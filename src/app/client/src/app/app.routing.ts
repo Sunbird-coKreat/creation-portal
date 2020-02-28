@@ -3,19 +3,16 @@ import { ErrorPageComponent, AuthGuard } from '@sunbird/core';
 import { RouterModule, Routes } from '@angular/router';
 const appRoutes: Routes = [
   {
-    path: 'learn', loadChildren: 'app/modules/learn/learn.module#LearnModule'
-  },
-  {
     path: 'resources', loadChildren: 'app/modules/resource/resource.module#ResourceModule'
   },
   {
     path: 'search', loadChildren: 'app/modules/search/search.module#SearchModule'
   },
   {
-    path: 'workspace', loadChildren: 'app/modules/workspace/workspace.module#WorkspaceModule'
+    path: 'contribute', loadChildren: 'app/modules/program/program.module#ProgramModule'
   },
   {
-    path: 'contribute', loadChildren: 'app/modules/program/program.module#ProgramModule'
+    path: 'sourcing', loadChildren: 'app/modules/program/program.module#ProgramModule'
   },
   // {
   //   path: 'home', loadChildren: 'app/modules/home/home.module#HomeModule'
@@ -46,6 +43,9 @@ const appRoutes: Routes = [
   },
   {
     path: 'get', loadChildren: 'app/modules/dial-code-search/dial-code-search.module#DialCodeSearchModule'
+  },
+  {
+    path: 'contribution-portal', loadChildren: 'app/modules/public/public.module#PublicModule'
   },
   {
     path: '', loadChildren: 'app/modules/public/public.module#PublicModule'
