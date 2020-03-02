@@ -15,7 +15,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let program of programsList" [routerLink]="['./contribute/program/' + program.programId]" >
+            <tr *ngFor="let program of programsList" [routerLink]="['./program/' + program.programId]" >
               <td> <p>{{program?.name}}</p>
                 <p class="ui teal label">CBSC</p> 
 
