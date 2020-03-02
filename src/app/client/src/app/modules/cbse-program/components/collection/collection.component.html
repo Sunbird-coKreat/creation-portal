@@ -47,16 +47,66 @@
       </nav>
     </div>
   </div>
-  <div  *ngIf="objectKey(collectionList).length" class="ui container">
-    <div *ngFor="let key of objectKey(collectionList)">
-      <sb-library-cards-grid  [title]="key" appTelemetryInteract
+  <div class="book-table">
+    <div class="ui equal width grid book-info">
+    <div class="column">
+      <p>Expression for Intrest</p>
+      <p><strong>1st Mar 2020</strong></p>
+    </div>
+    <div class="column">
+      <p>Shortlisting of contributor</p>
+      <p><strong>5th  Mar 2020</strong></p>
+    </div>
+    <div class="column">
+      <p>Content Submission</p>
+      <p><strong>23rd  Mar 2020</strong></p>
+    </div>
+    <div class="column">
+      <p>Textbook Publication</p>
+      <p><strong>10 Apr 2020</strong></p>
+    </div>
+    <div class="column">
+      <p>Reward</p>
+      <p><strong>To be disussed</strong></p>
+    </div>
+  </div>
+    <table class="ui very padded table">
+    <thead>
+      <tr>
+        <!-- <th></th> -->
+        <th>Textbook</th>
+        <th>Grade</th>
+        <th>Medium</th>
+        <th>Chapters</th>
+        <th>Subject</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    <!-- <span *ngFor="let key of objectKey(collectionList)"> -->
+        <tr *ngFor="let data of collectionList" >
+          <td><p>{{data.name}}</p></td>
+          <td><span>{{data.gradeLevel}}</span></td>
+          <td><span class="language">{{data.medium}}</span></td>
+          <td>20</td>
+          <td>{{data.subject}}</td>
+         
+          <td><button *ngIf="nominate === 'nominate' &&  this.changeButtonId !== data.identifier " class="sb-btn sb-btn-normal sb-btn-primary" (click)="ChangeUploadStatus(data.identifier)">Nominate</button>
+          <button *ngIf="uploadSample === 'uploadSample' && this.changeButtonId === data.identifier" class="sb-btn sb-btn-normal sb-btn-success" (click)="nominate='uploadSample'">Upload Sample</button></td>
+        </tr>
+      </tbody>
+    </table> 
+</div>
+    <!-- <div *ngFor="let key of objectKey(collectionList)"> -->
+
+      <!-- <sb-library-cards-grid  [title]="key" appTelemetryInteract
       [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('collection-card', 'click', 'collection')"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata"
-      [contentList]="collectionList[key]" [maxCardCount]="4" [type]="'infinite_card_grid'" (viewMoreClick)="viewMoreClickHandler($event)" (cardClick)="collectionClickHandler($event)"></sb-library-cards-grid>
+      [contentList]="collectionList[key]" [maxCardCount]="4" [type]="'infinite_card_grid'" (viewMoreClick)="viewMoreClickHandler($event)" (cardClick)="collectionClickHandler($event)"></sb-library-cards-grid> -->
         <!-- <app-card appContentDirection appTelemetryInteract [telemetryInteractEdata]="telemetryInteract" [data]="content" appTelemetryInteract [telemetryInteractEdata]="telemetryInteract" (clickEvent)="showTopics($event)"></app-card> -->
-    </div>
-  </div>
+    <!-- </div> -->
+ 
   <div  *ngIf="!objectKey(collectionList).length">
     <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0006'}"></app-no-result>
   </div>
