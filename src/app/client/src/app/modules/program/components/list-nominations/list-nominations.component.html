@@ -1,0 +1,150 @@
+
+<div class="sb-cbse-homepage-container">
+
+  <!-- Header Section -->
+  <div class="sb-pageSection-header">
+    <div class="ui container d-flex flex-ai-center chapterlist-header">
+      <div class="d-flex mr-auto flex-ai-center">
+        <div class="textbook-details ml-8">
+            <label class="d-block fs-1 mb-4">New Program FEB2020</label>
+            <div class="d-flex flex-ai-center">
+              <span class="dot-separator"></span>
+              <label class="d-block fsmall font-weight-normal mb-0">Marathi, Hindi, English</label>
+            </div>
+            <div class="d-flex flex-ai-center">
+              <span class="dot-separator"></span>
+              <label class="d-block fsmall font-weight-normal mb-0">Grade 1, Grade 2</label>
+            </div>
+            <div class="d-flex flex-ai-center">
+              <span class="dot-separator"></span>
+              <label class="d-block fsmall font-weight-normal mb-0">
+                Expression for Interest Date:  July 26th, 2019
+              </label>
+            </div>
+            <div class="d-flex flex-ai-center">
+              <span class="dot-separator"></span>
+              <label class="d-block fsmall font-weight-normal mb-0">
+                Shortlisting of Contributor Date:  Aug 5th, 2019
+              </label>
+            </div>
+            <div class="d-flex flex-ai-center">
+              <span class="dot-separator"></span>
+              <label class="d-block fsmall font-weight-normal mb-0">
+                Content Submission Date:  Aug 20th, 2019
+              </label>
+            </div>
+            <div class="d-flex flex-ai-center">
+              <span class="dot-separator"></span>
+              <label class="d-block fsmall font-weight-normal mb-0">
+                Program End Date:  Aug 30th, 2019
+              </label>
+            </div>
+        </div>
+      </div>
+
+      <div class="sb-meta-data-container sb-meta-data-column d-flex flex-w-wrap ml-16">
+        <label class="d-block width-100">Nominations</label>
+        <div class="d-flex">
+          <dl class="sb-meta-data">
+            <dt>15</dt>
+            <dd>Total</dd>
+          </dl>
+          <dl class="sb-meta-data">
+            <dt>5</dt>
+            <dd>Rejected</dd>
+          </dl>
+          <dl class="sb-meta-data">
+            <dt>5</dt>
+            <dd>Pending</dd>
+          </dl>
+          <dl class="sb-meta-data">
+            <dt>5</dt>
+            <dd>Approved</dd>
+          </dl>
+        </div>
+      </div> 
+
+      <div class="sb-textbook-allchapters sb-field">
+        <label class="fsmall font-weight-normal">Select Status</label>
+        <sui-select class="selection state-selection">
+          <sui-select-option *ngFor="let status of ['All Statuses', 'Pending', 'Approved', 'Rejected']" [value]="status" ></sui-select-option>
+        </sui-select>
+      </div>
+    </div> 
+  </div> 
+</div>
+
+<table class="ui celled table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Textbooks</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let nomination of nominations">
+      <td data-label="Contributor Name">
+        <a (click)="show=true" class="header text-decoration-underline">{{nomination.contributor_name}}</a>
+      </td>
+      <td data-label="Type">{{nomination.type}}</td>
+      <td data-label="Website">{{nomination.textbooks}}</td>
+      <td data-label="Status">{{nomination?.status}}</td>
+      <td data-label="Actions">
+        <button class="sb-btn sb-btn-normal sb-btn-success" *ngIf="nomination?.status === 'Pending'"
+          [routerLink]="'/sourcing/program/' + nomination.program_id">View Sample</button>
+        <button class="sb-btn sb-btn-normal sb-btn-success" *ngIf="nomination?.status === 'Approved'"
+          [routerLink]="'/sourcing/program/' + nomination.program_id">View Contribution</button>
+        <button class="sb-btn sb-btn-normal sb-btn-primary mx-10" (click)="onApproveClick(nomination)" *ngIf="nomination?.status === 'Pending'">Approve</button>
+        <button class="sb-btn sb-btn-normal sb-btn-warning " *ngIf="nomination?.status === 'Pending'" (click)="onRejectClick(nomination)">Reject</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<sui-modal *ngIf="show" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+  class="sb-modal" appBodyScroll (dismissed)="show = false" #modal>
+  <div class="sb-modal-header"> Nominee Profile Details </div>
+  <div class="sb-modal-content o-y-visible pb-8">
+    <div class="ui container">
+      <div class="mx-48 text-center">
+        <div class="sb-profile-page__avatar">
+          <img src="assets/images/guest.svg" alt="guest" class="w-100">
+        </div>
+        <div class="fs-2-5 font-weight-bold mb-24">{{ 'Nitesh Kesarkar' | titlecase}} </div>
+      </div>
+      <div class="mx-48 relative text-center">
+        <div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
+          <span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.State}} :</span>
+          <span class="fmedium font-weight-bold pl-4">{{'Maharashtra'}}</span>
+        </div>
+        <div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
+          <span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.District}} :</span>
+          <span class="fmedium font-weight-bold pl-4">
+            {{'Kolhapur'}}</span>
+        </div>
+        <div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
+          <span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Board}} :</span>
+          <span class="fmedium font-weight-bold pl-4">{{'CBSE'}}</span>
+        </div>
+        <div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
+          <span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Medium}} :</span>
+          <span class="fmedium font-weight-bold pl-4">
+            {{'English'}}</span>
+        </div>
+        <div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
+          <span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Subjects}} :</span>
+          <span class="fmedium font-weight-bold pl-4">
+            {{'Marathi'}}</span>
+        </div>
+        <div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
+          <span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Classes}} :</span>
+          <span class="fmedium font-weight-bold pl-4">
+            {{'Grade 1'}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</sui-modal>

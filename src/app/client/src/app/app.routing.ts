@@ -9,10 +9,10 @@ const appRoutes: Routes = [
     path: 'search', loadChildren: 'app/modules/search/search.module#SearchModule'
   },
   {
-    path: 'contribute', loadChildren: 'app/modules/program/program.module#ProgramModule'
+    path: 'sourcing', loadChildren: 'app/modules/program/program.module#ProgramModule'
   },
   {
-    path: 'sourcing', loadChildren: 'app/modules/program/program.module#ProgramModule'
+    path: 'contribute', loadChildren: 'app/modules/contribute/contribute.module#ContributeModule'
   },
   // {
   //   path: 'home', loadChildren: 'app/modules/home/home.module#HomeModule'

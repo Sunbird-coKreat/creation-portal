@@ -23,6 +23,7 @@ export class ListAllProgramsComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.programsList$ = this.getProgramsList();
+    console.log(this.programsList$)
   }
 
   /**
@@ -111,15 +112,5 @@ export class ListAllProgramsComponent implements OnInit, AfterViewInit {
 
   getFeatureId(featureId, taskId) {
     return [{ id: featureId, type: 'Feature' }, { id: taskId, type: 'Task' }];
-  }
-  
-    /**
-   * fetch the list of programs.
-   */
-  private getProgramBoard(prograObj) {
-	 return "CBSE";
-     const filters =  prograObj.config.filters;
-     const implicitProperty =  _.find(filters.implicit, {'code': 'board'});
-     return (implicitProperty) ? implicitProperty.defaultValue : '';
   }
 }

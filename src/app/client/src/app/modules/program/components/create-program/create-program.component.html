@@ -1,0 +1,238 @@
+<div class="ui form centered grid my-10">
+      <div class="twelve wide tablet seven wide computer column">
+         <sui-tabset>
+            <div class="ui top attached tabular menu">
+               <a class="item" suiTabHeader="1">Details</a>
+               <a class="item" suiTabHeader="2" [isDisabled]="!showTextBookSelector">Second</a>
+            </div>
+            <div class="ui bottom attached segment form-fields" suiTabContent="1">
+               <form class="ui form">
+                  <div class="required field">
+                     <label>Name</label>
+                     <input autofocus="" class="sb-form-control ng-pristine ng-valid ng-touched" type="text" placeholder="Name">
+                  </div>
+                  <div class="required field">
+                     <label>Description</label>
+                     <div class="sb-field relative">
+                        <textarea type="text" class="wmd-input width-100 sb-form-control" placeholder="Add description" name="" required></textarea>
+                        <span class="characters-left">1000 Characters left</span>
+                     </div>
+                  </div>
+                  <div class="row two fields">
+                     <div class="required field">
+                        <label>Expression for Interest Date</label>
+                        <div class="ui read-only calendar mb-10 sb-field">
+                           <div class="ui input right icon sb-form-control">
+                              <i class="calendar icon date-calendar"></i>
+                              <input [pickerMinDate]='pickerMinDate' suiDatepicker [pickerMode]="'date'">
+                           </div>
+                        </div>
+                     </div>
+                     <div class="field">
+                        <label>Shortlisting of Contributor Date</label>
+                        <div class="ui read-only calendar mb-10">
+                           <div class="ui input right icon sb-form-control">
+                              <i class="calendar icon date-calendar"></i>
+                              <input [pickerMinDate]='pickerMinDate' suiDatepicker [pickerMode]="'date'">
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="row two fields">
+                     <div class="field required">
+                        <label>Content Submission Date</label>
+                        <div class="ui read-only calendar mb-10">
+                           <div class="ui input right icon sb-form-control">
+                              <i class="calendar icon date-calendar"></i>
+                              <input [pickerMinDate]='pickerMinDate' suiDatepicker [pickerMode]="'date'">
+                           </div>
+                        </div>
+                     </div>
+                     <div class="field required">
+                        <label>Program End Date</label>
+                        <div class="ui read-only calendar mb-10">
+                           <div class="ui input right icon sb-form-control">
+                              <i class="calendar icon date-calendar"></i>
+                              <input [pickerMinDate]='pickerMinDate' suiDatepicker [pickerMode]="'date'">
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               
+                     <h4 class="py-20">Filters for textbooks</h4>
+               
+                  <div class="row two fields">
+                     <div class="required field">
+                        <label>Board</label>
+                        <ng-template let-option #optionTemplate >
+                           <div class="field m-0">
+                              <div class="template-checkbox">
+                                 <div class="p-5 option-text"  title="{{option.name}}">
+                                    {{option.name}}
+                                 </div>
+                                 <div class="ml-auto">
+                                    <i class="square outline medium icon"></i>
+                                 </div>
+                              </div>
+                           </div>
+                        </ng-template>
+                        <sui-select class="selection"
+                           labelField="name"
+                           [options]="options"
+                           valueField="name">
+                           <sui-select-option *ngFor="let option of data.board"
+                           [value]="option">
+                           </sui-select-option>
+                        </sui-select>
+                     </div>
+                     <div class="required field">
+                        <label>Select Medium</label>
+                        <ng-template let-option #optionTemplate >
+                           <div class="field m-0">
+                              <div class="template-checkbox">
+                                 <div class="p-5 option-text"  title="{{option.name}}">
+                                    {{option.name}}
+                                 </div>
+                                 <div class="ml-auto">
+                                    <i class="square outline medium icon"></i>
+                                 </div>
+                              </div>
+                           </div>
+                        </ng-template>
+                        <sui-multi-select class="selection"
+                        labelField="name"
+                        [hasLabels]="true"
+                        [options]="options"
+                        valueField="name"
+                        #multiSelect>
+                        <sui-select-option *ngFor="let option of data.medium"
+                        [value]="option" >
+                        </sui-select-option>
+                        </sui-multi-select>
+                     </div>
+                  </div>
+                  <div class="row two fields">
+                     <div class="required field">
+                        <label> Grade / Class </label>
+                        <ng-template let-option #optionTemplate >
+                           <div class="field m-0">
+                              <div class="template-checkbox">
+                                 <div class="p-5 option-text"  title="{{option.name}}">
+                                    {{option.name}}
+                                 </div>
+                                 <div class="ml-auto">
+                                    <i class="square outline medium icon"></i>
+                                 </div>
+                              </div>
+                           </div>
+                        </ng-template>
+                        <sui-multi-select class="selection"
+                        labelField="name"
+                        [hasLabels]="true"
+                        [options]="data.filteredOptions"
+                        valueField="name"
+                        #multiSelect>
+                        <sui-select-option *ngFor="let option of data.filteredOptions"
+                        [value]="option" >
+                        </sui-select-option>
+                        </sui-multi-select>
+                     </div>
+                     <div class="required field">
+                        <label> Subject</label>
+                        <ng-template let-option #optionTemplate >
+                           <div class="field m-0">
+                              <div class="template-checkbox">
+                                 <div class="p-5 option-text"  title="{{option.name}}">
+                                    {{option.name}}
+                                 </div>
+                                 <div class="ml-auto">
+                                    <i class="square outline medium icon"></i>
+                                 </div>
+                              </div>
+                           </div>
+                        </ng-template>
+                        <sui-multi-select class="selection"
+                        labelField="name"
+                        [hasLabels]="true"
+                        [options]="data.filteredOptions"
+                        valueField="name"
+                        #multiSelect>
+                        <sui-select-option *ngFor="let option of data.filteredOptions"
+                        [value]="option" >
+                        </sui-select-option>
+                        </sui-multi-select>
+                     </div>
+               </div>
+             
+               <h4 class="py-20">Types of content</h4>
+               
+                  <div class="row two fields">
+                     <div class="ui checkbox field">
+                        <input type="checkbox" name="example">
+                        <label>Explanation video</label>
+                     </div>
+                     <div class="ui checkbox field">
+                        <input type="checkbox" name="example">
+                        <label>Practice Question set</label>
+                     </div>
+                  </div>
+                  <div class="row two fields">
+                     <div class="ui checkbox field">
+                        <input type="checkbox" name="example">
+                        <label>Lesson plan pdf</label>
+                     </div>
+                     <div class="ui checkbox field">
+                        <input type="checkbox" name="example">
+                        <label>Learning outcome pdf</label>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="field">
+                        <label>Certificates to be awarded </label>
+                        <ng-template let-option #optionTemplate >
+                              <div class="field m-0">
+                                 <div class="template-checkbox">
+                                    <div class="p-5 option-text"  title="{{option.name}}">
+                                       {{option.name}}
+                                    </div>
+                                    <div class="ml-auto">
+                                       <i class="square outline medium icon"></i>
+                                    </div>
+                                 </div>
+                              </div>
+                           </ng-template>
+                           <sui-multi-select class="selection"
+                           labelField="name"
+                           [hasLabels]="true"
+                           [options]="options"
+                           valueField="name"
+                           #multiSelect>
+                           <sui-select-option *ngFor="let option of data.medium"
+                           [value]="option" >
+                           </sui-select-option>
+                           </sui-multi-select>
+                     </div>
+                     <div class="field">
+                        <label>Rewards Given</label>
+                        <div class="sb-field relative">
+                           <textarea type="text" class="wmd-input width-100 sb-form-control" placeholder="Add reward description" name="" required></textarea>
+                           <span class="characters-left">1000 Characters left</span>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="text-right my-20">
+                     <button class="sb-btn sb-btn-normal sb-btn-primary">
+                     Save
+                     </button>
+                     <button class="sb-btn sb-btn-normal sb-btn-warning mx-10">
+                     Publish
+                     </button>
+                  </div>
+               </form>
+            </div>
+            <div class="ui bottom attached segment" suiTabContent="2" >
+               Tab2
+            </div>
+         </sui-tabset>
+      </div>
+   </div>

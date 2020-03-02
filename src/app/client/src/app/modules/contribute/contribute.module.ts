@@ -6,26 +6,26 @@ import { SuiModule } from 'ng2-semantic-ui/dist';
 import { SlickModule } from 'ngx-slick';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { ProgramRoutingModule } from './program-routing.module';
+import { ContributeRoutingModule } from './contibute-routing.module';
 import { ListAllProgramsComponent } from './components';
 import { ProgramComponent } from './components/program/program.component';
 import { OnboardPopupComponent } from './components/onboard-popup/onboard-popup.component';
 import { ProgramHeaderComponent } from './components/program-header/program-header.component';
-import { CreateProgramComponent } from './components/create-program/create-program.component';
-import { ProgramNominationsComponent } from './components/program-nominations/program-nominations.component';
-import { ListNominationsComponent } from './components/list-nominations/list-nominations.component';
 import { NgInviewModule } from 'angular-inport';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { DynamicModule } from 'ng-dynamic-component';
 import { CbseProgramModule } from '../../modules/cbse-program/cbse-program.module';
 import { CollectionComponent, DashboardComponent } from '../cbse-program';
 import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
+import { EnrollContributorComponent } from './components/enroll-contributor/enroll-contributor.component';
+import { ListAllMyProgramsComponent } from './components/list-all-my-programs/list-all-my-programs.component';
 @NgModule({
-  declarations: [ListAllProgramsComponent, ProgramComponent, OnboardPopupComponent, ProgramHeaderComponent, CreateProgramComponent, ProgramNominationsComponent, ListNominationsComponent],
+  
+  declarations: [ListAllProgramsComponent, ProgramComponent, OnboardPopupComponent, ProgramHeaderComponent,EnrollContributorComponent, ListAllMyProgramsComponent  ],
   imports: [
-  SuiModule,
+    SuiModule,
     CommonModule,
-    ProgramRoutingModule,
+    ContributeRoutingModule,
     CommonConsumptionModule,
     SlickModule,
     FormsModule,
@@ -35,11 +35,12 @@ import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
     NgInviewModule,
     TelemetryModule,
     CbseProgramModule,
-    DynamicModule.withComponents([CollectionComponent, DashboardComponent, ListNominationsComponent])
+    
+    DynamicModule.withComponents([CollectionComponent, DashboardComponent])
   ],
   exports: [
     ProgramComponent,
-    OnboardPopupComponent
+    OnboardPopupComponent,
   ]
 })
-export class ProgramModule { }
+export class ContributeModule { }
