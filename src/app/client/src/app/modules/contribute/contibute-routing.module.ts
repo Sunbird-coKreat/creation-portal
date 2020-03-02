@@ -32,7 +32,7 @@ const routes: Routes = [{
     },
 },
 {
-  path: 'contribute/program/:programId', component: ProgramComponent,
+  path: 'program/:programId', component: ProgramComponent,
   data: {
     telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
   },
