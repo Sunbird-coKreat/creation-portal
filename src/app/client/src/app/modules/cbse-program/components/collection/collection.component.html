@@ -84,7 +84,7 @@
     </thead>
     <tbody>
     <!-- <span *ngFor="let key of objectKey(collectionList)"> -->
-        <tr *ngFor="let data of collectionList" >
+        <tr *ngFor="let data of collectionList" (click)="onClick($event)" >
           <td><p>{{data.name}}</p></td>
           <td><span>{{data.gradeLevel}}</span></td>
           <td><span class="language">{{data.medium}}</span></td>

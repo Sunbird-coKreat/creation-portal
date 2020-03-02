@@ -4,11 +4,11 @@
   <div class="sb-pageSection-content">
     <ng-container *ngIf="(programsList$ | async ) as programsList else loading">
       <div class="ui five item menu">
-        <a class="active item" (click)="nominationStatus='approved'">Approved</a>
-        <a class="item" (click)="nominationStatus='rejected'">Rejected</a>
-        <a class="item" (click)="nominationStatus='nominated'">Nominated</a>
-        <a class="item" (click)="nominationStatus='countributed'">contributed</a>
-        <a class="item" (click)="nominationStatus='close'">Close</a>
+        <a class=" item {{nominationStatus === 'approved' ? 'active' : ''}}" (click)="changeNominationStatus('approved')">Approved</a>
+        <a class="item {{nominationStatus === 'rejected' ? 'active' : ''}}" (click)="changeNominationStatus('rejected')">Rejected</a>
+        <a class="item {{nominationStatus === 'nominated' ? 'active' : ''}}" (click)="changeNominationStatus('nominated')">Nominated</a>
+        <a class="item {{nominationStatus === 'contributed' ? 'active' : ''}}" (click)="changeNominationStatus('countributed')">contributed</a>
+        <a class="item {{ nominationStatus === 'close' ? 'active' : ''}}" (click)="changeNominationStatus('close')">Closed</a>
       </div>
       <ng-container *ngIf="programsList && programsList.length else noResult">
         <table class="ui very padded table accordion">
@@ -23,7 +23,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let program of programsList" >
+            <tr *ngFor="let program of programsList" [routerLink]="['contribute/myprogram/'+program.programId]" >
               <td> <p>{{program?.name}}</p>
                 <p class="ui teal label">CBSC</p> 
 
@@ -37,7 +37,7 @@
                 
               </td>
               <td >
-                <p>Mathamatics , Science and 3 more</p>
+                <p>Mathamatics , Science and Marathi</p>
                 <p class="language">English, Hindi, Marathi</p>
                 
               </td>
@@ -51,9 +51,16 @@
                 <span *ngIf="nominationStatus === 'nominated'" class="nominated">Nomination Nominated</span>
                 
                 <span *ngIf="nominationStatus === 'countributed'" class="countributed">countributed</span>
-                <span *ngIf="nominationStatus === 'close'" class="close">Programe close</span>
+                <span *ngIf="nominationStatus === 'close'" class="close">Programe closed</span>
               </td>
-              <td>View</td>
+              <td>
+                <span *ngIf="nominationStatus === 'approved'">View and Upload</span>
+                <span *ngIf="nominationStatus === 'rejected'">View</span>
+                <span *ngIf="nominationStatus === 'nominated'">View & Upload</span>
+                
+                <span *ngIf="nominationStatus === 'countributed'">view and Upload</span>
+                <span *ngIf="nominationStatus === 'close'">View</span>
+              </td>
             </tr>
           </tbody>
         </table> 

@@ -20,6 +20,22 @@
     height: 64px;
   }
 }
+.book-table  {
+  padding-top: 70px;
+  padding-bottom: 10px;
+  padding-left: 70px;
+  padding-right: 70px;
+}
+.book-info
+{
+  padding-top: 30;
+  padding-bottom: 10px;
+  padding-left: 70px;
+  padding-right: 70px;
+}
+.language {
+  color: rgb(245, 109, 19);
+}
 .ui.selection.dropdown.state-selection {
   color: var(--primary-400);
   font-weight: bold;
