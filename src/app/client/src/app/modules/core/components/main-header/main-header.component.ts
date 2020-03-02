@@ -94,7 +94,6 @@ export class MainHeaderComponent implements OnInit {
           this.userProfile = user.userProfile;
           this.getLanguage(this.userService.channel);
           this.isCustodianOrgUser();
-          document.title = _.get(user, 'userProfile.rootOrgName');
         }
       });
     } else {
@@ -209,7 +208,7 @@ export class MainHeaderComponent implements OnInit {
   getUrl() {
     this.routerEvents.subscribe((urlAfterRedirects: NavigationEnd) => {
       let currentRoute = this.activatedRoute.root;
-      this.contributeTabActive = this.router.isActive('/contribute', true);
+      this.contributeTabActive = this.router.isActive('/sourcing', true);
       if (currentRoute.children) {
         while (currentRoute.children.length > 0) {
           const child: ActivatedRoute[] = currentRoute.children;

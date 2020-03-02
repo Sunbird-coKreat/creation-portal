@@ -1,0 +1,69 @@
+<div class="sb-pageSection my-24 ui container" [appTelemetryImpression]="telemetryImpression">
+  <div class="sb-pageSection-header">
+  </div>
+  <div class="sb-pageSection-content">
+    <ng-container *ngIf="(programsList$ | async ) as programsList else loading">
+      <div class="ui five item menu">
+        <a class="active item" (click)="nominationStatus='approved'">Approved</a>
+        <a class="item" (click)="nominationStatus='rejected'">Rejected</a>
+        <a class="item" (click)="nominationStatus='nominated'">Nominated</a>
+        <a class="item" (click)="nominationStatus='countributed'">contributed</a>
+        <a class="item" (click)="nominationStatus='close'">Cloes</a>
+      </div>
+      <ng-container *ngIf="programsList && programsList.length else noResult">
+        <table class="ui very padded table accordion">
+          <thead>
+            <tr>
+              <th>Program & Board</th>
+              <th>Textbooks & Chapters</th>
+              <th>Subjects</th>
+              <th>Submission Date</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let program of programsList" >
+              <td> <p>{{program?.name}}</p>
+                <p class="ui teal label">CBSC</p> 
+
+              </td>
+              <td >
+                <p >
+                  <strong class="textbook-info">5 </strong><small>Textbooks </small>
+                  <strong class="textbook-info">64</strong><small> Textbooks</small>
+                  <small>5,6,7 </small><strong class="textbook-info"> Grades</strong>
+                </p>
+                
+              </td>
+              <td >
+                <p>Mathamatics , Science and 3 more</p>
+                <p class="language">English, Hindi, Marathi</p>
+                
+              </td>
+              <td  >
+                <p>10 May 2019</p>
+                <p><small>20 days to ago</small></p>
+              </td>
+              <td>
+                <span *ngIf="nominationStatus === 'approved'" class="status-accepted">Nomination Approved</span>
+                <span *ngIf="nominationStatus === 'rejected'" class="rejected">Nomination Rejected</span>
+                <span *ngIf="nominationStatus === 'nominated'" class="nominated">Nomination Nominated</span>
+                
+                <span *ngIf="nominationStatus === 'countributed'" class="countributed">countributed</span>
+                <span *ngIf="nominationStatus === 'close'" class="close">Programe close</span>
+              </td>
+              <td>View</td>
+            </tr>
+          </tbody>
+        </table> 
+      </ng-container>
+      <ng-template #noResult>
+        <app-no-result [data]="{messageText: resourceService.messages.stmsg.m0006}"></app-no-result>
+      </ng-template>
+    </ng-container>
+    <ng-template #loading>
+      <app-loader></app-loader>
+    </ng-template>
+  </div>
+</div>
