@@ -17,12 +17,11 @@ import { DynamicModule } from 'ng-dynamic-component';
 import { CbseProgramModule } from '../../modules/cbse-program/cbse-program.module';
 import { CollectionComponent, DashboardComponent } from '../cbse-program';
 import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
-import { EnrollContributorComponent } from './components/enroll-contributor/enroll-contributor.component';
 import { ListAllMyProgramsComponent } from './components/list-all-my-programs/list-all-my-programs.component';
 import { MyProgramComponent} from './components/my-program/my-program.component';
 @NgModule({
   
-  declarations: [ListAllProgramsComponent, ProgramComponent, OnboardPopupComponent, ProgramHeaderComponent,EnrollContributorComponent, ListAllMyProgramsComponent, MyProgramComponent  ],
+  declarations: [ListAllProgramsComponent, ProgramComponent, OnboardPopupComponent, ProgramHeaderComponent, ListAllMyProgramsComponent, MyProgramComponent  ],
   imports: [
     SuiModule,
     CommonModule,

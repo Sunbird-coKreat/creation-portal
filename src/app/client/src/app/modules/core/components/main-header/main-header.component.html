@@ -87,9 +87,6 @@
                 <a routerLink="contribute" *ngIf="this.router.url.includes('/contribute')"><span class="fs-1 sb-color-white py-8">All Programs</span></a>
                 <span class="computer only mx-10 search-qrcode-divider" *ngIf="this.router.url.includes('/contribute')">|</span>
                 <a routerLink="contribute/myenrollprograms" *ngIf="this.router.url.includes('/contribute')"><span class="fs-1 sb-color-white py-8">My Programs</span></a>
-                <span class="computer only mx-10 search-qrcode-divider" *ngIf="this.router.url.includes('/contribute')">|</span>
-                <a routerLink="contribute/enrollprograms" *ngIf="this.router.url.includes('/contribute')"><span class="fs-1 sb-color-white py-8">Enroll as Contributor </span>
-                </a>
             </div>
         </ng-container>
         <ng-template #defaultView>
@@ -99,9 +96,6 @@
                 <a routerLink="contribute" *ngIf="this.router.url.includes('/contribute')"><span class="fs-1 sb-color-white py-8">All Programs</span></a>
                 <span class="computer only mx-10 search-qrcode-divider" *ngIf="this.router.url.includes('/contribute')">|</span>
                 <a routerLink="contribute/myenrollprograms" *ngIf="this.router.url.includes('/contribute')"><span class="fs-1 sb-color-white py-8">My Programs</span></a>
-                <span class="computer only mx-10 search-qrcode-divider" *ngIf="this.router.url.includes('/contribute')">|</span>
-                <a routerLink="contribute/enrollprograms" *ngIf="this.router.url.includes('/contribute')"><span class="fs-1 sb-color-white py-8">Enroll as Contributor </span>
-                </a>
                 <!--QR Button-->
                 <!-- <button class="ui button qr-code-btn d-flex flex-ai-center computer only mr-0" appTelemetryInteract
                     [telemetryInteractEdata]="enterDialCodeInteractEdata" (click)="showQrmodal = true;"
