@@ -74,7 +74,7 @@
   </div> 
 </div>
 
-<table class="ui celled table">
+<table class="ui very padded table">
   <thead>
     <tr>
       <th>Name</th>
@@ -86,23 +86,23 @@
   </thead>
   <tbody>
     <tr *ngFor="let nomination of nominations">
-      <td data-label="Contributor Name">
+      <td data-label="Contributor Name" class="hand">
         <a (click)="show=true" class="header text-decoration-underline">{{nomination.contributor_name}}</a>
       </td>
       <td data-label="Type">{{nomination.type}}</td>
       <td data-label="Website">{{nomination.textbooks}}</td>
       <td data-label="Status">{{nomination?.status}}</td>
       <td data-label="Actions">
-        <button class="sb-btn sb-btn-normal sb-btn-success" *ngIf="nomination?.status === 'Pending'"
+        <button class="sb-btn sb-btn-normal sb-btn-success m-5" *ngIf="nomination?.status === 'Pending'"
           [routerLink]="'/sourcing/program/' + nomination.program_id">View Sample</button>
-        <button class="sb-btn sb-btn-normal sb-btn-success" *ngIf="nomination?.status === 'Approved'"
+        <button class="sb-btn sb-btn-normal sb-btn-success m-5" *ngIf="nomination?.status === 'Approved'"
           [routerLink]="'/sourcing/program/' + nomination.program_id">View Contribution</button>
-        <button class="sb-btn sb-btn-normal sb-btn-primary mx-10" (click)="onApproveClick(nomination)" *ngIf="nomination?.status === 'Pending'">Approve</button>
-        <button class="sb-btn sb-btn-normal sb-btn-warning " *ngIf="nomination?.status === 'Pending'" (click)="onRejectClick(nomination)">Reject</button>
+        <button class="sb-btn sb-btn-normal sb-btn-primary m-5" (click)="onApproveClick(nomination)" *ngIf="nomination?.status === 'Pending'">Approve</button>
+        <button class="sb-btn sb-btn-normal sb-btn-warning m-5" *ngIf="nomination?.status === 'Pending'" (click)="onRejectClick(nomination)">Reject</button>
       </td>
     </tr>
   </tbody>
-</table>
+</table> 
 
 <sui-modal *ngIf="show" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
   class="sb-modal" appBodyScroll (dismissed)="show = false" #modal>

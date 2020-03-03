@@ -5,37 +5,48 @@
 
     <ng-container *ngIf="(programsList$ | async ) as programsList else loading">
       <ng-container *ngIf="programsList && programsList.length else noResult">
-        <div class="sbgrid sbgrid--grid-carousel">
-          <div appTelemetryInteract [telemetryInteractObject]="getTelemetryInteractObject(program.programId)"
-            [telemetryInteractEdata]="getTelemetryInteractEdata('program-card')" [telemetryInteractCdata]="getFeatureId('user:program:contribute', 'SB-15591')"
-            class="sbcard sbcard--resource sbcard--course" [routerLink]="['./nominations/' + program.programId]" *ngFor="let program of programsList">
-            <div class="sbcard__main_area">
-              <div class="sbcard__img mr-8"><img [src]="program.imagePath || 'assets/images/programs_default.png'"
-                  alt="" title="" /></div>
-              <div class="sbcard__info">
-                <h4 class="sbcard__title sb__ellipsis sb__ellipsis--two sb-color-primary font-weight-bold">
+        <table class="ui very padded table">
+          <thead>
+            <tr>
+              <th>Program & Board</th>
+              <th>Textbooks & Chapters</th>
+              <th>No of Contributions</th>
+              <th>Subjects</th>
+              <th>Shortlisting of Contributor Date</th>
+              <th>Program End Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let program of programsList" [routerLink]="['./nominations/' + program.programId]" class="hand">
+              <td> 
+                <p class="sb__ellipsis sb__ellipsis--two sb-color-primary font-weight-bold">
                   {{program?.name}}
-                </h4>
-                <div class="sbcard__meta1"><span>{{program?.description}}</span>
-                </div>
-                  
-              </div>
-            </div>
-            <div class="sbcard__moreinfo">
-              <div class="sbcard__meta2">
-				 <div class="sbcard__meta2_board">
-					<span>Board: {{getProgramBoard(program)}}</span>
-                </div>
-                 <div class="sbcard__meta2_contributions">
-					<span>No of contributions: 18</span>
-                </div>
-                <div class="sbcard__medium">
-                  {{program?.rootOrgName}}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+                </p>
+                <p class="ui teal label">{{getProgramBoard(program)}}</p> 
+              </td>
+              <td >
+                <p ><strong> 3 </strong><small> Textbooks </small></p>
+                <p ><strong> 10</strong><small> Chapters </small></p>
+                <p ><strong> 5, 6, 7 </strong><small> Grades </small></p>
+              </td>
+              <td >
+                <p ><strong> 10 </strong> </p>
+              </td>
+              <td >
+                <p>Mathamatics, Science, History</p>
+                <p class="language">English, Hindi, Marathi</p>
+              </td>
+              <td>
+                <p>March 10th, 2019</p>
+                <p><small>6 days to ago</small></p>   
+              </td>
+              <td>
+                <p>March 15th, 2019</p>
+                <p><small>11 days to ago</small></p>   
+              </td>
+            </tr>
+          </tbody>
+        </table> 
       </ng-container>
       <ng-template #noResult>
         <app-no-result [data]="{messageText: resourceService.messages.stmsg.m0006}"></app-no-result>
