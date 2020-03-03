@@ -1,7 +1,7 @@
 <div class="">
   <div class="practical-appbar">
     <div class="practical-appbar__content ui container d-flex flex-ai-center">
-      <ng-container *ngIf="headerActions.showTabs">
+      <!-- <ng-container *ngIf="headerActions.showTabs">
         <ng-container *ngFor="let tab of filterBy('index'); let i = index">
           <a appTelemetryInteract
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('header-tab-'+tab.label, 'click', 'collection')"
@@ -10,7 +10,7 @@
             class="practical-appbar__item" *ngIf="tab?.visibility" (click)="handleTabChange(tab.onClick, tab.index)"
             [class.active]="tab.index == defaultTabIndex">{{tab.label}}</a>
         </ng-container>
-      </ng-container>
+      </ng-container> -->
       <button appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('header-back-button', 'click', 'collection')"
         [telemetryInteractCdata]="telemetryInteractCdata"

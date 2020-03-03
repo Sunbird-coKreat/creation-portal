@@ -48,17 +48,17 @@
               <td>
                 <span *ngIf="nominationStatus === 'approved'" class="status-accepted">Nomination Approved</span>
                 <span *ngIf="nominationStatus === 'rejected'" class="rejected">Nomination Rejected</span>
-                <span *ngIf="nominationStatus === 'nominated'" class="nominated">Nomination Nominated</span>
+                <span *ngIf="nominationStatus === 'nominated'" class="nominated">Nominated</span>
                 
-                <span *ngIf="nominationStatus === 'countributed'" class="countributed">countributed</span>
+                <span *ngIf="nominationStatus === 'countributed'" class="countributed">Countributed</span>
                 <span *ngIf="nominationStatus === 'close'" class="close">Programe closed</span>
               </td>
               <td>
-                <span *ngIf="nominationStatus === 'approved'">View and Upload</span>
+                <span *ngIf="nominationStatus === 'approved'">View and Upload Sample</span>
                 <span *ngIf="nominationStatus === 'rejected'">View</span>
-                <span *ngIf="nominationStatus === 'nominated'">View & Upload</span>
+                <span *ngIf="nominationStatus === 'nominated'">View & Upload Sample</span>
                 
-                <span *ngIf="nominationStatus === 'countributed'">view and Upload</span>
+                <span *ngIf="nominationStatus === 'countributed'">view and Upload Sample</span>
                 <span *ngIf="nominationStatus === 'close'">View</span>
               </td>
             </tr>
