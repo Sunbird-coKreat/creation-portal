@@ -1,8 +1,7 @@
 
 
 <div *ngIf="!showLoader && !showError && currentStage === 'collectionComponent'">
-
-  <div class="state-medium-container sb-bg-color-white">
+  <!-- <div class="state-medium-container sb-bg-color-white">
     <div class="ui container d-flex flex-ai-center">
       <div class="state-medium-container__dropdown">
         <div class="sb-field mb-0 selected-board"
@@ -11,10 +10,10 @@
            [telemetryInteractCdata]="telemetryInteractCdata"
            [telemetryInteractPdata]="telemetryInteractPdata">
           {{board}}
-          <!-- <sui-select class="selection state-selection"  placeholder="{{board}}" labelField="name" #multiSelect>
+           <sui-select class="selection state-selection"  placeholder="{{board}}" labelField="name" #multiSelect>
             <sui-select-option *ngFor="let option of multiSelect1" [value]="option" aria-disabled="#multiSelect">
             </sui-select-option>
-          </sui-select> -->
+          </sui-select> 
         </div>
       </div>
       <div class="state-medium-container__separator"></div>
@@ -31,8 +30,8 @@
         </div>
       </div>
     </div>
-  </div>
-  <div class="sb-class sb-bg-color-gray-0">
+  </div> -->
+  <!-- <div class="sb-class sb-bg-color-gray-0">
     <div class="ui container">
       <nav class="sb-class__pills-container">
        <ngx-slick class="carousel" [config]="_slideConfig">
@@ -46,40 +45,72 @@
           </ngx-slick>
       </nav>
     </div>
-  </div>
-  <div class="book-table">
-    <div class="ui equal width grid book-info">
-    <div class="column">
-      <p>Expression for Intrest</p>
-      <p><strong>1st Mar 2020</strong></p>
-    </div>
-    <div class="column">
-      <p>Shortlisting of contributor</p>
-      <p><strong>5th  Mar 2020</strong></p>
-    </div>
-    <div class="column">
-      <p>Content Submission</p>
-      <p><strong>23rd  Mar 2020</strong></p>
-    </div>
-    <div class="column">
-      <p>Textbook Publication</p>
-      <p><strong>10 Apr 2020</strong></p>
-    </div>
-    <div class="column">
-      <p>Reward</p>
-      <p><strong>To be disussed</strong></p>
-    </div>
-  </div>
+    
+  </div> -->
+    <div class="book-table">
+      <div class="sb-pageSection-header row">
+        <h4 class="sb-pageSection-title six">New Program FEB2020
+          <ng-template #popupTemplate>
+            <div class="content">
+              <div class="textbook-details ml-8">
+            <div class="d-flex flex-ai-center">
+              <span class="dot-separator"></span>
+              <label class="d-block fsmall font-weight-normal mb-0">Marathi, Hindi, English</label>
+            </div>
+            <div class="d-flex flex-ai-center">
+              <span class="dot-separator"></span>
+              <label class="d-block fsmall font-weight-normal mb-0">Grade 1, Grade 2</label>
+            </div>
+            <div class="d-flex flex-ai-center">
+              <span class="dot-separator"></span>
+              <label class="d-block fsmall font-weight-normal mb-0">
+              Expression for Interest Date:  July 26th, 2019
+              </label>
+            </div>
+            <div class="d-flex flex-ai-center">
+              <span class="dot-separator"></span>
+              <label class="d-block fsmall font-weight-normal mb-0">
+              Shortlisting of Contributor Date:  Aug 5th, 2019
+              </label>
+            </div>
+					<div class="d-flex flex-ai-center">
+					  <span class="dot-separator"></span>
+					  <label class="d-block fsmall font-weight-normal mb-0">
+						Content Submission Date:  Aug 20th, 2019
+					  </label>
+					</div>
+					<div class="d-flex flex-ai-center">
+					  <span class="dot-separator"></span>
+					  <label class="d-block fsmall font-weight-normal mb-0">
+						Program End Date:  Aug 30th, 2019
+					  </label>
+					</div>
+					</div>
+					</div>
+				</ng-template>
+				<i class="circle help link icon" suiPopup [popupTemplate]="popupTemplate">
+				</i>
+      </h4>
+      <!-- <div class="sb-pageSection-title six">
+        <button  class="sb-btn sb-btn-normal sb-btn-primary {{nominateButton}} ? === 'show' ? 'active' : 'disabled'" (click)="ChangeUploadStatus(data.identifier)" routerLink="contribute/myenrollprograms">Nominate</button>
+      </div> -->
+      <div class="ui grid">
+        <div class="two column row">
+          <div class=" ten wide column"></div>
+          <div class="two wide column column">
+            <button  class="sb-btn sb-btn-normal sb-btn-primary {{nominateButton === 'show' ? 'active' : 'disabled'}}" (click)="redirect()" >Nominate</button>
+          </div>
+      </div>
+      </div> 
     <table class="ui very padded table">
     <thead>
       <tr>
-        <!-- <th></th> -->
         <th>Textbook</th>
         <th>Grade</th>
         <th>Medium</th>
         <th>Chapters</th>
         <th>Subject</th>
-        <th></th>
+        <th>Select</th>
       </tr>
     </thead>
     <tbody>
@@ -90,13 +121,16 @@
           <td><span class="language">{{data.medium}}</span></td>
           <td>20</td>
           <td>{{data.subject}}</td>
-
-          <td><button *ngIf="nominate === 'nominate' &&  this.changeButtonId !== data.identifier " class="sb-btn sb-btn-normal sb-btn-primary" (click)="ChangeUploadStatus(data.identifier)">Nominate</button>
-          <button *ngIf="nominate === 'uploadSample' && this.changeButtonId === data.identifier" class="sb-btn sb-btn-normal sb-btn-success" (click)="uploadSample($event, data)">Upload Sample</button></td>
+          <td>
+              <input type="checkbox" name="example" (click)="nominationChecked(data.identifier)" >
+          </td>
+            <!-- <button *ngIf="nominate === 'nominate' &&  this.changeButtonId !== data.identifier " class="sb-btn sb-btn-normal sb-btn-primary" (click)="ChangeUploadStatus(data.identifier)">Nominate</button>
+          <button *ngIf="nominate === 'uploadSample' && this.changeButtonId === data.identifier" class="sb-btn sb-btn-normal sb-btn-success" (click)="uploadSample($event, data)">Upload Sample</button></td> -->
         </tr>
       </tbody>
     </table>
-</div>
+  </div>
+
     <!-- <div *ngFor="let key of objectKey(collectionList)"> -->
 
       <!-- <sb-library-cards-grid  [title]="key" appTelemetryInteract
@@ -106,7 +140,6 @@
       [contentList]="collectionList[key]" [maxCardCount]="4" [type]="'infinite_card_grid'" (viewMoreClick)="viewMoreClickHandler($event)" (cardClick)="collectionClickHandler($event)"></sb-library-cards-grid> -->
         <!-- <app-card appContentDirection appTelemetryInteract [telemetryInteractEdata]="telemetryInteract" [data]="content" appTelemetryInteract [telemetryInteractEdata]="telemetryInteract" (clickEvent)="showTopics($event)"></app-card> -->
     <!-- </div> -->
-
   <div  *ngIf="!objectKey(collectionList).length">
     <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0006'}"></app-no-result>
   </div>
@@ -115,7 +148,6 @@
 <div *ngIf="currentStage !== 'collectionComponent'" style="margin-bottom: -60px;">
   <app-chapter-list [chapterListComponentInput]="chapterListComponentInput" (selectedQuestionTypeTopic)="selectedQuestionTypeTopic"></app-chapter-list>
 </div>
-
 <div class="twelve wide column" *ngIf="!showLoader && showError">
   <app-no-result [data]="{ messageText: 'resourceService.messages.fmsg.m0004'}"></app-no-result>
 </div>
