@@ -1,0 +1,26 @@
+.sb-dock-menu-bar {
+    height: 3rem;
+    .sb-dock-menu {
+        height: 3rem;
+        a {
+            font-size: 0.875rem;
+    padding: 0.85rem 1rem;
+    color: var(--white);
+    text-transform: uppercase;
+    text-decoration: none;
+            &:hover,&:active,&.active {
+                background-color: var(--primary-800);
+            }
+        }
+    }
+}
+
+.sb-dock-header {
+    
+}
+.sb-dock-new-program {
+    position: absolute !important;
+    right: 120px;
+    top: 0.75rem;
+    z-index: 99999;
+}

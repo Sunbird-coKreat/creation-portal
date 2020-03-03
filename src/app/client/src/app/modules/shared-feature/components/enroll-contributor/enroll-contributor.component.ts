@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { ToasterService } from '@sunbird/shared';
 
 @Component({
   selector: 'app-enroll-contributor',
@@ -7,9 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class EnrollContributorComponent implements OnInit {
   contributorType = 'individual';
-  showModal = false;
   data;
-  constructor() { }
+  disableSubmit = false;
+  @Output() close = new EventEmitter<any>();
+
+  constructor(private tosterService: ToasterService) { }
 
   ngOnInit(): void {
     this.data =
@@ -42,7 +45,12 @@ export class EnrollContributorComponent implements OnInit {
   }
 
   handleSubmit() {
-    console.log("submit");
+    this.tosterService.success("You are successfully enrolled as a contributor!");
+    this.closeModal();
+  }
+
+  closeModal() {
+    this.close.emit();
   }
 
 }

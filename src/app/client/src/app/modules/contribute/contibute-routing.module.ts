@@ -3,7 +3,6 @@ import { ListAllProgramsComponent } from './components';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ProgramComponent } from './components';
-import { EnrollContributorComponent } from './components/enroll-contributor/enroll-contributor.component';
 import { ListAllMyProgramsComponent } from './components/list-all-my-programs/list-all-my-programs.component';
 import { MyProgramComponent} from './components/my-program/my-program.component';
 const routes: Routes = [{
@@ -15,22 +14,16 @@ const routes: Routes = [{
   }
 },
 {
-  path: 'enrollprograms', component: EnrollContributorComponent, pathMatch: 'full',
-  data: {
-    telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
-  }, 
-},
-{
-  path: 'myprograms/:programId', component: MyProgramComponent, pathMatch: 'full',
+  path: 'myprogram/:programId', component: MyProgramComponent, pathMatch: 'full',
   data: {
     telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
   },
 },
 {
   path: 'myenrollprograms', component: ListAllMyProgramsComponent, pathMatch: 'full',
-  // data: {
-  //   telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
-  // }, 
+  data: {
+    telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
+  }, 
 },
 {
   path: 'program/:programId', component: ProgramComponent,
