@@ -10,7 +10,7 @@ import { throwError } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   IChapterListComponentInput, ISessionContext,
-  IContentUploadComponentInput, IResourceTemplateComponentInput
+  IContentUploadComponentInput, IResourceTemplateComponentInput, IContentEditorComponentInput
 } from '../../interfaces';
 import { ProgramStageService } from '../../../program/services';
 import { ProgramComponentsService } from '../../../program/services/program-components/program-components.service';
@@ -21,6 +21,7 @@ interface IDynamicInput {
   contentUploadComponentInput?: IContentUploadComponentInput;
   resourceTemplateComponentInput?: IResourceTemplateComponentInput;
   practiceQuestionSetComponentInput?: any;
+  contentEditorComponentInput?: IContentEditorComponentInput;
 }
 
 @Component({
@@ -160,7 +161,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
   }
 
-  public initiateInputs(action?) {
+  public initiateInputs(action?, content?) {
     this.dynamicInputs = {
       contentUploadComponentInput: {
         config: _.find(this.programContext.config.components, {'id': 'ng.sunbird.uploadComponent'}),
@@ -181,6 +182,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         selectedSharedContext: this.selectedSharedContext,
         contentIdentifier: this.contentId,
         action: action,
+        programContext: _.get(this.chapterListComponentInput, 'programContext')
+      },
+      contentEditorComponentInput: {
+        contentId: this.contentId,
+        action: action,
+        content: content,
+        sessionContext: this.sessionContext,
+        unitIdentifier: this.unitIdentifier,
         programContext: _.get(this.chapterListComponentInput, 'programContext')
       }
     };
@@ -422,12 +431,12 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     });
     if (this.templateDetails) {
     this.componentLoadHandler('preview',
-      this.programComponentsService.getComponentInstance(this.templateDetails.onClick), this.templateDetails.onClick);
+    this.programComponentsService.getComponentInstance(this.templateDetails.onClick), this.templateDetails.onClick, event);
     }
   }
 
-  componentLoadHandler(action, component, componentName) {
-    this.initiateInputs(action);
+  componentLoadHandler(action, component, componentName, event?) {
+    this.initiateInputs(action, (event ? event.content : undefined));
     this.creationComponent = component;
     this.programStageService.addStage(componentName);
   }

@@ -19,6 +19,7 @@ import { DynamicModule } from 'ng-dynamic-component';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { CollectionComponent } from './components/collection/collection.component';
 import { ResourceReorderComponent } from './components/resource-reorder/resource-reorder.component';
+import { ContentEditorComponent } from './components/content-editor/content-editor.component';
 import { CollectionHierarchyService } from './services/collection-hierarchy/collection-hierarchy.service';
 import { SlickModule } from 'ngx-slick';
 
@@ -28,7 +29,7 @@ import { SlickModule } from 'ngx-slick';
     McqTemplateSelectionComponent,
     QuestionPreviewComponent, SanitizeHtmlPipe, QuestionCreationHeaderComponent,
     DashboardComponent, RecursiveTreeComponent,
-    ContentUploaderComponent,  ResourceTemplateComponent, CollectionComponent, ResourceReorderComponent],
+    ContentUploaderComponent,  ResourceTemplateComponent, CollectionComponent, ResourceReorderComponent, ContentEditorComponent],
   imports: [
     CommonModule,
     SuiTabsModule,
@@ -43,7 +44,7 @@ import { SlickModule } from 'ngx-slick';
        QuestionCreationComponent, ChapterListComponent, McqCreationComponent, CkeditorToolComponent ,
       McqTemplateSelectionComponent,
       QuestionPreviewComponent, QuestionCreationHeaderComponent,
-      DashboardComponent, RecursiveTreeComponent, ContentUploaderComponent, ResourceTemplateComponent]),
+      DashboardComponent, RecursiveTreeComponent, ContentUploaderComponent, ResourceTemplateComponent, ContentEditorComponent]),
 
   ],
   providers: [CollectionHierarchyService],
