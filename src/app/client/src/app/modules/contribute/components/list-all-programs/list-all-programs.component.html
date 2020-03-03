@@ -2,6 +2,9 @@
   <div class="sb-pageSection-header">
   </div>
   <div class="sb-pageSection-content">
+    <div class="sb-pageSection-header">
+      <h3>Explore Programs</h3>
+    </div>
     <ng-container *ngIf="(programsList$ | async ) as programsList else loading">
       <ng-container *ngIf="programsList && programsList.length else noResult">
         <table class="ui very padded table accordion">
