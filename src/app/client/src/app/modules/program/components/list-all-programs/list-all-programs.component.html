@@ -1,5 +1,7 @@
 <div class="sb-pageSection my-24 ui container" [appTelemetryImpression]="telemetryImpression">
   <div class="sb-pageSection-header">
+	  <h4 class="sb-pageSection-title sb-pageSection-sentenceCase m-0 mr-8">My programs</h4>
+	  <button class="sb-btn sb-btn-xs sb-btn-primary ml-auto" type="button" (click)="show = true">Create Program</button>
   </div>
   <div class="sb-pageSection-content">
 
@@ -57,3 +59,15 @@
     </ng-template>
   </div>
 </div>
+
+<sui-modal *ngIf="show"
+  [mustScroll]="true" 
+  [isClosable]="true"
+  [transitionDuration]="0"
+  [size]="'normal'"
+  class="sb-modal"
+  appBodyScroll
+  (dismissed)="show = false"
+  #modal>
+<app-create-program></app-create-program>
+</sui-modal>
