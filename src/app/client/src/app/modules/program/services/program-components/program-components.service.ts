@@ -3,6 +3,7 @@ import { CollectionComponent } from '../../../cbse-program/components/collection
 import {DashboardComponent } from '../../../cbse-program/components/dashboard/dashboard.component';
 import { ContentUploaderComponent } from '../../../cbse-program/components/content-uploader/content-uploader.component';
 import { QuestionListComponent } from '../../../cbse-program/components/question-list/question-list.component';
+import { ContentEditorComponent } from '../../../cbse-program/components/content-editor/content-editor.component';
 import { ToasterService } from '@sunbird/shared';
 
 @Injectable({
@@ -14,7 +15,8 @@ export class ProgramComponentsService {
     collectionComponent: CollectionComponent,
     uploadComponent: ContentUploaderComponent,
     questionSetComponent: QuestionListComponent,
-    curiositySetComponent: QuestionListComponent
+    curiositySetComponent: QuestionListComponent,
+    editorComponent: ContentEditorComponent
   };
   constructor(public toasterService: ToasterService) {
 

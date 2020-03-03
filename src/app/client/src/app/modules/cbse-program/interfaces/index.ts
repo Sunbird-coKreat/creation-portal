@@ -4,3 +4,4 @@ export * from './contentuploader';
 export * from '../../program/interfaces';
 export * from './resourcetemplate';
 export * from './dashboard';
+export * from './contentEditor';
