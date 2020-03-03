@@ -82,7 +82,7 @@
         *ngIf="(showExploreHeader || userService.loggedIn || isOffline && !showOfflineHelpCentre) && !router.url.includes('/sourcing/program')">
         <ng-container *ngIf="programsTabActive else defaultView">
             <div class="ui container d-flex flex-ai-center mx-0">
-                <a routerLink="sourcing/create-program" *ngIf="this.router.url.includes('/sourcing')"><span class="fs-1 sb-color-white py-8">Add New Program</span></a>
+                <a routerLink="/sourcing" *ngIf="this.router.url.includes('/sourcing/nominations/')"><span class="fs-1 sb-color-white py-8">Back</span></a>
                 
                 <a routerLink="contribute" *ngIf="this.router.url.includes('/contribute')"><span class="fs-1 sb-color-white py-8">All Programs</span></a>
                 <span class="computer only mx-10 search-qrcode-divider" *ngIf="this.router.url.includes('/contribute')">|</span>
@@ -94,7 +94,7 @@
         </ng-container>
         <ng-template #defaultView>
             <div class="ui container d-flex flex-ai-center mx-0">
-                <a routerLink="sourcing/create-program" *ngIf="this.router.url.includes('/sourcing')"><span class="fs-1 sb-color-white py-8">Add New Program</span></a>
+                <a routerLink="/sourcing" *ngIf="this.router.url.includes('/sourcing/nominations/')"><span class="fs-1 sb-color-white py-8">Back</span></a>
                 
                 <a routerLink="contribute" *ngIf="this.router.url.includes('/contribute')"><span class="fs-1 sb-color-white py-8">All Programs</span></a>
                 <span class="computer only mx-10 search-qrcode-divider" *ngIf="this.router.url.includes('/contribute')">|</span>

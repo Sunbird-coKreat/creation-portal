@@ -1,62 +1,80 @@
+
 <div class="sb-pageSection my-24 ui container" [appTelemetryImpression]="telemetryImpression">
   <div class="sb-pageSection-header">
 	  <h4 class="sb-pageSection-title sb-pageSection-sentenceCase m-0 mr-8">My programs</h4>
 	  <button class="sb-btn sb-btn-xs sb-btn-primary ml-auto" type="button" (click)="show = true">Create Program</button>
   </div>
   <div class="sb-pageSection-content">
-
-    <ng-container *ngIf="(programsList$ | async ) as programsList else loading">
-      <ng-container *ngIf="programsList && programsList.length else noResult">
-        <table class="ui very padded table">
-          <thead>
-            <tr>
-              <th>Program & Board</th>
-              <th>Textbooks & Chapters</th>
-              <th>No of Contributions</th>
-              <th>Subjects</th>
-              <th>Shortlisting of Contributor Date</th>
-              <th>Program End Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let program of programsList" [routerLink]="['./nominations/' + program.programId]" class="hand">
-              <td> 
-                <p class="sb__ellipsis sb__ellipsis--two sb-color-primary font-weight-bold">
-                  {{program?.name}}
-                </p>
-                <p class="ui teal label">{{getProgramBoard(program)}}</p> 
-              </td>
-              <td >
-                <p ><strong> 3 </strong><small> Textbooks </small></p>
-                <p ><strong> 10</strong><small> Chapters </small></p>
-                <p ><strong> 5, 6, 7 </strong><small> Grades </small></p>
-              </td>
-              <td >
-                <p ><strong> 10 </strong> </p>
-              </td>
-              <td >
-                <p>Mathamatics, Science, History</p>
-                <p class="language">English, Hindi, Marathi</p>
-              </td>
-              <td>
-                <p>March 10th, 2019</p>
-                <p><small>6 days to ago</small></p>   
-              </td>
-              <td>
-                <p>March 15th, 2019</p>
-                <p><small>11 days to ago</small></p>   
-              </td>
-            </tr>
-          </tbody>
-        </table> 
+  <div class="sb-pageSection my-24 ui container" [appTelemetryImpression]="telemetryImpression">
+    <div class="sb-pageSection-header">
+      <h4 class="sb-pageSection-title">My Prgorams <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8">2</span></h4>
+    </div>
+    <div class="sb-pageSection-content mt-12">
+  
+      <ng-container *ngIf="(programsList$ | async ) as programsList else loading">
+        <ng-container *ngIf="programsList && programsList.length else noResult">
+          <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
+            <thead class="sb-table-header sb-table-thead-gray">
+              <tr>
+                <th class="sb-sort-icon">Program</th>
+                <th class="sb-sort-icon">No of Textbooks</th>
+                <th class="sb-sort-icon">Grades, Mediums, Subjects</th>
+                <th class="sb-sort-icon">Nominations</th>
+                <th class="sb-sort-icon">Nomination <br> Shortlist Dates</th>
+                <th class="sb-sort-icon">Content Submission Date <br> Program End Date</th>
+                <th class="sb-sort-icon">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="sb-table-body">
+              <tr *ngFor="let program of programsList" [routerLink]="['./nominations/' + program.programId]" class="hand">
+                <td> 
+                  <div class="sb__ellipsis sb__ellipsis--two sb-color-primary font-weight-bold">
+                    {{program?.name}}
+                  </div>
+                </td>
+                <td>
+                  <div>3 Textbooks</div>
+                </td>
+                <td>
+                <div>Class 7, Class 2, class 3</div>
+                <hr class="divider">
+                <div>English, Hindi, Marathi</div>
+                <hr class="divider">
+                <div>Mathamatics, Science, History</div>
+                </td>
+                <td>
+                  <div>5 Pending</div>
+                <hr class="divider">
+                <div>3 Approved</div>
+                <hr class="divider">
+                <div>2 Rejected</div>
+                </td>
+                <td>
+                  <div>March 10th, 2019<br>
+                    <em>6 days to ago</em></div>
+                  <hr class="divider">
+                  <div>March 12th, 2019<br><em>8 days to ago</em></div>  
+                </td>
+                <td>
+                  <div>March 15th, 2019 <br><em>11 days to ago</em></div>
+                  <hr class="divider">
+                  <div>March 31th, 2019<br><em>25 days to ago</em></div>
+                </td>
+                <td>
+                  <button class="sb-btn sb-btn-xs sb-btn-outline-primary">View Details</button>
+                </td>
+              </tr>
+            </tbody>
+          </table> 
+        </ng-container>
+        <ng-template #noResult>
+          <app-no-result [data]="{messageText: resourceService.messages.stmsg.m0006}"></app-no-result>
+        </ng-template>
       </ng-container>
-      <ng-template #noResult>
-        <app-no-result [data]="{messageText: resourceService.messages.stmsg.m0006}"></app-no-result>
+      <ng-template #loading>
+        <app-loader></app-loader>
       </ng-template>
-    </ng-container>
-    <ng-template #loading>
-      <app-loader></app-loader>
-    </ng-template>
+    </div>
   </div>
 </div>
 
