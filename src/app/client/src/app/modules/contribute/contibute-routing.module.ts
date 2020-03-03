@@ -21,6 +21,12 @@ const routes: Routes = [{
   }, 
 },
 {
+  path: 'myprogram/:programId', component: MyProgramComponent, pathMatch: 'full',
+  data: {
+    telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
+  },
+},
+{
   path: 'myenrollprograms', component: ListAllMyProgramsComponent, pathMatch: 'full',
   // data: {
   //   telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
@@ -32,12 +38,6 @@ const routes: Routes = [{
 //       telemetry: { env: 'myprograms', type: 'view', subtype: 'paginate' }
 //     },
 // },
-{
-  path: 'myprogram/:programId', component: MyProgramComponent, pathMatch: 'full',
-  // data: {
-  //   telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
-  // },
-},
 {
   path: 'program/:programId', component: ProgramComponent,
   data: {
