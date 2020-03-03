@@ -60,7 +60,7 @@
               <td>
                 <span *ngIf="nominationStatus === 'approved'">View and Upload Sample</span>
                 <span *ngIf="nominationStatus === 'rejected'">View</span>
-                <span *ngIf="nominationStatus === 'nominated'">View & Upload Sample</span>
+                <span *ngIf="nominationStatus === 'nominated'"><button class="sb-btn sb-btn-normal sb-btn-primary disabled" [routerLink]="['/contribute/program/' + program.programId]" >View & Upload Sample</button></span>
                 
                 <span *ngIf="nominationStatus === 'countributed'">view and Upload Sample</span>
                 <span *ngIf="nominationStatus === 'close'">View</span>

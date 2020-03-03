@@ -97,10 +97,13 @@
       <div class="ui grid">
         <div class="two column row">
           <div class=" ten wide column"></div>
-          <div class="two wide column column">
-            <button  class="sb-btn sb-btn-normal sb-btn-primary {{nominateButton === 'show' ? 'active' : 'disabled'}}" (click)="redirect()" >Nominate</button>
+          <div class="two wide column column " *ngIf="nominateButton === 'show'">
+            <a href="http://localhost:3000/contribute/myenrollprograms"  class="sb-btn sb-btn-normal sb-btn-primary {{nominateButton === 'show' ? 'active' : 'disabled'}}" >Nominate</a>
           </div>
-      </div>
+          <div class="two wide column column " *ngIf="nominateButton === 'hide'">
+            <button   class="sb-btn sb-btn-normal sb-btn-primary disabled" >Nominate</button>
+          </div>
+       </div>
       </div> 
     <table class="ui very padded table">
     <thead>
