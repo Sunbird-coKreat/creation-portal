@@ -41,7 +41,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
           "contributor_name": "Nilesh Sanap",
           "type": "Individual",
           "program_id": this.programId,
-          "status": "Approved",
+          "status": "Accepted",
           "textbooks": "Textbook2"
         }, {
           "contributor_id": "hhd_898",
