@@ -113,4 +113,7 @@ export class ListAllMyProgramsComponent implements OnInit, AfterViewInit {
   getFeatureId(featureId, taskId) {
     return [{ id: featureId, type: 'Feature' }, { id: taskId, type: 'Task' }];
   }
+  changeNominationStatus(status){
+    this.nominationStatus = status;
+  }
 }

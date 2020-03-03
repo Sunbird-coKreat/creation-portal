@@ -84,18 +84,18 @@
     </thead>
     <tbody>
     <!-- <span *ngFor="let key of objectKey(collectionList)"> -->
-        <tr *ngFor="let data of collectionList" >
+        <tr *ngFor="let data of collectionList">
           <td><p>{{data.name}}</p></td>
           <td><span>{{data.gradeLevel}}</span></td>
           <td><span class="language">{{data.medium}}</span></td>
           <td>20</td>
           <td>{{data.subject}}</td>
-         
+
           <td><button *ngIf="nominate === 'nominate' &&  this.changeButtonId !== data.identifier " class="sb-btn sb-btn-normal sb-btn-primary" (click)="ChangeUploadStatus(data.identifier)">Nominate</button>
-          <button *ngIf="uploadSample === 'uploadSample' && this.changeButtonId === data.identifier" class="sb-btn sb-btn-normal sb-btn-success" (click)="nominate='uploadSample'">Upload Sample</button></td>
+          <button *ngIf="nominate === 'uploadSample' && this.changeButtonId === data.identifier" class="sb-btn sb-btn-normal sb-btn-success" (click)="uploadSample($event, data)">Upload Sample</button></td>
         </tr>
       </tbody>
-    </table> 
+    </table>
 </div>
     <!-- <div *ngFor="let key of objectKey(collectionList)"> -->
 
@@ -106,7 +106,7 @@
       [contentList]="collectionList[key]" [maxCardCount]="4" [type]="'infinite_card_grid'" (viewMoreClick)="viewMoreClickHandler($event)" (cardClick)="collectionClickHandler($event)"></sb-library-cards-grid> -->
         <!-- <app-card appContentDirection appTelemetryInteract [telemetryInteractEdata]="telemetryInteract" [data]="content" appTelemetryInteract [telemetryInteractEdata]="telemetryInteract" (clickEvent)="showTopics($event)"></app-card> -->
     <!-- </div> -->
- 
+
   <div  *ngIf="!objectKey(collectionList).length">
     <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0006'}"></app-no-result>
   </div>

@@ -2,10 +2,10 @@
 <div class="sb-modal-content o-y-visible pb-8">
   <sui-tabset>
 	 <div class="ui top attached tabular menu">
-		<a class="item" suiTabHeader="1">Details</a>
-		<a class="item" suiTabHeader="2" [isDisabled]="!showTextBookSelector">Select Textbooks</a>
+		<a class="item" suiTabHeader="1" [ngClass]="{'active' : !showTextBookSelector}">Details</a>
+		<a class="item" suiTabHeader="2" [ngClass]="{'active' : showTextBookSelector}" [isDisabled]="!showTextBookSelector">Select Textbooks</a>
 	 </div>
-	 <div class="ui bottom attached segment" suiTabContent="1">
+	 <div class="ui bottom attached segment" suiTabContent="1" [ngClass]="{'active' : !showTextBookSelector}">
 		<form class="ui form" [formGroup]="createProgramForm" (submit)="saveProgram()">
 		   <div class="required field px-10">
 			  <label>Name</label>
@@ -223,7 +223,7 @@
 		   </div>
 		</form>
 	 </div>
-	 <div class="ui bottom attached segment" suiTabContent="2" >
+	 <div class="ui bottom attached segment" suiTabContent="2" [ngClass]="{'active' : showTextBookSelector}">
 		<table class="ui padded table" *ngIf="showTextBookSelector">
 			<thead>
 			  <tr>
