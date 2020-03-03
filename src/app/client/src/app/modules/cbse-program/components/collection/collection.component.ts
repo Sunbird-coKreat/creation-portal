@@ -37,9 +37,8 @@ export class CollectionComponent implements OnInit, OnDestroy {
   public filters;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
-  public nominate="nominate";
-  public changeButtonId="";
-  public uploadSample=""
+  public nominate = 'nominate';
+  public changeButtonId = '';
   isMediumClickable = false;
   showLoader = true;
   selectedIndex = -1;
@@ -221,7 +220,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     // }
 
     this.collectionList = this.filteredList;
-    console.log( this.filteredList)
+    console.log( this.filteredList);
   }
 
   addCardImage(collection) {
@@ -229,28 +228,6 @@ export class CollectionComponent implements OnInit, OnDestroy {
     return collection;
   }
 
-  collectionClickHandler(event) {
-    this.sharedContext = this.collectionComponentInput.programContext.config.sharedContext.reduce((obj, context) => {
-      return {...obj, [context]: event.data[context] || this.sharedContext[context]};
-    }, this.sharedContext);
-
-    _.forEach(['gradeLevel', 'medium', 'subject'], (val) => {
-       this.checkArrayCondition(val);
-    });
-    this.sessionContext = _.assign(this.sessionContext, this.sharedContext);
-    this.sessionContext.collection =  event.data.metaData.identifier;
-    this.sessionContext.collectionName = event.data.name;
-    this.collection = event.data;
-    this.chapterListComponentInput = {
-      sessionContext: this.sessionContext,
-      collection: this.collection,
-      config: _.find(this.programContext.config.components, {'id': 'ng.sunbird.chapterList'}),
-      programContext: this.programContext,
-      role: this.role
-    };
-    this.isCollectionSelected.emit(event.data.metaData.identifier ? true : false);
-    this.programStageService.addStage('chapterListComponent');
-  }
 
   checkArrayCondition(param) {
     // tslint:disable-next-line:max-line-length
@@ -265,11 +242,32 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.stageSubscription.unsubscribe();
   }
 
-  ChangeUploadStatus(rowId)
-  {
+  ChangeUploadStatus(rowId) {
     this.changeButtonId = rowId;
-    //this.nominate = "uploadSample";
-    this.uploadSample="uploadSample";
+    this.nominate = 'uploadSample';
+    // this.uploadSample = 'uploadSample';
   }
 
+  uploadSample(event, collection) {
+    this.sharedContext = this.collectionComponentInput.programContext.config.sharedContext.reduce((obj, context) => {
+      return {...obj, [context]: collection[context] || this.sharedContext[context]};
+    }, this.sharedContext);
+
+    _.forEach(['gradeLevel', 'medium', 'subject'], (val) => {
+       this.checkArrayCondition(val);
+    });
+    this.sessionContext = _.assign(this.sessionContext, this.sharedContext);
+    this.sessionContext.collection =  collection.metaData.identifier;
+    this.sessionContext.collectionName = collection.name;
+    this.collection = collection;
+    this.chapterListComponentInput = {
+      sessionContext: this.sessionContext,
+      collection: this.collection,
+      config: _.find(this.programContext.config.components, {'id': 'ng.sunbird.chapterList'}),
+      programContext: this.programContext,
+      role: this.role
+    };
+    this.programStageService.addStage('chapterListComponent');
+    this.isCollectionSelected.emit(collection.metaData.identifier ? true : false);
+  }
 }
