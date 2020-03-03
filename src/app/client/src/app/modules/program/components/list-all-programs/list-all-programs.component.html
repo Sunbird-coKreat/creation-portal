@@ -6,7 +6,8 @@
     <div class="sb-pageSection-content mt-12">
       <ng-container *ngIf="(programsList$ | async ) as programsList else loading">
         <ng-container *ngIf="programsList && programsList.length else noResult">
-          <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
+          <div class="sb-table-responsive-div">
+             <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
             <thead class="sb-table-header sb-table-thead-gray">
               <tr>
                 <th class="sb-sort-icon">Program</th>
@@ -15,7 +16,7 @@
                 <th class="sb-sort-icon">Nominations</th>
                 <th class="sb-sort-icon">Nomination <br> Shortlist Dates</th>
                 <th class="sb-sort-icon">Content Submission Date <br> Program End Date</th>
-                <th class="text-center">Actions</th>
+                <th class="w-10 text-center">Actions</th>
               </tr>
             </thead>
             <tbody class="sb-table-body">
@@ -59,6 +60,7 @@
               </tr>
             </tbody>
           </table> 
+          </div>
         </ng-container>
         <ng-template #noResult>
           <app-no-result [data]="{messageText: resourceService.messages.stmsg.m0006}"></app-no-result>
