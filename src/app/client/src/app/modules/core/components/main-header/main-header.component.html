@@ -4,11 +4,12 @@
 <div *ngIf="showAccountMergemodal">
     <app-account-merge-modal (closeAccountMergeModal)="showAccountMergemodal = false"></app-account-merge-modal>
 </div>
-<div class="ui fixed relative main menu bs-0 d-block">
+<div class="ui fixed relative main menu bs-0 d-block sb-dock-header">
     <extension-point [name]="'network-status-notify'" *ngIf="isOffline"></extension-point>
     <!--Header White Section-->
     <div class="ui container">
-        <div class="ui grid padded width-100">
+        <div class="ui grid padded width-100 relative">
+            <button routerLink="sourcing/create-program" class="sb-btn sb-btn-normal sb-btn-outline-secondary sb-dock-new-program" *ngIf="this.router.url.includes('/sourcing')">+ Add New Program</button>
             <div class="six wide column p-0">
                 <!--Logo-->
                 <a class="d-flex logo" tabindex="0" title="{{tenantInfo.titleName}}" role="banner">
@@ -78,11 +79,13 @@
     <!--Header White Section-->
     <!--Header Blue Section-->
     <!--Computer-->
-    <div class="sb-bg-color-primary p-8"
+    <div class="sb-bg-color-primary sb-dock-menu-bar"
         *ngIf="(showExploreHeader || userService.loggedIn || isOffline && !showOfflineHelpCentre) && !router.url.includes('/sourcing/program')">
+        
         <ng-container *ngIf="programsTabActive else defaultView">
             <div class="ui container d-flex flex-ai-center mx-0">
-                <a routerLink="/sourcing" *ngIf="this.router.url.includes('/sourcing/nominations/')"><span class="fs-1 sb-color-white py-8">Back</span></a>
+             
+                <a routerLink="sourcing/create-program" *ngIf="this.router.url.includes('/sourcing')"><span class="fs-1 sb-color-white py-8">Add New Program</span></a>
                 
                 <a routerLink="contribute" *ngIf="this.router.url.includes('/contribute')"><span class="fs-1 sb-color-white py-8">All Programs</span></a>
                 <span class="computer only mx-10 search-qrcode-divider" *ngIf="this.router.url.includes('/contribute')">|</span>
@@ -90,9 +93,9 @@
             </div>
         </ng-container>
         <ng-template #defaultView>
-            <div class="ui container d-flex flex-ai-center mx-0">
-                <a routerLink="/sourcing" *ngIf="this.router.url.includes('/sourcing/nominations/')"><span class="fs-1 sb-color-white py-8">Back</span></a>
-                
+            
+            <div class="ui container d-flex flex-ai-center mx-0 sb-dock-menu">
+                <a routerLink="sourcing" class="active" *ngIf="this.router.url.includes('/sourcing')">My Programs</a>
                 <a routerLink="contribute" *ngIf="this.router.url.includes('/contribute')"><span class="fs-1 sb-color-white py-8">All Programs</span></a>
                 <span class="computer only mx-10 search-qrcode-divider" *ngIf="this.router.url.includes('/contribute')">|</span>
                 <a routerLink="contribute/myenrollprograms" *ngIf="this.router.url.includes('/contribute')"><span class="fs-1 sb-color-white py-8">My Programs</span></a>
