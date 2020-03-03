@@ -4,7 +4,8 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ProgramComponent } from './components';
 import { ListAllMyProgramsComponent } from './components/list-all-my-programs/list-all-my-programs.component';
-import { MyProgramComponent} from './components/my-program/my-program.component';
+//import { MyProgramComponent} from './components/my-program/my-program.component';
+import { ListNominatedTextbooksComponent} from './components/list-nominated-textbooks/list-nominated-textbooks.component';
 const routes: Routes = [{
   path: '', component: ListAllProgramsComponent, canActivate: [ProgramsService],
   data: {
@@ -13,12 +14,12 @@ const routes: Routes = [{
     }
   }
 },
-{
-  path: 'myprogram/:programId', component: MyProgramComponent, pathMatch: 'full',
-  data: {
-    telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
-  },
-},
+// {
+//   path: 'myprogram/:programId', component: MyProgramComponent, pathMatch: 'full',
+//   data: {
+//     telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
+//   },
+// },
 {
   path: 'myenrollprograms', component: ListAllMyProgramsComponent, pathMatch: 'full',
   data: {
@@ -27,6 +28,12 @@ const routes: Routes = [{
 },
 {
   path: 'program/:programId', component: ProgramComponent,
+  data: {
+    telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
+  },
+},
+{
+  path: 'nominatedtextbooks/:programId', component: ListNominatedTextbooksComponent,
   data: {
     telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
   },

@@ -7,38 +7,38 @@
     </div>
     <ng-container *ngIf="(programsList$ | async ) as programsList else loading">
       <ng-container *ngIf="programsList && programsList.length else noResult">
-        <table class="ui very padded table accordion">
-          <thead>
+        <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
+          <thead class="sb-table-header sb-table-thead-gray">
             <tr>
-              <th>Program & Board</th>
-              <th>Textbooks & Chapters</th>
-              <th>Subjects</th>
-              <th>Submission Date</th>
-
+              <th class="sb-sort-icon">Program</th>
+              <th class="sb-sort-icon">No of Textbooks</th>
+              <th class="sb-sort-icon">Grades, Mediums, Subjects</th>
+              <th class="sb-sort-icon">Nomination End Date</th>
+              <th class="text-center">Actions</th>
             </tr>
           </thead>
-          <tbody>
-            <tr *ngFor="let program of programsList" [routerLink]="['./program/' + program.programId]" >
-              <td> <p>{{program?.name}}</p>
-                <p class="ui teal label">CBSE</p> 
-
+          <tbody class="sb-table-body">
+            <tr *ngFor="let program of programsList" [routerLink]="['./program/' + program.programId]" class="hand">
+              <td> 
+                <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
+                  {{program?.name}}
+                </div>
               </td>
-              <td >
-                <p >
-                  <strong>5 </strong><small>Textbooks </small>
-                  <strong>64</strong><small> Textbooks</small>
-                  <small>5,6,7 </small><strong> Grades</strong>
-                </p>
-                
+              <td>
+                <div  suiPopup popupHeader="Text Books" popupText="Textbookname1, Textbookname1, Textbookname1">3 Textbooks</div>
               </td>
-              <td >
-                <p>Mathamatics , Science and 3 more</p>
-                <p class="language">English, Hindi, Marathi</p>
-                
+              <td>
+              <div class="sb__ellipsis sb-color-primary" suiPopup popupHeader="Grades" popupText="Grade 7, Grade 2, Grade 3">Grade 7, Grade 2, Grade 3</div>
+              <hr class="divider">
+              <div class="sb__ellipsis" suiPopup popupHeader="Medium" popupText="English, Hindi, Marathi">English, Hindi, Marathi</div>
+              <hr class="divider">
+              <div class="sb__ellipsis" suiPopup popupHeader="Subjects" popupText="Mathematics, Science, History">Mathematics, Science, History</div>
               </td>
-              <td  >
-                <p>10 May 2019</p>
-                <p><small>20 days to ago</small></p>   
+              <td>
+                <div>March 15th, 2019 <br><em>11 days to go</em></div>
+              </td>
+              <td class="text-center">
+                <button class="sb-btn sb-btn-xs sb-btn-outline-primary">View Details</button>
               </td>
             </tr>
           </tbody>
