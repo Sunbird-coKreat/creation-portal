@@ -84,21 +84,15 @@
         
         <ng-container *ngIf="programsTabActive else defaultView">
             <div class="ui container d-flex flex-ai-center mx-0">
-             
-                <a routerLink="sourcing/create-program" *ngIf="this.router.url.includes('/sourcing')"><span class="fs-1 sb-color-white py-8">Add New Program</span></a>
-                
-                <a routerLink="contribute" *ngIf="this.router.url.includes('/contribute')"><span class="fs-1 sb-color-white py-8">All Programs</span></a>
-                <span class="computer only mx-10 search-qrcode-divider" *ngIf="this.router.url.includes('/contribute')">|</span>
-                <a routerLink="contribute/myenrollprograms" *ngIf="this.router.url.includes('/contribute')"><span class="fs-1 sb-color-white py-8">My Programs</span></a>
             </div>
         </ng-container>
         <ng-template #defaultView>
             
             <div class="ui container d-flex flex-ai-center mx-0 sb-dock-menu">
-                <a routerLink="sourcing" class="active" *ngIf="this.router.url.includes('/sourcing')">My Programs</a>
-                <a routerLink="contribute" *ngIf="this.router.url.includes('/contribute')"><span class="fs-1 sb-color-white py-8">All Programs</span></a>
-                <span class="computer only mx-10 search-qrcode-divider" *ngIf="this.router.url.includes('/contribute')">|</span>
-                <a routerLink="contribute/myenrollprograms" *ngIf="this.router.url.includes('/contribute')"><span class="fs-1 sb-color-white py-8">My Programs</span></a>
+                <a routerLink="sourcing" *ngIf="this.router.url.includes('/sourcing')" [class.active]="this.router.isActive('/sourcing', true)">My Programs</a>
+                <a routerLink="contribute" *ngIf="this.router.url.includes('/contribute')"  [class.active]="this.router.isActive('/contribute', true)"><span class="sb-color-white">All Programs</span></a>
+                
+                <a routerLink="contribute/myenrollprograms" *ngIf="this.router.url.includes('/contribute')" [class.active]="this.router.isActive('/contribute/myenrollprograms', true)"><span class="sb-color-white">My Programs</span></a>
                 <!--QR Button-->
                 <!-- <button class="ui button qr-code-btn d-flex flex-ai-center computer only mr-0" appTelemetryInteract
                     [telemetryInteractEdata]="enterDialCodeInteractEdata" (click)="showQrmodal = true;"
