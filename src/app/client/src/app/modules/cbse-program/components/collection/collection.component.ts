@@ -37,6 +37,9 @@ export class CollectionComponent implements OnInit, OnDestroy {
   public filters;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
+  public nominate="nominate";
+  public changeButtonId="";
+  public uploadSample=""
   isMediumClickable = false;
   showLoader = true;
   selectedIndex = -1;
@@ -211,11 +214,14 @@ export class CollectionComponent implements OnInit, OnDestroy {
 }
 
   groupCollectionList(groupValue?: string) {
-    if (groupValue) {
-      this.collectionList = _.groupBy(this.collectionsWithCardImage, { 'subject' : groupValue } );
-    } else {
-      this.collectionList = _.groupBy(this.filteredList, 'subject');
-    }
+    // if (groupValue) {
+    //   this.collectionList = _.groupBy(this.collectionsWithCardImage, { 'subject' : groupValue } );
+    // } else {
+    //   this.collectionList = _.groupBy(this.filteredList, 'subject');
+    // }
+
+    this.collectionList = this.filteredList;
+    console.log( this.filteredList)
   }
 
   addCardImage(collection) {
@@ -257,6 +263,13 @@ export class CollectionComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.stageSubscription.unsubscribe();
+  }
+
+  ChangeUploadStatus(rowId)
+  {
+    this.changeButtonId = rowId;
+    //this.nominate = "uploadSample";
+    this.uploadSample="uploadSample";
   }
 
 }
