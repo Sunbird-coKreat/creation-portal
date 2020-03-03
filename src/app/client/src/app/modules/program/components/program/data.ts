@@ -1171,6 +1171,25 @@ const programThirdSession = {
                   }
                 },
                 {
+                  'id': 'interactiveContent',
+                  'label': 'Interactive Editor',
+                  'onClick': 'editorComponent',
+                  'mimeType': [
+                    'application/vnd.ekstep.ecml-archive'
+                  ],
+                  'metadata': {
+                    'name': 'InteractiveResource',
+                    'description': 'InteractiveResource',
+                    'resourceType': 'Learn',
+                    'contentType': 'Resource',
+                    'audience': [
+                      'Learner'
+                    ],
+                    'appIcon': 'https://ntpproductionall.blob.core.windows.net/ntp-content-production/content/do_31280847585016217619710/artifact/explanation.thumb.png',
+                    'marks': 5
+                  }
+                },
+                {
                   'id': 'vsaPracticeQuestionContent',
                   'label': 'VSA - Practice Sets',
                   'onClick': 'questionSetComponent',
