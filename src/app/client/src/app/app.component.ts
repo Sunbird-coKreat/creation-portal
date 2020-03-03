@@ -88,6 +88,7 @@ export class AppComponent implements OnInit, OnDestroy {
   isCustodianOrgUser: any;
   usersProfile: any;
   isLocationConfirmed = true;
+  isContributor = false;
   userFeed: any;
   showUserVerificationPopup = false;
   feedCategory = 'OrgMigrationAction';
@@ -494,6 +495,10 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.userFeed) {
       this.showUserVerificationPopup = true;
     }
+  }
+
+  onContributorModalSubmit() {
+    this.isContributor = true;
   }
 
   /** It will fetch user feed data if user is custodian as well as logged in. */
