@@ -324,7 +324,7 @@
 	</div>
 	<div class="pull-right sb-bg-color-white">
 		<button *ngIf="!showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary" (click)="saveProgram()">Next</button>
-		<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary" (click)="linkTextBooksToProgram()">Save & Close</button>
+		<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary" [routerLink]="'/sourcing'">Save & Close</button>
 	</div>
 </div>
 </div>
