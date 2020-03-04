@@ -88,7 +88,7 @@
 					</div>
 					</div>
 				</ng-template>
-				<i class="circle help link icon" suiPopup [popupTemplate]="popupTemplate">
+				<i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate">
 				</i>
       </h4>
       <div class="pull-right mb-20">
@@ -145,7 +145,7 @@
             <div class="sb__ellipsis" suiPopup popupHeader="Subject" popupText="{{data.subject}}">{{data.subject}}</div>
           </td>
           <td class="text-center">
-              <input type="checkbox"  (click)="nominationChecked(data.identifier)" >
+              <input type="checkbox" name="{{data.identifier}}" (click)="nominationChecked(data.identifier)" >
           </td>
         </tr>
       </tbody>
