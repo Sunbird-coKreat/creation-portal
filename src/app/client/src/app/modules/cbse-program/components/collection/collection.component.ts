@@ -9,6 +9,7 @@ import { ProgramStageService, ProgramTelemetryService } from '../../../program/s
 import { ISessionContext, IChapterListComponentInput } from '../../interfaces';
 import { InitialState } from '../../interfaces';
 
+
 @Component({
   selector: 'app-collection',
   templateUrl: './collection.component.html',
@@ -37,8 +38,8 @@ export class CollectionComponent implements OnInit, OnDestroy {
   public filters;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
-  public nominate = 'nominate';
-  public changeButtonId = '';
+  public nominateButton = 'hide';
+  public nominate = '';
   isMediumClickable = false;
   showLoader = true;
   selectedIndex = -1;
@@ -71,6 +72,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
       currentRole: _.get(this.programContext, 'userDetails.roles[0]'),
       bloomsLevel: _.get(this.programContext, 'config.scope.bloomsLevel'),
       programId: _.get(this.programContext, 'programId'),
+      //programId: '31ab2990-7892-11e9-8a02-93c5c62c03f1' || _.get(this.programContext, 'programId'),
       program: _.get(this.programContext, 'name'),
       onBoardSchool: _.get(this.programContext, 'userDetails.onBoardingData.school'),
       collectionType: _.get(this.collectionComponentConfig, 'collectionType'),
@@ -243,9 +245,21 @@ export class CollectionComponent implements OnInit, OnDestroy {
   }
 
   ChangeUploadStatus(rowId) {
-    this.changeButtonId = rowId;
+    this.nominate = rowId;
     this.nominate = 'uploadSample';
     // this.uploadSample = 'uploadSample';
+  }
+
+  nominationChecked(rowId)
+  {
+    if(rowId !== '')
+    {
+      this.nominateButton = 'show';
+    }
+  }
+  redirect()
+  {
+    
   }
 
   uploadSample(event, collection) {

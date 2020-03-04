@@ -7,15 +7,14 @@ import { map, catchError, retry } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 @Component({
-  selector: 'app-list-all-my-programs',
-  templateUrl: './list-all-my-programs.component.html',
-  styleUrls: ['./list-all-my-programs.component.scss']
+  selector: 'app-list-all-programs',
+  templateUrl: './list-all-programs.component.html',
+  styleUrls: ['./list-all-programs.component.scss']
 })
-export class ListAllMyProgramsComponent implements OnInit, AfterViewInit {
+export class ListAllProgramsComponent implements OnInit, AfterViewInit {
 
   public programsList$;
   public noResultFound;
-  public nominationStatus = "Nominated"
   public telemetryImpression: IImpressionEventInput;
 
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
@@ -113,7 +112,14 @@ export class ListAllMyProgramsComponent implements OnInit, AfterViewInit {
   getFeatureId(featureId, taskId) {
     return [{ id: featureId, type: 'Feature' }, { id: taskId, type: 'Task' }];
   }
-  changeNominationStatus(status){
-    this.nominationStatus = status;
+  
+    /**
+   * fetch the list of programs.
+   */
+  private getProgramBoard(prograObj) {
+	 return "CBSE";
+     const filters =  prograObj.config.filters;
+     const implicitProperty =  _.find(filters.implicit, {'code': 'board'});
+     return (implicitProperty) ? implicitProperty.defaultValue : '';
   }
 }
