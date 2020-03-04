@@ -1,9 +1,7 @@
-import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
-import { Observable, of } from 'rxjs';
-import { ResourceService, ConfigService, ServerResponse, NavigationHelperService } from '@sunbird/shared';
+import { IImpressionEventInput} from '@sunbird/telemetry';
+import { ResourceService, ConfigService, NavigationHelperService } from '@sunbird/shared';
 import { ProgramsService, PublicDataService } from '@sunbird/core';
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { map, catchError, retry } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -25,7 +23,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
     private activatedRoute: ActivatedRoute, private router: Router, private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient) { }
 
   ngOnInit() {
-	this.contributor = {"name": "Nitesh Kesarkar", "type": "Organisation", "nominationStatus": "Pending"};
+	this.contributor = {"name": "Pratham", "type": "Organisation", "nominationStatus": "Pending"};
 	this.getProgramTextbooks();
   }
 
