@@ -44,7 +44,7 @@ export class MyProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.showTabs = false;
     }
   };
-  public telemetryPageId = 'collection';
+  public telemetryPageId = 'my-collection';
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
     public extPluginService: ExtPluginService, public userService: UserService,
