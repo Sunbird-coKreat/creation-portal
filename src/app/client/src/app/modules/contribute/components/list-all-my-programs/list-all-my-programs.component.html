@@ -23,13 +23,14 @@
               <th class="sb-sort-icon">Contribution Date</th>
               <th class="sb-sort-icon">Nomination Status</th>
               <th class="text-center">Actions</th>
-            </tr>ew Program FEB20
+            </tr>
           </thead>
           <tbody class="sb-table-body">
             <tr *ngFor="let program of programsList" [routerLink]="['/contribute/nominatedtextbooks/' + program.programId]" class="hand">
               <td> 
                 <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
                   {{program?.name}}
+                  <div class="px-10 py-7 ui grey label mini b-0">CBSE</div>
                 </div>
               </td>
               <td>
@@ -46,10 +47,11 @@
                 <div>March 15th, 2019 <br><em>11 days to go</em></div>
               </td>
               <td>
-                <div>{{nominationStatus}}</div>
+                <div >{{nominationStatus}}</div>
               </td>
               <td class="text-center">
-                <button class="sb-btn sb-btn-xs sb-btn-outline-primary">View Details</button>
+                <button class="sb-btn sb-btn-xs sb-btn-outline-primary" *ngIf="nominationStatus === 'Nominated' || nominationStatus === 'Nomination Approved'">View & Upload</button>
+                <button class="sb-btn sb-btn-xs sb-btn-outline-primary" *ngIf="nominationStatus === 'Nomination Rejected' || nominationStatus === 'Contributed' || nominationStatus === 'Program Closed'">View</button>
               </td>
             </tr>
           </tbody>
