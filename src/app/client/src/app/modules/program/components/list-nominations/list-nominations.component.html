@@ -70,31 +70,37 @@
 			<label class="d-block fs-1 mb-4">Nomination List</label>
 			<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
 				<thead class="sb-table-header sb-table-thead-gray">
-					<tr>
-						 <th class="sb-sort-icon">Contributor Name</th>
-						  <th>Type</th>
-						  <th>Textbooks</th>
-						  <th class="sb-sort-icon">Status</th>
-						  <th>Actions</th>
-					</tr>
+				  <tr>
+					<th class="sb-sort-icon">Contributor Name</th>
+					<th class="sb-sort-icon">Type</th>
+					<th class="sb-sort-icon">Textbooks</th>
+					<th class="sb-sort-icon">Status</th>
+					<th class="text-center">Actions</th>
+				  </tr>
 				</thead>
 				<tbody class="sb-table-body">
-					<tr *ngFor="let nomination of nominations">
-					  <td data-label="Contributor Name" class="hand">
-						<a (click)="show=true" class="header text-decoration-underline">{{nomination.contributor_name}}</a>
-					  </td>
-					  <td data-label="Type">{{nomination.type}}</td>
-					  <td data-label="Website">{{nomination.textbooks}}</td>
-					  <td data-label="Status">{{nomination?.status}}</td>
-					  <td data-label="Actions">
-						<button class="sb-btn sb-btn-normal sb-btn-success m-5" *ngIf="nomination?.status === 'Pending'"
+				  <tr *ngFor="let nomination of nominations">
+					<td> 
+					  <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
+						{{nomination?.contributor_name}}
+					  </div>
+					</td>
+					<td>
+					<div>{{nomination?.type}}</div>
+					</td>
+					<td>
+					  <div  suiPopup popupHeader="Text Books" popupText="{{nomination?.textbooks}}">3 Textbooks</div>
+					</td>
+					<td>
+					<div>{{nomination?.status}}</div>
+					</td>
+					<td class="text-center">
+					  <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" *ngIf="nomination?.status === 'Pending'"
 						  [routerLink]="'/sourcing/contributor/' + nomination.program_id">View Details</button>
-						<button class="sb-btn sb-btn-normal sb-btn-success m-5" *ngIf="nomination?.status === 'Accepted'"
+						<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" *ngIf="nomination?.status === 'Accepted'"
 						  [routerLink]="'/sourcing/contributor/' + nomination.program_id">View Contribution</button>
-						<!--button class="sb-btn sb-btn-normal sb-btn-primary m-5" (click)="onApproveClick(nomination)" *ngIf="nomination?.status === 'Pending'">Approve</button>
-						<button class="sb-btn sb-btn-normal sb-btn-warning m-5" *ngIf="nomination?.status === 'Pending'" (click)="onRejectClick(nomination)">Reject</button-->
-					  </td>
-					</tr>
+					</td>
+				  </tr>
 				</tbody>
 			</table> 
 		</div>
