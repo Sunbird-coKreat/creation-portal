@@ -1,16 +1,16 @@
 <div class="ui container">
-  <div class="sb-pageSection my-24 ui container" [appTelemetryImpression]="telemetryImpression">
+  <div class="sb-pageSection my-24" [appTelemetryImpression]="telemetryImpression">
     <div class="sb-pageSection-header">
       <h4 class="sb-pageSection-title">My Programs <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">10</span></h4>
     </div>
     <div class="sb-pageSection-content mt-12">
       <ng-container *ngIf="(programsList$ | async ) as programsList else loading">
         <ng-container *ngIf="programsList && programsList.length else noResult">
-          <div class="sb-table-responsive-div">
-             <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
+          <div class="sb-table-responsive">
+             <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable">
             <thead class="sb-table-header sb-table-thead-gray">
               <tr>
-                <th class="sb-sort-icon">Program</th>
+                <th class="w-20 sb-sort-icon">Program</th>
                 <th class="sb-sort-icon"># Text Books</th>
                 <th class="sb-sort-icon">Grades, Mediums, Subjects</th>
                 <th class="sb-sort-icon">Nominations</th>

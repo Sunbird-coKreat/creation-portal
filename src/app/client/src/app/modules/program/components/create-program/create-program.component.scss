@@ -1,3 +1,25 @@
+@import "variables";
+@import "mixins/mixins";
+
+.ui input, .ui textarea, .ui select {
+    font-size: 0.75rem !important;
+    padding: 0.25rem 0.5rem !important;
+    min-height: 2rem !important;
+}
+.ui .field label {
+    font-weight: bold !important;
+}
+.sb-pageSection .sb-pageSection-title {
+    text-transform: inherit;
+}
+h4 {
+    font-weight: bold;
+    font-size:16px;
+    text-transform: uppercase;
+    color: var(--primary-400);
+    margin:0px;
+    padding:0px;
+}
 .ui {
     .field{
         label {
@@ -30,4 +52,20 @@
     .ui.form .fields{
         margin:30px 0;
     }
+}
+
+
+
+/* steps */
+.ui.ordered.steps .step.completed:before, .ui.steps .step.completed>.icon:before {
+    content: '\2714';
+}
+.ui.steps .step.active {
+    cursor: auto;
+    background: var(--primary-100);
+}
+
+.ui.steps .step .title {
+    font-size: 0.85rem;
+    text-transform: uppercase;
 }
