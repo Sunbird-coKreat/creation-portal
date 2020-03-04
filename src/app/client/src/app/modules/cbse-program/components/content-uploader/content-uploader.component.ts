@@ -204,6 +204,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
   }
 
   uploadByURL(fileUpload, mimeType) {
+    this.loading = true;
     if (fileUpload) {
       let creator = this.userService.userProfile.firstName;
       if (!_.isEmpty(this.userService.userProfile.lastName)) {
@@ -237,12 +238,15 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
       }
       this.actionService.post(option).pipe(map((res: any) => res.result), catchError(err => {
         const errInfo = { errorMsg: 'Unable to create contentId, Please Try Again' };
+        this.programStageService.removeLastStage();
         return throwError(this.cbseService.apiErrorHandling(err, errInfo));
       }))
         .subscribe(result => {
           this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, result.node_id)
             .subscribe(() => {
               this.uploadFile(mimeType, result.node_id);
+            }, (err) => {
+              this.programStageService.removeLastStage();
             });
         });
     }
@@ -251,7 +255,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
   uploadFile(mimeType, contentId) {
     const contentType = mimeType;
     // document.getElementById('qq-upload-actions').style.display = 'none';
-    this.loading = true;
     const option = {
       url: 'content/v3/upload/url/' + contentId,
       data: {
