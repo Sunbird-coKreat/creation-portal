@@ -277,8 +277,9 @@
 				<tr>
 					<th class="w-5">
 						<div class="sb-checkbox sb-checkbox-primary">
-							<input type="checkbox"  id="" (change)="isSelected = !isSelected" name="example">
-						</div>
+                            <input type="checkbox" id="checkall" (change)="isSelected = !isSelected" name="checkall">
+                            <label for="checkall"></label>
+                         </div>
 					</th>
 					<th class="sb-sort-icon">Title</th>
 					<th class="sb-sort-icon">Grade</th>
@@ -291,8 +292,9 @@
 					<tr *ngFor="let data of collections" >
 					<td class="collapsing">
 						<div class="sb-checkbox sb-checkbox-primary">
-							<input type="checkbox"  id="" [checked]="isSelected" name="">
-							</div>
+                            <input type="checkbox" id="checkitem" [checked]="isSelected" name="checkitem">
+                            <label for="checkitem"></label>
+                          </div>
 					</td>
 					<td> 
 						<div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
@@ -324,6 +326,7 @@
 	</div>
 	<div class="pull-right sb-bg-color-white">
 		<button *ngIf="!showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary" (click)="saveProgram()">Next</button>
+		<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-default mr-10" (click)="navigateTo(1)">Prev</button>
 		<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary" [routerLink]="'/sourcing'">Save & Close</button>
 	</div>
 </div>
