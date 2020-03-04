@@ -18,10 +18,10 @@
           <thead class="sb-table-header sb-table-thead-gray">
             <tr>
               <th class="sb-sort-icon">Program</th>
-              <th class="sb-sort-icon">No of Textbooks</th>
-              <th class="sb-sort-icon">Grades, Mediums, Subjects</th>
-              <th class="sb-sort-icon">Contribution Date</th>
-              <th class="sb-sort-icon">Nomination Status</th>
+              <th>No of Textbooks</th>
+              <th>Grades, Mediums, Subjects</th>
+              <th>Contribution Date</th>
+              <th>Nomination Status</th>
               <th class="text-center">Actions</th>
             </tr>
           </thead>
@@ -50,8 +50,8 @@
                 <div >{{nominationStatus}}</div>
               </td>
               <td class="text-center">
-                <button class="sb-btn sb-btn-xs sb-btn-outline-primary" *ngIf="nominationStatus === 'Nominated' || nominationStatus === 'Nomination Approved'">View & Upload</button>
-                <button class="sb-btn sb-btn-xs sb-btn-outline-primary" *ngIf="nominationStatus === 'Nomination Rejected' || nominationStatus === 'Contributed' || nominationStatus === 'Program Closed'">View</button>
+                <button class="sb-btn sb-btn-xs sb-btn-outline-primary" *ngIf="nominationStatus === 'Nominated' || nominationStatus === 'Nomination Approved'">View Details</button>
+                <button class="sb-btn sb-btn-xs sb-btn-outline-primary" *ngIf="nominationStatus === 'Nomination Rejected' || nominationStatus === 'Contributed' || nominationStatus === 'Program Closed'">View Details</button>
               </td>
             </tr>
           </tbody>
