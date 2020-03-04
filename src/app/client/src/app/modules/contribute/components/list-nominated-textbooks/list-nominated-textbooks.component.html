@@ -22,7 +22,7 @@
 					<div class="d-flex flex-ai-center">
 					  <span class="dot-separator"></span>
 					  <label class="d-block fsmall font-weight-normal mb-0">
-						Nomination Shortlisting:  Aug 5th, 2019
+						Nomination Shortlisting Date:  Aug 5th, 2019
 					  </label>
 					</div>
 					<div class="d-flex flex-ai-center">
@@ -69,14 +69,14 @@
 					<th class="sb-sort-icon">Medium</th>
 					<th>Subjects</th>
 					<th>Chapters</th>
-					<th></th>
+					<th>Action</th>
 				  </tr>
 				</thead>
 				<tbody class="sb-table-body">
 
 					<tr *ngFor="let contributorTextbook of contributorTextbooks">
 					  <td class="hand">
-						<a (click)="show=true" class="header text-decoration-underline">{{contributorTextbook.name}}</a>
+						{{contributorTextbook.name}}
 					  </td>
 					  <td >{{contributorTextbook.gradeLevel}}</td>
 					  <td>{{contributorTextbook.medium}}</td>
