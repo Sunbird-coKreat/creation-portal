@@ -31,21 +31,21 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
       this.nominations = [
         {
           "contributor_id": "1234",
-          "contributor_name": "Nitesh Kesarkar",
+          "contributor_name": "Akshara Foundation",
           "type": "Organisation",
           "textbooks": "Textbook1, Textbook2, Textbook3",
           "status": "Pending",
           "program_id": this.programId
         }, {
           "contributor_id": "1245",
-          "contributor_name": "Nilesh Sanap",
-          "type": "Individual",
+          "contributor_name": "Pratham",
+          "type": "Organisation",
           "program_id": this.programId,
           "status": "Accepted",
           "textbooks": "Textbook2"
         }, {
           "contributor_id": "hhd_898",
-          "contributor_name": "Vaishali K",
+          "contributor_name": "John Doe",
           "type": "Individual",
           "program_id": this.programId,
           "status": "Rejected",

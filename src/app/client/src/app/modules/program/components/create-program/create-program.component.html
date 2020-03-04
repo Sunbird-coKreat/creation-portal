@@ -57,10 +57,10 @@
 							<div class="sb-field relative">
 								<textarea formControlName="description" type="text" class="wmd-input width-100 sb-form-control" placeholder="Add description" name="" required></textarea>
 								<div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['description'].errors && createProgramForm.controls['description'].errors.required && (!createProgramForm.controls['description'].pristine || formIsInvalid)">
-								{{resource?.messages?.stmsg?.m0105}}
+								{{resource?.messages?.stmsg?.m0107}}
 								</div>
 								<div class="ui pointing red basic label below" *ngIf="createProgramForm.controls['description'].errors && createProgramForm.controls['description'].errors.maxlength && (!createProgramForm.controls['description'].pristine || formIsInvalid)">
-								{{resource?.messages?.stmsg?.m0106}}
+								{{resource?.messages?.stmsg?.m0117}}
 								</div>
 								<div *ngIf="createProgramForm.value.name.length" class="pull-right fsmall">{{createProgramForm.value.description.length}} / 100</div>
 							</div>
@@ -69,7 +69,7 @@
 
 					<div class="three wide column">
 						<div class="field">
-							<label>Expression for Interest Date</label>
+							<label>Nomination End Date</label>
 							<div class="ui read-only calendar mb-10 sb-field">
 								<div class="ui input right icon">
 								<i class="calendar icon date-calendar"></i>
@@ -80,7 +80,7 @@
 					</div>
 					<div class="three wide column">
 						<div class="field">
-							<label>Shortlisting of Contributor Date</label>
+							<label>Contribution End Date</label>
 							<div class="ui read-only calendar mb-10">
 								<div class="ui input right icon">
 								<i class="calendar icon date-calendar"></i>
@@ -91,7 +91,7 @@
 					</div>
 					<div class="three wide column">
 						<div class="field">
-							<label>Content Submission Date</label>
+							<label>Nomination Shortlisting Date</label>
 							<div class="ui read-only calendar mb-10">
 								<div class="ui input right icon">
 								<i class="calendar icon date-calendar"></i>
@@ -103,7 +103,7 @@
 					<div class="three wide column">
 						<div class="field">
 							<label>Program End Date</label>
-							<div class="ui read-only calendar mb-10">
+							<div class="ui read-only calendasr mb-10">
 								<div class="ui input right icon">
 								<i class="calendar icon date-calendar"></i>
 								<input [pickerMinDate]='pickerMinDate' suiDatepicker [pickerMode]="'date'">
@@ -112,7 +112,7 @@
 						</div>
 					</div>
 					<div class="twelve wide column py-0">
-						<h4>Filters for textbooks</h4>
+						<h4>Program Scope</h4>
 					</div>
 					<div class="three wide column">
 						<div class="field">
@@ -139,7 +139,7 @@
 							</sui-select>
 						</div>
 					</div>
-					<div class="nine wide column">
+					<div class="three wide column">
 						<div class="field">
 							<label>Select Medium</label>
 							<ng-template let-option #optionTemplate >
@@ -166,8 +166,7 @@
 							</sui-multi-select>
 						</div>
 					</div>
-
-					<div class="six wide column">
+					<div class="three wide column">
 						<div class="field">
 							<label> Grade / Class </label>
 							<ng-template let-option #optionTemplate >
@@ -194,7 +193,7 @@
 							</sui-multi-select>
 						</div>
 					</div>
-					<div class="six wide column">
+					<div class="three wide column">
 						<div class="field">
 							<label> Subject</label>
 							<ng-template let-option #optionTemplate >
@@ -257,14 +256,14 @@
 						<div class="field">
 							<label>Rewards Given</label>
 							<div class="sb-field relative">
-								<textarea formControlName="rewards" type="text" class="wmd-input width-100 sb-form-control" placeholder="Add description" name="" required></textarea>
-								<div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['description'].errors && createProgramForm.controls['description'].errors.required && (!createProgramForm.controls['description'].pristine || formIsInvalid)">
+								<textarea  type="text" class="wmd-input width-100 sb-form-control" placeholder="Add description" name=""></textarea>
+								<!--div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['rewards'].errors && createProgramForm.controls['rewards'].errors.required && (!createProgramForm.controls['rewards'].pristine || formIsInvalid)">
 								{{resource?.messages?.stmsg?.m0105}}
 								</div>
-								<div class="ui pointing red basic label below" *ngIf="createProgramForm.controls['description'].errors && createProgramForm.controls['description'].errors.maxlength && (!createProgramForm.controls['description'].pristine || formIsInvalid)">
+								<div class="ui pointing red basic label below" *ngIf="createProgramForm.controls['rewards'].errors && createProgramForm.controls['rewards'].errors.maxlength && (!createProgramForm.controls['rewards'].pristine || formIsInvalid)">
 								{{resource?.messages?.stmsg?.m0106}}
 								</div>
-								<div *ngIf="createProgramForm.value.name.length" class="pull-right fsmall">{{createProgramForm.value.rewards.length}} / 100</div>
+								<div *ngIf="createProgramForm.value.rewards.length" class="pull-right fsmall">{{createProgramForm.value.rewards.length}} / 100</div-->
 							</div>
 						</div>
 					</div>
@@ -276,15 +275,16 @@
 				<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable" *ngIf="showTextBookSelector">
 			   <thead class="sb-table-header sb-table-thead-gray">
 				<tr>
-					<th class="w-5 sb-sort-icon">
+					<th class="w-5">
 						<div class="sb-checkbox sb-checkbox-primary">
-							<input type="checkbox" id="checkall" (change)="isSelected = !isSelected" name="checkall">
-							<label for="checkall"></label>
-							</div></th>
+                            <input type="checkbox" id="checkall" (change)="isSelected = !isSelected" name="checkall">
+                            <label for="checkall"></label>
+                         </div>
+					</th>
 					<th class="sb-sort-icon">Title</th>
 					<th class="sb-sort-icon">Grade</th>
 					<th class="sb-sort-icon">Medium</th>
-					<th class="sb-sort-icon">Chapters</th>
+					<th>Chapters</th>
 					<th class="sb-sort-icon">Subject</th>
 				</tr>
 				</thead>
@@ -292,9 +292,9 @@
 					<tr *ngFor="let data of collections" >
 					<td class="collapsing">
 						<div class="sb-checkbox sb-checkbox-primary">
-							<input type="checkbox" id="checkitem" [checked]="isSelected" name="checkitem">
-							<label for="checkitem"></label>
-							</div>
+                            <input type="checkbox" id="checkitem" [checked]="isSelected" name="checkitem">
+                            <label for="checkitem"></label>
+                          </div>
 					</td>
 					<td> 
 						<div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
@@ -311,25 +311,23 @@
 							{{data.medium}}
 						</div>
 					  </td>
-					  <td> 
+					  <td>20</td>
+					  <td>
 						<div class="sb__ellipsis">
-							{{data.medium}}
+							{{data.subject}}
 						</div>
-					  </td>
-					<td>20</td>
-					<div class="sb__ellipsis">
-						{{data.subject}}
-					</div>
+						</td>
 					</tr>
 				</tbody>
 				</table> 
-				</div>
+			</div>
 		</div>
 	</sui-tabset>
 	</div>
 	<div class="pull-right sb-bg-color-white">
 		<button *ngIf="!showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary" (click)="saveProgram()">Next</button>
-		<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary" (click)="linkTextBooksToProgram()">Save & Close</button>
+		<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-default mr-10" (click)="navigateTo(1)">Prev</button>
+		<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary" [routerLink]="'/sourcing'">Save & Close</button>
 	</div>
 </div>
 </div>

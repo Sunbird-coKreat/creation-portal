@@ -68,8 +68,8 @@
 		<div class="sb-pageSection-content mt-12">
 			<div class="ui grid">
 				<div class="six wide column">
-					<label class="fs-1 mb-4">Contributor: </label>
-					<span class="hand"><a (click)="show=true" class="header text-decoration-underline">{{contributor.name}}</a></span>
+					<label class="fs-1 mb-4">Contributor : </label>
+					<span class="hand"><a (click)="show=true" class="header text-decoration-underline"> {{contributor.name}} </a></span>
 				</div>
 				<div class="six wide column right aligned">
 					<button class="sb-btn ui positive basic button m-5" *ngIf="contributor?.nominationStatus === 'Pending'" [routerLink]="'sourcing/nominations/0d19cd20-5889-11ea-aa49-89d7d466a619'">Accept</button>
@@ -86,8 +86,8 @@
 					<th class="sb-sort-icon">Textbook</th>
 					<th class="sb-sort-icon">Grade</th>
 					<th class="sb-sort-icon">Medium</th>
-					<th>Subjects</th>
-					<th>
+					<th class="sb-sort-icon">Subjects</th>
+					<th class="sb-sort-icon">
 						<span *ngIf="contributor?.nominationStatus == 'Pending'">
 							Sample content count
 						</span>
@@ -95,7 +95,7 @@
 							Contribution count
 						</span>
 					</th>
-					<th></th>
+					<th>Actions</th>
 				  </tr>
 				</thead>
 				<tbody class="sb-table-body">
@@ -127,7 +127,7 @@
         <div class="sb-profile-page__avatar">
           <img src="assets/images/guest.svg" alt="guest" class="w-100">
         </div>
-        <div class="fs-2-5 font-weight-bold mb-24">{{ 'Nitesh Kesarkar' | titlecase}} </div>
+        <div class="fs-2-5 font-weight-bold mb-24">{{ 'Pratham' | titlecase}} </div>
       </div>
       <div class="mx-48 relative text-center">
         <div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
