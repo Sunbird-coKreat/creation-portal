@@ -1,6 +1,9 @@
 @import "variables";
 @import "mixins/mixins";
 
+hr {
+    border: 0.5px solid #ddd;
+}
 .sb-profile-page{
 
     &__avatar{

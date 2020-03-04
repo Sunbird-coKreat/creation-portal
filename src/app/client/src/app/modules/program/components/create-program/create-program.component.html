@@ -227,7 +227,7 @@
 					</div>
 						<div class="d-flex flex-w-wrap">
 							<div class="sb-checkbox sb-checkbox-primary">
-							<input type="checkbox"  id="check1" name="example">
+							<input type="checkbox" id="check1" name="example">
 							<label for="check1">Explanation video</label>
 							</div>
 							<div class="sb-checkbox sb-checkbox-primary ml-16">
@@ -278,7 +278,8 @@
 				<tr>
 					<th class="w-5 sb-sort-icon">
 						<div class="sb-checkbox sb-checkbox-primary">
-							<input type="checkbox"  id="" (change)="isSelected = !isSelected" name="example">
+							<input type="checkbox" id="checkall" (change)="isSelected = !isSelected" name="checkall">
+							<label for="checkall"></label>
 							</div></th>
 					<th class="sb-sort-icon">Title</th>
 					<th class="sb-sort-icon">Grade</th>
@@ -291,7 +292,8 @@
 					<tr *ngFor="let data of collections" >
 					<td class="collapsing">
 						<div class="sb-checkbox sb-checkbox-primary">
-							<input type="checkbox"  id="" [checked]="isSelected" name="">
+							<input type="checkbox" id="checkitem" [checked]="isSelected" name="checkitem">
+							<label for="checkitem"></label>
 							</div>
 					</td>
 					<td> 
