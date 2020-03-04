@@ -1,7 +1,7 @@
 <div class="ui container">
 	<div class="sb-pageSection my-24 ui container" [appTelemetryImpression]="telemetryImpression">
-		<div class="sb-pageSection-header row">
-			<h4 class="sb-pageSection-title six">New Program FEB2020
+		<div class="sb-pageSection-header ui grid">
+			<h4 class="sb-pageSection-title six wide column">New Program FEB2020
 				<ng-template #popupTemplate>
 					<div class="content">
 						<div class="textbook-details ml-8">
@@ -44,7 +44,7 @@
 				<i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate">
 				</i>
 			</h4>
-			<div class="sb-meta-data-container sb-meta-data-column six">
+			<div class="sb-meta-data-container sb-meta-data-column six wide coulmn">
 				<label class="width-100">Nominations</label>
 				<div class="d-flex">
 				  <dl class="sb-meta-data">
@@ -87,9 +87,9 @@
 					  <td data-label="Website">{{nomination.textbooks}}</td>
 					  <td data-label="Status">{{nomination?.status}}</td>
 					  <td data-label="Actions">
-						<button class="sb-btn sb-btn-normal sb-btn-success m-5" *ngIf="nomination?.status === 'Pending'"
+						<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" *ngIf="nomination?.status === 'Pending'"
 						  [routerLink]="'/sourcing/contributor/' + nomination.program_id">View Details</button>
-						<button class="sb-btn sb-btn-normal sb-btn-success m-5" *ngIf="nomination?.status === 'Accepted'"
+						<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" *ngIf="nomination?.status === 'Accepted'"
 						  [routerLink]="'/sourcing/contributor/' + nomination.program_id">View Contribution</button>
 						<!--button class="sb-btn sb-btn-normal sb-btn-primary m-5" (click)="onApproveClick(nomination)" *ngIf="nomination?.status === 'Pending'">Approve</button>
 						<button class="sb-btn sb-btn-normal sb-btn-warning m-5" *ngIf="nomination?.status === 'Pending'" (click)="onRejectClick(nomination)">Reject</button-->
