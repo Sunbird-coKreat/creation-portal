@@ -140,7 +140,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 	saveProgramError(err) {
 		console.log(err)
 	}
-    
+	
     validateAllFormFields(formGroup: FormGroup) {
         Object.keys(formGroup.controls).forEach(field => {
             const control = formGroup.get(field);
@@ -149,8 +149,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         });
     }
     
-    linkTextBooksToProgram() {
-		window.location.reload();
+    navigateTo(stepNo) {
+		this.showTextBookSelector = false;
     }
     
     saveProgram() {
