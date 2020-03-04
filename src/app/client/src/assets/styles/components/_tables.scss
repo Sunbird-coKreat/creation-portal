@@ -128,9 +128,11 @@
 
 }
 
-.sb-table-responsive {
-  overflow-x: auto;
-  width: 100%;
+.sb-table-responsive, .sb-table-responsive-div {
+    display: block; 
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .sb-table-container {
