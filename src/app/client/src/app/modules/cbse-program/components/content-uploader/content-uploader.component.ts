@@ -220,7 +220,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
             content: {
               'name': this.templateDetails.metadata.name,
               'code': UUID.UUID(),
-              'mimeType': this.templateDetails.mimeType[0],
+              'mimeType': this.detectMimeType(this.uploader.getName(0)),
               'createdBy': this.userService.userid,
               'contentType': this.templateDetails.metadata.contentType,
               'resourceType': this.templateDetails.metadata.resourceType || 'Learn',
