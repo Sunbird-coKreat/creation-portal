@@ -6,7 +6,7 @@ import { ExtPluginService } from './../ext-plugin/ext-plugin.service';
 import { ConfigService, ServerResponse, ToasterService, ResourceService } from '@sunbird/shared';
 import { Injectable } from '@angular/core';
 import { UserService } from '../user/user.service';
-import { combineLatest, of, iif, Observable, BehaviorSubject, throwError } from 'rxjs';
+import { combineLatest, of, iif, Observable, BehaviorSubject, throwError, merge } from 'rxjs';
 import * as _ from 'lodash-es';
 import { CanActivate, Router } from '@angular/router';
 
@@ -118,6 +118,58 @@ export class ProgramsService implements CanActivate {
         }
       })
     )
+    );
+  }
+
+  /**
+   * gets list of programs
+   */
+  public getProgramsForOrg(): Observable<IProgram[]> {
+    let list = [];
+    let mergeObj = {
+      textbooks: [ 
+        { id: "1", name: "Textbook 1" },
+        { id: "2", name: "Textbook 2" },
+        { id: "3", name: "Textbook 3" }
+      ],
+      grades: [ 
+        { id: "1", name: "Grade 1" },
+        { id: "2", name: "Grade 2" },
+        { id: "3", name: "Grade 3" }
+      ],
+      mediums: [ 
+        { id: "1", name: "Marathi" },
+        { id: "2", name: "English" },
+        { id: "3", name: "Kannada" }
+      ],
+      subjects: [ 
+        { id: "1", name: "Mathematics" },
+        { id: "2", name: "Science" },
+        { id: "3", name: "Geography" }
+      ],
+      nominations: {
+        pending: 5,
+        approved: 8,
+        rejected: 2
+      },
+      program_end_date: '',
+      nomination_end_date: '',
+      nomination_shortlisting_date: '',
+      curation_end_date: '',
+    };
+
+    return this.searchProgramsAPICall().pipe(
+      map(result => {
+        _.forEach(_.get(result, 'result.programs'), function(program) {
+          list.push({...program, ...mergeObj});
+        });
+        return list;
+      }),
+      catchError(err => {
+        console.log("getProgramsForOrg", err);
+        this.toasterService.warning(err);
+        return of([])
+      })
     );
   }
 }

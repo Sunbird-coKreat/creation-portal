@@ -1,0 +1,14 @@
+<div class="ui container">
+  <p>
+    shared-program-list works!
+  </p>
+  <ul *ngIf="programs && programs.length else loading">
+    <li *ngFor="let program of programs" >
+      {{ program | json }}
+    </li>
+  </ul> 
+  <ng-template #loading>
+    <app-loader></app-loader>
+  </ng-template>
+</div>
+
