@@ -4,7 +4,7 @@
 			<h4 class="sb-pageSection-title">Create a Program</h4>
 		  </div>
 
-	<div class="sb-modal-content o-y-visible pb-8">
+	<div class="pb-8">
 		<div class="ui ordered steps">
 			<div class="completed step">
 			  <div class="content">
@@ -37,8 +37,8 @@
 				<div class="ui grid">
 					<div class="twelve wide column">
 						<div class="required field ">
-							<label>Name</label>
 							<div class="sb-field">
+							<label>Name</label>
 							<input autofocus="" formControlName="name"  class="sb-form-control ng-pristine ng-valid ng-touched" type="text" placeholder="Name">
 							<div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['name'].errors && createProgramForm.controls['name'].errors.required && (!createProgramForm.controls['name'].pristine || formIsInvalid)">
 								{{resource?.messages?.stmsg?.m0105}}
