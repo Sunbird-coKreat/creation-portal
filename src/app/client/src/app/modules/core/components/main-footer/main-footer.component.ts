@@ -55,10 +55,12 @@ footerAlign() {
   $('.footerfix').css('height', 'auto');
   const footerHeight = $('footer').outerHeight();
   const pageContainerHeight = window.innerHeight;
-  // alert(pageContainerHeight);
   const footerMobileHeight = $('.download-mobile-app').outerHeight();
   $('.footerfix').css('height', footerHeight);
-  $('.footer-fix').css('min-height', pageContainerHeight - footerMobileHeight + 'px');
+  $('.footer-fix').css('min-height', pageContainerHeight - footerMobileHeight - 13 + 'px');
+  const footerFixCt = $('.footer-fix').outerHeight();
+  //const dynamicHeight = 
+  $('.dynamicHeight').css('min-height', footerFixCt - footerMobileHeight - 13);
   if (window.innerWidth <= 767) {
     (document.querySelector('.download-mobile-app') as HTMLElement).style.bottom = footerHeight + 'px';
     (document.querySelector('body') as HTMLElement).style.paddingBottom = footerHeight + footerMobileHeight + 'px';
