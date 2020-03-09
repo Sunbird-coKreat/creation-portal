@@ -55,7 +55,7 @@ footerAlign() {
   $('.footerfix').css('height', 'auto');
   const footerHeight = $('footer').outerHeight();
   const pageContainerHeight = window.innerHeight;
-  alert(pageContainerHeight);
+  // alert(pageContainerHeight);
   const footerMobileHeight = $('.download-mobile-app').outerHeight();
   $('.footerfix').css('height', footerHeight);
   $('.footer-fix').css('min-height', pageContainerHeight - footerMobileHeight + 'px');
