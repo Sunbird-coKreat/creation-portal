@@ -16,13 +16,12 @@
   </div>
 </div> -->
 <extension-point [name]="'content-manager'" *ngIf="isOffline && !showDownloadmanager"></extension-point>
-​
 <footer class="footer 
 " *ngIf="showFooter && !isOffline" #footerFix>
   <div class="ui container">
-    <div class="ui grid stackable">
+    <div class="ui grid stackable m-0 p-0">
       <div class="four wide column footerMenu mr-auto">
-        <ul class="p-0 m-0">
+        <ul class="p-0 m-0 d-flex flex-dc flex-jc-space-between">
           <!-- <li class="mb-15">
             <a href="/verticals/profile-registry/">
               {{resourceService.frmelmnts?.lnk?.footerDikshaVerticals}}
@@ -35,7 +34,7 @@
             </a>
           </li>
 ​
-          <li>
+          <li class="mb-0">
             <label class="d-block mb-0">
               {{resourceService.frmelmnts?.lnk?.footerContact}}
             </label>
@@ -51,10 +50,7 @@
             </a>
           </li> -->
         </ul>
-        
-     
       </div>
-​
       <div class="download-mobile-app">
         <div class="download-mobile-app-logo p-16">
           <div class="mobile-circles">
@@ -74,14 +70,14 @@
           <p class="d-block pt-10">{{resourceService.frmelmnts?.lbl?.getUnlimitedAccess}}</p>
         </div>
       </div>
-      <div class="four wide column contantDetails">
+      <div class="four wide column contantDetails d-flex flex-dc flex-jc-space-between">
         <label class="d-block">
           <a appTelemetryInteract [telemetryInteractEdata]="setTelemetryInteractEdata('t&c')" href="/term-of-use.html">
             {{resourceService.frmelmnts?.lnk?.footerTnC}}
           </a>
           <span>| &copy; {{date | date:'yyyy'}}, DIKSHA</span>
         </label>
-        <label class="sb-footer-license">
+        <label class="sb-footer-license mb-0">
           <img src="/assets/images/CCby.svg">
           <span>{{resourceService.frmelmnts?.lbl?.CCbyLicense}}</span>
         </label>

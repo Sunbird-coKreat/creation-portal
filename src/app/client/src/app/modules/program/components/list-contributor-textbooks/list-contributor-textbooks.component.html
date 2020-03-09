@@ -1,4 +1,4 @@
-<div class="sb-bg-color-white py-24"*ngIf="!showChapterList">
+<div class="sb-bg-color-primary-0 py-24"*ngIf="!showChapterList">
 	<div class="ui container" [appTelemetryImpression]="telemetryImpression">
 
 		<div class="d-flex flex-ai-center flex-jc-space-between">
@@ -11,7 +11,7 @@
 				<dl class="sb-meta-data mb-0 pr-8">
 					<dt>Name</dt>
 					<dd class="sb__ellipsis">
-						<a class="hand text-decoration-underline sb-color-primary" (click)="show=true">{{contributor.name}} </a>
+						<a class="cursor-pointer text-decoration-underline sb-color-primary" (click)="show=true">{{contributor.name}} </a>
 					</dd>
 				  </dl>
 				  <div class="d-flex flex-ai-center flex-jc-space-around flex-basis-1">
@@ -109,20 +109,22 @@
 		  </div>
 	</div>
 	</div>
-<div class="ui container" *ngIf="!showChapterList">
-	<div class="sb-pageSection my-24 ui container" [appTelemetryImpression]="telemetryImpression">
-		<div class="sb-pageSection-content mt-12">
-	<div class="d-flex flex-ai-center flex-jc-space-between">
-		<div class="sb-pageSection-header pt-16">
-			<h4 class="sb-pageSection-title">List of Textbooks <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">10</span></h4>
-		  </div>
-		<div class="">
-			<button class="sb-btn sb-btn-normal sb-btn-secondary mr-8" *ngIf="contributor?.nominationStatus === 'Pending'" [routerLink]="'sourcing/nominations/0d19cd20-5889-11ea-aa49-89d7d466a619'">Accept</button>
-			<button class="sb-btn sb-btn-normal sb-btn-outline-error" *ngIf="contributor?.nominationStatus === 'Pending'" [routerLink]="'sourcing/nominations/0d19cd20-5889-11ea-aa49-89d7d466a619'">Reject</button>
-			<span *ngIf="contributor?.nominationStatus === 'Accepted' || contributor?.nominationStatus === 'Rejected'">
-				Status: {{contributor?.nominationStatus}}
-			</span>
-		</div>
+
+<div class="sb-bg-color-white pb-48 dynamicHeight"  *ngIf="!showChapterList">
+<div class="ui container">
+	<div class="sb-pageSection pt-24" [appTelemetryImpression]="telemetryImpression">
+		<div class="sb-pageSection-content">
+			<div class="d-flex flex-ai-center flex-jc-space-between">
+				<div class="sb-pageSection-header pt-16">
+					<h4 class="sb-pageSection-title">List of Textbooks <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">10</span></h4>
+				</div>
+				<div class="">
+					<button class="sb-btn sb-btn-normal sb-btn-secondary mr-8" *ngIf="contributor?.nominationStatus === 'Pending'" [routerLink]="'sourcing/nominations/0d19cd20-5889-11ea-aa49-89d7d466a619'">Accept</button>
+					<button class="sb-btn sb-btn-normal sb-btn-outline-error" *ngIf="contributor?.nominationStatus === 'Pending'" [routerLink]="'sourcing/nominations/0d19cd20-5889-11ea-aa49-89d7d466a619'">Reject</button>
+					<span *ngIf="contributor?.nominationStatus === 'Accepted' || contributor?.nominationStatus === 'Rejected'">
+						Status: {{contributor?.nominationStatus}}
+					</span>
+				</div>
 			</div>
 			<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
 				<thead class="sb-table-header sb-table-thead-gray">
@@ -162,6 +164,10 @@
 		</div>
 	</div>
 </div>
+</div>
+<ng-container *ngIf="showChapterList">
+	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>
+</ng-container>
 <sui-modal *ngIf="show" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
   class="sb-modal" appBodyScroll (dismissed)="show = false" #modal>
   <div class="sb-modal-header"> Nominee Profile Details </div>
@@ -207,6 +213,4 @@
   </div>
 </sui-modal>
 
-<ng-container *ngIf="showChapterList">
-	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>
-  </ng-container>
+
