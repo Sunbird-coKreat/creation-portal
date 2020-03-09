@@ -126,37 +126,9 @@ export class ProgramsService implements CanActivate {
    */
   public getProgramsForOrg(): Observable<IProgram[]> {
     let list = [];
-    let mergeObj = {
-      textbooks: [ 
-        { id: "1", name: "Textbook 1" },
-        { id: "2", name: "Textbook 2" },
-        { id: "3", name: "Textbook 3" }
-      ],
-      grades: [ 
-        { id: "1", name: "Grade 1" },
-        { id: "2", name: "Grade 2" },
-        { id: "3", name: "Grade 3" }
-      ],
-      mediums: [ 
-        { id: "1", name: "Marathi" },
-        { id: "2", name: "English" },
-        { id: "3", name: "Kannada" }
-      ],
-      subjects: [ 
-        { id: "1", name: "Mathematics" },
-        { id: "2", name: "Science" },
-        { id: "3", name: "Geography" }
-      ],
-      nominations: {
-        pending: 5,
-        approved: 8,
-        rejected: 2
-      },
-      program_end_date: '',
-      nomination_end_date: '',
-      nomination_shortlisting_date: '',
-      curation_end_date: '',
-    };
+    let mergeObj = this.getApiSampleObj();
+    let targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + 10)
 
     return this.searchProgramsAPICall().pipe(
       map(result => {
@@ -171,5 +143,73 @@ export class ProgramsService implements CanActivate {
         return of([])
       })
     );
+  }
+
+  /**
+   * gets list of programs for contributors
+   */
+  public getProgramsForContributors(): Observable<IProgram[]> {
+    let list = [];
+    let mergeObj = this.getApiSampleObj();
+    let targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + 10)
+
+    return this.searchProgramsAPICall().pipe(
+      map(result => {
+        _.forEach(_.get(result, 'result.programs'), function(program) {
+          list.push({...program, ...mergeObj});
+        });
+        return list;
+      }),
+      catchError(err => {
+        console.log("getProgramsForOrg", err);
+        this.toasterService.warning(err);
+        return of([])
+      })
+    );
+  }
+
+  /**
+   * get api obj sample
+   */
+  private getApiSampleObj() {
+   return {
+      textbooks: [ 
+        { id: "1", name: "Textbook 1" },
+        { id: "2", name: "Textbook 2" },
+        { id: "3", name: "Textbook 3" }
+      ],
+      grades: [ 
+        { id: "1", name: "Grade 1" },
+        { id: "3", name: "Grade 3" }
+      ],
+      mediums: [ 
+        { id: "1", name: "Marathi" },
+        { id: "2", name: "English" }
+      ],
+      subjects: [ 
+        { id: "1", name: "Mathematics" },
+        { id: "2", name: "Science" },
+        { id: "3", name: "Geography" }
+      ],
+      nominations: {
+        pending: 5,
+        approved: 8,
+        rejected: 2
+      },
+      nomination_status: 'Pending',
+      contribution_date: this.getFutureDate(-1),
+      nomination_end_date: this.getFutureDate(-5),
+      nomination_shortlisting_date: this.getFutureDate(0),
+      curation_end_date: this.getFutureDate(1),
+      program_end_date: this.getFutureDate(10),
+    };
+  }
+
+  /**
+   * get future date
+   */
+  private getFutureDate(days) {
+    return new Date((new Date()).getTime() + (days * 86400000));
   }
 }

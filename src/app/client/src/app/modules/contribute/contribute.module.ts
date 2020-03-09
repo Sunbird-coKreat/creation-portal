@@ -19,10 +19,12 @@ import { CollectionComponent, DashboardComponent } from '../cbse-program';
 import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
 import { ListAllMyProgramsComponent } from './components/list-all-my-programs/list-all-my-programs.component';
 import { ListNominatedTextbooksComponent} from './components/list-nominated-textbooks/list-nominated-textbooks.component';
-// import { MyProgramComponent} from './components/my-program/my-program.component';
+import { ProgramListComponent} from '../shared-feature/components/program-list/program-list.component';
+import { DaysToGoPipe } from '../shared-feature/pipe/days-to-go.pipe';
+
 @NgModule({
   
-  declarations: [ListAllProgramsComponent, ProgramComponent, OnboardPopupComponent, ProgramHeaderComponent, ListAllMyProgramsComponent, ListNominatedTextbooksComponent  ],
+  declarations: [ListAllProgramsComponent, ProgramComponent, OnboardPopupComponent, ProgramHeaderComponent, ListAllMyProgramsComponent, ListNominatedTextbooksComponent, ProgramListComponent, DaysToGoPipe  ],
   imports: [
     SuiModule,
     CommonModule,

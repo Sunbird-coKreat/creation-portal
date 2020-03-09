@@ -7,7 +7,7 @@ import { SlickModule } from 'ngx-slick';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { ProgramRoutingModule } from './program-routing.module';
-import { ListAllProgramsComponent, AllProgramListComponent } from './components';
+import { ListAllProgramsComponent } from './components';
 import { ProgramComponent } from './components/program/program.component';
 import { OnboardPopupComponent } from './components/onboard-popup/onboard-popup.component';
 import { ProgramHeaderComponent } from './components/program-header/program-header.component';
@@ -22,6 +22,7 @@ import { CbseProgramModule } from '../../modules/cbse-program/cbse-program.modul
 import { CollectionComponent, DashboardComponent, ChapterListComponent } from '../cbse-program';
 import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
 import { ProgramListComponent } from '../shared-feature';
+import { DaysToGoPipe } from '../shared-feature/pipe/days-to-go.pipe';
 
 @NgModule({
   declarations: [ListAllProgramsComponent,
@@ -29,7 +30,7 @@ import { ProgramListComponent } from '../shared-feature';
     ProgramComponent, OnboardPopupComponent,
     ProgramHeaderComponent, CreateProgramComponent,
     ProgramNominationsComponent, ListNominationsComponent,
-    ListContributorTextbooksComponent, AllProgramListComponent, ProgramListComponent],
+    ListContributorTextbooksComponent, ProgramListComponent, DaysToGoPipe],
   imports: [
   SuiModule,
     CommonModule,

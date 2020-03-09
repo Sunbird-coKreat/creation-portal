@@ -6,4 +6,3 @@ export * from './create-program/create-program.component';
 export * from './list-nominations/list-nominations.component';
 export * from './program-nominations/program-nominations.component';
 export * from './list-contributor-textbooks/list-contributor-textbooks.component';
-export * from './all-program-list/all-program-list.component';
