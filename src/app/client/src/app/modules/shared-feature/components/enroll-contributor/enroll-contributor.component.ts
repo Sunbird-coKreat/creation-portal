@@ -9,6 +9,7 @@ import { ToasterService } from '@sunbird/shared';
 export class EnrollContributorComponent implements OnInit {
   contributorType = 'individual';
   data;
+  options;
   disableSubmit = false;
   @Output() close = new EventEmitter<any>();
 
