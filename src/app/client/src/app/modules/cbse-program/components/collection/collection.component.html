@@ -47,7 +47,7 @@
     </div>
     
   </div> -->
-    <div class="book-table">
+    <div class="book-table ui container">
       <div class="sb-pageSection-header row my-20">
         <h4 class="sb-pageSection-title six">New Program FEB2020
           <ng-template #popupTemplate>
@@ -70,33 +70,33 @@
             <div class="d-flex flex-ai-center">
               <span class="dot-separator"></span>
               <label class="d-block fsmall font-weight-normal mb-0">
-            Nomination Shortlisting Date:  Aug 5th, 2019
+              Nomination Shortlisting Date:  Aug 5th, 2019
               </label>
             </div>
-					<div class="d-flex flex-ai-center">
-					  <span class="dot-separator"></span>
-					  <label class="d-block fsmall font-weight-normal mb-0">
-						Contribution End Date:  Aug 20th, 2019
-					  </label>
-					</div>
-					<div class="d-flex flex-ai-center">
-					  <span class="dot-separator"></span>
-					  <label class="d-block fsmall font-weight-normal mb-0">
-						Program End Date:  Aug 30th, 2019
-					  </label>
-					</div>
-					</div>
-					</div>
+            <div class="d-flex flex-ai-center">
+              <span class="dot-separator"></span>
+              <label class="d-block fsmall font-weight-normal mb-0">
+              Contribution End Date:  Aug 20th, 2019
+              </label>
+            </div>
+            <div class="d-flex flex-ai-center">
+              <span class="dot-separator"></span>
+              <label class="d-block fsmall font-weight-normal mb-0">
+              Program End Date:  Aug 30th, 2019
+              </label>
+            </div>
+            </div>
+            </div>
 				</ng-template>
 				<i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate">
 				</i>
       </h4>
       <div class="pull-right mb-20">
         <div *ngIf="nominateButton === 'show'">
-          <a href="http://localhost:3000/contribute/myenrollprograms"  class="sb-btn sb-btn-normal sb-btn-primary {{nominateButton === 'show' ? 'active' : 'disabled'}}" >Nominate</a>
+          <a href="http://localhost:3000/contribute/myenrollprograms"  class="sb-btn sb-btn-normal sb-btn-primary disabled {{nominateButton === 'show' ? 'active' : 'disabled'}}" >Nominate</a>
         </div>
         <div class="two wide column column " *ngIf="nominateButton === 'hide'">
-          <button   class="sb-btn sb-btn-normal sb-btn-primary disabled" >Nominate</button>
+          <button class="sb-btn sb-btn-disabled sb-btn-normal" >Nominate</button>
         </div>
     </div>
       <!-- <div class="sb-pageSection-title six">
@@ -136,13 +136,13 @@
             <div  suiPopup popupHeader="Grades" popupText="{{data.gradeLevel}}">{{data.gradeLevel}}</div>
           </td>
           <td>
-            <div class="sb__ellipsis" suiPopup popupHeader="Medium" popupText="{{data.medium}}">{{data.medium}}</div>
+            <div class="sb__ellipsis">{{data.medium}}</div>
           </td>
           <td>
             12
           </td>
           <td>
-            <div class="sb__ellipsis" suiPopup popupHeader="Subject" popupText="{{data.subject}}">{{data.subject}}</div>
+            <div class="sb__ellipsis">{{data.subject}}</div>
           </td>
           <td class="text-center">
               <input type="checkbox" name="{{data.identifier}}" (click)="nominationChecked(data.identifier)" >
