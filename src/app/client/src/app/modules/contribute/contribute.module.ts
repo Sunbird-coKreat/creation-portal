@@ -19,9 +19,9 @@ import { CollectionComponent, DashboardComponent } from '../cbse-program';
 import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
 import { ListAllMyProgramsComponent } from './components/list-all-my-programs/list-all-my-programs.component';
 import { ListNominatedTextbooksComponent} from './components/list-nominated-textbooks/list-nominated-textbooks.component';
-// import { MyProgramComponent} from './components/my-program/my-program.component';
 @NgModule({
-  
+
+  // tslint:disable-next-line:max-line-length
   declarations: [ListAllProgramsComponent, ProgramComponent, OnboardPopupComponent, ProgramHeaderComponent, ListAllMyProgramsComponent, ListNominatedTextbooksComponent  ],
   imports: [
     SuiModule,
@@ -36,7 +36,7 @@ import { ListNominatedTextbooksComponent} from './components/list-nominated-text
     NgInviewModule,
     TelemetryModule,
     CbseProgramModule,
-    
+
     DynamicModule.withComponents([CollectionComponent, DashboardComponent])
   ],
   exports: [
