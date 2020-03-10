@@ -70,6 +70,14 @@
       <div class="sb-pageSection-content sb-bg-white py-24 px-0" style="min-height: 350px;">
         <div class="ui container sb-textbook-details-container mb-24">
           <div class="sb-chapterlist">
+              <div class="ui dropdown sb-dotted-dropdown" 
+              suiDropdown autoClose="itemClick">
+              <div class="p-8 w-auto"><span class="sb-dotmenu"></span></div>
+              <div class="menu" suiDropdownMenu style="right: 0;left: auto;">
+                  <div class="item sb-color-secondary" (click)="showApproveModal = !showApproveModal">Approve</div>
+                  <div class="item sb-color-error" (click)="showErrorRejectModal = !showErrorRejectModal">Reject</div>
+              </div>
+          </div>
             <sui-accordion class="styled fluid sb-accordion sb-chapterlist-accordion" [closeOthers]="true">
               <app-recursive-tree [collectionUnits]="collectionHierarchy" [programContext]="programContext" [sessionContext]="sessionContext" [selectedChapter]="selectedChapterOption"
                 (nodeMeta)="showResourceTemplate($event)"></app-recursive-tree>
@@ -123,3 +131,38 @@
     <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showConfirmationModal = false"> No </button>
   </div>
 </sui-modal>
+<!--/* show approve modal */ -->
+<sui-modal *ngIf="showApproveModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
+  [size]="'normal'" class="sb-modal sb-success" appBodyScroll (dismissed)="showViewDeatilsModal = !showViewDeatilsModal" #modal>
+  <div class="sb-modal-header">
+      Content approved
+  </div>
+  <div class="sb-modal-content">
+      <div class="sb-meta-data-container sb-meta-data-row-facing my-20">
+        <i class="check icon d-flex mx-auto sb-color-secondary sb-secondary-shade fmedium"> </i> 
+        <h4 class="text-center mt-20">Approved</h4>
+      </div>
+  </div>
+</sui-modal>
+
+<!--/* show reject modal */ -->
+<sui-modal *ngIf="showErrorRejectModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
+[size]="'normal'" class="sb-modal sb-error" appBodyScroll
+(dismissed)="showErrorRejectModal = !showErrorRejectModal" #modal>
+<div class="sb-modal-header">
+ Your Content Rejected
+</div>
+<div class="sb-modal-content">
+    <div class="sb-field-group">
+      <label>Reason for rejection</label>
+      <div class="sb-field relative">
+        <textarea class="sb-form-control" name="moretext" placeholder="Type here..." rows="4"></textarea>
+        <span class="characters-left">1000 Characters left</span>
+      </div>
+    </div>
+</div>
+<div class="sb-modal-actions">
+  <button class="sb-btn sb-btn-normal sb-btn-primary" type="submit"> Submit </button>
+</div>
+</sui-modal>
+    

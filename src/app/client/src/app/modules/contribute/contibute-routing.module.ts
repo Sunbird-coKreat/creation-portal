@@ -6,6 +6,9 @@ import { ProgramComponent } from './components';
 import { ListAllMyProgramsComponent } from './components/list-all-my-programs/list-all-my-programs.component';
 //import { MyProgramComponent} from './components/my-program/my-program.component';
 import { ListNominatedTextbooksComponent} from './components/list-nominated-textbooks/list-nominated-textbooks.component';
+import { OrgUserListComponent } from './components/org-user-list/org-user-list.component';
+import { OrgContriAdminComponent } from './components/org-contri-admin/org-contri-admin.component';
+import { ContriDashboardComponent } from './components/dashboard/dashboard.component';
 const routes: Routes = [{
   path: '', component: ListAllProgramsComponent, canActivate: [ProgramsService],
   data: {
@@ -38,7 +41,24 @@ const routes: Routes = [{
     telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
   },
 },
-
+{
+  path: 'orglist', component: OrgUserListComponent, pathMatch: 'full',
+  data: {
+    telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
+  },
+},
+{
+  path: 'contriadmin', component: OrgContriAdminComponent, pathMatch: 'full',
+  data: {
+    telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
+  },
+},
+{
+  path: 'dashboard', component: ContriDashboardComponent, pathMatch: 'full',
+  data: {
+    telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
+  },
+}
 ];
 
 @NgModule({

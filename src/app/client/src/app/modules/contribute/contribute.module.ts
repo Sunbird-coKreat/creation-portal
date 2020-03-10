@@ -19,10 +19,13 @@ import { CollectionComponent, DashboardComponent } from '../cbse-program';
 import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
 import { ListAllMyProgramsComponent } from './components/list-all-my-programs/list-all-my-programs.component';
 import { ListNominatedTextbooksComponent} from './components/list-nominated-textbooks/list-nominated-textbooks.component';
+import { OrgUserListComponent } from './components/org-user-list/org-user-list.component';
+import { OrgContriAdminComponent } from './components/org-contri-admin/org-contri-admin.component';
+import { ContriDashboardComponent } from './components/dashboard/dashboard.component';
 // import { MyProgramComponent} from './components/my-program/my-program.component';
 @NgModule({
   
-  declarations: [ListAllProgramsComponent, ProgramComponent, OnboardPopupComponent, ProgramHeaderComponent, ListAllMyProgramsComponent, ListNominatedTextbooksComponent  ],
+  declarations: [ListAllProgramsComponent, ProgramComponent, OnboardPopupComponent, ProgramHeaderComponent, ListAllMyProgramsComponent, ListNominatedTextbooksComponent, OrgUserListComponent, OrgContriAdminComponent, ContriDashboardComponent ],
   imports: [
     SuiModule,
     CommonModule,
@@ -36,7 +39,6 @@ import { ListNominatedTextbooksComponent} from './components/list-nominated-text
     NgInviewModule,
     TelemetryModule,
     CbseProgramModule,
-    
     DynamicModule.withComponents([CollectionComponent, DashboardComponent])
   ],
   exports: [
