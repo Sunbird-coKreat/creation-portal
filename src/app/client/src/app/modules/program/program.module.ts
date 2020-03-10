@@ -21,13 +21,16 @@ import { DynamicModule } from 'ng-dynamic-component';
 import { CbseProgramModule } from '../../modules/cbse-program/cbse-program.module';
 import { CollectionComponent, DashboardComponent, ChapterListComponent } from '../cbse-program';
 import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
+import { ProgramListComponent } from '../shared-feature';
+import { DaysToGoPipe } from '../shared-feature/pipe/days-to-go.pipe';
+
 @NgModule({
   declarations: [ListAllProgramsComponent,
     // tslint:disable-next-line:max-line-length
     ProgramComponent, OnboardPopupComponent,
     ProgramHeaderComponent, CreateProgramComponent,
     ProgramNominationsComponent, ListNominationsComponent,
-    ListContributorTextbooksComponent],
+    ListContributorTextbooksComponent, ProgramListComponent, DaysToGoPipe],
   imports: [
   SuiModule,
     CommonModule,

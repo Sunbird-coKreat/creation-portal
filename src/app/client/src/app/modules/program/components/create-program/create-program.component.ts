@@ -20,6 +20,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      */
     createProgramForm: FormGroup;
     sbFormBuilder: FormBuilder;
+    options;
 
     /**
      * Contains Program form data
