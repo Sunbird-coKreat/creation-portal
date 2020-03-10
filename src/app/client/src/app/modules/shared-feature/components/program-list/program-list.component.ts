@@ -30,7 +30,9 @@ export class ProgramListComponent implements OnInit {
   private checkIfUserIsContributor() {
     this.programsService.allowToContribute$.pipe(
       tap((isContributor: boolean) => {
+        // TODO implement based on api and remove url checks
         // this.isContributor = !isContributor;
+
         this.isContributor = this.router.url.includes('/contribute');
         this.activeAllProgramsMenu = this.router.isActive('/contribute', true);
         this.activeMyProgramsMenu = this.router.isActive('/contribute/myenrollprograms', true);
@@ -38,10 +40,10 @@ export class ProgramListComponent implements OnInit {
         if (this.isContributor) {
           this.getProgramsForContributors();
         } else {
-          this.getProgramsForOrg();
+          this.getMyProgramsForOrg();
         }
 
-        console.log("Am I contributor : ", isContributor);
+        console.log("Am I contributor : ", this.isContributor);
         console.log("activeMyProgramsMenu : ", this.activeMyProgramsMenu);
         console.log("activeAllProgramsMenu : ", this.activeAllProgramsMenu);
       })
@@ -62,8 +64,8 @@ export class ProgramListComponent implements OnInit {
   /**
    * fetch the list of programs.
    */
-  private getProgramsForOrg() {
-    return this.programsService.getProgramsForOrg().subscribe(
+  private getMyProgramsForOrg() {
+    return this.programsService.getMyProgramsForOrg().subscribe(
       programs => {
         this.programs = programs;
       }
@@ -107,16 +109,16 @@ export class ProgramListComponent implements OnInit {
   }
   
   private viewDetailsBtnClicked(program) {
-    if (this.activeMyProgramsMenu) {
-      return this.router.navigateByUrl('/contribute/nominatedtextbooks/' + program.programId);
-    }
-
-    if (this.activeAllProgramsMenu) {
-      return this.router.navigateByUrl('/contribute/program/' + program.programId);
-    }
-
     if (this.isContributor) {
-      return this.router.navigateByUrl('/sourcing/nominations/' + program.programId);
+      if (this.activeMyProgramsMenu) {
+        return this.router.navigateByUrl('/contribute/nominatedtextbooks/' + program.program_id);
+      }
+
+      if (this.activeAllProgramsMenu) {
+        return this.router.navigateByUrl('/contribute/program/' + program.program_id);
+      }
+    } else {
+      return this.router.navigateByUrl('/sourcing/nominations/' + program.program_id);
     }
   }
 }
