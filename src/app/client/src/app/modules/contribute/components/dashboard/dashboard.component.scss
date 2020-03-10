@@ -1,3 +1,33 @@
-h1{
-  font-size: 5em;
+.sb-card{
+  margin: 0.3rem;
+  text-align: center;
+  .sb-card-title{
+    font-size: 0.9rem;
+  }
+  h2{
+    font-size: 4.2rem;
+     margin: 2rem 0;
+  }
+}
+.sb-card-cover{
+  display: flex;
+  flex-wrap: wrap;
+  align-content: stretch;
+}
+
+  
+  .sb-card{
+    width: 16.2rem;
+  }
+  .sb-card-cover{
+    justify-content: stretch;
+  }
+
+@media (min-width:768px){
+  .sb-card{
+    width: 11.7rem;
+  }
+  .sb-card-cover{
+    justify-content: cemter;
+  }
 }

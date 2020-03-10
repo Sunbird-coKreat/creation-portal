@@ -1,105 +1,69 @@
-<div class="sb-pageSection my-24 ui container" [appTelemetryImpression]="telemetryImpression">
+<div class="ui container">
+<div class="sb-pageSection mt-24 mb-60" [appTelemetryImpression]="telemetryImpression">
     <div class="sb-pageSection-content">
       <div class="sb-pageSection-header">
           <h4 class="sb-pageSection-title"> Contributor Dashboard</h4>
         </div>
     </div>
-    <div class="ui grid">
-      <div class="six wide tablet four wide computer column masonry-grid">
+    <div class="ui grid mx-0">
+      <div class="twelve wide tablet four wide computer column px-5">
+          <h5 class="my-10 font-weight-bold">Programs</h5>
+          <div class="sb-card-cover">
             <!-- 1st card -->
-            <div class="sb-card masonry-item" tabindex="0" dir="rtl" lang="ur">
+            <div class="sb-card" tabindex="0" dir="rtl" lang="ur">
               <div class="sb-card-body">
                 <h4 class="sb-card-title">
                     Contributors made
                 </h4>
-                <h1 class="sb-color-primary">100</h1>
-              </div>
-              <div class="sb-card-progressbar">
-                <sui-progress class="ui progress success">
-                  <div class="bar" style="width: 30%;">
-                    <div class="progress">100%</div>
-                  </div>
-                  <div class="label"></div>
-                </sui-progress>
+                <h2 class="sb-color-gray-200">100</h2>
               </div>
             </div>
-             <!-- 2nd card -->
-             <div class="sb-card masonry-item" tabindex="0" dir="rtl" lang="ur">
+            <!-- 2nd card -->
+            <div class="sb-card" tabindex="0" dir="rtl" lang="ur">
                 <div class="sb-card-body">
                   <h4 class="sb-card-title">
-                     Programs nominated
+                    Programs nominated
                   </h4>
-                  <h1 class="sb-color-secondary">60</h1>
-                </div>
-                <div class="sb-card-progressbar">
-                  <sui-progress class="ui progress">
-                    <div class="bar" style="width: 30%;">
-                      <div class="progress">100%</div>
-                    </div>
-                    <div class="label"></div>
-                  </sui-progress>
+                  <h2 class="sb-color-gray-200">60</h2>
                 </div>
               </div>
-               <!-- 3rd card -->
-            <div class="sb-card masonry-item" tabindex="0" dir="rtl" lang="ur">
+              <!-- 3rd card -->
+            <div class="sb-card" tabindex="0" dir="rtl" lang="ur">
                 <div class="sb-card-body">
                   <h4 class="sb-card-title">
                       Content Uploaded
                   </h4>
-                  <h1 class="sb-color-gray">50</h1>
-                </div>
-                <div class="sb-card-progressbar">
-                  <sui-progress class="ui progress">
-                    <div class="bar" style="width: 30%;">
-                      <div class="progress">100%</div>
-                    </div>
-                    <div class="label"></div>
-                  </sui-progress>
+                  <h2 class="sb-color-gray-200">50</h2>
                 </div>
               </div>
-               <!-- 4th card -->
-            <div class="sb-card masonry-item" tabindex="0" dir="rtl" lang="ur">
+              <!-- 4th card -->
+            <div class="sb-card" tabindex="0" dir="rtl" lang="ur">
                 <div class="sb-card-body">
                   <h4 class="sb-card-title">
                       Programs Approved
                   </h4>
-                  <h1 class="sb-color-warning">30</h1>
+                  <h2 class="sb-color-gray-200">30</h2>
                 </div>
-                <div class="sb-card-progressbar">
-                  <sui-progress class="ui progress">
-                    <div class="bar" style="width: 30%;">
-                      <div class="progress">100%</div>
-                    </div>
-                    <div class="label"></div>
-                  </sui-progress>
-                </div>
-              </div>
-               <!-- 5th card -->
-            <div class="sb-card masonry-item" tabindex="0" dir="rtl" lang="ur">
-                <div class="sb-card-body">
-                  <h4 class="sb-card-title">
-                      Published on DIKSHA
-                  </h4>
-                  <h1 class="sb-color-error">90</h1>
-                </div>
-                <div class="sb-card-progressbar">
-                  <sui-progress class="ui progress">
-                    <div class="bar" style="width: 30%;">
-                      <div class="progress">100%</div>
-                    </div>
-                    <div class="label"></div>
-                  </sui-progress>
-                </div>
-              </div>  
-      </div>
-      <div class="six wide tablet eight wide computer column">
-          <h5>List of recently published content</h5>
-          <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed mb-20">
+        </div>
+         <!-- 5th card -->
+      <div class="sb-card" tabindex="0" dir="rtl" lang="ur">
+          <div class="sb-card-body">
+            <h4 class="sb-card-title">
+                Published on DIKSHA
+            </h4>
+            <h2 class="sb-color-gray-200">10</h2>
+          </div>
+        </div>
+    </div>
+  </div>
+      <div class="twelve wide tablet eight wide computer column px-5">
+          <h5 class="my-10 font-weight-bold">List of recently published content</h5>
+          <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed mb-30">
               <thead class="sb-table-header sb-table-thead-gray">
                 <tr>
                   <th class="sb-sort-icon">Program</th>
-                  <th>No of Textbooks</th>
-                  <th>Grades, Mediums, Subjects</th>
+                  <th>Textbooks</th>
+                  <th>Grade, Mediums, Board</th>
                   <th class="text-center">Links</th>
                 </tr>
               </thead>
@@ -109,15 +73,15 @@
                       <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
                         Old man and the Sea
                       </div>
-                      <div class="sb-label-value mt-4">Program Kerala</div>
+                      <div>Program Kerala</div>
                     </td>
                   <td>English</td>
                   <td>
-                      <div class="sb__ellipsis sb-color-primary" suiPopup popupHeader="Grades" popupText="Grade 7, Grade 2, Grade 3">5th, English</div>
-                      <div class="sb__ellipsis" suiPopup popupHeader="Medium" popupText="English, Hindi, Marathi">CBSE</div>
+                      <div class="sb__ellipsis sb-color-primary">5th, English</div>
+                      <div class="sb-label-value mt-4">CBSE</div>
                   </td>
                   <td>
-                     <a class="sb__ellipsis">https://docs.google.com/document/d/1OftdTSPe6Ndi1dMUXYoxEHg4oc2pWiCzzKsys7UdQaA/edit</a>
+                     <a class="sb__ellipsis font-weight-bold"  suiPopup popupHeader="Links" popupText="https://docs.google.com/document/d/edit">https://docs.google.com/document/d/edit</a>
                   </td>
                 </tr>
                 <tr> 
@@ -125,15 +89,15 @@
                         <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
                           Old man and the Sea
                         </div>
-                        <div class="sb-label-value mt-4">Program Kerala</div>
+                        <div>Program Uttar Pradesh</div>
                       </td>
-                    <td>English</td>
+                    <td>Hindi</td>
                     <td>
-                        <div class="sb__ellipsis sb-color-primary" suiPopup popupHeader="Grades" popupText="Grade 7, Grade 2, Grade 3">5th, English</div>
-                        <div class="sb__ellipsis" suiPopup popupHeader="Medium" popupText="English, Hindi, Marathi">CBSE</div>
+                        <div class="sb__ellipsis sb-color-primary">5th, Hindi</div>
+                        <div class="sb-label-value mt-4">ICSE</div>
                     </td>
                     <td>
-                       <a class="sb__ellipsis"> https://docs.google.com/document/d/1OftdTSPe6Ndi1dMUXYoxEHg4oc2pWiCzzKsys7UdQaA/edit</a>
+                       <a class="sb__ellipsis font-weight-bold" suiPopup popupHeader="Links" popupText="https://docs.google.com/document/d/edit"> https://docs.google.com/document/d/edit</a>
                     </td>
                   </tr>
                   <tr> 
@@ -141,28 +105,28 @@
                           <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
                             Old man and the Sea
                           </div>
-                          <div class="sb-label-value mt-4">Program Kerala</div>
+                          <div>Program Punjab</div>
                         </td>
-                      <td>English</td>
+                      <td>Physics</td>
                       <td>
-                          <div class="sb__ellipsis sb-color-primary" suiPopup popupHeader="Grades" popupText="Grade 7, Grade 2, Grade 3">5th, English</div>
-                          <div class="sb__ellipsis" suiPopup popupHeader="Medium" popupText="English, Hindi, Marathi">CBSE</div>
+                          <div class="sb__ellipsis sb-color-primary">5th, Physics</div>
+                          <div class="sb-label-value mt-4">CBSE</div>
                       </td>
                       <td>
-                         <a class="sb__ellipsis">https://docs.google.com/document/d/1OftdTSPe6Ndi1dMUXYoxEHg4oc2pWiCzzKsys7UdQaA/edit</a>
+                         <a class="sb__ellipsis font-weight-bold" suiPopup popupHeader="Links" popupText="https://docs.google.com/document/d/edit">https://docs.google.com/document/d/edit</a>
                       </td>
                     </tr>
                     </tbody>
               </table>
-          
-          <h5>User Requests</h5>
+
+          <h5 class="my-10 font-weight-bold">User Requests</h5>
           <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
               <thead class="sb-table-header sb-table-thead-gray">
                 <tr>
                   <th class="sb-sort-icon">Individual / Organisation</th>
-                  <th>Grades, Mediums, Subjects</th>
-                  <th class="text-center">Content Type</th>
-                  <th class="text-center">Actions</th>
+                  <th>Grade, Medium, Board</th>
+                  <th>Content Type</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody class="sb-table-body">
@@ -171,60 +135,60 @@
                       <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
                         Program name Kerala
                       </div>
-                      <div class="sb-label-value mt-4">CBSE</div>
                     </td>
                   <td>
                       <div class="sb-color-primary">Grade 7, English</div>
-                      <div class="sb__ellipsis">CBSE</div>
+                      <div class="sb-label-value mt-4">CBSE</div>
                   </td>
                   <td>                
                     <div>Explaination Video, Learning out..</div>
                   </td>
                   <td>
                       <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5">Accept</button>
-                      <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5">Reject</button>
+                      <button class="sb-btn sb-btn-xs sb-btn-outline-primary">Reject</button>
+                      <i class="angle right link icon ml-5"></i>
                   </td>
                 </tr>
                 <tr> 
                     <td>
                         <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
-                          Program name Kerala
+                          Program name Bihar
                         </div>
-                        <div class="sb-label-value mt-4">CBSE</div>
                       </td>
                       <td>
-                          <div class="sb-color-primary">Grade 7, English</div>
-                          <div class="sb__ellipsis">CBSE</div>
+                          <div class="sb-color-primary">Grade 8, Hindi</div>
+                          <div class="sb-label-value mt-4">CBSE</div>
                       </td>
                     <td>                
                       <div>Explaination Video, Learning out..</div>
                     </td>
                     <td>
                         <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5">Accept</button>
-                        <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5">Reject</button>
+                        <button class="sb-btn sb-btn-xs sb-btn-outline-primary">Reject</button>
+                        <i class="angle right link icon ml-5"></i>
                     </td>
                   </tr>
                   <tr> 
                       <td>
                           <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
-                            Program name Kerala
+                            Program name Punjab
                           </div>
-                          <div class="sb-label-value mt-4">CBSE</div>
                         </td>
                         <td>
-                            <div class="sb-color-primary">Grade 7, English</div>
-                            <div class="sb__ellipsis">CBSE</div>
+                            <div class="sb-color-primary">Grade 10, Mathematics</div>
+                            <div class="sb-label-value mt-4">CBSE</div>
                         </td>
                       <td>                
                         <div>Explaination Video, Learning out..</div>
                       </td>
                       <td>
                           <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5">Accept</button>
-                          <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5">Reject</button>
+                          <button class="sb-btn sb-btn-xs sb-btn-outline-primary">Reject</button>
+                          <i class="angle right link icon ml-5"></i>
                       </td>
                     </tr>
                     </tbody>
               </table>
-      </div>
+       </div>
     </div>
 </div>
