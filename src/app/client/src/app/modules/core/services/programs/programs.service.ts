@@ -263,20 +263,20 @@ export class ProgramsService extends DataService implements CanActivate {
    */
   private getApiSampleObj() {
    return {
-      textbooks: [ 
+      textbooks: [
         { id: "1", name: "Textbook 1" },
         { id: "2", name: "Textbook 2" },
         { id: "3", name: "Textbook 3" }
       ],
-      grades: [ 
+      grades: [
         { id: "1", name: "Grade 1" },
         { id: "3", name: "Grade 3" }
       ],
-      mediums: [ 
+      mediums: [
         { id: "1", name: "Marathi" },
         { id: "2", name: "English" }
       ],
-      subjects: [ 
+      subjects: [
         { id: "1", name: "Mathematics" },
         { id: "2", name: "Science" },
         { id: "3", name: "Geography" }
