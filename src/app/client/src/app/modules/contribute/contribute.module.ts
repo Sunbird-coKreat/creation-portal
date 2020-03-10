@@ -25,6 +25,7 @@ import { DaysToGoPipe } from '../shared-feature/pipe/days-to-go.pipe';
 @NgModule({
   
   declarations: [ListAllProgramsComponent, ProgramComponent, OnboardPopupComponent, ProgramHeaderComponent, ListAllMyProgramsComponent, ListNominatedTextbooksComponent, ProgramListComponent, DaysToGoPipe  ],
+
   imports: [
     SuiModule,
     CommonModule,
@@ -38,7 +39,7 @@ import { DaysToGoPipe } from '../shared-feature/pipe/days-to-go.pipe';
     NgInviewModule,
     TelemetryModule,
     CbseProgramModule,
-    
+
     DynamicModule.withComponents([CollectionComponent, DashboardComponent])
   ],
   exports: [

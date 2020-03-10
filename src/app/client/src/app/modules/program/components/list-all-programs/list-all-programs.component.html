@@ -1,13 +1,11 @@
 <app-program-list></app-program-list>
 
-<sui-modal *ngIf="show"
-  [mustScroll]="true" 
+<sui-modal [mustScroll]="true" 
   [isClosable]="true"
   [transitionDuration]="0"
   [size]="'normal'"
   class="sb-modal"
   appBodyScroll
-  (dismissed)="show = false"
   #modal>
 <app-create-program></app-create-program>
 </sui-modal>
