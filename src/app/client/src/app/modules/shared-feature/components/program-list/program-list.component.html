@@ -22,7 +22,7 @@
                 <th *ngIf="!isContributor">{{ resourceService.frmelmnts.lbl.nominations }}</th>
                 <th *ngIf="!isContributor">{{ resourceService.frmelmnts.lbl.nomination }}<br>{{ resourceService.frmelmnts.lbl.shortlistDates }}</th>
                 <th *ngIf="!isContributor">{{ resourceService.frmelmnts.lbl.contentSubmissionDate }}<br>{{ resourceService.frmelmnts.lbl.programEndDate }}</th>
-                <th *ngIf="activeMyProgramsMenu">{{ resourceService.frmelmnts.lbl.contributionDate }}</th>
+                <th *ngIf="activeMyProgramsMenu" class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.contributionDate }}</th>
                 <th *ngIf="activeAllProgramsMenu" class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.nominationEndDate }}</th>
                 <th *ngIf="activeMyProgramsMenu"><span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
                   <div class="text">{{ resourceService.frmelmnts.lbl.nominationStatus }}</div>
