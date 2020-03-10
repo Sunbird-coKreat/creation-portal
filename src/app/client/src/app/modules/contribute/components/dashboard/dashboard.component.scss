@@ -14,15 +14,16 @@
   flex-wrap: wrap;
   align-content: stretch;
 }
-@media (min-width:320px){
+
+  
   .sb-card{
     width: 16.2rem;
   }
   .sb-card-cover{
     justify-content: stretch;
   }
-}
-@media(min-width:768px){
+
+@media (min-width:768px){
   .sb-card{
     width: 11.7rem;
   }
