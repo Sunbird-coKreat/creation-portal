@@ -5,7 +5,7 @@
 		<!-- <button  class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" type="button"><i class="icon-svg icon-svg--xxs icon-back mr-4"><svg  class="icon icon-svg--primary"><use xlink:href="assets/images/libdemo/sprite.svg#arrow-long-left"></use></svg></i> Back</button> -->
         <h4 class="sb-pageSection-title six wide column">
           New Program FEB2020
-          <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate"></i>
+          <i class="info circle link icon hide hidden" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
           <ng-template #popupTemplate>
             <div class="content">
               <div class="textbook-details ml-8">
@@ -60,25 +60,25 @@
 		</h4>
 		<div class="d-flex flex-jc-space-between flex-ai-center fnormal mt-8">
 			<div class="d-flex flex-dc flex-25 pr-16">
-				<div class="sb__ellipsis" suiPopup popupHeader="Grades/Class" popupText="Grade 1, Grade 2">Grade 1, Grade 2</div>
+				<div class="sb__ellipsis" suiPopup popupHeader="Grades/Class"  popupDelay="1000" popupText="Grade 1, Grade 2">Grade 1, Grade 2</div>
 				<div class="divider my-4"></div>
-				<div class="sb__ellipsis" suiPopup popupHeader="Medium" popupText="English, Marthi, Hindi">English, Marthi, Hindi</div>
+				<div class="sb__ellipsis" suiPopup popupHeader="Medium"  popupDelay="1000" popupText="English, Marthi, Hindi">English, Marthi, Hindi</div>
 			</div>
 			<div class="d-flex flex-ai-center flex-jc-space-between flex-75 ">
 				<dl class="sb-meta-data mb-0 pr-8 w-25">
-					<dt class="sb__ellipsis" suiPopup popupHeader="Expression of Interest Date" popupText="July 26th, 2019">Expression of Interest Date</dt>
+					<dt class="sb__ellipsis"  popupDelay="1000" suiPopup popupHeader="Expression of Interest Date" popupText="July 26th, 2019">Expression of Interest Date</dt>
 					<dd>July 26th, 2019</dd>
 				  </dl>
 				  <dl class="sb-meta-data mb-0 pr-8 w-25">
-					<dt class="sb__ellipsis" suiPopup popupHeader="Expression of Interest Date" popupText="July 26th, 2019">Shortlisting of Contributor Date</dt>
+					<dt class="sb__ellipsis"  popupDelay="1000" suiPopup popupHeader="Expression of Interest Date" popupText="July 26th, 2019">Shortlisting of Contributor Date</dt>
 					<dd>July 26th, 2019</dd>
 				  </dl>
 				  <dl class="sb-meta-data mb-0 pr-8 w-25">
-					<dt class="sb__ellipsis" suiPopup popupHeader="Expression of Interest Date" popupText="July 26th, 2019">Content Submission Date</dt>
+					<dt class="sb__ellipsis"  popupDelay="1000" suiPopup popupHeader="Expression of Interest Date" popupText="July 26th, 2019">Content Submission Date</dt>
 					<dd>July 26th, 2019</dd>
 				  </dl>
 				  <dl class="sb-meta-data mb-0 pr-8 w-25">
-					<dt class="sb__ellipsis" suiPopup popupHeader="Expression of Interest Date" popupText="July 26th, 2019">Program End Date</dt>
+					<dt class="sb__ellipsis"  popupDelay="1000" suiPopup popupHeader="Expression of Interest Date" popupText="July 26th, 2019">Program End Date</dt>
 					<dd>July 26th, 2019</dd>
 				  </dl>
 			</div>
@@ -123,16 +123,23 @@
 				  <th class="sb-sort-icon">Contributor Name</th>
 				  <th class="sb-sort-icon">Type</th>
 				  <th class="sb-sort-icon">Textbooks</th>
-				  <th class="sb-sort-icon">Status</th>
+				  <th><span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
+            <div class="text">Status</div>
+            <i class="filter icon"></i>
+            <div class="menu" suiDropdownMenu>
+                <div class="item">All</div>
+                <div class="item">Pending</div>
+                <div class="item selected">Approved</div>
+                <div class="item">Rejected</div>
+            </div>
+        </span></th>
 				  <th class="text-center"></th>
 				</tr>
 			  </thead>
 			  <tbody class="sb-table-body">
 				<tr *ngFor="let nomination of nominations">
 				  <td>
-					<div
-					  class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold"
-					>
+					<div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
 					  {{ nomination?.contributor_name }}
 					</div>
 				  </td>
@@ -140,29 +147,18 @@
 					<div>{{ nomination?.type }}</div>
 				  </td>
 				  <td>
-					<div
-					  suiPopup
-					  popupHeader="Text Books"
-					  popupText="{{ nomination?.textbooks }}">3 Textbooks</div>
+					<div suiPopup popupDelay="1000" popupHeader="Text Books" popupText="{{ nomination?.textbooks }}">3 Textbooks</div>
 				  </td>
 				  <td>
 					<span class="sb-label sb-label-table sb-label-primary-100">{{ nomination?.status }}</span>
 				  </td>
-				  <td class="text-center">
-					<button
-					  class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
+				  <td class="text-right">
+					<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
 					  *ngIf="nomination?.status === 'Pending'"
-					  [routerLink]="'/sourcing/contributor/' + nomination.program_id"
-					>
-					  View Details
-					</button>
-					<button
-					  class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
+					  [routerLink]="'/sourcing/contributor/' + nomination.program_id">View Details</button>
+					<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
 					  *ngIf="nomination?.status === 'Accepted'"
-					  [routerLink]="'/sourcing/contributor/' + nomination.program_id"
-					>
-					  View Contribution
-					</button>
+					  [routerLink]="'/sourcing/contributor/' + nomination.program_id">View Contribution</button>
 				  </td>
 				</tr>
 			  </tbody>

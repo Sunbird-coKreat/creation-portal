@@ -17,7 +17,7 @@
 				  <div class="d-flex flex-ai-center flex-jc-space-around flex-basis-1">
 					<dl class="sb-meta-data mb-0 pr-8">
 						<dt>Program Name</dt>
-						<dd class="sb__ellipsis" suiPopup popupText="New Program FEB2020">New Program FEB2020 <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate"></i>
+						<dd class="sb__ellipsis" suiPopup popupText="New Program FEB2020" popupDelay="1000">New Program FEB2020 <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate"></i>
 							<ng-template #popupTemplate>
 							  <div class="content">
 								<div class="textbook-details ml-8">
@@ -71,7 +71,7 @@
 							</ng-template></dd>
 					  </dl>
 				  <dl class="sb-meta-data mb-0 pr-8">
-					  <dt class="sb__ellipsis" suiPopup>Type</dt>
+					  <dt class="sb__ellipsis">Type</dt>
 					  <dd  popupText="Org/Individual">Org/Individual</dd>
 					</dl>
 					<dl class="sb-meta-data mb-0 pr-8">
@@ -110,7 +110,7 @@
 	</div>
 	</div>
 
-<div class="sb-bg-color-white pb-48 dynamicHeight"  *ngIf="!showChapterList">
+<div class="sb-bg-color-white pb-64 dynamicHeight"  *ngIf="!showChapterList">
 <div class="ui container">
 	<div class="sb-pageSection pt-24" [appTelemetryImpression]="telemetryImpression">
 		<div class="sb-pageSection-content">
@@ -168,7 +168,7 @@
 <ng-container *ngIf="showChapterList">
 	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>
 </ng-container>
-<sui-modal [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+<sui-modal [mustScroll]="true" [isClosable]="true" *ngIf="show" [transitionDuration]="0" [size]="'normal'"
   class="sb-modal" appBodyScroll #modal>
   <div class="sb-modal-header"> Nominee Profile Details </div>
   <div class="sb-modal-content o-y-visible pb-8">

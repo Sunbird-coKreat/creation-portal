@@ -1,5 +1,5 @@
 .sb-pageSection {
-  .sb-pageSection-header {
+  &-header {
     display: flex;
     align-items: center;
     @include margin($sb-page-section-header-content-space);
