@@ -105,10 +105,9 @@
             </tbody>
           </table>
 </div>
-<button class="sb-btn sb-btn-outline-primary ml-10 sb-btn-normal" (click)="showAssignRoleModal = true">Link to add a user</button>
 
 <!-- Modal popup for share link -->
-<sui-modal *ngIf="showAssignRoleModal" 
+<sui-modal *ngIf="showNormalModal" 
             [mustScroll]="true" 
             [isClosable]="true" 
             [transitionDuration]="0" 
@@ -127,7 +126,8 @@
           </div>
 </sui-modal>
 
-<sui-modal *ngIf="showNormalModal" 
+<!-- <button class="sb-btn sb-btn-outline-primary ml-10 sb-btn-normal" (click)="showAssignRoleModal = true">Link to add a user</button>
+<sui-modal *ngIf="showAssignRoleModal" 
             [mustScroll]="true" 
             [isClosable]="true" 
             [transitionDuration]="0" 
@@ -177,4 +177,4 @@
                   </tbody>
                 </table>
             </div>
-      </sui-modal>
+      </sui-modal> -->
