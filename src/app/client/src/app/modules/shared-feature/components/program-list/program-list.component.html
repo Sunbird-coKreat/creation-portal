@@ -19,9 +19,9 @@
                 <th *ngIf="!isContributor">{{ resourceService.frmelmnts.lbl.nominations }}</th>
                 <th *ngIf="!isContributor">{{ resourceService.frmelmnts.lbl.nomination }}<br>{{ resourceService.frmelmnts.lbl.shortlistDates }}</th>
                 <th *ngIf="!isContributor">{{ resourceService.frmelmnts.lbl.contentSubmissionDate }}<br>{{ resourceService.frmelmnts.lbl.programEndDate }}</th>
-                <th *ngIf="activeMyProgramsMenu">{{ resourceService.frmelmnts.lbl.contributionDate }}</th>
+                <th *ngIf="activeMyProgramsMenu" class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.contributionDate }}</th>
                 <th *ngIf="activeAllProgramsMenu" class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.nominationEndDate }}</th>
-                <th *ngIf="activeMyProgramsMenu">{{ resourceService.frmelmnts.lbl.nominationStatus }}</th>
+                <th *ngIf="activeMyProgramsMenu" class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.nominationStatus }}</th>
                 <th class="w-10 text-center">{{ resourceService.frmelmnts.lbl.actions }}</th>
               </tr>
             </thead>
@@ -61,7 +61,7 @@
                   </div>
                 </td>
                 <td *ngIf="activeMyProgramsMenu" >
-                  <div >{{ getProgramStatus(program) }}</div>
+                  <div >{{ getProgramNominationStatus(program) }}</div>
                 </td>
                 <td *ngIf="!isContributor">
                   <div>{{ program?.nomination_end_date | date:'LLLL d, yyyy' }}<br>
