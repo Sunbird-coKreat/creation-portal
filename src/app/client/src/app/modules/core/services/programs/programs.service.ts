@@ -204,7 +204,6 @@ export class ProgramsService extends DataService implements CanActivate {
       }),
       catchError(err => {
         console.log("getMyProgramsForOrg", err);
-        this.toasterService.warning(this.resourceService.messages.emsg.m0014);
         return of([])
       })
     );
@@ -228,7 +227,6 @@ export class ProgramsService extends DataService implements CanActivate {
       }),
       catchError(err => {
         console.log("getAllProgramsForContrib", err);
-        this.toasterService.warning(this.resourceService.messages.emsg.m0014);
         return of([])
       })
     );
@@ -252,7 +250,6 @@ export class ProgramsService extends DataService implements CanActivate {
       }),
       catchError(err => {
         console.log("getAllProgramsForContrib", err);
-        this.toasterService.warning(this.resourceService.messages.emsg.m0014);
         return of([])
       })
     );
