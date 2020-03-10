@@ -1,11 +1,14 @@
-<div class="ui container">
+<div class="ui container mb-48">
   <div class="sb-pageSection my-24" [appTelemetryImpression]="telemetryImpression">
-    <div class="sb-pageSection-header">
-      <h4 class="sb-pageSection-title" *ngIf="programs !== undefined && programs.length">
-        <span *ngIf="!isContributor || activeMyProgramsMenu">{{ resourceService.frmelmnts.lbl.myPrograms }} </span>
-        <span *ngIf="activeAllProgramsMenu">{{ resourceService.frmelmnts.lbl.explorePrograms }} </span>
-        <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8" *ngIf="programs && programs.length">{{programs.length}}</span></h4>
-    </div>
+      <div class="d-flex flex-ai-center flex-jc-space-between">
+        <div class="sb-pageSection-header mb-0">
+          <h4 class="sb-pageSection-title">
+            <span *ngIf="!isContributor || activeAllProgramsMenu">{{ resourceService.frmelmnts.lbl.myPrograms }} </span>
+            <span *ngIf="activeMyProgramsMenu">{{ resourceService.frmelmnts.lbl.explorePrograms }} </span>
+            <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8" *ngIf="programs && programs.length">{{programs.length}}</span></h4>
+        </div>
+        <!-- <button routerLink="sourcing/create-program" *ngIf="this.router.url.includes('/sourcing')" class="sb-btn sb-btn-normal sb-btn-primary"><i class="plus outline icon"></i> Add New Program</button> -->
+      </div>
     <div class="sb-pageSection-content mt-12">
       <ng-container *ngIf="programs !== undefined else loading">
         <ng-container *ngIf="programs.length else noResult">
@@ -21,7 +24,16 @@
                 <th *ngIf="!isContributor">{{ resourceService.frmelmnts.lbl.contentSubmissionDate }}<br>{{ resourceService.frmelmnts.lbl.programEndDate }}</th>
                 <th *ngIf="activeMyProgramsMenu" class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.contributionDate }}</th>
                 <th *ngIf="activeAllProgramsMenu" class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.nominationEndDate }}</th>
-                <th *ngIf="activeMyProgramsMenu" class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.nominationStatus }}</th>
+                <th *ngIf="activeMyProgramsMenu"><span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
+                  <div class="text">{{ resourceService.frmelmnts.lbl.nominationStatus }}</div>
+                  <i class="filter icon"></i>
+                  <div class="menu" suiDropdownMenu>
+                      <div class="item">All</div>
+                      <div class="item">Pending</div>
+                      <div class="item selected">Approved</div>
+                      <div class="item">Rejected</div>
+                  </div>
+              </span></th>
                 <th class="w-10 text-center">{{ resourceService.frmelmnts.lbl.actions }}</th>
               </tr>
             </thead>
@@ -34,14 +46,14 @@
                   <div *ngIf="activeMyProgramsMenu" class="sb-label-value mt-4">{{ getProgramBoard(program) }}</div>
                 </td>
                 <td>
-                  <div suiPopup popupHeader="{{ resourceService.frmelmnts.lbl.textbooks }}" popupText="{{ getProgramTextbooks(program) }}">{{ program.textbooks.length }} {{ resourceService.frmelmnts.lbl.textbooks }}</div>
+                  <div suiPopup popupHeader="{{ resourceService.frmelmnts.lbl.textbooks }}" popupDelay="1000" popupText="{{ getProgramTextbooks(program) }}">{{ program.textbooks.length }} {{ resourceService.frmelmnts.lbl.textbooks }}</div>
                 </td>
                 <td>
-                  <div class="sb__ellipsis sb-color-primary" suiPopup popupHeader="{{ resourceService.frmelmnts.lbl.grades }}" popupText="{{ getProgramGrades(program) }}">{{ getProgramGrades(program) }}</div>
+                  <div class="sb__ellipsis" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.grades }}" popupText="{{ getProgramGrades(program) }}">{{ getProgramGrades(program) }}</div>
                   <hr class="divider">
-                  <div class="sb__ellipsis" suiPopup popupHeader="{{ resourceService.frmelmnts.lbl.mediums }}" popupText="{{ getProgramMediums(program) }}">{{ getProgramMediums(program) }}</div>
+                  <div class="sb__ellipsis" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.mediums }}" popupText="{{ getProgramMediums(program) }}">{{ getProgramMediums(program) }}</div>
                   <hr class="divider">
-                  <div class="sb__ellipsis" suiPopup popupHeader="{{ resourceService.frmelmnts.lbl.subjects }}" popupText="{{ getProgramSubjects(program) }}">{{ getProgramSubjects(program) }}</div>
+                  <div class="sb__ellipsis" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.subjects }}" popupText="{{ getProgramSubjects(program) }}">{{ getProgramSubjects(program) }}</div>
                 </td>
                 <td *ngIf="!isContributor">
                   <div>{{ program?.nominations?.pending }} {{ resourceService.frmelmnts.lbl.pending }}</div>
@@ -60,8 +72,8 @@
                     <em>{{ program?.nomination_end_date | daysToGo }}</em>
                   </div>
                 </td>
-                <td *ngIf="activeMyProgramsMenu" >
-                  <div >{{ getProgramNominationStatus(program) }}</div>
+                <td *ngIf="activeMyProgramsMenu">
+                  <span class="sb-label sb-label-table sb-label-primary-100">{{ getProgramStatus(program) }}</span>
                 </td>
                 <td *ngIf="!isContributor">
                   <div>{{ program?.nomination_end_date | date:'LLLL d, yyyy' }}<br>
@@ -82,7 +94,15 @@
                   </div>
                 </td>
                 <td class="text-center">
-                  <button class="sb-btn sb-btn-xs sb-btn-outline-primary" (click)="viewDetailsBtnClicked(program)">{{ resourceService.frmelmnts.lbl.viewDetails }}</button>
+                  <div class="ui dropdown sb-dotted-dropdown" suiDropdown
+                                                autoClose="itemClick">
+                                                <div class="p-8 w-auto" suiPopup popupText="View All Actions" popupDelay="1000"><span class="sb-dotmenu"></span></div>
+                                                <div class="menu" suiDropdownMenu>
+                                                    <div class="item" (click)="viewDetailsBtnClicked(program)">{{ resourceService.frmelmnts.lbl.viewDetails }}</div>
+                                                    <div class="item" *ngIf="activeMyProgramsMenu">Assign Role</div>
+                                                </div>
+                                            </div>
+                  <!-- <button class="sb-btn sb-btn-xs sb-btn-outline-primary" (click)="viewDetailsBtnClicked(program)">{{ resourceService.frmelmnts.lbl.viewDetails }}</button> -->
                 </td>
               </tr>
             </tbody>
