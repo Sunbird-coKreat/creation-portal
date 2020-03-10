@@ -105,8 +105,10 @@
             </tbody>
           </table>
 </div>
+<button class="sb-btn sb-btn-outline-primary ml-10 sb-btn-normal" (click)="showAssignRoleModal = true">Link to add a user</button>
+
 <!-- Modal popup for share link -->
-<sui-modal *ngIf="showNormalModal" 
+<sui-modal *ngIf="showAssignRoleModal" 
             [mustScroll]="true" 
             [isClosable]="true" 
             [transitionDuration]="0" 
@@ -124,3 +126,55 @@
               </button>
           </div>
 </sui-modal>
+
+<sui-modal *ngIf="showNormalModal" 
+            [mustScroll]="true" 
+            [isClosable]="true" 
+            [transitionDuration]="0" 
+            [size]="'normal'"
+            class="sb-modal" 
+            appBodyScroll (dismissed)="showNormalModal = !showNormalModal" 
+            #modal>
+        <div class="sb-modal-header">
+          Link to share
+        </div>
+        <div class="sb-modal-content">
+          <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
+              <thead class="sb-table-header sb-table-thead-gray">
+                <tr>
+                    <th>Username</th>
+                    <th>Assign Role</th>
+                </tr>
+              </thead>
+              <tbody class="sb-table-body">
+                <tr>
+                  <td>Nilesh</td>
+                  <td>
+                      <div class="sb-checkbox sb-checkbox-primary">
+                          <input type="checkbox" id="check1" name="example">
+                          <label for="check1">Assign Reviewer</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Nitesh</td>
+                    <td>
+                      <div class="sb-checkbox sb-checkbox-primary">
+                        <input type="checkbox" id="check1" name="example">
+                        <label for="check1">Assign Reviewer</label>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                      <td>Vaishali</td>
+                      <td>
+                        <div class="sb-checkbox sb-checkbox-primary">
+                          <input type="checkbox" id="check1" name="example">
+                          <label for="check1">Assign Reviewer</label>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+            </div>
+      </sui-modal>
