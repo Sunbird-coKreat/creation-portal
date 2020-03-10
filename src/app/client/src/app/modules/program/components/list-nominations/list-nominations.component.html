@@ -4,7 +4,7 @@
       <div class="flex-basis-1 pr-16">
 		<!-- <button  class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" type="button"><i class="icon-svg icon-svg--xxs icon-back mr-4"><svg  class="icon icon-svg--primary"><use xlink:href="assets/images/libdemo/sprite.svg#arrow-long-left"></use></svg></i> Back</button> -->
         <h4 class="sb-pageSection-title six wide column">
-          New Program FEB2020
+          {{ programDetails?.name }}
           <i class="info circle link icon hide hidden" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
           <ng-template #popupTemplate>
             <div class="content">
@@ -26,7 +26,7 @@
                 </div>
                 <div class="content">
                   <label class="d-block fsmall font-weight-normal mb-0">
-                    July 26th, 2019
+                    {{ programDetails?.nomination_enddate }}
                   </label>
                 </div>
                 <hr />
@@ -35,7 +35,7 @@
                 </div>
                 <div class="content">
                   <label class="d-block fsmall font-weight-normal mb-0">
-                    Aug 5th, 2019
+                    {{ programDetails?.shortlisting_enddate }}
                   </label>
                 </div>
                 <hr />
@@ -44,14 +44,14 @@
                 </div>
                 <div class="content">
                   <label class="d-block fsmall font-weight-normal mb-0">
-                    Aug 20th, 2019
+                    {{ programDetails?.content_submission_enddate }}
                   </label>
                 </div>
                 <hr />
                 <div class="header"><strong>Program End Date</strong></div>
                 <div class="content">
                   <label class="d-block fsmall font-weight-normal mb-0">
-                    Aug 30th, 2019
+                    {{ programDetails?.enddate }}
                   </label>
                 </div>
               </div>
@@ -66,20 +66,20 @@
 			</div>
 			<div class="d-flex flex-ai-center flex-jc-space-between flex-75 ">
 				<dl class="sb-meta-data mb-0 pr-8 w-25">
-					<dt class="sb__ellipsis"  popupDelay="1000" suiPopup popupHeader="Expression of Interest Date" popupText="July 26th, 2019">Expression of Interest Date</dt>
-					<dd>July 26th, 2019</dd>
+					<dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="Expression of Interest Date" popupText="{{ programDetails?.nomination_enddate }}">Expression of Interest Date</dt>
+					<dd> {{ programDetails?.nomination_enddate }}</dd>
 				  </dl>
 				  <dl class="sb-meta-data mb-0 pr-8 w-25">
-					<dt class="sb__ellipsis"  popupDelay="1000" suiPopup popupHeader="Expression of Interest Date" popupText="July 26th, 2019">Shortlisting of Contributor Date</dt>
-					<dd>July 26th, 2019</dd>
+					<dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="Shortlisting of Contributor Date" popupText="{{ programDetails?.shortlisting_enddate }}">Shortlisting of Contributor Date</dt>
+					<dd> {{ programDetails?.shortlisting_enddate }}</dd>
 				  </dl>
 				  <dl class="sb-meta-data mb-0 pr-8 w-25">
-					<dt class="sb__ellipsis"  popupDelay="1000" suiPopup popupHeader="Expression of Interest Date" popupText="July 26th, 2019">Content Submission Date</dt>
-					<dd>July 26th, 2019</dd>
+					<dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="Content Submission Date" popupText="{{ programDetails?.content_submission_enddate }}">Content Submission Date</dt>
+					<dd> {{ programDetails?.content_submission_enddate }}</dd>
 				  </dl>
 				  <dl class="sb-meta-data mb-0 pr-8 w-25">
-					<dt class="sb__ellipsis"  popupDelay="1000" suiPopup popupHeader="Expression of Interest Date" popupText="July 26th, 2019">Program End Date</dt>
-					<dd>July 26th, 2019</dd>
+					<dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="Program End Date" popupText="{{ programDetails?.enddate }}">Program End Date</dt>
+					<dd>{{ programDetails?.enddate }}</dd>
 				  </dl>
 			</div>
 			</div>
