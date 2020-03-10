@@ -34,13 +34,8 @@
     text-transform: uppercase;
     }
 }
-hr.divider,hr {
-    border: 0.5px solid #ddd;
-}
-.divider {
-    height:1px;
-    background-color: #ddd;
-    display: block;
+.divider,hr {
+    border:0.5px solid hsla(0, 0%, 80%, 0.5);
 }
 .sb-inner-white-bg-container {
     background-color:var(--white);

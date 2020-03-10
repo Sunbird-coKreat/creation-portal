@@ -3,6 +3,9 @@
 @extend .flex-jc-center;
 @extend .flex-ai-center;
 }
+.d-flex {
+  display: flex;
+}
 .flex-jc-center {
   justify-content: center !important;
 }
