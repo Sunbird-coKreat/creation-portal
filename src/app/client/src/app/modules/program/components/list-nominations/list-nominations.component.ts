@@ -13,7 +13,9 @@ import { ISessionContext } from '../../../cbse-program/interfaces';
 })
 export class ListNominationsComponent implements OnInit, AfterViewInit {
 	 @Input('nominations')
-	 nominations: [];
+   nominations: [];
+   @Input('nominationsCount')
+	 nominationsCount: [];
 	 @Output()
 	 onApprove = new EventEmitter();
 	 @Output()
@@ -25,12 +27,14 @@ export class ListNominationsComponent implements OnInit, AfterViewInit {
    public programDetails: any;
    public userProfile: any;
 
-  constructor(public frameworkService: FrameworkService, private programsService: ProgramsService, public resourceService: ResourceService,
-    private config: ConfigService, private publicDataService: PublicDataService,
-    private activatedRoute: ActivatedRoute, private router: Router, private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService)  {
+  constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
+    public resourceService: ResourceService, private config: ConfigService,
+    private publicDataService: PublicDataService, private activatedRoute: ActivatedRoute,
+    private router: Router, private navigationHelperService: NavigationHelperService,
+    public toasterService: ToasterService, public userService: UserService)  {
       this.programId = this.activatedRoute.snapshot.params.programId;
   }
-	
+
   ngAfterViewInit() {
   }
 
@@ -69,9 +73,6 @@ export class ListNominationsComponent implements OnInit, AfterViewInit {
       if (frameworkDetails && !frameworkDetails.err) {
         this.sessionContext.frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
       }
-
-      console.log("program");
-      console.log(this.programDetails);
     }, error => {
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
       this.toasterService.error(errorMes || 'Fetching framework details failed');
@@ -79,11 +80,11 @@ export class ListNominationsComponent implements OnInit, AfterViewInit {
   }
 
   onApproveClick(nomination) {
-	this.onApprove.emit(nomination);
+    this.onApprove.emit(nomination);
   }
-  
+
   onRejectClick(nomination) {
-	this.onReject.emit(nomination);
+    this.onReject.emit(nomination);
   }
 
   goToProfile() {
