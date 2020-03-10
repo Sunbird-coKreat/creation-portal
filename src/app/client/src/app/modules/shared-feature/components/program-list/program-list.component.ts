@@ -38,7 +38,14 @@ export class ProgramListComponent implements OnInit {
         this.activeMyProgramsMenu = this.router.isActive('/contribute/myenrollprograms', true);
 
         if (this.isContributor) {
-          this.getProgramsForContributors();
+          if (this.activeAllProgramsMenu) {
+            this.getAllProgramsForContrib('public')
+          }
+
+          if(this.activeMyProgramsMenu) {
+             this.getMyProgramsForContrib();
+          }
+         
         } else {
           this.getMyProgramsForOrg();
         }
@@ -53,8 +60,19 @@ export class ProgramListComponent implements OnInit {
   /**
    * fetch the list of programs.
    */
-  private getProgramsForContributors() {
-    return this.programsService.getProgramsForContributors().subscribe(
+  private getAllProgramsForContrib(type) {
+    return this.programsService.getAllProgramsForContrib(type).subscribe(
+      programs => {
+        this.programs = programs;
+      }
+    );
+  }
+
+  /**
+   * fetch the list of programs.
+   */
+  private getMyProgramsForContrib() {
+    return this.programsService.getMyProgramsForContrib().subscribe(
       programs => {
         this.programs = programs;
       }
@@ -104,7 +122,7 @@ export class ProgramListComponent implements OnInit {
     return program.board;
   }
 
-  private getProgramStatus(program) {
+  private getProgramNominationStatus(program) {
     return program.nomination_status;
   }
   

@@ -105,6 +105,42 @@ export class ProgramsService extends DataService implements CanActivate {
   }
 
   /**
+   * makes api call to get list of programs from ext framework Service
+   */
+  getAllProgramsByType(type): Observable<ServerResponse> {
+    const req = {
+      url: '/program/v1/list',
+      headers: {
+        'content-type' : 'application/json'
+      },
+      data: {
+        request: {
+          type: type
+        }
+      }
+    };
+    return this.post(req);
+  }
+
+  /**
+   * makes api call to get list of programs from ext framework Service
+   */
+  getMyProgramsForContribFromApi(): Observable<ServerResponse> {
+    const req = {
+      url: '/program/v1/list',
+      headers: {
+        'content-type' : 'application/json'
+      },
+      data: {
+        request: {
+          "userId": _.get(this.userService, 'userProfile.userId')
+        }
+      }
+    };
+    return this.post(req);
+  }
+
+  /**
    * gets list of programs
    */
   private getPrograms(): Observable<IProgram[]> {
@@ -168,31 +204,55 @@ export class ProgramsService extends DataService implements CanActivate {
       }),
       catchError(err => {
         console.log("getMyProgramsForOrg", err);
-        this.toasterService.warning(err);
+        this.toasterService.warning(this.resourceService.messages.emsg.m0014);
         return of([])
       })
     );
   }
 
   /**
-   * gets list of programs for contributors
+   * gets list of programs
    */
-  public getProgramsForContributors(): Observable<IProgram[]> {
+  public getAllProgramsForContrib(type): Observable<IProgram[]> {
     let list = [];
     let mergeObj = this.getApiSampleObj();
     let targetDate = new Date();
     targetDate.setDate(targetDate.getDate() + 10)
 
-    return this.searchProgramsAPICall().pipe(
+    return this.getAllProgramsByType(type).pipe(
       map(result => {
-        _.forEach(_.get(result, 'result.programs'), function(program) {
+        _.forEach(_.get(result, 'result'), function(program) {
           list.push({...program, ...mergeObj});
         });
         return list;
       }),
       catchError(err => {
-        console.log("getProgramsForOrg", err);
-        this.toasterService.warning(err);
+        console.log("getAllProgramsForContrib", err);
+        this.toasterService.warning(this.resourceService.messages.emsg.m0014);
+        return of([])
+      })
+    );
+  }
+
+  /**
+   * gets list of programs
+   */
+  public getMyProgramsForContrib(): Observable<IProgram[]> {
+    let list = [];
+    let mergeObj = this.getApiSampleObj();
+    let targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + 10)
+
+    return this.getMyProgramsForContribFromApi().pipe(
+      map(result => {
+        _.forEach(_.get(result, 'result'), function(program) {
+          list.push({...program, ...mergeObj});
+        });
+        return list;
+      }),
+      catchError(err => {
+        console.log("getAllProgramsForContrib", err);
+        this.toasterService.warning(this.resourceService.messages.emsg.m0014);
         return of([])
       })
     );
