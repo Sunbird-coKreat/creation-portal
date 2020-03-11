@@ -26,7 +26,6 @@ export class ProgramsService extends DataService implements CanActivate {
   public readonly allowToContribute$ = this._allowToContribute$.asObservable()
     .pipe(skipWhile(data => data === undefined || data === null));
 
-
   public config: ConfigService;
   baseUrl: string;
   public http: HttpClient;
@@ -38,7 +37,6 @@ export class ProgramsService extends DataService implements CanActivate {
       this.config = config;
       this.baseUrl = 'http://localhost:5000';
      }
-
 
   /**
    * initializes the service is the user is logged in;
@@ -70,6 +68,57 @@ export class ProgramsService extends DataService implements CanActivate {
       );
   }
 
+  /**
+   * makes api call to save the program 
+   */
+  createProgram(request): Observable<ServerResponse> {
+    const req = {
+      url: '/program/v1/create',
+      headers: {
+        'content-type' : 'application/json'
+      },
+      data: {
+        request
+      }
+    };
+
+    return this.post(req);
+  }
+
+   /**
+   * makes api call to get the textbooks for program 
+   */
+  getProgramCollection(request): Observable<ServerResponse> {
+    const req = {
+      url: 'http://localhost:3000/content/composite/v1/search',
+      headers: {
+        'content-type' : 'application/json'
+      },
+      data: {
+        request
+      }
+    };
+    console.log(req);
+    return this.post(req);
+  }
+
+  /**
+   * makes api call to get the textbooks for program 
+   */
+  updateProgram(request): Observable<ServerResponse> {
+    const req = {
+      url: '/program/v1/update',
+      headers: {
+        'content-type' : 'application/json'
+      },
+      data: {
+        request
+      }
+    };
+
+    return this.post(req);
+  }
+   
   /**
    * makes api call to get list of programs from ext framework Service
    */
