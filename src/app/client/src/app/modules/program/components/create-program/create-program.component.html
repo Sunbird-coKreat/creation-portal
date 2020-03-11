@@ -1,5 +1,5 @@
 <div class="ui container">
-	<div class="sb-pageSection my-24" >
+	<div class="sb-pageSection mt-24 pb-48">
 		<div class="sb-pageSection-header">
 			<h4 class="sb-pageSection-title">Create a Program</h4>
 		</div>
@@ -270,7 +270,7 @@
 				</div>
 			</sui-tabset>
 		</div>
-		<div class="sb-bg-color-white text-align-right">
+		<div class="text-align-right">
 			<button *ngIf="!showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary" (click)="saveProgram()">Next</button>
 			<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-default mr-10" (click)="navigateTo(1)">Prev</button>
 			<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary" (click)="updateProgramCollection()">Save & Close</button>
