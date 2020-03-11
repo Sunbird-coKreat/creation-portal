@@ -13,7 +13,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   component = ListNominationsComponent;
   programId = '';
   nominations = [];
-  nominations_count = 0;
+  showNominationsComponent = false;
 
   inputs = {};
   outputs = {
@@ -50,7 +50,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
     };
     this.programsService.post(req).subscribe((data) => {
       if (data.result.length > 0) {
-        this.nominations_count = data.result.length;
         _.forEach(data.result, (res) => {
           let name = res.userData.firstName;
           if (!_.isEmpty(res.userData.lastName)) {
@@ -58,19 +57,15 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
           }
           this.nominations.push({
             'name': name,
-            'program_id': res.program_id,
-            'user_id': res.user_id,
-            'type': res.organisation_id ? 'Organisation': 'Individual',
-            'status': res.status,
-            'textbook_count': res.collection_ids ? res.collection_ids.length : 0
+            'type': res.organisation_id ? 'Organisation' : 'Individual',
+            'nominationData': res
           });
         });
       }
       this.inputs = {
-        nominations: this.nominations,
-        nominationsCount: this.nominations_count
+        nominations: this.nominations
       };
-      console.log('getNominationList ', data, this.nominations);
+      this.showNominationsComponent = true;
     }, error => {
       this.tosterService.error('User onboarding failed');
     });

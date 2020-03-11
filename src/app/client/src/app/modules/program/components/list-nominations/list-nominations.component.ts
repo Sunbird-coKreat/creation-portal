@@ -1,6 +1,6 @@
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService } from '@sunbird/shared';
 import { ProgramsService, PublicDataService, UserService, FrameworkService } from '@sunbird/core';
-import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter} from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter, OnChanges} from '@angular/core';
 import * as _ from 'lodash-es';
 import { tap, first } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,12 +11,9 @@ import { ISessionContext } from '../../../cbse-program/interfaces';
   templateUrl: './list-nominations.component.html',
   styleUrls: ['./list-nominations.component.scss']
 })
-export class ListNominationsComponent implements OnInit, AfterViewInit {
-	 @Input('nominations')
-   nominations: [];
-   @Input('nominationsCount')
-	 nominationsCount: [];
-	 @Output()
+export class ListNominationsComponent implements OnInit, AfterViewInit, OnChanges {
+	 @Input() nominations: any;
+   @Output()
 	 onApprove = new EventEmitter();
 	 @Output()
    onReject = new EventEmitter();
@@ -26,6 +23,7 @@ export class ListNominationsComponent implements OnInit, AfterViewInit {
    public programId: string;
    public programDetails: any;
    public userProfile: any;
+   nominationsCount = 0;
 
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService,
@@ -40,6 +38,9 @@ export class ListNominationsComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getProgramDetails();
+  }
+
+  ngOnChanges() {
   }
 
   getProgramDetails() {
