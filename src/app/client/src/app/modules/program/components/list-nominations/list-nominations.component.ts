@@ -24,6 +24,7 @@ export class ListNominationsComponent implements OnInit, AfterViewInit, OnChange
    public programDetails: any;
    public userProfile: any;
    nominationsCount = 0;
+   public selectedNomineeProfile: any;
 
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService,
@@ -90,5 +91,9 @@ export class ListNominationsComponent implements OnInit, AfterViewInit, OnChange
 
   goToProfile() {
     this.router.navigateByUrl('/profile');
+  }
+
+  getNomineeProfile(nominee) {
+     this.selectedNomineeProfile = nominee.nominationData.userData;
   }
 }
