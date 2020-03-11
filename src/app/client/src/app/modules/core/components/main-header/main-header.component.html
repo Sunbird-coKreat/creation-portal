@@ -9,8 +9,7 @@
     <!--Header White Section-->
     <div class="ui container">
         <div class="ui grid padded width-100 relative">
-            <button routerLink="sourcing/create-program" class="sb-btn sb-btn-normal sb-btn-outline-secondary sb-dock-new-program" *ngIf="this.router.url.includes('/sourcing')"><i class="plus outline icon"></i> Add New Program</button>
-            <button routerLink="" class="sb-btn sb-btn-normal sb-btn-outline-secondary sb-dock-new-program" *ngIf="this.router.url.includes('/contribute')"><i class="plus outline icon"></i> Become a Contributor</button>
+            <button routerLink="sourcing/create-program" class="sb-btn sb-btn-normal sb-btn-outline-secondary sb-dock-new-program" *ngIf="this.router.url.includes('/sourcing')"><i class="plus outline icon"></i> {{resourceService.frmelmnts?.lnk?.addnewprogram}}</button>
             <div class="six wide column p-0">
                 <!--Logo-->
                 <a class="d-flex logo" tabindex="0" title="{{tenantInfo.titleName}}" role="banner">
@@ -90,10 +89,12 @@
         <ng-template #defaultView>
             
             <div class="ui container d-flex flex-ai-center mx-0 sb-dock-menu">
-                    <a routerLink="sourcing" *ngIf="this.router.url.includes('/sourcing')" [class.active]="this.router.isActive('/sourcing', true)">My Programs</a>
-                    <a routerLink="contribute" *ngIf="this.router.url.includes('/contribute')"  [class.active]="this.router.isActive('/contribute', true)"><span class="sb-color-white">All Programs</span></a>
-                    <a routerLink="contribute/myenrollprograms" *ngIf="this.router.url.includes('/contribute')" [class.active]="this.router.isActive('/contribute/myenrollprograms', true)"><span class="sb-color-white">My Programs</span></a>
-                    <a routerLink="contribute/orglist" *ngIf="this.router.url.includes('/contribute')" [class.active]="this.router.isActive('/contribute', true)">Manage users</a>
+                    <a routerLink="sourcing" *ngIf="this.router.url.includes('/sourcing')" [class.active]="this.router.isActive('/sourcing', true)">{{ resourceService.frmelmnts.lbl.myPrograms }}</a>
+                    <a routerLink="contribute" *ngIf="this.router.url.includes('/contribute')"  [class.active]="this.router.isActive('/contribute', true)"><span class="sb-color-white">{{ resourceService.frmelmnts.lbl.allPrograms }}</span></a>
+                    <a routerLink="contribute/myenrollprograms" *ngIf="this.router.url.includes('/contribute')" [class.active]="this.router.isActive('/contribute/myenrollprograms', true)"><span class="sb-color-white">{{ resourceService.frmelmnts.lbl.myPrograms }}</span></a>
+                    <a routerLink="contribute/orglist" *ngIf="this.router.url.includes('/contribute')" [class.active]="this.router.isActive('/contribute/orglist', true)">{{ resourceService.frmelmnts.lbl.manageUsers }}</a>
+                    <a routerLink="contribute/dashboard" *ngIf="this.router.url.includes('/contribute')" [class.active]="this.router.isActive('/contribute/dashboard', true)">{{ resourceService.frmelmnts.lbl.dashboard }}</a>
+
                 <!--QR Button-->
                 <!-- <button class="ui button qr-code-btn d-flex flex-ai-center computer only mr-0" appTelemetryInteract
                     [telemetryInteractEdata]="enterDialCodeInteractEdata" (click)="showQrmodal = true;"

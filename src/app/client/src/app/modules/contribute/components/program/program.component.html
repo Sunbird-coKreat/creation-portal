@@ -1,7 +1,7 @@
 <!-- <app-program-header *ngIf="!showLoader" [headerComponentInput]="headerComponentInput" (emitTabChange)="tabChangeHandler($event)" [appTelemetryImpression]="telemetryImpression"></app-program-header> -->
 
 
-<ng-container *ngIf="!showLoader && currentStage">
+<ng-container *ngIf="!showLoader">
   <ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>
 </ng-container>
 

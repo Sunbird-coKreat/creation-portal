@@ -3,17 +3,19 @@ import { ListAllProgramsComponent } from './components';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ProgramComponent, CreateProgramComponent, ProgramNominationsComponent, ListContributorTextbooksComponent } from './components';
+import { AuthGuard } from '../core/guard/auth-gard.service';
 
 const routes: Routes = [{
-  path: '', component: ListAllProgramsComponent, canActivate: [ProgramsService],
+  path: '', component: ListAllProgramsComponent, canActivate: [ProgramsService, AuthGuard],
   data: {
+    roles: 'rootOrgAdmin',
     telemetry: {
       env: 'contribute', pageid: 'programs-list', type: 'view', subtype: 'paginate'
     }
   }
 },
 {
-  path: 'create-program', component: CreateProgramComponent, pathMatch: 'full', 
+  path: 'create-program', component: CreateProgramComponent, pathMatch: 'full',
   data: {
     telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
   }
