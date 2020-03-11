@@ -152,6 +152,6 @@
          "signedFields": ["serialNum"],
          "indexFields": ["(serialNum, teacherCode)","teacherName"],
          "uniqueIndexFields": ["serialNum", "teacherCode"],
-         "systemFields": ["osCreatedAt", "osUpdatedAt", "osCreatedBy", "osUpdatedBy"]
+         "systemFields": ["_osCreatedAt", "_osUpdatedAt", "_osCreatedBy", "_osUpdatedBy"]
   }
 }

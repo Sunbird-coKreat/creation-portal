@@ -156,19 +156,6 @@
         "YesNoCode-YES",
         "YesNoCode-NO"
       ]
-    },
-    "Role": {
-      "type": "string",
-      "enum": [
-        "ADMIN",
-        "USER"
-      ]
-    },
-    "ID":{
-      "type":"string"
-     },
-     "OrgCode":{
-      "type":"string"
     }
   }
 }
