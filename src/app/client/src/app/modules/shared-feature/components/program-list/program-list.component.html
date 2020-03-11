@@ -63,34 +63,34 @@
                   <div>{{ program?.nominations?.rejected }} {{ resourceService.frmelmnts.lbl.rejected }}</div>
                 </td>
                 <td *ngIf="activeMyProgramsMenu" >
-                  <div>{{ program?.contribution_date | date:'LLLL d, yyyy'  }}<br>
-                    <em>{{ program?.contribution_date | daysToGo }}</em>
+                  <div>{{ program?.content_submission_enddate | date:'LLLL d, yyyy'  }}<br>
+                    <em>{{ program?.content_submission_enddate | daysToGo }}</em>
                   </div>
                 </td>
                 <td *ngIf="activeAllProgramsMenu">
-                  <div>{{ program?.nomination_end_date | date:'LLLL d, yyyy' }}<br>
-                    <em>{{ program?.nomination_end_date | daysToGo }}</em>
+                  <div>{{ program?.nomination_enddate | date:'LLLL d, yyyy' }}<br>
+                    <em>{{ program?.nomination_enddate | daysToGo }}</em>
                   </div>
                 </td>
                 <td *ngIf="activeMyProgramsMenu">
                   <span class="sb-label sb-label-table sb-label-primary-100">{{ getProgramStatus(program) }}</span>
                 </td>
                 <td *ngIf="!isContributor">
-                  <div>{{ program?.nomination_end_date | date:'LLLL d, yyyy' }}<br>
-                    <em>{{ program?.nomination_end_date | daysToGo }}</em>
+                  <div>{{ program?.nomination_enddate | date:'LLLL d, yyyy' }}<br>
+                    <em>{{ program?.nomination_enddate | daysToGo }}</em>
                   </div>
                   <hr class="divider">
-                  <div>{{ program?.nomination_shortlisting_date | date:'LLLL d, yyyy' }}<br>
-                    <em>{{ program?.nomination_shortlisting_date | daysToGo }}</em>
+                  <div>{{ program?.shortlisting_enddate | date:'LLLL d, yyyy' }}<br>
+                    <em>{{ program?.shortlisting_enddate | daysToGo }}</em>
                   </div>  
                 </td>
                 <td *ngIf="!isContributor">
-                  <div>{{ program?.curation_end_date | date:'LLLL d, yyyy'  }}<br>
-                    <em>{{ program?.curation_end_date | daysToGo }}</em>
+                  <div>{{ program?.content_submission_enddate | date:'LLLL d, yyyy'  }}<br>
+                    <em>{{ program?.content_submission_enddate | daysToGo }}</em>
                   </div>
                   <hr class="divider">
-                  <div>{{ program?.program_end_date | date:'LLLL d, yyyy' }}<br>
-                    <em>{{ program?.program_end_date | daysToGo }}</em>
+                  <div>{{ program?.enddate | date:'LLLL d, yyyy' }}<br>
+                    <em>{{ program?.enddate | daysToGo }}</em>
                   </div>
                 </td>
                 <td class="text-center">
