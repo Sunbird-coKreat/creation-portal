@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { ConfigService, UtilService, ResourceService, ToasterService } from '@sunbird/shared';
-import { PublicDataService, ContentService, UserService, ProgramsService, FrameworkService  } from '@sunbird/core';
+import { PublicDataService, ContentService, UserService, ProgramsService  } from '@sunbird/core';
 import * as _ from 'lodash-es';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
@@ -9,7 +9,6 @@ import { ProgramStageService, ProgramTelemetryService } from '../../../program/s
 import { ISessionContext, IChapterListComponentInput } from '../../interfaces';
 import { InitialState } from '../../interfaces';
 import { ActivatedRoute, Router } from '@angular/router';
-import { tap, first } from 'rxjs/operators';
 
 
 @Component({
@@ -42,10 +41,6 @@ export class CollectionComponent implements OnInit, OnDestroy {
   public telemetryInteractPdata: any;
   public nominateButton = 'hide';
   public nominate = '';
-
-   public programId: string;
-
-   public programDetails: any;
   isMediumClickable = false;
   showLoader = true;
   selectedIndex = -1;
@@ -76,10 +71,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     private cbseService: CbseProgramService, public programStageService: ProgramStageService,
     public resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService,
     public userService: UserService, public utilService: UtilService, public contentService: ContentService,
-    private activatedRoute: ActivatedRoute, private router: Router, private programsService: ProgramsService,
-    private tosterService: ToasterService, public frameworkService: FrameworkService, public toasterService: ToasterService) { 
-       this.programId = this.activatedRoute.snapshot.params.programId;
-    }
+    private activatedRoute: ActivatedRoute, private router: Router, private programsService: ProgramsService, private tosterService: ToasterService) { }
 
   ngOnInit() {
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
@@ -97,8 +89,8 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.sessionContext = _.assign(this.collectionComponentInput.sessionContext, {
       currentRole: _.get(this.programContext, 'userDetails.roles[0]'),
       bloomsLevel: _.get(this.programContext, 'config.scope.bloomsLevel'),
-      //programId: _.get(this.programContext, 'programId'),
-      programId: '31ab2990-7892-11e9-8a02-93c5c62c03f1' || _.get(this.programContext, 'programId'),
+      programId: _.get(this.programContext, 'programId'),
+      // programId: '31ab2990-7892-11e9-8a02-93c5c62c03f1' || _.get(this.programContext, 'programId'),
       program: _.get(this.programContext, 'name'),
       onBoardSchool: _.get(this.programContext, 'userDetails.onBoardingData.school'),
       collectionType: _.get(this.collectionComponentConfig, 'collectionType'),
@@ -119,49 +111,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.collectionComponentInput.programContext.programId, 'Program');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID + '.programs');
-    this.getProgramDetails();
   }
-
-  getProgramDetails() {
-    this.fetchProgramDetails().subscribe((programDetails) => {
-      this.programDetails = _.get(programDetails, 'result');
-    }, error => {
-      // TODO: navigate to program list page
-      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-      this.toasterService.error(errorMes || 'Fetching program details failed');
-    });
-  }
-
-  fetchProgramDetails() {
-    const req = {
-      url: `/program/v1/read/${this.programId}`
-    };
-    return this.programsService.get(req).pipe(tap((programDetails: any) => {
-      programDetails.result.config = JSON.parse(programDetails.result.config);
-      this.programDetails = programDetails.result;
-      this.sessionContext.framework = _.get(this.programDetails, 'config.framework');
-      if (this.sessionContext.framework) {
-        this.userProfile = this.userService.userProfile;
-        this.fetchFrameWorkDetails();
-      }
-    }));
-  }
-
-  public fetchFrameWorkDetails() {
-    this.frameworkService.initialize(this.sessionContext.framework);
-    this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
-      if (frameworkDetails && !frameworkDetails.err) {
-        this.sessionContext.frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
-      }
-
-      console.log("program");
-      console.log(this.programDetails);
-    }, error => {
-      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-      this.toasterService.error(errorMes || 'Fetching framework details failed');
-    });
-  }
-
 
   getImplicitFilters(): string[] {
     const sharedContext = this.collectionComponentInput.programContext.config.sharedContext,
