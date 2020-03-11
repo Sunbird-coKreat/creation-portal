@@ -35,6 +35,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
   };
   public currentStage: any;
   showChapterList = false;
+  show= false;
   role: any = {};
   collection;
   configData;

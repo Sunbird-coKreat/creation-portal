@@ -30,18 +30,27 @@ export class ProgramListComponent implements OnInit {
   private checkIfUserIsContributor() {
     this.programsService.allowToContribute$.pipe(
       tap((isContributor: boolean) => {
+        // TODO implement based on api and remove url checks
         // this.isContributor = !isContributor;
+
         this.isContributor = this.router.url.includes('/contribute');
         this.activeAllProgramsMenu = this.router.isActive('/contribute', true);
         this.activeMyProgramsMenu = this.router.isActive('/contribute/myenrollprograms', true);
 
         if (this.isContributor) {
-          this.getProgramsForContributors();
+          if (this.activeAllProgramsMenu) {
+            this.getAllProgramsForContrib('public')
+          }
+
+          if(this.activeMyProgramsMenu) {
+             this.getMyProgramsForContrib();
+          }
+         
         } else {
-          this.getProgramsForOrg();
+          this.getMyProgramsForOrg();
         }
 
-        console.log("Am I contributor : ", isContributor);
+        console.log("Am I contributor : ", this.isContributor);
         console.log("activeMyProgramsMenu : ", this.activeMyProgramsMenu);
         console.log("activeAllProgramsMenu : ", this.activeAllProgramsMenu);
       })
@@ -51,8 +60,8 @@ export class ProgramListComponent implements OnInit {
   /**
    * fetch the list of programs.
    */
-  private getProgramsForContributors() {
-    return this.programsService.getProgramsForContributors().subscribe(
+  private getAllProgramsForContrib(type) {
+    return this.programsService.getAllProgramsForContrib(type).subscribe(
       programs => {
         this.programs = programs;
       }
@@ -62,8 +71,19 @@ export class ProgramListComponent implements OnInit {
   /**
    * fetch the list of programs.
    */
-  private getProgramsForOrg() {
-    return this.programsService.getProgramsForOrg().subscribe(
+  private getMyProgramsForContrib() {
+    return this.programsService.getMyProgramsForContrib().subscribe(
+      programs => {
+        this.programs = programs;
+      }
+    );
+  }
+
+  /**
+   * fetch the list of programs.
+   */
+  private getMyProgramsForOrg() {
+    return this.programsService.getMyProgramsForOrg().subscribe(
       programs => {
         this.programs = programs;
       }
@@ -102,21 +122,21 @@ export class ProgramListComponent implements OnInit {
     return program.board;
   }
 
-  private getProgramStatus(program) {
+  private getProgramNominationStatus(program) {
     return program.nomination_status;
   }
   
   private viewDetailsBtnClicked(program) {
-    if (this.activeMyProgramsMenu) {
-      return this.router.navigateByUrl('/contribute/nominatedtextbooks/' + program.programId);
-    }
-
-    if (this.activeAllProgramsMenu) {
-      return this.router.navigateByUrl('/contribute/program/' + program.programId);
-    }
-
     if (this.isContributor) {
-      return this.router.navigateByUrl('/sourcing/nominations/' + program.programId);
+      if (this.activeMyProgramsMenu) {
+        return this.router.navigateByUrl('/contribute/nominatedtextbooks/' + program.program_id);
+      }
+
+      if (this.activeAllProgramsMenu) {
+        return this.router.navigateByUrl('/contribute/program/' + program.program_id);
+      }
+    } else {
+      return this.router.navigateByUrl('/sourcing/nominations/' + program.program_id);
     }
   }
 }
