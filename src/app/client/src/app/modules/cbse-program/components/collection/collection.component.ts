@@ -101,6 +101,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.getCollectionCard();
     const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
     this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
+    this.sessionContext.programId = this.programContext.program_id
     this.role.currentRole = this.sessionContext.currentRole;
     this.classes = _.find(this.collectionComponentConfig.config.filters.explicit, {'code': 'gradeLevel'}).range;
     this.mediums = _.find(this.collectionComponentConfig.config.filters.implicit, {'code': 'medium'}).defaultValue;
@@ -223,7 +224,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     let payloadArray = [];
     payloadArray = [{
       objectType: 'content',
-      programId: this.sessionContext.programId,
+      programId: this.sessionContext.programId || this.programContext.program_id,
       status: this.sessionContext.collectionStatus || ['Draft', 'Live'],
       contentType: this.sessionContext.collectionType || 'Textbook'
     }];

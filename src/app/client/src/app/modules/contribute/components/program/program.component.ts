@@ -178,6 +178,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
 
   initiateInputs() {
     this.showLoader = false;
+    this.sessionContext.programId = this.programDetails.program_id;
     this.dynamicInputs = {
       collectionComponentInput: {
         sessionContext: this.sessionContext,

@@ -12,7 +12,7 @@
     <div class="sb-pageSection-content mt-12">
       <ng-container *ngIf="programs !== undefined else loading">
         <ng-container *ngIf="programs.length else noResult">
-          <div class="sb-table-responsive">
+          <div class="">
              <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable">
             <thead class="sb-table-header sb-table-thead-gray">
               <tr>
@@ -94,14 +94,14 @@
                   </div>
                 </td>
                 <td class="text-center">
-                  <div class="ui dropdown sb-dotted-dropdown" suiDropdown
-                                                autoClose="itemClick">
-                                                <div class="p-8 w-auto" suiPopup popupText="View All Actions" popupDelay="1000"><span class="sb-dotmenu"></span></div>
-                                                <div class="menu" suiDropdownMenu>
-                                                    <div class="item" (click)="viewDetailsBtnClicked(program)">{{ resourceService.frmelmnts.lbl.viewDetails }}</div>
-                                                    <div class="item" *ngIf="activeMyProgramsMenu">Assign Role</div>
-                                                </div>
-                                            </div>
+                  <button type="button" class="sb-btn sb-btn-outline-primary sb-btn-normal" *ngIf="!isContributor" (click)="viewDetailsBtnClicked(program)">{{ resourceService.frmelmnts.lbl.viewDetails }}</button>           
+                  <div class="ui dropdown sb-dotted-dropdown" *ngIf="isContributor" suiDropdown autoClose="itemClick">
+                        <div class="p-8 w-auto" suiPopup popupText="View All Actions" popupDelay="1000"><span class="sb-dotmenu"></span></div>
+                        <div class="menu" suiDropdownMenu>
+                            <div class="item" (click)="viewDetailsBtnClicked(program)">{{ resourceService.frmelmnts.lbl.viewDetails }}</div>
+                            <div class="item" *ngIf="activeMyProgramsMenu">Assign Role</div>
+                        </div>
+                    </div>
                   <!-- <button class="sb-btn sb-btn-xs sb-btn-outline-primary" (click)="viewDetailsBtnClicked(program)">{{ resourceService.frmelmnts.lbl.viewDetails }}</button> -->
                 </td>
               </tr>
