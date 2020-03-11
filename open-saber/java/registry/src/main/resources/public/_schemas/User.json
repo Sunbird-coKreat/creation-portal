@@ -16,49 +16,98 @@
       "type": "object",
       "title": "The User Schema",
       "required": [
-        "id",
-        "email",
-        "loginid",
-        "status",
-        "username",
-        "phone"
+        "firstName",
+        "userId"
       ],
       "properties": {
-        "id": {
-          "$id": "#/properties/id",
-          "type": "integer",
+        "firstName": {
+          "$id": "#/properties/firstName",
+          "type": "string",
+          "$comment": "First Name"
+        },
+         "lastName": {
+          "$id": "#/properties/lastName",
+          "type": "string",
+          "$comment": "Last Name"
+        },
+         "userId": {
+          "$id": "#/properties/userId",
+          "type": "string",
           "$comment": "User ID"
         },
-        "email": {
-          "$id": "#/properties/email",
+        "channel": {
+          "$id": "#/properties/channel",
           "type": "string",
-          "$comment": "Email id"
+          "$comment": "channel"
         },
-        "loginid": {
-          "$id": "#/properties/loginid",
+        "enrolledDate": {
+          "$id": "#/properties/enrolledDate",
+          "$ref": "Common.json#/definitions/Date"
+        },
+         "certificates": {
+          "$id": "#/properties/certificates",
           "type": "string",
-          "$comment": "Login ID"
+          "$comment": "Certificates"
         },
-        "status": {
-          "$id": "#/properties/status",
+         "description": {
+          "$id": "#/properties/description",
+          "type": "string",
+          "$comment": "Description"
+        },
+        "website": {
+          "$id": "#/properties/website",
+          "type": "string",
+          "title": "Website URI"
+        },
+        "contentTypes": {
+          "$id": "#/properties/contentTypes",
+          "type": "array",
+          "items":{
+            "type":"string"
+          },
+          "title": "Content Types"
+        },
+        "board": {
+          "$id": "#/properties/board",
+          "type": "array",
+          "items":{
+            "type":"string"
+          },
+          "title": "Board"
+        },
+        "medium": {
+          "$id": "#/properties/medium",
+          "type": "array",
+          "items":{
+            "type":"string"
+          },
+          "title": "Medium"
+        },
+         "gradeLevel": {
+          "$id": "#/properties/gradeLevel",
+          "type": "array",
+          "items":{
+            "type":"string"
+          },
+          "title": "Grade Level"
+        },
+         "subject": {
+          "$id": "#/properties/subject",
+          "type": "array",
+          "items":{
+            "type":"string"
+          },
+          "title": "Subject"
+        },
+         "totalContributedContent": {
+          "$id": "#/properties/totalContributedContent",
           "type": "integer",
-          "$comment": "status"
+          "title": "Total Contribution of content by an User"
         },
-        "username": {
-          "$id": "#/properties/username",
-          "type": "string",
-          "title": "User name"
-        },
-        "phone": {
-          "$id": "#/properties/phone",
-          "type": "string",
-          "title": "phone number"
-        },
-        "organisationId": {
-          "$id": "#/properties/organisationId",
-          "type": "string",
-          "default" : "http://ekstep.org/orgId=1",
-          "title": "Organisation Id"
+         "totalAcceptedContent": {
+          "$id": "#/properties/totalAcceptedContent",
+          "type": "integer",
+          "title": "Total  content accepted by an User"
         }
       }
     }
@@ -71,10 +120,10 @@
       "uniqueIndexFields: Optional; list of field names used for creating unique index. Field names must be different from index field name",
       "systemFields: Optional; list of fields names used for system standard information like created, updated timestamps and userid"],
 
-    "privateFields": ["phone", "email"],
+    "privateFields": [],
     "signedFields": [],
-    "indexFields": ["email","loginid","status","username","phone"],
-    "uniqueIndexFields": ["id"],
-    "systemFields": ["createdAt", "updatedAt", "createdBy", "updatedBy"]
+    "indexFields": ["userId"],
+    "uniqueIndexFields": [],
+    "systemFields": ["createdAt", "updatedAt"]
   }
 }

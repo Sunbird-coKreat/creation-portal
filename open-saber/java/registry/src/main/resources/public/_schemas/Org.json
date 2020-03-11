@@ -28,8 +28,7 @@
         },
         "code":{
        		 "$id": "#/properties/code",
-         	 "$ref": "Common.json#/definitions/OrgCode"
-       
+         	 "type":"string"       
         },
         "description": {
           "$id": "#/properties/description",
@@ -93,7 +92,8 @@
         },
         "createdBy": {
           "$id": "#/properties/createdBy",
-          "$ref": "Common.json#/definitions/ID"
+          "type": "string",
+          "title":"User Id"
          
         }
       }
