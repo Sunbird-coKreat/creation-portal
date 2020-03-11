@@ -49,47 +49,60 @@
   </div> -->
     <div class="ui container">
       <div class="sb-pageSection-header row my-20">
-        <h4 class="sb-pageSection-title six">New Program FEB2020
+        <h4 class="sb-pageSection-title six wide column">
+          {{ programDetails?.name }}
+          <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
           <ng-template #popupTemplate>
             <div class="content">
               <div class="textbook-details ml-8">
-            <div class="d-flex flex-ai-center">
-              <span class="dot-separator"></span>
-              <label class="d-block fsmall font-weight-normal mb-0">Marathi, Hindi, English</label>
+                <div class="header"><strong>Medium</strong></div>
+                <div class="content">
+                  <label class="d-block fsmall font-weight-normal mb-0"
+                    >Marathi, Hindi, English</label>
+                </div>
+                <hr />
+                <div class="header"><strong>Grades / Classes</strong></div>
+                <div class="content">
+                  <label class="d-block fsmall font-weight-normal mb-0"
+                    >Grade 1, Grade 2</label>
+                </div>
+                <hr />
+                <div class="header">
+                  <strong>Expression for Interest Date</strong>
+                </div>
+                <div class="content">
+                  <label class="d-block fsmall font-weight-normal mb-0">
+                    {{ programDetails?.nomination_enddate | date:'longDate' }}
+                  </label>
+                </div>
+                <hr />
+                <div class="header">
+                  <strong>Shortlisting of Contributor Date</strong>
+                </div>
+                <div class="content">
+                  <label class="d-block fsmall font-weight-normal mb-0">
+                    {{ programDetails?.shortlisting_enddate | date:'longDate' }}
+                  </label>
+                </div>
+                <hr />
+                <div class="header">
+                  <strong>Content Submission Date</strong>
+                </div>
+                <div class="content">
+                  <label class="d-block fsmall font-weight-normal mb-0">
+                    {{ programDetails?.content_submission_enddate | date:'longDate' }}
+                  </label>
+                </div>
+                <hr />
+                <div class="header"><strong>Program End Date</strong></div>
+                <div class="content">
+                  <label class="d-block fsmall font-weight-normal mb-0">
+                    {{ programDetails?.enddate | date:'longDate' }}
+                  </label>
+                </div>
+              </div>
             </div>
-            <div class="d-flex flex-ai-center">
-              <span class="dot-separator"></span>
-              <label class="d-block fsmall font-weight-normal mb-0">Grade 1, Grade 2</label>
-            </div>
-            <div class="d-flex flex-ai-center">
-              <span class="dot-separator"></span>
-              <label class="d-block fsmall font-weight-normal mb-0">
-              Nomination End Date:  July 26th, 2019
-              </label>
-            </div>
-            <div class="d-flex flex-ai-center">
-              <span class="dot-separator"></span>
-              <label class="d-block fsmall font-weight-normal mb-0">
-              Nomination Shortlisting Date:  Aug 5th, 2019
-              </label>
-            </div>
-            <div class="d-flex flex-ai-center">
-              <span class="dot-separator"></span>
-              <label class="d-block fsmall font-weight-normal mb-0">
-              Contribution End Date:  Aug 20th, 2019
-              </label>
-            </div>
-            <div class="d-flex flex-ai-center">
-              <span class="dot-separator"></span>
-              <label class="d-block fsmall font-weight-normal mb-0">
-              Program End Date:  Aug 30th, 2019
-              </label>
-            </div>
-            </div>
-            </div>
-				</ng-template>
-				<i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate">
-				</i>
+          </ng-template>
       </h4>
       <div class="pull-right">
         <div *ngIf="nominateButton === 'show'">

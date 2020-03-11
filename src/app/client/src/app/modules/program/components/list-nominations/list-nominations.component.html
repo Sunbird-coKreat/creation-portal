@@ -26,7 +26,7 @@
                 </div>
                 <div class="content">
                   <label class="d-block fsmall font-weight-normal mb-0">
-                    {{ programDetails?.nomination_enddate }}
+                    {{ programDetails?.nomination_enddate | date:'longDate' }}
                   </label>
                 </div>
                 <hr />
@@ -35,7 +35,7 @@
                 </div>
                 <div class="content">
                   <label class="d-block fsmall font-weight-normal mb-0">
-                    {{ programDetails?.shortlisting_enddate }}
+                    {{ programDetails?.shortlisting_enddate | date:'longDate' }}
                   </label>
                 </div>
                 <hr />
@@ -44,14 +44,14 @@
                 </div>
                 <div class="content">
                   <label class="d-block fsmall font-weight-normal mb-0">
-                    {{ programDetails?.content_submission_enddate }}
+                    {{ programDetails?.content_submission_enddate | date:'longDate' }}
                   </label>
                 </div>
                 <hr />
                 <div class="header"><strong>Program End Date</strong></div>
                 <div class="content">
                   <label class="d-block fsmall font-weight-normal mb-0">
-                    {{ programDetails?.enddate }}
+                    {{ programDetails?.enddate | date:'longDate' }}
                   </label>
                 </div>
               </div>
@@ -66,20 +66,20 @@
             </div>
             <div class="d-flex flex-ai-center flex-jc-space-between flex-75 ">
                 <dl class="sb-meta-data mb-0 pr-8 w-25">
-                    <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="Expression of Interest Date" popupText="{{ programDetails?.nomination_enddate }}">Expression of Interest Date</dt>
-                    <dd> {{ programDetails?.nomination_enddate }}</dd>
+                    <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="Expression of Interest Date" popupText="{{ programDetails?.nomination_enddate | date:'longDate' }}">Expression of Interest Date</dt>
+                    <dd> {{ programDetails?.nomination_enddate | date:'longDate' }}</dd>
                   </dl>
                   <dl class="sb-meta-data mb-0 pr-8 w-25">
-                    <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="Shortlisting of Contributor Date" popupText="{{ programDetails?.shortlisting_enddate }}">Shortlisting of Contributor Date</dt>
-                    <dd> {{ programDetails?.shortlisting_enddate }}</dd>
+                    <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="Shortlisting of Contributor Date" popupText="{{ programDetails?.shortlisting_enddate | date:'longDate' }}">Shortlisting of Contributor Date</dt>
+                    <dd> {{ programDetails?.shortlisting_enddate | date:'longDate' }}</dd>
                   </dl>
                   <dl class="sb-meta-data mb-0 pr-8 w-25">
-                    <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="Content Submission Date" popupText="{{ programDetails?.content_submission_enddate }}">Content Submission Date</dt>
-                    <dd> {{ programDetails?.content_submission_enddate }}</dd>
+                    <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="Content Submission Date" popupText="{{ programDetails?.content_submission_enddate | date:'longDate' }}">Content Submission Date</dt>
+                    <dd> {{ programDetails?.content_submission_enddate | date:'longDate' }}</dd>
                   </dl>
                   <dl class="sb-meta-data mb-0 pr-8 w-25">
-                    <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="Program End Date" popupText="{{ programDetails?.enddate }}">Program End Date</dt>
-                    <dd>{{ programDetails?.enddate }}</dd>
+                    <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="Program End Date" popupText="{{ programDetails?.enddate | date:'longDate' }}">Program End Date</dt>
+                    <dd>{{ programDetails?.enddate | date:'longDate' }}</dd>
                   </dl>
             </div>
             </div>
