@@ -9,11 +9,13 @@ import { UserService } from '../user/user.service';
 import { combineLatest, of, iif, Observable, BehaviorSubject, throwError, merge } from 'rxjs';
 import * as _ from 'lodash-es';
 import { CanActivate, Router } from '@angular/router';
+import { DataService } from '../data/data.service';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProgramsService implements CanActivate {
+export class ProgramsService extends DataService implements CanActivate {
 
   private _programsList$ = new BehaviorSubject(undefined);
   private _allowToContribute$ = new BehaviorSubject(undefined);
@@ -24,10 +26,18 @@ export class ProgramsService implements CanActivate {
   public readonly allowToContribute$ = this._allowToContribute$.asObservable()
     .pipe(skipWhile(data => data === undefined || data === null));
 
-  constructor(private extFrameworkService: ExtPluginService, private configService: ConfigService,
-    private orgDetailsService: OrgDetailsService, private userService: UserService,
-    private router: Router, private toasterService: ToasterService, private resourceService: ResourceService) { }
 
+  public config: ConfigService;
+  baseUrl: string;
+  public http: HttpClient;
+
+  constructor(config: ConfigService, http: HttpClient, private extFrameworkService: ExtPluginService, private configService: ConfigService,
+    private orgDetailsService: OrgDetailsService, private userService: UserService,
+    private router: Router, private toasterService: ToasterService, private resourceService: ResourceService) {
+      super(http);
+      this.config = config;
+      this.baseUrl = 'http://localhost:5000';
+     }
 
   /**
    * initializes the service is the user is logged in;
@@ -60,6 +70,57 @@ export class ProgramsService implements CanActivate {
   }
 
   /**
+   * makes api call to save the program 
+   */
+  createProgram(request): Observable<ServerResponse> {
+    const req = {
+      url: '/program/v1/create',
+      headers: {
+        'content-type' : 'application/json'
+      },
+      data: {
+        request
+      }
+    };
+
+    return this.post(req);
+  }
+
+   /**
+   * makes api call to get the textbooks for program 
+   */
+  getProgramCollection(request): Observable<ServerResponse> {
+    const req = {
+      url: 'http://localhost:3000/content/composite/v1/search',
+      headers: {
+        'content-type' : 'application/json'
+      },
+      data: {
+        request
+      }
+    };
+    console.log(req);
+    return this.post(req);
+  }
+
+  /**
+   * makes api call to get the textbooks for program 
+   */
+  updateProgram(request): Observable<ServerResponse> {
+    const req = {
+      url: '/program/v1/update',
+      headers: {
+        'content-type' : 'application/json'
+      },
+      data: {
+        request
+      }
+    };
+
+    return this.post(req);
+  }
+   
+  /**
    * makes api call to get list of programs from ext framework Service
    */
   searchProgramsAPICall(): Observable<ServerResponse> {
@@ -73,6 +134,60 @@ export class ProgramsService implements CanActivate {
       }
     };
     return this.extFrameworkService.post(req);
+  }
+
+  /**
+   * makes api call to get list of programs from ext framework Service
+   */
+  getMyProgramsForOrgFromApi(): Observable<ServerResponse> {
+    const req = {
+      url: '/program/v1/list',
+      headers: {
+        'content-type' : 'application/json'
+      },
+      data: {
+        request: {
+          rootorg_id: _.get(this.userService, 'userProfile.rootOrg.rootOrgId')
+        }
+      }
+    };
+    return this.post(req);
+  }
+
+  /**
+   * makes api call to get list of programs from ext framework Service
+   */
+  getAllProgramsByType(type): Observable<ServerResponse> {
+    const req = {
+      url: '/program/v1/list',
+      headers: {
+        'content-type' : 'application/json'
+      },
+      data: {
+        request: {
+          type: type
+        }
+      }
+    };
+    return this.post(req);
+  }
+
+  /**
+   * makes api call to get list of programs from ext framework Service
+   */
+  getMyProgramsForContribFromApi(): Observable<ServerResponse> {
+    const req = {
+      url: '/program/v1/list',
+      headers: {
+        'content-type' : 'application/json'
+      },
+      data: {
+        request: {
+          "userId": _.get(this.userService, 'userProfile.userId')
+        }
+      }
+    };
+    return this.post(req);
   }
 
   /**
@@ -124,46 +239,70 @@ export class ProgramsService implements CanActivate {
   /**
    * gets list of programs
    */
-  public getProgramsForOrg(): Observable<IProgram[]> {
+  public getMyProgramsForOrg(): Observable<IProgram[]> {
     let list = [];
     let mergeObj = this.getApiSampleObj();
     let targetDate = new Date();
     targetDate.setDate(targetDate.getDate() + 10)
 
-    return this.searchProgramsAPICall().pipe(
+    return this.getMyProgramsForOrgFromApi().pipe(
       map(result => {
-        _.forEach(_.get(result, 'result.programs'), function(program) {
+        _.forEach(_.get(result, 'result'), function(program) {
           list.push({...program, ...mergeObj});
         });
         return list;
       }),
       catchError(err => {
-        console.log("getProgramsForOrg", err);
-        this.toasterService.warning(err);
+        console.log("getMyProgramsForOrg", err);
+        this.toasterService.warning(this.resourceService.messages.emsg.m0014);
         return of([])
       })
     );
   }
 
   /**
-   * gets list of programs for contributors
+   * gets list of programs
    */
-  public getProgramsForContributors(): Observable<IProgram[]> {
+  public getAllProgramsForContrib(type): Observable<IProgram[]> {
     let list = [];
     let mergeObj = this.getApiSampleObj();
     let targetDate = new Date();
     targetDate.setDate(targetDate.getDate() + 10)
 
-    return this.searchProgramsAPICall().pipe(
+    return this.getAllProgramsByType(type).pipe(
       map(result => {
-        _.forEach(_.get(result, 'result.programs'), function(program) {
+        _.forEach(_.get(result, 'result'), function(program) {
           list.push({...program, ...mergeObj});
         });
         return list;
       }),
       catchError(err => {
-        console.log("getProgramsForOrg", err);
-        this.toasterService.warning(err);
+        console.log("getAllProgramsForContrib", err);
+        this.toasterService.warning(this.resourceService.messages.emsg.m0014);
+        return of([])
+      })
+    );
+  }
+
+  /**
+   * gets list of programs
+   */
+  public getMyProgramsForContrib(): Observable<IProgram[]> {
+    let list = [];
+    let mergeObj = this.getApiSampleObj();
+    let targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + 10)
+
+    return this.getMyProgramsForContribFromApi().pipe(
+      map(result => {
+        _.forEach(_.get(result, 'result'), function(program) {
+          list.push({...program, ...mergeObj});
+        });
+        return list;
+      }),
+      catchError(err => {
+        console.log("getAllProgramsForContrib", err);
+        this.toasterService.warning(this.resourceService.messages.emsg.m0014);
         return of([])
       })
     );

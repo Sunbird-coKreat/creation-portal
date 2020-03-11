@@ -1,12 +1,15 @@
-import { ResourceService, ConfigService, NavigationHelperService } from '@sunbird/shared';
-import { HttpClient } from '@angular/common/http';
-import { ProgramsService, PublicDataService, DataService } from '@sunbird/core';
+import { ConfigService, ResourceService, ToasterService, RouterNavigationService, ServerResponse, NavigationHelperService } from '@sunbird/shared';
+import { ProgramsService, DataService, FrameworkService } from '@sunbird/core';
+import { Subscription, Subject } from 'rxjs';
+import { tap, first , map } from 'rxjs/operators';
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormControl, FormBuilder, Validators, FormGroup} from '@angular/forms';
+import { FormControl, FormBuilder, Validators, FormGroup, FormArray } from '@angular/forms';
 import { IProgram } from './../../../core/interfaces';
 import { UserService } from '@sunbird/core';
+import { programConfigObj } from './programconfig';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
     selector: 'app-create-program',
@@ -15,86 +18,140 @@ import { UserService } from '@sunbird/core';
 })
 
 export class CreateProgramComponent implements OnInit, AfterViewInit {
+    public unsubscribe = new Subject<void>();
+
     /**
      * Program creation form name
      */
     createProgramForm: FormGroup;
+    collectionListForm: FormGroup;
+
     sbFormBuilder: FormBuilder;
-    options;
 
     /**
      * Contains Program form data
      */
     programDetails: IProgram;
+        
+    /**
+    * To send activatedRoute.snapshot to routerNavigationService
+    */
+    private activatedRoute: ActivatedRoute;
 
-    /*
-     * Contains resource service ref
-     */
-    public resource: ResourceService;
+    /**
+    * To call resource service which helps to use language constant
+    */
+    public resourceService: ResourceService;
 
+    /**
+    * To show toaster(error, success etc) after any API calls
+    */
+    private toasterService: ToasterService;
+
+    /**
+    * To navigate back to parent component
+    */
+    public routerNavigationService: RouterNavigationService;
+
+    /**
+    * List of textbooks for the program by BMGC
+    */
+    collections;
+
+    /**
+    * List of textbooks for the program by BMGC
+    */
+    frameworkdetails;
+    programScope = {};
+    userprofile;
+    programId = 0;
     showTextBookSelector = false;
     formIsInvalid = false;
-    collections;
-    data;
-    public categoryList: {};
+
     pickerMinDate = new Date(new Date().setHours(0, 0, 0, 0));
     pickerMinDateForEndDate = new Date(new Date().setHours(0, 0, 0, 0));
 
-    constructor(private programsService: ProgramsService, private user: UserService, resource: ResourceService,
-        private config: ConfigService, private publicDataService: PublicDataService,
-        private activatedRoute: ActivatedRoute, private router: Router, private navigationHelperService: NavigationHelperService, private formBuilder: FormBuilder, private httpClient: HttpClient, ) {
+    constructor(
+        public frameworkService: FrameworkService,
+        private programsService: ProgramsService,
+        private userService: UserService,
+        toasterService: ToasterService,
+        resource: ResourceService,
+        private config: ConfigService,
+        activatedRoute: ActivatedRoute,
+        private router: Router,
+        private navigationHelperService: NavigationHelperService,
+        private formBuilder: FormBuilder,
+        private httpClient: HttpClient) {
 
         this.sbFormBuilder = formBuilder;
-        this.resource = resource;
-        this.user = user;
-    }
-
-    ngOnInit() {
-        this.initializeFormFields();
-        this.data = {
-            'board': [{
-                'name': 'NCERT',
-                'value': 'NCERT'
-            }, {
-                'name': 'CBSE',
-                'value': 'CBSE'
-            }, {
-                'name': 'ICSE',
-                'value': 'ICSE'
-            }, {
-                'name': 'UP',
-                'value': 'UP'
+        this.programScope = {
+            'purpose': [{
+              'name': 'Resource',
+              'value': 'Resource'
+              }, {
+                  'name': 'TeachingMethod',
+                  'value': 'TeachingMethod'
+              }, {
+                  'name': 'PedagogyFlow',
+                  'value': 'PedagogyFlow'
+              }, {
+                  'name': 'FocusSpot',
+                  'value': 'FocusSpot'
+              }, {
+                'name': 'LearningOutcomeDefinition',
+                'value': 'LearningOutcomeDefinition'
+              }, {
+                'name': 'PracticeQuestionSet',
+                'value': 'PracticeQuestionSet'
+              }, {
+                'name': 'CuriosityQuestionSet',
+                'value': 'CuriosityQuestionSet'
+              }, {
+                'name': 'MarkingSchemeRubric',
+                'value': 'MarkingSchemeRubric'
+              }, {
+                'name': 'ExplanationResource',
+                'value': 'ExplanationResource'
+              }, {
+                'name': 'ExperientialResource',
+                'value': 'ExperientialResource'
+              }, {
+                'name': 'ConceptMap',
+                'value': 'ConceptMap'
             }],
-            'medium': [{
-                'name': 'English',
-                'value': 'english'
-            }, {
-                'name': 'Marathi',
-                'value': 'Marathi'
-            }, {
-                'name': 'Hindi',
-                'value': 'Hindi'
-            }, {
-                'name': 'Oriya',
-                'value': 'Oriya'
-            }],
-            'contenttypes': [{
-                'name': 'Explanation',
-                'value': 'Explanation'
-            }, {
-                'name': 'Experiential',
-                'value': 'Experiential'
-            }, {
-                'name': 'FocusSpot',
-                'value': 'Hindi'
-            }, {
-                'name': 'Curiosity Sets',
-                'value': 'Curiosity Sets'
-            }]
         }
     }
 
+    ngOnInit() {
+        this.userprofile = this.userService.userProfile;
+        console.log(this.userprofile);
+        this.initializeFormFields();
+        this.fetchFrameWorkDetails(); 
+        //this.showTexbooklist('dsd');
+    }
+    
     ngAfterViewInit() {}
+      
+    fetchFrameWorkDetails() {
+      let instance = this;
+      this.frameworkService.initialize(this.userprofile.framework.id);
+      this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
+        if (frameworkDetails && !frameworkDetails.err) {
+          instance.frameworkdetails = frameworkDetails.frameworkdata[this.userprofile.framework.id[0]].categories; 
+          this.generateProgramScopeFields(instance.frameworkdetails);
+        }
+      }, error => {
+        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+        this.toasterService.warning(errorMes || 'Fetching framework details failed');
+      });
+    }
+
+    generateProgramScopeFields(fields) {
+      fields.forEach( (element) => {
+        this.programScope[element['code']] = element['terms'];
+      });
+    }
 
     /**
      * Executed when user come from any other page or directly hit the url
@@ -104,673 +161,185 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     initializeFormFields(): void {
         this.createProgramForm = this.sbFormBuilder.group({
             name: ['', [Validators.required, Validators.maxLength(100)]],
-            description: ['', Validators.maxLength(1000)]
+            description: ['', Validators.maxLength(1000)],
+            nomination_enddate: ['', Validators.required],
+            shortlisting_enddate: [''],
+            program_end_date: ['', Validators.required],
+            content_submission_enddate: ['', Validators.required],
+            content_types: [],
+            subject: ['', Validators.required],
+            gradeLevel: ['', Validators.required],
+            medium: ['', Validators.required],
         });
-    }
 
-	getProgramTextbooks(res) {		
-		 const option = {
-		  url: 'content/composite/v1/search',
-		   data: {
-			request: {
-				 filters: {
-					objectType: "content", 
-					programId: "31ab2990-7892-11e9-8a02-93c5c62c03f1",
-					status: ["Draft", "Live"], 
-					contentType: "Textbook", 
-					framework: "NCFCOPY", 
-					board:	"NCERT",
-					medium:	["English"] 
-				}
-			}
-		  }
-		};
-		
-		this.httpClient.post<any>(option.url, option.data).subscribe(
-		  (res) => this.showTexbooklist(res), 
-		  (err) => console.log(err)
-		);
-	}
-	
-	showTexbooklist (res){
-		this.showTextBookSelector = true;
-		this.collections = res.result.content;
-	}
-	
-	
-	saveProgramError(err) {
-		console.log(err)
-	}
-	
+        this.collectionListForm = this.sbFormBuilder.group({
+          pcollections: this.sbFormBuilder.array([]) 
+        });
+        /*this.createProgramForm.patchValue({
+          rootorg_id: this.userprofile.rootOrgId
+        });*/
+    }
+ 
+    saveProgramError(err) {
+        console.log(err)
+    }
+    
     validateAllFormFields(formGroup: FormGroup) {
         Object.keys(formGroup.controls).forEach(field => {
             const control = formGroup.get(field);
-            console.log("control", control);
             control.markAsTouched();
         });
     }
     
     navigateTo(stepNo) {
-		this.showTextBookSelector = false;
+        this.showTextBookSelector = false;
     }
     
     saveProgram() {
         this.formIsInvalid = false;
+        
         if (this.createProgramForm.dirty && this.createProgramForm.valid) {
             const data = {
                 ...this.createProgramForm.value
             };
+            
+            data['rootorg_id'] = this.userprofile.rootOrgId;
+            data['createdby'] = this.userprofile.id;
+            data['createdon'] = new Date();
+            data['startdate'] = new Date();
+            data['slug'] =  "sunbird";
+            data['status'] = "Draft";
+            data['type'] =  "public",
+            data['default_roles'] = ["CONTRIBUTOR"];
+            data['enddate'] = data.program_end_date;
+            
+            programConfigObj.board = this.userprofile.framework.board[0];
+            programConfigObj.gradeLevel = data.gradeLevel;
+            programConfigObj.medium = data.medium;
+            programConfigObj.subject = data.subject;
+            data['config'] = programConfigObj;
+            
+            delete data.gradeLevel;
+            delete data.medium;
+            delete data.subject;
+            delete data.program_end_date;
 
-            const option = {
-                url: "plugin/program/v1/create",
-                data: {
-                    request: {
-                        name: data.name,
-                        description: data.description,
-                        rootOrgId: this.user.rootOrgId,
-                        imagePath: null,
-                        rootOrgName: null,
-                        slug: "sunbird",
-                        startDate: "2020-02-27T12:50:30.000Z",
-                        type: "public",
-                        defaultRoles: [
-                            "CONTRIBUTOR"
-                        ],
-                         "config": {
-      "_comments": "",
-      "loginReqired": true,
-      "framework": "NCFCOPY",
-      "roles": [
-        {
-          "id": 1,
-          "name": "CONTRIBUTOR",
-          "default": true,
-          "defaultTab": 1,
-          "tabs": [
-            1
-          ]
-        },
-        {
-          "id": 2,
-          "name": "REVIEWER",
-          "defaultTab": 2,
-          "tabs": [
-            2
-          ]
-        }
-      ],
-      "header": {
-        "id": "ng.sunbird.header",
-        "ver": "1.0",
-        "compId": "headerComp",
-        "author": "Venkat",
-        "description": "",
-        "publishedDate": "",
-        "data": {},
-        "config": {
-          "tabs": [
-            {
-              "index": 1,
-              "label": "Contribute",
-              "onClick": "collectionComponent"
-            },
-            {
-              "index": 2,
-              "label": "Review",
-              "onClick": "collectionComponent"
-            },
-            {
-              "index": 3,
-              "label": "Dashboard",
-              "onClick": "dashboardComponent"
+            if (!this.programId) {
+              this.programsService.createProgram(data).subscribe(
+                (res) => {this.programId=res.result.program_id; this.showTexbooklist(res)},
+                (err) => this.saveProgramError(err)
+              );
             }
-          ]
-        }
-      },
-      "components": [
-        {
-          "id": "ng.sunbird.collection",
-          "ver": "1.0",
-          "compId": "collectionComponent",
-          "author": "Venkat",
-          "description": "",
-          "publishedDate": "",
-          "data": {},
-          "config": {
-            "filters": {
-              "implicit": [
-                {
-                  "code": "framework",
-                  "defaultValue": "NCFCOPY",
-                  "label": "Framework"
-                },
-                {
-                  "code": "board",
-                  "defaultValue": "NCERT",
-                  "label": "Board"
-                },
-                {
-                  "code": "medium",
-				  "defaultValue": ["English"],                  
-				  "label": "Medium"
-                }
-              ],
-              "explicit": [
-                {
-                  "code": "gradeLevel",
-                  "range": [
-                    "Class 6",
-                    "Class 7",
-                    "Class 8"
-                  ],
-                  "label": "Class",
-                  "multiselect": false,
-                  "defaultValue": [
-                    "Class 6"
-                  ],
-                  "visibility": true
-                },
-                {
-                  "code": "subject",
-                  "range": [
-                    "English",
-                    "Maths"
-                  ],
-                  "label": "Subject",
-                  "multiselect": false,
-                  "defaultValue": [
-                    "English"
-                  ],
-                  "visibility": true
-                }
-              ]
-            },
-            "groupBy": {
-              "value": "subject",
-              "defaultValue": "subject"
-            },
-            "collectionType": "Textbook",
-            "collectionList": [],
-            "status": [
-              "Draft",
-              "Live"
-            ]
-          }
-        },
-        {
-          "id": "ng.sunbird.chapterList",
-          "ver": "1.0",
-          "compId": "chapterListComponent",
-          "author": "Kartheek",
-          "description": "",
-          "publishedDate": "",
-          "data": {},
-          "config": {
-            "contentTypes": {
-              "value": [
-                {
-                  "id": "explanationContent",
-                  "label": "Explanation",
-                  "onClick": "uploadComponent",
-                  "mimeType": [
-                    "application/pdf"
-                  ],
-                  "metadata": {
-                    "name": "Explanation Resource",
-                    "description": "ExplanationResource",
-                    "resourceType": "Read",
-                    "contentType": "ExplanationResource",
-                    "audience": [
-                      "Learner"
-                    ],
-                    "appIcon": "https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_21291553051403878414/artifact/explanation.thumb_1576602846206.png",
-                    "marks": 5
-                  },
-                  "filesConfig": {
-                    "accepted": "pdf",
-                    "size": "50"
-                  }
-                },
-                {
-                  "id": "experientialContent",
-                  "label": "Experiential",
-                  "onClick": "uploadComponent",
-                  "mimeType": [
-                    "video/mp4"
-                  ],
-                  "metadata": {
-                    "name": "Experiential Resource",
-                    "description": "ExperientialResource",
-                    "resourceType": "Read",
-                    "contentType": "ExperientialResource",
-                    "audience": [
-                      "Learner"
-                    ],
-                    "appIcon": "https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_21291553051403878414/artifact/explanation.thumb_1576602846206.png",
-                    "marks": 5
-                  },
-                  "filesConfig": {
-                    "accepted": "mp4",
-                    "size": "50"
-                  }
-                },
-                {
-                  "id": "focusSpotContent",
-                  "label": "FocusSpot",
-                  "onClick": "uploadComponent",
-                  "mimeType": [
-                    "application/pdf"
-                  ],
-                  "metadata": {
-                    "name": "FocusSpot Resoirce",
-                    "description": "FocusSpot",
-                    "resourceType": "Read",
-                    "contentType": "FocusSpot",
-                    "audience": [
-                      "Learner"
-                    ],
-                    "appIcon": "https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_21291553100098764812/artifact/focus-spot_1561727473311.thumb_1576602905573.png",
-                    "marks": 5
-                  },
-                  "filesConfig": {
-                    "accepted": "pdf",
-                    "size": "50"
-                  }
-                },
-                {
-                  "id": "vsaPracticeQuestionContent",
-                  "label": "VSA - Practice Sets",
-                  "onClick": "questionSetComponent",
-                  "mimeType": [
-                    "application/vnd.ekstep.ecml-archive"
-                  ],
-                  "metadata": {
-                    "name": "Practice QuestionSet",
-                    "description": "Practice QuestionSet",
-                    "resourceType": "Learn",
-                    "contentType": "PracticeQuestionSet",
-                    "audience": [
-                      "Learner"
-                    ],
-                    "appIcon": "",
-                    "marks": 5
-                  },
-                  "questionCategories": [
-                    "vsa"
-                  ]
-                },
-                {
-                  "id": "saPracticeQuestionContent",
-                  "label": "SA - Practice Sets",
-                  "onClick": "questionSetComponent",
-                  "mimeType": [
-                    "application/vnd.ekstep.ecml-archive"
-                  ],
-                  "metadata": {
-                    "name": "Practice QuestionSet",
-                    "description": "Practice QuestionSet",
-                    "resourceType": "Learn",
-                    "contentType": "PracticeQuestionSet",
-                    "audience": [
-                      "Learner"
-                    ],
-                    "appIcon": "",
-                    "marks": 5
-                  },
-                  "questionCategories": [
-                    "sa"
-                  ]
-                },
-                {
-                  "id": "laPracticeQuestionContent",
-                  "label": "LA - Practice Sets",
-                  "onClick": "questionSetComponent",
-                  "mimeType": [
-                    "application/vnd.ekstep.ecml-archive"
-                  ],
-                  "metadata": {
-                    "name": "Practice QuestionSet",
-                    "description": "Practice QuestionSet",
-                    "resourceType": "Learn",
-                    "contentType": "PracticeQuestionSet",
-                    "audience": [
-                      "Learner"
-                    ],
-                    "appIcon": "",
-                    "marks": 5
-                  },
-                  "questionCategories": [
-                    "la"
-                  ]
-                },
-                {
-                  "id": "mcqPracticeQuestionContent",
-                  "label": "MCQ - Practice Sets",
-                  "onClick": "questionSetComponent",
-                  "mimeType": [
-                    "application/vnd.ekstep.ecml-archive"
-                  ],
-                  "metadata": {
-                    "name": "Practice QuestionSet",
-                    "description": "Practice QuestionSet",
-                    "resourceType": "Learn",
-                    "contentType": "PracticeQuestionSet",
-                    "audience": [
-                      "Learner"
-                    ],
-                    "appIcon": "",
-                    "marks": 5
-                  },
-                  "questionCategories": [
-                    "mcq"
-                  ]
-                },
-                {
-                  "id": "curiositySetContent",
-                  "label": "Curiosity Sets",
-                  "onClick": "curiositySetComponent",
-                  "mimeType": [
-                    "application/vnd.ekstep.ecml-archive"
-                  ],
-                  "metadata": {
-                    "name": "Curiosity QuestionSet",
-                    "description": "Curiosity QuestionSet",
-                    "resourceType": "Learn",
-                    "contentType": "CuriosityQuestionSet",
-                    "audience": [
-                      "Learner"
-                    ],
-                    "appIcon": "",
-                    "marks": 5
-                  },
-                  "questionCategories": [
-                    "Curiosity"
-                  ]
-                }
-              ],
-              "defaultValue": [
-                {
-                  "id": "vsaPracticeQuestionContent",
-                  "label": "Practice Sets",
-                  "onClick": "questionSetComponent",
-                  "mimeType": [
-                    "application/vnd.ekstep.ecml-archive"
-                  ],
-                  "metadata": {
-                    "name": "Practice QuestionSet",
-                    "description": "Practice QuestionSet",
-                    "resourceType": "Learn",
-                    "contentType": "PracticeQuestionSet",
-                    "audience": [
-                      "Learner"
-                    ],
-                    "appIcon": "",
-                    "marks": 5
-                  },
-                  "questionCategories": [
-                    "vsa"
-                  ]
-                }
-              ]
+            else {
+              data['program_id'] = this.programId;
+              this.showTexbooklist("show");
+              /*this.programsService.updateProgram(data).subscribe(
+                (res) => {this.programId=res.result.program_id; this.showTexbooklist(res)},
+                (err) => this.saveProgramError(err)
+              );*/
             }
-          }
-        },
-        {
-          "id": "ng.sunbird.uploadComponent",
-          "ver": "1.0",
-          "compId": "uploadContentComponent",
-          "author": "Kartheek",
-          "description": "",
-          "publishedDate": "",
-          "data": {},
-          "config": {
-            "filesConfig": {
-              "accepted": "pdf, mp4, webm, youtube",
-              "size": "50"
-            },
-            "formConfiguration": [
-              {
-                "code": "learningOutcome",
-                "dataType": "list",
-                "description": "Learning Outcomes For The Content",
-                "editable": true,
-                "inputType": "multiselect",
-                "label": "Learning Outcome",
-                "name": "LearningOutcome",
-                "placeholder": "Select Learning Outcomes",
-                "required": false,
-                "visible": true
-              },
-              {
-                "code": "bloomslevel",
-                "dataType": "list",
-                "description": "Learning Level For The Content",
-                "editable": true,
-                "inputType": "select",
-                "label": "Learning Level",
-                "name": "LearningLevel",
-                "placeholder": "Select Learning Levels",
-                "required": true,
-                "visible": true,
-                "deafultValue": [
-                  "remember",
-                  "understand",
-                  "apply",
-                  "analyse",
-                  "evaluate",
-                  "create"
-                ]
-              },
-              {
-                "code": "creator",
-                "dataType": "text",
-                "description": "Enter The Author Name",
-                "editable": true,
-                "inputType": "text",
-                "label": "Author",
-                "name": "Author",
-                "placeholder": "Enter Author Name",
-                "required": true,
-                "visible": true
-              },
-              {
-                "code": "license",
-                "dataType": "list",
-                "description": "License For The Content",
-                "editable": true,
-                "inputType": "select",
-                "label": "License",
-                "name": "License",
-                "placeholder": "Select License",
-                "required": true,
-                "visible": true
-              }
-            ]
-          }
-        },
-        {
-          "id": "ng.sunbird.practiceSetComponent",
-          "ver": "1.0",
-          "compId": "practiceSetComponent",
-          "author": "Kartheek",
-          "description": "",
-          "publishedDate": "",
-          "data": {},
-          "config": {
-            "No of options": 4,
-            "solutionType": [
-              "Video",
-              "Text & image"
-            ],
-            "questionCategory": [
-              "vsa",
-              "sa",
-              "ls",
-              "mcq",
-              "curiosity"
-            ],
-            "formConfiguration": [
-              {
-                "code": "LearningOutcome",
-                "range": [],
-                "label": "Learning Outcome",
-                "multiselect": false
-              },
-              {
-                "code": "bloomslevel",
-                "range": [],
-                "label": "Learning Level",
-                "multiselect": true
-              }
-            ]
-          }
-        },
-        {
-          "id": "ng.sunbird.dashboard",
-          "ver": "1.0",
-          "compId": "dashboardComp",
-          "author": "Venkanna Gouda",
-          "description": "",
-          "publishedDate": "",
-          "data": {},
-          "config": {}
-        }
-      ],
-      "actions": {
-        "showTotalContribution": {
-          "roles": [
-            1,
-            2
-          ]
-        },
-        "showMyContribution": {
-          "roles": [
-            1
-          ]
-        },
-        "showRejected": {
-          "roles": [
-            1
-          ]
-        },
-        "showUnderReview": {
-          "roles": [
-            1
-          ]
-        },
-        "showTotalUnderReview": {
-          "roles": [
-            2
-          ]
-        },
-        "showAcceptedByMe": {
-          "roles": [
-            2
-          ]
-        },
-        "showRejectedByMe": {
-          "roles": [
-            2
-          ]
-        },
-        "showFilters": {
-          "roles": [
-            1,
-            2,
-            3
-          ]
-        },
-        "addresource": {
-          "roles": [
-            1
-          ]
-        },
-        "showDashboard": {
-          "roles": [
-            3
-          ]
-        },
-        "showCert": {
-          "roles": [
-            4
-          ]
-        },
-        "showSave": {
-          "roles": [
-            1
-          ]
-        },
-        "showChangeFile": {
-          "roles": [
-            1
-          ]
-        },
-        "showRequestChanges": {
-          "roles": [
-            2
-          ]
-        },
-        "showPublish": {
-          "roles": [
-            2
-          ]
-        },
-        "showSubmit": {
-          "roles": [
-            1
-          ]
-        }
-      },
-      "onBoardingForm": {
-        "templateName": "onBoardingForm",
-        "action": "onboard",
-        "fields": [
-          {
-            "code": "school",
-            "dataType": "text",
-            "name": "School",
-            "label": "School",
-            "description": "School",
-            "inputType": "select",
-            "required": false,
-            "displayProperty": "Editable",
-            "visible": true,
-            "range": [
-              {
-                "identifier": "my_school",
-                "code": "my_school",
-                "name": "My School",
-                "description": "My School",
-                "index": 1,
-                "category": "school",
-                "status": "Live"
-              }
-            ],
-            "index": 1
-          }
-        ]
-      },
-      "sharedContext": [
-        "channel",
-        "framework",
-        "board",
-        "medium",
-        "gradeLevel",
-        "subject",
-        "topic"
-      ]
-    }
-                    }
-                }
-            };
-           
-            this.httpClient.post<any>(option.url, option.data).subscribe(
-			  (res) => this.getProgramTextbooks(res),
-			  (err) => this.saveProgramError(err)
-			);
         } else {
             this.formIsInvalid = true;
             this.validateAllFormFields(this.createProgramForm);
         }
     }
+
+    showTexbooklist (res){
+      console.log(this.programId);
+      const formData = {
+        ...this.createProgramForm.value
+      };
+
+      const option = {
+        url: 'content/composite/v1/search',
+        data: {
+          request: {
+            filters: {
+              objectType: "content", 
+              status: ["Draft", "Live"], 
+              contentType: "Textbook", 
+              framework: this.userprofile.framework.id[0], 
+              board:	this.userprofile.framework.board[0],
+              medium:	formData.medium  
+            }
+          }
+        }
+      };
+
+      let instance = this;
+      this.httpClient.post<any>(option.url, option.data).subscribe(
+        (res) => {
+                this.showTextBookSelector = true;
+                this.collections = res.result.content;
+              }, 
+        (err) => {
+          console.log(err);
+          // TODO: navigate to program list page
+          const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+          instance.toasterService.warning(errorMes || 'Fetching textbooks failed');
+        }
+      );
+    }
+    
+    getProgramTextbooks(res) {
+      const formData = {
+        ...this.createProgramForm.value
+      };
+
+      const request = { };
+      request['filters'] = {
+        objectType: "content", 
+        status: ["Draft", "Live"], 
+        contentType: "Textbook", 
+        framework: this.userprofile.framework.id[0], 
+        board:	this.userprofile.framework.board[0],
+        medium:	formData.medium 
+      };
+
+      return this.programsService.getProgramCollection(request);
+   }
+
+   onCollectionCheck(collectionId: string, isChecked: boolean) {
+    const pcollectionsFormArray = <FormArray>this.collectionListForm.controls.pcollections;
+
+    if (isChecked) {
+      pcollectionsFormArray.push(new FormControl(collectionId));
+    } else {
+      let index = pcollectionsFormArray.controls.findIndex(x => x.value == collectionId)
+      pcollectionsFormArray.removeAt(index);
+    }
+  }
+
+  updateProgramCollection () {
+    console.log(this.collectionListForm.value);
+    const data = {};
+    data['program_id'] = this.programId;
+    data['collection'] = this.collectionListForm.value.pcollections;
+    console.log(data);
+
+    const option = {
+      url: '/program/v1/collection/link',
+      header: {
+        'content-type' : 'application/json',
+        'Authorization' : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlMDRkNzJkMWNiZDg0MTEyOTBkNGFiZWM3NDU5YTFlYiJ9.bThu42m1nPTMikbYGywqBqQYUihm_l1HsmKMREMuSdM",
+        'X-Authenticated-User-Token' : "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ1WXhXdE4tZzRfMld5MG5PS1ZoaE5hU0gtM2lSSjdXU25ibFlwVVU0TFRrIn0.eyJqdGkiOiJjMDI3MzllMS0wMTFiLTQwNmEtOTkwOS1mNzU1MDA3NDNiMWMiLCJleHAiOjE1ODM5OTM4MjUsIm5iZiI6MCwiaWF0IjoxNTgzODIxMDI1LCJpc3MiOiJodHRwczovL2Rldi5zdW5iaXJkZWQub3JnL2F1dGgvcmVhbG1zL3N1bmJpcmQiLCJzdWIiOiJmOjVhOGEzZjJiLTM0MDktNDJlMC05MDAxLWY5MTNiYzBmZGUzMTo5NWU0OTQyZC1jYmU4LTQ3N2QtYWViZC1hZDhlNmRlNGJmYzgiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhZG1pbi1jbGkiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiI0NjMxMmU3My1jYzNmLTQ3ZDctOGYxZS1jNTFiNTA5NDNmZTYiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHBzOi8vZGV2LmNlbnRyYWxpbmRpYS5jbG91ZGFwcC5henVyZS5jb20vIiwiaHR0cDovL2Rldi5jZW50cmFsaW5kaWEuY2xvdWRhcHAuYXp1cmUuY29tLyJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwic2NvcGUiOiIiLCJuYW1lIjoiUmV2aWV3ZXIgVXNlciIsInByZWZlcnJlZF91c2VybmFtZSI6Im50cHRlc3QxMDMiLCJnaXZlbl9uYW1lIjoiUmV2aWV3ZXIiLCJmYW1pbHlfbmFtZSI6IlVzZXIiLCJlbWFpbCI6InVzZXJ0ZXN0MTNAdGVzdHNzLmNvbSJ9.Cq_k0zB8RfzpW6anvIw3yuB-AokQ7F8pmYIOdz-RT8QlRP3RHTvClqMznD4dh7rTNqkfNL3CObgJgckj9nrrMvdCJhkJ08cEnZmxsbB4lcWQaJkDiG4DocrkFv4KRRQaBXPlRRI14MCKrAxby71y4IN1Ny3G7QvBue7BMhxPsFdq8z9v2P5m9N_s69BGY18VPQ6xxprbUD9HqL_JGht9fyKIxt0877SqRtJ7ZZrfjS4rWj2Q6m2TbzWm8YcUqk5f-z8uoHHs8-jS_EnzN8xFGIIeLF3xST2aXBkPR1A4Yyj3qu82E0EmoGxA-w_1vzDCBGhBJtxPSDAYcUVtmCrjEw"
+      },
+      data: {
+        request: {
+          'program_id': this.programId,
+          'collection': this.collectionListForm.value.pcollections
+          }
+      }
+    };
+
+    let instance = this;
+    this.programsService.post(option).subscribe(
+      (res) => {this.router.navigate(['/sourcing'])},
+      (err) => { console.log(err);
+        // TODO: navigate to program list page
+        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+        instance.toasterService.warning(errorMes || 'Fetching textbooks failed');
+      }
+    );
+  }
 }
