@@ -320,9 +320,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     const option = {
       url: '/program/v1/collection/link',
       header: {
-        'content-type' : 'application/json',
-        'Authorization' : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlMDRkNzJkMWNiZDg0MTEyOTBkNGFiZWM3NDU5YTFlYiJ9.bThu42m1nPTMikbYGywqBqQYUihm_l1HsmKMREMuSdM",
-        'X-Authenticated-User-Token' : "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ1WXhXdE4tZzRfMld5MG5PS1ZoaE5hU0gtM2lSSjdXU25ibFlwVVU0TFRrIn0.eyJqdGkiOiJjMDI3MzllMS0wMTFiLTQwNmEtOTkwOS1mNzU1MDA3NDNiMWMiLCJleHAiOjE1ODM5OTM4MjUsIm5iZiI6MCwiaWF0IjoxNTgzODIxMDI1LCJpc3MiOiJodHRwczovL2Rldi5zdW5iaXJkZWQub3JnL2F1dGgvcmVhbG1zL3N1bmJpcmQiLCJzdWIiOiJmOjVhOGEzZjJiLTM0MDktNDJlMC05MDAxLWY5MTNiYzBmZGUzMTo5NWU0OTQyZC1jYmU4LTQ3N2QtYWViZC1hZDhlNmRlNGJmYzgiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhZG1pbi1jbGkiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiI0NjMxMmU3My1jYzNmLTQ3ZDctOGYxZS1jNTFiNTA5NDNmZTYiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHBzOi8vZGV2LmNlbnRyYWxpbmRpYS5jbG91ZGFwcC5henVyZS5jb20vIiwiaHR0cDovL2Rldi5jZW50cmFsaW5kaWEuY2xvdWRhcHAuYXp1cmUuY29tLyJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwic2NvcGUiOiIiLCJuYW1lIjoiUmV2aWV3ZXIgVXNlciIsInByZWZlcnJlZF91c2VybmFtZSI6Im50cHRlc3QxMDMiLCJnaXZlbl9uYW1lIjoiUmV2aWV3ZXIiLCJmYW1pbHlfbmFtZSI6IlVzZXIiLCJlbWFpbCI6InVzZXJ0ZXN0MTNAdGVzdHNzLmNvbSJ9.Cq_k0zB8RfzpW6anvIw3yuB-AokQ7F8pmYIOdz-RT8QlRP3RHTvClqMznD4dh7rTNqkfNL3CObgJgckj9nrrMvdCJhkJ08cEnZmxsbB4lcWQaJkDiG4DocrkFv4KRRQaBXPlRRI14MCKrAxby71y4IN1Ny3G7QvBue7BMhxPsFdq8z9v2P5m9N_s69BGY18VPQ6xxprbUD9HqL_JGht9fyKIxt0877SqRtJ7ZZrfjS4rWj2Q6m2TbzWm8YcUqk5f-z8uoHHs8-jS_EnzN8xFGIIeLF3xST2aXBkPR1A4Yyj3qu82E0EmoGxA-w_1vzDCBGhBJtxPSDAYcUVtmCrjEw"
+        'content-type' : 'application/json'
       },
       data: {
         request: {
@@ -338,7 +336,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       (err) => { console.log(err);
         // TODO: navigate to program list page
         const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-        instance.toasterService.warning(errorMes || 'Fetching textbooks failed');
+        this.toasterService.warning(errorMes || 'Fetching textbooks failed');
       }
     );
   }
