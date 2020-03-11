@@ -26,7 +26,8 @@
             </tr>
           </thead>
           <tbody class="sb-table-body">
-            <tr *ngFor="let program of programsList" [routerLink]="['/contribute/nominatedtextbooks/' + program.programId]" class="hand">
+            <!-- [routerLink]="['/contribute/nominatedtextbooks/' -->
+            <tr *ngFor="let program of programsList" [routerLink]="['/contribute/testing/' + program.programId]" class="hand">
               <td> 
                 <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
                   {{program?.name}}

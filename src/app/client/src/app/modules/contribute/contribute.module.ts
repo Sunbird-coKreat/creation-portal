@@ -20,9 +20,12 @@ import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
 import { ListAllMyProgramsComponent } from './components/list-all-my-programs/list-all-my-programs.component';
 import { ListNominatedTextbooksComponent} from './components/list-nominated-textbooks/list-nominated-textbooks.component';
 // import { MyProgramComponent} from './components/my-program/my-program.component';
+import { DummyComponent } from  './components/dummy/dummy.component';
+import { TextbookListComponent } from '../shared-feature';
+import { SharedFeatureModule } from '../shared-feature/shared-feature.module'
 @NgModule({
   
-  declarations: [ListAllProgramsComponent, ProgramComponent, OnboardPopupComponent, ProgramHeaderComponent, ListAllMyProgramsComponent, ListNominatedTextbooksComponent  ],
+  declarations: [ListAllProgramsComponent, ProgramComponent, OnboardPopupComponent, ProgramHeaderComponent, ListAllMyProgramsComponent, ListNominatedTextbooksComponent, DummyComponent ],
   imports: [
     SuiModule,
     CommonModule,
@@ -36,12 +39,14 @@ import { ListNominatedTextbooksComponent} from './components/list-nominated-text
     NgInviewModule,
     TelemetryModule,
     CbseProgramModule,
-    
-    DynamicModule.withComponents([CollectionComponent, DashboardComponent])
+    SharedFeatureModule,
+    DynamicModule.withComponents([CollectionComponent, DashboardComponent, TextbookListComponent])
   ],
   exports: [
     ProgramComponent,
     OnboardPopupComponent,
+    DummyComponent
   ]
+
 })
 export class ContributeModule { }
