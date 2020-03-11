@@ -314,23 +314,10 @@ export class ProgramsService extends DataService implements CanActivate {
         { id: "2", name: "Textbook 2" },
         { id: "3", name: "Textbook 3" }
       ],
-      grades: [
-        { id: "1", name: "Grade 1" },
-        { id: "3", name: "Grade 3" }
-      ],
-      mediums: [
-        { id: "1", name: "Marathi" },
-        { id: "2", name: "English" }
-      ],
-      subjects: [
-        { id: "1", name: "Mathematics" },
-        { id: "2", name: "Science" },
-        { id: "3", name: "Geography" }
-      ],
       nominations: {
-        pending: 5,
-        approved: 8,
-        rejected: 2
+        pending: 0,
+        approved: 0,
+        rejected: 0
       },
       nomination_status: 'Pending',
       contribution_date: this.getFutureDate(-1),
