@@ -183,7 +183,7 @@
       Select ContentTypes
   </div>
   <div class="sb-modal-content">
-    <div class="ui checkbox" *ngFor="let contenttype of contentTypeList">
+    <div class="mb-10" *ngFor="let contenttype of contentTypeList">
       <div class="sb-checkbox sb-checkbox-primary">
         <input class="checking" [(ngModel)]="contenttype.isSelected" (change)="toggle(contenttype);" (click)="$event.stopPropagation()" type="checkbox">
         <label for="check1" class="mb-0"> {{contenttype.name}}</label>
@@ -193,6 +193,6 @@
   </div>
   <div class="sb-modal-actions">
     <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="addNomination()"> Add </button>
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showConfirmationModal = false"> No </button>
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showContentTypeModal = false"> No </button>
   </div>
 </sui-modal>

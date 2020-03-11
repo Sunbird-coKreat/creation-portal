@@ -319,6 +319,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
   }
 
   addNomination() {
+    this.showContentTypeModal = false;
     let creator = this.userService.userProfile.firstName;
     if (!_.isEmpty(this.userService.userProfile.lastName)) {
       creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
@@ -338,6 +339,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     };
     this.programsService.post(req).subscribe((data) => {
       this.tosterService.success('Nomination sent');
+      this.router.navigateByUrl('/contribute/myenrollprograms');
     }, error => {
       this.tosterService.error('User onboarding failed');
     });
