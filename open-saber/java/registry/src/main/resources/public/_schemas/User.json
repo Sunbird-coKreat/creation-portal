@@ -1,0 +1,128 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "type": "object",
+  "properties": {
+    "User": {
+      "$ref": "#/definitions/User"
+    }
+  },
+  "title":"User",
+  "required": [
+    "User"
+  ],
+  "definitions": {
+    "User": {
+      "$id": "#/properties/User",
+      "type": "object",
+      "title": "The User Schema",
+      "required": [
+        "firstName",
+        "userId",
+        "channel"
+      ],
+      "additionalProperties": false,
+      "properties": {
+      
+         "firstName": {
+          "$id": "#/properties/firstName",
+          "type": "string",
+          "$comment": "First Name"
+        },
+        "lastName": {
+          "$id": "#/properties/lastName",
+          "type": "string",
+          "$comment": "Last Name"
+        },
+        "userId": {
+          "$id": "#/properties/userId",
+          "$ref": "Common.json#/definitions/ID"
+        },
+        "channel": {
+          "$id": "#/properties/channel",
+          "type": "string",
+          "title": "Channel Information"
+        },
+        "enrolledDate": {
+          "$id": "#/properties/enrolledDate",
+          "$ref": "Common.json#/definitions/Date"
+        },
+        "certificates": {
+           "$id": "#/properties/certificates",
+          "type": "string",
+          "title": "certificates Information"
+        },
+         "totalContributedContent": {
+          "$id": "#/properties/totalContributedContent",
+          "type": "integer",
+          "title": "Total Contribution of content by an Org"
+        },
+         "totalAcceptedContent": {
+          "$id": "#/properties/totalAcceptedContent",
+          "type": "integer",
+          "title": "Total  content accepted by an Org"
+        },
+        "description": {
+          "$id": "#/properties/description",
+          "type": "string",
+          "title":"Description"
+        },
+         "website": {
+          "$id": "#/properties/website",
+          "type": "string",
+          "title": "Website URI"
+        },
+        "contentTypes": {
+          "$id": "#/properties/contentTypes",
+          "type": "array",
+          "items":{
+            "type":"string"
+          }
+        },
+        "board": {
+          "$id": "#/properties/board",
+          "type": "array",
+          "items":{
+            "type":"string"
+          },
+          "title": "Board"
+        },
+        "medium": {
+          "$id": "#/properties/medium",
+          "type": "array",
+          "items":{
+            "type":"string"
+          },
+          "title": "Medium"
+        },
+        "gradeLevel": {
+          "$id": "#/properties/gradeLevel",
+          "type": "array",
+          "items":{
+            "type":"string"
+          },
+          "title": "Grade Level"
+        },
+         "subject": {
+          "$id": "#/properties/subject",
+          "type": "array",
+          "items":{
+            "type":"string"
+          },
+          "title": "Subject"
+        }
+      }
+    }
+  },
+  "_osConfig": {
+         "osComment": ["This section contains the OpenSABER specific configuration information", 
+                      "privateFields: Optional; list of field names to be encrypted and stored in database", 
+                      "signedFields: Optional; list of field names that must be pre-signed",
+                      "systemFields: Optional; list of fields names used for system standard information like created, updated timestamps and userid"], 
+                      
+                                           
+         "privateFields": [],
+         "signedFields": [],
+         "systemFields": ["osCreatedAt", "osUpdatedAt"]
+         
+  } 
+}

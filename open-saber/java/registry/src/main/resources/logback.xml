@@ -1,0 +1,86 @@
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/app.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>logs/app_%d{yyyy-MM-dd}_%d{HH-mm-ss}_%i.log</fileNamePattern>
+            <maxFileSize>30MB</maxFileSize>
+            <!-- Adopter's specific tags: maxHistory, totalSizeCap disabled by default -->            
+            <!-- <maxHistory>10</maxHistory> -->
+            <!-- <totalSizeCap>20GB</totalSizeCap> -->           
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="Perf4jFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/perf.log</file>
+        <encoder>
+            <!-- <Pattern>%date %-5level [%thread] %logger{36} [%file:%line] %msg%n -->
+            <Pattern>%date %-5level %msg%n</Pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <FileNamePattern>logs/perf_%d{yyyy-MM-dd}_%d{HH-mm-ss}_%i.log</FileNamePattern>
+            <!-- Adopter's specific tags: maxHistory, totalSizeCap disabled by default -->            
+            <!-- <maxHistory>10</maxHistory> -->
+            <!-- <totalSizeCap>5GB</totalSizeCap> -->
+            <maxFileSize>30MB</maxFileSize> 
+        </rollingPolicy>
+    </appender>
+
+    <appender name="CoalescingStatistics" class="org.perf4j.logback.AsyncCoalescingStatisticsAppender">
+        <param name="TimeSlice" value="600000"/>
+        <appender-ref ref="Perf4jFileAppender"/>
+    </appender>
+
+    <appender name="AuditFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>audit_logs/audit.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>audit_logs/audit_%d{yyyy-MM-dd}_%d{HH-mm-ss}_%i.log</fileNamePattern>
+            <!-- Adopter's specific tags: maxHistory, totalSizeCap disabled by default -->            
+            <!-- <maxHistory>10</maxHistory> -->
+            <!-- <totalSizeCap>5GB</totalSizeCap> -->
+            <maxFileSize>30MB</maxFileSize>            
+        </rollingPolicy>
+        <encoder>
+            <pattern>%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Loggers -->
+    <!-- The Perf4J logger. Note that org.perf4j.TimingLogger is the value of
+        the org.perf4j.StopWatch.DEFAULT_LOGGER_NAME constant. Also, note that additivity
+        is set to false, which is usually what is desired - this means that timing
+        statements will only be sent to this logger and NOT to upstream loggers. -->
+    <logger name="org.perf4j.TimingLogger" level="DEBUG" additivity="FALSE">
+        <appender-ref ref="CoalescingStatistics"/>
+        <appender-ref ref="Perf4jFileAppender"/>
+    </logger>
+
+    <logger name="es.weso" level="ERROR"/>
+    <logger name="org.springframework" level="ERROR"/>
+
+    <!-- OpenSABER specific loggers. Turn these to INFO in production -->
+    <logger name="io.opensaber.registry.service" level="DEBUG"/>
+    <logger name="com.steelbridgelabs.oss.neo4j.structure.Neo4JSession" level="DEBUG"/>
+    <logger name="io.opensaber.registry.dao.RegistryDaoImpl" level="DEBUG"/>
+    <logger name="com.mchange.v2.c3p0.impl.NewProxyPreparedStatement" level="DEBUG"/>
+
+    <logger name="io.opensaber.audit.AuditServiceImpl" level="DEBUG" additivity="FALSE">
+        <appender-ref ref="AuditFileAppender"/>
+    </logger>
+
+    <root level="INFO" additivity="FALSE">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
+    </root>
+
+</configuration>
