@@ -49,47 +49,58 @@
   </div> -->
     <div class="ui container">
       <div class="sb-pageSection-header row my-20">
-        <h4 class="sb-pageSection-title six">New Program FEB2020
+        <h4 class="sb-pageSection-title six">{{programContext.name}}
           <ng-template #popupTemplate>
             <div class="content">
               <div class="textbook-details ml-8">
-            <div class="d-flex flex-ai-center">
-              <span class="dot-separator"></span>
-              <label class="d-block fsmall font-weight-normal mb-0">Marathi, Hindi, English</label>
+                <div class="header"><strong>Subject</strong></div>
+                <div class="content">
+                  <label class="d-block fsmall font-weight-normal mb-0">{{sharedContext.subject.join(', ')}}</label>
+                </div>
+                <hr />
+                <div class="header"><strong>Grades / Classes</strong></div>
+                <div class="content">
+                  <label class="d-block fsmall font-weight-normal mb-0">{{sharedContext.gradeLevel.join(', ')}}</label>
+                </div>
+                <hr />
+                <div class="header">
+                  <strong>Nomination End Date</strong>
+                </div>
+                <div class="content">
+                  <label class="d-block fsmall font-weight-normal mb-0">
+                    {{programContext.nomination_enddate | date: medium }}
+                  </label>
+                </div>
+                <hr />
+                <div class="header">
+                  <strong>Nomination Shortlisting Date</strong>
+                </div>
+                <div class="content">
+                  <label class="d-block fsmall font-weight-normal mb-0">
+                    {{programContext.shortlisting_enddate | date: medium }}
+                  </label>
+                </div>
+                <hr />
+                <div class="header">
+                  <strong>Contribution End Date</strong>
+                </div>
+                <div class="content">
+                  <label class="d-block fsmall font-weight-normal mb-0">
+                    {{programContext.content_submission_enddate | date: medium }}
+                  </label>
+                </div>
+                <hr />
+                <div class="header"><strong>Program End Date</strong></div>
+                <div class="content">
+                  <label class="d-block fsmall font-weight-normal mb-0">
+                    {{programContext.enddate | date: medium }}
+                  </label>
+                </div>
+              </div>
             </div>
-            <div class="d-flex flex-ai-center">
-              <span class="dot-separator"></span>
-              <label class="d-block fsmall font-weight-normal mb-0">Grade 1, Grade 2</label>
-            </div>
-            <div class="d-flex flex-ai-center">
-              <span class="dot-separator"></span>
-              <label class="d-block fsmall font-weight-normal mb-0">
-              Nomination End Date:  July 26th, 2019
-              </label>
-            </div>
-            <div class="d-flex flex-ai-center">
-              <span class="dot-separator"></span>
-              <label class="d-block fsmall font-weight-normal mb-0">
-              Nomination Shortlisting Date:  Aug 5th, 2019
-              </label>
-            </div>
-            <div class="d-flex flex-ai-center">
-              <span class="dot-separator"></span>
-              <label class="d-block fsmall font-weight-normal mb-0">
-              Contribution End Date:  Aug 20th, 2019
-              </label>
-            </div>
-            <div class="d-flex flex-ai-center">
-              <span class="dot-separator"></span>
-              <label class="d-block fsmall font-weight-normal mb-0">
-              Program End Date:  Aug 30th, 2019
-              </label>
-            </div>
-            </div>
-            </div>
-				</ng-template>
-				<i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate">
-				</i>
+          </ng-template>
+                <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate">
+                </i>
       </h4>
       <div class="pull-right">
         <div *ngIf="nominateButton === 'show'">
@@ -141,7 +152,7 @@
             <div class="sb__ellipsis">{{data.medium}}</div>
           </td>
           <td>
-            12
+            -
           </td>
           <td>
             <div class="sb__ellipsis">{{data.subject}}</div>
