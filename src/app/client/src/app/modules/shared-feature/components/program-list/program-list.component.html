@@ -16,22 +16,22 @@
              <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable">
             <thead class="sb-table-header sb-table-thead-gray">
               <tr>
-                <th class="w-20 sb-sort-icon">{{ resourceService.frmelmnts.lbl.program }}</th>
-                <th>{{ resourceService.frmelmnts.lbl.noOfTextbooks }}</th>
-                <th>{{ resourceService.frmelmnts.lbl.gradesMediumsSubjects }}</th>
-                <th *ngIf="!isContributor">{{ resourceService.frmelmnts.lbl.nominations }}</th>
-                <th *ngIf="!isContributor">{{ resourceService.frmelmnts.lbl.nomination }}<br>{{ resourceService.frmelmnts.lbl.shortlistDates }}</th>
-                <th *ngIf="!isContributor">{{ resourceService.frmelmnts.lbl.contentSubmissionDate }}<br>{{ resourceService.frmelmnts.lbl.programEndDate }}</th>
-                <th *ngIf="activeMyProgramsMenu" class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.contributionDate }}</th>
-                <th *ngIf="activeAllProgramsMenu" class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.nominationEndDate }}</th>
+                <th class="w-20 sb-sort-icon">{{resourceService.frmelmnts.lbl.program}}</th>
+                <th>{{resourceService.frmelmnts.lbl.noOfTextbooks}}</th>
+                <th>{{resourceService.frmelmnts.lbl.gradesMediumsSubjects}}</th>
+                <th *ngIf="!isContributor">{{resourceService.frmelmnts.lbl.nominations}}</th>
+                <th *ngIf="!isContributor">{{resourceService.frmelmnts.lbl.nomination}}<br>{{resourceService.frmelmnts.lbl.shortlistDates}}</th>
+                <th *ngIf="!isContributor">{{resourceService.frmelmnts.lbl.contentSubmissionDate }}<br>{{resourceService.frmelmnts.lbl.programEndDate}}</th>
+                <th *ngIf="activeMyProgramsMenu" class="sb-sort-icon">{{resourceService.frmelmnts.lbl.contributionDate}}</th>
+                <th *ngIf="activeAllProgramsMenu" class="sb-sort-icon">{{resourceService.frmelmnts.lbl.nominationEndDate}}</th>
                 <th *ngIf="activeMyProgramsMenu"><span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
-                  <div class="text">{{ resourceService.frmelmnts.lbl.nominationStatus }}</div>
+                  <div class="text">{{resourceService.frmelmnts.lbl.nominationStatus}}</div>
                   <i class="filter icon"></i>
                   <div class="menu" suiDropdownMenu>
-                      <div class="item">All</div>
-                      <div class="item">Pending</div>
-                      <div class="item selected">Approved</div>
-                      <div class="item">Rejected</div>
+                      <div class="item">{{resourceService.frmelmnts.lbl.all}}</div>
+                      <div class="item">{{resourceService.frmelmnts.lbl.pending}}</div>
+                      <div class="item selected">{{resourceService.frmelmnts.lbl.approved}}</div>
+                      <div class="item">{{resourceService.frmelmnts.lbl.rejected}}</div>
                   </div>
               </span></th>
                 <th class="w-10 text-center">{{ resourceService.frmelmnts.lbl.actions }}</th>
@@ -96,10 +96,10 @@
                 <td class="text-center">
                   <button type="button" class="sb-btn sb-btn-outline-primary sb-btn-normal" *ngIf="!isContributor" (click)="viewDetailsBtnClicked(program)">{{ resourceService.frmelmnts.lbl.viewDetails }}</button>           
                   <div class="ui dropdown sb-dotted-dropdown" *ngIf="isContributor" suiDropdown autoClose="itemClick">
-                        <div class="p-8 w-auto" suiPopup popupText="View All Actions" popupDelay="1000"><span class="sb-dotmenu"></span></div>
+                        <div class="p-8 w-auto" popupDelay="1000"><span class="sb-dotmenu"></span></div>
                         <div class="menu" suiDropdownMenu>
                             <div class="item" (click)="viewDetailsBtnClicked(program)">{{ resourceService.frmelmnts.lbl.viewDetails }}</div>
-                            <div class="item" *ngIf="activeMyProgramsMenu">Assign Role</div>
+                            <div class="item" *ngIf="activeMyProgramsMenu">{{resourceService.frmelmnts.lbl.assignRole}}</div>
                         </div>
                     </div>
                   <!-- <button class="sb-btn sb-btn-xs sb-btn-outline-primary" (click)="viewDetailsBtnClicked(program)">{{ resourceService.frmelmnts.lbl.viewDetails }}</button> -->
