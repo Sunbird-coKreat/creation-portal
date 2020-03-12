@@ -262,17 +262,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
               board:	this.userprofile.framework.board[0],
               medium:	formData.medium  
             }
-          },
-          // {
-          //   "id": "ng.sunbird.dashboard",
-          //   "ver": "1.0",
-          //   "compId": "dashboardComp",
-          //   "author": "Venkanna Gouda",
-          //   "description": "",
-          //   "publishedDate": "",
-          //   "data": {},
-          //   "config": {}
-          // }
+          }
         }
       };
 
@@ -290,7 +280,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         }
       );
     }
-    
     
     getProgramTextbooks(res) {
       const formData = {
@@ -310,45 +299,45 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       return this.programsService.getProgramCollection(request);
    }
 
-  //  onCollectionCheck(collectionId: string, isChecked: boolean) {
-  //   const pcollectionsFormArray = <FormArray>this.collectionListForm.controls.pcollections;
+   onCollectionCheck(collectionId: string, isChecked: boolean) {
+    const pcollectionsFormArray = <FormArray>this.collectionListForm.controls.pcollections;
 
-  //   if (isChecked) {
-  //     pcollectionsFormArray.push(new FormControl(collectionId));
-  //   } else {
-  //     let index = pcollectionsFormArray.controls.findIndex(x => x.value == collectionId)
-  //     pcollectionsFormArray.removeAt(index);
-  //   }
-  // }
+    if (isChecked) {
+      pcollectionsFormArray.push(new FormControl(collectionId));
+    } else {
+      let index = pcollectionsFormArray.controls.findIndex(x => x.value == collectionId)
+      pcollectionsFormArray.removeAt(index);
+    }
+  }
 
-  // updateProgramCollection () {
-  //   console.log(this.collectionListForm.value);
-  //   const data = {};
-  //   data['program_id'] = this.programId;
-  //   data['collection'] = this.collectionListForm.value.pcollections;
-  //   console.log(data);
+  updateProgramCollection () {
+    console.log(this.collectionListForm.value);
+    const data = {};
+    data['program_id'] = this.programId;
+    data['collection'] = this.collectionListForm.value.pcollections;
+    console.log(data);
 
-  //   const option = {
-  //     url: '/program/v1/collection/link',
-  //     header: {
-  //       'content-type' : 'application/json'
-  //     },
-  //     data: {
-  //       request: {
-  //         'program_id': this.programId,
-  //         'collection': this.collectionListForm.value.pcollections
-  //         }
-  //     }
-  //   };
+    const option = {
+      url: '/program/v1/collection/link',
+      header: {
+        'content-type' : 'application/json'
+      },
+      data: {
+        request: {
+          'program_id': this.programId,
+          'collection': this.collectionListForm.value.pcollections
+          }
+      }
+    };
 
-  //   let instance = this;
-  //   this.programsService.post(option).subscribe(
-  //     (res) => {this.router.navigate(['/sourcing'])},
-  //     (err) => { console.log(err);
-  //       // TODO: navigate to program list page
-  //       const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-  //       this.toasterService.warning(errorMes || 'Fetching textbooks failed');
-  //     }
-  //   );
-  // }
+    let instance = this;
+    this.programsService.post(option).subscribe(
+      (res) => {this.router.navigate(['/sourcing'])},
+      (err) => { console.log(err);
+        // TODO: navigate to program list page
+        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+        this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+      }
+    );
+  }
 }
