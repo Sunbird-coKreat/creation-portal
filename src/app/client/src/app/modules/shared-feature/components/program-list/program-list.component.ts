@@ -94,38 +94,15 @@ export class ProgramListComponent implements OnInit {
     return _.join(_.map(program.textbooks, 'name'), ', ');
   }
 
-  private getProgramGrades(program) {
-    let grades = program.grades;
-
-    if (!grades) return '-';
-
-    return _.join(_.map(grades, 'name'), ', ');
-  }
-
-  private getProgramSubjects(program) {
-    let subjects = program.subjects;
-
-    if (!subjects) return '-';
-
-    return _.join(_.map(subjects, 'name'), ', ');
-  }
-
-  private getProgramMediums(program) {
-    let mediums = program.mediums;
-
-    if (!mediums) return '-';
-
-    return _.join(_.map(mediums, 'name'), ', ');
-  }
-
-  private getProgramBoard(program) {
-    return program.board;
+  getProgramInfo(program, type) {
+    const config = JSON.parse(program.config);
+    return type  === 'board' ? config[type] : _.join(config[type], ', ');
   }
 
   private getProgramNominationStatus(program) {
     return program.nomination_status;
   }
-  
+
   private viewDetailsBtnClicked(program) {
     if (this.isContributor) {
       if (this.activeMyProgramsMenu) {
