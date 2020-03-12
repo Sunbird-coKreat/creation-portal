@@ -1,4 +1,4 @@
-<div class="ui container">
+<div class="ui container" *ngIf="!showChapterList">
 	<div class="sb-pageSection my-24 ui container" [appTelemetryImpression]="telemetryImpression">
 		<div class="sb-pageSection-header row">
 			<h4 class="sb-pageSection-title six">New Program FEB2020
@@ -69,7 +69,7 @@
 					<th class="sb-sort-icon">Medium</th>
 					<th>Subjects</th>
 					<th>Chapters</th>
-					<th>Action</th>
+					<th class="text-center">Action</th>
 				  </tr>
 				</thead>
 				<tbody class="sb-table-body">
@@ -83,7 +83,8 @@
 					  <td>{{contributorTextbook.subject}}</td>
 					  <td>5</td>
 					  <td class="text-center">
-							<button class="sb-btn sb-btn-xs sb-btn-outline-primary">View Details</button>
+							<button class="sb-btn sb-btn-xs sb-btn-outline-primary" (click)="viewContribution()">Upload content</button>
+							<button class="sb-btn sb-btn-xs sb-btn-outline-primary">Review content</button>
 					  </td>
 					</tr>
 				</tbody>
@@ -91,3 +92,7 @@
 		</div>
 	</div>
 </div>
+
+<ng-container *ngIf="showChapterList">
+	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>
+  </ng-container>

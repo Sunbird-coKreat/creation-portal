@@ -15,6 +15,7 @@
     }
 }
 
+
 .sb-dock-header {
     
 }
@@ -24,3 +25,31 @@
     top: 0.75rem;
     z-index: 99999;
 }
+
+.form-section-separator {
+    h4 {
+    font-size: 0.875rem;
+    font-weight: bold;
+    margin: 0.5rem 0px;
+    text-transform: uppercase;
+    }
+}
+.divider,hr {
+    border:0.5px solid hsla(0, 0%, 80%, 0.5);
+}
+.sb-inner-white-bg-container {
+    background-color:var(--white);
+    padding-bottom: 3rem;
+}
+
+.sb-label-value {
+    background-color: $primary-200;
+    padding: ($base-block-space/2) $base-block-space;
+    color: $white;
+    display: inline-block;
+    font-size: $font-size-sm;
+    text-transform: capitalize;
+    margin-right: $base-block-space;
+    cursor: pointer;
+    border-radius: $base-block-space/4;
+  }

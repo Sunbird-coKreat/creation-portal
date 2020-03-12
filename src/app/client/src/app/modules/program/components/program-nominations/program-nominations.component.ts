@@ -12,7 +12,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   component = ListNominationsComponent;
   programId = '';
-  nominations;
+  nominations = [];
+  showNominationsComponent = false;
 
   inputs = {};
   outputs = {
@@ -24,42 +25,49 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
     },
   };
 
-  constructor(private tosterService: ToasterService, private programsService: ProgramsService, public resourceService: ResourceService,
-    private config: ConfigService, private publicDataService: PublicDataService,
-    private activatedRoute: ActivatedRoute, private router: Router, private navigationHelperService: NavigationHelperService) { 
+  constructor(private tosterService: ToasterService, private programsService: ProgramsService,
+    public resourceService: ResourceService, private config: ConfigService,
+    private publicDataService: PublicDataService, private activatedRoute: ActivatedRoute, private router: Router,
+    private navigationHelperService: NavigationHelperService) {
       this.programId = this.activatedRoute.snapshot.params.programId;
-      this.nominations = [
-        {
-          "contributor_id": "1234",
-          "contributor_name": "Nitesh Kesarkar",
-          "type": "Organisation",
-          "textbooks": "Textbook1, Textbook2, Textbook3",
-          "status": "Pending",
-          "program_id": this.programId
-        }, {
-          "contributor_id": "1245",
-          "contributor_name": "Nilesh Sanap",
-          "type": "Individual",
-          "program_id": this.programId,
-          "status": "Accepted",
-          "textbooks": "Textbook2"
-        }, {
-          "contributor_id": "hhd_898",
-          "contributor_name": "Vaishali K",
-          "type": "Individual",
-          "program_id": this.programId,
-          "status": "Rejected",
-          "textbooks": "Textbook1, Textbook3"
-        }
-      ];
     }
 
   ngOnInit() {
-    this.inputs = {
-      nominations: this.nominations,
-    };
+    this.getNominationList();
   }
 
   ngAfterViewInit() {
+  }
+
+  getNominationList() {
+    const req = {
+      url: `/program/v1/nomination/list`,
+      data: {
+        request: {
+          program_id: this.activatedRoute.snapshot.params.programId
+        }
+      }
+    };
+    this.programsService.post(req).subscribe((data) => {
+      if (data.result.length > 0) {
+        _.forEach(data.result, (res) => {
+          let name = res.userData.firstName;
+          if (!_.isEmpty(res.userData.lastName)) {
+            name = name + ' ' + res.userData.lastName;
+          }
+          this.nominations.push({
+            'name': name,
+            'type': res.organisation_id ? 'Organisation' : 'Individual',
+            'nominationData': res
+          });
+        });
+      }
+      this.inputs = {
+        nominations: this.nominations
+      };
+      this.showNominationsComponent = true;
+    }, error => {
+      this.tosterService.error('User onboarding failed');
+    });
   }
 }

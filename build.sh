@@ -6,7 +6,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 build_tag=$1
-name=player
+name=creation-player
 node=$2
 org=$3
 export sunbird_content_editor_artifact_url=$4

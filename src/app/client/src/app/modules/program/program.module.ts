@@ -19,10 +19,18 @@ import { NgInviewModule } from 'angular-inport';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { DynamicModule } from 'ng-dynamic-component';
 import { CbseProgramModule } from '../../modules/cbse-program/cbse-program.module';
-import { CollectionComponent, DashboardComponent } from '../cbse-program';
+import { CollectionComponent, DashboardComponent, ChapterListComponent } from '../cbse-program';
 import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
+import { ProgramListComponent } from '../shared-feature';
+import { DaysToGoPipe } from '../shared-feature/pipe/days-to-go.pipe';
+
 @NgModule({
-  declarations: [ListAllProgramsComponent, ProgramComponent, OnboardPopupComponent, ProgramHeaderComponent, CreateProgramComponent, ProgramNominationsComponent, ListNominationsComponent, ListContributorTextbooksComponent],
+  declarations: [ListAllProgramsComponent,
+    // tslint:disable-next-line:max-line-length
+    ProgramComponent, OnboardPopupComponent,
+    ProgramHeaderComponent, CreateProgramComponent,
+    ProgramNominationsComponent, ListNominationsComponent,
+    ListContributorTextbooksComponent, ProgramListComponent, DaysToGoPipe],
   imports: [
   SuiModule,
     CommonModule,
@@ -36,7 +44,7 @@ import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
     NgInviewModule,
     TelemetryModule,
     CbseProgramModule,
-    DynamicModule.withComponents([CollectionComponent, DashboardComponent, ListNominationsComponent])
+    DynamicModule.withComponents([CollectionComponent, DashboardComponent, ChapterListComponent, ListNominationsComponent])
   ],
   exports: [
     ProgramComponent,

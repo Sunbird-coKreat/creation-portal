@@ -1,93 +1,139 @@
+<div class="sb-bg-color-primary-0 py-24"*ngIf="!showChapterList">
+	<div class="ui container" [appTelemetryImpression]="telemetryImpression">
+
+		<div class="d-flex flex-ai-center flex-jc-space-between">
+			<div class="flex-basis-1 pr-16">
+			  <!-- <button  class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" type="button"><i class="icon-svg icon-svg--xxs icon-back mr-4"><svg  class="icon icon-svg--primary"><use xlink:href="assets/images/libdemo/sprite.svg#arrow-long-left"></use></svg></i> Back</button> -->
+			  <h4 class="sb-pageSection-title six wide column">
+				 Contributor Details
+			  </h4>
+			  <div class="d-flex flex-ai-center fnormal mt-8">
+				<dl class="sb-meta-data mb-0 pr-8">
+					<dt>Name</dt>
+					<dd class="sb__ellipsis">
+						<a class="cursor-pointer text-decoration-underline sb-color-primary" (click)="show=true">{{contributor.name}} </a>
+					</dd>
+				  </dl>
+				  <div class="d-flex flex-ai-center flex-jc-space-around flex-basis-1">
+					<dl class="sb-meta-data mb-0 pr-8">
+						<dt>Program Name</dt>
+						<dd class="sb__ellipsis" suiPopup popupText="New Program FEB2020" popupDelay="1000">New Program FEB2020 <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate"></i>
+							<ng-template #popupTemplate>
+							  <div class="content">
+								<div class="textbook-details ml-8">
+								  <div class="header"><strong>Medium</strong></div>
+								  <div class="content">
+									<label class="d-block fsmall font-weight-normal mb-0"
+									  >Marathi, Hindi, English</label>
+								  </div>
+								  <hr />
+								  <div class="header"><strong>Grades / Classes</strong></div>
+								  <div class="content">
+									<label class="d-block fsmall font-weight-normal mb-0"
+									  >Grade 1, Grade 2</label>
+								  </div>
+								  <hr />
+								  <div class="header">
+									<strong>Expression for Interest Date</strong>
+								  </div>
+								  <div class="content">
+									<label class="d-block fsmall font-weight-normal mb-0">
+									  July 26th, 2019
+									</label>
+								  </div>
+								  <hr />
+								  <div class="header">
+									<strong>Shortlisting of Contributor Date</strong>
+								  </div>
+								  <div class="content">
+									<label class="d-block fsmall font-weight-normal mb-0">
+									  Aug 5th, 2019
+									</label>
+								  </div>
+								  <hr />
+								  <div class="header">
+									<strong>Content Submission Date</strong>
+								  </div>
+								  <div class="content">
+									<label class="d-block fsmall font-weight-normal mb-0">
+									  Aug 20th, 2019
+									</label>
+								  </div>
+								  <hr />
+								  <div class="header"><strong>Program End Date</strong></div>
+								  <div class="content">
+									<label class="d-block fsmall font-weight-normal mb-0">
+									  Aug 30th, 2019
+									</label>
+								  </div>
+								</div>
+							  </div>
+							</ng-template></dd>
+					  </dl>
+				  <dl class="sb-meta-data mb-0 pr-8">
+					  <dt class="sb__ellipsis">Type</dt>
+					  <dd  popupText="Org/Individual">Org/Individual</dd>
+					</dl>
+					<dl class="sb-meta-data mb-0 pr-8">
+					  <dt class="sb__ellipsis">Submitted Date</dt>
+					  <dd>July 26th, 2019</dd>
+					</dl>
+					<dl class="sb-meta-data mb-0 pr-8">
+					  <dt class="sb__ellipsis">Status</dt>
+					  <dd><span class="sb-label sb-label-table sb-label-warning-0">Pending</span></dd>
+					</dl>
+					</div>
+				  </div>
+			  </div>
+			<div class="sb-meta-data-container sb-meta-data-column">
+			  <label class="width-100">Nominations</label>
+			  <div class="d-flex">
+				<dl class="sb-meta-data">
+				  <dt>15</dt>
+				  <dd>Total</dd>
+				</dl>
+				<dl class="sb-meta-data">
+				  <dt>5</dt>
+				  <dd>Rejected</dd>
+				</dl>
+				<dl class="sb-meta-data">
+				  <dt>5</dt>
+				  <dd>Pending</dd>
+				</dl>
+				<dl class="sb-meta-data">
+				  <dt>5</dt>
+				  <dd>Approved</dd>
+				</dl>
+			  </div>
+			</div>
+		  </div>
+	</div>
+	</div>
+
+<div class="sb-bg-color-white pb-64 dynamicHeight"  *ngIf="!showChapterList">
 <div class="ui container">
-	<div class="sb-pageSection my-24 ui container" [appTelemetryImpression]="telemetryImpression">
-		<div class="sb-pageSection-header ui grid">
-			<h4 class="sb-pageSection-title six wide column">New Program FEB2020
-					<ng-template #popupTemplate>
-					<div class="content">
-						<div class="textbook-details ml-8">
-					<div class="d-flex flex-ai-center">
-					  <span class="dot-separator"></span>
-					  <label class="d-block fsmall font-weight-normal mb-0">Marathi, Hindi, English</label>
-					</div>
-					<div class="d-flex flex-ai-center">
-					  <span class="dot-separator"></span>
-					  <label class="d-block fsmall font-weight-normal mb-0">Grade 1, Grade 2</label>
-					</div>
-					<div class="d-flex flex-ai-center">
-					  <span class="dot-separator"></span>
-					  <label class="d-block fsmall font-weight-normal mb-0">
-						Expression for Interest Date:  July 26th, 2019
-					  </label>
-					</div>
-					<div class="d-flex flex-ai-center">
-					  <span class="dot-separator"></span>
-					  <label class="d-block fsmall font-weight-normal mb-0">
-						Shortlisting of Contributor Date:  Aug 5th, 2019
-					  </label>
-					</div>
-					<div class="d-flex flex-ai-center">
-					  <span class="dot-separator"></span>
-					  <label class="d-block fsmall font-weight-normal mb-0">
-						Content Submission Date:  Aug 20th, 2019
-					  </label>
-					</div>
-					<div class="d-flex flex-ai-center">
-					  <span class="dot-separator"></span>
-					  <label class="d-block fsmall font-weight-normal mb-0">
-						Program End Date:  Aug 30th, 2019
-					  </label>
-					</div>
-					</div>
-					</div>
-				</ng-template>
-			
-				<i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate"></i>
-			</h4>
-			<div class="sb-meta-data-container sb-meta-data-column six wide column">
-				<label class="width-100">Nominations</label>
-				<div class="d-flex">
-				  <dl class="sb-meta-data">
-					<dt>15</dt>
-					<dd>Total</dd>
-				  </dl>
-				  <dl class="sb-meta-data">
-					<dt>5</dt>
-					<dd>Rejected</dd>
-				  </dl>
-				  <dl class="sb-meta-data">
-					<dt>5</dt>
-					<dd>Pending</dd>
-				  </dl>
-				  <dl class="sb-meta-data">
-					<dt>5</dt>
-					<dd>Approved</dd>
-				  </dl>
+	<div class="sb-pageSection pt-24" [appTelemetryImpression]="telemetryImpression">
+		<div class="sb-pageSection-content">
+			<div class="d-flex flex-ai-center flex-jc-space-between">
+				<div class="sb-pageSection-header pt-16">
+					<h4 class="sb-pageSection-title">List of Textbooks <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">10</span></h4>
 				</div>
-			</div> 
-		</div>
-		<div class="sb-pageSection-content mt-12">
-			<div class="ui grid">
-				<div class="six wide column">
-					<label class="fs-1 mb-4">Contributor: </label>
-					<span class="hand"><a (click)="show=true" class="header text-decoration-underline">{{contributor.name}}</a></span>
-				</div>
-				<div class="six wide column right aligned">
-					<button class="sb-btn ui positive basic button m-5" *ngIf="contributor?.nominationStatus === 'Pending'" [routerLink]="'sourcing/nominations/0d19cd20-5889-11ea-aa49-89d7d466a619'">Accept</button>
-					<button class="sb-btn ui negative basic button m-5" *ngIf="contributor?.nominationStatus === 'Pending'" [routerLink]="'sourcing/nominations/0d19cd20-5889-11ea-aa49-89d7d466a619'">Reject</button>
+				<div class="">
+					<button class="sb-btn sb-btn-normal sb-btn-secondary mr-8" *ngIf="contributor?.nominationStatus === 'Pending'" [routerLink]="'sourcing/nominations/0d19cd20-5889-11ea-aa49-89d7d466a619'">Accept</button>
+					<button class="sb-btn sb-btn-normal sb-btn-outline-error" *ngIf="contributor?.nominationStatus === 'Pending'" [routerLink]="'sourcing/nominations/0d19cd20-5889-11ea-aa49-89d7d466a619'">Reject</button>
 					<span *ngIf="contributor?.nominationStatus === 'Accepted' || contributor?.nominationStatus === 'Rejected'">
 						Status: {{contributor?.nominationStatus}}
 					</span>
 				</div>
 			</div>
-			
 			<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
 				<thead class="sb-table-header sb-table-thead-gray">
 				  <tr>
 					<th class="sb-sort-icon">Textbook</th>
 					<th class="sb-sort-icon">Grade</th>
 					<th class="sb-sort-icon">Medium</th>
-					<th>Subjects</th>
-					<th>
+					<th class="sb-sort-icon">Subjects</th>
+					<th class="sb-sort-icon">
 						<span *ngIf="contributor?.nominationStatus == 'Pending'">
 							Sample content count
 						</span>
@@ -95,7 +141,7 @@
 							Contribution count
 						</span>
 					</th>
-					<th></th>
+					<th>Actions</th>
 				  </tr>
 				</thead>
 				<tbody class="sb-table-body">
@@ -108,9 +154,9 @@
 					  <td>3</td>
 					  <td data-label="Actions">
 						<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" *ngIf="contributor?.nominationStatus == 'Pending'"
-						  [routerLink]="'/sourcing/contributorchapters/0d19cd20-5889-11ea-aa49-89d7d466a619'">View Sample Content</button>
+						(click)="viewContribution()">View Sample Content</button>
 						<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" *ngIf="contributor?.nominationStatus == 'Accepted'"
-						  [routerLink]="'/sourcing/contributorchapters/0d19cd20-5889-11ea-aa49-89d7d466a619'">View Contributions</button>
+						(click)="viewContribution()">View Contributions</button>
 					  </td>
 					</tr>
 				</tbody>
@@ -118,8 +164,12 @@
 		</div>
 	</div>
 </div>
-<sui-modal *ngIf="show" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
-  class="sb-modal" appBodyScroll (dismissed)="show = false" #modal>
+</div>
+<ng-container *ngIf="showChapterList">
+	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>
+</ng-container>
+<sui-modal [mustScroll]="true" [isClosable]="true" *ngIf="show" [transitionDuration]="0" [size]="'normal'"
+  class="sb-modal" #modal>
   <div class="sb-modal-header"> Nominee Profile Details </div>
   <div class="sb-modal-content o-y-visible pb-8">
     <div class="ui container">
@@ -127,7 +177,7 @@
         <div class="sb-profile-page__avatar">
           <img src="assets/images/guest.svg" alt="guest" class="w-100">
         </div>
-        <div class="fs-2-5 font-weight-bold mb-24">{{ 'Nitesh Kesarkar' | titlecase}} </div>
+        <div class="fs-2-5 font-weight-bold mb-24">{{ 'Pratham' | titlecase}} </div>
       </div>
       <div class="mx-48 relative text-center">
         <div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
@@ -162,3 +212,5 @@
     </div>
   </div>
 </sui-modal>
+
+
