@@ -24,13 +24,24 @@ import { DaysToGoPipe } from '../shared-feature/pipe/days-to-go.pipe';
 import { OrgUserListComponent } from './components/org-user-list/org-user-list.component';
 import { OrgContriAdminComponent } from './components/org-contri-admin/org-contri-admin.component';
 import { ContriDashboardComponent } from './components/dashboard/dashboard.component';
-// import { MyProgramComponent} from './components/my-program/my-program.component';
-import { DummyComponent } from  './components/dummy/dummy.component';
+// import { DummyComponent } from  './components/dummy/dummy.component';
 import { TextbookListComponent } from '../shared-feature';
 import { SharedFeatureModule } from '../shared-feature/shared-feature.module'
+// import { MyProgramComponent} from './components/my-program/my-program.component';
 @NgModule({
-  
-  declarations: [ListAllProgramsComponent, ProgramComponent, OnboardPopupComponent, ProgramHeaderComponent, ListAllMyProgramsComponent, ListNominatedTextbooksComponent, DummyComponent ],
+  declarations: [
+    ListAllProgramsComponent,
+    ProgramComponent,
+    OnboardPopupComponent,
+    ProgramHeaderComponent,
+    ListAllMyProgramsComponent,
+    ListNominatedTextbooksComponent,
+    OrgUserListComponent,
+    OrgContriAdminComponent,
+    ContriDashboardComponent,
+    ProgramListComponent,
+    DaysToGoPipe
+  ],
   imports: [
     SuiModule,
     CommonModule,
@@ -50,8 +61,6 @@ import { SharedFeatureModule } from '../shared-feature/shared-feature.module'
   exports: [
     ProgramComponent,
     OnboardPopupComponent,
-    DummyComponent
   ]
-
 })
 export class ContributeModule { }
