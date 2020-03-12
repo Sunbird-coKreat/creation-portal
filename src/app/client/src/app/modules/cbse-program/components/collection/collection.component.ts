@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { ConfigService, UtilService, ResourceService } from '@sunbird/shared';
-import { PublicDataService, ContentService, UserService  } from '@sunbird/core';
+import { ConfigService, UtilService, ResourceService, ToasterService } from '@sunbird/shared';
+import { PublicDataService, ContentService, UserService, ProgramsService  } from '@sunbird/core';
 import * as _ from 'lodash-es';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
@@ -8,6 +8,7 @@ import { CbseProgramService } from '../../services';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import { ISessionContext, IChapterListComponentInput } from '../../interfaces';
 import { InitialState } from '../../interfaces';
+import { ActivatedRoute, Router } from '@angular/router';
 
 
 @Component({
@@ -49,11 +50,28 @@ export class CollectionComponent implements OnInit, OnDestroy {
   };
   public showStage;
   public currentStage: any;
+  public contentTypeList = [
+    {name: 'Resource', value: 'Resource' },
+    {name: 'Teaching Method', value: 'TeachingMethod'},
+    {name: 'Pedagogy Flow', value: 'PedagogyFlow'},
+    {name: 'Focus Spot', value: 'FocusSpot' },
+    {name: 'Learning Outcome', value: 'LearningOutcomeDefinition'},
+    {name: 'Practice QuestionSet', value: 'PracticeQuestionSet'},
+    {name: 'Curiosity QuestionSet', value: 'CuriosityQuestionSet'},
+    {name: 'Marking SchemeRubric', value: 'MarkingSchemeRubric'},
+    {name: 'Explanation Resource', value: 'ExplanationResource'},
+    {name: 'Experiential Resource', value: 'ExperientialResource'},
+    {name: 'ConceptMap', value: 'ConceptMap'}
+  ];
+  showContentTypeModal = false;
+  selectedContentTypes = [];
+  selectedCollectionIds = [];
   _slideConfig = {'slidesToShow': 10, 'slidesToScroll': 1, 'variableWidth': true};
   constructor(private configService: ConfigService, public publicDataService: PublicDataService,
     private cbseService: CbseProgramService, public programStageService: ProgramStageService,
     public resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService,
-    public userService: UserService, public utilService: UtilService, public contentService: ContentService) { }
+    public userService: UserService, public utilService: UtilService, public contentService: ContentService,
+    private activatedRoute: ActivatedRoute, private router: Router, private programsService: ProgramsService, private tosterService: ToasterService) { }
 
   ngOnInit() {
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
@@ -72,7 +90,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
       currentRole: _.get(this.programContext, 'userDetails.roles[0]'),
       bloomsLevel: _.get(this.programContext, 'config.scope.bloomsLevel'),
       programId: _.get(this.programContext, 'programId'),
-      //programId: '31ab2990-7892-11e9-8a02-93c5c62c03f1' || _.get(this.programContext, 'programId'),
+      // programId: '31ab2990-7892-11e9-8a02-93c5c62c03f1' || _.get(this.programContext, 'programId'),
       program: _.get(this.programContext, 'name'),
       onBoardSchool: _.get(this.programContext, 'userDetails.onBoardingData.school'),
       collectionType: _.get(this.collectionComponentConfig, 'collectionType'),
@@ -82,6 +100,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.getCollectionCard();
     const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
     this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
+    this.sessionContext.programId = this.programContext.program_id
     this.role.currentRole = this.sessionContext.currentRole;
     this.classes = _.find(this.collectionComponentConfig.config.filters.explicit, {'code': 'gradeLevel'}).range;
     this.mediums = _.find(this.collectionComponentConfig.config.filters.implicit, {'code': 'medium'}).defaultValue;
@@ -204,7 +223,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     let payloadArray = [];
     payloadArray = [{
       objectType: 'content',
-      programId: this.sessionContext.programId,
+      programId: this.sessionContext.programId || this.programContext.program_id,
       status: this.sessionContext.collectionStatus || ['Draft', 'Live'],
       contentType: this.sessionContext.collectionType || 'Textbook'
     }];
@@ -250,16 +269,30 @@ export class CollectionComponent implements OnInit, OnDestroy {
     // this.uploadSample = 'uploadSample';
   }
 
-  nominationChecked(rowId)
-  {
-    if(rowId !== '')
-    {
+  nominationChecked(rowId) {
+    if (_.includes(this.selectedCollectionIds, rowId)) {
+      _.remove(this.selectedCollectionIds, (data) => {
+        return data === rowId;
+      });
+    } else {
+      this.selectedCollectionIds.push(rowId);
+    }
+    if (this.selectedCollectionIds.length > 0) {
       this.nominateButton = 'show';
     }
   }
-  redirect()
-  {
-    
+  redirect() {
+
+  }
+
+  toggle(item: any) {
+    if (_.includes(this.selectedContentTypes, item.value)) {
+      _.remove(this.selectedContentTypes, (data) => {
+        return data === item.value;
+      });
+    } else {
+      this.selectedContentTypes.push(item.value);
+    }
   }
 
   uploadSample(event, collection) {
@@ -283,5 +316,32 @@ export class CollectionComponent implements OnInit, OnDestroy {
     };
     this.programStageService.addStage('chapterListComponent');
     this.isCollectionSelected.emit(collection.metaData.identifier ? true : false);
+  }
+
+  addNomination() {
+    this.showContentTypeModal = false;
+    let creator = this.userService.userProfile.firstName;
+    if (!_.isEmpty(this.userService.userProfile.lastName)) {
+      creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
+    }
+    const req = {
+      url: `/program/v1/nomination/add`,
+      data: {
+        request: {
+          program_id: this.activatedRoute.snapshot.params.programId,
+          user_id: this.userService.userProfile.userId,
+          status: 'Pending',
+          content_types: this.selectedContentTypes,
+          collection_ids: this.selectedCollectionIds,
+          createdby: creator
+        }
+      }
+    };
+    this.programsService.post(req).subscribe((data) => {
+      this.tosterService.success('Nomination sent');
+      this.router.navigateByUrl('/contribute/myenrollprograms');
+    }, error => {
+      this.tosterService.error('User onboarding failed');
+    });
   }
 }

@@ -1,4 +1,4 @@
-import { ExtPluginService, UserService, FrameworkService } from '@sunbird/core';
+import { ExtPluginService, UserService, FrameworkService, ProgramsService } from '@sunbird/core';
 import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService } from '@sunbird/shared';
@@ -49,7 +49,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
     public extPluginService: ExtPluginService, public userService: UserService,
     public toasterService: ToasterService, public programStageService: ProgramStageService,
-    public programComponentsService: ProgramComponentsService,
+    public programComponentsService: ProgramComponentsService, public programsService: ProgramsService,
     private navigationHelperService: NavigationHelperService) {
     this.programId = this.activatedRoute.snapshot.params.programId;
     localStorage.setItem('programId', this.programId);
@@ -92,7 +92,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   initiateOnboarding() {
     this.fetchProgramDetails().subscribe((programDetails) => {
-      this.handleOnboarding();
+      this.showOnboardPopup = false;
+      this.initiateHeader('success');
     }, error => {
       // TODO: navigate to program list page
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
@@ -104,10 +105,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   fetchProgramDetails() { // Getting Program Configuration
     const req = {
       // url: `${this.configService.urlConFig.URLS.CONTENT.GET}/${contentId}`,
-      url: `program/v1/read/${this.programId}`,
-      param: { userId: this.userService.userid }
+      url: `/program/v1/read/${this.programId}`
     };
-    return this.extPluginService.get(req).pipe(tap((programDetails: any) => {
+    return this.programsService.get(req).pipe(tap((programDetails: any) => {
+      programDetails.result.config = JSON.parse(programDetails.result.config);
       this.programDetails = programDetails.result;
       this.sessionContext.framework = _.get(this.programDetails, 'config.framework');
       if (this.sessionContext.framework) {
@@ -177,6 +178,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
 
   initiateInputs() {
     this.showLoader = false;
+    this.sessionContext.programId = this.programDetails.program_id;
     this.dynamicInputs = {
       collectionComponentInput: {
         sessionContext: this.sessionContext,
@@ -199,6 +201,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         userDetails: _.get(this.programDetails, 'userDetails'),
         showTabs: this.showTabs
       };
+      this.component = this.programComponentsService.getComponentInstance('collectionComponent');
       this.tabs = _.get(this.programDetails.config, 'header.config.tabs');
       if (this.tabs && this.programDetails.userDetails) {
         this.defaultView = _.find(this.tabs, { 'index': this.getDefaultActiveTab() });

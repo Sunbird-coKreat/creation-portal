@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, Renderer2, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Renderer2, AfterViewInit, ChangeDetectorRef, HostListener } from '@angular/core';
 import { ResourceService, ConfigService } from '@sunbird/shared';
 import { environment } from '@sunbird/environment';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
@@ -29,7 +29,8 @@ export class MainFooterComponent implements OnInit, AfterViewInit {
   instance: string;
   bodyPaddingBottom: string;
   constructor(resourceService: ResourceService, public router: Router, public activatedRoute: ActivatedRoute,
-    public configService: ConfigService, private renderer: Renderer2) {
+    public configService: ConfigService, private renderer: Renderer2, private cdr: ChangeDetectorRef
+) {
     this.resourceService = resourceService;
   }
 
@@ -40,18 +41,35 @@ export class MainFooterComponent implements OnInit, AfterViewInit {
     this.showDownloadmanager = this.router.url.includes('/profile') || this.router.url.includes('/play/collection') ||
       this.router.url.includes('/play/content');
   }
+
   ngAfterViewInit() {
-    setTimeout(() => {
-      if (this.footerFix && this.footerFix.nativeElement) {
-        this.bodyPaddingBottom = this.footerFix.nativeElement.offsetHeight + 'px';
-        this.renderer.setStyle(
-          document.body,
-          'padding-bottom',
-          this.bodyPaddingBottom
-        );
-      }
-    }, 500);
+    this.footerAlign();
   }
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    //console.log('event', event);
+    this.footerAlign();
+  }
+// footer dynamic height
+footerAlign() {
+  $('.footerfix').css('height', 'auto');
+  const footerHeight = $('footer').outerHeight();
+  const pageContainerHeight = window.innerHeight;
+  const footerMobileHeight = $('.download-mobile-app').outerHeight();
+  $('.footerfix').css('height', footerHeight);
+  $('.footer-fix').css('min-height', pageContainerHeight - footerMobileHeight - 13 + 'px');
+  const footerFixCt = $('.footer-fix').outerHeight();
+  $('.dynamicHeight').css('min-height', footerFixCt - footerMobileHeight - 13);
+  // alert(footerFixCt - footerMobileHeight - 13);
+  if (window.innerWidth <= 767) {
+    (document.querySelector('.download-mobile-app') as HTMLElement).style.bottom = footerHeight + 'px';
+    (document.querySelector('body') as HTMLElement).style.paddingBottom = footerHeight + footerMobileHeight + 'px';
+  } else {
+    (document.querySelector('.download-mobile-app') as HTMLElement).style.bottom = 0 + 'px';
+    (document.querySelector('body') as HTMLElement).style.paddingBottom = footerMobileHeight + 'px';
+    // alert(footerMobileHeight - footerHeight + 'px');
+  }
+}
 
   redirectToDikshaApp() {
     let applink = this.configService.appConfig.UrlLinks.downloadDikshaApp;

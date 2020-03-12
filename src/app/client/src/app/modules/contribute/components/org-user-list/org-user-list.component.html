@@ -1,0 +1,126 @@
+<div class="ui container">
+    <div class="my-24" [appTelemetryImpression]="telemetryImpression">
+          <div class="d-flex flex-ai-center flex-jc-space-between">
+              <div>  
+                <h4 class="sb-pageSection-title">Ekstep Organistaion - User List
+                    <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">3</span>
+                  </h4>
+              </div>
+              <div>
+                <button class="sb-btn sb-btn-outline-primary ml-10 sb-btn-normal" (click)="showNormalModal = true">Link to add a user</button>
+              </div>
+            </div>
+      </div>
+    <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
+        <thead class="sb-table-header sb-table-thead-gray">
+          <tr>
+              <th>Username</th>
+              <th>Mobile no.</th>
+              <th>Grade/Subject</th>
+              <th>Select Role</th>
+          </tr>
+        </thead>
+        <tbody class="sb-table-body">
+          <tr>
+            <td>Nilesh</td>
+            <td>8087660152</td>
+            <td>Grade 4, English</td>
+            <td>
+                <ng-template let-option #optionTemplate >
+                    <div class="field m-0">
+                    <div class="template-checkbox">
+                      <div class="p-5 option-text"  title="{{option.name}}">
+                        {{option.name}}
+                      </div>
+                      <div class="ml-auto">
+                        <i class="square outline medium icon"></i>
+                      </div>
+                    </div>
+                    </div>
+                  </ng-template>
+                  <sui-select class="selection"
+                    labelField="name"
+                    [options]="options"
+                    valueField="name">
+                    <sui-select-option *ngFor="let option of data.board"
+                    [value]="option">
+                    </sui-select-option>
+                  </sui-select>
+              </td>
+          </tr>
+          <tr>
+              <td>Nitesh</td>
+              <td>8087660123</td>
+              <td>Grade 9, Mathematics</td>
+              <td>
+                  <ng-template let-option #optionTemplate >
+                      <div class="field m-0">
+                      <div class="template-checkbox">
+                        <div class="p-5 option-text"  title="{{option.name}}">
+                          {{option.name}}
+                        </div>
+                        <div class="ml-auto">
+                          <i class="square outline medium icon"></i>
+                        </div>
+                      </div>
+                      </div>
+                    </ng-template>
+                    <sui-select class="selection"
+                      labelField="name"
+                      [options]="options"
+                      valueField="name">
+                      <sui-select-option *ngFor="let option of data.board"
+                      [value]="option">
+                      </sui-select-option>
+                    </sui-select>
+              </td>
+            </tr>
+            <tr>
+                <td>Vaishali</td>
+                <td>8087660134</td>
+                <td>Grade 10, chemistry</td>
+                <td>
+                    <ng-template let-option #optionTemplate >
+								<div class="field m-0">
+								<div class="template-checkbox">
+									<div class="p-5 option-text"  title="{{option.name}}">
+										{{option.name}}
+									</div>
+									<div class="ml-auto">
+										<i class="square outline medium icon"></i>
+									</div>
+								</div>
+								</div>
+							</ng-template>
+							<sui-select class="selection"
+								labelField="name"
+								[options]="options"
+								valueField="name">
+								<sui-select-option *ngFor="let option of data.board"
+								[value]="option">
+								</sui-select-option>
+							</sui-select>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+</div>
+<!-- Modal popup for share link -->
+<sui-modal *ngIf="showNormalModal" 
+            [mustScroll]="true" 
+            [isClosable]="true" 
+            [transitionDuration]="0" 
+            [size]="'normal'"
+            class="sb-modal" 
+            appBodyScroll (dismissed)="showNormalModal = !showNormalModal" 
+            #modal>
+        <div class="sb-modal-header">
+          Link to share
+        </div>
+        <div class="sb-modal-content">
+            <button class="ui right labeled icon button sb-bg-color-gray-0 mt-10 sb__ellipsis w-100 text-left">
+                https://projects.invisionapp.com/d/main/default
+                <i class="copy icon" suiPopup popupHeader="Copylink"></i>
+              </button>
+          </div>
+</sui-modal>

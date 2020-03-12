@@ -1,159 +1,248 @@
-<div class="sb-bg-color-white py-24">
-<div class="ui container" [appTelemetryImpression]="telemetryImpression">
-<div class="d-flex flex-ai-center flex-jc-space-between">
-	<div class="">
-		<h4 class="sb-pageSection-title six wide column">New Program FEB2020 <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate">
-		</i>
-			<ng-template #popupTemplate>
-				<div class="content">
-					<div class="textbook-details ml-8">
-						
-<div class="header"><strong>Medium</strong></div>
-<div class="content">
-	<label class="d-block fsmall font-weight-normal mb-0">Marathi, Hindi, English</label>
+<div class="sb-bg-color-primary-0 py-24">
+  <div class="ui container">
+    <div class="d-flex flex-ai-center flex-jc-space-between">
+      <div class="flex-basis-1 pr-16">
+        <!-- <button  class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" type="button"><i class="icon-svg icon-svg--xxs icon-back mr-4"><svg  class="icon icon-svg--primary"><use xlink:href="assets/images/libdemo/sprite.svg#arrow-long-left"></use></svg></i> Back</button> -->
+        <h4 class="sb-pageSection-title six wide column">
+          {{ programDetails?.name }}
+          <i class="info circle link icon hide hidden" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
+          <ng-template #popupTemplate>
+            <div class="content">
+              <div class="textbook-details ml-8">
+                <div class="header"><strong>Medium</strong></div>
+                <div class="content">
+                  <label class="d-block fsmall font-weight-normal mb-0"
+                    >Marathi, Hindi, English</label>
+                </div>
+                <hr />
+                <div class="header"><strong>Grades / Classes</strong></div>
+                <div class="content">
+                  <label class="d-block fsmall font-weight-normal mb-0"
+                    >Grade 1, Grade 2</label>
+                </div>
+                <hr />
+                <div class="header">
+                  <strong>Expression for Interest Date</strong>
+                </div>
+                <div class="content">
+                  <label class="d-block fsmall font-weight-normal mb-0">
+                    {{ programDetails?.nomination_enddate | date:medium }}
+                  </label>
+                </div>
+                <hr />
+                <div class="header">
+                  <strong>Shortlisting of Contributor Date</strong>
+                </div>
+                <div class="content">
+                  <label class="d-block fsmall font-weight-normal mb-0">
+                    {{ programDetails?.shortlisting_enddate | date:medium }}
+                  </label>
+                </div>
+                <hr />
+                <div class="header">
+                  <strong>Content Submission Date</strong>
+                </div>
+                <div class="content">
+                  <label class="d-block fsmall font-weight-normal mb-0">
+                    {{ programDetails?.content_submission_enddate | date:medium }}
+                  </label>
+                </div>
+                <hr />
+                <div class="header"><strong>Program End Date</strong></div>
+                <div class="content">
+                  <label class="d-block fsmall font-weight-normal mb-0">
+                    {{ programDetails?.enddate | date:medium }}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </h4>
+        <div class="d-flex flex-jc-space-between flex-ai-center fnormal mt-8">
+            <div class="d-flex flex-dc flex-25 pr-16">
+                <div class="sb__ellipsis" suiPopup popupHeader="Grades/Class"  popupDelay="1000" popupText="Grade 1, Grade 2">Grade 1, Grade 2</div>
+                <div class="divider my-4"></div>
+                <div class="sb__ellipsis" suiPopup popupHeader="Medium"  popupDelay="1000" popupText="English, Marthi, Hindi">English, Marthi, Hindi</div>
+            </div>
+            <div class="d-flex flex-ai-center flex-jc-space-between flex-75 ">
+                <dl class="sb-meta-data mb-0 pr-8 w-25">
+                    <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="Expression of Interest Date" popupText="{{ programDetails?.nomination_enddate | date:medium }}">Expression of Interest Date</dt>
+                    <dd> {{ programDetails?.nomination_enddate | date:medium }}</dd>
+                  </dl>
+                  <dl class="sb-meta-data mb-0 pr-8 w-25">
+                    <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="Shortlisting of Contributor Date" popupText="{{ programDetails?.shortlisting_enddate | date:medium }}">Shortlisting of Contributor Date</dt>
+                    <dd> {{ programDetails?.shortlisting_enddate | date:medium }}</dd>
+                  </dl>
+                  <dl class="sb-meta-data mb-0 pr-8 w-25">
+                    <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="Content Submission Date" popupText="{{ programDetails?.content_submission_enddate | date:medium }}">Content Submission Date</dt>
+                    <dd> {{ programDetails?.content_submission_enddate | date:medium }}</dd>
+                  </dl>
+                  <dl class="sb-meta-data mb-0 pr-8 w-25">
+                    <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="Program End Date" popupText="{{ programDetails?.enddate | date:medium }}">Program End Date</dt>
+                    <dd>{{ programDetails?.enddate | date:medium }}</dd>
+                  </dl>
+            </div>
+            </div>
+        </div>
+      <div class="sb-meta-data-container sb-meta-data-column">
+        <label class="width-100">Nominations</label>
+        <div class="d-flex">
+          <dl class="sb-meta-data">
+            <dt>15</dt>
+            <dd>Total</dd>
+          </dl>
+          <dl class="sb-meta-data">
+            <dt>5</dt>
+            <dd>Rejected</dd>
+          </dl>
+          <dl class="sb-meta-data">
+            <dt>5</dt>
+            <dd>Pending</dd>
+          </dl>
+          <dl class="sb-meta-data">
+            <dt>5</dt>
+            <dd>Approved</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-<hr>
-<div class="header"><strong>Grades / Classes</strong></div>
-<div class="content">
-	<label class="d-block fsmall font-weight-normal mb-0">Grade 1, Grade 2</label>
+<div class="sb-bg-color-white pb-64 dynamicHeight">
+    <div class="ui container sb-pageSection">
+        <div class="sb-pageSection-header pt-16">
+          <h4 class="sb-pageSection-title">List of Nominations <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{nominations.length}}</span></h4>
+        </div>
+        <div class="sb-pageSection-content mt-12" *ngIf="nominations.length > 0">
+          <div>
+            <table
+              class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed"
+            >
+              <thead class="sb-table-header sb-table-thead-gray">
+                <tr>
+                  <th class="sb-sort-icon">Contributor Name</th>
+                  <th class="sb-sort-icon">Type</th>
+                  <th class="sb-sort-icon">Textbooks</th>
+                  <th><span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
+            <div class="text">Status</div>
+            <i class="filter icon"></i>
+            <div class="menu" suiDropdownMenu>
+                <div class="item">All</div>
+                <div class="item">Pending</div>
+                <div class="item selected">Approved</div>
+                <div class="item">Rejected</div>
+            </div>
+        </span></th>
+                  <th class="text-center"></th>
+                </tr>
+              </thead>
+              <tbody class="sb-table-body">
+                <tr *ngFor="let nomination of nominations">
+                  <td>
+                    <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold" (click)="showNomineeProfile = true; getNomineeProfile(nomination)">
+                      {{ nomination?.name }}
+                    </div>
+                  </td>
+                  <td>
+                    <div>{{ nomination?.type }}</div>
+                  </td>
+                  <td>
+                    <div suiPopup popupDelay="1000" popupHeader="Text Books" popupText="{{ nomination?.textbooks }}">
+                      {{ nomination?.nominationData?.textbook_count }} Textbooks
+                    </div>
+                  </td>
+                  <td>
+                    <span class="sb-label sb-label-table sb-label-primary-100">
+                      {{ nomination?.nominationData?.status }}
+                    </span>
+                  </td>
+                  <td class="text-right">
+                    <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
+                      *ngIf="nomination?.nominationData?.status === 'Pending'"
+                      [routerLink]="'/sourcing/contributor/' + nomination.program_id">View Details</button>
+                    <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
+                      *ngIf="nomination?.nominationData?.status === 'Accepted'"
+                      [routerLink]="'/sourcing/contributor/' + nomination.program_id">View Contribution</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+    </div>
+    <div class="sb-pageSection-content mt-12" *ngIf="nominations.length === 0">
+      <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0146'}"></app-no-result>
+    </div>
+    </div>
 </div>
-<hr>
-<div class="header"><strong>Expression for Interest Date</strong></div>
-<div class="content">
-	<label class="d-block fsmall font-weight-normal mb-0">
-		July 26th, 2019
-	  </label>
-</div>
-<hr>
-<div class="header"><strong>Shortlisting of Contributor Date</strong></div>
-<div class="content">
-	<label class="d-block fsmall font-weight-normal mb-0">
-		Aug 5th, 2019
-	  </label>
-</div>
-<hr>
-<div class="header"><strong>Content Submission Date</strong></div>
-<div class="content">
-	<label class="d-block fsmall font-weight-normal mb-0">
-		Aug 20th, 2019
-	  </label>
-</div>	
-<hr>
-<div class="header"><strong>Program End Date</strong></div>
-<div class="content">
-	<label class="d-block fsmall font-weight-normal mb-0">
-		Aug 30th, 2019
-	  </label>
-</div>	
-				</div>
-				</div>
-			</ng-template>
-		</h4>
-		
-	</div>	
-	<div class="sb-meta-data-container sb-meta-data-column">
-		<label class="width-100">Nominations</label>
-		<div class="d-flex">
-		  <dl class="sb-meta-data">
-			<dt>15</dt>
-			<dd>Total</dd>
-		  </dl>
-		  <dl class="sb-meta-data">
-			<dt>5</dt>
-			<dd>Rejected</dd>
-		  </dl>
-		  <dl class="sb-meta-data">
-			<dt>5</dt>
-			<dd>Pending</dd>
-		  </dl>
-		  <dl class="sb-meta-data">
-			<dt>5</dt>
-			<dd>Approved</dd>
-		  </dl>
-		</div>
-	</div>
-</div> 
-</div>
-</div>
-<div class="ui container sb-pageSection">
-	<div class="sb-pageSection-header pt-16"><h4 class="sb-pageSection-title">List of Nominations</h4></div>
-	<div class="sb-pageSection-content mt-12">
-		<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
-			<thead class="sb-table-header sb-table-thead-gray">
-			  <tr>
-				<th class="sb-sort-icon">Contributor Name</th>
-				<th class="sb-sort-icon">Type</th>
-				<th class="sb-sort-icon">Textbooks</th>
-				<th class="sb-sort-icon">Status</th>
-				<th class="text-center">Actions</th>
-			  </tr>
-			</thead>
-			<tbody class="sb-table-body">
-			  <tr *ngFor="let nomination of nominations">
-				<td> 
-				  <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
-					{{nomination?.contributor_name}}
-				  </div>
-				</td>
-				<td>
-				<div>{{nomination?.type}}</div>
-				</td>
-				<td>
-				  <div  suiPopup popupHeader="Text Books" popupText="{{nomination?.textbooks}}">3 Textbooks</div>
-				</td>
-				<td>
-				<div>{{nomination?.status}}</div>
-				</td>
-				<td class="text-center">
-				  <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" *ngIf="nomination?.status === 'Pending'"
-					  [routerLink]="'/sourcing/contributor/' + nomination.program_id">View Details</button>
-					<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" *ngIf="nomination?.status === 'Accepted'"
-					  [routerLink]="'/sourcing/contributor/' + nomination.program_id">View Contribution</button>
-				</td>
-			  </tr>
-			</tbody>
-		</table> 
-	</div>
-</div>
-<sui-modal *ngIf="show" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
-  class="sb-modal" appBodyScroll (dismissed)="show = false" #modal>
-  <div class="sb-modal-header"> Nominee Profile Details </div>
+
+
+
+<sui-modal
+  *ngIf="showNomineeProfile"
+  [mustScroll]="true"
+  [isClosable]="true"
+  [transitionDuration]="0"
+  [size]="'normal'"
+  class="sb-modal"
+  appBodyScroll
+  (dismissed)="showNomineeProfile = false"
+  #modal
+>
+  <div class="sb-modal-header">Nominee Profile Details</div>
   <div class="sb-modal-content o-y-visible pb-8">
     <div class="ui container">
       <div class="mx-48 text-center">
         <div class="sb-profile-page__avatar">
-          <img src="assets/images/guest.svg" alt="guest" class="w-100">
+          <img src="assets/images/guest.svg" alt="guest" class="w-100" />
         </div>
-        <div class="fs-2-5 font-weight-bold mb-24">{{ 'Pratham' | titlecase}} </div>
+        <div class="fs-2-5 font-weight-bold mb-24">
+          {{ selectedNomineeProfile.userName }}
+        </div>
       </div>
       <div class="mx-48 relative text-center">
+        <!-- <div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
+          <span class="fmedium white-space-nowrap"
+            >{{ resourceService?.frmelmnts?.lbl?.profile?.State }} :</span
+          >
+          <span class="fmedium font-weight-bold pl-4">{{ "Maharashtra" }}</span>
+        </div>
+        <div
+          class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc"
+        >
+          <span class="fmedium white-space-nowrap"
+            >{{ resourceService?.frmelmnts?.lbl?.profile?.District }} :</span
+          >
+          <span class="fmedium font-weight-bold pl-4"> {{ "Kolhapur" }}</span>
+        </div> -->
         <div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
-          <span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.State}} :</span>
-          <span class="fmedium font-weight-bold pl-4">{{'Maharashtra'}}</span>
+          <span class="fmedium white-space-nowrap"
+            >{{ resourceService?.frmelmnts?.lbl?.profile?.Board }} :</span
+          >
+          <span class="fmedium font-weight-bold pl-4">{{ selectedNomineeProfile.framework.board.join(", ") }}</span>
         </div>
-        <div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
-          <span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.District}} :</span>
-          <span class="fmedium font-weight-bold pl-4">
-            {{'Kolhapur'}}</span>
+        <div
+          class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc"
+        >
+          <span class="fmedium white-space-nowrap"
+            >{{ resourceService?.frmelmnts?.lbl?.profile?.Medium }} :</span
+          >
+          <span class="fmedium font-weight-bold pl-4"> {{ selectedNomineeProfile.framework.medium.join(", ") }}</span>
         </div>
-        <div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
-          <span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Board}} :</span>
-          <span class="fmedium font-weight-bold pl-4">{{'CBSE'}}</span>
+        <div
+          class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc"
+        >
+          <span class="fmedium white-space-nowrap"
+            >{{ resourceService?.frmelmnts?.lbl?.profile?.Subjects }} :</span
+          >
+          <span class="fmedium font-weight-bold pl-4"> {{ selectedNomineeProfile.framework.subject.join(", ") }}</span>
         </div>
-        <div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
-          <span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Medium}} :</span>
-          <span class="fmedium font-weight-bold pl-4">
-            {{'English'}}</span>
-        </div>
-        <div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
-          <span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Subjects}} :</span>
-          <span class="fmedium font-weight-bold pl-4">
-            {{'Marathi'}}</span>
-        </div>
-        <div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
-          <span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Classes}} :</span>
-          <span class="fmedium font-weight-bold pl-4">
-            {{'Grade 1'}}</span>
+        <div
+          class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc"
+        >
+          <span class="fmedium white-space-nowrap"
+            >{{ resourceService?.frmelmnts?.lbl?.profile?.Classes }} :</span
+          >
+          <span class="fmedium font-weight-bold pl-4"> {{ selectedNomineeProfile.framework.gradeLevel.join(", ") }}</span>
         </div>
       </div>
     </div>

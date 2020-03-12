@@ -1,333 +1,279 @@
 <div class="ui container">
-	<div class="sb-pageSection my-24" [appTelemetryImpression]="telemetryImpression">
+	<div class="sb-pageSection mt-24 pb-48">
 		<div class="sb-pageSection-header">
 			<h4 class="sb-pageSection-title">Create a Program</h4>
-		  </div>
-
-	<div class="sb-modal-content o-y-visible pb-8">
-		<div class="ui ordered steps">
-			<div class="completed step">
-			  <div class="content">
-				<div class="title">Step 1</div>
-				<div class="description">Fill the Details</div>
-			  </div>
-			</div>
-			<div class="completed step">
-			  <div class="content">
-				<div class="title">Step 2</div>
-				<div class="description">Select Text Books</div>
-			  </div>
-			</div>
-			<div class="active step">
-			  <div class="content">
-				<div class="title">Step 3</div>
-				<div class="description">Review & Submit</div>
-			  </div>
-			</div>
-		  </div>
-	<sui-tabset>
-		<div class="ui top attached tabular menu">
-			<a class="item" suiTabHeader="1" [ngClass]="{'active' : !showTextBookSelector}">Details</a>
-			<a class="item" suiTabHeader="2" [ngClass]="{'active' : showTextBookSelector}" [isDisabled]="!showTextBookSelector">Select Textbooks</a>
 		</div>
-		<div class="ui bottom attached segment" suiTabContent="1" [ngClass]="{'active' : !showTextBookSelector}">
-			<form class="ui form" [formGroup]="createProgramForm" (submit)="saveProgram()">
 
-			
-				<div class="ui grid">
-					<div class="twelve wide column">
-						<div class="required field ">
-							<label>Name</label>
-							<div class="sb-field">
-							<input autofocus="" formControlName="name"  class="sb-form-control ng-pristine ng-valid ng-touched" type="text" placeholder="Name">
-							<div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['name'].errors && createProgramForm.controls['name'].errors.required && (!createProgramForm.controls['name'].pristine || formIsInvalid)">
-								{{resource?.messages?.stmsg?.m0105}}
+		<div class="pb-8">
+			<div class="ui ordered steps">
+				<div class="completed step">
+				<div class="content">
+					<div class="title">Step 1</div>
+					<div class="description">Fill the Details</div>
+				</div>
+				</div>
+				<div class="completed step">
+				<div class="content">
+					<div class="title">Step 2</div>
+					<div class="description">Select Text Books</div>
+				</div>
+				</div>
+			</div>
+			<sui-tabset>
+				<div class="ui top attached tabular menu">
+					<a class="item" suiTabHeader="1" [ngClass]="{'active' : !showTextBookSelector}">Details</a>
+					<a class="item" suiTabHeader="2" [ngClass]="{'active' : showTextBookSelector}" [isDisabled]="!showTextBookSelector">Select Textbooks</a>
+				</div>
+				<div class="ui bottom attached segment" suiTabContent="1" [ngClass]="{'active' : !showTextBookSelector}">
+					<form class="ui form" [formGroup]="createProgramForm" (submit)="saveProgram()">
+						<div class="ui grid">
+							<div class="twelve wide column">
+								<div class="required field ">
+									<label>Name</label>
+									<div class="sb-field">
+										<input autofocus="" formControlName="name"  class="sb-form-control ng-pristine ng-valid ng-touched" type="text" placeholder="Name">
+										<div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['name'].errors && createProgramForm.controls['name'].errors.required && (!createProgramForm.controls['name'].pristine || formIsInvalid)">
+										   This field is required
+										</div>
+										<div class="ui pointing red basic label below" *ngIf="createProgramForm.controls['name'].errors && createProgramForm.controls['name'].errors.maxlength && (!createProgramForm.controls['name'].pristine || formIsInvalid)">
+										  Character length can not be greater than 100
+										</div>	
+										<div *ngIf="createProgramForm.value.name.length" class="pull-right fsmall">{{createProgramForm.value.name.length}} / 100</div>
+									</div>
+								</div>
 							</div>
-							<div class="ui pointing red basic label below" *ngIf="createProgramForm.controls['name'].errors && createProgramForm.controls['name'].errors.maxlength && (!createProgramForm.controls['name'].pristine || formIsInvalid)">
-							{{resource?.messages?.stmsg?.m0106}}
-							</div>	
-							<div *ngIf="createProgramForm.value.name.length" class="pull-right fsmall">{{createProgramForm.value.name.length}} / 100</div>
-						</div>
+							<div class="twelve wide column">
+								<div class="required field ">
+									<label>Description</label>
+									<div class="sb-field relative">
+										<textarea formControlName="description" type="text" class="wmd-input width-100 sb-form-control" placeholder="Add description" name="" required></textarea>
+										<div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['description'].errors && createProgramForm.controls['description'].errors.required && (!createProgramForm.controls['description'].pristine || formIsInvalid)">
+										  This field is required
+										</div>
+										<div class="ui pointing red basic label below" *ngIf="createProgramForm.controls['description'].errors && createProgramForm.controls['description'].errors.maxlength && (!createProgramForm.controls['description'].pristine || formIsInvalid)">
+											Character length can not be greater than 1000
+										</div>
+										<div *ngIf="createProgramForm.value.description.length" class="pull-right fsmall">{{createProgramForm.value.description.length}} / 1000</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="three wide column">
+								<div class="required field">
+									<label>Nomination End Date</label>
+									<div class="ui read-only calendar mb-10 sb-field">
+										<div class="ui input right icon">
+											<i class="calendar icon date-calendar"></i>
+											<input [pickerMinDate]='pickerMinDate' formControlName="nomination_enddate"  suiDatepicker [pickerMode]="'date'">
+										</div>
+										<div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['nomination_enddate'].errors && createProgramForm.controls['nomination_enddate'].errors.required && (!createProgramForm.controls['nomination_enddate'].pristine || formIsInvalid)">
+											This field is required
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="three wide column">
+								<div class="field">
+									<label>Nomination Shortlisting Date</label>
+									<div class="ui read-only calendar mb-10">
+										<div class="ui input right icon">
+											<i class="calendar icon date-calendar"></i>
+											<input [pickerMinDate]='pickerMinDate' formControlName="shortlisting_enddate" suiDatepicker [pickerMode]="'date'">
+										</div>
+										
+									</div>
+								</div>
+							</div>
+
+							<div class="three wide column">
+								<div class="required field">
+									<label>Contribution End Date</label>
+									<div class="ui read-only calendar mb-10">
+										<div class="ui input right icon">
+											<i class="calendar icon date-calendar"></i>
+											<input [pickerMinDate]='pickerMinDate' formControlName="content_submission_enddate" suiDatepicker [pickerMode]="'date'">
+										</div>
+										<div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['content_submission_enddate'].errors && createProgramForm.controls['content_submission_enddate'].errors.required && (!createProgramForm.controls['content_submission_enddate'].pristine || formIsInvalid)">
+											This field is required
+										</div>
+									</div>
+								</div>
+							</div>
 							
-						</div>
-					</div>
-					<div class="twelve wide column">
-						<div class="required field ">
-							<label>Description</label>
-							<div class="sb-field relative">
-								<textarea formControlName="description" type="text" class="wmd-input width-100 sb-form-control" placeholder="Add description" name="" required></textarea>
-								<div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['description'].errors && createProgramForm.controls['description'].errors.required && (!createProgramForm.controls['description'].pristine || formIsInvalid)">
-								{{resource?.messages?.stmsg?.m0107}}
-								</div>
-								<div class="ui pointing red basic label below" *ngIf="createProgramForm.controls['description'].errors && createProgramForm.controls['description'].errors.maxlength && (!createProgramForm.controls['description'].pristine || formIsInvalid)">
-								{{resource?.messages?.stmsg?.m0117}}
-								</div>
-								<div *ngIf="createProgramForm.value.name.length" class="pull-right fsmall">{{createProgramForm.value.description.length}} / 100</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="three wide column">
-						<div class="field">
-							<label>Nomination End Date</label>
-							<div class="ui read-only calendar mb-10 sb-field">
-								<div class="ui input right icon">
-								<i class="calendar icon date-calendar"></i>
-								<input [pickerMinDate]='pickerMinDate' suiDatepicker [pickerMode]="'date'">
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="three wide column">
-						<div class="field">
-							<label>Nomination Shortlisting Date</label>
-							<div class="ui read-only calendar mb-10">
-								<div class="ui input right icon">
-								<i class="calendar icon date-calendar"></i>
-								<input [pickerMinDate]='pickerMinDate' suiDatepicker [pickerMode]="'date'">
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="three wide column">
-						<div class="field">
-							<label>Contribution End Date</label>
-							<div class="ui read-only calendar mb-10">
-								<div class="ui input right icon">
-								<i class="calendar icon date-calendar"></i>
-								<input [pickerMinDate]='pickerMinDate' suiDatepicker [pickerMode]="'date'">
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="three wide column">
-						<div class="field">
-							<label>Program End Date</label>
-							<div class="ui read-only calendasr mb-10">
-								<div class="ui input right icon">
-								<i class="calendar icon date-calendar"></i>
-								<input [pickerMinDate]='pickerMinDate' suiDatepicker [pickerMode]="'date'">
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="twelve wide column py-0">
-						<h4>Program Scope</h4>
-					</div>
-					<div class="three wide column">
-						<div class="field">
-							<label class="mb-10">Board</label>
-							<ng-template let-option #optionTemplate >
-								<div class="field m-0">
-								<div class="template-checkbox">
-									<div class="p-5 option-text"  title="{{option.name}}">
-										{{option.name}}
-									</div>
-									<div class="ml-auto">
-										<i class="square outline medium icon"></i>
+							<div class="three wide column">
+								<div class="required field">
+									<label>Program End Date</label>
+									<div class="ui read-only calendasr mb-10">
+										<div class="ui input right icon">
+											<i class="calendar icon date-calendar"></i>
+											<input [pickerMinDate]='pickerMinDate' formControlName="program_end_date"  suiDatepicker [pickerMode]="'date'">
+										</div>
+										<div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['program_end_date'].errors && createProgramForm.controls['program_end_date'].errors.required && (!createProgramForm.controls['program_end_date'].pristine || formIsInvalid)">
+											This field is required
+										</div>
 									</div>
 								</div>
-								</div>
-							</ng-template>
-							<sui-select class="selection"
-								labelField="name"
-								[options]="options"
-								valueField="name">
-								<sui-select-option *ngFor="let option of data.board"
-								[value]="option">
-								</sui-select-option>
-							</sui-select>
-						</div>
-					</div>
-					<div class="three wide column">
-						<div class="field">
-							<label>Select Medium</label>
-							<ng-template let-option #optionTemplate >
-								<div class="field m-0">
-								<div class="template-checkbox">
-									<div class="p-5 option-text"  title="{{option.name}}">
-										{{option.name}}
-									</div>
-									<div class="ml-auto">
-										<i class="square outline medium icon"></i>
-									</div>
-								</div>
-								</div>
-							</ng-template>
-							<sui-multi-select class="selection"
-							labelField="name"
-							[hasLabels]="true"
-							[options]="options"
-							valueField="name"
-							#multiSelect>
-							<sui-select-option *ngFor="let option of data.medium"
-							[value]="option" >
-							</sui-select-option>
-							</sui-multi-select>
-						</div>
-					</div>
-					<div class="three wide column">
-						<div class="field">
-							<label> Grade / Class </label>
-							<ng-template let-option #optionTemplate >
-								<div class="field m-0">
-								<div class="template-checkbox">
-									<div class="p-5 option-text"  title="{{option.name}}">
-										{{option.name}}
-									</div>
-									<div class="ml-auto">
-										<i class="square outline medium icon"></i>
-									</div>
-								</div>
-								</div>
-							</ng-template>
-							<sui-multi-select class="selection"
-							labelField="name"
-							[hasLabels]="true"
-							[options]="data.filteredOptions"
-							valueField="name"
-							#multiSelect>
-							<sui-select-option *ngFor="let option of data.filteredOptions"
-							[value]="option" >
-							</sui-select-option>
-							</sui-multi-select>
-						</div>
-					</div>
-					<div class="three wide column">
-						<div class="field">
-							<label> Subject</label>
-							<ng-template let-option #optionTemplate >
-								<div class="field m-0">
-								<div class="template-checkbox">
-									<div class="p-5 option-text"  title="{{option.name}}">
-										{{option.name}}
-									</div>
-									<div class="ml-auto">
-										<i class="square outline medium icon"></i>
-									</div>
-								</div>
-								</div>
-							</ng-template>
-							<sui-multi-select class="selection"
-							labelField="name"
-							[hasLabels]="true"
-							[options]="data.filteredOptions"
-							valueField="name"
-							#multiSelect>
-							<sui-select-option *ngFor="let option of data.filteredOptions"
-							[value]="option" >
-							</sui-select-option>
-							</sui-multi-select>
-						</div>
-					</div>
-					<div class="twelve wide column">
-						<div class="field">
-						<label>Purpose of content</label>
-					</div>
-						<div class="d-flex flex-w-wrap">
-							<div class="sb-checkbox sb-checkbox-primary">
-							<input type="checkbox" id="check1" name="example">
-							<label for="check1">Explanation video</label>
 							</div>
-							<div class="sb-checkbox sb-checkbox-primary ml-16">
-							<input type="checkbox" id="check2" name="example">
-							<label for="check2">Practice Question set</label>
+							<div class="twelve wide column py-0 form-section-separator">
+								<h4>Program Scope</h4>
 							</div>
-							<div class="sb-checkbox sb-checkbox-primary ml-16">
-							<input type="checkbox" id="check3" name="example">
-							<label for="check3">Lesson plan pdf</label>
-							</div>
-							<div class="sb-checkbox sb-checkbox-primary ml-16">
-							<input type="checkbox" id="check4" name="example">
-							<label for="check4">Learning outcome pdf</label>
-							</div>
-						  </div>
-					</div>
-					<div class="twelve wide column">
-						<div class="field">
-							<label>Certificates to be awarded </label>
-							<select class="ui fluid dropdown">
-								<option value="">Select</option>
-								<option value="dummy">Dummy</option>
-							</select>
-						</div>
-					</div>
-					<div class="twelve wide column">
-						<div class="field">
-							<label>Rewards Given</label>
-							<div class="sb-field relative">
-								<textarea  type="text" class="wmd-input width-100 sb-form-control" placeholder="Add description" name=""></textarea>
-								<!--div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['rewards'].errors && createProgramForm.controls['rewards'].errors.required && (!createProgramForm.controls['rewards'].pristine || formIsInvalid)">
-								{{resource?.messages?.stmsg?.m0105}}
+							
+							<div class="four wide column">
+								<div class="required field">
+									<label>Select Medium</label>
+									<sui-multi-select formControlName="medium" class="selection"
+									labelField="name"
+									[hasLabels]="true"
+									[options]="options"
+									valueField="name"
+									#multiSelect>
+									<sui-select-option *ngFor="let option of programScope.medium"
+									[value]="option" >
+									</sui-select-option>
+									</sui-multi-select>
+									<div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['medium'].errors && createProgramForm.controls['medium'].errors.required && (!createProgramForm.controls['medium'].pristine || formIsInvalid)">
+										This field is required
+									</div>
 								</div>
-								<div class="ui pointing red basic label below" *ngIf="createProgramForm.controls['rewards'].errors && createProgramForm.controls['rewards'].errors.maxlength && (!createProgramForm.controls['rewards'].pristine || formIsInvalid)">
-								{{resource?.messages?.stmsg?.m0106}}
-								</div>
-								<div *ngIf="createProgramForm.value.rewards.length" class="pull-right fsmall">{{createProgramForm.value.rewards.length}} / 100</div-->
 							</div>
+							<div class="four wide column">
+								<div class="required field">
+									<label> Grade / Class </label>
+									<sui-multi-select formControlName="gradeLevel" class="selection"
+									labelField="name"
+									[hasLabels]="true"
+									[options]="programScope.gradeLevel"
+									valueField="name"
+									#multiSelect>
+									<sui-select-option *ngFor="let option of programScope.gradeLevel"
+									[value]="option" >
+									</sui-select-option>
+									</sui-multi-select>
+									<div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['gradeLevel'].errors && createProgramForm.controls['gradeLevel'].errors.required && (!createProgramForm.controls['gradeLevel'].pristine || formIsInvalid)">
+										This field is required
+									</div>
+								</div>
+							</div>
+							<div class="four wide column">
+								<div class="required field">
+									<label> Subject</label>
+									<sui-multi-select class="selection"
+									formControlName="subject"
+									labelField="name"
+									[hasLabels]="true"
+									[options]="programScope.subject"
+									valueField="name"
+									#multiSelect>
+									<sui-select-option *ngFor="let option of programScope.subject"
+									[value]="option" >
+									</sui-select-option>
+									</sui-multi-select>
+									<div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['subject'].errors && createProgramForm.controls['subject'].errors.required && (!createProgramForm.controls['subject'].pristine || formIsInvalid)">
+										This field is required
+									</div>
+								</div>
+							</div>
+							<div class="twelve wide column">
+								<div class="field">
+									<label>Purpose</label>
+									<sui-multi-select class="selection"
+									labelField="name"
+									[hasLabels]="true"
+									formControlName="content_types"
+									[options]="programScope.purpose"
+									valueField="name"
+									#multiSelect>
+									<sui-select-option *ngFor="let option of programScope.purpose"
+									[value]="option" >
+									</sui-select-option>
+									</sui-multi-select>
+								</div>
+							</div>
+							<!--div class="twelve wide column">
+								<div class="field">
+									<label>Certificates to be awarded </label>
+									<select class="ui fluid dropdown">
+										<option value="">Select</option>
+										<option value="dummy">Dummy</option>
+									</select>
+								</div>
+							</div>
+							<div class="twelve wide column">
+								<div class="field">
+									<label>Rewards Given</label>
+									<div class="sb-field relative">
+										<textarea  type="text" class="wmd-input width-100 sb-form-control" placeholder="Add description" name=""></textarea>
+										<div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['rewards'].errors && createProgramForm.controls['rewards'].errors.required && (!createProgramForm.controls['rewards'].pristine || formIsInvalid)">
+										{{resource?.messages?.stmsg?.m0105}}
+										</div>
+										<div class="ui pointing red basic label below" *ngIf="createProgramForm.controls['rewards'].errors && createProgramForm.controls['rewards'].errors.maxlength && (!createProgramForm.controls['rewards'].pristine || formIsInvalid)">
+										{{resource?.messages?.stmsg?.m0106}}
+										</div>
+										<div *ngIf="createProgramForm.value.rewards.length" class="pull-right fsmall">{{createProgramForm.value.rewards.length}} / 100</div>
+									</div>
+								</div>
+							</div-->
 						</div>
+					</form>
+				</div>
+				<div class="ui bottom attached segment" suiTabContent="2" [ngClass]="{'active' : showTextBookSelector}">
+					<div class="sb-table-responsive">
+						<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable" *ngIf="showTextBookSelector">
+					<thead class="sb-table-header sb-table-thead-gray">
+						<tr>
+							<th class="w-5">
+								<div class="sb-checkbox sb-checkbox-primary">
+									<input type="checkbox" id="checkall" (change)="isSelected = !isSelected" name="checkall">
+									<label for="checkall"></label>
+								</div>
+							</th>
+							<th class="sb-sort-icon">Title</th>
+							<th class="sb-sort-icon">Grade</th>
+							<th class="sb-sort-icon">Medium</th>
+							<th>Chapters</th>
+							<th class="sb-sort-icon">Subject</th>
+						</tr>
+						</thead>
+						<tbody class="sb-table-body">
+							<tr *ngFor="let data of collections" >
+							<td class="collapsing">
+								<div class="sb-checkbox sb-checkbox-primary">
+									<input type="checkbox" id="checkitem" (change)="onCollectionCheck(data.identifier, $event.target.checked)" [checked]="isSelected" name="checkitem">
+									<label for="checkitem"></label>
+								</div>
+							</td>
+							<td> 
+								<div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
+									{{data.name}}
+								</div>
+							</td>
+							<td> 
+								<div class="sb__ellipsis">
+									{{data.gradeLevel}}
+								</div>
+							</td>
+							<td> 
+								<div class="sb__ellipsis">
+									{{data.medium}}
+								</div>
+							</td>
+							<td>20</td>
+							<td>
+								<div class="sb__ellipsis">
+									{{data.subject}}
+								</div>
+								</td>
+							</tr>
+						</tbody>
+						</table> 
 					</div>
-				  </div>
-			</form>
+				</div>
+			</sui-tabset>
 		</div>
-		<div class="ui bottom attached segment" suiTabContent="2" [ngClass]="{'active' : showTextBookSelector}">
-			<div class="sb-table-responsive">
-				<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable" *ngIf="showTextBookSelector">
-			   <thead class="sb-table-header sb-table-thead-gray">
-				<tr>
-					<th class="w-5">
-						<div class="sb-checkbox sb-checkbox-primary">
-                            <input type="checkbox" id="checkall" (change)="isSelected = !isSelected" name="checkall">
-                            <label for="checkall"></label>
-                         </div>
-					</th>
-					<th class="sb-sort-icon">Title</th>
-					<th class="sb-sort-icon">Grade</th>
-					<th class="sb-sort-icon">Medium</th>
-					<th>Chapters</th>
-					<th class="sb-sort-icon">Subject</th>
-				</tr>
-				</thead>
-				<tbody class="sb-table-body">
-					<tr *ngFor="let data of collections" >
-					<td class="collapsing">
-						<div class="sb-checkbox sb-checkbox-primary">
-                            <input type="checkbox" id="checkitem" [checked]="isSelected" name="checkitem">
-                            <label for="checkitem"></label>
-                          </div>
-					</td>
-					<td> 
-						<div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
-							{{data.name}}
-						</div>
-					  </td>
-					  <td> 
-						<div class="sb__ellipsis">
-							{{data.gradeLevel}}
-						</div>
-					  </td>
-					  <td> 
-						<div class="sb__ellipsis">
-							{{data.medium}}
-						</div>
-					  </td>
-					  <td>20</td>
-					  <td>
-						<div class="sb__ellipsis">
-							{{data.subject}}
-						</div>
-						</td>
-					</tr>
-				</tbody>
-				</table> 
-			</div>
+		<div class="text-align-right">
+			<button *ngIf="!showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary" (click)="saveProgram()">Next</button>
+			<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-default mr-10" (click)="navigateTo(1)">Prev</button>
+			<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary" (click)="updateProgramCollection()">Save & Close</button>
 		</div>
-	</sui-tabset>
 	</div>
-	<div class="pull-right sb-bg-color-white">
-		<button *ngIf="!showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary" (click)="saveProgram()">Next</button>
-		<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-default mr-10" (click)="navigateTo(1)">Prev</button>
-		<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary" [routerLink]="'/sourcing'">Save & Close</button>
-	</div>
-</div>
 </div>

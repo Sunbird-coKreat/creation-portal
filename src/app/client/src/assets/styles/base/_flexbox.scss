@@ -3,6 +3,9 @@
 @extend .flex-jc-center;
 @extend .flex-ai-center;
 }
+.d-flex {
+  display: flex;
+}
 .flex-jc-center {
   justify-content: center !important;
 }
@@ -44,4 +47,16 @@
 }
 .flex-basis-100 {
   flex-basis: 100%;
+}
+.flex-30 {
+  flex:30;
+}
+.flex-70 {
+  flex:70;
+}
+.flex-25 {
+  flex:25;
+}
+.flex-75 {
+  flex:75;
 }
