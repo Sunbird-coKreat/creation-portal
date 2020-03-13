@@ -30,13 +30,14 @@ export class ProgramsService extends DataService implements CanActivate {
   public config: ConfigService;
   baseUrl: string;
   public http: HttpClient;
+  private API_URL = this.post || this.publicDataService.post; // TODO: remove API_URL once service is deployed
 
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService, private extFrameworkService: ExtPluginService,
     private router: Router, private toasterService: ToasterService, private resourceService: ResourceService) {
       super(http);
       this.config = config;
-      this.baseUrl = this.config.urlConFig.URLS.PUBLIC_PREFIX;
+      this.baseUrl = 'http://localhost:5000/' || this.config.urlConFig.URLS.PUBLIC_PREFIX;
     }
 
   /**
@@ -83,7 +84,7 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
 
-    return this.publicDataService.post(req);
+    return this.API_URL(req);
   }
 
    /**
@@ -100,7 +101,7 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
     console.log(req);
-    return this.publicDataService.post(req);
+    return this.API_URL(req);
   }
 
   /**
@@ -117,7 +118,7 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
 
-    return this.publicDataService.post(req);
+    return this.API_URL(req);
   }
   /**
    * makes api call to get list of programs from ext framework Service
@@ -152,7 +153,7 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
-    return this.publicDataService.post(req);
+    return this.API_URL(req);
   }
 
   /**
@@ -172,7 +173,7 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
-    return this.publicDataService.post(req);
+    return this.API_URL(req);
   }
 
   /**
@@ -192,7 +193,7 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
-    return this.publicDataService.post(req);
+    return this.API_URL(req);
   }
 
   /**
@@ -255,7 +256,7 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * gets list of programs
    */
-  public getAllProgramsForContrib(type): Observable<any[]> {
+  public getAllProgramsForContrib(type): Observable<any> {
     const list = [];
     const mergeObj = this.getApiSampleObj();
     const targetDate = new Date();
@@ -267,7 +268,7 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * gets list of programs
    */
-  public getMyProgramsForContrib(): Observable<any[]> {
+  public getMyProgramsForContrib(): Observable<any> {
     const list = [];
     const mergeObj = this.getApiSampleObj();
     const targetDate = new Date();
