@@ -8,49 +8,49 @@
     (dismissed)="closeModal();" 
     #modal>
   <div class="sb-modal-header">
-    {{'Enroll as Contributor'}}
+    {{resourceService.frmelmnts.lbl.enrollAsContributor}}
   </div>
   <div class="sb-modal-content o-y-visible onBoardDropdown">
     <div class="twelve wide tablet seven wide computer column form-fields">
         <form class="">
          <div class="sb-field-group mb-8">
-            <label>Type of Contributor <span class="sb-color-warning">*</span></label>
+            <label>{{resourceService.frmelmnts.lbl.typeOfContributor}} <span class="sb-color-warning">*</span></label>
             <div class="sb-field mt-4 d-flex">
                <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
                   <input type="radio" id="radio1" name="contributorType"  (click)="contributorType='organisation'">
-                  <label for="radio1">Organisation</label>
+                  <label for="radio1">{{resourceService.frmelmnts.lbl.organisation}}</label>
                </div>
                <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
                   <input type="radio" id="radio2" name="contributorType"  (click)="contributorType='individual'">
-                  <label for="radio2">Individual</label>
+                  <label for="radio2">{{resourceService.frmelmnts.lbl.individual}}</label>
                </div>
             </div>
          </div>
 
             <div class="sb-field-group mb-8"  *ngIf="contributorType === 'organisation'">
-               <label>Name of Organisation</label>
+               <label>{{resourceService.frmelmnts.lbl.nameOfOrganisation}}</label>
                <div class="sb-field">
                    <input class="sb-form-control" placeholder="Name of an Organisation">
                </div>
             </div>
 
             <div class="sb-field-group mb-8"  *ngIf="contributorType === 'individual'">
-               <label>Name of Individual</label>
+               <label>{{resourceService.frmelmnts.lbl.nameOfIndividual}}</label>
                <div class="sb-field">
                    <input class="sb-form-control" placeholder="Name of an Individual">
                </div>
             </div>
 
              <div class="sb-field-group mb-8">
-               <label>Contributor Information</label>
+               <label>{{resourceService.frmelmnts.lbl.contributorInformation}}</label>
                <div class="sb-field">
                   <textarea rows="4" class="sb-form-control" placeholder="Contributor Information" spellcheck="false"></textarea>
-                  <span class="characters-left">1000 Characters left</span>
+                  <span class="characters-left">{{resourceService.frmelmnts.lbl.thousandCharacterLeft}}</span>
                </div>
             </div>
 
             <div class="sb-field-group mb-8">
-               <label>Website</label>
+               <label>{{resourceService.frmelmnts.lbl.website}}</label>
                <div class="sb-field">
                    <input class="sb-form-control" placeholder="Website URL">
                </div>
@@ -58,11 +58,11 @@
              
             <div class="twelve wide column">
                <div class="field">
-                  <label>Types of content</label>
+                  <label>{{resourceService.frmelmnts.lbl.typesOfContent}}</label>
                </div>
                <div class="d-flex flex-w-wrap mt-4 mb-8">
                   <div class="sb-checkbox sb-checkbox-primary">
-                     <input type="checkbox"  id="check1" name="example">
+                     <input type="checkbox" id="check1" name="example">
                      <label for="check1">Explanation video</label>
                   </div>
                   <div class="sb-checkbox sb-checkbox-primary ml-16">
@@ -77,11 +77,11 @@
             </div>				
 
             <div class="twelve wide column py-0 form-section-separator">
-               <h4>Your proficiency</h4>
+               <h4>{{resourceService.frmelmnts.lbl.yourProficiency}}</h4>
             </div>
             <div class="ui grid m-0 p-0">
                <div class="six wide column sb-field-group p-0 pr-16 mb-8">
-                  <label>Board</label>
+                  <label>{{resourceService.frmelmnts.lbl.board}}</label>
                   <div class="sb-field">
                      <ng-template let-option #optionTemplate >
                         <div class="field m-0">
@@ -108,7 +108,7 @@
                   </div>
                </div>
                <div class="six wide column sb-field-group p-0 mb-8">
-                  <label>Select Medium</label>
+                  <label>{{resourceService.frmelmnts.lbl.selectMedium}}</label>
                   <div class="sb-field">
                      <ng-template let-option #optionTemplate >
                         <div class="field m-0">
@@ -136,7 +136,7 @@
                </div>
             
                <div class="six wide column sb-field-group p-0 pr-16 mb-8">
-                  <label>Grade / Class</label>
+                  <label>{{resourceService.frmelmnts.lbl.gradeClass}}</label>
                   <div class="sb-field">
                      <ng-template let-option #optionTemplate >
                         <div class="field m-0">
@@ -164,7 +164,7 @@
                </div>
 
                <div class="six wide column sb-field-group p-0 mb-8">
-                  <label>Subject</label>
+                  <label>{{resourceService.frmelmnts.lbl.subject}}</label>
                   <div class="sb-field">
                      <ng-template let-option #optionTemplate >
                         <div class="field m-0">
@@ -198,7 +198,7 @@
   <div class="sb-modal-actions">
     <button class="sb-btn sb-btn-normal sb-btn-primary"
       [disabled]="!disableSubmit" (click)="handleSubmit()">
-      {{'Submit'}}
+      {{resourceService.frmelmnts.btn.submit}}
     </button>
   </div>
 </sui-modal>
