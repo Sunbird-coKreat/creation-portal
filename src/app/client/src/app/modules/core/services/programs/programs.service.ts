@@ -69,7 +69,7 @@ export class ProgramsService extends DataService implements CanActivate {
   }
 
   /**
-   * makes api call to save the program 
+   * makes api call to save the program
    */
   createProgram(request): Observable<ServerResponse> {
     const req = {
@@ -86,7 +86,7 @@ export class ProgramsService extends DataService implements CanActivate {
   }
 
    /**
-   * makes api call to get the textbooks for program 
+   * makes api call to get the textbooks for program
    */
   getProgramCollection(request): Observable<ServerResponse> {
     const req = {
@@ -103,7 +103,7 @@ export class ProgramsService extends DataService implements CanActivate {
   }
 
   /**
-   * makes api call to get the textbooks for program 
+   * makes api call to get the textbooks for program
    */
   updateProgram(request): Observable<ServerResponse> {
     const req = {
@@ -118,7 +118,7 @@ export class ProgramsService extends DataService implements CanActivate {
 
     return this.post(req);
   }
-   
+
   /**
    * makes api call to get list of programs from ext framework Service
    */
@@ -244,34 +244,22 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * gets list of programs
    */
-  public getMyProgramsForOrg(): Observable<IProgram[]> {
-    let list = [];
-    let mergeObj = this.getApiSampleObj();
-    let targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + 10)
+  public getMyProgramsForOrg(): Observable<any> {
+    const list = [];
+    const targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + 10);
 
-    return this.getMyProgramsForOrgFromApi().pipe(
-      map(result => {
-        _.forEach(_.get(result, 'result'), function(program) {
-          list.push({...program, ...mergeObj});
-        });
-        return list;
-      }),
-      catchError(err => {
-        console.log("getMyProgramsForOrg", err);
-        return of([])
-      })
-    );
+    return this.getMyProgramsForOrgFromApi();
   }
 
   /**
    * gets list of programs
    */
   public getAllProgramsForContrib(type): Observable<IProgram[]> {
-    let list = [];
-    let mergeObj = this.getApiSampleObj();
-    let targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + 10)
+    const list = [];
+    const mergeObj = this.getApiSampleObj();
+    const targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + 10);
 
     return this.getAllProgramsByType(type).pipe(
       map(result => {
@@ -281,8 +269,8 @@ export class ProgramsService extends DataService implements CanActivate {
         return list;
       }),
       catchError(err => {
-        console.log("getAllProgramsForContrib", err);
-        return of([])
+        console.log('getAllProgramsForContrib', err);
+        return of([]);
       })
     );
   }
@@ -291,10 +279,10 @@ export class ProgramsService extends DataService implements CanActivate {
    * gets list of programs
    */
   public getMyProgramsForContrib(): Observable<IProgram[]> {
-    let list = [];
-    let mergeObj = this.getApiSampleObj();
-    let targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + 10)
+    const list = [];
+    const mergeObj = this.getApiSampleObj();
+    const targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + 10);
 
     return this.getMyProgramsForContribFromApi().pipe(
       map(result => {
@@ -304,8 +292,8 @@ export class ProgramsService extends DataService implements CanActivate {
         return list;
       }),
       catchError(err => {
-        console.log("getAllProgramsForContrib", err);
-        return of([])
+        console.log('getAllProgramsForContrib', err);
+        return of([]);
       })
     );
   }
@@ -316,9 +304,9 @@ export class ProgramsService extends DataService implements CanActivate {
   private getApiSampleObj() {
    return {
       textbooks: [
-        { id: "1", name: "Textbook 1" },
-        { id: "2", name: "Textbook 2" },
-        { id: "3", name: "Textbook 3" }
+        { id: '1', name: 'Textbook 1' },
+        { id: '2', name: 'Textbook 2' },
+        { id: '3', name: 'Textbook 3' }
       ],
       nominations: {
         pending: 0,
