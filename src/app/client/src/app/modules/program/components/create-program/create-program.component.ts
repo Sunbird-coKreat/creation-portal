@@ -57,12 +57,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     * List of textbooks for the program by BMGC
     */
     collections;
-
+    options;
     /**
     * List of textbooks for the program by BMGC
     */
     frameworkdetails;
-    programScope = {};
+    programScope: any = {};
     userprofile;
     programId = 0;
     showTextBookSelector = false;

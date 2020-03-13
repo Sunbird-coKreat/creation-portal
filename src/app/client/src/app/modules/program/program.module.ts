@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { SuiModule } from 'ng2-semantic-ui/dist';
 import { SlickModule } from 'ngx-slick';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
+import { SharedFeatureModule } from '@sunbird/shared-feature';
 import { ProgramRoutingModule } from './program-routing.module';
 import { ListAllProgramsComponent } from './components';
 import { ProgramComponent } from './components/program/program.component';
@@ -21,8 +21,6 @@ import { DynamicModule } from 'ng-dynamic-component';
 import { CbseProgramModule } from '../../modules/cbse-program/cbse-program.module';
 import { CollectionComponent, DashboardComponent, ChapterListComponent } from '../cbse-program';
 import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
-import { ProgramListComponent } from '../shared-feature';
-import { DaysToGoPipe } from '../shared-feature/pipe/days-to-go.pipe';
 
 @NgModule({
   declarations: [ListAllProgramsComponent,
@@ -30,7 +28,7 @@ import { DaysToGoPipe } from '../shared-feature/pipe/days-to-go.pipe';
     ProgramComponent, OnboardPopupComponent,
     ProgramHeaderComponent, CreateProgramComponent,
     ProgramNominationsComponent, ListNominationsComponent,
-    ListContributorTextbooksComponent, ProgramListComponent, DaysToGoPipe],
+    ListContributorTextbooksComponent],
   imports: [
   SuiModule,
     CommonModule,
@@ -44,6 +42,7 @@ import { DaysToGoPipe } from '../shared-feature/pipe/days-to-go.pipe';
     NgInviewModule,
     TelemetryModule,
     CbseProgramModule,
+    SharedFeatureModule,
     DynamicModule.withComponents([CollectionComponent, DashboardComponent, ChapterListComponent, ListNominationsComponent])
   ],
   exports: [
