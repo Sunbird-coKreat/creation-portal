@@ -87,6 +87,40 @@ export class MainHeaderComponent implements OnInit {
       this.orgSetupRole = this.config.rolesConfig.headerDropdownRoles.orgSetupRole;
       this.orgAdminRole = this.config.rolesConfig.headerDropdownRoles.orgAdminRole;
   }
+
+  public handleBack() {
+    if (this.router.url.includes('/sourcing/nominations/')) {
+      this.router.navigateByUrl('/sourcing');
+    }
+
+    console.log(this.router.url);
+  }
+
+  public hideBackButton() {
+    const hideBackBtnForUrls = [
+      '/sourcing',
+      '/contribute',
+      '/contribute/myenrollprograms',
+      '/contribute/orglist',
+    ];
+
+    for (let i = 0; i < hideBackBtnForUrls.length; i++) {
+      let url = hideBackBtnForUrls[i];
+
+      if (!this.router.url.includes(url)) {
+        continue;
+      }
+
+      if (this.router.isActive(url, true)) {
+        return true;
+      }
+
+      if (i === (hideBackBtnForUrls.length - 1)) {
+        return false;
+      }
+    }
+  }
+
   ngOnInit() {
     if (this.userService.loggedIn) {
       this.userService.userData$.subscribe((user: any) => {
