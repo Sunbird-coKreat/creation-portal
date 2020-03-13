@@ -159,10 +159,10 @@
                   <td class="text-right">
                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                       *ngIf="nomination?.nominationData?.status === 'Pending'"
-                      [routerLink]="'/sourcing/contributor/' + nomination.program_id">View Details</button>
+                      [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">View Details</button>
                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                       *ngIf="nomination?.nominationData?.status === 'Accepted'"
-                      [routerLink]="'/sourcing/contributor/' + nomination.program_id">View Contribution</button>
+                      [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">View Contribution</button>
                   </td>
                 </tr>
               </tbody>

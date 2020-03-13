@@ -146,7 +146,9 @@ export class ProgramsService extends DataService implements CanActivate {
       },
       data: {
         request: {
-          rootorg_id: _.get(this.userService, 'userProfile.rootOrg.rootOrgId')
+          filters: {
+            rootorg_id: _.get(this.userService, 'userProfile.rootOrg.rootOrgId')
+          }
         }
       }
     };
@@ -164,7 +166,9 @@ export class ProgramsService extends DataService implements CanActivate {
       },
       data: {
         request: {
-          type: type
+          filters: {
+            type: type
+          }
         }
       }
     };
@@ -182,7 +186,9 @@ export class ProgramsService extends DataService implements CanActivate {
       },
       data: {
         request: {
-          "userId": _.get(this.userService, 'userProfile.userId')
+          filters: {
+            'userId': _.get(this.userService, 'userProfile.userId')
+          }
         }
       }
     };

@@ -46,7 +46,7 @@
                   <div *ngIf="activeMyProgramsMenu" class="sb-label-value mt-4">{{ getProgramInfo(program, 'board') }}</div>
                 </td>
                 <td>
-                  <div suiPopup popupHeader="{{ resourceService.frmelmnts.lbl.textbooks }}" popupDelay="1000" popupText="{{ getProgramTextbooks(program) }}"> - {{ resourceService.frmelmnts.lbl.textbooks }}</div>
+                  <div suiPopup popupHeader="{{ resourceService.frmelmnts.lbl.textbooks }}" popupDelay="1000" popupText="{{ getProgramTextbooks(program) }}"> 0 {{ resourceService.frmelmnts.lbl.textbooks }}</div>
                 </td>
                 <td>
                   <div class="sb__ellipsis" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.grades }}" popupText="{{ getProgramInfo(program, 'gradeLevel') }}">{{ getProgramInfo(program, 'gradeLevel') }}</div>
