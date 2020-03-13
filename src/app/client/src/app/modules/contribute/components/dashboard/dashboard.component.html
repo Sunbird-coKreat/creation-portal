@@ -1,5 +1,5 @@
 <div class="ui container">
-<div class="sb-pageSection mt-24 mb-60" [appTelemetryImpression]="telemetryImpression">
+<div class="sb-pageSection mt-24 mb-60" >
     <div class="sb-pageSection-content">
       <div class="sb-pageSection-header">
           <h4 class="sb-pageSection-title">My Dashboard</h4>
@@ -139,8 +139,8 @@
      <div class="sb-pageSection mb-24">
         <div class="sb-pageSection-header mb-10">
           <h4 class="sb-pageSection-title">
-            <span *ngIf="!isContributor || activeAllProgramsMenu">List of recently published content</span>
-            <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8" *ngIf="programs && programs.length">{{programs.length}}</span></h4>
+            <span >List of recently published content</span>
+            <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8"> 0 </span></h4>
         </div>
           <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed mb-20">
               <thead class="sb-table-header sb-table-thead-gray">
@@ -206,8 +206,8 @@
       <div class="sb-pageSection mb-24">
         <div class="sb-pageSection-header mb-10">
           <h4 class="sb-pageSection-title">
-            <span *ngIf="!isContributor || activeAllProgramsMenu">User Requests</span>
-            <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8" *ngIf="programs && programs.length">{{programs.length}}</span></h4>
+            <span >User Requests</span>
+            <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8" > 0 </span></h4>
         </div>
         <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
           <thead class="sb-table-header sb-table-thead-gray">

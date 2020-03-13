@@ -13,9 +13,10 @@ import * as _ from 'lodash-es';
 export class ProgramListComponent implements OnInit {
 
   public programs;
-  private isContributor: boolean;
-  private activeAllProgramsMenu: boolean;
-  private activeMyProgramsMenu: boolean;
+  public isContributor: boolean;
+  public activeAllProgramsMenu: boolean;
+  public activeMyProgramsMenu: boolean;
+
 
   constructor(private programsService: ProgramsService, public resourceService: ResourceService, private activatedRoute: ActivatedRoute,
     public router: Router) { }

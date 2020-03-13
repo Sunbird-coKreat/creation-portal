@@ -25,6 +25,7 @@ export class ListNominationsComponent implements OnInit, AfterViewInit, OnChange
    public userProfile: any;
    nominationsCount = 0;
    public selectedNomineeProfile: any;
+   showNomineeProfile;
 
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService,
