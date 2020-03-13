@@ -43,17 +43,17 @@
                   <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
                     {{program?.name}}
                   </div>
-                  <div *ngIf="activeMyProgramsMenu" class="sb-label-value mt-4">{{ getProgramBoard(program) }}</div>
+                  <div *ngIf="activeMyProgramsMenu" class="sb-label-value mt-4">{{ getProgramInfo(program, 'board') }}</div>
                 </td>
                 <td>
-                  <div suiPopup popupHeader="{{ resourceService.frmelmnts.lbl.textbooks }}" popupDelay="1000" popupText="{{ getProgramTextbooks(program) }}">{{ program.textbooks.length }} {{ resourceService.frmelmnts.lbl.textbooks }}</div>
+                  <div suiPopup popupHeader="{{ resourceService.frmelmnts.lbl.textbooks }}" popupDelay="1000" popupText="{{ getProgramTextbooks(program) }}"> - {{ resourceService.frmelmnts.lbl.textbooks }}</div>
                 </td>
                 <td>
-                  <div class="sb__ellipsis" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.grades }}" popupText="{{ getProgramGrades(program) }}">{{ getProgramGrades(program) }}</div>
+                  <div class="sb__ellipsis" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.grades }}" popupText="{{ getProgramInfo(program, 'gradeLevel') }}">{{ getProgramInfo(program, 'gradeLevel') }}</div>
                   <hr class="divider">
-                  <div class="sb__ellipsis" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.mediums }}" popupText="{{ getProgramMediums(program) }}">{{ getProgramMediums(program) }}</div>
+                  <div class="sb__ellipsis" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.mediums }}" popupText="{{ getProgramInfo(program, 'medium') }}">{{ getProgramInfo(program, 'medium') }}</div>
                   <hr class="divider">
-                  <div class="sb__ellipsis" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.subjects }}" popupText="{{ getProgramSubjects(program) }}">{{ getProgramSubjects(program) }}</div>
+                  <div class="sb__ellipsis" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.subjects }}" popupText="{{ getProgramInfo(program, 'subject') }}">{{ getProgramInfo(program, 'subject') }}</div>
                 </td>
                 <td *ngIf="!isContributor">
                   <div>{{ program?.nominations?.pending }} {{ resourceService.frmelmnts.lbl.pending }}</div>

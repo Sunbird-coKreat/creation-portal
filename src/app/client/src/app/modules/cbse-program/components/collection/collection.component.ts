@@ -71,8 +71,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     private cbseService: CbseProgramService, public programStageService: ProgramStageService,
     public resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService,
     public userService: UserService, public utilService: UtilService, public contentService: ContentService,
-    private activatedRoute: ActivatedRoute, private router: Router, private programsService: ProgramsService,
-    private tosterService: ToasterService) { }
+    private activatedRoute: ActivatedRoute, private router: Router, private programsService: ProgramsService, private tosterService: ToasterService) { }
 
   ngOnInit() {
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
