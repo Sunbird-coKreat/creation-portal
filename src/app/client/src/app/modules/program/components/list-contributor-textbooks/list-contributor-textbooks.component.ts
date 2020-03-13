@@ -11,6 +11,7 @@ import { ProgramStageService } from '../../services/';
 import { ProgramComponentsService} from '../../services/program-components/program-components.service';
 import { ChapterListComponent } from '../../../cbse-program/components/chapter-list/chapter-list.component';
 import { programContext, sessionContext, configData, collection } from './data';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-list-contributor-textbooks',
@@ -29,7 +30,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
   public chapterListComponentInput: IChapterListComponentInput = {};
   public dynamicInputs;
   public programDetails: any = {};
-  public programId = '31ab2990-7892-11e9-8a02-93c5c62c03f1';
+  public programId = '';
   public state: InitialState = {
     stages: []
   };
@@ -42,16 +43,32 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
 
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private config: ConfigService, private publicDataService: PublicDataService,
-	private activatedRoute: ActivatedRoute, private router: Router, public programStageService: ProgramStageService,
-	private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient) { }
+  private activatedRoute: ActivatedRoute, private router: Router, public programStageService: ProgramStageService,
+  private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient) { }
 
   ngOnInit() {
-  this.contributor = {'name': 'Pratham', 'type': 'Organisation', 'nominationStatus': 'Pending'};
-  this.getProgramTextbooks();
-  this.programContext = programContext;
-  this.sessionContext = sessionContext;
-  this.configData = configData;
-  this.collection = collection;
+    this.programId = this.activatedRoute.snapshot.params.programId;
+    this.fetchProgramDetails().subscribe((programDetails) => {
+      this.getProgramTextbooks();
+      this.programContext = programContext;
+      this.sessionContext = sessionContext;
+      this.configData = configData;
+      this.collection = collection;
+    }, error => {
+      // TODO: navigate to program list page
+      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+    });
+    this.contributor = {'name': 'Pratham', 'type': 'Organisation', 'nominationStatus': 'Pending'};
+  }
+
+  fetchProgramDetails() {
+    const req = {
+      url: `/program/v1/read/${this.programId}`
+    };
+    return this.programsService.get(req).pipe(tap((programDetails: any) => {
+      programDetails.result.config = JSON.parse(programDetails.result.config);
+      this.programDetails = programDetails.result;
+    }));
   }
 
   getProgramTextbooks() {
@@ -61,12 +78,12 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
       request: {
          filters: {
           objectType: 'content',
-          programId: '31ab2990-7892-11e9-8a02-93c5c62c03f1',
+          programId: this.programId,
           status: ['Draft', 'Live'],
           contentType: 'Textbook',
-          framework: 'NCFCOPY',
-          board:	'NCERT',
-          medium:	['English']
+          framework: this.programDetails.config.framework,
+          board:	this.programDetails.config.board,
+          medium:	this.programDetails.config.medium,
         }
       }
       }

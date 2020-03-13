@@ -7,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class OrgUserListComponent implements OnInit {
   data;
+  options;
+  showNormalModal;
   constructor() { }
 
   ngOnInit() {
