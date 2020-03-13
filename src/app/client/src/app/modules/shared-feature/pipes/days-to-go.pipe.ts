@@ -15,8 +15,8 @@ export class DaysToGoPipe implements PipeTransform {
     const date  = moment(value);
     const today = moment();
     let days    = 0;
-    
-    if(date.isAfter(today)) {
+
+    if (date.isAfter(today)) {
         days = date.diff(today, 'days');
 
         if (days === 0) {

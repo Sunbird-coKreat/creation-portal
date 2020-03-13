@@ -222,9 +222,6 @@
       "CONTENT_EXPORT": "content/export",
       "TELEMETRY_EXPORT": "telemetry/export"
     },
-    "CONTRIBUTION_PROGRAMS":{
-      "SEARCH": "program/v1/search"
-    },
     "ASSESSMENT": {	
       "CREATE": "assessment/v3/items/create",	
       "READ": "assessment/v3/items/read",	
@@ -241,6 +238,20 @@
       "READ": "itemset/v3/read",
       "RETIRE": "itemset/v3/retire",
       "REVIEW": "itemset/v3/review"
+    },
+    "CONTRIBUTION_PROGRAMS": {
+      "CREATE": "program/v1/create",
+      "READ": "program/v1/read",
+      "UPDATE": "program/v1/update",
+      "REMOVE": "program/v1/remove",
+      "SEARCH": "program/v1/search",
+      "LIST": "program/v1/list",
+      "NOMINATION_ADD": "program/v1/nomination/add",
+      "NOMINATION_UPDATE": "program/v1/nomination/update",
+      "NOMINATION_REMOVE": "program/v1/nomination/remove",
+      "NOMINATION_LIST": "program/v1/nomination/list",
+      "COLLECTION_LINK": "program/v1/collection/link",
+      "CONTENTTYPE_LIST": "program/v1/contenttypes/list"
     }
   }
 }
