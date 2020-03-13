@@ -30,13 +30,14 @@ export class ProgramsService extends DataService implements CanActivate {
   public config: ConfigService;
   baseUrl: string;
   public http: HttpClient;
+  private API_URL = this.post || this.publicDataService.post; // TODO: remove API_URL once service is deployed
 
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService, private extFrameworkService: ExtPluginService,
     private router: Router, private toasterService: ToasterService, private resourceService: ResourceService) {
       super(http);
       this.config = config;
-      this.baseUrl = this.config.urlConFig.URLS.PUBLIC_PREFIX;
+      this.baseUrl = 'http://localhost:5000/' || this.config.urlConFig.URLS.PUBLIC_PREFIX;
     }
 
   /**
@@ -83,11 +84,11 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
 
-    return this.publicDataService.post(req);
+    return this.API_URL(req);
   }
 
    /**
-   * makes api call to get the textbooks for program 
+   * makes api call to get the textbooks for program
    */
   getProgramCollection(request): Observable<ServerResponse> {
     const req = {
@@ -100,11 +101,11 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
     console.log(req);
-    return this.publicDataService.post(req);
+    return this.API_URL(req);
   }
 
   /**
-   * makes api call to get the textbooks for program 
+   * makes api call to get the textbooks for program
    */
   updateProgram(request): Observable<ServerResponse> {
     const req = {
@@ -117,7 +118,7 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
 
-    return this.publicDataService.post(req);
+    return this.API_URL(req);
   }
   /**
    * makes api call to get list of programs from ext framework Service
@@ -152,7 +153,7 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
-    return this.publicDataService.post(req);
+    return this.API_URL(req);
   }
 
   /**
@@ -172,7 +173,7 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
-    return this.publicDataService.post(req);
+    return this.API_URL(req);
   }
 
   /**
@@ -192,7 +193,7 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
-    return this.publicDataService.post(req);
+    return this.API_URL(req);
   }
 
   /**
@@ -244,70 +245,36 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * gets list of programs
    */
-  public getMyProgramsForOrg(): Observable<IProgram[]> {
-    let list = [];
-    let mergeObj = this.getApiSampleObj();
-    let targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + 10)
+  public getMyProgramsForOrg(): Observable<any> {
+    const list = [];
+    const targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + 10);
 
-    return this.getMyProgramsForOrgFromApi().pipe(
-      map(result => {
-        _.forEach(_.get(result, 'result'), function(program) {
-          list.push({...program, ...mergeObj});
-        });
-        return list;
-      }),
-      catchError(err => {
-        console.log("getMyProgramsForOrg", err);
-        return of([])
-      })
-    );
+    return this.getMyProgramsForOrgFromApi();
   }
 
   /**
    * gets list of programs
    */
-  public getAllProgramsForContrib(type): Observable<IProgram[]> {
-    let list = [];
-    let mergeObj = this.getApiSampleObj();
-    let targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + 10)
+  public getAllProgramsForContrib(type): Observable<any> {
+    const list = [];
+    const mergeObj = this.getApiSampleObj();
+    const targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + 10);
 
-    return this.getAllProgramsByType(type).pipe(
-      map(result => {
-        _.forEach(_.get(result, 'result'), function(program) {
-          list.push({...program, ...mergeObj});
-        });
-        return list;
-      }),
-      catchError(err => {
-        console.log("getAllProgramsForContrib", err);
-        return of([])
-      })
-    );
+    return this.getAllProgramsByType(type);
   }
 
   /**
    * gets list of programs
    */
-  public getMyProgramsForContrib(): Observable<IProgram[]> {
-    let list = [];
-    let mergeObj = this.getApiSampleObj();
-    let targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + 10)
+  public getMyProgramsForContrib(): Observable<any> {
+    const list = [];
+    const mergeObj = this.getApiSampleObj();
+    const targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + 10);
 
-    return this.getMyProgramsForContribFromApi().pipe(
-      map(result => {
-        _.forEach(_.get(result, 'result'), function(program) {
-          list.push({...program, ...mergeObj});
-        });
-        return list;
-      }),
-      catchError(err => {
-        console.log("getAllProgramsForContrib", err);
-        return of([])
-      })
-    );
+    return this.getMyProgramsForContribFromApi();
   }
 
   /**
@@ -316,9 +283,9 @@ export class ProgramsService extends DataService implements CanActivate {
   private getApiSampleObj() {
    return {
       textbooks: [
-        { id: "1", name: "Textbook 1" },
-        { id: "2", name: "Textbook 2" },
-        { id: "3", name: "Textbook 3" }
+        { id: '1', name: 'Textbook 1' },
+        { id: '2', name: 'Textbook 2' },
+        { id: '3', name: 'Textbook 3' }
       ],
       nominations: {
         pending: 0,
