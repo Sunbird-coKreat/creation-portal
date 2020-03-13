@@ -30,14 +30,14 @@ export class ProgramsService extends DataService implements CanActivate {
   public config: ConfigService;
   baseUrl: string;
   public http: HttpClient;
-  private API_URL = this.post || this.publicDataService.post; // TODO: remove API_URL once service is deployed
+  private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
 
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService, private extFrameworkService: ExtPluginService,
     private router: Router, private toasterService: ToasterService, private resourceService: ResourceService) {
       super(http);
       this.config = config;
-      this.baseUrl = 'http://localhost:5000/' || this.config.urlConFig.URLS.PUBLIC_PREFIX;
+      this.baseUrl = this.config.urlConFig.URLS.PUBLIC_PREFIX;
     }
 
   /**
