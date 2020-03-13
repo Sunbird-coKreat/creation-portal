@@ -1,12 +1,12 @@
 const request = require('request')
 const envHelper = require('./environmentVariablesHelper.js')
 const learnerURL = envHelper.LEARNER_URL
-const learnerAuthorization = envHelper.PORTAL_API_AUTH_TOKEN
+const learnerAuthorization = envHelper.SUNBIRD_PORTAL_API_AUTH_TOKEN
 const telemetryHelper = require('./telemetryHelper')
 const _ = require('lodash')
 const uuidv1 = require('uuid/v1');
 const requestPromise = require('request-promise'); //  'request' npm package with Promise support
-const apiAuthToken = envHelper.PORTAL_API_AUTH_TOKEN;
+const apiAuthToken = envHelper.SUNBIRD_PORTAL_API_AUTH_TOKEN
 const logger = require('sb_logger_util_v2');
 
 module.exports = {
