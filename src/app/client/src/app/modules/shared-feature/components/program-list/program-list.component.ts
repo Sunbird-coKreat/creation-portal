@@ -39,20 +39,20 @@ export class ProgramListComponent implements OnInit {
 
         if (this.isContributor) {
           if (this.activeAllProgramsMenu) {
-            this.getAllProgramsForContrib('public')
+            this.getAllProgramsForContrib('public');
           }
 
-          if(this.activeMyProgramsMenu) {
+          if (this.activeMyProgramsMenu) {
              this.getMyProgramsForContrib();
           }
-         
+
         } else {
           this.getMyProgramsForOrg();
         }
 
-        console.log("Am I contributor : ", this.isContributor);
-        console.log("activeMyProgramsMenu : ", this.activeMyProgramsMenu);
-        console.log("activeAllProgramsMenu : ", this.activeAllProgramsMenu);
+        console.log('Am I contributor : ', this.isContributor);
+        console.log('activeMyProgramsMenu : ', this.activeMyProgramsMenu);
+        console.log('activeAllProgramsMenu : ', this.activeAllProgramsMenu);
       })
     ).subscribe();
   }
@@ -72,22 +72,24 @@ export class ProgramListComponent implements OnInit {
    * fetch the list of programs.
    */
   private getMyProgramsForContrib() {
-    return this.programsService.getMyProgramsForContrib().subscribe(
-      programs => {
-        this.programs = programs;
-      }
-    );
+    return this.programsService.getMyProgramsForContrib().subscribe((response) => {
+      this.programs = _.get(response, 'result.programs');
+    }, error => {
+      console.log(error);
+      // TODO: Add error toaster
+    });
   }
 
   /**
    * fetch the list of programs.
    */
   private getMyProgramsForOrg() {
-    return this.programsService.getMyProgramsForOrg().subscribe(
-      programs => {
-        this.programs = programs;
-      }
-    );
+    return this.programsService.getMyProgramsForOrg().subscribe((response) => {
+      this.programs = _.get(response, 'result.programs');
+    }, error => {
+      console.log(error);
+      // TODO: Add error toaster
+    });
   }
 
   private getProgramTextbooks(program) {
