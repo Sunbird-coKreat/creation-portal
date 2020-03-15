@@ -318,7 +318,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     console.log(data);
 
     const option = {
-      url: '/program/v1/collection/link',
+      url: 'program/v1/collection/link',
       header: {
         'content-type' : 'application/json'
       },

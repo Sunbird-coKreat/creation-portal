@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ProgramsService } from '@sunbird/core';
-import { tap } from 'rxjs/operators';
-import { ResourceService, ToasterService } from '@sunbird/shared';
-import {ActivatedRoute, Router} from '@angular/router';
+import { ResourceService } from '@sunbird/shared';
+import { ActivatedRoute, Router } from '@angular/router';
+import { IProgram } from '../../../core/interfaces';
+import { ProgramStageService } from '../../../program/services';
 import * as _ from 'lodash-es';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-program-list',
@@ -12,14 +14,14 @@ import * as _ from 'lodash-es';
 })
 export class ProgramListComponent implements OnInit {
 
-  public programs;
+  public programs: IProgram[];
+  public count = 0;
   public isContributor: boolean;
   public activeAllProgramsMenu: boolean;
   public activeMyProgramsMenu: boolean;
 
-
   constructor(private programsService: ProgramsService, public resourceService: ResourceService, private activatedRoute: ActivatedRoute,
-    public router: Router) { }
+    public router: Router, public programStageService: ProgramStageService) { }
 
   ngOnInit() {
     this.checkIfUserIsContributor();
@@ -44,16 +46,12 @@ export class ProgramListComponent implements OnInit {
           }
 
           if (this.activeMyProgramsMenu) {
-             this.getMyProgramsForContrib();
+             // this.getMyProgramsForContrib(); // TODO remove after my programs api ready
+             this.getAllProgramsForContrib('public');
           }
-
         } else {
           this.getMyProgramsForOrg();
         }
-
-        console.log('Am I contributor : ', this.isContributor);
-        console.log('activeMyProgramsMenu : ', this.activeMyProgramsMenu);
-        console.log('activeAllProgramsMenu : ', this.activeAllProgramsMenu);
       })
     ).subscribe();
   }
@@ -63,8 +61,9 @@ export class ProgramListComponent implements OnInit {
    */
   private getAllProgramsForContrib(type) {
     return this.programsService.getAllProgramsForContrib(type).subscribe(
-      programs => {
-        this.programs = programs;
+      response => {
+        this.programs = _.get(response, 'result.programs');
+        this.count = _.get(response, 'result.count');
       }
     );
   }
@@ -75,6 +74,7 @@ export class ProgramListComponent implements OnInit {
   private getMyProgramsForContrib() {
     return this.programsService.getMyProgramsForContrib().subscribe((response) => {
       this.programs = _.get(response, 'result.programs');
+      this.count = _.get(response, 'result.count');
     }, error => {
       console.log(error);
       // TODO: Add error toaster
@@ -87,6 +87,7 @@ export class ProgramListComponent implements OnInit {
   private getMyProgramsForOrg() {
     return this.programsService.getMyProgramsForOrg().subscribe((response) => {
       this.programs = _.get(response, 'result.programs');
+      this.count = _.get(response, 'result.count');
     }, error => {
       console.log(error);
       // TODO: Add error toaster
@@ -99,23 +100,26 @@ export class ProgramListComponent implements OnInit {
 
   getProgramInfo(program, type) {
     const config = JSON.parse(program.config);
-    return type  === 'board' ? config[type] : _.join(config[type], ', ');
+    return type  === 'board' ? 'CBSE' : _.join(config[type], ', ');
   }
 
   private getProgramNominationStatus(program) {
-    return program.nomination_status;
+    return program.nomination_status || 'Pending';
   }
 
   private viewDetailsBtnClicked(program) {
     if (this.isContributor) {
       if (this.activeMyProgramsMenu) {
+        this.programStageService.addStage('ListAllMyProgramsComponent');
         return this.router.navigateByUrl('/contribute/nominatedtextbooks/' + program.program_id);
       }
 
       if (this.activeAllProgramsMenu) {
+        this.programStageService.addStage('ListAllProgramsComponent');
         return this.router.navigateByUrl('/contribute/program/' + program.program_id);
       }
     } else {
+      this.programStageService.addStage('ListAllProgramsComponent');
       return this.router.navigateByUrl('/sourcing/nominations/' + program.program_id);
     }
   }

@@ -30,14 +30,15 @@ export class ProgramsService extends DataService implements CanActivate {
   public config: ConfigService;
   baseUrl: string;
   public http: HttpClient;
-  private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
+  // private post = this.publicDataService.post; // TODO: remove post once service is deployed
 
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService, private extFrameworkService: ExtPluginService,
     private router: Router, private toasterService: ToasterService, private resourceService: ResourceService) {
       super(http);
       this.config = config;
-      this.baseUrl = this.config.urlConFig.URLS.PUBLIC_PREFIX;
+      // this.baseUrl = this.config.urlConFig.URLS.PUBLIC_PREFIX;
+      this.baseUrl = 'http://localhost:5000/' ;
     }
 
   /**
@@ -84,7 +85,7 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
 
-    return this.API_URL(req);
+    return this.post(req);
   }
 
    /**
@@ -101,7 +102,7 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
     console.log(req);
-    return this.API_URL(req);
+    return this.post(req);
   }
 
   /**
@@ -118,7 +119,7 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
 
-    return this.API_URL(req);
+    return this.post(req);
   }
   /**
    * makes api call to get list of programs from ext framework Service
@@ -153,7 +154,7 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
-    return this.API_URL(req);
+    return this.post(req);
   }
 
   /**
@@ -173,7 +174,7 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
-    return this.API_URL(req);
+    return this.post(req);
   }
 
   /**
@@ -193,7 +194,7 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
-    return this.API_URL(req);
+    return this.post(req);
   }
 
   /**
@@ -245,66 +246,21 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * gets list of programs
    */
-  public getMyProgramsForOrg(): Observable<any> {
-    const list = [];
-    const targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + 10);
-
+  public getMyProgramsForOrg(): Observable<ServerResponse> {
     return this.getMyProgramsForOrgFromApi();
   }
 
   /**
    * gets list of programs
    */
-  public getAllProgramsForContrib(type): Observable<any> {
-    const list = [];
-    const mergeObj = this.getApiSampleObj();
-    const targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + 10);
-
+  public getAllProgramsForContrib(type): Observable<ServerResponse> {
     return this.getAllProgramsByType(type);
   }
 
   /**
    * gets list of programs
    */
-  public getMyProgramsForContrib(): Observable<any> {
-    const list = [];
-    const mergeObj = this.getApiSampleObj();
-    const targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + 10);
-
+  public getMyProgramsForContrib(): Observable<ServerResponse> {
     return this.getMyProgramsForContribFromApi();
-  }
-
-  /**
-   * get api obj sample
-   */
-  private getApiSampleObj() {
-   return {
-      textbooks: [
-        { id: '1', name: 'Textbook 1' },
-        { id: '2', name: 'Textbook 2' },
-        { id: '3', name: 'Textbook 3' }
-      ],
-      nominations: {
-        pending: 0,
-        approved: 0,
-        rejected: 0
-      },
-      nomination_status: 'Pending',
-      contribution_date: this.getFutureDate(-1),
-      nomination_end_date: this.getFutureDate(-5),
-      nomination_shortlisting_date: this.getFutureDate(0),
-      curation_end_date: this.getFutureDate(1),
-      program_end_date: this.getFutureDate(10),
-    };
-  }
-
-  /**
-   * get future date
-   */
-  private getFutureDate(days) {
-    return new Date((new Date()).getTime() + (days * 86400000));
   }
 }

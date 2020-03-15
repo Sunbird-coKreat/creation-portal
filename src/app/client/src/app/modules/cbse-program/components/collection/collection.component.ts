@@ -71,7 +71,8 @@ export class CollectionComponent implements OnInit, OnDestroy {
     private cbseService: CbseProgramService, public programStageService: ProgramStageService,
     public resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService,
     public userService: UserService, public utilService: UtilService, public contentService: ContentService,
-    private activatedRoute: ActivatedRoute, private router: Router, private programsService: ProgramsService, private tosterService: ToasterService) { }
+    private activatedRoute: ActivatedRoute, private router: Router, private programsService: ProgramsService,
+    private tosterService: ToasterService) { }
 
   ngOnInit() {
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
@@ -89,8 +90,8 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.sessionContext = _.assign(this.collectionComponentInput.sessionContext, {
       currentRole: _.get(this.programContext, 'userDetails.roles[0]'),
       bloomsLevel: _.get(this.programContext, 'config.scope.bloomsLevel'),
-      programId: _.get(this.programContext, 'programId'),
-      // programId: '31ab2990-7892-11e9-8a02-93c5c62c03f1' || _.get(this.programContext, 'programId'),
+      // programId: _.get(this.programContext, 'programId'),
+      programId: '31ab2990-7892-11e9-8a02-93c5c62c03f1' || _.get(this.programContext, 'programId'),
       program: _.get(this.programContext, 'name'),
       onBoardSchool: _.get(this.programContext, 'userDetails.onBoardingData.school'),
       collectionType: _.get(this.collectionComponentConfig, 'collectionType'),
@@ -241,7 +242,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     // }
 
     this.collectionList = this.filteredList;
-    console.log( this.filteredList);
+    // console.log( this.filteredList);
   }
 
   addCardImage(collection) {
@@ -325,7 +326,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
       creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
     }
     const req = {
-      url: `/program/v1/nomination/add`,
+      url: `program/v1/nomination/add`,
       data: {
         request: {
           program_id: this.activatedRoute.snapshot.params.programId,

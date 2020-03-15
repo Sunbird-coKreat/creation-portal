@@ -1,4 +1,4 @@
-import {filter, first, map} from 'rxjs/operators';
+import { first } from 'rxjs/operators';
 import { UserService, PermissionService, TenantService, OrgDetailsService, FormService } from './../../services';
 import { Component, OnInit, ChangeDetectorRef, Input } from '@angular/core';
 import { ConfigService, ResourceService, IUserProfile, IUserData } from '@sunbird/shared';
@@ -8,7 +8,8 @@ import { IInteractEventObject, IInteractEventEdata } from '@sunbird/telemetry';
 import { CacheService } from 'ng2-cache-service';
 import { environment } from '@sunbird/environment';
 declare var jQuery: any;
-import { Observable } from 'rxjs';
+import { ProgramStageService } from '../../../program/services';
+import { InitialState } from '../../../cbse-program/interfaces';
 
 @Component({
   selector: 'app-header',
@@ -21,6 +22,12 @@ export class MainHeaderComponent implements OnInit {
     formAction: 'search',
     filterEnv: 'resourcebundle'
   };
+
+  public state: InitialState = {
+    stages: []
+  };
+  public stageSubscription: any;
+  public currentStage: any;
   exploreButtonVisibility: string;
   queryParam: any = {};
   showExploreHeader = false;
@@ -75,7 +82,8 @@ export class MainHeaderComponent implements OnInit {
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
     public orgDetailsService: OrgDetailsService, private _cacheService: CacheService, public formService: FormService,
-    public activatedRoute: ActivatedRoute, private cacheService: CacheService, private cdr: ChangeDetectorRef) {
+    public activatedRoute: ActivatedRoute, private cacheService: CacheService, private cdr: ChangeDetectorRef,
+    public programStageService: ProgramStageService) {
       try {
         this.exploreButtonVisibility = (<HTMLInputElement>document.getElementById('exploreButtonVisibility')).value;
       } catch (error) {
@@ -93,7 +101,21 @@ export class MainHeaderComponent implements OnInit {
       this.router.navigateByUrl('/sourcing');
     }
 
-    console.log(this.router.url);
+    if (this.router.url.includes('/contribute/program/')) {
+      this.router.navigateByUrl('/contribute');
+    }
+
+    if (this.router.url.includes('/contribute/nominatedtextbooks/')) {
+      this.router.navigateByUrl('/contribute/myenrollprograms');
+    }
+
+    if (this.router.url.includes('/sourcing/create-program')) {
+      this.router.navigateByUrl('/sourcing');
+    }
+
+    // console.log('before', this.state.stages);
+    // this.programStageService.removeLastStage();
+    // console.log('after', this.state.stages);
   }
 
   public hideBackButton() {
@@ -105,7 +127,7 @@ export class MainHeaderComponent implements OnInit {
     ];
 
     for (let i = 0; i < hideBackBtnForUrls.length; i++) {
-      let url = hideBackBtnForUrls[i];
+      const url = hideBackBtnForUrls[i];
 
       if (!this.router.url.includes(url)) {
         continue;
@@ -157,6 +179,17 @@ export class MainHeaderComponent implements OnInit {
           this.showOfflineHelpCentre = false;
         }
       });
+    }
+
+    this.stageSubscription = this.programStageService.getStage().subscribe(state => {
+      this.state.stages = state.stages;
+      this.changeView();
+    });
+  }
+
+  changeView() {
+    if (!_.isEmpty(this.state.stages)) {
+      this.currentStage  = _.last(this.state.stages).stage;
     }
   }
 
@@ -333,5 +366,9 @@ export class MainHeaderComponent implements OnInit {
   }
   showSideBar() {
     jQuery('.ui.sidebar').sidebar('setting', 'transition', 'overlay').sidebar('toggle');
+  }
+
+  ngOnDestroy() {
+    this.stageSubscription.unsubscribe();
   }
 }
