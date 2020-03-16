@@ -57,7 +57,7 @@ export class ListNominationsComponent implements OnInit, AfterViewInit, OnChange
 
   fetchProgramDetails() {
     const req = {
-      url: `program/v1/read/${this.programId}`
+      url: `/program/v1/read/${this.programId}`
     };
     return this.programsService.get(req).pipe(tap((programDetails: any) => {
       programDetails.result.config = JSON.parse(programDetails.result.config);

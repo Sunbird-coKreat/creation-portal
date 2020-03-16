@@ -59,8 +59,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     private cbseService: CbseProgramService, public programStageService: ProgramStageService,
     public resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService,
     public userService: UserService, public utilService: UtilService, public contentService: ContentService,
-    private activatedRoute: ActivatedRoute, private router: Router, private programsService: ProgramsService,
-    private tosterService: ToasterService) { }
+    private activatedRoute: ActivatedRoute, private router: Router, private programsService: ProgramsService, private tosterService: ToasterService) { }
 
   ngOnInit() {
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
@@ -75,10 +74,10 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.sharedContext = this.collectionComponentInput.programContext.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});
-
+    
     this.contentType = _.get(this.programContext, 'content_types'),
     this.sessionContext = _.assign(this.collectionComponentInput.sessionContext, {
-
+      
       currentRole: _.get(this.programContext, 'userDetails.roles[0]'),
       bloomsLevel: _.get(this.programContext, 'config.scope.bloomsLevel'),
       programId: _.get(this.programContext, 'programId'),
@@ -92,7 +91,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.getCollectionCard();
     const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
     this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
-    this.sessionContext.programId = this.programContext.program_id;
+    this.sessionContext.programId = this.programContext.program_id
     this.role.currentRole = this.sessionContext.currentRole;
     this.classes = _.find(this.collectionComponentConfig.config.filters.explicit, {'code': 'gradeLevel'}).range;
     this.mediums = _.find(this.collectionComponentConfig.config.filters.implicit, {'code': 'medium'}).defaultValue;
@@ -226,7 +225,14 @@ export class CollectionComponent implements OnInit, OnDestroy {
 }
 
   groupCollectionList(groupValue?: string) {
+    // if (groupValue) {
+    //   this.collectionList = _.groupBy(this.collectionsWithCardImage, { 'subject' : groupValue } );
+    // } else {
+    //   this.collectionList = _.groupBy(this.filteredList, 'subject');
+    // }
+
     this.collectionList = this.filteredList;
+    console.log( this.filteredList);
   }
 
   addCardImage(collection) {
@@ -310,7 +316,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
       creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
     }
     const req = {
-      url: `program/v1/nomination/add`,
+      url: `/program/v1/nomination/add`,
       data: {
         request: {
           program_id: this.activatedRoute.snapshot.params.programId,

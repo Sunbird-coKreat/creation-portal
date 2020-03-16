@@ -105,7 +105,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   fetchProgramDetails() { // Getting Program Configuration
     const req = {
       // url: `${this.configService.urlConFig.URLS.CONTENT.GET}/${contentId}`,
-      url: `program/v1/read/${this.programId}`
+      url: `/program/v1/read/${this.programId}`
     };
     return this.programsService.get(req).pipe(tap((programDetails: any) => {
       programDetails.result.config = JSON.parse(programDetails.result.config);

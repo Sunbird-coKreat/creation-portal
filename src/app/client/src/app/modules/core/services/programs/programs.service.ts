@@ -30,15 +30,14 @@ export class ProgramsService extends DataService implements CanActivate {
   public config: ConfigService;
   baseUrl: string;
   public http: HttpClient;
-  // private post = this.publicDataService.post; // TODO: remove post once service is deployed
+  private API_URL = this.publicDataService.API_URL; // TODO: remove API_URL once service is deployed
 
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService, private extFrameworkService: ExtPluginService,
     private router: Router, private toasterService: ToasterService, private resourceService: ResourceService) {
       super(http);
       this.config = config;
-      // this.baseUrl = this.config.urlConFig.URLS.PUBLIC_PREFIX;
-      this.baseUrl = 'http://localhost:5000/' ;
+      this.baseUrl = this.config.urlConFig.URLS.PUBLIC_PREFIX;
     }
 
   /**
@@ -85,7 +84,7 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
 
-    return this.post(req);
+    return this.API_URL(req);
   }
 
    /**
@@ -102,7 +101,7 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
     console.log(req);
-    return this.post(req);
+    return this.API_URL(req);
   }
 
   /**
@@ -119,7 +118,7 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
 
-    return this.post(req);
+    return this.API_URL(req);
   }
   /**
    * makes api call to get list of programs from ext framework Service
@@ -134,7 +133,7 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
-    return this.extFrameworkService.post(req);
+    return this.extFrameworkService.API_URL(req);
   }
 
   /**
@@ -154,7 +153,7 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
-    return this.post(req);
+    return this.API_URL(req);
   }
 
   /**
@@ -174,7 +173,7 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
-    return this.post(req);
+    return this.API_URL(req);
   }
 
   /**
@@ -194,7 +193,7 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
-    return this.post(req);
+    return this.API_URL(req);
   }
 
   /**
