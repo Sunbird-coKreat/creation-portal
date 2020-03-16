@@ -39,7 +39,7 @@ export class EnrollContributorService extends DataService {
         }
       };
   
-      return this.publicDataService.post(req);
+      return this.post(req);
     }
 
 }

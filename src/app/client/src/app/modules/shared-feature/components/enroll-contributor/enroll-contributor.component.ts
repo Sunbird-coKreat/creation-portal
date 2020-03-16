@@ -10,7 +10,6 @@ import { Subscription, Subject, interval ,} from 'rxjs';
 import { ServerResponse, RequestParam, HttpOptions } from '@sunbird/shared';
 import { of as observableOf, throwError as observableThrowError, Observable  } from 'rxjs';
 
-
 @Component({
   selector: 'app-enroll-contributor',
   templateUrl: './enroll-contributor.component.html',
@@ -74,8 +73,6 @@ export class EnrollContributorComponent implements OnInit {
     this.fetchFrameWorkDetails();
     this.initializeFormFields();
   }
-
-  
 
   fetchFrameWorkDetails() {
     let instance = this;
@@ -146,15 +143,8 @@ export class EnrollContributorComponent implements OnInit {
   {
     const option =
     {
-      url: "http://dock.sunbirded.org/api/reg/add",
       id : "open-saber.registry.create",
       ver: "1.0",
-      ets: "11234",
-      params: {
-        did: "",
-        key: "",
-        msgid: ""    
-      },
       request:
       {
         User
@@ -166,7 +156,7 @@ export class EnrollContributorComponent implements OnInit {
             'Authorization' : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhMzRmNjM3NTM4ZTg0MTc3OWVlNjMwM2FkYzExNDY0NCJ9.RpY7PL4ASDLNOU9xMCKXZtDF4vUPuMTDVO6keh4kI1M"
           }
         };
-        this.saveData(option);
+       // this.saveData(option);
         // return this.http.post("http://dock.sunbirded.org/" + "api/reg/add", option, httpOptions).pipe(
         //   ((data) => {
         //     // if (data.responseCode !== 'OK') {
@@ -174,24 +164,22 @@ export class EnrollContributorComponent implements OnInit {
         //     // }
         //     return observableOf(data);
         //   }));
-
-        // this.http.post<any>("http://dock.sunbirded.org/api/reg/add", option, httpOptions).subscribe(
-        //   (res) => {
-        //           console.log(res);
-        //         }, 
-        //   (err) => {
-        //     console.log(err);
-        //     // TODO: navigate to program list page
-        //     const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-        //    // instance.toasterService.warning(errorMes || 'Fetching textbooks failed');
-        //   }
-        // );
-  }
+        this.http.post<any>("http://dock.sunbirded.org/api/reg/add", option, httpOptions).subscribe(
+          (res) => {
+                  console.log(res);
+                }, 
+          (err) => {
+            console.log(err);
+            // TODO: navigate to program list page
+            const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+           // instance.toasterService.warning(errorMes || 'Fetching textbooks failed');
+          }
+        );
+     }
   enrollAsOrganisation(Org)
   {
     const option =
     {
-      url: "http://dock.sunbirded.org/api/reg/add",
       id : "open-saber.registry.create",
       ver: "1.0",
       ets: "11234",
@@ -205,25 +193,24 @@ export class EnrollContributorComponent implements OnInit {
         Org
       }
     }
-    this.saveData(option);
-    // const httpOptions: HttpOptions = {
-    //       headers: {
-    //         'Content-Type' : "application/json",
-    //         'Authorization' : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhMzRmNjM3NTM4ZTg0MTc3OWVlNjMwM2FkYzExNDY0NCJ9.RpY7PL4ASDLNOU9xMCKXZtDF4vUPuMTDVO6keh4kI1M"
-    //       }
-    //     };
-    //     this.http.post<any>("http://dock.sunbirded.org/api/reg/add", option, httpOptions).subscribe(
-    //       (res) => {
-    //               console.log(res);
-    //             }, 
-    //       (err) => {
-    //         console.log(err);
-    //         // TODO: navigate to program list page
-    //         const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-    //        // instance.toasterService.warning(errorMes || 'Fetching textbooks failed');
-    //       }
-    //     );
-
+    //this.saveData(option);
+    const httpOptions: HttpOptions = {
+          headers: {
+            'Content-Type' : "application/json",
+            'Authorization' : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhMzRmNjM3NTM4ZTg0MTc3OWVlNjMwM2FkYzExNDY0NCJ9.RpY7PL4ASDLNOU9xMCKXZtDF4vUPuMTDVO6keh4kI1M"
+          }
+        };
+        this.http.post<any>("http://dock.sunbirded.org/api/reg/add", option, httpOptions).subscribe(
+          (res) => {
+                  console.log(res);
+                }, 
+          (err) => {
+            console.log(err);
+            // TODO: navigate to program list page
+            const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+           // instance.toasterService.warning(errorMes || 'Fetching textbooks failed');
+          }
+        );
   }
   saveData(option)
   {
