@@ -12,43 +12,239 @@
   </div>
   <div class="sb-modal-content o-y-visible onBoardDropdown">
     <div class="twelve wide tablet seven wide computer column form-fields">
-        <form class="">
-         <div class="sb-field-group mb-8">
-            <label>Type of Contributor <span class="sb-color-warning">*</span></label>
-            <div class="sb-field mt-4 d-flex">
-               <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-                  <input type="radio" id="radio1" name="contributorType"  (click)="contributorType='organisation'">
-                  <label for="radio1">Organisation</label>
+      <form class="ui form" [formGroup]="contributeForm" (submit)="saveUser()">
+         <div class="ui grid m-0 p-0">
+            <div class="six wide column sb-field-group p-0 pr-16 mb-8">
+               <label>Board</label>
+               <div class="sb-field">
+                  <!-- <ng-template let-option #optionTemplate >
+                     <div class="field m-0">
+                        <div class="template-checkbox">
+                           <div class="p-5 option-text"  title="{{option.name}}">
+                              {{option.name}}
+                           </div>
+                           <div class="ml-auto">
+                              <i class="square outline medium icon"></i>
+                           </div>
+                        </div>
+                     </div>
+                  </ng-template>
+                  <sui-multi-select class="selection"
+                  labelField="name"
+                  [hasLabels]="true"
+                  [options]="options"
+                  valueField="name"
+                  #multiSelect>
+                  <sui-select-option *ngFor="let option of data.board"
+                  [value]="option" >
+                  </sui-select-option>
+                  </sui-multi-select> -->
+                  <sui-multi-select class="selection"
+                  formControlName="board"
+                     labelField="name"
+                     [hasLabels]="true"
+                     [options]="enrollDetails.board"
+                     valueField="name"
+                     #multiSelect>
+                        <sui-select-option *ngFor="let option of enrollDetails.board"
+                        [value]="option" >
+                        </sui-select-option>
+						</sui-multi-select>
                </div>
-               <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-                  <input type="radio" id="radio2" name="contributorType"  (click)="contributorType='individual'">
-                  <label for="radio2">Individual</label>
+            </div>
+            <div class="six wide column sb-field-group p-0 mb-8">
+               <label>Select Medium</label>
+               <div class="sb-field">
+                  <!-- <ng-template let-option #optionTemplate >
+                     <div class="field m-0">
+                        <div class="template-checkbox">
+                           <div class="p-5 option-text"  title="{{option.name}}">
+                              {{option.name}}
+                           </div>
+                           <div class="ml-auto">
+                              <i class="square outline medium icon"></i>
+                           </div>
+                        </div>
+                     </div>
+                  </ng-template>
+                  <sui-multi-select class="selection"
+                  labelField="name"
+                  [hasLabels]="true"
+                  [options]="options"
+                  valueField="name"
+                  #multiSelect>
+                  <sui-select-option *ngFor="let option of data.medium"
+                  [value]="option" >
+                  </sui-select-option>
+                  </sui-multi-select> -->
+                   <!-- formControlName="medium" -->
+                  <sui-multi-select class="selection"
+                  formControlName="medium"
+                  labelField="name"
+                  [hasLabels]="true"
+                  [options]="options"
+                  valueField="name"
+                  #multiSelect>
+                     <sui-select-option *ngFor="let option of enrollDetails.medium"
+                     [value]="option" >
+                     </sui-select-option>
+						</sui-multi-select>
+                  
+               </div>
+            </div>
+         
+            <div class="six wide column sb-field-group p-0 pr-16 mb-8">
+               <label>Grade / Class</label>
+               <div class="sb-field">
+                  <!-- <ng-template let-option #optionTemplate >
+                     <div class="field m-0">
+                        <div class="template-checkbox">
+                           <div class="p-5 option-text"  title="{{option.name}}">
+                              {{option.name}}
+                           </div>
+                           <div class="ml-auto">
+                              <i class="square outline medium icon"></i>
+                           </div>
+                        </div>
+                     </div>
+                  </ng-template>
+                  <sui-multi-select class="selection"
+                  labelField="name"
+                  [hasLabels]="true"
+                  [options]="data.grade"
+                  valueField="name"
+                  #multiSelect>
+                  <sui-select-option *ngFor="let option of data.grade"
+                  [value]="option" >
+                  </sui-select-option>
+                  </sui-multi-select> -->
+                  <!-- formControlName="gradeLevel" -->
+                  <sui-multi-select  class="selection"
+                     formControlName="gradeLevel"
+                     labelField="name"
+                     [hasLabels]="true"
+                     [options]="enrollDetails.gradeLevel"
+                     valueField="name"
+                     #multiSelect>
+                     <sui-select-option *ngFor="let option of enrollDetails.gradeLevel"
+                     [value]="option" >
+						   </sui-select-option>
+						</sui-multi-select>
+               </div>
+            </div>
+
+            <div class="six wide column sb-field-group p-0 mb-8">
+               <label>Subject</label>
+               <div class="sb-field">
+                  <!-- <ng-template let-option #optionTemplate >
+                     <div class="field m-0">
+                        <div class="template-checkbox">
+                           <div class="p-5 option-text"  title="{{option.name}}">
+                              {{option.name}}
+                           </div>
+                           <div class="ml-auto">
+                              <i class="square outline medium icon"></i>
+                           </div>
+                        </div>
+                     </div>
+                  </ng-template>
+                  <sui-multi-select class="selection"
+                  labelField="name"
+                  [hasLabels]="true"
+                  [options]="data.subject"
+                  valueField="name"
+                  #multiSelect>
+                  <sui-select-option *ngFor="let option of data.subject"
+                  [value]="option" >
+                  </sui-select-option>
+                  </sui-multi-select> -->
+                  <!-- formControlName="subject" -->
+                  <sui-multi-select class="selection"
+                     formControlName="subject"
+                     labelField="name"
+                     [hasLabels]="true"
+                     [options]="enrollDetails.subject"
+                     valueField="name"
+                     #multiSelect>
+                        <sui-select-option *ngFor="let option of enrollDetails.subject"
+                        [value]="option" >
+                        </sui-select-option>
+						</sui-multi-select>
                </div>
             </div>
          </div>
 
-            <div class="sb-field-group mb-8"  *ngIf="contributorType === 'organisation'">
+         <div class="ui grid m-0 p-0">
+            <div class="twelve wide column sb-field-group p-0 pr-16 mb-8">
+               <label>Types of content</label>
+               <div class="sb-field">
+                  <!-- <ng-template let-option #optionTemplate >
+                     <div class="field m-0">
+                        <div class="template-checkbox">
+                           <div class="p-5 option-text"  title="{{option.name}}">
+                              {{option.name}}
+                           </div>
+                           <div class="ml-auto">
+                              <i class="square outline medium icon"></i>
+                           </div>
+                        </div>
+                     </div>
+                  </ng-template>
+                  <sui-multi-select class="selection"
+                  labelField="name"
+                  [hasLabels]="true"
+                  [options]="options"
+                  valueField="name"
+                  #multiSelect>
+                  <sui-select-option *ngFor="let option of data.board"
+                  [value]="option" >
+                  </sui-select-option>
+                  </sui-multi-select> -->
+                  <!-- formControlName="content_types" -->
+                  <sui-multi-select class="selection"
+                     formControlName="contentTypes"
+                     labelField="name"
+                     [hasLabels]="true"
+                     [options]="contentType.contentType"
+                     valueField="name"
+                     #multiSelect>
+                     <sui-select-option *ngFor="let option of contentType.contentType"
+                     [value]="option" >
+                     </sui-select-option>
+									</sui-multi-select>
+               </div>
+            </div>
+         </div>
+
+         <div class="sb-field-group mb-8">
+            <label>Do you want enroll as Organisation? </label>
+            <div class="sb-field mt-4 d-flex">
+               <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+                  <input type="radio" id="radio1" name="enrollAsOrg"  (click)="enrollAsOrg=true">
+                  <label for="radio1">Yes</label>
+               </div>
+               <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+                  <input type="radio" id="radio2" name="enrollAsOrg"  (click)="enrollAsOrg=false">
+                  <label for="radio2">No</label>
+               </div>
+            </div>
+         </div>
+
+            <div class="sb-field-group mb-8"  *ngIf="enrollAsOrg === true">
                <label>Name of Organisation</label>
                <div class="sb-field">
-                   <input class="sb-form-control" placeholder="Name of an Organisation">
+                   <input class="sb-form-control" placeholder="Name of an Organisation" formControlName="name">
                </div>
             </div>
 
-            <div class="sb-field-group mb-8"  *ngIf="contributorType === 'individual'">
-               <label>Name of Individual</label>
+             <div class="sb-field-group mb-8" *ngIf="enrollAsOrg === true">
+               <label>Description of Organisation</label>
                <div class="sb-field">
-                   <input class="sb-form-control" placeholder="Name of an Individual">
-               </div>
-            </div>
-
-             <div class="sb-field-group mb-8">
-               <label>Contributor Information</label>
-               <div class="sb-field">
-                  <textarea rows="4" class="sb-form-control" placeholder="Contributor Information" spellcheck="false"></textarea>
+                  <textarea rows="4" class="sb-form-control" placeholder="Description of Organisation" spellcheck="false" formControlName="description"></textarea>
                   <span class="characters-left">1000 Characters left</span>
                </div>
             </div>
-
+<!-- 
             <div class="sb-field-group mb-8">
                <label>Website</label>
                <div class="sb-field">
@@ -78,126 +274,13 @@
 
             <div class="twelve wide column py-0 form-section-separator">
                <h4>Your proficiency</h4>
-            </div>
-            <div class="ui grid m-0 p-0">
-               <div class="six wide column sb-field-group p-0 pr-16 mb-8">
-                  <label>Board</label>
-                  <div class="sb-field">
-                     <ng-template let-option #optionTemplate >
-                        <div class="field m-0">
-                           <div class="template-checkbox">
-                              <div class="p-5 option-text"  title="{{option.name}}">
-                                 {{option.name}}
-                              </div>
-                              <div class="ml-auto">
-                                 <i class="square outline medium icon"></i>
-                              </div>
-                           </div>
-                        </div>
-                     </ng-template>
-                     <sui-multi-select class="selection"
-                     labelField="name"
-                     [hasLabels]="true"
-                     [options]="options"
-                     valueField="name"
-                     #multiSelect>
-                     <sui-select-option *ngFor="let option of data.board"
-                     [value]="option" >
-                     </sui-select-option>
-                     </sui-multi-select>
-                  </div>
-               </div>
-               <div class="six wide column sb-field-group p-0 mb-8">
-                  <label>Select Medium</label>
-                  <div class="sb-field">
-                     <ng-template let-option #optionTemplate >
-                        <div class="field m-0">
-                           <div class="template-checkbox">
-                              <div class="p-5 option-text"  title="{{option.name}}">
-                                 {{option.name}}
-                              </div>
-                              <div class="ml-auto">
-                                 <i class="square outline medium icon"></i>
-                              </div>
-                           </div>
-                        </div>
-                     </ng-template>
-                     <sui-multi-select class="selection"
-                     labelField="name"
-                     [hasLabels]="true"
-                     [options]="options"
-                     valueField="name"
-                     #multiSelect>
-                     <sui-select-option *ngFor="let option of data.medium"
-                     [value]="option" >
-                     </sui-select-option>
-                     </sui-multi-select>
-                  </div>
-               </div>
-            
-               <div class="six wide column sb-field-group p-0 pr-16 mb-8">
-                  <label>Grade / Class</label>
-                  <div class="sb-field">
-                     <ng-template let-option #optionTemplate >
-                        <div class="field m-0">
-                           <div class="template-checkbox">
-                              <div class="p-5 option-text"  title="{{option.name}}">
-                                 {{option.name}}
-                              </div>
-                              <div class="ml-auto">
-                                 <i class="square outline medium icon"></i>
-                              </div>
-                           </div>
-                        </div>
-                     </ng-template>
-                     <sui-multi-select class="selection"
-                     labelField="name"
-                     [hasLabels]="true"
-                     [options]="data.grade"
-                     valueField="name"
-                     #multiSelect>
-                     <sui-select-option *ngFor="let option of data.grade"
-                     [value]="option" >
-                     </sui-select-option>
-                     </sui-multi-select>
-                  </div>
-               </div>
-
-               <div class="six wide column sb-field-group p-0 mb-8">
-                  <label>Subject</label>
-                  <div class="sb-field">
-                     <ng-template let-option #optionTemplate >
-                        <div class="field m-0">
-                           <div class="template-checkbox">
-                              <div class="p-5 option-text"  title="{{option.name}}">
-                                 {{option.name}}
-                              </div>
-                              <div class="ml-auto">
-                                 <i class="square outline medium icon"></i>
-                              </div>
-                           </div>
-                        </div>
-                     </ng-template>
-                     <sui-multi-select class="selection"
-                     labelField="name"
-                     [hasLabels]="true"
-                     [options]="data.subject"
-                     valueField="name"
-                     #multiSelect>
-                     <sui-select-option *ngFor="let option of data.subject"
-                     [value]="option" >
-                     </sui-select-option>
-                     </sui-multi-select>
-                  </div>
-               </div>
-            </div>
+            </div> -->
 
         </form>
     </div>
   </div>
   <div class="sb-modal-actions">
-    <button class="sb-btn sb-btn-normal sb-btn-primary"
-      [disabled]="!disableSubmit" (click)="handleSubmit()">
+    <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="saveUser()">
       {{'Submit'}}
     </button>
   </div>
