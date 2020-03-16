@@ -72,6 +72,41 @@ module.exports = function (app) {
     permissionsHelper.checkPermission(),
     proxyObj()
   )
+
+  app.all('/api/org/v1/search',
+    permissionsHelper.checkPermission(),
+    proxy(learnerURL, {
+      limit: reqDataLimitOfContentUpload,
+      proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        let urlParam = req.originalUrl.replace('/api/', '')
+        let query = require('url').parse(req.url).query
+        if (query) {
+          return require('url').parse(learnerURL + urlParam + '?' + query).path
+        } else {
+          return require('url').parse(learnerURL + urlParam).path
+        }
+      },
+      userResDecorator: function (proxyRes, proxyResData,  req, res) {
+        try {
+          logger.info({msg: 'proxyObj'});
+          let data = JSON.parse(proxyResData.toString('utf8'));
+          let response = data.result.response;
+          data.result.response = {id: '', rootOrgId: '',isUserExists:''};
+          if (data.responseCode === 'OK') {
+            data.result.response.id = response.id;
+            data.result.response.rootOrgId = response.rootOrgId;
+            data.result.response.isUserExists = true;
+          }
+          if(req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
+          else return proxyUtils.handleSessionExpiry(proxyRes, data, req, res, data);
+        } catch (err) {
+          logger.error({msg:'content api user res decorator json parse error:', proxyResData})
+          return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res);
+        }
+      }
+    })
+  )
   
   app.all('/learner/*',
     healthService.checkDependantServiceHealth(['LEARNER', 'CASSANDRA']),
@@ -110,8 +145,10 @@ function proxyObj (){
       let urlParam = req.originalUrl.replace('/learner/', '')
       let query = require('url').parse(req.url).query
       if (query) {
+        logger.info({msg: 'urlParam if '+ require('url').parse(learnerURL + urlParam + '?' + query).path});
         return require('url').parse(learnerURL + urlParam + '?' + query).path
       } else {
+        logger.info({msg: 'urlParam else '+ learnerURL + urlParam});
         return require('url').parse(learnerURL + urlParam).path
       }
     },
