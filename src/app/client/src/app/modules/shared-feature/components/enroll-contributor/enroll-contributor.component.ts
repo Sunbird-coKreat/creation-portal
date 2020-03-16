@@ -13,13 +13,12 @@ export class EnrollContributorComponent implements OnInit {
   disableSubmit = false;
   @Output() close = new EventEmitter<any>();
 
-  constructor(private tosterService: ToasterService, private resourceService: ResourceService) { }
+  constructor(private tosterService: ToasterService, public resourceService: ResourceService) { }
 
   ngOnInit(): void {
-    this.data =
-    {
+    this.data = {
       'board' : [
-        {'name': 'NCERT', 'value': 'NCERT'}, 
+        {'name': 'NCERT', 'value': 'NCERT'},
         {'name': 'CBSE', 'value': 'CBSE'}, 
         {'name': 'ICSE', 'value': 'ICSE'}, 
         {'name': 'UP', 'value': 'UP'}
