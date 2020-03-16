@@ -112,6 +112,14 @@ export class ProgramListComponent implements OnInit {
     return program.nomination_status || 'Pending';
   }
 
+  getSourcingOrgName(program) {
+    return program.sourcing_org_name ? program.sourcing_org_name : '-';
+  }
+
+  getProgramContentTypes(program) {
+    return _.join(program.content_types, ', ');
+  }
+
   private viewDetailsBtnClicked(program) {
     if (this.isContributor) {
       if (this.activeMyProgramsMenu) {
