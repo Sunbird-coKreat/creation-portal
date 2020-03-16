@@ -32,7 +32,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      * Contains Program form data
      */
     programDetails: IProgram;
-        
+
     /**
     * To send activatedRoute.snapshot to routerNavigationService
     */
@@ -57,12 +57,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     * List of textbooks for the program by BMGC
     */
     collections;
-
+    options;
     /**
     * List of textbooks for the program by BMGC
     */
     frameworkdetails;
-    programScope = {};
+    programScope: any = {};
     userprofile;
     programId = 0;
     showTextBookSelector = false;
@@ -127,18 +127,18 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         this.userprofile = this.userService.userProfile;
         console.log(this.userprofile);
         this.initializeFormFields();
-        this.fetchFrameWorkDetails(); 
+        this.fetchFrameWorkDetails();
         //this.showTexbooklist('dsd');
     }
-    
+
     ngAfterViewInit() {}
-      
+
     fetchFrameWorkDetails() {
       let instance = this;
       this.frameworkService.initialize(this.userprofile.framework.id);
       this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
         if (frameworkDetails && !frameworkDetails.err) {
-          instance.frameworkdetails = frameworkDetails.frameworkdata[this.userprofile.framework.id[0]].categories; 
+          instance.frameworkdetails = frameworkDetails.frameworkdata[this.userprofile.framework.id[0]].categories;
           this.generateProgramScopeFields(instance.frameworkdetails);
         }
       }, error => {
@@ -173,36 +173,36 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         });
 
         this.collectionListForm = this.sbFormBuilder.group({
-          pcollections: this.sbFormBuilder.array([]) 
+          pcollections: this.sbFormBuilder.array([])
         });
         /*this.createProgramForm.patchValue({
           rootorg_id: this.userprofile.rootOrgId
         });*/
     }
- 
+
     saveProgramError(err) {
         console.log(err)
     }
-    
+
     validateAllFormFields(formGroup: FormGroup) {
         Object.keys(formGroup.controls).forEach(field => {
             const control = formGroup.get(field);
             control.markAsTouched();
         });
     }
-    
+
     navigateTo(stepNo) {
         this.showTextBookSelector = false;
     }
-    
+
     saveProgram() {
         this.formIsInvalid = false;
-        
+
         if (this.createProgramForm.dirty && this.createProgramForm.valid) {
             const data = {
                 ...this.createProgramForm.value
             };
-            
+
             data['rootorg_id'] = this.userprofile.rootOrgId;
             data['createdby'] = this.userprofile.id;
             data['createdon'] = new Date();
@@ -212,13 +212,13 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
             data['type'] =  "public",
             data['default_roles'] = ["CONTRIBUTOR"];
             data['enddate'] = data.program_end_date;
-            
+
             programConfigObj.board = this.userprofile.framework.board[0];
             programConfigObj.gradeLevel = data.gradeLevel;
             programConfigObj.medium = data.medium;
             programConfigObj.subject = data.subject;
             data['config'] = programConfigObj;
-            
+
             delete data.gradeLevel;
             delete data.medium;
             delete data.subject;
@@ -232,11 +232,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
             }
             else {
               data['program_id'] = this.programId;
-              this.showTexbooklist("show");
-              /*this.programsService.updateProgram(data).subscribe(
-                (res) => {this.programId=res.result.program_id; this.showTexbooklist(res)},
+              this.programsService.updateProgram(data).subscribe(
+                (res) => {this.showTexbooklist(res)},
                 (err) => this.saveProgramError(err)
-              );*/
+              );
             }
         } else {
             this.formIsInvalid = true;
@@ -255,12 +254,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         data: {
           request: {
             filters: {
-              objectType: "content", 
-              status: ["Draft", "Live"], 
-              contentType: "Textbook", 
-              framework: this.userprofile.framework.id[0], 
+              objectType: "content",
+              status: ["Draft", "Live"],
+              contentType: "Textbook",
+              framework: this.userprofile.framework.id[0],
               board:	this.userprofile.framework.board[0],
-              medium:	formData.medium  
+              medium:	formData.medium
             }
           }
         }
@@ -271,7 +270,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         (res) => {
                 this.showTextBookSelector = true;
                 this.collections = res.result.content;
-              }, 
+              },
         (err) => {
           console.log(err);
           // TODO: navigate to program list page
@@ -280,7 +279,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         }
       );
     }
-    
+
     getProgramTextbooks(res) {
       const formData = {
         ...this.createProgramForm.value
@@ -288,12 +287,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       const request = { };
       request['filters'] = {
-        objectType: "content", 
-        status: ["Draft", "Live"], 
-        contentType: "Textbook", 
-        framework: this.userprofile.framework.id[0], 
+        objectType: "content",
+        status: ["Draft", "Live"],
+        contentType: "Textbook",
+        framework: this.userprofile.framework.id[0],
         board:	this.userprofile.framework.board[0],
-        medium:	formData.medium 
+        medium:	formData.medium
       };
 
       return this.programsService.getProgramCollection(request);

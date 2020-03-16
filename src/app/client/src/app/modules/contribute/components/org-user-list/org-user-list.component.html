@@ -1,5 +1,5 @@
 <div class="ui container">
-    <div class="my-24" [appTelemetryImpression]="telemetryImpression">
+    <div class="my-24">
           <div class="d-flex flex-ai-center flex-jc-space-between">
               <div>  
                 <h4 class="sb-pageSection-title">Ekstep Organistaion - User List
@@ -23,7 +23,7 @@
         <tbody class="sb-table-body">
           <tr>
             <td>Nilesh</td>
-            <td>8087660152</td>
+            <td>**********</td>
             <td>Grade 4, English</td>
             <td>
                 <ng-template let-option #optionTemplate >
@@ -50,7 +50,7 @@
           </tr>
           <tr>
               <td>Nitesh</td>
-              <td>8087660123</td>
+              <td>**********</td>
               <td>Grade 9, Mathematics</td>
               <td>
                   <ng-template let-option #optionTemplate >
@@ -77,7 +77,7 @@
             </tr>
             <tr>
                 <td>Vaishali</td>
-                <td>8087660134</td>
+                <td>**********</td>
                 <td>Grade 10, chemistry</td>
                 <td>
                     <ng-template let-option #optionTemplate >
@@ -105,6 +105,7 @@
             </tbody>
           </table>
 </div>
+
 <!-- Modal popup for share link -->
 <sui-modal *ngIf="showNormalModal" 
             [mustScroll]="true" 
@@ -124,3 +125,56 @@
               </button>
           </div>
 </sui-modal>
+
+<!-- <button class="sb-btn sb-btn-outline-primary ml-10 sb-btn-normal" (click)="showAssignRoleModal = true">Link to add a user</button>
+<sui-modal *ngIf="showAssignRoleModal" 
+            [mustScroll]="true" 
+            [isClosable]="true" 
+            [transitionDuration]="0" 
+            [size]="'normal'"
+            class="sb-modal" 
+            appBodyScroll (dismissed)="showNormalModal = !showNormalModal" 
+            #modal>
+        <div class="sb-modal-header">
+          Link to share
+        </div>
+        <div class="sb-modal-content">
+          <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
+              <thead class="sb-table-header sb-table-thead-gray">
+                <tr>
+                    <th>Username</th>
+                    <th>Assign Role</th>
+                </tr>
+              </thead>
+              <tbody class="sb-table-body">
+                <tr>
+                  <td>Nilesh</td>
+                  <td>
+                      <div class="sb-checkbox sb-checkbox-primary">
+                          <input type="checkbox" id="check1" name="example">
+                          <label for="check1">Assign Reviewer</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Nitesh</td>
+                    <td>
+                      <div class="sb-checkbox sb-checkbox-primary">
+                        <input type="checkbox" id="check1" name="example">
+                        <label for="check1">Assign Reviewer</label>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                      <td>Vaishali</td>
+                      <td>
+                        <div class="sb-checkbox sb-checkbox-primary">
+                          <input type="checkbox" id="check1" name="example">
+                          <label for="check1">Assign Reviewer</label>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+            </div>
+      </sui-modal> -->

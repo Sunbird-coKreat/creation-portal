@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { SuiModule } from 'ng2-semantic-ui/dist';
 import { SlickModule } from 'ngx-slick';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
+import { SharedFeatureModule } from '@sunbird/shared-feature';
 import { ContributeRoutingModule } from './contibute-routing.module';
 import { ListAllProgramsComponent } from './components';
 import { ProgramComponent } from './components/program/program.component';
@@ -19,8 +19,6 @@ import { CollectionComponent, DashboardComponent } from '../cbse-program';
 import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
 import { ListAllMyProgramsComponent } from './components/list-all-my-programs/list-all-my-programs.component';
 import { ListNominatedTextbooksComponent} from './components/list-nominated-textbooks/list-nominated-textbooks.component';
-import { ProgramListComponent} from '../shared-feature/components/program-list/program-list.component';
-import { DaysToGoPipe } from '../shared-feature/pipe/days-to-go.pipe';
 import { OrgUserListComponent } from './components/org-user-list/org-user-list.component';
 import { OrgContriAdminComponent } from './components/org-contri-admin/org-contri-admin.component';
 import { ContriDashboardComponent } from './components/dashboard/dashboard.component';
@@ -38,10 +36,14 @@ import { SharedFeatureModule } from '../shared-feature/shared-feature.module'
     ListNominatedTextbooksComponent,
     OrgUserListComponent,
     OrgContriAdminComponent,
+<<<<<<< HEAD
     ContriDashboardComponent,
     ProgramListComponent,
     DaysToGoPipe
   ],
+=======
+    ContriDashboardComponent],
+>>>>>>> upstream/creation_portal
   imports: [
     SuiModule,
     CommonModule,
@@ -56,7 +58,11 @@ import { SharedFeatureModule } from '../shared-feature/shared-feature.module'
     TelemetryModule,
     CbseProgramModule,
     SharedFeatureModule,
+<<<<<<< HEAD
     DynamicModule.withComponents([CollectionComponent, DashboardComponent, TextbookListComponent])
+=======
+    DynamicModule.withComponents([CollectionComponent, DashboardComponent])
+>>>>>>> upstream/creation_portal
   ],
   exports: [
     ProgramComponent,
