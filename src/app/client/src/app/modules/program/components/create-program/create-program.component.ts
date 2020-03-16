@@ -232,11 +232,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
             }
             else {
               data['program_id'] = this.programId;
-              this.showTexbooklist("show");
-              /*this.programsService.updateProgram(data).subscribe(
-                (res) => {this.programId=res.result.program_id; this.showTexbooklist(res)},
+              this.programsService.updateProgram(data).subscribe(
+                (res) => {this.showTexbooklist(res)},
                 (err) => this.saveProgramError(err)
-              );*/
+              );
             }
         } else {
             this.formIsInvalid = true;

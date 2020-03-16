@@ -50,19 +50,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
   };
   public showStage;
   public currentStage: any;
-  public contentTypeList = [
-    {name: 'Resource', value: 'Resource' },
-    {name: 'Teaching Method', value: 'TeachingMethod'},
-    {name: 'Pedagogy Flow', value: 'PedagogyFlow'},
-    {name: 'Focus Spot', value: 'FocusSpot' },
-    {name: 'Learning Outcome', value: 'LearningOutcomeDefinition'},
-    {name: 'Practice QuestionSet', value: 'PracticeQuestionSet'},
-    {name: 'Curiosity QuestionSet', value: 'CuriosityQuestionSet'},
-    {name: 'Marking SchemeRubric', value: 'MarkingSchemeRubric'},
-    {name: 'Explanation Resource', value: 'ExplanationResource'},
-    {name: 'Experiential Resource', value: 'ExperientialResource'},
-    {name: 'ConceptMap', value: 'ConceptMap'}
-  ];
+  public contentType:any;
   showContentTypeModal = false;
   selectedContentTypes = [];
   selectedCollectionIds = [];
@@ -87,7 +75,10 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.sharedContext = this.collectionComponentInput.programContext.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});
+    
+    this.contentType = _.get(this.programContext, 'content_types'),
     this.sessionContext = _.assign(this.collectionComponentInput.sessionContext, {
+      
       currentRole: _.get(this.programContext, 'userDetails.roles[0]'),
       bloomsLevel: _.get(this.programContext, 'config.scope.bloomsLevel'),
       // programId: _.get(this.programContext, 'programId'),
