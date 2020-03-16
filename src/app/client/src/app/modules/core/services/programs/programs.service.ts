@@ -30,7 +30,7 @@ export class ProgramsService extends DataService implements CanActivate {
   public config: ConfigService;
   baseUrl: string;
   public http: HttpClient;
-  private API_URL = this.publicDataService.API_URL; // TODO: remove API_URL once service is deployed
+  private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
 
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService, private extFrameworkService: ExtPluginService,
@@ -133,7 +133,7 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
-    return this.extFrameworkService.API_URL(req);
+    return this.extFrameworkService.post(req);
   }
 
   /**
