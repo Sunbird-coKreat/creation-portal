@@ -93,8 +93,14 @@ export class ProgramListComponent implements OnInit {
     });
   }
 
-  private getProgramTextbooks(program) {
-    return _.join(_.map(program.textbooks, 'name'), ', ');
+  private getProgramTextbooksCount(program) {
+    const count = program.collection_ids ? program.collection_ids.length : 0 ;
+
+    if (count < 2) {
+      return count + ' ' + this.resourceService.frmelmnts.lbl.textbook;
+    }
+
+    return count + ' ' + this.resourceService.frmelmnts.lbl.textbooks;
   }
 
   getProgramInfo(program, type) {
