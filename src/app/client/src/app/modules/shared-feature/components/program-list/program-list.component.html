@@ -6,7 +6,7 @@
           <span *ngIf="!isContributor || activeMyProgramsMenu">{{ resourceService.frmelmnts.lbl.myPrograms }} </span>
           <span *ngIf="activeAllProgramsMenu">{{ resourceService.frmelmnts.lbl.explorePrograms }} </span>
           <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8"
-            *ngIf="programs && programs.length">{{programs.length}}</span></h4>
+            *ngIf="programs && programs.length">{{count}}</span></h4>
       </div>
       <!-- <button routerLink="sourcing/create-program" *ngIf="this.router.url.includes('/sourcing')" class="sb-btn sb-btn-normal sb-btn-primary"><i class="plus outline icon"></i> Add New Program</button> -->
     </div>
@@ -84,7 +84,7 @@
                         <div class="status__date">23 Mar ‘20 <em></em></div>
                       </div>
                     </div>
-            <div class="program-timeline-item">
+                    <div class="program-timeline-item">
                       <div class="status">
                         <div class="status__label">Contributions</div>
                         <div class="status__date">23 Mar ‘20 <em></em></div>
@@ -92,7 +92,7 @@
                     </div>
                   </div>
 
-                  
+
                   <!-- <div>{{ program?.nomination_enddate | date:'LLLL d, yyyy' }}<br>
                     <em>{{ program?.nomination_enddate | daysToGo }}</em>
                   </div> -->

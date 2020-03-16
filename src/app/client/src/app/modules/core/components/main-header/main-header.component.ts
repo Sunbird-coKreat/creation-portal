@@ -1,4 +1,4 @@
-import {filter, first, map} from 'rxjs/operators';
+import { first } from 'rxjs/operators';
 import { UserService, PermissionService, TenantService, OrgDetailsService, FormService } from './../../services';
 import { Component, OnInit, ChangeDetectorRef, Input } from '@angular/core';
 import { ConfigService, ResourceService, IUserProfile, IUserData } from '@sunbird/shared';
@@ -8,7 +8,6 @@ import { IInteractEventObject, IInteractEventEdata } from '@sunbird/telemetry';
 import { CacheService } from 'ng2-cache-service';
 import { environment } from '@sunbird/environment';
 declare var jQuery: any;
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -21,6 +20,7 @@ export class MainHeaderComponent implements OnInit {
     formAction: 'search',
     filterEnv: 'resourcebundle'
   };
+
   exploreButtonVisibility: string;
   queryParam: any = {};
   showExploreHeader = false;
@@ -87,6 +87,50 @@ export class MainHeaderComponent implements OnInit {
       this.orgSetupRole = this.config.rolesConfig.headerDropdownRoles.orgSetupRole;
       this.orgAdminRole = this.config.rolesConfig.headerDropdownRoles.orgAdminRole;
   }
+
+  public handleBack() {
+    if (this.router.url.includes('/sourcing/nominations/')) {
+      this.router.navigateByUrl('/sourcing');
+    }
+
+    if (this.router.url.includes('/contribute/program/')) {
+      this.router.navigateByUrl('/contribute');
+    }
+
+    if (this.router.url.includes('/contribute/nominatedtextbooks/')) {
+      this.router.navigateByUrl('/contribute/myenrollprograms');
+    }
+
+    if (this.router.url.includes('/sourcing/create-program')) {
+      this.router.navigateByUrl('/sourcing');
+    }
+  }
+
+  public hideBackButton() {
+    const hideBackBtnForUrls = [
+      '/sourcing',
+      '/contribute',
+      '/contribute/myenrollprograms',
+      '/contribute/orglist',
+    ];
+
+    for (let i = 0; i < hideBackBtnForUrls.length; i++) {
+      const url = hideBackBtnForUrls[i];
+
+      if (!this.router.url.includes(url)) {
+        continue;
+      }
+
+      if (this.router.isActive(url, true)) {
+        return true;
+      }
+
+      if (i === (hideBackBtnForUrls.length - 1)) {
+        return false;
+      }
+    }
+  }
+
   ngOnInit() {
     if (this.userService.loggedIn) {
       this.userService.userData$.subscribe((user: any) => {

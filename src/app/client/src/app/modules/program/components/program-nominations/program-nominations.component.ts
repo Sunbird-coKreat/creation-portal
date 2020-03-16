@@ -41,7 +41,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
 
   getNominationList() {
     const req = {
-      url: `/program/v1/nomination/list`,
+      url: `program/v1/nomination/list`,
       data: {
         request: {
           program_id: this.activatedRoute.snapshot.params.programId
