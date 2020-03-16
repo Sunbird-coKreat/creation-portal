@@ -23,7 +23,7 @@
       "properties": {       
         "userId": {
           "$id": "#/properties/userId",
-          "$ref": "Common.json#/definitions/ID"
+          "type":"string"
         },
         "orgId": {
           "$id": "#/properties/orgId",
@@ -33,7 +33,7 @@
           "$id": "#/properties/roles",
           "type": "array",
            "items": {
-            "$ref": "Common.json#/definitions/Role"
+            "$ref": "Common.json#/definitions/UserRole"
            }
         
         }        
