@@ -3,7 +3,6 @@ import { ProgramsService } from '@sunbird/core';
 import { ResourceService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IProgram } from '../../../core/interfaces';
-import { ProgramStageService } from '../../../program/services';
 import * as _ from 'lodash-es';
 import { tap } from 'rxjs/operators';
 
@@ -21,7 +20,7 @@ export class ProgramListComponent implements OnInit {
   public activeMyProgramsMenu: boolean;
 
   constructor(private programsService: ProgramsService, public resourceService: ResourceService, private activatedRoute: ActivatedRoute,
-    public router: Router, public programStageService: ProgramStageService) { }
+    public router: Router) { }
 
   ngOnInit() {
     this.checkIfUserIsContributor();
@@ -110,16 +109,13 @@ export class ProgramListComponent implements OnInit {
   private viewDetailsBtnClicked(program) {
     if (this.isContributor) {
       if (this.activeMyProgramsMenu) {
-        this.programStageService.addStage('ListAllMyProgramsComponent');
         return this.router.navigateByUrl('/contribute/nominatedtextbooks/' + program.program_id);
       }
 
       if (this.activeAllProgramsMenu) {
-        this.programStageService.addStage('ListAllProgramsComponent');
         return this.router.navigateByUrl('/contribute/program/' + program.program_id);
       }
     } else {
-      this.programStageService.addStage('ListAllProgramsComponent');
       return this.router.navigateByUrl('/sourcing/nominations/' + program.program_id);
     }
   }

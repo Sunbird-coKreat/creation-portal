@@ -8,8 +8,6 @@ import { IInteractEventObject, IInteractEventEdata } from '@sunbird/telemetry';
 import { CacheService } from 'ng2-cache-service';
 import { environment } from '@sunbird/environment';
 declare var jQuery: any;
-import { ProgramStageService } from '../../../program/services';
-import { InitialState } from '../../../cbse-program/interfaces';
 
 @Component({
   selector: 'app-header',
@@ -23,11 +21,6 @@ export class MainHeaderComponent implements OnInit {
     filterEnv: 'resourcebundle'
   };
 
-  public state: InitialState = {
-    stages: []
-  };
-  public stageSubscription: any;
-  public currentStage: any;
   exploreButtonVisibility: string;
   queryParam: any = {};
   showExploreHeader = false;
@@ -82,8 +75,7 @@ export class MainHeaderComponent implements OnInit {
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
     public orgDetailsService: OrgDetailsService, private _cacheService: CacheService, public formService: FormService,
-    public activatedRoute: ActivatedRoute, private cacheService: CacheService, private cdr: ChangeDetectorRef,
-    public programStageService: ProgramStageService) {
+    public activatedRoute: ActivatedRoute, private cacheService: CacheService, private cdr: ChangeDetectorRef) {
       try {
         this.exploreButtonVisibility = (<HTMLInputElement>document.getElementById('exploreButtonVisibility')).value;
       } catch (error) {
@@ -112,10 +104,6 @@ export class MainHeaderComponent implements OnInit {
     if (this.router.url.includes('/sourcing/create-program')) {
       this.router.navigateByUrl('/sourcing');
     }
-
-    // console.log('before', this.state.stages);
-    // this.programStageService.removeLastStage();
-    // console.log('after', this.state.stages);
   }
 
   public hideBackButton() {
@@ -179,17 +167,6 @@ export class MainHeaderComponent implements OnInit {
           this.showOfflineHelpCentre = false;
         }
       });
-    }
-
-    this.stageSubscription = this.programStageService.getStage().subscribe(state => {
-      this.state.stages = state.stages;
-      this.changeView();
-    });
-  }
-
-  changeView() {
-    if (!_.isEmpty(this.state.stages)) {
-      this.currentStage  = _.last(this.state.stages).stage;
     }
   }
 
@@ -366,9 +343,5 @@ export class MainHeaderComponent implements OnInit {
   }
   showSideBar() {
     jQuery('.ui.sidebar').sidebar('setting', 'transition', 'overlay').sidebar('toggle');
-  }
-
-  ngOnDestroy() {
-    this.stageSubscription.unsubscribe();
   }
 }
