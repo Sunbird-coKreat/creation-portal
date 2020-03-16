@@ -75,14 +75,14 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.sharedContext = this.collectionComponentInput.programContext.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});
-    
+
     this.contentType = _.get(this.programContext, 'content_types'),
     this.sessionContext = _.assign(this.collectionComponentInput.sessionContext, {
-      
+
       currentRole: _.get(this.programContext, 'userDetails.roles[0]'),
       bloomsLevel: _.get(this.programContext, 'config.scope.bloomsLevel'),
-      // programId: _.get(this.programContext, 'programId'),
-      programId: '31ab2990-7892-11e9-8a02-93c5c62c03f1' || _.get(this.programContext, 'programId'),
+      programId: _.get(this.programContext, 'programId'),
+      // programId: '31ab2990-7892-11e9-8a02-93c5c62c03f1' || _.get(this.programContext, 'programId'),
       program: _.get(this.programContext, 'name'),
       onBoardSchool: _.get(this.programContext, 'userDetails.onBoardingData.school'),
       collectionType: _.get(this.collectionComponentConfig, 'collectionType'),
@@ -92,7 +92,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.getCollectionCard();
     const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
     this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
-    this.sessionContext.programId = this.programContext.program_id
+    this.sessionContext.programId = this.programContext.program_id;
     this.role.currentRole = this.sessionContext.currentRole;
     this.classes = _.find(this.collectionComponentConfig.config.filters.explicit, {'code': 'gradeLevel'}).range;
     this.mediums = _.find(this.collectionComponentConfig.config.filters.implicit, {'code': 'medium'}).defaultValue;
@@ -226,14 +226,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
 }
 
   groupCollectionList(groupValue?: string) {
-    // if (groupValue) {
-    //   this.collectionList = _.groupBy(this.collectionsWithCardImage, { 'subject' : groupValue } );
-    // } else {
-    //   this.collectionList = _.groupBy(this.filteredList, 'subject');
-    // }
-
     this.collectionList = this.filteredList;
-    // console.log( this.filteredList);
   }
 
   addCardImage(collection) {

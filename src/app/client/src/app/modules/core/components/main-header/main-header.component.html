@@ -92,12 +92,12 @@
                     <button
                     *ngIf="!hideBackButton()"
                     (click)="this.handleBack()"
-                    class="d-flex flex-ai-center sb-btn sb-btn-normal sb-btn-link sb-left-icon-btn sb-color-white" type="button" style="color:white;">
+                    class="d-flex flex-ai-center sb-btn sb-btn-normal sb-btn-link sb-left-icon-btn sb-color-white" type="button">
                     <i class="icon-svg icon-svg--xs icon-arrow-long-left mr-8">
                     <svg class="icon icon-svg--white">
                         <use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
                     </svg>
-                    </i>Back</button>
+                    </i>{{ resourceService.frmelmnts.btn.back }}</button>
                     <a routerLink="sourcing" *ngIf="hideBackButton() && this.router.url.includes('/sourcing', true)" [class.active]="this.router.isActive('/sourcing', true)">{{ resourceService.frmelmnts.lbl.myPrograms }}</a>
                     <a routerLink="contribute" *ngIf="hideBackButton() && this.router.url.includes('/contribute')"  [class.active]="this.router.isActive('/contribute', true)"><span class="sb-color-white">{{ resourceService.frmelmnts.lbl.allPrograms }}</span></a>
                     <a routerLink="contribute/myenrollprograms" *ngIf="hideBackButton() && this.router.url.includes('/contribute')" [class.active]="this.router.isActive('/contribute/myenrollprograms', true)"><span class="sb-color-white">{{ resourceService.frmelmnts.lbl.myPrograms }}</span></a>
