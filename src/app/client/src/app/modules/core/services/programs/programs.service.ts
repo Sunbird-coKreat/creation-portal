@@ -231,7 +231,7 @@ export class ProgramsService extends DataService implements CanActivate {
    * auth guard to prevent unauthorized access to the route
    */
   canActivate(): Observable<boolean> {
-    return iif(() => !this.userService.loggedIn, of(false), this.allowToContribute$.pipe(
+    return iif(() => !this.userService.loggedIn, of(false), of(true).pipe(
       tap(allow => {
         if (!allow) {
           this.toasterService.warning(this.resourceService.messages.imsg.m0035);
