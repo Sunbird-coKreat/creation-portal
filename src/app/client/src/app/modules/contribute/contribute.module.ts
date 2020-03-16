@@ -22,10 +22,7 @@ import { ListNominatedTextbooksComponent} from './components/list-nominated-text
 import { OrgUserListComponent } from './components/org-user-list/org-user-list.component';
 import { OrgContriAdminComponent } from './components/org-contri-admin/org-contri-admin.component';
 import { ContriDashboardComponent } from './components/dashboard/dashboard.component';
-// import { DummyComponent } from  './components/dummy/dummy.component';
-import { TextbookListComponent } from '../shared-feature';
-import { SharedFeatureModule } from '../shared-feature/shared-feature.module'
-// import { MyProgramComponent} from './components/my-program/my-program.component';
+// import { DummyComponent } from  './components/dummy/dummy.component// import { MyProgramComponent} from './components/my-program/my-program.component';
 @NgModule({
   declarations: [
     ListAllProgramsComponent,
@@ -36,14 +33,7 @@ import { SharedFeatureModule } from '../shared-feature/shared-feature.module'
     ListNominatedTextbooksComponent,
     OrgUserListComponent,
     OrgContriAdminComponent,
-<<<<<<< HEAD
-    ContriDashboardComponent,
-    ProgramListComponent,
-    DaysToGoPipe
-  ],
-=======
     ContriDashboardComponent],
->>>>>>> upstream/creation_portal
   imports: [
     SuiModule,
     CommonModule,
@@ -58,11 +48,7 @@ import { SharedFeatureModule } from '../shared-feature/shared-feature.module'
     TelemetryModule,
     CbseProgramModule,
     SharedFeatureModule,
-<<<<<<< HEAD
-    DynamicModule.withComponents([CollectionComponent, DashboardComponent, TextbookListComponent])
-=======
     DynamicModule.withComponents([CollectionComponent, DashboardComponent])
->>>>>>> upstream/creation_portal
   ],
   exports: [
     ProgramComponent,
