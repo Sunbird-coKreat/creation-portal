@@ -296,7 +296,7 @@ export class UserService {
     };
     this.contentService.post(option).subscribe((res) => {
       if (res.result.User.length) {
-        this._userProfile.osId = res.result.User[0].osid;
+        this._userProfile.userRegData = res.result.User[0];
       }
     });
   }
