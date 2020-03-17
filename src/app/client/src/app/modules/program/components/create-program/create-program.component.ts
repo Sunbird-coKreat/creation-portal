@@ -317,9 +317,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     console.log(data);
 
     const option = {
-      url: '/program/v1/collection/link',
+      url: 'program/v1/collection/link',
       header: {
-        'content-type' : 'application/json'
+        'content-type' : 'application/json',
+        'X-Authenticated-User-Token':'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ1WXhXdE4tZzRfMld5MG5PS1ZoaE5hU0gtM2lSSjdXU25ibFlwVVU0TFRrIn0.eyJqdGkiOiIzN2ZjOTVjNy1jY2ZkLTRlYjctOGZhOC01MjgxMmI0MDg3NzAiLCJleHAiOjE1ODQyNTQ1MTksIm5iZiI6MCwiaWF0IjoxNTg0MDgxNzE5LCJpc3MiOiJodHRwczovL2Rldi5zdW5iaXJkZWQub3JnL2F1dGgvcmVhbG1zL3N1bmJpcmQiLCJzdWIiOiJmOjVhOGEzZjJiLTM0MDktNDJlMC05MDAxLWY5MTNiYzBmZGUzMTo5NWU0OTQyZC1jYmU4LTQ3N2QtYWViZC1hZDhlNmRlNGJmYzgiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhZG1pbi1jbGkiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiIwNDRlZDJjNy04YWZmLTQwZGYtYjc0Yy0zZTcxZWJkM2U1N2YiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHBzOi8vZGV2LmNlbnRyYWxpbmRpYS5jbG91ZGFwcC5henVyZS5jb20vIiwiaHR0cDovL2Rldi5jZW50cmFsaW5kaWEuY2xvdWRhcHAuYXp1cmUuY29tLyJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwic2NvcGUiOiIiLCJuYW1lIjoiUmV2aWV3ZXIgVXNlciIsInByZWZlcnJlZF91c2VybmFtZSI6Im50cHRlc3QxMDMiLCJnaXZlbl9uYW1lIjoiUmV2aWV3ZXIiLCJmYW1pbHlfbmFtZSI6IlVzZXIiLCJlbWFpbCI6InVzKioqKioqKipAdGVzdHNzLmNvbSJ9.IyE3G67EXgVgBeQmpYiBcXnH8HfOltgII0iadx9HJ1lpZsMIHJYbl96kcOGu70ELhlGbaMgnRdkOsk118tslqqKzmeF7ftsdK9vnQ2ZKL7nfarP5-y29vszz0IvHp-K3Z2QZJdZcRZMfBIqU9LWeumvivawSOU2xcwE26BRmUe1siHiteZRw83SH-0HgD6DPFvbU--jf2SXRx1Np28fDXWo_adeDJgsMF0dSnO7OwfEkb8PgcojDafWjGBtPWJJztSxE6WrrDyw3qFyXxofVeF9ZnD6PTxfaykQNs1tI-F9kaecslyQ9XWGE9saSuRR4a3sXHm9DrEQ1KR55IOBJpw'
       },
       data: {
         request: {
