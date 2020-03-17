@@ -42,11 +42,6 @@ module.exports = function (app) {
         })
     )
 
-    app.use('/api/program/*', permissionsHelper.checkPermission(), proxy(contentProxyUrl, {
-        proxyReqOptDecorator: proxyHeaders.decorateRequestHeaders(),
-        proxyReqPathResolver: proxyReqPathResolverMethod
-    }))
-
     app.use('/api/*', permissionsHelper.checkPermission(), proxy(contentProxyUrl, {
         proxyReqPathResolver: proxyReqPathResolverMethod
     }))
