@@ -68,19 +68,18 @@ export class EnrollContributorComponent implements OnInit {
   public mapOrgId: string
   @Output() close = new EventEmitter<any>();
 
-  constructor(private tosterService: ToasterService, public userService: UserService, public frameworkService : FrameworkService, public toasterService : ToasterService, public formBuilder: FormBuilder, public http: HttpClient, public enrollContributorService : EnrollContributorService,  public resourceService : ResourceService, private datePipe: DatePipe  ) { }
+  constructor(private tosterService: ToasterService, public userService: UserService, public frameworkService : FrameworkService, public toasterService : ToasterService, public formBuilder: FormBuilder, public http: HttpClient, public enrollContributorService : EnrollContributorService,  public resourceService : ResourceService, private datePipe: DatePipe  ) { 
+    this.userProfile = this.userService.userProfile;
+  }
 
   ngOnInit(): void {
-    if(this.userService.userProfile)
-    {
       this.userProfile = this.userService.userProfile;
+      console.log(this.userService.userProfile, "this si the user service")
+      console.log(this.userProfile)
       this.fetchFrameWorkDetails();
       this.initializeFormFields();
-    }
-    else
-    {
       console.log("Refresh the page")
-    }
+  
       
     this.enrolledDate = new Date();
     this.enrolledDate = this.datePipe.transform(this.enrolledDate, 'yyyy-MM-dd');
