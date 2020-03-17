@@ -30,22 +30,6 @@ export class EnrollContributorService extends DataService {
       this.baseUrl = "http://dock.sunbirded.org/api/";
   
     }
-
-    // enrollContributor(request): Observable<ServerResponse> {
-    //   const req = {
-    //     url: request.url,
-    //     headers: {
-    //       'content-type' : 'application/json',
-    //       'Access-Control-Allow-Headers' : '*'
-    //     },
-    //     data: {
-    //           request
-    //     },
-    //   };
-  
-    //   return this.post(req);
-    // }
-
     saveData(option)
     {
       const httpOptions: HttpOptions = {
@@ -54,16 +38,6 @@ export class EnrollContributorService extends DataService {
           'Authorization' : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhMzRmNjM3NTM4ZTg0MTc3OWVlNjMwM2FkYzExNDY0NCJ9.RpY7PL4ASDLNOU9xMCKXZtDF4vUPuMTDVO6keh4kI1M"
         }
       };
-    //   return this.http.post<any>( this.baseUrl + option.url, option.data, httpOptions).subscribe(
-    //     (res) => {
-    //             res
-    //           }, 
-    //     (err) => {
-    //       console.log(err);
-    //       const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-    //     }
-    //   );
-
     return this.http.post(this.baseUrl + option.url, option.data, httpOptions).pipe(
       mergeMap((data: ServerResponse) => {
         if (data.responseCode !== 'OK') {

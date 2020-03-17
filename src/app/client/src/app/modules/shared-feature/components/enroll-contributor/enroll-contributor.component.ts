@@ -72,6 +72,8 @@ export class EnrollContributorComponent implements OnInit {
 
   ngOnInit(): void {
     this.userProfile = this.userService.userProfile;
+    console.log(this.userService)
+    console.log(this.userProfile)
     this.fetchFrameWorkDetails();
     this.initializeFormFields();
     this.enrolledDate = new Date();
@@ -181,8 +183,7 @@ export class EnrollContributorComponent implements OnInit {
       (res) => {this.mapUserId=res.result.User.osid; 
         if(this.enrollAsOrg  === false) {
           this.contributeForm.reset();
-          this.tosterService.success("You are successfully enrolled as a contributor! USER"); 
-          this.close.emit();
+          this.tosterService.success("You are successfully enrolled as a contributor"); 
         }
       },
       (err) => console.log(err)
@@ -229,7 +230,6 @@ export class EnrollContributorComponent implements OnInit {
     this.enrollContributorService.saveData(option).subscribe(
       (res) => { 
       this.contributeForm.reset();
-      this.close.emit();
       this.tosterService.success("You are successfully enrolled as a contributor!")
     },
       (err) => console.log(err)
