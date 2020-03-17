@@ -23,4 +23,5 @@ export * from './otp/otp.service';
 export * from './certificate/certificate.service';
 export * from './programs/programs.service';
 export * from './action/action.service';
-export * from './textbook-list/textbook-list.service'
+export * from './textbook-list/textbook-list.service';
+export * from './registry/registry.service';
