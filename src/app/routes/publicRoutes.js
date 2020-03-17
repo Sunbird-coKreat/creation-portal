@@ -4,6 +4,8 @@ const bodyParser = require('body-parser')
 const permissionsHelper = require('../helpers/permissionsHelper.js')
 const envHelper = require('../helpers/environmentVariablesHelper.js')
 const contentProxyUrl = envHelper.CONTENT_PROXY_URL
+const learnerURL = envHelper.LEARNER_URL
+const reqDataLimitOfContentUpload = '50mb'
 const contentServiceBaseUrl = envHelper.CONTENT_URL
 const logger = require('sb_logger_util_v2')
 
@@ -16,7 +18,7 @@ module.exports = function (app) {
         permissionsHelper.checkPermission(),
         proxy(learnerURL, {
         limit: reqDataLimitOfContentUpload,
-        proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
+        proxyReqOptDecorator: proxyHeaders.decorateSunbirdRequestHeaders(),
         proxyReqPathResolver: function (req) {
             let urlParam = req.originalUrl.replace('/api/', '')
             let query = require('url').parse(req.url).query
@@ -31,10 +33,10 @@ module.exports = function (app) {
             logger.info({msg: '/api/org/v1/search'});
             const data = JSON.parse(proxyResData.toString('utf8'));
             if(req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
-            else return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
+            else return proxyHeaders.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
             } catch(err) {
             logger.error({msg:'content api user res decorator json parse error:', proxyResData})
-                return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res);
+                return proxyHeaders.handleSessionExpiry(proxyRes, proxyResData, req, res);
             }
         }
         })
