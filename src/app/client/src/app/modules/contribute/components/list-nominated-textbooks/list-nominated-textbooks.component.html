@@ -1,137 +1,168 @@
 <div *ngIf="!showChapterList">
-	<div class="sb-pageSection" [appTelemetryImpression]="telemetryImpression">
-		<div class="ui container my-24">
-			<h4 class="sb-pageSection-title six">New Program FEB2020
-					<ng-template #popupTemplate>
-					<div class="content">
-						<div class="textbook-details ml-8">
-								<div class="header"><strong>Medium</strong></div>
-									<div class="content">
-										<label class="d-block fsmall font-weight-normal mb-0">Marathi, Hindi, English</label>
-									</div>
-									<hr />
-									<div class="header"><strong>Grades / Classes</strong></div>
-									<div class="content">
-										<label class="d-block fsmall font-weight-normal mb-0"
-											>Grade 1, Grade 2</label>
-									</div>
-									<hr />
-                <div class="header">
-                  <strong>Nomination End Date</strong>
-                </div>
-                <div class="content">
-                  <label class="d-block fsmall font-weight-normal mb-0">
-                    July 26th, 2019
-                  </label>
-                </div>
+
+	<div class="sb-bg-color-primary-0 practical-header py-16">
+		<div class="d-flex flex-ai-center flex-jc-space-between practical-header__content ui container p-0">
+		 
+		  <div class="practical-header__title flex-basis-1">
+			<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" type="button">
+			  <i class="icon-svg icon-svg--xxs icon-back mr-4">
+				<svg _ngcontent-nak-c11="" class="icon icon-svg--primary">
+				  <use xlink:href="assets/images/libdemo/sprite.svg#arrow-long-left"></use>
+				</svg></i> Back to My/Explore Programs</button>
+				
+			<h4 class="m-0 p-0">Program Name Kerala <ng-template #popupTemplate>
+				<div class="content">
+					<div class="textbook-details ml-8">
+							<div class="header"><strong>Medium</strong></div>
+								<div class="content">
+									<label class="d-block fsmall font-weight-normal mb-0">Marathi, Hindi, English</label>
+								</div>
+								<hr />
+								<div class="header"><strong>Grades / Classes</strong></div>
+								<div class="content">
+									<label class="d-block fsmall font-weight-normal mb-0"
+										>Grade 1, Grade 2</label>
+								</div>
+								<hr />
+			<div class="header">
+			  <strong>Nomination End Date</strong>
+			</div>
+			<div class="content">
+			  <label class="d-block fsmall font-weight-normal mb-0">
+				July 26th, 2019
+			  </label>
+			</div>
+							<hr />
+							<div class="header">
+									<strong>	Nomination Shortlisting Date</strong>
+								</div>
+								<div class="content">
+									<label class="d-block fsmall font-weight-normal mb-0">
+											Aug 5th, 2019
+									</label>
+								</div>
 								<hr />
 								<div class="header">
-										<strong>	Nomination Shortlisting Date</strong>
+										<strong>Contribution End Date</strong>
 									</div>
 									<div class="content">
 										<label class="d-block fsmall font-weight-normal mb-0">
-												Aug 5th, 2019
+												Aug 20th, 2019
 										</label>
 									</div>
 									<hr />
-									<div class="header">
-											<strong>Contribution End Date</strong>
-										</div>
-										<div class="content">
-											<label class="d-block fsmall font-weight-normal mb-0">
-													Aug 20th, 2019
-											</label>
-										</div>
-										<hr />
-									<div class="header">
-											<strong>Program End Date</strong>
-										</div>
-										<div class="content">
-											<label class="d-block fsmall font-weight-normal mb-0">
-													Aug 30th, 2019
-											</label>
-										</div>
-							</div>
-					</div>
-				</ng-template>
-					<i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
-				</h4>
-		<div class="d-flex flex-jc-space-between flex-ai-center fnormal mt-8">
-				<div class="d-flex flex-dc flex-25 pr-16">
-					<div class="sb__ellipsis" suiPopup popupHeader="Grades/Class" popupText="Grade 1, Grade 2">Grade 1, Grade 2</div>
-					<div class="divider my-4"></div>
-					<div class="sb__ellipsis" suiPopup popupHeader="Medium" popupText="English, Marthi, Hindi">English, Marthi, Hindi</div>
+								<div class="header">
+										<strong>Program End Date</strong>
+									</div>
+									<div class="content">
+										<label class="d-block fsmall font-weight-normal mb-0">
+												Aug 30th, 2019
+										</label>
+									</div>
+						</div>
 				</div>
-				<div class="d-flex flex-ai-center flex-jc-space-between flex-75 ">
-					<dl class="sb-meta-data mb-0 pr-8 w-25">
-						<dt class="sb__ellipsis" suiPopup popupHeader="Expression of Interest Date" popupText="July 26th, 2019">Nomination End Date</dt>
-						<dd>July 26th, 2019</dd>
-						</dl>
-						<dl class="sb-meta-data mb-0 pr-8 w-25">
-						<dt class="sb__ellipsis" suiPopup popupHeader="Expression of Interest Date" popupText="July 26th, 2019">Nomination Shortlisting Date</dt>
-						<dd>July 26th, 2019</dd>
-						</dl>
-						<dl class="sb-meta-data mb-0 pr-8 w-25">
-						<dt class="sb__ellipsis" suiPopup popupHeader="Expression of Interest Date" popupText="July 26th, 2019">Contribution End Date</dt>
-						<dd>July 26th, 2019</dd>
-						</dl>
-						<dl class="sb-meta-data mb-0 pr-8 w-25">
-						<dt class="sb__ellipsis" suiPopup popupHeader="Expression of Interest Date" popupText="July 26th, 2019">Program End Date</dt>
-						<dd>July 26th, 2019</dd>
-						</dl>
-				</div>
-				</div>
+			</ng-template>
+				<i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
+			</h4>
+			<p class="fs-0-785 font-weight-normal">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus convallis massa felis, quis pretium urna efficitur in.</p>
+		  </div>
+  
+		  <div class="program-timeline px-16">
+			<div class="program-timeline-item">
+			  <div class="status completed">
+				<div class="status__label">Nomination End Date</div>
+				<div class="status__date">23 Mar ‘20 <em>20 days to go</em></div>
+			  </div>
 			</div>
-<div class="sb-bg-color-white pb-40 dynamicHeight">
-		<div class="ui container sb-pageSection">
-			<div class="sb-pageSection-header pt-16">
-				<h4 class="sb-pageSection-title">Textbook List<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">10</span></h4>
+				 <div class="program-timeline-item">
+			  <div class="status active">
+				<div class="status__label">Nomination Shortlisting Date</div>
+				<div class="status__date">23 Mar ‘20 <em></em></div>
+			  </div>
 			</div>
-			<!-- <div class="ui grid">
-				<div class="six wide column">
-					<label class="fs-1 mb-4">Contributor: </label>
-					<span class="hand"><a (click)="show=true" class="header text-decoration-underline">{{contributor.name}}</a></span>
+		<div class="program-timeline-item">
+			  <div class="status">
+				<div class="status__label">Contribution End Date</div>
+				<div class="status__date">23 Mar ‘20 <em></em></div>
+			  </div>
+			</div>
+			<div class="program-timeline-item">
+				<div class="status">
+				  <div class="status__label">Program End Date</div>
+				  <div class="status__date">23 Mar ‘20 <em></em></div>
 				</div>
-				<div class="six wide column">
-					<button class="sb-btn ui positive basic button m-5" *ngIf="contributor?.nominationStatus === 'Pending'">Accept</button>
-					<button class="sb-btn ui negative basic button m-5" *ngIf="contributor?.nominationStatus === 'Pending'">Reject</button>
-					<span *ngIf="contributor?.nominationStatus === 'Accepted' || contributor?.nominationStatus === 'Rejected'">
-						Status: {{contributor?.nominationStatus}}
-					</span>
-				</div>
-			</div> -->
-			
-			<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
-				<thead class="sb-table-header sb-table-thead-gray">
-				  <tr>
-					<th class="sb-sort-icon">Textbook</th>
-					<th class="sb-sort-icon">Grade</th>
-					<th class="sb-sort-icon">Medium</th>
-					<th>Subjects</th>
-					<th>Chapters</th>
-					<th class="text-center">Action</th>
-				  </tr>
-				</thead>
-				<tbody class="sb-table-body">
-
-					<tr *ngFor="let contributorTextbook of contributorTextbooks">
-					  <td class="hand">
-						{{contributorTextbook.name}}
-					  </td>
-					  <td >{{contributorTextbook.gradeLevel}}</td>
-					  <td>{{contributorTextbook.medium}}</td>
-					  <td>{{contributorTextbook.subject}}</td>
-					  <td>5</td>
-					  <td class="text-center">
-							<button class="sb-btn sb-btn-xs sb-btn-outline-primary" (click)="viewContribution()">Upload content</button>
-							<button class="sb-btn sb-btn-xs sb-btn-outline-primary">Review content</button>
-					  </td>
-					</tr>
-				</tbody>
-			</table> 
+			  </div>
+		  </div>
+  
+		  <div class='practical-sb-buttons'>
+			<button class="sb-btn sb-btn-secondary sb-btn-normal">Express Interest</button>
+		  </div>
 		</div>
-	</div>
-</div>
+	  </div>
+	  <div class="sb-bg-color-primary-0">
+			<sui-tabset>
+				<div class="ui pointing secondary menu sb-bg-color-primary-0">
+					<div class="ui container p-0 m-0">
+					<a class="item" suiTabHeader="1">Dashboard</a>
+					<a class="item" suiTabHeader="2">Text Books</a>
+					<a class="item" suiTabHeader="3">Users</a>
+					</div>
+				</div>
+				<div class="ui segment m-0 mt-4 sb-bg-color-white" suiTabContent="1">
+				  <div class="ui container">COMING SOON</div>
+				</div>
+				<div class="ui segment p-0 m-0 mt-4 sb-bg-color-white" suiTabContent="2">
+					<div class="ui container p-0 m-0">
+					<div class="sb-pageSection" [appTelemetryImpression]="telemetryImpression">
+						<div class="sb-bg-color-white pb-40 dynamicHeight">
+								<div class="sb-pageSection">
+									<div class="sb-pageSection-header pt-16">
+										<h4 class="sb-pageSection-title">Textbook List<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">10</span></h4>
+									</div>
+									<div class="sb-table-responsive">
+									<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
+										<thead class="sb-table-header sb-table-thead-gray">
+										  <tr>
+											<th class="sb-sort-icon">Textbook</th>
+											<th class="sb-sort-icon">Grade</th>
+											<th class="sb-sort-icon">Medium</th>
+											<th>Subjects</th>
+											<th>Chapters</th>
+											<th class="text-center">Action</th>
+										  </tr>
+										</thead>
+										<tbody class="sb-table-body">
+						
+											<tr *ngFor="let contributorTextbook of contributorTextbooks">
+											  <td class="hand">
+												{{contributorTextbook.name}}
+											  </td>
+											  <td >{{contributorTextbook.gradeLevel}}</td>
+											  <td>{{contributorTextbook.medium}}</td>
+											  <td>{{contributorTextbook.subject}}</td>
+											  <td>5</td>
+											  <td class="text-center">
+													<button class="sb-btn sb-btn-xs sb-btn-outline-primary" (click)="viewContribution()">Upload content</button>
+													<button class="sb-btn sb-btn-xs sb-btn-outline-primary">Review content</button>
+											  </td>
+											</tr>
+										</tbody>
+									</table> 
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="ui segment m-0 mt-4 sb-bg-color-white" suiTabContent="3">
+				  <div class="ui container">Users</div>
+				</div>
+				
+			</sui-tabset>
+	  </div>
+
+
+
 </div>
 <ng-container *ngIf="showChapterList">
 	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>

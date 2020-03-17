@@ -1,5 +1,5 @@
 <div class="ui container pb-48" style="min-height: 650px;">
- <div class="sb-pageSection my-24">
+  <div class="sb-pageSection my-24">
     <div class="d-flex flex-ai-center flex-jc-space-between">
       <div class="sb-pageSection-header mb-0">
         <h4 class="sb-pageSection-title">
@@ -49,7 +49,6 @@
                 </td>
                 <td class="text-center">
                   <button type="button" class="sb-btn sb-btn-outline-primary sb-btn-xs" *ngIf="!isContributor" (click)="viewDetailsBtnClicked(program)">{{ resourceService.frmelmnts.lbl.viewDetails }}</button>
-
                   <div class="ui dropdown sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary ml-auto sb-btn-dropdown" suiDropdown autoClose="itemClick" *ngIf="isContributor">
                       <div class="text">{{ resourceService.frmelmnts.lbl.actions }}</div>
                       <i class="dropdown icon"></i>
@@ -71,7 +70,7 @@
                   </div>
                 </td>
                 <td>
-                  <div class="sb__ellipsis sb__ellipsis--breakAll " suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.purpose }}" popupText="{{ getProgramContentTypes(program) }}">{{ getProgramContentTypes(program) }}</div>
+                  <div class="sb__ellipsis sb__ellipsis--breakAll " style="width: 200px;" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.purpose }}" popupText="{{ getProgramContentTypes(program) }}">{{ getProgramContentTypes(program) }}</div>
                 </td>
                 <td>
                   <div class="sb__ellipsis sb__ellipsis--breakAll " suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.grades }}" popupText="{{ getProgramInfo(program, 'gradeLevel') }}">{{ getProgramInfo(program, 'gradeLevel') }}</div>
@@ -97,7 +96,7 @@
                         <div class="status__label">{{ resourceService.frmelmnts.lbl.nominationSubmission }}</div>
                         <div class="status__date">
                           {{ program?.nomination_enddate | date:'d LLL yy'  }}
-                          <em>{{ program?.nomination_enddate | daysToGo  }}</em></div>
+                          <em class="d-block">{{ program?.nomination_enddate | daysToGo  }}</em></div>
                       </div>
                     </div>
                          <div class="program-timeline-item">
@@ -105,66 +104,26 @@
                         <div class="status__label">{{ resourceService.frmelmnts.lbl.shortlistingNomination }}</div>
                         <div class="status__date">
                           {{ program?.shortlisting_enddate | date:'d LLL yy'  }}
-                          <em></em></div>
+                          <em class="d-block"></em></div>
                       </div>
-              </td>
-              <td>
-                <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold"   style="width: 250px;">
-                  {{program?.name}}
-                </div>
-                <div class="sb__ellipsis sb__ellipsis--three">{{ getProgramTextbooksCount(program) }}</div>
-                <div *ngIf="activeMyProgramsMenu" class="sb-label-value mt-4">{{ getProgramInfo(program, 'board') }}</div>
-              </td>
-              <td *ngIf="isContributor" >
-                <div>{{ getSourcingOrgName(program) }}
-                </div>
-              </td>
-              <td>
-                <div class="sb__ellipsis sb__ellipsis--breakAll " suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.purpose }}" popupText="{{ getProgramContentTypes(program) }}">{{ getProgramContentTypes(program) }}</div>
-              </td>
-              <td>
-                <div class="sb__ellipsis sb__ellipsis--breakAll " suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.grades }}" popupText="{{ getProgramInfo(program, 'gradeLevel') }}">{{ getProgramInfo(program, 'gradeLevel') }}</div>
-                <hr class="divider">
-                <div class="sb__ellipsis sb__ellipsis--breakAll " suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.mediums }}" popupText="{{ getProgramInfo(program, 'medium') }}">{{ getProgramInfo(program, 'medium') }}</div>
-                <hr class="divider">
-                <div class="sb__ellipsis sb__ellipsis--breakAll " suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.subjects }}" popupText="{{ getProgramInfo(program, 'subject') }}">{{ getProgramInfo(program, 'subject') }}</div>
-              </td>
-              <td *ngIf="!isContributor">
-                <div>{{ program?.nominations?.pending }} {{ resourceService.frmelmnts.lbl.pending }}</div>
-                <hr class="divider">
-                <div>{{ program?.nominations?.approved }} {{ resourceService.frmelmnts.lbl.approved }}</div>
-                <hr class="divider">
-                <div>{{ program?.nominations?.rejected }} {{ resourceService.frmelmnts.lbl.rejected }}</div>
-              </td>
-              <td *ngIf="!isContributor">
-                <div>{{ program.status }}</div>
-              </td>
-              <td *ngIf="!isContributor || activeAllProgramsMenu" class="nowrap">
-                <div class="program-timeline">
-                  <div class="program-timeline-item">
-                    <div class="status completed">
-                      <div class="status__label">{{ resourceService.frmelmnts.lbl.nominationSubmission }}</div>
-                      <div class="status__date">
-                        {{ program?.nomination_enddate | date:'d LLL yy'  }}
-                        <em>{{ program?.nomination_enddate | daysToGo  }}</em></div>
                     </div>
                     <div class="program-timeline-item">
                       <div class="status">
                         <div class="status__label">{{ resourceService.frmelmnts.lbl.contributions }}</div>
                         <div class="status__date">
-                          {{ program?.content_submission_enddate | date:'d LLL yy'  }} <em></em></div>
+                          {{ program?.content_submission_enddate | date:'d LLL yy'  }} <em class="d-block"></em></div>
                       </div>
                     </div>
                     <div class="program-timeline-item" *ngIf="!isContributor">
                       <div class="status">
                         <div class="status__label">{{ resourceService.frmelmnts.lbl.programEndDate }}</div>
-                        <div class="status__date">{{ program?.enddate | date:'LLLL d, yyyy' }} <em>{{ program?.enddate | daysToGo }}</em></div>
+                        <div class="status__date">{{ program?.enddate | date:'LLLL d, yyyy' }} <em class="d-block">{{ program?.enddate | daysToGo }}</em></div>
                       </div>
                     </div>
                   </div>
                 </td>
                 <td *ngIf="activeMyProgramsMenu">
-                  <div>{{ program?.enddate | date:'LLLL d, yyyy' }} <em>{{ program?.enddate | daysToGo }}</em></div>
+                  <div>{{ program?.enddate | date:'LLLL d, yyyy' }} <em class="d-block">{{ program?.enddate | daysToGo }}</em></div>
                 </td>
                 <td *ngIf="activeMyProgramsMenu">
                   <span class="sb-label sb-label-table sb-label-primary-100">{{ getProgramNominationStatus(program) }}</span>
@@ -178,12 +137,9 @@
           <app-no-result [data]="{messageText: resourceService.messages.stmsg.m0006}"></app-no-result>
         </ng-template>
       </ng-container>
-      <ng-template #noResult>
-        <app-no-result [data]="{messageText: resourceService.messages.stmsg.m0006}"></app-no-result>
+      <ng-template #loading>
+        <app-loader></app-loader>
       </ng-template>
-    </ng-container>
-    <ng-template #loading>
-      <app-loader></app-loader>
-    </ng-template>
+    </div>
   </div>
 </div>
