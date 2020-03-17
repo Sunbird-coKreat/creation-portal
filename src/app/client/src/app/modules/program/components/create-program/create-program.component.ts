@@ -174,7 +174,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
               this.programScope['medium'] = mediumOption;
             }
           }
-        }, err => {
+        }, error => {
+          const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+          this.toasterService.warning(errorMes || 'Fetching framework details failed');
         });
     }
 
