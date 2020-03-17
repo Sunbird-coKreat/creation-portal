@@ -231,7 +231,7 @@ export class ProgramsService extends DataService implements CanActivate {
    * auth guard to prevent unauthorized access to the route
    */
   canActivate(): Observable<boolean> {
-    return iif(() => !this.userService.loggedIn, of(false), this.allowToContribute$.pipe(
+    return iif(() => !this.userService.loggedIn, of(false), of(true).pipe(
       tap(allow => {
         if (!allow) {
           this.toasterService.warning(this.resourceService.messages.imsg.m0035);
@@ -245,66 +245,21 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * gets list of programs
    */
-  public getMyProgramsForOrg(): Observable<any> {
-    const list = [];
-    const targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + 10);
-
+  public getMyProgramsForOrg(): Observable<ServerResponse> {
     return this.getMyProgramsForOrgFromApi();
   }
 
   /**
    * gets list of programs
    */
-  public getAllProgramsForContrib(type): Observable<any> {
-    const list = [];
-    const mergeObj = this.getApiSampleObj();
-    const targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + 10);
-
+  public getAllProgramsForContrib(type): Observable<ServerResponse> {
     return this.getAllProgramsByType(type);
   }
 
   /**
    * gets list of programs
    */
-  public getMyProgramsForContrib(): Observable<any> {
-    const list = [];
-    const mergeObj = this.getApiSampleObj();
-    const targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + 10);
-
+  public getMyProgramsForContrib(): Observable<ServerResponse> {
     return this.getMyProgramsForContribFromApi();
-  }
-
-  /**
-   * get api obj sample
-   */
-  private getApiSampleObj() {
-   return {
-      textbooks: [
-        { id: '1', name: 'Textbook 1' },
-        { id: '2', name: 'Textbook 2' },
-        { id: '3', name: 'Textbook 3' }
-      ],
-      nominations: {
-        pending: 0,
-        approved: 0,
-        rejected: 0
-      },
-      nomination_status: 'Pending',
-      contribution_date: this.getFutureDate(-1),
-      nomination_end_date: this.getFutureDate(-5),
-      nomination_shortlisting_date: this.getFutureDate(0),
-      curation_end_date: this.getFutureDate(1),
-      program_end_date: this.getFutureDate(10),
-    };
-  }
-
-  /**
-   * get future date
-   */
-  private getFutureDate(days) {
-    return new Date((new Date()).getTime() + (days * 86400000));
   }
 }
