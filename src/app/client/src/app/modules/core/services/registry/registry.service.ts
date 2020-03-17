@@ -43,7 +43,29 @@ export class RegistryService extends DataService {
 
       }
     };
+    return this.API_URL(req);
+  }
 
+
+  public getUserDetails(userId): Observable<ServerResponse> {
+    const req = {
+      url: `content/reg/read`,
+      data: {
+        'id': 'open-saber.registry.read',
+        'ver': '1.0',
+        'ets': '11234',
+        'params': {
+          'did': '',
+          'key': '',
+          'msgid': ''
+        },
+        'request': {
+           'User': {
+             'osid': userId
+           }
+        }
+      }
+    };
     return this.API_URL(req);
   }
 

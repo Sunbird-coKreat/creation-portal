@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IProgram } from '../../../core/interfaces';
 import * as _ from 'lodash-es';
 import { tap } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
 import * as moment from 'moment';
 
 @Component({
@@ -20,7 +21,9 @@ export class ProgramListComponent implements OnInit {
   public isContributor: boolean;
   public activeAllProgramsMenu: boolean;
   public activeMyProgramsMenu: boolean;
-
+  public showAssignRoleModal = false;
+  public data = {};
+  public contributorOrgUser = [];
   constructor(private programsService: ProgramsService, private registryService: RegistryService,
     public resourceService: ResourceService, private activatedRoute: ActivatedRoute,
     public router: Router) { }
@@ -84,10 +87,36 @@ export class ProgramListComponent implements OnInit {
   }
 
   private getContributionOrgUsers() {
+
+    this.showAssignRoleModal = true;
       const orgUsers = this.registryService.getContributionOrgUsers('1-27ea8585-d081-49f9-94ca-54c57b348689');
 
       orgUsers.subscribe(response => {
-        console.log(response);
+        const result = _.get(response, 'result');
+        if (!result || _.isEmpty(result)) {
+          console.log('NO USER FOUND');
+        } else {
+          this.data = {
+            'board': [{
+                'name': 'admin',
+                'value': 'Admin'
+            }, {
+                'name': 'reviewer',
+                'value': 'Reviewer'
+            }, {
+              'name': 'contributor',
+              'value': 'Contributor'
+          }]
+          };
+          const userIds = _.map(result[_.first(_.keys(result))], 'userId');
+          const getUserDetails = _.map(userIds, id => this.registryService.getUserDetails(id));
+          forkJoin(...getUserDetails)
+            .subscribe((res: any) => {
+              this.contributorOrgUser = _.map(res, 'result.User');
+            }, error => {
+              console.log(error);
+            })
+        }
       }, error => {
         console.log(error);
       });
