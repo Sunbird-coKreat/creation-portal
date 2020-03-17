@@ -37,7 +37,7 @@ export class ProgramsService extends DataService implements CanActivate {
     private router: Router, private toasterService: ToasterService, private resourceService: ResourceService) {
       super(http);
       this.config = config;
-      this.baseUrl = this.config.urlConFig.URLS.PUBLIC_PREFIX;
+      this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;
     }
 
   /**
@@ -146,7 +146,7 @@ export class ProgramsService extends DataService implements CanActivate {
   getMyProgramsForOrgFromApi(): Observable<ServerResponse> {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
-      headers: {
+      header: {
         'content-type' : 'application/json'
       },
       data: {
