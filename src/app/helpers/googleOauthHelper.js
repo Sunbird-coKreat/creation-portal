@@ -223,7 +223,7 @@ const getHeaders = (req) => {
     'ts': dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
     'content-type': 'application/json',
     'accept': 'application/json',
-    'Authorization': 'Bearer ' + envHelper.PORTAL_API_AUTH_TOKEN
+    'Authorization': 'Bearer ' + envHelper.SUNBIRD_PORTAL_API_AUTH_TOKEN
   }
 }
 module.exports = { googleOauth, createSession, fetchUserByEmailId, createUserWithMailId };

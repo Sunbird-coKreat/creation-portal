@@ -16,7 +16,7 @@ module.exports = function (app) {
   app.patch('/learner/portal/user/v1/update',
     proxyUtils.verifyToken(),permissionsHelper.checkPermission(),
     proxy(envHelper.learner_Service_Local_BaseUrl, {
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
       proxyReqPathResolver: (req) => {
         return '/private/user/v1/update';
       },
@@ -36,36 +36,11 @@ module.exports = function (app) {
   app.all('/learner/*', telemetryHelper.generateTelemetryForLearnerService,
     telemetryHelper.generateTelemetryForProxy)
 
-  app.post('/learner/content/v1/media/upload',
-    proxyUtils.verifyToken(),
-    permissionsHelper.checkPermission(),
-    proxy(learnerURL, {
-      limit: reqDataLimitOfContentUpload,
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-      proxyReqPathResolver: function (req) {
-        return require('url').parse(learnerURL + '/content/v1/media/upload').path
-      },
-      userResDecorator: function (proxyRes, proxyResData,  req, res) {
-        try {
-          logger.info({msg: '/learner/content/v1/media/upload called'});
-          let data = JSON.parse(proxyResData.toString('utf8'))
-          if (data.responseCode === 'OK') {
-            data.success = true
-            return JSON.stringify(data)
-          }
-          else return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
-        } catch (err) {
-          logger.error({msg:'content api user res decorator json parse error:', proxyResData})
-          return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res);
-        }
-      }
-    }))
-
   app.all('/learner/data/v1/role/read',
     permissionsHelper.checkPermission(),
     proxy(learnerURL, {
       limit: reqDataLimitOfContentUpload,
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
       proxyReqPathResolver: function (req) {
         let urlParam = req.originalUrl.replace('/learner/', '')
         let query = require('url').parse(req.url).query
@@ -103,10 +78,11 @@ module.exports = function (app) {
     permissionsHelper.checkPermission(),
     proxy(learnerURL, {
       limit: reqDataLimitOfContentUpload,
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
       proxyReqPathResolver: function (req) {
         let urlParam = req.params['0']
         let query = require('url').parse(req.url).query
+        console.log('learnerURL + urlParam ', learnerURL + urlParam + 'sadasd ' +require('url').parse(learnerURL + urlParam).path);
         if (query) {
           return require('url').parse(learnerURL + urlParam + '?' + query).path
         } else {
@@ -130,13 +106,15 @@ module.exports = function (app) {
 function proxyObj (){
   return proxy(learnerURL, {
     limit: reqDataLimitOfContentUpload,
-    proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+    proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
     proxyReqPathResolver: function (req) {
       let urlParam = req.originalUrl.replace('/learner/', '')
       let query = require('url').parse(req.url).query
       if (query) {
+        logger.info({msg: 'urlParam if '+ require('url').parse(learnerURL + urlParam + '?' + query).path});
         return require('url').parse(learnerURL + urlParam + '?' + query).path
       } else {
+        logger.info({msg: 'urlParam else '+ learnerURL + urlParam});
         return require('url').parse(learnerURL + urlParam).path
       }
     },

@@ -37,7 +37,7 @@
 										</div>
 										<div class="ui pointing red basic label below" *ngIf="createProgramForm.controls['name'].errors && createProgramForm.controls['name'].errors.maxlength && (!createProgramForm.controls['name'].pristine || formIsInvalid)">
 										  Character length can not be greater than 100
-										</div>	
+										</div>
 										<div *ngIf="createProgramForm.value.name.length" class="pull-right fsmall">{{createProgramForm.value.name.length}} / 100</div>
 									</div>
 								</div>
@@ -80,7 +80,7 @@
 											<i class="calendar icon date-calendar"></i>
 											<input [pickerMinDate]='pickerMinDate' formControlName="shortlisting_enddate" suiDatepicker [pickerMode]="'date'">
 										</div>
-										
+
 									</div>
 								</div>
 							</div>
@@ -99,7 +99,7 @@
 									</div>
 								</div>
 							</div>
-							
+
 							<div class="three wide column">
 								<div class="required field">
 									<label>Program End Date</label>
@@ -192,7 +192,7 @@
 										<option value="dummy">Dummy</option>
 									</select>
 								</div>
-							</div>
+							</div-->
 							<div class="twelve wide column">
 								<div class="field">
 									<label>Rewards Given</label>
@@ -207,7 +207,7 @@
 										<div *ngIf="createProgramForm.value.rewards.length" class="pull-right fsmall">{{createProgramForm.value.rewards.length}} / 100</div>
 									</div>
 								</div>
-							</div-->
+							</div>
 						</div>
 					</form>
 				</div>
@@ -237,17 +237,17 @@
 									<label for="checkitem"></label>
 								</div>
 							</td>
-							<td> 
+							<td>
 								<div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
 									{{data.name}}
 								</div>
 							</td>
-							<td> 
+							<td>
 								<div class="sb__ellipsis">
 									{{data.gradeLevel}}
 								</div>
 							</td>
-							<td> 
+							<td>
 								<div class="sb__ellipsis">
 									{{data.medium}}
 								</div>
@@ -260,7 +260,7 @@
 								</td>
 							</tr>
 						</tbody>
-						</table> 
+						</table>
 					</div>
 				</div>
 			</sui-tabset>

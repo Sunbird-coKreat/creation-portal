@@ -5,14 +5,15 @@ import { CommonModule } from '@angular/common';
 import {
   ViewAllComponent, ProfileFrameworkPopupComponent, TermsAndConditionsPopupComponent,
   OtpPopupComponent, BatchInfoComponent, SsoMergeConfirmationComponent, ValidateTeacherIdentifierPopupComponent,
-  UserLocationComponent, EnrollContributorComponent
+  UserLocationComponent, EnrollContributorComponent, TextbookListComponent, ProgramListComponent
 } from './components';
+import { DaysToGoPipe } from './pipes';
 import { SlickModule } from 'ngx-slick';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule,
-  SuiProgressModule, SuiRatingModule, SuiCollapseModule, SuiDimmerModule } from 'ng2-semantic-ui';
+  SuiProgressModule, SuiRatingModule, SuiCollapseModule, SuiDimmerModule} from 'ng2-semantic-ui';
 
 @NgModule({
   imports: [
@@ -29,10 +30,10 @@ import { SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, Su
   ],
   declarations: [ViewAllComponent, ProfileFrameworkPopupComponent, TermsAndConditionsPopupComponent,
     OtpPopupComponent, BatchInfoComponent, SsoMergeConfirmationComponent, ValidateTeacherIdentifierPopupComponent,
-    UserLocationComponent, EnrollContributorComponent
+    UserLocationComponent, EnrollContributorComponent, ProgramListComponent, DaysToGoPipe,  TextbookListComponent
   ],
   exports: [ViewAllComponent, ProfileFrameworkPopupComponent, TermsAndConditionsPopupComponent,
     OtpPopupComponent, BatchInfoComponent, SsoMergeConfirmationComponent, ValidateTeacherIdentifierPopupComponent,
-    UserLocationComponent, EnrollContributorComponent]
+    UserLocationComponent, EnrollContributorComponent, ProgramListComponent, DaysToGoPipe]
 })
 export class SharedFeatureModule { }

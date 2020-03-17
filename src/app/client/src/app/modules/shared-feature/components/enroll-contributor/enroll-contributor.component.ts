@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { ToasterService } from '@sunbird/shared';
+import { ToasterService, ResourceService } from '@sunbird/shared';
 
 @Component({
   selector: 'app-enroll-contributor',
@@ -13,13 +13,12 @@ export class EnrollContributorComponent implements OnInit {
   disableSubmit = false;
   @Output() close = new EventEmitter<any>();
 
-  constructor(private tosterService: ToasterService) { }
+  constructor(private tosterService: ToasterService, public resourceService: ResourceService) { }
 
   ngOnInit(): void {
-    this.data =
-    {
+    this.data = {
       'board' : [
-        {'name': 'NCERT', 'value': 'NCERT'}, 
+        {'name': 'NCERT', 'value': 'NCERT'},
         {'name': 'CBSE', 'value': 'CBSE'}, 
         {'name': 'ICSE', 'value': 'ICSE'}, 
         {'name': 'UP', 'value': 'UP'}

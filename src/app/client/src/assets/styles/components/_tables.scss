@@ -214,6 +214,9 @@
     white-space: nowrap;
   }
 }
+.nowrap {
+  white-space: nowrap;
+}
 .sb-table-striped tbody tr:nth-child(2n) {
   background-color: $primary-0;
 }

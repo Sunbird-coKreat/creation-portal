@@ -341,7 +341,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       );
     }
 
-
    onCollectionCheck(collection, isChecked: boolean) {
     const pcollectionsFormArray = <FormArray>this.collectionListForm.controls.pcollections;
     const collectionId = collection.identifier;
@@ -365,7 +364,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
 
     const option = {
-      url: '/program/v1/collection/link',
+      url: 'program/v1/collection/link',
       header: {
         'content-type' : 'application/json',
         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIyZThlNmU5MjA4YjI0MjJmOWFlM2EzNjdiODVmNWQzNiJ9.gvpNN7zEl28ZVaxXWgFmCL6n65UJfXZikUWOKSE8vJ8',

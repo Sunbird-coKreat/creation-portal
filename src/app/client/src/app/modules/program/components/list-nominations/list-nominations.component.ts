@@ -3,7 +3,7 @@ import { ProgramsService, PublicDataService, UserService, FrameworkService } fro
 import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter, OnChanges} from '@angular/core';
 import * as _ from 'lodash-es';
 import { tap, first } from 'rxjs/operators';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { ISessionContext } from '../../../cbse-program/interfaces';
 
 @Component({
@@ -25,6 +25,7 @@ export class ListNominationsComponent implements OnInit, AfterViewInit, OnChange
    public userProfile: any;
    nominationsCount = 0;
    public selectedNomineeProfile: any;
+   showNomineeProfile;
 
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService,
@@ -56,7 +57,7 @@ export class ListNominationsComponent implements OnInit, AfterViewInit, OnChange
 
   fetchProgramDetails() {
     const req = {
-      url: `/program/v1/read/${this.programId}`
+      url: `program/v1/read/${this.programId}`
     };
     return this.programsService.get(req).pipe(tap((programDetails: any) => {
       programDetails.result.config = JSON.parse(programDetails.result.config);
@@ -95,5 +96,12 @@ export class ListNominationsComponent implements OnInit, AfterViewInit, OnChange
 
   getNomineeProfile(nominee) {
      this.selectedNomineeProfile = nominee.nominationData.userData;
+  }
+
+  viewNominationDetails(nomination) {
+    const extraData: NavigationExtras = {
+      fragment: nomination.nominationData
+    };
+     this.router.navigate(['/sourcing/contributor/' + nomination.nominationData.program_id], extraData);
   }
 }

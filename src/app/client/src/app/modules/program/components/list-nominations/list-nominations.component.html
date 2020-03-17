@@ -26,7 +26,7 @@
                 </div>
                 <div class="content">
                   <label class="d-block fsmall font-weight-normal mb-0">
-                    {{ programDetails?.nomination_enddate | date:medium }}
+                    {{ programDetails?.nomination_enddate | date:'medium' }}
                   </label>
                 </div>
                 <hr />
@@ -35,7 +35,7 @@
                 </div>
                 <div class="content">
                   <label class="d-block fsmall font-weight-normal mb-0">
-                    {{ programDetails?.shortlisting_enddate | date:medium }}
+                    {{ programDetails?.shortlisting_enddate | date:'medium' }}
                   </label>
                 </div>
                 <hr />
@@ -44,14 +44,14 @@
                 </div>
                 <div class="content">
                   <label class="d-block fsmall font-weight-normal mb-0">
-                    {{ programDetails?.content_submission_enddate | date:medium }}
+                    {{ programDetails?.content_submission_enddate | date:'medium' }}
                   </label>
                 </div>
                 <hr />
                 <div class="header"><strong>Program End Date</strong></div>
                 <div class="content">
                   <label class="d-block fsmall font-weight-normal mb-0">
-                    {{ programDetails?.enddate | date:medium }}
+                    {{ programDetails?.enddate | date:'medium' }}
                   </label>
                 </div>
               </div>
@@ -66,20 +66,20 @@
             </div>
             <div class="d-flex flex-ai-center flex-jc-space-between flex-75 ">
                 <dl class="sb-meta-data mb-0 pr-8 w-25">
-                    <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="Expression of Interest Date" popupText="{{ programDetails?.nomination_enddate | date:medium }}">Expression of Interest Date</dt>
-                    <dd> {{ programDetails?.nomination_enddate | date:medium }}</dd>
+                    <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="Expression of Interest Date" popupText="{{ programDetails?.nomination_enddate | date:'medium' }}">Expression of Interest Date</dt>
+                    <dd> {{ programDetails?.nomination_enddate | date:'medium' }}</dd>
                   </dl>
                   <dl class="sb-meta-data mb-0 pr-8 w-25">
-                    <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="Shortlisting of Contributor Date" popupText="{{ programDetails?.shortlisting_enddate | date:medium }}">Shortlisting of Contributor Date</dt>
-                    <dd> {{ programDetails?.shortlisting_enddate | date:medium }}</dd>
+                    <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="Shortlisting of Contributor Date" popupText="{{ programDetails?.shortlisting_enddate | date:'medium' }}">Shortlisting of Contributor Date</dt>
+                    <dd> {{ programDetails?.shortlisting_enddate | date:'medium' }}</dd>
                   </dl>
                   <dl class="sb-meta-data mb-0 pr-8 w-25">
-                    <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="Content Submission Date" popupText="{{ programDetails?.content_submission_enddate | date:medium }}">Content Submission Date</dt>
-                    <dd> {{ programDetails?.content_submission_enddate | date:medium }}</dd>
+                    <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="Content Submission Date" popupText="{{ programDetails?.content_submission_enddate | date:'medium' }}">Content Submission Date</dt>
+                    <dd> {{ programDetails?.content_submission_enddate | date:'medium' }}</dd>
                   </dl>
                   <dl class="sb-meta-data mb-0 pr-8 w-25">
-                    <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="Program End Date" popupText="{{ programDetails?.enddate | date:medium }}">Program End Date</dt>
-                    <dd>{{ programDetails?.enddate | date:medium }}</dd>
+                    <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="Program End Date" popupText="{{ programDetails?.enddate | date:'medium' }}">Program End Date</dt>
+                    <dd>{{ programDetails?.enddate | date:'medium' }}</dd>
                   </dl>
             </div>
             </div>
@@ -159,10 +159,10 @@
                   <td class="text-right">
                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                       *ngIf="nomination?.nominationData?.status === 'Pending'"
-                      [routerLink]="'/sourcing/contributor/' + nomination.program_id">View Details</button>
+                      (click)="viewNominationDetails(nomination)">View Details</button>
                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                       *ngIf="nomination?.nominationData?.status === 'Accepted'"
-                      [routerLink]="'/sourcing/contributor/' + nomination.program_id">View Contribution</button>
+                      [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">View Contribution</button>
                   </td>
                 </tr>
               </tbody>

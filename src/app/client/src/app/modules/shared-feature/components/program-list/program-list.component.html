@@ -1,59 +1,79 @@
-<div class="ui container mb-48">
-  <div class="sb-pageSection my-24" [appTelemetryImpression]="telemetryImpression">
-      <div class="d-flex flex-ai-center flex-jc-space-between">
-        <div class="sb-pageSection-header mb-0">
-          <h4 class="sb-pageSection-title">
-            <span *ngIf="!isContributor || activeMyProgramsMenu">{{ resourceService.frmelmnts.lbl.myPrograms }} </span>
-            <span *ngIf="activeAllProgramsMenu">{{ resourceService.frmelmnts.lbl.explorePrograms }} </span>
-            <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8" *ngIf="programs && programs.length">{{programs.length}}</span></h4>
-        </div>
-        <!-- <button routerLink="sourcing/create-program" *ngIf="this.router.url.includes('/sourcing')" class="sb-btn sb-btn-normal sb-btn-primary"><i class="plus outline icon"></i> Add New Program</button> -->
+<div class="ui container pb-48" style="min-height: 650px;">
+ <div class="sb-pageSection my-24">
+    <div class="d-flex flex-ai-center flex-jc-space-between">
+      <div class="sb-pageSection-header mb-0">
+        <h4 class="sb-pageSection-title">
+          <span *ngIf="!isContributor || activeMyProgramsMenu">{{ resourceService.frmelmnts.lbl.myPrograms }} </span>
+          <span *ngIf="activeAllProgramsMenu">{{ resourceService.frmelmnts.lbl.explorePrograms }} </span>
+          <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8"
+            *ngIf="programs && programs.length">{{count}}</span></h4>
       </div>
+      <!-- <button routerLink="sourcing/create-program" *ngIf="this.router.url.includes('/sourcing')" class="sb-btn sb-btn-normal sb-btn-primary"><i class="plus outline icon"></i> Add New Program</button> -->
+    </div>
     <div class="sb-pageSection-content mt-12">
       <ng-container *ngIf="programs !== undefined else loading">
         <ng-container *ngIf="programs.length else noResult">
-          <div class="">
-             <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable">
+          <div class="sb-table-responsive">
+            <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
             <thead class="sb-table-header sb-table-thead-gray">
               <tr>
+                <th class="w-5 text-center">Sl.No.</th>
+                <th class="w-5 text-center"></th>
                 <th class="w-20 sb-sort-icon">{{ resourceService.frmelmnts.lbl.program }}</th>
-                <th>{{ resourceService.frmelmnts.lbl.noOfTextbooks }}</th>
-                <th>{{ resourceService.frmelmnts.lbl.gradesMediumsSubjects }}</th>
+                <th *ngIf="isContributor">{{ resourceService.frmelmnts.lbl.orgName }}</th>
+                <th class="w-20">{{ resourceService.frmelmnts.lbl.purpose }}</th>
+                <th class="w-20">{{ resourceService.frmelmnts.lbl.gradesMediumsSubjects }}</th>
                 <th *ngIf="!isContributor">{{ resourceService.frmelmnts.lbl.nominations }}</th>
-                <th *ngIf="!isContributor">{{ resourceService.frmelmnts.lbl.nomination }}<br>{{ resourceService.frmelmnts.lbl.shortlistDates }}</th>
-                <th *ngIf="!isContributor">{{ resourceService.frmelmnts.lbl.contentSubmissionDate }}<br>{{ resourceService.frmelmnts.lbl.programEndDate }}</th>
+                <th *ngIf="!isContributor">{{ resourceService.frmelmnts.lbl.status }}</th>
+                <th *ngIf="!isContributor">{{ resourceService.frmelmnts.lbl.programDates }}</th>
                 <th *ngIf="activeMyProgramsMenu" class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.contributionDate }}</th>
-                <th *ngIf="activeAllProgramsMenu" class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.nominationEndDate }}</th>
+                <th *ngIf="activeAllProgramsMenu">{{ resourceService.frmelmnts.lbl.programDates }}</th>
                 <th *ngIf="activeMyProgramsMenu"><span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
                   <div class="text">{{ resourceService.frmelmnts.lbl.nominationStatus }}</div>
                   <i class="filter icon"></i>
                   <div class="menu" suiDropdownMenu>
-                      <div class="item">All</div>
-                      <div class="item">Pending</div>
-                      <div class="item selected">Approved</div>
-                      <div class="item">Rejected</div>
+                      <div class="item" selected>resourceService.frmelmnts.lbl.allStatus</div>
+                      <div class="item">{{ resourceService.frmelmnts.lbl.pendig }}</div>
+                      <div class="item">{{ resourceService.frmelmnts.lbl.approved }}</div>
+                      <div class="item">{{ resourceService.frmelmnts.lbl.rejected }}</div>
                   </div>
               </span></th>
-                <th class="w-10 text-center">{{ resourceService.frmelmnts.lbl.actions }}</th>
               </tr>
             </thead>
             <tbody class="sb-table-body">
               <tr *ngFor="let program of programs">
-                <td> 
-                  <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
+                <td class="text-center">1</td>
+                <td class="text-center">
+                <button type="button" class="sb-btn sb-btn-outline-primary sb-btn-xs" *ngIf="!isContributor" (click)="viewDetailsBtnClicked(program)">{{ resourceService.frmelmnts.lbl.viewDetails }}</button>
+                  <div class="ui dropdown sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary ml-auto sb-btn-dropdown" suiDropdown autoClose="itemClick" *ngIf="isContributor">
+                            <div class="text">Actions</div>
+                            <i class="dropdown icon"></i>
+                            <div class="menu" suiDropdownMenu>
+                                <div class="item" (click)="viewDetailsBtnClicked(program)">{{ resourceService.frmelmnts.lbl.viewDetails }}</div>
+                                <div class="item" *ngIf="activeMyProgramsMenu">Assign Role</div>
+                            </div>
+                        </div>
+                </td>
+                <td>
+                  <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold"   style="width: 250px;">
                     {{program?.name}}
                   </div>
+                  <div class="sb__ellipsis sb__ellipsis--three">{{ getProgramTextbooksCount(program) }}</div>
                   <div *ngIf="activeMyProgramsMenu" class="sb-label-value mt-4">{{ getProgramInfo(program, 'board') }}</div>
                 </td>
-                <td>
-                  <div suiPopup popupHeader="{{ resourceService.frmelmnts.lbl.textbooks }}" popupDelay="1000" popupText="{{ getProgramTextbooks(program) }}"> - {{ resourceService.frmelmnts.lbl.textbooks }}</div>
+                <td *ngIf="isContributor" >
+                  <div>{{ getSourcingOrgName(program) }}
+                  </div>
                 </td>
                 <td>
-                  <div class="sb__ellipsis" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.grades }}" popupText="{{ getProgramInfo(program, 'gradeLevel') }}">{{ getProgramInfo(program, 'gradeLevel') }}</div>
+                  <div class="sb__ellipsis sb__ellipsis--breakAll " suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.purpose }}" popupText="{{ getProgramContentTypes(program) }}">{{ getProgramContentTypes(program) }}</div>
+                </td>
+                <td>
+                  <div class="sb__ellipsis sb__ellipsis--breakAll " suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.grades }}" popupText="{{ getProgramInfo(program, 'gradeLevel') }}">{{ getProgramInfo(program, 'gradeLevel') }}</div>
                   <hr class="divider">
-                  <div class="sb__ellipsis" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.mediums }}" popupText="{{ getProgramInfo(program, 'medium') }}">{{ getProgramInfo(program, 'medium') }}</div>
+                  <div class="sb__ellipsis sb__ellipsis--breakAll " suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.mediums }}" popupText="{{ getProgramInfo(program, 'medium') }}">{{ getProgramInfo(program, 'medium') }}</div>
                   <hr class="divider">
-                  <div class="sb__ellipsis" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.subjects }}" popupText="{{ getProgramInfo(program, 'subject') }}">{{ getProgramInfo(program, 'subject') }}</div>
+                  <div class="sb__ellipsis sb__ellipsis--breakAll " suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.subjects }}" popupText="{{ getProgramInfo(program, 'subject') }}">{{ getProgramInfo(program, 'subject') }}</div>
                 </td>
                 <td *ngIf="!isContributor">
                   <div>{{ program?.nominations?.pending }} {{ resourceService.frmelmnts.lbl.pending }}</div>
@@ -62,51 +82,48 @@
                   <hr class="divider">
                   <div>{{ program?.nominations?.rejected }} {{ resourceService.frmelmnts.lbl.rejected }}</div>
                 </td>
-                <td *ngIf="activeMyProgramsMenu" >
-                  <div>{{ program?.content_submission_enddate | date:'LLLL d, yyyy'  }}<br>
-                    <em>{{ program?.content_submission_enddate | daysToGo }}</em>
-                  </div>
+                <td *ngIf="!isContributor">
+                  <div>{{ program.status }}</div>
                 </td>
-                <td *ngIf="activeAllProgramsMenu">
-                  <div>{{ program?.nomination_enddate | date:'LLLL d, yyyy' }}<br>
-                    <em>{{ program?.nomination_enddate | daysToGo }}</em>
+                <td *ngIf="!isContributor || activeAllProgramsMenu" class="nowrap">
+                  <div class="program-timeline">
+                    <div class="program-timeline-item">
+                      <div class="status completed">
+                        <div class="status__label">{{ resourceService.frmelmnts.lbl.nominationSubmission }}</div>
+                        <div class="status__date">
+                          {{ program?.nomination_enddate | date:'d LLL yy'  }}
+                          <em>{{ program?.nomination_enddate | daysToGo  }}</em></div>
+                      </div>
+                    </div>
+                         <div class="program-timeline-item">
+                      <div class="status active">
+                        <div class="status__label">{{ resourceService.frmelmnts.lbl.shortlistingNomination }}</div>
+                        <div class="status__date">
+                          {{ program?.shortlisting_enddate | date:'d LLL yy'  }}
+                          <em></em></div>
+                      </div>
+                    </div>
+                    <div class="program-timeline-item">
+                      <div class="status">
+                        <div class="status__label">{{ resourceService.frmelmnts.lbl.contributions }}</div>
+                        <div class="status__date">
+                          {{ program?.content_submission_enddate | date:'d LLL yy'  }} <em></em></div>
+                      </div>
+                    </div>
+                    <div class="program-timeline-item" *ngIf="!isContributor">
+                      <div class="status">
+                        <div class="status__label">{{ resourceService.frmelmnts.lbl.programEndDate }}</div>
+                        <div class="status__date">{{ program?.enddate | date:'LLLL d, yyyy' }} <em>{{ program?.enddate | daysToGo }}</em></div>
+                      </div>
+                    </div>
                   </div>
                 </td>
                 <td *ngIf="activeMyProgramsMenu">
-                  <span class="sb-label sb-label-table sb-label-primary-100">{{ getProgramStatus(program) }}</span>
+                  <span class="sb-label sb-label-table sb-label-primary-100">{{ getProgramNominationStatus(program) }}</span>
                 </td>
-                <td *ngIf="!isContributor">
-                  <div>{{ program?.nomination_enddate | date:'LLLL d, yyyy' }}<br>
-                    <em>{{ program?.nomination_enddate | daysToGo }}</em>
-                  </div>
-                  <hr class="divider">
-                  <div>{{ program?.shortlisting_enddate | date:'LLLL d, yyyy' }}<br>
-                    <em>{{ program?.shortlisting_enddate | daysToGo }}</em>
-                  </div>  
-                </td>
-                <td *ngIf="!isContributor">
-                  <div>{{ program?.content_submission_enddate | date:'LLLL d, yyyy'  }}<br>
-                    <em>{{ program?.content_submission_enddate | daysToGo }}</em>
-                  </div>
-                  <hr class="divider">
-                  <div>{{ program?.enddate | date:'LLLL d, yyyy' }}<br>
-                    <em>{{ program?.enddate | daysToGo }}</em>
-                  </div>
-                </td>
-                <td class="text-center">
-                  <button type="button" class="sb-btn sb-btn-outline-primary sb-btn-normal" *ngIf="!isContributor" (click)="viewDetailsBtnClicked(program)">{{ resourceService.frmelmnts.lbl.viewDetails }}</button>           
-                  <div class="ui dropdown sb-dotted-dropdown" *ngIf="isContributor" suiDropdown autoClose="itemClick">
-                        <div class="p-8 w-auto" suiPopup popupText="View All Actions" popupDelay="1000"><span class="sb-dotmenu"></span></div>
-                        <div class="menu" suiDropdownMenu>
-                            <div class="item" (click)="viewDetailsBtnClicked(program)">{{ resourceService.frmelmnts.lbl.viewDetails }}</div>
-                            <div class="item" *ngIf="activeMyProgramsMenu">Assign Role</div>
-                        </div>
-                    </div>
-                  <!-- <button class="sb-btn sb-btn-xs sb-btn-outline-primary" (click)="viewDetailsBtnClicked(program)">{{ resourceService.frmelmnts.lbl.viewDetails }}</button> -->
-                </td>
-              </tr>
-            </tbody>
-          </table> 
+                </tr>
+              </tbody>
+            </table>
           </div>
         </ng-container>
         <ng-template #noResult>
@@ -119,4 +136,3 @@
     </div>
   </div>
 </div>
-
