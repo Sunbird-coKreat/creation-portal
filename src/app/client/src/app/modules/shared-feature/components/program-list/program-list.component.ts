@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IProgram } from '../../../core/interfaces';
 import * as _ from 'lodash-es';
 import { tap } from 'rxjs/operators';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-program-list',
@@ -15,6 +16,7 @@ export class ProgramListComponent implements OnInit {
 
   public programs: IProgram[];
   public count = 0;
+  public activeDates = <any>[];
   public isContributor: boolean;
   public activeAllProgramsMenu: boolean;
   public activeMyProgramsMenu: boolean;
@@ -131,6 +133,38 @@ export class ProgramListComponent implements OnInit {
       }
     } else {
       return this.router.navigateByUrl('/sourcing/nominations/' + program.program_id);
+    }
+  }
+
+  isActive(program, name, index) {
+    const date  = moment(program[name]);
+    const today = moment();
+    const isFutureDate = date.isAfter(today);
+
+    if (!this.activeDates[index]) {
+      this.activeDates[index] = {};
+    }
+
+    if (name === 'nomination_enddate' && isFutureDate) {
+      this.activeDates[index]['nomination_enddate'] = true;
+      return true;
+    }
+
+    if (!this.activeDates[index]['nomination_enddate'] && name === 'shortlisting_enddate' && isFutureDate) {
+      this.activeDates[index]['shortlisting_enddate'] = true;
+      return true;
+    }
+
+    if (!this.activeDates[index]['nomination_enddate']  && !this.activeDates[index]['shortlisting_enddate']
+     && name === 'content_submission_enddate' && isFutureDate) {
+      this.activeDates[index]['content_submission_enddate'] = true;
+      return true;
+    }
+
+    if (!this.activeDates[index]['nomination_enddate']  && !this.activeDates[index]['shortlisting_enddate']  &&
+    !this.activeDates[index]['content_submission_enddate'] && name === 'content_submission_enddate' && isFutureDate) {
+      this.activeDates[index]['enddate'] = true;
+      return true;
     }
   }
 }
