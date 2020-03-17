@@ -78,7 +78,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       headers: {
         'content-type': 'application/json',
         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIyZThlNmU5MjA4YjI0MjJmOWFlM2EzNjdiODVmNWQzNiJ9.gvpNN7zEl28ZVaxXWgFmCL6n65UJfXZikUWOKSE8vJ8',
-        'X-Authenticated-User-Token': 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ1WXhXdE4tZzRfMld5MG5PS1ZoaE5hU0gtM2lSSjdXU25ibFlwVVU0TFRrIn0.eyJqdGkiOiI1YTcyYzcwYi1hYzdlLTQxYmItYTVhMi1lZmRiZWU3ZDBkYmUiLCJleHAiOjE1ODQ1MzQxNDEsIm5iZiI6MCwiaWF0IjoxNTg0MzYxMzQxLCJpc3MiOiJodHRwczovL2Rldi5zdW5iaXJkZWQub3JnL2F1dGgvcmVhbG1zL3N1bmJpcmQiLCJzdWIiOiJmOjVhOGEzZjJiLTM0MDktNDJlMC05MDAxLWY5MTNiYzBmZGUzMTo4NDU0Y2IyMS0zY2U5LTRlMzAtODViNS1mYWRlMDk3ODgwZDgiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhZG1pbi1jbGkiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiI3NjNjZmEyMi01NzQyLTQyZmMtYTk1ZC0yNzA0ZDUxZjc2ZjQiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHBzOi8vZGV2LmNlbnRyYWxpbmRpYS5jbG91ZGFwcC5henVyZS5jb20vIiwiaHR0cDovL2Rldi5jZW50cmFsaW5kaWEuY2xvdWRhcHAuYXp1cmUuY29tLyJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwic2NvcGUiOiIiLCJuYW1lIjoiTWVudG9yIEZpcnN0IFVzZXIiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJudHB0ZXN0MTA0IiwiZ2l2ZW5fbmFtZSI6Ik1lbnRvciBGaXJzdCIsImZhbWlseV9uYW1lIjoiVXNlciIsImVtYWlsIjoidXMqKioqKioqKkB0ZXN0c3MuY29tIn0.O4qydQ3K2Rm0dhE-GlzlA_D9eQVeu702K7blBzRKmu6I7ockmQxCM9Vh60ubJy2F3leCTjlD2_7fFxo_Ct_X6YWrkil2RkTiqj1sBuuMXNTpql407u1hIAcAbyLhphs3_wEGDH9kp7GHQn7oxIkGD5SatL4CVcl_K55gkBSdO-IsddPF01z17xPj5v0YofJ2YTXkB4h6g2eFSwtJ7g9vWse7-CZtQm7FG01nqTjb7-4PXAL7bNxkI2a3B6N6z1QtZDWOsohYPVVyeagjk3lhfhyodG2nvHI2Ohw8-F6jD_eMGRjD41PhGHOuF1irjapV8rU4BsS2eWlf0ERWEREp1A',
+        'X-Authenticated-User-Token': 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ1WXhXdE4tZzRfMld5MG5PS1ZoaE5hU0gtM2lSSjdXU25ibFlwVVU0TFRrIn0.eyJqdGkiOiIxYjMzODhlMC0xNmQ3LTQ3YWQtOTEwZi1jNWFiNjAwOGJmOTEiLCJleHAiOjE1ODQ2MTQ0NzgsIm5iZiI6MCwiaWF0IjoxNTg0NDQxNjc4LCJpc3MiOiJodHRwczovL2Rldi5zdW5iaXJkZWQub3JnL2F1dGgvcmVhbG1zL3N1bmJpcmQiLCJzdWIiOiJmOjVhOGEzZjJiLTM0MDktNDJlMC05MDAxLWY5MTNiYzBmZGUzMTo4NDU0Y2IyMS0zY2U5LTRlMzAtODViNS1mYWRlMDk3ODgwZDgiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhZG1pbi1jbGkiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiI5ODliNmNjYS0wNjQ3LTQ0NjUtOGNlZi0zNGRkNTI4M2NiZjgiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHBzOi8vZGV2LmNlbnRyYWxpbmRpYS5jbG91ZGFwcC5henVyZS5jb20vIiwiaHR0cDovL2Rldi5jZW50cmFsaW5kaWEuY2xvdWRhcHAuYXp1cmUuY29tLyJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwic2NvcGUiOiIiLCJuYW1lIjoiTWVudG9yIEZpcnN0IFVzZXIiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJudHB0ZXN0MTA0IiwiZ2l2ZW5fbmFtZSI6Ik1lbnRvciBGaXJzdCIsImZhbWlseV9uYW1lIjoiVXNlciIsImVtYWlsIjoidXMqKioqKioqKkB0ZXN0c3MuY29tIn0.SmhJwNxNsAwdDooSdTubCJb5CdRxzcduGdaSz5Ycnn_J-B-4aoiM2jVkA-Gc76rATFKE1uz8xxyoq_Io9Lo9mB91TIRNInkTb_VMHkAtKwXl0LnSog8_ASl6rZ8wG1uojGAsOblj_jjzYbwWCF-cQpaZXkw0NhUh27LuKMAZjlIjG3sWzD5fTJLn_Vl4R1fOsCLHviuQy-fpUQ8WEtoDo8hME-w1ika00WTzMKYaOnNTSaHBz1n6c33ROB1ogdL5hHhK2UlmYg7Uv8X-zah_V7ip2WKZ8uR-DfIIsXfHsg4ESNX2BRl_tD8vTKN2E3jn4ERZ3w27PS3nebjGB6TNRw',
         'observe': 'response'
       }
     };
@@ -282,13 +282,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
             data['default_roles'] = ["CONTRIBUTOR"];
             data['enddate'] = data.program_end_date;
-
-            programConfigObj.board = this.userprofile.framework.board[0];
-            programConfigObj.gradeLevel = this.gradeLevelOption;
-            programConfigObj.medium = this.mediumOption;
-            programConfigObj.subject = data.subject;
             data['config'] = programConfigObj;
-
             delete data.gradeLevel;
             delete data.medium;
             delete data.subject;
@@ -354,44 +348,79 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     if (isChecked) {
       pcollectionsFormArray.push(new FormControl(collectionId));
-      tempCollections[collectionId] = collection;
-      /*this.mediumOption = _.concat(this.mediumOption, collection.medium);
-      this.gradeLevelOption = _.concat(this.gradeLevelOption, collection.gradeLevel);
-      this.subjectsOption = _.concat(this.subjectsOption, collection.subject);*/
+      this.tempCollections.push(collection);
     } else {
-      let index = pcollectionsFormArray.controls.findIndex(x => x.value == collectionId)
+      const index = pcollectionsFormArray.controls.findIndex(x => x.value == collectionId)
       pcollectionsFormArray.removeAt(index);
 
-      delete tempCollections[collectionId];
+      const cindex = this.tempCollections.findIndex(x => x.identifier == collectionId);
+      this.tempCollections.splice(cindex,1);
     }
-
-    console.log(tempCollections);
   }
 
   updateProgramCollection () {
+    if (_.isEmpty( this.collectionListForm.value.pcollections )) {
+      this.toasterService.warning('Please select at least a textbook');
+      return false;
+    }
+
     const option = {
       url: '/program/v1/collection/link',
       header: {
         'content-type' : 'application/json',
         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIyZThlNmU5MjA4YjI0MjJmOWFlM2EzNjdiODVmNWQzNiJ9.gvpNN7zEl28ZVaxXWgFmCL6n65UJfXZikUWOKSE8vJ8',
-        'X-Authenticated-User-Token': 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ1WXhXdE4tZzRfMld5MG5PS1ZoaE5hU0gtM2lSSjdXU25ibFlwVVU0TFRrIn0.eyJqdGkiOiI1YTcyYzcwYi1hYzdlLTQxYmItYTVhMi1lZmRiZWU3ZDBkYmUiLCJleHAiOjE1ODQ1MzQxNDEsIm5iZiI6MCwiaWF0IjoxNTg0MzYxMzQxLCJpc3MiOiJodHRwczovL2Rldi5zdW5iaXJkZWQub3JnL2F1dGgvcmVhbG1zL3N1bmJpcmQiLCJzdWIiOiJmOjVhOGEzZjJiLTM0MDktNDJlMC05MDAxLWY5MTNiYzBmZGUzMTo4NDU0Y2IyMS0zY2U5LTRlMzAtODViNS1mYWRlMDk3ODgwZDgiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhZG1pbi1jbGkiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiI3NjNjZmEyMi01NzQyLTQyZmMtYTk1ZC0yNzA0ZDUxZjc2ZjQiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHBzOi8vZGV2LmNlbnRyYWxpbmRpYS5jbG91ZGFwcC5henVyZS5jb20vIiwiaHR0cDovL2Rldi5jZW50cmFsaW5kaWEuY2xvdWRhcHAuYXp1cmUuY29tLyJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwic2NvcGUiOiIiLCJuYW1lIjoiTWVudG9yIEZpcnN0IFVzZXIiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJudHB0ZXN0MTA0IiwiZ2l2ZW5fbmFtZSI6Ik1lbnRvciBGaXJzdCIsImZhbWlseV9uYW1lIjoiVXNlciIsImVtYWlsIjoidXMqKioqKioqKkB0ZXN0c3MuY29tIn0.O4qydQ3K2Rm0dhE-GlzlA_D9eQVeu702K7blBzRKmu6I7ockmQxCM9Vh60ubJy2F3leCTjlD2_7fFxo_Ct_X6YWrkil2RkTiqj1sBuuMXNTpql407u1hIAcAbyLhphs3_wEGDH9kp7GHQn7oxIkGD5SatL4CVcl_K55gkBSdO-IsddPF01z17xPj5v0YofJ2YTXkB4h6g2eFSwtJ7g9vWse7-CZtQm7FG01nqTjb7-4PXAL7bNxkI2a3B6N6z1QtZDWOsohYPVVyeagjk3lhfhyodG2nvHI2Ohw8-F6jD_eMGRjD41PhGHOuF1irjapV8rU4BsS2eWlf0ERWEREp1A',
+        'X-Authenticated-User-Token': 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ1WXhXdE4tZzRfMld5MG5PS1ZoaE5hU0gtM2lSSjdXU25ibFlwVVU0TFRrIn0.eyJqdGkiOiIxYjMzODhlMC0xNmQ3LTQ3YWQtOTEwZi1jNWFiNjAwOGJmOTEiLCJleHAiOjE1ODQ2MTQ0NzgsIm5iZiI6MCwiaWF0IjoxNTg0NDQxNjc4LCJpc3MiOiJodHRwczovL2Rldi5zdW5iaXJkZWQub3JnL2F1dGgvcmVhbG1zL3N1bmJpcmQiLCJzdWIiOiJmOjVhOGEzZjJiLTM0MDktNDJlMC05MDAxLWY5MTNiYzBmZGUzMTo4NDU0Y2IyMS0zY2U5LTRlMzAtODViNS1mYWRlMDk3ODgwZDgiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhZG1pbi1jbGkiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiI5ODliNmNjYS0wNjQ3LTQ0NjUtOGNlZi0zNGRkNTI4M2NiZjgiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHBzOi8vZGV2LmNlbnRyYWxpbmRpYS5jbG91ZGFwcC5henVyZS5jb20vIiwiaHR0cDovL2Rldi5jZW50cmFsaW5kaWEuY2xvdWRhcHAuYXp1cmUuY29tLyJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwic2NvcGUiOiIiLCJuYW1lIjoiTWVudG9yIEZpcnN0IFVzZXIiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJudHB0ZXN0MTA0IiwiZ2l2ZW5fbmFtZSI6Ik1lbnRvciBGaXJzdCIsImZhbWlseV9uYW1lIjoiVXNlciIsImVtYWlsIjoidXMqKioqKioqKkB0ZXN0c3MuY29tIn0.SmhJwNxNsAwdDooSdTubCJb5CdRxzcduGdaSz5Ycnn_J-B-4aoiM2jVkA-Gc76rATFKE1uz8xxyoq_Io9Lo9mB91TIRNInkTb_VMHkAtKwXl0LnSog8_ASl6rZ8wG1uojGAsOblj_jjzYbwWCF-cQpaZXkw0NhUh27LuKMAZjlIjG3sWzD5fTJLn_Vl4R1fOsCLHviuQy-fpUQ8WEtoDo8hME-w1ika00WTzMKYaOnNTSaHBz1n6c33ROB1ogdL5hHhK2UlmYg7Uv8X-zah_V7ip2WKZ8uR-DfIIsXfHsg4ESNX2BRl_tD8vTKN2E3jn4ERZ3w27PS3nebjGB6TNRw',
         'observe': 'response'
       },
       data: {
         request: {
           'program_id': this.programId,
-          'collection_ids': this.collectionListForm.value.pcollections
+          'collection': this.collectionListForm.value.pcollections
           }
       }
     };
 
     this.programsService.post(option).subscribe(
-      (res) => {this.router.navigate(['/sourcing'])},
+      (res) => { this.addCollectionsToProgram(); },
       (err) => { console.log(err);
         // TODO: navigate to program list page
         const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
         this.toasterService.warning(errorMes || 'Fetching textbooks failed');
       }
+    );
+  }
+
+  addCollectionsToProgram() {
+    _.forEach(this.tempCollections, (collection) => {
+
+      if (this.mediumOption.indexOf(collection.medium) === -1) {
+        this.mediumOption.push(collection.medium);
+      }
+      if (this.subjectsOption.indexOf(collection.subject) === -1) {
+        this.subjectsOption.push(collection.subject);
+      }
+
+      _.forEach(collection.gradeLevel, (single) => {
+        if (this.gradeLevelOption.indexOf(single) === -1) {
+          this.gradeLevelOption.push(single);
+        }
+      });
+    });
+
+    let data = {};
+    data['program_id'] = this.programId;
+    data['collection_ids'] = this.collectionListForm.value.pcollections;
+
+    programConfigObj.board = this.userprofile.framework.board[0];
+    programConfigObj.gradeLevel = this.gradeLevelOption;
+    programConfigObj.medium = this.mediumOption;
+    programConfigObj.subject = this.subjectsOption;
+    data['config'] = programConfigObj;
+    data['status'] = "Live";
+
+    this.programsService.updateProgram(data).subscribe(
+      (res) => {this.router.navigate(['/sourcing'])},
+      (err) => this.saveProgramError(err)
     );
   }
 }
