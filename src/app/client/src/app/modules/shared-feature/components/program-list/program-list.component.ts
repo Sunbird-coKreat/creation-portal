@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ProgramsService } from '@sunbird/core';
-import { tap } from 'rxjs/operators';
-import { ResourceService, ToasterService } from '@sunbird/shared';
-import {ActivatedRoute, Router} from '@angular/router';
+import { ResourceService } from '@sunbird/shared';
+import { ActivatedRoute, Router } from '@angular/router';
+import { IProgram } from '../../../core/interfaces';
 import * as _ from 'lodash-es';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-program-list',
@@ -12,11 +13,11 @@ import * as _ from 'lodash-es';
 })
 export class ProgramListComponent implements OnInit {
 
-  public programs;
+  public programs: IProgram[];
+  public count = 0;
   public isContributor: boolean;
   public activeAllProgramsMenu: boolean;
   public activeMyProgramsMenu: boolean;
-
 
   constructor(private programsService: ProgramsService, public resourceService: ResourceService, private activatedRoute: ActivatedRoute,
     public router: Router) { }
@@ -44,16 +45,12 @@ export class ProgramListComponent implements OnInit {
           }
 
           if (this.activeMyProgramsMenu) {
-             this.getMyProgramsForContrib();
+             // this.getMyProgramsForContrib(); // TODO remove after my programs api ready
+             this.getAllProgramsForContrib('public');
           }
-
         } else {
           this.getMyProgramsForOrg();
         }
-
-        console.log('Am I contributor : ', this.isContributor);
-        console.log('activeMyProgramsMenu : ', this.activeMyProgramsMenu);
-        console.log('activeAllProgramsMenu : ', this.activeAllProgramsMenu);
       })
     ).subscribe();
   }
@@ -63,8 +60,9 @@ export class ProgramListComponent implements OnInit {
    */
   private getAllProgramsForContrib(type) {
     return this.programsService.getAllProgramsForContrib(type).subscribe(
-      programs => {
-        this.programs = programs;
+      response => {
+        this.programs = _.get(response, 'result.programs');
+        this.count = _.get(response, 'result.count');
       }
     );
   }
@@ -75,6 +73,7 @@ export class ProgramListComponent implements OnInit {
   private getMyProgramsForContrib() {
     return this.programsService.getMyProgramsForContrib().subscribe((response) => {
       this.programs = _.get(response, 'result.programs');
+      this.count = _.get(response, 'result.count');
     }, error => {
       console.log(error);
       // TODO: Add error toaster
@@ -87,14 +86,21 @@ export class ProgramListComponent implements OnInit {
   private getMyProgramsForOrg() {
     return this.programsService.getMyProgramsForOrg().subscribe((response) => {
       this.programs = _.get(response, 'result.programs');
+      this.count = _.get(response, 'result.count');
     }, error => {
       console.log(error);
       // TODO: Add error toaster
     });
   }
 
-  private getProgramTextbooks(program) {
-    return _.join(_.map(program.textbooks, 'name'), ', ');
+  private getProgramTextbooksCount(program) {
+    const count = program.collection_ids ? program.collection_ids.length : 0 ;
+
+    if (count < 2) {
+      return count + ' ' + this.resourceService.frmelmnts.lbl.textbook;
+    }
+
+    return count + ' ' + this.resourceService.frmelmnts.lbl.textbooks;
   }
 
   getProgramInfo(program, type) {
@@ -103,7 +109,15 @@ export class ProgramListComponent implements OnInit {
   }
 
   private getProgramNominationStatus(program) {
-    return program.nomination_status;
+    return program.nomination_status || 'Pending';
+  }
+
+  getSourcingOrgName(program) {
+    return program.sourcing_org_name ? program.sourcing_org_name : '-';
+  }
+
+  getProgramContentTypes(program) {
+    return _.join(program.content_types, ', ');
   }
 
   private viewDetailsBtnClicked(program) {
