@@ -21,10 +21,10 @@
 			</div>
 			<sui-tabset>
 				<div class="ui top attached tabular menu">
-					<a class="item" suiTabHeader="1" >Details</a>
-					<a class="item" suiTabHeader="2" >Select Textbooks</a>
+					<a class="item" suiTabHeader="1" [ngClass]="{'active' : !showTextBookSelector}">Details</a>
+					<a class="item" suiTabHeader="2" [ngClass]="{'active' : showTextBookSelector}" [isDisabled]="!showTextBookSelector">Select Textbooks</a>
 				</div>
-				<div class="ui bottom attached segment" suiTabContent="1" >
+				<div class="ui bottom attached segment" suiTabContent="1" [ngClass]="{'active' : !showTextBookSelector}">
 					<form class="ui form" [formGroup]="createProgramForm" (submit)="saveProgram()">
 						<div class="ui grid">
 							<div class="twelve wide column">
@@ -216,66 +216,68 @@
 						</div>
 					</form>
 				</div>
-				<div class="ui bottom attached segment" suiTabContent="2">
+				<div class="ui bottom attached segment" suiTabContent="2" [ngClass]="{'active' : showTextBookSelector}">
 					<div class="d-flex  flex-jc-space-between">
 						<div class="flex-70 pr-10">
-								<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable">
-							<thead class="sb-table-header sb-table-thead-gray">
-								<tr>
-										<th class="sb-sort-icon">
-											<div class="sb-checkbox sb-checkbox-primary">
-												<input type="checkbox" id="check1" name="example">
-												<label for="check1">57 Textbooks
-													</label>
-												</div>
-											</th>
-										<th class="sb-sort-icon">Medium</th>
-										<th class="sb-sort-icon">Class</th>
-										<th>No. of Chapters</th>
-										<th class="text-right"><button type="button" class="sb-btn sb-btn-normal sb-btn-primary">Add Selected</button></th>
-								</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>
-											<div class="sb-checkbox sb-checkbox-primary" onclick="getData()">
-												<input type="checkbox" id="check1" name="example">
-												<label for="check1">English</label>
-												</div>
-											</td>
-										<td>English</td>
-										<td>4</td>
-										<td>4</td>
-										<td class="text-right">-</td>
-									</tr>
-									<tr>
-											<td>
+								<div class="sb-table-responsive">
+								<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable"  *ngIf="showTextBookSelector">
+									<thead class="sb-table-header sb-table-thead-gray">
+										<tr>
+												<th class="sb-sort-icon">
 													<div class="sb-checkbox sb-checkbox-primary">
+														<input type="checkbox" id="check1" name="example">
+														<label for="check1">57 Textbooks
+															</label>
+														</div>
+													</th>
+												<th class="sb-sort-icon">Medium</th>
+												<th class="sb-sort-icon">Class</th>
+												<th>No. of Chapters</th>
+												<th class="text-right"><button type="button" class="sb-btn sb-btn-normal sb-btn-primary">Add Selected</button></th>
+										</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>
+													<div class="sb-checkbox sb-checkbox-primary" onclick="getData()">
 														<input type="checkbox" id="check1" name="example">
 														<label for="check1">English</label>
 														</div>
 													</td>
-											<td>English</td>
-											<td>4</td>
-											<td>4</td>
-											<td class="text-right">
-													<button type="button" class="sb-btn sb-btn-error sb-btn-normal">Remove</button>
-											</td>
-										</tr>
-										<tr>
-												<td>
-														<div class="sb-checkbox sb-checkbox-primary">
-															<input type="checkbox" id="check1" name="example">
-															<label for="check1">English</label>
-															</div>
-														</td>
 												<td>English</td>
 												<td>4</td>
 												<td>4</td>
-												<td class="sb-color-gray-400 text-right">Added in another program</td>
+												<td class="text-right">-</td>
 											</tr>
-								</tbody>
-								</table>
+											<tr>
+													<td>
+															<div class="sb-checkbox sb-checkbox-primary">
+																<input type="checkbox" id="check1" name="example">
+																<label for="check1">English</label>
+																</div>
+															</td>
+													<td>English</td>
+													<td>4</td>
+													<td>4</td>
+													<td class="text-right">
+															<button type="button" class="sb-btn sb-btn-error sb-btn-normal">Remove</button>
+													</td>
+												</tr>
+												<tr>
+														<td>
+																<div class="sb-checkbox sb-checkbox-primary">
+																	<input type="checkbox" id="check1" name="example">
+																	<label for="check1">English</label>
+																	</div>
+																</td>
+														<td>English</td>
+														<td>4</td>
+														<td>4</td>
+														<td class="sb-color-gray-400 text-right">Added in another program</td>
+													</tr>
+										</tbody>
+										</table>
+								</div>
 						</div>
 						<div class="flex-30 bt-l bt-r">
 								<div class="sb-bg-white b-1-100 br-4 o-y-auto fs-0-92">
