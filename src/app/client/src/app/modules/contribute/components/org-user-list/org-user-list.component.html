@@ -15,17 +15,27 @@
           <thead class="sb-table-header sb-table-thead-gray">
             <tr>
                 <th>Name</th>
-                <th>Role</th>
-                <th>Program</th>
-                <th class="text-center">Actions</th>
+                <th>
+                  <span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
+                    <div class="text">{{resourceService.frmelmnts.lbl.role}}</div>
+                    <i class="filter icon"></i>
+                    <div class="menu" suiDropdownMenu>
+                        <div class="item" selected>{{resourceService.frmelmnts.lbl.admin}}</div>
+                        <div class="item">{{resourceService.frmelmnts.lbl.reviewer}}</div>
+                        <div class="item">{{resourceService.frmelmnts.lbl.contributor}}</div>
+                    </div>
+                 </span>
+                </th>
+                <th>{{resourceService.frmelmnts.lbl.program}}</th>
+                <th class="text-center">{{resourceService.frmelmnts.lbl.anncmnttblactions}}</th>
             </tr>
           </thead>
           <tbody class="sb-table-body">
             <tr>
               <td>Nilesh</td>
               <td>
-                  <div> <label class="sb-label sb-label-table sb-label-success-0">Admin</label></div>
-                  <div> <label class="sb-label sb-label-table sb-label-primary-100">Contributor</label></div>
+                  <div> <label class="sb-label sb-label-table sb-label-success-0">{{resourceService.frmelmnts.lbl.admin}}</label></div>
+                  <div> <label class="sb-label sb-label-table sb-label-primary-100">{{resourceService.frmelmnts.lbl.contributor}}</label></div>
               </td>
               <td>
                 <div><span class="font-weight-bold">Kerala program one</span>(content contribution)</div>
@@ -37,7 +47,7 @@
             <tr>
                 <td>Nilesh</td>
                 <td>
-                  <div><label class="sb-label sb-label-table sb-label-warning-0">Reviewer</label></div>
+                  <div><label class="sb-label sb-label-table sb-label-warning-0">{{resourceService.frmelmnts.lbl.reviewer}}</label></div>
                 </td>
                 <td>
                     <div><span class="font-weight-bold">Kerala program one</span>(content contribution)</div>
@@ -49,9 +59,9 @@
               <tr>
                   <td>Nilesh</td>
                   <td>
-                  <div><label class="sb-label sb-label-table sb-label-success-0">Admin</label></div>
-                   <div><label class="sb-label sb-label-table sb-label-warning-0">Reviewer</label></div>
-                   <div><label class="sb-label sb-label-table sb-label-primary-100">Contributor</label></div>
+                  <div><label class="sb-label sb-label-table sb-label-success-0">{{resourceService.frmelmnts.lbl.admin}}</label></div>
+                   <div><label class="sb-label sb-label-table sb-label-warning-0">{{resourceService.frmelmnts.lbl.reviewer}}</label></div>
+                   <div><label class="sb-label sb-label-table sb-label-primary-100">{{resourceService.frmelmnts.lbl.contributor}}</label></div>
                   </td>
                   <td>
                     <div><span class="font-weight-bold">Kerala program one</span>(content contribution)</div>
