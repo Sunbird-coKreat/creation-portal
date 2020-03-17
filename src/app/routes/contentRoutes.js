@@ -36,7 +36,7 @@ module.exports = (app) => {
             }
         }))
 
-        app.all('/content/program/*',
+    app.all('/content/program/*',
         permissionsHelper.checkPermission(),
         proxy(contentURL, {
             limit: reqDataLimitOfContentUpload,
@@ -46,7 +46,7 @@ module.exports = (app) => {
             },
             userResDecorator: (proxyRes, proxyResData, req, res) => {
                 try {
-                    logger.info({msg: '/content/program/ called'});
+                    logger.info({msg: '/content/program called'});
                     const data = JSON.parse(proxyResData.toString('utf8'));
                     if (req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
                     else return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data)
@@ -55,7 +55,30 @@ module.exports = (app) => {
                     return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res)
                 }
             }
-        }))
+        })
+    )
+
+    app.all('/content/reg/*',
+        permissionsHelper.checkPermission(),
+        proxy(contentURL, {
+            limit: reqDataLimitOfContentUpload,
+            proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+            proxyReqPathResolver: (req) => {
+                return require('url').parse(contentURL + req.originalUrl.replace('/content/', '')).path
+            },
+            userResDecorator: (proxyRes, proxyResData, req, res) => {
+                try {
+                    logger.info({msg: '/content/reg called'});
+                    const data = JSON.parse(proxyResData.toString('utf8'));
+                    if (req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
+                    else return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data)
+                } catch (err) {
+                    logger.error({msg: 'content api user res decorator json parse error', proxyResData});
+                    return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res)
+                }
+            }
+        })
+    )
 
     app.all('/content/*',
         healthService.checkDependantServiceHealth(['CONTENT', 'CASSANDRA']),
