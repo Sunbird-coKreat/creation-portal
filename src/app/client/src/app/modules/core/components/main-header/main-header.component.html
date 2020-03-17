@@ -87,7 +87,7 @@
             </div>
         </ng-container>
         <ng-template #defaultView>
-            
+
             <div class="ui container d-flex flex-ai-center mx-0 sb-dock-menu">
                 <a routerLink="contribute/dashboard" *ngIf="this.router.url.includes('/contribute')" [class.active]="this.router.isActive('/contribute/dashboard', true)">{{ resourceService.frmelmnts.lnk.dashboard }}</a>
                     <a routerLink="sourcing" *ngIf="this.router.url.includes('/sourcing')" [class.active]="this.router.isActive('/sourcing', true)">{{ resourceService.frmelmnts.lbl.myPrograms }}</a>
