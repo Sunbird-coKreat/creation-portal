@@ -1,5 +1,4 @@
 
-
 <div *ngIf="!showLoader && !showError && currentStage === 'collectionComponent'">
   <!-- <div class="state-medium-container sb-bg-color-white">
     <div class="ui container d-flex flex-ai-center">
@@ -194,10 +193,10 @@
       Select ContentTypes
   </div>
   <div class="sb-modal-content">
-    <div class="mb-10" *ngFor="let contenttype of contentTypeList">
+    <div class="mb-10" *ngFor="let contenttype of contentType">
       <div class="sb-checkbox sb-checkbox-primary">
         <input class="checking" [(ngModel)]="contenttype.isSelected" (change)="toggle(contenttype);" (click)="$event.stopPropagation()" type="checkbox">
-        <label for="check1" class="mb-0"> {{contenttype.name}}</label>
+        <label for="check1" class="mb-0"> {{contenttype}}</label>
       </div>
       <!-- <sui-checkbox name="{{contenttype.name}}" (click)="toggle($event, contenttype, contenttype.value);">{{contenttype.name}}</sui-checkbox> -->
     </div>

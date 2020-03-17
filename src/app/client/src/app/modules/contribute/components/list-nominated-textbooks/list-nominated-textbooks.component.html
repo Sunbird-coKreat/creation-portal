@@ -1,52 +1,92 @@
-<div class="ui container" *ngIf="!showChapterList">
-	<div class="sb-pageSection my-24 ui container" [appTelemetryImpression]="telemetryImpression">
-		<div class="sb-pageSection-header row">
+<div *ngIf="!showChapterList">
+	<div class="sb-pageSection" [appTelemetryImpression]="telemetryImpression">
+		<div class="ui container my-24">
 			<h4 class="sb-pageSection-title six">New Program FEB2020
 					<ng-template #popupTemplate>
 					<div class="content">
 						<div class="textbook-details ml-8">
-					<div class="d-flex flex-ai-center">
-					  <span class="dot-separator"></span>
-					  <label class="d-block fsmall font-weight-normal mb-0">Marathi, Hindi, English</label>
-					</div>
-					<div class="d-flex flex-ai-center">
-					  <span class="dot-separator"></span>
-					  <label class="d-block fsmall font-weight-normal mb-0">Grade 1, Grade 2</label>
-					</div>
-					<div class="d-flex flex-ai-center">
-					  <span class="dot-separator"></span>
-					  <label class="d-block fsmall font-weight-normal mb-0">
-						Nomination End Date:  July 26th, 2019
-					  </label>
-					</div>
-					<div class="d-flex flex-ai-center">
-					  <span class="dot-separator"></span>
-					  <label class="d-block fsmall font-weight-normal mb-0">
-						Nomination Shortlisting Date:  Aug 5th, 2019
-					  </label>
-					</div>
-					<div class="d-flex flex-ai-center">
-					  <span class="dot-separator"></span>
-					  <label class="d-block fsmall font-weight-normal mb-0">
-						Contribution End Date:  Aug 20th, 2019
-					  </label>
-					</div>
-					<div class="d-flex flex-ai-center">
-					  <span class="dot-separator"></span>
-					  <label class="d-block fsmall font-weight-normal mb-0">
-						Program End Date:  Aug 30th, 2019
-					  </label>
-					</div>
-					</div>
+								<div class="header"><strong>Medium</strong></div>
+									<div class="content">
+										<label class="d-block fsmall font-weight-normal mb-0">Marathi, Hindi, English</label>
+									</div>
+									<hr />
+									<div class="header"><strong>Grades / Classes</strong></div>
+									<div class="content">
+										<label class="d-block fsmall font-weight-normal mb-0"
+											>Grade 1, Grade 2</label>
+									</div>
+									<hr />
+                <div class="header">
+                  <strong>Nomination End Date</strong>
+                </div>
+                <div class="content">
+                  <label class="d-block fsmall font-weight-normal mb-0">
+                    July 26th, 2019
+                  </label>
+                </div>
+								<hr />
+								<div class="header">
+										<strong>	Nomination Shortlisting Date</strong>
+									</div>
+									<div class="content">
+										<label class="d-block fsmall font-weight-normal mb-0">
+												Aug 5th, 2019
+										</label>
+									</div>
+									<hr />
+									<div class="header">
+											<strong>Contribution End Date</strong>
+										</div>
+										<div class="content">
+											<label class="d-block fsmall font-weight-normal mb-0">
+													Aug 20th, 2019
+											</label>
+										</div>
+										<hr />
+									<div class="header">
+											<strong>Program End Date</strong>
+										</div>
+										<div class="content">
+											<label class="d-block fsmall font-weight-normal mb-0">
+													Aug 30th, 2019
+											</label>
+										</div>
+							</div>
 					</div>
 				</ng-template>
-			
-				<i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate"></i>
-			</h4>
-		</div>
-		<div class="sb-pageSection-content mt-12">
-			<label class="d-block fs-1 mb-4">Textbook List</label>
-
+					<i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
+				</h4>
+		<div class="d-flex flex-jc-space-between flex-ai-center fnormal mt-8">
+				<div class="d-flex flex-dc flex-25 pr-16">
+					<div class="sb__ellipsis" suiPopup popupHeader="Grades/Class" popupText="Grade 1, Grade 2">Grade 1, Grade 2</div>
+					<div class="divider my-4"></div>
+					<div class="sb__ellipsis" suiPopup popupHeader="Medium" popupText="English, Marthi, Hindi">English, Marthi, Hindi</div>
+				</div>
+				<div class="d-flex flex-ai-center flex-jc-space-between flex-75 ">
+					<dl class="sb-meta-data mb-0 pr-8 w-25">
+						<dt class="sb__ellipsis" suiPopup popupHeader="Expression of Interest Date" popupText="July 26th, 2019">Nomination End Date</dt>
+						<dd>July 26th, 2019</dd>
+						</dl>
+						<dl class="sb-meta-data mb-0 pr-8 w-25">
+						<dt class="sb__ellipsis" suiPopup popupHeader="Expression of Interest Date" popupText="July 26th, 2019">Nomination Shortlisting Date</dt>
+						<dd>July 26th, 2019</dd>
+						</dl>
+						<dl class="sb-meta-data mb-0 pr-8 w-25">
+						<dt class="sb__ellipsis" suiPopup popupHeader="Expression of Interest Date" popupText="July 26th, 2019">Contribution End Date</dt>
+						<dd>July 26th, 2019</dd>
+						</dl>
+						<dl class="sb-meta-data mb-0 pr-8 w-25">
+						<dt class="sb__ellipsis" suiPopup popupHeader="Expression of Interest Date" popupText="July 26th, 2019">Program End Date</dt>
+						<dd>July 26th, 2019</dd>
+						</dl>
+				</div>
+				</div>
+			</div>
+<div class="sb-bg-color-white pb-40 dynamicHeight">
+		<div class="ui container sb-pageSection">
+			<div class="sb-pageSection-header pt-16">
+				<h4 class="sb-pageSection-title">Textbook List<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">10</span></h4>
+			</div>
 			<!-- <div class="ui grid">
 				<div class="six wide column">
 					<label class="fs-1 mb-4">Contributor: </label>
@@ -92,7 +132,7 @@
 		</div>
 	</div>
 </div>
-
+</div>
 <ng-container *ngIf="showChapterList">
 	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>
   </ng-container>

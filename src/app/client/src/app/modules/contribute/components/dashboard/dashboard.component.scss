@@ -41,8 +41,16 @@ h1{
     }
 }
 
+@media (min-width:768px){
+  .sb-card{
+    width: 11.7rem;
+  }
+  .sb-card-cover{
+    justify-content: center;
+  }
+}
 .sb-stat-card-item__container {
-  @extend .d-flex;
+    @extend .d-flex;
     @extend .flex-dc;
     flex:1;
   .sb-stat-card__item {
@@ -52,4 +60,7 @@ h1{
     font-size: 0.875rem;
     padding-left: 0.25rem;
   }
+}
+.mt-50{
+  margin-top:3rem;
 }

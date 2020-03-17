@@ -22,7 +22,7 @@ import { ListNominatedTextbooksComponent} from './components/list-nominated-text
 import { OrgUserListComponent } from './components/org-user-list/org-user-list.component';
 import { OrgContriAdminComponent } from './components/org-contri-admin/org-contri-admin.component';
 import { ContriDashboardComponent } from './components/dashboard/dashboard.component';
-// import { MyProgramComponent} from './components/my-program/my-program.component';
+// import { DummyComponent } from  './components/dummy/dummy.component// import { MyProgramComponent} from './components/my-program/my-program.component';
 @NgModule({
   declarations: [
     ListAllProgramsComponent,
