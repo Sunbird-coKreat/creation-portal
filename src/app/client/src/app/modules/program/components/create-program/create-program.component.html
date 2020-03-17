@@ -117,20 +117,17 @@
 							<div class="twelve wide column py-0 form-section-separator">
 								<h4>Program Scope</h4>
 							</div>
-							
+
 							<div class="four wide column">
 								<div class="required field">
 									<label>Select Medium</label>
-									<sui-multi-select formControlName="medium" class="selection"
-									labelField="name"
-									[hasLabels]="true"
-									[options]="options"
-									valueField="name"
-									#multiSelect>
-									<sui-select-option *ngFor="let option of programScope.medium"
-									[value]="option" >
-									</sui-select-option>
+
+									<sui-multi-select placeholder="{{resourceService?.frmelmnts?.lbl?.profile?.selectMedium}}" class="selection"
+										[options]="programScope['medium']" [isDisabled]="!programScope['medium']" formControlName="medium" (ngModelChange)="onMediumChange()" labelField="name"
+										[isSearchable]="true" #mediums>
+										<sui-select-option *ngFor="let medium of mediums.filteredOptions" [value]="medium"> </sui-select-option>
 									</sui-multi-select>
+
 									<div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['medium'].errors && createProgramForm.controls['medium'].errors.required && (!createProgramForm.controls['medium'].pristine || formIsInvalid)">
 										This field is required
 									</div>
@@ -140,13 +137,11 @@
 								<div class="required field">
 									<label> Grade / Class </label>
 									<sui-multi-select formControlName="gradeLevel" class="selection"
-									labelField="name"
-									[hasLabels]="true"
-									[options]="programScope.gradeLevel"
-									valueField="name"
-									#multiSelect>
-									<sui-select-option *ngFor="let option of programScope.gradeLevel"
-									[value]="option" >
+									labelField="name" (ngModelChange)="onClassChange()"
+									[options]="programScope['gradeLevel']"
+									[isSearchable]="true"
+									#graveLevels>
+									<sui-select-option *ngFor="let gradeLevel of graveLevels.filteredOptions" [value]="gradeLevel" >
 									</sui-select-option>
 									</sui-multi-select>
 									<div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['gradeLevel'].errors && createProgramForm.controls['gradeLevel'].errors.required && (!createProgramForm.controls['gradeLevel'].pristine || formIsInvalid)">
@@ -157,15 +152,15 @@
 							<div class="four wide column">
 								<div class="required field">
 									<label> Subject</label>
-									<sui-multi-select class="selection"
+									<sui-multi-select class="selection" [isSearchable]="true"
 									formControlName="subject"
 									labelField="name"
 									[hasLabels]="true"
-									[options]="programScope.subject"
+									[options]="programScope['subject']"
 									valueField="name"
-									#multiSelect>
-									<sui-select-option *ngFor="let option of programScope.subject"
-									[value]="option" >
+									#subjects>
+									<sui-select-option *ngFor="let subject of subjects.filteredOptions"
+									[value]="subject" >
 									</sui-select-option>
 									</sui-multi-select>
 									<div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['subject'].errors && createProgramForm.controls['subject'].errors.required && (!createProgramForm.controls['subject'].pristine || formIsInvalid)">
@@ -238,7 +233,7 @@
 							<tr *ngFor="let data of collections" >
 							<td class="collapsing">
 								<div class="sb-checkbox sb-checkbox-primary">
-									<input type="checkbox" id="checkitem" (change)="onCollectionCheck(data.identifier, $event.target.checked)" [checked]="isSelected" name="checkitem">
+									<input type="checkbox" id="checkitem" (change)="onCollectionCheck(data, $event.target.checked)" [checked]="isSelected" name="checkitem">
 									<label for="checkitem"></label>
 								</div>
 							</td>
