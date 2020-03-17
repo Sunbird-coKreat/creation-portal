@@ -2,13 +2,15 @@ import { Injectable } from '@angular/core';
 import { mergeMap, catchError, tap, retry, map, skipWhile } from 'rxjs/operators';
 import { ExtPluginService } from './../ext-plugin/ext-plugin.service';
 import { PublicDataService } from './../public-data/public-data.service';
-import { ConfigService, ServerResponse, ToasterService, ResourceService } from '@sunbird/shared';
+import { ConfigService,  ToasterService, ResourceService } from '@sunbird/shared';
 import { UserService } from '../user/user.service';
-import { combineLatest, of, iif, Observable, BehaviorSubject, throwError, merge } from 'rxjs';
+import { combineLatest, of, iif, BehaviorSubject, throwError, merge } from 'rxjs';
 import * as _ from 'lodash-es';
 import { CanActivate, Router } from '@angular/router';
 import { DataService } from '../data/data.service';
 import { HttpClient } from '@angular/common/http';
+import { ServerResponse, RequestParam, HttpOptions } from '@sunbird/shared';
+import { of as observableOf, throwError as observableThrowError, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -25,21 +27,49 @@ export class EnrollContributorService extends DataService {
     private router: Router, private toasterService: ToasterService, private resourceService: ResourceService) {
       super(http);
       this.config = config;
-      this.baseUrl = this.config.urlConFig.URLS.PUBLIC_PREFIX;
+      this.baseUrl = "http://dock.sunbirded.org/api/";
+  
     }
 
-    enrollContributor(request): Observable<ServerResponse> {
-      const req = {
-        url: request.url,
+    // enrollContributor(request): Observable<ServerResponse> {
+    //   const req = {
+    //     url: request.url,
+    //     headers: {
+    //       'content-type' : 'application/json',
+    //       'Access-Control-Allow-Headers' : '*'
+    //     },
+    //     data: {
+    //           request
+    //     },
+    //   };
+  
+    //   return this.post(req);
+    // }
+
+    saveData(option)
+    {
+      const httpOptions: HttpOptions = {
         headers: {
-          'content-type' : 'application/json'
-        },
-        data: {
-          request
+          'Content-Type' : "application/json",
+          'Authorization' : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhMzRmNjM3NTM4ZTg0MTc3OWVlNjMwM2FkYzExNDY0NCJ9.RpY7PL4ASDLNOU9xMCKXZtDF4vUPuMTDVO6keh4kI1M"
         }
       };
-  
-      return this.post(req);
-    }
+    //   return this.http.post<any>( this.baseUrl + option.url, option.data, httpOptions).subscribe(
+    //     (res) => {
+    //             res
+    //           }, 
+    //     (err) => {
+    //       console.log(err);
+    //       const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+    //     }
+    //   );
 
+    return this.http.post(this.baseUrl + option.url, option.data, httpOptions).pipe(
+      mergeMap((data: ServerResponse) => {
+        if (data.responseCode !== 'OK') {
+          return observableThrowError(data);
+        }
+        return observableOf(data);
+      }));
+     }
 }

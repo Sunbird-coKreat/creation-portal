@@ -8,37 +8,15 @@
     (dismissed)="closeModal();" 
     #modal>
   <div class="sb-modal-header">
-    {{'Enroll as Contributor'}}
+    {{resourceService.frmelmnts.lbl.enrollAsContributor}}
   </div>
   <div class="sb-modal-content o-y-visible onBoardDropdown">
     <div class="twelve wide tablet seven wide computer column form-fields">
       <form class="ui form" [formGroup]="contributeForm" (submit)="saveUser()">
          <div class="ui grid m-0 p-0">
             <div class="six wide column sb-field-group p-0 pr-16 mb-8">
-               <label>Board</label>
-               <div class="sb-field">
-                  <!-- <ng-template let-option #optionTemplate >
-                     <div class="field m-0">
-                        <div class="template-checkbox">
-                           <div class="p-5 option-text"  title="{{option.name}}">
-                              {{option.name}}
-                           </div>
-                           <div class="ml-auto">
-                              <i class="square outline medium icon"></i>
-                           </div>
-                        </div>
-                     </div>
-                  </ng-template>
-                  <sui-multi-select class="selection"
-                  labelField="name"
-                  [hasLabels]="true"
-                  [options]="options"
-                  valueField="name"
-                  #multiSelect>
-                  <sui-select-option *ngFor="let option of data.board"
-                  [value]="option" >
-                  </sui-select-option>
-                  </sui-multi-select> -->
+               <label>{{resourceService.frmelmnts.lbl.board}}</label>
+               <div class="sb-field required field">
                   <sui-multi-select class="selection"
                   formControlName="board"
                      labelField="name"
@@ -49,35 +27,15 @@
                         <sui-select-option *ngFor="let option of enrollDetails.board"
                         [value]="option" >
                         </sui-select-option>
-						</sui-multi-select>
+                  </sui-multi-select>
+                  <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['board'].errors && contributeForm.controls['board'].errors.required && (!contributeForm.controls['board'].pristine || formIsInvalid)">
+							This field is required
+						</div>
                </div>
             </div>
             <div class="six wide column sb-field-group p-0 mb-8">
-               <label>Select Medium</label>
-               <div class="sb-field">
-                  <!-- <ng-template let-option #optionTemplate >
-                     <div class="field m-0">
-                        <div class="template-checkbox">
-                           <div class="p-5 option-text"  title="{{option.name}}">
-                              {{option.name}}
-                           </div>
-                           <div class="ml-auto">
-                              <i class="square outline medium icon"></i>
-                           </div>
-                        </div>
-                     </div>
-                  </ng-template>
-                  <sui-multi-select class="selection"
-                  labelField="name"
-                  [hasLabels]="true"
-                  [options]="options"
-                  valueField="name"
-                  #multiSelect>
-                  <sui-select-option *ngFor="let option of data.medium"
-                  [value]="option" >
-                  </sui-select-option>
-                  </sui-multi-select> -->
-                   <!-- formControlName="medium" -->
+               <label>{{resourceService.frmelmnts.lbl.selectMedium}}</label>
+               <div class="sb-field required field">
                   <sui-multi-select class="selection"
                   formControlName="medium"
                   labelField="name"
@@ -88,37 +46,17 @@
                      <sui-select-option *ngFor="let option of enrollDetails.medium"
                      [value]="option" >
                      </sui-select-option>
-						</sui-multi-select>
+                  </sui-multi-select>
+                  <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['medium'].errors && contributeForm.controls['medium'].errors.required && (!contributeForm.controls['medium'].pristine || formIsInvalid)">
+							This field is required
+						</div>
                   
                </div>
             </div>
          
             <div class="six wide column sb-field-group p-0 pr-16 mb-8">
-               <label>Grade / Class</label>
-               <div class="sb-field">
-                  <!-- <ng-template let-option #optionTemplate >
-                     <div class="field m-0">
-                        <div class="template-checkbox">
-                           <div class="p-5 option-text"  title="{{option.name}}">
-                              {{option.name}}
-                           </div>
-                           <div class="ml-auto">
-                              <i class="square outline medium icon"></i>
-                           </div>
-                        </div>
-                     </div>
-                  </ng-template>
-                  <sui-multi-select class="selection"
-                  labelField="name"
-                  [hasLabels]="true"
-                  [options]="data.grade"
-                  valueField="name"
-                  #multiSelect>
-                  <sui-select-option *ngFor="let option of data.grade"
-                  [value]="option" >
-                  </sui-select-option>
-                  </sui-multi-select> -->
-                  <!-- formControlName="gradeLevel" -->
+               <label>{{resourceService.frmelmnts.lbl.gradeClass}}</label>
+               <div class="sb-field required field">
                   <sui-multi-select  class="selection"
                      formControlName="gradeLevel"
                      labelField="name"
@@ -129,36 +67,16 @@
                      <sui-select-option *ngFor="let option of enrollDetails.gradeLevel"
                      [value]="option" >
 						   </sui-select-option>
-						</sui-multi-select>
+                  </sui-multi-select>
+                  <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['gradeLevel'].errors && contributeForm.controls['gradeLevel'].errors.required && (!contributeForm.controls['gradeLevel'].pristine || formIsInvalid)">
+							This field is required
+						</div>
                </div>
             </div>
 
             <div class="six wide column sb-field-group p-0 mb-8">
-               <label>Subject</label>
-               <div class="sb-field">
-                  <!-- <ng-template let-option #optionTemplate >
-                     <div class="field m-0">
-                        <div class="template-checkbox">
-                           <div class="p-5 option-text"  title="{{option.name}}">
-                              {{option.name}}
-                           </div>
-                           <div class="ml-auto">
-                              <i class="square outline medium icon"></i>
-                           </div>
-                        </div>
-                     </div>
-                  </ng-template>
-                  <sui-multi-select class="selection"
-                  labelField="name"
-                  [hasLabels]="true"
-                  [options]="data.subject"
-                  valueField="name"
-                  #multiSelect>
-                  <sui-select-option *ngFor="let option of data.subject"
-                  [value]="option" >
-                  </sui-select-option>
-                  </sui-multi-select> -->
-                  <!-- formControlName="subject" -->
+               <label>{{resourceService.frmelmnts.lbl.subject}}</label>
+               <div class="sb-field required field">
                   <sui-multi-select class="selection"
                      formControlName="subject"
                      labelField="name"
@@ -169,38 +87,18 @@
                         <sui-select-option *ngFor="let option of enrollDetails.subject"
                         [value]="option" >
                         </sui-select-option>
-						</sui-multi-select>
+                  </sui-multi-select>
+                  <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['subject'].errors && contributeForm.controls['subject'].errors.required && (!contributeForm.controls['subject'].pristine || formIsInvalid)">
+							This field is required
+						</div>
                </div>
             </div>
          </div>
 
          <div class="ui grid m-0 p-0">
             <div class="twelve wide column sb-field-group p-0 pr-16 mb-8">
-               <label>Types of content</label>
-               <div class="sb-field">
-                  <!-- <ng-template let-option #optionTemplate >
-                     <div class="field m-0">
-                        <div class="template-checkbox">
-                           <div class="p-5 option-text"  title="{{option.name}}">
-                              {{option.name}}
-                           </div>
-                           <div class="ml-auto">
-                              <i class="square outline medium icon"></i>
-                           </div>
-                        </div>
-                     </div>
-                  </ng-template>
-                  <sui-multi-select class="selection"
-                  labelField="name"
-                  [hasLabels]="true"
-                  [options]="options"
-                  valueField="name"
-                  #multiSelect>
-                  <sui-select-option *ngFor="let option of data.board"
-                  [value]="option" >
-                  </sui-select-option>
-                  </sui-multi-select> -->
-                  <!-- formControlName="content_types" -->
+               <label>{{resourceService.frmelmnts.lbl.typesOfContent}}</label>
+               <div class="sb-field required field">
                   <sui-multi-select class="selection"
                      formControlName="contentTypes"
                      labelField="name"
@@ -211,77 +109,56 @@
                      <sui-select-option *ngFor="let option of contentType.contentType"
                      [value]="option" >
                      </sui-select-option>
-									</sui-multi-select>
+                  </sui-multi-select>
+                  <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['contentTypes'].errors && contributeForm.controls['contentTypes'].errors.required && (!contributeForm.controls['contentTypes'].pristine || formIsInvalid)">
+							This field is required
+						</div>
                </div>
             </div>
          </div>
 
          <div class="sb-field-group mb-8">
             <label>Do you want enroll as Organisation? </label>
+            <!-- (click)="enrollAsOrg=true" -->
             <div class="sb-field mt-4 d-flex">
                <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-                  <input type="radio" id="radio1" name="enrollAsOrg"  (click)="enrollAsOrg=true">
+                  <input type="radio" id="radio1" name="enrollAsOrg"  (click)="chnageEnrollStatus(true)">
                   <label for="radio1">Yes</label>
                </div>
                <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-                  <input type="radio" id="radio2" name="enrollAsOrg"  (click)="enrollAsOrg=false">
+                  <input type="radio" id="radio1" name="enrollAsOrg"  (click)="chnageEnrollStatus(false)">
                   <label for="radio2">No</label>
                </div>
             </div>
          </div>
 
             <div class="sb-field-group mb-8"  *ngIf="enrollAsOrg === true">
-               <label>Name of Organisation</label>
-               <div class="sb-field">
+               <label>{{resourceService.frmelmnts.lbl.nameOfOrganisation}}</label>
+               <div class="sb-field required field">
                    <input class="sb-form-control" placeholder="Name of an Organisation" formControlName="name">
+                   <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['name'].errors && contributeForm.controls['name'].errors.required && (!contributeForm.controls['name'].pristine || formIsInvalid)">
+							This field is required
+						</div>
                </div>
             </div>
-
              <div class="sb-field-group mb-8" *ngIf="enrollAsOrg === true">
-               <label>Description of Organisation</label>
-               <div class="sb-field">
-                  <textarea rows="4" class="sb-form-control" placeholder="Description of Organisation" spellcheck="false" formControlName="description"></textarea>
-                  <span class="characters-left">1000 Characters left</span>
+               <label>{{resourceService.frmelmnts.lbl.description}}</label>
+               <div class="sb-field required field">
+                  <textarea rows="4" class="sb-form-control" placeholder="Contributor Information" spellcheck="false" formControlName="description"></textarea>
+                  <span class="characters-left">{{resourceService.frmelmnts.lbl.thousandCharacterLeft}}</span>
+                  <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['description'].errors && contributeForm.controls['description'].errors.required && (!contributeForm.controls['description'].pristine || formIsInvalid)">
+							This field is required
+						</div>
                </div>
             </div>
-<!-- 
-            <div class="sb-field-group mb-8">
-               <label>Website</label>
-               <div class="sb-field">
-                   <input class="sb-form-control" placeholder="Website URL">
-               </div>
-            </div>
-             
-            <div class="twelve wide column">
-               <div class="field">
-                  <label>Types of content</label>
-               </div>
-               <div class="d-flex flex-w-wrap mt-4 mb-8">
-                  <div class="sb-checkbox sb-checkbox-primary">
-                     <input type="checkbox"  id="check1" name="example">
-                     <label for="check1">Explanation video</label>
-                  </div>
-                  <div class="sb-checkbox sb-checkbox-primary ml-16">
-                     <input type="checkbox" id="check2" name="example">
-                     <label for="check2">Practice Question set</label>
-                  </div>
-                  <div class="sb-checkbox sb-checkbox-primary ml-16">
-                     <input type="checkbox" id="check3" name="example">
-                     <label for="check3">Lesson plan pdf</label>
-                  </div>
-               </div>	
-            </div>				
-
-            <div class="twelve wide column py-0 form-section-separator">
-               <h4>Your proficiency</h4>
-            </div> -->
-
         </form>
     </div>
   </div>
   <div class="sb-modal-actions">
-    <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="saveUser()">
-      {{'Submit'}}
+   <!-- [disabled]="!disableSubmit" -->
+    <button class="sb-btn sb-btn-normal sb-btn-primary"
+      (click)="saveUser()">
+      {{resourceService.frmelmnts.btn.submit}}
     </button>
   </div>
 </sui-modal>

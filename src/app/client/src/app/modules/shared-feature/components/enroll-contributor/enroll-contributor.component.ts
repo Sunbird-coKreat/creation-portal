@@ -1,5 +1,4 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { ToasterService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormBuilder, Validators, FormGroup, FormArray } from '@angular/forms';
 import * as _ from 'lodash-es';
@@ -9,6 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { Subscription, Subject, interval ,} from 'rxjs';
 import { ServerResponse, RequestParam, HttpOptions } from '@sunbird/shared';
 import { of as observableOf, throwError as observableThrowError, Observable  } from 'rxjs';
+import { ToasterService, ResourceService } from '@sunbird/shared';
 
 @Component({
   selector: 'app-enroll-contributor',
@@ -21,6 +21,7 @@ export class EnrollContributorComponent implements OnInit {
   public userProfile: any;
   public programScope = {};
   frameworkdetails;
+  formIsInvalid = false;
   contentType = {
     'contentType': [{
       'name': 'Resource',
@@ -62,14 +63,16 @@ export class EnrollContributorComponent implements OnInit {
 
   options;
   disableSubmit = false;
-  public contributeForm:any;
+  public contributeForm:FormGroup;
+  public mapUserId: string
+  public mapOrgId: string
   @Output() close = new EventEmitter<any>();
 
-  constructor(private tosterService: ToasterService, public userService: UserService, public frameworkService : FrameworkService, public toasterService : ToasterService, public formBuilder: FormBuilder, public http: HttpClient, public enrollContributorService : EnrollContributorService ) { }
+  constructor(private tosterService: ToasterService, public userService: UserService, public frameworkService : FrameworkService, public toasterService : ToasterService, public formBuilder: FormBuilder, public http: HttpClient, public enrollContributorService : EnrollContributorService,  public resourceService : ResourceService  ) { }
 
   ngOnInit(): void {
     this.userProfile = this.userService.userProfile;
-    console.log(this.userProfile)
+    console.log(this.userProfile )
     this.fetchFrameWorkDetails();
     this.initializeFormFields();
   }
@@ -92,6 +95,8 @@ export class EnrollContributorComponent implements OnInit {
     fields.forEach( (element) => {
       this.enrollDetails[element['code']] = element['terms'];
     });
+
+    console.log(this.enrollDetails, "frmaework");
   }
 
   initializeFormFields(): void {
@@ -100,143 +105,146 @@ export class EnrollContributorComponent implements OnInit {
         medium: ['', Validators.required],
         gradeLevel: ['', Validators.required],
         subject: ['', Validators.required],
-        contentTypes: [],
-        name: ['', Validators.required],
-        description: ['', Validators.required],
+        contentTypes: ['', Validators.required],
+        name: [''],
+        description: [''],
     });
   }
 
+  validateAllFormFields(formGroup: FormGroup) {
+    Object.keys(formGroup.controls).forEach(field => {
+        const control = formGroup.get(field);
+        control.markAsTouched();
+    });
+}
   saveUser() {
-    
-   if(this.enrollAsOrg === false)
-   {
-      const User = {
-        ...this.contributeForm.value
-        
-    };
-      User['firstName'] =  this.userProfile.firstName;
-      User['firstName'] =  this.userProfile.firstName;
-      User['userId'] =  this.userProfile.identifier;
-      User['certificates'] =  "";
-      User['channel'] = "sunbird";
-      this.enrollUser(User);
-   }
-   if(this.enrollAsOrg === true)
-   {
-      const Org = {
-        ...this.contributeForm.value
-        
-    };
+    this.formIsInvalid = false;
+    if (this.contributeForm.dirty && this.contributeForm.valid) {
+      if(this.enrollAsOrg === false)
+      {
+          const User = {
+            ...this.contributeForm.value
+            
+        };
+          User['firstName'] =  this.userProfile.firstName;
+          User['firstName'] =  this.userProfile.firstName;
+          User['userId'] =  this.userProfile.identifier;
+          User['certificates'] =  "";
+          User['channel'] = "sunbird";
+          this.enrollUser(User);
+      }
+      if(this.enrollAsOrg === true)
+      {
 
-      Org['createdBy'] =  this.userProfile.identifier;
-      Org['code'] = "COde";
-      this.enrollAsOrganisation(Org);
-   }
-    //data['enrolledDate'] = "23-3-2020";
-    // this.enrollUser(data).subscribe(
-    //   (res) => this.saveSuccess(res),
-    //   (err) => this.saveError(err),
-    // );
-    
+        const User = {
+          ...this.contributeForm.value
+            
+        };
+          User['firstName'] =  this.userProfile.firstName;
+          User['firstName'] =  this.userProfile.firstName;
+          User['userId'] =  this.userProfile.identifier;
+          User['certificates'] =  "";
+          User['channel'] = "sunbird";
+          this.enrollUser(User);
+            const Org = {
+              ...this.contributeForm.value   
+          };
+            Org['createdBy'] =  this.userProfile.identifier;
+            Org['code'] = "CODE";
+            this.enrollAsOrganisation(Org);   
+        } 
+    }
+    else
+    {
+            this.formIsInvalid = true;
+            this.validateAllFormFields(this.contributeForm);
+    }
   }
   enrollUser(User)
   {
     const option =
     {
-      id : "open-saber.registry.create",
-      ver: "1.0",
-      request:
+      url: "reg/add",
+      data:
       {
-        User
-      }
+        id : "open-saber.registry.create",
+        request:
+        {
+          User
+        } 
+      }             
     }
-    const httpOptions: HttpOptions = {
-          headers: {
-            'Content-Type' : "application/json",
-            'Authorization' : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhMzRmNjM3NTM4ZTg0MTc3OWVlNjMwM2FkYzExNDY0NCJ9.RpY7PL4ASDLNOU9xMCKXZtDF4vUPuMTDVO6keh4kI1M"
-          }
-        };
-       // this.saveData(option);
-        // return this.http.post("http://dock.sunbirded.org/" + "api/reg/add", option, httpOptions).pipe(
-        //   ((data) => {
-        //     // if (data.responseCode !== 'OK') {
-        //     //   return observableThrowError(data);
-        //     // }
-        //     return observableOf(data);
-        //   }));
-        this.http.post<any>("http://dock.sunbirded.org/api/reg/add", option, httpOptions).subscribe(
-          (res) => {
-                  console.log(res);
-                }, 
-          (err) => {
-            console.log(err);
-            // TODO: navigate to program list page
-            const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-           // instance.toasterService.warning(errorMes || 'Fetching textbooks failed');
-          }
-        );
-     }
+   // this.saveData(option);
+    this.enrollContributorService.saveData(option).subscribe(
+      (res) => {this.mapUserId=res.result.User.osid; 
+        if(this.enrollAsOrg  === false) {
+          this.tosterService.success("You are successfully enrolled as a contributor!");
+          this.contributeForm.reset();
+        }
+      },
+      (err) => console.log(err)
+    );
+
+  }
   enrollAsOrganisation(Org)
   {
     const option =
     {
-      id : "open-saber.registry.create",
-      ver: "1.0",
-      ets: "11234",
-      params: {
-        did: "",
-        key: "",
-        msgid: ""    
-      },
-      request:
+      url: "reg/add",
+      data:
       {
-        Org
+        id : "open-saber.registry.create",
+        request:
+        {
+          Org
+        }
       }
     }
-    //this.saveData(option);
-    const httpOptions: HttpOptions = {
-          headers: {
-            'Content-Type' : "application/json",
-            'Authorization' : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhMzRmNjM3NTM4ZTg0MTc3OWVlNjMwM2FkYzExNDY0NCJ9.RpY7PL4ASDLNOU9xMCKXZtDF4vUPuMTDVO6keh4kI1M"
-          }
-        };
-        this.http.post<any>("http://dock.sunbirded.org/api/reg/add", option, httpOptions).subscribe(
-          (res) => {
-                  console.log(res);
-                }, 
-          (err) => {
-            console.log(err);
-            // TODO: navigate to program list page
-            const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-           // instance.toasterService.warning(errorMes || 'Fetching textbooks failed');
-          }
-        );
-  }
-  saveData(option)
-  {
-    this.enrollContributorService.enrollContributor(option).subscribe(
-      (res) => {console.log(res)},
-      (err) => { console.log(err);
-        // TODO: navigate to program list page
-        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-        this.toasterService.warning(errorMes || 'Fetching textbooks failed');
-      }
+
+    this.enrollContributorService.saveData(option).subscribe(
+      (res) => {this.mapOrgId=res.result.Org.osid; this.mapUserToOrg() },
+      (err) => console.log(err)
     );
   }
-  saveSuccess(res)
-  {
-    console.log(res.result, "this is saved with the success");
-    this.tosterService.success("You are successfully enrolled as a contributor!");
-    this.closeModal();
-  }
 
-  saveError(error)
+  mapUserToOrg()
   {
-    console.log(error, "this is not saved with the following error")
-    this.tosterService.success("You are NOT enrolled as a contributor!");
-    this.closeModal();
+    const option = {
+      url:"reg/add",
+      data:
+      {
+        id: "open-saber.registry.create",
+        request: {
+          User_Org: {
+          userId: this.mapUserId,
+          orgId: this.mapOrgId,
+          roles:["admin"]
+        }
+      }
+    }
+    }
+    this.enrollContributorService.saveData(option).subscribe(
+      (res) => { this.tosterService.success("You are successfully enrolled as a contributor!")
+      this.contributeForm.reset();
+      this.closeModal();
+    },
+      (err) => console.log(err)
+    );
   }
+  chnageEnrollStatus(status)
+  {
+  
+    this.enrollAsOrg = status;
+    if(this.enrollAsOrg == true)
+    {
+      const name = this.contributeForm.get('name');
+      const description = this.contributeForm.get('description');
+      name.setValidators([Validators.required]);
+      description.setValidators([Validators.required]);
+    }
 
+  }
+ 
   closeModal() {
     this.close.emit();
   }

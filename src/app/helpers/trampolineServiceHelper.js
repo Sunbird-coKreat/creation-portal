@@ -14,7 +14,7 @@ const trampolineClientId = envHelper.PORTAL_TRAMPOLINE_CLIENT_ID
 const trampolineServerUrl = envHelper.PORTAL_AUTH_SERVER_URL
 const trampolineRealm = envHelper.PORTAL_REALM
 const trampolineSecret = envHelper.PORTAL_TRAMPOLINE_SECRET
-const learnerAuthorization = envHelper.PORTAL_API_AUTH_TOKEN
+const learnerAuthorization = envHelper.SUNBIRD_PORTAL_API_AUTH_TOKEN
 
 let keycloak = getKeyCloakClient({
   clientId: trampolineClientId,

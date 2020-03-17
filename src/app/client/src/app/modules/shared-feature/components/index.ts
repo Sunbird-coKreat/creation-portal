@@ -7,6 +7,7 @@ export * from './sso-merge-confirmation/sso-merge-confirmation.component';
 export * from './validate-teacher-identifier-popup/validate-teacher-identifier-popup.component';
 export * from './user-location/user-location.component';
 export * from './enroll-contributor/enroll-contributor.component';
+export * from './textbook-list/textbook-list.component';
 export * from './program-list/program-list.component';
 
 
