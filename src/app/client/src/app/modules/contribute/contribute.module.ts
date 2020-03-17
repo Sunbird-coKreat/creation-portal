@@ -5,7 +5,6 @@ import { CommonModule } from '@angular/common';
 import { SuiModule } from 'ng2-semantic-ui/dist';
 import { SlickModule } from 'ngx-slick';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SharedFeatureModule } from '@sunbird/shared-feature';
 import { ContributeRoutingModule } from './contibute-routing.module';
 import { ListAllProgramsComponent } from './components';
 import { ProgramComponent } from './components/program/program.component';
@@ -22,7 +21,8 @@ import { ListNominatedTextbooksComponent} from './components/list-nominated-text
 import { OrgUserListComponent } from './components/org-user-list/org-user-list.component';
 import { OrgContriAdminComponent } from './components/org-contri-admin/org-contri-admin.component';
 import { ContriDashboardComponent } from './components/dashboard/dashboard.component';
-// import { DummyComponent } from  './components/dummy/dummy.component// import { MyProgramComponent} from './components/my-program/my-program.component';
+import { SharedFeatureModule } from '../shared-feature/shared-feature.module';
+
 @NgModule({
   declarations: [
     ListAllProgramsComponent,
