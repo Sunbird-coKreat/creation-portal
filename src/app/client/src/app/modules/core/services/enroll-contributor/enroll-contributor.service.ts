@@ -35,7 +35,7 @@ export class EnrollContributorService extends DataService {
       const httpOptions: HttpOptions = {
         headers: {
           'Content-Type' : "application/json",
-          'Authorization' : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhMzRmNjM3NTM4ZTg0MTc3OWVlNjMwM2FkYzExNDY0NCJ9.RpY7PL4ASDLNOU9xMCKXZtDF4vUPuMTDVO6keh4kI1M"
+          'Authorization' : ""
         }
       };
     return this.http.post(this.baseUrl + option.url, option.data, httpOptions).pipe(

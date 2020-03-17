@@ -145,9 +145,9 @@
                <label>{{resourceService.frmelmnts.lbl.nameOfOrganisation}}</label>
                <div class="sb-field required field">
                    <input class="sb-form-control" placeholder="Name of an Organisation" formControlName="name">
-                   <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['name'].errors && contributeForm.controls['name'].errors.required && (!contributeForm.controls['name'].pristine || formIsInvalid)">
+                   <!-- <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['name'].errors && contributeForm.controls['name'].errors.required && (!contributeForm.controls['name'].pristine || formIsInvalid)">
 							This field is required
-						</div>
+						</div> -->
                </div>
             </div>
              <div class="sb-field-group mb-8" *ngIf="enrollAsOrg === true">
@@ -155,9 +155,9 @@
                <div class="sb-field required field">
                   <textarea rows="4" class="sb-form-control" placeholder="Contributor Information" spellcheck="false" formControlName="description"></textarea>
                   <span class="characters-left">{{resourceService.frmelmnts.lbl.thousandCharacterLeft}}</span>
-                  <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['description'].errors && contributeForm.controls['description'].errors.required && (!contributeForm.controls['description'].pristine || formIsInvalid)">
+                  <!-- <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['description'].errors && contributeForm.controls['description'].errors.required && (!contributeForm.controls['description'].pristine || formIsInvalid)">
 							This field is required
-						</div>
+						</div> -->
                </div>
             </div>
         </form>

@@ -71,9 +71,17 @@ export class EnrollContributorComponent implements OnInit {
   constructor(private tosterService: ToasterService, public userService: UserService, public frameworkService : FrameworkService, public toasterService : ToasterService, public formBuilder: FormBuilder, public http: HttpClient, public enrollContributorService : EnrollContributorService,  public resourceService : ResourceService, private datePipe: DatePipe  ) { }
 
   ngOnInit(): void {
-    this.userProfile = this.userService.userProfile;
-    this.fetchFrameWorkDetails();
-    this.initializeFormFields();
+    if(this.userService.userProfile)
+    {
+      this.userProfile = this.userService.userProfile;
+      this.fetchFrameWorkDetails();
+      this.initializeFormFields();
+    }
+    else
+    {
+      console.log("Refresh the page")
+    }
+      
     this.enrolledDate = new Date();
     this.enrolledDate = this.datePipe.transform(this.enrolledDate, 'yyyy-MM-dd');
   }
@@ -238,17 +246,17 @@ export class EnrollContributorComponent implements OnInit {
     this.enrollAsOrg = status;
     if(this.enrollAsOrg == true)
     {
-      const name = this.contributeForm.get('name');
-      const description = this.contributeForm.get('description');
-      name.setValidators([Validators.required]);
-      description.setValidators([Validators.required]);
+      // const name = this.contributeForm.get('name');
+      // const description = this.contributeForm.get('description');
+      // name.setValidators([Validators.required]);
+      // description.setValidators([Validators.required]);
     }
     if(this.enrollAsOrg == false)
     {
-      const name = this.contributeForm.get('name');
-      const description = this.contributeForm.get('description');
-      name.setValidators([]);
-      description.setValidators([]);
+      // const name = this.contributeForm.get('name');
+      // const description = this.contributeForm.get('description');
+      // name.setValidators(null);
+      // description.setValidators(null);
     }
   }
  
