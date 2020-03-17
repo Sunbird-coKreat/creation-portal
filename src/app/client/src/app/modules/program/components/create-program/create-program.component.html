@@ -58,7 +58,7 @@
 								</div>
 							</div>
 
-							<div class="three wide column">
+							<div class="twelve wide tablet three wide computer column">
 								<div class="required field">
 									<label>Nomination End Date</label>
 									<div class="ui read-only calendar mb-10 sb-field">
@@ -72,7 +72,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="three wide column">
+							<div class="twelve wide tablet three wide computer column">
 								<div class="field">
 									<label>Nomination Shortlisting Date</label>
 									<div class="ui read-only calendar mb-10">
@@ -85,7 +85,7 @@
 								</div>
 							</div>
 
-							<div class="three wide column">
+							<div class="twelve wide tablet three wide computer column">
 								<div class="required field">
 									<label>Contribution End Date</label>
 									<div class="ui read-only calendar mb-10">
@@ -100,7 +100,7 @@
 								</div>
 							</div>
 							
-							<div class="three wide column">
+							<div class="twelve wide tablet three wide computer column">
 								<div class="required field">
 									<label>Program End Date</label>
 									<div class="ui read-only calendasr mb-10">
@@ -118,7 +118,7 @@
 								<h4>Program Scope</h4>
 							</div>
 							
-							<div class="four wide column">
+							<div class="twelve wide tablet four wide computer column">
 								<div class="required field">
 									<label>Select Medium</label>
 									<sui-multi-select formControlName="medium" class="selection"
@@ -136,7 +136,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="four wide column">
+							<div class="twelve wide tablet four wide computer column">
 								<div class="required field">
 									<label> Grade / Class </label>
 									<sui-multi-select formControlName="gradeLevel" class="selection"
@@ -154,7 +154,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="four wide column">
+							<div class="twelve wide tablet four wide computer column">
 								<div class="required field">
 									<label> Subject</label>
 									<sui-multi-select class="selection"
@@ -217,7 +217,115 @@
 					</form>
 				</div>
 				<div class="ui bottom attached segment" suiTabContent="2" [ngClass]="{'active' : showTextBookSelector}">
+					<div class="d-flex  flex-jc-space-between">
+						<div class="flex-70 pr-10">
+								<div class="sb-table-responsive">
+								<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable"  *ngIf="showTextBookSelector">
+									<thead class="sb-table-header sb-table-thead-gray">
+										<tr>
+												<th class="sb-sort-icon">
+													<div class="sb-checkbox sb-checkbox-primary">
+														<input type="checkbox" id="check1" name="example">
+														<label for="check1">57 Textbooks
+															</label>
+														</div>
+													</th>
+												<th class="sb-sort-icon">Medium</th>
+												<th class="sb-sort-icon">Class</th>
+												<th>No. of Chapters</th>
+												<th class="text-right"><button type="button" class="sb-btn sb-btn-normal sb-btn-primary">Add Selected</button></th>
+										</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>
+													<div class="sb-checkbox sb-checkbox-primary" onclick="getData()">
+														<input type="checkbox" id="check1" name="example">
+														<label for="check1">English</label>
+														</div>
+													</td>
+												<td>English</td>
+												<td>4</td>
+												<td>4</td>
+												<td class="text-right">-</td>
+											</tr>
+											<tr>
+													<td>
+															<div class="sb-checkbox sb-checkbox-primary">
+																<input type="checkbox" id="check1" name="example">
+																<label for="check1">English</label>
+																</div>
+															</td>
+													<td>English</td>
+													<td>4</td>
+													<td>4</td>
+													<td class="text-right">
+															<button type="button" class="sb-btn sb-btn-error sb-btn-normal">Remove</button>
+													</td>
+												</tr>
+												<tr>
+														<td>
+																<div class="sb-checkbox sb-checkbox-primary">
+																	<input type="checkbox" id="check1" name="example">
+																	<label for="check1">English</label>
+																	</div>
+																</td>
+														<td>English</td>
+														<td>4</td>
+														<td>4</td>
+														<td class="sb-color-gray-400 text-right">Added in another program</td>
+													</tr>
+										</tbody>
+										</table>
+								</div>
+						</div>
+						<div class="flex-30 bt-l bt-r">
+								<div class="sb-bg-white b-1-100 br-4 o-y-auto fs-0-92">
+											<h5 class="p-10">
+												<span class="p-10 font-weight-bold">4 textbooks added</span>
+												<hr>
+											</h5>
+											<div class="o-y-auto max-height">
+												<span class="mx-20 sb-color-gray-400 font-weight-bold">Geography</span>
+												<span class="mx-20">English</span>
+												<span class="mx-20">6</span>
+												<span class="mx-20 pull-right"><i class="close outline icon sb-color-red-100"></i></span>
+												<hr>
+												<span class="mx-20 sb-color-gray-400 font-weight-bold">Geography</span>
+												<span class="mx-20">English</span>
+												<span class="mx-20">6</span>
+												<span class="mx-20 pull-right"><i class="close icon sb-color-red-100"></i></span>
+												<hr>
+												<span class="mx-20 sb-color-gray-400 font-weight-bold">Geography</span>
+												<span class="mx-20">English</span>
+												<span class="mx-20">6</span>
+												<span class="mx-20 pull-right"><i class="close icon sb-color-red-100"></i></span>
+												<hr>
+												<span class="mx-20 sb-color-gray-400 font-weight-bold">Geography</span>
+												<span class="mx-20">English</span>
+												<span class="mx-20">6</span>
+												<span class="mx-20 pull-right"><i class="close icon sb-color-red-100"></i></span>
+												<hr>
+												<span class="mx-20 sb-color-gray-400 font-weight-bold">Geography</span>
+												<span class="mx-20">English</span>
+												<span class="mx-20">6</span>
+												<span class="mx-20 pull-right"><i class="close icon sb-color-red-100"></i></span>
+												<hr>
+												<span class="mx-20 sb-color-gray-400 font-weight-bold">Geography</span>
+												<span class="mx-20">English</span>
+												<span class="mx-20">6</span>
+												<span class="mx-20 pull-right"><i class="close icon sb-color-red-100"></i></span>
+												<hr>
+											</div>
+										<button class="sb-btn sb-btn-normal w-100 sb-btn-primary bradius-0">
+											Create Program
+										</button>
+									</div>
+						</div>
+					</div>
 					<div class="sb-table-responsive">
+							<div class="d-flex  flex-jc-space-between">
+									<div class="flex-70 pr-10">
 						<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable" *ngIf="showTextBookSelector">
 					<thead class="sb-table-header sb-table-thead-gray">
 						<tr>
@@ -228,10 +336,10 @@
 								</div>
 							</th>
 							<th class="sb-sort-icon">Title</th>
-							<th class="sb-sort-icon">Grade</th>
-							<th class="sb-sort-icon">Medium</th>
-							<th>Chapters</th>
-							<th class="sb-sort-icon">Subject</th>
+							<th class="sb-sort-icon w-20">Medium</th>
+							<th class="sb-sort-icon w-20">Class</th>
+							<th class="sb-sort-icon w-20">No. of Chapters</th>
+							<th class="text-right w-20"><button type="button" class="sb-btn sb-btn-normal sb-btn-primary">Add Selected</button></th>
 						</tr>
 						</thead>
 						<tbody class="sb-table-body">
@@ -266,6 +374,52 @@
 							</tr>
 						</tbody>
 						</table> 
+						</div>
+						<div class="flex-30 bt-l bt-r">
+								<div class="sb-bg-white b-1-100 br-4 o-y-auto fs-0-92">
+											<h5 class="p-10">
+												<span class="p-10 font-weight-bold">4 textbooks added</span>
+												<hr>
+											</h5>
+											<div class="o-y-auto max-height">
+												<span class="mx-20 sb-color-gray-400 font-weight-bold">Geography</span>
+												<span class="mx-20">English</span>
+												<span class="mx-20">6</span>
+												<span class="mx-20 pull-right"><i class="close outline icon sb-color-red-100"></i></span>
+												<hr>
+												<span class="mx-20 sb-color-gray-400 font-weight-bold">Geography</span>
+												<span class="mx-20">English</span>
+												<span class="mx-20">6</span>
+												<span class="mx-20 pull-right"><i class="close icon sb-color-red-100"></i></span>
+												<hr>
+												<span class="mx-20 sb-color-gray-400 font-weight-bold">Geography</span>
+												<span class="mx-20">English</span>
+												<span class="mx-20">6</span>
+												<span class="mx-20 pull-right"><i class="close icon sb-color-red-100"></i></span>
+												<hr>
+												<span class="mx-20 sb-color-gray-400 font-weight-bold">Geography</span>
+												<span class="mx-20">English</span>
+												<span class="mx-20">6</span>
+												<span class="mx-20 pull-right"><i class="close icon sb-color-red-100"></i></span>
+												<hr>
+												<span class="mx-20 sb-color-gray-400 font-weight-bold">Geography</span>
+												<span class="mx-20">English</span>
+												<span class="mx-20">6</span>
+												<span class="mx-20 pull-right"><i class="close icon sb-color-red-100"></i></span>
+												<hr>
+												<span class="mx-20 sb-color-gray-400 font-weight-bold">Geography</span>
+												<span class="mx-20">English</span>
+												<span class="mx-20">6</span>
+												<span class="mx-20 pull-right"><i class="close icon sb-color-red-100"></i></span>
+												<hr>
+											</div>
+										<button class="sb-btn sb-btn-normal w-100 sb-btn-primary bradius-0">
+											Create Program
+										</button>
+									</div>
+						</div>
+					
+						</div>
 					</div>
 				</div>
 			</sui-tabset>

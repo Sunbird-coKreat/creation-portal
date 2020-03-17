@@ -316,7 +316,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
       creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
     }
     const req = {
-      url: `/program/v1/nomination/add`,
+      url: `program/v1/nomination/add`,
       data: {
         request: {
           program_id: this.activatedRoute.snapshot.params.programId,
