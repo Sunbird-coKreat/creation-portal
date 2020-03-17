@@ -1,6 +1,6 @@
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService } from '@sunbird/shared';
 import { ProgramsService, PublicDataService } from '@sunbird/core';
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ListNominationsComponent } from '../list-nominations/list-nominations.component';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -9,7 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   templateUrl: './program-nominations.component.html',
   styleUrls: ['./program-nominations.component.scss']
 })
-export class ProgramNominationsComponent implements OnInit, AfterViewInit {
+export class ProgramNominationsComponent implements OnInit {
   component = ListNominationsComponent;
   programId = '';
   nominations = [];
@@ -17,11 +17,11 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
 
   inputs = {};
   outputs = {
-    onApprove: (nomination) => {
-      this.tosterService.success("Nomination accepted for - " + nomination.contributor_name);
+    approve: (nomination) => {
+      this.tosterService.success('Nomination accepted for - ' + nomination.contributor_name);
     },
-    onReject: (nomination) => {
-      this.tosterService.warning("Nomination rejected for - " + nomination.contributor_name);
+    reject: (nomination) => {
+      this.tosterService.warning('Nomination rejected for - ' + nomination.contributor_name);
     },
   };
 
@@ -36,12 +36,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
     this.getNominationList();
   }
 
-  ngAfterViewInit() {
-  }
-
   getNominationList() {
     const req = {
-      url: `program/v1/nomination/list`,
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
       data: {
         request: {
           filters: {
@@ -65,7 +62,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
         });
       }
       this.inputs = {
-        nominations: this.nominations
+        nominations: this.nominations,
+        nominationsCount: this.nominations.length
       };
       this.showNominationsComponent = true;
     }, error => {

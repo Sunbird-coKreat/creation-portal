@@ -1,6 +1,6 @@
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService } from '@sunbird/shared';
 import { ProgramsService, PublicDataService, UserService, FrameworkService } from '@sunbird/core';
-import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter, OnChanges} from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import * as _ from 'lodash-es';
 import { tap, first } from 'rxjs/operators';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
@@ -11,19 +11,21 @@ import { ISessionContext } from '../../../cbse-program/interfaces';
   templateUrl: './list-nominations.component.html',
   styleUrls: ['./list-nominations.component.scss']
 })
-export class ListNominationsComponent implements OnInit, AfterViewInit, OnChanges {
-	 @Input() nominations: any;
-   @Output()
-	 onApprove = new EventEmitter();
-	 @Output()
-   onReject = new EventEmitter();
+export class ListNominationsComponent implements OnInit {
+  @Input() nominations: any;
+  @Input() nominationsCount: Number;
+  @Output()
+  approve = new EventEmitter();
+  @Output()
+  reject = new EventEmitter();
 
    public sessionContext: ISessionContext = {};
    show = false;
    public programId: string;
    public programDetails: any;
    public userProfile: any;
-   nominationsCount = 0;
+   public mediums: any;
+   public grades: any;
    public selectedNomineeProfile: any;
    showNomineeProfile;
 
@@ -35,14 +37,18 @@ export class ListNominationsComponent implements OnInit, AfterViewInit, OnChange
       this.programId = this.activatedRoute.snapshot.params.programId;
   }
 
-  ngAfterViewInit() {
-  }
-
   ngOnInit() {
     this.getProgramDetails();
   }
 
-  ngOnChanges() {
+  private getNominatedTextbooksCount(nomination) {
+    const count = nomination.collection_ids ? nomination.collection_ids.length : 0 ;
+
+    if (count < 2) {
+      return count + ' ' + this.resourceService.frmelmnts.lbl.textbook;
+    }
+
+    return count + ' ' + this.resourceService.frmelmnts.lbl.textbooks;
   }
 
   getProgramDetails() {
@@ -62,6 +68,9 @@ export class ListNominationsComponent implements OnInit, AfterViewInit, OnChange
     return this.programsService.get(req).pipe(tap((programDetails: any) => {
       programDetails.result.config = JSON.parse(programDetails.result.config);
       this.programDetails = programDetails.result;
+      this.mediums = _.join(this.programDetails.config['medium'], ', ');
+      this.grades = _.join(this.programDetails.config['gradeLevel'], ', ');
+
       this.sessionContext.framework = _.get(this.programDetails, 'config.framework');
       if (this.sessionContext.framework) {
         this.userProfile = this.userService.userProfile;
@@ -82,12 +91,17 @@ export class ListNominationsComponent implements OnInit, AfterViewInit, OnChange
     });
   }
 
+  getProgramInfo(type) {
+    const config = JSON.parse(this.programDetails.config);
+    return type  === 'board' ? config[type] : _.join(config[type], ', ');
+  }
+
   onApproveClick(nomination) {
-    this.onApprove.emit(nomination);
+    this.approve.emit(nomination);
   }
 
   onRejectClick(nomination) {
-    this.onReject.emit(nomination);
+    this.reject.emit(nomination);
   }
 
   goToProfile() {
