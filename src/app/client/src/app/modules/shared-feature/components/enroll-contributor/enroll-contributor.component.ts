@@ -1,5 +1,4 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormBuilder, Validators, FormGroup, FormArray } from '@angular/forms';
 import * as _ from 'lodash-es';
 import { UserService, FrameworkService, EnrollContributorService} from '@sunbird/core';
@@ -9,17 +8,20 @@ import { Subscription, Subject, interval ,} from 'rxjs';
 import { ServerResponse, RequestParam, HttpOptions } from '@sunbird/shared';
 import { of as observableOf, throwError as observableThrowError, Observable  } from 'rxjs';
 import { ToasterService, ResourceService } from '@sunbird/shared';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-enroll-contributor',
   templateUrl: './enroll-contributor.component.html',
-  styleUrls: ['./enroll-contributor.component.scss']
+  styleUrls: ['./enroll-contributor.component.scss'],
+  providers:[DatePipe]
 })
 export class EnrollContributorComponent implements OnInit {
   public enrollAsOrg = false;
   public enrollDetails = {};
   public userProfile: any;
   public programScope = {};
+  public enrolledDate:any;
   frameworkdetails;
   formIsInvalid = false;
   contentType = {
@@ -57,8 +59,6 @@ export class EnrollContributorComponent implements OnInit {
         'name': 'ConceptMap',
         'value': 'ConceptMap'
     }],
-
-   
   }
 
   options;
@@ -68,13 +68,14 @@ export class EnrollContributorComponent implements OnInit {
   public mapOrgId: string
   @Output() close = new EventEmitter<any>();
 
-  constructor(private tosterService: ToasterService, public userService: UserService, public frameworkService : FrameworkService, public toasterService : ToasterService, public formBuilder: FormBuilder, public http: HttpClient, public enrollContributorService : EnrollContributorService,  public resourceService : ResourceService  ) { }
+  constructor(private tosterService: ToasterService, public userService: UserService, public frameworkService : FrameworkService, public toasterService : ToasterService, public formBuilder: FormBuilder, public http: HttpClient, public enrollContributorService : EnrollContributorService,  public resourceService : ResourceService, private datePipe: DatePipe  ) { }
 
   ngOnInit(): void {
     this.userProfile = this.userService.userProfile;
-    console.log(this.userProfile )
     this.fetchFrameWorkDetails();
     this.initializeFormFields();
+    this.enrolledDate = new Date();
+    this.enrolledDate = this.datePipe.transform(this.enrolledDate, 'yyyy-MM-dd');
   }
 
   fetchFrameWorkDetails() {
@@ -129,6 +130,7 @@ export class EnrollContributorComponent implements OnInit {
           User['firstName'] =  this.userProfile.firstName;
           User['firstName'] =  this.userProfile.firstName;
           User['userId'] =  this.userProfile.identifier;
+          User['enrolledDate'] = this.enrolledDate;
           User['certificates'] =  "";
           User['channel'] = "sunbird";
           this.enrollUser(User);
@@ -150,7 +152,7 @@ export class EnrollContributorComponent implements OnInit {
               ...this.contributeForm.value   
           };
             Org['createdBy'] =  this.userProfile.identifier;
-            Org['code'] = "CODE";
+            Org['code'] = this.contributeForm.controls['name'].value.toUpperCase();
             this.enrollAsOrganisation(Org);   
         } 
     }
@@ -178,8 +180,9 @@ export class EnrollContributorComponent implements OnInit {
     this.enrollContributorService.saveData(option).subscribe(
       (res) => {this.mapUserId=res.result.User.osid; 
         if(this.enrollAsOrg  === false) {
-          this.tosterService.success("You are successfully enrolled as a contributor!");
           this.contributeForm.reset();
+          this.tosterService.success("You are successfully enrolled as a contributor! USER"); 
+          this.close.emit();
         }
       },
       (err) => console.log(err)
@@ -224,16 +227,16 @@ export class EnrollContributorComponent implements OnInit {
     }
     }
     this.enrollContributorService.saveData(option).subscribe(
-      (res) => { this.tosterService.success("You are successfully enrolled as a contributor!")
+      (res) => { 
       this.contributeForm.reset();
-      this.closeModal();
+      this.close.emit();
+      this.tosterService.success("You are successfully enrolled as a contributor!")
     },
       (err) => console.log(err)
     );
   }
   chnageEnrollStatus(status)
   {
-  
     this.enrollAsOrg = status;
     if(this.enrollAsOrg == true)
     {
@@ -242,7 +245,6 @@ export class EnrollContributorComponent implements OnInit {
       name.setValidators([Validators.required]);
       description.setValidators([Validators.required]);
     }
-
   }
  
   closeModal() {
