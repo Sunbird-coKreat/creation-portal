@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ProgramsService } from '@sunbird/core';
+import { ProgramsService, RegistryService } from '@sunbird/core';
 import { ResourceService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IProgram } from '../../../core/interfaces';
@@ -21,7 +21,8 @@ export class ProgramListComponent implements OnInit {
   public activeAllProgramsMenu: boolean;
   public activeMyProgramsMenu: boolean;
 
-  constructor(private programsService: ProgramsService, public resourceService: ResourceService, private activatedRoute: ActivatedRoute,
+  constructor(private programsService: ProgramsService, private registryService: RegistryService,
+    public resourceService: ResourceService, private activatedRoute: ActivatedRoute,
     public router: Router) { }
 
   ngOnInit() {
@@ -80,6 +81,16 @@ export class ProgramListComponent implements OnInit {
       console.log(error);
       // TODO: Add error toaster
     });
+  }
+
+  private getContributionOrgUsers() {
+      const orgUsers = this.registryService.getContributionOrgUsers('1-27ea8585-d081-49f9-94ca-54c57b348689');
+
+      orgUsers.subscribe(response => {
+        console.log(response);
+      }, error => {
+        console.log(error);
+      });
   }
 
   /**
