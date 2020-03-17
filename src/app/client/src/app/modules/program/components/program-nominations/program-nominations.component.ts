@@ -39,7 +39,6 @@ export class ProgramNominationsComponent implements OnInit {
   getNominationList() {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
-      header: {},
       data: {
         request: {
           filters: {

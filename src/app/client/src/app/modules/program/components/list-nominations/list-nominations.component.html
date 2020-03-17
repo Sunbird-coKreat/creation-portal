@@ -162,7 +162,7 @@
                   <td class="text-right">
                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                       *ngIf="nomination?.nominationData?.status === 'Pending'"
-                      [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">{{ resourceService.frmelmnts.lbl.viewDetails }}</button>
+                      (click)="viewNominationDetails(nomination)">{{ resourceService.frmelmnts.lbl.viewDetails }}</button>
                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                       *ngIf="nomination?.nominationData?.status === 'Accepted'"
                       [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">{{ resourceService.frmelmnts.lbl.viewContribution }}</button>

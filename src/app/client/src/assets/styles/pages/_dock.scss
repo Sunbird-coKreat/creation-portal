@@ -56,7 +56,6 @@
 
 
  /* program dates time line */
-
 .program-timeline {
   display: flex;
   padding: 0;
@@ -93,15 +92,22 @@
   background-color:var(--primary-200);
   border: 0.25rem solid var(--primary-100);
     }
+    &.warning .status__label:before {
+        background-color:var(--tertiary-100);
+          }
+          &.warning .status__label:before {
+            background-color:var(--red-100);
+              }
     &.completed .status__label:before {
-        background-color:var(--secondary-200);
-        border: 0.25rem solid var(--gray-0);
+    // background-color:var(--secondary-200);
+    // border: 0.25rem solid var(--gray-0);
     } 
 .status__label {
-  font-size:0.875rem;
+  font-size:0.75rem;
+//white-space: normal;
 }
 .status__date {
-  font-size:14px;
+  font-size:0.75rem;
 } 
   div em {
   display:block;
