@@ -20,12 +20,25 @@ export class ProgramListComponent implements OnInit {
   public isContributor: boolean;
   public activeAllProgramsMenu: boolean;
   public activeMyProgramsMenu: boolean;
+  data;
 
   constructor(private programsService: ProgramsService, public resourceService: ResourceService, private activatedRoute: ActivatedRoute,
     public router: Router) { }
 
   ngOnInit() {
     this.checkIfUserIsContributor();
+    this.data = {
+      'board': [{
+          'name': 'admin',
+          'value': 'Admin'
+      }, {
+          'name': 'reviewer',
+          'value': 'Reviewer'
+      }, {
+        'name': 'contributor',
+        'value': 'Contributor'
+    }]
+    }
   }
 
   /**
