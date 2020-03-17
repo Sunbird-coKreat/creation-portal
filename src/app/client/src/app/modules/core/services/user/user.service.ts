@@ -230,6 +230,7 @@ export class UserService {
     this.getOrganisationDetails(organisationIds);
     this.setRoleOrgMap(profileData);
     this.setOrgDetailsToRequestHeaders();
+    this.openSaberRegistrySearch(profileData);
     this._userData$.next({ err: null, userProfile: this._userProfile });
     this.rootOrgName = this._userProfile.rootOrg.orgName;
   }
@@ -271,6 +272,33 @@ export class UserService {
         this._userProfile.organisationNames = this.orgNames;
       }
       );
+  }
+
+  openSaberRegistrySearch(userData) {
+    const option = {
+      url: 'reg/search',
+      data: {
+        'id': 'open-saber.registry.search',
+        'ver': '1.0',
+        'ets': '11234',
+        'params': {
+          'did': '',
+          'key': '',
+          'msgid': ''
+        },
+         'request': {
+           'entityType': ['User'],
+           'filters': {
+             'userId': {'eq': userData.userId}
+           }
+        }
+      }
+    };
+    this.contentService.post(option).subscribe((res) => {
+      if (res.result.User.length) {
+        this._userProfile.osId = res.result.User[0].osid;
+      }
+    });
   }
 
   /**
