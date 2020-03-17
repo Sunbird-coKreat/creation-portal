@@ -120,6 +120,10 @@ export class ProgramsService extends DataService implements CanActivate {
 
     return this.API_URL(req);
   }
+
+  updateNomination(req) {
+    return this.API_URL(req);
+  }
   /**
    * makes api call to get list of programs from ext framework Service
    */
