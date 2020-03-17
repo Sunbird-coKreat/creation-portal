@@ -89,20 +89,13 @@ module.exports = function (app) {
       },
       userResDecorator: function (proxyRes, proxyResData,  req, res) {
         try {
-          logger.info({msg: 'proxyObj'});
-          let data = JSON.parse(proxyResData.toString('utf8'));
-          let response = data.result.response;
-          data.result.response = {id: '', rootOrgId: '',isUserExists:''};
-          if (data.responseCode === 'OK') {
-            data.result.response.id = response.id;
-            data.result.response.rootOrgId = response.rootOrgId;
-            data.result.response.isUserExists = true;
-          }
+          logger.info({msg: '/api/org/v1/search'});
+          const data = JSON.parse(proxyResData.toString('utf8'));
           if(req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
-          else return proxyUtils.handleSessionExpiry(proxyRes, data, req, res, data);
-        } catch (err) {
+          else return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
+        } catch(err) {
           logger.error({msg:'content api user res decorator json parse error:', proxyResData})
-          return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res);
+            return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res);
         }
       }
     })
