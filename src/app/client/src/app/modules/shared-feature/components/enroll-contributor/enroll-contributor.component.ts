@@ -72,8 +72,6 @@ export class EnrollContributorComponent implements OnInit {
 
   ngOnInit(): void {
     this.userProfile = this.userService.userProfile;
-    console.log(this.userService)
-    console.log(this.userProfile)
     this.fetchFrameWorkDetails();
     this.initializeFormFields();
     this.enrolledDate = new Date();
@@ -244,6 +242,13 @@ export class EnrollContributorComponent implements OnInit {
       const description = this.contributeForm.get('description');
       name.setValidators([Validators.required]);
       description.setValidators([Validators.required]);
+    }
+    if(this.enrollAsOrg == false)
+    {
+      const name = this.contributeForm.get('name');
+      const description = this.contributeForm.get('description');
+      name.setValidators([]);
+      description.setValidators([]);
     }
   }
  

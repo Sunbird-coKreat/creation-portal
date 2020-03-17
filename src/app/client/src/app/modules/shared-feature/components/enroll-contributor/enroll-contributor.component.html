@@ -6,7 +6,8 @@
     class="sb-modal"
     appBodyScroll 
     (dismissed)="closeModal();" 
-    #modal>
+    #modal
+    >
   <div class="sb-modal-header">
     {{resourceService.frmelmnts.lbl.enrollAsContributor}}
   </div>
@@ -15,7 +16,7 @@
       <form class="ui form" [formGroup]="contributeForm" (submit)="saveUser()">
          <div class="ui grid m-0 p-0">
             <div class="six wide column sb-field-group p-0 pr-16 mb-8">
-               <label>{{resourceService.frmelmnts.lbl.board}}</label>
+               <label>{{resourceService.frmelmnts.lbl.board}} <span class="sb-color-warning">*</span></label>
                <div class="sb-field required field">
                   <sui-multi-select class="selection"
                   formControlName="board"
@@ -34,7 +35,9 @@
                </div>
             </div>
             <div class="six wide column sb-field-group p-0 mb-8">
-               <label>{{resourceService.frmelmnts.lbl.selectMedium}}</label>
+               <label>{{resourceService.frmelmnts.lbl.selectMedium}}
+                  <span class="sb-color-warning">*</span>
+               </label>
                <div class="sb-field required field">
                   <sui-multi-select class="selection"
                   formControlName="medium"
@@ -55,7 +58,9 @@
             </div>
          
             <div class="six wide column sb-field-group p-0 pr-16 mb-8">
-               <label>{{resourceService.frmelmnts.lbl.gradeClass}}</label>
+               <label>{{resourceService.frmelmnts.lbl.gradeClass}}
+                  <span class="sb-color-warning">*</span>
+               </label>
                <div class="sb-field required field">
                   <sui-multi-select  class="selection"
                      formControlName="gradeLevel"
@@ -75,7 +80,9 @@
             </div>
 
             <div class="six wide column sb-field-group p-0 mb-8">
-               <label>{{resourceService.frmelmnts.lbl.subject}}</label>
+               <label>{{resourceService.frmelmnts.lbl.subject}} 
+                  <span class="sb-color-warning">*</span>
+               </label>
                <div class="sb-field required field">
                   <sui-multi-select class="selection"
                      formControlName="subject"
@@ -97,7 +104,9 @@
 
          <div class="ui grid m-0 p-0">
             <div class="twelve wide column sb-field-group p-0 pr-16 mb-8">
-               <label>{{resourceService.frmelmnts.lbl.typesOfContent}}</label>
+               <label>{{resourceService.frmelmnts.lbl.typesOfContent}}
+                  <span class="sb-color-warning">*</span>
+               </label>
                <div class="sb-field required field">
                   <sui-multi-select class="selection"
                      formControlName="contentTypes"
