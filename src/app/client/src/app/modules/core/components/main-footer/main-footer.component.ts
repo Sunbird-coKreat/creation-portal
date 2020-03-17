@@ -54,21 +54,37 @@ export class MainFooterComponent implements OnInit, AfterViewInit {
 
 footerAlign() {
   const footerHeight = $('footer').outerHeight();
+  const mobileHeight = $('.download-mobile-app').outerHeight();
   const bodyHeight = $('body').outerHeight();
-  //$('.footer-fix').css('height', footerHeight);
-  $('.dynamicHeight').css('min-height', bodyHeight - footerHeight + 120);
   if (window.innerWidth <= 767) {
-    (document.querySelector('.download-mobile-app') as HTMLElement).style.minHeight = 0 + 'px';
+    (document.querySelector('.download-mobile-app-logo') as HTMLElement).style.minHeight = 0 + 'px';
     (document.querySelector('.download-mobile-app') as HTMLElement).style.bottom = footerHeight + 'px';
-    (document.querySelector('body') as HTMLElement).style.paddingBottom = footerHeight + 'px';
+    (document.querySelector('body') as HTMLElement).style.paddingBottom = footerHeight + mobileHeight + 'px';
   } else {
-    (document.querySelector('.download-mobile-app-logo') as HTMLElement).style.height = footerHeight + 'px';
-    (document.querySelector('body') as HTMLElement).style.paddingBottom = footerHeight + 'px';
+    (document.querySelector('.download-mobile-app-logo') as HTMLElement).style.minHeight = footerHeight + 'px';
     (document.querySelector('.footer-fix') as HTMLElement).style.minHeight = bodyHeight - footerHeight + 'px';
-    (document.querySelector('.download-mobile-app') as HTMLElement).style.minHeight = 200 + 'px';
     (document.querySelector('.download-mobile-app') as HTMLElement).style.bottom = 0 + 'px';
+    (document.querySelector('body') as HTMLElement).style.paddingBottom = footerHeight + 'px';
   }
 }
+
+// footerAlign() {
+//   const footerHeight = $('footer').outerHeight();
+//   const bodyHeight = $('body').outerHeight();
+//   //$('.footer-fix').css('height', footerHeight);
+//   $('.dynamicHeight').css('min-height', bodyHeight - footerHeight + 120);
+//   if (window.innerWidth <= 767) {
+//     (document.querySelector('.download-mobile-app') as HTMLElement).style.minHeight = 0 + 'px';
+//     (document.querySelector('.download-mobile-app') as HTMLElement).style.bottom = footerHeight + 'px';
+//     (document.querySelector('body') as HTMLElement).style.paddingBottom = footerHeight + 'px';
+//   } else {
+//     (document.querySelector('.download-mobile-app-logo') as HTMLElement).style.height = footerHeight + 'px';
+//     (document.querySelector('body') as HTMLElement).style.paddingBottom = footerHeight + 'px';
+//     (document.querySelector('.footer-fix') as HTMLElement).style.minHeight = bodyHeight - footerHeight + 'px';
+//     (document.querySelector('.download-mobile-app') as HTMLElement).style.minHeight = 200 + 'px';
+//     (document.querySelector('.download-mobile-app') as HTMLElement).style.bottom = 0 + 'px';
+//   }
+// }
 
 
   redirectToDikshaApp() {
