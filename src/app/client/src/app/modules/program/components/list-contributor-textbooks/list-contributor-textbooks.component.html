@@ -119,8 +119,8 @@
 					<h4 class="sb-pageSection-title">List of Textbooks <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">10</span></h4>
 				</div>
 				<div class="">
-					<button class="sb-btn sb-btn-normal sb-btn-secondary mr-8" *ngIf="contributor?.nominationStatus === 'Pending'" [routerLink]="'sourcing/nominations/0d19cd20-5889-11ea-aa49-89d7d466a619'">Accept</button>
-					<button class="sb-btn sb-btn-normal sb-btn-outline-error" *ngIf="contributor?.nominationStatus === 'Pending'" [routerLink]="'sourcing/nominations/0d19cd20-5889-11ea-aa49-89d7d466a619'">Reject</button>
+					<button class="sb-btn sb-btn-normal sb-btn-secondary mr-8" *ngIf="contributor?.nominationStatus === 'Pending'" (click)="updateNomination('accept')">Accept</button>
+					<button class="sb-btn sb-btn-normal sb-btn-outline-error" *ngIf="contributor?.nominationStatus === 'Pending'" (click)="showRequestChangesPopup = true">Reject</button>
 					<span *ngIf="contributor?.nominationStatus === 'Accepted' || contributor?.nominationStatus === 'Rejected'">
 						Status: {{contributor?.nominationStatus}}
 					</span>
@@ -214,3 +214,27 @@
 </sui-modal>
 
 
+<sui-modal *ngIf="showRequestChangesPopup" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
+[size]="'normal'" class="sb-modal" appBodyScroll #modal (dismissed)="showRequestChangesPopup = false;">
+<div class="sb-modal-header">
+	Add Review Comments
+</div>
+<form #FormControl="ngForm" class="ui form">
+<div class="sb-modal-content">
+	<div class="sb-field-group">
+		<label>Enter your comments</label>
+		<div class="sb-field relative">
+			<textarea type="text" class="wmd-input width-100 sb-form-control" id="wmd-input" [(ngModel)]="rejectComment" placeholder="Add comment" name="rejectComment" required></textarea>
+			<label class="ui basic red error label pt-1 mt-5 width-100"
+				*ngIf="FormControl.form.controls.rejectComment?.touched && !FormControl.form.valid">Fill comments </label>
+			<!-- <textarea rows="4" name="moretext" class="sb-form-control" placeholder="Type here..."></textarea>
+			<span class="characters-left">1000 Characters left</span> -->
+		</div>
+	</div>
+</div>
+<div class="sb-modal-actions">
+  <button id="submitReview" type="submit" class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid}"   (click)="updateNomination('reject')"
+  > Submit Review </button>
+</div>
+</form>
+</sui-modal>
