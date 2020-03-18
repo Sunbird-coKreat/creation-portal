@@ -326,7 +326,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   showTexbooklist() {
 
     const option = {
-      url: 'content/composite/v1/search',
+      url: 'learner/composite/v1/search',
       data: {
         request: {
           filters: {
