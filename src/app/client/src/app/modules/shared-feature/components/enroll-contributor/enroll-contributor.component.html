@@ -1,11 +1,13 @@
-<sui-modal 
-    [mustScroll]="true" 
-    [isClosable]="true" 
-    [transitionDuration]="0" 
-    [size]="'normal'" 
+<div *ngIf="frameworkFetched && !userProfile.userRegData.User">
+
+<sui-modal
+   [mustScroll]="true"
+    [isClosable]="false"
+    [transitionDuration]="0"
+    [size]="'normal'"
     class="sb-modal"
-    appBodyScroll 
-    (dismissed)="closeModal();" 
+    appBodyScroll
+    (dismissed)="closeModal();"
     #modal
     >
   <div class="sb-modal-header">
@@ -15,8 +17,9 @@
     <div class="twelve wide tablet seven wide computer column form-fields">
       <form class="ui form" [formGroup]="contributeForm" (submit)="saveUser()">
          <div class="ui grid m-0 p-0">
-            <div class="six wide column sb-field-group p-0 pr-16 mb-8">
-               <label>{{resourceService.frmelmnts.lbl.board}} <span class="sb-color-warning">*</span></label>
+            <div class="six wide column sb-field-group p-0 pr-16 mb-16">
+               <label class="d-block">{{resourceService.frmelmnts.lbl.board}} <span class="sb-color-warning">*</span><i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="Help Header" popupText="Lable help text"></i>
+                </label>
                <div class="sb-field required field">
                   <sui-multi-select class="selection"
                   formControlName="board"
@@ -34,9 +37,9 @@
 						</div>
                </div>
             </div>
-            <div class="six wide column sb-field-group p-0 mb-8">
-               <label>{{resourceService.frmelmnts.lbl.selectMedium}}
-                  <span class="sb-color-warning">*</span>
+            <div class="six wide column sb-field-group p-0 mb-16">
+               <label class="d-block">{{resourceService.frmelmnts.lbl.selectMedium}}
+                  <span class="sb-color-warning">*</span><i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="Help Header" popupText="Lable help text"></i>
                </label>
                <div class="sb-field required field">
                   <sui-multi-select class="selection"
@@ -57,9 +60,9 @@
                </div>
             </div>
 
-            <div class="six wide column sb-field-group p-0 pr-16 mb-8">
-               <label>{{resourceService.frmelmnts.lbl.gradeClass}}
-                  <span class="sb-color-warning">*</span>
+            <div class="six wide column sb-field-group p-0 pr-16 mb-16">
+               <label class="d-block">{{resourceService.frmelmnts.lbl.gradeClass}}
+                  <span class="sb-color-warning">*</span><i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="Help Header" popupText="Lable help text"></i>
                </label>
                <div class="sb-field required field">
                   <sui-multi-select  class="selection"
@@ -79,9 +82,9 @@
                </div>
             </div>
 
-            <div class="six wide column sb-field-group p-0 mb-8">
-               <label>{{resourceService.frmelmnts.lbl.subject}}
-                  <span class="sb-color-warning">*</span>
+            <div class="six wide column sb-field-group p-0 mb-16">
+               <label class="d-block">{{resourceService.frmelmnts.lbl.subject}}
+                  <span class="sb-color-warning">*</span><i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="Help Header" popupText="Lable help text"></i>
                </label>
                <div class="sb-field required field">
                   <sui-multi-select class="selection"
@@ -100,12 +103,10 @@
 						</div>
                </div>
             </div>
-         </div>
 
-         <div class="ui grid m-0 p-0">
-            <div class="twelve wide column sb-field-group p-0 pr-16 mb-8">
-               <label>{{resourceService.frmelmnts.lbl.typesOfContent}}
-                  <span class="sb-color-warning">*</span>
+            <div class="twelve wide column sb-field-group p-0 mb-16">
+               <label class="d-block">{{resourceService.frmelmnts.lbl.typesOfContent}}
+                  <span class="sb-color-warning">*</span><i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="Help Header" popupText="Lable help text"></i>
                </label>
                <div class="sb-field required field">
                   <sui-multi-select class="selection"
@@ -124,42 +125,47 @@
 						</div>
                </div>
             </div>
-         </div>
 
-         <div class="sb-field-group mb-8">
-            <label>Do you want enroll as Organisation? </label>
-            <!-- (click)="enrollAsOrg=true" -->
-            <div class="sb-field mt-4 d-flex">
-               <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-                  <input type="radio" id="Organisation" name="enrollAsOrg"  (click)="chnageEnrollStatus(true)">
-                  <label for="Organisation">Yes</label>
+            <div class="six wide column sb-field-group p-0 pr-16 mb-16">
+               <div class="sb-field-group mb-8">
+                  <label class="d-block">Do you want enroll as Organisation? <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="Help Header" popupText="Lable help text"></i></label>
+                  <!-- (click)="enrollAsOrg=true" -->
+                  <div class="sb-field mt-4 d-flex">
+                     <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+                        <input type="radio" id="Organisation" name="enrollAsOrg"  (click)="chnageEnrollStatus(true)">
+                        <label for="Organisation">Yes</label>
+                     </div>
+                     <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+                        <input type="radio" id="individual" name="enrollAsOrg"  (click)="chnageEnrollStatus(false)">
+                        <label for="individual">No</label>
+                     </div>
+                  </div>
                </div>
-               <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-                  <input type="radio" id="individual" name="enrollAsOrg"  (click)="chnageEnrollStatus(false)">
-                  <label for="individual">No</label>
+            </div>
+            <div class="six wide column sb-field-group p-0 mb-16">
+               <div class="sb-field-group mb-8"  *ngIf="enrollAsOrg === true">
+                  <label class="d-block">{{resourceService.frmelmnts.lbl.nameOfOrganisation}} <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="Help Header" popupText="Lable help text"></i></label>
+                  <div class="sb-field required field">
+                      <input class="sb-form-control" placeholder="Name of an Organisation" formControlName="name">
+                      <!-- <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['name'].errors && contributeForm.controls['name'].errors.required && (!contributeForm.controls['name'].pristine || formIsInvalid)">
+                        This field is required
+                     </div> -->
+                  </div>
+               </div>
+            </div>
+            <div class="twelve wide column sb-field-group p-0 mb-16">
+               <div class="sb-field-group mb-8" *ngIf="enrollAsOrg === true">
+                  <label class="d-block">{{resourceService.frmelmnts.lbl.description}} <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="Help Header" popupText="Lable help text"></i></label>
+                  <div class="sb-field required field">
+                     <textarea rows="4" class="sb-form-control" placeholder="Contributor Information" spellcheck="false" formControlName="description"></textarea>
+                     <span class="characters-left">{{resourceService.frmelmnts.lbl.thousandCharacterLeft}}</span>
+                     <!-- <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['description'].errors && contributeForm.controls['description'].errors.required && (!contributeForm.controls['description'].pristine || formIsInvalid)">
+                        This field is required
+                     </div> -->
+                  </div>
                </div>
             </div>
          </div>
-
-            <div class="sb-field-group mb-8"  *ngIf="enrollAsOrg === true">
-               <label>{{resourceService.frmelmnts.lbl.nameOfOrganisation}}</label>
-               <div class="sb-field required field">
-                   <input class="sb-form-control" placeholder="Name of an Organisation" formControlName="name">
-                   <!-- <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['name'].errors && contributeForm.controls['name'].errors.required && (!contributeForm.controls['name'].pristine || formIsInvalid)">
-							This field is required
-						</div> -->
-               </div>
-            </div>
-             <div class="sb-field-group mb-8" *ngIf="enrollAsOrg === true">
-               <label>{{resourceService.frmelmnts.lbl.description}}</label>
-               <div class="sb-field required field">
-                  <textarea rows="4" class="sb-form-control" placeholder="Contributor Information" spellcheck="false" formControlName="description"></textarea>
-                  <span class="characters-left">{{resourceService.frmelmnts.lbl.thousandCharacterLeft}}</span>
-                  <!-- <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['description'].errors && contributeForm.controls['description'].errors.required && (!contributeForm.controls['description'].pristine || formIsInvalid)">
-							This field is required
-						</div> -->
-               </div>
-            </div>
         </form>
     </div>
   </div>
@@ -171,3 +177,5 @@
     </button>
   </div>
 </sui-modal>
+
+</div>

@@ -28,14 +28,13 @@ export class EnrollContributorService extends DataService {
       super(http);
       this.config = config;
       this.baseUrl = "http://dock.sunbirded.org/api/";
-  
     }
-    saveData(option)
-    {
+
+    saveData(option) {
       const httpOptions: HttpOptions = {
         headers: {
-          'Content-Type' : "application/json",
-          'Authorization' : ""
+          'Content-Type' : 'application/json',
+          'Authorization' : ''
         }
       };
     return this.http.post(this.baseUrl + option.url, option.data, httpOptions).pipe(

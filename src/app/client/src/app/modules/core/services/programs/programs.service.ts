@@ -5,9 +5,10 @@ import { FrameworkService } from './../framework/framework.service';
 import { ExtPluginService } from './../ext-plugin/ext-plugin.service';
 import { PublicDataService } from './../public-data/public-data.service';
 import { ConfigService, ServerResponse, ToasterService, ResourceService } from '@sunbird/shared';
+// import { LearnerService } from '@sunbird/core';
 import { Injectable } from '@angular/core';
 import { UserService } from '../user/user.service';
-import { combineLatest, of, iif, Observable, throwError as observableThrowError, BehaviorSubject, throwError, merge } from 'rxjs';
+import { combineLatest, of, iif, Observable, BehaviorSubject, throwError, merge } from 'rxjs';
 import * as _ from 'lodash-es';
 import { CanActivate, Router } from '@angular/router';
 import { DataService } from '../data/data.service';
@@ -76,9 +77,6 @@ export class ProgramsService extends DataService implements CanActivate {
   createProgram(request): Observable<ServerResponse> {
     const req = {
       url: this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.CREATE,
-      headers: {
-        'content-type' : 'application/json'
-      },
       data: {
         request
       }
@@ -93,9 +91,6 @@ export class ProgramsService extends DataService implements CanActivate {
   getProgramCollection(request): Observable<ServerResponse> {
     const req = {
       url: `${this.config.urlConFig.URLS.COMPOSITE.SEARCH}`,
-      headers: {
-        'content-type' : 'application/json'
-      },
       data: {
         request
       }
@@ -110,9 +105,6 @@ export class ProgramsService extends DataService implements CanActivate {
   updateProgram(request): Observable<ServerResponse> {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.UPDATE}`,
-      headers: {
-        'content-type' : 'application/json'
-      },
       data: {
         request
       }
@@ -121,7 +113,11 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.API_URL(req);
   }
 
-  updateNomination(req) {
+  updateNomination(request) {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_UPDATE}`,
+      data: request
+    };
     return this.API_URL(req);
   }
 
@@ -147,9 +143,6 @@ export class ProgramsService extends DataService implements CanActivate {
   getMyProgramsForOrgFromApi(): Observable<ServerResponse> {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
-      header: {
-        'content-type' : 'application/json'
-      },
       data: {
         request: {
           filters: {
@@ -167,9 +160,6 @@ export class ProgramsService extends DataService implements CanActivate {
   getAllProgramsByType(type): Observable<ServerResponse> {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
-      headers: {
-        'content-type' : 'application/json'
-      },
       data: {
         request: {
           filters: {
@@ -187,13 +177,12 @@ export class ProgramsService extends DataService implements CanActivate {
   getMyProgramsForContribFromApi(): Observable<ServerResponse> {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
-      headers: {
-        'content-type' : 'application/json'
-      },
       data: {
         request: {
           filters: {
-            'userId': _.get(this.userService, 'userProfile.userId')
+            enrolled_id: {
+              user_id: _.get(this.userService, 'userProfile.userId')
+            }
           }
         }
       }

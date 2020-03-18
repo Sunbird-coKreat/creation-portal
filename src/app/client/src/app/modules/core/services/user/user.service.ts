@@ -2,8 +2,8 @@ import { ConfigService, ServerResponse, IUserProfile, IUserData, IOrganization, 
 import { LearnerService } from './../learner/learner.service';
 import { ContentService } from './../content/content.service';
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, BehaviorSubject, of } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash-es';
 import { HttpClient } from '@angular/common/http';
@@ -230,6 +230,7 @@ export class UserService {
     this.getOrganisationDetails(organisationIds);
     this.setRoleOrgMap(profileData);
     this.setOrgDetailsToRequestHeaders();
+    this.openSaberRegistrySearch(profileData);
     this._userData$.next({ err: null, userProfile: this._userProfile });
     this.rootOrgName = this._userProfile.rootOrg.orgName;
   }
@@ -271,6 +272,67 @@ export class UserService {
         this._userProfile.organisationNames = this.orgNames;
       }
       );
+  }
+
+  openSaberRegistrySearch(userData) {
+    this._userProfile['userRegData'] = {};
+    const option = {
+      url: 'reg/search',
+      data: {
+        id: 'open-saber.registry.search',
+        ver: '1.0',
+        ets: '11234',
+        params: {
+          did: '',
+          key: '',
+          msgid: ''
+        }
+      }
+    };
+    option.data['request'] = {
+      entityType: ['User'],
+      filters: {
+        userId: {eq: userData.userId}
+      }
+   };
+    this.contentService.post(option).pipe(tap((res1) => {
+      if (res1.result.User.length) {
+        this._userProfile.userRegData['User'] = res1.result.User[0];
+      }
+    }), switchMap((res2) => {
+      if (res2.result.User.length) {
+      option.data['request'] = {
+        entityType: ['User_Org'],
+        filters: {
+        userId: {eq: res2.result.User[0].osid}
+        }
+     };
+      return this.contentService.post(option);
+    } else {
+      return of(null);
+    }
+    }), tap((res3) => {
+      if (res3 && res3.result.User_Org.length) {
+      this._userProfile.userRegData['User_Org'] = res3.result.User_Org[0];
+      }
+    }), switchMap((res4) => {
+      if (res4 && res4.result.User_Org.length) {
+      option.data['request'] = {
+        entityType: ['Org'],
+        filters: {
+          osid: {eq: res4.result.User_Org[0].orgId}
+        }
+     };
+    return this.contentService.post(option);
+    } else {
+      return of(null);
+    }
+    })
+    ).subscribe((res: any) => {
+      if (res && res.result.Org.length) {
+        this._userProfile.userRegData['Org'] = res.result.Org[0];
+        }
+     });
   }
 
   /**

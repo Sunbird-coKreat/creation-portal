@@ -6,6 +6,9 @@
 .d-flex {
   display: flex;
 }
+.d-flex-inline {
+  display: inline-flex !important;
+}
 .flex-jc-center {
   justify-content: center !important;
 }

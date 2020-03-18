@@ -1,9 +1,99 @@
 @import "variables";
 @import "mixins/mixins";
 
+.progressbar {
+	text-align: center;
+	width:100%;
+  font-size: 1rem;
+}
+.counter div.status {
+	background-color: white;
+	display: inline-block;
+	border: 1px solid grey;
+	border-radius: 50%;
+	width: 4em;
+    line-height: 3.88em;
+  vertical-align: top;
+  z-index: 99;
+	position: relative;
+}
+
+.counter td {
+	cursor: pointer;
+	text-align: center;
+	position: relative;
+}
+
+.counter span {
+	position: absolute;
+	top: 2em;
+	left: -50%;
+	width: 100%;
+	border-top: 5px solid grey;
+	z-index: 1;
+}
+
+.progressbar .counter .active div.status{
+	border-color: var(--primary-400);
+  color: var(--white);
+  background-color: var(--primary-400);
+}
+.progressbar .counter .active span {
+  border-color: var(--secondary-200);
+}
+.progressbar .counter .completed div.status{
+	border-color: var(--secondary-200);
+  color: var(--white);
+  background-color: var(--secondary-200);
+  strong {
+    visibility:hidden;
+  }
+  &::after {
+    content: '\2713';
+    font-weight: bold;
+    zoom: 2;
+    position: absolute;
+    left: 0px;
+    right: 0px;
+  }
+}
+
+.progressbar .counter div.status{
+	border-color: var(--gray-100);
+  color: var(--black);
+  background-color: var(--gray-100);
+  content: '\2713';
+}
+/*.counter td:not(:first-child):before
+	content: '';
+	position: absolute;
+	top: 2em;
+	display: block;
+	border-top: 2px solid grey;
+}*/
+
+.progressbar .descriptions {
+  label {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--primary-400);
+  }
+  .completed {
+    label {
+      color:var(--secondary-400);
+    }
+  }
+  td {
+    padding:1rem;
+    vertical-align: top;
+    width: 25%;
+  }
+ 
+
+}
+
 
 .sb-profile-page{
-
     &__avatar{
         width: 92px;
         height: 92px;

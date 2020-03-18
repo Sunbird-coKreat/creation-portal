@@ -82,7 +82,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
 
   getProgramTextbooks() {
      const option = {
-      url: 'content/composite/v1/search',
+      url: 'learner/composite/v1/search',
        data: {
       request: {
          filters: {
