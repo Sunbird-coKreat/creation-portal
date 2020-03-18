@@ -1,11 +1,13 @@
-<sui-modal 
-    [mustScroll]="true" 
-    [isClosable]="true" 
-    [transitionDuration]="0" 
-    [size]="'normal'" 
+<div *ngIf="frameworkFetched">
+
+<sui-modal
+   [mustScroll]="true"
+    [isClosable]="true"
+    [transitionDuration]="0"
+    [size]="'normal'"
     class="sb-modal"
-    appBodyScroll 
-    (dismissed)="closeModal();" 
+    appBodyScroll
+    (dismissed)="closeModal();"
     #modal
     >
   <div class="sb-modal-header">
@@ -54,10 +56,10 @@
                   <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['medium'].errors && contributeForm.controls['medium'].errors.required && (!contributeForm.controls['medium'].pristine || formIsInvalid)">
 							This field is required
 						</div>
-                  
+
                </div>
             </div>
-         
+
             <div class="six wide column sb-field-group p-0 pr-16 mb-16">
                <label class="d-block">{{resourceService.frmelmnts.lbl.gradeClass}}
                   <span class="sb-color-warning">*</span><i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="Help Header" popupText="Lable help text"></i>
@@ -81,7 +83,7 @@
             </div>
 
             <div class="six wide column sb-field-group p-0 mb-16">
-               <label class="d-block">{{resourceService.frmelmnts.lbl.subject}} 
+               <label class="d-block">{{resourceService.frmelmnts.lbl.subject}}
                   <span class="sb-color-warning">*</span><i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="Help Header" popupText="Lable help text"></i>
                </label>
                <div class="sb-field required field">
@@ -175,3 +177,5 @@
     </button>
   </div>
 </sui-modal>
+
+</div>
