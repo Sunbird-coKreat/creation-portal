@@ -164,4 +164,8 @@ export class ListNominationsComponent implements OnInit {
     };
      this.router.navigate(['/sourcing/contributor/' + nomination.nominationData.program_id], extraData);
   }
+
+  goBack() {
+    this.navigationHelperService.navigateToPreviousUrl();
+  }
 }
