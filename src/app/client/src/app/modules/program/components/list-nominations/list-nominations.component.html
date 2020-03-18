@@ -1,61 +1,198 @@
-<div class="sb-bg-color-primary-0 py-24">
+<div class="sb-bg-color-primary-0 practical-header py-16">
+  <div class="d-flex flex-ai-center flex-jc-space-between practical-header__content ui container p-0">
+
+    <div class="practical-header__title flex-basis-1">
+      <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" type="button">
+        <i class="icon-svg icon-svg--xxs icon-back mr-4">
+          <svg _ngcontent-nak-c11="" class="icon icon-svg--primary">
+            <use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
+          </svg></i> Back to My/Explore Programs</button>
+
+      <h4 class="m-0 p-0">{{ programDetails?.name }} <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
+        <ng-template #popupTemplate>
+          <div class="content">
+            <div class="textbook-details ml-8">
+              <div class="header"><strong>{{ resourceService.frmelmnts.lbl.mediums }}</strong></div>
+              <div class="content">
+                <label class="d-block fsmall font-weight-normal mb-0"
+                  >{{ mediums }}</label>
+              </div>
+              <hr />
+              <div class="header"><strong>{{ resourceService.frmelmnts.lbl.grades }}</strong></div>
+              <div class="content">
+                <label class="d-block fsmall font-weight-normal mb-0"
+                  >{{ grades }}</label>
+              </div>
+              <hr />
+              <div class="header">
+                <strong>{{ resourceService.frmelmnts.lbl.expressionOfInterestDate }}</strong>
+              </div>
+              <div class="content">
+                <label class="d-block fsmall font-weight-normal mb-0">
+                  {{ programDetails?.nomination_enddate |  date:'LLLL d, yyyy'  }}
+                </label>
+              </div>
+              <hr />
+              <div class="header">
+                <strong>{{ resourceService.frmelmnts.lbl.shortlistingOfContributorDate }}</strong>
+              </div>
+              <div class="content">
+                <label class="d-block fsmall font-weight-normal mb-0">
+                  {{ programDetails?.shortlisting_enddate |  date:'LLLL d, yyyy'  }}
+                </label>
+              </div>
+              <hr />
+              <div class="header">
+                <strong>{{ resourceService.frmelmnts.lbl.contentSubmissionDate }}</strong>
+              </div>
+              <div class="content">
+                <label class="d-block fsmall font-weight-normal mb-0">
+                  {{ programDetails?.content_submission_enddate |  date:'LLLL d, yyyy'  }}
+                </label>
+              </div>
+              <hr />
+              <div class="header"><strong>{{ resourceService.frmelmnts.lbl.programEndDate }}</strong></div>
+              <div class="content">
+                <label class="d-block fsmall font-weight-normal mb-0">
+                  {{ programDetails?.enddate |  date:'LLLL d, yyyy'  }}
+                </label>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </h4>
+      <p class="fs-0-785 font-weight-normal">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus
+        convallis massa felis, quis pretium urna efficitur in.</p>
+    </div>
+
+    <div class="program-timeline px-16">
+      <div class="program-timeline-item">
+        <div class="status completed">
+          <div class="status__label">56 Nominations</div>
+          <div class="status__date">23 Mar ‘20 <em></em></div>
+        </div>
+      </div>
+      <div class="program-timeline-item">
+        <div class="status active">
+          <div class="status__label">Shortlisting Nominations
+            </div>
+          <div class="status__date">23 Mar ‘20 <em class="sb-color-warning">20 days to go</em></div>
+        </div>
+      </div>
+      <div class="program-timeline-item">
+        <div class="status">
+          <div class="status__label">Contribution & Review</div>
+          <div class="status__date">23 Mar ‘20 <em></em></div>
+        </div>
+      </div>
+      <div class="program-timeline-item">
+        <div class="status">
+          <div class="status__label">Program End Date</div>
+          <div class="status__date">23 Mar ‘20 <em></em></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sb-bg-color-primary-100">
+  <sui-tabset>
+    <div class="ui pointing secondary menu sb-bg-color-primary-100">
+      <div class="ui container p-0 m-0 d-flex flex-ai-center flex-jc-center">
+        <a class="item active" suiTabHeader="1">Text Books</a>
+        <a class="item" suiTabHeader="2">Contributors <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ nominationsCount }}</span></a>
+        <a class="item" suiTabHeader="3">Content</a>
+        <a class="item" suiTabHeader="4">Users</a>
+      </div>
+    </div>
+    <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" isActive='true' suiTabContent="1">
+      <div class="ui container">Textbooks</div>
+    </div>
+    <div class="ui segment  p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="2">
+      <div class="ui container p-0 m-0">
+        <div class="sb-pageSection" [appTelemetryImpression]="telemetryImpression">
+          <div class="sb-bg-color-white pt-32">
+              <div class="sb-table-responsive" *ngIf="nominations.length > 0">
+                <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
+                  <thead class="sb-table-header sb-table-thead-gray">
+                    <tr>
+                      <th class="w-5 text-center"></th>
+                      <th class="w-5 text-center"></th>
+                      <th class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.contributorName }}</th>
+                      <th class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.type }}</th>
+                      <th class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.textbooks }}</th>
+                      <th>
+                        <span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
+                          <div class="text">{{ resourceService.frmelmnts.lbl.status }}</div>
+                          <i class="filter icon"></i>
+                          <div class="menu" suiDropdownMenu>
+                            <div class="item" selected>resourceService.frmelmnts.lbl.allStatus</div>
+                            <div class="item">{{ resourceService.frmelmnts.lbl.pendig }}</div>
+                            <div class="item">{{ resourceService.frmelmnts.lbl.approved }}</div>
+                            <div class="item">{{ resourceService.frmelmnts.lbl.rejected }}</div>
+                          </div>
+                        </span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="sb-table-body">
+                    <tr *ngFor="let nomination of nominations; let i = index;">
+                      <td class="text-center">{{ i + 1}}</td>
+                      <td class="text-center">
+                        <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
+                          *ngIf="nomination?.nominationData?.status === 'Pending'"
+                          (click)="viewNominationDetails(nomination)">{{ resourceService.frmelmnts.lbl.viewDetails }}</button>
+                        <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
+                          *ngIf="nomination?.nominationData?.status === 'Accepted'"
+                          [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">{{ resourceService.frmelmnts.lbl.viewContribution }}</button>
+                      </td>
+                      <td>
+                        <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold" (click)="showNomineeProfile = true; getNomineeProfile(nomination)">
+                          {{ nomination?.name }}
+                        </div>
+                      </td>
+                      <td>
+                        <div>{{ nomination?.type }}</div>
+                      </td>
+                      <td>
+                        <div suiPopup popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.textbooks }}" popupText="{{ nomination?.textbooks }}">
+                          {{ getNominatedTextbooksCount(nomination) }}
+                        </div>
+                      </td>
+                      <td>
+                        <span class="sb-label sb-label-table sb-label-primary-100">
+                          {{ nomination?.nominationData?.status }}
+                        </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="mt-12" *ngIf="nominations.length === 0">
+                <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0146'}"></app-no-result>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="3">
+      <div class="ui container">Content</div>
+    </div>
+    <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="4">
+      <div class="ui container">Users</div>
+    </div>
+
+  </sui-tabset>
+</div>
+
+
+
+<div class="sb-bg-color-primary-0 py-24 hidden hide">
   <div class="ui container">
     <div class="d-flex flex-ai-center flex-jc-space-between">
       <div class="flex-basis-1 pr-16">
         <h4 class="sb-pageSection-title six wide column">
           {{ programDetails?.name }}
-          <i class="info circle link icon hide hidden" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
-          <ng-template #popupTemplate>
-            <div class="content">
-              <div class="textbook-details ml-8">
-                <div class="header"><strong>{{ resourceService.frmelmnts.lbl.mediums }}</strong></div>
-                <div class="content">
-                  <label class="d-block fsmall font-weight-normal mb-0"
-                    >{{ mediums }}</label>
-                </div>
-                <hr />
-                <div class="header"><strong>{{ resourceService.frmelmnts.lbl.grades }}</strong></div>
-                <div class="content">
-                  <label class="d-block fsmall font-weight-normal mb-0"
-                    >{{ grades }}</label>
-                </div>
-                <hr />
-                <div class="header">
-                  <strong>{{ resourceService.frmelmnts.lbl.expressionOfInterestDate }}</strong>
-                </div>
-                <div class="content">
-                  <label class="d-block fsmall font-weight-normal mb-0">
-                    {{ programDetails?.nomination_enddate |  date:'LLLL d, yyyy'  }}
-                  </label>
-                </div>
-                <hr />
-                <div class="header">
-                  <strong>{{ resourceService.frmelmnts.lbl.shortlistingOfContributorDate }}</strong>
-                </div>
-                <div class="content">
-                  <label class="d-block fsmall font-weight-normal mb-0">
-                    {{ programDetails?.shortlisting_enddate |  date:'LLLL d, yyyy'  }}
-                  </label>
-                </div>
-                <hr />
-                <div class="header">
-                  <strong>{{ resourceService.frmelmnts.lbl.contentSubmissionDate }}</strong>
-                </div>
-                <div class="content">
-                  <label class="d-block fsmall font-weight-normal mb-0">
-                    {{ programDetails?.content_submission_enddate |  date:'LLLL d, yyyy'  }}
-                  </label>
-                </div>
-                <hr />
-                <div class="header"><strong>{{ resourceService.frmelmnts.lbl.programEndDate }}</strong></div>
-                <div class="content">
-                  <label class="d-block fsmall font-weight-normal mb-0">
-                    {{ programDetails?.enddate |  date:'LLLL d, yyyy'  }}
-                  </label>
-                </div>
-              </div>
-            </div>
-          </ng-template>
         </h4>
         <div class="d-flex flex-jc-space-between flex-ai-center fnormal mt-8">
           <div class="d-flex flex-dc flex-25 pr-16">
@@ -83,7 +220,7 @@
           </div>
         </div>
       </div>
-      <div class="sb-meta-data-container sb-meta-data-column">
+      <div class="sb-meta-data-container sb-meta-data-column hidden hide">
         <label class="width-100">{{ resourceService.frmelmnts.lbl.nominations }} </label>
         <div class="d-flex">
           <dl class="sb-meta-data">
@@ -108,10 +245,12 @@
           </dl>
         </div>
       </div>
+      
     </div>
   </div>
 </div>
-<div class="sb-bg-color-white pb-64 dynamicHeight">
+
+<div class="sb-bg-color-white dynamicHeight  hidden hide">
     <div class="ui container sb-pageSection">
         <div class="sb-pageSection-header pt-16">
           <h4 class="sb-pageSection-title"> {{ resourceService.frmelmnts.lbl.listofNominations }}
@@ -119,10 +258,8 @@
           </h4>
         </div>
         <div class="sb-pageSection-content mt-12" *ngIf="nominations.length > 0">
-          <div>
-            <table
-              class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed"
-            >
+          <div class="sb-table-responsive">
+            <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
               <thead class="sb-table-header sb-table-thead-gray">
                 <tr>
                   <th class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.contributorName }}</th>
@@ -176,7 +313,7 @@
               </tbody>
             </table>
           </div>
-    </div>
+        </div>
     <div class="sb-pageSection-content mt-12" *ngIf="nominations.length === 0">
       <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0146'}"></app-no-result>
     </div>
