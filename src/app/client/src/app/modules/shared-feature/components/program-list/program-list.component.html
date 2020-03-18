@@ -65,7 +65,7 @@
                       <i class="dropdown icon"></i>
                       <div class="menu" suiDropdownMenu>
                         <div class="item" (click)="viewDetailsBtnClicked(program)">{{ resourceService.frmelmnts.lbl.viewDetails }}</div>
-                        <div class="item" (click)="getContributionOrgUsers(program)" *ngIf="activeMyProgramsMenu">{{ resourceService.frmelmnts.lbl.assignRole }}</div>
+                        <div class="item" (click)="getContributionOrgUsers(program)" *ngIf="activeMyProgramsMenu && userService?.userProfile?.userRegData?.User_Org?.orgId">{{ resourceService.frmelmnts.lbl.assignRole }}</div>
                       </div>
                   </div>
                 </td>

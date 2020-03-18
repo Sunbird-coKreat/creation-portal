@@ -32,6 +32,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
   public collection;
   public collectionsWithCardImage;
   public role: any = {};
+  public hasExpressedInterest = false;
   public collectionList: any = {};
   public mediums;
   public showError = false;
@@ -53,6 +54,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
   public showStage;
   public currentStage: any;
   public contentType:any;
+  public currentNominationStatus: any;
   showContentTypeModal = false;
   selectedContentTypes = [];
   selectedCollectionIds = [];
@@ -109,6 +111,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID + '.programs');
     this.setActiveDate();
+    this.getNominationStatus();
   }
 
   getImplicitFilters(): string[] {
@@ -313,7 +316,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
       creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
     }
     const req = {
-      url: `program/v1/nomination/add`,
+      url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_ADD}`,
       data: {
         request: {
           program_id: this.activatedRoute.snapshot.params.programId,
@@ -334,19 +337,61 @@ export class CollectionComponent implements OnInit, OnDestroy {
   }
   setActiveDate() {
     const dates = [ 'nomination_enddate', 'shortlisting_enddate', 'content_submission_enddate', 'enddate'];
- 
+
     dates.forEach(key => {
       const date  = moment(moment(this.programContext[key]).format('YYYY-MM-DD'));
       const today = moment(moment().format('YYYY-MM-DD'));
       const isFutureDate = !date.isSame(today) && date.isAfter(today);
- 
+
       if (key === 'nomination_enddate' && isFutureDate) {
         this.activeDate = key;
       }
- 
+
       if (this.activeDate === '' && isFutureDate) {
         this.activeDate = key;
       }
+    });
+  }
+
+  expressInterest() {
+    const req = {
+      url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_ADD}`,
+      data: {
+        request: {
+          program_id: this.activatedRoute.snapshot.params.programId,
+          user_id: this.userService.userProfile.userId,
+          status: 'Initiated',
+          organisation_id: this.userService.userProfile.userRegData.User_Org.orgId
+        }
+      }
+    };
+    this.programsService.post(req).subscribe((data) => {
+      this.hasExpressedInterest = true;
+      this.tosterService.success('Nomination sent');
+    }, error => {
+      this.tosterService.error('User onboarding failed');
+    });
+  }
+
+  getNominationStatus() {
+    const req = {
+      url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
+      data: {
+        request: {
+          filters: {
+            program_id: this.activatedRoute.snapshot.params.programId,
+            user_id: this.userService.userProfile.userId,
+          }
+        }
+      }
+    };
+    this.programsService.post(req).subscribe((data) => {
+      if (data.result && !_.isEmpty(data.result)) {
+          this.currentNominationStatus =  _.get(_.first(data.result), 'status');
+          this.hasExpressedInterest = (this.currentNominationStatus === 'Initiated') ? true : false;
+      }
+    }, error => {
+      this.tosterService.error('Failed fetching current nomination status');
     });
   }
 
