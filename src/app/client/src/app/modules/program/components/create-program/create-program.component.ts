@@ -91,42 +91,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     this.sbFormBuilder = formBuilder;
 
-    this.programScope = {
-      'purpose': [{
-        'name': 'Resource',
-        'value': 'Resource'
-      }, {
-        'name': 'TeachingMethod',
-        'value': 'TeachingMethod'
-      }, {
-        'name': 'PedagogyFlow',
-        'value': 'PedagogyFlow'
-      }, {
-        'name': 'FocusSpot',
-        'value': 'FocusSpot'
-      }, {
-        'name': 'LearningOutcomeDefinition',
-        'value': 'LearningOutcomeDefinition'
-      }, {
-        'name': 'PracticeQuestionSet',
-        'value': 'PracticeQuestionSet'
-      }, {
-        'name': 'CuriosityQuestionSet',
-        'value': 'CuriosityQuestionSet'
-      }, {
-        'name': 'MarkingSchemeRubric',
-        'value': 'MarkingSchemeRubric'
-      }, {
-        'name': 'ExplanationResource',
-        'value': 'ExplanationResource'
-      }, {
-        'name': 'ExperientialResource',
-        'value': 'ExperientialResource'
-      }, {
-        'name': 'ConceptMap',
-        'value': 'ConceptMap'
-      }],
-    }
   }
 
   ngOnInit() {
