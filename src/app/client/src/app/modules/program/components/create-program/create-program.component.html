@@ -273,14 +273,14 @@
 													<label for="checkall"></label>
 												</div>
 											</th>
-											<th class="sb-sort-icon">{{resource.frmelmnts.lbl.title}}</th>
-											<th class="sb-sort-icon">{{resource.frmelmnts.lbl.grade}}</th>
-											<th class="sb-sort-icon">{{resource.frmelmnts.lbl.medium}}</th>
-											<th>{{resource.frmelmnts.lbl.chapters}}</th>
-											<th class="sb-sort-icon">{{resource.frmelmnts.lbl.subject}}</th>
+											<th class="sb-sort-icon w-5">{{resource.frmelmnts.lbl.title}}</th>
+											<th class="sb-sort-icon w-10">{{resource.frmelmnts.lbl.grade}}</th>
+											<th class="sb-sort-icon w-5">{{resource.frmelmnts.lbl.medium}}</th>
+											<th class="w-5">{{resource.frmelmnts.lbl.chapters}}</th>
+											<th class="sb-sort-icon w-5">{{resource.frmelmnts.lbl.subject}}</th>
 										</tr>
 									</thead>
-									<tbody class="sb-table-body w-100 o-y-auto max-height d-block">
+									<tbody class="sb-table-body d-block w-100 o-y-auto max-height">
 										<tr *ngFor="let data of collections">
 											<td class="collapsing">
 												<div class="sb-checkbox sb-checkbox-primary">
@@ -292,23 +292,23 @@
 											</td>
 											<td>
 												<div
-													class="sb-color-primary font-weight-bold">
+													class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
 													{{data.name}}
 												</div>
 											</td>
 											<td>
-												<div class="">
+												<div class="sb__ellipsis">
 													{{data.gradeLevel}}
 												</div>
 											</td>
 											<td>
-												<div>
+												<div class="sb__ellipsis">
 													{{data.medium}}
 												</div>
 											</td>
 											<td>{{ data.childNodes ? data.childNodes.length : 0 }}</td>
 											<td>
-												<div>
+												<div class="sb__ellipsis">
 													{{data.subject}}
 												</div>
 											</td>
