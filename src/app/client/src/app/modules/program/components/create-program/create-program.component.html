@@ -21,16 +21,16 @@
 			</div-->
 			<sui-tabset>
 				<div class="ui top attached tabular menu">
-					<a class="item" suiTabHeader="1" [ngClass]="{'active' : !showTextBookSelector}">{{resourceService.frmelmnts.lbl.details}}</a>
+					<a class="item" suiTabHeader="1" [ngClass]="{'active' : !showTextBookSelector}">{{resource.frmelmnts.lbl.details}}</a>
 					<a class="item" suiTabHeader="2" [ngClass]="{'active' : showTextBookSelector}"
-					[isDisabled]="!showTextBookSelector">{{resourceService.frmelmnts.lbl.selectTextbooks}}</a>
+					[isDisabled]="!showTextBookSelector">{{resource.frmelmnts.lbl.selectTextbooks}}</a>
 				</div>
 				<div class="ui bottom attached segment" suiTabContent="1" [ngClass]="{'active' : !showTextBookSelector}">
 					<form class="ui form" [formGroup]="createProgramForm" (submit)="saveProgram()">
 						<div class="ui grid">
 							<div class="twelve wide column">
 								<div class="required field">
-										<label class="d-block">{{resourceService.frmelmnts.lbl.name}}
+										<label class="d-block">{{resource.frmelmnts.lbl.name}}
 											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupText="Name"></i>
 										</label>									
 										<div class="sb-field">
@@ -43,7 +43,7 @@
 										</div>
 										<div class="ui pointing red basic label below"
 											*ngIf="createProgramForm.controls['name'].errors && createProgramForm.controls['name'].errors.maxlength && (!createProgramForm.controls['name'].pristine || formIsInvalid)">
-												{{resourceService.frmelmnts.lbl.characterLengthGreaterThousand}}									
+												{{resource.frmelmnts.lbl.characterLengthGreaterThousand}}									
 											</div>
 										<div *ngIf="createProgramForm.value.name.length" class="pull-right fsmall">
 											{{createProgramForm.value.name.length}} / 100</div>
@@ -52,21 +52,21 @@
 							</div>
 							<div class="twelve wide column">
 								<div class="required field ">
-									<label class="d-block">{{resourceService.frmelmnts.lbl.description}}
+									<label class="d-block">{{resource.frmelmnts.lbl.description}}
 											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Description"></i>
 									</label>
 									<div class="sb-field relative">
 										<textarea formControlName="description" type="text"
 											class="wmd-input width-100 sb-form-control" placeholder="Add description"
 											name="" required></textarea>
-											<span class="characters-left">{{resourceService.frmelmnts.lbl.thousandCharacterLeft}}</span>
+											<span class="characters-left">{{resource.frmelmnts.lbl.thousandCharacterLeft}}</span>
 										<div class="ui pointing red basic label below "
 											*ngIf="createProgramForm.controls['description'].errors && createProgramForm.controls['description'].errors.required && (!createProgramForm.controls['description'].pristine || formIsInvalid)">
 											This field is required
 										</div>
 										<div class="ui pointing red basic label below"
 											*ngIf="createProgramForm.controls['description'].errors && createProgramForm.controls['description'].errors.maxlength && (!createProgramForm.controls['description'].pristine || formIsInvalid)">
-											{{resourceService.frmelmnts.lbl.characterLengthGreaterThousand}}
+											{{resource.frmelmnts.lbl.characterLengthGreaterThousand}}
 										</div>
 										<div *ngIf="createProgramForm.value.description.length"
 											class="pull-right fsmall">{{createProgramForm.value.description.length}} /
@@ -77,7 +77,7 @@
 
 							<div class="twelve wide tablet three wide computer column">
 								<div class="required field">
-									<label class="d-block">{{resourceService.frmelmnts.lbl.nominationEndDate}}
+									<label class="d-block">{{resource.frmelmnts.lbl.nominationEndDate}}
 											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Nomination End Date"></i>
 									</label>
 									<div class="ui read-only calendar mb-10 sb-field">
@@ -95,7 +95,7 @@
 							</div>
 							<div class="twelve wide tablet three wide computer column">
 								<div class="field">
-									<label class="d-block">{{resourceService.frmelmnts.lbl.nominationShortlistingDate}}
+									<label class="d-block">{{resource.frmelmnts.lbl.nominationShortlistingDate}}
 											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Nomination Shortlisting Date"></i>
 									</label>
 									<div class="ui read-only calendar mb-10">
@@ -111,7 +111,7 @@
 
 							<div class="twelve wide tablet three wide computer column">
 								<div class="required field">
-									<label class="d-block">{{resourceService.frmelmnts.lbl.contributionEndDate}}
+									<label class="d-block">{{resource.frmelmnts.lbl.contributionEndDate}}
 											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Contribution End Date"></i>
 									</label>
 									<div class="ui read-only calendar mb-10">
@@ -131,7 +131,7 @@
 
 							<div class="three wide column">
 								<div class="required field">
-									<label class="d-block">{{resourceService.frmelmnts.lbl.programEndDate}}
+									<label class="d-block">{{resource.frmelmnts.lbl.programEndDate}}
 											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Program End Date"></i>
 									</label>
 									<div class="ui read-only calendasr mb-10">
@@ -149,7 +149,7 @@
 							</div>
 							<div class="twelve wide column">
 								<div class="field">
-									<label class="d-block">{{resourceService.frmelmnts.lbl.purpose}}
+									<label class="d-block">{{resource.frmelmnts.lbl.purpose}}
 											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Purpose"></i>
 									</label>
 									<sui-multi-select class="selection" labelField="name" [hasLabels]="true"
@@ -171,7 +171,7 @@
 							</div-->
 							<div class="twelve wide column">
 								<div class="field">
-									<label class="d-block">{{resourceService.frmelmnts.lbl.rewardsGiven}}
+									<label class="d-block">{{resource.frmelmnts.lbl.rewardsGiven}}
 											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Rewards Given"></i>
 									</label>
 									<div class="sb-field relative">
@@ -195,11 +195,11 @@
 						<div class="ui grid">
 							<div class="three wide column">
 								<div class="field">
-									<label class="d-block">{{resourceService.frmelmnts.lbl.selectMedium}}
+									<label class="d-block">{{resource.frmelmnts.lbl.selectMedium}}
 											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Select Medium"></i>
 									</label>
 									<sui-multi-select
-										placeholder="{{resourceService?.frmelmnts?.lbl?.profile?.selectMedium}}"
+										placeholder="{{resource?.frmelmnts?.lbl?.profile?.selectMedium}}"
 										class="selection" formControlName="medium" [options]="programScope['medium']"
 										[isDisabled]="!programScope['medium']" (ngModelChange)="onMediumChange()"
 										labelField="name" #mediums>
@@ -214,7 +214,7 @@
 							</div>
 							<div class="three wide column">
 								<div class="field">
-									<label class="d-block"> {{resourceService.frmelmnts.lbl.gradeClass}}
+									<label class="d-block"> {{resource.frmelmnts.lbl.gradeClass}}
 											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Grade / Class"></i>
 										</label>
 									<sui-multi-select class="selection" formControlName="gradeLevel" labelField="name"
@@ -231,7 +231,7 @@
 							</div>
 							<div class="three wide column">
 								<div class="field">
-									<label class="d-block"> {{resourceService.frmelmnts.lbl.subject}}
+									<label class="d-block"> {{resource.frmelmnts.lbl.subject}}
 											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Subject"></i>
 									</label>
 									<sui-multi-select class="selection" formControlName="subject" labelField="name"
@@ -250,10 +250,10 @@
 								<div class="field">
 									<label>&nbsp;</label>
 									<button class="sb-btn sb-btn-normal sb-btn-outline-primary">
-											{{resourceService.frmelmnts.btn.reset}}
+											{{resource.frmelmnts.btn.reset}}
 									</button>
 									<button class="sb-btn sb-btn-normal sb-btn-primary ml-8" (click)="showTexbooklist()">
-									{{resourceService.frmelmnts.btn.apply}}
+									{{resource.frmelmnts.btn.apply}}
 									</button>
 								</div>
 							</div>
@@ -273,11 +273,11 @@
 													<label for="checkall"></label>
 												</div>
 											</th>
-											<th class="sb-sort-icon">{{resourceService.frmelmnts.lbl.title}}</th>
-											<th class="sb-sort-icon">{{resourceService.frmelmnts.lbl.grade}}</th>
-											<th class="sb-sort-icon">{{resourceService.frmelmnts.lbl.medium}}</th>
-											<th>{{resourceService.frmelmnts.lbl.chapters}}</th>
-											<th class="sb-sort-icon">{{resourceService.frmelmnts.lbl.subject}}</th>
+											<th class="sb-sort-icon">{{resource.frmelmnts.lbl.title}}</th>
+											<th class="sb-sort-icon">{{resource.frmelmnts.lbl.grade}}</th>
+											<th class="sb-sort-icon">{{resource.frmelmnts.lbl.medium}}</th>
+											<th>{{resource.frmelmnts.lbl.chapters}}</th>
+											<th class="sb-sort-icon">{{resource.frmelmnts.lbl.subject}}</th>
 										</tr>
 									</thead>
 									<tbody class="sb-table-body">
@@ -352,11 +352,11 @@
 		</div>
 		<div class="text-align-right">
 			<button *ngIf="!showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary"
-				(click)="saveProgram()">{{resourceService.frmelmnts.btn.next}}</button>
+				(click)="saveProgram()">{{resource.frmelmnts.btn.next}}</button>
 			<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-default mr-10"
-				(click)="navigateTo(1)">{{resourceService.frmelmnts.btn.previous}}</button>
+				(click)="navigateTo(1)">{{resource.frmelmnts.btn.previous}}</button>
 			<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary"
-				(click)="updateProgramCollection()">{{resourceService.frmelmnts.btn.saveAndClose}}</button>
+				(click)="updateProgramCollection()">{{resource.frmelmnts.btn.saveAndClose}}</button>
 		</div>
 	</div>
 </div>

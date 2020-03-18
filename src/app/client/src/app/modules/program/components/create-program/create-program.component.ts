@@ -1,4 +1,5 @@
-import { HttpOptions, ConfigService, ResourceService, ToasterService, RouterNavigationService, ServerResponse, NavigationHelperService } from '@sunbird/shared';
+import { HttpOptions, ConfigService, ResourceService, ToasterService, RouterNavigationService,
+   ServerResponse, NavigationHelperService } from '@sunbird/shared';
 import { ProgramsService, DataService, FrameworkService } from '@sunbird/core';
 import { Subscription, Subject } from 'rxjs';
 import { tap, first, map, takeUntil } from 'rxjs/operators';
@@ -44,11 +45,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public resourceService: ResourceService;
 
   /**
-  * To show toaster(error, success etc) after any API calls
-  */
-  private toasterService: ToasterService;
-
-  /**
   * To navigate back to parent component
   */
   public routerNavigationService: RouterNavigationService;
@@ -84,8 +80,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     public frameworkService: FrameworkService,
     private programsService: ProgramsService,
     private userService: UserService,
-    toasterService: ToasterService,
-    resource: ResourceService,
+    public toasterService: ToasterService,
+    public resource: ResourceService,
     private config: ConfigService,
     activatedRoute: ActivatedRoute,
     private router: Router,
