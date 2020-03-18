@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
 import { FormControl, FormBuilder, Validators, FormGroup, FormArray } from '@angular/forms';
 import * as _ from 'lodash-es';
 import { UserService, FrameworkService, EnrollContributorService} from '@sunbird/core';
@@ -22,6 +22,7 @@ export class EnrollContributorComponent implements OnInit {
   public userProfile: any;
   public programScope = {};
   public enrolledDate: any;
+  @ViewChild('modal') modal;
   frameworkdetails;
   formIsInvalid = false;
   contentType = {
@@ -189,6 +190,7 @@ export class EnrollContributorComponent implements OnInit {
         if (this.enrollAsOrg  === false) {
           this.contributeForm.reset();
           this.tosterService.success('You are successfully enrolled as a contributor');
+          this.modal.deny();
         }
       },
       (err) => console.log(err)
@@ -233,6 +235,7 @@ export class EnrollContributorComponent implements OnInit {
       (res) => {
       this.contributeForm.reset();
       this.tosterService.success('You are successfully enrolled as a contributor!');
+      this.modal.deny();
     },
       (err) => console.log(err)
     );
