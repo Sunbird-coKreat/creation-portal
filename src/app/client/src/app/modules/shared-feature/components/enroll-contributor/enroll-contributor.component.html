@@ -1,8 +1,8 @@
-<div *ngIf="frameworkFetched">
+<div *ngIf="frameworkFetched && !userProfile.userRegData.User">
 
 <sui-modal
    [mustScroll]="true"
-    [isClosable]="true"
+    [isClosable]="false"
     [transitionDuration]="0"
     [size]="'normal'"
     class="sb-modal"
