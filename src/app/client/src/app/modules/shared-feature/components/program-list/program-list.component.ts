@@ -99,7 +99,8 @@ export class ProgramListComponent implements OnInit {
   private getContributionOrgUsers(selectedProgram) {
     this.selectedProgramToAssignRoles = selectedProgram.program_id;
     this.showAssignRoleModal = true;
-      const orgUsers = this.registryService.getContributionOrgUsers('1-27ea8585-d081-49f9-94ca-54c57b348689');
+    console.log('this.userService.userProfile.userRegData.User_Org.orgId ', this.userService.userProfile.userRegData.User_Org.orgId);
+    const orgUsers = this.registryService.getContributionOrgUsers(this.userService.userProfile.userRegData.User_Org.orgId);
       orgUsers.subscribe(response => {
         const result = _.get(response, 'result');
         if (!result || _.isEmpty(result)) {

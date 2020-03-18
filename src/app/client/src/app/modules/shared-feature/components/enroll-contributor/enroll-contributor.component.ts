@@ -132,7 +132,7 @@ export class EnrollContributorComponent implements OnInit {
 
         };
           User['firstName'] =  this.userProfile.firstName;
-          User['lastName'] =  this.userProfile.lastName;
+          User['lastName'] =  this.userProfile.lastName || '';
           User['userId'] =  this.userProfile.identifier;
           User['enrolledDate'] = this.enrolledDate;
           User['certificates'] =  '';
@@ -143,20 +143,13 @@ export class EnrollContributorComponent implements OnInit {
 
         const User = {
           ...this.contributeForm.value
-
         };
           User['firstName'] =  this.userProfile.firstName;
-          User['lastName'] =  this.userProfile.lastName;
+          User['lastName'] =  this.userProfile.lastName || '';
           User['userId'] =  this.userProfile.identifier;
           User['certificates'] =  '';
           User['channel'] = 'sunbird';
           this.enrollUser(User);
-            const Org = {
-              ...this.contributeForm.value
-          };
-            Org['createdBy'] =  this.userProfile.identifier;
-            Org['code'] = this.contributeForm.controls['name'].value.toUpperCase();
-            this.enrollAsOrganisation(Org);
         }
     } else {
             this.formIsInvalid = true;
@@ -177,11 +170,23 @@ export class EnrollContributorComponent implements OnInit {
     };
    // this.saveData(option);
     this.enrollContributorService.saveData(option).subscribe(
-      (res) => {this.mapUserId = res.result.User.osid;
-        if (this.enrollAsOrg  === false) {
+      (res) => {
+        if (res.result.User.osid) {
+          const Org = {
+            ...this.contributeForm.value
+         };
+          Org['createdBy'] =  res.result.User.osid;
+          Org['code'] = this.contributeForm.controls['name'].value.toUpperCase();
+          this.mapUserId = res.result.User.osid;
+          if (this.enrollAsOrg  === false) {
+            this.contributeForm.reset();
+            this.tosterService.success('You are successfully enrolled as a contributor');
+            this.modal.deny();
+          }
+          this.enrollAsOrganisation(Org);
+        } else {
           this.contributeForm.reset();
-          this.tosterService.success('You are successfully enrolled as a contributor');
-          this.modal.deny();
+          this.tosterService.error('Enrollment unsuccessfully');
         }
       },
       (err) => console.log(err)
