@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 import { ProgramsService, UserService, FrameworkService, EnrollContributorService} from '@sunbird/core';
 import { tap, first , map, takeUntil } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
-import { Subscription, Subject, interval ,} from 'rxjs';
+import { Subscription, Subject, interval , } from 'rxjs';
 import { ServerResponse, RequestParam, HttpOptions } from '@sunbird/shared';
 import { of as observableOf, throwError as observableThrowError, Observable  } from 'rxjs';
 import { ToasterService, ResourceService } from '@sunbird/shared';
@@ -14,27 +14,32 @@ import { DatePipe } from '@angular/common';
   selector: 'app-enroll-contributor',
   templateUrl: './enroll-contributor.component.html',
   styleUrls: ['./enroll-contributor.component.scss'],
-  providers:[DatePipe]
+  providers: [DatePipe]
 })
 export class EnrollContributorComponent implements OnInit {
   public unsubscribe = new Subject<void>();
   public enrollAsOrg = false;
-  public enrollDetails = {};
+  public enrollDetails: any = {};
   public userProfile: any;
   public programScope = {};
-  public enrolledDate:any;
+  public enrolledDate: any;
   frameworkdetails;
   formIsInvalid = false;
   contentType = { };
 
   options;
   disableSubmit = false;
-  public contributeForm:FormGroup;
-  public mapUserId: string
-  public mapOrgId: string
+  public contributeForm: FormGroup;
+  public mapUserId: string;
+  public mapOrgId: string;
+  public frameworkFetched = false;
   @Output() close = new EventEmitter<any>();
 
-  constructor(private programsService: ProgramsService, private tosterService: ToasterService, public userService: UserService, public frameworkService : FrameworkService, public toasterService : ToasterService, public formBuilder: FormBuilder, public http: HttpClient, public enrollContributorService : EnrollContributorService,  public resourceService : ResourceService, private datePipe: DatePipe  ) {
+  constructor(private programsService: ProgramsService, private tosterService: ToasterService,
+    public userService: UserService, public frameworkService: FrameworkService,
+    public toasterService: ToasterService, public formBuilder: FormBuilder,
+    public http: HttpClient, public enrollContributorService: EnrollContributorService,
+    public resourceService: ResourceService, private datePipe: DatePipe  ) {
     this.userProfile = this.userService.userProfile;
   }
 
@@ -83,12 +88,7 @@ export class EnrollContributorComponent implements OnInit {
       }
     );
   }
- /* generateenrollDetailsFields(fields) {
-    fields.forEach( (element) => {
-      this.enrollDetails[element['code']] = element['terms'];
-    });
-  }*/
-
+ 
   initializeFormFields(): void {
     this.contributeForm = this.formBuilder.group({
         board: ['', Validators.required],
@@ -110,8 +110,7 @@ export class EnrollContributorComponent implements OnInit {
   saveUser() {
     this.formIsInvalid = false;
     if (this.contributeForm.dirty && this.contributeForm.valid) {
-      if(this.enrollAsOrg === false)
-      {
+      if (this.enrollAsOrg === false) {
           const User = {
             ...this.contributeForm.value
 
@@ -120,12 +119,11 @@ export class EnrollContributorComponent implements OnInit {
           User['lastName'] =  this.userProfile.lastName;
           User['userId'] =  this.userProfile.identifier;
           User['enrolledDate'] = this.enrolledDate;
-          User['certificates'] =  "";
-          User['channel'] = "sunbird";
+          User['certificates'] =  '';
+          User['channel'] = 'sunbird';
           this.enrollUser(User);
       }
-      if(this.enrollAsOrg === true)
-      {
+      if (this.enrollAsOrg === true) {
 
         const User = {
           ...this.contributeForm.value
@@ -134,8 +132,8 @@ export class EnrollContributorComponent implements OnInit {
           User['firstName'] =  this.userProfile.firstName;
           User['lastName'] =  this.userProfile.lastName;
           User['userId'] =  this.userProfile.identifier;
-          User['certificates'] =  "";
-          User['channel'] = "sunbird";
+          User['certificates'] =  '';
+          User['channel'] = 'sunbird';
           this.enrollUser(User);
             const Org = {
               ...this.contributeForm.value
@@ -144,96 +142,86 @@ export class EnrollContributorComponent implements OnInit {
             Org['code'] = this.contributeForm.controls['name'].value.toUpperCase();
             this.enrollAsOrganisation(Org);
         }
-    }
-    else
-    {
+    } else {
             this.formIsInvalid = true;
             this.validateAllFormFields(this.contributeForm);
     }
   }
-  enrollUser(User)
-  {
-    const option =
-    {
-      url: "reg/add",
+  enrollUser(User) {
+    const option = {
+      url: 'reg/add',
       data:
       {
-        id : "open-saber.registry.create",
+        id : 'open-saber.registry.create',
         request:
         {
           User
         }
       }
-    }
+    };
    // this.saveData(option);
     this.enrollContributorService.saveData(option).subscribe(
-      (res) => {this.mapUserId=res.result.User.osid;
-        if(this.enrollAsOrg  === false) {
+      (res) => {this.mapUserId = res.result.User.osid;
+        if (this.enrollAsOrg  === false) {
           this.contributeForm.reset();
-          this.tosterService.success("You are successfully enrolled as a contributor");
+          this.tosterService.success('You are successfully enrolled as a contributor');
         }
       },
       (err) => console.log(err)
     );
 
   }
-  enrollAsOrganisation(Org)
-  {
-    const option =
-    {
-      url: "reg/add",
+  enrollAsOrganisation(Org) {
+    const option = {
+      url: 'reg/add',
       data:
       {
-        id : "open-saber.registry.create",
+        id : 'open-saber.registry.create',
         request:
         {
           Org
         }
       }
-    }
+    };
 
     this.enrollContributorService.saveData(option).subscribe(
-      (res) => {this.mapOrgId=res.result.Org.osid; this.mapUserToOrg() },
+      (res) => {this.mapOrgId = res.result.Org.osid; this.mapUserToOrg(); },
       (err) => console.log(err)
     );
   }
 
-  mapUserToOrg()
-  {
+  mapUserToOrg() {
     const option = {
-      url:"reg/add",
+      url: 'reg/add',
       data:
       {
-        id: "open-saber.registry.create",
+        id: 'open-saber.registry.create',
         request: {
           User_Org: {
           userId: this.mapUserId,
           orgId: this.mapOrgId,
-          roles:["admin"]
+          roles: ['admin']
         }
       }
     }
-    }
+    };
     this.enrollContributorService.saveData(option).subscribe(
       (res) => {
       this.contributeForm.reset();
-      this.tosterService.success("You are successfully enrolled as a contributor!")
+      this.tosterService.success('You are successfully enrolled as a contributor!');
     },
       (err) => console.log(err)
     );
   }
-  chnageEnrollStatus(status)
-  {
+  chnageEnrollStatus(status) {
     this.enrollAsOrg = status;
-    if(this.enrollAsOrg == true)
-    {
+    if (this.enrollAsOrg === true) {
       // const name = this.contributeForm.get('name');
       // const description = this.contributeForm.get('description');
       // name.setValidators([Validators.required]);
       // description.setValidators([Validators.required]);
     }
-    if(this.enrollAsOrg == false)
-    {
+    if (this.enrollAsOrg === false) {
       // const name = this.contributeForm.get('name');
       // const description = this.contributeForm.get('description');
       // name.setValidators(null);

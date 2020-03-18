@@ -18,11 +18,11 @@ export class ListNominationsComponent implements OnInit {
   approve = new EventEmitter();
   @Output()
   reject = new EventEmitter();
-  private initiatedCount = 0;
-  private pendingCount = 0;
-  private approvedCount = 0;
-  private rejectedCount = 0;
-  private totalCount = 0;
+  public initiatedCount = 0;
+  public pendingCount = 0;
+  public approvedCount = 0;
+  public rejectedCount = 0;
+  public totalCount = 0;
 
    public sessionContext: ISessionContext = {};
    show = false;

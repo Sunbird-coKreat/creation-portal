@@ -1,32 +1,41 @@
 <div class="ui container">
-    <div class="my-24">
-          <div class="d-flex flex-ai-center flex-jc-space-between">
-              <div>  
-                <h4 class="sb-pageSection-title">Ekstep Organistaion - User List
-                    <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">3</span>
-                  </h4>
-              </div>
-              <div>
-                <button class="sb-btn sb-btn-outline-primary ml-10 sb-btn-normal" (click)="showNormalModal = true">Link to add a user</button>
-              </div>
-            </div>
+  <div class="my-24">
+    <div class="d-flex flex-ai-center flex-jc-space-between">
+      <div>
+        <h4 class="sb-pageSection-title">Ekstep Organistaion
+          <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">3</span>
+        </h4>
       </div>
-    <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
-        <thead class="sb-table-header sb-table-thead-gray">
-          <tr>
-              <th>Username</th>
-              <th>Mobile no.</th>
-              <th>Grade/Subject</th>
-              <th>Select Role</th>
-          </tr>
-        </thead>
-        <tbody class="sb-table-body">
-          <tr>
-            <td>Nilesh</td>
-            <td>**********</td>
-            <td>Grade 4, English</td>
-            <td>
-                <ng-template let-option #optionTemplate >
+      <div>
+        <button class="sb-btn sb-btn-outline-primary sb-btn-normal ml-10 " (click)="showNormalModal = true"><i
+            class="plus circle icon"></i> Invite a User</button>
+      </div>
+    </div>
+  </div>
+  <div class="sb-table-respoinsive">
+    <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
+      <thead class="sb-table-header sb-table-thead-gray">
+        <tr>
+          <th>S.No.</th>
+          <th></th>
+          <th>Username</th>
+          <th>Mobile no.</th>
+          <th>Grade/Subject</th>
+          <th>Roles</th>
+          <th>Programs</th>
+        </tr>
+      </thead>
+      <tbody class="sb-table-body">
+        <tr>
+          <td>1</td>
+          <td><button type="button" class="sb-btn sb-btn-outline-primary sb-btn-xs">Edit</button></td>
+          <td>Nilesh</td>
+          <td>**********</td>
+          <td>Grade 4, English</td>
+          <td>
+            <div class="sb-label-value mt-4">Admin</div>
+            <div class="sb-label-value mt-4">Reviewer</div>
+            <!-- <ng-template let-option #optionTemplate >
                     <div class="field m-0">
                     <div class="template-checkbox">
                       <div class="p-5 option-text"  title="{{option.name}}">
@@ -45,15 +54,25 @@
                     <sui-select-option *ngFor="let option of data.board"
                     [value]="option">
                     </sui-select-option>
-                  </sui-select>
-              </td>
-          </tr>
-          <tr>
-              <td>Nitesh</td>
-              <td>**********</td>
-              <td>Grade 9, Mathematics</td>
-              <td>
-                  <ng-template let-option #optionTemplate >
+                  </sui-select> -->
+
+          </td>
+          <td>
+            <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold" style="width: 250px;">
+              Kerala Program name, AP Program name, Karnataka Program name, Tamilnadu Program name
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><button type="button" class="sb-btn sb-btn-outline-primary sb-btn-xs">Edit</button></td>
+          <td>Nitesh</td>
+          <td>**********</td>
+          <td>Grade 9, Mathematics</td>
+          <td>
+            <div class="sb-label-value mt-4">Admin</div>
+            <div class="sb-label-value mt-4">Reviewer</div>
+            <!-- <ng-template let-option #optionTemplate >
                       <div class="field m-0">
                       <div class="template-checkbox">
                         <div class="p-5 option-text"  title="{{option.name}}">
@@ -72,15 +91,22 @@
                       <sui-select-option *ngFor="let option of data.board"
                       [value]="option">
                       </sui-select-option>
-                    </sui-select>
-              </td>
-            </tr>
-            <tr>
-                <td>Vaishali</td>
-                <td>**********</td>
-                <td>Grade 10, chemistry</td>
-                <td>
-                    <ng-template let-option #optionTemplate >
+                    </sui-select> -->
+          </td>
+         <td> <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold" style="width: 250px;">
+          Kerala Program name, AP Program name, Karnataka Program name, Tamilnadu Program name
+        </div></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><button type="button" class="sb-btn sb-btn-outline-primary sb-btn-xs">Edit</button></td>
+          <td>Vaishali</td>
+          <td>**********</td>
+          <td>Grade 10, chemistry</td>
+          <td>
+            <div class="sb-label-value mt-4">Admin</div>
+            <div class="sb-label-value mt-4">Reviewer</div>
+            <!-- <ng-template let-option #optionTemplate >
 								<div class="field m-0">
 								<div class="template-checkbox">
 									<div class="p-5 option-text"  title="{{option.name}}">
@@ -99,31 +125,32 @@
 								<sui-select-option *ngFor="let option of data.board"
 								[value]="option">
 								</sui-select-option>
-							</sui-select>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+              </sui-select> -->
+
+          </td>
+          <td>
+            <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold" style="width: 250px;">
+              Kerala Program name, AP Program name, Karnataka Program name, Tamilnadu Program name
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <!-- Modal popup for share link -->
-<sui-modal *ngIf="showNormalModal" 
-            [mustScroll]="true" 
-            [isClosable]="true" 
-            [transitionDuration]="0" 
-            [size]="'normal'"
-            class="sb-modal" 
-            appBodyScroll (dismissed)="showNormalModal = !showNormalModal" 
-            #modal>
-        <div class="sb-modal-header">
-          Link to share
-        </div>
-        <div class="sb-modal-content">
-            <button class="ui right labeled icon button sb-bg-color-gray-0 mt-10 sb__ellipsis w-100 text-left">
-                https://projects.invisionapp.com/d/main/default
-                <i class="copy icon" suiPopup popupHeader="Copylink"></i>
-              </button>
-          </div>
+<sui-modal *ngIf="showNormalModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+  class="sb-modal" appBodyScroll (dismissed)="showNormalModal = !showNormalModal" #modal>
+  <div class="sb-modal-header">
+    Link to share
+  </div>
+  <div class="sb-modal-content">
+    <p class="mb-8"> Share using the link </p>
+    <div class="ui action input fluid">
+      <input name="title" readonly="" value="https://projects.invisionapp.com/d/main/default" type="text" class="">
+      <button class="ui basic primary button"> Copy link </button></div>
+  </div>
 </sui-modal>
 
 <!-- <button class="sb-btn sb-btn-outline-primary ml-10 sb-btn-normal" (click)="showAssignRoleModal = true">Link to add a user</button>
