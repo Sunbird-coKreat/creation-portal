@@ -23,7 +23,18 @@
                 <th *ngIf="isContributor">{{ resourceService.frmelmnts.lbl.orgName }}</th>
                 <th class="w-20">{{ resourceService.frmelmnts.lbl.purpose }}</th>
                 <th class="w-20">{{ resourceService.frmelmnts.lbl.gradesMediumsSubjects }}</th>
-                <th *ngIf="!isContributor">{{ resourceService.frmelmnts.lbl.status }}</th>
+                <th *ngIf="!isContributor">
+                  <span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
+                    <div class="text">{{ resourceService.frmelmnts.lbl.status }}</div>
+                    <i class="filter icon"></i>
+                    <div class="menu" suiDropdownMenu>
+                        <div class="item" selected>{{ resourceService.frmelmnts.lbl.allStatus }}</div>
+                        <div class="item">{{ resourceService.frmelmnts.lbl.draft }}</div>
+                        <div class="item">{{ resourceService.frmelmnts.lbl.published }}</div>
+                        <div class="item">{{ resourceService.frmelmnts.lbl.closed }}</div>
+                    </div>
+                  </span>
+                </th>
                 <th *ngIf="!isContributor">{{ resourceService.frmelmnts.lbl.programDates }}</th>
                 <th *ngIf="activeMyProgramsMenu" class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.contributionDate }}</th>
                 <th *ngIf="activeAllProgramsMenu">{{ resourceService.frmelmnts.lbl.programDates }}</th>
@@ -32,8 +43,9 @@
                     <div class="text">{{ resourceService.frmelmnts.lbl.nominationStatus }}</div>
                     <i class="filter icon"></i>
                     <div class="menu" suiDropdownMenu>
-                        <div class="item" selected>resourceService.frmelmnts.lbl.allStatus</div>
-                        <div class="item">{{ resourceService.frmelmnts.lbl.pendig }}</div>
+                        <div class="item" selected>{{ resourceService.frmelmnts.lbl.allStatus }}</div>
+                        <div class="item">{{ resourceService.frmelmnts.lbl.initiated }}</div>
+                        <div class="item">{{ resourceService.frmelmnts.lbl.pending }}</div>
                         <div class="item">{{ resourceService.frmelmnts.lbl.approved }}</div>
                         <div class="item">{{ resourceService.frmelmnts.lbl.rejected }}</div>
                     </div>
@@ -88,7 +100,7 @@
                       <div class="status" [class.active]="isActive(program, 'nomination_enddate', i)">
                         <div class="status__label">{{ resourceService.frmelmnts.lbl.nominationSubmission }}</div>
                         <div class="status__date">
-                          {{ program?.nomination_enddate | date:'d LLL yy'  }}
+                          {{ program?.nomination_enddate | date:'LLLL d, yyyy'  }}
                           <em *ngIf="isActive(program, 'nomination_enddate', i)">{{ program?.nomination_enddate | daysToGo  }}</em>
                         </div>
                       </div>
@@ -97,7 +109,7 @@
                       <div class="status" [class.active]="isActive(program, 'shortlisting_enddate', i)">
                         <div class="status__label">{{ resourceService.frmelmnts.lbl.shortlistingNomination }}</div>
                         <div class="status__date">
-                          {{ program?.shortlisting_enddate | date:'d LLL yy'  }}
+                          {{ program?.shortlisting_enddate | date:'LLLL d, yyyy'  }}
                           <em *ngIf="isActive(program, 'shortlisting_enddate', i)">{{ program?.shortlisting_enddate | daysToGo  }}</em>
                         </div>
                       </div>
@@ -106,7 +118,7 @@
                       <div class="status" [class.active]="isActive(program, 'content_submission_enddate', i)">
                         <div class="status__label">{{ resourceService.frmelmnts.lbl.contributions }}</div>
                         <div class="status__date">
-                          {{ program?.content_submission_enddate | date:'d LLL yy'  }}
+                          {{ program?.content_submission_enddate | date:'LLLL d, yyyy'  }}
                           <em *ngIf="isActive(program, 'content_submission_enddate', i)">{{ program?.content_submission_enddate | daysToGo  }}</em>
                         </div>
                       </div>
