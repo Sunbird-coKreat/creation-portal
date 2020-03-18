@@ -63,7 +63,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   */
   frameworkdetails;
   frameworkCategories;
-  programScope = {};
+  programScope: any;
   userprofile;
   programId = 0;
   showTextBookSelector = false;
@@ -307,13 +307,13 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       if (!this.programId) {
         data['status'] = "Draft";
         this.programsService.createProgram(data).subscribe(
-          (res) => { this.programId = res.result.program_id; this.showTexbooklist(res) },
+          (res) => { this.programId = res.result.program_id; this.showTexbooklist() },
           (err) => this.saveProgramError(err)
         );
       } else {
         data['program_id'] = this.programId;
         this.programsService.updateProgram(data).subscribe(
-          (res) => { this.showTexbooklist(res) },
+          (res) => { this.showTexbooklist() },
           (err) => this.saveProgramError(err)
         );
       }
@@ -323,7 +323,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
   }
 
-  showTexbooklist(res) {
+  showTexbooklist() {
 
     const option = {
       url: 'content/composite/v1/search',
