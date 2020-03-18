@@ -7,7 +7,7 @@ import { PublicDataService } from './../public-data/public-data.service';
 import { ConfigService, ServerResponse, ToasterService, ResourceService } from '@sunbird/shared';
 import { Injectable } from '@angular/core';
 import { UserService } from '../user/user.service';
-import { combineLatest, of, iif, Observable, throwError as observableThrowError, BehaviorSubject, throwError, merge } from 'rxjs';
+import { combineLatest, of, iif, Observable, BehaviorSubject, throwError, merge } from 'rxjs';
 import * as _ from 'lodash-es';
 import { CanActivate, Router } from '@angular/router';
 import { DataService } from '../data/data.service';
