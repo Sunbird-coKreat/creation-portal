@@ -56,10 +56,10 @@ export class EnrollContributorComponent implements OnInit {
 
   fetchFrameWorkDetails() {
    const frameworkId = _.get(this.userProfile.framework, 'id') ? _.get(this.userProfile.framework, 'id')[0] : null;
+   if (frameworkId) {
     this.frameworkService.getFrameworkCategories(frameworkId)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((data) => {
-
         if (data && _.get(data, 'result.framework.categories')) {
           this.frameworkdetails = _.get(data, 'result.framework.categories');
 
@@ -73,6 +73,18 @@ export class EnrollContributorComponent implements OnInit {
         this.toasterService.warning(errorMes || 'Fetching framework details failed');
         this.router.navigate(['']);
       });
+   } else {
+    this.frameworkService.initialize();
+    this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
+      if (frameworkInfo && !frameworkInfo.err) {
+        this.frameworkdetails  = frameworkInfo.frameworkdata.defaultFramework.categories;
+        this.frameworkdetails.forEach((element) => {
+          this.enrollDetails[element['code']] = element['terms'];
+        });
+        this.frameworkFetched = true;
+      }
+    });
+   }
   }
 
   getProgramContentTypes () {
