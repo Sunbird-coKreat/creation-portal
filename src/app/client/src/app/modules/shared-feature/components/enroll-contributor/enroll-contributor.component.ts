@@ -96,7 +96,11 @@ export class EnrollContributorComponent implements OnInit {
     this.frameworkService.initialize(this.userProfile.framework.id);
     this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
       if (frameworkDetails && !frameworkDetails.err) {
-        instance.frameworkdetails = frameworkDetails.frameworkdata[this.userProfile.framework.id[0]].categories;
+        if (this.userProfile.framework.id) {
+          instance.frameworkdetails = frameworkDetails.frameworkdata[this.userProfile.framework.id[0]].categories;
+        } else if (frameworkDetails.frameworkdata.defaultFramework) {
+          instance.frameworkdetails = frameworkDetails.frameworkdata.defaultFramework.categories;
+        }
         this.frameworkFetched = true;
         this.generateenrollDetailsFields(instance.frameworkdetails);
       }
