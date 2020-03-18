@@ -87,20 +87,24 @@
         <label class="width-100">{{ resourceService.frmelmnts.lbl.nominations }} </label>
         <div class="d-flex">
           <dl class="sb-meta-data">
-            <dt>15</dt>
-            <dd>Total</dd>
+            <dt>{{ initiatedCount }}</dt>
+            <dd>{{ resourceService.frmelmnts.lbl.initiated }}</dd>
           </dl>
           <dl class="sb-meta-data">
-            <dt>5</dt>
-            <dd>Rejected</dd>
+            <dt>{{ pendingCount }}</dt>
+            <dd>{{ resourceService.frmelmnts.lbl.pending }}</dd>
           </dl>
           <dl class="sb-meta-data">
-            <dt>5</dt>
-            <dd>Pending</dd>
+            <dt>{{ approvedCount }}</dt>
+            <dd>{{ resourceService.frmelmnts.lbl.approved }}</dd>
           </dl>
           <dl class="sb-meta-data">
-            <dt>5</dt>
-            <dd>Approved</dd>
+            <dt>{{ rejectedCount }}</dt>
+            <dd>{{ resourceService.frmelmnts.lbl.rejected }}</dd>
+          </dl>
+          <dl class="sb-meta-data">
+            <dt>{{ totalCount }}</dt>
+            <dd>{{ resourceService.frmelmnts.lbl.total }}</dd>
           </dl>
         </div>
       </div>
@@ -129,14 +133,15 @@
                       <div class="text">{{ resourceService.frmelmnts.lbl.status }}</div>
                       <i class="filter icon"></i>
                       <div class="menu" suiDropdownMenu>
-                        <div class="item" selected>resourceService.frmelmnts.lbl.allStatus</div>
-                        <div class="item">{{ resourceService.frmelmnts.lbl.pendig }}</div>
+                        <div class="item" selected>{{ resourceService.frmelmnts.lbl.allStatus }}</div>
+                        <div class="item">{{ resourceService.frmelmnts.lbl.initiated }}</div>
+                        <div class="item">{{ resourceService.frmelmnts.lbl.pending }}</div>
                         <div class="item">{{ resourceService.frmelmnts.lbl.approved }}</div>
                         <div class="item">{{ resourceService.frmelmnts.lbl.rejected }}</div>
                       </div>
                     </span>
                   </th>
-                  <th class="text-center">{{ resourceService.frmelmnts.lbl.actions }}</th>
+                  <th class="text-center"></th>
                 </tr>
               </thead>
               <tbody class="sb-table-body">
@@ -159,12 +164,12 @@
                       {{ nomination?.nominationData?.status }}
                     </span>
                   </td>
-                  <td class="text-right">
+                  <td class="text-center">
                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                       *ngIf="nomination?.nominationData?.status === 'Pending'"
                       (click)="viewNominationDetails(nomination)">{{ resourceService.frmelmnts.lbl.viewDetails }}</button>
                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
-                      *ngIf="nomination?.nominationData?.status === 'Accepted'"
+                      *ngIf="nomination?.nominationData?.status === 'Approved'"
                       [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">{{ resourceService.frmelmnts.lbl.viewContribution }}</button>
                   </td>
                 </tr>
