@@ -1,8 +1,8 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormControl, FormBuilder, Validators, FormGroup, FormArray } from '@angular/forms';
 import * as _ from 'lodash-es';
-import { UserService, FrameworkService, EnrollContributorService} from '@sunbird/core';
-import { tap, first , map } from 'rxjs/operators';
+import { ProgramsService, UserService, FrameworkService, EnrollContributorService} from '@sunbird/core';
+import { tap, first , map, takeUntil } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Subscription, Subject, interval ,} from 'rxjs';
 import { ServerResponse, RequestParam, HttpOptions } from '@sunbird/shared';
@@ -17,6 +17,7 @@ import { DatePipe } from '@angular/common';
   providers:[DatePipe]
 })
 export class EnrollContributorComponent implements OnInit {
+  public unsubscribe = new Subject<void>();
   public enrollAsOrg = false;
   public enrollDetails = {};
   public userProfile: any;
@@ -24,42 +25,7 @@ export class EnrollContributorComponent implements OnInit {
   public enrolledDate:any;
   frameworkdetails;
   formIsInvalid = false;
-  contentType = {
-    'contentType': [{
-      'name': 'Resource',
-      'value': 'Resource'
-      }, {
-          'name': 'TeachingMethod',
-          'value': 'TeachingMethod'
-      }, {
-          'name': 'PedagogyFlow',
-          'value': 'PedagogyFlow'
-      }, {
-          'name': 'FocusSpot',
-          'value': 'FocusSpot'
-      }, {
-        'name': 'LearningOutcomeDefinition',
-        'value': 'LearningOutcomeDefinition'
-      }, {
-        'name': 'PracticeQuestionSet',
-        'value': 'PracticeQuestionSet'
-      }, {
-        'name': 'CuriosityQuestionSet',
-        'value': 'CuriosityQuestionSet'
-      }, {
-        'name': 'MarkingSchemeRubric',
-        'value': 'MarkingSchemeRubric'
-      }, {
-        'name': 'ExplanationResource',
-        'value': 'ExplanationResource'
-      }, {
-        'name': 'ExperientialResource',
-        'value': 'ExperientialResource'
-      }, {
-        'name': 'ConceptMap',
-        'value': 'ConceptMap'
-    }],
-  }
+  contentType = { };
 
   options;
   disableSubmit = false;
@@ -68,44 +34,60 @@ export class EnrollContributorComponent implements OnInit {
   public mapOrgId: string
   @Output() close = new EventEmitter<any>();
 
-  constructor(private tosterService: ToasterService, public userService: UserService, public frameworkService : FrameworkService, public toasterService : ToasterService, public formBuilder: FormBuilder, public http: HttpClient, public enrollContributorService : EnrollContributorService,  public resourceService : ResourceService, private datePipe: DatePipe  ) { 
+  constructor(private programsService: ProgramsService, private tosterService: ToasterService, public userService: UserService, public frameworkService : FrameworkService, public toasterService : ToasterService, public formBuilder: FormBuilder, public http: HttpClient, public enrollContributorService : EnrollContributorService,  public resourceService : ResourceService, private datePipe: DatePipe  ) {
     this.userProfile = this.userService.userProfile;
   }
 
   ngOnInit(): void {
       this.userProfile = this.userService.userProfile;
-      console.log(this.userService.userProfile, "this si the user service")
-      console.log(this.userProfile)
       this.fetchFrameWorkDetails();
       this.initializeFormFields();
-      console.log("Refresh the page")
-  
-      
-    this.enrolledDate = new Date();
-    this.enrolledDate = this.datePipe.transform(this.enrolledDate, 'yyyy-MM-dd');
+      this.getProgramContentTypes();
+      this.enrolledDate = new Date();
+      this.enrolledDate = this.datePipe.transform(this.enrolledDate, 'yyyy-MM-dd');
   }
 
   fetchFrameWorkDetails() {
-    let instance = this;
-    this.frameworkService.initialize(this.userProfile.framework.id);
-    this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
-      if (frameworkDetails && !frameworkDetails.err) {
-        instance.frameworkdetails = frameworkDetails.frameworkdata[this.userProfile.framework.id[0]].categories; 
-        this.generateenrollDetailsFields(instance.frameworkdetails);
-      }
-    }, error => {
-      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-      this.toasterService.warning(errorMes || 'Fetching framework details failed');
-    });
+
+    this.frameworkService.getFrameworkCategories(_.get(this.userProfile.framework, 'id')[0])
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((data) => {
+
+        if (data && _.get(data, 'result.framework.categories')) {
+          this.frameworkdetails = _.get(data, 'result.framework.categories');
+
+          this.frameworkdetails.forEach((element) => {
+            this.enrollDetails[element['code']] = element['terms'];
+          });
+        }
+      }, error => {
+        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+        this.toasterService.warning(errorMes || 'Fetching framework details failed');
+      });
   }
 
-  generateenrollDetailsFields(fields) {
+  getProgramContentTypes () {
+    const option = {
+      url: 'program/v1/contenttypes/list',
+    };
+
+    this.programsService.get(option).subscribe(
+      (res) => {
+        this.contentType['contentType'] = res.result.contentType;
+        },
+      (err) => {
+        console.log(err);
+        // TODO: navigate to program list page
+        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+        this.toasterService.warning(errorMes || 'Fetching content types failed');
+      }
+    );
+  }
+ /* generateenrollDetailsFields(fields) {
     fields.forEach( (element) => {
       this.enrollDetails[element['code']] = element['terms'];
     });
-
-    console.log(this.enrollDetails, "frmaework");
-  }
+  }*/
 
   initializeFormFields(): void {
     this.contributeForm = this.formBuilder.group({
@@ -132,10 +114,10 @@ export class EnrollContributorComponent implements OnInit {
       {
           const User = {
             ...this.contributeForm.value
-            
+
         };
           User['firstName'] =  this.userProfile.firstName;
-          User['firstName'] =  this.userProfile.firstName;
+          User['lastName'] =  this.userProfile.lastName;
           User['userId'] =  this.userProfile.identifier;
           User['enrolledDate'] = this.enrolledDate;
           User['certificates'] =  "";
@@ -147,21 +129,21 @@ export class EnrollContributorComponent implements OnInit {
 
         const User = {
           ...this.contributeForm.value
-            
+
         };
           User['firstName'] =  this.userProfile.firstName;
-          User['firstName'] =  this.userProfile.firstName;
+          User['lastName'] =  this.userProfile.lastName;
           User['userId'] =  this.userProfile.identifier;
           User['certificates'] =  "";
           User['channel'] = "sunbird";
           this.enrollUser(User);
             const Org = {
-              ...this.contributeForm.value   
+              ...this.contributeForm.value
           };
             Org['createdBy'] =  this.userProfile.identifier;
             Org['code'] = this.contributeForm.controls['name'].value.toUpperCase();
-            this.enrollAsOrganisation(Org);   
-        } 
+            this.enrollAsOrganisation(Org);
+        }
     }
     else
     {
@@ -180,15 +162,15 @@ export class EnrollContributorComponent implements OnInit {
         request:
         {
           User
-        } 
-      }             
+        }
+      }
     }
    // this.saveData(option);
     this.enrollContributorService.saveData(option).subscribe(
-      (res) => {this.mapUserId=res.result.User.osid; 
+      (res) => {this.mapUserId=res.result.User.osid;
         if(this.enrollAsOrg  === false) {
           this.contributeForm.reset();
-          this.tosterService.success("You are successfully enrolled as a contributor"); 
+          this.tosterService.success("You are successfully enrolled as a contributor");
         }
       },
       (err) => console.log(err)
@@ -233,7 +215,7 @@ export class EnrollContributorComponent implements OnInit {
     }
     }
     this.enrollContributorService.saveData(option).subscribe(
-      (res) => { 
+      (res) => {
       this.contributeForm.reset();
       this.tosterService.success("You are successfully enrolled as a contributor!")
     },
@@ -258,7 +240,7 @@ export class EnrollContributorComponent implements OnInit {
       // description.setValidators(null);
     }
   }
- 
+
   closeModal() {
     this.close.emit();
   }

@@ -53,10 +53,10 @@
                   <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['medium'].errors && contributeForm.controls['medium'].errors.required && (!contributeForm.controls['medium'].pristine || formIsInvalid)">
 							This field is required
 						</div>
-                  
+
                </div>
             </div>
-         
+
             <div class="six wide column sb-field-group p-0 pr-16 mb-8">
                <label>{{resourceService.frmelmnts.lbl.gradeClass}}
                   <span class="sb-color-warning">*</span>
@@ -80,7 +80,7 @@
             </div>
 
             <div class="six wide column sb-field-group p-0 mb-8">
-               <label>{{resourceService.frmelmnts.lbl.subject}} 
+               <label>{{resourceService.frmelmnts.lbl.subject}}
                   <span class="sb-color-warning">*</span>
                </label>
                <div class="sb-field required field">
@@ -131,12 +131,12 @@
             <!-- (click)="enrollAsOrg=true" -->
             <div class="sb-field mt-4 d-flex">
                <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-                  <input type="radio" id="radio1" name="enrollAsOrg"  (click)="chnageEnrollStatus(true)">
-                  <label for="radio1">Yes</label>
+                  <input type="radio" id="Organisation" name="enrollAsOrg"  (click)="chnageEnrollStatus(true)">
+                  <label for="Organisation">Yes</label>
                </div>
                <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-                  <input type="radio" id="radio1" name="enrollAsOrg"  (click)="chnageEnrollStatus(false)">
-                  <label for="radio2">No</label>
+                  <input type="radio" id="individual" name="enrollAsOrg"  (click)="chnageEnrollStatus(false)">
+                  <label for="individual">No</label>
                </div>
             </div>
          </div>
