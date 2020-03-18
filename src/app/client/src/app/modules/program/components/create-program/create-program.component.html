@@ -20,12 +20,12 @@
 				</div>
 			</div-->
 			<sui-tabset>
-				<div class="ui top attached tabular menu">
+				<div class="ui pointing secondary menu sb-bg-color-primary-0">
 					<a class="item" suiTabHeader="1" [ngClass]="{'active' : !showTextBookSelector}">{{resource.frmelmnts.lbl.details}}</a>
 					<a class="item" suiTabHeader="2" [ngClass]="{'active' : showTextBookSelector}"
 					[isDisabled]="!showTextBookSelector">{{resource.frmelmnts.lbl.selectTextbooks}}</a>
 				</div>
-				<div class="ui bottom attached segment" suiTabContent="1" [ngClass]="{'active' : !showTextBookSelector}">
+				<div class="ui segment mt-5" suiTabContent="1" [ngClass]="{'active' : !showTextBookSelector}">
 					<form class="ui form" [formGroup]="createProgramForm" (submit)="saveProgram()">
 						<div class="ui grid">
 							<div class="twelve wide column">
@@ -190,7 +190,7 @@
 						</div>
 					</form>
 				</div>
-				<div class="ui bottom attached segment" suiTabContent="2" [ngClass]="{'active' : showTextBookSelector}">
+				<div class="ui segment mt-5" suiTabContent="2" [ngClass]="{'active' : showTextBookSelector}">
 					<form class="ui form" [formGroup]="collectionListForm" (submit)="saveProgram()">
 						<div class="ui grid">
 							<div class="three wide column">
@@ -327,7 +327,7 @@
 									<div class="sb-program-collection ui container" *ngFor="let tempCollection of tempCollections">
 										<div class="ui grid">
 											<div class="eleven wide column">
-												<h5 class="mx-10 sb-color-gray-400 sb__ellipsis sb__ellipsis--three">{{tempCollection.name}}</h5>
+												<h5 class="mx-10 sb-color-gray-400 sb__ellipsis sb__ellipsis--three font-weight-bold">{{tempCollection.name}}</h5>
 												<small class="ui container d-flex mx-10">
 													<span>{{tempCollection.medium}}</span>
 													<span class="mx-8" style="border-left: 1px solid var(--gray-200);"></span>
@@ -337,7 +337,7 @@
 												</small>
 											</div>
 											<span class="one wide column text-align-right" (click)="onCollectionCheck(tempCollection, false)">
-												<i class="close outline icon sb-color-red-100"></i>
+												<i class="close outline icon sb-color-red-100" suiPopup popupHeader="close"></i>
 											</span>
 											<hr class="row p-0">
 										</div>
@@ -350,7 +350,7 @@
 				</div>
 			</sui-tabset>
 		</div>
-		<div class="text-align-right">
+		<div class="text-align-right mt-10">
 			<button *ngIf="!showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary"
 				(click)="saveProgram()">{{resource.frmelmnts.btn.next}}</button>
 			<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-default mr-10"
