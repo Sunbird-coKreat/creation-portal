@@ -9,7 +9,8 @@ import { ProgramStageService, ProgramTelemetryService } from '../../../program/s
 import { ISessionContext, IChapterListComponentInput } from '../../interfaces';
 import { InitialState } from '../../interfaces';
 import { ActivatedRoute, Router } from '@angular/router';
-
+import * as moment from 'moment';
+import { programContext } from '../../../program/components/list-contributor-textbooks/data';
 
 @Component({
   selector: 'app-collection',
@@ -48,6 +49,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
   public state: InitialState = {
     stages: []
   };
+  public activeDate = '';
   public showStage;
   public currentStage: any;
   public contentType:any;
@@ -55,13 +57,15 @@ export class CollectionComponent implements OnInit, OnDestroy {
   selectedContentTypes = [];
   selectedCollectionIds = [];
   _slideConfig = {'slidesToShow': 10, 'slidesToScroll': 1, 'variableWidth': true};
+
   constructor(private configService: ConfigService, public publicDataService: PublicDataService,
     private cbseService: CbseProgramService, public programStageService: ProgramStageService,
     public resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService,
     public userService: UserService, private navigationHelperService: NavigationHelperService,
     public utilService: UtilService, public contentService: ContentService,
     private activatedRoute: ActivatedRoute, private router: Router, public learnerService: LearnerService,
-    private programsService: ProgramsService, private tosterService: ToasterService) { }
+    private programsService: ProgramsService, private tosterService: ToasterService) {
+     }
 
   ngOnInit() {
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
@@ -104,6 +108,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.collectionComponentInput.programContext.programId, 'Program');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID + '.programs');
+    this.setActiveDate();
   }
 
   getImplicitFilters(): string[] {
@@ -337,7 +342,23 @@ export class CollectionComponent implements OnInit, OnDestroy {
       this.tosterService.error('User onboarding failed');
     });
   }
-
+  setActiveDate() {
+    const dates = [ 'nomination_enddate', 'shortlisting_enddate', 'content_submission_enddate', 'enddate'];
+ 
+    dates.forEach(key => {
+      const date  = moment(moment(this.programContext[key]).format('YYYY-MM-DD'));
+      const today = moment(moment().format('YYYY-MM-DD'));
+      const isFutureDate = !date.isSame(today) && date.isAfter(today);
+ 
+      if (key === 'nomination_enddate' && isFutureDate) {
+        this.activeDate = key;
+      }
+ 
+      if (this.activeDate === '' && isFutureDate) {
+        this.activeDate = key;
+      }
+    });
+  }
 
   goBack() {
     this.navigationHelperService.navigateToPreviousUrl();
