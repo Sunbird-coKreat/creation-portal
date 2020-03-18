@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { ProgramsService } from '@sunbird/core';
+import { ProgramsService, RegistryService } from '@sunbird/core';
 import { ResourceService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IProgram } from '../../../core/interfaces';
 import * as _ from 'lodash-es';
 import { tap } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-program-list',
@@ -15,11 +17,15 @@ export class ProgramListComponent implements OnInit {
 
   public programs: IProgram[];
   public count = 0;
+  public activeDates = <any>[];
   public isContributor: boolean;
   public activeAllProgramsMenu: boolean;
   public activeMyProgramsMenu: boolean;
-
-  constructor(private programsService: ProgramsService, public resourceService: ResourceService, private activatedRoute: ActivatedRoute,
+  public showAssignRoleModal = false;
+  public data = {};
+  public contributorOrgUser = [];
+  constructor(private programsService: ProgramsService, private registryService: RegistryService,
+    public resourceService: ResourceService, private activatedRoute: ActivatedRoute,
     public router: Router) { }
 
   ngOnInit() {
@@ -80,6 +86,42 @@ export class ProgramListComponent implements OnInit {
     });
   }
 
+  private getContributionOrgUsers() {
+
+    this.showAssignRoleModal = true;
+      const orgUsers = this.registryService.getContributionOrgUsers('1-27ea8585-d081-49f9-94ca-54c57b348689');
+
+      orgUsers.subscribe(response => {
+        const result = _.get(response, 'result');
+        if (!result || _.isEmpty(result)) {
+          console.log('NO USER FOUND');
+        } else {
+          this.data = {
+            'board': [{
+                'name': 'admin',
+                'value': 'Admin'
+            }, {
+                'name': 'reviewer',
+                'value': 'Reviewer'
+            }, {
+              'name': 'contributor',
+              'value': 'Contributor'
+          }]
+          };
+          const userIds = _.map(result[_.first(_.keys(result))], 'userId');
+          const getUserDetails = _.map(userIds, id => this.registryService.getUserDetails(id));
+          forkJoin(...getUserDetails)
+            .subscribe((res: any) => {
+              this.contributorOrgUser = _.map(res, 'result.User');
+            }, error => {
+              console.log(error);
+            })
+        }
+      }, error => {
+        console.log(error);
+      });
+  }
+
   /**
    * fetch the list of programs.
    */
@@ -131,6 +173,38 @@ export class ProgramListComponent implements OnInit {
       }
     } else {
       return this.router.navigateByUrl('/sourcing/nominations/' + program.program_id);
+    }
+  }
+
+  isActive(program, name, index) {
+    const date  = moment(program[name]);
+    const today = moment();
+    const isFutureDate = date.isAfter(today);
+
+    if (!this.activeDates[index]) {
+      this.activeDates[index] = {};
+    }
+
+    if (name === 'nomination_enddate' && isFutureDate) {
+      this.activeDates[index]['nomination_enddate'] = true;
+      return true;
+    }
+
+    if (!this.activeDates[index]['nomination_enddate'] && name === 'shortlisting_enddate' && isFutureDate) {
+      this.activeDates[index]['shortlisting_enddate'] = true;
+      return true;
+    }
+
+    if (!this.activeDates[index]['nomination_enddate']  && !this.activeDates[index]['shortlisting_enddate']
+     && name === 'content_submission_enddate' && isFutureDate) {
+      this.activeDates[index]['content_submission_enddate'] = true;
+      return true;
+    }
+
+    if (!this.activeDates[index]['nomination_enddate']  && !this.activeDates[index]['shortlisting_enddate']  &&
+    !this.activeDates[index]['content_submission_enddate'] && name === 'content_submission_enddate' && isFutureDate) {
+      this.activeDates[index]['enddate'] = true;
+      return true;
     }
   }
 }

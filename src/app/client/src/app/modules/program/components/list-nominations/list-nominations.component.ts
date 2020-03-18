@@ -1,6 +1,6 @@
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService } from '@sunbird/shared';
 import { ProgramsService, PublicDataService, UserService, FrameworkService } from '@sunbird/core';
-import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter, OnChanges} from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import * as _ from 'lodash-es';
 import { tap, first } from 'rxjs/operators';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
@@ -11,19 +11,26 @@ import { ISessionContext } from '../../../cbse-program/interfaces';
   templateUrl: './list-nominations.component.html',
   styleUrls: ['./list-nominations.component.scss']
 })
-export class ListNominationsComponent implements OnInit, AfterViewInit, OnChanges {
-	 @Input() nominations: any;
-   @Output()
-	 onApprove = new EventEmitter();
-	 @Output()
-   onReject = new EventEmitter();
+export class ListNominationsComponent implements OnInit {
+  @Input() nominations: any;
+  @Input() nominationsCount: Number;
+  @Output()
+  approve = new EventEmitter();
+  @Output()
+  reject = new EventEmitter();
+  private initiatedCount = 0;
+  private pendingCount = 0;
+  private approvedCount = 0;
+  private rejectedCount = 0;
+  private totalCount = 0;
 
    public sessionContext: ISessionContext = {};
    show = false;
    public programId: string;
    public programDetails: any;
    public userProfile: any;
-   nominationsCount = 0;
+   public mediums: any;
+   public grades: any;
    public selectedNomineeProfile: any;
    showNomineeProfile;
 
@@ -35,14 +42,19 @@ export class ListNominationsComponent implements OnInit, AfterViewInit, OnChange
       this.programId = this.activatedRoute.snapshot.params.programId;
   }
 
-  ngAfterViewInit() {
-  }
-
   ngOnInit() {
     this.getProgramDetails();
+    this.getNominationCounts();
   }
 
-  ngOnChanges() {
+  private getNominatedTextbooksCount(nomination) {
+    const count = nomination.collection_ids ? nomination.collection_ids.length : 0 ;
+
+    if (count < 2) {
+      return count + ' ' + this.resourceService.frmelmnts.lbl.textbook;
+    }
+
+    return count + ' ' + this.resourceService.frmelmnts.lbl.textbooks;
   }
 
   getProgramDetails() {
@@ -62,12 +74,59 @@ export class ListNominationsComponent implements OnInit, AfterViewInit, OnChange
     return this.programsService.get(req).pipe(tap((programDetails: any) => {
       programDetails.result.config = JSON.parse(programDetails.result.config);
       this.programDetails = programDetails.result;
+      this.mediums = _.join(this.programDetails.config['medium'], ', ');
+      this.grades = _.join(this.programDetails.config['gradeLevel'], ', ');
+
       this.sessionContext.framework = _.get(this.programDetails, 'config.framework');
       if (this.sessionContext.framework) {
         this.userProfile = this.userService.userProfile;
         this.fetchFrameWorkDetails();
       }
     }));
+  }
+
+  getNominationCounts() {
+    this.fetchNominationCounts().subscribe((response) => {
+      const statuses = _.get(response, 'result');
+      statuses.forEach(nomination => {
+        if (nomination.status === 'Initiated') {
+          this.initiatedCount = nomination.count;
+        }
+
+        if (nomination.status === 'Pending') {
+          this.pendingCount = nomination.count;
+        }
+
+        if (nomination.status === 'Approved') {
+          this.approvedCount = nomination.count;
+        }
+
+        if (nomination.status === 'Rejected') {
+          this.rejectedCount = nomination.count;
+        }
+        // tslint:disable-next-line: radix
+        this.totalCount += parseInt(nomination.count);
+      });
+    }, error => {
+      // TODO: navigate to program list page
+      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+      this.toasterService.error(errorMes || 'Fetching program details failed');
+    });
+  }
+
+  fetchNominationCounts() {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
+      data: {
+        request: {
+          filters: {
+            program_id: this.programId
+          },
+          facets: ['program_id', 'status']
+        }
+      }
+    };
+    return this.programsService.post(req);
   }
 
   public fetchFrameWorkDetails() {
@@ -82,16 +141,17 @@ export class ListNominationsComponent implements OnInit, AfterViewInit, OnChange
     });
   }
 
+  getProgramInfo(type) {
+    const config = JSON.parse(this.programDetails.config);
+    return type  === 'board' ? config[type] : _.join(config[type], ', ');
+  }
+
   onApproveClick(nomination) {
-    this.onApprove.emit(nomination);
+    this.approve.emit(nomination);
   }
 
   onRejectClick(nomination) {
-    this.onReject.emit(nomination);
-  }
-
-  goToProfile() {
-    this.router.navigateByUrl('/profile');
+    this.reject.emit(nomination);
   }
 
   getNomineeProfile(nominee) {
