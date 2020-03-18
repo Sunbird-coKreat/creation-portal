@@ -64,6 +64,7 @@ export interface IUserProfile {
     tncLatestVersion?: string;
     promptTnC?: boolean;
     tncLatestVersionUrl?: string;
+    userRegData?: any;
 }
 export interface IJobProfile {
     jobName: string;

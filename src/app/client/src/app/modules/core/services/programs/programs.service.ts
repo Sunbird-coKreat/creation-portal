@@ -76,9 +76,6 @@ export class ProgramsService extends DataService implements CanActivate {
   createProgram(request): Observable<ServerResponse> {
     const req = {
       url: this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.CREATE,
-      headers: {
-        'content-type' : 'application/json'
-      },
       data: {
         request
       }
@@ -93,9 +90,6 @@ export class ProgramsService extends DataService implements CanActivate {
   getProgramCollection(request): Observable<ServerResponse> {
     const req = {
       url: `${this.config.urlConFig.URLS.COMPOSITE.SEARCH}`,
-      headers: {
-        'content-type' : 'application/json'
-      },
       data: {
         request
       }
@@ -110,9 +104,6 @@ export class ProgramsService extends DataService implements CanActivate {
   updateProgram(request): Observable<ServerResponse> {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.UPDATE}`,
-      headers: {
-        'content-type' : 'application/json'
-      },
       data: {
         request
       }
@@ -121,7 +112,11 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.API_URL(req);
   }
 
-  updateNomination(req) {
+  updateNomination(request) {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_UPDATE}`,
+      data: request
+    };
     return this.API_URL(req);
   }
   /**
@@ -146,9 +141,6 @@ export class ProgramsService extends DataService implements CanActivate {
   getMyProgramsForOrgFromApi(): Observable<ServerResponse> {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
-      header: {
-        'content-type' : 'application/json'
-      },
       data: {
         request: {
           filters: {
@@ -166,9 +158,6 @@ export class ProgramsService extends DataService implements CanActivate {
   getAllProgramsByType(type): Observable<ServerResponse> {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
-      headers: {
-        'content-type' : 'application/json'
-      },
       data: {
         request: {
           filters: {
@@ -186,13 +175,12 @@ export class ProgramsService extends DataService implements CanActivate {
   getMyProgramsForContribFromApi(): Observable<ServerResponse> {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
-      headers: {
-        'content-type' : 'application/json'
-      },
       data: {
         request: {
           filters: {
-            'userId': _.get(this.userService, 'userProfile.userId')
+            enrolled_id: {
+              user_id: _.get(this.userService, 'userProfile.userId')
+            }
           }
         }
       }
