@@ -121,7 +121,11 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.API_URL(req);
   }
 
-  updateNomination(req) {
+  updateNomination(request) {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_UPDATE}`,
+      data: request
+    };
     return this.API_URL(req);
   }
   /**

@@ -54,7 +54,7 @@
                       <i class="dropdown icon"></i>
                       <div class="menu" suiDropdownMenu>
                         <div class="item" (click)="viewDetailsBtnClicked(program)">{{ resourceService.frmelmnts.lbl.viewDetails }}</div>
-                        <div class="item" (click)="getContributionOrgUsers()" *ngIf="activeMyProgramsMenu">{{ resourceService.frmelmnts.lbl.assignRole }}</div>
+                        <div class="item" (click)="getContributionOrgUsers(program)" *ngIf="activeMyProgramsMenu">{{ resourceService.frmelmnts.lbl.assignRole }}</div>
                       </div>
                   </div>
                 </td>
@@ -157,7 +157,7 @@
         </tr>
       </thead>
       <tbody class="sb-table-body">
-        <tr *ngFor="let user of contributorOrgUser">
+        <tr *ngFor="let user of contributorOrgUser; let i = index">
           <td>{{user.firstName +' '+ user.lastName}}</td>
           <td>
             <ng-template let-option #optionTemplate>
@@ -172,13 +172,22 @@
                 </div>
               </div>
             </ng-template>
-            <sui-select class="selection" labelField="name" [options]="options" valueField="name">
-              <sui-select-option *ngFor="let option of data.board" [value]="option">
+            {{user.selectedRole}}
+            <sui-select class="selection" [(ngModel)]="user.selectedRole" labelField="name" [options]="options" valueField="name">
+              <sui-select-option *ngFor="let option of roles;" [value]="option">
               </sui-select-option>
             </sui-select>
           </td>
         </tr>
       </tbody>
     </table>
+  </div>
+  <div class="sb-modal-actions">
+    <button
+      class="sb-btn sb-btn-normal sb-btn-success"
+      (click)="assignRolesToOrgUsers();"
+    >
+      Submit
+    </button>
   </div>
 </sui-modal>
