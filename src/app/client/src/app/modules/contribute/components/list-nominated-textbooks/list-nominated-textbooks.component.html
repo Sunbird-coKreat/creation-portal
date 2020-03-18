@@ -2,168 +2,227 @@
 
 	<div class="sb-bg-color-primary-0 practical-header py-16">
 		<div class="d-flex flex-ai-center flex-jc-space-between practical-header__content ui container p-0">
-		 
-		  <div class="practical-header__title flex-basis-1">
-			<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" type="button">
-			  <i class="icon-svg icon-svg--xxs icon-back mr-4">
-				<svg _ngcontent-nak-c11="" class="icon icon-svg--primary">
-				  <use xlink:href="assets/images/libdemo/sprite.svg#arrow-long-left"></use>
-				</svg></i> Back to My/Explore Programs</button>
-				
-			<h4 class="m-0 p-0">Program Name Kerala <ng-template #popupTemplate>
-				<div class="content">
-					<div class="textbook-details ml-8">
-							<div class="header"><strong>Medium</strong></div>
+
+			<div class="practical-header__title flex-basis-1">
+				<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" type="button">
+					<i class="icon-svg icon-svg--xxs icon-back mr-4">
+						<svg _ngcontent-nak-c11="" class="icon icon-svg--primary">
+							<use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
+						</svg></i> Back to My/Explore Programs</button>
+
+				<h4 class="m-0 p-0">Program Name Kerala <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
+					<ng-template #popupTemplate>
+						<div class="content">
+							<div class="textbook-details ml-8">
+								<div class="header"><strong>Medium</strong></div>
 								<div class="content">
-									<label class="d-block fsmall font-weight-normal mb-0">Marathi, Hindi, English</label>
+									<label class="d-block fsmall font-weight-normal mb-0">Marathi, Hindi,
+										English</label>
 								</div>
 								<hr />
 								<div class="header"><strong>Grades / Classes</strong></div>
 								<div class="content">
-									<label class="d-block fsmall font-weight-normal mb-0"
-										>Grade 1, Grade 2</label>
+									<label class="d-block fsmall font-weight-normal mb-0">Grade 1, Grade 2</label>
 								</div>
 								<hr />
-			<div class="header">
-			  <strong>Nomination End Date</strong>
-			</div>
-			<div class="content">
-			  <label class="d-block fsmall font-weight-normal mb-0">
-				July 26th, 2019
-			  </label>
-			</div>
-							<hr />
-							<div class="header">
-									<strong>	Nomination Shortlisting Date</strong>
+								<div class="header">
+									<strong>Nomination End Date</strong>
 								</div>
 								<div class="content">
 									<label class="d-block fsmall font-weight-normal mb-0">
-											Aug 5th, 2019
+										July 26th, 2019
 									</label>
 								</div>
 								<hr />
 								<div class="header">
-										<strong>Contribution End Date</strong>
-									</div>
-									<div class="content">
-										<label class="d-block fsmall font-weight-normal mb-0">
-												Aug 20th, 2019
-										</label>
-									</div>
-									<hr />
+									<strong> Nomination Shortlisting Date</strong>
+								</div>
+								<div class="content">
+									<label class="d-block fsmall font-weight-normal mb-0">
+										Aug 5th, 2019
+									</label>
+								</div>
+								<hr />
 								<div class="header">
-										<strong>Program End Date</strong>
-									</div>
-									<div class="content">
-										<label class="d-block fsmall font-weight-normal mb-0">
-												Aug 30th, 2019
-										</label>
-									</div>
+									<strong>Contribution End Date</strong>
+								</div>
+								<div class="content">
+									<label class="d-block fsmall font-weight-normal mb-0">
+										Aug 20th, 2019
+									</label>
+								</div>
+								<hr />
+								<div class="header">
+									<strong>Program End Date</strong>
+								</div>
+								<div class="content">
+									<label class="d-block fsmall font-weight-normal mb-0">
+										Aug 30th, 2019
+									</label>
+								</div>
+							</div>
 						</div>
-				</div>
-			</ng-template>
-				<i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
-			</h4>
-			<p class="fs-0-785 font-weight-normal">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus convallis massa felis, quis pretium urna efficitur in.</p>
-		  </div>
-  
-		  <div class="program-timeline px-16">
-			<div class="program-timeline-item">
-			  <div class="status completed">
-				<div class="status__label">Nomination End Date</div>
-				<div class="status__date">23 Mar ‘20 <em>20 days to go</em></div>
-			  </div>
+					</ng-template>
+				</h4>
+				<p class="fs-0-785 font-weight-normal">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus
+					convallis massa felis, quis pretium urna efficitur in.</p>
 			</div>
-				 <div class="program-timeline-item">
-			  <div class="status active">
-				<div class="status__label">Nomination Shortlisting Date</div>
-				<div class="status__date">23 Mar ‘20 <em></em></div>
-			  </div>
-			</div>
-		<div class="program-timeline-item">
-			  <div class="status">
-				<div class="status__label">Contribution End Date</div>
-				<div class="status__date">23 Mar ‘20 <em></em></div>
-			  </div>
-			</div>
-			<div class="program-timeline-item">
-				<div class="status">
-				  <div class="status__label">Program End Date</div>
-				  <div class="status__date">23 Mar ‘20 <em></em></div>
-				</div>
-			  </div>
-		  </div>
-  
-		  <div class='practical-sb-buttons'>
-			<button class="sb-btn sb-btn-secondary sb-btn-normal">Express Interest</button>
-		  </div>
-		</div>
-	  </div>
-	  <div class="sb-bg-color-primary-0">
-			<sui-tabset>
-				<div class="ui pointing secondary menu sb-bg-color-primary-0">
-					<div class="ui container p-0 m-0">
-					<a class="item" suiTabHeader="1">Dashboard</a>
-					<a class="item" suiTabHeader="2">Text Books</a>
-					<a class="item" suiTabHeader="3">Users</a>
+
+			<div class="program-timeline px-16">
+				<div class="program-timeline-item">
+					<div class="status completed">
+						<div class="status__label">Nomination End Date</div>
+						<div class="status__date">23 Mar ‘20 <em>20 days to go</em></div>
 					</div>
 				</div>
-				<div class="ui segment m-0 mt-4 sb-bg-color-white" suiTabContent="1">
-				  <div class="ui container">COMING SOON</div>
+				<div class="program-timeline-item">
+					<div class="status active">
+						<div class="status__label">Nomination Shortlisting Date</div>
+						<div class="status__date">23 Mar ‘20 <em></em></div>
+					</div>
 				</div>
-				<div class="ui segment p-0 m-0 mt-4 sb-bg-color-white" suiTabContent="2">
-					<div class="ui container p-0 m-0">
+				<div class="program-timeline-item">
+					<div class="status">
+						<div class="status__label">Contribution End Date</div>
+						<div class="status__date">23 Mar ‘20 <em></em></div>
+					</div>
+				</div>
+				<div class="program-timeline-item">
+					<div class="status">
+						<div class="status__label">Program End Date</div>
+						<div class="status__date">23 Mar ‘20 <em></em></div>
+					</div>
+				</div>
+			</div>
+
+			<div class='practical-sb-buttons'>
+				<button class="sb-btn sb-btn-secondary sb-btn-normal">Express Interest</button>
+			</div>
+		</div>
+	</div>
+	
+	<div class="sb-bg-color-primary-100">
+		<sui-tabset>
+			<div class="ui pointing secondary menu sb-bg-color-primary-100">
+				<div class="ui container p-0 m-0 d-flex flex-ai-center flex-jc-center">
+					<a class="item" suiTabHeader="1">Dashboard</a>
+					<a class="item active" suiTabHeader="2">Text Books <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">10</span></a>
+					<a class="item" suiTabHeader="3">Users</a>
+				</div>
+			</div>
+			<div class="ui segment m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="1">
+				<div class="ui container">
+
+					<table class="progressbar mt-32">
+						<tr class="counter">
+							<td class="completed">
+								<div class="status"><strong>1</strong></div>
+							</td>
+							<td class="active">
+								<div class="status"><strong>2</strong></div>
+								<span></span>
+							</td>
+							<td>
+								<div class="status"><strong>3</strong></div>
+								<span></span>
+							</td>
+							<td>
+								<div class="status"><strong>4</strong></div>
+								<span></span>
+							</td>
+						</tr>
+						<tr class="descriptions">
+							<td class="completed">
+								<label>Express Interest</label>
+								<p>Express interest in any program of your choice to start uploading samples</p>
+							</td>
+							<td>
+								<label>You can upload samples for any textbook and any chapter of your choice</label>
+								<p>Note: You can submit nomination without uploading samples, however uploading samples gives you a better chance for nomination approval</p>
+								<p class="">Before 30th March 2019 <em class="sb-color-tertiary d-block">20 days to go</em></p>
+							<div class="d-flex-inline flex-dc">
+								<button type="button" class="sb-btn sb-btn-primary sb-btn-normal">Submit Nomination</button>
+								<button type="button" class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn mt-4 d-inline-block">Add Users</button>
+								<button type="button" class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn mt-4">Upload Sample</button>
+							</div>
+							</td>
+							<td>
+								<label>Nomination approval</label>
+								<p>Your nomination will be reviewed and approved on the below date for you to start uploading content</p>
+							</td>
+							<td>
+								<label>Review and upload content</label>
+								<p>You can now start uploading content.</p>
+								<p><em>Note: Contribution need not be for all textbooks and all content. You can choose to contribute as much as you want.</em></p>
+								<p>Before 30 Apr ‘20 <em class="d-block"></em></p>
+							</td>
+						</tr>
+					</table>
+
+
+
+
+				</div>
+			</div>
+			<div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" isActive='true' suiTabContent="2">
+				<div class="ui container p-0 m-0">
 					<div class="sb-pageSection" [appTelemetryImpression]="telemetryImpression">
-						<div class="sb-bg-color-white pb-40 dynamicHeight">
-								<div class="sb-pageSection">
-									<div class="sb-pageSection-header pt-16">
-										<h4 class="sb-pageSection-title">Textbook List<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">10</span></h4>
-									</div>
-									<div class="sb-table-responsive">
-									<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
-										<thead class="sb-table-header sb-table-thead-gray">
-										  <tr>
+						<div class="sb-bg-color-white pt-32">
+							<div class="sb-table-responsive">
+								<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
+									<thead class="sb-table-header sb-table-thead-gray">
+										<tr>
+											<th class="w-5 text-center">{{ resourceService.frmelmnts.lbl.srNo }}</th>
+                							<th class="w-5 text-center"></th>
 											<th class="sb-sort-icon">Textbook</th>
 											<th class="sb-sort-icon">Grade</th>
 											<th class="sb-sort-icon">Medium</th>
 											<th>Subjects</th>
 											<th>Chapters</th>
-											<th class="text-center">Action</th>
-										  </tr>
-										</thead>
-										<tbody class="sb-table-body">
-						
-											<tr *ngFor="let contributorTextbook of contributorTextbooks">
-											  <td class="hand">
+										</tr>
+									</thead>
+									<tbody class="sb-table-body">
+										<tr *ngFor="let contributorTextbook of contributorTextbooks; let i = index;">
+											<td class="text-center">
+												{{ i + 1 }}
+											  </td>
+											<td class="text-center">
+												<div class="ui dropdown sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary ml-auto sb-btn-dropdown" suiDropdown autoClose="itemClick">
+													<div class="text">{{ resourceService.frmelmnts.lbl.actions }}</div>
+													<i class="dropdown icon"></i>
+													<div class="menu" suiDropdownMenu>
+													  <div class="item" (click)="viewContribution()">Upload Content</div>
+													  <div class="item">Review Content</div>
+													</div>
+												</div>
+											</td>
+											<td class="hand">
 												{{contributorTextbook.name}}
-											  </td>
-											  <td >{{contributorTextbook.gradeLevel}}</td>
-											  <td>{{contributorTextbook.medium}}</td>
-											  <td>{{contributorTextbook.subject}}</td>
-											  <td>5</td>
-											  <td class="text-center">
-													<button class="sb-btn sb-btn-xs sb-btn-outline-primary" (click)="viewContribution()">Upload content</button>
-													<button class="sb-btn sb-btn-xs sb-btn-outline-primary">Review content</button>
-											  </td>
-											</tr>
-										</tbody>
-									</table> 
-									</div>
-								</div>
+											</td>
+											<td>{{contributorTextbook.gradeLevel}}</td>
+											<td>{{contributorTextbook.medium}}</td>
+											<td>{{contributorTextbook.subject}}</td>
+											<td>5</td>
+											
+										</tr>
+									</tbody>
+								</table>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="ui segment m-0 mt-4 sb-bg-color-white" suiTabContent="3">
-				  <div class="ui container">Users</div>
-				</div>
-				
-			</sui-tabset>
-	  </div>
+			</div>
+			<div class="ui segment m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="3">
+				<div class="ui container">Users</div>
+			</div>
+
+		</sui-tabset>
+	</div>
 
 
 
 </div>
 <ng-container *ngIf="showChapterList">
-	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>
-  </ng-container>
+	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs">
+	</ndc-dynamic>
+</ng-container>
