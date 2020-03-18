@@ -4,7 +4,7 @@ import { ResourceService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IProgram } from '../../../core/interfaces';
 import * as _ from 'lodash-es';
-import { tap } from 'rxjs/operators';
+import { tap, filter } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
 import * as moment from 'moment';
 import { programContext } from '../../../contribute/components/list-nominated-textbooks/data';
@@ -55,8 +55,7 @@ export class ProgramListComponent implements OnInit {
           }
 
           if (this.activeMyProgramsMenu) {
-             // this.getMyProgramsForContrib(); // TODO remove after my programs api ready
-             this.getAllProgramsForContrib('public');
+            this.getMyProgramsForContrib();
           }
         } else {
           this.getMyProgramsForOrg();
@@ -82,7 +81,14 @@ export class ProgramListComponent implements OnInit {
    */
   private getMyProgramsForContrib() {
     return this.programsService.getMyProgramsForContrib().subscribe((response) => {
-      this.programs = _.get(response, 'result.programs');
+      const programs  = [];
+      _.map(_.get(response, 'result.programs'), (nomination) => {
+        nomination.program.contributionDate = nomination.createdon;
+        nomination.program.nomination_status = nomination.status;
+        nomination.program.nominated_collection_ids = nomination.collection_ids;
+        programs.push(nomination.program);
+      });
+      this.programs = programs;
       this.count = _.get(response, 'result.count');
     }, error => {
       console.log(error);
@@ -127,7 +133,13 @@ export class ProgramListComponent implements OnInit {
   }
 
   private getProgramTextbooksCount(program) {
-    const count = program.collection_ids ? program.collection_ids.length : 0 ;
+    let count = 0;
+
+    if (program.nominated_collection_ids && program.nominated_collection_ids.length) {
+      count = program.nominated_collection_ids.length;
+    } else if (program.collection_ids && program.collection_ids.length) {
+      count = program.collection_ids.length;
+    }
 
     if (count < 2) {
       return count + ' ' + this.resourceService.frmelmnts.lbl.textbook;
@@ -142,7 +154,7 @@ export class ProgramListComponent implements OnInit {
   }
 
   private getProgramNominationStatus(program) {
-    return program.nomination_status || 'Pending';
+    return program.nomination_status;
   }
 
   getSourcingOrgName(program) {
