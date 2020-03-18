@@ -46,7 +46,128 @@
     </div>
     
   </div> -->
-    <div class="ui container pb-48">
+
+	<div class="sb-bg-color-primary-0 practical-header py-16">
+		<div class="d-flex flex-ai-center flex-jc-space-between practical-header__content ui container p-0">
+
+			<div class="practical-header__title flex-basis-1">
+				<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" type="button">
+					<i class="icon-svg icon-svg--xxs icon-back mr-4">
+						<svg _ngcontent-nak-c11="" class="icon icon-svg--primary">
+							<use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
+						</svg></i> Back to Explore Programs</button>
+
+				<h4 class="m-0 p-0">{{programContext.name}}
+          <ng-template #popupTemplate>
+            <div class="content">
+              <div class="textbook-details ml-8">
+                <div class="header"><strong>Subject</strong></div>
+                <div class="content">
+                  <label class="d-block fsmall font-weight-normal mb-0">{{sharedContext.subject.join(', ')}}</label>
+                </div>
+                <hr />
+                <div class="header"><strong>Grades / Classes</strong></div>
+                <div class="content">
+                  <label class="d-block fsmall font-weight-normal mb-0">{{sharedContext.gradeLevel.join(', ')}}</label>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+                <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate">
+                </i>
+				</h4>
+				<p class="fs-0-785 font-weight-normal">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus
+					convallis massa felis, quis pretium urna efficitur in.</p>
+			</div>
+
+			<div class="program-timeline px-16">
+				<div class="program-timeline-item">
+					<div class="status completed">
+						<div class="status__label">Nomination End Date</div>
+						<div class="status__date">23 Mar ‘20 <em>20 days to go</em></div>
+					</div>
+				</div>
+				<div class="program-timeline-item">
+					<div class="status active">
+						<div class="status__label">Nomination Shortlisting Date</div>
+						<div class="status__date">23 Mar ‘20 <em></em></div>
+					</div>
+				</div>
+				<div class="program-timeline-item">
+					<div class="status">
+						<div class="status__label">Contribution End Date</div>
+						<div class="status__date">23 Mar ‘20 <em></em></div>
+					</div>
+				</div>
+				<div class="program-timeline-item">
+					<div class="status">
+						<div class="status__label">Program End Date</div>
+						<div class="status__date">23 Mar ‘20 <em></em></div>
+					</div>
+				</div>
+			</div>
+
+			<div class="practical-sb-buttons">
+      <div  *ngIf="nominateButton === 'hide'"> <button class="sb-btn sb-btn-disabled sb-btn-normal" >Nominate</button></div>
+        <div *ngIf="nominateButton === 'show'">
+          <button class="sb-btn sb-btn-normal sb-btn-primary disabled {{nominateButton === 'show' ? 'active' : 'disabled'}}" (click)="showContentTypeModal= true;" >Nominate</button>
+        </div>
+			</div>
+		</div>
+	</div>
+
+  <div class="sb-bg-color-white py-24 dynamicHeight">
+    <div class="ui container m-0 p-0">
+      <div class="sb-pageSection-header">
+        <h4 class="sb-pageSection-title six">{{programContext.name}} <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">10</span></h4>
+          </div>
+      <div class="sb-table-responsive">
+        <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
+          <thead class="sb-table-header sb-table-thead-gray">
+            <tr>
+              <th class="sb-sort-icon">Textbook</th>
+              <th class="sb-sort-icon">Grade</th>
+              <th class="sb-sort-icon">Medium</th>
+              <th class="sb-sort-icon">Chapters</th>
+              <th class="sb-sort-icon">Subject</th>
+              <th class="text-center">Select</th>
+            </tr>
+          </thead>
+          <tbody class="sb-table-body">
+            <tr *ngFor="let data of collectionList" >
+              <td> 
+                <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
+                  {{data.name}}
+                </div>
+              </td>
+              <td>
+                <div  suiPopup popupHeader="Grades" popupText="{{data.gradeLevel}}">{{data.gradeLevel}}</div>
+              </td>
+              <td>
+                <div class="sb__ellipsis">{{data.medium}}</div>
+              </td>
+              <td>
+                -
+              </td>
+              <td>
+                <div class="sb__ellipsis">{{data.subject}}</div>
+              </td>
+              <td class="text-center">
+                  <input type="checkbox" name="{{data.identifier}}" (click)="nominationChecked(data.identifier)" >
+              </td>
+            </tr>
+          </tbody>
+        </table> 
+      </div>
+      <div  *ngIf="!objectKey(collectionList).length">
+        <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0006'}"></app-no-result>
+      </div>
+    </div>
+  </div>
+
+
+
+    <div class="ui container pb-48 hidden hide">
       <div class="sb-pageSection-header row my-20">
         <h4 class="sb-pageSection-title six">{{programContext.name}}
           <ng-template #popupTemplate>
@@ -175,7 +296,7 @@
   <div  *ngIf="!objectKey(collectionList).length">
     <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0006'}"></app-no-result>
   </div>
-</div>
+    </div>
 
 <div *ngIf="currentStage !== 'collectionComponent'" style="margin-bottom: -60px;">
   <app-chapter-list [chapterListComponentInput]="chapterListComponentInput" (selectedQuestionTypeTopic)="selectedQuestionTypeTopic"></app-chapter-list>
