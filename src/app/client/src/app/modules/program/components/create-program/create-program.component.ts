@@ -97,6 +97,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     private httpClient: HttpClient) {
 
     this.sbFormBuilder = formBuilder;
+
     this.programScope = {
       'purpose': [{
         'name': 'Resource',
@@ -140,6 +141,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     console.log(this.userprofile);
     this.initializeFormFields();
     this.fetchFrameWorkDetails();
+    this.getProgramContentTypes();
     //this.showTexbooklist('dsd');
   }
 
@@ -247,6 +249,25 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     });*/
   }
 
+  getProgramContentTypes () {
+    const option = {
+      url: 'program/v1/contenttypes/list',
+    };
+
+    this.programsService.get(option).subscribe(
+      (res) => {
+          this.programScope['purpose'] = res.result.contentType;
+          console.log(this.programScope['purpose']);
+        },
+      (err) => {
+        console.log(err);
+        // TODO: navigate to program list page
+        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+        this.toasterService.warning(errorMes || 'Fetching content types failed');
+      }
+    );
+
+  }
 
   saveProgramError(err) {
     console.log(err)
