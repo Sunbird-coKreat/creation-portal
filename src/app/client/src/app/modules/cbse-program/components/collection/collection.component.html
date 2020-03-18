@@ -12,7 +12,7 @@
            <sui-select class="selection state-selection"  placeholder="{{board}}" labelField="name" #multiSelect>
             <sui-select-option *ngFor="let option of multiSelect1" [value]="option" aria-disabled="#multiSelect">
             </sui-select-option>
-          </sui-select> 
+          </sui-select>
         </div>
       </div>
       <div class="state-medium-container__separator"></div>
@@ -44,14 +44,14 @@
           </ngx-slick>
       </nav>
     </div>
-    
+
   </div> -->
 
 	<div class="sb-bg-color-primary-0 practical-header py-16">
 		<div class="d-flex flex-ai-center flex-jc-space-between practical-header__content ui container p-0">
 
 			<div class="practical-header__title flex-basis-1">
-				<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" type="button">
+				<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="goBack()" type="button">
 					<i class="icon-svg icon-svg--xxs icon-back mr-4">
 						<svg _ngcontent-nak-c11="" class="icon icon-svg--primary">
 							<use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
@@ -135,7 +135,7 @@
           </thead>
           <tbody class="sb-table-body">
             <tr *ngFor="let data of collectionList" >
-              <td> 
+              <td>
                 <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
                   {{data.name}}
                 </div>
@@ -157,7 +157,7 @@
               </td>
             </tr>
           </tbody>
-        </table> 
+        </table>
       </div>
       <div  *ngIf="!objectKey(collectionList).length">
         <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0006'}"></app-no-result>
@@ -260,7 +260,7 @@
       </thead>
       <tbody class="sb-table-body">
         <tr *ngFor="let data of collectionList" >
-          <td> 
+          <td>
             <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
               {{data.name}}
             </div>
@@ -282,7 +282,7 @@
           </td>
         </tr>
       </tbody>
-    </table> 
+    </table>
 
     <!-- <div *ngFor="let key of objectKey(collectionList)"> -->
 
