@@ -81,14 +81,14 @@
                   </div>
                 </td>
                 <td>
-                  <div class="sb__ellipsis sb__ellipsis--breakAll " style="width: 200px;" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.purpose }}" popupText="{{ getProgramContentTypes(program) }}">{{ getProgramContentTypes(program) }}</div>
+                  <div class="sb__ellipsis sb__ellipsis--breakAll" style="width: 200px;" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.purpose }}" popupText="{{ getProgramContentTypes(program) }}">{{ getProgramContentTypes(program) }}</div>
                 </td>
                 <td>
                   <div class="sb__ellipsis sb__ellipsis--breakAll" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.grades }}" popupText="{{ getProgramInfo(program, 'gradeLevel') }}">{{ getProgramInfo(program, 'gradeLevel') }}</div>
                   <hr class="divider">
-                  <div class="sb__ellipsis sb__ellipsis--breakAll " suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.mediums }}" popupText="{{ getProgramInfo(program, 'medium') }}">{{ getProgramInfo(program, 'medium') }}</div>
+                  <div class="sb__ellipsis sb__ellipsis--breakAll" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.mediums }}" popupText="{{ getProgramInfo(program, 'medium') }}">{{ getProgramInfo(program, 'medium') }}</div>
                   <hr class="divider">
-                  <div class="sb__ellipsis sb__ellipsis--breakAll " suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.subjects }}" popupText="{{ getProgramInfo(program, 'subject') }}">{{ getProgramInfo(program, 'subject') }}</div>
+                  <div class="sb__ellipsis sb__ellipsis--breakAll" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.subjects }}" popupText="{{ getProgramInfo(program, 'subject') }}">{{ getProgramInfo(program, 'subject') }}</div>
                 </td>
                 <td *ngIf="!isContributor">
                   <div>{{ program.status }}</div>
