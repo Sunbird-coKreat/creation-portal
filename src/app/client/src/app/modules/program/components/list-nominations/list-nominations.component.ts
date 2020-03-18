@@ -18,6 +18,11 @@ export class ListNominationsComponent implements OnInit {
   approve = new EventEmitter();
   @Output()
   reject = new EventEmitter();
+  private initiatedCount = 0;
+  private pendingCount = 0;
+  private approvedCount = 0;
+  private rejectedCount = 0;
+  private totalCount = 0;
 
    public sessionContext: ISessionContext = {};
    show = false;
@@ -39,6 +44,7 @@ export class ListNominationsComponent implements OnInit {
 
   ngOnInit() {
     this.getProgramDetails();
+    this.getNominationCounts();
   }
 
   private getNominatedTextbooksCount(nomination) {
@@ -79,6 +85,50 @@ export class ListNominationsComponent implements OnInit {
     }));
   }
 
+  getNominationCounts() {
+    this.fetchNominationCounts().subscribe((response) => {
+      const statuses = _.get(response, 'result');
+      statuses.forEach(nomination => {
+        if (nomination.status === 'Initiated') {
+          this.initiatedCount = nomination.count;
+        }
+
+        if (nomination.status === 'Pending') {
+          this.pendingCount = nomination.count;
+        }
+
+        if (nomination.status === 'Approved') {
+          this.approvedCount = nomination.count;
+        }
+
+        if (nomination.status === 'Rejected') {
+          this.rejectedCount = nomination.count;
+        }
+        // tslint:disable-next-line: radix
+        this.totalCount += parseInt(nomination.count);
+      });
+    }, error => {
+      // TODO: navigate to program list page
+      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+      this.toasterService.error(errorMes || 'Fetching program details failed');
+    });
+  }
+
+  fetchNominationCounts() {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
+      data: {
+        request: {
+          filters: {
+            program_id: this.programId
+          },
+          facets: ['program_id', 'status']
+        }
+      }
+    };
+    return this.programsService.post(req);
+  }
+
   public fetchFrameWorkDetails() {
     this.frameworkService.initialize(this.sessionContext.framework);
     this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
@@ -102,10 +152,6 @@ export class ListNominationsComponent implements OnInit {
 
   onRejectClick(nomination) {
     this.reject.emit(nomination);
-  }
-
-  goToProfile() {
-    this.router.navigateByUrl('/profile');
   }
 
   getNomineeProfile(nominee) {
