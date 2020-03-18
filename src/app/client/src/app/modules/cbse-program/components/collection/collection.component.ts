@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { ConfigService, UtilService, ResourceService, ToasterService } from '@sunbird/shared';
-import { PublicDataService, ContentService, UserService, ProgramsService  } from '@sunbird/core';
+import { PublicDataService, ContentService, UserService, ProgramsService, EnrollContributorService  } from '@sunbird/core';
 import * as _ from 'lodash-es';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
@@ -9,8 +9,9 @@ import { ProgramStageService, ProgramTelemetryService } from '../../../program/s
 import { ISessionContext, IChapterListComponentInput } from '../../interfaces';
 import { InitialState } from '../../interfaces';
 import { ActivatedRoute, Router } from '@angular/router';
-
-
+import { HttpClient } from '@angular/common/http';
+import { ServerResponse, RequestParam, HttpOptions } from '@sunbird/shared';
+//import { PassThrough } from 'stream';
 @Component({
   selector: 'app-collection',
   templateUrl: './collection.component.html',
@@ -54,12 +55,18 @@ export class CollectionComponent implements OnInit, OnDestroy {
   showContentTypeModal = false;
   selectedContentTypes = [];
   selectedCollectionIds = [];
+  public isOrgAdmin =false;
+  public isIndividualUser =false;
+  public nominationStatus = '';
+  public enroll = false;
+  ExpressIntrest = true;
+ 
   _slideConfig = {'slidesToShow': 10, 'slidesToScroll': 1, 'variableWidth': true};
   constructor(private configService: ConfigService, public publicDataService: PublicDataService,
     private cbseService: CbseProgramService, public programStageService: ProgramStageService,
     public resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService,
     public userService: UserService, public utilService: UtilService, public contentService: ContentService,
-    private activatedRoute: ActivatedRoute, private router: Router, private programsService: ProgramsService, private tosterService: ToasterService) { }
+    private activatedRoute: ActivatedRoute, private router: Router, private programsService: ProgramsService, private tosterService: ToasterService, public http: HttpClient, public enrollContributorService : EnrollContributorService,) { }
 
   ngOnInit() {
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
@@ -69,6 +76,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
 
     this.currentStage = 'collectionComponent';
     this.userProfile = _.get(this.collectionComponentInput, 'userProfile');
+    console.log(this.userProfile)
     this.collectionComponentConfig = _.get(this.collectionComponentInput, 'config');
     this.programContext = _.get(this.collectionComponentInput, 'programContext');
     this.sharedContext = this.collectionComponentInput.programContext.config.sharedContext.reduce((obj, context) => {
@@ -76,12 +84,13 @@ export class CollectionComponent implements OnInit, OnDestroy {
     }, {});
     
     this.contentType = _.get(this.programContext, 'content_types'),
+    console.log(this.programContext, "this si the content types")
     this.sessionContext = _.assign(this.collectionComponentInput.sessionContext, {
       
       currentRole: _.get(this.programContext, 'userDetails.roles[0]'),
       bloomsLevel: _.get(this.programContext, 'config.scope.bloomsLevel'),
       programId: _.get(this.programContext, 'programId'),
-      // programId: '31ab2990-7892-11e9-8a02-93c5c62c03f1' || _.get(this.programContext, 'programId'),
+      //programId: '31ab2990-7892-11e9-8a02-93c5c62c03f1' || _.get(this.programContext, 'programId'),
       program: _.get(this.programContext, 'name'),
       onBoardSchool: _.get(this.programContext, 'userDetails.onBoardingData.school'),
       collectionType: _.get(this.collectionComponentConfig, 'collectionType'),
@@ -102,6 +111,16 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.collectionComponentInput.programContext.programId, 'Program');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID + '.programs');
+    this.checkOrgAdmin();
+    if(this.isOrgAdmin === false)
+    {
+        this.checkIdividualUser() 
+    }
+    if(this.isOrgAdmin || this.isIndividualUser)
+    {
+        this.enroll = true;
+        this.getNomination()
+    }
   }
 
   getImplicitFilters(): string[] {
@@ -316,7 +335,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
       creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
     }
     const req = {
-      url: `program/v1/nomination/add`,
+      url: `program/v1/nomination/update`,
       data: {
         request: {
           program_id: this.activatedRoute.snapshot.params.programId,
@@ -334,5 +353,128 @@ export class CollectionComponent implements OnInit, OnDestroy {
     }, error => {
       this.tosterService.error('User onboarding failed');
     });
+  }
+
+  expressIntrest() {
+
+    let creator = this.userService.userProfile.firstName;
+    if (!_.isEmpty(this.userService.userProfile.lastName)) {
+      creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
+    }
+    const req = {
+      url: `program/v1/nomination/add`,
+      data: {
+        request: {
+          program_id: this.activatedRoute.snapshot.params.programId,
+          user_id: this.userService.userProfile.userId,
+          status: 'Initiated',
+          collection_ids: this.selectedCollectionIds,
+          createdby: creator
+        }
+      }
+    };
+    this.programsService.post(req).subscribe((data) => {
+      this.tosterService.success('Express Intrest');
+     // this.router.navigateByUrl('/contribute/myenrollprograms');
+    }, error => {
+      this.tosterService.error('User onboarding failed');
+    });
+  }
+
+
+  checkOrgAdmin()
+  {
+
+    const option =
+    {
+        id : "open-saber.registry.search",
+        request:
+        {
+            "entityType":["Org"],
+            "filters":{
+              "createdBy":{"eq":"8454cb21-3ce9-4e30-85b5-fade097880d8"}
+            }
+        }             
+    }
+    const httpOptions: HttpOptions = {
+          headers: {
+            'Content-Type' : "application/json",
+            'Authorization' : ""
+          }
+        };
+        this.http.post<any>("http://dock.sunbirded.org/api/reg/search", option, httpOptions).subscribe(
+          (res) => {
+            console.log(res, "thsis i the res")
+            if (res && res.result.Org.length) {
+              this.isOrgAdmin = true;
+              }      
+            }, 
+          (err) => {
+            console.log(err);
+            const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+          }
+        );
+  }
+  checkIdividualUser()
+  {
+    const option =
+    {
+      id : "open-saber.registry.search",
+      request:
+      {
+        "entityType":["User"],
+        "filters":{
+          "userId":{"eq":"8454cb21-3ce9-4e30-85b5-fade097880d8"}
+        }
+      }
+    }
+    const httpOptions: HttpOptions = {
+          headers: {
+            'Content-Type' : "application/json",
+            'Authorization' : ""
+          }
+        };
+        this.http.post<any>("http://dock.sunbirded.org/api/reg/search", option, httpOptions).subscribe(
+          (res) => {
+            if (res && res.result.User.length) {
+              this.isIndividualUser = true;
+              }      
+            }, 
+          (err) => {
+            console.log(err);
+            const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+          }
+        );
+  }
+
+  getNomination() {
+    this.fetchNomination().subscribe((response) => {
+      const statuses = _.get(response, 'result');
+      if (statuses && statuses.length) {
+         this.nominationStatus = statuses[0].status;
+         this.ExpressIntrest = false;
+      }  
+    }, error => {
+      // TODO: navigate to program list page
+      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+      //this.toasterService.error(errorMes || 'Fetching program details failed');
+    });
+  }
+
+
+  fetchNomination() {
+    const req = {
+      url: "program/v1/nomination/list",
+      data: {
+        request: {
+          filters: {
+            program_id: "31ab2990-7892-11e9-8a02-93c5c62c03f1",
+            user_id: "8454cb21-3ce9-4e30-85b5-fade097880d8"
+          },
+          facets: ['program_id', 'user_id', 'status']
+        }
+      }
+    };
+    return this.programsService.post(req);
   }
 }

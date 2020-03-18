@@ -102,12 +102,32 @@
                 </i>
       </h4>
       <div class="pull-right">
-        <div *ngIf="nominateButton === 'show'">
+        <!-- disabled {{nominateButton === 'show' ? 'active' : 'disabled'}}
+        (click)="showContentTypeModal= true;" -->
+        <!-- <div *ngIf="this.ExpressIntrest === true && this.nominationStatus == ''">
+          <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="expressIntrest()" >Express Intrest</button>
+        </div>
+        <div *ngIf="this.ExpressIntrest === false && this.nominationStatus !== ''">
+          <button class="sb-btn sb-btn-normal sb-btn-primary disabled {{nominateButton === 'show' ? 'active' : 'disabled'}}" (click)="showContentTypeModal= true;" >Nominate</button>
+
+        </div> -->
+
+        <div *ngIf="this.ExpressIntrest === true && this.nominationStatus == '' && enroll == true">
+          <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="expressIntrest()" >Express Intrest</button>
+        </div>
+        <div *ngIf="this.ExpressIntrest === false && this.nominationStatus === 'Initiated'  && enroll == true">
           <button class="sb-btn sb-btn-normal sb-btn-primary disabled {{nominateButton === 'show' ? 'active' : 'disabled'}}" (click)="showContentTypeModal= true;" >Nominate</button>
         </div>
-        <div class="two wide column column " *ngIf="nominateButton === 'hide'">
-          <button class="sb-btn sb-btn-disabled sb-btn-normal" >Nominate</button>
+        <div *ngIf="enroll == false">
+            <button class="sb-btn sb-btn-normal sb-btn-primary disabled "  >Express Intrest</button>
         </div>
+        
+        <!-- <div *ngIf="nominateButton === 'show'">
+          <button class="sb-btn sb-btn-normal sb-btn-primary disabled {{nominateButton === 'show' ? 'active' : 'disabled'}}" (click)="showContentTypeModal= true;" >Nominate</button>
+        </div> -->
+        <!-- <div class="two wide column column " *ngIf="nominateButton === 'hide'">
+          <button class="sb-btn sb-btn-disabled sb-btn-normal" >Nominate</button>
+        </div> -->
     </div>
   </div>
 
