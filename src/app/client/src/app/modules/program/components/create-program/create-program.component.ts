@@ -335,7 +335,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
             contentType: "Textbook",
             framework: this.userprofile.framework.id[0],
             board: this.userprofile.framework.board[0],
-          }
+          },
+          not_exists: ["programId"]
         }
       }
     };
