@@ -18,7 +18,7 @@ import { DatePipe } from '@angular/common';
 })
 export class EnrollContributorComponent implements OnInit {
   public enrollAsOrg = false;
-  public enrollDetails = {};
+  public enrollDetails: any;
   public userProfile: any;
   public programScope = {};
   public enrolledDate:any;
