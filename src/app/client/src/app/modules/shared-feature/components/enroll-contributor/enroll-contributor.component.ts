@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
 import { FormControl, FormBuilder, Validators, FormGroup, FormArray } from '@angular/forms';
 import * as _ from 'lodash-es';
 import { UserService, FrameworkService, EnrollContributorService} from '@sunbird/core';
@@ -22,6 +22,7 @@ export class EnrollContributorComponent implements OnInit {
   public userProfile: any;
   public programScope = {};
   public enrolledDate: any;
+  @ViewChild('modal') modal;
   frameworkdetails;
   formIsInvalid = false;
   contentType = {
@@ -95,7 +96,11 @@ export class EnrollContributorComponent implements OnInit {
     this.frameworkService.initialize(this.userProfile.framework.id);
     this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
       if (frameworkDetails && !frameworkDetails.err) {
-        instance.frameworkdetails = frameworkDetails.frameworkdata[this.userProfile.framework.id[0]].categories;
+        if (this.userProfile.framework.id) {
+          instance.frameworkdetails = frameworkDetails.frameworkdata[this.userProfile.framework.id[0]].categories;
+        } else if (frameworkDetails.frameworkdata.defaultFramework) {
+          instance.frameworkdetails = frameworkDetails.frameworkdata.defaultFramework.categories;
+        }
         this.frameworkFetched = true;
         this.generateenrollDetailsFields(instance.frameworkdetails);
       }
@@ -189,6 +194,7 @@ export class EnrollContributorComponent implements OnInit {
         if (this.enrollAsOrg  === false) {
           this.contributeForm.reset();
           this.tosterService.success('You are successfully enrolled as a contributor');
+          this.modal.deny();
         }
       },
       (err) => console.log(err)
@@ -233,6 +239,7 @@ export class EnrollContributorComponent implements OnInit {
       (res) => {
       this.contributeForm.reset();
       this.tosterService.success('You are successfully enrolled as a contributor!');
+      this.modal.deny();
     },
       (err) => console.log(err)
     );

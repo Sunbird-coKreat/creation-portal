@@ -168,6 +168,10 @@ export class ListNominationsComponent implements OnInit {
      this.router.navigate(['/sourcing/contributor/' + nomination.nominationData.program_id], extraData);
   }
 
+  goBack() {
+    this.navigationHelperService.navigateToPreviousUrl();
+  }
+
   setActiveDate() {
     const dates = [ 'nomination_enddate', 'shortlisting_enddate', 'content_submission_enddate', 'enddate'];
 

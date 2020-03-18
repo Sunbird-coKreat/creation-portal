@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { ConfigService, UtilService, ResourceService, ToasterService } from '@sunbird/shared';
-import { PublicDataService, ContentService, UserService, ProgramsService, LearnerService, FrameworkService  } from '@sunbird/core';
+import { ConfigService, UtilService, ResourceService, NavigationHelperService, ToasterService } from '@sunbird/shared';
+import { PublicDataService, ContentService, UserService, ProgramsService, LearnerService  } from '@sunbird/core';
 import * as _ from 'lodash-es';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
@@ -61,7 +61,8 @@ export class CollectionComponent implements OnInit, OnDestroy {
   constructor(private configService: ConfigService, public publicDataService: PublicDataService,
     private cbseService: CbseProgramService, public programStageService: ProgramStageService,
     public resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService,
-    public userService: UserService, public utilService: UtilService, public contentService: ContentService,
+    public userService: UserService, private navigationHelperService: NavigationHelperService,
+    public utilService: UtilService, public contentService: ContentService,
     private activatedRoute: ActivatedRoute, private router: Router, public learnerService: LearnerService,
     private programsService: ProgramsService, private tosterService: ToasterService) {
      }
@@ -341,22 +342,25 @@ export class CollectionComponent implements OnInit, OnDestroy {
       this.tosterService.error('User onboarding failed');
     });
   }
-
   setActiveDate() {
-   const dates = [ 'nomination_enddate', 'shortlisting_enddate', 'content_submission_enddate', 'enddate'];
+    const dates = [ 'nomination_enddate', 'shortlisting_enddate', 'content_submission_enddate', 'enddate'];
+ 
+    dates.forEach(key => {
+      const date  = moment(moment(this.programContext[key]).format('YYYY-MM-DD'));
+      const today = moment(moment().format('YYYY-MM-DD'));
+      const isFutureDate = !date.isSame(today) && date.isAfter(today);
+ 
+      if (key === 'nomination_enddate' && isFutureDate) {
+        this.activeDate = key;
+      }
+ 
+      if (this.activeDate === '' && isFutureDate) {
+        this.activeDate = key;
+      }
+    });
+  }
 
-   dates.forEach(key => {
-     const date  = moment(moment(this.programContext[key]).format('YYYY-MM-DD'));
-     const today = moment(moment().format('YYYY-MM-DD'));
-     const isFutureDate = !date.isSame(today) && date.isAfter(today);
-
-     if (key === 'nomination_enddate' && isFutureDate) {
-       this.activeDate = key;
-     }
-
-     if (this.activeDate === '' && isFutureDate) {
-       this.activeDate = key;
-     }
-   });
- }
+  goBack() {
+    this.navigationHelperService.navigateToPreviousUrl();
+  }
 }

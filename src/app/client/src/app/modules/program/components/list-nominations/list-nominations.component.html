@@ -1,7 +1,7 @@
 <div class="sb-bg-color-primary-0 practical-header py-16">
   <div class="d-flex flex-ai-center flex-jc-space-between practical-header__content ui container p-0">
     <div class="practical-header__title flex-basis-1">
-      <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" type="button" [routerLink]="['/sourcing']">
+      <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="goBack()" type="button">
         <i class="icon-svg icon-svg--xxs icon-back mr-4">
           <svg class="icon icon-svg--primary">
           <use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
@@ -261,7 +261,7 @@
           </dl>
         </div>
       </div>
-      
+
     </div>
   </div>
 </div>
