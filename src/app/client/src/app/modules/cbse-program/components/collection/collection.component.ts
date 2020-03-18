@@ -178,7 +178,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
       filterValueItem = filterArray;
     }
     this.filteredList = this.filterByCollection(this.collectionsWithCardImage, filterBy, filterValueItem);
-    this.groupCollectionList();
+    //this.groupCollectionList();
   }
 
   getSharedContextObjectProperty(property) {
@@ -231,17 +231,6 @@ export class CollectionComponent implements OnInit, OnDestroy {
     });
     return payloadArray[0];
 }
-
-  groupCollectionList(groupValue?: string) {
-    // if (groupValue) {
-    //   this.collectionList = _.groupBy(this.collectionsWithCardImage, { 'subject' : groupValue } );
-    // } else {
-    //   this.collectionList = _.groupBy(this.filteredList, 'subject');
-    // }
-
-    //this.collectionList = this.filteredList;
-    console.log( this.filteredList);
-  }
 
   addCardImage(collection) {
     collection.cardImg = collection.image;
