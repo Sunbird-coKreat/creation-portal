@@ -83,7 +83,7 @@
 				<div class="program-timeline px-16" >
 				  <div class="program-timeline-item">
 					<div class="status" [class.active]="activeDate === 'nomination_enddate'">
-					  <div class="status__label">56 Nominations</div>
+					  <div class="status__label">Nomination End Date</div>
 					  <div class="status__date">
 						{{ programContext?.nomination_enddate |  date:'LLLL d, yyyy'  }}
 						<br/>
@@ -125,7 +125,8 @@
 			  </ng-container>
 
 			<div class="practical-sb-buttons">
-      <div  *ngIf="nominateButton === 'hide'"> <button class="sb-btn sb-btn-disabled sb-btn-normal" >Nominate</button></div>
+        <button (click)="expressInterest()" *ngIf="!hasExpressedInterest" class="sb-btn sb-btn-success sb-btn-normal" >Express Interest</button>
+      <div  *ngIf="nominateButton === 'hide' && hasExpressedInterest"> <button class="sb-btn sb-btn-disabled sb-btn-normal" >Nominate</button></div>
         <div *ngIf="nominateButton === 'show'">
           <button class="sb-btn sb-btn-normal sb-btn-primary disabled {{nominateButton === 'show' ? 'active' : 'disabled'}}" (click)="showContentTypeModal= true;" >Nominate</button>
         </div>
