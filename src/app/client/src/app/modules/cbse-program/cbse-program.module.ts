@@ -22,6 +22,8 @@ import { ResourceReorderComponent } from './components/resource-reorder/resource
 import { ContentEditorComponent } from './components/content-editor/content-editor.component';
 import { CollectionHierarchyService } from './services/collection-hierarchy/collection-hierarchy.service';
 import { SlickModule } from 'ngx-slick';
+import { SharedFeatureModule } from '../shared-feature';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [QuestionListComponent, QuestionCreationComponent,
@@ -31,12 +33,14 @@ import { SlickModule } from 'ngx-slick';
     DashboardComponent, RecursiveTreeComponent,
     ContentUploaderComponent,  ResourceTemplateComponent, CollectionComponent, ResourceReorderComponent, ContentEditorComponent],
   imports: [
+    RouterModule,
     CommonModule,
     SuiTabsModule,
     CommonConsumptionModule,
     SuiModule,
     ReactiveFormsModule, FormsModule, SharedModule,
     InfiniteScrollModule,
+    SharedFeatureModule,
     PlayerHelperModule,
     TelemetryModule,
     SlickModule.forRoot(),

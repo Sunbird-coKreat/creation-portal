@@ -5,6 +5,7 @@ import * as _ from 'lodash-es';
 import { tap, first } from 'rxjs/operators';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { ISessionContext } from '../../../cbse-program/interfaces';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-list-nominations',
@@ -23,6 +24,7 @@ export class ListNominationsComponent implements OnInit {
   public approvedCount = 0;
   public rejectedCount = 0;
   public totalCount = 0;
+  public activeDate = '';
 
    public sessionContext: ISessionContext = {};
    show = false;
@@ -60,6 +62,7 @@ export class ListNominationsComponent implements OnInit {
   getProgramDetails() {
     this.fetchProgramDetails().subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
+      this.setActiveDate();
     }, error => {
       // TODO: navigate to program list page
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
@@ -163,5 +166,23 @@ export class ListNominationsComponent implements OnInit {
       fragment: nomination.nominationData
     };
      this.router.navigate(['/sourcing/contributor/' + nomination.nominationData.program_id], extraData);
+  }
+
+  setActiveDate() {
+    const dates = [ 'nomination_enddate', 'shortlisting_enddate', 'content_submission_enddate', 'enddate'];
+
+    dates.forEach(key => {
+      const date  = moment(moment(this.programDetails[key]).format('YYYY-MM-DD'));
+      const today = moment(moment().format('YYYY-MM-DD'));
+      const isFutureDate = !date.isSame(today) && date.isAfter(today);
+
+      if (key === 'nomination_enddate' && isFutureDate) {
+        this.activeDate = key;
+      }
+
+      if (this.activeDate === '' && isFutureDate) {
+        this.activeDate = key;
+      }
+    });
   }
 }

@@ -12,8 +12,8 @@ export class DaysToGoPipe implements PipeTransform {
       return value;
     }
 
-    const date  = moment(value);
-    const today = moment();
+    const date  = moment(moment(value).format('YYYY-MM-DD'));
+    const today = moment(moment().format('YYYY-MM-DD'));
     let days    = 0;
 
     if (date.isAfter(today)) {
@@ -25,7 +25,11 @@ export class DaysToGoPipe implements PipeTransform {
           return days + ((days === 1) ? ' day' : ' days') + ' to go';
         }
     } else {
-        days = date.diff(today, 'days') * -1;
+        days = date.diff(today, 'days');
+
+        if (days !== 0 ) {
+          days *= -1;
+        }
 
         if (days === 0) {
           return 'Today';

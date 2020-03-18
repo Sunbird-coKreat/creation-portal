@@ -4,109 +4,128 @@
 		<div class="d-flex flex-ai-center flex-jc-space-between practical-header__content ui container p-0">
 
 			<div class="practical-header__title flex-basis-1">
-				<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" type="button">
+				<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" type="button" [routerLink]="['/contribute/myenrollprograms']">
 					<i class="icon-svg icon-svg--xxs icon-back mr-4">
-						<svg _ngcontent-nak-c11="" class="icon icon-svg--primary">
-							<use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
-						</svg></i> Back to My/Explore Programs</button>
+						<svg class="icon icon-svg--primary">
+						<use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
+						</svg>
+					</i>
+					Back to My/Explore Programs
+				</button>
 
-				<h4 class="m-0 p-0">Program Name Kerala <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
+				<h4 class="m-0 p-0">{{ programDetails?.name }} <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
 					<ng-template #popupTemplate>
 						<div class="content">
 							<div class="textbook-details ml-8">
-								<div class="header"><strong>Medium</strong></div>
+								<div class="header"><strong>{{ resourceService.frmelmnts.lbl.mediums }}</strong></div>
 								<div class="content">
-									<label class="d-block fsmall font-weight-normal mb-0">Marathi, Hindi,
-										English</label>
+									<label class="d-block fsmall font-weight-normal mb-0">{{ mediums }}</label>
 								</div>
 								<hr />
-								<div class="header"><strong>Grades / Classes</strong></div>
+								<div class="header"><strong>{{ resourceService.frmelmnts.lbl.grades }}</strong></div>
 								<div class="content">
-									<label class="d-block fsmall font-weight-normal mb-0">Grade 1, Grade 2</label>
+									<label class="d-block fsmall font-weight-normal mb-0">{{ grades }}</label>
 								</div>
 								<hr />
 								<div class="header">
-									<strong>Nomination End Date</strong>
+									<strong>{{ resourceService.frmelmnts.lbl.expressionOfInterestDate }}</strong>
 								</div>
 								<div class="content">
 									<label class="d-block fsmall font-weight-normal mb-0">
-										July 26th, 2019
+										{{ programDetails?.nomination_enddate |  date:'LLLL d, yyyy'  }}
 									</label>
 								</div>
 								<hr />
 								<div class="header">
-									<strong> Nomination Shortlisting Date</strong>
+									<strong>{{ resourceService.frmelmnts.lbl.shortlistingOfContributorDate }}</strong>
 								</div>
 								<div class="content">
 									<label class="d-block fsmall font-weight-normal mb-0">
-										Aug 5th, 2019
+										{{ programDetails?.shortlisting_enddate |  date:'LLLL d, yyyy'  }}
 									</label>
 								</div>
 								<hr />
 								<div class="header">
-									<strong>Contribution End Date</strong>
+									<strong>{{ resourceService.frmelmnts.lbl.contentSubmissionDate }}</strong>
 								</div>
 								<div class="content">
 									<label class="d-block fsmall font-weight-normal mb-0">
-										Aug 20th, 2019
+										{{ programDetails?.content_submission_enddate |  date:'LLLL d, yyyy'  }}
 									</label>
 								</div>
 								<hr />
 								<div class="header">
-									<strong>Program End Date</strong>
+									<strong>{{ resourceService.frmelmnts.lbl.programEndDate }}</strong>
 								</div>
 								<div class="content">
 									<label class="d-block fsmall font-weight-normal mb-0">
-										Aug 30th, 2019
+										{{ programDetails?.enddate |  date:'LLLL d, yyyy'  }}
 									</label>
 								</div>
 							</div>
 						</div>
 					</ng-template>
 				</h4>
-				<p class="fs-0-785 font-weight-normal">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus
-					convallis massa felis, quis pretium urna efficitur in.</p>
+				<p class="fs-0-785 font-weight-normal">{{ programDetails?.description }}</p>
 			</div>
 
-			<div class="program-timeline px-16">
-				<div class="program-timeline-item">
-					<div class="status completed">
-						<div class="status__label">Nomination End Date</div>
-						<div class="status__date">23 Mar ‘20 <em>20 days to go</em></div>
+			<ng-container *ngIf="programDetails">
+				<div class="program-timeline px-16" >
+				  <div class="program-timeline-item">
+					<div class="status" [class.active]="activeDate === 'nomination_enddate'">
+					  <div class="status__label">56 Nominations</div>
+					  <div class="status__date">
+						{{ programDetails?.nomination_enddate |  date:'LLLL d, yyyy'  }}
+						<br/>
+						<em [class.sb-color-warning]="activeDate === 'nomination_enddate'" *ngIf="activeDate === 'nomination_enddate'">{{ programDetails?.nomination_enddate | daysToGo  }}</em>
+					  </div>
 					</div>
-				</div>
-				<div class="program-timeline-item">
-					<div class="status active">
-						<div class="status__label">Nomination Shortlisting Date</div>
-						<div class="status__date">23 Mar ‘20 <em></em></div>
+				  </div>
+				  <div class="program-timeline-item">
+					<div class="status"  [class.active]="activeDate === 'shortlisting_enddate'">
+					  <div class="status__label">Shortlisting Nominations</div>
+					  <div class="status__date">
+						{{ programDetails?.shortlisting_enddate |  date:'LLLL d, yyyy'  }}
+						<br/>
+						<em [class.sb-color-warning]="activeDate === 'shortlisting_enddate'" *ngIf="activeDate === 'shortlisting_enddate'">{{ programDetails?.shortlisting_enddate | daysToGo  }}</em>
+					  </div>
 					</div>
-				</div>
-				<div class="program-timeline-item">
-					<div class="status">
-						<div class="status__label">Contribution End Date</div>
-						<div class="status__date">23 Mar ‘20 <em></em></div>
+				  </div>
+				  <div class="program-timeline-item">
+					<div class="status"  [class.active]="activeDate === 'content_submission_enddate'">
+					  <div class="status__label">Contribution & Review</div>
+					  <div class="status__date">
+						{{ programDetails?.content_submission_enddate |  date:'LLLL d, yyyy'  }}
+						<br/>
+						<em [class.sb-color-warning]="activeDate === 'content_submission_enddate'" *ngIf="activeDate === 'content_submission_enddate'">{{ programDetails?.content_submission_enddate | daysToGo  }}</em>
+					  </div>
 					</div>
-				</div>
-				<div class="program-timeline-item">
-					<div class="status">
-						<div class="status__label">Program End Date</div>
-						<div class="status__date">23 Mar ‘20 <em></em></div>
+				  </div>
+				  <div class="program-timeline-item">
+					<div class="status" [class.active]="activeDate === 'enddate'">
+					  <div class="status__label">{{ resourceService.frmelmnts.lbl.programEndDate }}</div>
+					  <div class="status__date">
+						{{ programDetails?.enddate |  date:'LLLL d, yyyy'  }}
+						<br/>
+						<em [class.sb-color-warning]="activeDate === 'enddate'" *ngIf="activeDate === 'enddate'">{{ programDetails?.enddate | daysToGo  }}</em>
+					  </div>
 					</div>
+				  </div>
 				</div>
-			</div>
+			  </ng-container>
 
 			<div class='practical-sb-buttons'>
 				<button class="sb-btn sb-btn-secondary sb-btn-normal">Express Interest</button>
 			</div>
 		</div>
 	</div>
-	
+
 	<div class="sb-bg-color-primary-100">
 		<sui-tabset>
 			<div class="ui pointing secondary menu sb-bg-color-primary-100">
 				<div class="ui container p-0 m-0 d-flex flex-ai-center flex-jc-center">
 					<a class="item" suiTabHeader="1">Dashboard</a>
-					<a class="item active" suiTabHeader="2">Text Books <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">10</span></a>
+					<a class="item active" suiTabHeader="2">{{ resourceService.frmelmnts.lbl.textbooks }}<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">10</span></a>
 					<a class="item" suiTabHeader="3">Users</a>
 				</div>
 			</div>
@@ -158,10 +177,6 @@
 							</td>
 						</tr>
 					</table>
-
-
-
-
 				</div>
 			</div>
 			<div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" isActive='true' suiTabContent="2">
