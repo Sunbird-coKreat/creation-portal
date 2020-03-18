@@ -59,7 +59,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   */
   frameworkdetails;
   frameworkCategories;
-  programScope: any;
+  programScope: any = {};
   userprofile;
   programId = 0;
   showTextBookSelector = false;

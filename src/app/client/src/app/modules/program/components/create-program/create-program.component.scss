@@ -69,6 +69,26 @@ h4 {
     font-size: 0.85rem;
     text-transform: uppercase;
 }
-.sb__ellipsis{
-    width:8.4rem;
+.sb-table-striped{
+    td{
+        width: 10%;
+        max-width: 10%;
+        &:first-child{
+            width: 2% !important;
+            max-width: 2% !important;  
+        }
+    }
+    th{
+        &:first-child{
+            @extend td;
+        }
+    }
+}
+
+.ui.secondary{
+    &.menu{
+        .active{
+            font-weight: 600;
+        }
+    }
 }
