@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { ConfigService, UtilService, ResourceService, ToasterService } from '@sunbird/shared';
-import { PublicDataService, ContentService, UserService, ProgramsService  } from '@sunbird/core';
+import { PublicDataService, ContentService, UserService, ProgramsService, LearnerService  } from '@sunbird/core';
 import * as _ from 'lodash-es';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
@@ -59,7 +59,8 @@ export class CollectionComponent implements OnInit, OnDestroy {
     private cbseService: CbseProgramService, public programStageService: ProgramStageService,
     public resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService,
     public userService: UserService, public utilService: UtilService, public contentService: ContentService,
-    private activatedRoute: ActivatedRoute, private router: Router, private programsService: ProgramsService, private tosterService: ToasterService) { }
+    private activatedRoute: ActivatedRoute, private router: Router, public learnerService: LearnerService,
+    private programsService: ProgramsService, private tosterService: ToasterService) { }
 
   ngOnInit() {
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
@@ -200,7 +201,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     const req = {data: {request: { filters: ''}, }, url: ''};
     req.url = `${this.configService.urlConFig.URLS.COMPOSITE.SEARCH}`;
     req.data.request.filters = this.generateSearchFilterRequestData();
-    return this.contentService.post(req)
+    return this.learnerService.post(req)
       .pipe(
         catchError(err => {
           const errInfo = { errorMsg: 'Question creation failed' };

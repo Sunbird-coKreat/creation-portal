@@ -4,7 +4,7 @@ import { OrgDetailsService } from './../org-details/org-details.service';
 import { FrameworkService } from './../framework/framework.service';
 import { ExtPluginService } from './../ext-plugin/ext-plugin.service';
 import { PublicDataService } from './../public-data/public-data.service';
-import { ConfigService, ServerResponse, ToasterService, ResourceService } from '@sunbird/shared';
+import { ConfigService, ServerResponse, ToasterService, ResourceService, LearnerService } from '@sunbird/shared';
 import { Injectable } from '@angular/core';
 import { UserService } from '../user/user.service';
 import { combineLatest, of, iif, Observable, BehaviorSubject, throwError, merge } from 'rxjs';
@@ -34,7 +34,8 @@ export class ProgramsService extends DataService implements CanActivate {
 
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService, private extFrameworkService: ExtPluginService,
-    private router: Router, private toasterService: ToasterService, private resourceService: ResourceService) {
+    private router: Router, private toasterService: ToasterService, private resourceService: ResourceService,
+    public learnerService: LearnerService) {
       super(http);
       this.config = config;
       this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;
@@ -95,7 +96,7 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
     console.log(req);
-    return this.API_URL(req);
+    return this.learnerService.post(req);
   }
 
   /**

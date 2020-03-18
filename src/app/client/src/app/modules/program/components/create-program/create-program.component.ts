@@ -322,7 +322,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   showTexbooklist() {
 
     const option = {
-      url: 'content/composite/v1/search',
+      url: 'learner/composite/v1/search',
       data: {
         request: {
           filters: {
@@ -331,7 +331,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
             contentType: "Textbook",
             framework: this.userprofile.framework.id[0],
             board: this.userprofile.framework.board[0],
-          }
+          },
+          not_exists: ["programId"]
         }
       }
     };
