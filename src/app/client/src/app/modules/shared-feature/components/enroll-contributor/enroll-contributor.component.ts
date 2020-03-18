@@ -9,6 +9,7 @@ import { ServerResponse, RequestParam, HttpOptions } from '@sunbird/shared';
 import { of as observableOf, throwError as observableThrowError, Observable  } from 'rxjs';
 import { ToasterService, ResourceService } from '@sunbird/shared';
 import { DatePipe } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-enroll-contributor',
@@ -39,7 +40,7 @@ export class EnrollContributorComponent implements OnInit {
   constructor(private programsService: ProgramsService, private tosterService: ToasterService,
     public userService: UserService, public frameworkService: FrameworkService,
     public toasterService: ToasterService, public formBuilder: FormBuilder,
-    public http: HttpClient, public enrollContributorService: EnrollContributorService,
+    public http: HttpClient, public enrollContributorService: EnrollContributorService, public router: Router,
     public resourceService: ResourceService, private datePipe: DatePipe  ) {
     this.userProfile = this.userService.userProfile;
   }
@@ -54,8 +55,8 @@ export class EnrollContributorComponent implements OnInit {
   }
 
   fetchFrameWorkDetails() {
-
-    this.frameworkService.getFrameworkCategories(_.get(this.userProfile.framework, 'id')[0])
+   const frameworkId = _.get(this.userProfile.framework, 'id') ? _.get(this.userProfile.framework, 'id')[0] : null;
+    this.frameworkService.getFrameworkCategories(frameworkId)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((data) => {
 
@@ -65,10 +66,12 @@ export class EnrollContributorComponent implements OnInit {
           this.frameworkdetails.forEach((element) => {
             this.enrollDetails[element['code']] = element['terms'];
           });
+          this.frameworkFetched = true;
         }
       }, error => {
         const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
         this.toasterService.warning(errorMes || 'Fetching framework details failed');
+        this.router.navigate(['']);
       });
   }
 
