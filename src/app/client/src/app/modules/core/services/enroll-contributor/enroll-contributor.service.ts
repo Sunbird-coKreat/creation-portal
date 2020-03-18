@@ -27,15 +27,8 @@ export class EnrollContributorService {
     private userService: UserService, private extFrameworkService: ExtPluginService, private contentService: ContentService,
     private router: Router, private toasterService: ToasterService, private resourceService: ResourceService) {
     }
-    saveData(option)
-    {
-      const httpOptions: HttpOptions = {
-        headers: {
-          'Content-Type' : "application/json",
-          'Authorization' : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhMzRmNjM3NTM4ZTg0MTc3OWVlNjMwM2FkYzExNDY0NCJ9.RpY7PL4ASDLNOU9xMCKXZtDF4vUPuMTDVO6keh4kI1M"
-        }
-      };
-    return this.http.post(this.baseUrl + option.url, option.data, httpOptions).pipe(
+    saveData(option) {
+    return this.contentService.post(option).pipe(
       mergeMap((data: ServerResponse) => {
         if (data.responseCode !== 'OK') {
           return observableThrowError(data);
