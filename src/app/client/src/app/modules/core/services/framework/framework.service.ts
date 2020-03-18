@@ -85,7 +85,7 @@ export class FrameworkService {
     const frameworkOptions = {
       url: this.configService.urlConFig.URLS.FRAMEWORK.READ + '/' + framework
     };
-    return this.publicDataService.get(frameworkOptions);
+    return this.learnerService.get(frameworkOptions);
   }
 
   private setFrameWorkData(framework?: any) {
