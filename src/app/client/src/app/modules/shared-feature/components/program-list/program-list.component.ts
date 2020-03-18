@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ProgramsService, RegistryService, UserService } from '@sunbird/core';
-import { ResourceService } from '@sunbird/shared';
+import { ResourceService, ToasterService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IProgram } from '../../../core/interfaces';
 import * as _ from 'lodash-es';
@@ -27,7 +27,7 @@ export class ProgramListComponent implements OnInit {
   public roles;
   public selectedRole;
   public selectedProgramToAssignRoles;
-  constructor(private programsService: ProgramsService, private registryService: RegistryService,
+  constructor(private programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router) { }
 
@@ -228,7 +228,8 @@ export class ProgramListComponent implements OnInit {
     };
     const updateNomination = this.programsService.updateNomination(req);
     updateNomination.subscribe(response => {
-      console.log(response);
+      this.showAssignRoleModal = false;
+      this.toasterService.success('Roles updated');
     }, error => {
       console.log(error);
     });
