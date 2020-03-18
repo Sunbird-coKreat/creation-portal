@@ -184,7 +184,6 @@
                 </div>
               </div>
             </ng-template>
-            {{user.selectedRole}}
             <sui-select class="selection" [(ngModel)]="user.selectedRole" labelField="name" [options]="options" valueField="name">
               <sui-select-option *ngFor="let option of roles;" [value]="option">
               </sui-select-option>
