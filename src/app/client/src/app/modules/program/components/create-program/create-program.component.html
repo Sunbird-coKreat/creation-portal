@@ -32,7 +32,7 @@
 								<div class="required field">
 										<label class="d-block">{{resource.frmelmnts.lbl.name}}
 											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupText="Name"></i>
-										</label>									
+										</label>
 										<div class="sb-field">
 										<input autofocus="" formControlName="name"
 											class="sb-form-control ng-pristine ng-valid ng-touched" type="text"
@@ -43,7 +43,7 @@
 										</div>
 										<div class="ui pointing red basic label below"
 											*ngIf="createProgramForm.controls['name'].errors && createProgramForm.controls['name'].errors.maxlength && (!createProgramForm.controls['name'].pristine || formIsInvalid)">
-												{{resource.frmelmnts.lbl.characterLengthGreaterThousand}}									
+												{{resource.frmelmnts.lbl.characterLengthGreaterThousand}}
 											</div>
 										<div *ngIf="createProgramForm.value.name.length" class="pull-right fsmall">
 											{{createProgramForm.value.name.length}} / 100</div>
@@ -297,18 +297,18 @@
 												</div>
 											</td>
 											<td>
-												<div class="sb__ellipsis">
+												<div class="sb__ellipsis sb__ellipsis--three">
 													{{data.gradeLevel}}
 												</div>
 											</td>
 											<td>
-												<div class="sb__ellipsis">
+												<div>
 													{{data.medium}}
 												</div>
 											</td>
 											<td>{{ data.childNodes ? data.childNodes.length : 0 }}</td>
 											<td>
-												<div class="sb__ellipsis">
+												<div>
 													{{data.subject}}
 												</div>
 											</td>

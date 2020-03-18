@@ -1,12 +1,14 @@
 <div class="sb-bg-color-primary-0 practical-header py-16">
   <div class="d-flex flex-ai-center flex-jc-space-between practical-header__content ui container p-0">
-
     <div class="practical-header__title flex-basis-1">
-      <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" type="button">
+      <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="goBack()" type="button">
         <i class="icon-svg icon-svg--xxs icon-back mr-4">
-          <svg _ngcontent-nak-c11="" class="icon icon-svg--primary">
-            <use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
-          </svg></i> Back to My/Explore Programs</button>
+          <svg class="icon icon-svg--primary">
+          <use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
+          </svg>
+        </i>
+        Back to My/Explore Programs
+      </button>
 
       <h4 class="m-0 p-0">{{ programDetails?.name }} <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
         <ng-template #popupTemplate>
@@ -61,37 +63,53 @@
           </div>
         </ng-template>
       </h4>
-      <p class="fs-0-785 font-weight-normal">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus
-        convallis massa felis, quis pretium urna efficitur in.</p>
+      <p class="fs-0-785 font-weight-normal">{{ programDetails?.description }} </p>
     </div>
 
-    <div class="program-timeline px-16">
-      <div class="program-timeline-item">
-        <div class="status completed">
-          <div class="status__label">56 Nominations</div>
-          <div class="status__date">23 Mar ‘20 <em></em></div>
-        </div>
-      </div>
-      <div class="program-timeline-item">
-        <div class="status active">
-          <div class="status__label">Shortlisting Nominations
+    <ng-container *ngIf="programDetails">
+      <div class="program-timeline px-16" >
+        <div class="program-timeline-item">
+          <div class="status" [class.active]="activeDate === 'nomination_enddate'">
+            <div class="status__label">56 Nominations</div>
+            <div class="status__date">
+              {{ programDetails?.nomination_enddate |  date:'LLLL d, yyyy'  }}
+              <br/>
+              <em [class.sb-color-warning]="activeDate === 'nomination_enddate'" *ngIf="activeDate === 'nomination_enddate'">{{ programDetails?.nomination_enddate | daysToGo  }}</em>
             </div>
-          <div class="status__date">23 Mar ‘20 <em class="sb-color-warning">20 days to go</em></div>
+          </div>
+        </div>
+        <div class="program-timeline-item">
+          <div class="status"  [class.active]="activeDate === 'shortlisting_enddate'">
+            <div class="status__label">Shortlisting Nominations</div>
+            <div class="status__date">
+              {{ programDetails?.shortlisting_enddate |  date:'LLLL d, yyyy'  }}
+              <br/>
+              <em [class.sb-color-warning]="activeDate === 'shortlisting_enddate'" *ngIf="activeDate === 'shortlisting_enddate'">{{ programDetails?.shortlisting_enddate | daysToGo  }}</em>
+            </div>
+          </div>
+        </div>
+        <div class="program-timeline-item">
+          <div class="status"  [class.active]="activeDate === 'content_submission_enddate'">
+            <div class="status__label">Contribution & Review</div>
+            <div class="status__date">
+              {{ programDetails?.content_submission_enddate |  date:'LLLL d, yyyy'  }}
+              <br/>
+              <em [class.sb-color-warning]="activeDate === 'content_submission_enddate'" *ngIf="activeDate === 'content_submission_enddate'">{{ programDetails?.content_submission_enddate | daysToGo  }}</em>
+            </div>
+          </div>
+        </div>
+        <div class="program-timeline-item">
+          <div class="status" [class.active]="activeDate === 'enddate'">
+            <div class="status__label">{{ resourceService.frmelmnts.lbl.programEndDate }}</div>
+            <div class="status__date">
+              {{ programDetails?.enddate |  date:'LLLL d, yyyy'  }}
+              <br/>
+              <em [class.sb-color-warning]="activeDate === 'enddate'" *ngIf="activeDate === 'enddate'">{{ programDetails?.enddate | daysToGo  }}</em>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="program-timeline-item">
-        <div class="status">
-          <div class="status__label">Contribution & Review</div>
-          <div class="status__date">23 Mar ‘20 <em></em></div>
-        </div>
-      </div>
-      <div class="program-timeline-item">
-        <div class="status">
-          <div class="status__label">Program End Date</div>
-          <div class="status__date">23 Mar ‘20 <em></em></div>
-        </div>
-      </div>
-    </div>
+    </ng-container>
   </div>
 </div>
 
@@ -99,14 +117,14 @@
   <sui-tabset>
     <div class="ui pointing secondary menu sb-bg-color-primary-100">
       <div class="ui container p-0 m-0 d-flex flex-ai-center flex-jc-center">
-        <a class="item active" suiTabHeader="1">Text Books</a>
+        <a class="item active" suiTabHeader="1">{{ resourceService.frmelmnts.lbl.textbooks }}</a>
         <a class="item" suiTabHeader="2">Contributors <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ nominationsCount }}</span></a>
         <a class="item" suiTabHeader="3">Content</a>
         <a class="item" suiTabHeader="4">Users</a>
       </div>
     </div>
     <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" isActive='true' suiTabContent="1">
-      <div class="ui container">Textbooks</div>
+      <div class="ui container">{{ resourceService.frmelmnts.lbl.textbooks }}</div>
     </div>
     <div class="ui segment  p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="2">
       <div class="ui container p-0 m-0">
@@ -126,7 +144,7 @@
                           <div class="text">{{ resourceService.frmelmnts.lbl.status }}</div>
                           <i class="filter icon"></i>
                           <div class="menu" suiDropdownMenu>
-                            <div class="item" selected>resourceService.frmelmnts.lbl.allStatus</div>
+                            <div class="item" selected>{{ resourceService.frmelmnts.lbl.allStatus }}</div>
                             <div class="item">{{ resourceService.frmelmnts.lbl.pendig }}</div>
                             <div class="item">{{ resourceService.frmelmnts.lbl.approved }}</div>
                             <div class="item">{{ resourceService.frmelmnts.lbl.rejected }}</div>
@@ -184,8 +202,6 @@
 
   </sui-tabset>
 </div>
-
-
 
 <div class="sb-bg-color-primary-0 py-24 hidden hide">
   <div class="ui container">
@@ -245,7 +261,7 @@
           </dl>
         </div>
       </div>
-      
+
     </div>
   </div>
 </div>
