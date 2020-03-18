@@ -86,8 +86,8 @@ export class CollectionComponent implements OnInit, OnDestroy {
 
       currentRole: _.get(this.programContext, 'userDetails.roles[0]'),
       bloomsLevel: _.get(this.programContext, 'config.scope.bloomsLevel'),
-      programId: _.get(this.programContext, 'programId'),
-      // programId: '31ab2990-7892-11e9-8a02-93c5c62c03f1' || _.get(this.programContext, 'programId'),
+      //programId: _.get(this.programContext, 'programId'),
+       programId: '31ab2990-7892-11e9-8a02-93c5c62c03f1' || _.get(this.programContext, 'programId'),
       program: _.get(this.programContext, 'name'),
       onBoardSchool: _.get(this.programContext, 'userDetails.onBoardingData.school'),
       collectionType: _.get(this.collectionComponentConfig, 'collectionType'),
@@ -138,6 +138,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
       const collectionCards = this.utilService.getDataForCard(filteredTextbook, constantData, dynamicFields, metaData);
       this.collectionsWithCardImage = _.forEach(collectionCards, collection => this.addCardImage(collection));
       this.filterCollectionList(this.classes);
+      this.collectionList = res.result.content;
       this.showLoader = false;
       this.showError = false;
     });
@@ -238,7 +239,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     //   this.collectionList = _.groupBy(this.filteredList, 'subject');
     // }
 
-    this.collectionList = this.filteredList;
+    //this.collectionList = this.filteredList;
     console.log( this.filteredList);
   }
 

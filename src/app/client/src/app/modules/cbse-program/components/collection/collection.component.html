@@ -164,7 +164,7 @@
                 <div class="sb__ellipsis">{{data.medium}}</div>
               </td>
               <td>
-                -
+                {{ data.childNodes ? data.childNodes.length : 0 }}
               </td>
               <td>
                 <div class="sb__ellipsis">{{data.subject}}</div>
@@ -289,7 +289,7 @@
             <div class="sb__ellipsis">{{data.medium}}</div>
           </td>
           <td>
-            -
+            {{ data.childNodes ? data.childNodes.length : 0 }}
           </td>
           <td>
             <div class="sb__ellipsis">{{data.subject}}</div>

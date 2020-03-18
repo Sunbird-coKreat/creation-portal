@@ -323,6 +323,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       (res) => {
         this.showTextBookSelector = true;
         this.collections = res.result.content;
+        console.log(this.collections)
       },
       (err) => {
         console.log(err);
