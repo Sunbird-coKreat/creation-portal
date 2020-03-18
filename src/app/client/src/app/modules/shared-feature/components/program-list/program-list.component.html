@@ -36,11 +36,11 @@
                   </span>
                 </th>
                 <th *ngIf="!isContributor">{{ resourceService.frmelmnts.lbl.programDates }}</th>
-                <th *ngIf="activeMyProgramsMenu" class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.contributionDate }}</th>
+                <th *ngIf="activeMyProgramsMenu" class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.nominatedDate }}</th>
                 <th *ngIf="activeAllProgramsMenu">{{ resourceService.frmelmnts.lbl.programDates }}</th>
                 <th *ngIf="activeMyProgramsMenu">
                   <span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
-                    <div class="text">{{ resourceService.frmelmnts.lbl.nominationStatus }}</div>
+                    <div class="text">{{ resourceService.frmelmnts.lbl.status }}</div>
                     <i class="filter icon"></i>
                     <div class="menu" suiDropdownMenu>
                         <div class="item" selected>{{ resourceService.frmelmnts.lbl.allStatus }}</div>
@@ -65,7 +65,7 @@
                       <i class="dropdown icon"></i>
                       <div class="menu" suiDropdownMenu>
                         <div class="item" (click)="viewDetailsBtnClicked(program)">{{ resourceService.frmelmnts.lbl.viewDetails }}</div>
-                        <div class="item" (click)="getContributionOrgUsers()" *ngIf="activeMyProgramsMenu">{{ resourceService.frmelmnts.lbl.assignRole }}</div>
+                        <div class="item" (click)="getContributionOrgUsers(program)" *ngIf="activeMyProgramsMenu">{{ resourceService.frmelmnts.lbl.assignRole }}</div>
                       </div>
                   </div>
                 </td>
@@ -81,14 +81,14 @@
                   </div>
                 </td>
                 <td>
-                  <div class="sb__ellipsis sb__ellipsis--breakAll " style="width: 200px;" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.purpose }}" popupText="{{ getProgramContentTypes(program) }}">{{ getProgramContentTypes(program) }}</div>
+                  <div class="sb__ellipsis sb__ellipsis--breakAll" style="width: 200px;" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.purpose }}" popupText="{{ getProgramContentTypes(program) }}">{{ getProgramContentTypes(program) }}</div>
                 </td>
                 <td>
                   <div class="sb__ellipsis sb__ellipsis--breakAll" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.grades }}" popupText="{{ getProgramInfo(program, 'gradeLevel') }}">{{ getProgramInfo(program, 'gradeLevel') }}</div>
                   <hr class="divider">
-                  <div class="sb__ellipsis sb__ellipsis--breakAll " suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.mediums }}" popupText="{{ getProgramInfo(program, 'medium') }}">{{ getProgramInfo(program, 'medium') }}</div>
+                  <div class="sb__ellipsis sb__ellipsis--breakAll" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.mediums }}" popupText="{{ getProgramInfo(program, 'medium') }}">{{ getProgramInfo(program, 'medium') }}</div>
                   <hr class="divider">
-                  <div class="sb__ellipsis sb__ellipsis--breakAll " suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.subjects }}" popupText="{{ getProgramInfo(program, 'subject') }}">{{ getProgramInfo(program, 'subject') }}</div>
+                  <div class="sb__ellipsis sb__ellipsis--breakAll" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.subjects }}" popupText="{{ getProgramInfo(program, 'subject') }}">{{ getProgramInfo(program, 'subject') }}</div>
                 </td>
                 <td *ngIf="!isContributor">
                   <div>{{ program.status }}</div>
@@ -100,7 +100,7 @@
                         <div class="status__label">{{ resourceService.frmelmnts.lbl.nominationSubmission }}</div>
                         <div class="status__date">
                           {{ program?.nomination_enddate | date:'LLLL d, yyyy'  }}
-                          <em *ngIf="isActive(program, 'nomination_enddate', i)" class="d-block">{{ program?.nomination_enddate | daysToGo  }}</em>
+                          <em class="d-block" *ngIf="isActive(program, 'nomination_enddate', i)">{{ program?.nomination_enddate | daysToGo  }}</em>
                         </div>
                       </div>
                     </div>
@@ -109,7 +109,7 @@
                         <div class="status__label">{{ resourceService.frmelmnts.lbl.shortlistingNomination }}</div>
                         <div class="status__date">
                           {{ program?.shortlisting_enddate | date:'LLLL d, yyyy'  }}
-                          <em *ngIf="isActive(program, 'shortlisting_enddate', i)" class="d-block">{{ program?.shortlisting_enddate | daysToGo  }}</em>
+                          <em class="d-block" *ngIf="isActive(program, 'shortlisting_enddate', i)">{{ program?.shortlisting_enddate | daysToGo  }}</em>
                         </div>
                       </div>
                     </div>
@@ -125,16 +125,20 @@
                     <div class="program-timeline-item" *ngIf="!isContributor">
                       <div class="status" [class.active]="isActive(program, 'enddate', i)">
                         <div class="status__label">{{ resourceService.frmelmnts.lbl.programEndDate }}</div>
-                        <div class="status__date">{{ program?.enddate | date:'LLLL d, yyyy' }}
-                          <em class="d-block" *ngIf="isActive(program, 'enddate', i)">{{ program?.enddate | daysToGo  }}</em>
+                        <div class="status__date">
+                          {{ program?.enddate | date:'LLLL d, yyyy' }}
+                          <em class="d-block" *ngIf="isActive(program, 'enddate', i)">{{ program?.enddate | daysToGo }}</em>
                         </div>
                       </div>
                     </div>
                   </div>
                 </td>
                 <td *ngIf="activeMyProgramsMenu">
-                  <div>{{ program?.enddate | date:'LLLL d, yyyy' }}
-                    <em class="d-block">{{ program?.enddate | daysToGo }}</em></div>
+                  <div>
+                    {{ program?.contributionDate | date:'LLLL d, yyyy' }}
+                    <br/>
+                    <em class="d-block">{{ program?.contributionDate | daysToGo }}</em>
+                  </div>
                 </td>
                 <td *ngIf="activeMyProgramsMenu">
                   <span class="sb-label sb-label-table sb-label-primary-100">{{ getProgramNominationStatus(program) }}</span>
@@ -155,7 +159,7 @@
   </div>
 </div>
 <sui-modal *ngIf="showAssignRoleModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
-  [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showNormalModal = !showNormalModal" #modal>
+  [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showAssignRoleModal = !showAssignRoleModal" #modal>
   <div class="sb-modal-header">
     Set Role
   </div>
@@ -168,7 +172,7 @@
         </tr>
       </thead>
       <tbody class="sb-table-body">
-        <tr *ngFor="let user of contributorOrgUser">
+        <tr *ngFor="let user of contributorOrgUser; let i = index">
           <td>{{user.firstName +' '+ user.lastName}}</td>
           <td>
             <ng-template let-option #optionTemplate>
@@ -183,13 +187,21 @@
                 </div>
               </div>
             </ng-template>
-            <sui-select class="selection" labelField="name" [options]="options" valueField="name">
-              <sui-select-option *ngFor="let option of data.board" [value]="option">
+            <sui-select class="selection" [(ngModel)]="user.selectedRole" labelField="name" [options]="options" valueField="name">
+              <sui-select-option *ngFor="let option of roles;" [value]="option">
               </sui-select-option>
             </sui-select>
           </td>
         </tr>
       </tbody>
     </table>
+  </div>
+  <div class="sb-modal-actions">
+    <button
+      class="sb-btn sb-btn-normal sb-btn-success"
+      (click)="assignRolesToOrgUsers();"
+    >
+      Submit
+    </button>
   </div>
 </sui-modal>
