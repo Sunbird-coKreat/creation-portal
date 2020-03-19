@@ -105,11 +105,19 @@ export class ProgramListComponent implements OnInit {
         if (!result || _.isEmpty(result)) {
           console.log('NO USER FOUND');
         } else {
-          const userIds = _.map(result[_.first(_.keys(result))], 'userId');
+          // get Ids of all users whose role is 'user'
+          const userIds = _.map(_.filter(result[_.first(_.keys(result))], ['roles', ['user']]), 'userId');
           const getUserDetails = _.map(userIds, id => this.registryService.getUserDetails(id));
           forkJoin(...getUserDetails)
             .subscribe((res: any) => {
-              this.contributorOrgUser = _.map(res, 'result.User');
+              if (res) {
+                _.forEach(res, r => {
+                  if (r.result && r.result.User) {
+                   this.contributorOrgUser.push(r.result.User);
+                  }
+                });
+              }
+
             }, error => {
               console.log(error);
             });
