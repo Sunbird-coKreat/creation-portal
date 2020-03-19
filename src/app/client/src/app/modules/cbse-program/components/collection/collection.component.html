@@ -12,7 +12,7 @@
            <sui-select class="selection state-selection"  placeholder="{{board}}" labelField="name" #multiSelect>
             <sui-select-option *ngFor="let option of multiSelect1" [value]="option" aria-disabled="#multiSelect">
             </sui-select-option>
-          </sui-select> 
+          </sui-select>
         </div>
       </div>
       <div class="state-medium-container__separator"></div>
@@ -44,14 +44,14 @@
           </ngx-slick>
       </nav>
     </div>
-    
+
   </div> -->
 
 	<div class="sb-bg-color-primary-0 practical-header py-16">
 		<div class="d-flex flex-ai-center flex-jc-space-between practical-header__content ui container p-0">
 
 			<div class="practical-header__title flex-basis-1">
-				<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" type="button">
+				<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="goBack()" type="button">
 					<i class="icon-svg icon-svg--xxs icon-back mr-4">
 						<svg _ngcontent-nak-c11="" class="icon icon-svg--primary">
 							<use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
@@ -61,12 +61,12 @@
           <ng-template #popupTemplate>
             <div class="content">
               <div class="textbook-details ml-8">
-                <div class="header"><strong>Subject</strong></div>
+                <div class="header"><strong>{{ resourceService.frmelmnts.lbl.subjects }}</strong></div>
                 <div class="content">
                   <label class="d-block fsmall font-weight-normal mb-0">{{sharedContext.subject.join(', ')}}</label>
                 </div>
                 <hr />
-                <div class="header"><strong>Grades / Classes</strong></div>
+                <div class="header"><strong>{{ resourceService.frmelmnts.lbl.grades }}</strong></div>
                 <div class="content">
                   <label class="d-block fsmall font-weight-normal mb-0">{{sharedContext.gradeLevel.join(', ')}}</label>
                 </div>
@@ -76,39 +76,57 @@
                 <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate">
                 </i>
 				</h4>
-				<p class="fs-0-785 font-weight-normal">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus
-					convallis massa felis, quis pretium urna efficitur in.</p>
+				<p class="fs-0-785 font-weight-normal">{{programContext.description}}</p>
 			</div>
 
-			<div class="program-timeline px-16">
-				<div class="program-timeline-item">
-					<div class="status completed">
-						<div class="status__label">Nomination End Date</div>
-						<div class="status__date">23 Mar ‘20 <em>20 days to go</em></div>
+			<ng-container *ngIf="programContext">
+				<div class="program-timeline px-16" >
+				  <div class="program-timeline-item">
+					<div class="status" [class.active]="activeDate === 'nomination_enddate'">
+					  <div class="status__label">Nomination End Date</div>
+					  <div class="status__date">
+						{{ programContext?.nomination_enddate |  date:'LLLL d, yyyy'  }}
+						<br/>
+						<em [class.sb-color-warning]="activeDate === 'nomination_enddate'" *ngIf="activeDate === 'nomination_enddate'">{{ programContext?.nomination_enddate | daysToGo  }}</em>
+					  </div>
 					</div>
-				</div>
-				<div class="program-timeline-item">
-					<div class="status active">
-						<div class="status__label">Nomination Shortlisting Date</div>
-						<div class="status__date">23 Mar ‘20 <em></em></div>
+				  </div>
+				  <div class="program-timeline-item">
+					<div class="status"  [class.active]="activeDate === 'shortlisting_enddate'">
+					  <div class="status__label">Shortlisting Nominations</div>
+					  <div class="status__date">
+						{{ programContext?.shortlisting_enddate |  date:'LLLL d, yyyy'  }}
+						<br/>
+						<em [class.sb-color-warning]="activeDate === 'shortlisting_enddate'" *ngIf="activeDate === 'shortlisting_enddate'">{{ programContext?.shortlisting_enddate | daysToGo  }}</em>
+					  </div>
 					</div>
-				</div>
-				<div class="program-timeline-item">
-					<div class="status">
-						<div class="status__label">Contribution End Date</div>
-						<div class="status__date">23 Mar ‘20 <em></em></div>
+				  </div>
+				  <div class="program-timeline-item">
+					<div class="status"  [class.active]="activeDate === 'content_submission_enddate'">
+					  <div class="status__label">Contribution & Review</div>
+					  <div class="status__date">
+						{{ programContext?.content_submission_enddate |  date:'LLLL d, yyyy'  }}
+						<br/>
+						<em [class.sb-color-warning]="activeDate === 'content_submission_enddate'" *ngIf="activeDate === 'content_submission_enddate'">{{ programContext?.content_submission_enddate | daysToGo  }}</em>
+					  </div>
 					</div>
-				</div>
-				<div class="program-timeline-item">
-					<div class="status">
-						<div class="status__label">Program End Date</div>
-						<div class="status__date">23 Mar ‘20 <em></em></div>
+				  </div>
+				  <div class="program-timeline-item">
+					<div class="status" [class.active]="activeDate === 'enddate'">
+					  <div class="status__label">{{ resourceService.frmelmnts.lbl.programEndDate }}</div>
+					  <div class="status__date">
+						{{ programContext?.enddate |  date:'LLLL d, yyyy'  }}
+						<br/>
+						<em [class.sb-color-warning]="activeDate === 'enddate'" *ngIf="activeDate === 'enddate'">{{ programContext?.enddate | daysToGo  }}</em>
+					  </div>
 					</div>
+				  </div>
 				</div>
-			</div>
+			  </ng-container>
 
 			<div class="practical-sb-buttons">
-      <div  *ngIf="nominateButton === 'hide'"> <button class="sb-btn sb-btn-disabled sb-btn-normal" >Nominate</button></div>
+        <button (click)="expressInterest()" *ngIf="!hasExpressedInterest" class="sb-btn sb-btn-success sb-btn-normal" >Express Interest</button>
+      <div  *ngIf="nominateButton === 'hide' && hasExpressedInterest"> <button class="sb-btn sb-btn-disabled sb-btn-normal" >Nominate</button></div>
         <div *ngIf="nominateButton === 'show'">
           <button class="sb-btn sb-btn-normal sb-btn-primary disabled {{nominateButton === 'show' ? 'active' : 'disabled'}}" (click)="showContentTypeModal= true;" >Nominate</button>
         </div>
@@ -135,7 +153,7 @@
           </thead>
           <tbody class="sb-table-body">
             <tr *ngFor="let data of collectionList" >
-              <td> 
+              <td>
                 <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
                   {{data.name}}
                 </div>
@@ -147,7 +165,7 @@
                 <div class="sb__ellipsis">{{data.medium}}</div>
               </td>
               <td>
-                -
+                {{ data.childNodes ? data.childNodes.length : 0 }}
               </td>
               <td>
                 <div class="sb__ellipsis">{{data.subject}}</div>
@@ -157,7 +175,7 @@
               </td>
             </tr>
           </tbody>
-        </table> 
+        </table>
       </div>
       <div  *ngIf="!objectKey(collectionList).length">
         <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0006'}"></app-no-result>
@@ -260,7 +278,7 @@
       </thead>
       <tbody class="sb-table-body">
         <tr *ngFor="let data of collectionList" >
-          <td> 
+          <td>
             <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
               {{data.name}}
             </div>
@@ -272,7 +290,7 @@
             <div class="sb__ellipsis">{{data.medium}}</div>
           </td>
           <td>
-            -
+            {{ data.childNodes ? data.childNodes.length : 0 }}
           </td>
           <td>
             <div class="sb__ellipsis">{{data.subject}}</div>
@@ -282,7 +300,7 @@
           </td>
         </tr>
       </tbody>
-    </table> 
+    </table>
 
     <!-- <div *ngFor="let key of objectKey(collectionList)"> -->
 

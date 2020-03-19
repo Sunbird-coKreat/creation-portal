@@ -79,7 +79,7 @@ export class FrameworkService {
     const channelOptions = {
       url: this.configService.urlConFig.URLS.CHANNEL.READ + '/' + hashTagId
     };
-    return this.publicDataService.get(channelOptions);
+    return this.learnerService.get(channelOptions);
   }
   public getFrameworkCategories(framework: string) {
     const frameworkOptions = {

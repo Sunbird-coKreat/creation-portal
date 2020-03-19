@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { ConfigService, UtilService, ResourceService, ToasterService } from '@sunbird/shared';
+import { ConfigService, UtilService, ResourceService, NavigationHelperService, ToasterService } from '@sunbird/shared';
 import { PublicDataService, ContentService, UserService, ProgramsService, LearnerService  } from '@sunbird/core';
 import * as _ from 'lodash-es';
 import { catchError } from 'rxjs/operators';
@@ -9,7 +9,8 @@ import { ProgramStageService, ProgramTelemetryService } from '../../../program/s
 import { ISessionContext, IChapterListComponentInput } from '../../interfaces';
 import { InitialState } from '../../interfaces';
 import { ActivatedRoute, Router } from '@angular/router';
-
+import * as moment from 'moment';
+import { programContext } from '../../../program/components/list-contributor-textbooks/data';
 
 @Component({
   selector: 'app-collection',
@@ -31,6 +32,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
   public collection;
   public collectionsWithCardImage;
   public role: any = {};
+  public hasExpressedInterest = false;
   public collectionList: any = {};
   public mediums;
   public showError = false;
@@ -48,19 +50,24 @@ export class CollectionComponent implements OnInit, OnDestroy {
   public state: InitialState = {
     stages: []
   };
+  public activeDate = '';
   public showStage;
   public currentStage: any;
   public contentType:any;
+  public currentNominationStatus: any;
   showContentTypeModal = false;
   selectedContentTypes = [];
   selectedCollectionIds = [];
   _slideConfig = {'slidesToShow': 10, 'slidesToScroll': 1, 'variableWidth': true};
+
   constructor(private configService: ConfigService, public publicDataService: PublicDataService,
     private cbseService: CbseProgramService, public programStageService: ProgramStageService,
     public resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService,
-    public userService: UserService, public utilService: UtilService, public contentService: ContentService,
+    public userService: UserService, private navigationHelperService: NavigationHelperService,
+    public utilService: UtilService, public contentService: ContentService,
     private activatedRoute: ActivatedRoute, private router: Router, public learnerService: LearnerService,
-    private programsService: ProgramsService, private tosterService: ToasterService) { }
+    private programsService: ProgramsService, private tosterService: ToasterService) {
+     }
 
   ngOnInit() {
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
@@ -75,14 +82,14 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.sharedContext = this.collectionComponentInput.programContext.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});
-    
+
     this.contentType = _.get(this.programContext, 'content_types'),
     this.sessionContext = _.assign(this.collectionComponentInput.sessionContext, {
-      
+
       currentRole: _.get(this.programContext, 'userDetails.roles[0]'),
       bloomsLevel: _.get(this.programContext, 'config.scope.bloomsLevel'),
       programId: _.get(this.programContext, 'programId'),
-      // programId: '31ab2990-7892-11e9-8a02-93c5c62c03f1' || _.get(this.programContext, 'programId'),
+      //programId: '31ab2990-7892-11e9-8a02-93c5c62c03f1' || _.get(this.programContext, 'programId'),
       program: _.get(this.programContext, 'name'),
       onBoardSchool: _.get(this.programContext, 'userDetails.onBoardingData.school'),
       collectionType: _.get(this.collectionComponentConfig, 'collectionType'),
@@ -103,6 +110,8 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.collectionComponentInput.programContext.programId, 'Program');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID + '.programs');
+    this.setActiveDate();
+    this.getNominationStatus();
   }
 
   getImplicitFilters(): string[] {
@@ -132,6 +141,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
       const collectionCards = this.utilService.getDataForCard(filteredTextbook, constantData, dynamicFields, metaData);
       this.collectionsWithCardImage = _.forEach(collectionCards, collection => this.addCardImage(collection));
       this.filterCollectionList(this.classes);
+      this.collectionList = res.result.content;
       this.showLoader = false;
       this.showError = false;
     });
@@ -171,7 +181,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
       filterValueItem = filterArray;
     }
     this.filteredList = this.filterByCollection(this.collectionsWithCardImage, filterBy, filterValueItem);
-    this.groupCollectionList();
+    //this.groupCollectionList();
   }
 
   getSharedContextObjectProperty(property) {
@@ -224,17 +234,6 @@ export class CollectionComponent implements OnInit, OnDestroy {
     });
     return payloadArray[0];
 }
-
-  groupCollectionList(groupValue?: string) {
-    // if (groupValue) {
-    //   this.collectionList = _.groupBy(this.collectionsWithCardImage, { 'subject' : groupValue } );
-    // } else {
-    //   this.collectionList = _.groupBy(this.filteredList, 'subject');
-    // }
-
-    this.collectionList = this.filteredList;
-    console.log( this.filteredList);
-  }
 
   addCardImage(collection) {
     collection.cardImg = collection.image;
@@ -317,7 +316,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
       creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
     }
     const req = {
-      url: `program/v1/nomination/add`,
+      url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_ADD}`,
       data: {
         request: {
           program_id: this.activatedRoute.snapshot.params.programId,
@@ -335,5 +334,68 @@ export class CollectionComponent implements OnInit, OnDestroy {
     }, error => {
       this.tosterService.error('User onboarding failed');
     });
+  }
+  setActiveDate() {
+    const dates = [ 'nomination_enddate', 'shortlisting_enddate', 'content_submission_enddate', 'enddate'];
+
+    dates.forEach(key => {
+      const date  = moment(moment(this.programContext[key]).format('YYYY-MM-DD'));
+      const today = moment(moment().format('YYYY-MM-DD'));
+      const isFutureDate = !date.isSame(today) && date.isAfter(today);
+
+      if (key === 'nomination_enddate' && isFutureDate) {
+        this.activeDate = key;
+      }
+
+      if (this.activeDate === '' && isFutureDate) {
+        this.activeDate = key;
+      }
+    });
+  }
+
+  expressInterest() {
+    const req = {
+      url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_ADD}`,
+      data: {
+        request: {
+          program_id: this.activatedRoute.snapshot.params.programId,
+          user_id: this.userService.userProfile.userId,
+          status: 'Initiated',
+          organisation_id: this.userService.userProfile.userRegData.User_Org.orgId
+        }
+      }
+    };
+    this.programsService.post(req).subscribe((data) => {
+      this.hasExpressedInterest = true;
+      this.tosterService.success('Nomination sent');
+    }, error => {
+      this.tosterService.error('User onboarding failed');
+    });
+  }
+
+  getNominationStatus() {
+    const req = {
+      url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
+      data: {
+        request: {
+          filters: {
+            program_id: this.activatedRoute.snapshot.params.programId,
+            user_id: this.userService.userProfile.userId,
+          }
+        }
+      }
+    };
+    this.programsService.post(req).subscribe((data) => {
+      if (data.result && !_.isEmpty(data.result)) {
+          this.currentNominationStatus =  _.get(_.first(data.result), 'status');
+          this.hasExpressedInterest = (this.currentNominationStatus === 'Initiated') ? true : false;
+      }
+    }, error => {
+      this.tosterService.error('Failed fetching current nomination status');
+    });
+  }
+
+  goBack() {
+    this.navigationHelperService.navigateToPreviousUrl();
   }
 }
