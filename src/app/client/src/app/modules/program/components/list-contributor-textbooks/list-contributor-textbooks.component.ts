@@ -32,6 +32,11 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
   public dynamicInputs;
   public programDetails: any = {};
   public programId = '';
+  public initiatedCount = 0;
+  public pendingCount = 0;
+  public approvedCount = 0;
+  public rejectedCount = 0;
+  public totalCount = 0;
   public state: InitialState = {
     stages: []
   };
@@ -57,8 +62,10 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
     this.activatedRoute.fragment.pipe(map(fragment => fragment || 'None')).subscribe((frag) => {
       this.selectedNominationDetails = frag;
     });
+    console.log(this.selectedNominationDetails);
     this.fetchProgramDetails().subscribe((programDetails) => {
       this.getProgramTextbooks();
+      this.getNominationCounts();
       this.programContext = programContext;
       this.sessionContext = sessionContext;
       this.configData = configData;
@@ -67,7 +74,51 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
       // TODO: navigate to program list page
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
     });
-    this.contributor = {'name': 'Pratham', 'type': 'Organisation', 'nominationStatus': 'Pending'};
+    this.contributor = this.selectedNominationDetails;
+  }
+
+  getNominationCounts() {
+    this.fetchNominationCounts().subscribe((response) => {
+      const statuses = _.get(response, 'result');
+      statuses.forEach(nomination => {
+        if (nomination.status === 'Initiated') {
+          this.initiatedCount = nomination.count;
+        }
+
+        if (nomination.status === 'Pending') {
+          this.pendingCount = nomination.count;
+        }
+
+        if (nomination.status === 'Approved') {
+          this.approvedCount = nomination.count;
+        }
+
+        if (nomination.status === 'Rejected') {
+          this.rejectedCount = nomination.count;
+        }
+        // tslint:disable-next-line: radix
+        this.totalCount += parseInt(nomination.count);
+      });
+    }, error => {
+      // TODO: navigate to program list page
+      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+      this.toasterService.error(errorMes || 'Fetching program details failed');
+    });
+  }
+
+  fetchNominationCounts() {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
+      data: {
+        request: {
+          filters: {
+            program_id: this.programId
+          },
+          facets: ['program_id', 'status']
+        }
+      }
+    };
+    return this.programsService.post(req);
   }
 
   fetchProgramDetails() {
@@ -132,13 +183,13 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
 
    updateNomination(status) {
     let nominationStatus;
-    (status === 'accept') ? (nominationStatus = 'Approved') : (nominationStatus = 'Rejected');
+    (status === 'accept') ? (nominationStatus = 'Accepted') : (nominationStatus = 'Rejected');
      const option = {
        url: this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_UPDATE,
        data: {
          request: {
            program_id: this.programId,
-           user_id: this.selectedNominationDetails.userData.identifier,
+           user_id: this.contributor.nominationData.user_id,
            status: nominationStatus,
            updatedby: this.userService.userProfile.userId
          }

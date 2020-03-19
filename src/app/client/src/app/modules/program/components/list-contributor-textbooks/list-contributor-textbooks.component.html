@@ -1,240 +1,293 @@
-<div class="sb-bg-color-primary-0 py-24"*ngIf="!showChapterList">
+<div class="sb-bg-color-primary-0 py-24" *ngIf="!showChapterList">
+	<div class="sb-bg-color-primary-0 practical-header py-16">
+        <div class="d-flex flex-ai-center flex-jc-space-between practical-header__content ui container p-0">
+            <div class="practical-header__title flex-basis-1">
+                <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="goBack()"
+                    type="button">
+                    <i class="icon-svg icon-svg--xxs icon-back mr-4">
+                        <svg class="icon icon-svg--primary">
+                            <use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
+                        </svg>
+                    </i>
+                    Back to My/Explore Programs
+                </button>
+
+                <h4 class="m-0 p-0">{{ programDetails?.name }} <i class="info circle link icon" suiPopup
+                        [popupTemplate]="popupTemplate" popupDelay="1000"></i>
+                    <ng-template #popupTemplate>
+                        <div class="content">
+                            <div class="textbook-details ml-8">
+                                <div class="header"><strong>{{ resourceService.frmelmnts.lbl.mediums }}</strong></div>
+                                <div class="content">
+                                    <label class="d-block fsmall font-weight-normal mb-0">{{ mediums }}</label>
+                                </div>
+                                <hr />
+                                <div class="header"><strong>{{ resourceService.frmelmnts.lbl.grades }}</strong></div>
+                                <div class="content">
+                                    <label class="d-block fsmall font-weight-normal mb-0">{{ grades }}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </h4>
+                <p class="fs-0-785 font-weight-normal">{{ programDetails?.description }} </p>
+            </div>
+            <div class="sb-meta-data-container sb-meta-data-column">
+                <label class="width-100">{{ resourceService.frmelmnts.lbl.nominations }} </label>
+                <div class="d-flex">
+                    <dl class="sb-meta-data">
+                        <dt>{{ initiatedCount }}</dt>
+                        <dd>{{ resourceService.frmelmnts.lbl.initiated }}</dd>
+                    </dl>
+                    <dl class="sb-meta-data">
+                        <dt>{{ pendingCount }}</dt>
+                        <dd>{{ resourceService.frmelmnts.lbl.pending }}</dd>
+                    </dl>
+                    <dl class="sb-meta-data">
+                        <dt>{{ approvedCount }}</dt>
+                        <dd>{{ resourceService.frmelmnts.lbl.approved }}</dd>
+                    </dl>
+                    <dl class="sb-meta-data">
+                        <dt>{{ rejectedCount }}</dt>
+                        <dd>{{ resourceService.frmelmnts.lbl.rejected }}</dd>
+                    </dl>
+                    <dl class="sb-meta-data">
+                        <dt>{{ totalCount }}</dt>
+                        <dd>{{ resourceService.frmelmnts.lbl.total }}</dd>
+                    </dl>
+                </div>
+            </div>
+            <ng-container *ngIf="programDetails">
+                <div class="program-timeline px-16">
+                    <div class="program-timeline-item">
+                        <div class="status" [class.active]="activeDate === 'nomination_enddate'">
+                            <div class="status__label">{{ resourceService.frmelmnts.lbl.nominationSubmission }}</div>
+                            <div class="status__date">
+                                {{ programDetails?.nomination_enddate |  date:'LLLL d, yyyy'  }}
+                                <br />
+                                <em [class.sb-color-warning]="activeDate === 'nomination_enddate'"
+                                    *ngIf="activeDate === 'nomination_enddate'">{{ programDetails?.nomination_enddate | daysToGo  }}</em>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="program-timeline-item">
+                        <div class="status" [class.active]="activeDate === 'shortlisting_enddate'">
+                            <div class="status__label">{{ resourceService.frmelmnts.lbl.shortlistingNomination }}</div>
+                            <div class="status__date">
+                                {{ programDetails?.shortlisting_enddate |  date:'LLLL d, yyyy'  }}
+                                <br />
+                                <em [class.sb-color-warning]="activeDate === 'shortlisting_enddate'"
+                                    *ngIf="activeDate === 'shortlisting_enddate'">{{ programDetails?.shortlisting_enddate | daysToGo  }}</em>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="program-timeline-item">
+                        <div class="status" [class.active]="activeDate === 'content_submission_enddate'">
+                            <div class="status__label">{{ resourceService.frmelmnts.lbl.contributions }}</div>
+                            <div class="status__date">
+                                {{ programDetails?.content_submission_enddate |  date:'LLLL d, yyyy'  }}
+                                <br />
+                                <em [class.sb-color-warning]="activeDate === 'content_submission_enddate'"
+                                    *ngIf="activeDate === 'content_submission_enddate'">{{ programDetails?.content_submission_enddate | daysToGo  }}</em>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="program-timeline-item">
+                        <div class="status" [class.active]="activeDate === 'enddate'">
+                            <div class="status__label">{{ resourceService.frmelmnts.lbl.programEndDate }}</div>
+                            <div class="status__date">
+                                {{ programDetails?.enddate |  date:'LLLL d, yyyy'  }}
+                                <br />
+                                <em [class.sb-color-warning]="activeDate === 'enddate'"
+                                    *ngIf="activeDate === 'enddate'">{{ programDetails?.enddate | daysToGo  }}</em>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
 	<div class="ui container" [appTelemetryImpression]="telemetryImpression">
 
 		<div class="d-flex flex-ai-center flex-jc-space-between">
 			<div class="flex-basis-1 pr-16">
-			  <!-- <button  class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" type="button"><i class="icon-svg icon-svg--xxs icon-back mr-4"><svg  class="icon icon-svg--primary"><use xlink:href="assets/images/libdemo/sprite.svg#arrow-long-left"></use></svg></i> Back</button> -->
-			  <h4 class="sb-pageSection-title six wide column">
-				 Contributor Details
-			  </h4>
-			  <div class="d-flex flex-ai-center fnormal mt-8">
-				<dl class="sb-meta-data mb-0 pr-8">
-					<dt>Name</dt>
-					<dd class="sb__ellipsis">
-						<a class="cursor-pointer text-decoration-underline sb-color-primary" (click)="show=true">{{contributor.name}} </a>
-					</dd>
-				  </dl>
-				  <div class="d-flex flex-ai-center flex-jc-space-around flex-basis-1">
+				<!-- <button  class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" type="button"><i class="icon-svg icon-svg--xxs icon-back mr-4"><svg  class="icon icon-svg--primary"><use xlink:href="assets/images/libdemo/sprite.svg#arrow-long-left"></use></svg></i> Back</button> -->
+				<h4 class="sb-pageSection-title six wide column">
+					Contributor Details
+				</h4>
+				<div class="d-flex flex-ai-center fnormal mt-8">
 					<dl class="sb-meta-data mb-0 pr-8">
-						<dt>Program Name</dt>
-						<dd class="sb__ellipsis" suiPopup popupText="New Program FEB2020" popupDelay="1000">{{this.programDetails.name}}<i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate"></i>
-							<ng-template #popupTemplate>
-							  <div class="content">
-								<div class="textbook-details ml-8">
-								  <div class="header"><strong>Medium</strong></div>
-								  <div class="content">
-									<label class="d-block fsmall font-weight-normal mb-0"
-									  >Marathi, Hindi, English</label>
-								  </div>
-								  <hr />
-								  <div class="header"><strong>Grades / Classes</strong></div>
-								  <div class="content">
-									<label class="d-block fsmall font-weight-normal mb-0"
-									  >Grade 1, Grade 2</label>
-								  </div>
-								  <hr />
-								  <div class="header">
-									<strong>Expression for Interest Date</strong>
-								  </div>
-								  <div class="content">
-									<label class="d-block fsmall font-weight-normal mb-0">
-									  July 26th, 2019
-									</label>
-								  </div>
-								  <hr />
-								  <div class="header">
-									<strong>Shortlisting of Contributor Date</strong>
-								  </div>
-								  <div class="content">
-									<label class="d-block fsmall font-weight-normal mb-0">
-									  Aug 5th, 2019
-									</label>
-								  </div>
-								  <hr />
-								  <div class="header">
-									<strong>Content Submission Date</strong>
-								  </div>
-								  <div class="content">
-									<label class="d-block fsmall font-weight-normal mb-0">
-									  Aug 20th, 2019
-									</label>
-								  </div>
-								  <hr />
-								  <div class="header"><strong>Program End Date</strong></div>
-								  <div class="content">
-									<label class="d-block fsmall font-weight-normal mb-0">
-									  Aug 30th, 2019
-									</label>
-								  </div>
-								</div>
-							  </div>
-							</ng-template></dd>
-					  </dl>
-				  <dl class="sb-meta-data mb-0 pr-8">
-					  <dt class="sb__ellipsis">Type</dt>
-					  <dd  popupText="Org/Individual">Org/Individual</dd>
+						<dt>Name</dt>
+						<dd class="sb__ellipsis">
+							<a class="cursor-pointer text-decoration-underline sb-color-primary"
+								(click)="show=true">{{contributor.name}} </a>
+						</dd>
 					</dl>
-					<dl class="sb-meta-data mb-0 pr-8">
-					  <dt class="sb__ellipsis">Submitted Date</dt>
-					  <dd>July 26th, 2019</dd>
-					</dl>
-					<dl class="sb-meta-data mb-0 pr-8">
-					  <dt class="sb__ellipsis">Status</dt>
-					  <dd><span class="sb-label sb-label-table sb-label-warning-0">Pending</span></dd>
-					</dl>
+					<div class="d-flex flex-ai-center flex-jc-space-around flex-basis-1">
+
+						<dl class="sb-meta-data mb-0 pr-8">
+							<dt class="sb__ellipsis">Type</dt>
+							<dd popupText="Org/Individual">{{contributor.type}}</dd>
+						</dl>
+						<dl class="sb-meta-data mb-0 pr-8">
+							<dt class="sb__ellipsis">Status</dt>
+							<dd><span class="sb-label sb-label-table sb-label-warning-0">Pending</span></dd>
+						</dl>
+						<dl class="sb-meta-data mb-0 pr-8">
+							<dt class="sb__ellipsis">Submitted Date</dt>
+							<dd>{{contributor.nominationData.createdon | date:'LLLL d, yyyy'}}</dd>
+						</dl>
 					</div>
-				  </div>
-			  </div>
-			<div class="sb-meta-data-container sb-meta-data-column">
-			  <label class="width-100">Nominations</label>
-			  <div class="d-flex">
-				<dl class="sb-meta-data">
-				  <dt>15</dt>
-				  <dd>Total</dd>
-				</dl>
-				<dl class="sb-meta-data">
-				  <dt>5</dt>
-				  <dd>Rejected</dd>
-				</dl>
-				<dl class="sb-meta-data">
-				  <dt>5</dt>
-				  <dd>Pending</dd>
-				</dl>
-				<dl class="sb-meta-data">
-				  <dt>5</dt>
-				  <dd>Approved</dd>
-				</dl>
-			  </div>
-			</div>
-		  </div>
-	</div>
-	</div>
-
-<div class="sb-bg-color-white dynamicHeight"  *ngIf="!showChapterList">
-<div class="ui container">
-	<div class="sb-pageSection pt-24" [appTelemetryImpression]="telemetryImpression">
-		<div class="sb-pageSection-content">
-			<div class="d-flex flex-ai-center flex-jc-space-between">
-				<div class="sb-pageSection-header pt-16">
-					<h4 class="sb-pageSection-title">List of Textbooks <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">10</span></h4>
-				</div>
-				<div class="">
-					<button class="sb-btn sb-btn-normal sb-btn-secondary mr-8" *ngIf="contributor?.nominationStatus === 'Pending'" (click)="updateNomination('accept')">Accept</button>
-					<button class="sb-btn sb-btn-normal sb-btn-outline-error" *ngIf="contributor?.nominationStatus === 'Pending'" (click)="showRequestChangesPopup = true">Reject</button>
-					<span *ngIf="contributor?.nominationStatus === 'Accepted' || contributor?.nominationStatus === 'Rejected'">
-						Status: {{contributor?.nominationStatus}}
-					</span>
 				</div>
 			</div>
-			<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
-				<thead class="sb-table-header sb-table-thead-gray">
-				  <tr>
-					<th class="sb-sort-icon">Textbook</th>
-					<th class="sb-sort-icon">Grade</th>
-					<th class="sb-sort-icon">Medium</th>
-					<th class="sb-sort-icon">Subjects</th>
-					<th class="sb-sort-icon">
-						<span *ngIf="contributor?.nominationStatus == 'Pending'">
-							Sample content count
-						</span>
-						<span *ngIf="contributor?.nominationStatus == 'Accepted'">
-							Contribution count
-						</span>
-					</th>
-					<th>Actions</th>
-				  </tr>
-				</thead>
-				<tbody class="sb-table-body">
-
-					<tr *ngFor="let contributorTextbook of contributorTextbooks">
-					  <td>{{contributorTextbook.name}}</td>
-					  <td >{{contributorTextbook.gradeLevel}}</td>
-					  <td>{{contributorTextbook.medium}}</td>
-					  <td>{{contributorTextbook.subject}}</td>
-					  <td>3</td>
-					  <td data-label="Actions">
-						<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" *ngIf="contributor?.nominationStatus == 'Pending'"
-						(click)="viewContribution()">View Sample Content</button>
-						<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" *ngIf="contributor?.nominationStatus == 'Accepted'"
-						(click)="viewContribution()">View Contributions</button>
-					  </td>
-					</tr>
-				</tbody>
-			</table> 
 		</div>
 	</div>
 </div>
+
+<div class="sb-bg-color-white dynamicHeight" *ngIf="!showChapterList">
+	<div class="ui container">
+		<div class="sb-pageSection pt-24" [appTelemetryImpression]="telemetryImpression">
+			<div class="sb-pageSection-content">
+				<div class="d-flex flex-ai-center flex-jc-space-between">
+					<div class="sb-pageSection-header pt-16">
+						<h4 class="sb-pageSection-title">List of Textbooks <span
+								class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ programDetails.collection_ids.length }}</span>
+						</h4>
+					</div>
+					<div class="">
+						<button class="sb-btn sb-btn-normal sb-btn-secondary mr-8"
+							*ngIf="contributor?.nominationData?.status === 'Pending'"
+							(click)="updateNomination('accept')">Accept</button>
+						<button class="sb-btn sb-btn-normal sb-btn-outline-error"
+							*ngIf="contributor?.nominationData?.status === 'Pending'"
+							(click)="showRequestChangesPopup = true">Reject</button>
+						<span
+							*ngIf="contributor?.nominationData?.status === 'Initiated' || contributor?.nominationData?.status === 'Accepted' || contributor?.nominationData?.status === 'Rejected'">
+							Status: {{contributor?.nominationData?.status}}
+						</span>
+					</div>
+				</div>
+				<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
+					<thead class="sb-table-header sb-table-thead-gray">
+						<tr>
+							<th class="sb-sort-icon">Textbook</th>
+							<th class="sb-sort-icon">Grade</th>
+							<th class="sb-sort-icon">Medium</th>
+							<th class="sb-sort-icon">Subjects</th>
+							<th class="sb-sort-icon">
+								<span *ngIf="contributor?.nominationData?.status == 'Pending'">
+									Sample content count
+								</span>
+								<span *ngIf="contributor?.nominationData?.status == 'Accepted'">
+									Contribution count
+								</span>
+							</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody class="sb-table-body">
+
+						<tr *ngFor="let contributorTextbook of contributorTextbooks">
+							<td>{{contributorTextbook.name}}</td>
+							<td>{{contributorTextbook.gradeLevel}}</td>
+							<td>{{contributorTextbook.medium}}</td>
+							<td>{{contributorTextbook.subject}}</td>
+							<td>3</td>
+							<td data-label="Actions">
+								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
+									*ngIf="contributor?.nominationData?.status == 'Pending'" (click)="viewContribution()">View
+									Sample Content</button>
+								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
+									*ngIf="contributor?.nominationData?.status == 'Accepted'"
+									(click)="viewContribution()">View Contributions</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
 </div>
 <ng-container *ngIf="showChapterList">
-	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>
+	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs">
+	</ndc-dynamic>
 </ng-container>
 <sui-modal [mustScroll]="true" [isClosable]="true" *ngIf="show" [transitionDuration]="0" [size]="'normal'"
-  class="sb-modal" #modal>
-  <div class="sb-modal-header"> Nominee Profile Details </div>
-  <div class="sb-modal-content o-y-visible pb-8">
-    <div class="ui container">
-      <div class="mx-48 text-center">
-        <div class="sb-profile-page__avatar">
-          <img src="assets/images/guest.svg" alt="guest" class="w-100">
-        </div>
-        <div class="fs-2-5 font-weight-bold mb-24">{{ 'Pratham' | titlecase}} </div>
-      </div>
-      <div class="mx-48 relative text-center">
-        <div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
-          <span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.State}} :</span>
-          <span class="fmedium font-weight-bold pl-4">{{'Maharashtra'}}</span>
-        </div>
-        <div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
-          <span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.District}} :</span>
-          <span class="fmedium font-weight-bold pl-4">
-            {{'Kolhapur'}}</span>
-        </div>
-        <div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
-          <span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Board}} :</span>
-          <span class="fmedium font-weight-bold pl-4">{{'CBSE'}}</span>
-        </div>
-        <div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
-          <span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Medium}} :</span>
-          <span class="fmedium font-weight-bold pl-4">
-            {{'English'}}</span>
-        </div>
-        <div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
-          <span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Subjects}} :</span>
-          <span class="fmedium font-weight-bold pl-4">
-            {{'Marathi'}}</span>
-        </div>
-        <div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
-          <span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Classes}} :</span>
-          <span class="fmedium font-weight-bold pl-4">
-            {{'Grade 1'}}</span>
-        </div>
-      </div>
-    </div>
-  </div>
+	class="sb-modal" #modal>
+	<div class="sb-modal-header"> Nominee Profile Details </div>
+	<div class="sb-modal-content o-y-visible pb-8">
+		<div class="ui container">
+			<div class="mx-48 text-center">
+				<div class="sb-profile-page__avatar">
+					<img src="assets/images/guest.svg" alt="guest" class="w-100">
+				</div>
+				<div class="fs-2-5 font-weight-bold mb-24">{{ 'Pratham' | titlecase}} </div>
+			</div>
+			<div class="mx-48 relative text-center">
+				<div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
+					<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.State}}
+						:</span>
+					<span class="fmedium font-weight-bold pl-4">{{'Maharashtra'}}</span>
+				</div>
+				<div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
+					<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.District}}
+						:</span>
+					<span class="fmedium font-weight-bold pl-4">
+						{{'Kolhapur'}}</span>
+				</div>
+				<div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
+					<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Board}}
+						:</span>
+					<span class="fmedium font-weight-bold pl-4">{{'CBSE'}}</span>
+				</div>
+				<div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
+					<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Medium}}
+						:</span>
+					<span class="fmedium font-weight-bold pl-4">
+						{{'English'}}</span>
+				</div>
+				<div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
+					<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Subjects}}
+						:</span>
+					<span class="fmedium font-weight-bold pl-4">
+						{{'Marathi'}}</span>
+				</div>
+				<div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
+					<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Classes}}
+						:</span>
+					<span class="fmedium font-weight-bold pl-4">
+						{{'Grade 1'}}</span>
+				</div>
+			</div>
+		</div>
+	</div>
 </sui-modal>
 
 
 <sui-modal *ngIf="showRequestChangesPopup" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
-[size]="'normal'" class="sb-modal" appBodyScroll #modal (dismissed)="showRequestChangesPopup = false;">
-<div class="sb-modal-header">
-	Add Review Comments
-</div>
-<form #FormControl="ngForm" class="ui form">
-<div class="sb-modal-content">
-	<div class="sb-field-group">
-		<label>Enter your comments</label>
-		<div class="sb-field relative">
-			<textarea type="text" class="wmd-input width-100 sb-form-control" id="wmd-input" [(ngModel)]="rejectComment" placeholder="Add comment" name="rejectComment" required></textarea>
-			<label class="ui basic red error label pt-1 mt-5 width-100"
-				*ngIf="FormControl.form.controls.rejectComment?.touched && !FormControl.form.valid">Fill comments </label>
-			<!-- <textarea rows="4" name="moretext" class="sb-form-control" placeholder="Type here..."></textarea>
-			<span class="characters-left">1000 Characters left</span> -->
-		</div>
+	[size]="'normal'" class="sb-modal" appBodyScroll #modal (dismissed)="showRequestChangesPopup = false;">
+	<div class="sb-modal-header">
+		Add Review Comments
 	</div>
-</div>
-<div class="sb-modal-actions">
-  <button id="submitReview" type="submit" class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid}"   (click)="updateNomination('reject')"
-  > Submit Review </button>
-</div>
-</form>
+	<form #FormControl="ngForm" class="ui form">
+		<div class="sb-modal-content">
+			<div class="sb-field-group">
+				<label>Enter your comments</label>
+				<div class="sb-field relative">
+					<textarea type="text" class="wmd-input width-100 sb-form-control" id="wmd-input"
+						[(ngModel)]="rejectComment" placeholder="Add comment" name="rejectComment" required></textarea>
+					<label class="ui basic red error label pt-1 mt-5 width-100"
+						*ngIf="FormControl.form.controls.rejectComment?.touched && !FormControl.form.valid">Fill
+						comments </label>
+					<!-- <textarea rows="4" name="moretext" class="sb-form-control" placeholder="Type here..."></textarea>
+			<span class="characters-left">1000 Characters left</span> -->
+				</div>
+			</div>
+		</div>
+		<div class="sb-modal-actions">
+			<button id="submitReview" type="submit" class="sb-btn sb-btn-normal"
+				[ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid}"
+				(click)="updateNomination('reject')"> Submit Review </button>
+		</div>
+	</form>
 </sui-modal>
