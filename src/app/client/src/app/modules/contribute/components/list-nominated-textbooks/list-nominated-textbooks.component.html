@@ -114,7 +114,7 @@
 				</div>
 			  </ng-container>
 
-			<div class='practical-sb-buttons'>
+			<div class='practical-sb-buttons' *ngIf="!nominated">
 				<button class="sb-btn sb-btn-secondary sb-btn-normal">Express Interest</button>
 			</div>
 		</div>
@@ -124,8 +124,7 @@
 		<sui-tabset>
 			<div class="ui pointing secondary menu sb-bg-color-primary-100">
 				<div class="ui container p-0 m-0 d-flex flex-ai-center flex-jc-center">
-					<a class="item" suiTabHeader="1">Dashboard</a>
-					<a class="item active" suiTabHeader="2">{{ resourceService.frmelmnts.lbl.textbooks }}<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">10</span></a>
+					<a class="item active" suiTabHeader="2">{{ resourceService.frmelmnts.lbl.textbooks }}<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{contributorTextbooks.length}}</span></a>
 					<a class="item" suiTabHeader="3">Users</a>
 				</div>
 			</div>
