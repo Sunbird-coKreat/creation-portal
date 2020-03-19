@@ -316,7 +316,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
       creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
     }
     const req = {
-      url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_ADD}`,
+      url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_UPDATE}`,
       data: {
         request: {
           program_id: this.activatedRoute.snapshot.params.programId,
@@ -354,6 +354,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
   }
 
   expressInterest() {
+    const userProfile = this.userService.userProfile;
     const req = {
       url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_ADD}`,
       data: {
@@ -361,13 +362,16 @@ export class CollectionComponent implements OnInit, OnDestroy {
           program_id: this.activatedRoute.snapshot.params.programId,
           user_id: this.userService.userProfile.userId,
           status: 'Initiated',
-          organisation_id: this.userService.userProfile.userRegData.User_Org.orgId
         }
       }
     };
+    if (userProfile.userRegData && userProfile.userRegData.User_Org) {
+      req.data.request['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
+    }
+
     this.programsService.post(req).subscribe((data) => {
       this.hasExpressedInterest = true;
-      this.tosterService.success('Nomination sent');
+      this.tosterService.success('Expressing Interest Successful');
     }, error => {
       this.tosterService.error('User onboarding failed');
     });
