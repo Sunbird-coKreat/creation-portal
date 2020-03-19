@@ -291,7 +291,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         request: {
           filters: {
             objectType: "content",
-            status: ["Draft", "Live"],
+            status: ["Draft"],
             contentType: "Textbook",
             framework: this.userprofile.framework.id[0],
             board: this.userprofile.framework.board[0],
