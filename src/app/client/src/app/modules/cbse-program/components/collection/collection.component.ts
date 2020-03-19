@@ -66,7 +66,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     public userService: UserService, private navigationHelperService: NavigationHelperService,
     public utilService: UtilService, public contentService: ContentService,
     private activatedRoute: ActivatedRoute, private router: Router, public learnerService: LearnerService,
-    private programsService: ProgramsService, private tosterService: ToasterService) {
+    private programsService: ProgramsService, private toasterService: ToasterService) {
      }
 
   ngOnInit() {
@@ -270,6 +270,10 @@ export class CollectionComponent implements OnInit, OnDestroy {
     }
     if (this.selectedCollectionIds.length > 0) {
       this.nominateButton = 'show';
+      this.hasExpressedInterest = true;
+    } else {
+      this.nominateButton = 'hide';
+      this.hasExpressedInterest = false;
     }
   }
   redirect() {
@@ -329,10 +333,10 @@ export class CollectionComponent implements OnInit, OnDestroy {
       }
     };
     this.programsService.post(req).subscribe((data) => {
-      this.tosterService.success('Nomination sent');
+      this.toasterService.success('Nomination sent');
       this.router.navigateByUrl('/contribute/myenrollprograms');
     }, error => {
-      this.tosterService.error('User onboarding failed');
+      this.toasterService.error('User onboarding failed');
     });
   }
   setActiveDate() {
@@ -371,9 +375,9 @@ export class CollectionComponent implements OnInit, OnDestroy {
 
     this.programsService.post(req).subscribe((data) => {
       this.hasExpressedInterest = true;
-      this.tosterService.success('Expressing Interest Successful');
+      this.toasterService.success('Expressing Interest Successful');
     }, error => {
-      this.tosterService.error('User onboarding failed');
+      this.toasterService.error('User onboarding failed');
     });
   }
 
@@ -395,7 +399,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
           this.hasExpressedInterest = (this.currentNominationStatus === 'Initiated') ? true : false;
       }
     }, error => {
-      this.tosterService.error('Failed fetching current nomination status');
+      this.toasterService.error('Failed fetching current nomination status');
     });
   }
 
