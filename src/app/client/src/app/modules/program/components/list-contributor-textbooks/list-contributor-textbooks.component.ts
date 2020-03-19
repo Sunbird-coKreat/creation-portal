@@ -183,7 +183,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
 
    updateNomination(status) {
     let nominationStatus;
-    (status === 'accept') ? (nominationStatus = 'Accepted') : (nominationStatus = 'Rejected');
+    (status === 'accept') ? (nominationStatus = 'Approved') : (nominationStatus = 'Rejected');
      const option = {
        url: this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_UPDATE,
        data: {

@@ -161,9 +161,16 @@ export class AppComponent implements OnInit, OnDestroy {
         this.logCdnStatus();
         this.setFingerPrintTelemetry();
         this.checkTncAndFrameWorkSelected();
-        this.initApp = true;
+        this.userService.openSaberRegistrySearch().then(() => {
+          this.initApp = true;
+        }).catch((err) => {
+          this.toasterService.error('Please Try Later...');
+          setTimeout(() => {
+            this.router.navigate(['']);
+          });
+        });
       }, error => {
-        this.initApp = true;
+        // this.initApp = true;
       });
 
     this.changeLanguageAttribute();

@@ -230,7 +230,6 @@ export class UserService {
     this.getOrganisationDetails(organisationIds);
     this.setRoleOrgMap(profileData);
     this.setOrgDetailsToRequestHeaders();
-    this.openSaberRegistrySearch(profileData);
     this._userData$.next({ err: null, userProfile: this._userProfile });
     this.rootOrgName = this._userProfile.rootOrg.orgName;
   }
@@ -274,7 +273,7 @@ export class UserService {
       );
   }
 
-  openSaberRegistrySearch(userData) {
+  openSaberRegistrySearch() {
     this._userProfile['userRegData'] = {};
     const option = {
       url: 'reg/search',
@@ -292,9 +291,10 @@ export class UserService {
     option.data['request'] = {
       entityType: ['User'],
       filters: {
-        userId: {eq: userData.userId}
+        userId: {eq: this.userid}
       }
    };
+  return new Promise((resolve, reject) => {
     this.contentService.post(option).pipe(tap((res1) => {
       if (res1.result.User.length) {
         this._userProfile.userRegData['User'] = res1.result.User[0];
@@ -307,7 +307,7 @@ export class UserService {
         userId: {eq: res2.result.User[0].osid}
         }
      };
-      return this.contentService.post(option);
+     return this.contentService.post(option);
     } else {
       return of(null);
     }
@@ -323,7 +323,7 @@ export class UserService {
           osid: {eq: res4.result.User_Org[0].orgId}
         }
      };
-    return this.contentService.post(option);
+     return this.contentService.post(option);
     } else {
       return of(null);
     }
@@ -332,7 +332,11 @@ export class UserService {
       if (res && res.result.Org.length) {
         this._userProfile.userRegData['Org'] = res.result.Org[0];
         }
+        return resolve('done');
+     }, (err) => {
+      return reject('fail');
      });
+    });
   }
 
   /**
