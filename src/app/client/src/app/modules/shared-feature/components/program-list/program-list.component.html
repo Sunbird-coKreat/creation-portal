@@ -59,8 +59,8 @@
                   {{ i + 1 }}
                 </td>
                 <td class="text-center">
-                  <button type="button" class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary" *ngIf="!isContributor" (click)="viewDetailsBtnClicked(program)">{{ resourceService.frmelmnts.lbl.viewDetails }}</button>
-                  <div class="ui dropdown sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary ml-auto sb-btn-dropdown" suiDropdown autoClose="itemClick" *ngIf="isContributor">
+                  <button type="button" class="ui dropdown sb-btn sb-btn-normal sb-btn-outline-primary ml-auto sb-btn-dropdown" *ngIf="!isContributor" (click)="viewDetailsBtnClicked(program)">{{ resourceService.frmelmnts.lbl.viewDetails }}</button>
+                  <div class="ui dropdown sb-btn sb-btn-normal sb-btn-outline-primary ml-auto sb-btn-dropdown" suiDropdown autoClose="itemClick" *ngIf="isContributor">
                       <div class="text">{{ resourceService.frmelmnts.lbl.actions }}</div>
                       <i class="dropdown icon"></i>
                       <div class="menu" suiDropdownMenu>
