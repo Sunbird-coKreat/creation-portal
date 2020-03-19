@@ -184,25 +184,22 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
    updateNomination(status) {
     let nominationStatus;
     (status === 'accept') ? (nominationStatus = 'Approved') : (nominationStatus = 'Rejected');
-     const option = {
-       url: this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_UPDATE,
-       data: {
-         request: {
+     const req = {
+       request: {
            program_id: this.programId,
            user_id: this.contributor.nominationData.user_id,
            status: nominationStatus,
            updatedby: this.userService.userProfile.userId
          }
-       }
-     };
+        };
      if (nominationStatus === 'Rejected') {
        if (this.FormControl.value.rejectComment) {
-         option.data.request['feedback'] = this.FormControl.value.rejectComment;
+        req.request['feedback'] = this.FormControl.value.rejectComment;
        } else {
          return;
        }
       }
-     this.programsService.updateNomination(option).subscribe((res) => {
+     this.programsService.updateNomination(req).subscribe((res) => {
        this.showRequestChangesPopup = false;
        setTimeout(() => {
          this.router.navigate(['/sourcing/nominations/' + this.programId]);
