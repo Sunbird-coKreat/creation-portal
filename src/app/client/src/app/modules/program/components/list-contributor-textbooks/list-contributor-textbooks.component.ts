@@ -217,4 +217,8 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
        this.toasterService.success(this.resourceService.messages.fmsg.m0026);
      });
   }
+
+  goBack() {
+    this.navigationHelperService.navigateToPreviousUrl();
+  }
 }
