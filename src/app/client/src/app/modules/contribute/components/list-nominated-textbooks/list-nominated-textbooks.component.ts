@@ -32,6 +32,8 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
   collection;
   configData;
   showChapterList = false;
+  public currentNominationStatus: any;
+  public nominated = false;
   public programId: string;
   public programDetails: any;
   public mediums: any;
@@ -40,7 +42,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
   public activeDate = '';
 
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
-    private config: ConfigService, private publicDataService: PublicDataService,
+    private configService: ConfigService, private publicDataService: PublicDataService,
   private activatedRoute: ActivatedRoute, private router: Router, public programStageService: ProgramStageService,
   public toasterService: ToasterService, private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
   public frameworkService: FrameworkService, public userService: UserService) {
@@ -55,6 +57,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
   this.sessionContext = sessionContext;
   this.configData = configData;
   this.collection = collection;
+  this.getNominationStatus();
   }
 
   getProgramDetails() {
@@ -105,12 +108,9 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
       request: {
          filters: {
           objectType: 'content',
-          programId: '31ab2990-7892-11e9-8a02-93c5c62c03f1',
+          programId: this.activatedRoute.snapshot.params.programId,
           status: ['Draft', 'Live'],
-          contentType: 'Textbook',
-          framework: 'NCFCOPY',
-          board:	'NCERT',
-          medium:	['English']
+          contentType: 'Textbook'
         }
       }
       }
@@ -164,6 +164,29 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
       if (this.activeDate === '' && isFutureDate) {
         this.activeDate = key;
       }
+    });
+  }
+
+
+  getNominationStatus() {
+    const req = {
+      url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
+      data: {
+        request: {
+          filters: {
+            program_id: this.activatedRoute.snapshot.params.programId,
+            user_id: this.userService.userProfile.userId,
+          }
+        }
+      }
+    };
+    this.programsService.post(req).subscribe((data) => {
+      if (data.result && !_.isEmpty(data.result)) {
+        this.nominated = true;
+        this.currentNominationStatus =  _.get(_.first(data.result), 'status');
+      }
+    }, error => {
+      this.toasterService.error('Failed fetching current nomination status');
     });
   }
 }
