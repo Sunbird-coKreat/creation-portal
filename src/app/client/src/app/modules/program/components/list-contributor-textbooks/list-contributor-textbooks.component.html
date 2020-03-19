@@ -120,22 +120,26 @@
 						<dt>Name</dt>
 						<dd class="sb__ellipsis">
 							<a class="cursor-pointer text-decoration-underline sb-color-primary"
-								(click)="show=true">{{contributor.name}} </a>
+								(click)="show=true">{{contributor?.name}} </a>
 						</dd>
 					</dl>
 					<div class="d-flex flex-ai-center flex-jc-space-around flex-basis-1">
 
 						<dl class="sb-meta-data mb-0 pr-8">
 							<dt class="sb__ellipsis">Type</dt>
-							<dd popupText="Org/Individual">{{contributor.type}}</dd>
+							<dd popupText="Org/Individual">{{contributor?.type}}</dd>
 						</dl>
 						<dl class="sb-meta-data mb-0 pr-8">
 							<dt class="sb__ellipsis">Status</dt>
 							<dd><span class="sb-label sb-label-table sb-label-warning-0">Pending</span></dd>
 						</dl>
+						<dl class="sb-meta-data mb-0 pr-8" >
+							<dt class="sb__ellipsis">Content Types</dt>
+							<dd><span class="sb-label sb-label-table sb-label-warning-0">{{programDetails?.content_types.join(', ')}}</span></dd>
+						</dl>
 						<dl class="sb-meta-data mb-0 pr-8">
 							<dt class="sb__ellipsis">Submitted Date</dt>
-							<dd>{{contributor.nominationData.createdon | date:'LLLL d, yyyy'}}</dd>
+							<dd>{{contributor?.nominationData?.createdon | date:'LLLL d, yyyy'}}</dd>
 						</dl>
 					</div>
 				</div>

@@ -396,7 +396,9 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.programsService.post(req).subscribe((data) => {
       if (data.result && !_.isEmpty(data.result)) {
           this.currentNominationStatus =  _.get(_.first(data.result), 'status');
-          this.hasExpressedInterest = (this.currentNominationStatus === 'Initiated') ? true : false;
+          this.hasExpressedInterest = true;
+      } else {
+        this.hasExpressedInterest = false;
       }
     }, error => {
       this.toasterService.error('Failed fetching current nomination status');
