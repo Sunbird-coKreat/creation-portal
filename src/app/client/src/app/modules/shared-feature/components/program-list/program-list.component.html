@@ -20,14 +20,14 @@
                 <th class="w-5 text-center">{{ resourceService.frmelmnts.lbl.srNo }}</th>
                 <th class="w-5 text-center"></th>
                 <th class="w-20 sb-sort-icon">{{ resourceService.frmelmnts.lbl.program }}</th>
-                <th *ngIf="isContributor">{{ resourceService.frmelmnts.lbl.orgName }}</th>
-                <th class="w-20">{{ resourceService.frmelmnts.lbl.purpose }}</th>
+                <th *ngIf="isContributor" class="w-20">{{ resourceService.frmelmnts.lbl.orgName }}</th>
+                <th class="w-10">{{ resourceService.frmelmnts.lbl.purpose }}</th>
                 <th class="w-20">{{ resourceService.frmelmnts.lbl.gradesMediumsSubjects }}</th>
-                <th *ngIf="!isContributor">
+                <th *ngIf="!isContributor" class="w-10">
                   <span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
                     <div class="text">{{ resourceService.frmelmnts.lbl.status }}</div>
                     <i class="filter icon"></i>
-                    <div class="menu" suiDropdownMenu>
+                    <div class="menu right" suiDropdownMenu>
                         <div class="item" selected>{{ resourceService.frmelmnts.lbl.allStatus }}</div>
                         <div class="item">{{ resourceService.frmelmnts.lbl.draft }}</div>
                         <div class="item">{{ resourceService.frmelmnts.lbl.published }}</div>
@@ -36,10 +36,10 @@
                   </span>
                 </th>
                 <th *ngIf="!isContributor">{{ resourceService.frmelmnts.lbl.programDates }}</th>
-                <th *ngIf="activeMyProgramsMenu" class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.nominatedDate }}</th>
-                <th *ngIf="activeAllProgramsMenu">{{ resourceService.frmelmnts.lbl.programDates }}</th>
-                <th *ngIf="activeMyProgramsMenu">
-                  <span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
+                <th *ngIf="activeMyProgramsMenu" class="sb-sort-icon w-20">{{ resourceService.frmelmnts.lbl.nominatedDate }}</th>
+                <th *ngIf="activeAllProgramsMenu" class="w-10">{{ resourceService.frmelmnts.lbl.programDates }}</th>
+                <th *ngIf="activeMyProgramsMenu" class="w-10">
+                  <span class="ui dropdown sb-table-dropdown d-inline-flex right" suiDropdown>
                     <div class="text">{{ resourceService.frmelmnts.lbl.status }}</div>
                     <i class="filter icon"></i>
                     <div class="menu" suiDropdownMenu>
