@@ -1,8 +1,12 @@
-import { Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
-import {  TextbookListService  } from '@sunbird/core';
+import { HttpOptions, ConfigService, ResourceService, ToasterService, RouterNavigationService,
+  ServerResponse, NavigationHelperService } from '@sunbird/shared';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { ProgramsService, DataService, FrameworkService } from '@sunbird/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import * as _ from 'lodash-es';
+import { HttpClient } from '@angular/common/http';
+import { tap, filter, map } from 'rxjs/operators';
 
+import * as _ from 'lodash-es';
 
 @Component({
   selector: 'app-textbook-list',
@@ -11,39 +15,82 @@ import * as _ from 'lodash-es';
 })
 export class TextbookListComponent implements OnInit {
 
-  @Input() textBookConfigs: any;
-  @Output() textbookList  = new EventEmitter<any>();
   public programId: string;
-  public config : any;
-  public textbooks: any;
+  public programDetails: any = {};
+  public config: any;
+  public collections: any;
+  public collectionsCnt = 0;
   public programContext: any;
   public sharedContext: any = {};
   public collectionComponentConfig: any;
   public filters;
   public apiUrl;
 
-  constructor(public activatedRoute: ActivatedRoute, private router: Router, public TextbookListService: TextbookListService
-    ) {
-   }
-  
+  constructor(public activatedRoute: ActivatedRoute, private router: Router,
+    public programsService: ProgramsService, private httpClient: HttpClient,
+    public toasterService: ToasterService, public resource: ResourceService
+  ) {
+
+  }
+
   ngOnInit(): void {
-     this.apiUrl = _.get(this.textBookConfigs, 'url');
-     this.config = _.get(this.textBookConfigs, 'config');
-    this.searchCollection();
+    this.programId = this.activatedRoute.snapshot.params.programId;
+
+    if (this.router.url.includes('sourcing/nominations/' + this.programId)) {
+
+      this.fetchProgramDetails().subscribe((programDetails) => {
+        this.getProgramCollection();
+      }, error => {
+        // TODO: navigate to program list page
+        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+      });
+    }
   }
 
-  searchCollection() {
-    const req = {data: {request: { filters: ''}, }, url: ''};
-    // req.data.request.filters = this.generateSearchFilterRequestData();
-    this.TextbookListService.getTextbookList(this.apiUrl,  this.config).subscribe(
-      (res) => this.showTexbooklist(res),
-      (err) => console.log(err)
+  fetchProgramDetails() {
+    const req = {
+      url: `program/v1/read/${this.programId}`
+    };
+    return this.programsService.get(req).pipe(tap((programDetails: any) => {
+      programDetails.result.config = JSON.parse(programDetails.result.config);
+      this.programDetails = programDetails.result;
+    }));
+  }
+
+  getProgramCollection () {
+    let httpOptions: HttpOptions = {
+      headers: {
+        'content-type': 'application/json'
+      }
+    };
+    const option = {
+      url: 'learner/composite/v1/search',
+      data: {
+        request: {
+          filters: {
+            programId: this.programId,
+            objectType: "content",
+            status: ["Draft", "Live"],
+            contentType: "Textbook",
+            framework: this.programDetails.config.framework,
+            board:	this.programDetails.config.board,
+            medium:	this.programDetails.config.medium
+          }
+        }
+      }
+    };
+    this.httpClient.post<any>(option.url, option.data, httpOptions).subscribe(
+      (res) => {
+        this.collections = res.result.content;
+        this.collectionsCnt = this.collections.length;
+      },
+      (err) => {
+        console.log(err);
+        // TODO: navigate to program list page
+        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+        this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+      }
     );
-  }
-  
-  showTexbooklist (res) {
-    this.textbooks = res.result.content;
-  }
 
-
+  }
 }
