@@ -364,44 +364,44 @@
             <div class="ui container">
                 <div class="mx-48 text-center">
                     <div class="sb-profile-page__avatar">
-                        <img src="assets/images/guest.svg" alt="guest" class="w-100" />
+                        <img src="assets/images/guest.svg" alt="guest" class="mb-24" />
                     </div>
                     <div class="fs-2-5 font-weight-bold mb-24">
-                        {{ selectedNomineeProfile.firstName + ' ' + selectedNomineeProfile.lastName }}
+                        {{ selectedNomineeProfile.firstName + ' ' + selectedNomineeProfile?.lastName }}
                     </div>
                 </div>
                 <div class="mx-48 relative text-center">
                     <div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
                         <span class="fmedium white-space-nowrap">{{ resourceService.frmelmnts.lbl.email }} :</span>
-                        <span class="fmedium font-weight-bold pl-4">{{ selectedNomineeProfile.email }}</span>
+                        <span class="fmedium font-weight-bold pl-4">{{ selectedNomineeProfile?.email }}</span>
                     </div>
                     <div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
                         <span class="fmedium white-space-nowrap">{{ resourceService.frmelmnts.lbl.mobileNo }} :</span>
-                        <span class="fmedium font-weight-bold pl-4">{{ selectedNomineeProfile.phone }}</span>
+                        <span class="fmedium font-weight-bold pl-4">{{ selectedNomineeProfile?.phone }}</span>
                     </div>
                     <div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
                         <span class="fmedium white-space-nowrap">{{ resourceService.frmelmnts.lbl.profile.Board }}
                             :</span>
                         <span
-                            class="fmedium font-weight-bold pl-4">{{ selectedNomineeProfile.board.join(", ") }}</span>
+                            class="fmedium font-weight-bold pl-4">{{ selectedNomineeProfile?.board?.join(", ") }}</span>
                     </div>
                     <div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
                         <span class="fmedium white-space-nowrap">{{ resourceService.frmelmnts.lbl.profile.Medium }}
                             :</span>
                         <span class="fmedium font-weight-bold pl-4">
-                            {{ selectedNomineeProfile.medium.join(", ") }}</span>
+                            {{ selectedNomineeProfile?.medium?.join(", ") }}</span>
                     </div>
                     <div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
                         <span class="fmedium white-space-nowrap">{{ resourceService.frmelmnts.lbl.profile.Subjects }}
                             :</span>
                         <span class="fmedium font-weight-bold pl-4">
-                            {{ selectedNomineeProfile.subject.join(", ") }}</span>
+                            {{ selectedNomineeProfile?.subject?.join(", ") }}</span>
                     </div>
                     <div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
                         <span class="fmedium white-space-nowrap">{{ resourceService.frmelmnts.lbl.profile.Classes }}
                             :</span>
                         <span class="fmedium font-weight-bold pl-4">
-                            {{ selectedNomineeProfile.gradeLevel.join(", ") }}</span>
+                            {{ selectedNomineeProfile?.gradeLevel?.join(", ") }}</span>
                     </div>
                 </div>
             </div>
