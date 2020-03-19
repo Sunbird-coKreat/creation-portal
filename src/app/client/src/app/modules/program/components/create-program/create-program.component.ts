@@ -248,7 +248,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       const data = {
         ...this.createProgramForm.value
       };
-
+      data['sourcing_org_name'] = this.userprofile.rootOrgName;
       data['rootorg_id'] = this.userprofile.rootOrgId;
       data['createdby'] = this.userprofile.id;
       data['createdon'] = new Date();
