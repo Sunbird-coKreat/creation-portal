@@ -13,6 +13,7 @@ import { ChapterListComponent } from '../../../cbse-program/components/chapter-l
 import { programContext, sessionContext, configData, collection } from './data';
 import { tap, filter, map } from 'rxjs/operators';
 import { NgForm } from '@angular/forms';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-list-contributor-textbooks',
@@ -37,6 +38,9 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
   public approvedCount = 0;
   public rejectedCount = 0;
   public totalCount = 0;
+  public activeDate = '';
+  public mediums: any;
+  public grades: any;
   public state: InitialState = {
     stages: []
   };
@@ -64,6 +68,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
     });
     console.log(this.selectedNominationDetails);
     this.fetchProgramDetails().subscribe((programDetails) => {
+      this.setActiveDate();
       this.getProgramTextbooks();
       this.getNominationCounts();
       this.programContext = programContext;
@@ -128,6 +133,8 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
     return this.programsService.get(req).pipe(tap((programDetails: any) => {
       programDetails.result.config = JSON.parse(programDetails.result.config);
       this.programDetails = programDetails.result;
+      this.mediums = _.join(this.programDetails.config['medium'], ', ');
+      this.grades = _.join(this.programDetails.config['gradeLevel'], ', ');
     }));
   }
 
@@ -213,6 +220,24 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
        });
        this.toasterService.success(this.resourceService.messages.fmsg.m0026);
      });
+  }
+
+  setActiveDate() {
+    const dates = [ 'nomination_enddate', 'shortlisting_enddate', 'content_submission_enddate', 'enddate'];
+
+    dates.forEach(key => {
+      const date  = moment(moment(this.programDetails[key]).format('YYYY-MM-DD'));
+      const today = moment(moment().format('YYYY-MM-DD'));
+      const isFutureDate = !date.isSame(today) && date.isAfter(today);
+
+      if (key === 'nomination_enddate' && isFutureDate) {
+        this.activeDate = key;
+      }
+
+      if (this.activeDate === '' && isFutureDate) {
+        this.activeDate = key;
+      }
+    });
   }
 
   goBack() {

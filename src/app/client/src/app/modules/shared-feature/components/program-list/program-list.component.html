@@ -100,7 +100,7 @@
                         <div class="status__label">{{ resourceService.frmelmnts.lbl.nominationSubmission }}</div>
                         <div class="status__date">
                           {{ program?.nomination_enddate | date:'LLLL d, yyyy'  }}
-                          <em class="d-block" *ngIf="isActive(program, 'nomination_enddate', i)">{{ program?.nomination_enddate | daysToGo  }}</em>
+                          <em class="d-block" *ngIf="isActive(program, 'nomination_enddate', i)" [class.sb-color-warning]="isActive(program, 'nomination_enddate', i)">{{ program?.nomination_enddate | daysToGo  }}</em>
                         </div>
                       </div>
                     </div>
@@ -109,7 +109,7 @@
                         <div class="status__label">{{ resourceService.frmelmnts.lbl.shortlistingNomination }}</div>
                         <div class="status__date">
                           {{ program?.shortlisting_enddate | date:'LLLL d, yyyy'  }}
-                          <em class="d-block" *ngIf="isActive(program, 'shortlisting_enddate', i)">{{ program?.shortlisting_enddate | daysToGo  }}</em>
+                          <em class="d-block" *ngIf="isActive(program, 'shortlisting_enddate', i)" [class.sb-color-warning]="isActive(program, 'shortlisting_enddate', i)">{{ program?.shortlisting_enddate | daysToGo  }}</em>
                         </div>
                       </div>
                     </div>
@@ -118,7 +118,7 @@
                         <div class="status__label">{{ resourceService.frmelmnts.lbl.contributions }}</div>
                         <div class="status__date">
                           {{ program?.content_submission_enddate | date:'LLLL d, yyyy'  }}
-                          <em class="d-block" *ngIf="isActive(program, 'content_submission_enddate', i)">{{ program?.content_submission_enddate | daysToGo  }}</em>
+                          <em class="d-block" *ngIf="isActive(program, 'content_submission_enddate', i)" [class.sb-color-warning]="isActive(program, 'content_submission_enddate', i)">{{ program?.content_submission_enddate | daysToGo  }}</em>
                         </div>
                       </div>
                     </div>
@@ -127,7 +127,7 @@
                         <div class="status__label">{{ resourceService.frmelmnts.lbl.programEndDate }}</div>
                         <div class="status__date">
                           {{ program?.enddate | date:'LLLL d, yyyy' }}
-                          <em class="d-block" *ngIf="isActive(program, 'enddate', i)">{{ program?.enddate | daysToGo }}</em>
+                          <em class="d-block" *ngIf="isActive(program, 'enddate', i)" [class.sb-color-warning]="isActive(program, 'enddate', i)">{{ program?.enddate | daysToGo }}</em>
                         </div>
                       </div>
                     </div>
