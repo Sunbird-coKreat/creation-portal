@@ -162,7 +162,7 @@
 							*ngIf="contributor?.nominationData?.status === 'Pending'"
 							(click)="showRequestChangesPopup = true">Reject</button>
 						<span
-							*ngIf="contributor?.nominationData?.status === 'Initiated' || contributor?.nominationData?.status === 'Approved || contributor?.nominationData?.status === 'Rejected'">
+							*ngIf="contributor?.nominationData?.status === 'Initiated' || contributor?.nominationData?.status === 'Approved' || contributor?.nominationData?.status === 'Rejected'">
 							Status: {{contributor?.nominationData?.status}}
 						</span>
 					</div>
