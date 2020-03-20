@@ -51,14 +51,14 @@ export class ProgramListComponent implements OnInit {
 
         if (this.isContributor) {
           if (this.activeAllProgramsMenu) {
-            this.getAllProgramsForContrib('public');
+            this.getAllProgramsForContrib('public', 'Live');
           }
 
           if (this.activeMyProgramsMenu) {
-            this.getMyProgramsForContrib();
+            this.getMyProgramsForContrib( 'Live');
           }
         } else {
-          this.getMyProgramsForOrg();
+          this.getMyProgramsForOrg( 'Live');
         }
       })
     ).subscribe();
@@ -67,8 +67,8 @@ export class ProgramListComponent implements OnInit {
   /**
    * fetch the list of programs.
    */
-  private getAllProgramsForContrib(type) {
-    return this.programsService.getAllProgramsForContrib(type).subscribe(
+  private getAllProgramsForContrib(type, status) {
+    return this.programsService.getAllProgramsByType(type, status).subscribe(
       response => {
         this.programs = _.get(response, 'result.programs');
         this.count = _.get(response, 'result.count');
@@ -79,8 +79,8 @@ export class ProgramListComponent implements OnInit {
   /**
    * fetch the list of programs.
    */
-  private getMyProgramsForContrib() {
-    return this.programsService.getMyProgramsForContrib().subscribe((response) => {
+  private getMyProgramsForContrib(status) {
+    return this.programsService.getMyProgramsForContrib(status).subscribe((response) => {
       const programs  = [];
       _.map(_.get(response, 'result.programs'), (nomination) => {
         nomination.program.contributionDate = nomination.createdon;
@@ -96,7 +96,7 @@ export class ProgramListComponent implements OnInit {
     });
   }
 
-  private getContributionOrgUsers(selectedProgram) {
+  getContributionOrgUsers(selectedProgram) {
     this.selectedProgramToAssignRoles = selectedProgram.program_id;
     this.showAssignRoleModal = true;
     const orgUsers = this.registryService.getContributionOrgUsers(this.userService.userProfile.userRegData.User_Org.orgId);
@@ -130,8 +130,8 @@ export class ProgramListComponent implements OnInit {
   /**
    * fetch the list of programs.
    */
-  private getMyProgramsForOrg() {
-    return this.programsService.getMyProgramsForOrg().subscribe((response) => {
+  private getMyProgramsForOrg(status) {
+    return this.programsService.getMyProgramsForOrg(status).subscribe((response) => {
       this.programs = _.get(response, 'result.programs');
       this.count = _.get(response, 'result.count');
     }, error => {
@@ -140,7 +140,7 @@ export class ProgramListComponent implements OnInit {
     });
   }
 
-  private getProgramTextbooksCount(program) {
+  getProgramTextbooksCount(program) {
     let count = 0;
 
     if (program.nominated_collection_ids && program.nominated_collection_ids.length) {
@@ -161,7 +161,7 @@ export class ProgramListComponent implements OnInit {
     return type  === 'board' ? config[type] : _.join(config[type], ', ');
   }
 
-  private getProgramNominationStatus(program) {
+  getProgramNominationStatus(program) {
     return program.nomination_status;
   }
 
@@ -173,7 +173,7 @@ export class ProgramListComponent implements OnInit {
     return _.join(program.content_types, ', ');
   }
 
-  private viewDetailsBtnClicked(program) {
+  viewDetailsBtnClicked(program) {
     if (this.isContributor) {
       if (this.activeMyProgramsMenu) {
         return this.router.navigateByUrl('/contribute/nominatedtextbooks/' + program.program_id);
