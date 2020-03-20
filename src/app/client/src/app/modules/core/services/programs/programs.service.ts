@@ -140,7 +140,7 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * makes api call to get list of programs from ext framework Service
    */
-  getMyProgramsForOrgFromApi(): Observable<ServerResponse> {
+  getMyProgramsForOrg(): Observable<ServerResponse> {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
       data: {
@@ -157,13 +157,14 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * makes api call to get list of programs from ext framework Service
    */
-  getAllProgramsByType(type): Observable<ServerResponse> {
+  getAllProgramsByType(type, status): Observable<ServerResponse> {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
       data: {
         request: {
           filters: {
-            type: type
+            type: type,
+            status: status
           }
         }
       }
@@ -174,14 +175,15 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * makes api call to get list of programs from ext framework Service
    */
-  getMyProgramsForContribFromApi(): Observable<ServerResponse> {
+  getMyProgramsForContrib(status): Observable<ServerResponse> {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
       data: {
         request: {
           filters: {
             enrolled_id: {
-              user_id: _.get(this.userService, 'userProfile.userId')
+              user_id: _.get(this.userService, 'userProfile.userId'),
+              status: status
             }
           }
         }
@@ -234,27 +236,6 @@ export class ProgramsService extends DataService implements CanActivate {
       })
     )
     );
-  }
-
-  /**
-   * gets list of programs
-   */
-  public getMyProgramsForOrg(): Observable<ServerResponse> {
-    return this.getMyProgramsForOrgFromApi();
-  }
-
-  /**
-   * gets list of programs
-   */
-  public getAllProgramsForContrib(type): Observable<ServerResponse> {
-    return this.getAllProgramsByType(type);
-  }
-
-  /**
-   * gets list of programs
-   */
-  public getMyProgramsForContrib(): Observable<ServerResponse> {
-    return this.getMyProgramsForContribFromApi();
   }
 
   /**
