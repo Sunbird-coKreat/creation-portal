@@ -146,7 +146,8 @@ export class ProgramsService extends DataService implements CanActivate {
       data: {
         request: {
           filters: {
-            rootorg_id: _.get(this.userService, 'userProfile.rootOrg.rootOrgId')
+            rootorg_id: _.get(this.userService, 'userProfile.rootOrg.rootOrgId'),
+            status: 'Live'
           }
         }
       }
@@ -163,7 +164,8 @@ export class ProgramsService extends DataService implements CanActivate {
       data: {
         request: {
           filters: {
-            type: type
+            type: type,
+            status: 'Live'
           }
         }
       }
