@@ -55,10 +55,10 @@ export class ProgramListComponent implements OnInit {
           }
 
           if (this.activeMyProgramsMenu) {
-            this.getMyProgramsForContrib( 'Live');
+            this.getMyProgramsForContrib('Live');
           }
         } else {
-          this.getMyProgramsForOrg( 'Live');
+          this.getMyProgramsForOrg();
         }
       })
     ).subscribe();
@@ -130,8 +130,8 @@ export class ProgramListComponent implements OnInit {
   /**
    * fetch the list of programs.
    */
-  private getMyProgramsForOrg(status) {
-    return this.programsService.getMyProgramsForOrg(status).subscribe((response) => {
+  private getMyProgramsForOrg() {
+    return this.programsService.getMyProgramsForOrg().subscribe((response) => {
       this.programs = _.get(response, 'result.programs');
       this.count = _.get(response, 'result.count');
     }, error => {
