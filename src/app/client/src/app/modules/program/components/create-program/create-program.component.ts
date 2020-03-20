@@ -124,7 +124,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           });
 
           this.frameworkCategories.forEach((element) => {
-            this.programScope[element['code']] = element['terms'];
+            this.programScope[element['code']] = _.sortBy(element['terms'], ['name']);;
           });
 
           const mediumOption = this.programsService.getAssociationData(board.terms, 'medium', this.frameworkCategories);
