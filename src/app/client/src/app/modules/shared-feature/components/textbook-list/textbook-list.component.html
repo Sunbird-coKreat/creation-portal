@@ -4,9 +4,9 @@
 			<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable">
 				<thead class="sb-table-header sb-table-thead-gray">
 					<tr>
-						<th class="sb-sort-icon w-5">{{resource.frmelmnts.lbl.title}}</th>
-						<th class="sb-sort-icon w-10">{{resource.frmelmnts.lbl.grade}}</th>
+						<th class="sb-sort-icon w-20">{{resource.frmelmnts.lbl.title}}</th>
 						<th class="sb-sort-icon w-5">{{resource.frmelmnts.lbl.medium}}</th>
+						<th class="sb-sort-icon w-5">{{resource.frmelmnts.lbl.class}}</th>
 						<th class="w-5">{{resource.frmelmnts.lbl.chapters}}</th>
 						<th class="sb-sort-icon w-5">{{resource.frmelmnts.lbl.subject}}</th>
 					</tr>
@@ -19,15 +19,15 @@
 							</div>
 						</td>
 						<td>
-							<div class="sb__ellipsis sb__ellipsis--three">
-								{{data.gradeLevel}}
-							</div>
-						</td>
-						<td>
 							<div>
 								{{data.medium}}
 							</div>
 						</td>
+						<td>
+								<div class="sb__ellipsis sb__ellipsis--three">
+									{{data.gradeLevel}}
+								</div>
+							</td>
 						<td>{{ data.childNodes ? data.childNodes.length : 0 }}</td>
 						<td>
 							<div>

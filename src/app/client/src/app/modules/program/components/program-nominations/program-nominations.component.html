@@ -2,7 +2,7 @@
     <div class="sb-bg-color-primary-0 practical-header py-16">
         <div class="d-flex flex-ai-center flex-jc-space-between practical-header__content ui container p-0">
             <div class="practical-header__title flex-basis-1">
-                <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="goBack()"
+                <!-- <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="goBack()"
                     type="button">
                     <i class="icon-svg icon-svg--xxs icon-back mr-4">
                         <svg class="icon icon-svg--primary">
@@ -10,7 +10,7 @@
                         </svg>
                     </i>
                     Back to My/Explore Programs
-                </button>
+                </button> -->
 
                 <h4 class="m-0 p-0">{{ programDetails?.name }} <i class="info circle link icon" suiPopup
                         [popupTemplate]="popupTemplate" popupDelay="1000"></i>
@@ -22,7 +22,7 @@
                                     <label class="d-block fsmall font-weight-normal mb-0">{{ mediums }}</label>
                                 </div>
                                 <hr />
-                                <div class="header"><strong>{{ resourceService.frmelmnts.lbl.grades }}</strong></div>
+                                <div class="header"><strong>{{ resourceService.frmelmnts.lbl.class }}</strong></div>
                                 <div class="content">
                                     <label class="d-block fsmall font-weight-normal mb-0">{{ grades }}</label>
                                 </div>
@@ -131,7 +131,7 @@
                         <div class="sb-bg-color-white pt-32">
                             <div class="sb-table-responsive" *ngIf="nominations.length > 0">
                                 <table
-                                    class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
+                                    class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
                                     <thead class="sb-table-header sb-table-thead-gray">
                                         <tr>
                                             <th class="w-5 text-center"></th>
@@ -161,10 +161,10 @@
                                     <tbody class="sb-table-body">
                                         <tr *ngFor="let nomination of nominations; let i = index;">
                                             <td class="text-center">{{ i + 1}}</td>
-                                            <td class="text-center">
+                                            <td class="text-center w-10">
                                                 <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                                                     *ngIf="nomination?.nominationData?.status === 'Pending'"
-                                                    (click)="viewNominationDetails(nomination)">{{ resourceService.frmelmnts.lbl.viewDetails }}</button>
+                                                    (click)="viewNominationDetails(nomination)">{{ resourceService.frmelmnts.lbl.open }}</button>
                                                 <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                                                     *ngIf="nomination?.nominationData?.status === 'Accepted'"
                                                     [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">{{ resourceService.frmelmnts.lbl.viewContribution }}</button>
@@ -338,10 +338,10 @@
                                         {{ nomination?.nominationData?.status }}
                                     </span>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center w-10">
                                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                                         *ngIf="nomination?.nominationData?.status === 'Pending'"
-                                        (click)="viewNominationDetails(nomination)">{{ resourceService.frmelmnts.lbl.viewDetails }}</button>
+                                        (click)="viewNominationDetails(nomination)">{{ resourceService.frmelmnts.lbl.open }}</button>
                                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                                         *ngIf="nomination?.nominationData?.status === 'Approved'"
                                         [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">{{ resourceService.frmelmnts.lbl.viewContribution }}</button>
