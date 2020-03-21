@@ -161,7 +161,8 @@ export class AppComponent implements OnInit, OnDestroy {
         this.logCdnStatus();
         this.setFingerPrintTelemetry();
         this.checkTncAndFrameWorkSelected();
-        this.userService.openSaberRegistrySearch().then(() => {
+        if (this.userService.loggedIn) {
+          this.userService.openSaberRegistrySearch().then(() => {
           this.initApp = true;
         }).catch((err) => {
           this.toasterService.error('Please Try Later...');
@@ -169,8 +170,11 @@ export class AppComponent implements OnInit, OnDestroy {
             this.router.navigate(['']);
           });
         });
+      } else {
+        this.initApp = true;
+      }
       }, error => {
-        // this.initApp = true;
+         // this.initApp = true;
       });
 
     this.changeLanguageAttribute();
