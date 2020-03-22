@@ -11,6 +11,9 @@ import { IProgram } from './../../../core/interfaces';
 import { UserService } from '@sunbird/core';
 import { programConfigObj } from './programconfig';
 import { HttpClient } from '@angular/common/http';
+import { IStartEventInput, IEndEventInput } from '@sunbird/telemetry';
+import { DeviceDetectorService } from 'ngx-device-detector';
+import { ProgramTelemetryService } from '../../services/program-telemetry/program-telemetry.service';
 
 @Component({
   selector: 'app-create-program',
@@ -33,11 +36,13 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    * Contains Program form data
    */
   programDetails: IProgram;
+  public telemetryStart: IStartEventInput;
+  public telemetryEnd: IEndEventInput;
 
   /**
   * To send activatedRoute.snapshot to routerNavigationService
   */
-  private activatedRoute: ActivatedRoute;
+  // private activatedRoute: ActivatedRoute;
 
   /**
   * To call resource service which helps to use language constant
@@ -61,7 +66,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   frameworkCategories;
   programScope: any = {};
   userprofile;
-  programId = 0;
+  programId: string;
   showTextBookSelector = false;
   formIsInvalid = false;
   subjectsOption = [];
@@ -69,6 +74,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   gradeLevelOption = [];
   pickerMinDate = new Date(new Date().setHours(0, 0, 0, 0));
   pickerMinDateForEndDate = new Date(new Date().setHours(0, 0, 0, 0));
+  public telemetryInteractCdata: any;
+  public telemetryInteractPdata: any;
+  public telemetryInteractObject: any;
 
   httpOptions: HttpOptions = {
     headers: {
@@ -83,11 +91,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     public toasterService: ToasterService,
     public resource: ResourceService,
     private config: ConfigService,
-    activatedRoute: ActivatedRoute,
+    public activatedRoute: ActivatedRoute,
     private router: Router,
     private navigationHelperService: NavigationHelperService,
     private formBuilder: FormBuilder,
-    private httpClient: HttpClient) {
+    private httpClient: HttpClient,
+    private deviceDetectorService: DeviceDetectorService,
+    public programTelemetryService: ProgramTelemetryService,
+    public configService: ConfigService) {
 
     this.sbFormBuilder = formBuilder;
 
@@ -99,10 +110,17 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.initializeFormFields();
     this.fetchFrameWorkDetails();
     this.getProgramContentTypes();
-    //this.showTexbooklist('dsd');
+    // this.showTexbooklist('dsd');
+    // tslint:disable-next-line:max-line-length
+    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.programId || '', 'Program');
+    // tslint:disable-next-line:max-line-length
+    this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID);
+    // tslint:disable-next-line:max-line-length
+    this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.programId || '', 'Program', '1.0');
   }
 
-  ngAfterViewInit() { }
+  ngAfterViewInit() {
+  }
 
   fetchFrameWorkDetails() {
     this.programScope['medium'] = [];
@@ -267,13 +285,13 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       if (!this.programId) {
         data['status'] = "Draft";
         this.programsService.createProgram(data).subscribe(
-          (res) => { this.programId = res.result.program_id; this.showTexbooklist() },
+          (res) => { this.programId = res.result.program_id; this.showTexbooklist(); this.generateTelemetryEvent('START'); },
           (err) => this.saveProgramError(err)
         );
       } else {
         data['program_id'] = this.programId;
         this.programsService.updateProgram(data).subscribe(
-          (res) => { this.showTexbooklist() },
+          (res) => { this.showTexbooklist(); },
           (err) => this.saveProgramError(err)
         );
       }
@@ -408,8 +426,57 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     data['status'] = "Live";
 
     this.programsService.updateProgram(data).subscribe(
-      (res) => { this.router.navigate(['/sourcing']) },
+      (res) => { this.router.navigate(['/sourcing']); this.generateTelemetryEvent('END'); },
       (err) => this.saveProgramError(err)
     );
+  }
+
+  generateTelemetryEvent(event) {
+   switch (event) {
+     case 'START':
+      const deviceInfo = this.deviceDetectorService.getDeviceInfo();
+      this.telemetryStart = {
+        context: {
+          env: this.activatedRoute.snapshot.data.telemetry.env
+        },
+        object: {
+          id: this.programId || '',
+          type: this.activatedRoute.snapshot.data.telemetry.object.type,
+          ver: this.activatedRoute.snapshot.data.telemetry.object.ver
+        },
+        edata: {
+          type: this.activatedRoute.snapshot.data.telemetry.type || '',
+          pageid: this.activatedRoute.snapshot.data.telemetry.pageid || '',
+          mode: this.activatedRoute.snapshot.data.telemetry.mode || '',
+          uaspec: {
+            agent: deviceInfo.browser,
+            ver: deviceInfo.browser_version,
+            system: deviceInfo.os_version,
+            platform: deviceInfo.os,
+            raw: deviceInfo.userAgent
+          }
+        }
+      };
+       break;
+     case 'END':
+      this.telemetryEnd = {
+        object: {
+          id: this.programId || '',
+          type: this.activatedRoute.snapshot.data.telemetry.object.type,
+          ver: this.activatedRoute.snapshot.data.telemetry.object.ver
+        },
+        context: {
+          env: this.activatedRoute.snapshot.data.telemetry.env
+        },
+        edata: {
+          type: this.activatedRoute.snapshot.data.telemetry.type,
+          pageid: this.activatedRoute.snapshot.data.telemetry.pageid,
+          mode: 'create'
+        }
+      };
+       break;
+     default:
+       break;
+   }
   }
 }

@@ -260,7 +260,7 @@
 						</div>
 					</form>
 					<div class="ui grid">
-						<div class="seven wide column">
+						<div class="seven wide column" [appTelemetryStart]="telemetryStart">
 							<div class="sb-table-responsive">
 								<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable"
 									*ngIf="showTextBookSelector">
@@ -350,9 +350,15 @@
 				</div>
 			</sui-tabset>
 		</div>
-		<div class="text-align-right mt-10">
+		<div class="text-align-right mt-10"  [appTelemetryEnd]= "telemetryEnd">
 			<button *ngIf="!showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary"
-				(click)="saveProgram()">{{resource.frmelmnts.btn.next}}</button>
+				(click)="saveProgram()"
+				appTelemetryInteract
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('next', 'click', 'create-program')"
+                [telemetryInteractObject]="telemetryInteractObject"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+		        [telemetryInteractPdata]="telemetryInteractPdata"
+		>{{resource.frmelmnts.btn.next}}</button>
 			<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-default mr-10"
 				(click)="navigateTo(1)">{{resource.frmelmnts.btn.previous}}</button>
 			<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary"
