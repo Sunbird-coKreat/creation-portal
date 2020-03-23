@@ -14,20 +14,20 @@
         <ng-template #popupTemplate>
           <div class="content">
             <div class="textbook-details ml-8">
-              <div class="header"><strong>{{ resourceService.frmelmnts.lbl.mediums }}</strong></div>
+              <div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.mediums }}</strong></div>
               <div class="content">
                 <label class="d-block fsmall font-weight-normal mb-0"
                   >{{ mediums }}</label>
               </div>
               <hr />
-              <div class="header"><strong>{{ resourceService.frmelmnts.lbl.class }}</strong></div>
+              <div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.class }}</strong></div>
               <div class="content">
                 <label class="d-block fsmall font-weight-normal mb-0"
                   >{{ grades }}</label>
               </div>
               <hr />
               <div class="header">
-                <strong>{{ resourceService.frmelmnts.lbl.expressionOfInterestDate }}</strong>
+                <strong>{{ resourceService?.frmelmnts?.lbl?.expressionOfInterestDate }}</strong>
               </div>
               <div class="content">
                 <label class="d-block fsmall font-weight-normal mb-0">
@@ -36,7 +36,7 @@
               </div>
               <hr />
               <div class="header">
-                <strong>{{ resourceService.frmelmnts.lbl.shortlistingOfContributorDate }}</strong>
+                <strong>{{ resourceService?.frmelmnts?.lbl?.shortlistingOfContributorDate }}</strong>
               </div>
               <div class="content">
                 <label class="d-block fsmall font-weight-normal mb-0">
@@ -45,7 +45,7 @@
               </div>
               <hr />
               <div class="header">
-                <strong>{{ resourceService.frmelmnts.lbl.contentSubmissionDate }}</strong>
+                <strong>{{ resourceService?.frmelmnts?.lbl?.contentSubmissionDate }}</strong>
               </div>
               <div class="content">
                 <label class="d-block fsmall font-weight-normal mb-0">
@@ -53,7 +53,7 @@
                 </label>
               </div>
               <hr />
-              <div class="header"><strong>{{ resourceService.frmelmnts.lbl.programEndDate }}</strong></div>
+              <div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.programEndDate }}</strong></div>
               <div class="content">
                 <label class="d-block fsmall font-weight-normal mb-0">
                   {{ programDetails?.enddate |  date:'LLLL d, yyyy'  }}
@@ -100,7 +100,7 @@
         </div>
         <div class="program-timeline-item">
           <div class="status" [class.active]="activeDate === 'enddate'">
-            <div class="status__label">{{ resourceService.frmelmnts.lbl.programEndDate }}</div>
+            <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.programEndDate }}</div>
             <div class="status__date">
               {{ programDetails?.enddate |  date:'LLLL d, yyyy'  }}
               <br/>
@@ -117,14 +117,14 @@
   <sui-tabset>
     <div class="ui pointing secondary menu sb-bg-color-primary-100">
       <div class="ui container p-0 m-0 d-flex flex-ai-center flex-jc-center">
-        <a class="item active" suiTabHeader="1">{{ resourceService.frmelmnts.lbl.textbooks }}</a>
+        <a class="item active" suiTabHeader="1">{{ resourceService?.frmelmnts?.lbl?.textbooks }}</a>
         <a class="item" suiTabHeader="2">Contributors <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ nominationsCount }}</span></a>
         <a class="item" suiTabHeader="3">Content</a>
         <a class="item" suiTabHeader="4">Users</a>
       </div>
     </div>
     <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" isActive='true' suiTabContent="1">
-      <div class="ui container">{{ resourceService.frmelmnts.lbl.textbooks }}</div>
+      <div class="ui container">{{ resourceService?.frmelmnts?.lbl?.textbooks }}</div>
     </div>
     <div class="ui segment  p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="2">
       <div class="ui container p-0 m-0">
@@ -136,18 +136,18 @@
                     <tr>
                       <th class="w-5 text-center"></th>
                       <th class="w-5 text-center"></th>
-                      <th class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.contributorName }}</th>
-                      <th class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.type }}</th>
-                      <th class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.textbooks }}</th>
+                      <th class="sb-sort-icon">{{ resourceService?.frmelmnts?.lbl?.contributorName }}</th>
+                      <th class="sb-sort-icon">{{ resourceService?.frmelmnts?.lbl?.type }}</th>
+                      <th class="sb-sort-icon">{{ resourceService?.frmelmnts?.lbl?.textbooks }}</th>
                       <th>
                         <span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
-                          <div class="text">{{ resourceService.frmelmnts.lbl.status }}</div>
+                          <div class="text">{{ resourceService?.frmelmnts?.lbl?.status }}</div>
                           <i class="filter icon"></i>
                           <div class="menu" suiDropdownMenu>
-                            <div class="item" selected>{{ resourceService.frmelmnts.lbl.allStatus }}</div>
-                            <div class="item">{{ resourceService.frmelmnts.lbl.pendig }}</div>
-                            <div class="item">{{ resourceService.frmelmnts.lbl.approved }}</div>
-                            <div class="item">{{ resourceService.frmelmnts.lbl.rejected }}</div>
+                            <div class="item" selected>{{ resourceService?.frmelmnts?.lbl?.allStatus }}</div>
+                            <div class="item">{{ resourceService?.frmelmnts?.lbl?.pendig }}</div>
+                            <div class="item">{{ resourceService?.frmelmnts?.lbl?.approved }}</div>
+                            <div class="item">{{ resourceService?.frmelmnts?.lbl?.rejected }}</div>
                           </div>
                         </span>
                       </th>
@@ -159,10 +159,10 @@
                       <td class="text-center">
                         <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                           *ngIf="nomination?.nominationData?.status === 'Pending'"
-                          (click)="viewNominationDetails(nomination)">{{ resourceService.frmelmnts.lbl.viewDetails }}</button>
+                          (click)="viewNominationDetails(nomination)">{{ resourceService?.frmelmnts?.lbl?.viewDetails }}</button>
                         <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                           *ngIf="nomination?.nominationData?.status === 'Accepted'"
-                          [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">{{ resourceService.frmelmnts.lbl.viewContribution }}</button>
+                          [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
                       </td>
                       <td>
                         <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold" (click)="showNomineeProfile = true; getNomineeProfile(nomination)">
@@ -173,7 +173,7 @@
                         <div>{{ nomination?.type }}</div>
                       </td>
                       <td>
-                        <div suiPopup popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.textbooks }}" popupText="{{ nomination?.textbooks }}">
+                        <div suiPopup popupDelay="1000" popupHeader="{{ resourceService?.frmelmnts?.lbl?.textbooks }}" popupText="{{ nomination?.textbooks }}">
                           {{ getNominatedTextbooksCount(nomination) }}
                         </div>
                       </td>
@@ -212,52 +212,52 @@
         </h4>
         <div class="d-flex flex-jc-space-between flex-ai-center fnormal mt-8">
           <div class="d-flex flex-dc flex-25 pr-16">
-              <div class="sb__ellipsis" suiPopup popupHeader="{{ resourceService.frmelmnts.lbl.grades }}"  popupDelay="1000" popupText="{{ grades }}">{{ grades }}</div>
+              <div class="sb__ellipsis" suiPopup popupHeader="{{ resourceService?.frmelmnts?.lbl?.grades }}"  popupDelay="1000" popupText="{{ grades }}">{{ grades }}</div>
               <div class="divider my-4"></div>
-              <div class="sb__ellipsis" suiPopup popupHeader="{{ resourceService.frmelmnts.lbl.mediums }}"  popupDelay="1000" popupText="{{ mediums }}">{{ mediums }}</div>
+              <div class="sb__ellipsis" suiPopup popupHeader="{{ resourceService?.frmelmnts?.lbl?.mediums }}"  popupDelay="1000" popupText="{{ mediums }}">{{ mediums }}</div>
           </div>
           <div class="d-flex flex-ai-center flex-jc-space-between flex-75 ">
             <dl class="sb-meta-data mb-0 pr-8 w-25">
-              <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="{{ resourceService.frmelmnts.lbl.expressionOfInterestDate }}" popupText="{{ programDetails?.nomination_enddate |  date:'LLLL d, yyyy'  }}">{{ resourceService.frmelmnts.lbl.expressionOfInterestDate }}</dt>
+              <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="{{ resourceService?.frmelmnts?.lbl?.expressionOfInterestDate }}" popupText="{{ programDetails?.nomination_enddate |  date:'LLLL d, yyyy'  }}">{{ resourceService?.frmelmnts?.lbl?.expressionOfInterestDate }}</dt>
               <dd> {{ programDetails?.nomination_enddate |  date:'LLLL d, yyyy'  }}</dd>
             </dl>
             <dl class="sb-meta-data mb-0 pr-8 w-25">
-              <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="{{ resourceService.frmelmnts.lbl.shortlistingOfContributorDate }}" popupText="{{ programDetails?.shortlisting_enddate |  date:'LLLL d, yyyy'  }}">{{ resourceService.frmelmnts.lbl.shortlistingOfContributorDate }}</dt>
+              <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="{{ resourceService?.frmelmnts?.lbl?.shortlistingOfContributorDate }}" popupText="{{ programDetails?.shortlisting_enddate |  date:'LLLL d, yyyy'  }}">{{ resourceService?.frmelmnts?.lbl?.shortlistingOfContributorDate }}</dt>
               <dd> {{ programDetails?.shortlisting_enddate |  date:'LLLL d, yyyy'  }}</dd>
             </dl>
             <dl class="sb-meta-data mb-0 pr-8 w-25">
-              <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="{{ resourceService.frmelmnts.lbl.contentSubmissionDate }}" popupText="{{ programDetails?.content_submission_enddate |  date:'LLLL d, yyyy'  }}">{{ resourceService.frmelmnts.lbl.contentSubmissionDate }}</dt>
+              <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="{{ resourceService?.frmelmnts?.lbl?.contentSubmissionDate }}" popupText="{{ programDetails?.content_submission_enddate |  date:'LLLL d, yyyy'  }}">{{ resourceService?.frmelmnts?.lbl?.contentSubmissionDate }}</dt>
               <dd> {{ programDetails?.content_submission_enddate |  date:'LLLL d, yyyy'  }}</dd>
             </dl>
             <dl class="sb-meta-data mb-0 pr-8 w-25">
-              <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="{{ resourceService.frmelmnts.lbl.programEndDate }}" popupText="{{ programDetails?.enddate |  date:'LLLL d, yyyy'  }}">{{ resourceService.frmelmnts.lbl.programEndDate }}</dt>
+              <dt class="sb__ellipsis" popupDelay="1000"  suiPopup popupHeader="{{ resourceService?.frmelmnts?.lbl?.programEndDate }}" popupText="{{ programDetails?.enddate |  date:'LLLL d, yyyy'  }}">{{ resourceService?.frmelmnts?.lbl?.programEndDate }}</dt>
               <dd>{{ programDetails?.enddate |  date:'LLLL d, yyyy'  }}</dd>
             </dl>
           </div>
         </div>
       </div>
       <div class="sb-meta-data-container sb-meta-data-column hidden hide">
-        <label class="width-100">{{ resourceService.frmelmnts.lbl.nominations }} </label>
+        <label class="width-100">{{ resourceService?.frmelmnts?.lbl?.nominations }} </label>
         <div class="d-flex">
           <dl class="sb-meta-data">
             <dt>{{ initiatedCount }}</dt>
-            <dd>{{ resourceService.frmelmnts.lbl.initiated }}</dd>
+            <dd>{{ resourceService?.frmelmnts?.lbl?.initiated }}</dd>
           </dl>
           <dl class="sb-meta-data">
             <dt>{{ pendingCount }}</dt>
-            <dd>{{ resourceService.frmelmnts.lbl.pending }}</dd>
+            <dd>{{ resourceService?.frmelmnts?.lbl?.pending }}</dd>
           </dl>
           <dl class="sb-meta-data">
             <dt>{{ approvedCount }}</dt>
-            <dd>{{ resourceService.frmelmnts.lbl.approved }}</dd>
+            <dd>{{ resourceService?.frmelmnts?.lbl?.approved }}</dd>
           </dl>
           <dl class="sb-meta-data">
             <dt>{{ rejectedCount }}</dt>
-            <dd>{{ resourceService.frmelmnts.lbl.rejected }}</dd>
+            <dd>{{ resourceService?.frmelmnts?.lbl?.rejected }}</dd>
           </dl>
           <dl class="sb-meta-data">
             <dt>{{ totalCount }}</dt>
-            <dd>{{ resourceService.frmelmnts.lbl.total }}</dd>
+            <dd>{{ resourceService?.frmelmnts?.lbl?.total }}</dd>
           </dl>
         </div>
       </div>
@@ -269,7 +269,7 @@
 <div class="sb-bg-color-white dynamicHeight  hidden hide">
     <div class="ui container sb-pageSection">
         <div class="sb-pageSection-header pt-16">
-          <h4 class="sb-pageSection-title"> {{ resourceService.frmelmnts.lbl.listofNominations }}
+          <h4 class="sb-pageSection-title"> {{ resourceService?.frmelmnts?.lbl?.listofNominations }}
             <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ nominationsCount }}</span>
           </h4>
         </div>
@@ -278,19 +278,19 @@
             <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
               <thead class="sb-table-header sb-table-thead-gray">
                 <tr>
-                  <th class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.contributorName }}</th>
-                  <th class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.type }}</th>
-                  <th class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.textbooks }}</th>
+                  <th class="sb-sort-icon">{{ resourceService?.frmelmnts?.lbl?.contributorName }}</th>
+                  <th class="sb-sort-icon">{{ resourceService?.frmelmnts?.lbl?.type }}</th>
+                  <th class="sb-sort-icon">{{ resourceService?.frmelmnts?.lbl?.textbooks }}</th>
                   <th>
                     <span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
-                      <div class="text">{{ resourceService.frmelmnts.lbl.status }}</div>
+                      <div class="text">{{ resourceService?.frmelmnts?.lbl?.status }}</div>
                       <i class="filter icon"></i>
                       <div class="menu" suiDropdownMenu>
-                        <div class="item" selected>{{ resourceService.frmelmnts.lbl.allStatus }}</div>
-                        <div class="item">{{ resourceService.frmelmnts.lbl.initiated }}</div>
-                        <div class="item">{{ resourceService.frmelmnts.lbl.pending }}</div>
-                        <div class="item">{{ resourceService.frmelmnts.lbl.approved }}</div>
-                        <div class="item">{{ resourceService.frmelmnts.lbl.rejected }}</div>
+                        <div class="item" selected>{{ resourceService?.frmelmnts?.lbl?.allStatus }}</div>
+                        <div class="item">{{ resourceService?.frmelmnts?.lbl?.initiated }}</div>
+                        <div class="item">{{ resourceService?.frmelmnts?.lbl?.pending }}</div>
+                        <div class="item">{{ resourceService?.frmelmnts?.lbl?.approved }}</div>
+                        <div class="item">{{ resourceService?.frmelmnts?.lbl?.rejected }}</div>
                       </div>
                     </span>
                   </th>
@@ -308,7 +308,7 @@
                     <div>{{ nomination?.type }}</div>
                   </td>
                   <td>
-                    <div suiPopup popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.textbooks }}" popupText="{{ nomination?.textbooks }}">
+                    <div suiPopup popupDelay="1000" popupHeader="{{ resourceService?.frmelmnts?.lbl?.textbooks }}" popupText="{{ nomination?.textbooks }}">
                       {{ getNominatedTextbooksCount(nomination) }}
                     </div>
                   </td>
@@ -320,10 +320,10 @@
                   <td class="text-center">
                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                       *ngIf="nomination?.nominationData?.status === 'Pending'"
-                      (click)="viewNominationDetails(nomination)">{{ resourceService.frmelmnts.lbl.viewDetails }}</button>
+                      (click)="viewNominationDetails(nomination)">{{ resourceService?.frmelmnts?.lbl?.viewDetails }}</button>
                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                       *ngIf="nomination?.nominationData?.status === 'Approved'"
-                      [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">{{ resourceService.frmelmnts.lbl.viewContribution }}</button>
+                      [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
                   </td>
                 </tr>
               </tbody>
@@ -347,7 +347,7 @@
   (dismissed)="showNomineeProfile = false"
   #modal
 >
-  <div class="sb-modal-header"> {{ resourceService.frmelmnts.lbl.contributorProfileDetails }}</div>
+  <div class="sb-modal-header"> {{ resourceService?.frmelmnts?.lbl?.contributorProfileDetails }}</div>
   <div class="sb-modal-content o-y-visible pb-8">
     <div class="ui container">
       <div class="mx-48 text-center">
@@ -361,19 +361,19 @@
       <div class="mx-48 relative text-center">
         <div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
           <span class="fmedium white-space-nowrap"
-            >{{ resourceService.frmelmnts.lbl.email }} :</span
+            >{{ resourceService?.frmelmnts?.lbl?.email }} :</span
           >
           <span class="fmedium font-weight-bold pl-4">{{ selectedNomineeProfile?.email }}</span>
         </div>
         <div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
           <span class="fmedium white-space-nowrap"
-            >{{ resourceService.frmelmnts.lbl.mobileNo }} :</span
+            >{{ resourceService?.frmelmnts?.lbl?.mobileNo }} :</span
           >
           <span class="fmedium font-weight-bold pl-4">{{ selectedNomineeProfile?.phone }}</span>
         </div>
         <div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
           <span class="fmedium white-space-nowrap"
-            >{{ resourceService.frmelmnts.lbl.profile.Board }} :</span
+            >{{ resourceService?.frmelmnts?.lbl?.profile.Board }} :</span
           >
           <span class="fmedium font-weight-bold pl-4">{{ selectedNomineeProfile?.framework?.board?.join(", ") }}</span>
         </div>
@@ -381,7 +381,7 @@
           class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc"
         >
           <span class="fmedium white-space-nowrap"
-            >{{ resourceService.frmelmnts.lbl.profile.Medium }} :</span
+            >{{ resourceService?.frmelmnts?.lbl?.profile.Medium }} :</span
           >
           <span class="fmedium font-weight-bold pl-4"> {{ selectedNomineeProfile?.framework?.medium?.join(", ") }}</span>
         </div>
@@ -389,7 +389,7 @@
           class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc"
         >
           <span class="fmedium white-space-nowrap"
-            >{{ resourceService.frmelmnts.lbl.profile.Subjects }} :</span
+            >{{ resourceService?.frmelmnts?.lbl?.profile.Subjects }} :</span
           >
           <span class="fmedium font-weight-bold pl-4"> {{ selectedNomineeProfile?.framework?.subject?.join(", ") }}</span>
         </div>
@@ -397,7 +397,7 @@
           class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc"
         >
           <span class="fmedium white-space-nowrap"
-            >{{ resourceService.frmelmnts.lbl.profile.Classes }} :</span
+            >{{ resourceService?.frmelmnts?.lbl?.profile.Classes }} :</span
           >
           <span class="fmedium font-weight-bold pl-4"> {{ selectedNomineeProfile?.framework?.gradeLevel?.join(", ") }}</span>
         </div>
