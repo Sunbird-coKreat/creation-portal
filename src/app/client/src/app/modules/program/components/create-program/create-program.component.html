@@ -1,7 +1,7 @@
 <div class="ui container">
 	<div class="sb-pageSection mt-24 pb-48">
 		<div class="sb-pageSection-header">
-			<h4 class="sb-pageSection-title">{{ resource.frmelmnts.lbl.createProgram }}</h4>
+			<h4 class="sb-pageSection-title">{{resource.frmelmnts.lbl.createProgram}}</h4>
 		</div>
 
 		<div class="pb-8">
@@ -149,7 +149,7 @@
 							<div class="twelve wide column">
 								<div class="field">
 									<label class="d-block">{{resource.frmelmnts.lbl.contentType}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Purpose"></i>
+											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Content Type(s)"></i>
 									</label>
 									<sui-multi-select class="selection" labelField="name" [hasLabels]="true"
 										formControlName="content_types" [options]="programScope.purpose"
@@ -170,9 +170,8 @@
 							</div-->
 							<div class="twelve wide column">
 								<div class="field">
-									<label class="d-block">{{resource.frmelmnts.lbl.rewardsGiven}}
+									<label class="d-block">{{resource.frmelmnts.lbl.recongnitionToContributors}}
 											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resource.frmelmnts.lbl.programRewardsHint}}"></i>
-									</label>
 									<div class="sb-field relative">
 										<textarea type="text" formControlName="rewards" class="wmd-input width-100 sb-form-control"
 											placeholder="{{resource.frmelmnts.lbl.programRewardsHint}}" name=""></textarea>
@@ -265,7 +264,7 @@
 					<div class="ui grid">
 						<div class="seven wide column">
 							<div class="sb-table-responsive">
-								<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable"
+								<table class="sb-table sb-table-striped sb-table-sortable"
 									*ngIf="showTextBookSelector">
 									<thead class="sb-table-header sb-table-thead-gray d-block">
 										<tr>
@@ -277,10 +276,10 @@
 												</div>
 											</th>
 											<th class="sb-sort-icon w-5">{{resource.frmelmnts.lbl.title}}</th>
-											<th class="sb-sort-icon w-10">{{resource.frmelmnts.lbl.grade}}</th>
 											<th class="sb-sort-icon w-5">{{resource.frmelmnts.lbl.medium}}</th>
-											<th class="w-5">{{resource.frmelmnts.lbl.chapters}}</th>
+											<th class="sb-sort-icon w-10">{{resource.frmelmnts.lbl.class}}</th>
 											<th class="sb-sort-icon w-5">{{resource.frmelmnts.lbl.subject}}</th>
+											<th class="w-5">{{resource.frmelmnts.lbl.chapters}}</th>
 										</tr>
 									</thead>
 									<tbody class="sb-table-body d-block w-100 o-y-auto max-height">
@@ -300,21 +299,21 @@
 												</div>
 											</td>
 											<td>
+												<div>
+													{{data.medium}}
+												</div>
+											</td>
+											<td>
 												<div class="sb__ellipsis sb__ellipsis--three">
 													{{data.gradeLevel}}
 												</div>
 											</td>
 											<td>
 												<div>
-													{{data.medium}}
-												</div>
-											</td>
-											<td>{{ data.childNodes ? data.childNodes.length : 0 }}</td>
-											<td>
-												<div>
 													{{data.subject}}
 												</div>
 											</td>
+											<td>{{ data.childNodes ? data.childNodes.length : 0 }}</td>
 										</tr>
 									</tbody>
 								</table>
@@ -359,7 +358,7 @@
 			<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-default mr-10"
 				(click)="navigateTo(1)">{{resource.frmelmnts.btn.previous}}</button>
 			<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary"
-				(click)="updateProgramCollection()">{{resource.frmelmnts.btn.saveAndClose}}</button>
+				(click)="updateProgramCollection()">{{resource.frmelmnts.btn.createProgram}}</button>
 		</div>
 	</div>
 </div>
