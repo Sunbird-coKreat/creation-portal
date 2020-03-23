@@ -12,7 +12,9 @@
     "code",
     "contentEncoding",
     "contentDisposition",
-    "mediaType"
+    "mediaType",
+    "origin",
+    "originData"
   ],
   "properties": {
     "name": {
@@ -992,6 +994,15 @@
     },
     "board" : {
       "type": "string"
+    },
+    "allowedContentTypes": {
+      "type": "array"
+    },
+    "closedPrograms": {
+      "type": "array"
+    },
+    "openForContribution": {
+      "type": "boolean"
     }
   }
 }
