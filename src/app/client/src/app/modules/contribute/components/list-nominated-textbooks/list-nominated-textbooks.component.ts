@@ -46,6 +46,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
   public orgDetails: any = {};
   public roles;
   public selectedRole;
+  public showNormalModal = false;
 
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private configService: ConfigService, private publicDataService: PublicDataService,
