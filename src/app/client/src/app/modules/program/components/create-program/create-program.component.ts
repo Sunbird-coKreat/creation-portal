@@ -1,5 +1,5 @@
-import { HttpOptions, ConfigService, ResourceService, ToasterService, RouterNavigationService,
-   ServerResponse, NavigationHelperService } from '@sunbird/shared';
+import { ConfigService, ResourceService, ToasterService, RouterNavigationService,
+   ServerResponse } from '@sunbird/shared';
 import { ProgramsService, DataService, FrameworkService } from '@sunbird/core';
 import { Subscription, Subject } from 'rxjs';
 import { tap, first, map, takeUntil } from 'rxjs/operators';
@@ -70,12 +70,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   pickerMinDate = new Date(new Date().setHours(0, 0, 0, 0));
   pickerMinDateForEndDate = new Date(new Date().setHours(0, 0, 0, 0));
 
-  httpOptions: HttpOptions = {
-    headers: {
-      'content-type': 'application/json'
-    }
-  };
-
   constructor(
     public frameworkService: FrameworkService,
     private programsService: ProgramsService,
@@ -85,7 +79,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     private config: ConfigService,
     activatedRoute: ActivatedRoute,
     private router: Router,
-    private navigationHelperService: NavigationHelperService,
     private formBuilder: FormBuilder,
     private httpClient: HttpClient) {
 
@@ -99,7 +92,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.initializeFormFields();
     this.fetchFrameWorkDetails();
     this.getProgramContentTypes();
-    //this.showTexbooklist('dsd');
+    //this.showTexbooklist();
   }
 
   ngAfterViewInit() { }
@@ -285,41 +278,38 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
   showTexbooklist() {
 
-    const option = {
-      url: 'learner/composite/v1/search',
-      data: {
-        request: {
-          filters: {
-            objectType: "content",
-            status: ["Draft"],
-            contentType: "Textbook",
-            framework: this.userprofile.framework.id[0],
-            board: this.userprofile.framework.board[0],
-          },
-          not_exists: ["programId"]
-        }
+    const requestData =  {
+      request: {
+        filters: {
+          objectType: "content",
+          status: ["Draft"],
+          contentType: "Textbook",
+          framework: this.userprofile.framework.id[0],
+          board: this.userprofile.framework.board[0],
+        },
+        not_exists: ["programId"]
       }
     };
 
     if (!_.isEmpty(this.collectionListForm.value.medium)) {
-      option.data.request.filters['medium'] = [];
+      requestData.request.filters['medium'] = [];
       _.forEach(this.collectionListForm.value.medium, (medium) => {
-         option.data.request.filters['medium'].push(medium.name);
+        requestData.request.filters['medium'].push(medium.name);
       });
     }
 
     if (!_.isEmpty(this.collectionListForm.value.gradeLevel)) {
-      option.data.request.filters['gradeLevel'] = [];
+      requestData.request.filters['gradeLevel'] = [];
       _.forEach(this.collectionListForm.value.gradeLevel, (gradeLevel) => {
-         option.data.request.filters['gradeLevel'].push(gradeLevel.name);
+        requestData.request.filters['gradeLevel'].push(gradeLevel.name);
       });
     }
 
     if (!_.isEmpty(this.collectionListForm.value.subject)) {
-      option.data.request.filters['subject'] = this.collectionListForm.value.subject;
+      requestData.request.filters['subject'] = this.collectionListForm.value.subject;
     }
 
-    this.httpClient.post<any>(option.url, option.data, this.httpOptions).subscribe(
+    return this.programsService.getCollectionList(requestData).subscribe(
       (res) => {
         this.showTextBookSelector = true;
         this.collections = res.result.content;
@@ -355,20 +345,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       return false;
     }
 
-    const option = {
-      url: 'program/v1/collection/link',
-      header: {
-        'content-type': 'application/json'
-      },
-      data: {
-        request: {
-          'program_id': this.programId,
-          'collection': this.collectionListForm.value.pcollections
-        }
-      }
+    const requsetData = {
+      'program_id': this.programId,
+      'collection': this.collectionListForm.value.pcollections
     };
 
-    this.programsService.post(option).subscribe(
+    this.programsService.updateProgramCollection(requsetData).subscribe(
       (res) => { this.addCollectionsToProgram(); },
       (err) => {
         console.log(err);
