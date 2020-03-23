@@ -21,7 +21,7 @@ import * as moment from 'moment';
 export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
 
   public contributor;
-  public contributorTextbooks;
+  public contributorTextbooks: any = [];
   public noResultFound;
   public telemetryImpression: IImpressionEventInput;
   public component: any;
