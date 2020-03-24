@@ -42,7 +42,7 @@
     }
   },
   "version": "enable",
-  "frameworkCategories": ["board","medium","subject","gradeLevel","difficultyLevel","topic", "subDomains", "subjectCodes"],
+  "frameworkCategories": [],
   "edge": {
     "properties": {
       "license": "License"
