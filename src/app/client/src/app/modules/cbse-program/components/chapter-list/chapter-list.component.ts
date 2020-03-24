@@ -423,6 +423,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               'contentType': this.templateDetails.metadata.contentType,
               'resourceType': this.templateDetails.metadata.resourceType || 'Learn',
               'creator': creator,
+              'programId': this.sessionContext.programId,
               'sampleContent': this.sampleContent,
               ...(_.pickBy(reqBody, _.identity))
             }
