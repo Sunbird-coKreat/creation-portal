@@ -1,4 +1,4 @@
-import { ProgramsService } from '@sunbird/core';
+import { ProgramsService, EnrollContributorService } from '@sunbird/core';
 import { ListAllProgramsComponent } from './components';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
@@ -8,6 +8,7 @@ import { ListNominatedTextbooksComponent} from './components/list-nominated-text
 import { OrgUserListComponent } from './components/org-user-list/org-user-list.component';
 import { OrgContriAdminComponent } from './components/org-contri-admin/org-contri-admin.component';
 import { ContriDashboardComponent } from './components/dashboard/dashboard.component';
+
 const routes: Routes = [{
   path: '', component: ListAllProgramsComponent, canActivate: [ProgramsService],
   data: {
@@ -15,6 +16,12 @@ const routes: Routes = [{
       env: 'contribute', pageid: 'programs-list', type: 'view', subtype: 'paginate'
     }
   }
+},
+{
+  path: 'join/:orgId', component: ListAllMyProgramsComponent, pathMatch: 'full',
+  data: {
+    telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
+  },
 },
 {
   path: 'myenrollprograms', component: ListAllMyProgramsComponent, pathMatch: 'full',

@@ -44,6 +44,12 @@ export class ProgramListComponent implements OnInit {
       tap((isContributor: boolean) => {
         // TODO implement based on api and remove url checks
         // this.isContributor = !isContributor;
+        const orgId = this.activatedRoute.snapshot.params.orgId;
+
+        // Check if user part of that organisation
+        if (this.router.url.includes('/contribute/join/' + orgId)) {
+            this.programsService.addUsertoContributorOrg(orgId);
+        }
 
         this.isContributor = this.router.url.includes('/contribute');
         this.activeAllProgramsMenu = this.router.isActive('/contribute', true);
