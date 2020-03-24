@@ -1,15 +1,15 @@
 <div class="sb-bg-color-primary-0 py-24" *ngIf="!showChapterList">
 	<div class="sb-bg-color-primary-0 practical-header">
         <div class="ui container p-0">
-						<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="goBack()"
+						<!-- <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="goBack()"
 								type="button">
 								<i class="icon-svg icon-svg--xxs icon-back mr-4">
 										<svg class="icon icon-svg--primary">
 												<use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
 										</svg>
 								</i>
-								{{resourceService.frmelmnts.lbl.back}}
-						</button>
+								{{resourceService.frmelmnts.lbl.back}} 
+						</button>-->
 						<div class="d-flex flex-ai-center flex-jc-space-between practical-header__content">
 							<div class="practical-header__title flex-basis-1 pr-10">
 									<h4 class="m-0 p-0">{{ programDetails?.name }} <i class="info circle link icon" suiPopup
@@ -172,7 +172,7 @@
 						</span>
 					</div>
 				</div>
-				<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
+				<table class="sb-table sb-table-striped sb-table-sortable sb-table-fixed">
 					<thead class="sb-table-header sb-table-thead-gray">
 						<tr>
 							<th class="sb-sort-icon w-10">{{resourceService.frmelmnts.lbl.textbook}}</th>
