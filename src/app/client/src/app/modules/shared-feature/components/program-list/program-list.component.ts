@@ -7,11 +7,13 @@ import * as _ from 'lodash-es';
 import { tap, filter } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
 import * as moment from 'moment';
+import { DatePipe } from '@angular/common';
 import { programContext } from '../../../contribute/components/list-nominated-textbooks/data';
 @Component({
   selector: 'app-program-list',
   templateUrl: './program-list.component.html',
-  styleUrls: ['./program-list.component.scss']
+  styleUrls: ['./program-list.component.scss'],
+  providers: [DatePipe]
 })
 export class ProgramListComponent implements OnInit {
 
@@ -27,9 +29,12 @@ export class ProgramListComponent implements OnInit {
   public roles;
   public selectedRole;
   public selectedProgramToAssignRoles;
+  public sortPrograms: any;
+  public direction = 'asc';
+  public enrollPrograms: IProgram[];
   constructor(private programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
-    public router: Router) { }
+    public router: Router, private datePipe: DatePipe ) { }
 
   ngOnInit() {
     this.checkIfUserIsContributor();
@@ -68,27 +73,79 @@ export class ProgramListComponent implements OnInit {
    * fetch the list of programs.
    */
   private getAllProgramsForContrib(type, status) {
-    return this.programsService.getAllProgramsByType(type, status).subscribe(
+    // return this.programsService.getAllProgramsByType(type, status).subscribe(
+    //   response => {
+    //     this.programs = _.get(response, 'result.programs');
+    //     this.count = _.get(response, 'result.count');
+    //   }
+    // );
+    return this.programsService.getAllProgramsByType(type).subscribe(
       response => {
         this.programs = _.get(response, 'result.programs');
-        this.count = _.get(response, 'result.count');
+        //this.getMyProgramsForContrib('Live');
+        if (this.programs.length)
+        {
+           let program = this.filterProgramByDate(this.programs)
+           this.count = _.get(response, 'result.count');
+           this.programs = program;
+           this.sortPrograms = this.programs;     
+        }
+       
       }
     );
   }
 
+  filterProgramByDate(programs)
+  {
+    let todayDate = new Date();
+    let Dates = this.datePipe.transform(todayDate, 'yyyy-MM-dd');
+    const filteredProgram = [];
+    _.forEach(programs, (program) => {
+      console.log(program)
+      // if (program.length) {
+          let nominationEndDate = this.datePipe.transform(program.nomination_enddate, 'yyyy-MM-dd');
+          if (nominationEndDate >= Dates )
+          {
+            filteredProgram.push(program);
+          }
+     // }
+    });
+    return filteredProgram;
+  }
+
+  sort(colName) {
+    if(this.direction === 'asc')
+    {
+      this.programs =  this.sortPrograms.sort((a,b) => 0 - (a[colName] > b[colName] ? -1 : 1));
+      //this.programs =  this.programs.sort((a, b) => a[colName] > b[colName] ? 1 : a[colName] > b[colName] ? -1 : 0)
+      this.direction = 'dsc';
+    }
+    else
+    {
+      console.log("Desending is executed")
+      //this.programs = this.programs.sort((a,b) => 0 - (a[colName] > b[colName] ? 1 : -1));
+      this.programs =  this.sortPrograms.sort((a, b) => a[colName] < b[colName] ? 1 : a[colName] > b[colName] ? -1 : 0)
+      this.direction = 'asc';
+    }
+   
+  }
+
   /**
    * fetch the list of programs.
-   */
+   *///status
   private getMyProgramsForContrib(status) {
-    return this.programsService.getMyProgramsForContrib(status).subscribe((response) => {
+    return this.programsService.getMyProgramsForContrib().subscribe((response) => {
       const programs  = [];
       _.map(_.get(response, 'result.programs'), (nomination) => {
+        console.log(nomination)
         nomination.program.contributionDate = nomination.createdon;
         nomination.program.nomination_status = nomination.status;
         nomination.program.nominated_collection_ids = nomination.collection_ids;
         programs.push(nomination.program);
       });
+      console.log(programs)
       this.programs = programs;
+      this.enrollPrograms = programs;
       this.count = _.get(response, 'result.count');
     }, error => {
       console.log(error);
