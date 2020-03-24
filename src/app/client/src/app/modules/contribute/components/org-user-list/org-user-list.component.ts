@@ -15,7 +15,8 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   options;
   showNormalModal;
   public telemetryImpression: IImpressionEventInput;
-  private orgLink = 'https://projects.invisionapp.com/d/main/default';
+  orgLink;
+  orgName;
 
   constructor(private toasterService: ToasterService, private configService: ConfigService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
@@ -31,6 +32,10 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
           'value': 'Reviewer'
       }]
     };
+    const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
+      ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
+    this.orgLink = `${baseUrl}contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
+    this.orgName = this.userService.userProfile.userRegData.Org.name;
   }
 
   ngAfterViewInit() {
