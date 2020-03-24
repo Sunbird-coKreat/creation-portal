@@ -264,10 +264,10 @@
 							<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{contributorOrgUser.length || 0}}</span>
 						  </h4>
 						</div>
-						<div>
+						<!-- <div>
 						  <button class="sb-btn sb-btn-outline-primary sb-btn-normal ml-10 " (click)="showNormalModal = true"><i
 							  class="plus circle icon"></i> Invite a User</button>
-						</div>
+						</div> -->
 					  </div>
 					</div>
 					<div class="sb-table-respoinsive" *ngIf="contributorOrgUser?.length != 0">
@@ -315,7 +315,7 @@
 		</sui-tabset>
 	</div>
 </div>
-<sui-modal *ngIf="showNormalModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+<!-- <sui-modal *ngIf="showNormalModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
   class="sb-modal" appBodyScroll (dismissed)="showNormalModal = !showNormalModal" #modal>
   <div class="sb-modal-header">
     {{ resourceService.frmelmnts.lbl.linkToShare }}
@@ -328,7 +328,7 @@
       </button>
     </div>
   </div>
-</sui-modal>
+</sui-modal> -->
 <ng-container *ngIf="showChapterList">
 	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs">
 	</ndc-dynamic>

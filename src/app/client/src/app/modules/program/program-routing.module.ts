@@ -10,32 +10,33 @@ const routes: Routes = [{
   data: {
     roles: 'rootOrgAdmin',
     telemetry: {
-      env: 'contribute', pageid: 'programs-list', type: 'view', subtype: 'paginate'
+      env: 'sourcing', pageid: 'programs-list', type: 'view', subtype: 'paginate'
     }
   }
 },
 {
   path: 'create-program', component: CreateProgramComponent, pathMatch: 'full',
   data: {
-    telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
+    telemetry: { env: 'sourcing', type: 'view', subtype: 'paginate', pageid: 'create-program', mode: 'create',
+                 object: { type: 'program', ver: '1.0'} }
   }
 },
 {
   path: 'program/:programId', component: ProgramComponent,
   data: {
-    telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
+    telemetry: { env: 'sourcing', type: 'view', subtype: 'paginate' }
   }
 },
 {
   path: 'nominations/:programId', component: ProgramNominationsComponent,
   data: {
-    telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
+    telemetry: { env: 'sourcing', type: 'view', subtype: 'paginate' }
   }
 },
 {
   path: 'contributor/:programId', component: ListContributorTextbooksComponent,
   data: {
-    telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
+    telemetry: { env: 'sourcing', type: 'view', subtype: 'paginate' }
   }
 }
 ];

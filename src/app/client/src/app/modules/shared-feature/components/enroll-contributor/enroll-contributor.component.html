@@ -1,6 +1,6 @@
 <div *ngIf="frameworkFetched && !userService.userProfile.userRegData.User">
 
-<sui-modal
+<sui-modal [appTelemetryImpression]="telemetryImpression"
    [mustScroll]="true"
     [isClosable]="false"
     [transitionDuration]="0"
