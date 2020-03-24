@@ -112,6 +112,16 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.API_URL(req);
   }
 
+  copyCollectionForPlatform(request): Observable<ServerResponse> {
+    const req = {
+      url: `program/v1/collection/copy`,
+      data: {
+        request
+      }
+    };
+    return this.API_URL(req);
+  }
+
   /**
    * makes api call to get the textbooks for program
    */

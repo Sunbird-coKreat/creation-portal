@@ -62,6 +62,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   programScope: any = {};
   userprofile;
   programId = 0;
+  public programData: any = {};
   showTextBookSelector = false;
   formIsInvalid = false;
   subjectsOption = [];
@@ -92,7 +93,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.initializeFormFields();
     this.fetchFrameWorkDetails();
     this.getProgramContentTypes();
-    //this.showTexbooklist();
+    // this.showTexbooklist();
   }
 
   ngAfterViewInit() { }
@@ -117,7 +118,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           });
 
           this.frameworkCategories.forEach((element) => {
-            this.programScope[element['code']] = _.sortBy(element['terms'], ['name']);;
+            this.programScope[element['code']] = _.sortBy(element['terms'], ['name']);
           });
 
           const mediumOption = this.programsService.getAssociationData(board.terms, 'medium', this.frameworkCategories);
@@ -133,7 +134,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   onMediumChange() {
-    //const thisClassOption = this.createProgramForm.value.gradeLevel;
+    // const thisClassOption = this.createProgramForm.value.gradeLevel;
 
     /*this.programScope['gradeLevel'] = [];
     this.programScope['subject'] = [];*/
@@ -220,7 +221,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   saveProgramError(err) {
-    console.log(err)
+    console.log(err);
   }
 
   validateAllFormFields(formGroup: FormGroup) {
@@ -238,35 +239,39 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.formIsInvalid = false;
 
     if (this.createProgramForm.dirty && this.createProgramForm.valid) {
-      const data = {
+      this.programData = {
         ...this.createProgramForm.value
       };
-      data['sourcing_org_name'] = this.userprofile.rootOrgName;
-      data['rootorg_id'] = this.userprofile.rootOrgId;
-      data['createdby'] = this.userprofile.id;
-      data['createdon'] = new Date();
-      data['startdate'] = new Date();
-      data['slug'] = "sunbird";
-      data['type'] = "public",
+      this.programData['sourcing_org_name'] = this.userprofile.rootOrgName;
+      this.programData['rootorg_id'] = this.userprofile.rootOrgId;
+      this.programData['createdby'] = this.userprofile.id;
+      this.programData['createdon'] = new Date();
+      this.programData['startdate'] = new Date();
+      this.programData['slug'] = 'sunbird';
+      this.programData['type'] = 'public',
 
-      data['default_roles'] = ["CONTRIBUTOR"];
-      data['enddate'] = data.program_end_date;
-      data['config'] = programConfigObj;
-      delete data.gradeLevel;
-      delete data.medium;
-      delete data.subject;
-      delete data.program_end_date;
+      this.programData['default_roles'] = ['CONTRIBUTOR'];
+      this.programData['enddate'] = this.programData.program_end_date;
+      this.programData['config'] = programConfigObj;
+      delete this.programData.gradeLevel;
+      delete this.programData.medium;
+      delete this.programData.subject;
+      delete this.programData.program_end_date;
 
       if (!this.programId) {
-        data['status'] = "Draft";
-        this.programsService.createProgram(data).subscribe(
-          (res) => { this.programId = res.result.program_id; this.showTexbooklist() },
+        this.programData['status'] = 'Draft';
+        this.programsService.createProgram(this.programData).subscribe(
+          (res) => {
+            this.programId = res.result.program_id;
+            this.programData['program_id'] = this.programId;
+            this.showTexbooklist();
+          },
           (err) => this.saveProgramError(err)
         );
       } else {
-        data['program_id'] = this.programId;
-        this.programsService.updateProgram(data).subscribe(
-          (res) => { this.showTexbooklist() },
+        this.programData['program_id'] = this.programId;
+        this.programsService.updateProgram(this.programData).subscribe(
+          (res) => { this.showTexbooklist(); },
           (err) => this.saveProgramError(err)
         );
       }
@@ -281,13 +286,13 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     const requestData =  {
       request: {
         filters: {
-          objectType: "content",
-          status: ["Draft"],
-          contentType: "Textbook",
+          objectType: 'content',
+          status: ['Draft'],
+          contentType: 'Textbook',
           framework: this.userprofile.framework.id[0],
           board: this.userprofile.framework.board[0],
         },
-        not_exists: ["programId"]
+        not_exists: ['programId']
       }
     };
 
@@ -331,10 +336,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       pcollectionsFormArray.push(new FormControl(collectionId));
       this.tempCollections.push(collection);
     } else {
-      const index = pcollectionsFormArray.controls.findIndex(x => x.value == collectionId)
+      const index = pcollectionsFormArray.controls.findIndex(x => x.value === collectionId);
       pcollectionsFormArray.removeAt(index);
 
-      const cindex = this.tempCollections.findIndex(x => x.identifier == collectionId);
+      const cindex = this.tempCollections.findIndex(x => x.identifier === collectionId);
       this.tempCollections.splice(cindex, 1);
     }
   }
@@ -345,12 +350,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       return false;
     }
 
-    const requsetData = {
+    const requestData = {
       'program_id': this.programId,
-      'collection': this.collectionListForm.value.pcollections
+      'collections': this.collectionListForm.value.pcollections,
+      'allowed_content_types': this.programData.content_types,
+      'channel': 'sunbird'
     };
 
-    this.programsService.updateProgramCollection(requsetData).subscribe(
+    this.programsService.copyCollectionForPlatform(requestData).subscribe(
       (res) => { this.addCollectionsToProgram(); },
       (err) => {
         console.log(err);
@@ -378,7 +385,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       });
     });
 
-    let data = {};
+    const data = {};
     data['program_id'] = this.programId;
     data['collection_ids'] = this.collectionListForm.value.pcollections;
 
@@ -387,10 +394,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     programConfigObj.medium = this.mediumOption;
     programConfigObj.subject = this.subjectsOption;
     data['config'] = programConfigObj;
-    data['status'] = "Live";
+    data['status'] = 'Live';
 
     this.programsService.updateProgram(data).subscribe(
-      (res) => { this.router.navigate(['/sourcing']) },
+      (res) => { this.router.navigate(['/sourcing']); },
       (err) => this.saveProgramError(err)
     );
   }
