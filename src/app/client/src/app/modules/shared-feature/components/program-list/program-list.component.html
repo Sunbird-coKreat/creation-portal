@@ -21,10 +21,10 @@
                 <th *ngIf="isContributor" class="w-20 sb-sort-icon" (click)="sort('sourcing_org_name')" >{{ resourceService.frmelmnts.lbl.orgName }}</th>
                 <th class="w-15">{{ resourceService.frmelmnts.lbl.contentType }}</th>
                 <th class="w-15">{{ resourceService.frmelmnts.lbl.MediumClassSubject }}</th>
-                <th *ngIf="!isContributor">{{ resourceService.frmelmnts.lbl.programDates }}</th>
-                <th *ngIf="activeMyProgramsMenu" class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.nominatedDate }}</th>
-                <th *ngIf="activeAllProgramsMenu">{{ resourceService.frmelmnts.lbl.programDates }}</th>
-                <th class="w-10 text-center"></th>
+                <th *ngIf="!isContributor" class="w-10">{{ resourceService.frmelmnts.lbl.programDates }}</th>
+                <th *ngIf="activeMyProgramsMenu" class="sb-sort-icon w-10">{{ resourceService.frmelmnts.lbl.nominatedDate }}</th>
+                <th *ngIf="activeAllProgramsMenu" class="w-10">{{ resourceService.frmelmnts.lbl.programDates }}</th>
+                <th *ngIf="activeAllProgramsMenu" class="w-5">status</th>
               </tr>
             </thead>
             <tbody class="sb-table-body">

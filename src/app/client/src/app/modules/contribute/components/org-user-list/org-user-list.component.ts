@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ToasterService, ResourceService } from '@sunbird/shared';
 
 @Component({
   selector: 'app-org-user-list',
@@ -9,7 +10,9 @@ export class OrgUserListComponent implements OnInit {
   data;
   options;
   showNormalModal;
-  constructor() { }
+  private orgLink = 'https://projects.invisionapp.com/d/main/default';
+
+  constructor(private toasterService: ToasterService, public resourceService: ResourceService) { }
 
   ngOnInit() {
     this.data = {
@@ -21,6 +24,13 @@ export class OrgUserListComponent implements OnInit {
           'value': 'Reviewer'
       }]
     }
+  }
+
+  copyLinkToClipboard(inputLink) {
+    inputLink.select();
+    document.execCommand('copy');
+    inputLink.setSelectionRange(0, 0);
+    this.toasterService.success(this.resourceService.frmelmnts.lbl.linkCopied);
   }
 
 }
