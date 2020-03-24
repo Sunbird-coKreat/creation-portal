@@ -17,14 +17,15 @@
             <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
             <thead class="sb-table-header sb-table-thead-gray">
               <tr>
-                <th class="w-15 sb-sort-icon">{{ resourceService.frmelmnts.lbl.program }}</th>
-                <th *ngIf="isContributor">{{ resourceService.frmelmnts.lbl.sourcingOrganization }}</th>
+                <th class="w-20 sb-sort-icon" (click)="sort('name')">{{ resourceService.frmelmnts.lbl.program }}</th>
+                <th *ngIf="isContributor" class="w-20 sb-sort-icon" (click)="sort('sourcing_org_name')" >{{ resourceService.frmelmnts.lbl.orgName }}</th>
                 <th class="w-15">{{ resourceService.frmelmnts.lbl.contentType }}</th>
                 <th class="w-15">{{ resourceService.frmelmnts.lbl.MediumClassSubject }}</th>
                 <th *ngIf="!isContributor" class="w-10">{{ resourceService.frmelmnts.lbl.programDates }}</th>
                 <th *ngIf="activeMyProgramsMenu" class="sb-sort-icon w-10">{{ resourceService.frmelmnts.lbl.nominatedDate }}</th>
                 <th *ngIf="activeAllProgramsMenu" class="w-10">{{ resourceService.frmelmnts.lbl.programDates }}</th>
-                <th *ngIf="activeAllProgramsMenu" class="w-5">status</th>
+                <th *ngIf="activeMyProgramsMenu" class="w-5 text-center">{{ resourceService.frmelmnts.lbl.status }}</th>
+                <th class="w-5 text-center"> {{ resourceService.frmelmnts.lbl.actions }}</th>
               </tr>
             </thead>
             <tbody class="sb-table-body">
@@ -43,7 +44,7 @@
                 <td>
                   <div class="sb__ellipsis sb__ellipsis--breakAll" style="width: 200px;" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.contentType }}" popupText="{{ getProgramContentTypes(program) }}">{{ getProgramContentTypes(program) }}</div>
                 </td>
-                <td>                  
+                <td>
                   <div class="sb__ellipsis sb__ellipsis--breakAll" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.mediums }}" popupText="{{ getProgramInfo(program, 'medium') }}">{{ getProgramInfo(program, 'medium') }}</div>
                   <hr class="divider">
 
@@ -51,7 +52,7 @@
                   <hr class="divider">
                   <div class="sb__ellipsis sb__ellipsis--breakAll" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.subjects }}" popupText="{{ getProgramInfo(program, 'subject') }}">{{ getProgramInfo(program, 'subject') }}</div>
                 </td>
-                
+
                 <td *ngIf="!isContributor || activeAllProgramsMenu" class="nowrap">
                   <div class="program-timeline">
                     <div class="program-timeline-item">
@@ -98,7 +99,7 @@
                     <em class="d-block">{{ program?.contributionDate | daysToGo }}</em>
                   </div>
                 </td>
-                <td *ngIf="activeMyProgramsMenu">
+                <td *ngIf="activeMyProgramsMenu" class="text-center">
                   <span class="sb-label sb-label-table sb-label-primary-100">{{ getProgramNominationStatus(program) }}</span>
                 </td>
                 <td class="text-center">
