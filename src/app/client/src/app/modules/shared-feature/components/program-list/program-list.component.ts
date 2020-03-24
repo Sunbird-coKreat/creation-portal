@@ -58,7 +58,7 @@ export class ProgramListComponent implements OnInit {
             this.getMyProgramsForContrib('Live');
           }
         } else {
-          this.getMyProgramsForOrg();
+          this.getMyProgramsForOrg('Live');
         }
       })
     ).subscribe();
@@ -130,8 +130,8 @@ export class ProgramListComponent implements OnInit {
   /**
    * fetch the list of programs.
    */
-  private getMyProgramsForOrg() {
-    return this.programsService.getMyProgramsForOrg().subscribe((response) => {
+  private getMyProgramsForOrg(status) {
+    return this.programsService.getMyProgramsForOrg(status).subscribe((response) => {
       this.programs = _.get(response, 'result.programs');
       this.count = _.get(response, 'result.count');
     }, error => {
