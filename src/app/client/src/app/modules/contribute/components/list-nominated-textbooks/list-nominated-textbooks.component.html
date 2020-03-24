@@ -205,7 +205,12 @@
 													<div class="text">{{ resourceService?.frmelmnts?.lbl?.actions }}</div>
 													<i class="dropdown icon"></i>
 													<div class="menu" suiDropdownMenu>
-													  <div class="item" (click)="viewContribution()">Upload Content</div>
+													  <div class="item" (click)="viewContribution()"
+													  appTelemetryInteract
+                                                      [telemetryInteractEdata]="getTelemetryInteractEdata('upload-content-textbook', 'click', 'nominated-textbook')"
+                                                      [telemetryInteractObject]="telemetryInteractObject"
+                                                      [telemetryInteractCdata]="telemetryInteractCdata"
+                                                      [telemetryInteractPdata]="telemetryInteractPdata">Upload Content</div>
 													  <div class="item">Review Content</div>
 													</div>
 												</div>
@@ -236,7 +241,12 @@
 						  </h4>
 						</div>
 						<div>
-						  <button class="sb-btn sb-btn-outline-primary sb-btn-normal ml-10 " (click)="showNormalModal = true"><i
+						  <button class="sb-btn sb-btn-outline-primary sb-btn-normal ml-10 " (click)="showNormalModal = true"
+						  appTelemetryInteract
+                          [telemetryInteractEdata]="getTelemetryInteractEdata('invite-link', 'click', 'nominated-textbook')"
+                          [telemetryInteractObject]="telemetryInteractObject"
+                          [telemetryInteractCdata]="telemetryInteractCdata"
+                          [telemetryInteractPdata]="telemetryInteractPdata"><i
 							  class="plus circle icon"></i> Invite a User</button>
 						</div>
 					  </div>
@@ -295,7 +305,12 @@
     <p class="mb-8">{{ resourceService.frmelmnts.lbl.sharelink }}</p>
     <div class="ui action input fluid">
       <input name="title" readonly="" value="{{orgDetails.orgLink}}" type="text" class="" #inputLink>
-      <button class="ui basic primary button" (click)="copyLinkToClipboard(inputLink)"> {{ resourceService.frmelmnts.btn.copyLink }}
+	  <button class="ui basic primary button" (click)="copyLinkToClipboard(inputLink)"
+	  appTelemetryInteract
+        [telemetryInteractEdata]="getTelemetryInteractEdata('copy-to-clipboard', 'click', 'nominated-textbook')"
+        [telemetryInteractObject]="telemetryInteractObject"
+        [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata"> {{ resourceService.frmelmnts.btn.copyLink }}
       </button>
     </div>
   </div>

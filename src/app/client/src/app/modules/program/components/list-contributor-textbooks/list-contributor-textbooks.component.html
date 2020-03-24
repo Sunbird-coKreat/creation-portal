@@ -1,9 +1,14 @@
-<div class="sb-bg-color-primary-0 py-24" *ngIf="!showChapterList">
+<div class="sb-bg-color-primary-0 py-24" *ngIf="!showChapterList" [appTelemetryImpression]="telemetryImpression">
 	<div class="sb-bg-color-primary-0 practical-header py-16">
         <div class="d-flex flex-ai-center flex-jc-space-between practical-header__content ui container p-0">
             <div class="practical-header__title flex-basis-1">
                 <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="goBack()"
-                    type="button">
+					type="button"
+					appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('list-textbooks', 'click', 'list-nominated-textbooks')"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata">
                     <i class="icon-svg icon-svg--xxs icon-back mr-4">
                         <svg class="icon icon-svg--primary">
                             <use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
@@ -120,7 +125,12 @@
 						<dt>Name</dt>
 						<dd class="sb__ellipsis">
 							<a class="cursor-pointer text-decoration-underline sb-color-primary"
-								(click)="show=true">{{contributor?.name}} </a>
+								(click)="show=true"
+								appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('name-contributor', 'click', 'list-nominated-textbooks')"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata">{{contributor?.name}} </a>
 						</dd>
 					</dl>
 					<div class="d-flex flex-ai-center flex-jc-space-around flex-basis-1">
@@ -161,10 +171,20 @@
 					<div class="">
 						<button class="sb-btn sb-btn-normal sb-btn-secondary mr-8"
 							*ngIf="contributor?.nominationData?.status === 'Pending'"
-							(click)="updateNomination('accept')">Accept</button>
+							(click)="updateNomination('accept')"
+							appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('accept-nomination', 'click', 'list-nominated-textbooks')"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata">Accept</button>
 						<button class="sb-btn sb-btn-normal sb-btn-outline-error"
 							*ngIf="contributor?.nominationData?.status === 'Pending'"
-							(click)="showRequestChangesPopup = true">Reject</button>
+							(click)="showRequestChangesPopup = true"
+							appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('reject-nomination', 'click', 'list-nominated-textbooks')"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata">Reject</button>
 						<span
 							*ngIf="contributor?.nominationData?.status === 'Initiated' || contributor?.nominationData?.status === 'Approved' || contributor?.nominationData?.status === 'Rejected'">
 							Status: {{contributor?.nominationData?.status}}
@@ -199,11 +219,21 @@
 							<td>3</td>
 							<td data-label="Actions">
 								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
-									*ngIf="contributor?.nominationData?.status == 'Pending'" (click)="viewContribution()">View
+									*ngIf="contributor?.nominationData?.status == 'Pending'" (click)="viewContribution()"
+									appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('view-content', 'click', 'list-nominated-textbooks')"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata">View
 									Sample Content</button>
 								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
 									*ngIf="contributor?.nominationData?.status == 'Accepted'"
-									(click)="viewContribution()">View Contributions</button>
+									(click)="viewContribution()"
+									appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('view-contribution', 'click', 'list-nominated-textbooks')"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata">View Contributions</button>
 							</td>
 						</tr>
 					</tbody>
@@ -291,7 +321,12 @@
 		<div class="sb-modal-actions">
 			<button id="submitReview" type="submit" class="sb-btn sb-btn-normal"
 				[ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid}"
-				(click)="updateNomination('reject')"> Submit Review </button>
+				(click)="updateNomination('reject')"
+				appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('rejection-feedback', 'click', 'list-nominated-textbooks')"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata"> Submit Review </button>
 		</div>
 	</form>
 </sui-modal>

@@ -132,11 +132,21 @@
                   <!-- (click)="enrollAsOrg=true" -->
                   <div class="sb-field mt-4 d-flex">
                      <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-                        <input type="radio" id="Organisation" name="enrollAsOrg"  (click)="chnageEnrollStatus(true)">
+                        <input type="radio" id="Organisation" name="enrollAsOrg"  (click)="chnageEnrollStatus(true)"
+                        appTelemetryInteract
+                        [telemetryInteractEdata]="getTelemetryInteractEdata('enrol-as-org', 'click', 'enrol-contributor')"
+                        [telemetryInteractObject]="telemetryInteractObject"
+                        [telemetryInteractCdata]="telemetryInteractCdata"
+                        [telemetryInteractPdata]="telemetryInteractPdata">
                         <label for="Organisation">Yes</label>
                      </div>
                      <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-                        <input type="radio" id="individual" name="enrollAsOrg"  (click)="chnageEnrollStatus(false)">
+                        <input type="radio" id="individual" name="enrollAsOrg"  (click)="chnageEnrollStatus(false)"
+                        appTelemetryInteract
+                        [telemetryInteractEdata]="getTelemetryInteractEdata('enrol-as-individual', 'click', 'enrol-contributor')"
+                        [telemetryInteractObject]="telemetryInteractObject"
+                        [telemetryInteractCdata]="telemetryInteractCdata"
+                        [telemetryInteractPdata]="telemetryInteractPdata">
                         <label for="individual">No</label>
                      </div>
                   </div>
@@ -172,7 +182,12 @@
   <div class="sb-modal-actions">
    <!-- [disabled]="!disableSubmit" -->
     <button class="sb-btn sb-btn-normal sb-btn-primary"
-      (click)="saveUser()">
+      (click)="saveUser()"
+      appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('enrol-data-save', 'click', 'enrol-contributor')"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata">
       {{resourceService.frmelmnts.btn.submit}}
     </button>
   </div>

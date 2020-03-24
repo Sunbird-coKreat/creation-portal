@@ -1,18 +1,19 @@
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService } from '@sunbird/shared';
 import { ProgramsService, PublicDataService, UserService, FrameworkService } from '@sunbird/core';
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, AfterViewInit } from '@angular/core';
 import * as _ from 'lodash-es';
 import { tap, first } from 'rxjs/operators';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { ISessionContext } from '../../../cbse-program/interfaces';
 import * as moment from 'moment';
+import { IImpressionEventInput} from '@sunbird/telemetry';
 
 @Component({
   selector: 'app-list-nominations',
   templateUrl: './list-nominations.component.html',
   styleUrls: ['./list-nominations.component.scss']
 })
-export class ListNominationsComponent implements OnInit {
+export class ListNominationsComponent implements OnInit, AfterViewInit {
   @Input() nominations: any;
   @Input() nominationsCount: Number;
   @Output()
@@ -35,6 +36,7 @@ export class ListNominationsComponent implements OnInit {
    public grades: any;
    public selectedNomineeProfile: any;
    showNomineeProfile;
+   public telemetryImpression: IImpressionEventInput;
 
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService,
@@ -47,6 +49,33 @@ export class ListNominationsComponent implements OnInit {
   ngOnInit() {
     this.getProgramDetails();
     this.getNominationCounts();
+  }
+
+  ngAfterViewInit() {
+    const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
+    const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+    const deviceId = <HTMLInputElement>document.getElementById('deviceId');
+    const telemetryCdata = [{type: 'Program_ID', id: this.activatedRoute.snapshot.params.programId}];
+     setTimeout(() => {
+      this.telemetryImpression = {
+        context: {
+          env: this.activatedRoute.snapshot.data.telemetry.env,
+          cdata: telemetryCdata || [],
+          pdata: {
+            id: this.userService.appId,
+            ver: version,
+            pid: this.config.appConfig.TELEMETRY.PID
+          },
+          did: deviceId ? deviceId.value : ''
+        },
+        edata: {
+          type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
+          pageid: _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid'),
+          uri: this.router.url,
+          duration: this.navigationHelperService.getPageLoadTime()
+        }
+      };
+     });
   }
 
   private getNominatedTextbooksCount(nomination) {

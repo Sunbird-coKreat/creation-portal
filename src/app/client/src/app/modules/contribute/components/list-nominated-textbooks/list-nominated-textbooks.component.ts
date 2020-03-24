@@ -47,6 +47,9 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
   public roles;
   public selectedRole;
   public showNormalModal = false;
+  public telemetryInteractCdata: any;
+  public telemetryInteractPdata: any;
+  public telemetryInteractObject: any;
 
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private configService: ConfigService, private publicDataService: PublicDataService,
@@ -68,6 +71,9 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
   this.collection = collection;
   this.getNominationStatus();
   this.roles = _.get(programContext, 'config.roles');
+  this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program_ID'}];
+  this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
+  this.telemetryInteractObject = {};
   }
 
   getProgramDetails() {
@@ -297,6 +303,15 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
     document.execCommand('copy');
     inputLink.setSelectionRange(0, 0);
     this.toasterService.success(this.resourceService.frmelmnts.lbl.linkCopied);
+  }
+
+  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+    return _.omitBy({
+      id,
+      type,
+      pageid,
+      extra
+    }, _.isUndefined);
   }
 
 }

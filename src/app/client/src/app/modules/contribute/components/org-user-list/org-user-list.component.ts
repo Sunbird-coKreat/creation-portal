@@ -16,6 +16,9 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   showNormalModal;
   public telemetryImpression: IImpressionEventInput;
   private orgLink = 'https://projects.invisionapp.com/d/main/default';
+  public telemetryInteractCdata: any;
+  public telemetryInteractPdata: any;
+  public telemetryInteractObject: any;
 
   constructor(private toasterService: ToasterService, private configService: ConfigService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
@@ -31,6 +34,9 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
           'value': 'Reviewer'
       }]
     };
+  this.telemetryInteractCdata = [{id: this.userService.userProfile.rootOrgId || '', type: 'Organisation_id'}];
+  this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
+  this.telemetryInteractObject = {};
   }
 
   ngAfterViewInit() {
@@ -67,4 +73,12 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     this.toasterService.success(this.resourceService.frmelmnts.lbl.linkCopied);
   }
 
+  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+    return _.omitBy({
+      id,
+      type,
+      pageid,
+      extra
+    }, _.isUndefined);
+  }
 }

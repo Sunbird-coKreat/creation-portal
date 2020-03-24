@@ -18,7 +18,12 @@
             <thead class="sb-table-header sb-table-thead-gray">
               <tr>
                 <th class="w-20 sb-sort-icon" (click)="sort('name')">{{ resourceService.frmelmnts.lbl.program }}</th>
-                <th *ngIf="isContributor" class="w-20 sb-sort-icon" (click)="sort('sourcing_org_name')" >{{ resourceService.frmelmnts.lbl.orgName }}</th>
+                <th *ngIf="isContributor" class="w-20 sb-sort-icon" (click)="sort('sourcing_org_name')" 
+                appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('sort-program-name', 'click', 'program-list')"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService.frmelmnts.lbl.orgName }}</th>
                 <th class="w-15">{{ resourceService.frmelmnts.lbl.contentType }}</th>
                 <th class="w-15">{{ resourceService.frmelmnts.lbl.MediumClassSubject }}</th>
                 <th *ngIf="!isContributor" class="w-10">{{ resourceService.frmelmnts.lbl.programDates }}</th>
@@ -108,8 +113,18 @@
                         <div class="text">{{ resourceService.frmelmnts.lbl.actions }}</div>
                         <i class="dropdown icon"></i>
                         <div class="menu" suiDropdownMenu>
-                          <div class="item" (click)="viewDetailsBtnClicked(program)">{{ resourceService.frmelmnts.lbl.open }}</div>
-                          <div class="item" (click)="getContributionOrgUsers(program)" *ngIf="activeMyProgramsMenu && userService?.userProfile?.userRegData?.User_Org?.orgId">{{ resourceService.frmelmnts.lbl.assignRole }}</div>
+                          <div class="item" (click)="viewDetailsBtnClicked(program)"
+                          appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('view-detail', 'click', 'program-list')"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService.frmelmnts.lbl.open }}</div>
+                          <div class="item" (click)="getContributionOrgUsers(program)" *ngIf="activeMyProgramsMenu && userService?.userProfile?.userRegData?.User_Org?.orgId"
+                          appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('get-org-users', 'click', 'program-list')"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService.frmelmnts.lbl.assignRole }}</div>
                         </div>
                     </div>
                   </td>

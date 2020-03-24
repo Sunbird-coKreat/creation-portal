@@ -1,6 +1,5 @@
-
 import { ConfigService, ResourceService, ToasterService, RouterNavigationService,
-  ServerResponse } from '@sunbird/shared';
+  ServerResponse, NavigationHelperService } from '@sunbird/shared';
 import { ProgramsService, DataService, FrameworkService } from '@sunbird/core';
 import { Subscription, Subject } from 'rxjs';
 import { tap, first, map, takeUntil } from 'rxjs/operators';
@@ -12,6 +11,7 @@ import { IProgram } from './../../../core/interfaces';
 import { UserService } from '@sunbird/core';
 import { programConfigObj } from './programconfig';
 import { HttpClient } from '@angular/common/http';
+import { IImpressionEventInput, IInteractEventEdata } from '@sunbird/telemetry';
 
 @Component({
  selector: 'app-create-program',
@@ -70,6 +70,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
  gradeLevelOption = [];
  pickerMinDate = new Date(new Date().setHours(0, 0, 0, 0));
  pickerMinDateForEndDate = new Date(new Date().setHours(0, 0, 0, 0));
+ public telemetryImpression: IImpressionEventInput;
+ public telemetryInteractCdata: any;
+  public telemetryInteractPdata: any;
+  public telemetryInteractObject: any;
 
  constructor(
    public frameworkService: FrameworkService,
@@ -81,7 +85,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    activatedRoute: ActivatedRoute,
    private router: Router,
    private formBuilder: FormBuilder,
-   private httpClient: HttpClient) {
+   private httpClient: HttpClient,
+   private navigationHelperService: NavigationHelperService,
+   private configService: ConfigService) {
 
    this.sbFormBuilder = formBuilder;
 
@@ -94,9 +100,36 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    this.fetchFrameWorkDetails();
    this.getProgramContentTypes();
    //this.showTexbooklist();
+   this.telemetryInteractCdata = [];
+  this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
+  this.telemetryInteractObject = {};
  }
 
- ngAfterViewInit() { }
+ ngAfterViewInit() {
+  const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
+  const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+  const deviceId = <HTMLInputElement>document.getElementById('deviceId');
+   setTimeout(() => {
+    this.telemetryImpression = {
+      context: {
+        env: this.activatedRoute.snapshot.data.telemetry.env,
+        cdata: [],
+        pdata: {
+          id: this.userService.appId,
+          ver: version,
+          pid: this.config.appConfig.TELEMETRY.PID
+        },
+        did: deviceId ? deviceId.value : ''
+      },
+      edata: {
+        type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
+        pageid: _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid'),
+        uri: this.router.url,
+        duration: this.navigationHelperService.getPageLoadTime()
+      }
+    };
+   });
+ }
 
  fetchFrameWorkDetails() {
    this.programScope['medium'] = [];
@@ -393,6 +426,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    this.programsService.updateProgram(data).subscribe(
      (res) => { this.router.navigate(['/sourcing']) },
      (err) => this.saveProgramError(err)
-    );
-  }
+   );
+ }
+ getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+  return _.omitBy({
+    id,
+    type,
+    pageid,
+    extra
+  }, _.isUndefined);
+}
 }
