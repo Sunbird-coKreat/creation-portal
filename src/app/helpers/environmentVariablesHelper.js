@@ -38,6 +38,7 @@ let envVariables = {
   CRYPTO_ENCRYPTION_KEY: env.crypto_encryption_key || '030702bc8696b8ee2aa71b9f13e4251e',
   LOG_FINGERPRINT_DETAILS: env.sunbird_log_fingerprint_details || 'true',
   SUNBIRD_PORTAL_BASE_URL: env.sunbird_portal_base_url,
+  DOCK_CHANNEL: env.dock_channel || 'sunbird',
   sunbird_device_api: env.sunbird_device_api || 'https://staging.ntp.net.in/api/',
 
 

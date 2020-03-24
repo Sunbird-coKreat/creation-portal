@@ -201,11 +201,12 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
   }
 
   getContributionOrgUsers() {
-    const selectedProgramToAssignRoles = this.activatedRoute.snapshot.params.programId;
+    const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
+      ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
     const orgUsers = this.registryService.getContributionOrgUsers(this.userService.userProfile.userRegData.User_Org.orgId);
     this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
     this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
-    this.orgDetails.orgLink = `/contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
+    this.orgDetails.orgLink = `${baseUrl}contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
     orgUsers.subscribe(response => {
         const result = _.get(response, 'result');
         if (!result || _.isEmpty(result)) {
@@ -265,6 +266,13 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
     }, error => {
       console.log(error);
     });
+  }
+
+  copyLinkToClipboard(inputLink) {
+    inputLink.select();
+    document.execCommand('copy');
+    inputLink.setSelectionRange(0, 0);
+    this.toasterService.success(this.resourceService.frmelmnts.lbl.linkCopied);
   }
 
 }
