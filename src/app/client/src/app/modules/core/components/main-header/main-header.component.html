@@ -81,7 +81,7 @@
     <!--Computer-->
     <div class="sb-bg-color-primary sb-dock-menu-bar"
         *ngIf="(showExploreHeader || userService.loggedIn || isOffline && !showOfflineHelpCentre) && !router.url.includes('/sourcing/program')">
-        
+
         <ng-container *ngIf="programsTabActive else defaultView">
             <div class="ui container d-flex flex-ai-center mx-0">
             </div>
