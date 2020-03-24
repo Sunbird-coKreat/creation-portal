@@ -260,6 +260,9 @@ export class TelemetryService {
       cdata: eventInput.context.cdata || [],
       rollup: this.getRollUpData(this.context.userOrgDetails.organisationIds)
     };
+    if (eventInput.did) {
+      eventContextData['did'] = eventInput.did;
+    }
     return eventContextData;
   }
 

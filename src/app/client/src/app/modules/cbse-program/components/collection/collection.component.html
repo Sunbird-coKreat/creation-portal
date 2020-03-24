@@ -51,11 +51,11 @@
 		<div class="d-flex flex-ai-center flex-jc-space-between practical-header__content ui container p-0">
 
 			<div class="practical-header__title flex-basis-1">
-				<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="goBack()" type="button">
+				<!-- <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="goBack()" type="button">
 					<i class="icon-svg icon-svg--xxs icon-back mr-4">
 						<svg _ngcontent-nak-c11="" class="icon icon-svg--primary">
 							<use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
-						</svg></i> Back to Explore Programs</button>
+						</svg></i> Back to Explore Programs</button> -->
 
 				<h4 class="m-0 p-0">{{programContext.name}}
           <ng-template #popupTemplate>
@@ -140,15 +140,15 @@
         <h4 class="sb-pageSection-title six">{{programContext.name}} <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">10</span></h4>
           </div>
       <div class="sb-table-responsive">
-        <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
+        <table class="sb-table sb-table-striped sb-table-sortable sb-table-fixed">
           <thead class="sb-table-header sb-table-thead-gray">
             <tr>
-              <th class="sb-sort-icon">Textbook</th>
-              <th class="sb-sort-icon">Grade</th>
-              <th class="sb-sort-icon">Medium</th>
-              <th class="sb-sort-icon">Chapters</th>
-              <th class="sb-sort-icon">Subject</th>
-              <th class="text-center">Select</th>
+              <th class="sb-sort-icon w-8">Textbook</th>
+              <th class="sb-sort-icon w-5">{{resourceService.frmelmnts.lbl.profile.Medium}}</th>
+              <th class="sb-sort-icon w-5">{{resourceService.frmelmnts.lbl.class}}</th>
+              <th class="sb-sort-icon w-5">{{resourceService.frmelmnts.lbl.subject}}</th>
+              <th class="sb-sort-icon w-5">{{resourceService.frmelmnts.lbl.chapters}}</th>
+              <th class="text-center w-5"></th>
             </tr>
           </thead>
           <tbody class="sb-table-body">
@@ -165,13 +165,14 @@
                 <div class="sb__ellipsis">{{data.medium}}</div>
               </td>
               <td>
-                {{ data.childNodes ? data.childNodes.length : 0 }}
+                <div class="sb__ellipsis">{{data.subject}}</div>
               </td>
               <td>
-                <div class="sb__ellipsis">{{data.subject}}</div>
+                {{ data.childNodes ? data.childNodes.length : 0 }}
               </td>
               <td class="text-center">
                   <input type="checkbox" name="{{data.identifier}}" (click)="nominationChecked(data.identifier)" >
+                  <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10">Upload Sample</button>
               </td>
             </tr>
           </tbody>
