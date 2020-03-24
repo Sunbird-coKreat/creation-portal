@@ -19,12 +19,13 @@
               <tr>
                 <th class="w-15 sb-sort-icon">{{ resourceService.frmelmnts.lbl.program }}</th>
                 <th *ngIf="isContributor" class="w-10">{{ resourceService.frmelmnts.lbl.sourcingOrganization }}</th>
-                <th class="w-15">{{ resourceService.frmelmnts.lbl.contentType }}</th>
+                <th class="w-10">{{ resourceService.frmelmnts.lbl.contentType }}</th>
                 <th class="w-15">{{ resourceService.frmelmnts.lbl.MediumClassSubject }}</th>
                 <th *ngIf="!isContributor" class="w-10">{{ resourceService.frmelmnts.lbl.programDates }}</th>
                 <th *ngIf="activeMyProgramsMenu" class="sb-sort-icon w-10">{{ resourceService.frmelmnts.lbl.nominatedDate }}</th>
                 <th *ngIf="activeAllProgramsMenu" class="w-10">{{ resourceService.frmelmnts.lbl.programDates }}</th>
                 <th *ngIf="activeAllProgramsMenu" class="w-5">status</th>
+                <th class="w-5"></th>
                 <th class="w-5"></th>
               </tr>
             </thead>

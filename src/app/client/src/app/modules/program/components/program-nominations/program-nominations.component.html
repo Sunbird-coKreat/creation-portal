@@ -30,7 +30,14 @@
                         </div>
                     </ng-template>
                 </h4>
-                <p class="fs-0-785 font-weight-normal">{{ programDetails?.description }} </p>
+                <p class="fs-0-785 font-weight-normal pr-10">{{ programDetails?.description }} </p>
+            </div>
+            <div class="sb-meta-data-container sb-meta-data-column">
+                <label class="width-100">Content Type(s)</label>
+                <div class="flex">
+                       <span> Focus Spot,</span>
+                       <span> Pedagogy Flow</span>
+                </div>
             </div>
             <div class="sb-meta-data-container sb-meta-data-column">
                 <label class="width-100">{{ resourceService.frmelmnts.lbl.nominations }} </label>
@@ -292,13 +299,13 @@
             </div>
             <div class="sb-pageSection-content mt-12" *ngIf="nominations.length > 0">
                 <div class="sb-table-responsive">
-                    <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
+                    <table class="sb-table sb-table-striped  sb-table-sortable sb-table-fixed">
                         <thead class="sb-table-header sb-table-thead-gray">
                             <tr>
-                                <th class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.contributorName }}</th>
-                                <th class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.type }}</th>
-                                <th class="sb-sort-icon">{{ resourceService.frmelmnts.lbl.textbooks }}</th>
-                                <th>
+                                <th class="sb-sort-icon w-10">{{ resourceService.frmelmnts.lbl.contributorName }}</th>
+                                <th class="sb-sort-icon w-10">{{ resourceService.frmelmnts.lbl.type }}</th>
+                                <th class="sb-sort-icon w-10">{{ resourceService.frmelmnts.lbl.textbooks }}</th>
+                                <th class="w-10">
                                     <span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
                                         <div class="text">{{ resourceService.frmelmnts.lbl.status }}</div>
                                         <i class="filter icon"></i>
@@ -312,7 +319,7 @@
                                         </div>
                                     </span>
                                 </th>
-                                <th class="text-center"></th>
+                                <th class="text-center w-10"></th>
                             </tr>
                         </thead>
                         <tbody class="sb-table-body">

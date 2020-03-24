@@ -22,7 +22,7 @@
 									<label class="d-block fsmall font-weight-normal mb-0">{{ mediums }}</label>
 								</div>
 								<hr />
-								<div class="header"><strong>{{ resourceService.frmelmnts.lbl.grades }}</strong></div>
+								<div class="header"><strong>{{ resourceService.frmelmnts.lbl.class }}</strong></div>
 								<div class="content">
 									<label class="d-block fsmall font-weight-normal mb-0">{{ grades }}</label>
 								</div>
@@ -186,38 +186,33 @@
 								<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
 									<thead class="sb-table-header sb-table-thead-gray">
 										<tr>
-											<th class="w-5 text-center">{{ resourceService.frmelmnts.lbl.srNo }}</th>
-                							<th class="w-5 text-center"></th>
-											<th class="sb-sort-icon">Textbook</th>
-											<th class="sb-sort-icon">Grade</th>
-											<th class="sb-sort-icon">Medium</th>
-											<th>Subjects</th>
-											<th>Chapters</th>
+                			<th class="w-5 text-center"></th>
+											<th class="sb-sort-icon">{{resourceService.frmelmnts.lbl.textbook}}</th>
+											<th class="sb-sort-icon">{{resourceService.frmelmnts.lbl.medium}}</th>
+											<th class="sb-sort-icon">{{resourceService.frmelmnts.lbl.Class}}</th>
+											<th>{{resourceService.frmelmnts.lbl.subject}}</th>
+											<th>{{resourceService.frmelmnts.lbl.chapters}}</th>
 										</tr>
 									</thead>
 									<tbody class="sb-table-body">
 										<tr *ngFor="let contributorTextbook of contributorTextbooks; let i = index;">
-											<td class="text-center">
-												{{ i + 1 }}
-											  </td>
-											<td class="text-center">
-												<div class="ui dropdown sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary ml-auto sb-btn-dropdown" suiDropdown autoClose="itemClick">
-													<div class="text">{{ resourceService.frmelmnts.lbl.actions }}</div>
-													<i class="dropdown icon"></i>
-													<div class="menu" suiDropdownMenu>
-													  <div class="item" (click)="viewContribution()">Upload Content</div>
-													  <div class="item">Review Content</div>
-													</div>
-												</div>
-											</td>
 											<td class="hand">
 												{{contributorTextbook.name}}
 											</td>
-											<td>{{contributorTextbook.gradeLevel}}</td>
 											<td>{{contributorTextbook.medium}}</td>
+											<td>{{contributorTextbook.gradeLevel}}</td>
 											<td>{{contributorTextbook.subject}}</td>
 											<td>5</td>
-
+											<td class="text-center">
+													<div class="ui dropdown sb-btn sb-btn-normal  sb-btn-outline-primary ml-auto sb-btn-dropdown" suiDropdown autoClose="itemClick">
+														<div class="text">{{ resourceService.frmelmnts.lbl.actions }}</div>
+														<i class="dropdown icon"></i>
+														<div class="menu" suiDropdownMenu>
+															<div class="item" (click)="viewContribution()">Upload Content</div>
+															<div class="item">Review Content</div>
+														</div>
+													</div>
+												</td>
 										</tr>
 									</tbody>
 								</table>
