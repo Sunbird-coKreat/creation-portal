@@ -1,7 +1,7 @@
 <div class="ui container">
 	<div class="sb-pageSection mt-24 pb-48">
 		<div class="sb-pageSection-header">
-			<h4 class="sb-pageSection-title">Create a Program</h4>
+			<h4 class="sb-pageSection-title">{{resource.frmelmnts.lbl.createNewProgram}}</h4>
 		</div>
 
 		<div class="pb-8">
@@ -31,19 +31,19 @@
 							<div class="twelve wide column">
 								<div class="required field">
 										<label class="d-block">{{resource.frmelmnts.lbl.name}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupText="Name"></i>
+											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupText="{{resource.frmelmnts.lbl.programNameHint}}"></i>
 										</label>
 										<div class="sb-field">
 										<input autofocus="" formControlName="name"
 											class="sb-form-control ng-pristine ng-valid ng-touched" type="text"
-											placeholder="Name">
+											placeholder="{{resource.frmelmnts.lbl.programNameHint}}">
 										<div class="ui pointing red basic label below "
 											*ngIf="createProgramForm.controls['name'].errors && createProgramForm.controls['name'].errors.required && (!createProgramForm.controls['name'].pristine || formIsInvalid)">
-											This field is required
+											{{ resource.frmelmnts.lbl.programNameRequired }}
 										</div>
 										<div class="ui pointing red basic label below"
 											*ngIf="createProgramForm.controls['name'].errors && createProgramForm.controls['name'].errors.maxlength && (!createProgramForm.controls['name'].pristine || formIsInvalid)">
-												{{resource.frmelmnts.lbl.characterLengthGreaterThousand}}
+												{{resource.frmelmnts.lbl.characterLengthGreaterHundred}}
 											</div>
 										<div *ngIf="createProgramForm.value.name.length" class="pull-right fsmall">
 											{{createProgramForm.value.name.length}} / 100</div>
@@ -53,16 +53,15 @@
 							<div class="twelve wide column">
 								<div class="required field ">
 									<label class="d-block">{{resource.frmelmnts.lbl.description}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Description"></i>
+											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resource.frmelmnts.lbl.programDescriptionHint}}"></i>
 									</label>
 									<div class="sb-field relative">
 										<textarea formControlName="description" type="text"
-											class="wmd-input width-100 sb-form-control" placeholder="Add description"
-											name="" required></textarea>
-											<span class="characters-left">{{resource.frmelmnts.lbl.thousandCharacterLeft}}</span>
+											class="wmd-input width-100 sb-form-control" placeholder="{{resource.frmelmnts.lbl.programDescriptionHint}}"
+											name="description" required></textarea>
 										<div class="ui pointing red basic label below "
 											*ngIf="createProgramForm.controls['description'].errors && createProgramForm.controls['description'].errors.required && (!createProgramForm.controls['description'].pristine || formIsInvalid)">
-											This field is required
+											{{ resource.frmelmnts.lbl.programDescriptionRequired }}
 										</div>
 										<div class="ui pointing red basic label below"
 											*ngIf="createProgramForm.controls['description'].errors && createProgramForm.controls['description'].errors.maxlength && (!createProgramForm.controls['description'].pristine || formIsInvalid)">
@@ -78,7 +77,7 @@
 							<div class="twelve wide tablet three wide computer column">
 								<div class="required field">
 									<label class="d-block">{{resource.frmelmnts.lbl.nominationEndDate}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Nomination End Date"></i>
+											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resource.frmelmnts.lbl.programNominationEnddateHint}}"></i>
 									</label>
 									<div class="ui read-only calendar mb-10 sb-field">
 										<div class="ui input right icon">
@@ -88,7 +87,7 @@
 										</div>
 										<div class="ui pointing red basic label below "
 											*ngIf="createProgramForm.controls['nomination_enddate'].errors && createProgramForm.controls['nomination_enddate'].errors.required && (!createProgramForm.controls['nomination_enddate'].pristine || formIsInvalid)">
-											This field is required
+											{{ resource.frmelmnts.lbl.programNominationEnddateRequired }}
 										</div>
 									</div>
 								</div>
@@ -96,7 +95,7 @@
 							<div class="twelve wide tablet three wide computer column">
 								<div class="field">
 									<label class="d-block">{{resource.frmelmnts.lbl.nominationShortlistingDate}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Nomination Shortlisting Date"></i>
+											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resource.frmelmnts.lbl.programShortlistingEnddateHint}}"></i>
 									</label>
 									<div class="ui read-only calendar mb-10">
 										<div class="ui input right icon">
@@ -112,7 +111,7 @@
 							<div class="twelve wide tablet three wide computer column">
 								<div class="required field">
 									<label class="d-block">{{resource.frmelmnts.lbl.contributionEndDate}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Contribution End Date"></i>
+											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resource.frmelmnts.lbl.programContributionEnddateHint}}"></i>
 									</label>
 									<div class="ui read-only calendar mb-10">
 										<div class="ui input right icon">
@@ -123,7 +122,7 @@
 										</div>
 										<div class="ui pointing red basic label below "
 											*ngIf="createProgramForm.controls['content_submission_enddate'].errors && createProgramForm.controls['content_submission_enddate'].errors.required && (!createProgramForm.controls['content_submission_enddate'].pristine || formIsInvalid)">
-											This field is required
+											{{ resource.frmelmnts.lbl.programContributionEndDateRequired }}
 										</div>
 									</div>
 								</div>
@@ -132,7 +131,7 @@
 							<div class="three wide column">
 								<div class="required field">
 									<label class="d-block">{{resource.frmelmnts.lbl.programEndDate}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Program End Date"></i>
+											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resource.frmelmnts.lbl.programEnddateHint}}"></i>
 									</label>
 									<div class="ui read-only calendasr mb-10">
 										<div class="ui input right icon">
@@ -142,7 +141,7 @@
 										</div>
 										<div class="ui pointing red basic label below "
 											*ngIf="createProgramForm.controls['program_end_date'].errors && createProgramForm.controls['program_end_date'].errors.required && (!createProgramForm.controls['program_end_date'].pristine || formIsInvalid)">
-											This field is required
+											{{ resource.frmelmnts.lbl.programEndDateRequired }}
 										</div>
 									</div>
 								</div>
@@ -150,7 +149,7 @@
 							<div class="twelve wide column">
 								<div class="field">
 									<label class="d-block">{{resource.frmelmnts.lbl.contentType}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Purpose"></i>
+											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Content Type(s)"></i>
 									</label>
 									<sui-multi-select class="selection" labelField="name" [hasLabels]="true"
 										formControlName="content_types" [options]="programScope.purpose"
@@ -171,12 +170,12 @@
 							</div-->
 							<div class="twelve wide column">
 								<div class="field">
-									<label class="d-block">{{resource.frmelmnts.lbl.rewardsGiven}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Rewards Given"></i>
+									<label class="d-block">{{resource.frmelmnts.lbl.recongnitionToContributors}}
+											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resource.frmelmnts.lbl.programRecognitionHint}}"></i>
 									</label>
 									<div class="sb-field relative">
 										<textarea type="text" formControlName="rewards" class="wmd-input width-100 sb-form-control"
-											placeholder="Add description" name=""></textarea>
+											placeholder="{{resource.frmelmnts.lbl.programRecognitionHint}}" name=""></textarea>
 										<!--div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['rewards'].errors && createProgramForm.controls['rewards'].errors.required && (!createProgramForm.controls['rewards'].pristine || formIsInvalid)">
 										{{resource?.messages?.stmsg?.m0105}}
 										</div>
@@ -195,11 +194,11 @@
 						<div class="ui grid">
 							<div class="three wide column">
 								<div class="field">
-									<label class="d-block">{{resource.frmelmnts.lbl.selectMedium}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Select Medium"></i>
+									<label class="d-block">{{resource.frmelmnts.lbl.medium}}
+											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resource.frmelmnts.lbl.selectMedium}}"></i>
 									</label>
 									<sui-multi-select
-										placeholder="{{resource?.frmelmnts?.lbl?.profile?.selectMedium}}"
+										placeholder="{{resource.frmelmnts.lbl.selectMedium}}"
 										class="selection" formControlName="medium" [options]="programScope['medium']"
 										[isDisabled]="!programScope['medium']" (ngModelChange)="onMediumChange()"
 										labelField="name" #mediums>
@@ -214,10 +213,12 @@
 							</div>
 							<div class="three wide column">
 								<div class="field">
-									<label class="d-block"> {{resource.frmelmnts.lbl.gradeClass}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Grade / Class"></i>
+									<label class="d-block"> {{resource.frmelmnts.lbl.Class}}
+											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resource.frmelmnts.lbl.selectGrade}}"></i>
 										</label>
-									<sui-multi-select class="selection" formControlName="gradeLevel" labelField="name"
+									<sui-multi-select
+										placeholder="{{resource.frmelmnts.lbl.selectGrade}}"
+										class="selection" formControlName="gradeLevel" labelField="name"
 										(ngModelChange)="onClassChange()" [options]="programScope['gradeLevel']"
 										 #graveLevels>
 										<sui-select-option *ngFor="let gradeLevel of graveLevels.filteredOptions"
@@ -232,9 +233,11 @@
 							<div class="three wide column">
 								<div class="field">
 									<label class="d-block"> {{resource.frmelmnts.lbl.subject}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Subject"></i>
+											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resource.frmelmnts.lbl.selectSubject}}"></i>
 									</label>
-									<sui-multi-select class="selection" formControlName="subject" labelField="name"
+									<sui-multi-select
+										placeholder="{{resource.frmelmnts.lbl.selectSubject}}"
+										class="selection" formControlName="subject" labelField="name"
 										[hasLabels]="true" [options]="programScope['subject']" valueField="name"
 										#subjects>
 										<sui-select-option *ngFor="let subject of subjects.filteredOptions"
@@ -262,7 +265,7 @@
 					<div class="ui grid">
 						<div class="seven wide column" [appTelemetryStart]="telemetryStart">
 							<div class="sb-table-responsive">
-								<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable"
+								<table class="sb-table sb-table-striped sb-table-sortable"
 									*ngIf="showTextBookSelector">
 									<thead class="sb-table-header sb-table-thead-gray d-block">
 										<tr>
@@ -274,10 +277,10 @@
 												</div>
 											</th>
 											<th class="sb-sort-icon w-5">{{resource.frmelmnts.lbl.title}}</th>
-											<th class="sb-sort-icon w-10">{{resource.frmelmnts.lbl.grade}}</th>
 											<th class="sb-sort-icon w-5">{{resource.frmelmnts.lbl.medium}}</th>
-											<th class="w-5">{{resource.frmelmnts.lbl.chapters}}</th>
+											<th class="sb-sort-icon w-10">{{resource.frmelmnts.lbl.class}}</th>
 											<th class="sb-sort-icon w-5">{{resource.frmelmnts.lbl.subject}}</th>
+											<th class="w-5">{{resource.frmelmnts.lbl.chapters}}</th>
 										</tr>
 									</thead>
 									<tbody class="sb-table-body d-block w-100 o-y-auto max-height">
@@ -297,21 +300,21 @@
 												</div>
 											</td>
 											<td>
+												<div>
+													{{data.medium}}
+												</div>
+											</td>
+											<td>
 												<div class="sb__ellipsis sb__ellipsis--three">
 													{{data.gradeLevel}}
 												</div>
 											</td>
 											<td>
 												<div>
-													{{data.medium}}
-												</div>
-											</td>
-											<td>{{ data.childNodes ? data.childNodes.length : 0 }}</td>
-											<td>
-												<div>
 													{{data.subject}}
 												</div>
 											</td>
+											<td>{{ data.childNodes ? data.childNodes.length : 0 }}</td>
 										</tr>
 									</tbody>
 								</table>
@@ -320,7 +323,7 @@
 						<div class="five wide column">
 							<div class="sb-bg-white b-1-100 br-4 o-y-auto fs-0-92">
 								<h5 class="p-10">
-									<span class="p-10 font-weight-bold">{{tempCollections.length}} textbooks added</span>
+									<span class="p-10 font-weight-bold">{{tempCollections.length + ' ' + resource.frmelmnts.lbl.textbooksAdded}}</span>
 									<hr>
 								</h5>
 								<div class="o-y-auto max-height">
@@ -362,7 +365,7 @@
 			<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-default mr-10"
 				(click)="navigateTo(1)">{{resource.frmelmnts.btn.previous}}</button>
 			<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary"
-				(click)="updateProgramCollection()">{{resource.frmelmnts.btn.saveAndClose}}</button>
+				(click)="updateProgramCollection()">{{resource.frmelmnts.btn.createProgram}}</button>
 		</div>
 	</div>
 </div>

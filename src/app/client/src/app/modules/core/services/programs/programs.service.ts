@@ -4,8 +4,7 @@ import { OrgDetailsService } from './../org-details/org-details.service';
 import { FrameworkService } from './../framework/framework.service';
 import { ExtPluginService } from './../ext-plugin/ext-plugin.service';
 import { PublicDataService } from './../public-data/public-data.service';
-import { ConfigService, ServerResponse, ToasterService, ResourceService } from '@sunbird/shared';
-// import { LearnerService } from '@sunbird/core';
+import { ConfigService, ServerResponse, ToasterService, ResourceService, HttpOptions } from '@sunbird/shared';
 import { Injectable } from '@angular/core';
 import { UserService } from '../user/user.service';
 import { combineLatest, of, iif, Observable, BehaviorSubject, throwError, merge } from 'rxjs';
@@ -85,17 +84,31 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.API_URL(req);
   }
 
-   /**
+  /**
    * makes api call to get the textbooks for program
    */
-  getProgramCollection(request): Observable<ServerResponse> {
+  getCollectionList(request): Observable<ServerResponse> {
+    return this.http.post('learner/composite/v1/search', request).pipe(
+      mergeMap((data: ServerResponse) => {
+        if (data.responseCode !== 'OK') {
+          return throwError(data);
+        }
+        return of(data);
+      }));
+  }
+
+  /**
+   * makes api call to get the textbooks for program
+   */
+  updateProgramCollection(request): Observable<ServerResponse> {
+
     const req = {
-      url: `${this.config.urlConFig.URLS.COMPOSITE.SEARCH}`,
+      url: 'program/v1/collection/link',
       data: {
         request
       }
     };
-    console.log(req);
+
     return this.API_URL(req);
   }
 
@@ -140,13 +153,14 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * makes api call to get list of programs from ext framework Service
    */
-  getMyProgramsForOrg(): Observable<ServerResponse> {
+  getMyProgramsForOrg(status): Observable<ServerResponse> {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
       data: {
         request: {
           filters: {
-            rootorg_id: _.get(this.userService, 'userProfile.rootOrg.rootOrgId')
+            rootorg_id: _.get(this.userService, 'userProfile.rootOrg.rootOrgId'),
+            status: status
           }
         }
       }
