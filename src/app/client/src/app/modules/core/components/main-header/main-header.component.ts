@@ -1,5 +1,5 @@
 import {filter, first, map} from 'rxjs/operators';
-import { UserService, PermissionService, TenantService, OrgDetailsService, FormService } from './../../services';
+import { UserService, PermissionService, TenantService, OrgDetailsService, FormService, ProgramsService} from './../../services';
 import { Component, OnInit, ChangeDetectorRef, Input } from '@angular/core';
 import { ConfigService, ResourceService, IUserProfile, IUserData } from '@sunbird/shared';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
@@ -75,7 +75,8 @@ export class MainHeaderComponent implements OnInit {
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
     public orgDetailsService: OrgDetailsService, private _cacheService: CacheService, public formService: FormService,
-    public activatedRoute: ActivatedRoute, private cacheService: CacheService, private cdr: ChangeDetectorRef) {
+    public activatedRoute: ActivatedRoute, private cacheService: CacheService, private cdr: ChangeDetectorRef,
+    public programsService: ProgramsService) {
       try {
         this.exploreButtonVisibility = (<HTMLInputElement>document.getElementById('exploreButtonVisibility')).value;
       } catch (error) {
