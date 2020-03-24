@@ -52,7 +52,8 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
     private configService: ConfigService, private publicDataService: PublicDataService,
   private activatedRoute: ActivatedRoute, private router: Router, public programStageService: ProgramStageService,
   public toasterService: ToasterService, private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
-  public frameworkService: FrameworkService, public userService: UserService, public registryService: RegistryService) {
+  public frameworkService: FrameworkService, public userService: UserService, public registryService: RegistryService,
+  public activeRoute: ActivatedRoute) {
     this.programId = this.activatedRoute.snapshot.params.programId;
    }
 
@@ -136,7 +137,30 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-
+    const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
+    const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+    const deviceId = <HTMLInputElement>document.getElementById('deviceId');
+    const telemetryCdata = [{ 'type': 'Program_ID', 'id': this.activatedRoute.snapshot.params.programId }];
+     setTimeout(() => {
+      this.telemetryImpression = {
+        context: {
+          env: this.activeRoute.snapshot.data.telemetry.env,
+          cdata: telemetryCdata,
+          pdata: {
+            id: this.userService.appId,
+            ver: version,
+            pid: this.configService.appConfig.TELEMETRY.PID
+          },
+          did: deviceId ? deviceId.value : ''
+        },
+        edata: {
+          type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
+          pageid: _.get(this.activeRoute, 'snapshot.data.telemetry.pageid'),
+          uri: this.router.url,
+          duration: this.navigationHelperService.getPageLoadTime()
+        }
+      };
+     });
   }
 
   viewContribution() {

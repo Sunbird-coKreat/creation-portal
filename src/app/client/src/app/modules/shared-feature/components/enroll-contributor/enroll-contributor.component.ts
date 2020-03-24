@@ -53,20 +53,21 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-    const telemetryCdata = [{ 'type': 'enrol', 'id': 'contributor' }];
+    const deviceId = <HTMLInputElement>document.getElementById('deviceId');
     setTimeout(() => {
       this.telemetryImpression = {
         context: {
-          env: this.activeRoute.snapshot.data.telemetry.env,
-          cdata: telemetryCdata || [],
+          env: 'creation-portal',
+          cdata: [],
           pdata: {
             id: this.userService.appId,
             ver: version,
             pid: this.configService.appConfig.TELEMETRY.PID
-          }
+          },
+          did: deviceId ? deviceId.value : ''
         },
         edata: {
-          type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
+          type: 'create',
           pageid: this.telemetryPageId,
           uri: this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
