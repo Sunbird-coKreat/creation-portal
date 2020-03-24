@@ -17,8 +17,8 @@
             <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
             <thead class="sb-table-header sb-table-thead-gray">
               <tr>
-                <th class="w-20 sb-sort-icon">{{ resourceService.frmelmnts.lbl.program }}</th>
-                <th *ngIf="isContributor">{{ resourceService.frmelmnts.lbl.orgName }}</th>
+                <th class="w-20 sb-sort-up-icon" (click)="sort('name')">{{ resourceService.frmelmnts.lbl.program }}</th>
+                <th *ngIf="isContributor" class="w-20 sb-sort-icon" (click)="sort('sourcing_org_name')" >{{ resourceService.frmelmnts.lbl.orgName }}</th>
                 <th class="w-15">{{ resourceService.frmelmnts.lbl.contentType }}</th>
                 <th class="w-15">{{ resourceService.frmelmnts.lbl.MediumClassSubject }}</th>
                 <th *ngIf="!isContributor">{{ resourceService.frmelmnts.lbl.programDates }}</th>
