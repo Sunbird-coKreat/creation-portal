@@ -91,7 +91,7 @@
             <div class="ui container d-flex flex-ai-center mx-0 sb-dock-menu">
                 <!-- <a routerLink="contribute/dashboard" *ngIf="this.router.url.includes('/contribute')" [class.active]="this.router.isActive('/contribute/dashboard', true)">{{ resourceService.frmelmnts.lnk.dashboard }}</a> -->
                     <a routerLink="sourcing" *ngIf="this.router.url.includes('/sourcing')" [class.active]="this.router.isActive('/sourcing', true)">{{ resourceService.frmelmnts.lbl.myPrograms }}</a>
-                    <a routerLink="contribute" *ngIf="this.router.url.includes('/contribute')"  [class.active]="this.router.isActive('/contribute', true)"><span class="sb-color-white">{{ resourceService.frmelmnts.lbl.allPrograms }}</span></a>
+                    <a routerLink="contribute" *ngIf="this.router.url.includes('/contribute') && this.programsService.checkforshowAllPrograms == 1"  [class.active]="this.router.isActive('/contribute', true)"><span class="sb-color-white">{{ resourceService.frmelmnts.lbl.allPrograms }}</span></a>
                     <a routerLink="contribute/myenrollprograms" *ngIf="this.router.url.includes('/contribute')" [class.active]="this.router.isActive('/contribute/myenrollprograms', true)"><span class="sb-color-white">{{ resourceService.frmelmnts.lbl.myPrograms }}</span></a>
                     <a routerLink="contribute/orglist" *ngIf="this.router.url.includes('/contribute')" [class.active]="this.router.isActive('/contribute/orglist', true)">{{ resourceService.frmelmnts.lbl.manageUsers }}</a>
                 <!--QR Button-->
