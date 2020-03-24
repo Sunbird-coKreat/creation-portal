@@ -1,3 +1,4 @@
+
 import { ConfigService, ResourceService, ToasterService, RouterNavigationService,
   ServerResponse } from '@sunbird/shared';
 import { ProgramsService, DataService, FrameworkService } from '@sunbird/core';
@@ -392,6 +393,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    this.programsService.updateProgram(data).subscribe(
      (res) => { this.router.navigate(['/sourcing']) },
      (err) => this.saveProgramError(err)
-   );
- }
+    );
+  }
 }
