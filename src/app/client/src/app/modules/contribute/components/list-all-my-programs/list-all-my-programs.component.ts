@@ -1,7 +1,7 @@
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
 import { Observable, of } from 'rxjs';
 import { ResourceService, ConfigService, ServerResponse, NavigationHelperService } from '@sunbird/shared';
-import { ProgramsService, PublicDataService } from '@sunbird/core';
+import { ProgramsService, PublicDataService, UserService } from '@sunbird/core';
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { map, catchError, retry } from 'rxjs/operators';
 import * as _ from 'lodash-es';
@@ -18,8 +18,8 @@ export class ListAllMyProgramsComponent implements OnInit, AfterViewInit {
   public nominationStatus = 'Nominated'
   public telemetryImpression: IImpressionEventInput;
 
-  constructor(private programsService: ProgramsService, public resourceService: ResourceService,
-    private config: ConfigService, private publicDataService: PublicDataService,
+  constructor(private programsService: ProgramsService, public resourceService: ResourceService, public activeRoute: ActivatedRoute,
+    private config: ConfigService, private publicDataService: PublicDataService, public userService: UserService,
     private activatedRoute: ActivatedRoute, private router: Router, private navigationHelperService: NavigationHelperService) { }
 
   ngOnInit() {
@@ -78,20 +78,29 @@ export class ListAllMyProgramsComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    setTimeout(() => {
+    const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
+    const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+    const deviceId = <HTMLInputElement>document.getElementById('deviceId');
+     setTimeout(() => {
       this.telemetryImpression = {
         context: {
-          env: this.activatedRoute.snapshot.data.telemetry.env
+          env: this.activeRoute.snapshot.data.telemetry.env,
+          cdata: [],
+          pdata: {
+            id: this.userService.appId,
+            ver: version,
+            pid: this.config.appConfig.TELEMETRY.PID
+          },
+          did: deviceId ? deviceId.value : ''
         },
         edata: {
-          type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
-          pageid: _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid'),
+          type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
+          pageid: _.get(this.activeRoute, 'snapshot.data.telemetry.pageid'),
           uri: this.router.url,
-          subtype: _.get(this.activatedRoute, 'snapshot.data.telemetry.subtype'),
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
-    });
+     });
   }
 
   public getTelemetryInteractEdata(id: string): IInteractEventEdata {

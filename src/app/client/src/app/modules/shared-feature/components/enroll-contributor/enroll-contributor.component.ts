@@ -1,13 +1,13 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild, AfterViewInit } from '@angular/core';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import * as _ from 'lodash-es';
 import { ProgramsService, UserService, FrameworkService, EnrollContributorService} from '@sunbird/core';
 import { first, takeUntil, switchMap, catchError } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Subject, of, throwError } from 'rxjs';
-import { ToasterService, ResourceService } from '@sunbird/shared';
+import { ToasterService, ResourceService, ConfigService, NavigationHelperService } from '@sunbird/shared';
 import { DatePipe } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-enroll-contributor',
@@ -15,7 +15,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./enroll-contributor.component.scss'],
   providers: [DatePipe]
 })
-export class EnrollContributorComponent implements OnInit {
+export class EnrollContributorComponent implements OnInit, AfterViewInit {
   public unsubscribe = new Subject<void>();
   public enrollAsOrg = false;
   public enrollDetails: any = {};
@@ -25,20 +25,21 @@ export class EnrollContributorComponent implements OnInit {
   frameworkdetails;
   formIsInvalid = false;
   contentType = { };
-
+  telemetryImpression: any;
   options;
   disableSubmit = false;
   public contributeForm: FormGroup;
   public mapUserId: string;
   public mapOrgId: string;
   public frameworkFetched = false;
+  public telemetryPageId = 'enroll-contributor';
   @Output() close = new EventEmitter<any>();
 
   constructor(private programsService: ProgramsService, private tosterService: ToasterService,
-    public userService: UserService, public frameworkService: FrameworkService,
-    public toasterService: ToasterService, public formBuilder: FormBuilder,
+    public userService: UserService, public frameworkService: FrameworkService, private configService: ConfigService,
+    public toasterService: ToasterService, public formBuilder: FormBuilder, private navigationHelperService: NavigationHelperService,
     public http: HttpClient, public enrollContributorService: EnrollContributorService, public router: Router,
-    public resourceService: ResourceService, private datePipe: DatePipe  ) {
+    public resourceService: ResourceService, private datePipe: DatePipe, public activeRoute: ActivatedRoute  ) {
   }
 
   ngOnInit(): void {
@@ -47,6 +48,32 @@ export class EnrollContributorComponent implements OnInit {
       this.getProgramContentTypes();
       this.enrolledDate = new Date();
       this.enrolledDate = this.datePipe.transform(this.enrolledDate, 'yyyy-MM-dd');
+  }
+
+  ngAfterViewInit() {
+    const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
+    const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+    const deviceId = <HTMLInputElement>document.getElementById('deviceId');
+    setTimeout(() => {
+      this.telemetryImpression = {
+        context: {
+          env: 'creation-portal',
+          cdata: [],
+          pdata: {
+            id: this.userService.appId,
+            ver: version,
+            pid: this.configService.appConfig.TELEMETRY.PID
+          },
+          did: deviceId ? deviceId.value : ''
+        },
+        edata: {
+          type: 'create',
+          pageid: this.telemetryPageId,
+          uri: this.router.url,
+          duration: this.navigationHelperService.getPageLoadTime()
+        }
+      };
+    });
   }
 
   fetchFrameWorkDetails() {
