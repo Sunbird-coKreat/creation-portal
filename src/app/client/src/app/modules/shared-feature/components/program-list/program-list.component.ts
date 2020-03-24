@@ -73,77 +73,54 @@ export class ProgramListComponent implements OnInit {
    * fetch the list of programs.
    */
   private getAllProgramsForContrib(type, status) {
-    // return this.programsService.getAllProgramsByType(type, status).subscribe(
-    //   response => {
-    //     this.programs = _.get(response, 'result.programs');
-    //     this.count = _.get(response, 'result.count');
-    //   }
-    // );
-    return this.programsService.getAllProgramsByType(type).subscribe(
+    return this.programsService.getAllProgramsByType(type, status).subscribe(
       response => {
         this.programs = _.get(response, 'result.programs');
-        //this.getMyProgramsForContrib('Live');
-        if (this.programs.length)
-        {
-           let program = this.filterProgramByDate(this.programs)
+        if (this.programs.length) {
+           const program = this.filterProgramByDate(this.programs);
            this.count = _.get(response, 'result.count');
            this.programs = program;
-           this.sortPrograms = this.programs;     
+           this.sortPrograms = this.programs;
         }
-       
       }
     );
   }
 
-  filterProgramByDate(programs)
-  {
-    let todayDate = new Date();
-    let Dates = this.datePipe.transform(todayDate, 'yyyy-MM-dd');
+  filterProgramByDate(programs) {
+    const todayDate = new Date();
+    const dates = this.datePipe.transform(todayDate, 'yyyy-MM-dd');
     const filteredProgram = [];
     _.forEach(programs, (program) => {
-      console.log(program)
-      // if (program.length) {
-          let nominationEndDate = this.datePipe.transform(program.nomination_enddate, 'yyyy-MM-dd');
-          if (nominationEndDate >= Dates )
-          {
-            filteredProgram.push(program);
-          }
-     // }
+      const nominationEndDate = this.datePipe.transform(program.nomination_enddate, 'yyyy-MM-dd');
+      if (nominationEndDate >= dates ) {
+        filteredProgram.push(program);
+      }
     });
     return filteredProgram;
   }
 
   sort(colName) {
-    if(this.direction === 'asc')
-    {
+    if (this.direction === 'asc'){
       this.programs =  this.sortPrograms.sort((a,b) => 0 - (a[colName] > b[colName] ? -1 : 1));
-      //this.programs =  this.programs.sort((a, b) => a[colName] > b[colName] ? 1 : a[colName] > b[colName] ? -1 : 0)
       this.direction = 'dsc';
-    }
-    else
-    {
-      console.log("Desending is executed")
-      //this.programs = this.programs.sort((a,b) => 0 - (a[colName] > b[colName] ? 1 : -1));
+    } else {
       this.programs =  this.sortPrograms.sort((a, b) => a[colName] < b[colName] ? 1 : a[colName] > b[colName] ? -1 : 0)
       this.direction = 'asc';
     }
-   
   }
 
   /**
    * fetch the list of programs.
-   *///status
+   */
   private getMyProgramsForContrib(status) {
-    return this.programsService.getMyProgramsForContrib().subscribe((response) => {
+    return this.programsService.getMyProgramsForContrib(status).subscribe((response) => {
       const programs  = [];
       _.map(_.get(response, 'result.programs'), (nomination) => {
-        console.log(nomination)
         nomination.program.contributionDate = nomination.createdon;
         nomination.program.nomination_status = nomination.status;
         nomination.program.nominated_collection_ids = nomination.collection_ids;
         programs.push(nomination.program);
       });
-      console.log(programs)
       this.programs = programs;
       this.enrollPrograms = programs;
       this.count = _.get(response, 'result.count');
