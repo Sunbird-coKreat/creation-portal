@@ -278,7 +278,6 @@ export class UserService {
 
   openSaberRegistrySearch() {
     this._userProfile['userRegData'] = {};
-    this.userRegDataFetChed = true;
     const option = {
       url: 'reg/search',
       data: {
