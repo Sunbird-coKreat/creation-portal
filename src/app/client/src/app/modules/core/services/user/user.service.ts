@@ -313,25 +313,24 @@ export class UserService {
     }
     }), tap((res3) => {
       if (res3 && res3.result.User_Org.length) {
-      this._userProfile.userRegData['User_Org'] = res3.result.User_Org;
+      this._userProfile.userRegData['User_Org'] = res3.result.User_Org[0];
       }
     }), switchMap((res4) => {
       if (res4 && res4.result.User_Org.length) {
-        const orgList = res4.result.User_Org.map((value)=> value.orgId.slice(2))
-        option.data['request'] = {
-          entityType: ['Org'],
-          filters: {
-            osid: {or: orgList}
-          }
-      };
-       return this.contentService.post(option);
-      } else {
-        return of(null);
-      }
+      option.data['request'] = {
+        entityType: ['Org'],
+        filters: {
+          osid: {eq: res4.result.User_Org[0].orgId}
+        }
+     };
+     return this.contentService.post(option);
+    } else {
+      return of(null);
+    }
     })
     ).subscribe((res: any) => {
       if (res && res.result.Org.length) {
-        this._userProfile.userRegData['Org'] = res.result.Org;
+        this._userProfile.userRegData['Org'] = res.result.Org[0];
         }
         return resolve('done');
      }, (err) => {

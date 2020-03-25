@@ -100,16 +100,16 @@ export class ProgramsService extends DataService implements CanActivate {
   */
   mapUsertoContributorOrgReg (orgOsid, UserOsid) {
     // Check if user is alredy part of the orgnisation
-    if (this.userService.userProfile.userRegData.User_Org && this.userService.userProfile.userRegData.User_Org.length) {
-      const userOrgs = this.userService.userProfile.userRegData.User_Org;
-      const orgList = userOrgs.map((value) => value.orgId);
-      if (orgList.length && orgList.indexOf(orgOsid) !== -1) {
+    if (!_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
+      const userOrg = this.userService.userProfile.userRegData.User_Org;
+
+      if (userOrg.orgId && userOrg.orgId === orgOsid) {
         this.toasterService.warning(this.resourceService.messages.emsg.contributorjoin.m0002);
         this.router.navigate(['contribute/myenrollprograms']);
         return false;
       }
 
-      if (orgList.length && orgList.indexOf(orgOsid) === -1) {
+      if (userOrg.orgId && userOrg.orgId !== orgOsid) {
         this.toasterService.warning(this.resourceService.messages.emsg.contributorjoin.m0003);
         this.router.navigate(['contribute/myenrollprograms']);
         return false;
@@ -225,19 +225,36 @@ export class ProgramsService extends DataService implements CanActivate {
   */
   checkforshowAllPrograms() {
     let showAllPrograms = 0;
-    if (this.userService.userProfile.userRegData.User && !this.userService.userProfile.userRegData.User_Org) {
+    if (!_.isEmpty(this.userService.userProfile.userRegData.User) && _.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
       showAllPrograms = 1;
-    } else if (this.userService.userProfile.userRegData.User_Org && this.userService.userProfile.userRegData.User_Org.length) {
-      const userOrgs = this.userService.userProfile.userRegData.User_Org;
-      let roleList = [];
-      roleList = roleList.concat(userOrgs.map((value) => value.roles));
-      if (roleList.indexOf('admin') === -1) {
+    } else if (!_.isEmpty(this.userService.userProfile.userRegData.User) && !_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
+      showAllPrograms = 1;
+      if (this.userService.userProfile.userRegData.User_Org.roles.indexOf('admin') === -1) {
         showAllPrograms = 0;
       }
     }
 
     return showAllPrograms;
   }
+
+  /*
+  * Logic to decide if the All programs should be shown to the contributor
+  */
+  /*checkIfUserIsContributingOrgAdmin() {
+  let isAdmin = 0;
+  if (this.userService.userProfile.userRegData.User && !this.userService.userProfile.userRegData.User_Org) {
+    showAllPrograms = 1;
+  } else if (this.userService.userProfile.userRegData.User_Org && this.userService.userProfile.userRegData.User_Org.length) {
+    const userOrgs = this.userService.userProfile.userRegData.User_Org;
+    let roleList = [];
+    roleList = roleList.concat(userOrgs.map((value) => value.roles));
+    if (roleList.indexOf('admin') === -1) {
+      showAllPrograms = 0;
+    }
+  }
+
+  return showAllPrograms;
+}*/
 
   /**
    * makes api call to save the program
@@ -358,6 +375,18 @@ export class ProgramsService extends DataService implements CanActivate {
    * makes api call to get list of programs from ext framework Service
    */
   getMyProgramsForContrib(status): Observable<ServerResponse> {
+    /*if (this.userService.userProfile.userRegData.User && !this.userService.userProfile.userRegData.User_Org) {
+      showAllPrograms = 1;
+    } else if (this.userService.userProfile.userRegData.User_Org && this.userService.userProfile.userRegData.User_Org.length) {
+      const userOrgs = this.userService.userProfile.userRegData.User_Org;
+      let roleList = [];
+      roleList = roleList.concat(userOrgs.map((value) => value.roles));
+      if (roleList.indexOf('admin') === -1) {
+        showAllPrograms = 0;
+      }
+    }*/
+
+
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
       data: {
@@ -365,8 +394,8 @@ export class ProgramsService extends DataService implements CanActivate {
           filters: {
             enrolled_id: {
               user_id: _.get(this.userService, 'userProfile.userId'),
-              status: status
-            }
+            },
+            status: status
           }
         }
       }
