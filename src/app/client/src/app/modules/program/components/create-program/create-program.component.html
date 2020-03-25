@@ -150,7 +150,7 @@
 							<div class="twelve wide column">
 								<div class="field">
 									<label class="d-block">{{resource.frmelmnts.lbl.contentType}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Content Type(s)"></i>
+											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resource.frmelmnts.lbl.contentTypesHint}}"></i>
 									</label>
 									<sui-multi-select class="selection" labelField="name" [hasLabels]="true"
 										formControlName="content_types" [options]="programScope.purpose"
@@ -208,7 +208,7 @@
 							</div>
 							<div class="three wide column">
 								<div class="field">
-									<label class="d-block"> {{resource.frmelmnts.lbl.Class}}
+									<label class="d-block"> {{resource.frmelmnts.lbl.grade}}
 											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resource.frmelmnts.lbl.selectGrade}}"></i>
 										</label>
 									<sui-multi-select
@@ -295,26 +295,26 @@
 											</td>
 											<td>
 												<div
-													class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
+													class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold text-center">
 													{{data.name}}
 												</div>
 											</td>
 											<td>
-												<div>
+												<div class="text-center">
 													{{data.medium}}
 												</div>
 											</td>
 											<td>
-												<div class="sb__ellipsis sb__ellipsis--three">
+												<div class="sb__ellipsis sb__ellipsis--three text-center">
 													{{data.gradeLevel}}
 												</div>
 											</td>
 											<td>
-												<div>
+												<div class="text-center">
 													{{data.subject}}
 												</div>
 											</td>
-											<td>{{ data.childNodes ? data.childNodes.length : 0 }}</td>
+											<td class="text-center">{{ data.childNodes ? data.childNodes.length : 0 }}</td>
 										</tr>
 									</tbody>
 								</table>
