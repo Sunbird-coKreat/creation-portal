@@ -153,7 +153,7 @@
 									</label>
 									<sui-multi-select class="selection" labelField="name" [hasLabels]="true"
 										formControlName="content_types" [options]="programScope.purpose"
-										valueField="name" #multiSelect>
+										valueField="value" #multiSelect>
 										<sui-select-option *ngFor="let option of programScope.purpose" [value]="option">
 										</sui-select-option>
 									</sui-multi-select>
