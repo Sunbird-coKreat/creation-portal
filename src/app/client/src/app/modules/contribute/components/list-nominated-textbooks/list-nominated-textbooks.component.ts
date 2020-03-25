@@ -113,7 +113,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
 
   getProgramTextbooks() {
      const option = {
-      url: 'learner/composite/v1/search',
+      url: 'content/composite/v1/search',
        data: {
       request: {
          filters: {
