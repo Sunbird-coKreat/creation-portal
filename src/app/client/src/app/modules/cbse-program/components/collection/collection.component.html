@@ -259,12 +259,8 @@
 <sui-modal *ngIf="showContentTypeModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
   [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showContentTypeModal = false" #modal>
   <div class="sb-modal-header">
-<<<<<<< HEAD
-      {{resourceService.frmelmnts.lbl.submitNomination}}
-=======
-    Select ContentTypes
->>>>>>> 6e2b665cd50e784ec2050636f83dfe2dbfe483df
-  </div>
+    {{resourceService.frmelmnts.lbl.submitNomination}} 
+   </div>
   <div class="sb-modal-content">
     <h5 class="font-weight-bold mb-10">{{resourceService.frmelmnts.lbl.listOfContentType}}</h5>
     <div class="mb-10" *ngFor="let contenttype of contentType">
@@ -277,13 +273,8 @@
     </div>
   </div>
   <div class="sb-modal-actions">
-<<<<<<< HEAD
     <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="addNomination()"> {{resourceService.frmelmnts.btn.submit}} </button>
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showContentTypeModal = false"> {{resourceService.frmelmnts.btn.cancel}} </button>
-=======
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="addNomination()"> Add </button>
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showContentTypeModal = false"> No
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showContentTypeModal = false"> {{resourceService.frmelmnts.btn.cancel}}
     </button>
->>>>>>> 6e2b665cd50e784ec2050636f83dfe2dbfe483df
   </div>
 </sui-modal>
