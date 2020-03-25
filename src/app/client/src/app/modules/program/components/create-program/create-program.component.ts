@@ -55,7 +55,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
  /**
  * List of textbooks for the program by BMGC
  */
- frameworkdetails;
+ private userFramework;
+ private userBoard;
  frameworkCategories;
  programScope: any = {};
  userprofile;
@@ -96,11 +97,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
  ngOnInit() {
    this.userprofile = this.userService.userProfile;
-   console.log(this.userprofile);
    this.initializeFormFields();
    this.fetchFrameWorkDetails();
    this.getProgramContentTypes();
-   //this.showTexbooklist();
+   // this.showTexbooklist();
    this.telemetryInteractCdata = [];
   this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
   this.telemetryInteractObject = {};
@@ -134,38 +134,53 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
  }
 
  fetchFrameWorkDetails() {
-   this.programScope['medium'] = [];
-   this.programScope['gradeLevel'] = [];
-   this.programScope['subject'] = [];
+   if (_.get(this.userprofile.framework, 'id')) {
+    this.userFramework = _.get(this.userprofile.framework, 'id')[0];
+    this.frameworkService.getFrameworkCategories(_.get(this.userprofile.framework, 'id')[0])
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe((data) => {
+      if (data && _.get(data, 'result.framework.categories')) {
+        this.frameworkCategories = _.get(data, 'result.framework.categories');
+      }
+      this.setFrameworkDataToProgram();
+    }, error => {
+      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+      this.toasterService.warning(errorMes || 'Fetching framework details failed');
+    });
+   } else {
+    this.frameworkService.initialize();
+    this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
+      if (frameworkInfo && !frameworkInfo.err) {
+        this.userFramework = frameworkInfo.frameworkdata.defaultFramework.identifier;
+        this.frameworkCategories  = frameworkInfo.frameworkdata.defaultFramework.categories;
+      }
+      this.setFrameworkDataToProgram();
+    });
+   }
+ }
 
-   this.collectionListForm.controls['medium'].setValue('');
-   this.collectionListForm.controls['gradeLevel'].setValue('');
-   this.collectionListForm.controls['subject'].setValue('');
+ setFrameworkDataToProgram() {
+  this.programScope['medium'] = [];
+  this.programScope['gradeLevel'] = [];
+  this.programScope['subject'] = [];
 
-   this.frameworkService.getFrameworkCategories(_.get(this.userprofile.framework, 'id')[0])
-     .pipe(takeUntil(this.unsubscribe))
-     .subscribe((data) => {
+  this.collectionListForm.controls['medium'].setValue('');
+  this.collectionListForm.controls['gradeLevel'].setValue('');
+  this.collectionListForm.controls['subject'].setValue('');
 
-       if (data && _.get(data, 'result.framework.categories')) {
-         this.frameworkCategories = _.get(data, 'result.framework.categories');
-         const board = _.find(this.frameworkCategories, (element) => {
-           return element.code === 'board';
-         });
+  const board = _.find(this.frameworkCategories, (element) => {
+    return element.code === 'board';
+  });
+  this.userBoard = board.identifier;
+  this.frameworkCategories.forEach((element) => {
+    this.programScope[element['code']] = _.sortBy(element['terms'], ['name']);
+  });
 
-         this.frameworkCategories.forEach((element) => {
-           this.programScope[element['code']] = _.sortBy(element['terms'], ['name']);
-         });
+  const mediumOption = this.programsService.getAssociationData(board.terms, 'medium', this.frameworkCategories);
 
-         const mediumOption = this.programsService.getAssociationData(board.terms, 'medium', this.frameworkCategories);
-
-         if (mediumOption.length) {
-           this.programScope['medium'] = mediumOption;
-         }
-       }
-     }, error => {
-       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-       this.toasterService.warning(errorMes || 'Fetching framework details failed');
-     });
+  if (mediumOption.length) {
+    this.programScope['medium'] = mediumOption;
+  }
  }
 
  onMediumChange() {
@@ -325,8 +340,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
          objectType: 'content',
          status: ['Draft'],
          contentType: 'Textbook',
-         framework: this.userprofile.framework.id[0],
-         board: this.userprofile.framework.board[0],
+         framework: this.userFramework,
+         board: this.userBoard,
        },
        not_exists: ['programId']
      }
@@ -425,7 +440,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    data['program_id'] = this.programId;
    data['collection_ids'] = this.collectionListForm.value.pcollections;
 
-   programConfigObj.board = this.userprofile.framework.board[0];
+   programConfigObj.board = this.userBoard;
    programConfigObj.gradeLevel = this.gradeLevelOption;
    programConfigObj.medium = this.mediumOption;
    programConfigObj.subject = this.subjectsOption;
