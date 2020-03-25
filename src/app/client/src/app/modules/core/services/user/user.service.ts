@@ -22,7 +22,9 @@ export class UserService {
    * Contains user id
    */
   private _userid: string;
-  _userRegDataCheck = 0;
+
+  public userRegDataFetChed = false;
+
   /**
     * Contains session id
     */
@@ -275,8 +277,8 @@ export class UserService {
   }
 
   openSaberRegistrySearch() {
-    this._userRegDataCheck = 1;
     this._userProfile['userRegData'] = {};
+    this.userRegDataFetChed = true;
     const option = {
       url: 'reg/search',
       data: {
