@@ -1,17 +1,17 @@
 <div *ngIf="!showChapterList">
 
 	<div class="sb-bg-color-primary-0 practical-header py-16">
-		<div class="d-flex flex-ai-center flex-jc-space-between practical-header__content ui container p-0">
+		<div class="d-flex  flex-jc-space-between practical-header__content ui container p-0">
 
-			<div class="practical-header__title flex-basis-1">
-				<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" type="button" [routerLink]="['/contribute/myenrollprograms']">
+			<div class="practical-header__title flex-basis-1 w-20">
+				<!-- <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" type="button" [routerLink]="['/contribute/myenrollprograms']">
 					<i class="icon-svg icon-svg--xxs icon-back mr-4">
 						<svg class="icon icon-svg--primary">
 						<use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
 						</svg>
 					</i>
 					Back to My/Explore Programs
-				</button>
+				</button> -->
 
 				<h4 class="m-0 p-0">{{ programDetails?.name }} <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
 					<ng-template #popupTemplate>
@@ -22,7 +22,7 @@
 									<label class="d-block fsmall font-weight-normal mb-0">{{ mediums }}</label>
 								</div>
 								<hr />
-								<div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.grades }}</strong></div>
+								<div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.class }}</strong></div>
 								<div class="content">
 									<label class="d-block fsmall font-weight-normal mb-0">{{ grades }}</label>
 								</div>
@@ -68,9 +68,40 @@
 				</h4>
 				<p class="fs-0-785 font-weight-normal">{{ programDetails?.description }}</p>
 			</div>
-
+			<div class="sb-meta-data-container sb-meta-data-column w-10 px-10">
+				<label class="m-0 p-0">Content Type(s)</label>
+					<p>
+						<span class="fs-0-785"> Focus Spot,</span>
+						<span class="fs-0-785"> Pedagogy Flow</span>
+					</p>
+				</div>
+				<div class="sb-meta-data-container sb-meta-data-column px-10">
+					<label class="width-100">Content Status </label>
+					<div class="d-flex">
+						<dl class="sb-meta-data">
+							<dt>0</dt>
+							<dd>Initiated</dd>
+						</dl>
+						<dl class="sb-meta-data">
+							<dt>3</dt>
+							<dd>Pending</dd>
+						</dl>
+						<dl class="sb-meta-data">
+							<dt>0</dt>
+							<dd>Approved</dd>
+						</dl>
+						<dl class="sb-meta-data">
+							<dt>0</dt>
+							<dd>Rejected</dd>
+						</dl>
+						<dl class="sb-meta-data">
+							<dt>3</dt>
+							<dd>Total</dd>
+						</dl>
+					</div>
+				</div>
 			<ng-container *ngIf="programDetails">
-				<div class="program-timeline px-16" >
+				<div class="program-timeline px-16 w-30">
 				  <div class="program-timeline-item">
 					<div class="status" [class.active]="activeDate === 'nomination_enddate'">
 					  <div class="status__label">Nomination End Date</div>
@@ -186,43 +217,49 @@
 								<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
 									<thead class="sb-table-header sb-table-thead-gray">
 										<tr>
-											<th class="w-5 text-center">{{ resourceService?.frmelmnts?.lbl?.srNo }}</th>
-                							<th class="w-5 text-center"></th>
-											<th class="sb-sort-icon">Textbook</th>
-											<th class="sb-sort-icon">Grade</th>
-											<th class="sb-sort-icon">Medium</th>
-											<th>Subjects</th>
-											<th>Chapters</th>
+											<th class="sb-sort-icon w-10">{{resourceService.frmelmnts.lbl.textbook}}</th>
+											<th class="sb-sort-icon w-5">{{resourceService.frmelmnts.lbl.medium}}</th>
+											<th class="sb-sort-icon w-5">{{resourceService.frmelmnts.lbl.Class}}</th>
+											<th class="w-5">{{resourceService.frmelmnts.lbl.subject}}</th>
+											<th class="w-5">{{resourceService.frmelmnts.lbl.chapters}}</th>
+											<th class="w-5">{{resourceService.frmelmnts.lbl.status}}</th>
+											<th class="w-5 text-center"></th>
 										</tr>
 									</thead>
 									<tbody class="sb-table-body">
 										<tr *ngFor="let contributorTextbook of contributorTextbooks; let i = index;">
-											<td class="text-center">
-												{{ i + 1 }}
-											  </td>
-											<td class="text-center">
-												<div class="ui dropdown sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary ml-auto sb-btn-dropdown" suiDropdown autoClose="itemClick">
-													<div class="text">{{ resourceService?.frmelmnts?.lbl?.actions }}</div>
-													<i class="dropdown icon"></i>
-													<div class="menu" suiDropdownMenu>
-													  <div class="item" (click)="viewContribution()"
-													  appTelemetryInteract
-                                                      [telemetryInteractEdata]="getTelemetryInteractEdata('upload-content', 'click', 'list-nominated-textbooks')"
-                                                      [telemetryInteractObject]="telemetryInteractObject"
-                                                      [telemetryInteractCdata]="telemetryInteractCdata"
-                                                      [telemetryInteractPdata]="telemetryInteractPdata">Upload Content</div>
-													  <div class="item">Review Content</div>
-													</div>
-												</div>
-											</td>
 											<td class="hand">
 												{{contributorTextbook.name}}
 											</td>
-											<td>{{contributorTextbook.gradeLevel}}</td>
 											<td>{{contributorTextbook.medium}}</td>
+											<td>{{contributorTextbook.gradeLevel}}</td>
 											<td>{{contributorTextbook.subject}}</td>
 											<td>5</td>
-
+											<td>Pending</td>
+											<td class="text-center">
+															<div class="ui dropdown sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary ml-auto sb-btn-dropdown" suiDropdown autoClose="itemClick">
+																<div class="text">{{ resourceService?.frmelmnts?.lbl?.open }}</div>
+																<i class="dropdown icon"></i>
+																<div class="menu" suiDropdownMenu>
+																	<div class="item" (click)="viewContribution()"
+																	appTelemetryInteract
+																														[telemetryInteractEdata]="getTelemetryInteractEdata('upload-content', 'click', 'list-nominated-textbooks')"
+																														[telemetryInteractObject]="telemetryInteractObject"
+																														[telemetryInteractCdata]="telemetryInteractCdata"
+																														[telemetryInteractPdata]="telemetryInteractPdata">Upload Content</div>
+																	<div class="item">Review Content</div>
+																</div>
+															</div>
+												<button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution()">Upload Content</button>
+													<!-- <div class="ui dropdown sb-btn sb-btn-normal  sb-btn-outline-primary ml-auto sb-btn-dropdown" suiDropdown autoClose="itemClick">
+														<div class="text">{{ resourceService.frmelmnts.lbl.actions }}</div>
+														<i class="dropdown icon"></i>
+														<div class="menu" suiDropdownMenu>
+															<div class="item" (click)="viewContribution()">Upload Content</div>
+															<div class="item">Review Content</div>
+														</div>
+													</div> -->
+												</td>
 										</tr>
 									</tbody>
 								</table>
