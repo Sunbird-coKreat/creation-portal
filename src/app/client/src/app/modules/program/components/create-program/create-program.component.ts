@@ -36,10 +36,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   */
  programDetails: IProgram;
 
- /**
- * To send activatedRoute.snapshot to routerNavigationService
- */
- private activatedRoute: ActivatedRoute;
 
  /**
  * To call resource service which helps to use language constant
@@ -86,7 +82,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    public toasterService: ToasterService,
    public resource: ResourceService,
    private config: ConfigService,
-   activatedRoute: ActivatedRoute,
+   private activatedRoute: ActivatedRoute,
    private router: Router,
    private formBuilder: FormBuilder,
    private httpClient: HttpClient,
