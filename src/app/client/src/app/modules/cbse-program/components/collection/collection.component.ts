@@ -212,7 +212,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     const req = {data: {request: { filters: ''}, }, url: ''};
     req.url = `${this.configService.urlConFig.URLS.COMPOSITE.SEARCH}`;
     req.data.request.filters = this.generateSearchFilterRequestData();
-    return this.learnerService.post(req)
+    return this.contentService.post(req)
       .pipe(
         catchError(err => {
           const errInfo = { errorMsg: 'Question creation failed' };
