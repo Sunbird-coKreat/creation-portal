@@ -1,4 +1,4 @@
-import { IImpressionEventInput} from '@sunbird/telemetry';
+import { IImpressionEventInput, IInteractEventEdata} from '@sunbird/telemetry';
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService } from '@sunbird/shared';
 import { ProgramsService, PublicDataService, UserService } from '@sunbird/core';
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
@@ -53,6 +53,9 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
   selectedNominationDetails: any;
   showRequestChangesPopup: boolean;
   @ViewChild('FormControl') FormControl: NgForm;
+  public telemetryInteractCdata: any;
+  public telemetryInteractPdata: any;
+  public telemetryInteractObject: any;
 
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private userService: UserService,
@@ -80,6 +83,9 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
     });
     this.contributor = this.selectedNominationDetails;
+    this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program_ID'}];
+  this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
+  this.telemetryInteractObject = {};
   }
 
   getNominationCounts() {
@@ -140,17 +146,14 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
 
   getProgramTextbooks() {
      const option = {
-      url: 'learner/composite/v1/search',
+      url: 'content/composite/v1/search',
        data: {
       request: {
          filters: {
           objectType: 'content',
           programId: this.programId,
           status: ['Draft', 'Live'],
-          contentType: 'Textbook',
-          framework: this.programDetails.config.framework,
-          board:	this.programDetails.config.board,
-          medium:	this.programDetails.config.medium,
+          contentType: 'Textbook'
         }
       }
       }
@@ -167,7 +170,30 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
   }
 
   ngAfterViewInit() {
-
+    const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
+    const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+    const deviceId = <HTMLInputElement>document.getElementById('deviceId');
+    const telemetryCdata = [{type: 'Program_ID', id: this.activatedRoute.snapshot.params.programId}];
+     setTimeout(() => {
+      this.telemetryImpression = {
+        context: {
+          env: this.activatedRoute.snapshot.data.telemetry.env,
+          cdata: telemetryCdata || [],
+          pdata: {
+            id: this.userService.appId,
+            ver: version,
+            pid: this.config.appConfig.TELEMETRY.PID
+          },
+          did: deviceId ? deviceId.value : ''
+        },
+        edata: {
+          type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
+          pageid: _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid'),
+          uri: this.router.url,
+          duration: this.navigationHelperService.getPageLoadTime()
+        }
+      };
+     });
   }
   viewContribution() {
   this.component = ChapterListComponent;
@@ -242,5 +268,14 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
 
   goBack() {
     this.navigationHelperService.navigateToPreviousUrl();
+  }
+
+  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+    return _.omitBy({
+      id,
+      type,
+      pageid,
+      extra
+    }, _.isUndefined);
   }
 }

@@ -1,5 +1,5 @@
 import {filter, first, map} from 'rxjs/operators';
-import { UserService, PermissionService, TenantService, OrgDetailsService, FormService } from './../../services';
+import { UserService, PermissionService, TenantService, OrgDetailsService, FormService, ProgramsService} from './../../services';
 import { Component, OnInit, ChangeDetectorRef, Input } from '@angular/core';
 import { ConfigService, ResourceService, IUserProfile, IUserData } from '@sunbird/shared';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
@@ -58,7 +58,9 @@ export class MainHeaderComponent implements OnInit {
   };
   public signUpInteractEdata: IInteractEventEdata;
   public enterDialCodeInteractEdata: IInteractEventEdata;
-  public telemetryInteractObject: IInteractEventObject;
+  public telemetryInteractCdata: any;
+  public telemetryInteractPdata: any;
+  public telemetryInteractObject: any;
   pageId: string;
   searchBox = {
     'center': false,
@@ -75,7 +77,8 @@ export class MainHeaderComponent implements OnInit {
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
     public orgDetailsService: OrgDetailsService, private _cacheService: CacheService, public formService: FormService,
-    public activatedRoute: ActivatedRoute, private cacheService: CacheService, private cdr: ChangeDetectorRef) {
+    public activatedRoute: ActivatedRoute, private cacheService: CacheService, private cdr: ChangeDetectorRef,
+    public programsService: ProgramsService) {
       try {
         this.exploreButtonVisibility = (<HTMLInputElement>document.getElementById('exploreButtonVisibility')).value;
       } catch (error) {
@@ -124,6 +127,9 @@ export class MainHeaderComponent implements OnInit {
         }
       });
     }
+    this.telemetryInteractCdata = [];
+  this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
+  this.telemetryInteractObject = {};
   }
 
   private isCustodianOrgUser() {
@@ -239,11 +245,11 @@ export class MainHeaderComponent implements OnInit {
       type: 'click',
       pageid: 'public'
     };
-    this.telemetryInteractObject = {
-      id: '',
-      type: 'signup',
-      ver: '1.0'
-    };
+    // this.telemetryInteractObject = {
+    //   id: '',
+    //   type: 'signup',
+    //   ver: '1.0'
+    // };
     this.enterDialCodeInteractEdata = {
       id: 'click-dial-code',
       type: 'click',
@@ -299,5 +305,14 @@ export class MainHeaderComponent implements OnInit {
   }
   showSideBar() {
     jQuery('.ui.sidebar').sidebar('setting', 'transition', 'overlay').sidebar('toggle');
+  }
+
+  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+    return _.omitBy({
+      id,
+      type,
+      pageid,
+      extra
+    }, _.isUndefined);
   }
 }

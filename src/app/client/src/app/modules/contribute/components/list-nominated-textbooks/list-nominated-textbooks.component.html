@@ -228,6 +228,24 @@
 									</thead>
 									<tbody class="sb-table-body">
 										<tr *ngFor="let contributorTextbook of contributorTextbooks; let i = index;">
+											<td class="text-center">
+												{{ i + 1 }}
+											  </td>
+											<td class="text-center">
+												<div class="ui dropdown sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary ml-auto sb-btn-dropdown" suiDropdown autoClose="itemClick">
+													<div class="text">{{ resourceService?.frmelmnts?.lbl?.actions }}</div>
+													<i class="dropdown icon"></i>
+													<div class="menu" suiDropdownMenu>
+													  <div class="item" (click)="viewContribution()"
+													  appTelemetryInteract
+                                                      [telemetryInteractEdata]="getTelemetryInteractEdata('upload-content', 'click', 'list-nominated-textbooks')"
+                                                      [telemetryInteractObject]="telemetryInteractObject"
+                                                      [telemetryInteractCdata]="telemetryInteractCdata"
+                                                      [telemetryInteractPdata]="telemetryInteractPdata">Upload Content</div>
+													  <div class="item">Review Content</div>
+													</div>
+												</div>
+											</td>
 											<td class="hand">
 												{{contributorTextbook.name}}
 											</td>

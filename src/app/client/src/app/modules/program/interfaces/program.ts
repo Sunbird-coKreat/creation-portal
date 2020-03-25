@@ -28,4 +28,6 @@ export interface ISessionContext { // TODO: remove any 'textbook' reference
   collectionName?: any;
   collectionType?: any;
   collectionStatus?: any;
+  currentOrgRole?: string;
+  nominationDetails?: any;
 }

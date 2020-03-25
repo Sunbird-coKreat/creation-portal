@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ProgramsService, RegistryService, UserService } from '@sunbird/core';
-import { ResourceService, ToasterService } from '@sunbird/shared';
+import { ResourceService, ToasterService, ConfigService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IProgram } from '../../../core/interfaces';
 import * as _ from 'lodash-es';
@@ -9,6 +9,7 @@ import { forkJoin } from 'rxjs';
 import * as moment from 'moment';
 import { DatePipe } from '@angular/common';
 import { programContext } from '../../../contribute/components/list-nominated-textbooks/data';
+import { IInteractEventEdata } from '@sunbird/telemetry';
 @Component({
   selector: 'app-program-list',
   templateUrl: './program-list.component.html',
@@ -32,13 +33,19 @@ export class ProgramListComponent implements OnInit {
   public sortPrograms: any;
   public direction = 'asc';
   public enrollPrograms: IProgram[];
+  public telemetryInteractCdata: any;
+  public telemetryInteractPdata: any;
+  public telemetryInteractObject: any;
   constructor(private programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
-    public router: Router, private datePipe: DatePipe ) { }
+    public router: Router, private datePipe: DatePipe, public configService: ConfigService ) { }
 
   ngOnInit() {
     this.checkIfUserIsContributor();
     this.roles = _.get(programContext, 'config.roles');
+  this.telemetryInteractCdata = [];
+  this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
+  this.telemetryInteractObject = {};
   }
 
   /**
@@ -49,6 +56,12 @@ export class ProgramListComponent implements OnInit {
       tap((isContributor: boolean) => {
         // TODO implement based on api and remove url checks
         // this.isContributor = !isContributor;
+        const orgId = this.activatedRoute.snapshot.params.orgId;
+
+        // Check if user part of that organisation
+        if (this.router.url.includes('/contribute/join/' + orgId)) {
+            this.programsService.addUsertoContributorOrg(orgId);
+        }
 
         this.isContributor = this.router.url.includes('/contribute');
         this.activeAllProgramsMenu = this.router.isActive('/contribute', true);
@@ -275,5 +288,14 @@ export class ProgramListComponent implements OnInit {
     }, error => {
       console.log(error);
     });
+  }
+
+  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+    return _.omitBy({
+      id,
+      type,
+      pageid,
+      extra
+    }, _.isUndefined);
   }
 }

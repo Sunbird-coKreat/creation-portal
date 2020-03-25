@@ -10,33 +10,33 @@ const routes: Routes = [{
   data: {
     roles: 'rootOrgAdmin',
     telemetry: {
-      env: 'sourcing', pageid: 'programs-list', type: 'view', subtype: 'paginate'
+      env: 'sourcing-portal', pageid: 'programs-list', type: 'view', subtype: 'paginate'
     }
   }
 },
 {
   path: 'create-program', component: CreateProgramComponent, pathMatch: 'full',
   data: {
-    telemetry: { env: 'sourcing', type: 'view', subtype: 'paginate', pageid: 'create-program', mode: 'create',
+    telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'create-program', mode: 'create',
                  object: { type: 'program', ver: '1.0'} }
   }
 },
 {
   path: 'program/:programId', component: ProgramComponent,
   data: {
-    telemetry: { env: 'sourcing', type: 'view', subtype: 'paginate' }
+    telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'program-details' }
   }
 },
 {
   path: 'nominations/:programId', component: ProgramNominationsComponent,
   data: {
-    telemetry: { env: 'sourcing', type: 'view', subtype: 'paginate' }
+    telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'nomination-details' }
   }
 },
 {
   path: 'contributor/:programId', component: ListContributorTextbooksComponent,
   data: {
-    telemetry: { env: 'sourcing', type: 'view', subtype: 'paginate' }
+    telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'contributor-details' }
   }
 }
 ];

@@ -1,4 +1,4 @@
-<div *ngIf="showNominationsComponent">
+<div *ngIf="showNominationsComponent" [appTelemetryImpression]="telemetryImpression">
     <div class="sb-bg-color-primary-0 practical-header py-16">
         <div class="d-flex  flex-jc-space-between practical-header__content ui container pt-15">
             <div class="practical-header__title w-50">
@@ -119,10 +119,20 @@
         <sui-tabset>
             <div class="ui pointing secondary menu sb-bg-color-primary-100">
                 <div class="ui container p-0 m-0 d-flex flex-ai-center flex-jc-center">
-                    <a class="item active" suiTabHeader="1">{{ resourceService?.frmelmnts?.lbl?.textbooks }}
+                    <a class="item active" suiTabHeader="1"
+                    appTelemetryInteract
+                                        [telemetryInteractEdata]="getTelemetryInteractEdata('program-linked-textbooks', 'click', 'program-nominations')"
+                                        [telemetryInteractObject]="telemetryInteractObject"
+                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                        [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.textbooks }}
                         <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ collectionsCount }}</span>
                     </a>
-                    <a class="item" suiTabHeader="2">Nominations
+                    <a class="item" suiTabHeader="2"
+                    appTelemetryInteract
+                                        [telemetryInteractEdata]="getTelemetryInteractEdata('nominations', 'click', 'program-nominations')"
+                                        [telemetryInteractObject]="telemetryInteractObject"
+                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                        [telemetryInteractPdata]="telemetryInteractPdata">Nominations
                         <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ nominationsCount }}</span>
                     </a>
                 </div>
@@ -166,10 +176,28 @@
                                     </thead>
                                     <tbody class="sb-table-body">
                                         <tr *ngFor="let nomination of nominations; let i = index;">
-                
+                                            <td class="text-center">{{ i + 1}}</td>
+                                            <td class="text-center w-10">
+                                                <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
+                                                    *ngIf="nomination?.nominationData?.status === 'Pending'"
+                                                    (click)="viewNominationDetails(nomination)"
+                                                    appTelemetryInteract
+                                                    [telemetryInteractEdata]="getTelemetryInteractEdata('view-nomination', 'click', 'program-nominations')"
+                                                    [telemetryInteractObject]="telemetryInteractObject"
+                                                    [telemetryInteractCdata]="telemetryInteractCdata"
+                                                    [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
+                                                <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
+                                                    *ngIf="nomination?.nominationData?.status === 'Accepted'"
+                                                    [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
+                                            </td>
                                             <td>
                                                 <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold"
-                                                    (click)="showNomineeProfile = true; getNomineeProfile(nomination)">
+                                                    (click)="showNomineeProfile = true; getNomineeProfile(nomination)"
+                                                    appTelemetryInteract
+                                                    [telemetryInteractEdata]="getTelemetryInteractEdata('show-nominee', 'click', 'program-nominations')"
+                                                    [telemetryInteractObject]="telemetryInteractObject"
+                                                    [telemetryInteractCdata]="telemetryInteractCdata"
+                                                    [telemetryInteractPdata]="telemetryInteractPdata">
                                                     {{ nomination?.name }}
                                                 </div>
                                             </td>
@@ -325,7 +353,12 @@
                             <tr *ngFor="let nomination of nominations">
                                 <td>
                                     <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold"
-                                        (click)="showNomineeProfile = true; getNomineeProfile(nomination)">
+                                        (click)="showNomineeProfile = true; getNomineeProfile(nomination)"
+                                        appTelemetryInteract
+                                        [telemetryInteractEdata]="getTelemetryInteractEdata('get-nominee-profile', 'click', 'program-nominations')"
+                                        [telemetryInteractObject]="telemetryInteractObject"
+                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                        [telemetryInteractPdata]="telemetryInteractPdata">
                                         {{ nomination?.name }}
                                     </div>
                                 </td>
@@ -347,7 +380,12 @@
                                 <td class="text-center w-10">
                                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                                         *ngIf="nomination?.nominationData?.status === 'Pending'"
-                                        (click)="viewNominationDetails(nomination)">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
+                                        (click)="viewNominationDetails(nomination)"
+                                        appTelemetryInteract
+                                        [telemetryInteractEdata]="getTelemetryInteractEdata('view-nomination', 'click', 'program-nominations')"
+                                        [telemetryInteractObject]="telemetryInteractObject"
+                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                        [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
                                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                                         *ngIf="nomination?.nominationData?.status === 'Approved'"
                                         [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
