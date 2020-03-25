@@ -1,7 +1,8 @@
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService } from '@sunbird/shared';
+import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
 import { ProgramsService, PublicDataService, UserService, FrameworkService } from '@sunbird/core';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ISessionContext } from '../../../cbse-program/interfaces';
 import * as _ from 'lodash-es';
 import { tap, first } from 'rxjs/operators';
@@ -12,7 +13,7 @@ import * as moment from 'moment';
   templateUrl: './program-nominations.component.html',
   styleUrls: ['./program-nominations.component.scss']
 })
-export class ProgramNominationsComponent implements OnInit {
+export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   public programId: string;
   public programDetails: any;
   nominations = [];
@@ -31,6 +32,10 @@ export class ProgramNominationsComponent implements OnInit {
   public grades: any;
   public selectedNomineeProfile: any;
   showNomineeProfile;
+  public telemetryImpression: IImpressionEventInput;
+  public telemetryInteractCdata: any;
+  public telemetryInteractPdata: any;
+  public telemetryInteractObject: any;
 
   /*inputs = {};
   outputs = {
@@ -53,6 +58,36 @@ export class ProgramNominationsComponent implements OnInit {
     this.getNominationList();
     this.getProgramDetails();
     this.getNominationCounts();
+    this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program_ID'}];
+  this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
+  this.telemetryInteractObject = {};
+  }
+
+  ngAfterViewInit() {
+    const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
+    const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+    const deviceId = <HTMLInputElement>document.getElementById('deviceId');
+    const telemetryCdata = [{type: 'Program_ID', id: this.activatedRoute.snapshot.params.programId}];
+     setTimeout(() => {
+      this.telemetryImpression = {
+        context: {
+          env: this.activatedRoute.snapshot.data.telemetry.env,
+          cdata: telemetryCdata || [],
+          pdata: {
+            id: this.userService.appId,
+            ver: version,
+            pid: this.config.appConfig.TELEMETRY.PID
+          },
+          did: deviceId ? deviceId.value : ''
+        },
+        edata: {
+          type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
+          pageid: _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid'),
+          uri: this.router.url,
+          duration: this.navigationHelperService.getPageLoadTime()
+        }
+      };
+     });
   }
 
   getNominationList() {
@@ -231,5 +266,14 @@ export class ProgramNominationsComponent implements OnInit {
         this.activeDate = key;
       }
     });
+  }
+
+  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+    return _.omitBy({
+      id,
+      type,
+      pageid,
+      extra
+    }, _.isUndefined);
   }
 }

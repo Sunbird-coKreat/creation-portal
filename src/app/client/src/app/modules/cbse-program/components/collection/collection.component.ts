@@ -209,10 +209,20 @@ export class CollectionComponent implements OnInit, OnDestroy {
   }
 
   searchCollection() {
-    const req = {data: {request: { filters: ''}, }, url: ''};
-    req.url = `${this.configService.urlConFig.URLS.COMPOSITE.SEARCH}`;
-    req.data.request.filters = this.generateSearchFilterRequestData();
-    return this.learnerService.post(req)
+    const req = {
+      url : `${this.configService.urlConFig.URLS.COMPOSITE.SEARCH}`,
+      data: {
+        request: {
+          filters: {
+            objectType: 'content',
+            programId: this.sessionContext.programId || this.programContext.program_id,
+            status: this.sessionContext.collectionStatus || ['Draft', 'Live'],
+            contentType: this.sessionContext.collectionType || 'Textbook'
+          }
+        }
+      }
+    };
+    return this.contentService.post(req)
       .pipe(
         catchError(err => {
           const errInfo = { errorMsg: 'Question creation failed' };
@@ -221,20 +231,6 @@ export class CollectionComponent implements OnInit, OnDestroy {
         return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     }));
   }
-
-  generateSearchFilterRequestData() {
-    let payloadArray = [];
-    payloadArray = [{
-      objectType: 'content',
-      programId: this.sessionContext.programId || this.programContext.program_id,
-      status: this.sessionContext.collectionStatus || ['Draft', 'Live'],
-      contentType: this.sessionContext.collectionType || 'Textbook'
-    }];
-    this.filters.forEach( (element) => {
-      payloadArray[0][element['code']] = element['defaultValue'];
-    });
-    return payloadArray[0];
-}
 
   addCardImage(collection) {
     collection.cardImg = collection.image;

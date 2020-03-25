@@ -8,7 +8,12 @@
       </div>
       <div>
         <button class="sb-btn sb-btn-outline-primary sb-btn-normal ml-10 " (click)="showNormalModal = true"><i
-            class="plus circle icon"></i> Invite a User</button>
+            class="plus circle icon"
+            appTelemetryInteract
+            [telemetryInteractEdata]="getTelemetryInteractEdata('user-link', 'click', 'org-user-list')"
+            [telemetryInteractObject]="telemetryInteractObject"
+            [telemetryInteractCdata]="telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryInteractPdata"></i> Invite a User</button>
       </div>
     </div>
   </div>
@@ -90,7 +95,12 @@
     <p class="mb-8">{{ resourceService.frmelmnts.lbl.sharelink }}</p>
     <div class="ui action input fluid">
       <input name="title" readonly="" value="{{orgLink}}" type="text" class="" #inputLink>
-      <button class="ui basic primary button" (click)="copyLinkToClipboard(inputLink)"> {{ resourceService.frmelmnts.btn.copyLink }}
+      <button class="ui basic primary button" (click)="copyLinkToClipboard(inputLink)"
+      appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('copy-link', 'click', 'org-user-list')"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata"> {{ resourceService.frmelmnts.btn.copyLink }}
       </button>
     </div>
   </div>

@@ -96,7 +96,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
     this.programContext = _.get(this.chapterListComponentInput, 'programContext');
     this.userProfile = _.get(this.chapterListComponentInput, 'userProfile');
-    this.currentUserID = _.get(this.programContext, 'userDetails.userId');
+    this.currentUserID = this.userProfile.identifier;
+    // this.currentUserID = _.get(this.programContext, 'userDetails.userId');
     this.role = _.get(this.chapterListComponentInput, 'role');
     this.collection = _.get(this.chapterListComponentInput, 'collection');
     this.actions = _.get(this.chapterListComponentInput, 'programContext.config.actions');
@@ -231,6 +232,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         instance.countData['mycontribution'] = 0;
         instance.countData['totalreview'] = 0;
         instance.countData['awaitingreview'] = 0;
+        instance.countData['sampleContenttotal'] = 0;
+        instance.countData['sampleMycontribution'] = 0;
         this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
         hierarchy = instance.hierarchyObj;
         this.sessionContext.hierarchyObj = { hierarchy };
@@ -323,7 +326,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     const childData = data.children;
     if (childData) {
       childData.map(child => {
-        self.getContentStatusCount(child);
+        self.getSampleContentStatusCount(child);
       });
     }
   }

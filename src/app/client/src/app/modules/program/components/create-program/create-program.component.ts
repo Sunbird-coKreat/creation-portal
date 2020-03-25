@@ -1,5 +1,5 @@
 import { ConfigService, ResourceService, ToasterService, RouterNavigationService,
-  ServerResponse } from '@sunbird/shared';
+  ServerResponse, NavigationHelperService } from '@sunbird/shared';
 import { ProgramsService, DataService, FrameworkService } from '@sunbird/core';
 import { Subscription, Subject } from 'rxjs';
 import { tap, first, map, takeUntil } from 'rxjs/operators';
@@ -11,6 +11,8 @@ import { IProgram } from './../../../core/interfaces';
 import { UserService } from '@sunbird/core';
 import { programConfigObj } from './programconfig';
 import { HttpClient } from '@angular/common/http';
+import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEventInput } from '@sunbird/telemetry';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
  selector: 'app-create-program',
@@ -34,10 +36,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   */
  programDetails: IProgram;
 
- /**
- * To send activatedRoute.snapshot to routerNavigationService
- */
- private activatedRoute: ActivatedRoute;
 
  /**
  * To call resource service which helps to use language constant
@@ -61,7 +59,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
  frameworkCategories;
  programScope: any = {};
  userprofile;
- programId = 0;
+ programId: string;
  public programData: any = {};
  showTextBookSelector = false;
  formIsInvalid = false;
@@ -70,6 +68,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
  gradeLevelOption = [];
  pickerMinDate = new Date(new Date().setHours(0, 0, 0, 0));
  pickerMinDateForEndDate = new Date(new Date().setHours(0, 0, 0, 0));
+ public telemetryImpression: IImpressionEventInput;
+ public telemetryInteractCdata: any;
+  public telemetryInteractPdata: any;
+  public telemetryInteractObject: any;
+  public telemetryStart: IStartEventInput;
+   public telemetryEnd: IEndEventInput;
 
  constructor(
    public frameworkService: FrameworkService,
@@ -78,10 +82,13 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    public toasterService: ToasterService,
    public resource: ResourceService,
    private config: ConfigService,
-   activatedRoute: ActivatedRoute,
+   private activatedRoute: ActivatedRoute,
    private router: Router,
    private formBuilder: FormBuilder,
-   private httpClient: HttpClient) {
+   private httpClient: HttpClient,
+   private navigationHelperService: NavigationHelperService,
+   private configService: ConfigService,
+   private deviceDetectorService: DeviceDetectorService) {
 
    this.sbFormBuilder = formBuilder;
 
@@ -93,10 +100,38 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    this.initializeFormFields();
    this.fetchFrameWorkDetails();
    this.getProgramContentTypes();
+   //this.showTexbooklist();
+   this.telemetryInteractCdata = [];
+  this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
+  this.telemetryInteractObject = {};
    // this.showTexbooklist();
  }
 
- ngAfterViewInit() { }
+ ngAfterViewInit() {
+  const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
+  const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+  const deviceId = <HTMLInputElement>document.getElementById('deviceId');
+   setTimeout(() => {
+    this.telemetryImpression = {
+      context: {
+        env: this.activatedRoute.snapshot.data.telemetry.env,
+        cdata: [],
+        pdata: {
+          id: this.userService.appId,
+          ver: version,
+          pid: this.config.appConfig.TELEMETRY.PID
+        },
+        did: deviceId ? deviceId.value : ''
+      },
+      edata: {
+        type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
+        pageid: _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid'),
+        uri: this.router.url,
+        duration: this.navigationHelperService.getPageLoadTime()
+      }
+    };
+   });
+ }
 
  fetchFrameWorkDetails() {
    this.programScope['medium'] = [];
@@ -265,6 +300,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
            this.programId = res.result.program_id;
            this.programData['program_id'] = this.programId;
             this.showTexbooklist();
+            this.generateTelemetryEvent('START');
           },
          (err) => this.saveProgramError(err)
        );
@@ -397,8 +433,65 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    data['status'] = 'Live';
 
    this.programsService.updateProgram(data).subscribe(
-     (res) => { this.router.navigate(['/sourcing']); },
+     (res) => { this.router.navigate(['/sourcing']); this.generateTelemetryEvent('END'); },
      (err) => this.saveProgramError(err)
-    );
+   );
+ }
+ getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+  return _.omitBy({
+    id,
+    type,
+    pageid,
+    extra
+  }, _.isUndefined);
+}
+
+generateTelemetryEvent(event) {
+  switch (event) {
+    case 'START':
+     const deviceInfo = this.deviceDetectorService.getDeviceInfo();
+     this.telemetryStart = {
+       context: {
+         env: this.activatedRoute.snapshot.data.telemetry.env
+       },
+       object: {
+         id: this.programId || '',
+         type: this.activatedRoute.snapshot.data.telemetry.object.type,
+         ver: this.activatedRoute.snapshot.data.telemetry.object.ver
+       },
+       edata: {
+         type: this.activatedRoute.snapshot.data.telemetry.type || '',
+         pageid: this.activatedRoute.snapshot.data.telemetry.pageid || '',
+         mode: this.activatedRoute.snapshot.data.telemetry.mode || '',
+         uaspec: {
+           agent: deviceInfo.browser,
+           ver: deviceInfo.browser_version,
+           system: deviceInfo.os_version,
+           platform: deviceInfo.os,
+           raw: deviceInfo.userAgent
+         }
+       }
+     };
+      break;
+    case 'END':
+     this.telemetryEnd = {
+       object: {
+         id: this.programId || '',
+         type: this.activatedRoute.snapshot.data.telemetry.object.type,
+         ver: this.activatedRoute.snapshot.data.telemetry.object.ver
+       },
+       context: {
+         env: this.activatedRoute.snapshot.data.telemetry.env
+       },
+       edata: {
+         type: this.activatedRoute.snapshot.data.telemetry.type,
+         pageid: this.activatedRoute.snapshot.data.telemetry.pageid,
+         mode: 'create'
+       }
+     };
+      break;
+    default:
+      break;
   }
+ }
 }
