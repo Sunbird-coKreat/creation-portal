@@ -153,10 +153,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
           objectType: 'content',
           programId: this.programId,
           status: ['Draft', 'Live'],
-          contentType: 'Textbook',
-          framework: this.programDetails.config.framework,
-          board:	this.programDetails.config.board,
-          medium:	this.programDetails.config.medium,
+          contentType: 'Textbook'
         }
       }
       }
