@@ -11,7 +11,8 @@ import { IProgram } from './../../../core/interfaces';
 import { UserService } from '@sunbird/core';
 import { programConfigObj } from './programconfig';
 import { HttpClient } from '@angular/common/http';
-import { IImpressionEventInput, IInteractEventEdata } from '@sunbird/telemetry';
+import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEventInput } from '@sunbird/telemetry';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
  selector: 'app-create-program',
@@ -62,7 +63,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
  frameworkCategories;
  programScope: any = {};
  userprofile;
- programId = 0;
+ programId: string;
  public programData: any = {};
  showTextBookSelector = false;
  formIsInvalid = false;
@@ -75,6 +76,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
  public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
+  public telemetryStart: IStartEventInput;
+   public telemetryEnd: IEndEventInput;
 
  constructor(
    public frameworkService: FrameworkService,
@@ -88,7 +91,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    private formBuilder: FormBuilder,
    private httpClient: HttpClient,
    private navigationHelperService: NavigationHelperService,
-   private configService: ConfigService) {
+   private configService: ConfigService,
+   private deviceDetectorService: DeviceDetectorService) {
 
    this.sbFormBuilder = formBuilder;
 
@@ -300,6 +304,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
            this.programId = res.result.program_id;
            this.programData['program_id'] = this.programId;
             this.showTexbooklist();
+            this.generateTelemetryEvent('START');
           },
          (err) => this.saveProgramError(err)
        );
@@ -432,7 +437,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    data['status'] = 'Live';
 
    this.programsService.updateProgram(data).subscribe(
-     (res) => { this.router.navigate(['/sourcing']); },
+     (res) => { this.router.navigate(['/sourcing']); this.generateTelemetryEvent('END'); },
      (err) => this.saveProgramError(err)
    );
  }
@@ -444,4 +449,53 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     extra
   }, _.isUndefined);
 }
+
+generateTelemetryEvent(event) {
+  switch (event) {
+    case 'START':
+     const deviceInfo = this.deviceDetectorService.getDeviceInfo();
+     this.telemetryStart = {
+       context: {
+         env: this.activatedRoute.snapshot.data.telemetry.env
+       },
+       object: {
+         id: this.programId || '',
+         type: this.activatedRoute.snapshot.data.telemetry.object.type,
+         ver: this.activatedRoute.snapshot.data.telemetry.object.ver
+       },
+       edata: {
+         type: this.activatedRoute.snapshot.data.telemetry.type || '',
+         pageid: this.activatedRoute.snapshot.data.telemetry.pageid || '',
+         mode: this.activatedRoute.snapshot.data.telemetry.mode || '',
+         uaspec: {
+           agent: deviceInfo.browser,
+           ver: deviceInfo.browser_version,
+           system: deviceInfo.os_version,
+           platform: deviceInfo.os,
+           raw: deviceInfo.userAgent
+         }
+       }
+     };
+      break;
+    case 'END':
+     this.telemetryEnd = {
+       object: {
+         id: this.programId || '',
+         type: this.activatedRoute.snapshot.data.telemetry.object.type,
+         ver: this.activatedRoute.snapshot.data.telemetry.object.ver
+       },
+       context: {
+         env: this.activatedRoute.snapshot.data.telemetry.env
+       },
+       edata: {
+         type: this.activatedRoute.snapshot.data.telemetry.type,
+         pageid: this.activatedRoute.snapshot.data.telemetry.pageid,
+         mode: 'create'
+       }
+     };
+      break;
+    default:
+      break;
+  }
+ }
 }

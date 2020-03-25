@@ -363,7 +363,7 @@
 				</div>
 			</sui-tabset>
 		</div>
-		<div class="text-align-right mt-10">
+		<div class="text-align-right mt-10" [appTelemetryStart]="telemetryStart" [appTelemetryEnd]="telemetryEnd">
 			<button *ngIf="!showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary"
 				(click)="saveProgram()"
 				appTelemetryInteract
