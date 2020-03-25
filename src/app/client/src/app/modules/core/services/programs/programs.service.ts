@@ -368,22 +368,13 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * makes api call to get list of programs from ext framework Service
    */
-  getMyProgramsForContrib(status): Observable<ServerResponse> {
-    const req = {
-      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
-      data: {
-        request: {
-          filters: {
-            enrolled_id: {
-              user_id: _.get(this.userService, 'userProfile.userId'),
-              status: status
-            }
-          }
-        }
-      }
-    };
-    return this.API_URL(req);
-  }
+  getMyProgramsForContrib(req): Observable<ServerResponse> {
+        const request  = {
+          url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
+          data: req
+        };
+        return this.API_URL(request);
+    }
 
   /**
    * gets list of programs
@@ -467,4 +458,18 @@ export class ProgramsService extends DataService implements CanActivate {
 
     return _.sortBy(_.unionBy(resultArray, 'identifier'), 'index');
   }
+
+
+  getNominationList(reqFilters) {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
+      data: {
+        request: {
+          filters: reqFilters
+        }
+      }
+    };
+    return this.API_URL(req);
+  }
+
 }
