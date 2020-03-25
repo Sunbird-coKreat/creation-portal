@@ -58,7 +58,9 @@ export class MainHeaderComponent implements OnInit {
   };
   public signUpInteractEdata: IInteractEventEdata;
   public enterDialCodeInteractEdata: IInteractEventEdata;
-  public telemetryInteractObject: IInteractEventObject;
+  public telemetryInteractCdata: any;
+  public telemetryInteractPdata: any;
+  public telemetryInteractObject: any;
   pageId: string;
   searchBox = {
     'center': false,
@@ -125,6 +127,9 @@ export class MainHeaderComponent implements OnInit {
         }
       });
     }
+    this.telemetryInteractCdata = [];
+  this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
+  this.telemetryInteractObject = {};
   }
 
   private isCustodianOrgUser() {
@@ -240,11 +245,11 @@ export class MainHeaderComponent implements OnInit {
       type: 'click',
       pageid: 'public'
     };
-    this.telemetryInteractObject = {
-      id: '',
-      type: 'signup',
-      ver: '1.0'
-    };
+    // this.telemetryInteractObject = {
+    //   id: '',
+    //   type: 'signup',
+    //   ver: '1.0'
+    // };
     this.enterDialCodeInteractEdata = {
       id: 'click-dial-code',
       type: 'click',
@@ -300,5 +305,14 @@ export class MainHeaderComponent implements OnInit {
   }
   showSideBar() {
     jQuery('.ui.sidebar').sidebar('setting', 'transition', 'overlay').sidebar('toggle');
+  }
+
+  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+    return _.omitBy({
+      id,
+      type,
+      pageid,
+      extra
+    }, _.isUndefined);
   }
 }
