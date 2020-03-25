@@ -72,6 +72,12 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   }
 
   copyLinkToClipboard() {
+    if (!this.orgLink) {
+      this.toasterService.error(this.resourceService.messages.emsg.invite.user.m0001);
+      this.showNormalModal = false;
+      return ;
+    }
+
     const selBox = document.createElement('textarea');
     selBox.style.position = 'fixed';
     selBox.style.left = '0';
