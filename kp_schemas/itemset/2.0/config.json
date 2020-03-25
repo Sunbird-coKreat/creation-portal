@@ -9,6 +9,6 @@
     },
     "version": "disable",
     "versionCheckMode": "OFF",
-    "frameworkCategories": ["board","medium","subject","gradeLevel","topic"],
+    "frameworkCategories": [],
     "cacheEnabled": false
 }
