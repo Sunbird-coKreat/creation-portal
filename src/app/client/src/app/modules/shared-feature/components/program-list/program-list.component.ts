@@ -44,9 +44,9 @@ export class ProgramListComponent implements OnInit {
   ngOnInit() {
     this.checkIfUserIsContributor();
     this.roles = _.get(programContext, 'config.roles');
-  this.telemetryInteractCdata = [];
-  this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
-  this.telemetryInteractObject = {};
+    this.telemetryInteractCdata = [];
+    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
+    this.telemetryInteractObject = {};
   }
 
   /**
@@ -127,12 +127,22 @@ export class ProgramListComponent implements OnInit {
         .subscribe((response) => {
 
         this.programs = _.map(_.get(response, 'result.programs'), (nomination: any) => {
-              nomination.program = {
-                contributionDate: nomination.createdon,
-                nomination_status: nomination.status,
-                nominated_collection_ids: nomination.collection_ids
-              };
-              return nomination;
+          if(nomination.program) {
+            nomination.program = _.merge({}, nomination.program, {
+              contributionDate: nomination.createdon,
+              nomination_status: nomination.status,
+              nominated_collection_ids: nomination.collection_ids
+            });
+            return  nomination.program;
+          } else {
+            nomination = _.merge({}, nomination, {
+              contributionDate: nomination.createdon,
+              nomination_status: nomination.status,
+              nominated_collection_ids: nomination.collection_ids
+            });
+            return  nomination;
+          }
+
           });
         this.enrollPrograms = this.programs;
         this.count = _.get(response, 'result.count');
