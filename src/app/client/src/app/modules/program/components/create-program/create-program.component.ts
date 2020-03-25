@@ -135,7 +135,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
  fetchFrameWorkDetails() {
    if (_.get(this.userprofile.framework, 'id')) {
+
     this.userFramework = _.get(this.userprofile.framework, 'id')[0];
+
     this.frameworkService.getFrameworkCategories(_.get(this.userprofile.framework, 'id')[0])
     .pipe(takeUntil(this.unsubscribe))
     .subscribe((data) => {
@@ -151,6 +153,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.frameworkService.initialize();
     this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
       if (frameworkInfo && !frameworkInfo.err) {
+
         this.userFramework = frameworkInfo.frameworkdata.defaultFramework.identifier;
         this.frameworkCategories  = frameworkInfo.frameworkdata.defaultFramework.categories;
       }
@@ -171,6 +174,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   const board = _.find(this.frameworkCategories, (element) => {
     return element.code === 'board';
   });
+  
   this.userBoard = board.identifier;
   this.frameworkCategories.forEach((element) => {
     this.programScope[element['code']] = _.sortBy(element['terms'], ['name']);
