@@ -1,22 +1,22 @@
 <div class="sb-bg-color-primary-0 py-24" *ngIf="!showChapterList" [appTelemetryImpression]="telemetryImpression">
 	<div class="sb-bg-color-primary-0 practical-header">
-        <div class="d-flex flex-ai-center flex-jc-space-between practical-header__content ui container p-0">
+		<div class="ui container">       
+				<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="goBack()"
+						type="button"
+						appTelemetryInteract
+				[telemetryInteractEdata]="getTelemetryInteractEdata('list-textbooks', 'click', 'list-nominated-textbooks')"
+				[telemetryInteractObject]="telemetryInteractObject"
+				[telemetryInteractCdata]="telemetryInteractCdata"
+				[telemetryInteractPdata]="telemetryInteractPdata">
+											<i class="icon-svg icon-svg--xxs icon-back mr-4">
+													<svg class="icon icon-svg--primary">
+															<use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
+													</svg>
+											</i>
+											Back
+									</button>
+			 <div class="d-flex flex-ai-center flex-jc-space-between practical-header__content p-0">
             <div class="practical-header__title flex-basis-1 pr-10">
-                <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="goBack()"
-					type="button"
-					appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('list-textbooks', 'click', 'list-nominated-textbooks')"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">
-                    <i class="icon-svg icon-svg--xxs icon-back mr-4">
-                        <svg class="icon icon-svg--primary">
-                            <use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
-                        </svg>
-                    </i>
-                    Back
-                </button>
-
                 <h4 class="m-0 p-0">{{ programDetails?.name }} <i class="info circle link icon" suiPopup
                         [popupTemplate]="popupTemplate" popupDelay="1000"></i>
                     <ng-template #popupTemplate>
@@ -111,7 +111,8 @@
                 </div>
             </ng-container>
         </div>
-    </div>
+		</div>
+	</div>
 	<div class="ui container" [appTelemetryImpression]="telemetryImpression">
 
 		<div class="d-flex flex-ai-center flex-jc-space-between">

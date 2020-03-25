@@ -151,9 +151,9 @@
                                     class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
                                     <thead class="sb-table-header sb-table-thead-gray">
                                         <tr>
-                                            <th class="sb-sort-icon w-10">{{ resourceService?.frmelmnts?.lbl?.contributorName }}
+                                            <th class="sb-sort-icon w-15">{{ resourceService?.frmelmnts?.lbl?.contributorName }}
                                             </th>
-                                            <th class="sb-sort-icon w-5">{{ resourceService?.frmelmnts?.lbl?.type }}</th>
+                                            <th class="sb-sort-icon w-10">{{ resourceService?.frmelmnts?.lbl?.type }}</th>
                                             <th class="sb-sort-icon w-10">{{ resourceService?.frmelmnts?.lbl?.textbooks }}</th>
                                             <th class="w-5">
                                                 <span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
@@ -176,20 +176,6 @@
                                     </thead>
                                     <tbody class="sb-table-body">
                                         <tr *ngFor="let nomination of nominations; let i = index;">
-                                            <td class="text-center">{{ i + 1}}</td>
-                                            <td class="text-center w-10">
-                                                <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
-                                                    *ngIf="nomination?.nominationData?.status === 'Pending'"
-                                                    (click)="viewNominationDetails(nomination)"
-                                                    appTelemetryInteract
-                                                    [telemetryInteractEdata]="getTelemetryInteractEdata('view-nomination', 'click', 'program-nominations')"
-                                                    [telemetryInteractObject]="telemetryInteractObject"
-                                                    [telemetryInteractCdata]="telemetryInteractCdata"
-                                                    [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
-                                                <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
-                                                    *ngIf="nomination?.nominationData?.status === 'Accepted'"
-                                                    [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
-                                            </td>
                                             <td>
                                                 <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold"
                                                     (click)="showNomineeProfile = true; getNomineeProfile(nomination)"
@@ -219,11 +205,16 @@
                                             <td class="text-center w-10">
                                                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                                                         *ngIf="nomination?.nominationData?.status === 'Pending'"
-                                                        (click)="viewNominationDetails(nomination)">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
+                                                        (click)="viewNominationDetails(nomination)"
+                                                        appTelemetryInteract
+                                                        [telemetryInteractEdata]="getTelemetryInteractEdata('view-nomination', 'click', 'program-nominations')"
+                                                        [telemetryInteractObject]="telemetryInteractObject"
+                                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                                        [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
                                                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                                                         *ngIf="nomination?.nominationData?.status === 'Accepted'"
                                                         [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
-                                            </td>
+                                                </td>
                                         </tr>
                                     </tbody>
                                 </table>
