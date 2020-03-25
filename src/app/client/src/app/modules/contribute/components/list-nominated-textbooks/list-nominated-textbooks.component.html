@@ -155,8 +155,8 @@
 		<sui-tabset>
 			<div class="ui pointing secondary menu sb-bg-color-primary-100">
 				<div class="ui container p-0 m-0 d-flex flex-ai-center flex-jc-center">
-					<a class="item active" suiTabHeader="2">{{ resourceService?.frmelmnts?.lbl?.textbooks }}<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{contributorTextbooks.length || 0}}</span></a>
-					<a *ngIf="sessionContext.currentOrgRole === 'admin'" class="item" suiTabHeader="3">Users <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{contributorOrgUser.length || 0}}</span></a>
+					<div class="item active" suiTabHeader="2">{{ resourceService?.frmelmnts?.lbl?.textbooks }}<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{contributorTextbooks.length || 0}}</span></div>
+					<div class="item" suiTabHeader="3"  *ngIf="sessionContext.currentOrgRole === 'admin'">Users <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{contributorOrgUser.length || 0}}</span></div>
 				</div>
 			</div>
 			<!-- <div class="ui segment m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="1">
@@ -237,7 +237,7 @@
 											<td>5</td>
 											<td>Pending</td>
 											<td class="text-center">
-												<button type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(contributorTextbook)" appTelemetryInteract
+												<button *ngIf="currentNominationStatus === 'Approved'" type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(contributorTextbook)" appTelemetryInteract
 												[telemetryInteractEdata]="getTelemetryInteractEdata('upload-content', 'click', 'list-nominated-textbooks')"
 												[telemetryInteractObject]="telemetryInteractObject"
 												[telemetryInteractCdata]="telemetryInteractCdata"
@@ -252,7 +252,7 @@
 				</div>
 			</div>
 			<div class="ui segment m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="3">
-				<div class="ui container" *ngIf="sessionContext.currentOrgRole === 'admin' &&contributorOrgUser">
+				<div class="ui container" *ngIf="contributorOrgUser">
 					<div class="my-24">
 					  <div class="d-flex flex-ai-center flex-jc-space-between">
 						<div>

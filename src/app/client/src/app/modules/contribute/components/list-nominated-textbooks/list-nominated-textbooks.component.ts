@@ -48,7 +48,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
   public showNormalModal = false;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
-  public telemetryInteractObject: any;
+  public telemetryInteractObject: any = {};
   public currentUserRole: any;
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private configService: ConfigService, private publicDataService: PublicDataService,
@@ -60,7 +60,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
    }
 
   ngOnInit() {
-  this.contributor = {'name': 'Nitesh Kesarkar', 'type': 'Organisation', 'nominationStatus': 'Pending'};
   this.getProgramDetails();
   this.getProgramTextbooks();
   if (!_.isEmpty(this.userService.userProfile.userRegData)
@@ -70,7 +69,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
   this.getNominationStatus();
   this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program_ID'}];
   this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
-  this.telemetryInteractObject = {};
   }
 
   getProgramDetails() {

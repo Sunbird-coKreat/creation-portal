@@ -23,7 +23,7 @@ export class UserService {
    */
   private _userid: string;
 
-  public userRegDataFetChed = false;
+  public userRegistryData = false;
 
   /**
     * Contains session id
