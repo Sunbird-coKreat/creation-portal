@@ -1,4 +1,4 @@
-<div class="ui container">
+<div class="ui container" [appTelemetryImpression]="telemetryImpression">
 	<div class="sb-pageSection mt-24 pb-48">
 		<div class="sb-pageSection-header">
 			<h4 class="sb-pageSection-title">{{resource.frmelmnts.lbl.createNewProgram}}</h4>
@@ -255,7 +255,12 @@
 									<button class="sb-btn sb-btn-normal sb-btn-outline-primary">
 											{{resource.frmelmnts.btn.reset}}
 									</button>
-									<button class="sb-btn sb-btn-normal sb-btn-primary ml-8" (click)="showTexbooklist()">
+									<button class="sb-btn sb-btn-normal sb-btn-primary ml-8" (click)="showTexbooklist()"
+									appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('show-textbook-list', 'click', 'create-program')"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata">
 									{{resource.frmelmnts.btn.apply}}
 									</button>
 								</div>
@@ -339,7 +344,12 @@
 													<span>{{tempCollection.subject}}</span>
 												</small>
 											</div>
-											<span class="one wide column text-align-right" (click)="onCollectionCheck(tempCollection, false)">
+											<span class="one wide column text-align-right" (click)="onCollectionCheck(tempCollection, false)"
+											appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('collection-check', 'click', 'create-program')"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata">
 												<i class="close outline icon sb-color-red-100" suiPopup popupHeader="close"></i>
 											</span>
 											<hr class="row p-0">
@@ -353,13 +363,28 @@
 				</div>
 			</sui-tabset>
 		</div>
-		<div class="text-align-right mt-10">
+		<div class="text-align-right mt-10" [appTelemetryStart]="telemetryStart" [appTelemetryEnd]="telemetryEnd">
 			<button *ngIf="!showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary"
-				(click)="saveProgram()">{{resource.frmelmnts.btn.next}}</button>
+				(click)="saveProgram()"
+				appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('next', 'click', 'create-program')"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.next}}</button>
 			<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-default mr-10"
-				(click)="navigateTo(1)">{{resource.frmelmnts.btn.previous}}</button>
+				(click)="navigateTo(1)"
+				appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('previous', 'click', 'create-program')"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.previous}}</button>
 			<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary"
-				(click)="updateProgramCollection()">{{resource.frmelmnts.btn.createProgram}}</button>
+				(click)="updateProgramCollection()"
+				appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('create-program', 'click', 'create-program')"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.createProgram}}</button>
 		</div>
 	</div>
 </div>

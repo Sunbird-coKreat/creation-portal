@@ -8,6 +8,7 @@ import { Subject, of, throwError } from 'rxjs';
 import { ToasterService, ResourceService, ConfigService, NavigationHelperService } from '@sunbird/shared';
 import { DatePipe } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
+import {  IInteractEventEdata } from '@sunbird/telemetry';
 
 @Component({
   selector: 'app-enroll-contributor',
@@ -34,6 +35,9 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
   public frameworkFetched = false;
   public telemetryPageId = 'enroll-contributor';
   @Output() close = new EventEmitter<any>();
+  public telemetryInteractCdata: any;
+   public telemetryInteractPdata: any;
+   public telemetryInteractObject: any;
 
   constructor(private programsService: ProgramsService, private tosterService: ToasterService,
     public userService: UserService, public frameworkService: FrameworkService, private configService: ConfigService,
@@ -48,6 +52,9 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
       this.getProgramContentTypes();
       this.enrolledDate = new Date();
       this.enrolledDate = this.datePipe.transform(this.enrolledDate, 'yyyy-MM-dd');
+     this.telemetryInteractCdata = [];
+     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
+     this.telemetryInteractObject = {};
   }
 
   ngAfterViewInit() {
@@ -197,6 +204,15 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
 
   closeModal() {
     this.close.emit();
+  }
+
+  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+    return _.omitBy({
+      id,
+      type,
+      pageid,
+      extra
+    }, _.isUndefined);
   }
 
 }

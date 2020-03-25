@@ -205,7 +205,12 @@
 													<div class="text">{{ resourceService?.frmelmnts?.lbl?.actions }}</div>
 													<i class="dropdown icon"></i>
 													<div class="menu" suiDropdownMenu>
-													  <div class="item" (click)="viewContribution()">Upload Content</div>
+													  <div class="item" (click)="viewContribution()"
+													  appTelemetryInteract
+                                                      [telemetryInteractEdata]="getTelemetryInteractEdata('upload-content', 'click', 'list-nominated-textbooks')"
+                                                      [telemetryInteractObject]="telemetryInteractObject"
+                                                      [telemetryInteractCdata]="telemetryInteractCdata"
+                                                      [telemetryInteractPdata]="telemetryInteractPdata">Upload Content</div>
 													  <div class="item">Review Content</div>
 													</div>
 												</div>
