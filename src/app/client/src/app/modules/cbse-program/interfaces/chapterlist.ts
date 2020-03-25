@@ -4,4 +4,5 @@ export interface IChapterListComponentInput {
   role?: any;
   collection?: any;
   programContext?: any;
+  userProfile?: any;
 }

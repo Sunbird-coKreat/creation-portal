@@ -74,6 +74,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   showError = false;
   public questionPattern: Array<any> = [];
   showConfirmationModal = false;
+  public userProfile: any;
+  public sampleContent = false;
   public telemetryPageId = 'chapter-list';
   constructor(public publicDataService: PublicDataService, private configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
@@ -93,7 +95,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.currentStage = 'chapterListComponent';
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
     this.programContext = _.get(this.chapterListComponentInput, 'programContext');
-    this.currentUserID = _.get(this.programContext, 'userDetails.userId');
+    this.userProfile = _.get(this.chapterListComponentInput, 'userProfile');
+    this.currentUserID = this.userProfile.identifier;
+    // this.currentUserID = _.get(this.programContext, 'userDetails.userId');
     this.role = _.get(this.chapterListComponentInput, 'role');
     this.collection = _.get(this.chapterListComponentInput, 'collection');
     this.actions = _.get(this.chapterListComponentInput, 'programContext.config.actions');
@@ -228,6 +232,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         instance.countData['mycontribution'] = 0;
         instance.countData['totalreview'] = 0;
         instance.countData['awaitingreview'] = 0;
+        instance.countData['sampleContenttotal'] = 0;
+        instance.countData['sampleMycontribution'] = 0;
         this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
         hierarchy = instance.hierarchyObj;
         this.sessionContext.hierarchyObj = { hierarchy };
@@ -240,7 +246,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   setCollectionTree(data, identifier) {
-    this.getContentStatusCount(data);
+    // tslint:disable-next-line:max-line-length
+    if (this.sessionContext.currentOrgRole !== 'user' && this.sessionContext.nominationDetails && !_.includes(['Approved', 'Rejected'], this.sessionContext.nominationDetails.status)) {
+      this.sampleContent = true;
+      this.getSampleContentStatusCount(data);
+    } else {
+      this.sampleContent = false;
+      this.getContentStatusCount(data);
+    }
     if (data.contentType !== 'TextBook') {
       const rootMeta = _.pick(data, this.sharedContext);
       const rootTree = this.generateNodeMeta(data, rootMeta);
@@ -299,6 +312,22 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         return treeItem;
       });
       return tree;
+    }
+  }
+
+  getSampleContentStatusCount(data) {
+    const self = this;
+    if (data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' && data.sampleContent) {
+      this.countData['sampleContenttotal'] = this.countData['sampleContenttotal'] + 1;
+      if (data.createdBy === this.currentUserID) {
+        this.countData['sampleMycontribution'] = this.countData['sampleMycontribution'] + 1;
+      }
+    }
+    const childData = data.children;
+    if (childData) {
+      childData.map(child => {
+        self.getSampleContentStatusCount(child);
+      });
     }
   }
 
@@ -397,10 +426,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               'contentType': this.templateDetails.metadata.contentType,
               'resourceType': this.templateDetails.metadata.resourceType || 'Learn',
               'creator': creator,
+              'programId': this.sessionContext.programId,
+              'sampleContent': this.sampleContent,
               ...(_.pickBy(reqBody, _.identity))
-              // 'framework': this.sessionContext.framework,
-              // 'organisation': this.sessionContext.onBoardSchool ? [this.sessionContext.onBoardSchool] : [],
-
             }
           }
         }

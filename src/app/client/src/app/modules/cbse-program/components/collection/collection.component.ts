@@ -32,7 +32,6 @@ export class CollectionComponent implements OnInit, OnDestroy {
   public collection;
   public collectionsWithCardImage;
   public role: any = {};
-  public hasExpressedInterest = false;
   public collectionList: any = {};
   public mediums;
   public showError = false;
@@ -55,6 +54,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
   public currentStage: any;
   public contentType:any;
   public currentNominationStatus: any;
+  public nominationDetails: any;
   showContentTypeModal = false;
   selectedContentTypes = [];
   selectedCollectionIds = [];
@@ -82,11 +82,9 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.sharedContext = this.collectionComponentInput.programContext.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});
-
     this.contentType = _.get(this.programContext, 'content_types'),
     this.sessionContext = _.assign(this.collectionComponentInput.sessionContext, {
-
-      currentRole: _.get(this.programContext, 'userDetails.roles[0]'),
+      // currentRole: _.get(this.programContext, 'userDetails.roles[0]'),
       bloomsLevel: _.get(this.programContext, 'config.scope.bloomsLevel'),
       programId: _.get(this.programContext, 'programId'),
       //programId: '31ab2990-7892-11e9-8a02-93c5c62c03f1' || _.get(this.programContext, 'programId'),
@@ -95,11 +93,15 @@ export class CollectionComponent implements OnInit, OnDestroy {
       collectionType: _.get(this.collectionComponentConfig, 'collectionType'),
       collectionStatus: _.get(this.collectionComponentConfig, 'status')
     }, this.sharedContext);
+    if (this.userProfile.userRegData) {
+      this.sessionContext.currentRole = this.userProfile.userRegData.User_Org.roles[0] === 'admin' ? 'CONTRIBUTOR' : 'REVIEWER';
+    }
     this.filters = this.getImplicitFilters();
     this.getCollectionCard();
+
     const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
     this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
-    this.sessionContext.programId = this.programContext.program_id
+    this.sessionContext.programId = this.programContext.program_id;
     this.role.currentRole = this.sessionContext.currentRole;
     this.classes = _.find(this.collectionComponentConfig.config.filters.explicit, {'code': 'gradeLevel'}).range;
     this.mediums = _.find(this.collectionComponentConfig.config.filters.implicit, {'code': 'medium'}).defaultValue;
@@ -181,7 +183,6 @@ export class CollectionComponent implements OnInit, OnDestroy {
       filterValueItem = filterArray;
     }
     this.filteredList = this.filterByCollection(this.collectionsWithCardImage, filterBy, filterValueItem);
-    //this.groupCollectionList();
   }
 
   getSharedContextObjectProperty(property) {
@@ -270,10 +271,8 @@ export class CollectionComponent implements OnInit, OnDestroy {
     }
     if (this.selectedCollectionIds.length > 0) {
       this.nominateButton = 'show';
-      this.hasExpressedInterest = true;
     } else {
       this.nominateButton = 'hide';
-      this.hasExpressedInterest = false;
     }
   }
   redirect() {
@@ -373,12 +372,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
       req.data.request['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
     }
 
-    this.programsService.post(req).subscribe((data) => {
-      this.hasExpressedInterest = true;
-      this.toasterService.success('Expressing Interest Successful');
-    }, error => {
-      this.toasterService.error('User onboarding failed');
-    });
+    return this.programsService.post(req);
   }
 
   getNominationStatus() {
@@ -387,19 +381,39 @@ export class CollectionComponent implements OnInit, OnDestroy {
       data: {
         request: {
           filters: {
-            program_id: this.activatedRoute.snapshot.params.programId,
-            user_id: this.userService.userProfile.userId,
+            program_id: this.activatedRoute.snapshot.params.programId
           }
         }
       }
     };
+    if (this.userProfile.userRegData && this.userProfile.userRegData.User_Org) {
+      req.data.request.filters['organisation_id'] = this.userProfile.userRegData.User_Org.orgId;
+    } else {
+      req.data.request.filters['user_id'] = this.userService.userProfile.userId;
+    }
     this.programsService.post(req).subscribe((data) => {
       if (data.result && !_.isEmpty(data.result)) {
           this.currentNominationStatus =  _.get(_.first(data.result), 'status');
-          this.hasExpressedInterest = true;
-      } else {
-        this.hasExpressedInterest = false;
+          this.sessionContext.nominationDetails = _.first(data.result);
       }
+      if (this.userProfile.userRegData && this.userProfile.userRegData.User_Org) {
+        this.sessionContext.currentOrgRole = this.userProfile.userRegData.User_Org.roles[0];
+        if (this.userProfile.userRegData.User_Org.roles[0] === 'admin') {
+          // tslint:disable-next-line:max-line-length
+          this.sessionContext.currentRole = (this.currentNominationStatus === 'Approved' ||  this.currentNominationStatus === 'Rejected') ? 'REVIEWER' : 'CONTRIBUTOR';
+        } else if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.rolemapping) {
+            _.find(this.sessionContext.nominationDetails.rolemapping, (users, role) => {
+              if (_.includes(users, this.userProfile.userRegData.User.userId)) {
+                this.sessionContext.currentRole = role;
+              }
+          });
+        }
+      } else {
+        this.sessionContext.currentRole = 'CONTRIBUTOR';
+        this.sessionContext.currentOrgRole = 'individual';
+      }
+      const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
+      this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
     }, error => {
       this.toasterService.error('Failed fetching current nomination status');
     });
@@ -407,5 +421,53 @@ export class CollectionComponent implements OnInit, OnDestroy {
 
   goBack() {
     this.navigationHelperService.navigateToPreviousUrl();
+  }
+
+  toggleUploadSampleButton(data) {
+    data.isSelected = !data.isSelected;
+  }
+
+  uploadSampleContent(event, collection) {
+    if (this.sessionContext.nominationDetails) {
+      this.gotoChapterView(collection);
+    } else {
+      this.expressInterest().subscribe((data) => {
+        if (data.result && !_.isEmpty(data.result)) {
+          this.sessionContext.nominationDetails = {
+            osid: data.result.id,
+            status: 'Initiated',
+            program_id: data.result.program_id,
+            user_id: data.result.user_id
+          };
+          if (this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org) {
+            this.sessionContext.nominationDetails['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
+          }
+          this.gotoChapterView(collection);
+        }
+      }, error => {
+        this.toasterService.error('User onboarding failed');
+      });
+    }
+  }
+
+  gotoChapterView(collection) {
+    this.sharedContext = this.collectionComponentInput.programContext.config.sharedContext.reduce((obj, context) => {
+      return {...obj, [context]: collection[context] || this.sharedContext[context]};
+    }, this.sharedContext);
+    _.forEach(['gradeLevel', 'medium', 'subject'], (val) => {
+       this.checkArrayCondition(val);
+    });
+    this.sessionContext = _.assign(this.sessionContext, this.sharedContext);
+    this.sessionContext.collection =  collection.identifier;
+    this.sessionContext.collectionName = collection.name;
+    this.chapterListComponentInput = {
+      sessionContext: this.sessionContext,
+      collection: collection,
+      userProfile: this.userProfile,
+      config: _.find(this.programContext.config.components, {'id': 'ng.sunbird.chapterList'}),
+      programContext: this.programContext,
+      role: this.role
+    };
+    this.programStageService.addStage('chapterListComponent');
   }
 }
