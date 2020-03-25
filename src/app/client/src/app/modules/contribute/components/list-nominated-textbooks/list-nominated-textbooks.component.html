@@ -17,18 +17,18 @@
 					<ng-template #popupTemplate>
 						<div class="content">
 							<div class="textbook-details ml-8">
-								<div class="header"><strong>{{ resourceService.frmelmnts.lbl.mediums }}</strong></div>
+								<div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.mediums }}</strong></div>
 								<div class="content">
 									<label class="d-block fsmall font-weight-normal mb-0">{{ mediums }}</label>
 								</div>
 								<hr />
-								<div class="header"><strong>{{ resourceService.frmelmnts.lbl.grades }}</strong></div>
+								<div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.grades }}</strong></div>
 								<div class="content">
 									<label class="d-block fsmall font-weight-normal mb-0">{{ grades }}</label>
 								</div>
 								<hr />
 								<div class="header">
-									<strong>{{ resourceService.frmelmnts.lbl.expressionOfInterestDate }}</strong>
+									<strong>{{ resourceService?.frmelmnts?.lbl?.expressionOfInterestDate }}</strong>
 								</div>
 								<div class="content">
 									<label class="d-block fsmall font-weight-normal mb-0">
@@ -37,7 +37,7 @@
 								</div>
 								<hr />
 								<div class="header">
-									<strong>{{ resourceService.frmelmnts.lbl.shortlistingOfContributorDate }}</strong>
+									<strong>{{ resourceService?.frmelmnts?.lbl?.shortlistingOfContributorDate }}</strong>
 								</div>
 								<div class="content">
 									<label class="d-block fsmall font-weight-normal mb-0">
@@ -46,7 +46,7 @@
 								</div>
 								<hr />
 								<div class="header">
-									<strong>{{ resourceService.frmelmnts.lbl.contentSubmissionDate }}</strong>
+									<strong>{{ resourceService?.frmelmnts?.lbl?.contentSubmissionDate }}</strong>
 								</div>
 								<div class="content">
 									<label class="d-block fsmall font-weight-normal mb-0">
@@ -55,7 +55,7 @@
 								</div>
 								<hr />
 								<div class="header">
-									<strong>{{ resourceService.frmelmnts.lbl.programEndDate }}</strong>
+									<strong>{{ resourceService?.frmelmnts?.lbl?.programEndDate }}</strong>
 								</div>
 								<div class="content">
 									<label class="d-block fsmall font-weight-normal mb-0">
@@ -103,7 +103,7 @@
 				  </div>
 				  <div class="program-timeline-item">
 					<div class="status" [class.active]="activeDate === 'enddate'">
-					  <div class="status__label">{{ resourceService.frmelmnts.lbl.programEndDate }}</div>
+					  <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.programEndDate }}</div>
 					  <div class="status__date">
 						{{ programDetails?.enddate |  date:'LLLL d, yyyy'  }}
 						<br/>
@@ -124,11 +124,11 @@
 		<sui-tabset>
 			<div class="ui pointing secondary menu sb-bg-color-primary-100">
 				<div class="ui container p-0 m-0 d-flex flex-ai-center flex-jc-center">
-					<a class="item active" suiTabHeader="2">{{ resourceService.frmelmnts.lbl.textbooks }}<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{contributorTextbooks.length}}</span></a>
-					<a class="item" suiTabHeader="3">Users</a>
+					<a class="item active" suiTabHeader="2">{{ resourceService?.frmelmnts?.lbl?.textbooks }}<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{contributorTextbooks.length || 0}}</span></a>
+					<a class="item" suiTabHeader="3">Users <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{contributorOrgUser.length || 0}}</span></a>
 				</div>
 			</div>
-			<div class="ui segment m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="1">
+			<!-- <div class="ui segment m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="1">
 				<div class="ui container">
 
 					<table class="progressbar mt-32">
@@ -177,7 +177,7 @@
 						</tr>
 					</table>
 				</div>
-			</div>
+			</div> -->
 			<div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" isActive='true' suiTabContent="2">
 				<div class="ui container p-0 m-0">
 					<div class="sb-pageSection" [appTelemetryImpression]="telemetryImpression">
@@ -186,7 +186,7 @@
 								<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
 									<thead class="sb-table-header sb-table-thead-gray">
 										<tr>
-											<th class="w-5 text-center">{{ resourceService.frmelmnts.lbl.srNo }}</th>
+											<th class="w-5 text-center">{{ resourceService?.frmelmnts?.lbl?.srNo }}</th>
                 							<th class="w-5 text-center"></th>
 											<th class="sb-sort-icon">Textbook</th>
 											<th class="sb-sort-icon">Grade</th>
@@ -202,7 +202,7 @@
 											  </td>
 											<td class="text-center">
 												<div class="ui dropdown sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary ml-auto sb-btn-dropdown" suiDropdown autoClose="itemClick">
-													<div class="text">{{ resourceService.frmelmnts.lbl.actions }}</div>
+													<div class="text">{{ resourceService?.frmelmnts?.lbl?.actions }}</div>
 													<i class="dropdown icon"></i>
 													<div class="menu" suiDropdownMenu>
 													  <div class="item" (click)="viewContribution()">Upload Content</div>
@@ -227,15 +227,79 @@
 				</div>
 			</div>
 			<div class="ui segment m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="3">
-				<div class="ui container">Users</div>
+				<div class="ui container" *ngIf="contributorOrgUser">
+					<div class="my-24">
+					  <div class="d-flex flex-ai-center flex-jc-space-between">
+						<div>
+						  <h4 class="sb-pageSection-title"> {{orgDetails.name}}
+							<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{contributorOrgUser.length || 0}}</span>
+						  </h4>
+						</div>
+						<!-- <div>
+						  <button class="sb-btn sb-btn-outline-primary sb-btn-normal ml-10 " (click)="showNormalModal = true"><i
+							  class="plus circle icon"></i> Invite a User</button>
+						</div> -->
+					  </div>
+					</div>
+					<div class="sb-table-respoinsive" *ngIf="contributorOrgUser?.length != 0">
+					  <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
+						<thead class="sb-table-header sb-table-thead-gray">
+						  <tr>
+							<th>S.No.</th>
+							<!-- <th></th> -->
+							<th>Username</th>
+							<th>Grade</th>
+							<th>Subject</th>
+							<th>ContentTypes</th>
+							<th>Roles</th>
+						  </tr>
+						</thead>
+						<tbody class="sb-table-body">
+						  <tr *ngFor="let orgUser of contributorOrgUser; let i= index;">
+							<td>{{ i + 1 }}</td>
+							<!-- <td><button type="button" class="sb-btn sb-btn-outline-primary sb-btn-xs">Edit</button></td> -->
+							<td>{{orgUser.fullName}}</td>
+							<!-- <td>**********</td> -->
+							<td>{{orgUser.gradeLevel.join(', ')}}</td>
+							<td>{{orgUser.subject.join(', ')}}</td>
+							<td>
+								<div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold" style="width: 250px;">
+									{{orgUser.contentTypes.join(', ')}}
+								</div>
+							</td>
+							<td>
+								<sui-select class="selection" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="options" valueField="name"
+								(selectedOptionChange)="onRoleChange()">
+									<sui-select-option *ngFor="let option of roles;" [value]="option">
+									</sui-select-option>
+								</sui-select>
+							</td>
+						  </tr>
+						</tbody>
+					  </table>
+					</div>
+					<div class="sb-table-respoinsive" *ngIf="contributorOrgUser?.length === 0">
+						<app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0146'}"></app-no-result>
+					</div>
+				  </div>
 			</div>
-
 		</sui-tabset>
 	</div>
-
-
-
 </div>
+<!-- <sui-modal *ngIf="showNormalModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+  class="sb-modal" appBodyScroll (dismissed)="showNormalModal = !showNormalModal" #modal>
+  <div class="sb-modal-header">
+    {{ resourceService.frmelmnts.lbl.linkToShare }}
+  </div>
+  <div class="sb-modal-content">
+    <p class="mb-8">{{ resourceService.frmelmnts.lbl.sharelink }}</p>
+    <div class="ui action input fluid">
+      <input name="title" readonly="" value="{{orgDetails.orgLink}}" type="text" class="" #inputLink>
+      <button class="ui basic primary button" (click)="copyLinkToClipboard(inputLink)"> {{ resourceService.frmelmnts.btn.copyLink }}
+      </button>
+    </div>
+  </div>
+</sui-modal> -->
 <ng-container *ngIf="showChapterList">
 	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs">
 	</ndc-dynamic>

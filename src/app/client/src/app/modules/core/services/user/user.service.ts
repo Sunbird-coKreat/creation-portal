@@ -317,16 +317,17 @@ export class UserService {
       }
     }), switchMap((res4) => {
       if (res4 && res4.result.User_Org.length) {
-      option.data['request'] = {
-        entityType: ['Org'],
-        filters: {
-          osid: {eq: res4.result.User_Org[0].orgId}
-        }
-     };
-     return this.contentService.post(option);
-    } else {
-      return of(null);
-    }
+        const orgList = res4.result.User_Org.map((value) => value.orgId.slice(2));
+        option.data['request'] = {
+          entityType: ['Org'],
+          filters: {
+            osid: {or: orgList}
+          }
+      };
+       return this.contentService.post(option);
+      } else {
+        return of(null);
+      }
     })
     ).subscribe((res: any) => {
       if (res && res.result.Org.length) {

@@ -13,7 +13,7 @@ const routes: Routes = [{
   path: '', component: ListAllProgramsComponent, canActivate: [ProgramsService],
   data: {
     telemetry: {
-      env: 'contribute', pageid: 'programs-list', type: 'view', subtype: 'paginate'
+      env: 'creation-portal', pageid: 'list-all-programs', type: 'view', subtype: 'paginate'
     }
   }
 },
@@ -26,37 +26,37 @@ const routes: Routes = [{
 {
   path: 'myenrollprograms', component: ListAllMyProgramsComponent, pathMatch: 'full',
   data: {
-    telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
+    telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'list-my-programs' }
   },
 },
 {
   path: 'program/:programId', component: ProgramComponent,
   data: {
-    telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
+    telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'program' }
   },
 },
 {
   path: 'nominatedtextbooks/:programId', component: ListNominatedTextbooksComponent,
   data: {
-    telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
+    telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'list-nominated-textbooks' }
   },
 },
 {
   path: 'orglist', component: OrgUserListComponent, pathMatch: 'full',
   data: {
-    telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
+    telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'list-org-users' }
   },
 },
 {
   path: 'contriadmin', component: OrgContriAdminComponent, pathMatch: 'full',
   data: {
-    telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
+    telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'org-admin' }
   },
 },
 {
   path: 'dashboard', component: ContriDashboardComponent, pathMatch: 'full',
   data: {
-    telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
+    telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'dashboard' }
   },
 }
 ];

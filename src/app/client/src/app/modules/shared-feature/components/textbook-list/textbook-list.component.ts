@@ -58,29 +58,26 @@ export class TextbookListComponent implements OnInit {
   }
 
   getProgramCollection () {
-    let httpOptions: HttpOptions = {
+    const httpOptions: HttpOptions = {
       headers: {
-        'content-type': 'application/json'
+        'content-type': 'application/json',
       }
     };
     const option = {
-      url: 'learner/composite/v1/search',
+      url: 'content/composite/v1/search',
       data: {
         request: {
           filters: {
             programId: this.programId,
-            objectType: "content",
-            status: ["Draft", "Live"],
-            contentType: "Textbook",
-            framework: this.programDetails.config.framework,
-            board:	this.programDetails.config.board,
-            medium:	this.programDetails.config.medium
+            objectType: 'content',
+            status: ['Draft'],
+            contentType: 'Textbook'
           }
         }
       }
     };
     this.httpClient.post<any>(option.url, option.data, httpOptions).subscribe(
-      (res) => {
+      (res: any) => {
         this.collections = res.result.content;
         this.collectionsCnt = this.collections.length;
       },

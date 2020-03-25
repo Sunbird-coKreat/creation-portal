@@ -1,5 +1,5 @@
 import { ConfigService, ResourceService, ToasterService, RouterNavigationService,
-   ServerResponse } from '@sunbird/shared';
+  ServerResponse } from '@sunbird/shared';
 import { ProgramsService, DataService, FrameworkService } from '@sunbird/core';
 import { Subscription, Subject } from 'rxjs';
 import { tap, first, map, takeUntil } from 'rxjs/operators';
@@ -13,385 +13,392 @@ import { programConfigObj } from './programconfig';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
-  selector: 'app-create-program',
-  templateUrl: './create-program.component.html',
-  styleUrls: ['./create-program.component.scss']
+ selector: 'app-create-program',
+ templateUrl: './create-program.component.html',
+ styleUrls: ['./create-program.component.scss']
 })
 
 export class CreateProgramComponent implements OnInit, AfterViewInit {
-  public unsubscribe = new Subject<void>();
+ public unsubscribe = new Subject<void>();
 
-  /**
-   * Program creation form name
-   */
-  createProgramForm: FormGroup;
-  collectionListForm: FormGroup;
-
-  sbFormBuilder: FormBuilder;
-
-  /**
-   * Contains Program form data
-   */
-  programDetails: IProgram;
-
-  /**
-  * To send activatedRoute.snapshot to routerNavigationService
+ /**
+  * Program creation form name
   */
-  private activatedRoute: ActivatedRoute;
+ createProgramForm: FormGroup;
+ collectionListForm: FormGroup;
 
-  /**
-  * To call resource service which helps to use language constant
+ sbFormBuilder: FormBuilder;
+
+ /**
+  * Contains Program form data
   */
-  public resourceService: ResourceService;
+ programDetails: IProgram;
 
-  /**
-  * To navigate back to parent component
+ /**
+ * To send activatedRoute.snapshot to routerNavigationService
+ */
+ private activatedRoute: ActivatedRoute;
+
+ /**
+ * To call resource service which helps to use language constant
+ */
+ public resourceService: ResourceService;
+
+ /**
+ * To navigate back to parent component
+ */
+ public routerNavigationService: RouterNavigationService;
+
+ /**
+ * List of textbooks for the program by BMGC
+ */
+ collections;
+ tempCollections = [];
+ /**
+ * List of textbooks for the program by BMGC
+ */
+ frameworkdetails;
+ frameworkCategories;
+ programScope: any = {};
+ userprofile;
+ programId = 0;
+ public programData: any = {};
+ showTextBookSelector = false;
+ formIsInvalid = false;
+ subjectsOption = [];
+ mediumOption = [];
+ gradeLevelOption = [];
+ pickerMinDate = new Date(new Date().setHours(0, 0, 0, 0));
+ pickerMinDateForEndDate = new Date(new Date().setHours(0, 0, 0, 0));
+
+ constructor(
+   public frameworkService: FrameworkService,
+   private programsService: ProgramsService,
+   private userService: UserService,
+   public toasterService: ToasterService,
+   public resource: ResourceService,
+   private config: ConfigService,
+   activatedRoute: ActivatedRoute,
+   private router: Router,
+   private formBuilder: FormBuilder,
+   private httpClient: HttpClient) {
+
+   this.sbFormBuilder = formBuilder;
+
+ }
+
+ ngOnInit() {
+   this.userprofile = this.userService.userProfile;
+   console.log(this.userprofile);
+   this.initializeFormFields();
+   this.fetchFrameWorkDetails();
+   this.getProgramContentTypes();
+   // this.showTexbooklist();
+ }
+
+ ngAfterViewInit() { }
+
+ fetchFrameWorkDetails() {
+   this.programScope['medium'] = [];
+   this.programScope['gradeLevel'] = [];
+   this.programScope['subject'] = [];
+
+   this.collectionListForm.controls['medium'].setValue('');
+   this.collectionListForm.controls['gradeLevel'].setValue('');
+   this.collectionListForm.controls['subject'].setValue('');
+
+   this.frameworkService.getFrameworkCategories(_.get(this.userprofile.framework, 'id')[0])
+     .pipe(takeUntil(this.unsubscribe))
+     .subscribe((data) => {
+
+       if (data && _.get(data, 'result.framework.categories')) {
+         this.frameworkCategories = _.get(data, 'result.framework.categories');
+         const board = _.find(this.frameworkCategories, (element) => {
+           return element.code === 'board';
+         });
+
+         this.frameworkCategories.forEach((element) => {
+           this.programScope[element['code']] = _.sortBy(element['terms'], ['name']);
+         });
+
+         const mediumOption = this.programsService.getAssociationData(board.terms, 'medium', this.frameworkCategories);
+
+         if (mediumOption.length) {
+           this.programScope['medium'] = mediumOption;
+         }
+       }
+     }, error => {
+       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+       this.toasterService.warning(errorMes || 'Fetching framework details failed');
+     });
+ }
+
+ onMediumChange() {
+   // const thisClassOption = this.createProgramForm.value.gradeLevel;
+
+   /*this.programScope['gradeLevel'] = [];
+   this.programScope['subject'] = [];*/
+   this.collectionListForm.controls['gradeLevel'].setValue('');
+   this.collectionListForm.controls['subject'].setValue('');
+
+   if (!_.isEmpty(this.collectionListForm.value.medium)) {
+     // tslint:disable-next-line: max-line-length
+     const classOption = this.programsService.getAssociationData(this.collectionListForm.value.medium, 'gradeLevel', this.frameworkCategories);
+
+     if (classOption.length) {
+       this.programScope['gradeLevel'] = classOption;
+     }
+
+     this.onClassChange();
+   }
+ }
+
+ onClassChange() {
+   // const thisSubjectOption = this.createProgramForm.value.subject;
+   // this.programScope['subject'] = [];
+   this.collectionListForm.controls['subject'].setValue('');
+
+   if (!_.isEmpty(this.collectionListForm.value.gradeLevel)) {
+
+     // tslint:disable-next-line: max-line-length
+     const subjectOption = this.programsService.getAssociationData(this.collectionListForm.value.gradeLevel, 'subject', this.frameworkCategories);
+
+     if (subjectOption.length) {
+       this.programScope['subject'] = subjectOption;
+     }
+   }
+ }
+
+ /**
+  * Executed when user come from any other page or directly hit the url
+  *
+  * It helps to initialize form fields and apply field level validation
   */
-  public routerNavigationService: RouterNavigationService;
+ initializeFormFields(): void {
+   this.createProgramForm = this.sbFormBuilder.group({
+     name: ['', [Validators.required, Validators.maxLength(100)]],
+     description: ['', Validators.maxLength(1000)],
+     nomination_enddate: ['', Validators.required],
+     shortlisting_enddate: [''],
+     program_end_date: ['', Validators.required],
+     content_submission_enddate: ['', Validators.required],
+     content_types: [],
+     rewards: [],
+     /*medium: ['', Validators.required],
+     gradeLevel: ['', Validators.required],
+     subject: ['', Validators.required],*/
+   });
 
-  /**
-  * List of textbooks for the program by BMGC
-  */
-  collections;
-  tempCollections = [];
-  /**
-  * List of textbooks for the program by BMGC
-  */
-  frameworkdetails;
-  frameworkCategories;
-  programScope: any = {};
-  userprofile;
-  programId = 0;
-  showTextBookSelector = false;
-  formIsInvalid = false;
-  subjectsOption = [];
-  mediumOption = [];
-  gradeLevelOption = [];
-  pickerMinDate = new Date(new Date().setHours(0, 0, 0, 0));
-  pickerMinDateForEndDate = new Date(new Date().setHours(0, 0, 0, 0));
+   this.collectionListForm = this.sbFormBuilder.group({
+     pcollections: this.sbFormBuilder.array([]),
+     medium: [],
+     gradeLevel: [],
+     subject: [],
+   });
+   /*this.createProgramForm.patchValue({
+     rootorg_id: this.userprofile.rootOrgId
+   });*/
+ }
 
-  constructor(
-    public frameworkService: FrameworkService,
-    private programsService: ProgramsService,
-    private userService: UserService,
-    public toasterService: ToasterService,
-    public resource: ResourceService,
-    private config: ConfigService,
-    activatedRoute: ActivatedRoute,
-    private router: Router,
-    private formBuilder: FormBuilder,
-    private httpClient: HttpClient) {
+ getProgramContentTypes () {
+   const option = {
+     url: 'program/v1/contenttypes/list',
+   };
 
-    this.sbFormBuilder = formBuilder;
+   this.programsService.get(option).subscribe(
+     (res) => {
+         this.programScope['purpose'] = res.result.contentType;
+         console.log(this.programScope['purpose']);
+       },
+     (err) => {
+       console.log(err);
+       // TODO: navigate to program list page
+       const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+       this.toasterService.warning(errorMes || 'Fetching content types failed');
+     }
+   );
 
-  }
+ }
 
-  ngOnInit() {
-    this.userprofile = this.userService.userProfile;
-    console.log(this.userprofile);
-    this.initializeFormFields();
-    this.fetchFrameWorkDetails();
-    this.getProgramContentTypes();
-    //this.showTexbooklist();
-  }
+ saveProgramError(err) {
+   console.log(err);
+ }
 
-  ngAfterViewInit() { }
+ validateAllFormFields(formGroup: FormGroup) {
+   Object.keys(formGroup.controls).forEach(field => {
+     const control = formGroup.get(field);
+     control.markAsTouched();
+   });
+ }
 
-  fetchFrameWorkDetails() {
-    this.programScope['medium'] = [];
-    this.programScope['gradeLevel'] = [];
-    this.programScope['subject'] = [];
+ navigateTo(stepNo) {
+   this.showTextBookSelector = false;
+ }
 
-    this.collectionListForm.controls['medium'].setValue('');
-    this.collectionListForm.controls['gradeLevel'].setValue('');
-    this.collectionListForm.controls['subject'].setValue('');
+ saveProgram() {
+   this.formIsInvalid = false;
 
-    this.frameworkService.getFrameworkCategories(_.get(this.userprofile.framework, 'id')[0])
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((data) => {
+   if (this.createProgramForm.dirty && this.createProgramForm.valid) {
+    this.programData = {
+       ...this.createProgramForm.value
+     };
+     this.programData['sourcing_org_name'] = this.userprofile.rootOrgName;
+     this.programData['rootorg_id'] = this.userprofile.rootOrgId;
+     this.programData['createdby'] = this.userprofile.id;
+     this.programData['createdon'] = new Date();
+     this.programData['startdate'] = new Date();
+     this.programData['slug'] = 'sunbird';
+     this.programData['type'] = 'public',
 
-        if (data && _.get(data, 'result.framework.categories')) {
-          this.frameworkCategories = _.get(data, 'result.framework.categories');
-          const board = _.find(this.frameworkCategories, (element) => {
-            return element.code === 'board';
-          });
+     this.programData['default_roles'] = ['CONTRIBUTOR'];
+     this.programData['enddate'] = this.programData.program_end_date;
+     this.programData['config'] = programConfigObj;
+     delete this.programData.gradeLevel;
+     delete this.programData.medium;
+     delete this.programData.subject;
+     delete this.programData.program_end_date;
 
-          this.frameworkCategories.forEach((element) => {
-            this.programScope[element['code']] = _.sortBy(element['terms'], ['name']);;
-          });
+     if (!this.programId) {
+      this.programData['status'] = 'Draft';
+       this.programsService.createProgram(this.programData).subscribe(
+         (res) => {
+           this.programId = res.result.program_id;
+           this.programData['program_id'] = this.programId;
+            this.showTexbooklist();
+          },
+         (err) => this.saveProgramError(err)
+       );
+     } else {
+      this.programData['program_id'] = this.programId;
+       this.programsService.updateProgram(this.programData).subscribe(
+         (res) => { this.showTexbooklist(); },
+         (err) => this.saveProgramError(err)
+       );
+     }
+   } else {
+     this.formIsInvalid = true;
+     this.validateAllFormFields(this.createProgramForm);
+   }
+ }
 
-          const mediumOption = this.programsService.getAssociationData(board.terms, 'medium', this.frameworkCategories);
+ showTexbooklist() {
 
-          if (mediumOption.length) {
-            this.programScope['medium'] = mediumOption;
-          }
-        }
-      }, error => {
-        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-        this.toasterService.warning(errorMes || 'Fetching framework details failed');
-      });
-  }
+   const requestData =  {
+     request: {
+       filters: {
+         objectType: 'content',
+         status: ['Draft'],
+         contentType: 'Textbook',
+         framework: this.userprofile.framework.id[0],
+         board: this.userprofile.framework.board[0],
+       },
+       not_exists: ['programId']
+     }
+   };
 
-  onMediumChange() {
-    //const thisClassOption = this.createProgramForm.value.gradeLevel;
+   if (!_.isEmpty(this.collectionListForm.value.medium)) {
+     requestData.request.filters['medium'] = [];
+     _.forEach(this.collectionListForm.value.medium, (medium) => {
+       requestData.request.filters['medium'].push(medium.name);
+     });
+   }
 
-    /*this.programScope['gradeLevel'] = [];
-    this.programScope['subject'] = [];*/
-    this.collectionListForm.controls['gradeLevel'].setValue('');
-    this.collectionListForm.controls['subject'].setValue('');
+   if (!_.isEmpty(this.collectionListForm.value.gradeLevel)) {
+     requestData.request.filters['gradeLevel'] = [];
+     _.forEach(this.collectionListForm.value.gradeLevel, (gradeLevel) => {
+       requestData.request.filters['gradeLevel'].push(gradeLevel.name);
+     });
+   }
 
-    if (!_.isEmpty(this.collectionListForm.value.medium)) {
-      // tslint:disable-next-line: max-line-length
-      const classOption = this.programsService.getAssociationData(this.collectionListForm.value.medium, 'gradeLevel', this.frameworkCategories);
+   if (!_.isEmpty(this.collectionListForm.value.subject)) {
+     requestData.request.filters['subject'] = this.collectionListForm.value.subject;
+   }
 
-      if (classOption.length) {
-        this.programScope['gradeLevel'] = classOption;
-      }
+   return this.programsService.getCollectionList(requestData).subscribe(
+     (res) => {
+       this.showTextBookSelector = true;
+       this.collections = res.result.content;
+     },
+     (err) => {
+       console.log(err);
+       // TODO: navigate to program list page
+       const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+       this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+     }
+   );
+ }
 
-      this.onClassChange();
-    }
-  }
+ onCollectionCheck(collection, isChecked: boolean) {
+   const pcollectionsFormArray = <FormArray>this.collectionListForm.controls.pcollections;
+   const collectionId = collection.identifier;
 
-  onClassChange() {
-    // const thisSubjectOption = this.createProgramForm.value.subject;
-    // this.programScope['subject'] = [];
-    this.collectionListForm.controls['subject'].setValue('');
+   if (isChecked) {
+     pcollectionsFormArray.push(new FormControl(collectionId));
+     this.tempCollections.push(collection);
+   } else {
+     const index = pcollectionsFormArray.controls.findIndex(x => x.value === collectionId);
+     pcollectionsFormArray.removeAt(index);
 
-    if (!_.isEmpty(this.collectionListForm.value.gradeLevel)) {
+     const cindex = this.tempCollections.findIndex(x => x.identifier === collectionId);
+     this.tempCollections.splice(cindex, 1);
+   }
+ }
 
-      // tslint:disable-next-line: max-line-length
-      const subjectOption = this.programsService.getAssociationData(this.collectionListForm.value.gradeLevel, 'subject', this.frameworkCategories);
+ updateProgramCollection() {
+   if (_.isEmpty(this.collectionListForm.value.pcollections)) {
+     this.toasterService.warning('Please select at least a textbook');
+     return false;
+   }
 
-      if (subjectOption.length) {
-        this.programScope['subject'] = subjectOption;
-      }
-    }
-  }
+   const requestData = {
+     'program_id': this.programId,
+     'collections': this.collectionListForm.value.pcollections,
+     'allowed_content_types': this.programData.content_types,
+     'channel': 'sunbird'
+   };
 
-  /**
-   * Executed when user come from any other page or directly hit the url
-   *
-   * It helps to initialize form fields and apply field level validation
-   */
-  initializeFormFields(): void {
-    this.createProgramForm = this.sbFormBuilder.group({
-      name: ['', [Validators.required, Validators.maxLength(100)]],
-      description: ['', Validators.maxLength(1000)],
-      nomination_enddate: ['', Validators.required],
-      shortlisting_enddate: [''],
-      program_end_date: ['', Validators.required],
-      content_submission_enddate: ['', Validators.required],
-      content_types: [],
-      rewards: [],
-      /*medium: ['', Validators.required],
-      gradeLevel: ['', Validators.required],
-      subject: ['', Validators.required],*/
-    });
+   this.programsService.copyCollectionForPlatform(requestData).subscribe(
+     (res) => { this.addCollectionsToProgram(); },
+     (err) => {
+       console.log(err);
+       // TODO: navigate to program list page
+       const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+       this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+     }
+   );
+ }
 
-    this.collectionListForm = this.sbFormBuilder.group({
-      pcollections: this.sbFormBuilder.array([]),
-      medium: [],
-      gradeLevel: [],
-      subject: [],
-    });
-    /*this.createProgramForm.patchValue({
-      rootorg_id: this.userprofile.rootOrgId
-    });*/
-  }
+ addCollectionsToProgram() {
+   _.forEach(this.tempCollections, (collection) => {
 
-  getProgramContentTypes () {
-    const option = {
-      url: 'program/v1/contenttypes/list',
-    };
+     if (this.mediumOption.indexOf(collection.medium) === -1) {
+       this.mediumOption.push(collection.medium);
+     }
+     if (this.subjectsOption.indexOf(collection.subject) === -1) {
+       this.subjectsOption.push(collection.subject);
+     }
 
-    this.programsService.get(option).subscribe(
-      (res) => {
-          this.programScope['purpose'] = res.result.contentType;
-          console.log(this.programScope['purpose']);
-        },
-      (err) => {
-        console.log(err);
-        // TODO: navigate to program list page
-        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-        this.toasterService.warning(errorMes || 'Fetching content types failed');
-      }
-    );
+     _.forEach(collection.gradeLevel, (single) => {
+       if (this.gradeLevelOption.indexOf(single) === -1) {
+         this.gradeLevelOption.push(single);
+       }
+     });
+   });
 
-  }
+   const data = {};
+   data['program_id'] = this.programId;
+   data['collection_ids'] = this.collectionListForm.value.pcollections;
 
-  saveProgramError(err) {
-    console.log(err)
-  }
+   programConfigObj.board = this.userprofile.framework.board[0];
+   programConfigObj.gradeLevel = this.gradeLevelOption;
+   programConfigObj.medium = this.mediumOption;
+   programConfigObj.subject = this.subjectsOption;
+   data['config'] = programConfigObj;
+   data['status'] = 'Live';
 
-  validateAllFormFields(formGroup: FormGroup) {
-    Object.keys(formGroup.controls).forEach(field => {
-      const control = formGroup.get(field);
-      control.markAsTouched();
-    });
-  }
-
-  navigateTo(stepNo) {
-    this.showTextBookSelector = false;
-  }
-
-  saveProgram() {
-    this.formIsInvalid = false;
-
-    if (this.createProgramForm.dirty && this.createProgramForm.valid) {
-      const data = {
-        ...this.createProgramForm.value
-      };
-      data['sourcing_org_name'] = this.userprofile.rootOrgName;
-      data['rootorg_id'] = this.userprofile.rootOrgId;
-      data['createdby'] = this.userprofile.id;
-      data['createdon'] = new Date();
-      data['startdate'] = new Date();
-      data['slug'] = "sunbird";
-      data['type'] = "public",
-
-      data['default_roles'] = ["CONTRIBUTOR"];
-      data['enddate'] = data.program_end_date;
-      data['config'] = programConfigObj;
-      delete data.gradeLevel;
-      delete data.medium;
-      delete data.subject;
-      delete data.program_end_date;
-
-      if (!this.programId) {
-        data['status'] = "Draft";
-        this.programsService.createProgram(data).subscribe(
-          (res) => { this.programId = res.result.program_id; this.showTexbooklist() },
-          (err) => this.saveProgramError(err)
-        );
-      } else {
-        data['program_id'] = this.programId;
-        this.programsService.updateProgram(data).subscribe(
-          (res) => { this.showTexbooklist() },
-          (err) => this.saveProgramError(err)
-        );
-      }
-    } else {
-      this.formIsInvalid = true;
-      this.validateAllFormFields(this.createProgramForm);
-    }
-  }
-
-  showTexbooklist() {
-
-    const requestData =  {
-      request: {
-        filters: {
-          objectType: "content",
-          status: ["Draft"],
-          contentType: "Textbook",
-          framework: this.userprofile.framework.id[0],
-          board: this.userprofile.framework.board[0],
-        },
-        not_exists: ["programId"]
-      }
-    };
-
-    if (!_.isEmpty(this.collectionListForm.value.medium)) {
-      requestData.request.filters['medium'] = [];
-      _.forEach(this.collectionListForm.value.medium, (medium) => {
-        requestData.request.filters['medium'].push(medium.name);
-      });
-    }
-
-    if (!_.isEmpty(this.collectionListForm.value.gradeLevel)) {
-      requestData.request.filters['gradeLevel'] = [];
-      _.forEach(this.collectionListForm.value.gradeLevel, (gradeLevel) => {
-        requestData.request.filters['gradeLevel'].push(gradeLevel.name);
-      });
-    }
-
-    if (!_.isEmpty(this.collectionListForm.value.subject)) {
-      requestData.request.filters['subject'] = this.collectionListForm.value.subject;
-    }
-
-    return this.programsService.getCollectionList(requestData).subscribe(
-      (res) => {
-        this.showTextBookSelector = true;
-        this.collections = res.result.content;
-      },
-      (err) => {
-        console.log(err);
-        // TODO: navigate to program list page
-        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-        this.toasterService.warning(errorMes || 'Fetching textbooks failed');
-      }
-    );
-  }
-
-  onCollectionCheck(collection, isChecked: boolean) {
-    const pcollectionsFormArray = <FormArray>this.collectionListForm.controls.pcollections;
-    const collectionId = collection.identifier;
-
-    if (isChecked) {
-      pcollectionsFormArray.push(new FormControl(collectionId));
-      this.tempCollections.push(collection);
-    } else {
-      const index = pcollectionsFormArray.controls.findIndex(x => x.value == collectionId)
-      pcollectionsFormArray.removeAt(index);
-
-      const cindex = this.tempCollections.findIndex(x => x.identifier == collectionId);
-      this.tempCollections.splice(cindex, 1);
-    }
-  }
-
-  updateProgramCollection() {
-    if (_.isEmpty(this.collectionListForm.value.pcollections)) {
-      this.toasterService.warning('Please select at least a textbook');
-      return false;
-    }
-
-    const requsetData = {
-      'program_id': this.programId,
-      'collection': this.collectionListForm.value.pcollections
-    };
-
-    this.programsService.updateProgramCollection(requsetData).subscribe(
-      (res) => { this.addCollectionsToProgram(); },
-      (err) => {
-        console.log(err);
-        // TODO: navigate to program list page
-        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-        this.toasterService.warning(errorMes || 'Fetching textbooks failed');
-      }
-    );
-  }
-
-  addCollectionsToProgram() {
-    _.forEach(this.tempCollections, (collection) => {
-
-      if (this.mediumOption.indexOf(collection.medium) === -1) {
-        this.mediumOption.push(collection.medium);
-      }
-      if (this.subjectsOption.indexOf(collection.subject) === -1) {
-        this.subjectsOption.push(collection.subject);
-      }
-
-      _.forEach(collection.gradeLevel, (single) => {
-        if (this.gradeLevelOption.indexOf(single) === -1) {
-          this.gradeLevelOption.push(single);
-        }
-      });
-    });
-
-    let data = {};
-    data['program_id'] = this.programId;
-    data['collection_ids'] = this.collectionListForm.value.pcollections;
-
-    programConfigObj.board = this.userprofile.framework.board[0];
-    programConfigObj.gradeLevel = this.gradeLevelOption;
-    programConfigObj.medium = this.mediumOption;
-    programConfigObj.subject = this.subjectsOption;
-    data['config'] = programConfigObj;
-    data['status'] = "Live";
-
-    this.programsService.updateProgram(data).subscribe(
-      (res) => { this.router.navigate(['/sourcing']) },
-      (err) => this.saveProgramError(err)
+   this.programsService.updateProgram(data).subscribe(
+     (res) => { this.router.navigate(['/sourcing']); },
+     (err) => this.saveProgramError(err)
     );
   }
 }

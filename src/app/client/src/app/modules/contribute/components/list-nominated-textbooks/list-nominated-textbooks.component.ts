@@ -1,8 +1,9 @@
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService } from '@sunbird/shared';
-import { ProgramsService, PublicDataService, UserService, FrameworkService } from '@sunbird/core';
+import { ProgramsService, PublicDataService, UserService, FrameworkService, RegistryService } from '@sunbird/core';
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { tap, first } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -21,7 +22,7 @@ import * as moment from 'moment';
 export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
 
   public contributor;
-  public contributorTextbooks;
+  public contributorTextbooks: any = [];
   public noResultFound;
   public telemetryImpression: IImpressionEventInput;
   public component: any;
@@ -33,6 +34,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
   configData;
   showChapterList = false;
   public currentNominationStatus: any;
+  public nominationDetails: any = {};
   public nominated = false;
   public programId: string;
   public programDetails: any;
@@ -40,12 +42,18 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
   public grades: any;
   public userProfile: any;
   public activeDate = '';
+  public contributorOrgUser: any = [];
+  public orgDetails: any = {};
+  public roles;
+  public selectedRole;
+  public showNormalModal = false;
 
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private configService: ConfigService, private publicDataService: PublicDataService,
   private activatedRoute: ActivatedRoute, private router: Router, public programStageService: ProgramStageService,
   public toasterService: ToasterService, private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
-  public frameworkService: FrameworkService, public userService: UserService) {
+  public frameworkService: FrameworkService, public userService: UserService, public registryService: RegistryService,
+  public activeRoute: ActivatedRoute) {
     this.programId = this.activatedRoute.snapshot.params.programId;
    }
 
@@ -53,11 +61,13 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
   this.contributor = {'name': 'Nitesh Kesarkar', 'type': 'Organisation', 'nominationStatus': 'Pending'};
   this.getProgramDetails();
   this.getProgramTextbooks();
+  this.getContributionOrgUsers();
   this.programContext = programContext;
   this.sessionContext = sessionContext;
   this.configData = configData;
   this.collection = collection;
   this.getNominationStatus();
+  this.roles = _.get(programContext, 'config.roles');
   }
 
   getProgramDetails() {
@@ -127,7 +137,30 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-
+    const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
+    const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+    const deviceId = <HTMLInputElement>document.getElementById('deviceId');
+    const telemetryCdata = [{ 'type': 'Program_ID', 'id': this.activatedRoute.snapshot.params.programId }];
+     setTimeout(() => {
+      this.telemetryImpression = {
+        context: {
+          env: this.activeRoute.snapshot.data.telemetry.env,
+          cdata: telemetryCdata,
+          pdata: {
+            id: this.userService.appId,
+            ver: version,
+            pid: this.configService.appConfig.TELEMETRY.PID
+          },
+          did: deviceId ? deviceId.value : ''
+        },
+        edata: {
+          type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
+          pageid: _.get(this.activeRoute, 'snapshot.data.telemetry.pageid'),
+          uri: this.router.url,
+          duration: this.navigationHelperService.getPageLoadTime()
+        }
+      };
+     });
   }
 
   viewContribution() {
@@ -183,10 +216,87 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
     this.programsService.post(req).subscribe((data) => {
       if (data.result && !_.isEmpty(data.result)) {
         this.nominated = true;
+        this.nominationDetails = _.first(data.result);
         this.currentNominationStatus =  _.get(_.first(data.result), 'status');
       }
     }, error => {
       this.toasterService.error('Failed fetching current nomination status');
     });
   }
+
+  getContributionOrgUsers() {
+    const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
+      ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
+    const orgUsers = this.registryService.getContributionOrgUsers(this.userService.userProfile.userRegData.User_Org.orgId);
+    this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
+    this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
+    this.orgDetails.orgLink = `${baseUrl}contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
+    orgUsers.subscribe(response => {
+        const result = _.get(response, 'result');
+        if (!result || _.isEmpty(result)) {
+          console.log('NO USER FOUND');
+        } else {
+          // get Ids of all users whose role is 'user'
+          const userIds = _.map(_.filter(result[_.first(_.keys(result))], ['roles', ['user']]), 'userId');
+          const getUserDetails = _.map(userIds, id => this.registryService.getUserDetails(id));
+          forkJoin(...getUserDetails)
+            .subscribe((res: any) => {
+              if (res) {
+                _.forEach(res, r => {
+                  if (r.result && r.result.User) {
+                    let creator = r.result.User.firstName;
+                    if (r.result.User.lastName) {
+                      creator  = creator + r.result.User.lastName;
+                    }
+                    r.result.User.fullName = creator;
+                    if (this.nominationDetails.rolemapping) {
+                      _.find(this.nominationDetails.rolemapping, (users, role) => {
+                        if (_.includes(users, r.result.User.userId)) {
+                          r.result.User.selectedRole = role;
+                        }
+                    });
+                    }
+                    this.contributorOrgUser.push(r.result.User);
+                  }
+                });
+                console.log('this.contributorOrgUser ', this.contributorOrgUser);
+              }
+            }, error => {
+              console.log(error);
+            });
+        }
+      }, error => {
+        console.log(error);
+      });
+  }
+
+  onRoleChange() {
+    const roleMap = {};
+    _.forEach(this.roles, role => {
+      roleMap[role.name] = _.filter(this.contributorOrgUser, user => {
+        if (user.selectedRole === role.name) {  return user.userId; }
+      }).map(({userId}) => userId);
+    });
+    const req = {
+      'request': {
+          'program_id': this.activatedRoute.snapshot.params.programId,
+          'user_id': this.userService.userid,
+          'rolemapping': roleMap
+      }
+    };
+    const updateNomination = this.programsService.updateNomination(req);
+    updateNomination.subscribe(response => {
+      this.toasterService.success('Roles updated');
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  copyLinkToClipboard(inputLink) {
+    inputLink.select();
+    document.execCommand('copy');
+    inputLink.setSelectionRange(0, 0);
+    this.toasterService.success(this.resourceService.frmelmnts.lbl.linkCopied);
+  }
+
 }
