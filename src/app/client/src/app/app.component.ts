@@ -163,6 +163,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.checkTncAndFrameWorkSelected();
         if (this.userService.loggedIn) {
           this.userService.openSaberRegistrySearch().then(() => {
+          this.userService.userRegDataFetChed = true;
           this.initApp = true;
         }).catch((err) => {
           this.toasterService.error('Please Try Later...');
