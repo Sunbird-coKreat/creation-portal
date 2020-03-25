@@ -34,7 +34,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     };
     const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
       ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
-    this.orgLink = `${baseUrl}contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
+    this.orgLink = `${baseUrl}/contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
     this.orgName = this.userService.userProfile.userRegData.Org.name;
   }
 
