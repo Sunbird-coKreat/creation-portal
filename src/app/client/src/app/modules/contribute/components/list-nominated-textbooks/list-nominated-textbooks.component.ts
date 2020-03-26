@@ -60,15 +60,22 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
    }
 
   ngOnInit() {
-  this.getProgramDetails();
-  this.getProgramTextbooks();
-  if (!_.isEmpty(this.userService.userProfile.userRegData)
-  && this.userService.userProfile.userRegData.User_Org.roles.includes('admin'))  {
-    this.getContributionOrgUsers();
-  }
-  this.getNominationStatus();
-  this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program_ID'}];
-  this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
+    this.getProgramDetails();
+    this.getProgramTextbooks();
+    if (!_.isEmpty(this.userService.userProfile.userRegData) &&
+      this.userService.userProfile.userRegData.User_Org &&
+      this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
+      this.getContributionOrgUsers();
+    }
+    this.getNominationStatus();
+    this.telemetryInteractCdata = [{
+      id: this.activatedRoute.snapshot.params.programId,
+      type: 'Program_ID'
+    }];
+    this.telemetryInteractPdata = {
+      id: this.userService.appId,
+      pid: this.configService.appConfig.TELEMETRY.PID
+    };
   }
 
   getProgramDetails() {
