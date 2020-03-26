@@ -96,25 +96,27 @@
 
             <div class="ui container d-flex flex-ai-center mx-0 sb-dock-menu">
                 <!-- <a routerLink="contribute/dashboard" *ngIf="this.router.url.includes('/contribute')" [class.active]="this.router.isActive('/contribute/dashboard', true)">{{ resourceService.frmelmnts.lnk.dashboard }}</a> -->
-                    <a routerLink="sourcing" *ngIf="this.router.url.includes('/sourcing')" [class.active]="this.router.isActive('/sourcing', true)"
+                    <a routerLink="sourcing" *ngIf="router.url.includes('/sourcing')" [class.active]="router.isActive('/sourcing', true)"
                     appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('my-programs', 'click', 'main-header')"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService.frmelmnts.lbl.myPrograms }}</a>
-                    <a routerLink="contribute" *ngIf="this.router.url.includes('/contribute') && this.programsService.checkforshowAllPrograms == 1"  [class.active]="this.router.isActive('/contribute', true)"
+                    <ng-container *ngIf="userService.userRegistryData">
+                        <a routerLink="contribute" *ngIf="router.url.includes('/contribute') && programsService.checkforshowAllPrograms()"  [class.active]="router.isActive('/contribute', true)"
                     appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('all-programs', 'click', 'main-header')"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata"><span class="sb-color-white">{{ resourceService.frmelmnts.lbl.allPrograms }}</span></a>
-                    <a routerLink="contribute/myenrollprograms" *ngIf="this.router.url.includes('/contribute')" [class.active]="this.router.isActive('/contribute/myenrollprograms', true)"
+                    </ng-container>
+                    <a routerLink="contribute/myenrollprograms" *ngIf="router.url.includes('/contribute')" [class.active]="router.isActive('/contribute/myenrollprograms', true)"
                     appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('my-programs', 'click', 'main-header')"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata"><span class="sb-color-white">{{ resourceService.frmelmnts.lbl.myPrograms }}</span></a>
-                    <a routerLink="contribute/orglist" *ngIf="this.router.url.includes('/contribute')" [class.active]="this.router.isActive('/contribute/orglist', true)"
+                    <a routerLink="contribute/orglist" *ngIf="router.url.includes('/contribute') && userService.userProfile?.userRegData?.User_Org?.roles?.includes('admin')" [class.active]="router.isActive('/contribute/orglist', true)"
                     appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('manage-users', 'click', 'main-header')"
       [telemetryInteractObject]="telemetryInteractObject"

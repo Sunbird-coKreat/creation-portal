@@ -224,19 +224,10 @@ export class ProgramsService extends DataService implements CanActivate {
   * Logic to decide if the All programs should be shown to the contributor
   */
   checkforshowAllPrograms() {
-    let showAllPrograms = 0;
-    if (this.userService.userProfile.userRegData.User && !this.userService.userProfile.userRegData.User_Org) {
-      showAllPrograms = 1;
-    } else if (this.userService.userProfile.userRegData.User_Org && this.userService.userProfile.userRegData.User_Org.length) {
-      const userOrgs = this.userService.userProfile.userRegData.User_Org;
-      let roleList = [];
-      roleList = roleList.concat(userOrgs.map((value) => value.roles));
-      if (roleList.indexOf('admin') === -1) {
-        showAllPrograms = 0;
-      }
+    if (!this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
+      return false;
     }
-
-    return showAllPrograms;
+    return true;
   }
 
   /**
@@ -368,22 +359,13 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * makes api call to get list of programs from ext framework Service
    */
-  getMyProgramsForContrib(status): Observable<ServerResponse> {
-    const req = {
-      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
-      data: {
-        request: {
-          filters: {
-            enrolled_id: {
-              user_id: _.get(this.userService, 'userProfile.userId'),
-              status: status
-            }
-          }
-        }
-      }
-    };
-    return this.API_URL(req);
-  }
+  getMyProgramsForContrib(req): Observable<ServerResponse> {
+        const request  = {
+          url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
+          data: req
+        };
+        return this.API_URL(request);
+    }
 
   /**
    * gets list of programs
@@ -467,4 +449,18 @@ export class ProgramsService extends DataService implements CanActivate {
 
     return _.sortBy(_.unionBy(resultArray, 'identifier'), 'index');
   }
+
+
+  getNominationList(reqFilters) {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
+      data: {
+        request: {
+          filters: reqFilters
+        }
+      }
+    };
+    return this.API_URL(req);
+  }
+
 }

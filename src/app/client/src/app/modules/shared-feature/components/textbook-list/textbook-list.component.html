@@ -1,14 +1,14 @@
 <div class="sb-pageSection">
 	<div class="sb-bg-color-white pt-32">
 		<div class="sb-table-responsive" *ngIf="collectionsCnt > 0">
-			<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable">
+			<table class="sb-table sb-table-striped  sb-table-sortable">
 				<thead class="sb-table-header sb-table-thead-gray">
 					<tr>
-						<th class="sb-sort-icon w-20">{{resource.frmelmnts.lbl.title}}</th>
-						<th class="sb-sort-icon w-5">{{resource.frmelmnts.lbl.medium}}</th>
-						<th class="sb-sort-icon w-5">{{resource.frmelmnts.lbl.class}}</th>
-						<th class="w-5">{{resource.frmelmnts.lbl.chapters}}</th>
-						<th class="sb-sort-icon w-5">{{resource.frmelmnts.lbl.subject}}</th>
+						<th class="sb-sort-icon w-15">{{resource.frmelmnts.lbl.title}}</th>
+						<th class="sb-sort-icon w-10">{{resource.frmelmnts.lbl.medium}}</th>
+						<th class="sb-sort-icon w-10">{{resource.frmelmnts.lbl.class}}</th>
+						<th class="sb-sort-icon w-10">{{resource.frmelmnts.lbl.subject}}</th>
+						<th class="w-10">{{resource.frmelmnts.lbl.chapters}}</th>
 					</tr>
 				</thead>
 				<tbody class="sb-table-body w-100 o-y-auto max-height">
@@ -28,12 +28,12 @@
 									{{data.gradeLevel}}
 								</div>
 							</td>
-						<td>{{ data.childNodes ? data.childNodes.length : 0 }}</td>
 						<td>
 							<div>
 								{{data.subject}}
 							</div>
 						</td>
+						<td>{{ data.childNodes ? data.childNodes.length : 0 }}</td>
 					</tr>
 				</tbody>
 			</table>

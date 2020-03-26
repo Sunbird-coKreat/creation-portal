@@ -95,8 +95,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.currentStage = 'chapterListComponent';
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
     this.programContext = _.get(this.chapterListComponentInput, 'programContext');
-    this.userProfile = _.get(this.chapterListComponentInput, 'userProfile');
-    this.currentUserID = this.userProfile.identifier;
+    this.currentUserID = this.userService.userProfile.userId;
     // this.currentUserID = _.get(this.programContext, 'userDetails.userId');
     this.role = _.get(this.chapterListComponentInput, 'role');
     this.collection = _.get(this.chapterListComponentInput, 'collection');
