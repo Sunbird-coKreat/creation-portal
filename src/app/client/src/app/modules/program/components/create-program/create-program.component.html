@@ -26,7 +26,7 @@
 					[isDisabled]="!showTextBookSelector">{{resource.frmelmnts.lbl.selectTextbooks}}</a>
 				</div>
 				<div class="ui segment mt-5" suiTabContent="1" [ngClass]="{'active' : !showTextBookSelector}">
-					<form class="ui form" [formGroup]="createProgramForm" (submit)="saveProgram()">
+					<form class="ui form" [formGroup]="createProgramForm">
 						<div class="ui grid">
 							<div class="twelve wide column">
 								<div class="required field">
@@ -46,8 +46,7 @@
 												{{resource.frmelmnts.lbl.characterLengthGreaterHundred}}
 											</div>
 										<div *ngIf="createProgramForm.value.name.length" class="pull-right fsmall">
-											{{createProgramForm.value.name.length}} / 100
-										</div>
+											{{createProgramForm.value.name.length}} / 100</div>
 									</div>
 								</div>
 							</div>
@@ -68,9 +67,9 @@
 											*ngIf="createProgramForm.controls['description'].errors && createProgramForm.controls['description'].errors.maxlength && (!createProgramForm.controls['description'].pristine || formIsInvalid)">
 											{{resource.frmelmnts.lbl.characterLengthGreaterThousand}}
 										</div>
-										<div *ngIf="createProgramForm.value.description.length" class="pull-right fsmall">
-											{{createProgramForm.value.description.length}} /	1000
-										</div>
+										<div *ngIf="createProgramForm.value.description.length"
+											class="pull-right fsmall">{{createProgramForm.value.description.length}} /
+											1000</div>
 									</div>
 								</div>
 							</div>
@@ -150,7 +149,7 @@
 							<div class="twelve wide column">
 								<div class="field">
 									<label class="d-block">{{resource.frmelmnts.lbl.contentType}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resource.frmelmnts.lbl.contentTypesHint}}"></i>
+											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="Content Type(s)"></i>
 									</label>
 									<sui-multi-select class="selection" labelField="name" [hasLabels]="true"
 										formControlName="content_types" [options]="programScope.purpose"
@@ -177,7 +176,13 @@
 									<div class="sb-field relative">
 										<textarea type="text" formControlName="rewards" class="wmd-input width-100 sb-form-control"
 											placeholder="{{resource.frmelmnts.lbl.programRecognitionHint}}" name=""></textarea>
-									
+										<!--div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['rewards'].errors && createProgramForm.controls['rewards'].errors.required && (!createProgramForm.controls['rewards'].pristine || formIsInvalid)">
+										{{resource?.messages?.stmsg?.m0105}}
+										</div>
+										<div class="ui pointing red basic label below" *ngIf="createProgramForm.controls['rewards'].errors && createProgramForm.controls['rewards'].errors.maxlength && (!createProgramForm.controls['rewards'].pristine || formIsInvalid)">
+										{{resource?.messages?.stmsg?.m0106}}
+										</div>
+										<div *ngIf="createProgramForm.value.rewards.length" class="pull-right fsmall">{{createProgramForm.value.rewards.length}} / 100</div-->
 									</div>
 								</div>
 							</div>
@@ -185,7 +190,7 @@
 					</form>
 				</div>
 				<div class="ui segment mt-5" suiTabContent="2" [ngClass]="{'active' : showTextBookSelector}">
-					<form class="ui form" [formGroup]="collectionListForm" (submit)="saveProgram()">
+					<form class="ui form" [formGroup]="collectionListForm">
 						<div class="ui grid">
 							<div class="three wide column">
 								<div class="field">
@@ -208,7 +213,7 @@
 							</div>
 							<div class="three wide column">
 								<div class="field">
-									<label class="d-block"> {{resource.frmelmnts.lbl.grade}}
+									<label class="d-block"> {{resource.frmelmnts.lbl.Class}}
 											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resource.frmelmnts.lbl.selectGrade}}"></i>
 										</label>
 									<sui-multi-select
@@ -247,7 +252,7 @@
 							<div class="three wide column">
 								<div class="field">
 									<label>&nbsp;</label>
-									<button class="sb-btn sb-btn-normal sb-btn-outline-primary">
+									<button class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="resetFilters()">
 											{{resource.frmelmnts.btn.reset}}
 									</button>
 									<button class="sb-btn sb-btn-normal sb-btn-primary ml-8" (click)="showTexbooklist()"
@@ -276,11 +281,11 @@
 													<label for="checkall"></label>
 												</div>
 											</th>
-											<th class="sb-sort-icon w-10">{{resource.frmelmnts.lbl.title}}</th>
-											<th class="sb-sort-icon w-10">{{resource.frmelmnts.lbl.medium}}</th>
+											<th class="sb-sort-icon w-5">{{resource.frmelmnts.lbl.title}}</th>
+											<th class="sb-sort-icon w-5">{{resource.frmelmnts.lbl.medium}}</th>
 											<th class="sb-sort-icon w-10">{{resource.frmelmnts.lbl.class}}</th>
-											<th class="sb-sort-icon w-10">{{resource.frmelmnts.lbl.subject}}</th>
-											<th class="w-10">{{resource.frmelmnts.lbl.chapters}}</th>
+											<th class="sb-sort-icon w-5">{{resource.frmelmnts.lbl.subject}}</th>
+											<th class="w-5">{{resource.frmelmnts.lbl.chapters}}</th>
 										</tr>
 									</thead>
 									<tbody class="sb-table-body d-block w-100 o-y-auto max-height">
@@ -295,26 +300,26 @@
 											</td>
 											<td>
 												<div
-													class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold text-center">
+													class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
 													{{data.name}}
 												</div>
 											</td>
 											<td>
-												<div class="text-center">
+												<div>
 													{{data.medium}}
 												</div>
 											</td>
 											<td>
-												<div class="sb__ellipsis sb__ellipsis--three text-center">
+												<div class="sb__ellipsis sb__ellipsis--three">
 													{{data.gradeLevel}}
 												</div>
 											</td>
 											<td>
-												<div class="text-center">
+												<div>
 													{{data.subject}}
 												</div>
 											</td>
-											<td class="text-center">{{ data.childNodes ? data.childNodes.length : 0 }}</td>
+											<td>{{ data.childNodes ? data.childNodes.length : 0 }}</td>
 										</tr>
 									</tbody>
 								</table>
