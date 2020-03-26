@@ -125,10 +125,6 @@
 											*ngIf="createProgramForm.controls['content_submission_enddate'].errors && createProgramForm.controls['content_submission_enddate'].errors.required && (!createProgramForm.controls['content_submission_enddate'].pristine || formIsInvalid)">
 											{{ resource.frmelmnts.lbl.programContributionEndDateRequired }}
 										</div>
-										<div class="ui pointing red basic label below "
-										*ngIf="">
-										{{ dateErrorMessage }}
-									</div>
 									</div>
 								</div>
 							</div>
