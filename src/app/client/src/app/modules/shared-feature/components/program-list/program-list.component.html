@@ -119,7 +119,7 @@
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService.frmelmnts.lbl.open }}</button>
-      <span *ngIf="activeAllProgramsMenu && program.nomination_status" class="sb-label sb-label-table sb-label-primary-100 mt-3 mb-3" >{{ getProgramNominationStatus(program) }}</span>
+      <span *ngIf="activeAllProgramsMenu && program.nomination_status" class="sb-label sb-label-table sb-label-primary-100 status" >{{ getProgramNominationStatus(program) }}</span>
       <button class="sb-btn sb-btn-normal sb-btn-outline-primary"  *ngIf="isContributor" (click)="viewDetailsBtnClicked(program)"
                           appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('view-detail', 'click', 'program-list')"
