@@ -41,8 +41,7 @@ export class ProgramsService extends DataService implements CanActivate {
     private toasterService: ToasterService, private resourceService: ResourceService) {
       super(http);
       this.config = config;
-      //this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;
-      this.baseUrl = "http://localhost:6000/" || this.config.urlConFig.URLS.CONTENT_PREFIX;
+      this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;
     }
 
   /**
