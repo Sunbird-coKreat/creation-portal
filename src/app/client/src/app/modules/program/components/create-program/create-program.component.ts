@@ -56,7 +56,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
  /**
  * List of textbooks for the program by BMGC
  */
- frameworkdetails;
+ private userFramework;
+ private userBoard;
  frameworkCategories;
  programScope: any = {};
  userprofile;
@@ -97,7 +98,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
  ngOnInit() {
    this.userprofile = this.userService.userProfile;
-   console.log(this.userprofile);
    this.initializeFormFields();
    this.fetchFrameWorkDetails();
    this.getProgramContentTypes();
@@ -136,6 +136,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
  fetchFrameWorkDetails() {
    if (_.get(this.userprofile.framework, 'id')) {
+    this.userFramework = _.get(this.userprofile.framework, 'id')[0];
     this.frameworkService.getFrameworkCategories(_.get(this.userprofile.framework, 'id')[0])
     .pipe(takeUntil(this.unsubscribe))
     .subscribe((data) => {
@@ -151,6 +152,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.frameworkService.initialize();
     this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
       if (frameworkInfo && !frameworkInfo.err) {
+        this.userFramework = frameworkInfo.frameworkdata.defaultFramework.identifier;
         this.frameworkCategories  = frameworkInfo.frameworkdata.defaultFramework.categories;
       }
       this.setFrameworkDataToProgram();
@@ -167,9 +169,18 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   this.collectionListForm.controls['gradeLevel'].setValue('');
   this.collectionListForm.controls['subject'].setValue('');
 
+  console.log(this.userprofile);
+  console.log(this.frameworkCategories);
   const board = _.find(this.frameworkCategories, (element) => {
     return element.code === 'board';
   });
+
+  this.userBoard = board.terms[0].name;
+  console.log(this.userBoard);
+
+  if (_.get(this.userprofile.framework, 'board')) {
+    this.userBoard = this.userprofile.framework.board[0];
+  }
 
   this.frameworkCategories.forEach((element) => {
     this.programScope[element['code']] = _.sortBy(element['terms'], ['name']);
@@ -331,6 +342,13 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   // }
 
   // this.saveProgram();
+  }
+
+ resetFilters () {
+    this.collectionListForm.controls['medium'].setValue('');
+    this.collectionListForm.controls['gradeLevel'].setValue('');
+    this.collectionListForm.controls['subject'].setValue('');
+    this.showTexbooklist();
  }
 
  saveProgram() {
@@ -388,8 +406,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
          objectType: 'content',
          status: ['Draft'],
          contentType: 'Textbook',
-         framework: this.userprofile.framework.id[0],
-         board: this.userprofile.framework.board[0],
+         framework: this.userFramework,
+         board: this.userBoard,
        },
        not_exists: ['programId']
      }
@@ -488,7 +506,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    data['program_id'] = this.programId;
    data['collection_ids'] = this.collectionListForm.value.pcollections;
 
-   programConfigObj.board = this.userprofile.framework.board[0];
+   programConfigObj.board = this.userBoard;
    programConfigObj.gradeLevel = this.gradeLevelOption;
    programConfigObj.medium = this.mediumOption;
    programConfigObj.subject = this.subjectsOption;

@@ -1,6 +1,6 @@
 <div class="sb-bg-color-primary-0 py-24" *ngIf="!showChapterList" [appTelemetryImpression]="telemetryImpression">
 	<div class="sb-bg-color-primary-0 practical-header">
-		<div class="ui container">       
+		<div class="ui container">
 				<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="goBack()"
 						type="button"
 						appTelemetryInteract
@@ -145,11 +145,11 @@
 							<dd><span class="sb-label sb-label-table sb-label-warning-0">Pending</span></dd>
 						</dl>
 						<dl class="sb-meta-data mb-0 pr-8" >
-							<dt class="sb__ellipsis">{{resourceService.frmelmnts.lbl.contentType}}</dt>
-							<dd><span class="sb-label sb-label-table sb-label-warning-0">{{programDetails?.content_types.join(', ')}}</span></dd>
+							<dt class="sb__ellipsis">{{resourceService?.frmelmnts?.lbl?.contentType}}</dt>
+							<dd><span class="sb-label sb-label-table sb-label-warning-0">{{programDetails?.content_types?.join(', ')}}</span></dd>
 						</dl>
 						<dl class="sb-meta-data mb-0 pr-8">
-							<dt class="sb__ellipsis">{{resourceService.frmelmnts.lbl.submittedDate}}</dt>
+							<dt class="sb__ellipsis">{{resourceService?.frmelmnts?.lbl?.submittedDate}}</dt>
 							<dd>{{contributor?.nominationData?.createdon | date:'LLLL d, yyyy'}}</dd>
 						</dl>
 					</div>
@@ -256,7 +256,7 @@
 				<div class="sb-profile-page__avatar">
 					<img src="assets/images/guest.svg" alt="guest" class="mb-24">
 				</div>
-				<div class="fs-2-5 font-weight-bold mb-24">{{ 'Pratham' | titlecase}} </div>
+				<div class="fs-2-5 font-weight-bold my-24">{{ 'Pratham' | titlecase}} </div>
 			</div>
 			<div class="mx-48 relative text-center">
 				<div class="mb-16 d-flex flex-jc-center sb-profile-page__category">

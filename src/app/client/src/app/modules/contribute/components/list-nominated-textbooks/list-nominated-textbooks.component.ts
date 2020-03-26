@@ -9,9 +9,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ProgramStageService } from '../../services/';
 import { ChapterListComponent } from '../../../cbse-program/components/chapter-list/chapter-list.component';
-import { programContext, sessionContext, configData, collection } from './data';
 import { IChapterListComponentInput } from '../../../cbse-program/interfaces';
-import { ISessionContext } from '../../interfaces';
+import { InitialState, ISessionContext, IUserParticipantDetails } from '../../interfaces';
 import * as moment from 'moment';
 
 @Component({
@@ -49,8 +48,8 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
   public showNormalModal = false;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
-  public telemetryInteractObject: any;
-
+  public telemetryInteractObject: any = {};
+  public currentUserRole: any;
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private configService: ConfigService, private publicDataService: PublicDataService,
   private activatedRoute: ActivatedRoute, private router: Router, public programStageService: ProgramStageService,
@@ -61,24 +60,21 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
    }
 
   ngOnInit() {
-  this.contributor = {'name': 'Nitesh Kesarkar', 'type': 'Organisation', 'nominationStatus': 'Pending'};
   this.getProgramDetails();
   this.getProgramTextbooks();
-  this.getContributionOrgUsers();
-  this.programContext = programContext;
-  this.sessionContext = sessionContext;
-  this.configData = configData;
-  this.collection = collection;
+  if (!_.isEmpty(this.userService.userProfile.userRegData)
+  && this.userService.userProfile.userRegData.User_Org.roles.includes('admin'))  {
+    this.getContributionOrgUsers();
+  }
   this.getNominationStatus();
-  this.roles = _.get(programContext, 'config.roles');
   this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program_ID'}];
   this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
-  this.telemetryInteractObject = {};
   }
 
   getProgramDetails() {
     this.fetchProgramDetails().subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
+      this.roles = _.get(this.programDetails, 'config.roles');
       this.setActiveDate();
     }, error => {
       // TODO: navigate to program list page
@@ -94,12 +90,12 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
     return this.programsService.get(req).pipe(tap((programDetails: any) => {
       programDetails.result.config = JSON.parse(programDetails.result.config);
       this.programDetails = programDetails.result;
+      this.programContext = this.programDetails;
       this.mediums = _.join(this.programDetails.config['medium'], ', ');
       this.grades = _.join(this.programDetails.config['gradeLevel'], ', ');
 
       this.sessionContext.framework = _.get(this.programDetails, 'config.framework');
       if (this.sessionContext.framework) {
-        this.userProfile = this.userService.userProfile;
         this.fetchFrameWorkDetails();
       }
     }));
@@ -133,13 +129,13 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
     };
 
     this.httpClient.post<any>(option.url, option.data).subscribe(
-      (res) => this.showTexbooklist(res),
+      (res) =>  {
+        if (res && res.result && res.result.content) {
+          this.contributorTextbooks = res.result.content;
+        }
+      },
       (err) => console.log(err)
     );
-  }
-
-  showTexbooklist (res) {
-    this.contributorTextbooks = res.result.content;
   }
 
   ngAfterViewInit() {
@@ -169,24 +165,25 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
      });
   }
 
-  viewContribution() {
-  this.component = ChapterListComponent;
-  //   this.programContext.programId = this.programId;
-  this.dynamicInputs = {
-  // tslint:disable-next-line:max-line-length
-  chapterListComponentInput :  {
-  sessionContext: this.sessionContext,
-  collection: this.collection,
-  config: this.configData,
-  programContext: this.programContext,
-  role: {
-    currentRole: 'REVIEWER'
+  viewContribution(collection) {
+    this.component = ChapterListComponent;
+    this.sessionContext.programId = this.programDetails.program_id;
+    this.sessionContext.collection =  collection.identifier;
+    this.sessionContext.collectionName = collection.name;
+    this.dynamicInputs = {
+      chapterListComponentInput: {
+        sessionContext: this.sessionContext,
+        collection: collection,
+        config: _.find(this.programContext.config.components, {'id': 'ng.sunbird.chapterList'}),
+        programContext: this.programContext,
+        role: {
+          currentRole : this.sessionContext.currentRole
+        }
+      }
+    };
+    this.showChapterList = true;
+    this.programStageService.addStage('chapterListComponent');
   }
-  }
-   };
-  this.showChapterList = true;
-  this.programStageService.addStage('chapterListComponent');
-   }
 
    setActiveDate() {
     const dates = [ 'nomination_enddate', 'shortlisting_enddate', 'content_submission_enddate', 'enddate'];
@@ -213,17 +210,43 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
       data: {
         request: {
           filters: {
-            program_id: this.activatedRoute.snapshot.params.programId,
-            user_id: this.userService.userProfile.userId,
+            program_id: this.activatedRoute.snapshot.params.programId
           }
         }
       }
     };
+    if (this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org) {
+      req.data.request.filters['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
+    } else {
+      req.data.request.filters['user_id'] = this.userService.userProfile.userId;
+    }
     this.programsService.post(req).subscribe((data) => {
       if (data.result && !_.isEmpty(data.result)) {
         this.nominated = true;
         this.nominationDetails = _.first(data.result);
+        this.sessionContext.nominationDetails = _.first(data.result);
         this.currentNominationStatus =  _.get(_.first(data.result), 'status');
+        if (this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org) {
+          this.sessionContext.currentOrgRole = this.userService.userProfile.userRegData.User_Org.roles[0];
+          if (this.userService.userProfile.userRegData.User_Org.roles[0] === 'admin') {
+            // tslint:disable-next-line:max-line-length
+            this.sessionContext.currentRole = (this.currentNominationStatus === 'Approved' ||  this.currentNominationStatus === 'Rejected') ? 'REVIEWER' : 'CONTRIBUTOR';
+          } else if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.rolemapping) {
+              _.find(this.sessionContext.nominationDetails.rolemapping, (users, role) => {
+                if (_.includes(users, this.userService.userProfile.userRegData.User.userId)) {
+                  this.sessionContext.currentRole = role;
+                }
+            });
+          } else {
+            this.sessionContext.currentRole = 'CONTRIBUTOR';
+          }
+        } else {
+          this.sessionContext.currentRole = 'CONTRIBUTOR';
+          this.sessionContext.currentOrgRole = 'individual';
+        }
+        const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
+        this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
+
       }
     }, error => {
       this.toasterService.error('Failed fetching current nomination status');
@@ -265,7 +288,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
                     this.contributorOrgUser.push(r.result.User);
                   }
                 });
-                console.log('this.contributorOrgUser ', this.contributorOrgUser);
               }
             }, error => {
               console.log(error);

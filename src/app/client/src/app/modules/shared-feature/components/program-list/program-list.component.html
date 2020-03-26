@@ -30,7 +30,7 @@
                 <th *ngIf="activeMyProgramsMenu" class="sb-sort-icon w-10">{{ resourceService.frmelmnts.lbl.nominatedDate }}</th>
                 <th *ngIf="activeAllProgramsMenu" class="w-10">{{ resourceService.frmelmnts.lbl.programDates }}</th>
                 <th *ngIf="activeMyProgramsMenu" class="w-5 text-center">{{ resourceService.frmelmnts.lbl.status }}</th>
-                <th class="w-5 text-center"> &nbsp;</th>
+                <th class="w-10 text-center"> &nbsp;</th>
               </tr>
             </thead>
             <tbody class="sb-table-body">
@@ -46,8 +46,8 @@
                   <div>{{ getSourcingOrgName(program) }}
                   </div>
                 </td>
-                <td>
-                  <div class="sb__ellipsis sb__ellipsis--breakAll" style="width: 200px;" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.contentType }}" popupText="{{ getProgramContentTypes(program) }}">{{ getProgramContentTypes(program) }}</div>
+                <td class="mouse-pointer">
+                  <div class="sb__ellipsis sb__ellipsis--breakAll"  suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.contentType }}" popupText="{{ getProgramContentTypes(program) }}">{{ getProgramContentTypes(program) }}</div>
                 </td>
                 <td>
                   <div class="sb__ellipsis sb__ellipsis--breakAll" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.mediums }}" popupText="{{ getProgramInfo(program, 'medium') }}">{{ getProgramInfo(program, 'medium') }}</div>
