@@ -4,7 +4,7 @@
       <div class="sb-pageSection-header mb-0">
         <h4 class="sb-pageSection-title">
           <span *ngIf="!isContributor || activeMyProgramsMenu">{{ resourceService.frmelmnts.lbl.myPrograms }} </span>
-          <span *ngIf="activeAllProgramsMenu">Nominated Programs </span>
+          <span *ngIf="activeAllProgramsMenu">{{ resourceService.frmelmnts.lbl.explorePrograms }}</span>
           <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8"
             *ngIf="programs && programs.length">{{count}}</span></h4>
       </div>
