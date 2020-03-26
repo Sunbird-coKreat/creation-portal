@@ -135,9 +135,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
  fetchFrameWorkDetails() {
    if (_.get(this.userprofile.framework, 'id')) {
-
     this.userFramework = _.get(this.userprofile.framework, 'id')[0];
-
     this.frameworkService.getFrameworkCategories(_.get(this.userprofile.framework, 'id')[0])
     .pipe(takeUntil(this.unsubscribe))
     .subscribe((data) => {
@@ -153,7 +151,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.frameworkService.initialize();
     this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
       if (frameworkInfo && !frameworkInfo.err) {
-
         this.userFramework = frameworkInfo.frameworkdata.defaultFramework.identifier;
         this.frameworkCategories  = frameworkInfo.frameworkdata.defaultFramework.categories;
       }
@@ -170,19 +167,20 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   this.collectionListForm.controls['medium'].setValue('');
   this.collectionListForm.controls['gradeLevel'].setValue('');
   this.collectionListForm.controls['subject'].setValue('');
+
   console.log(this.userprofile);
   console.log(this.frameworkCategories);
   const board = _.find(this.frameworkCategories, (element) => {
     return element.code === 'board';
   });
-  
- this.userBoard = board.terms[0].name;
+
+  this.userBoard = board.terms[0].name;
   console.log(this.userBoard);
 
   if (_.get(this.userprofile.framework, 'board')) {
     this.userBoard = this.userprofile.framework.board[0];
   }
-   
+
   this.frameworkCategories.forEach((element) => {
     this.programScope[element['code']] = _.sortBy(element['terms'], ['name']);
   });
@@ -294,6 +292,13 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
  navigateTo(stepNo) {
    this.showTextBookSelector = false;
+ }
+
+ resetFilters () {
+    this.collectionListForm.controls['medium'].setValue('');
+    this.collectionListForm.controls['gradeLevel'].setValue('');
+    this.collectionListForm.controls['subject'].setValue('');
+    this.showTexbooklist();
  }
 
  saveProgram() {

@@ -26,7 +26,7 @@
 					[isDisabled]="!showTextBookSelector">{{resource.frmelmnts.lbl.selectTextbooks}}</a>
 				</div>
 				<div class="ui segment mt-5" suiTabContent="1" [ngClass]="{'active' : !showTextBookSelector}">
-					<form class="ui form" [formGroup]="createProgramForm" (submit)="saveProgram()">
+					<form class="ui form" [formGroup]="createProgramForm">
 						<div class="ui grid">
 							<div class="twelve wide column">
 								<div class="required field">
@@ -185,7 +185,7 @@
 					</form>
 				</div>
 				<div class="ui segment mt-5" suiTabContent="2" [ngClass]="{'active' : showTextBookSelector}">
-					<form class="ui form" [formGroup]="collectionListForm" (submit)="saveProgram()">
+					<form class="ui form" [formGroup]="collectionListForm">
 						<div class="ui grid">
 							<div class="three wide column">
 								<div class="field">
@@ -247,7 +247,7 @@
 							<div class="three wide column">
 								<div class="field">
 									<label>&nbsp;</label>
-									<button class="sb-btn sb-btn-normal sb-btn-outline-primary">
+									<button class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="resetFilters()">
 											{{resource.frmelmnts.btn.reset}}
 									</button>
 									<button class="sb-btn sb-btn-normal sb-btn-primary ml-8" (click)="showTexbooklist()"

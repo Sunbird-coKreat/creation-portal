@@ -157,6 +157,7 @@ export class ProgramListComponent implements OnInit {
    */
   private getMyProgramsForContrib(status) {
     if (!_.isEmpty(this.userService.userProfile.userRegData)
+    && this.userService.userProfile.userRegData.User_Org
     && this.userService.userProfile.userRegData.User_Org.roles.indexOf('admin') === -1) {
       const filters = {
         organisation_id: this.userService.userProfile.userRegData.User_Org.orgId
