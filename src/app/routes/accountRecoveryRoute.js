@@ -10,7 +10,7 @@ const logger = require('sb_logger_util_v2');
 module.exports = (app) => {
 
   app.post('/learner/user/v1/fuzzy/search', proxy(envHelper.learner_Service_Local_BaseUrl, {
-    proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+    proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
     proxyReqPathResolver: (req) => {
       logger.info({msg: '/learner/user/v1/fuzzy/search called'});
       return '/private/user/v1/search';
@@ -30,7 +30,7 @@ module.exports = (app) => {
       }
     },
     proxy(envHelper.learner_Service_Local_BaseUrl, {
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
       proxyReqPathResolver: (req) => {
         return '/private/user/v1/password/reset'; // /private/user/v1/reset/password
       }
@@ -39,7 +39,7 @@ module.exports = (app) => {
   app.all('/learner/otp/v1/verify',
     bodyParser.urlencoded({ extended: false }), bodyParser.json({ limit: '10mb' }), 
     proxy(envHelper.LEARNER_URL, {
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
       proxyReqPathResolver: (req) => {
         return require('url').parse(envHelper.LEARNER_URL + req.originalUrl.replace('/learner/', '')).path
       },
