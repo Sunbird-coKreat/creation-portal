@@ -32,12 +32,14 @@ export class ProgramListComponent implements OnInit {
   public selectedProgramToAssignRoles;
   public sortPrograms: any;
   public filterProgramsByType: any;
-  public direction = 'asc';
+  public direction = '';
   public enrollPrograms: IProgram[];
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
   public nominationList;
+  columnName = '';
+  
   constructor(private programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService ) { }
@@ -130,12 +132,14 @@ export class ProgramListComponent implements OnInit {
   }
 
   sort(colName) {
-    if (this.direction === 'asc'){
-      this.programs =  this.sortPrograms.sort((a,b) => a[colName].localeCompare(b[colName]));
-      this.direction = 'dsc';
-    } else {
+    if (this.direction === 'asc' || this.direction === ''){
       this.programs =  this.sortPrograms.sort((a,b) => b[colName].localeCompare(a[colName]));
+      this.direction = 'dsc';
+      this.columnName = colName;
+    } else {
+      this.programs =  this.sortPrograms.sort((a,b) => a[colName].localeCompare(b[colName]));
       this.direction = 'asc';
+      this.columnName = colName;
     }
   }
   public getContributionProgramList(req) {

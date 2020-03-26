@@ -22,13 +22,26 @@
             <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
             <thead class="sb-table-header sb-table-thead-gray">
               <tr>
-                <th class="w-15 sb-sort-icon" (click)="sort('name')">{{ resourceService.frmelmnts.lbl.program }}</th>
-                <th *ngIf="isContributor" class="w-10 sb-sort-icon" (click)="sort('sourcing_org_name')" 
+                
+                <th class="w-15" (click)="sort('name')"> 
+                  {{ resourceService.frmelmnts.lbl.program }}   <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || columnName != 'name' "></i>      
+                  <span  *ngIf="columnName == 'name'">
+                    <i class="fa fa-sort-asc" aria-hidden="true" *ngIf="direction == 'asc'"></i>
+                    <i class="fa fa-sort-desc" aria-hidden="true" *ngIf="direction == 'dsc'"></i>
+                  </span>
+                </th>
+                <th *ngIf="isContributor" class="w-10" (click)="sort('sourcing_org_name')" 
                 appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('sort-program-name', 'click', 'program-list')"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService.frmelmnts.lbl.orgName }}</th>
+      [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService.frmelmnts.lbl.orgName }}  
+      <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || columnName != 'sourcing_org_name'"></i>
+      <span *ngIf="columnName == 'sourcing_org_name'">
+        <i class="fa fa-sort-asc" aria-hidden="true" *ngIf="direction == 'asc'"></i>
+        <i class="fa fa-sort-desc" aria-hidden="true" *ngIf="direction == 'dsc'"></i>
+      </span>
+    </th>
                 <th class="w-10">{{ resourceService.frmelmnts.lbl.contentType }}</th>
                 <th class="w-15">{{ resourceService.frmelmnts.lbl.MediumClassSubject }}</th>
                 <th *ngIf="!isContributor" class="w-10">{{ resourceService.frmelmnts.lbl.programDates }}</th>
