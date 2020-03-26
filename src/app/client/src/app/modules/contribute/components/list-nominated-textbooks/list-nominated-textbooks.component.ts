@@ -244,9 +244,10 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
           this.sessionContext.currentRole = 'CONTRIBUTOR';
           this.sessionContext.currentOrgRole = 'individual';
         }
-        const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
-        this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
-
+        if (this.programContext.config) {
+          const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
+          this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
+        }
       }
     }, error => {
       this.toasterService.error('Failed fetching current nomination status');
