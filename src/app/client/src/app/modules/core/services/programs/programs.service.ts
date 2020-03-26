@@ -95,51 +95,51 @@ export class ProgramsService extends DataService implements CanActivate {
       }));
   }
 
-  /**
+/**
   * Function used map the user with user role in registry
   */
-  mapUsertoContributorOrgReg (orgOsid, UserOsid) {
-    // Check if user is alredy part of the orgnisation
-    if (this.userService.userProfile.userRegData.User_Org && this.userService.userProfile.userRegData.User_Org.length) {
-      const userOrgs = this.userService.userProfile.userRegData.User_Org;
-      const orgList = userOrgs.map((value) => value.orgId);
-      if (orgList.length && orgList.indexOf(orgOsid) !== -1) {
-        this.toasterService.warning(this.resourceService.messages.emsg.contributorjoin.m0002);
-        this.router.navigate(['contribute/myenrollprograms']);
-        return false;
-      }
+ mapUsertoContributorOrgReg (orgOsid, UserOsid) {
+  // Check if user is alredy part of the orgnisation
+  if (!_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
+    const userOrg = this.userService.userProfile.userRegData.User_Org;
 
-      if (orgList.length && orgList.indexOf(orgOsid) === -1) {
-        this.toasterService.warning(this.resourceService.messages.emsg.contributorjoin.m0003);
-        this.router.navigate(['contribute/myenrollprograms']);
-        return false;
-      }
+    if (userOrg.orgId && userOrg.orgId === orgOsid) {
+      this.toasterService.warning(this.resourceService.messages.emsg.contributorjoin.m0002);
+      this.router.navigate(['contribute/myenrollprograms']);
+      return false;
     }
 
-    const userOrgAdd = {
-      User_Org: {
-          userId: UserOsid,
-        orgId: orgOsid,
-        roles: ["user"]
-      }
-    };
+    if (userOrg.orgId && userOrg.orgId !== orgOsid) {
+      this.toasterService.warning(this.resourceService.messages.emsg.contributorjoin.m0003);
+      this.router.navigate(['contribute/myenrollprograms']);
+      return false;
+    }
+  }
 
-    this.addToRegistry(userOrgAdd).subscribe(
-        (res) => {
-          this.toasterService.success(this.resourceService.messages.smsg.contributorjoin.m0001);
-          this.userService.openSaberRegistrySearch().then(() => {
-            this.router.navigate(['contribute']);
-          }).catch((err) => {
-            this.toasterService.error('Please Try Later...');
-            setTimeout(() => {
-              this.router.navigate(['contribute/myenrollprograms']);
-            });
+  const userOrgAdd = {
+    User_Org: {
+        userId: UserOsid,
+      orgId: orgOsid,
+      roles: ["user"]
+    }
+  };
+
+  this.addToRegistry(userOrgAdd).subscribe(
+      (res) => {
+        this.toasterService.success(this.resourceService.messages.smsg.contributorjoin.m0001);
+        this.userService.openSaberRegistrySearch().then(() => {
+          this.router.navigate(['contribute']);
+        }).catch((err) => {
+          this.toasterService.error('Please Try Later...');
+          setTimeout(() => {
+            this.router.navigate(['contribute/myenrollprograms']);
           });
-        },
-        (error) => {
-          this.toasterService.error(this.resourceService.messages.fmsg.contributorjoin.m0002);
-          this.router.navigate(['contribute/myenrollprograms']);
-        }
+        });
+      },
+      (error) => {
+        this.toasterService.error(this.resourceService.messages.fmsg.contributorjoin.m0002);
+        this.router.navigate(['contribute/myenrollprograms']);
+      }
     );
   }
 

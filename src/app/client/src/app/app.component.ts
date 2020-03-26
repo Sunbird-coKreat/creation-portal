@@ -166,7 +166,7 @@ export class AppComponent implements OnInit, OnDestroy {
           this.userService.userRegistryData = true;
           this.initApp = true;
           if (this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org &&
-            !this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
+            !this.userService.userProfile.userRegData.User_Org.roles.includes('admin') && !this.router.url.includes('/contribute/join/')) {
             this.router.navigateByUrl('/contribute/myenrollprograms');
           }
         }).catch((err) => {
