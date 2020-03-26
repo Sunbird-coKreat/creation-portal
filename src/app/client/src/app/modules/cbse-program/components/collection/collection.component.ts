@@ -87,13 +87,12 @@ export class CollectionComponent implements OnInit, OnDestroy {
       // currentRole: _.get(this.programContext, 'userDetails.roles[0]'),
       bloomsLevel: _.get(this.programContext, 'config.scope.bloomsLevel'),
       programId: _.get(this.programContext, 'programId'),
-      //programId: '31ab2990-7892-11e9-8a02-93c5c62c03f1' || _.get(this.programContext, 'programId'),
       program: _.get(this.programContext, 'name'),
       onBoardSchool: _.get(this.programContext, 'userDetails.onBoardingData.school'),
       collectionType: _.get(this.collectionComponentConfig, 'collectionType'),
       collectionStatus: _.get(this.collectionComponentConfig, 'status')
     }, this.sharedContext);
-    if (this.userProfile.userRegData) {
+    if (this.userProfile.userRegData && this.userProfile.userRegData.User_Org) {
       this.sessionContext.currentRole = this.userProfile.userRegData.User_Org.roles[0] === 'admin' ? 'CONTRIBUTOR' : 'REVIEWER';
     }
     this.filters = this.getImplicitFilters();
@@ -435,7 +434,8 @@ export class CollectionComponent implements OnInit, OnDestroy {
             program_id: data.result.program_id,
             user_id: data.result.user_id
           };
-          if (this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org) {
+          if (this.userService.userProfile.userRegData &&
+            this.userService.userProfile.userRegData.User_Org) {
             this.sessionContext.nominationDetails['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
           }
           this.gotoChapterView(collection);

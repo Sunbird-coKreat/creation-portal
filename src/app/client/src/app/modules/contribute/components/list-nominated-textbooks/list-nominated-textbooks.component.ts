@@ -60,15 +60,22 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
    }
 
   ngOnInit() {
-  this.getProgramDetails();
-  this.getProgramTextbooks();
-  if (!_.isEmpty(this.userService.userProfile.userRegData)
-  && this.userService.userProfile.userRegData.User_Org.roles.includes('admin'))  {
-    this.getContributionOrgUsers();
-  }
-  this.getNominationStatus();
-  this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program_ID'}];
-  this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
+    this.getProgramDetails();
+    this.getProgramTextbooks();
+    if (!_.isEmpty(this.userService.userProfile.userRegData) &&
+      this.userService.userProfile.userRegData.User_Org &&
+      this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
+      this.getContributionOrgUsers();
+    }
+    this.getNominationStatus();
+    this.telemetryInteractCdata = [{
+      id: this.activatedRoute.snapshot.params.programId,
+      type: 'Program_ID'
+    }];
+    this.telemetryInteractPdata = {
+      id: this.userService.appId,
+      pid: this.configService.appConfig.TELEMETRY.PID
+    };
   }
 
   getProgramDetails() {
@@ -244,9 +251,10 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
           this.sessionContext.currentRole = 'CONTRIBUTOR';
           this.sessionContext.currentOrgRole = 'individual';
         }
-        const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
-        this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
-
+        if (this.programContext.config) {
+          const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
+          this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
+        }
       }
     }, error => {
       this.toasterService.error('Failed fetching current nomination status');
