@@ -1,6 +1,6 @@
 import { IImpressionEventInput, IInteractEventEdata} from '@sunbird/telemetry';
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService } from '@sunbird/shared';
-import { ProgramsService, PublicDataService, UserService } from '@sunbird/core';
+import { ProgramsService, PublicDataService, UserService, FrameworkService } from '@sunbird/core';
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
@@ -10,18 +10,15 @@ import { InitialState, ISessionContext, IUserParticipantDetails } from '../../in
 import { ProgramStageService } from '../../services/';
 import { ProgramComponentsService} from '../../services/program-components/program-components.service';
 import { ChapterListComponent } from '../../../cbse-program/components/chapter-list/chapter-list.component';
-import { programContext, sessionContext, configData, collection } from './data';
-import { tap, filter, map } from 'rxjs/operators';
+import { tap, filter, first, map } from 'rxjs/operators';
 import { NgForm } from '@angular/forms';
 import * as moment from 'moment';
-
 @Component({
   selector: 'app-list-contributor-textbooks',
   templateUrl: './list-contributor-textbooks.component.html',
   styleUrls: ['./list-contributor-textbooks.component.scss']
 })
 export class ListContributorTextbooksComponent implements OnInit, AfterViewInit {
-
   public contributor;
   public contributorTextbooks;
   public noResultFound;
@@ -40,6 +37,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
   public totalCount = 0;
   public activeDate = '';
   public mediums: any;
+  public roles;
   public grades: any;
   public state: InitialState = {
     stages: []
@@ -56,14 +54,12 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
-
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
-    private userService: UserService,
+    private userService: UserService, private frameworkService: FrameworkService,
     private config: ConfigService, private publicDataService: PublicDataService,
   private activatedRoute: ActivatedRoute, private router: Router, public programStageService: ProgramStageService,
   private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
   public toasterService: ToasterService) { }
-
   ngOnInit() {
     this.programId = this.activatedRoute.snapshot.params.programId;
     this.activatedRoute.fragment.pipe(map(fragment => fragment || 'None')).subscribe((frag) => {
@@ -74,10 +70,13 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
       this.setActiveDate();
       this.getProgramTextbooks();
       this.getNominationCounts();
-      this.programContext = programContext;
-      this.sessionContext = sessionContext;
-      this.configData = configData;
-      this.collection = collection;
+      this.programContext = _.get(programDetails, 'result');
+      this.roles = _.get(this.programContext, 'config.roles');
+      this.configData = _.find(this.programContext.config.components, {'id': 'ng.sunbird.chapterList'});
+      this.sessionContext.framework = _.get(this.programContext, 'config.framework');
+      if (this.sessionContext.framework) {
+        this.fetchFrameWorkDetails();
+      }
     }, error => {
       // TODO: navigate to program list page
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
@@ -87,7 +86,17 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
   this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
   this.telemetryInteractObject = {};
   }
-
+  public fetchFrameWorkDetails() {
+    this.frameworkService.initialize(this.sessionContext.framework);
+    this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
+      if (frameworkDetails && !frameworkDetails.err) {
+        this.sessionContext.frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
+      }
+    }, error => {
+      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+      this.toasterService.error(errorMes || 'Fetching framework details failed');
+    });
+  }
   getNominationCounts() {
     this.fetchNominationCounts().subscribe((response) => {
       const statuses = _.get(response, 'result');
@@ -95,15 +104,12 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
         if (nomination.status === 'Initiated') {
           this.initiatedCount = nomination.count;
         }
-
         if (nomination.status === 'Pending') {
           this.pendingCount = nomination.count;
         }
-
         if (nomination.status === 'Approved') {
           this.approvedCount = nomination.count;
         }
-
         if (nomination.status === 'Rejected') {
           this.rejectedCount = nomination.count;
         }
@@ -116,7 +122,6 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
       this.toasterService.error(errorMes || 'Fetching program details failed');
     });
   }
-
   fetchNominationCounts() {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
@@ -131,7 +136,6 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
     };
     return this.programsService.post(req);
   }
-
   fetchProgramDetails() {
     const req = {
       url: `program/v1/read/${this.programId}`
@@ -143,7 +147,6 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
       this.grades = _.join(this.programDetails.config['gradeLevel'], ', ');
     }));
   }
-
   getProgramTextbooks() {
      const option = {
       url: 'content/composite/v1/search',
@@ -158,17 +161,14 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
       }
       }
     };
-
     this.httpClient.post<any>(option.url, option.data).subscribe(
       (res) => this.showTexbooklist(res),
       (err) => console.log(err)
     );
   }
-
   showTexbooklist (res) {
     this.contributorTextbooks = res.result.content;
   }
-
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
@@ -195,25 +195,28 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
       };
      });
   }
-  viewContribution() {
-  this.component = ChapterListComponent;
-  //   this.programContext.programId = this.programId;
-  this.dynamicInputs = {
-  // tslint:disable-next-line:max-line-length
-  chapterListComponentInput :  {
-  sessionContext: this.sessionContext,
-  collection: this.collection,
-  config: this.configData,
-  programContext: this.programContext,
-  role: {
-    currentRole: 'REVIEWER'
+  viewContribution(collection) {
+    this.component = ChapterListComponent;
+    this.sessionContext.programId = this.programDetails.program_id;
+    this.sessionContext.collection =  collection.identifier;
+    this.sessionContext.collectionName = collection.name;
+    this.sessionContext.currentRole = 'REVIEWER';
+    const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
+    this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
+    this.dynamicInputs = {
+      chapterListComponentInput: {
+        sessionContext: this.sessionContext,
+        collection: collection,
+        config: this.configData,
+        programContext: this.programContext,
+        role: {
+          currentRole: 'REVIEWER'
+        }
+      }
+    };
+    this.showChapterList = true;
+    this.programStageService.addStage('chapterListComponent');
   }
-  }
-   };
-  this.showChapterList = true;
-  this.programStageService.addStage('chapterListComponent');
-   }
-
    updateNomination(status) {
     let nominationStatus;
     (status === 'accept') ? (nominationStatus = 'Approved') : (nominationStatus = 'Rejected');
@@ -247,29 +250,23 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
        this.toasterService.success(this.resourceService.messages.fmsg.m0026);
      });
   }
-
   setActiveDate() {
     const dates = [ 'nomination_enddate', 'shortlisting_enddate', 'content_submission_enddate', 'enddate'];
-
     dates.forEach(key => {
       const date  = moment(moment(this.programDetails[key]).format('YYYY-MM-DD'));
       const today = moment(moment().format('YYYY-MM-DD'));
       const isFutureDate = !date.isSame(today) && date.isAfter(today);
-
       if (key === 'nomination_enddate' && isFutureDate) {
         this.activeDate = key;
       }
-
       if (this.activeDate === '' && isFutureDate) {
         this.activeDate = key;
       }
     });
   }
-
   goBack() {
     this.navigationHelperService.navigateToPreviousUrl();
   }
-
   getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
     return _.omitBy({
       id,
