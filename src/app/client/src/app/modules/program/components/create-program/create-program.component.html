@@ -21,9 +21,13 @@
 			</div-->
 			<sui-tabset>
 				<div class="ui pointing secondary menu sb-bg-color-primary-0">
-					<a class="item" suiTabHeader="1" [ngClass]="{'active' : !showTextBookSelector}">{{resource.frmelmnts.lbl.details}}</a>
-					<a class="item" suiTabHeader="2" [ngClass]="{'active' : showTextBookSelector}"
-					[isDisabled]="!showTextBookSelector">{{resource.frmelmnts.lbl.selectTextbooks}}</a>
+					<div class="item" suiTabHeader="1" [ngClass]="{'active' : !showTextBookSelector}">
+						{{resource.frmelmnts.lbl.details}}
+					</div>
+					<div class="item" suiTabHeader="2" [ngClass]="{'active' : showTextBookSelector}"
+					[isDisabled]="!showTextBookSelector">
+						{{resource.frmelmnts.lbl.selectTextbooks}}
+					</div>
 				</div>
 				<div class="ui segment mt-5" suiTabContent="1" [ngClass]="{'active' : !showTextBookSelector}">
 					<form class="ui form" [formGroup]="createProgramForm">
