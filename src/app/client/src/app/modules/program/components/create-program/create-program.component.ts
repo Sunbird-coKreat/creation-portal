@@ -13,6 +13,7 @@ import { programConfigObj } from './programconfig';
 import { HttpClient } from '@angular/common/http';
 import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEventInput } from '@sunbird/telemetry';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import * as moment from 'moment';
 
 @Component({
  selector: 'app-create-program',
@@ -281,6 +282,55 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
  navigateTo(stepNo) {
    this.showTextBookSelector = false;
+ }
+
+ validateDates() {
+  const formData = this.createProgramForm.value;
+  const nominationEndDate = moment(formData.nomination_enddate);
+  const shortlistingEndDate = moment(formData.shortlisting_enddate);
+  const contentSubmissionEndDate = moment(formData.content_submission_enddate);
+  const programEndDate = moment(formData.program_end_date);
+  const today = moment(moment().format('YYYY-MM-DD'));
+
+  Object.keys(this.createProgramForm.controls).forEach(field => {
+    const control = this.createProgramForm.get(field);
+    console.log(field, control);
+    control.markAsTouched();
+  });
+
+  const control1 = this.createProgramForm.get('shortlisting_enddate').setErrors({ message: 'date error' });
+    console.log('shortlisting_enddate', control1);
+
+  // // nomination date should be >= today
+  // if (!nominationEndDate.isSameOrAfter(today)) {
+  //   this.createProgramForm.value.nomination_enddate = '';
+  //   console.log('1');
+  //   return;
+  // }
+  // // shortlisting date should be >= nomination date
+  // if (!shortlistingEndDate.isSameOrAfter(nominationEndDate)) {
+  //   this.createProgramForm.value.shortlisting_enddate = '';
+  //     this.createProgramForm.get('shortlisting_enddate').markAsPristine();
+  //     this.createProgramForm.get('shortlisting_enddate').markAsUntouched();
+
+  //   console.log('2');
+  //   return;
+  // }
+
+  // // submission date should be >= shortlisting date
+  // if (!contentSubmissionEndDate.isSameOrAfter(shortlistingEndDate)) {
+  //   this.createProgramForm.value.content_submission_enddate = '';
+  //   console.log('3');
+  //   return;
+  // }
+  // // end date should be >= submission date
+  // if (!programEndDate.isSameOrAfter(contentSubmissionEndDate)) {
+  //   this.createProgramForm.value.program_end_date = '';
+  //   console.log('4');
+  //   return;
+  // }
+
+  // this.saveProgram();
  }
 
  saveProgram() {

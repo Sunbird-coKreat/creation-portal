@@ -26,7 +26,7 @@
 					[isDisabled]="!showTextBookSelector">{{resource.frmelmnts.lbl.selectTextbooks}}</a>
 				</div>
 				<div class="ui segment mt-5" suiTabContent="1" [ngClass]="{'active' : !showTextBookSelector}">
-					<form class="ui form" [formGroup]="createProgramForm" (submit)="saveProgram()">
+					<form class="ui form" [formGroup]="createProgramForm">
 						<div class="ui grid">
 							<div class="twelve wide column">
 								<div class="required field">
@@ -125,6 +125,10 @@
 											*ngIf="createProgramForm.controls['content_submission_enddate'].errors && createProgramForm.controls['content_submission_enddate'].errors.required && (!createProgramForm.controls['content_submission_enddate'].pristine || formIsInvalid)">
 											{{ resource.frmelmnts.lbl.programContributionEndDateRequired }}
 										</div>
+										<div class="ui pointing red basic label below "
+										*ngIf="">
+										{{ dateErrorMessage }}
+									</div>
 									</div>
 								</div>
 							</div>
@@ -185,7 +189,7 @@
 					</form>
 				</div>
 				<div class="ui segment mt-5" suiTabContent="2" [ngClass]="{'active' : showTextBookSelector}">
-					<form class="ui form" [formGroup]="collectionListForm" (submit)="saveProgram()">
+					<form class="ui form" [formGroup]="collectionListForm">
 						<div class="ui grid">
 							<div class="three wide column">
 								<div class="field">
@@ -360,7 +364,7 @@
 		</div>
 		<div class="text-align-right mt-10" [appTelemetryStart]="telemetryStart" [appTelemetryEnd]="telemetryEnd">
 			<button *ngIf="!showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary"
-				(click)="saveProgram()"
+				(click)="validateDates()"
 				appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('next', 'click', 'create-program')"
       [telemetryInteractObject]="telemetryInteractObject"
