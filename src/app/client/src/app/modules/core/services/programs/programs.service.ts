@@ -95,51 +95,51 @@ export class ProgramsService extends DataService implements CanActivate {
       }));
   }
 
-  /**
+/**
   * Function used map the user with user role in registry
   */
-  mapUsertoContributorOrgReg (orgOsid, UserOsid) {
-    // Check if user is alredy part of the orgnisation
-    if (this.userService.userProfile.userRegData.User_Org && this.userService.userProfile.userRegData.User_Org.length) {
-      const userOrgs = this.userService.userProfile.userRegData.User_Org;
-      const orgList = userOrgs.map((value) => value.orgId);
-      if (orgList.length && orgList.indexOf(orgOsid) !== -1) {
-        this.toasterService.warning(this.resourceService.messages.emsg.contributorjoin.m0002);
-        this.router.navigate(['contribute/myenrollprograms']);
-        return false;
-      }
+ mapUsertoContributorOrgReg (orgOsid, UserOsid) {
+  // Check if user is alredy part of the orgnisation
+  if (!_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
+    const userOrg = this.userService.userProfile.userRegData.User_Org;
 
-      if (orgList.length && orgList.indexOf(orgOsid) === -1) {
-        this.toasterService.warning(this.resourceService.messages.emsg.contributorjoin.m0003);
-        this.router.navigate(['contribute/myenrollprograms']);
-        return false;
-      }
+    if (userOrg.orgId && userOrg.orgId === orgOsid) {
+      this.toasterService.warning(this.resourceService.messages.emsg.contributorjoin.m0002);
+      this.router.navigate(['contribute/myenrollprograms']);
+      return false;
     }
 
-    const userOrgAdd = {
-      User_Org: {
-          userId: UserOsid,
-        orgId: orgOsid,
-        roles: ["user"]
-      }
-    };
+    if (userOrg.orgId && userOrg.orgId !== orgOsid) {
+      this.toasterService.warning(this.resourceService.messages.emsg.contributorjoin.m0003);
+      this.router.navigate(['contribute/myenrollprograms']);
+      return false;
+    }
+  }
 
-    this.addToRegistry(userOrgAdd).subscribe(
-        (res) => {
-          this.toasterService.success(this.resourceService.messages.smsg.contributorjoin.m0001);
-          this.userService.openSaberRegistrySearch().then(() => {
-            this.router.navigate(['contribute']);
-          }).catch((err) => {
-            this.toasterService.error('Please Try Later...');
-            setTimeout(() => {
-              this.router.navigate(['contribute/myenrollprograms']);
-            });
+  const userOrgAdd = {
+    User_Org: {
+        userId: UserOsid,
+      orgId: orgOsid,
+      roles: ["user"]
+    }
+  };
+
+  this.addToRegistry(userOrgAdd).subscribe(
+      (res) => {
+        this.toasterService.success(this.resourceService.messages.smsg.contributorjoin.m0001);
+        this.userService.openSaberRegistrySearch().then(() => {
+          this.router.navigate(['contribute']);
+        }).catch((err) => {
+          this.toasterService.error('Please Try Later...');
+          setTimeout(() => {
+            this.router.navigate(['contribute/myenrollprograms']);
           });
-        },
-        (error) => {
-          this.toasterService.error(this.resourceService.messages.fmsg.contributorjoin.m0002);
-          this.router.navigate(['contribute/myenrollprograms']);
-        }
+        });
+      },
+      (error) => {
+        this.toasterService.error(this.resourceService.messages.fmsg.contributorjoin.m0002);
+        this.router.navigate(['contribute/myenrollprograms']);
+      }
     );
   }
 
@@ -224,19 +224,13 @@ export class ProgramsService extends DataService implements CanActivate {
   * Logic to decide if the All programs should be shown to the contributor
   */
   checkforshowAllPrograms() {
-    let showAllPrograms = 0;
-    if (this.userService.userProfile.userRegData.User && !this.userService.userProfile.userRegData.User_Org) {
-      showAllPrograms = 1;
-    } else if (this.userService.userProfile.userRegData.User_Org && this.userService.userProfile.userRegData.User_Org.length) {
-      const userOrgs = this.userService.userProfile.userRegData.User_Org;
-      let roleList = [];
-      roleList = roleList.concat(userOrgs.map((value) => value.roles));
-      if (roleList.indexOf('admin') === -1) {
-        showAllPrograms = 0;
-      }
+    if (this.userService.userRegistryData &&
+      !_.isEmpty(this.userService.userProfile.userRegData.User_Org) &&
+      !this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
+        return false;
     }
 
-    return showAllPrograms;
+    return true;
   }
 
   /**
@@ -368,22 +362,13 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * makes api call to get list of programs from ext framework Service
    */
-  getMyProgramsForContrib(status): Observable<ServerResponse> {
-    const req = {
-      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
-      data: {
-        request: {
-          filters: {
-            enrolled_id: {
-              user_id: _.get(this.userService, 'userProfile.userId'),
-              status: status
-            }
-          }
-        }
-      }
-    };
-    return this.API_URL(req);
-  }
+  getMyProgramsForContrib(req): Observable<ServerResponse> {
+        const request  = {
+          url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
+          data: req
+        };
+        return this.API_URL(request);
+    }
 
   /**
    * gets list of programs
@@ -467,4 +452,18 @@ export class ProgramsService extends DataService implements CanActivate {
 
     return _.sortBy(_.unionBy(resultArray, 'identifier'), 'index');
   }
+
+
+  getNominationList(reqFilters) {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
+      data: {
+        request: {
+          filters: reqFilters
+        }
+      }
+    };
+    return this.API_URL(req);
+  }
+
 }
