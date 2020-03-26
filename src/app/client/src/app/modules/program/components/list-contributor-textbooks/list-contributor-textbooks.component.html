@@ -220,7 +220,7 @@
 							<td>3</td>
 							<td data-label="Actions">
 								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
-									*ngIf="contributor?.nominationData?.status == 'Pending'" (click)="viewContribution()"
+									*ngIf="contributor?.nominationData?.status == 'Pending'" (click)="viewContribution(contributorTextbook)"
 									appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('view-content', 'click', 'list-nominated-textbooks')"
       [telemetryInteractObject]="telemetryInteractObject"
@@ -229,7 +229,7 @@
 									Sample Content</button>
 								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
 									*ngIf="contributor?.nominationData?.status == 'Accepted'"
-									(click)="viewContribution()"
+									(click)="viewContribution(contributorTextbook)"
 									appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('view-contribution', 'click', 'list-nominated-textbooks')"
       [telemetryInteractObject]="telemetryInteractObject"
