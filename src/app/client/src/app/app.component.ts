@@ -165,8 +165,9 @@ export class AppComponent implements OnInit, OnDestroy {
           this.userService.openSaberRegistrySearch().then(() => {
           this.userService.userRegistryData = true;
           this.initApp = true;
-          if (!_.isEmpty(this.userService.userProfile.userRegData.User_Org) &&
-          !this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
+
+          if (this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org &&
+            !this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
             this.router.navigateByUrl('/contribute/myenrollprograms');
           }
         }).catch((err) => {
