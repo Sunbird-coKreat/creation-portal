@@ -31,6 +31,7 @@ export class ProgramListComponent implements OnInit {
   public selectedRole;
   public selectedProgramToAssignRoles;
   public sortPrograms: any;
+  public filterProgramsByType: any;
   public direction = 'asc';
   public enrollPrograms: IProgram[];
   public telemetryInteractCdata: any;
@@ -92,12 +93,27 @@ export class ProgramListComponent implements OnInit {
         this.programs = _.get(response, 'result.programs');
         if (this.programs.length) {
            const program = this.filterProgramByDate(this.programs);
-           this.count = _.get(response, 'result.count');
-           this.programs = program;
-           this.sortPrograms = this.programs;
+           const nominatedPrograms  = [];
+           this.programsService.getMyProgramsForContrib('Live').subscribe((response) => {
+            _.map(_.get(response, 'result.programs'), (nomination) => {
+              nomination.program.contributionDate = nomination.createdon;
+              nomination.program.nomination_status = nomination.status;
+              nomination.program.nominated_collection_ids = nomination.collection_ids;
+              nominatedPrograms.push(nomination.program);
+            });
+
+            this.mergeAllAndNominatedPrograms(program,nominatedPrograms)
+          }, error => {
+            console.log(error);
+            // TODO: Add error toaster
+          });
+          
+          
         }
       }
     );
+
+    
   }
 
   filterProgramByDate(programs) {
@@ -115,10 +131,10 @@ export class ProgramListComponent implements OnInit {
 
   sort(colName) {
     if (this.direction === 'asc'){
-      this.programs =  this.sortPrograms.sort((a,b) => 0 - (a[colName] > b[colName] ? -1 : 1));
+      this.programs =  this.sortPrograms.sort((a,b) => a[colName].localeCompare(b[colName]));
       this.direction = 'dsc';
     } else {
-      this.programs =  this.sortPrograms.sort((a, b) => a[colName] < b[colName] ? 1 : a[colName] > b[colName] ? -1 : 0)
+      this.programs =  this.sortPrograms.sort((a,b) => b[colName].localeCompare(a[colName]));
       this.direction = 'asc';
     }
   }
@@ -152,6 +168,40 @@ export class ProgramListComponent implements OnInit {
       });
   }
 
+  mergeAllAndNominatedPrograms(allPrograms,enrolledPrograms)
+  {
+    _.map(allPrograms, (allProgram) => {
+      _.map(enrolledPrograms, (enrolledProgram) => {
+        if(allProgram.program_id == enrolledProgram.program_id)
+        {
+          Object.assign(allProgram,enrolledProgram);
+        }
+      }); 
+    });
+    this.filterProgramsByType = allPrograms;
+    this.sortPrograms = allPrograms
+    this.programs = allPrograms;
+    this.count = this.programs.length;
+
+   }
+
+   filterProgramByType(type)
+   {
+    if(type == 'nominated_programs')
+    {
+          this.programs = this.filterProgramsByType.filter(
+                nominatedPrograms => 
+                nominatedPrograms.nomination_status == "Pending" || nominatedPrograms.nomination_status == "Initiated" || nominatedPrograms.nomination_status == "Approved" || nominatedPrograms.nomination_status == "Rejected" );  
+          this.sortPrograms = this.programs;
+          this.count = this.programs.length;       
+    }
+    else if(type == 'all_programs')
+    {
+      this.programs = this.filterProgramsByType;
+      this.sortPrograms = this.programs;
+      this.count = this.programs.length; 
+    }
+   }
   /**
    * fetch the list of programs.
    */
@@ -263,7 +313,7 @@ export class ProgramListComponent implements OnInit {
   }
 
   getProgramNominationStatus(program) {
-    return program.nomination_status;
+    return program.nomination_status ? program.nomination_status : '' ;
   }
 
   getSourcingOrgName(program) {
