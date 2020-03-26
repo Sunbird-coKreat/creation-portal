@@ -224,11 +224,12 @@ export class ProgramsService extends DataService implements CanActivate {
   * Logic to decide if the All programs should be shown to the contributor
   */
   checkforshowAllPrograms() {
-    if (this.userService.userRegistryData && !_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
-      if (!this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
+    if (this.userService.userRegistryData &&
+      !_.isEmpty(this.userService.userProfile.userRegData.User_Org) &&
+      !this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
         return false;
-      }
     }
+
     return true;
   }
 
