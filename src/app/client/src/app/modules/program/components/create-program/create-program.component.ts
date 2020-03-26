@@ -170,12 +170,19 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   this.collectionListForm.controls['medium'].setValue('');
   this.collectionListForm.controls['gradeLevel'].setValue('');
   this.collectionListForm.controls['subject'].setValue('');
-
+  console.log(this.userprofile);
+  console.log(this.frameworkCategories);
   const board = _.find(this.frameworkCategories, (element) => {
     return element.code === 'board';
   });
   
-  this.userBoard = board.identifier;
+ this.userBoard = board.terms[0].name;
+  console.log(this.userBoard);
+
+  if (_.get(this.userprofile.framework, 'board')) {
+    this.userBoard = this.userprofile.framework.board[0];
+  }
+   
   this.frameworkCategories.forEach((element) => {
     this.programScope[element['code']] = _.sortBy(element['terms'], ['name']);
   });
