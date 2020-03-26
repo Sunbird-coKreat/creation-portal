@@ -41,7 +41,8 @@ export class ProgramsService extends DataService implements CanActivate {
     private toasterService: ToasterService, private resourceService: ResourceService) {
       super(http);
       this.config = config;
-      this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;
+      //this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;
+      this.baseUrl = "http://localhost:6000/" || this.config.urlConFig.URLS.CONTENT_PREFIX;
     }
 
   /**
@@ -224,8 +225,10 @@ export class ProgramsService extends DataService implements CanActivate {
   * Logic to decide if the All programs should be shown to the contributor
   */
   checkforshowAllPrograms() {
-    if (!this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
-      return false;
+    if (this.userService.userRegistryData && !_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
+      if (!this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
+        return false;
+      }
     }
     return true;
   }
