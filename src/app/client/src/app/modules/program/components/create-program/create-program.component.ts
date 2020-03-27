@@ -334,8 +334,18 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.showTexbooklist();
  }
 
+ handleContentTypes() {
+   const contentTypes = this.createProgramForm.value.content_types;
+   let configContentTypes = _.get(_.find(programConfigObj.components, {id: 'ng.sunbird.chapterList'}), 'config.contentTypes.value');
+   configContentTypes = _.filter(configContentTypes, (type) => {
+     return _.includes(contentTypes, type.metadata.contentType);
+   });
+   _.find(programConfigObj.components, {id: 'ng.sunbird.chapterList'}).config.contentTypes.value = configContentTypes;
+ }
+
  saveProgram() {
    this.formIsInvalid = false;
+   this.handleContentTypes();
 
    if (this.createProgramForm.dirty && this.createProgramForm.valid) {
     this.programData = {
