@@ -1,7 +1,7 @@
-<div class="sb-bg-color-primary-0 py-24" *ngIf="currentStage === 'listContributorTextbook'" [appTelemetryImpression]="telemetryImpression">
+<div class="sb-bg-color-primary-0 py-15" *ngIf="currentStage === 'listContributorTextbook'" [appTelemetryImpression]="telemetryImpression">
 	<div class="sb-bg-color-primary-0 practical-header">
 		<div class="ui container">
-				<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="goBack()"
+				<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn fs-0-92" (click)="goBack()"
 						type="button"
 						appTelemetryInteract
 				[telemetryInteractEdata]="getTelemetryInteractEdata('list-textbooks', 'click', 'list-nominated-textbooks')"
@@ -13,11 +13,12 @@
 															<use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
 													</svg>
 											</i>
-											Back
+											{{resourceService.frmelmnts.lbl.back}}
 									</button>
-			 <div class="d-flex flex-ai-center flex-jc-space-between practical-header__content p-0">
+			 <div class="d-flex flex-jc-space-between practical-header__content py-10">
             <div class="practical-header__title flex-basis-1 pr-10">
-                <h4 class="m-0 p-0">{{ programDetails?.name }} <i class="info circle link icon" suiPopup
+								<h5 class="m-0 p-0 d-inline-block font-weight-bold">{{ programDetails?.name }} </h5>
+								<i class="info circle link icon" suiPopup
                         [popupTemplate]="popupTemplate" popupDelay="1000"></i>
                     <ng-template #popupTemplate>
                         <div class="content">
@@ -27,15 +28,14 @@
                                     <label class="d-block fsmall font-weight-normal mb-0">{{ mediums }}</label>
                                 </div>
                                 <hr />
-                                <div class="header"><strong>{{ resourceService.frmelmnts.lbl.grades }}</strong></div>
+                                <div class="header"><strong>{{ resourceService.frmelmnts.lbl.class }}</strong></div>
                                 <div class="content">
                                     <label class="d-block fsmall font-weight-normal mb-0">{{ grades }}</label>
                                 </div>
                             </div>
                         </div>
                     </ng-template>
-                </h4>
-                <p class="fs-0-785 font-weight-normal">{{ programDetails?.description }} </p>
+                <p class="fs-0-785 font-weight-normal sb__ellipsis sb__ellipsis--three">{{ programDetails?.description }} </p>
             </div>
             <div class="sb-meta-data-container sb-meta-data-column">
                 <label class="width-100">{{ resourceService.frmelmnts.lbl.nominations }} </label>
@@ -146,7 +146,7 @@
 						</dl>
 						<dl class="sb-meta-data mb-0 pr-8" >
 							<dt class="sb__ellipsis">{{resourceService?.frmelmnts?.lbl?.contentType}}</dt>
-							<dd><span class="sb-label sb-label-table sb-label-warning-0">{{programDetails?.content_types?.join(', ')}}</span></dd>
+							<dd><span>{{programDetails?.content_types?.join(', ')}}</span></dd>
 						</dl>
 						<dl class="sb-meta-data mb-0 pr-8">
 							<dt class="sb__ellipsis">{{resourceService?.frmelmnts?.lbl?.submittedDate}}</dt>

@@ -164,7 +164,16 @@ export class MainHeaderComponent implements OnInit {
     if (this.isOffline) {
       this.router.navigate(['']);
     } else if (this.userService.loggedIn) {
-      this.router.navigate(['resources']);
+      if (this.router.url.includes('/contribute')) {
+        if (this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org &&
+          !this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
+          this.router.navigateByUrl('/contribute/myenrollprograms');
+        } else {
+          this.router.navigate(['contribute']);
+        }
+      } else {
+        this.router.navigate(['sourcing']);
+      }
     } else {
       window.location.href = this.slug ? this.slug + '/explore'  : '/explore';
     }
