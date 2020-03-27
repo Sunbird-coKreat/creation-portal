@@ -15,7 +15,6 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   options;
   showNormalModal;
   public telemetryImpression: IImpressionEventInput;
-  // private orgLink = 'https://projects.invisionapp.com/d/main/default';
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
@@ -72,10 +71,24 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
      });
   }
 
-  copyLinkToClipboard(inputLink) {
-    inputLink.select();
+  copyLinkToClipboard() {
+    if (!this.orgLink) {
+      this.toasterService.error(this.resourceService.messages.emsg.invite.user.m0001);
+      this.showNormalModal = false;
+      return ;
+    }
+
+    const selBox = document.createElement('textarea');
+    selBox.style.position = 'fixed';
+    selBox.style.left = '0';
+    selBox.style.top = '0';
+    selBox.style.opacity = '0';
+    selBox.value = this.orgLink;
+    document.body.appendChild(selBox);
+    selBox.focus();
+    selBox.select();
     document.execCommand('copy');
-    inputLink.setSelectionRange(0, 0);
+    document.body.removeChild(selBox);
     this.toasterService.success(this.resourceService.frmelmnts.lbl.linkCopied);
   }
 
