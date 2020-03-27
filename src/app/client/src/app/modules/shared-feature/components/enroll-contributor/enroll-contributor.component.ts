@@ -143,6 +143,7 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
         contentTypes: ['', Validators.required],
         name: [''],
         description: [''],
+        website: [''],
     });
   }
 
