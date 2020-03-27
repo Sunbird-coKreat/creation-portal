@@ -330,13 +330,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
     });
   }
 
-  copyLinkToClipboard(inputLink) {
-    inputLink.select();
-    document.execCommand('copy');
-    inputLink.setSelectionRange(0, 0);
-    this.toasterService.success(this.resourceService.frmelmnts.lbl.linkCopied);
-  }
-
   getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
     return _.omitBy({
       id,
