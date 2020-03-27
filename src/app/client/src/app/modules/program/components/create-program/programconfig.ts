@@ -1,346 +1,484 @@
 // tslint:disable:max-line-length
 var programConfig = {
-    "_comments": "",
-    "loginReqired": true,
-    "framework": "NCFCOPY",
-    "board":"", 
-    "gradeLevel":[],
-    "medium":[],
-    "subject":[],
-    "roles": [
+    '_comments': '',
+    'loginReqired': true,
+    'framework': 'NCFCOPY',
+    'board':'', 
+    'gradeLevel':[],
+    'medium':[],
+    'subject':[],
+    'roles': [
       {
-        "id": 1,
-        "name": "CONTRIBUTOR",
-        "default": true,
-        "defaultTab": 1,
-        "tabs": [
+        'id': 1,
+        'name': 'CONTRIBUTOR',
+        'default': true,
+        'defaultTab': 1,
+        'tabs': [
           1
         ]
       },
       {
-        "id": 2,
-        "name": "REVIEWER",
-        "defaultTab": 2,
-        "tabs": [
+        'id': 2,
+        'name': 'REVIEWER',
+        'defaultTab': 2,
+        'tabs': [
           2
         ]
       }
     ],
-    "header": {
-      "id": "ng.sunbird.header",
-      "ver": "1.0",
-      "compId": "headerComp",
-      "author": "Venkat",
-      "description": "",
-      "publishedDate": "",
-      "data": {},
-      "config": {
-        "tabs": [
+    'header': {
+      'id': 'ng.sunbird.header',
+      'ver': '1.0',
+      'compId': 'headerComp',
+      'author': 'Venkat',
+      'description': '',
+      'publishedDate': '',
+      'data': {},
+      'config': {
+        'tabs': [
           {
-            "index": 1,
-            "label": "Contribute",
-            "onClick": "collectionComponent"
+            'index': 1,
+            'label': 'Contribute',
+            'onClick': 'collectionComponent'
           },
           {
-            "index": 2,
-            "label": "Review",
-            "onClick": "collectionComponent"
+            'index': 2,
+            'label': 'Review',
+            'onClick': 'collectionComponent'
           },
           {
-            "index": 3,
-            "label": "Dashboard",
-            "onClick": "dashboardComponent"
+            'index': 3,
+            'label': 'Dashboard',
+            'onClick': 'dashboardComponent'
           }
         ]
       }
     },
-    "components": [
+    'components': [
       {
-        "id": "ng.sunbird.collection",
-        "ver": "1.0",
-        "compId": "collectionComponent",
-        "author": "Venkat",
-        "description": "",
-        "publishedDate": "",
-        "data": {},
-        "config": {
-          "filters": {
-            "implicit": [
+        'id': 'ng.sunbird.collection',
+        'ver': '1.0',
+        'compId': 'collectionComponent',
+        'author': 'Venkat',
+        'description': '',
+        'publishedDate': '',
+        'data': {},
+        'config': {
+          'filters': {
+            'implicit': [
               {
-                "code": "framework",
-                "defaultValue": "NCFCOPY",
-                "label": "Framework"
+                'code': 'framework',
+                'defaultValue': 'NCFCOPY',
+                'label': 'Framework'
               },
               {
-                "code": "board",
-                "defaultValue": "NCERT",
-                "label": "Board"
+                'code': 'board',
+                'defaultValue': 'NCERT',
+                'label': 'Board'
               },
               {
-                "code": "medium",
-                "defaultValue": [
-                  "English"
+                'code': 'medium',
+                'defaultValue': [
+                  'English'
                 ],
-                "label": "Medium"
+                'label': 'Medium'
               }
             ],
-            "explicit": [
+            'explicit': [
               {
-                "code": "gradeLevel",
-                "range": [
-                  "Kindergarten",
-                  "Grade 1",
-                  "Grade 2",
-                  "Grade 3"
+                'code': 'gradeLevel',
+                'range': [
+                  'Kindergarten',
+                  'Grade 1',
+                  'Grade 2',
+                  'Grade 3'
                 ],
-                "label": "Class",
-                "multiselect": false,
-                "defaultValue": [
-                  "Kindergarten",
-                  "Grade 1"
+                'label': 'Class',
+                'multiselect': false,
+                'defaultValue': [
+                  'Kindergarten',
+                  'Grade 1'
                 ],
-                "visibility": true
+                'visibility': true
               },
               {
-                "code": "subject",
-                "range": [
-                  "English",
-                  "Mathematics",
-                  "Hindi"
+                'code': 'subject',
+                'range': [
+                  'English',
+                  'Mathematics',
+                  'Hindi'
                 ],
-                "label": "Subject",
-                "multiselect": false,
-                "defaultValue": [
-                  "English"
+                'label': 'Subject',
+                'multiselect': false,
+                'defaultValue': [
+                  'English'
                 ],
-                "visibility": true
+                'visibility': true
               }
             ]
           },
-          "groupBy": {
-            "value": "subject",
-            "defaultValue": "subject"
+          'groupBy': {
+            'value': 'subject',
+            'defaultValue': 'subject'
           },
-          "collectionType": "Textbook",
-          "collectionList": [],
-          "status": [
-            "Draft",
-            "Live"
+          'collectionType': 'Textbook',
+          'collectionList': [],
+          'status': [
+            'Draft',
+            'Live'
           ]
         }
       },
       {
-        "id": "ng.sunbird.chapterList",
-        "ver": "1.0",
-        "compId": "chapterListComponent",
-        "author": "Kartheek",
-        "description": "",
-        "publishedDate": "",
-        "data": {},
-        "config": {
-          "contentTypes": {
-            "value": [
+        'id': 'ng.sunbird.chapterList',
+        'ver': '1.0',
+        'compId': 'chapterListComponent',
+        'author': 'Kartheek',
+        'description': '',
+        'publishedDate': '',
+        'data': {},
+        'config': {
+          'contentTypes': {
+            'value': [
               {
-                "id": "explanationContent",
-                "label": "Explanation",
-                "onClick": "uploadComponent",
-                "mimeType": [
-                  "application/pdf"
+                'id': 'explanationContent',
+                'label': 'Explanation',
+                'onClick': 'uploadComponent',
+                'mimeType': [
+                  'application/pdf'
                 ],
-                "metadata": {
-                  "name": "Explanation Resource",
-                  "description": "ExplanationResource",
-                  "resourceType": "Read",
-                  "contentType": "ExplanationResource",
-                  "audience": [
-                    "Learner"
+                'metadata': {
+                  'name': 'Explanation Resource',
+                  'description': 'ExplanationResource',
+                  'resourceType': 'Read',
+                  'contentType': 'ExplanationResource',
+                  'audience': [
+                    'Learner'
                   ],
-                  "appIcon": "https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_21291553051403878414/artifact/explanation.thumb_1576602846206.png",
-                  "marks": 5
+                  'appIcon': 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_21291553051403878414/artifact/explanation.thumb_1576602846206.png',
+                  'marks': 5
                 },
-                "filesConfig": {
-                  "accepted": "pdf",
-                  "size": "50"
+                'filesConfig': {
+                  'accepted': 'pdf',
+                  'size': '50'
                 }
               },
               {
-                "id": "experientialContent",
-                "label": "Experiential",
-                "onClick": "uploadComponent",
-                "mimeType": [
-                  "video/mp4"
+                'id': 'experientialContent',
+                'label': 'Experiential',
+                'onClick': 'uploadComponent',
+                'mimeType': [
+                  'video/mp4'
                 ],
-                "metadata": {
-                  "name": "Experiential Resource",
-                  "description": "ExperientialResource",
-                  "resourceType": "Read",
-                  "contentType": "ExperientialResource",
-                  "audience": [
-                    "Learner"
+                'metadata': {
+                  'name': 'Experiential Resource',
+                  'description': 'ExperientialResource',
+                  'resourceType': 'Read',
+                  'contentType': 'ExperientialResource',
+                  'audience': [
+                    'Learner'
                   ],
-                  "appIcon": "https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_21291553051403878414/artifact/explanation.thumb_1576602846206.png",
-                  "marks": 5
+                  'appIcon': 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_21291553051403878414/artifact/explanation.thumb_1576602846206.png',
+                  'marks': 5
                 },
-                "filesConfig": {
-                  "accepted": "mp4",
-                  "size": "50"
+                'filesConfig': {
+                  'accepted': 'mp4',
+                  'size': '50'
                 }
               },
               {
-                "id": "focusSpotContent",
-                "label": "FocusSpot",
-                "onClick": "uploadComponent",
-                "mimeType": [
-                  "application/pdf"
+                'id': 'focusSpotContent',
+                'label': 'FocusSpot',
+                'onClick': 'uploadComponent',
+                'mimeType': [
+                  'application/pdf'
                 ],
-                "metadata": {
-                  "name": "FocusSpot Resource",
-                  "description": "FocusSpot",
-                  "resourceType": "Read",
-                  "contentType": "FocusSpot",
-                  "audience": [
-                    "Learner"
+                'metadata': {
+                  'name': 'FocusSpot Resource',
+                  'description': 'FocusSpot',
+                  'resourceType': 'Read',
+                  'contentType': 'FocusSpot',
+                  'audience': [
+                    'Learner'
                   ],
-                  "appIcon": "https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_21291553100098764812/artifact/focus-spot_1561727473311.thumb_1576602905573.png",
-                  "marks": 5
+                  'appIcon': 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_21291553100098764812/artifact/focus-spot_1561727473311.thumb_1576602905573.png',
+                  'marks': 5
                 },
-                "filesConfig": {
-                  "accepted": "pdf",
-                  "size": "50"
+                'filesConfig': {
+                  'accepted': 'pdf',
+                  'size': '50'
                 }
               },
               {
-                "id": "vsaPracticeQuestionContent",
-                "label": "VSA - Practice Sets",
-                "onClick": "questionSetComponent",
-                "mimeType": [
-                  "application/vnd.ekstep.ecml-archive"
+                'id': 'TeachingMethod',
+                'label': 'Teaching Method',
+                'onClick': 'uploadComponent',
+                'mimeType': [
+                  'application/pdf'
                 ],
-                "metadata": {
-                  "name": "Practice QuestionSet",
-                  "description": "Practice QuestionSet",
-                  "resourceType": "Learn",
-                  "contentType": "PracticeQuestionSet",
-                  "audience": [
-                    "Learner"
+                'metadata': {
+                  'name': 'Teaching Method',
+                  'description': 'TeachingMethod',
+                  'resourceType': 'Read',
+                  'contentType': 'TeachingMethod',
+                  'audience': [
+                    'Learner'
                   ],
-                  "appIcon": "",
-                  "marks": 5
+                  'appIcon': 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_21291553100098764812/artifact/focus-spot_1561727473311.thumb_1576602905573.png',
+                  'marks': 5
                 },
-                "questionCategories": [
-                  "vsa"
+                'filesConfig': {
+                  'accepted': 'pdf',
+                  'size': '50'
+                }
+              },
+              {
+                'id': 'PedagogyFlow',
+                'label': 'Pedagogy Flow',
+                'onClick': 'uploadComponent',
+                'mimeType': [
+                  'application/pdf'
+                ],
+                'metadata': {
+                  'name': 'Pedagogy Flow',
+                  'description': 'PedagogyFlow',
+                  'resourceType': 'Read',
+                  'contentType': 'PedagogyFlow',
+                  'audience': [
+                    'Learner'
+                  ],
+                  'appIcon': 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_21291553100098764812/artifact/focus-spot_1561727473311.thumb_1576602905573.png',
+                  'marks': 5
+                },
+                'filesConfig': {
+                  'accepted': 'pdf',
+                  'size': '50'
+                }
+              },
+              {
+                'id': 'LearningOutcomeDefinition',
+                'label': 'Learning Outcome Definition',
+                'onClick': 'uploadComponent',
+                'mimeType': [
+                  'application/pdf'
+                ],
+                'metadata': {
+                  'name': 'Learning Outcome Definition',
+                  'description': 'LearningOutcomeDefinition',
+                  'resourceType': 'Read',
+                  'contentType': 'LearningOutcomeDefinition',
+                  'audience': [
+                    'Learner'
+                  ],
+                  'appIcon': 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_21291553100098764812/artifact/focus-spot_1561727473311.thumb_1576602905573.png',
+                  'marks': 5
+                },
+                'filesConfig': {
+                  'accepted': 'pdf',
+                  'size': '50'
+                }
+              },
+              {
+                'id': 'MarkingSchemeRubric',
+                'label': 'Marking Scheme Rubric',
+                'onClick': 'uploadComponent',
+                'mimeType': [
+                  'application/pdf'
+                ],
+                'metadata': {
+                  'name': 'Marking Scheme Rubric',
+                  'description': 'MarkingSchemeRubric',
+                  'resourceType': 'Read',
+                  'contentType': 'MarkingSchemeRubric',
+                  'audience': [
+                    'Learner'
+                  ],
+                  'appIcon': 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_21291553100098764812/artifact/focus-spot_1561727473311.thumb_1576602905573.png',
+                  'marks': 5
+                },
+                'filesConfig': {
+                  'accepted': 'pdf',
+                  'size': '50'
+                }
+              },
+              {
+                'id': 'ConceptMap',
+                'label': 'Concept Map',
+                'onClick': 'uploadComponent',
+                'mimeType': [
+                  'application/pdf'
+                ],
+                'metadata': {
+                  'name': 'Concept Map',
+                  'description': 'ConceptMap',
+                  'resourceType': 'Read',
+                  'contentType': 'ConceptMap',
+                  'audience': [
+                    'Learner'
+                  ],
+                  'appIcon': 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_21291553100098764812/artifact/focus-spot_1561727473311.thumb_1576602905573.png',
+                  'marks': 5
+                },
+                'filesConfig': {
+                  'accepted': 'pdf',
+                  'size': '50'
+                }
+              },
+              {
+                'id': 'SelfAssess',
+                'label': 'Self Assess',
+                'onClick': 'uploadComponent',
+                'mimeType': [
+                  'application/pdf'
+                ],
+                'metadata': {
+                  'name': 'Self Assess',
+                  'description': 'SelfAssess',
+                  'resourceType': 'Read',
+                  'contentType': 'SelfAssess',
+                  'audience': [
+                    'Learner'
+                  ],
+                  'appIcon': 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_21291553100098764812/artifact/focus-spot_1561727473311.thumb_1576602905573.png',
+                  'marks': 5
+                },
+                'filesConfig': {
+                  'accepted': 'pdf',
+                  'size': '50'
+                }
+              },
+              {
+                'id': 'vsaPracticeQuestionContent',
+                'label': 'VSA - Practice Sets',
+                'onClick': 'questionSetComponent',
+                'mimeType': [
+                  'application/vnd.ekstep.ecml-archive'
+                ],
+                'metadata': {
+                  'name': 'Practice QuestionSet',
+                  'description': 'Practice QuestionSet',
+                  'resourceType': 'Learn',
+                  'contentType': 'PracticeQuestionSet',
+                  'audience': [
+                    'Learner'
+                  ],
+                  'appIcon': '',
+                  'marks': 5
+                },
+                'questionCategories': [
+                  'vsa'
                 ]
               },
               {
-                "id": "saPracticeQuestionContent",
-                "label": "SA - Practice Sets",
-                "onClick": "questionSetComponent",
-                "mimeType": [
-                  "application/vnd.ekstep.ecml-archive"
+                'id': 'saPracticeQuestionContent',
+                'label': 'SA - Practice Sets',
+                'onClick': 'questionSetComponent',
+                'mimeType': [
+                  'application/vnd.ekstep.ecml-archive'
                 ],
-                "metadata": {
-                  "name": "Practice QuestionSet",
-                  "description": "Practice QuestionSet",
-                  "resourceType": "Learn",
-                  "contentType": "PracticeQuestionSet",
-                  "audience": [
-                    "Learner"
+                'metadata': {
+                  'name': 'Practice QuestionSet',
+                  'description': 'Practice QuestionSet',
+                  'resourceType': 'Learn',
+                  'contentType': 'PracticeQuestionSet',
+                  'audience': [
+                    'Learner'
                   ],
-                  "appIcon": "",
-                  "marks": 5
+                  'appIcon': '',
+                  'marks': 5
                 },
-                "questionCategories": [
-                  "sa"
+                'questionCategories': [
+                  'sa'
                 ]
               },
               {
-                "id": "laPracticeQuestionContent",
-                "label": "LA - Practice Sets",
-                "onClick": "questionSetComponent",
-                "mimeType": [
-                  "application/vnd.ekstep.ecml-archive"
+                'id': 'laPracticeQuestionContent',
+                'label': 'LA - Practice Sets',
+                'onClick': 'questionSetComponent',
+                'mimeType': [
+                  'application/vnd.ekstep.ecml-archive'
                 ],
-                "metadata": {
-                  "name": "Practice QuestionSet",
-                  "description": "Practice QuestionSet",
-                  "resourceType": "Learn",
-                  "contentType": "PracticeQuestionSet",
-                  "audience": [
-                    "Learner"
+                'metadata': {
+                  'name': 'Practice QuestionSet',
+                  'description': 'Practice QuestionSet',
+                  'resourceType': 'Learn',
+                  'contentType': 'PracticeQuestionSet',
+                  'audience': [
+                    'Learner'
                   ],
-                  "appIcon": "",
-                  "marks": 5
+                  'appIcon': '',
+                  'marks': 5
                 },
-                "questionCategories": [
-                  "la"
+                'questionCategories': [
+                  'la'
                 ]
               },
               {
-                "id": "mcqPracticeQuestionContent",
-                "label": "MCQ - Practice Sets",
-                "onClick": "questionSetComponent",
-                "mimeType": [
-                  "application/vnd.ekstep.ecml-archive"
+                'id': 'mcqPracticeQuestionContent',
+                'label': 'MCQ - Practice Sets',
+                'onClick': 'questionSetComponent',
+                'mimeType': [
+                  'application/vnd.ekstep.ecml-archive'
                 ],
-                "metadata": {
-                  "name": "Practice QuestionSet",
-                  "description": "Practice QuestionSet",
-                  "resourceType": "Learn",
-                  "contentType": "PracticeQuestionSet",
-                  "audience": [
-                    "Learner"
+                'metadata': {
+                  'name': 'Practice QuestionSet',
+                  'description': 'Practice QuestionSet',
+                  'resourceType': 'Learn',
+                  'contentType': 'PracticeQuestionSet',
+                  'audience': [
+                    'Learner'
                   ],
-                  "appIcon": "",
-                  "marks": 5
+                  'appIcon': '',
+                  'marks': 5
                 },
-                "questionCategories": [
-                  "mcq"
+                'questionCategories': [
+                  'mcq'
                 ]
               },
               {
-                "id": "curiositySetContent",
-                "label": "Curiosity Sets",
-                "onClick": "curiositySetComponent",
-                "mimeType": [
-                  "application/vnd.ekstep.ecml-archive"
+                'id': 'curiositySetContent',
+                'label': 'Curiosity Sets',
+                'onClick': 'curiositySetComponent',
+                'mimeType': [
+                  'application/vnd.ekstep.ecml-archive'
                 ],
-                "metadata": {
-                  "name": "Curiosity QuestionSet",
-                  "description": "Curiosity QuestionSet",
-                  "resourceType": "Learn",
-                  "contentType": "CuriosityQuestionSet",
-                  "audience": [
-                    "Learner"
+                'metadata': {
+                  'name': 'Curiosity QuestionSet',
+                  'description': 'Curiosity QuestionSet',
+                  'resourceType': 'Learn',
+                  'contentType': 'CuriosityQuestionSet',
+                  'audience': [
+                    'Learner'
                   ],
-                  "appIcon": "",
-                  "marks": 5
+                  'appIcon': '',
+                  'marks': 5
                 },
-                "questionCategories": [
-                  "curiosity"
+                'questionCategories': [
+                  'curiosity'
                 ]
               }
             ],
-            "defaultValue": [
+            'defaultValue': [
               {
-                "id": "vsaPracticeQuestionContent",
-                "label": "Practice Sets",
-                "onClick": "questionSetComponent",
-                "mimeType": [
-                  "application/vnd.ekstep.ecml-archive"
+                'id': 'vsaPracticeQuestionContent',
+                'label': 'Practice Sets',
+                'onClick': 'questionSetComponent',
+                'mimeType': [
+                  'application/vnd.ekstep.ecml-archive'
                 ],
-                "metadata": {
-                  "name": "Practice QuestionSet",
-                  "description": "Practice QuestionSet",
-                  "resourceType": "Learn",
-                  "contentType": "PracticeQuestionSet",
-                  "audience": [
-                    "Learner"
+                'metadata': {
+                  'name': 'Practice QuestionSet',
+                  'description': 'Practice QuestionSet',
+                  'resourceType': 'Learn',
+                  'contentType': 'PracticeQuestionSet',
+                  'audience': [
+                    'Learner'
                   ],
-                  "appIcon": "",
-                  "marks": 5
+                  'appIcon': '',
+                  'marks': 5
                 },
-                "questionCategories": [
-                  "vsa"
+                'questionCategories': [
+                  'vsa'
                 ]
               }
             ]
@@ -348,331 +486,331 @@ var programConfig = {
         }
       },
       {
-        "id": "ng.sunbird.uploadComponent",
-        "ver": "1.0",
-        "compId": "uploadContentComponent",
-        "author": "Kartheek",
-        "description": "",
-        "publishedDate": "",
-        "data": {},
-        "config": {
-          "filesConfig": {
-            "accepted": "pdf, mp4, webm, youtube",
-            "size": "50"
+        'id': 'ng.sunbird.uploadComponent',
+        'ver': '1.0',
+        'compId': 'uploadContentComponent',
+        'author': 'Kartheek',
+        'description': '',
+        'publishedDate': '',
+        'data': {},
+        'config': {
+          'filesConfig': {
+            'accepted': 'pdf, mp4, webm, youtube',
+            'size': '50'
           },
-          "formConfiguration": [
+          'formConfiguration': [
             {
-              "code": "learningOutcome",
-              "dataType": "list",
-              "description": "Learning Outcomes For The Content",
-              "editable": true,
-              "inputType": "multiselect",
-              "label": "Learning Outcome",
-              "name": "LearningOutcome",
-              "placeholder": "Select Learning Outcomes",
-              "required": false,
-              "visible": true
+              'code': 'learningOutcome',
+              'dataType': 'list',
+              'description': 'Learning Outcomes For The Content',
+              'editable': true,
+              'inputType': 'multiselect',
+              'label': 'Learning Outcome',
+              'name': 'LearningOutcome',
+              'placeholder': 'Select Learning Outcomes',
+              'required': false,
+              'visible': true
             },
             {
-              "code": "bloomslevel",
-              "dataType": "list",
-              "description": "Learning Level For The Content",
-              "editable": true,
-              "inputType": "select",
-              "label": "Learning Level",
-              "name": "LearningLevel",
-              "placeholder": "Select Learning Levels",
-              "required": true,
-              "visible": true,
-              "defaultValue": [
-                "remember",
-                "understand",
-                "apply",
-                "analyse",
-                "evaluate",
-                "create"
+              'code': 'bloomslevel',
+              'dataType': 'list',
+              'description': 'Learning Level For The Content',
+              'editable': true,
+              'inputType': 'select',
+              'label': 'Learning Level',
+              'name': 'LearningLevel',
+              'placeholder': 'Select Learning Levels',
+              'required': true,
+              'visible': true,
+              'defaultValue': [
+                'remember',
+                'understand',
+                'apply',
+                'analyse',
+                'evaluate',
+                'create'
               ]
             },
             {
-              "code": "creator",
-              "dataType": "text",
-              "description": "Enter The Author Name",
-              "editable": true,
-              "inputType": "text",
-              "label": "Author",
-              "name": "Author",
-              "placeholder": "Enter Author Name",
-              "required": true,
-              "visible": true
+              'code': 'creator',
+              'dataType': 'text',
+              'description': 'Enter The Author Name',
+              'editable': true,
+              'inputType': 'text',
+              'label': 'Author',
+              'name': 'Author',
+              'placeholder': 'Enter Author Name',
+              'required': true,
+              'visible': true
             },
             {
-              "code": "license",
-              "dataType": "list",
-              "description": "License For The Content",
-              "editable": true,
-              "inputType": "select",
-              "label": "License",
-              "name": "License",
-              "placeholder": "Select License",
-              "required": true,
-              "visible": true
+              'code': 'license',
+              'dataType': 'list',
+              'description': 'License For The Content',
+              'editable': true,
+              'inputType': 'select',
+              'label': 'License',
+              'name': 'License',
+              'placeholder': 'Select License',
+              'required': true,
+              'visible': true
             }
           ],
-          "resourceTitleLength": "200",
-          "tenantName": "SunbirdEd"
+          'resourceTitleLength': '200',
+          'tenantName': 'SunbirdEd'
         }
       },
       {
-        "id": "ng.sunbird.practiceSetComponent",
-        "ver": "1.0",
-        "compId": "practiceSetComponent",
-        "author": "Kartheek",
-        "description": "",
-        "publishedDate": "",
-        "data": {},
-        "config": {
-          "No of options": 4,
-          "solutionType": [
-            "Video",
-            "Text & image"
+        'id': 'ng.sunbird.practiceSetComponent',
+        'ver': '1.0',
+        'compId': 'practiceSetComponent',
+        'author': 'Kartheek',
+        'description': '',
+        'publishedDate': '',
+        'data': {},
+        'config': {
+          'No of options': 4,
+          'solutionType': [
+            'Video',
+            'Text & image'
           ],
-          "questionCategory": [
-            "vsa",
-            "sa",
-            "ls",
-            "mcq",
-            "curiosity"
+          'questionCategory': [
+            'vsa',
+            'sa',
+            'ls',
+            'mcq',
+            'curiosity'
           ],
-          "formConfiguration": [
+          'formConfiguration': [
             {
-              "code": "learningOutcome",
-              "dataType": "list",
-              "description": "Learning Outcomes For The Content",
-              "editable": true,
-              "inputType": "multiselect",
-              "label": "Learning Outcome",
-              "name": "LearningOutcome",
-              "placeholder": "Select Learning Outcomes",
-              "required": false,
-              "visible": true
+              'code': 'learningOutcome',
+              'dataType': 'list',
+              'description': 'Learning Outcomes For The Content',
+              'editable': true,
+              'inputType': 'multiselect',
+              'label': 'Learning Outcome',
+              'name': 'LearningOutcome',
+              'placeholder': 'Select Learning Outcomes',
+              'required': false,
+              'visible': true
             },
             {
-              "code": "bloomsLevel",
-              "dataType": "list",
-              "description": "Learning Level For The Content",
-              "editable": true,
-              "inputType": "multiselect",
-              "label": "Learning Level",
-              "name": "LearningLevel",
-              "placeholder": "Select Learning Levels",
-              "required": true,
-              "visible": true,
-              "defaultValue": [
-                "remember",
-                "understand",
-                "apply",
-                "analyse",
-                "evaluate",
-                "create"
+              'code': 'bloomsLevel',
+              'dataType': 'list',
+              'description': 'Learning Level For The Content',
+              'editable': true,
+              'inputType': 'multiselect',
+              'label': 'Learning Level',
+              'name': 'LearningLevel',
+              'placeholder': 'Select Learning Levels',
+              'required': true,
+              'visible': true,
+              'defaultValue': [
+                'remember',
+                'understand',
+                'apply',
+                'analyse',
+                'evaluate',
+                'create'
               ]
             },
             {
-              "code": "creator",
-              "dataType": "text",
-              "description": "Enter The Author Name",
-              "editable": true,
-              "inputType": "text",
-              "label": "Author",
-              "name": "Author",
-              "placeholder": "Enter Author Name",
-              "required": true,
-              "visible": true
+              'code': 'creator',
+              'dataType': 'text',
+              'description': 'Enter The Author Name',
+              'editable': true,
+              'inputType': 'text',
+              'label': 'Author',
+              'name': 'Author',
+              'placeholder': 'Enter Author Name',
+              'required': true,
+              'visible': true
             },
             {
-              "code": "license",
-              "dataType": "list",
-              "description": "License For The Content",
-              "editable": true,
-              "inputType": "select",
-              "label": "License",
-              "name": "License",
-              "placeholder": "Select License",
-              "required": true,
-              "visible": true
+              'code': 'license',
+              'dataType': 'list',
+              'description': 'License For The Content',
+              'editable': true,
+              'inputType': 'select',
+              'label': 'License',
+              'name': 'License',
+              'placeholder': 'Select License',
+              'required': true,
+              'visible': true
             }
           ],
-          "resourceTitleLength": "200",
-          "tenantName": "",
-          "assetConfig": {
-            "image": {
-              "size": "50",
-              "accepted": "jpeg, png, jpg"
+          'resourceTitleLength': '200',
+          'tenantName': '',
+          'assetConfig': {
+            'image': {
+              'size': '50',
+              'accepted': 'jpeg, png, jpg'
             },
-            "video": {
-              "size": "50",
-              "accepted": "pdf, mp4, webm, youtube"
+            'video': {
+              'size': '50',
+              'accepted': 'pdf, mp4, webm, youtube'
             }
           }
         }
       },
       {
-        "id": "ng.sunbird.dashboard",
-        "ver": "1.0",
-        "compId": "dashboardComp",
-        "author": "Venkanna Gouda",
-        "description": "",
-        "publishedDate": "",
-        "data": {},
-        "config": {}
+        'id': 'ng.sunbird.dashboard',
+        'ver': '1.0',
+        'compId': 'dashboardComp',
+        'author': 'Venkanna Gouda',
+        'description': '',
+        'publishedDate': '',
+        'data': {},
+        'config': {}
       }
     ],
-    "actions": {
-      "showCountPanel": {
-        "roles": [
+    'actions': {
+      'showCountPanel': {
+        'roles': [
           1,
           2
         ]
       },
-      "showContribution": {
-        "roles": [
+      'showContribution': {
+        'roles': [
           1
         ]
       },
-      "showUpforReview": {
-        "roles": [
+      'showUpforReview': {
+        'roles': [
           2
         ]
       },
-      "showTotalContribution": {
-        "roles": [
+      'showTotalContribution': {
+        'roles': [
           1
         ]
       },
-      "showMyContribution": {
-        "roles": [
+      'showMyContribution': {
+        'roles': [
           1
         ]
       },
-      "showRejected": {
-        "roles": [
+      'showRejected': {
+        'roles': [
           1
         ]
       },
-      "showUnderReview": {
-        "roles": [
+      'showUnderReview': {
+        'roles': [
           1
         ]
       },
-      "showTotalUnderReview": {
-        "roles": [
+      'showTotalUnderReview': {
+        'roles': [
           2
         ]
       },
-      "showAawaitingReview": {
-        "roles": [
+      'showAawaitingReview': {
+        'roles': [
           2
         ]
       },
-      "showFilters": {
-        "roles": [
+      'showFilters': {
+        'roles': [
           1,
           2,
           3
         ]
       },
-      "showAddResource": {
-        "roles": [
+      'showAddResource': {
+        'roles': [
           1
         ]
       },
-      "showEditResource": {
-        "roles": [
+      'showEditResource': {
+        'roles': [
           1
         ]
       },
-      "showMoveResource": {
-        "roles": [
+      'showMoveResource': {
+        'roles': [
           1
         ]
       },
-      "showDeleteResource": {
-        "roles": [
+      'showDeleteResource': {
+        'roles': [
           1
         ]
       },
-      "showPreviewResource": {
-        "roles": [
+      'showPreviewResource': {
+        'roles': [
           2
         ]
       },
-      "showDashboard": {
-        "roles": [
+      'showDashboard': {
+        'roles': [
           3
         ]
       },
-      "showCert": {
-        "roles": [
+      'showCert': {
+        'roles': [
           4
         ]
       },
-      "showSave": {
-        "roles": [
+      'showSave': {
+        'roles': [
           1
         ]
       },
-      "showEdit": {
-        "roles": [
+      'showEdit': {
+        'roles': [
           1
         ]
       },
-      "showChangeFile": {
-        "roles": [
+      'showChangeFile': {
+        'roles': [
           1
         ]
       },
-      "showRequestChanges": {
-        "roles": [
+      'showRequestChanges': {
+        'roles': [
           2
         ]
       },
-      "showPublish": {
-        "roles": [
+      'showPublish': {
+        'roles': [
           2
         ]
       },
-      "showSubmit": {
-        "roles": [
+      'showSubmit': {
+        'roles': [
           1
         ]
       },
-      "showCreatorView": {
-        "roles": [
+      'showCreatorView': {
+        'roles': [
           1
         ]
       },
-      "showReviewerView": {
-        "roles": [
+      'showReviewerView': {
+        'roles': [
           2
         ]
       },
-      "showCreateQuestion": {
-        "roles": [
+      'showCreateQuestion': {
+        'roles': [
           1
         ]
       },
-      "showDeleteQuestion": {
-        "roles": [
+      'showDeleteQuestion': {
+        'roles': [
           1
         ]
       }
     },
-    "sharedContext": [
-      "channel",
-      "framework",
-      "board",
-      "medium",
-      "gradeLevel",
-      "subject"
+    'sharedContext': [
+      'channel',
+      'framework',
+      'board',
+      'medium',
+      'gradeLevel',
+      'subject'
     ]
 };
 
