@@ -37,6 +37,7 @@ export class ProgramListComponent implements OnInit {
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
   public nominationList;
+  public sortColumnName = '';
   constructor(private programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService ) { }
@@ -114,12 +115,28 @@ export class ProgramListComponent implements OnInit {
   }
 
   sort(colName) {
-    if (this.direction === 'asc'){
-      this.programs =  this.sortPrograms.sort((a,b) => 0 - (a[colName] > b[colName] ? -1 : 1));
-      this.direction = 'dsc';
+    if (this.direction === 'asc' || this.direction === ''){
+      if(colName == 'createdon')
+      {
+        this.programs = this.sortPrograms.sort((a,b) => b[colName] - a[colName]);
+      }
+      else
+      {
+        this.programs = this.sortPrograms.sort((a,b) => b[colName].localeCompare(a[colName]));
+      }
+      this.direction = 'desc';
+      this.sortColumnName = colName;
     } else {
-      this.programs =  this.sortPrograms.sort((a, b) => a[colName] < b[colName] ? 1 : a[colName] > b[colName] ? -1 : 0)
+      if(colName == 'createdon')
+      {
+        this.programs = this.sortPrograms.sort((a,b) => a[colName] - b[colName]);
+      }
+      else
+      {
+        this.programs =  this.sortPrograms.sort((a,b) => a[colName].localeCompare(b[colName]));
+      }
       this.direction = 'asc';
+      this.sortColumnName = colName;
     }
   }
   public getContributionProgramList(req) {
@@ -145,6 +162,7 @@ export class ProgramListComponent implements OnInit {
 
           });
         this.enrollPrograms = this.programs;
+        this.sortPrograms = this.programs;
         this.count = _.get(response, 'result.count');
       }, error => {
         console.log(error);
