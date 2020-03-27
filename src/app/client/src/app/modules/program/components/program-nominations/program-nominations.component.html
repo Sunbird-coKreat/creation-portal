@@ -12,7 +12,8 @@
                     Back to My/Explore Programs
                 </button> -->
 
-                <h4 class="m-0 p-0">{{ programDetails?.name }} <i class="info circle link icon" suiPopup
+                <h5 class="m-0 p-0 font-weight-bold d-inline-block">{{ programDetails?.name }} </h5>
+                <i class="info circle link icon" suiPopup
                         [popupTemplate]="popupTemplate" popupDelay="1000"></i>
                     <ng-template #popupTemplate>
                         <div class="content">
@@ -29,8 +30,7 @@
                             </div>
                         </div>
                     </ng-template>
-                </h4>
-                <p class="fs-0-785 font-weight-normal pr-10">{{ programDetails?.description }} </p>
+                <p class="fs-0-785 font-weight-normal pr-10 sb__ellipsis sb__ellipsis--three">{{ programDetails?.description }} </p>
             </div>
             <div class="sb-meta-data-container sb-meta-data-column w-10 px-10 w-30">
 				<label class="m-0 p-0">{{ resourceService.frmelmnts.lbl.contentType}}</label>

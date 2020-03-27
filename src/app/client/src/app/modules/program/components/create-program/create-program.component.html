@@ -197,7 +197,7 @@
 									</label>
 									<sui-multi-select
 										placeholder="{{resource.frmelmnts.lbl.selectMedium}}"
-										class="selection" formControlName="medium" [options]="programScope['medium']"
+										class="selection p-5" formControlName="medium" [options]="programScope['medium']"
 										[isDisabled]="!programScope['medium']" (ngModelChange)="onMediumChange()"
 										labelField="name" #mediums>
 										<sui-select-option *ngFor="let medium of mediums.filteredOptions"
@@ -216,7 +216,7 @@
 										</label>
 									<sui-multi-select
 										placeholder="{{resource.frmelmnts.lbl.selectGrade}}"
-										class="selection" formControlName="gradeLevel" labelField="name"
+										class="selection p-5" formControlName="gradeLevel" labelField="name"
 										(ngModelChange)="onClassChange()" [options]="programScope['gradeLevel']"
 										 #graveLevels>
 										<sui-select-option *ngFor="let gradeLevel of graveLevels.filteredOptions"
@@ -235,7 +235,7 @@
 									</label>
 									<sui-multi-select
 										placeholder="{{resource.frmelmnts.lbl.selectSubject}}"
-										class="selection" formControlName="subject" labelField="name"
+										class="selection p-5" formControlName="subject" labelField="name"
 										[hasLabels]="true" [options]="programScope['subject']" valueField="name"
 										#subjects>
 										<sui-select-option *ngFor="let subject of subjects.filteredOptions"
@@ -325,8 +325,8 @@
 						</div>
 						<div class="five wide column">
 							<div class="sb-bg-white b-1-100 br-4 o-y-auto fs-0-92">
-								<h5 class="p-10">
-									<span class="p-10 font-weight-bold">{{tempCollections.length + ' ' + resource.frmelmnts.lbl.textbooksAdded}}</span>
+								<h5 class="py-15 px-10 font-weight-bold">
+										{{tempCollections.length + ' ' + resource.frmelmnts.lbl.textbooksAdded}}
 									<hr>
 								</h5>
 								<div class="o-y-auto max-height">
