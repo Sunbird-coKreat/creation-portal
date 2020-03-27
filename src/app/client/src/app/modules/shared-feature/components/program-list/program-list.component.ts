@@ -239,6 +239,7 @@ export class ProgramListComponent implements OnInit {
     return this.programsService.getMyProgramsForOrg(status).subscribe((response) => {
       this.programs = _.get(response, 'result.programs');
       this.count = _.get(response, 'result.count');
+      this.sortPrograms = this.programs;
     }, error => {
       console.log(error);
       // TODO: Add error toaster
