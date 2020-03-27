@@ -108,23 +108,18 @@ export class ProgramListComponent implements OnInit {
                 const enrolledPrograms = _.map(_.get(thisresponse, 'result.programs'), (nomination: any) => {
                   return nomination.program_id;
                 });
-
                 const temp = [];
                 _.forEach(tempPrograms, tempProgram => {
                   if (!enrolledPrograms.includes(tempProgram.program_id)) {
                     temp.push(tempProgram);
                   }
                 });
-
                 this.programs = this.filterProgramByDate(temp);
-                this.count = this.programs.length;
-                this.sortPrograms = this.programs;
-
               } else {
                 this.programs = this.filterProgramByDate(tempPrograms);
-                this.count = this.programs.length;
-                this.sortPrograms = this.programs;
               }
+              this.count = this.programs.length;
+              this.sortPrograms = this.programs;
           });
         }
       }
@@ -132,7 +127,6 @@ export class ProgramListComponent implements OnInit {
   }
 
   filterProgramByDate(programs) {
-
     const todayDate = new Date();
     const dates = this.datePipe.transform(todayDate, 'yyyy-MM-dd');
     const filteredProgram = [];
