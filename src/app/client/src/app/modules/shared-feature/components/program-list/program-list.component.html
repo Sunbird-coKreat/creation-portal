@@ -18,7 +18,7 @@
             <thead class="sb-table-header sb-table-thead-gray">
               <tr>
                 <th class="w-15 sb-sort-icon" (click)="sort('name')">{{ resourceService.frmelmnts.lbl.program }}</th>
-                <th *ngIf="isContributor" class="w-10 sb-sort-icon" (click)="sort('sourcing_org_name')" 
+                <th *ngIf="isContributor" class="w-10 sb-sort-icon" (click)="sort('sourcing_org_name')"
                 appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('sort-program-name', 'click', 'program-list')"
       [telemetryInteractObject]="telemetryInteractObject"
@@ -27,7 +27,7 @@
                 <th class="w-10">{{ resourceService.frmelmnts.lbl.contentType }}</th>
                 <th class="w-15">{{ resourceService.frmelmnts.lbl.MediumClassSubject }}</th>
                 <th *ngIf="!isContributor" class="w-10">{{ resourceService.frmelmnts.lbl.programDates }}</th>
-                <th *ngIf="activeMyProgramsMenu" class="sb-sort-icon w-10">{{ resourceService.frmelmnts.lbl.nominatedDate }}</th>
+                <th *ngIf="activeMyProgramsMenu" class="sb-sort-icon w-10" (click)="sort('createdon')">{{ resourceService.frmelmnts.lbl.nominatedDate }}</th>
                 <th *ngIf="activeAllProgramsMenu" class="w-10">{{ resourceService.frmelmnts.lbl.programDates }}</th>
                 <th *ngIf="activeMyProgramsMenu" class="w-5 text-center">{{ resourceService.frmelmnts.lbl.status }}</th>
                 <th class="w-10 text-center"> &nbsp;</th>
