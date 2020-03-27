@@ -111,12 +111,8 @@ export class ProgramListComponent implements OnInit {
                 const temp = [];
                 _.filter(tempPrograms, tempProgram => {
                   return !enrolledPrograms.includes(tempProgram.program_id);
-                 })
-               /* _.forEach(tempPrograms, tempProgram => {
-                  if (!enrolledPrograms.includes(tempProgram.program_id)) {
-                    temp.push(tempProgram);
-                  }
-                });*/
+                 });
+
                 this.programs = this.filterProgramByDate(temp);
               } else {
                 this.programs = this.filterProgramByDate(tempPrograms);
