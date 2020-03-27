@@ -118,9 +118,9 @@ export class ProgramsService extends DataService implements CanActivate {
 
   const userOrgAdd = {
     User_Org: {
-        userId: UserOsid,
+      userId: UserOsid,
       orgId: orgOsid,
-      roles: ["user"]
+      roles: ['user']
     }
   };
 
@@ -128,7 +128,7 @@ export class ProgramsService extends DataService implements CanActivate {
       (res) => {
         this.toasterService.success(this.resourceService.messages.smsg.contributorjoin.m0001);
         this.userService.openSaberRegistrySearch().then(() => {
-          this.router.navigate(['contribute']);
+          this.router.navigate(['contribute/myenrollprograms']);
         }).catch((err) => {
           this.toasterService.error('Please Try Later...');
           setTimeout(() => {
