@@ -30,7 +30,7 @@
       [telemetryInteractEdata]="getTelemetryInteractEdata('sort-program-name', 'click', 'program-list')"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService.frmelmnts.lbl.orgName }} &nbsp;&nbsp; 
+      [telemetryInteractPdata]="telemetryInteractPdata">{{{ resourceService.frmelmnts.lbl.sourcingOrganisation }} &nbsp;&nbsp; 
         <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumnName != 'sourcing_org_name'"></i>
         <span *ngIf="sortColumnName == 'sourcing_org_name'">
           <i class="fa fa-sort-asc" aria-hidden="true" *ngIf="direction == 'asc'"></i>

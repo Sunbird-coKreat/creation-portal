@@ -15,10 +15,10 @@
   </div>
   <div class="sb-modal-content o-y-visible onBoardDropdown">
     <div class="twelve wide tablet seven wide computer column form-fields">
-      <form class="ui form" [formGroup]="contributeForm" (submit)="saveUser()">
+      <form class="ui" [formGroup]="contributeForm" (submit)="saveUser()">
          <div class="ui grid m-0 p-0">
             <div class="six wide column sb-field-group p-0 pr-16 mb-16">
-               <label class="d-block">{{resourceService.frmelmnts.lbl.board}} <span class="sb-color-warning">*</span><i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="Help Header" popupText="Lable help text"></i>
+               <label class="d-block">{{resourceService.frmelmnts.lbl.board}} <span class="sb-color-warning">*</span><i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.boardHint}}"></i>
                 </label>
                <div class="sb-field required field">
                   <sui-multi-select class="selection"
@@ -39,7 +39,7 @@
             </div>
             <div class="six wide column sb-field-group p-0 mb-16">
                <label class="d-block">{{resourceService.frmelmnts.lbl.selectMedium}}
-                  <span class="sb-color-warning">*</span><i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="Help Header" popupText="Lable help text"></i>
+                  <span class="sb-color-warning">*</span><i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupText="{{resourceService.frmelmnts.lbl.mediumHint}}"></i>
                </label>
                <div class="sb-field required field">
                   <sui-multi-select class="selection"
@@ -61,8 +61,8 @@
             </div>
 
             <div class="six wide column sb-field-group p-0 pr-16 mb-16">
-               <label class="d-block">{{resourceService.frmelmnts.lbl.gradeClass}}
-                  <span class="sb-color-warning">*</span><i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="Help Header" popupText="Lable help text"></i>
+               <label class="d-block">{{resourceService.frmelmnts.lbl.class}}
+                  <span class="sb-color-warning">*</span><i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupText="{{resourceService.frmelmnts.lbl.classHint}}"></i>
                </label>
                <div class="sb-field required field">
                   <sui-multi-select  class="selection"
@@ -84,7 +84,7 @@
 
             <div class="six wide column sb-field-group p-0 mb-16">
                <label class="d-block">{{resourceService.frmelmnts.lbl.subject}}
-                  <span class="sb-color-warning">*</span><i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="Help Header" popupText="Lable help text"></i>
+                  <span class="sb-color-warning">*</span><i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupText="{{resourceService.frmelmnts.lbl.subjectHint}}"></i>
                </label>
                <div class="sb-field required field">
                   <sui-multi-select class="selection"
@@ -106,7 +106,7 @@
 
             <div class="twelve wide column sb-field-group p-0 mb-16">
                <label class="d-block">{{resourceService.frmelmnts.lbl.typesOfContent}}
-                  <span class="sb-color-warning">*</span><i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="Help Header" popupText="Lable help text"></i>
+                  <span class="sb-color-warning">*</span><i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupText="{{resourceService.frmelmnts.lbl.contentTypeHint}}"></i>
                </label>
                <div class="sb-field required field">
                   <sui-multi-select class="selection"
@@ -128,7 +128,7 @@
 
             <div class="six wide column sb-field-group p-0 pr-16 mb-16">
                <div class="sb-field-group mb-8">
-                  <label class="d-block">Do you want enroll as Organisation? <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="Help Header" popupText="Lable help text"></i></label>
+                  <label class="d-block">Do you want enroll as Organisation? <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.wantToEnrollContributorHint}}"></i></label>
                   <!-- (click)="enrollAsOrg=true" -->
                   <div class="sb-field mt-4 d-flex">
                      <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
@@ -162,7 +162,7 @@
             </div>
             <div class="twelve wide column sb-field-group p-0 mb-16">
                <div class="sb-field-group mb-8"  *ngIf="enrollAsOrg === true">
-                  <label class="d-block">{{resourceService.frmelmnts.lbl.nameOfOrganisation}} <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="Help Header" popupText="Lable help text"></i></label>
+                  <label class="d-block">{{resourceService.frmelmnts.lbl.nameOfOrganisation}} <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.nameOfOrganisationHint}}"></i></label>
                   <div class="sb-field required field">
                       <input class="sb-form-control" placeholder="Name of an Organisation" formControlName="name">
                       <!-- <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['name'].errors && contributeForm.controls['name'].errors.required && (!contributeForm.controls['name'].pristine || formIsInvalid)">
@@ -173,7 +173,7 @@
             </div>
             <div class="twelve wide column sb-field-group p-0 mb-16">
                <div class="sb-field-group mb-8" *ngIf="enrollAsOrg === true">
-                  <label class="d-block">{{resourceService.frmelmnts.lbl.description}} <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="Help Header" popupText="Lable help text"></i></label>
+                  <label class="d-block">{{resourceService.frmelmnts.lbl.description}} <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.programRecognitionHint}}"></i></label>
                   <div class="sb-field required field">
                      <textarea rows="4" class="sb-form-control" placeholder="Contributor Information" spellcheck="false" formControlName="description"></textarea>
                      <span class="characters-left">{{resourceService.frmelmnts.lbl.thousandCharacterLeft}}</span>
