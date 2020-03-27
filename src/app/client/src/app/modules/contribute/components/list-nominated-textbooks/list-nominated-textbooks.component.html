@@ -69,10 +69,11 @@
 				<p class="fs-0-785 font-weight-normal">{{ programDetails?.description }}</p>
 			</div>
 			<div class="sb-meta-data-container sb-meta-data-column w-10 px-10">
-				<label class="m-0 p-0">Content Type(s)</label>
+				<label class="m-0 p-0">{{ resourceService.frmelmnts.lbl.contentType}}</label>
 					<p>
-						<span class="fs-0-785"> Focus Spot,</span>
-						<span class="fs-0-785"> Pedagogy Flow</span>
+						<span class="fs-0-785" *ngFor="let contentType of programDetails.content_types;">
+							{{ contentType }}
+						</span>
 					</p>
 				</div>
 				<div class="sb-meta-data-container sb-meta-data-column px-10">
