@@ -165,10 +165,17 @@ export class ProgramListComponent implements OnInit {
       this.programsService.getNominationList(filters)
         .subscribe(
           (data) => {
+          // Get only those programs for which user has been added contributor or reviewer and the nomination is in "Approved" state
           if (data.result && data.result.length > 0) {
             this.nominationList = _.map(_.filter(data.result, obj => {
-             return obj.status === 'Approved';
+              if (obj.rolemapping
+                && (( obj.rolemapping.CONTRIBUTOR.includes(_.get(this.userService, 'userProfile.userId' )))
+                || ( obj.rolemapping.REVIEWER.includes(_.get(this.userService, 'userProfile.userId' ))))
+                && obj.status === 'Approved') {
+                  return obj;
+                }
             }), 'program_id');
+
             const req = {
               request: {
                 filters: {
