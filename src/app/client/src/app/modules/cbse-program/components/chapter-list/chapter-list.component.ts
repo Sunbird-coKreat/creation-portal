@@ -404,7 +404,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   handleTemplateSelection(event) {
     this.showResourceTemplatePopup = false;
-    if (event.template) {
+    if (event.template && event.templateDetails && !(event.templateDetails.onClick === 'uploadComponent')) {
       this.templateDetails = event.templateDetails;
       let creator = this.userService.userProfile.firstName;
       if (!_.isEmpty(this.userService.userProfile.lastName)) {
@@ -447,6 +447,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
                this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
             });
         });
+    } else if (event.templateDetails) {
+      this.templateDetails = event.templateDetails;
+      // tslint:disable-next-line:max-line-length
+      this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
     }
   }
 

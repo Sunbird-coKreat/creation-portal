@@ -12,6 +12,7 @@ import { CbseProgramService } from '../../services/cbse-program/cbse-program.ser
 import { HelperService } from '../../services/helper.service';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UUID } from 'angular2-uuid';
 
 @Component({
   selector: 'app-content-uploader',
@@ -28,6 +29,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
   @Input() contentUploadComponentInput: IContentUploadComponentInput;
 
   public sessionContext: any;
+  public sharedContext: any;
+  public selectedSharedContext: any;
   public programContext: any;
   public templateDetails: any;
   public unitIdentifier: any;
@@ -84,6 +87,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     this.programContext = _.get(this.contentUploadComponentInput, 'programContext');
     this.titleCharacterLimit = _.get(this.config, 'config.resourceTitleLength');
     this.actions = _.get(this.contentUploadComponentInput, 'programContext.config.actions');
+    this.selectedSharedContext = _.get(this.contentUploadComponentInput, 'selectedSharedContext');
+    this.sharedContext = _.get(this.contentUploadComponentInput, 'programContext.config.sharedContext');
     if (_.get(this.contentUploadComponentInput, 'action') === 'preview') {
       this.showUploadModal = false;
       this.showPreview = true;
@@ -199,15 +204,57 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
   }
 
   uploadByURL(fileUpload, mimeType) {
+    this.loading = true;
     if (fileUpload) {
-      this.uploadFile(mimeType, this.contentUploadComponentInput.contentId);
+      let creator = this.userService.userProfile.firstName;
+      if (!_.isEmpty(this.userService.userProfile.lastName)) {
+        creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
+      }
+      const reqBody = this.sharedContext.reduce((obj, context) => {
+        return { ...obj, [context]: this.selectedSharedContext[context] || this.sessionContext[context] };
+      }, {});
+      const option = {
+        url: `content/v3/create`,
+        data: {
+          request: {
+            content: {
+              'name': this.templateDetails.metadata.name,
+              'code': UUID.UUID(),
+              'mimeType': this.detectMimeType(this.uploader.getName(0)),
+              'createdBy': this.userService.userid,
+              'contentType': this.templateDetails.metadata.contentType,
+              'resourceType': this.templateDetails.metadata.resourceType || 'Learn',
+              'creator': creator,
+              ...(_.pickBy(reqBody, _.identity))
+              // 'framework': this.sessionContext.framework,
+              // 'organisation': this.sessionContext.onBoardSchool ? [this.sessionContext.onBoardSchool] : [],
+
+            }
+          }
+        }
+      };
+      if (this.templateDetails.metadata.appIcon) {
+        option.data.request.content.appIcon = this.templateDetails.metadata.appIcon;
+      }
+      this.actionService.post(option).pipe(map((res: any) => res.result), catchError(err => {
+        const errInfo = { errorMsg: 'Unable to create contentId, Please Try Again' };
+        this.programStageService.removeLastStage();
+        return throwError(this.cbseService.apiErrorHandling(err, errInfo));
+      }))
+        .subscribe(result => {
+          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, result.node_id)
+            .subscribe(() => {
+              this.uploadFile(mimeType, result.node_id);
+            }, (err) => {
+              this.programStageService.removeLastStage();
+            });
+        });
     }
   }
 
   uploadFile(mimeType, contentId) {
     const contentType = mimeType;
     // document.getElementById('qq-upload-actions').style.display = 'none';
-    this.loading = true;
     const option = {
       url: 'content/v3/upload/url/' + contentId,
       data: {
