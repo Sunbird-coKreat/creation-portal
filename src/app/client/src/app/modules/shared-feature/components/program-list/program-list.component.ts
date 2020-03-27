@@ -109,19 +109,27 @@ export class ProgramListComponent implements OnInit {
                   return nomination.program_id;
                 });
                 const temp = [];
-                _.forEach(tempPrograms, tempProgram => {
+                _.filter(tempPrograms, tempProgram => {
+                  return !enrolledPrograms.includes(tempProgram.program_id);
+                 })
+               /* _.forEach(tempPrograms, tempProgram => {
                   if (!enrolledPrograms.includes(tempProgram.program_id)) {
                     temp.push(tempProgram);
                   }
-                });
+                });*/
                 this.programs = this.filterProgramByDate(temp);
               } else {
                 this.programs = this.filterProgramByDate(tempPrograms);
               }
               this.count = this.programs.length;
               this.sortPrograms = this.programs;
-          });
+            }, error => {
+              this.toasterService.error(_.get(error, 'error.params.errmsg') || 'Fetching Programs failed');
+            }
+          );
         }
+      }, error => {
+        this.toasterService.error(_.get(error, 'error.params.errmsg') || 'Fetching Programs failed');
       }
     );
   }
