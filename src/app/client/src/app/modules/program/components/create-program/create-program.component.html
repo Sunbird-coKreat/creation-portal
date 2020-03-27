@@ -360,7 +360,7 @@
 		</div>
 		<div class="text-align-right mt-10" [appTelemetryStart]="telemetryStart" [appTelemetryEnd]="telemetryEnd">
 			<button *ngIf="!showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary"
-				(click)="saveProgram()"
+				(click)="validateDates()"
 				appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('next', 'click', 'create-program')"
       [telemetryInteractObject]="telemetryInteractObject"
