@@ -78,8 +78,10 @@ export class TextbookListComponent implements OnInit {
     };
     this.httpClient.post<any>(option.url, option.data, httpOptions).subscribe(
       (res: any) => {
-        this.collections = res.result.content;
-        this.collectionsCnt = this.collections.length;
+        if (res && res.result && res.result.content) {
+          this.collections = res.result.content;
+          this.collectionsCnt = this.collections.length;
+        }
       },
       (err) => {
         console.log(err);

@@ -262,13 +262,14 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
   }
 
   getContributionOrgUsers() {
-    const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
-      ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
-    const orgUsers = this.registryService.getContributionOrgUsers(this.userService.userProfile.userRegData.User_Org.orgId);
-    this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
-    this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
-    this.orgDetails.orgLink = `${baseUrl}contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
-    orgUsers.subscribe(response => {
+    const baseUrl = ( <HTMLInputElement> document.getElementById('portalBaseUrl')) ?
+      ( <HTMLInputElement> document.getElementById('portalBaseUrl')).value : '';
+    if (this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org) {
+      const orgUsers = this.registryService.getContributionOrgUsers(this.userService.userProfile.userRegData.User_Org.orgId);
+      this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
+      this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
+      this.orgDetails.orgLink = `${baseUrl}contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
+      orgUsers.subscribe(response => {
         const result = _.get(response, 'result');
         if (!result || _.isEmpty(result)) {
           console.log('NO USER FOUND');
@@ -283,7 +284,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
                   if (r.result && r.result.User) {
                     let creator = r.result.User.firstName;
                     if (r.result.User.lastName) {
-                      creator  = creator + r.result.User.lastName;
+                      creator = creator + r.result.User.lastName;
                     }
                     r.result.User.fullName = creator;
                     if (this.nominationDetails.rolemapping) {
@@ -291,7 +292,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
                         if (_.includes(users, r.result.User.userId)) {
                           r.result.User.selectedRole = role;
                         }
-                    });
+                      });
                     }
                     this.contributorOrgUser.push(r.result.User);
                   }
@@ -304,6 +305,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
       }, error => {
         console.log(error);
       });
+    }
   }
 
   onRoleChange() {
