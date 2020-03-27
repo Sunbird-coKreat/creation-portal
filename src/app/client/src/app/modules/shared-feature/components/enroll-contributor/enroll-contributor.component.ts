@@ -105,7 +105,7 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
    } else {
     this.frameworkService.initialize();
     this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
-      if (frameworkInfo && !frameworkInfo.err) {
+      if (frameworkInfo && !frameworkInfo.err && frameworkInfo.frameworkdata && frameworkInfo.frameworkdata.defaultFramework) {
         this.frameworkdetails  = frameworkInfo.frameworkdata.defaultFramework.categories;
         this.frameworkdetails.forEach((element) => {
           this.enrollDetails[element['code']] = element['terms'];
@@ -143,6 +143,7 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
         contentTypes: ['', Validators.required],
         name: [''],
         description: [''],
+        website: [''],
     });
   }
 

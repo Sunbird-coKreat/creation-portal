@@ -60,15 +60,22 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
    }
 
   ngOnInit() {
-  this.getProgramDetails();
-  this.getProgramTextbooks();
-  if (!_.isEmpty(this.userService.userProfile.userRegData)
-  && this.userService.userProfile.userRegData.User_Org.roles.includes('admin'))  {
-    this.getContributionOrgUsers();
-  }
-  this.getNominationStatus();
-  this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program_ID'}];
-  this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
+    this.getProgramDetails();
+    this.getProgramTextbooks();
+    if (!_.isEmpty(this.userService.userProfile.userRegData) &&
+      this.userService.userProfile.userRegData.User_Org &&
+      this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
+      this.getContributionOrgUsers();
+    }
+    this.getNominationStatus();
+    this.telemetryInteractCdata = [{
+      id: this.activatedRoute.snapshot.params.programId,
+      type: 'Program_ID'
+    }];
+    this.telemetryInteractPdata = {
+      id: this.userService.appId,
+      pid: this.configService.appConfig.TELEMETRY.PID
+    };
   }
 
   getProgramDetails() {
@@ -244,9 +251,10 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
           this.sessionContext.currentRole = 'CONTRIBUTOR';
           this.sessionContext.currentOrgRole = 'individual';
         }
-        const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
-        this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
-
+        if (this.programContext.config) {
+          const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
+          this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
+        }
       }
     }, error => {
       this.toasterService.error('Failed fetching current nomination status');
@@ -254,13 +262,14 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
   }
 
   getContributionOrgUsers() {
-    const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
-      ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
-    const orgUsers = this.registryService.getContributionOrgUsers(this.userService.userProfile.userRegData.User_Org.orgId);
-    this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
-    this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
-    this.orgDetails.orgLink = `${baseUrl}contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
-    orgUsers.subscribe(response => {
+    const baseUrl = ( <HTMLInputElement> document.getElementById('portalBaseUrl')) ?
+      ( <HTMLInputElement> document.getElementById('portalBaseUrl')).value : '';
+    if (this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org) {
+      const orgUsers = this.registryService.getContributionOrgUsers(this.userService.userProfile.userRegData.User_Org.orgId);
+      this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
+      this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
+      this.orgDetails.orgLink = `${baseUrl}contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
+      orgUsers.subscribe(response => {
         const result = _.get(response, 'result');
         if (!result || _.isEmpty(result)) {
           console.log('NO USER FOUND');
@@ -275,7 +284,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
                   if (r.result && r.result.User) {
                     let creator = r.result.User.firstName;
                     if (r.result.User.lastName) {
-                      creator  = creator + r.result.User.lastName;
+                      creator = creator + r.result.User.lastName;
                     }
                     r.result.User.fullName = creator;
                     if (this.nominationDetails.rolemapping) {
@@ -283,7 +292,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
                         if (_.includes(users, r.result.User.userId)) {
                           r.result.User.selectedRole = role;
                         }
-                    });
+                      });
                     }
                     this.contributorOrgUser.push(r.result.User);
                   }
@@ -296,6 +305,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
       }, error => {
         console.log(error);
       });
+    }
   }
 
   onRoleChange() {
