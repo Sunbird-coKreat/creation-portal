@@ -326,20 +326,20 @@ export class CollectionComponent implements OnInit, OnDestroy {
       }
     };
     this.programsService.post(request).subscribe((res) => {
-       if (res.result && res.result.length) {
-        const req = {
-          url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_UPDATE}`,
-          data: {
-            request: {
-              program_id: this.activatedRoute.snapshot.params.programId,
-              user_id: this.userService.userProfile.userId,
-              status: 'Pending',
-              content_types: this.selectedContentTypes,
-              collection_ids: this.selectedCollectionIds,
-              createdby: creator
-            }
+      const req = {
+        url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_UPDATE}`,
+        data: {
+          request: {
+            program_id: this.activatedRoute.snapshot.params.programId,
+            user_id: this.userService.userProfile.userId,
+            status: 'Pending',
+            content_types: this.selectedContentTypes,
+            collection_ids: this.selectedCollectionIds,
+            updatedby: creator
           }
-        };
+        }
+      };
+       if (res.result && res.result.length) {
         this.programsService.post(req).subscribe((data) => {
           this.toasterService.success('Nomination sent');
           this.router.navigateByUrl('/contribute/myenrollprograms');
@@ -347,19 +347,9 @@ export class CollectionComponent implements OnInit, OnDestroy {
           this.toasterService.error('User onboarding failed');
         });
        } else {
-        const req = {
-          url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_ADD}`,
-          data: {
-            request: {
-              program_id: this.activatedRoute.snapshot.params.programId,
-              user_id: this.userService.userProfile.userId,
-              status: 'Initiated',
-              content_types: this.selectedContentTypes,
-              collection_ids: this.selectedCollectionIds,
-              createdby: creator
-            }
-          }
-        };
+        req['url'] = `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_ADD}`;
+        req.data.request['status'] = 'Initiated';
+        req.data.request['createdby'] = creator;
         this.programsService.post(req).subscribe((data) => {
           this.toasterService.success('Nomination sent');
           this.router.navigateByUrl('/contribute/myenrollprograms');
