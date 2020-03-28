@@ -2,26 +2,25 @@
   <div class="sb-bg-color-primary-0 practical-header py-16">
     <div class="d-flex flex-ai-center flex-jc-space-between practical-header__content ui container p-0">
       <div class="practical-header__title flex-basis-1">
-        <h4 class="m-0 p-0">{{programContext.name}}
-          <ng-template #popupTemplate>
-            <div class="content">
-              <div class="textbook-details ml-8">
-                <div class="header"><strong>{{ resourceService.frmelmnts.lbl.subjects }}</strong></div>
-                <div class="content">
-                  <label class="d-block fsmall font-weight-normal mb-0">{{sharedContext.subject.join(', ')}}</label>
-                </div>
-                <hr />
-                <div class="header"><strong>{{ resourceService.frmelmnts.lbl.grades }}</strong></div>
-                <div class="content">
-                  <label class="d-block fsmall font-weight-normal mb-0">{{sharedContext.gradeLevel.join(', ')}}</label>
-                </div>
+        <h5 class="m-0 p-0 font-weight-bold d-inline-block">{{programContext.name}}</h5>
+        <ng-template #popupTemplate>
+          <div class="content">
+            <div class="textbook-details ml-8">
+              <div class="header"><strong>{{ resourceService.frmelmnts.lbl.subjects }}</strong></div>
+              <div class="content">
+                <label class="d-block fsmall font-weight-normal mb-0">{{sharedContext.subject.join(', ')}}</label>
+              </div>
+              <hr />
+              <div class="header"><strong>{{ resourceService.frmelmnts.lbl.grades }}</strong></div>
+              <div class="content">
+                <label class="d-block fsmall font-weight-normal mb-0">{{sharedContext.gradeLevel.join(', ')}}</label>
               </div>
             </div>
-          </ng-template>
-          <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate">
-          </i>
-        </h4>
-        <p class="fs-0-785 font-weight-normal">{{programContext.description}}</p>
+          </div>
+        </ng-template>
+        <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate">
+        </i>
+        <p class="fs-0-785 font-weight-normal pr-10 sb__ellipsis sb__ellipsis--three">{{programContext.description}}</p>
       </div>
 
       <ng-container *ngIf="programContext">
@@ -87,7 +86,7 @@
   <div class="sb-bg-color-white py-24 dynamicHeight">
     <div class="ui container m-0 p-0">
       <div class="sb-pageSection-header">
-        <h4 class="sb-pageSection-title six">{{programContext.name}} <span
+        <h4 class="sb-pageSection-title six">{{resourceService.frmelmnts.lbl.textbookList}} <span
             class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">10</span></h4>
       </div>
       <div class="sb-table-responsive">
