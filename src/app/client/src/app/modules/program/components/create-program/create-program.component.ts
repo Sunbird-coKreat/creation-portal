@@ -14,6 +14,7 @@ import { HttpClient } from '@angular/common/http';
 import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEventInput } from '@sunbird/telemetry';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import * as moment from 'moment';
+import * as alphaNumSort from 'alphanum-sort';
 
 @Component({
  selector: 'app-create-program',
@@ -183,7 +184,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   this.frameworkCategories.forEach((element) => {
-    this.programScope[element['code']] = _.sortBy(element['terms'], ['name']);
+    const sortedArray = alphaNumSort(_.reduce(element['terms'], (result, value) => {
+      result.push(value['name']);
+      return result;
+    }, []));
+    const sortedTermsArray = _.map(sortedArray, (name) => {
+      return _.find(element['terms'], {name: name});
+    });
+    this.programScope[element['code']] = sortedTermsArray;
   });
 
   const mediumOption = this.programsService.getAssociationData(board.terms, 'medium', this.frameworkCategories);

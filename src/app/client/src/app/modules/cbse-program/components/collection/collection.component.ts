@@ -314,24 +314,50 @@ export class CollectionComponent implements OnInit, OnDestroy {
     if (!_.isEmpty(this.userService.userProfile.lastName)) {
       creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
     }
-    const req = {
-      url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_UPDATE}`,
+    // check nomination available
+    const request = {
+      url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
       data: {
         request: {
+          filters: {
           program_id: this.activatedRoute.snapshot.params.programId,
-          user_id: this.userService.userProfile.userId,
-          status: 'Pending',
-          content_types: this.selectedContentTypes,
-          collection_ids: this.selectedCollectionIds,
-          createdby: creator
+          user_id: this.userService.userProfile.userId
+          }
         }
       }
     };
-    this.programsService.post(req).subscribe((data) => {
-      this.toasterService.success('Nomination sent');
-      this.router.navigateByUrl('/contribute/myenrollprograms');
-    }, error => {
-      this.toasterService.error('User onboarding failed');
+    this.programsService.post(request).subscribe((res) => {
+      const req = {
+        url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_UPDATE}`,
+        data: {
+          request: {
+            program_id: this.activatedRoute.snapshot.params.programId,
+            user_id: this.userService.userProfile.userId,
+            status: 'Pending',
+            content_types: this.selectedContentTypes,
+            collection_ids: this.selectedCollectionIds,
+            updatedby: creator
+          }
+        }
+      };
+       if (res.result && res.result.length) {
+        this.programsService.post(req).subscribe((data) => {
+          this.toasterService.success('Nomination sent');
+          this.router.navigateByUrl('/contribute/myenrollprograms');
+        }, error => {
+          this.toasterService.error('User onboarding failed');
+        });
+       } else {
+        req['url'] = `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_ADD}`;
+        req.data.request['status'] = 'Initiated';
+        req.data.request['createdby'] = creator;
+        this.programsService.post(req).subscribe((data) => {
+          this.toasterService.success('Nomination sent');
+          this.router.navigateByUrl('/contribute/myenrollprograms');
+        }, error => {
+          this.toasterService.error('User onboarding failed');
+        });
+       }
     });
   }
   setActiveDate() {

@@ -177,7 +177,9 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     );
   }
   showTexbooklist (res) {
-    this.contributorTextbooks = res.result.content;
+    this.contributorTextbooks = res.result.content.length ? _.filter(res.result.content, (collection) => {
+         return _.includes(this.selectedNominationDetails.nominationData.collection_ids, collection.identifier);
+    }) : [];
   }
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));

@@ -300,7 +300,7 @@
 							<th class="w-5">&nbsp;</th>
 						</tr>
 					</thead>
-					<tbody class="sb-table-body">
+					<tbody class="sb-table-body" *ngIf="contributorTextbooks.length">
 
 						<tr *ngFor="let contributorTextbook of contributorTextbooks">
 							<td>{{contributorTextbook.name}}</td>

@@ -73,6 +73,7 @@ export class MainHeaderComponent implements OnInit {
   languages: Array<any>;
   showOfflineHelpCentre = false;
   contributeTabActive: boolean;
+  activeTab = {};
 
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
@@ -126,6 +127,14 @@ export class MainHeaderComponent implements OnInit {
           this.showOfflineHelpCentre = false;
         }
       });
+    }
+    // maintain active tab state
+    if (this.router.isActive('/contribute', true)) {
+      this.handleActiveTabState('allPrograms');
+    } else if (this.router.isActive('/contribute/orglist', true)) {
+      this.handleActiveTabState('manageUsers');
+    } else {
+      this.handleActiveTabState('myPrograms');
     }
     this.telemetryInteractCdata = [];
   this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
@@ -314,6 +323,11 @@ export class MainHeaderComponent implements OnInit {
   }
   showSideBar() {
     jQuery('.ui.sidebar').sidebar('setting', 'transition', 'overlay').sidebar('toggle');
+  }
+
+  handleActiveTabState(tab) {
+    this.activeTab = {}; // As only one property should available at a time
+    this.activeTab[tab] = true;
   }
 
   getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
