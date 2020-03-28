@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, EventEmitter, Output, OnChanges, OnDestroy, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { PublicDataService, UserService, ActionService } from '@sunbird/core';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService } from '@sunbird/shared';
-import { TelemetryService } from '@sunbird/telemetry';
+import { TelemetryService, IInteractEventEdata , IImpressionEventInput} from '@sunbird/telemetry';
 import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
 import { CbseProgramService } from '../../services';
@@ -37,6 +37,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public sessionContext: ISessionContext;
   public role: any;
   public textBookChapters: Array<any> = [];
+  public telemetryImpression: IImpressionEventInput;
   private questionType: Array<any> = [];
   private textBookMeta: any;
   public hierarchyObj = {};
@@ -68,7 +69,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public stageSubscription: any;
   public programContext: any;
   public currentUserID: string;
-  telemetryImpression: any;
   public collectionData;
   showLoader = true;
   showError = false;
@@ -575,8 +575,20 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
        });
   }
 
+  handleBack() {
+    this.programStageService.removeLastStage();
+  }
 
   ngOnDestroy() {
     this.stageSubscription.unsubscribe();
+  }
+
+  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+    return _.omitBy({
+      id,
+      type,
+      pageid,
+      extra
+    }, _.isUndefined);
   }
 }
