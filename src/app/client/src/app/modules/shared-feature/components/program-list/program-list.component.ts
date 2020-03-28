@@ -144,7 +144,9 @@ export class ProgramListComponent implements OnInit {
           }
 
           });
+
         this.enrollPrograms = this.programs;
+        this.sortPrograms = this.programs;
         this.count = _.get(response, 'result.count');
       }, error => {
         console.log(error);
@@ -167,8 +169,9 @@ export class ProgramListComponent implements OnInit {
           (data) => {
           if (data.result && data.result.length > 0) {
             this.nominationList = _.map(_.filter(data.result, obj => {
-             return obj.status === 'Approved';
+              return obj.status === 'Approved';
             }), 'program_id');
+
             const req = {
               request: {
                 filters: {
@@ -236,6 +239,7 @@ export class ProgramListComponent implements OnInit {
     return this.programsService.getMyProgramsForOrg(status).subscribe((response) => {
       this.programs = _.get(response, 'result.programs');
       this.count = _.get(response, 'result.count');
+      this.sortPrograms = this.programs;
     }, error => {
       console.log(error);
       // TODO: Add error toaster
