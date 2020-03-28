@@ -13,6 +13,8 @@ import { programConfigObj } from './programconfig';
 import { HttpClient } from '@angular/common/http';
 import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEventInput } from '@sunbird/telemetry';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import * as moment from 'moment';
+import * as alphaNumSort from 'alphanum-sort';
 
 @Component({
  selector: 'app-create-program',
@@ -182,7 +184,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   this.frameworkCategories.forEach((element) => {
-    this.programScope[element['code']] = _.sortBy(element['terms'], ['name']);
+    const sortedArray = alphaNumSort(_.reduce(element['terms'], (result, value) => {
+      result.push(value['name']);
+      return result;
+    }, []));
+    const sortedTermsArray = _.map(sortedArray, (name) => {
+      return _.find(element['terms'], {name: name});
+    });
+    this.programScope[element['code']] = sortedTermsArray;
   });
 
   const mediumOption = this.programsService.getAssociationData(board.terms, 'medium', this.frameworkCategories);
@@ -294,6 +303,38 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    this.showTextBookSelector = false;
  }
 
+ validateDates() {
+    const formData = this.createProgramForm.value;
+    const nominationEndDate = moment(formData.nomination_enddate);
+    const shortlistingEndDate = moment(formData.shortlisting_enddate);
+    const contentSubmissionEndDate = moment(formData.content_submission_enddate);
+    const programEndDate = moment(formData.program_end_date);
+    const today = moment(moment().format('YYYY-MM-DD'));
+
+    // nomination date should be >= today
+    if (!nominationEndDate.isSameOrAfter(today)) {
+      this.toasterService.error(this.resource.messages.emsg.createProgram.m0001);
+      return;
+    }
+    // shortlisting date should be >= nomination date
+    if (!shortlistingEndDate.isSameOrAfter(nominationEndDate)) {
+        this.toasterService.error(this.resource.messages.emsg.createProgram.m0002);
+      return;
+    }
+    // submission date should be >= shortlisting date
+    if (!contentSubmissionEndDate.isSameOrAfter(shortlistingEndDate)) {
+      this.toasterService.error(this.resource.messages.emsg.createProgram.m0003);
+      return;
+    }
+    // end date should be >= submission date
+    if (!programEndDate.isSameOrAfter(contentSubmissionEndDate)) {
+      this.toasterService.error(this.resource.messages.emsg.createProgram.m0004);
+      return;
+    }
+
+    this.saveProgram();
+  }
+
  resetFilters () {
     this.collectionListForm.controls['medium'].setValue('');
     this.collectionListForm.controls['gradeLevel'].setValue('');
@@ -301,8 +342,18 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.showTexbooklist();
  }
 
+ handleContentTypes() {
+   const contentTypes = this.createProgramForm.value.content_types;
+   let configContentTypes = _.get(_.find(programConfigObj.components, {id: 'ng.sunbird.chapterList'}), 'config.contentTypes.value');
+   configContentTypes = _.filter(configContentTypes, (type) => {
+     return _.includes(contentTypes, type.metadata.contentType);
+   });
+   _.find(programConfigObj.components, {id: 'ng.sunbird.chapterList'}).config.contentTypes.value = configContentTypes;
+ }
+
  saveProgram() {
    this.formIsInvalid = false;
+   this.handleContentTypes();
 
    if (this.createProgramForm.dirty && this.createProgramForm.valid) {
     this.programData = {

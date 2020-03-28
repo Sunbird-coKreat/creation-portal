@@ -1,4 +1,18 @@
 <div class="d-flex sb-bg-color-gray-0 practical-header" [appTelemetryImpression]="telemetryImpression">
+  <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="handleBack()"
+  type="button"
+  appTelemetryInteract
+[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('go-back', 'click', 'content-uploader')"
+[telemetryInteractObject]="telemetryInteractObject"
+[telemetryInteractCdata]="telemetryInteractCdata"
+[telemetryInteractPdata]="telemetryInteractPdata">
+            <i class="icon-svg icon-svg--xxs icon-back mr-4">
+                <svg class="icon icon-svg--primary">
+                    <use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
+                </svg>
+            </i>
+            Back
+        </button>
   <div class="d-flex flex-ai-center flex-jc-space-between practical-header__content ui container">
     <div #contentTitle class="font-weight-bold fs-1" *ngIf="!showTextArea">
       <div class="d-flex flex-ai-center"><span class="practical-header__title" suiPopup popupText="{{editTitle}}">{{editTitle}} </span><span class="fsmall ml-16 sb-color-primary font-weight-normal"><a *ngIf="visibility && visibility.showEdit" class="cursor-pointer"

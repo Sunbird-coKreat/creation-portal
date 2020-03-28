@@ -73,6 +73,7 @@ export class MainHeaderComponent implements OnInit {
   languages: Array<any>;
   showOfflineHelpCentre = false;
   contributeTabActive: boolean;
+  activeTab = {};
 
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
@@ -127,6 +128,14 @@ export class MainHeaderComponent implements OnInit {
         }
       });
     }
+    // maintain active tab state
+    if (this.router.isActive('/contribute', true)) {
+      this.handleActiveTabState('allPrograms');
+    } else if (this.router.isActive('/contribute/orglist', true)) {
+      this.handleActiveTabState('manageUsers');
+    } else {
+      this.handleActiveTabState('myPrograms');
+    }
     this.telemetryInteractCdata = [];
   this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
   this.telemetryInteractObject = {};
@@ -164,7 +173,16 @@ export class MainHeaderComponent implements OnInit {
     if (this.isOffline) {
       this.router.navigate(['']);
     } else if (this.userService.loggedIn) {
-      this.router.navigate(['resources']);
+      if (this.router.url.includes('/contribute')) {
+        if (this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org &&
+          !this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
+          this.router.navigateByUrl('/contribute/myenrollprograms');
+        } else {
+          this.router.navigate(['contribute']);
+        }
+      } else {
+        this.router.navigate(['sourcing']);
+      }
     } else {
       window.location.href = this.slug ? this.slug + '/explore'  : '/explore';
     }
@@ -305,6 +323,11 @@ export class MainHeaderComponent implements OnInit {
   }
   showSideBar() {
     jQuery('.ui.sidebar').sidebar('setting', 'transition', 'overlay').sidebar('toggle');
+  }
+
+  handleActiveTabState(tab) {
+    this.activeTab = {}; // As only one property should available at a time
+    this.activeTab[tab] = true;
   }
 
   getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {

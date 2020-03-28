@@ -121,7 +121,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public fetchFrameWorkDetails() {
     this.frameworkService.initialize(this.sessionContext.framework);
     this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
-      if (frameworkDetails && !frameworkDetails.err) {
+      if (frameworkDetails && !frameworkDetails.err && frameworkDetails.frameworkdata) {
         this.sessionContext.frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
       }
     }, error => {
