@@ -17,7 +17,7 @@
             <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
             <thead class="sb-table-header sb-table-thead-gray">
               <tr>
-                <th class="w-15 hand" (click)="sort('name')">
+                <th class="w-15 cursor-pointer" (click)="sort('name')">
                   {{ resourceService.frmelmnts.lbl.program }} &nbsp;&nbsp; 
                   <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumnName != 'name' "></i>      
                   <span  *ngIf="sortColumnName == 'name'">
@@ -25,7 +25,7 @@
                     <i class="fa fa-sort-desc" aria-hidden="true" *ngIf="direction == 'desc'"></i>
                   </span>
                 </th>
-                <th *ngIf="isContributor" class="w-10 hand" (click)="sort('sourcing_org_name')" 
+                <th *ngIf="isContributor" class="w-10 cursor-pointer" (click)="sort('sourcing_org_name')" 
                 appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('sort-program-name', 'click', 'program-list')"
       [telemetryInteractObject]="telemetryInteractObject"
@@ -39,7 +39,7 @@
                 <th class="w-10">{{ resourceService.frmelmnts.lbl.contentType }}</th>
                 <th class="w-15">{{ resourceService.frmelmnts.lbl.MediumClassSubject }}</th>
                 <th *ngIf="!isContributor" class="w-10">{{ resourceService.frmelmnts.lbl.programDates }}</th>
-                <th *ngIf="activeMyProgramsMenu" class="w-10 hand" (click)="sort('createdon')">{{ resourceService.frmelmnts.lbl.nominatedDate }}&nbsp;&nbsp; 
+                <th *ngIf="activeMyProgramsMenu" class="w-10 cursor-pointer" (click)="sort('createdon')">{{ resourceService.frmelmnts.lbl.nominatedDate }}&nbsp;&nbsp; 
                   <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumnName != 'createdon'"></i>
                   <span *ngIf="sortColumnName == 'createdon'">
                     <i class="fa fa-sort-asc" aria-hidden="true" *ngIf="direction == 'asc'"></i>

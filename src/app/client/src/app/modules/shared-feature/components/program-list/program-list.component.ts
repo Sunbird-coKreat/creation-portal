@@ -116,28 +116,13 @@ export class ProgramListComponent implements OnInit {
 
   sort(colName) {
     if (this.direction === 'asc' || this.direction === ''){
-      if(colName == 'createdon')
-      {
-        this.programs = this.sortPrograms.sort((a,b) => b[colName] - a[colName]);
-      }
-      else
-      {
-        this.programs = this.sortPrograms.sort((a,b) => b[colName].localeCompare(a[colName]));
-      }
+        this.programs = this.sortPrograms.sort((a,b) => b[colName].localeCompare(a[colName]))
       this.direction = 'desc';
-      this.sortColumnName = colName;
     } else {
-      if(colName == 'createdon')
-      {
-        this.programs = this.sortPrograms.sort((a,b) => a[colName] - b[colName]);
-      }
-      else
-      {
         this.programs =  this.sortPrograms.sort((a,b) => a[colName].localeCompare(b[colName]));
-      }
       this.direction = 'asc';
-      this.sortColumnName = colName;
     }
+    this.sortColumnName = colName;
   }
   public getContributionProgramList(req) {
     this.programsService.getMyProgramsForContrib(req)
