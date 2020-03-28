@@ -130,7 +130,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-    const telemetryCdata = [{ 'type': 'Program', 'id': this.programContext.programId }];
+    const telemetryCdata = [{ 'type': 'Program', 'id': this.programContext.program_id }];
     setTimeout(() => {
       this.telemetryImpression = {
         context: {
@@ -160,7 +160,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     } else if (onSelectChapterChange === true && this.selectedChapterOption !== 'all') {
       this.lastOpenedUnit(this.selectedChapterOption);
     } else {
-      this.lastOpenedUnit(this.collectionHierarchy[0].identifier);
+      if (!_.isEmpty(this.collectionHierarchy)) { this.lastOpenedUnit(this.collectionHierarchy[0].identifier)}
     }
   }
 
@@ -265,7 +265,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         const treeLeaf = children && children.filter(item => item.contentType !== 'TextBookUnit');
         rootTree['children'] = treeChildren || null;
         rootTree['leaf'] = this.getContentVisibility(treeLeaf) || null;
-        return [rootTree];
+        return rootTree ? [rootTree] : [];
       } else {
         rootTree['leaf'] = _.map(data.children, (child) => {
           const meta = _.pick(child, this.sharedContext);
@@ -273,10 +273,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           treeItem['visibility'] = this.shouldContentBeVisible(child);
           return treeItem;
         });
-        return [rootTree];
+        return rootTree ? [rootTree] : [];
       }
     } else {
-      return this.getUnitWithChildren(data, identifier);
+      return this.getUnitWithChildren(data, identifier) || [];
     }
   }
 
