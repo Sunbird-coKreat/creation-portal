@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, EventEmitter, Output, OnChanges, OnDestroy, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { PublicDataService, UserService, ActionService } from '@sunbird/core';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService } from '@sunbird/shared';
-import { TelemetryService } from '@sunbird/telemetry';
+import { TelemetryService, IInteractEventEdata , IImpressionEventInput} from '@sunbird/telemetry';
 import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
 import { CbseProgramService } from '../../services';
@@ -37,6 +37,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public sessionContext: ISessionContext;
   public role: any;
   public textBookChapters: Array<any> = [];
+  public telemetryImpression: IImpressionEventInput;
   private questionType: Array<any> = [];
   private textBookMeta: any;
   public hierarchyObj = {};
@@ -68,7 +69,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public stageSubscription: any;
   public programContext: any;
   public currentUserID: string;
-  telemetryImpression: any;
   public collectionData;
   showLoader = true;
   showError = false;
@@ -130,7 +130,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-    const telemetryCdata = [{ 'type': 'Program', 'id': this.programContext.programId }];
+    const telemetryCdata = [{ 'type': 'Program', 'id': this.programContext.program_id }];
     setTimeout(() => {
       this.telemetryImpression = {
         context: {
@@ -160,7 +160,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     } else if (onSelectChapterChange === true && this.selectedChapterOption !== 'all') {
       this.lastOpenedUnit(this.selectedChapterOption);
     } else {
-      this.lastOpenedUnit(this.collectionHierarchy[0].identifier);
+      if (!_.isEmpty(this.collectionHierarchy)) { this.lastOpenedUnit(this.collectionHierarchy[0].identifier)}
     }
   }
 
@@ -265,7 +265,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         const treeLeaf = children && children.filter(item => item.contentType !== 'TextBookUnit');
         rootTree['children'] = treeChildren || null;
         rootTree['leaf'] = this.getContentVisibility(treeLeaf) || null;
-        return [rootTree];
+        return rootTree ? [rootTree] : [];
       } else {
         rootTree['leaf'] = _.map(data.children, (child) => {
           const meta = _.pick(child, this.sharedContext);
@@ -273,10 +273,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           treeItem['visibility'] = this.shouldContentBeVisible(child);
           return treeItem;
         });
-        return [rootTree];
+        return rootTree ? [rootTree] : [];
       }
     } else {
-      return this.getUnitWithChildren(data, identifier);
+      return this.getUnitWithChildren(data, identifier) || [];
     }
   }
 
@@ -404,7 +404,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   handleTemplateSelection(event) {
     this.showResourceTemplatePopup = false;
-    if (event.template) {
+    if (event.template && event.templateDetails && !(event.templateDetails.onClick === 'uploadComponent')) {
       this.templateDetails = event.templateDetails;
       let creator = this.userService.userProfile.firstName;
       if (!_.isEmpty(this.userService.userProfile.lastName)) {
@@ -447,6 +447,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
                this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
             });
         });
+    } else if (event.templateDetails) {
+      this.templateDetails = event.templateDetails;
+      // tslint:disable-next-line:max-line-length
+      this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
     }
   }
 
@@ -571,8 +575,20 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
        });
   }
 
+  handleBack() {
+    this.programStageService.removeLastStage();
+  }
 
   ngOnDestroy() {
     this.stageSubscription.unsubscribe();
+  }
+
+  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+    return _.omitBy({
+      id,
+      type,
+      pageid,
+      extra
+    }, _.isUndefined);
   }
 }

@@ -1,24 +1,24 @@
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService } from '@sunbird/shared';
 import { ProgramsService, PublicDataService, UserService, FrameworkService, RegistryService } from '@sunbird/core';
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { tap, first } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { ProgramStageService } from '../../services/';
+import { ProgramStageService } from '../../../program/services/program-stage/program-stage.service';
 import { ChapterListComponent } from '../../../cbse-program/components/chapter-list/chapter-list.component';
 import { IChapterListComponentInput } from '../../../cbse-program/interfaces';
 import { InitialState, ISessionContext, IUserParticipantDetails } from '../../interfaces';
 import * as moment from 'moment';
 
 @Component({
-  selector: 'app-list-contributor-textbooks',
+  selector: 'app-nominated-contributor-textbooks',
   templateUrl: './list-nominated-textbooks.component.html',
   styleUrls: ['./list-nominated-textbooks.component.scss']
 })
-export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
+export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public contributor;
   public contributorTextbooks: any = [];
@@ -29,6 +29,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
   public programContext: any = {};
   public chapterListComponentInput: IChapterListComponentInput = {};
   public dynamicInputs;
+  public currentStage: any;
   collection;
   configData;
   showChapterList = false;
@@ -41,6 +42,11 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
   public grades: any;
   public userProfile: any;
   public activeDate = '';
+  public showUsersTab = false;
+  public stageSubscription: any;
+  public state: InitialState = {
+    stages: []
+  };
   public contributorOrgUser: any = [];
   public orgDetails: any = {};
   public roles;
@@ -62,10 +68,20 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.getProgramDetails();
     this.getProgramTextbooks();
+    this.programStageService.initialize();
+    this.stageSubscription = this.programStageService.getStage().subscribe(state => {
+      this.state.stages = state.stages;
+      this.changeView();
+    });
+    this.programStageService.addStage('listNominatedTextbookComponent');
+
+    this.currentStage = 'listNominatedTextbookComponent';
+
     if (!_.isEmpty(this.userService.userProfile.userRegData) &&
       this.userService.userProfile.userRegData.User_Org &&
       this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
       this.getContributionOrgUsers();
+      this.showUsersTab = true;
     }
     this.getNominationStatus();
     this.telemetryInteractCdata = [{
@@ -262,13 +278,14 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
   }
 
   getContributionOrgUsers() {
-    const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
-      ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
-    const orgUsers = this.registryService.getContributionOrgUsers(this.userService.userProfile.userRegData.User_Org.orgId);
-    this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
-    this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
-    this.orgDetails.orgLink = `${baseUrl}contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
-    orgUsers.subscribe(response => {
+    const baseUrl = ( <HTMLInputElement> document.getElementById('portalBaseUrl')) ?
+      ( <HTMLInputElement> document.getElementById('portalBaseUrl')).value : '';
+    if (this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org) {
+      const orgUsers = this.registryService.getContributionOrgUsers(this.userService.userProfile.userRegData.User_Org.orgId);
+      this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
+      this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
+      this.orgDetails.orgLink = `${baseUrl}contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
+      orgUsers.subscribe(response => {
         const result = _.get(response, 'result');
         if (!result || _.isEmpty(result)) {
           console.log('NO USER FOUND');
@@ -283,7 +300,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
                   if (r.result && r.result.User) {
                     let creator = r.result.User.firstName;
                     if (r.result.User.lastName) {
-                      creator  = creator + r.result.User.lastName;
+                      creator = creator + r.result.User.lastName;
                     }
                     r.result.User.fullName = creator;
                     if (this.nominationDetails.rolemapping) {
@@ -291,7 +308,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
                         if (_.includes(users, r.result.User.userId)) {
                           r.result.User.selectedRole = role;
                         }
-                    });
+                      });
                     }
                     this.contributorOrgUser.push(r.result.User);
                   }
@@ -304,6 +321,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
       }, error => {
         console.log(error);
       });
+    }
   }
 
   onRoleChange() {
@@ -328,11 +346,10 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
     });
   }
 
-  copyLinkToClipboard(inputLink) {
-    inputLink.select();
-    document.execCommand('copy');
-    inputLink.setSelectionRange(0, 0);
-    this.toasterService.success(this.resourceService.frmelmnts.lbl.linkCopied);
+  changeView() {
+    if (!_.isEmpty(this.state.stages)) {
+      this.currentStage = _.last(this.state.stages).stage;
+    }
   }
 
   getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
@@ -344,4 +361,8 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit {
     }, _.isUndefined);
   }
 
+
+  ngOnDestroy() {
+    this.stageSubscription.unsubscribe();
+  }
 }

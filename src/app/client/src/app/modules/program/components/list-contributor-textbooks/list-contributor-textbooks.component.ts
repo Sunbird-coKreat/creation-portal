@@ -1,7 +1,7 @@
 import { IImpressionEventInput, IInteractEventEdata} from '@sunbird/telemetry';
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService } from '@sunbird/shared';
 import { ProgramsService, PublicDataService, UserService, FrameworkService } from '@sunbird/core';
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -18,7 +18,7 @@ import * as moment from 'moment';
   templateUrl: './list-contributor-textbooks.component.html',
   styleUrls: ['./list-contributor-textbooks.component.scss']
 })
-export class ListContributorTextbooksComponent implements OnInit, AfterViewInit {
+export class ListContributorTextbooksComponent implements OnInit, AfterViewInit, OnDestroy {
   public contributor;
   public contributorTextbooks;
   public noResultFound;
@@ -35,6 +35,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
   public approvedCount = 0;
   public rejectedCount = 0;
   public totalCount = 0;
+  public stageSubscription: any;
   public activeDate = '';
   public mediums: any;
   public roles;
@@ -60,12 +61,21 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
   private activatedRoute: ActivatedRoute, private router: Router, public programStageService: ProgramStageService,
   private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
   public toasterService: ToasterService) { }
+
+
   ngOnInit() {
     this.programId = this.activatedRoute.snapshot.params.programId;
     this.activatedRoute.fragment.pipe(map(fragment => fragment || 'None')).subscribe((frag) => {
       this.selectedNominationDetails = frag;
     });
-    console.log(this.selectedNominationDetails);
+    this.programStageService.initialize();
+    this.stageSubscription = this.programStageService.getStage().subscribe(state => {
+      this.state.stages = state.stages;
+      this.changeView();
+    });
+    this.programStageService.addStage('listContributorTextbook');
+
+    this.currentStage = 'listContributorTextbook';
     this.fetchProgramDetails().subscribe((programDetails) => {
       this.setActiveDate();
       this.getProgramTextbooks();
@@ -167,7 +177,9 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
     );
   }
   showTexbooklist (res) {
-    this.contributorTextbooks = res.result.content;
+    this.contributorTextbooks = res.result.content.length ? _.filter(res.result.content, (collection) => {
+         return _.includes(this.selectedNominationDetails.nominationData.collection_ids, collection.identifier);
+    }) : [];
   }
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
@@ -214,7 +226,6 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
         }
       }
     };
-    this.showChapterList = true;
     this.programStageService.addStage('chapterListComponent');
   }
    updateNomination(status) {
@@ -264,6 +275,11 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
       }
     });
   }
+  changeView() {
+    if (!_.isEmpty(this.state.stages)) {
+      this.currentStage = _.last(this.state.stages).stage;
+    }
+  }
   goBack() {
     this.navigationHelperService.navigateToPreviousUrl();
   }
@@ -274,5 +290,9 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit 
       pageid,
       extra
     }, _.isUndefined);
+  }
+
+  ngOnDestroy() {
+    this.stageSubscription.unsubscribe();
   }
 }

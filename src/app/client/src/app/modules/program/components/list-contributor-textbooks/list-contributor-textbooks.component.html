@@ -1,7 +1,7 @@
-<div class="sb-bg-color-primary-0 py-24" *ngIf="!showChapterList" [appTelemetryImpression]="telemetryImpression">
+<div class="sb-bg-color-primary-0 py-15" *ngIf="currentStage === 'listContributorTextbook'" [appTelemetryImpression]="telemetryImpression">
 	<div class="sb-bg-color-primary-0 practical-header">
 		<div class="ui container">
-				<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="goBack()"
+				<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn fs-0-92" (click)="goBack()"
 						type="button"
 						appTelemetryInteract
 				[telemetryInteractEdata]="getTelemetryInteractEdata('list-textbooks', 'click', 'list-nominated-textbooks')"
@@ -13,11 +13,12 @@
 															<use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
 													</svg>
 											</i>
-											Back
+											{{resourceService.frmelmnts.lbl.back}}
 									</button>
-			 <div class="d-flex flex-ai-center flex-jc-space-between practical-header__content p-0">
+			 <div class="d-flex flex-jc-space-between practical-header__content py-10">
             <div class="practical-header__title flex-basis-1 pr-10">
-                <h4 class="m-0 p-0">{{ programDetails?.name }} <i class="info circle link icon" suiPopup
+								<h5 class="m-0 p-0 d-inline-block font-weight-bold">{{ programDetails?.name }} </h5>
+								<i class="info circle link icon" suiPopup
                         [popupTemplate]="popupTemplate" popupDelay="1000"></i>
                     <ng-template #popupTemplate>
                         <div class="content">
@@ -27,15 +28,14 @@
                                     <label class="d-block fsmall font-weight-normal mb-0">{{ mediums }}</label>
                                 </div>
                                 <hr />
-                                <div class="header"><strong>{{ resourceService.frmelmnts.lbl.grades }}</strong></div>
+                                <div class="header"><strong>{{ resourceService.frmelmnts.lbl.class }}</strong></div>
                                 <div class="content">
                                     <label class="d-block fsmall font-weight-normal mb-0">{{ grades }}</label>
                                 </div>
                             </div>
                         </div>
                     </ng-template>
-                </h4>
-                <p class="fs-0-785 font-weight-normal">{{ programDetails?.description }} </p>
+                <p class="fs-0-785 font-weight-normal sb__ellipsis sb__ellipsis--three">{{ programDetails?.description }} </p>
             </div>
             <div class="sb-meta-data-container sb-meta-data-column">
                 <label class="width-100">{{ resourceService.frmelmnts.lbl.nominations }} </label>
@@ -142,11 +142,11 @@
 						</dl>
 						<dl class="sb-meta-data mb-0 pr-8">
 							<dt class="sb__ellipsis">{{resourceService.frmelmnts.lbl.status}}</dt>
-							<dd><span class="sb-label sb-label-table sb-label-warning-0">Pending</span></dd>
+							<dd><span class="sb-label sb-label-table sb-label-warning-0">{{contributor?.nominationData?.status }}</span></dd>
 						</dl>
 						<dl class="sb-meta-data mb-0 pr-8" >
 							<dt class="sb__ellipsis">{{resourceService?.frmelmnts?.lbl?.contentType}}</dt>
-							<dd><span class="sb-label sb-label-table sb-label-warning-0">{{programDetails?.content_types?.join(', ')}}</span></dd>
+							<dd><span>{{programDetails?.content_types?.join(', ')}}</span></dd>
 						</dl>
 						<dl class="sb-meta-data mb-0 pr-8">
 							<dt class="sb__ellipsis">{{resourceService?.frmelmnts?.lbl?.submittedDate}}</dt>
@@ -157,7 +157,97 @@
 			</div>
 		</div>
 	</div>
-</div>
+
+
+
+
+
+
+<sui-modal [mustScroll]="true" [isClosable]="true" *ngIf="show" [transitionDuration]="0" [size]="'normal'"
+	class="sb-modal" #modal>
+	<div class="sb-modal-header"> {{resourceService.frmelmnts.lbl.nomineeProfileDetails}} </div>
+	<div class="sb-modal-content o-y-visible pb-8">
+		<div class="ui container">
+			<div class="mx-48 text-center">
+				<div class="sb-profile-page__avatar">
+					<img src="assets/images/guest.svg" alt="guest" class="mb-24">
+				</div>
+				<div class="fs-2-5 font-weight-bold my-24">{{contributor?.name}} </div>
+			</div>
+			<div class="mx-48 relative text-center">
+				<div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
+					<span class="fmedium white-space-nowrap">{{resourceService.frmelmnts.lbl.type}}
+						:</span>
+					<span class="fmedium font-weight-bold pl-4">{{contributor?.type}}</span>
+				</div>
+				<div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
+					<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Board}}
+						:</span>
+					<span class="fmedium font-weight-bold pl-4">{{contributor?.nominationData?.userData?.board?.join(', ')}}</span>
+				</div>
+				<div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
+					<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Medium}}
+						:</span>
+					<span class="fmedium font-weight-bold pl-4">
+						{{contributor?.nominationData?.userData?.medium?.join(', ')}}</span>
+				</div>
+				<div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
+					<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Subjects}}
+						:</span>
+					<span class="fmedium font-weight-bold pl-4">
+						{{contributor?.nominationData?.userData?.subject?.join(', ')}}</span>
+				</div>
+				<div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
+					<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Classes}}
+						:</span>
+					<span class="fmedium font-weight-bold pl-4">
+						{{contributor?.nominationData?.userData?.gradeLevel?.join(', ')}}</span>
+				</div>
+				<div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
+					<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.contentType}}
+						:</span>
+					<span class="fmedium font-weight-bold pl-4">
+						{{contributor?.nominationData?.userData?.contentTypes?.join(', ')}}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</sui-modal>
+
+
+
+<sui-modal *ngIf="showRequestChangesPopup" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
+	[size]="'normal'" class="sb-modal" appBodyScroll #modal (dismissed)="showRequestChangesPopup = false;">
+	<div class="sb-modal-header">
+			{{resourceService.frmelmnts.lbl.reasonsForRejection}}
+	</div>
+	<form #FormControl="ngForm" class="ui form">
+		<div class="sb-modal-content">
+			<div class="sb-field-group">
+				<label>{{resourceService.frmelmnts.lbl.enterYourComments}}</label>
+				<div class="sb-field relative">
+					<textarea type="text" class="wmd-input width-100 sb-form-control" id="wmd-input"
+						[(ngModel)]="rejectComment" placeholder="Add comment" name="rejectComment" required></textarea>
+					<label class="ui basic red error label pt-1 mt-5 width-100"
+						*ngIf="FormControl.form.controls.rejectComment?.touched && !FormControl.form.valid">{{resourceService.frmelmnts.lbl.fillComments}} </label>
+					<!-- <textarea rows="4" name="moretext" class="sb-form-control" placeholder="Type here..."></textarea>
+			<span class="characters-left">1000 Characters left</span> -->
+				</div>
+			</div>
+		</div>
+		<div class="sb-modal-actions">
+			<button id="submitReview" type="submit" class="sb-btn sb-btn-normal"
+				[ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid}"
+				(click)="updateNomination('reject')"
+				appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('rejection-feedback', 'click', 'list-nominated-textbooks')"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.submit}} </button>
+		</div>
+	</form>
+</sui-modal>
+
 
 <div class="sb-bg-color-white dynamicHeight" *ngIf="!showChapterList">
 	<div class="ui container">
@@ -210,7 +300,7 @@
 							<th class="w-5">&nbsp;</th>
 						</tr>
 					</thead>
-					<tbody class="sb-table-body">
+					<tbody class="sb-table-body" *ngIf="contributorTextbooks.length">
 
 						<tr *ngFor="let contributorTextbook of contributorTextbooks">
 							<td>{{contributorTextbook.name}}</td>
@@ -243,90 +333,10 @@
 		</div>
 	</div>
 </div>
-<ng-container *ngIf="showChapterList">
+</div>
+
+<ng-container *ngIf="currentStage !== 'listContributorTextbook'">
 	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs">
 	</ndc-dynamic>
 </ng-container>
-<sui-modal [mustScroll]="true" [isClosable]="true" *ngIf="show" [transitionDuration]="0" [size]="'normal'"
-	class="sb-modal" #modal>
-	<div class="sb-modal-header"> {{resourceService.frmelmnts.lbl.nomineeProfileDetails}} </div>
-	<div class="sb-modal-content o-y-visible pb-8">
-		<div class="ui container">
-			<div class="mx-48 text-center">
-				<div class="sb-profile-page__avatar">
-					<img src="assets/images/guest.svg" alt="guest" class="mb-24">
-				</div>
-				<div class="fs-2-5 font-weight-bold my-24">{{ 'Pratham' | titlecase}} </div>
-			</div>
-			<div class="mx-48 relative text-center">
-				<div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
-					<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.State}}
-						:</span>
-					<span class="fmedium font-weight-bold pl-4">{{'Maharashtra'}}</span>
-				</div>
-				<div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
-					<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.District}}
-						:</span>
-					<span class="fmedium font-weight-bold pl-4">
-						{{'Kolhapur'}}</span>
-				</div>
-				<div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
-					<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Board}}
-						:</span>
-					<span class="fmedium font-weight-bold pl-4">{{'CBSE'}}</span>
-				</div>
-				<div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
-					<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Medium}}
-						:</span>
-					<span class="fmedium font-weight-bold pl-4">
-						{{'English'}}</span>
-				</div>
-				<div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
-					<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Subjects}}
-						:</span>
-					<span class="fmedium font-weight-bold pl-4">
-						{{'Marathi'}}</span>
-				</div>
-				<div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
-					<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Classes}}
-						:</span>
-					<span class="fmedium font-weight-bold pl-4">
-						{{'Grade 1'}}</span>
-				</div>
-			</div>
-		</div>
-	</div>
-</sui-modal>
 
-
-<sui-modal *ngIf="showRequestChangesPopup" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
-	[size]="'normal'" class="sb-modal" appBodyScroll #modal (dismissed)="showRequestChangesPopup = false;">
-	<div class="sb-modal-header">
-			{{resourceService.frmelmnts.lbl.reasonsForRejection}}
-	</div>
-	<form #FormControl="ngForm" class="ui form">
-		<div class="sb-modal-content">
-			<div class="sb-field-group">
-				<label>{{resourceService.frmelmnts.lbl.enterYourComments}}</label>
-				<div class="sb-field relative">
-					<textarea type="text" class="wmd-input width-100 sb-form-control" id="wmd-input"
-						[(ngModel)]="rejectComment" placeholder="Add comment" name="rejectComment" required></textarea>
-					<label class="ui basic red error label pt-1 mt-5 width-100"
-						*ngIf="FormControl.form.controls.rejectComment?.touched && !FormControl.form.valid">{{resourceService.frmelmnts.lbl.fillComments}} </label>
-					<!-- <textarea rows="4" name="moretext" class="sb-form-control" placeholder="Type here..."></textarea>
-			<span class="characters-left">1000 Characters left</span> -->
-				</div>
-			</div>
-		</div>
-		<div class="sb-modal-actions">
-			<button id="submitReview" type="submit" class="sb-btn sb-btn-normal"
-				[ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid}"
-				(click)="updateNomination('reject')"
-				appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('rejection-feedback', 'click', 'list-nominated-textbooks')"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.submit}} </button>
-		</div>
-	</form>
-</sui-modal>
