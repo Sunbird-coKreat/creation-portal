@@ -348,6 +348,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    this.handleContentTypes();
 
    if (this.createProgramForm.dirty && this.createProgramForm.valid) {
+    const contentTypes = this.createProgramForm.value.content_types;
+    this.createProgramForm.value.content_types = _.isEmpty(contentTypes) ?  [] : contentTypes;
     this.programData = {
        ...this.createProgramForm.value
      };
