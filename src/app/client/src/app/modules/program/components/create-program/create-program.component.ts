@@ -239,7 +239,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      name: ['', [Validators.required, Validators.maxLength(100)]],
      description: ['', Validators.maxLength(1000)],
      nomination_enddate: ['', Validators.required],
-     shortlisting_enddate: [''],
+     shortlisting_enddate: ['', Validators.required],
      program_end_date: ['', Validators.required],
      content_submission_enddate: ['', Validators.required],
      content_types: [],
@@ -323,8 +323,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.toasterService.error(this.resource.messages.emsg.createProgram.m0004);
       return;
     }
-
-    this.saveProgram();
   }
 
  resetFilters () {
@@ -358,7 +356,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      this.programData['startdate'] = new Date();
      this.programData['slug'] = 'sunbird';
      this.programData['type'] = 'public',
-
      this.programData['default_roles'] = ['CONTRIBUTOR'];
      this.programData['enddate'] = this.programData.program_end_date;
      this.programData['config'] = programConfigObj;
@@ -388,11 +385,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    } else {
      this.formIsInvalid = true;
      this.validateAllFormFields(this.createProgramForm);
+     this.validateDates();
    }
  }
 
  showTexbooklist() {
-
    const requestData =  {
      request: {
        filters: {

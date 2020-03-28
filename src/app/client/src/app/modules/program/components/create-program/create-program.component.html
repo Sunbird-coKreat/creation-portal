@@ -98,7 +98,7 @@
 								</div>
 							</div>
 							<div class="twelve wide tablet three wide computer column">
-								<div class="field">
+								<div class="required field">
 									<label class="d-block">{{resource.frmelmnts.lbl.nominationShortlistingDate}}
 											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" [popupPlacement]="'left'"  popupText="{{resource.frmelmnts.lbl.programShortlistingEnddateHint}}"></i>
 									</label>
@@ -108,6 +108,10 @@
 											<input [pickerMinDate]='createProgramForm.value.nomination_enddate ? createProgramForm.value.nomination_enddate : pickerMinDate'
 												formControlName="shortlisting_enddate" suiDatepicker
 												[pickerMode]="'date'">
+										</div>
+										<div class="ui pointing red basic label below "
+											*ngIf="createProgramForm.controls['shortlisting_enddate'].errors && createProgramForm.controls['shortlisting_enddate'].errors.required && (!createProgramForm.controls['shortlisting_enddate'].pristine || formIsInvalid)">
+											{{ resource.frmelmnts.lbl.programShortlistingEnddateRequired }}
 										</div>
 									</div>
 								</div>
@@ -363,7 +367,7 @@
 		</div>
 		<div class="text-align-right mt-10" [appTelemetryStart]="telemetryStart" [appTelemetryEnd]="telemetryEnd">
 			<button *ngIf="!showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary"
-				(click)="validateDates()"
+				(click)="saveProgram()"
 				appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('next', 'click', 'create-program')"
       [telemetryInteractObject]="telemetryInteractObject"
