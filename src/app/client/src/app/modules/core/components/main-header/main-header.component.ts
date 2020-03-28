@@ -317,18 +317,8 @@ export class MainHeaderComponent implements OnInit {
   }
 
   handleActiveTabState(tab) {
-    this.activeTab = {};
-     switch (tab) {
-      case 'allPrograms':
-        this.activeTab['allPrograms'] = true;
-        break;
-        case 'myPrograms':
-        this.activeTab['myPrograms'] = true;
-        break;
-        case 'manageUsers':
-        this.activeTab['manageUsers'] = true;
-        break;
-     }
+    this.activeTab = {}; // As only one property should available at a time
+    this.activeTab[tab] = true;
   }
 
   getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
