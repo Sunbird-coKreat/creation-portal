@@ -1,4 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef,
+  AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { FineUploader } from 'fine-uploader';
 import { ToasterService, ConfigService, ResourceService, NavigationHelperService } from '@sunbird/shared';
 import { PublicDataService, UserService, ActionService, PlayerService, FrameworkService } from '@sunbird/core';
@@ -606,6 +607,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
         this.markFormGroupTouched(control);
       }
     });
+  }
+
+  handleBack() {
+    this.programStageService.removeLastStage();
   }
 
   changeFile() {

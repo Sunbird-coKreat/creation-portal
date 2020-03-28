@@ -70,11 +70,12 @@ export class CollectionComponent implements OnInit, OnDestroy {
      }
 
   ngOnInit() {
+    this.programStageService.initialize();
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
       this.changeView();
     });
-
+    this.programStageService.addStage('collectionComponent');
     this.currentStage = 'collectionComponent';
     this.userProfile = _.get(this.collectionComponentInput, 'userProfile');
     this.collectionComponentConfig = _.get(this.collectionComponentInput, 'config');
@@ -412,10 +413,6 @@ export class CollectionComponent implements OnInit, OnDestroy {
     }, error => {
       this.toasterService.error('Failed fetching current nomination status');
     });
-  }
-
-  goBack() {
-    this.navigationHelperService.navigateToPreviousUrl();
   }
 
   toggleUploadSampleButton(data) {
