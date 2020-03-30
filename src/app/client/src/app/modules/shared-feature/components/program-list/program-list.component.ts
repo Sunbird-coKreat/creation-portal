@@ -38,6 +38,7 @@ export class ProgramListComponent implements OnInit {
   public telemetryInteractObject: any;
   public nominationList;
   public sortColumnName = '';
+  public showLoader = true;
   constructor(private programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService ) { }
@@ -112,13 +113,13 @@ export class ProgramListComponent implements OnInit {
                 const temp = _.filter(tempPrograms, tempProgram => {
                   return !enrolledPrograms.includes(tempProgram.program_id);
                  });
-
                 this.programs = this.filterProgramByDate(temp);
               } else {
                 this.programs = this.filterProgramByDate(tempPrograms);
               }
               this.count = this.programs.length;
               this.sortPrograms = this.programs;
+              this.showLoader = false;
             }, error => {
               this.toasterService.error(_.get(error, 'error.params.errmsg') || 'Fetching Programs failed');
             }
@@ -156,9 +157,8 @@ export class ProgramListComponent implements OnInit {
   public getContributionProgramList(req) {
     this.programsService.getMyProgramsForContrib(req)
         .subscribe((response) => {
-
         this.programs = _.map(_.get(response, 'result.programs'), (nomination: any) => {
-          if(nomination.program) {
+          if (nomination.program) {
             nomination.program = _.merge({}, nomination.program, {
               contributionDate: nomination.createdon,
               nomination_status: nomination.status,
@@ -174,8 +174,8 @@ export class ProgramListComponent implements OnInit {
             return  nomination;
           }
 
-          });
-
+        });
+        this.showLoader = false;
         this.enrollPrograms = this.programs;
         this.sortPrograms = this.programs;
         this.count = _.get(response, 'result.count');

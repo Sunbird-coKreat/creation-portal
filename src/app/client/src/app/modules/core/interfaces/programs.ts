@@ -3,17 +3,17 @@ export interface IProgramsList {
 }
 
 export interface IProgram {
-    programId: string;
-    config: IConfig;
-    defaultRoles: string[];
-    description: string;
-    endDate: null;
-    name: string;
-    slug: string;
-    startDate: string;
-    status: null;
-    type: string;
-    userDetails: IUserDetails;
+    programId?: string;
+    config?: IConfig;
+    defaultRoles?: string[];
+    description?: string;
+    endDate?: null;
+    name?: string;
+    slug?: string;
+    startDate?: string;
+    status?: null;
+    type?: string;
+    userDetails?: IUserDetails;
 }
 
 export interface IConfig {
