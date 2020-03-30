@@ -267,7 +267,10 @@ export class CollectionComponent implements OnInit, OnDestroy {
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage  = _.last(this.state.stages).stage;
     }
-  }
+    if (this.sessionContext && this.programContext && this.currentStage === 'collectionComponent') {
+      this.getCollectionCard();
+    }
+   }
 
   searchCollection() {
     const req = {
