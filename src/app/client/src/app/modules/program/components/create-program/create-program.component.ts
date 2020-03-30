@@ -493,26 +493,28 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
  }
 
  sort(colName) {
-   const collections = [];
-  _.forEach(this.sortCollection, (collection) => {
-   console.log(collection.name, "this is the name")
-   console.log(collection.medium, "this is medium data")
-   console.log(collection.name, "this is the name")
-   console.log(collection.colName, "this is dynamic collection eith . operator")
-   console.log(collection[colName], "this is dynamic collection eith array operator")
-   
-  });
-  console.log(collections)
-   console.log(this.sortCollection, "yhis is the sort collection")
-   console.log(colName, "this is the column ne")
-  if (this.direction === 'asc' || this.direction === ''){
-      this.collections = this.sortCollection.sort((a,b) => b[colName].localeCompare(a[colName]))
-    this.direction = 'desc';
-  } else {
-    this.collections =  this.sortCollection.sort((a,b) => a[colName].localeCompare(b[colName]));
-    this.direction = 'asc';
+  if(colName != 'gradeLevel')
+  {
+    if (this.direction === 'asc' || this.direction === ''){
+      this.collections = this.sortCollection.sort((a,b) => 
+      b[colName] ? b[colName].localeCompare(a[colName]) : -1 )
+      this.direction = 'desc';
+    } else {
+      this.collections =  this.sortCollection.sort((a,b) => a[colName] ? a[colName].localeCompare(b[colName]) : 1);
+      this.direction = 'asc';
+    }
   }
-  //this.sortColumnName = colName;
+  else if(colName == 'gradeLevel' )
+  {
+    if (this.direction === 'asc' || this.direction === ''){
+      this.collections = this.sortCollection.sort((a,b) =>  -1 )
+      this.direction = 'desc';
+    } else {
+      this.collections =  this.sortCollection.sort((a,b) => 1);
+      this.direction = 'asc';
+    }
+  }
+  this.sortColumnName = colName;
 }
 
  addCollectionsToProgram() {
