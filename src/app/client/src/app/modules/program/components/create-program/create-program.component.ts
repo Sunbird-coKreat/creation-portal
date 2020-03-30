@@ -14,7 +14,7 @@ import { HttpClient } from '@angular/common/http';
 import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEventInput } from '@sunbird/telemetry';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import * as moment from 'moment';
-import * as alphaNumSort from 'alphanum-sort';
+//import * as alphaNumSort from 'alphanum-sort';
 
 @Component({
  selector: 'app-create-program',
@@ -69,6 +69,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
  subjectsOption = [];
  mediumOption = [];
  gradeLevelOption = [];
+ public sortColumnName = '';
+ public direction = '';
+ public sortCollection: any;
  pickerMinDate = new Date(new Date().setHours(0, 0, 0, 0));
  pickerMinDateForEndDate = new Date(new Date().setHours(0, 0, 0, 0));
  public telemetryImpression: IImpressionEventInput;
@@ -183,16 +186,16 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.userBoard = this.userprofile.framework.board[0];
   }
 
-  this.frameworkCategories.forEach((element) => {
-    const sortedArray = alphaNumSort(_.reduce(element['terms'], (result, value) => {
-      result.push(value['name']);
-      return result;
-    }, []));
-    const sortedTermsArray = _.map(sortedArray, (name) => {
-      return _.find(element['terms'], {name: name});
-    });
-    this.programScope[element['code']] = sortedTermsArray;
-  });
+  // this.frameworkCategories.forEach((element) => {
+  //   const sortedArray = alphaNumSort(_.reduce(element['terms'], (result, value) => {
+  //     result.push(value['name']);
+  //     return result;
+  //   }, []));
+  //   const sortedTermsArray = _.map(sortedArray, (name) => {
+  //     return _.find(element['terms'], {name: name});
+  //   });
+  //   this.programScope[element['code']] = sortedTermsArray;
+  // });
 
   const mediumOption = this.programsService.getAssociationData(board.terms, 'medium', this.frameworkCategories);
 
@@ -438,6 +441,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      (res) => {
        this.showTextBookSelector = true;
        this.collections = res.result.content;
+       this.sortCollection = res.result.content;
      },
      (err) => {
        console.log(err);
@@ -487,6 +491,29 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      }
    );
  }
+
+ sort(colName) {
+   const collections = [];
+  _.forEach(this.sortCollection, (collection) => {
+   console.log(collection.name, "this is the name")
+   console.log(collection.medium, "this is medium data")
+   console.log(collection.name, "this is the name")
+   console.log(collection.colName, "this is dynamic collection eith . operator")
+   console.log(collection[colName], "this is dynamic collection eith array operator")
+   
+  });
+  console.log(collections)
+   console.log(this.sortCollection, "yhis is the sort collection")
+   console.log(colName, "this is the column ne")
+  if (this.direction === 'asc' || this.direction === ''){
+      this.collections = this.sortCollection.sort((a,b) => b[colName].localeCompare(a[colName]))
+    this.direction = 'desc';
+  } else {
+    this.collections =  this.sortCollection.sort((a,b) => a[colName].localeCompare(b[colName]));
+    this.direction = 'asc';
+  }
+  //this.sortColumnName = colName;
+}
 
  addCollectionsToProgram() {
    _.forEach(this.tempCollections, (collection) => {
