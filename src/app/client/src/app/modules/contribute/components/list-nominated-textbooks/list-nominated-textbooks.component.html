@@ -149,6 +149,9 @@
 			<div class='practical-sb-buttons' *ngIf="!nominated">
 				<button class="sb-btn sb-btn-secondary sb-btn-normal">Express Interest</button>
 			</div>
+			<div class='practical-sb-buttons' *ngIf="nominated">
+				{{ resourceService.frmelmnts.lbl.status }}: <span _ngcontent-lor-c8="" class="sb-label sb-label-table sb-label-primary-100">{{ nominationDetails?.status }}</span>
+			</div>
 		</div>
 	</div>
 
