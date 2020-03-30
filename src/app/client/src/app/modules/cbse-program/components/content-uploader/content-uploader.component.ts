@@ -206,7 +206,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
 
   uploadByURL(fileUpload, mimeType) {
     this.loading = true;
-    if (fileUpload && !this.contentMetaData.identifier && !this.contentUploadComponentInput.contentId) {
+    if (fileUpload && !this.contentMetaData && !this.contentUploadComponentInput.contentId) {
       let creator = this.userService.userProfile.firstName;
       if (!_.isEmpty(this.userService.userProfile.lastName)) {
         creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
