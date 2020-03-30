@@ -371,6 +371,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       createdBy: node.createdBy || null,
       parentId: node.parent || null,
       prevStatus: node.prevStatus || null,
+      sampleContent: node.sampleContent || null,
       sharedContext: {
         ...sharedMeta
       }
@@ -391,7 +392,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   shouldContentBeVisible(content) {
     const creatorViewRole = this.actions.showCreatorView.roles.includes(this.sessionContext.currentRoleId);
     const reviewerViewRole = this.actions.showReviewerView.roles.includes(this.sessionContext.currentRoleId);
-    if (reviewerViewRole && content.status === 'Review' && this.currentUserID !== content.createdBy) {
+    if ((this.sessionContext.nominationDetails.status === 'Approved' || this.sessionContext.nominationDetails.status === 'Rejected')
+     && content.sampleContent === true) {
+      return false;
+    } else if (reviewerViewRole && content.status === 'Review' && this.currentUserID !== content.createdBy) {
       return true;
     } else if (creatorViewRole && this.currentUserID === content.createdBy) {
       return true;

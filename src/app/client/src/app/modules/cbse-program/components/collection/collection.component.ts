@@ -267,7 +267,10 @@ export class CollectionComponent implements OnInit, OnDestroy {
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage  = _.last(this.state.stages).stage;
     }
-  }
+    if (this.sessionContext && this.programContext && this.currentStage === 'collectionComponent') {
+      this.getCollectionCard();
+    }
+   }
 
   searchCollection() {
     const req = {
@@ -410,7 +413,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
         });
        } else {
         req['url'] = `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_ADD}`;
-        req.data.request['status'] = 'Initiated';
+        req.data.request['status'] = 'Pending';
         req.data.request['createdby'] = creator;
         this.programsService.post(req).subscribe((data) => {
           this.toasterService.success('Nomination sent');
