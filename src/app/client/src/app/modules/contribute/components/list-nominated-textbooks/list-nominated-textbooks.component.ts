@@ -116,7 +116,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       this.programContext = this.programDetails;
       this.mediums = _.join(this.programDetails.config['medium'], ', ');
       this.grades = _.join(this.programDetails.config['gradeLevel'], ', ');
-
+      console.log(this.sessionContext);
       this.sessionContext.framework = _.get(this.programDetails, 'config.framework');
       if (this.sessionContext.framework) {
         this.fetchFrameWorkDetails();
