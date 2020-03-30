@@ -250,7 +250,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      shortlisting_enddate: [''],
      program_end_date: ['', Validators.required],
      content_submission_enddate: ['', Validators.required],
-     content_types: [],
+     content_types: ['', Validators.required],
      rewards: [],
      /*medium: ['', Validators.required],
      gradeLevel: ['', Validators.required],
@@ -356,6 +356,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    this.handleContentTypes();
 
    if (this.createProgramForm.dirty && this.createProgramForm.valid) {
+    const contentTypes = this.createProgramForm.value.content_types;
+    this.createProgramForm.value.content_types = _.isEmpty(contentTypes) ?  [] : contentTypes;
     this.programData = {
        ...this.createProgramForm.value
      };

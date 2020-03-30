@@ -37,6 +37,7 @@ export class ProgramListComponent implements OnInit {
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
   public nominationList;
+  public sortColumnName = '';
   constructor(private programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService ) { }
@@ -87,15 +88,44 @@ export class ProgramListComponent implements OnInit {
    * fetch the list of programs.
    */
   private getAllProgramsForContrib(type, status) {
-    return this.programsService.getAllProgramsByType(type, status).subscribe(
+    this.programsService.getAllProgramsByType(type, status).subscribe(
       response => {
-        this.programs = _.get(response, 'result.programs');
-        if (this.programs.length) {
-           const program = this.filterProgramByDate(this.programs);
-           this.count = _.get(response, 'result.count');
-           this.programs = program;
-           this.sortPrograms = this.programs;
+        let tempPrograms = _.get(response, 'result.programs');
+        if (tempPrograms.length) {
+          const req = {
+            request: {
+              filters: {
+                enrolled_id: {
+                  user_id: _.get(this.userService, 'userProfile.userId'),
+                },
+                status: status
+              }
+            }
+          };
+
+          this.programsService.getMyProgramsForContrib(req)
+          .subscribe((thisresponse) => {
+              if (!_.isEmpty(_.get(thisresponse, 'result.programs'))) {
+                const enrolledPrograms = _.map(_.get(thisresponse, 'result.programs'), (nomination: any) => {
+                  return nomination.program_id;
+                });
+                const temp = _.filter(tempPrograms, tempProgram => {
+                  return !enrolledPrograms.includes(tempProgram.program_id);
+                 });
+
+                this.programs = this.filterProgramByDate(temp);
+              } else {
+                this.programs = this.filterProgramByDate(tempPrograms);
+              }
+              this.count = this.programs.length;
+              this.sortPrograms = this.programs;
+            }, error => {
+              this.toasterService.error(_.get(error, 'error.params.errmsg') || 'Fetching Programs failed');
+            }
+          );
         }
+      }, error => {
+        this.toasterService.error(_.get(error, 'error.params.errmsg') || 'Fetching Programs failed');
       }
     );
   }
@@ -114,13 +144,14 @@ export class ProgramListComponent implements OnInit {
   }
 
   sort(colName) {
-    if (this.direction === 'asc'){
-      this.programs =  this.sortPrograms.sort((a,b) => 0 - (a[colName] > b[colName] ? -1 : 1));
-      this.direction = 'dsc';
+    if (this.direction === 'asc' || this.direction === ''){
+        this.programs = this.sortPrograms.sort((a,b) => b[colName].localeCompare(a[colName]))
+      this.direction = 'desc';
     } else {
-      this.programs =  this.sortPrograms.sort((a, b) => a[colName] < b[colName] ? 1 : a[colName] > b[colName] ? -1 : 0)
+        this.programs =  this.sortPrograms.sort((a,b) => a[colName].localeCompare(b[colName]));
       this.direction = 'asc';
     }
+    this.sortColumnName = colName;
   }
   public getContributionProgramList(req) {
     this.programsService.getMyProgramsForContrib(req)
@@ -167,9 +198,15 @@ export class ProgramListComponent implements OnInit {
       this.programsService.getNominationList(filters)
         .subscribe(
           (data) => {
+          // Get only those programs for which user has been added contributor or reviewer and the nomination is in "Approved" state
           if (data.result && data.result.length > 0) {
             this.nominationList = _.map(_.filter(data.result, obj => {
-              return obj.status === 'Approved';
+              if (obj.rolemapping
+                && (( obj.rolemapping.CONTRIBUTOR.includes(_.get(this.userService, 'userProfile.userId' )))
+                || ( obj.rolemapping.REVIEWER.includes(_.get(this.userService, 'userProfile.userId' ))))
+                && obj.status === 'Approved') {
+                  return obj;
+                }
             }), 'program_id');
 
             const req = {

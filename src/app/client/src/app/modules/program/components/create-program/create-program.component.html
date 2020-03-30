@@ -152,7 +152,7 @@
 								</div>
 							</div>
 							<div class="twelve wide column">
-								<div class="field">
+								<div class="required field">
 									<label class="d-block">{{resource.frmelmnts.lbl.contentType}}
 											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" [popupPlacement]="'left'"  popupText="{{resource.frmelmnts.lbl.contentTypesHint}}"></i>
 									</label>
@@ -162,17 +162,12 @@
 										<sui-select-option *ngFor="let option of programScope.purpose" [value]="option">
 										</sui-select-option>
 									</sui-multi-select>
+									<div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['content_types'].errors && createProgramForm.controls['content_types'].errors.required && (!createProgramForm.controls['content_types'].pristine || formIsInvalid)">
+										{{ resource.frmelmnts.lbl.contentTypesRequired }}
+									</div>
 								</div>
 							</div>
-							<!--div class="twelve wide column">
-								<div class="field">
-									<label>Certificates to be awarded </label>
-									<select class="ui fluid dropdown">
-										<option value="">Select</option>
-										<option value="dummy">Dummy</option>
-									</select>
-								</div>
-							</div-->
+
 							<div class="twelve wide column">
 								<div class="field">
 									<label class="d-block">{{resource.frmelmnts.lbl.recongnitionToContributors}}
