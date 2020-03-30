@@ -12,6 +12,7 @@ import * as _ from 'lodash-es';
 })
 export class OrgUserListComponent implements OnInit, AfterViewInit {
   data;
+  position;
   options;
   showNormalModal;
   public telemetryImpression: IImpressionEventInput;
@@ -26,6 +27,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router) { }
 
   ngOnInit() {
+    this.position = 'top center';
     this.data = {
       'board': [{
           'name': 'admin',
@@ -71,25 +73,27 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
      });
   }
 
+  copyOnLoad() {
+    this.showNormalModal = true;
+    setTimeout(() => {
+      this.copyLinkToClipboard();
+    }, 300);
+  }
+
   copyLinkToClipboard() {
     if (!this.orgLink) {
       this.toasterService.error(this.resourceService.messages.emsg.invite.user.m0001);
       this.showNormalModal = false;
       return ;
     }
+    console.log(this.showNormalModal);
 
-    const selBox = document.createElement('textarea');
-    selBox.style.position = 'fixed';
-    selBox.style.left = '0';
-    selBox.style.top = '0';
-    selBox.style.opacity = '0';
-    selBox.value = this.orgLink;
-    document.body.appendChild(selBox);
-    selBox.focus();
-    selBox.select();
-    document.execCommand('copy');
-    document.body.removeChild(selBox);
-    this.toasterService.success(this.resourceService.frmelmnts.lbl.linkCopied);
+    if (this.showNormalModal) {
+      const input = document.getElementById('copyLinkData') as HTMLInputElement;
+      input.select();
+      input.focus();
+      document.execCommand('copy');
+    }
   }
 
   getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
