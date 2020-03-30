@@ -181,7 +181,6 @@
 											<th class="sb-sort-icon w-5">{{resourceService.frmelmnts.lbl.Class}}</th>
 											<th class="w-5">{{resourceService.frmelmnts.lbl.subject}}</th>
 											<th class="w-5">{{resourceService.frmelmnts.lbl.chapters}}</th>
-											<th class="w-5">{{resourceService.frmelmnts.lbl.status}}</th>
 											<th class="w-5"></th>
 										</tr>
 									</thead>
@@ -194,14 +193,15 @@
 											<td>{{contributorTextbook.gradeLevel}}</td>
 											<td>{{contributorTextbook.subject}}</td>
 											<td>5</td>
-											<td>Pending</td>
 											<td>
-												<button *ngIf="currentNominationStatus === 'Approved'" type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(contributorTextbook)" appTelemetryInteract
+												<button *ngIf="currentNominationStatus === 'Approved'"
+												type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary"
+												[disabled]="!canUploadContent()" (click)="viewContribution(contributorTextbook)" appTelemetryInteract
 												[telemetryInteractEdata]="getTelemetryInteractEdata('upload-content', 'click', 'list-nominated-textbooks')"
 												[telemetryInteractObject]="telemetryInteractObject"
 												[telemetryInteractCdata]="telemetryInteractCdata"
-												[telemetryInteractPdata]="telemetryInteractPdata">{{this.sessionContext.currentRole === 'Contributor' ?  'Upload Content' : 'Review Content'}}</button>
-												</td>
+												[telemetryInteractPdata]="telemetryInteractPdata">{{this.sessionContext.currentRole === 'CONTRIBUTOR' ?  'Upload Content' : 'Review Content'}}</button>
+										</td>
 										</tr>
 									</tbody>
 								</table>
