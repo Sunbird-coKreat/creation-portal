@@ -343,6 +343,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      const control = formGroup.get(field);
      control.markAsTouched();
    });
+   this.validateDates();
  }
 
  navigateTo(stepNo) {
@@ -453,8 +454,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      this.formIsInvalid = true;
      this.validateAllFormFields(this.createProgramForm);
    }
-
-   this.validateDates();
  }
 
  showTexbooklist() {
