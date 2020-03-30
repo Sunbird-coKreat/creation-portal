@@ -49,6 +49,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   role: any = {};
   collection;
   configData;
+  showAcceptRejectBtns = true;
   selectedNominationDetails: any;
   showRequestChangesPopup: boolean;
   @ViewChild('FormControl') FormControl: NgForm;
@@ -87,6 +88,10 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       if (this.sessionContext.framework) {
         this.fetchFrameWorkDetails();
       }
+
+      const shortlistingDate  = moment(this.programDetails.shortlisting_enddate);
+      const today = moment();
+      this.showAcceptRejectBtns = shortlistingDate.isSame(today) || shortlistingDate.isAfter(today);
     }, error => {
       // TODO: navigate to program list page
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');

@@ -1,6 +1,6 @@
 <div *ngIf="!showLoader && !showError && currentStage === 'collectionComponent'">
-  <div class="sb-bg-color-primary-0 practical-header py-16">
-    <div class="d-flex flex-ai-center flex-jc-space-between practical-header__content ui container p-0">
+  <div class="sb-bg-color-primary-0 practical-header py-20">
+    <div class="d-flex flex-jc-space-between practical-header__content ui container py-10">
       <div class="practical-header__title flex-basis-1">
         <h5 class="m-0 p-0 font-weight-bold d-inline-block">{{programContext.name}} </h5>
         <ng-template #popupTemplate>
@@ -94,13 +94,13 @@
         <table class="sb-table sb-table-striped sb-table-sortable sb-table-fixed">
           <thead class="sb-table-header sb-table-thead-gray">
             <tr>
-              <th class="sb-sort-icon w-8">Textbook</th>
+              <th class="sb-sort-icon w-5">{{resourceService.frmelmnts.lbl.textbook}}</th>
               <th class="sb-sort-icon w-5">{{resourceService.frmelmnts.lbl.profile.Medium}}</th>
               <th class="sb-sort-icon w-5">{{resourceService.frmelmnts.lbl.class}}</th>
               <th class="sb-sort-icon w-5">{{resourceService.frmelmnts.lbl.subject}}</th>
               <th class="sb-sort-icon w-5">{{resourceService.frmelmnts.lbl.chapters}}</th>
               <th class="sb-sort-icon w-5" *ngIf="currentNominationStatus === 'Initiated' || currentNominationStatus=== 'Pending'">Sample Content</th>
-              <th class="text-center w-5"></th>
+              <th class="w-5"></th>
             </tr>
           </thead>
           <tbody class="sb-table-body">
@@ -123,9 +123,9 @@
                 {{ data.childNodes ? data.childNodes.length : 0 }}
               </td>
               <td *ngIf="currentNominationStatus === 'Initiated' || currentNominationStatus=== 'Pending'">{{data.sampleContentCount || 0 }}</td>
-              <td class="text-center">
+              <td>
                 <input type="checkbox" *ngIf="!data.sampleContentCount" [checked]="data.isSelected || data.sampleContentCount" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
-                <button type="button" *ngIf="data.isSelected || data.sampleContentCount" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10">Upload Sample</button>
+                <button type="button" *ngIf="data.isSelected || data.sampleContentCount" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10 px-10">Upload Sample</button>
               </td>
             </tr>
           </tbody>

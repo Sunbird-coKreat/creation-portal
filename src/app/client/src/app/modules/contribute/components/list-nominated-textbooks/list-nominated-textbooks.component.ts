@@ -208,6 +208,13 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     this.programStageService.addStage('chapterListComponent');
   }
 
+  canUploadContent() {
+    const contributionendDate  = moment(this.programDetails.content_submission_enddate);
+    const endDate  = moment(this.programDetails.enddate);
+    const today = moment();
+    return (contributionendDate.isSameOrAfter(today) && endDate.isSameOrAfter(today)) ? true : false;
+  }
+
    setActiveDate() {
     const dates = [ 'nomination_enddate', 'shortlisting_enddate', 'content_submission_enddate', 'enddate'];
 
@@ -253,7 +260,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           this.sessionContext.currentOrgRole = this.userService.userProfile.userRegData.User_Org.roles[0];
           if (this.userService.userProfile.userRegData.User_Org.roles[0] === 'admin') {
             // tslint:disable-next-line:max-line-length
-            this.sessionContext.currentRole = (this.currentNominationStatus === 'Approved' ||  this.currentNominationStatus === 'Rejected') ? 'REVIEWER' : 'CONTRIBUTOR';
+            this.sessionContext.currentRole = (this.currentNominationStatus === 'Approved' ||  this.currentNominationStatus === 'Rejected') ? 'Reviewer' : 'Contributor';
           } else if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.rolemapping) {
               _.find(this.sessionContext.nominationDetails.rolemapping, (users, role) => {
                 if (_.includes(users, this.userService.userProfile.userRegData.User.userId)) {
