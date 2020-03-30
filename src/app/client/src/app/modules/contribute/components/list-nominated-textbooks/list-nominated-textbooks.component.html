@@ -229,7 +229,7 @@
 							<th>Username</th>
 							<th>Grade</th>
 							<th>Subject</th>
-							<th>ContentTypes</th>
+							<th>Content Type(s)</th>
 							<th>Roles</th>
 						  </tr>
 						</thead>
@@ -246,11 +246,16 @@
 								</div>
 							</td>
 							<td>
-								<sui-select class="selection pt-5" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="options" valueField="name"
-								(selectedOptionChange)="onRoleChange()">
-									<sui-select-option *ngFor="let option of roles;" [value]="option">
-									</sui-select-option>
-								</sui-select>
+								<div *ngIf="nominationDetails?.status === 'Rejected'; else elseBlock">
+									{{ orgUser?.selectedRole }}
+								</div>
+								<ng-template #elseBlock>
+									<sui-select class="selection" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="options" valueField="name"
+									(selectedOptionChange)="onRoleChange()">
+										<sui-select-option *ngFor="let option of roles;" [value]="option">
+										</sui-select-option>
+									</sui-select>
+								</ng-template>
 							</td>
 						  </tr>
 						</tbody>
