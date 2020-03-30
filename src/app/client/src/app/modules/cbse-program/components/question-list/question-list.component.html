@@ -1,26 +1,40 @@
 <!-- Untitled Practice Set Section with text field -->
 <div class="d-flex sb-bg-color-gray-0 practical-header" [appTelemetryImpression]="telemetryImpression">
+  <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="handleBack()"
+  type="button"
+  appTelemetryInteract
+[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('go-back', 'click', 'content-uploader')"
+[telemetryInteractObject]="telemetryInteractObject"
+[telemetryInteractCdata]="telemetryInteractCdata"
+[telemetryInteractPdata]="telemetryInteractPdata">
+            <i class="icon-svg icon-svg--xxs icon-back mr-4">
+                <svg class="icon icon-svg--primary">
+                    <use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
+                </svg>
+            </i>
+            Back
+        </button>
   <div class="d-flex flex-ai-center practical-header__content ui container">
     <div class="mr-auto" *ngIf="!showTextArea">
       <div class="d-flex flex-ai-center">
         <span class="font-weight-bold fs-1 practical-header__title">{{resourceName}}</span>
-        <a class="cursor-pointer fsmall sb-color-primary ml-16" 
-          appTelemetryInteract 
+        <a class="cursor-pointer fsmall sb-color-primary ml-16"
+          appTelemetryInteract
           [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('edit-resourcetitle', 'click', 'question-list')"
           [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
           [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
-          (click)="showResourceTitleEditor()" 
+          (click)="showResourceTitleEditor()"
           *ngIf="visibility && visibility.showSave"
         >Edit</a>
       </div>
       <div class="mt-8 practice-set__status">
-       
+
         <span class="sb-label sb-label-table sb-label-success-0"
         [ngClass]="{ 'sb-label-success-0': resourceStatus === 'Live', 'sb-label-warning-0': (resourceStatus === 'Draft'),  'sb-label-error-0': (resourceStatus === 'Draft' && resourceDetails.rejectComment && resourceDetails.rejectComment !== '') ,  'sb-label-gray-0': resourceStatus === 'Review' }">{{ resourceStatusText }}</span>
-        
-        <span class="cursor-pointer fs-0-785 ml-8" 
-        appTelemetryInteract 
+
+        <span class="cursor-pointer fs-0-785 ml-8"
+        appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('view-reviewercomments', 'click', 'question-list')"
         [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
         [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
@@ -39,44 +53,44 @@
     </div>
     <div class='practical-sb-buttons'>
       <button id="saveContent" *ngIf="visibility && visibility.showSave" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="questionCreationChild.buttonTypeHandler('save')"
-      appTelemetryInteract 
+      appTelemetryInteract
       [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('save-resourcemetadata', 'click', 'question-list')"
       [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
       [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
       >Save</button>
       <button id="requestChanges" *ngIf="visibility && visibility.showRequestChanges && resourceStatus === 'Review'" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true;"
-      appTelemetryInteract 
+      appTelemetryInteract
       [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-resource', 'click', 'question-list')"
       [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
       [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
       >Request Changes</button>
       <button class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" *ngIf="previewBtnVisibility" (click)="handlerContentPreview()"
-      appTelemetryInteract 
+      appTelemetryInteract
       [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('preview-resource', 'click', 'question-list')"
       [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
       [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
       >Preview</button>
-      <button class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" *ngIf="!previewBtnVisibility" (click)="questionCreationChild.buttonTypeHandler('edit');previewBtnVisibility = true;" 
-      appTelemetryInteract 
+      <button class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" *ngIf="!previewBtnVisibility" (click)="questionCreationChild.buttonTypeHandler('edit');previewBtnVisibility = true;"
+      appTelemetryInteract
       [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('edit-resource', 'click', 'question-list')"
       [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
       [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
       >Edit</button>
-      <button id="publishContent" *ngIf="visibility && visibility.showPublish && resourceStatus === 'Review'" class="sb-btn sb-btn-normal mr-8" 
+      <button id="publishContent" *ngIf="visibility && visibility.showPublish && resourceStatus === 'Review'" class="sb-btn sb-btn-normal mr-8"
       [ngClass]="isPublishBtnDisable ? 'sb-btn-disabled' : 'sb-btn-secondary'"
       [disabled] = "isPublishBtnDisable" (click)="publishContent()"
-      appTelemetryInteract 
+      appTelemetryInteract
       [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('publish-resource', 'click', 'question-list')"
       [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
       [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
       >Publish</button>
       <button id="submitContent"  *ngIf="visibility && visibility.showSubmit && resourceStatus === 'Draft'" class="sb-btn sb-btn-secondary sb-btn-normal" (click)="questionCreationChild.buttonTypeHandler('review')"
-      appTelemetryInteract 
+      appTelemetryInteract
       [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('submit-resourceforreview', 'click', 'question-list')"
       [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
       [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
@@ -84,7 +98,7 @@
       >Submit</button>
     </div>
   </div>
-</div> 
+</div>
 
 <div class="ui container">
   <div class="ui twelve column grid m-0">
@@ -96,7 +110,7 @@
         <!-- add button to be integrated -->
         <button  class="sb-btn sb-btn-outline-primary sb-btn-normal sb-left-icon-btn sb-btn-radius ml-auto"
         *ngIf="visibility && visibility.showCreateQuestion" (click)="createNewQuestion()"
-        appTelemetryInteract 
+        appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('create-question', 'click', 'question-list')"
         [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
         [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
@@ -104,12 +118,12 @@
         <i class="plus icon mr-4 ml-4"></i>ADD</button>
       </div>
 
-  
+
       <div class="question-list">
         <div class="question-list__item active d-flex flex-ai-center p-16 cursor-pointer"
           [class.active]="selectedQuestionId === question.identifier"
           (click)="handleQuestionTabChange(question.identifier);" *ngFor="let question of questionList; let i = index;"
-          appTelemetryInteract 
+          appTelemetryInteract
           [telemetryInteractEdata]="{id:'question_tab',type:'click',pageid:'question-list',extra: {type:'reference',category:question.category,identifier:question.identifier}}"
           [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
           [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
@@ -117,7 +131,7 @@
           <label class="mb-0 mr-auto" for="check1"> Question {{i + 1}}</label>
           <img src="../../../../../assets/images/exclamation-icon.svg" *ngIf="question.rejectComment && question.rejectComment !== '' " class="ml-8" width="20px" height="16px">
           <i class="trash alternate outline icon ml-24" *ngIf="visibility && visibility.showDeleteQuestion"
-          appTelemetryInteract 
+          appTelemetryInteract
           [telemetryInteractEdata]="{id:'delete-question',type:'click',pageid:'question-list',extra: {type:'reference',category:question.category,identifier:question.identifier}}"
           [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
           [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
@@ -184,7 +198,7 @@
       Delete Question
   </div>
   <div class="sb-modal-content">
-      <p>Do you want to delete the question?</p> 
+      <p>Do you want to delete the question?</p>
   </div>
   <div class="sb-modal-actions">
     <button type="button" class="sb-btn sb-btn-normal" (click)="deleteQuestion()"> Delete </button>
@@ -201,7 +215,7 @@
     <div class="sb-publish-content">
       <div class="sb-publish-content-title"> Click Publish to:</div>
       <p class="py-8">
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled 
+          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled
       </p>
     </div>
   </div>
@@ -218,7 +232,7 @@
   </div>
   <div class="sb-modal-content">
       <div class="sb-publish-content">
-        <div class="review-modal-list"> 
+        <div class="review-modal-list">
           {{resourceDetails?.rejectComment}}
       </div>
       </div>
@@ -237,7 +251,7 @@
   <div class="sb-modal-content">
       <div class="sb-field-group">
           <label>Enter your comments</label>
-          <div class="sb-field relative">  
+          <div class="sb-field relative">
               <textarea type="text" class="wmd-input width-100 sb-form-control" id="wmd-input" [(ngModel)]="contentRejectComment" placeholder="Add comment" name="contentRejectComment" required></textarea>
               <span class="characters-left">{{ commentCharLimit - contentRejectComment.length }} Characters left</span>
           </div>
