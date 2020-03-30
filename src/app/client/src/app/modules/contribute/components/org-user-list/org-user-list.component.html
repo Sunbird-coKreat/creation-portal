@@ -28,7 +28,7 @@
   <div class="sb-modal-content">
     <p class="mb-8">{{ resourceService.frmelmnts.lbl.sharelink }}</p>
     <div class="ui action input fluid">
-      <input readonly="" value="{{orgLink}}" type="text" class="sb-bg-color-gray-100">
+      <input readonly="" value="{{orgLink}}" type="text">
       <button class="ui basic primary button" (click)="copyLinkToClipboard()" appTelemetryInteract
         [telemetryInteractEdata]="getTelemetryInteractEdata('copy-link', 'click', 'org-user-list')"
         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
