@@ -1,7 +1,7 @@
 <div class="sb-bg-color-primary-0 py-15" *ngIf="currentStage === 'listContributorTextbook'" [appTelemetryImpression]="telemetryImpression">
 	<div class="sb-bg-color-primary-0 practical-header">
 		<div class="ui container">
-				<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn fs-0-92" (click)="goBack()"
+				<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn fs-0-92 pl-0" (click)="goBack()"
 						type="button"
 						appTelemetryInteract
 				[telemetryInteractEdata]="getTelemetryInteractEdata('list-textbooks', 'click', 'list-nominated-textbooks')"
@@ -142,7 +142,7 @@
 						</dl>
 						<dl class="sb-meta-data mb-0 pr-8">
 							<dt class="sb__ellipsis">{{resourceService.frmelmnts.lbl.status}}</dt>
-							<dd><span class="sb-label sb-label-table sb-label-warning-0">{{contributor?.nominationData?.status }}</span></dd>
+							<dd><span>{{contributor?.nominationData?.status }}</span></dd>
 						</dl>
 						<dl class="sb-meta-data mb-0 pr-8 w-30">
 							<dt class="sb__ellipsis">{{resourceService?.frmelmnts?.lbl?.contentType}}</dt>
