@@ -68,7 +68,11 @@
 					</ng-template>
 				<p class="fs-0-785 font-weight-normal pr-10 sb__ellipsis sb__ellipsis--three">{{ programDetails?.description }}</p>
 			</div>
-				<div class="sb-meta-data-container sb-meta-data-column px-10">
+			<div class="sb-meta-data-container sb-meta-data-column px-10 w-20">
+				<label class="m-0">{{ resourceService.frmelmnts.lbl.contentType}}</label>
+				<p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{programDetails?.content_types?.join(', ')}}"><span>{{programDetails?.content_types?.join(', ')}}</span></p>
+			</div>
+				<!-- <div class="sb-meta-data-container sb-meta-data-column px-10">
 					<label class="width-100">Content Status </label>
 					<div class="d-flex">
 						<dl class="sb-meta-data">
@@ -92,9 +96,9 @@
 							<dd>Total</dd>
 						</dl>
 					</div>
-				</div>
+				</div> -->
 			<ng-container *ngIf="programDetails">
-				<div class="program-timeline px-16 w-30">
+				<div class="program-timeline px-10 w-40">
 				  <div class="program-timeline-item">
 					<div class="status" [class.active]="activeDate === 'nomination_enddate'">
 					  <div class="status__label">Nomination End Date</div>
@@ -137,19 +141,15 @@
 				  </div>
 				</div>
 			  </ng-container>
-			  <div class="sb-meta-data-container sb-meta-data-column px-10">
-				<label class="m-0">{{ resourceService.frmelmnts.lbl.contentType}}</label>
-				<p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{programDetails?.content_types?.join(', ')}}"><span>{{programDetails?.content_types?.join(', ')}}</span></p>
-			</div>
-			<div class="sb-meta-data-container sb-meta-data-column  px-10">
+			<div class="sb-meta-data-container sb-meta-data-column px-10">
 				<div class='practical-sb-buttons' *ngIf="nominated">
-					<label>{{ resourceService.frmelmnts.lbl.status }}:</label>
+					<label class="m-0">{{ resourceService.frmelmnts.lbl.status }}</label>
 					<p>{{ nominationDetails?.status }}</p>
 				</div>
 			</div>
 			<div class="sb-meta-data-container sb-meta-data-column  px-10">
 				<div *ngIf="nominated && nominationDetails.status=='Rejected'">
-					<label>{{ resourceService.frmelmnts.lbl.reasonsForRejection }}:</label>
+					<label class="m-0">{{ resourceService.frmelmnts.lbl.reasonsForRejection }}</label>
 					<p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.reasonsForRejection}}" popupText="{{nominationDetails?.feedback}}">{{ nominationDetails?.feedback }}</p>
 				</div>
 			</div>
