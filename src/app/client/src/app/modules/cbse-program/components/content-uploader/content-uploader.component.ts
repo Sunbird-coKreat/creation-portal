@@ -229,11 +229,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
               ...(_.pickBy(reqBody, _.identity))
               // 'framework': this.sessionContext.framework,
               // 'organisation': this.sessionContext.onBoardSchool ? [this.sessionContext.onBoardSchool] : [],
-
             }
           }
         }
       };
+      if (this.sessionContext.sampleContent) {
+        option.data.request.content.sampleContent = this.sessionContext.sampleContent;
+      }
       if (this.templateDetails.metadata.appIcon) {
         option.data.request.content.appIcon = this.templateDetails.metadata.appIcon;
       }
