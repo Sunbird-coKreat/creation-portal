@@ -6,7 +6,7 @@
         </h4>
       </div>
       <div>
-        <button class="sb-btn sb-btn-outline-primary sb-btn-normal ml-10 " (click)="showNormalModal = true;copyLinkToClipboard();"><i
+        <button class="sb-btn sb-btn-outline-primary sb-btn-normal ml-10 " (click)="copyOnLoad()"><i
             class="plus circle icon" appTelemetryInteract
             [telemetryInteractEdata]="getTelemetryInteractEdata('user-link', 'click', 'org-user-list')"
             [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
@@ -28,7 +28,7 @@
   <div class="sb-modal-content">
     <p class="mb-8">{{ resourceService.frmelmnts.lbl.sharelink }}</p>
     <div class="ui action input fluid">
-      <input readonly="" value="{{orgLink}}" type="text">
+      <input readonly="" value="{{orgLink}}" type="text" id="copyLinkData" suiPopup [popupPlacement]="position" popupText="{{resourceService?.frmelmnts?.lbl?.linkCopied}}" #popup="suiPopup" popupTrigger="focus">
       <button class="ui basic primary button" (click)="copyLinkToClipboard()" appTelemetryInteract
         [telemetryInteractEdata]="getTelemetryInteractEdata('copy-link', 'click', 'org-user-list')"
         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"

@@ -1,7 +1,7 @@
 <div *ngIf="showNominationsComponent" [appTelemetryImpression]="telemetryImpression">
     <div class="sb-bg-color-primary-0 practical-header py-16">
         <div class="d-flex  flex-jc-space-between practical-header__content ui container pt-15">
-            <div class="practical-header__title w-20">
+            <div class="practical-header__title">
                 <!-- <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="goBack()"
                     type="button">
                     <i class="icon-svg icon-svg--xxs icon-back mr-4">
@@ -33,12 +33,8 @@
                 <p class="fs-0-785 font-weight-normal pr-10 sb__ellipsis sb__ellipsis--three">{{ programDetails?.description }} </p>
             </div>
             <div class="sb-meta-data-container sb-meta-data-column w-10 px-10 w-30">
-				<label class="m-0 p-0">{{ resourceService.frmelmnts.lbl.contentType}}</label>
-				<p>
-					<span class="fs-0-785" *ngFor="let contentType of programDetails?.content_types;">
-						{{ contentType }}
-					</span>
-				</p>
+                    <label class="mb-0">{{resourceService?.frmelmnts?.lbl?.contentType}}</label>
+                    <p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{programDetails?.content_types?.join(', ')}}"><span>{{programDetails?.content_types?.join(', ')}}</span></p>
 			</div>
             <div class="sb-meta-data-container sb-meta-data-column px-10">
                 <label class="width-100">{{ resourceService?.frmelmnts?.lbl?.nominations }} </label>

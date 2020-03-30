@@ -1,9 +1,9 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { ConfigService, UtilService, ResourceService, NavigationHelperService, ToasterService } from '@sunbird/shared';
-import { PublicDataService, ContentService, UserService, ProgramsService, LearnerService  } from '@sunbird/core';
+import { PublicDataService, ContentService, UserService, ProgramsService, LearnerService, ActionService  } from '@sunbird/core';
 import * as _ from 'lodash-es';
 import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { throwError, forkJoin } from 'rxjs';
 import { CbseProgramService } from '../../services';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import { ISessionContext, IChapterListComponentInput } from '../../interfaces';
@@ -32,7 +32,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
   public collection;
   public collectionsWithCardImage;
   public role: any = {};
-  public collectionList: any = {};
+  public collectionList: any = [];
   public mediums;
   public showError = false;
   public classes;
@@ -53,14 +53,17 @@ export class CollectionComponent implements OnInit, OnDestroy {
   public showStage;
   public currentStage: any;
   public contentType:any;
+  public sampleDataCount = 0;
   public currentNominationStatus: any;
   public nominationDetails: any;
   showContentTypeModal = false;
   selectedContentTypes = [];
   selectedCollectionIds = [];
+  public currentUserID;
   _slideConfig = {'slidesToShow': 10, 'slidesToScroll': 1, 'variableWidth': true};
 
   constructor(private configService: ConfigService, public publicDataService: PublicDataService,
+    public actionService: ActionService,
     private cbseService: CbseProgramService, public programStageService: ProgramStageService,
     public resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService,
     public userService: UserService, private navigationHelperService: NavigationHelperService,
@@ -75,6 +78,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
       this.state.stages = state.stages;
       this.changeView();
     });
+    this.currentUserID = this.userService.userProfile.userId;
     this.programStageService.addStage('collectionComponent');
     this.currentStage = 'collectionComponent';
     this.userProfile = _.get(this.collectionComponentInput, 'userProfile');
@@ -143,10 +147,54 @@ export class CollectionComponent implements OnInit, OnDestroy {
       const collectionCards = this.utilService.getDataForCard(filteredTextbook, constantData, dynamicFields, metaData);
       this.collectionsWithCardImage = _.forEach(collectionCards, collection => this.addCardImage(collection));
       this.filterCollectionList(this.classes);
-      this.collectionList = res.result.content;
+      if ((this.currentNominationStatus === 'Initiated' || this.currentNominationStatus === 'Pending') && !_.isEmpty(res.result.content)) {
+        const collectionIds = _.map(res.result.content, 'identifier');
+        this.getCollectionHierarchy(collectionIds)
+          .subscribe(response => {
+            const hierarchies = _.map(response, r => {
+              if (r.result && r.result.content) {
+                return r.result.content;
+              } else {
+                return r.result;
+              }
+            });
+            _.forEach(hierarchies, hierarchy => {
+              this.sampleDataCount = 0;
+              hierarchy.sampleContentCount = this.getSampleContentStatusCount(hierarchy);
+            });
+            this.collectionList = _.map(res.result.content, content => {
+              const contentWithHierarchy =  _.find(hierarchies, {identifier: content.identifier});
+              content.sampleContentCount = contentWithHierarchy.sampleContentCount;
+              if (contentWithHierarchy.sampleContentCount > 0) {
+                this.selectedCollectionIds.push(contentWithHierarchy.identifier);
+              }
+              return content;
+            });
+        });
+
+      } else {
+        this.collectionList = res.result.content;
+      }
       this.showLoader = false;
       this.showError = false;
     });
+  }
+
+
+  getSampleContentStatusCount(data) {
+    const self = this;
+    if (data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' && data.sampleContent) {
+      if (data.createdBy === this.currentUserID) {
+        self.sampleDataCount = self.sampleDataCount + 1;
+      }
+    }
+    const childData = data.children;
+    if (childData) {
+      childData.map(child => {
+        self.getSampleContentStatusCount(child);
+      });
+    }
+    return self.sampleDataCount;
   }
 
   filterTextBook(filterArr) {
@@ -162,6 +210,19 @@ export class CollectionComponent implements OnInit, OnDestroy {
       }
     });
     return filteredTextbook;
+  }
+
+
+  getCollectionHierarchy(collectionIds) {
+   const hierarchyRequest =  _.map(collectionIds, id => {
+      const req = {
+        url: 'content/v3/hierarchy/' + id,
+        param: { 'mode': 'edit' }
+      };
+      return this.actionService.get(req);
+    });
+
+    return forkJoin(hierarchyRequest);
   }
 
   setAndClearFilterIndex(index: number) {
