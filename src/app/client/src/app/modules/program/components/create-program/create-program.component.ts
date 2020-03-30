@@ -351,6 +351,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
  }
 
  validateDates() {
+    let hasError = false;
     const formData = this.createProgramForm.value;
     const nominationEndDate = moment(formData.nomination_enddate);
     const contentSubmissionEndDate = moment(formData.content_submission_enddate);
@@ -360,7 +361,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     // nomination date should be >= today
     if (!nominationEndDate.isSameOrAfter(today)) {
       this.toasterService.error(this.resource.messages.emsg.createProgram.m0001);
-      return;
+      hasError = true;
     }
 
     if (!_.isEmpty(formData.shortlisting_enddate)) {
@@ -369,25 +370,27 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       // shortlisting date should be >= nomination date
       if (!shortlistingEndDate.isSameOrAfter(nominationEndDate)) {
         this.toasterService.error(this.resource.messages.emsg.createProgram.m0002);
-      return;
+        hasError = true;
       }
       // submission date should be >= shortlisting date
       if (!contentSubmissionEndDate.isSameOrAfter(shortlistingEndDate)) {
-      this.toasterService.error(this.resource.messages.emsg.createProgram.m0003);
-      return;
+        this.toasterService.error(this.resource.messages.emsg.createProgram.m0003);
+        hasError = true;
       }
     } else {
       if (!contentSubmissionEndDate.isSameOrAfter(nominationEndDate)) {
         this.toasterService.error(this.resource.messages.emsg.createProgram.m0005);
-        return;
+        hasError = true;
       }
     }
 
     // end date should be >= submission date
     if (!programEndDate.isSameOrAfter(contentSubmissionEndDate)) {
       this.toasterService.error(this.resource.messages.emsg.createProgram.m0004);
-      return;
+      hasError = true;
     }
+
+    return hasError;
   }
 
  resetFilters () {
@@ -411,6 +414,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    this.handleContentTypes();
 
    if (this.createProgramForm.dirty && this.createProgramForm.valid) {
+     if (this.validateDates()) {
+      return false;
+     }
+
     const contentTypes = this.createProgramForm.value.content_types;
     this.createProgramForm.value.content_types = _.isEmpty(contentTypes) ?  [] : contentTypes;
     this.programData = {
