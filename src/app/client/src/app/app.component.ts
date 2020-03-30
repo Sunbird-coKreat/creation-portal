@@ -165,7 +165,9 @@ export class AppComponent implements OnInit, OnDestroy {
           this.userService.openSaberRegistrySearch().then(() => {
             this.userService.userRegistryData = true;
             this.initApp = true;
-            if (this.userService.userProfile.userRegData &&
+            if (_.indexOf(this.userService.userProfile.userRoles, 'ORG_ADMIN') > -1) {
+              this.router.navigateByUrl('/sourcing');
+            } else if (this.userService.userProfile.userRegData &&
               this.userService.userProfile.userRegData.User_Org &&
               !this.userService.userProfile.userRegData.User_Org.roles.includes('admin') &&
               !this.router.url.includes('/contribute/join/')) {
