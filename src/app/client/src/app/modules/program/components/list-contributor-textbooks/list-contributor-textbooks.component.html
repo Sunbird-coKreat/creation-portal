@@ -144,12 +144,10 @@
 							<dt class="sb__ellipsis">{{resourceService.frmelmnts.lbl.status}}</dt>
 							<dd><span class="sb-label sb-label-table sb-label-warning-0">{{contributor?.nominationData?.status }}</span></dd>
 						</dl>
-						<dl class="sb-meta-data mb-0 pr-8 w-40">
+						<dl class="sb-meta-data mb-0 pr-8 w-30">
 							<dt class="sb__ellipsis">{{resourceService?.frmelmnts?.lbl?.contentType}}</dt>
-							<dd> <span class="fs-0-785 sb__ellipsis d-inline-block" *ngFor="let contentType of programDetails.content_types;">
-											{{ contentType }}
-										</span>&nbsp;
-							</dd>
+							<dd class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{programDetails?.content_types?.join(', ')}}"><span>{{programDetails?.content_types?.join(', ')}}</span></dd>
+
 						</dl>
 						<dl class="sb-meta-data mb-0 pr-8">
 							<dt class="sb__ellipsis">{{resourceService?.frmelmnts?.lbl?.submittedDate}}</dt>
