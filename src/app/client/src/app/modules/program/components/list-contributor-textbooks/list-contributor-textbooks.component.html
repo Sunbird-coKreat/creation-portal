@@ -17,7 +17,7 @@
 									</button>
 			 <div class="d-flex flex-jc-space-between practical-header__content py-10">
             <div class="practical-header__title flex-basis-1 pr-10">
-								<h5 class="m-0 p-0 d-inline-block font-weight-bold">{{ programDetails?.name }} </h5>
+								<h5 class="mb-10 p-0 d-inline-block font-weight-bold">{{ programDetails?.name }} </h5>
 								<i class="info circle link icon" suiPopup
                         [popupTemplate]="popupTemplate" popupDelay="1000"></i>
                     <ng-template #popupTemplate>
@@ -113,7 +113,7 @@
         </div>
 		</div>
 	</div>
-	<div class="ui container" [appTelemetryImpression]="telemetryImpression">
+	<div class="ui container pb-10" [appTelemetryImpression]="telemetryImpression">
 
 		<div class="d-flex flex-ai-center flex-jc-space-between">
 			<div class="flex-basis-1 pr-16">
@@ -144,9 +144,10 @@
 							<dt class="sb__ellipsis">{{resourceService.frmelmnts.lbl.status}}</dt>
 							<dd><span class="sb-label sb-label-table sb-label-warning-0">{{contributor?.nominationData?.status }}</span></dd>
 						</dl>
-						<dl class="sb-meta-data mb-0 pr-8" >
+						<dl class="sb-meta-data mb-0 pr-8 w-30">
 							<dt class="sb__ellipsis">{{resourceService?.frmelmnts?.lbl?.contentType}}</dt>
-							<dd><span>{{programDetails?.content_types?.join(', ')}}</span></dd>
+							<dd class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{programDetails?.content_types?.join(', ')}}"><span>{{programDetails?.content_types?.join(', ')}}</span></dd>
+
 						</dl>
 						<dl class="sb-meta-data mb-0 pr-8">
 							<dt class="sb__ellipsis">{{resourceService?.frmelmnts?.lbl?.submittedDate}}</dt>
@@ -165,7 +166,7 @@
 
 <sui-modal [mustScroll]="true" [isClosable]="true" *ngIf="show" [transitionDuration]="0" [size]="'normal'"
 	class="sb-modal" #modal>
-	<div class="sb-modal-header"> {{resourceService.frmelmnts.lbl.nomineeProfileDetails}} </div>
+	<div class="sb-modal-header"> {{resourceService.frmelmnts.lbl.profileDetails}} </div>
 	<div class="sb-modal-content o-y-visible pb-8">
 		<div class="ui container">
 			<div class="mx-48 text-center">
@@ -300,7 +301,7 @@
 							<th class="w-5">&nbsp;</th>
 						</tr>
 					</thead>
-					<tbody class="sb-table-body" *ngIf="contributorTextbooks.length">
+					<tbody class="sb-table-body" *ngIf="contributorTextbooks?.length">
 
 						<tr *ngFor="let contributorTextbook of contributorTextbooks">
 							<td>{{contributorTextbook.name}}</td>

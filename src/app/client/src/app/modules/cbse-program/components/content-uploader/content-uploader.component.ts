@@ -206,7 +206,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
 
   uploadByURL(fileUpload, mimeType) {
     this.loading = true;
-    if (fileUpload) {
+    if (fileUpload && !this.contentMetaData && !this.contentUploadComponentInput.contentId) {
       let creator = this.userService.userProfile.firstName;
       if (!_.isEmpty(this.userService.userProfile.lastName)) {
         creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
@@ -229,11 +229,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
               ...(_.pickBy(reqBody, _.identity))
               // 'framework': this.sessionContext.framework,
               // 'organisation': this.sessionContext.onBoardSchool ? [this.sessionContext.onBoardSchool] : [],
-
             }
           }
         }
       };
+      if (this.sessionContext.sampleContent) {
+        option.data.request.content.sampleContent = this.sessionContext.sampleContent;
+      }
       if (this.templateDetails.metadata.appIcon) {
         option.data.request.content.appIcon = this.templateDetails.metadata.appIcon;
       }
@@ -250,6 +252,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
               this.programStageService.removeLastStage();
             });
         });
+    } else {
+      this.uploadFile(mimeType, this.contentMetaData.identifier || this.contentUploadComponentInput.contentId);
     }
   }
 

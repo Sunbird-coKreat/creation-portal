@@ -803,4 +803,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sessionContext.questionList = [];
   }
 
+  handleBack() {
+    this.programStageService.removeLastStage();
+  }
+
+
 }

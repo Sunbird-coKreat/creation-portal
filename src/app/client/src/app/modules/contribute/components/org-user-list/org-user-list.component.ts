@@ -2,8 +2,10 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ToasterService, ResourceService, NavigationHelperService, ConfigService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
-import { UserService, ProgramsService } from '@sunbird/core';
+import { UserService, ProgramsService, RegistryService } from '@sunbird/core';
 import * as _ from 'lodash-es';
+import { forkJoin } from 'rxjs';
+import { join } from 'path';
 
 @Component({
   selector: 'app-org-user-list',
@@ -12,6 +14,7 @@ import * as _ from 'lodash-es';
 })
 export class OrgUserListComponent implements OnInit, AfterViewInit {
   data;
+  position;
   options;
   showNormalModal;
   public telemetryImpression: IImpressionEventInput;
@@ -21,13 +24,16 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   orgLink;
   orgName;
   public userLists: any;
+  public contributorOrgUser: any = [];
+  public orgDetails: any = {};
+  public showLoader = true;
 
   constructor(private toasterService: ToasterService, private configService: ConfigService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
-    private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router, private programsService: ProgramsService) { }
+    private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router, private programsService: ProgramsService, public registryService: RegistryService) { }
 
   ngOnInit() {
-
+    this.position = 'top center';
     this.data = {
       'board': [{
           'name': 'admin',
@@ -44,7 +50,8 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
       ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
     this.orgLink = `${baseUrl}/contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
     this.orgName = this.userService.userProfile.userRegData.Org.name;
-    this.searchUser()
+    //this.searchUser()
+    this.getContributionOrgUsers()
   }
 
   ngAfterViewInit() {
@@ -74,25 +81,27 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
      });
   }
 
+  copyOnLoad() {
+    this.showNormalModal = true;
+    setTimeout(() => {
+      this.copyLinkToClipboard();
+    }, 300);
+  }
+
   copyLinkToClipboard() {
     if (!this.orgLink) {
       this.toasterService.error(this.resourceService.messages.emsg.invite.user.m0001);
       this.showNormalModal = false;
       return ;
     }
+    console.log(this.showNormalModal);
 
-    const selBox = document.createElement('textarea');
-    selBox.style.position = 'fixed';
-    selBox.style.left = '0';
-    selBox.style.top = '0';
-    selBox.style.opacity = '0';
-    selBox.value = this.orgLink;
-    document.body.appendChild(selBox);
-    selBox.focus();
-    selBox.select();
-    document.execCommand('copy');
-    document.body.removeChild(selBox);
-    this.toasterService.success(this.resourceService.frmelmnts.lbl.linkCopied);
+    if (this.showNormalModal) {
+      const input = document.getElementById('copyLinkData') as HTMLInputElement;
+      input.select();
+      input.focus();
+      document.execCommand('copy');
+    }
   }
 
   getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
@@ -103,58 +112,46 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
       extra
     }, _.isUndefined);
   }
-  searchUser()
-  {
-    const orgSearch = {
-      entityType: ["User_Org"],
-      filters: {
-        orgId: {eq :this.userService.userProfile.userRegData.User_Org.orgId}
-      }
-    };
-    this.programsService.searchRegistry(orgSearch).subscribe(
-      (response) => {
-        if (!_.isEmpty(response.result.User_Org)) {
-          this.fetchUserData(response.result.User_Org)
+  getContributionOrgUsers() {
+    const baseUrl = ( <HTMLInputElement> document.getElementById('portalBaseUrl')) ?
+      ( <HTMLInputElement> document.getElementById('portalBaseUrl')).value : '';
+    if (this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org) {
+      const orgUsers = this.registryService.getContributionOrgUsers(this.userService.userProfile.userRegData.User_Org.orgId);
+      this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
+      this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
+      this.orgDetails.orgLink = `${baseUrl}contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
+      orgUsers.subscribe(response => {
+        const result = _.get(response, 'result');
+        if (!result || _.isEmpty(result)) {
+          console.log('NO USER FOUND');
+        } else {
+          // get Ids of all users whose role is 'user'
+          const userIds = _.map(_.filter(result[_.first(_.keys(result))], ['roles', ['user']]), 'userId');
+          const getUserDetails = _.map(userIds, id => this.registryService.getUserDetails(id));
+          forkJoin(...getUserDetails)
+            .subscribe((res: any) => {
+              if (res) {
+                _.forEach(res, r => {
+                  if (r.result && r.result.User) {
+                    let creator = r.result.User.firstName;
+                    if (r.result.User.lastName) {
+                      creator = creator + r.result.User.lastName;
+                    }
+                    r.result.User.fullName = creator;
+                    this.contributorOrgUser.push(r.result.User);
+                  }
+                });
+                this.showLoader = false;
+              }
+            }, error => {
+              
+              console.log(error);
+              this.showLoader = false;
+            });
         }
-      },
-      (err) => {
-        console.log(err);
-        // TODO: navigate to program list page
-        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-        this.toasterService.warning(errorMes || this.resourceService.messages.fmsg.contributorjoin.m0001);
-      }
-    );
-  }
-
-  fetchUserData(data)
-  {
-    if(!_.isEmpty(data))
-    {
-      const userList = [];
-      _.forEach(data, (userID) => {
-        const userSearch = {
-          entityType: ["User"],
-          filters: {
-            osid: {eq : userID.userId }
-          }
-        };
-
-        this.programsService.searchRegistry(userSearch).subscribe(
-          (response) => {
-            if (!_.isEmpty(response.result.User[0])) {
-              userList.push(response.result.User[0]);
-            }
-          },
-          (err) => {
-            const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-            this.toasterService.warning(errorMes || this.resourceService.messages.fmsg.contributorjoin.m0001);
-          }
-        );
+      }, error => {
+        console.log(error);
       });
-      this.userLists = userList;
-      console.log(this.userLists)
-      //return userList;
-      }
+    }
   }
-
 }
