@@ -87,15 +87,45 @@ export class ProgramListComponent implements OnInit {
    * fetch the list of programs.
    */
   private getAllProgramsForContrib(type, status) {
-    return this.programsService.getAllProgramsByType(type, status).subscribe(
+    this.programsService.getAllProgramsByType(type, status).subscribe(
       response => {
-        this.programs = _.get(response, 'result.programs');
-        if (this.programs.length) {
-           const program = this.filterProgramByDate(this.programs);
-           this.count = _.get(response, 'result.count');
-           this.programs = program;
-           this.sortPrograms = this.programs;
+        let tempPrograms = _.get(response, 'result.programs');
+        if (tempPrograms.length) {
+          const req = {
+            request: {
+              filters: {
+                enrolled_id: {
+                  user_id: _.get(this.userService, 'userProfile.userId'),
+                },
+                status: status
+              }
+            }
+          };
+
+          this.programsService.getMyProgramsForContrib(req)
+          .subscribe((thisresponse) => {
+              if (!_.isEmpty(_.get(thisresponse, 'result.programs'))) {
+                const enrolledPrograms = _.map(_.get(thisresponse, 'result.programs'), (nomination: any) => {
+                  return nomination.program_id;
+                });
+                const temp = [];
+                _.filter(tempPrograms, tempProgram => {
+                  return !enrolledPrograms.includes(tempProgram.program_id);
+                 });
+
+                this.programs = this.filterProgramByDate(temp);
+              } else {
+                this.programs = this.filterProgramByDate(tempPrograms);
+              }
+              this.count = this.programs.length;
+              this.sortPrograms = this.programs;
+            }, error => {
+              this.toasterService.error(_.get(error, 'error.params.errmsg') || 'Fetching Programs failed');
+            }
+          );
         }
+      }, error => {
+        this.toasterService.error(_.get(error, 'error.params.errmsg') || 'Fetching Programs failed');
       }
     );
   }
