@@ -174,14 +174,15 @@ export class AppComponent implements OnInit, OnDestroy {
               this.router.navigateByUrl('/contribute/myenrollprograms');
             }
           }).catch((err) => {
-            this.toasterService.error('Please Try Later...');
-            setTimeout(() => {
-              this.router.navigate(['']);
-            });
+            this.initApp = true;
+            // this.toasterService.error('Please Try Later...');
+            // setTimeout(() => {
+            //   // this.router.navigate(['']);
+            // });
           });
         } else {
-        this.initApp = true;
-      }
+          this.initApp = true;
+        }
       }, error => {
          // this.initApp = true;
       });
