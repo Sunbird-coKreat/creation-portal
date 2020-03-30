@@ -109,8 +109,7 @@ export class ProgramListComponent implements OnInit {
                 const enrolledPrograms = _.map(_.get(thisresponse, 'result.programs'), (nomination: any) => {
                   return nomination.program_id;
                 });
-                const temp = [];
-                _.filter(tempPrograms, tempProgram => {
+                const temp = _.filter(tempPrograms, tempProgram => {
                   return !enrolledPrograms.includes(tempProgram.program_id);
                  });
 
