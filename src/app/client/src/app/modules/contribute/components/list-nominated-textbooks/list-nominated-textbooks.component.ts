@@ -208,6 +208,13 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     this.programStageService.addStage('chapterListComponent');
   }
 
+  canUploadContent() {
+    const contributionendDate  = moment(this.programDetails.content_submission_enddate);
+    const endDate  = moment(this.programDetails.enddate);
+    const today = moment();
+    return (contributionendDate.isSameOrAfter(today) && endDate.isSameOrAfter(today)) ? true : false;
+  }
+
    setActiveDate() {
     const dates = [ 'nomination_enddate', 'shortlisting_enddate', 'content_submission_enddate', 'enddate'];
 
