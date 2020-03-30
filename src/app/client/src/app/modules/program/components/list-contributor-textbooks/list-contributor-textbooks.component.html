@@ -304,11 +304,11 @@
 					<tbody class="sb-table-body" *ngIf="contributorTextbooks?.length">
 
 						<tr *ngFor="let contributorTextbook of contributorTextbooks">
-							<td>{{contributorTextbook.name}}</td>
-							<td>{{contributorTextbook.medium}}</td>
-							<td>{{contributorTextbook.gradeLevel}}</td>
-							<td>{{contributorTextbook.subject}}</td>
-							<td>3</td>
+							<td>{{contributorTextbook?.name}}</td>
+							<td>{{contributorTextbook?.medium}}</td>
+							<td>{{contributorTextbook?.gradeLevel}}</td>
+							<td>{{contributorTextbook?.subject}}</td>
+							<td>{{contributorTextbook?.sampleContentCount || 0}}</td>
 							<td data-label="Actions">
 								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
 									*ngIf="contributor?.nominationData?.status == 'Pending'" (click)="viewContribution(contributorTextbook)"

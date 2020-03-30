@@ -1,6 +1,6 @@
 import { IImpressionEventInput, IInteractEventEdata} from '@sunbird/telemetry';
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService } from '@sunbird/shared';
-import { ProgramsService, PublicDataService, UserService, FrameworkService } from '@sunbird/core';
+import { ProgramsService, PublicDataService, UserService, FrameworkService, ActionService } from '@sunbird/core';
 import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
@@ -13,6 +13,8 @@ import { ChapterListComponent } from '../../../cbse-program/components/chapter-l
 import { tap, filter, first, map } from 'rxjs/operators';
 import { NgForm } from '@angular/forms';
 import * as moment from 'moment';
+import { throwError, forkJoin } from 'rxjs';
+
 @Component({
   selector: 'app-list-contributor-textbooks',
   templateUrl: './list-contributor-textbooks.component.html',
@@ -52,6 +54,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   showAcceptRejectBtns = true;
   selectedNominationDetails: any;
   showRequestChangesPopup: boolean;
+  public sampleDataCount = 0;
   @ViewChild('FormControl') FormControl: NgForm;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
@@ -61,7 +64,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     private config: ConfigService, private publicDataService: PublicDataService,
   private activatedRoute: ActivatedRoute, private router: Router, public programStageService: ProgramStageService,
   private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
-  public toasterService: ToasterService) { }
+  public toasterService: ToasterService, public actionService: ActionService) { }
 
 
   ngOnInit() {
@@ -85,6 +88,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       this.roles = _.get(this.programContext, 'config.roles');
       this.configData = _.find(this.programContext.config.components, {'id': 'ng.sunbird.chapterList'});
       this.sessionContext.framework = _.get(this.programContext, 'config.framework');
+      this.sessionContext.nominationDetails = this.selectedNominationDetails && this.selectedNominationDetails.nominationData;
       if (this.sessionContext.framework) {
         this.fetchFrameWorkDetails();
       }
@@ -182,10 +186,58 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     );
   }
   showTexbooklist (res) {
-    this.contributorTextbooks = res.result.content.length ? _.filter(res.result.content, (collection) => {
+    const contributorTextbooks = res.result.content.length ? _.filter(res.result.content, (collection) => {
          return _.includes(this.selectedNominationDetails.nominationData.collection_ids, collection.identifier);
     }) : [];
+    if (!_.isEmpty(contributorTextbooks)) {
+      const collectionIds = _.map(contributorTextbooks, 'identifier');
+      this.getCollectionHierarchy(collectionIds)
+        .subscribe(response => {
+          const hierarchies = _.map(response, r => {
+            if (r.result && r.result.content) {
+              return r.result.content;
+            } else {
+              return r.result;
+            }
+          });
+          const hierarchyContent = _.map(hierarchies, hierarchy => {
+            this.sampleDataCount = 0;
+            hierarchy.sampleContentCount = this.getSampleContentStatusCount(hierarchy);
+            return hierarchy;
+          });
+          this.contributorTextbooks = _.map(contributorTextbooks, content => {
+            const contentWithHierarchy =  _.find(hierarchyContent, {identifier: content.identifier});
+            content.sampleContentCount = contentWithHierarchy.sampleContentCount;
+            return content;
+          });
+        });
+    } else {
+      this.contributorTextbooks = contributorTextbooks;
+    }
   }
+  getSampleContentStatusCount(data) {
+    const self = this;
+    if (data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' && data.sampleContent) {
+        self.sampleDataCount = self.sampleDataCount + 1;
+    }
+    const childData = data.children;
+    if (childData) {
+      childData.map(child => {
+        self.getSampleContentStatusCount(child);
+      });
+    }
+    return self.sampleDataCount;
+  }
+  getCollectionHierarchy(collectionIds) {
+    const hierarchyRequest =  _.map(collectionIds, id => {
+       const req = {
+         url: 'content/v3/hierarchy/' + id,
+         param: { 'mode': 'edit' }
+       };
+       return this.actionService.get(req);
+     });
+     return forkJoin(hierarchyRequest);
+   }
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
