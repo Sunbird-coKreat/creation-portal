@@ -1,7 +1,7 @@
 <div *ngIf="currentStage === 'listNominatedTextbookComponent'">
 
 	<div class="sb-bg-color-primary-0 practical-header py-16">
-		<div class="d-flex  flex-jc-space-between practical-header__content ui container p-0">
+		<div class="d-flex  flex-jc-space-between practical-header__content ui container pt-10">
 
 			<div class="practical-header__title flex-basis-1 w-20">
 				<!-- <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" type="button" (click)="goBack()">
@@ -13,7 +13,8 @@
 					Back to My/Explore Programs
 				</button> -->
 
-				<h4 class="m-0 p-0">{{ programDetails?.name }} <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
+				<h5 class="m-0 p-0 font-weight-bold d-inline-block">{{ programDetails?.name }} </h5>
+				<i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
 					<ng-template #popupTemplate>
 						<div class="content">
 							<div class="textbook-details ml-8">
@@ -65,16 +66,11 @@
 							</div>
 						</div>
 					</ng-template>
-				</h4>
-				<p class="fs-0-785 font-weight-normal">{{ programDetails?.description }}</p>
+				<p class="fs-0-785 font-weight-normal pr-10 sb__ellipsis sb__ellipsis--three">{{ programDetails?.description }}</p>
 			</div>
 			<div class="sb-meta-data-container sb-meta-data-column w-10 px-10">
-				<label class="m-0 p-0">{{ resourceService.frmelmnts.lbl.contentType}}</label>
-				<p>
-					<span class="fs-0-785" *ngFor="let contentType of programDetails?.content_types;">
-						{{ contentType }}
-					</span>
-				</p>
+				<label class="m-0">{{ resourceService.frmelmnts.lbl.contentType}}</label>
+				<p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{programDetails?.content_types?.join(', ')}}"><span>{{programDetails?.content_types?.join(', ')}}</span></p>
 			</div>
 				<div class="sb-meta-data-container sb-meta-data-column px-10">
 					<label class="width-100">Content Status </label>
@@ -166,7 +162,7 @@
 					<div class="sb-pageSection" [appTelemetryImpression]="telemetryImpression">
 						<div class="sb-bg-color-white pt-32">
 							<div class="sb-table-responsive">
-								<table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
+								<table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
 									<thead class="sb-table-header sb-table-thead-gray">
 										<tr>
 											<th class="sb-sort-icon w-10">{{resourceService.frmelmnts.lbl.textbook}}</th>
@@ -175,7 +171,7 @@
 											<th class="w-5">{{resourceService.frmelmnts.lbl.subject}}</th>
 											<th class="w-5">{{resourceService.frmelmnts.lbl.chapters}}</th>
 											<th class="w-5">{{resourceService.frmelmnts.lbl.status}}</th>
-											<th class="w-5 text-center"></th>
+											<th class="w-5"></th>
 										</tr>
 									</thead>
 									<tbody class="sb-table-body">
@@ -188,12 +184,12 @@
 											<td>{{contributorTextbook.subject}}</td>
 											<td>5</td>
 											<td>Pending</td>
-											<td class="text-center">
+											<td>
 												<button *ngIf="currentNominationStatus === 'Approved'" type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(contributorTextbook)" appTelemetryInteract
 												[telemetryInteractEdata]="getTelemetryInteractEdata('upload-content', 'click', 'list-nominated-textbooks')"
 												[telemetryInteractObject]="telemetryInteractObject"
 												[telemetryInteractCdata]="telemetryInteractCdata"
-												[telemetryInteractPdata]="telemetryInteractPdata">{{this.sessionContext.currentRole === 'CONTRIBUTOR' ?  'Upload Content' : 'Review Content'}}</button>
+												[telemetryInteractPdata]="telemetryInteractPdata">{{this.sessionContext.currentRole === 'Contributor' ?  'Upload Content' : 'Review Content'}}</button>
 												</td>
 										</tr>
 									</tbody>
@@ -215,10 +211,9 @@
 					  </div>
 					</div>
 					<div class="sb-table-responsive" *ngIf="contributorOrgUser?.length != 0">
-					  <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
+					  <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap desktop-o-x-unset">
 						<thead class="sb-table-header sb-table-thead-gray">
 						  <tr>
-							<th>S.No.</th>
 							<!-- <th></th> -->
 							<th>Username</th>
 							<th>Grade</th>
@@ -229,7 +224,6 @@
 						</thead>
 						<tbody class="sb-table-body">
 						  <tr *ngFor="let orgUser of contributorOrgUser; let i= index;">
-							<td>{{ i + 1 }}</td>
 							<!-- <td><button type="button" class="sb-btn sb-btn-outline-primary sb-btn-xs">Edit</button></td> -->
 							<td>{{orgUser.fullName}}</td>
 							<!-- <td>**********</td> -->
@@ -241,7 +235,7 @@
 								</div>
 							</td>
 							<td>
-								<sui-select class="selection" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="options" valueField="name"
+								<sui-select class="selection pt-5" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="options" valueField="name"
 								(selectedOptionChange)="onRoleChange()">
 									<sui-select-option *ngFor="let option of roles;" [value]="option">
 									</sui-select-option>
