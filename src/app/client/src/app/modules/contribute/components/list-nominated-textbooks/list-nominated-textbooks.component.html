@@ -151,11 +151,20 @@
 			</div>
 			<div>
 				<div class='practical-sb-buttons' *ngIf="nominated">
-					<label>{{ resourceService.frmelmnts.lbl.status }}:</label><span class="sb-label sb-label-table sb-label-primary-100">{{ nominationDetails?.status }}</span>
+					<label>
+						{{ resourceService.frmelmnts.lbl.status }} : 
+					</label>
+					<span class="sb-label sb-label-table sb-label-primary-100">
+						{{ nominationDetails?.status }}
+					</span>
 				</div>
 				<div class='practical-sb-buttons' *ngIf="nominated && nominationDetails.status=='Rejected'">
-					<label>{{ resourceService.frmelmnts.lbl.reasonsForRejection }}:</label>
-					<span>{{ nominationDetails?.feedback }}</span>
+					<label>
+						{{ resourceService.frmelmnts.lbl.reasonsForRejection }} : 
+					</label>
+					<span>
+						{{ nominationDetails?.feedback }}
+					</span>
 				</div>
 			</div>
 		</div>
@@ -232,7 +241,7 @@
 							<th>Username</th>
 							<th>Grade</th>
 							<th>Subject</th>
-							<th>ContentTypes</th>
+							<th>Content Type(s)</th>
 							<th>Roles</th>
 						  </tr>
 						</thead>
@@ -250,11 +259,16 @@
 								</div>
 							</td>
 							<td>
-								<sui-select class="selection" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="options" valueField="name"
-								(selectedOptionChange)="onRoleChange()">
-									<sui-select-option *ngFor="let option of roles;" [value]="option">
-									</sui-select-option>
-								</sui-select>
+								<div *ngIf="nominationDetails?.status === 'Rejected'; else elseBlock">
+									{{ orgUser?.selectedRole }}
+								</div>
+								<ng-template #elseBlock>
+									<sui-select class="selection" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="options" valueField="name"
+									(selectedOptionChange)="onRoleChange()">
+										<sui-select-option *ngFor="let option of roles;" [value]="option">
+										</sui-select-option>
+									</sui-select>
+								</ng-template>
 							</td>
 						  </tr>
 						</tbody>
