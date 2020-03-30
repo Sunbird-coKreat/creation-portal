@@ -87,7 +87,8 @@
 									<div class="ui read-only calendar mb-10 sb-field">
 										<div class="ui input right icon">
 											<i class="calendar icon date-calendar"></i>
-											<input [pickerMinDate]='pickerMinDate' formControlName="nomination_enddate"
+											<input [pickerMinDate]='getMinDate("nomination_enddate")'  formControlName="nomination_enddate"
+											[pickerMaxDate]='getMaxDate("nomination_enddate")'
 												suiDatepicker [pickerMode]="'date'">
 										</div>
 										<div class="ui pointing red basic label below "
@@ -105,7 +106,8 @@
 									<div class="ui read-only calendar mb-10">
 										<div class="ui input right icon">
 											<i class="calendar icon date-calendar"></i>
-											<input [pickerMinDate]='createProgramForm.value.nomination_enddate ? createProgramForm.value.nomination_enddate : pickerMinDate'
+											<input [pickerMinDate]='getMinDate("shortlisting_enddate")' 
+											[pickerMaxDate]='getMaxDate("shortlisting_enddate")'
 												formControlName="shortlisting_enddate" suiDatepicker
 												[pickerMode]="'date'">
 										</div>
@@ -121,7 +123,8 @@
 									<div class="ui read-only calendar mb-10">
 										<div class="ui input right icon">
 											<i class="calendar icon date-calendar"></i>
-											<input [pickerMinDate]='createProgramForm.value.shortlisting_enddate ? createProgramForm.value.shortlisting_enddate : pickerMinDate'
+											<input [pickerMinDate]='getMinDate("content_submission_enddate")' 
+											[pickerMaxDate]='getMaxDate("content_submission_enddate")'
 												formControlName="content_submission_enddate" suiDatepicker
 												[pickerMode]="'date'">
 										</div>
@@ -141,7 +144,7 @@
 									<div class="ui read-only calendasr mb-10">
 										<div class="ui input right icon">
 											<i class="calendar icon date-calendar"></i>
-											<input [pickerMinDate]='createProgramForm.value.content_submission_enddate ? createProgramForm.value.content_submission_enddate :pickerMinDate' formControlName="program_end_date"
+											<input [pickerMinDate]='getMinDate("program_end_date")' formControlName="program_end_date"
 												suiDatepicker [pickerMode]="'date'">
 										</div>
 										<div class="ui pointing red basic label below "
@@ -152,7 +155,7 @@
 								</div>
 							</div>
 							<div class="twelve wide column">
-								<div class="field">
+								<div class="required field">
 									<label class="d-block">{{resource.frmelmnts.lbl.contentType}}
 											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" [popupPlacement]="'left'"  popupText="{{resource.frmelmnts.lbl.contentTypesHint}}"></i>
 									</label>
@@ -162,6 +165,10 @@
 										<sui-select-option *ngFor="let option of programScope.purpose" [value]="option">
 										</sui-select-option>
 									</sui-multi-select>
+									<div class="ui pointing red basic label below "
+										*ngIf="createProgramForm.controls['content_types'].errors && createProgramForm.controls['content_types'].errors.required && (!createProgramForm.controls['content_types'].pristine || formIsInvalid)">
+										{{ resource.frmelmnts.lbl.programContentTypeRequired }}
+									</div>
 								</div>
 							</div>
 							<!--div class="twelve wide column">
@@ -363,7 +370,7 @@
 		</div>
 		<div class="text-align-right mt-10" [appTelemetryStart]="telemetryStart" [appTelemetryEnd]="telemetryEnd">
 			<button *ngIf="!showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary"
-				(click)="validateDates()"
+				(click)="saveProgram()"
 				appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('next', 'click', 'create-program')"
       [telemetryInteractObject]="telemetryInteractObject"

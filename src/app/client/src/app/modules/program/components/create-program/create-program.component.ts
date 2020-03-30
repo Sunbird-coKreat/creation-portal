@@ -97,6 +97,56 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
  }
 
+ getMaxDate(date) {
+  if (date === 'nomination_enddate') {
+    if (this.createProgramForm.value.shortlisting_enddate) {
+      return this.createProgramForm.value.shortlisting_enddate;
+    }
+  }
+
+  if (date === 'shortlisting_enddate') {
+    if (this.createProgramForm.value.content_submission_enddate) {
+      return this.createProgramForm.value.content_submission_enddate;
+    }
+  }
+
+  return this.createProgramForm.value.program_end_date;
+ }
+
+ getMinDate(date) {
+  if (date === 'shortlisting_enddate') {
+    if (this.createProgramForm.value.nomination_enddate) {
+      return this.createProgramForm.value.nomination_enddate;
+    }
+  }
+
+  if (date === 'content_submission_enddate') {
+    if (this.createProgramForm.value.shortlisting_enddate) {
+      return this.createProgramForm.value.shortlisting_enddate;
+    }
+
+    if (this.createProgramForm.value.nomination_enddate) {
+      return this.createProgramForm.value.nomination_enddate;
+    }
+  }
+
+  if (date === 'program_end_date') {
+    if (this.createProgramForm.value.content_submission_enddate) {
+      return this.createProgramForm.value.content_submission_enddate;
+    }
+
+    if (this.createProgramForm.value.shortlisting_enddate) {
+      return this.createProgramForm.value.shortlisting_enddate;
+    }
+
+    if (this.createProgramForm.value.nomination_enddate) {
+      return this.createProgramForm.value.nomination_enddate;
+    }
+  }
+
+  return this.pickerMinDate;
+ }
+
  ngOnInit() {
    this.userprofile = this.userService.userProfile;
    this.initializeFormFields();
@@ -170,14 +220,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   this.collectionListForm.controls['gradeLevel'].setValue('');
   this.collectionListForm.controls['subject'].setValue('');
 
-  console.log(this.userprofile);
-  console.log(this.frameworkCategories);
   const board = _.find(this.frameworkCategories, (element) => {
     return element.code === 'board';
   });
 
   this.userBoard = board.terms[0].name;
-  console.log(this.userBoard);
 
   if (_.get(this.userprofile.framework, 'board')) {
     this.userBoard = this.userprofile.framework.board[0];
@@ -250,7 +297,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      shortlisting_enddate: [''],
      program_end_date: ['', Validators.required],
      content_submission_enddate: ['', Validators.required],
-     content_types: [],
+     content_types: ['', Validators.required],
      rewards: [],
      /*medium: ['', Validators.required],
      gradeLevel: ['', Validators.required],
@@ -276,7 +323,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    this.programsService.get(option).subscribe(
      (res) => {
          this.programScope['purpose'] = res.result.contentType;
-         console.log(this.programScope['purpose']);
        },
      (err) => {
        console.log(err);
@@ -306,7 +352,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
  validateDates() {
     const formData = this.createProgramForm.value;
     const nominationEndDate = moment(formData.nomination_enddate);
-    const shortlistingEndDate = moment(formData.shortlisting_enddate);
     const contentSubmissionEndDate = moment(formData.content_submission_enddate);
     const programEndDate = moment(formData.program_end_date);
     const today = moment(moment().format('YYYY-MM-DD'));
@@ -316,23 +361,32 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.toasterService.error(this.resource.messages.emsg.createProgram.m0001);
       return;
     }
-    // shortlisting date should be >= nomination date
-    if (!shortlistingEndDate.isSameOrAfter(nominationEndDate)) {
+
+    if (!_.isEmpty(formData.shortlisting_enddate)) {
+      const shortlistingEndDate = moment(formData.shortlisting_enddate);
+
+      // shortlisting date should be >= nomination date
+      if (!shortlistingEndDate.isSameOrAfter(nominationEndDate)) {
         this.toasterService.error(this.resource.messages.emsg.createProgram.m0002);
       return;
-    }
-    // submission date should be >= shortlisting date
-    if (!contentSubmissionEndDate.isSameOrAfter(shortlistingEndDate)) {
+      }
+      // submission date should be >= shortlisting date
+      if (!contentSubmissionEndDate.isSameOrAfter(shortlistingEndDate)) {
       this.toasterService.error(this.resource.messages.emsg.createProgram.m0003);
       return;
+      }
+    } else {
+      if (!contentSubmissionEndDate.isSameOrAfter(nominationEndDate)) {
+        this.toasterService.error(this.resource.messages.emsg.createProgram.m0005);
+        return;
+      }
     }
+
     // end date should be >= submission date
     if (!programEndDate.isSameOrAfter(contentSubmissionEndDate)) {
       this.toasterService.error(this.resource.messages.emsg.createProgram.m0004);
       return;
     }
-
-    this.saveProgram();
   }
 
  resetFilters () {
@@ -399,6 +453,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      this.formIsInvalid = true;
      this.validateAllFormFields(this.createProgramForm);
    }
+
+   this.validateDates();
  }
 
  showTexbooklist() {
