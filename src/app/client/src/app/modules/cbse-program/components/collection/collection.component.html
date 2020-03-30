@@ -74,10 +74,10 @@
       </ng-container>
 
       <div class="practical-sb-buttons">
-        <div *ngIf="nominateButton === 'hide'"> <button
+        <div *ngIf="selectedCollectionIds.length === 0"> <button
             class="sb-btn sb-btn-disabled sb-btn-normal">Nominate</button></div>
-        <div *ngIf="nominateButton === 'show'">
-          <button class="sb-btn sb-btn-normal sb-btn-primary disabled {{nominateButton === 'show' ? 'active' : 'disabled'}}"
+        <div *ngIf="selectedCollectionIds.length > 0">
+          <button class="sb-btn sb-btn-normal sb-btn-primary disabled {{selectedCollectionIds.length > 0 ? 'active' : 'disabled'}}"
             (click)="showContentTypeModal= true;">Nominate</button>
         </div>
       </div>
@@ -88,7 +88,7 @@
     <div class="ui container m-0 p-0">
       <div class="sb-pageSection-header">
         <h4 class="sb-pageSection-title six">{{programContext.name}} <span
-            class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">10</span></h4>
+            class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{collectionList.length || ''}}</span></h4>
       </div>
       <div class="sb-table-responsive">
         <table class="sb-table sb-table-striped sb-table-sortable sb-table-fixed">
@@ -99,6 +99,7 @@
               <th class="sb-sort-icon w-5">{{resourceService.frmelmnts.lbl.class}}</th>
               <th class="sb-sort-icon w-5">{{resourceService.frmelmnts.lbl.subject}}</th>
               <th class="sb-sort-icon w-5">{{resourceService.frmelmnts.lbl.chapters}}</th>
+              <th class="sb-sort-icon w-5">Sample Content</th>
               <th class="text-center w-5"></th>
             </tr>
           </thead>
@@ -121,9 +122,10 @@
               <td>
                 {{ data.childNodes ? data.childNodes.length : 0 }}
               </td>
+              <td>{{data.sampleContentCount || 0 }}</td>
               <td class="text-center">
-                <input type="checkbox" [checked]="data.isSelected" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
-                <button type="button" *ngIf="data.isSelected" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10">Upload Sample</button>
+                <input type="checkbox" *ngIf="!data.sampleContentCount" [checked]="data.isSelected || data.sampleContentCount" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
+                <button type="button" *ngIf="data.isSelected || data.sampleContentCount" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10">Upload Sample</button>
               </td>
             </tr>
           </tbody>

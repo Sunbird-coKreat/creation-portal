@@ -248,9 +248,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     // tslint:disable-next-line:max-line-length
     if (this.sessionContext.currentOrgRole !== 'user' && this.sessionContext.nominationDetails && !_.includes(['Approved', 'Rejected'], this.sessionContext.nominationDetails.status)) {
       this.sampleContent = true;
+      this.sessionContext['sampleContent'] = true;
       this.getSampleContentStatusCount(data);
     } else {
       this.sampleContent = false;
+      this.sessionContext['sampleContent'] = false;
       this.getContentStatusCount(data);
     }
     if (data.contentType !== 'TextBook') {

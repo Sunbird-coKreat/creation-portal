@@ -165,21 +165,12 @@
 										<sui-select-option *ngFor="let option of programScope.purpose" [value]="option">
 										</sui-select-option>
 									</sui-multi-select>
-									<div class="ui pointing red basic label below "
-										*ngIf="createProgramForm.controls['content_types'].errors && createProgramForm.controls['content_types'].errors.required && (!createProgramForm.controls['content_types'].pristine || formIsInvalid)">
-										{{ resource.frmelmnts.lbl.programContentTypeRequired }}
+									<div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['content_types'].errors && createProgramForm.controls['content_types'].errors.required && (!createProgramForm.controls['content_types'].pristine || formIsInvalid)">
+										{{ resource.frmelmnts.lbl.contentTypesRequired }}
 									</div>
 								</div>
 							</div>
-							<!--div class="twelve wide column">
-								<div class="field">
-									<label>Certificates to be awarded </label>
-									<select class="ui fluid dropdown">
-										<option value="">Select</option>
-										<option value="dummy">Dummy</option>
-									</select>
-								</div>
-							</div-->
+
 							<div class="twelve wide column">
 								<div class="field">
 									<label class="d-block">{{resource.frmelmnts.lbl.recongnitionToContributors}}
