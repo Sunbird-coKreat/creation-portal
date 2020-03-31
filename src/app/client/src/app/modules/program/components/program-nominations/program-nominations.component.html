@@ -40,10 +40,6 @@
                 <label class="width-100">{{ resourceService?.frmelmnts?.lbl?.nominations }} </label>
                 <div class="d-flex">
                     <dl class="sb-meta-data">
-                        <dt>{{ initiatedCount }}</dt>
-                        <dd>{{ resourceService?.frmelmnts?.lbl?.initiated }}</dd>
-                    </dl>
-                    <dl class="sb-meta-data">
                         <dt>{{ pendingCount }}</dt>
                         <dd>{{ resourceService?.frmelmnts?.lbl?.pending }}</dd>
                     </dl>
@@ -157,9 +153,7 @@
                                                     <div class="text">{{ resourceService?.frmelmnts?.lbl?.status }}</div>
                                                     <i class="filter icon"></i>
                                                     <div class="menu" suiDropdownMenu>
-                                                        <div class="item" (click)="onStatusChange('All')" [class.selected]="selectedStatus === 'All'">{{ resourceService?.frmelmnts?.lbl?.allStatus }}
-                                                        </div>
-                                                        <div class="item" (click)="onStatusChange('Initiated')"  [class.selected]="selectedStatus === 'Initiated'">{{ resourceService?.frmelmnts?.lbl?.initiated }}</div>
+                                                        <div class="item" (click)="onStatusChange('All')" [class.selected]="selectedStatus === 'All'">{{ resourceService?.frmelmnts?.lbl?.allStatus }}</div>
                                                         <div class="item" (click)="onStatusChange('Pending')"  [class.selected]="selectedStatus === 'Pending'">{{ resourceService?.frmelmnts?.lbl?.pending }}</div>
                                                         <div class="item" (click)="onStatusChange('Approved')"  [class.selected]="selectedStatus === 'Approved'">{{ resourceService?.frmelmnts?.lbl?.approved }}</div>
                                                         <div class="item" (click)="onStatusChange('Rejected')"  [class.selected]="selectedStatus === 'Rejected'">{{ resourceService?.frmelmnts?.lbl?.rejected }}</div>

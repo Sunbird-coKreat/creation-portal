@@ -125,7 +125,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
       data: {
         request: {
           filters: {
-            program_id: this.activatedRoute.snapshot.params.programId
+            program_id: this.activatedRoute.snapshot.params.programId,
+            status: ["Pending", "Approved", "Rejected"]
           }
         }
       }
@@ -204,10 +205,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
     this.fetchNominationCounts().subscribe((response) => {
       const statuses = _.get(response, 'result');
       statuses.forEach(nomination => {
-        if (nomination.status === 'Initiated') {
-          this.initiatedCount = nomination.count;
-        }
-
         if (nomination.status === 'Pending') {
           this.pendingCount = nomination.count;
         }
@@ -235,7 +232,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
       data: {
         request: {
           filters: {
-            program_id: this.programId
+            program_id: this.programId,
+            status: ["Pending", "Approved", "Rejected"]
           },
           facets: ['program_id', 'status']
         }
