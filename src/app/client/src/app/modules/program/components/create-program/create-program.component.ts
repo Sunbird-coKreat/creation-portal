@@ -152,11 +152,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    this.initializeFormFields();
    this.fetchFrameWorkDetails();
    this.getProgramContentTypes();
-   // this.showTexbooklist();
    this.telemetryInteractCdata = [];
   this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
   this.telemetryInteractObject = {};
-   // this.showTexbooklist();
+  // this.showTexbooklist();
  }
 
  ngAfterViewInit() {
@@ -510,6 +509,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
        this.toasterService.warning(errorMes || 'Fetching textbooks failed');
      }
    );
+ }
+
+ onAllCollectionCheck(isChecked: boolean) {
+    _.forEach(this.collections, (collection, i) => {
+        setTimeout(() => {
+          this.onCollectionCheck(collection, isChecked);
+        }, i * 500);
+      });
  }
 
  onCollectionCheck(collection, isChecked: boolean) {
