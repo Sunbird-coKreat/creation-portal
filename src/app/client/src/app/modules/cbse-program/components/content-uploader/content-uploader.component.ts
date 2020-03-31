@@ -245,7 +245,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
         return throwError(this.cbseService.apiErrorHandling(err, errInfo));
       }))
         .subscribe(result => {
-          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, result.node_id)
+          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, result.identifier)
             .subscribe(() => {
               this.uploadFile(mimeType, result.node_id);
             }, (err) => {
@@ -483,7 +483,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     contentData: this.contentMetaData
     };
    this.playerConfig = this.playerService.getConfig(contentDetails);
-   this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.content_id)
+   this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.identifier)
    .subscribe((data) => {
        this.toasterService.success(this.resourceService.messages.smsg.m0060);
      }, (err) => {
@@ -526,7 +526,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
         if (action === 'review') {
           this.sendForReview();
         } else if (this.sessionContext.collection && this.unitIdentifier && action !== 'review') {
-          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.content_id)
+          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.identifier)
           .subscribe((data) => {
             this.toasterService.success(this.resourceService.messages.smsg.m0060);
           }, (err) => {
@@ -548,7 +548,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     this.helperService.reviewContent(this.contentMetaData.identifier)
        .subscribe((res) => {
         if (this.sessionContext.collection && this.unitIdentifier) {
-          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.content_id)
+          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.identifier)
           .subscribe((data) => {
             this.toasterService.success(this.resourceService.messages.smsg.m0061);
             this.programStageService.removeLastStage();
@@ -570,7 +570,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
       .subscribe(res => {
         this.showRequestChangesPopup = false;
         if (this.sessionContext.collection && this.unitIdentifier) {
-          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id)
+          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.identifier)
           .subscribe((data) => {
             this.toasterService.success(this.resourceService.messages.smsg.m0062);
             this.programStageService.removeLastStage();
@@ -589,12 +589,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     this.helperService.publishContent(this.contentMetaData.identifier, this.userService.userProfile.userId)
        .subscribe(res => {
         if (this.sessionContext.collection && this.unitIdentifier) {
-          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.content_id)
+          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.identifier)
           .subscribe((data) => {
             this.toasterService.success(this.resourceService.messages.smsg.m0063);
             this.programStageService.removeLastStage();
             this.uploadedContentMeta.emit({
-              contentId: res.result.node_id
+              contentId: res.result.identifier
             });
           });
         }

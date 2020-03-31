@@ -118,6 +118,7 @@ let envVariables = {
   PORTAL_EXT_PLUGIN_URL: process.env.sunbird_ext_plugin_url || 'http://player_player:3000/plugin/',
   kp_content_service_base_url: env.sunbird_kp_content_service_base_url || 'http://content-service:9000',
   kp_learning_service_base_url: env.sunbird_kp_learning_service_base_url,
+  kp_assessment_service_base_url: env.sunbird_kp_assessment_service_base_url || 'http://assessment-service:9000',
 
 
   // Health Checks Configuration
