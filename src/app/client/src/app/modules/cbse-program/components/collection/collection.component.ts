@@ -509,6 +509,11 @@ export class CollectionComponent implements OnInit, OnDestroy {
     data.isSelected = !data.isSelected;
   }
 
+  canNominate() {
+    const today = moment();
+    return moment(this.programContext.nomination_enddate).isSameOrAfter(today, 'day');
+  }
+
   uploadSampleContent(event, collection) {
     if (this.sessionContext.nominationDetails) {
       this.gotoChapterView(collection);
