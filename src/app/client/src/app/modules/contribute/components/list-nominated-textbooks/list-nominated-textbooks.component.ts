@@ -245,7 +245,10 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
         }
       }
     };
-    if (this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org) {
+
+    if (!_.isEmpty(this.userService.userProfile.userRegData)
+    && this.userService.userProfile.userRegData.User_Org
+    && !this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
       req.data.request.filters['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
     } else {
       req.data.request.filters['user_id'] = this.userService.userProfile.userId;
