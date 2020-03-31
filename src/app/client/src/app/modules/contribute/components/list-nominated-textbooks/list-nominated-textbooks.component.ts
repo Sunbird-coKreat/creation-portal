@@ -212,7 +212,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     const contributionendDate  = moment(this.programDetails.content_submission_enddate);
     const endDate  = moment(this.programDetails.enddate);
     const today = moment();
-    return (contributionendDate.isSameOrAfter(today) && endDate.isSameOrAfter(today)) ? true : false;
+    return (contributionendDate.isSameOrAfter(today, 'day') && endDate.isSameOrAfter(today, 'day')) ? true : false;
   }
 
    setActiveDate() {
