@@ -173,7 +173,7 @@
                                     </thead>
                                     <tbody class="sb-table-body">
                                         <tr *ngFor="let nomination of nominations; let i = index;">
-                                            <td>
+                                            <td class="cursor-pointer">
                                                 <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold"
                                                     (click)="showNomineeProfile = true; getNomineeProfile(nomination)"
                                                     appTelemetryInteract
@@ -210,7 +210,7 @@
                                                         [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
                                                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                                                         *ngIf="nomination?.nominationData?.status === 'Accepted'"
-                                                        [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
+                                                        (click)="viewNominationDetails(nomination)">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
                                                 </td>
                                         </tr>
                                     </tbody>
@@ -376,7 +376,7 @@
                                         [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
                                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                                         *ngIf="nomination?.nominationData?.status === 'Approved'"
-                                        [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
+                                        (click)="viewNominationDetails(nomination)">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -391,7 +391,7 @@
 
     <sui-modal *ngIf="showNomineeProfile" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
         [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showNomineeProfile = false" #modal>
-        <div class="sb-modal-header"> {{ resourceService?.frmelmnts?.lbl?.contributorProfileDetails }}</div>
+        <div class="sb-modal-header"> {{ resourceService?.frmelmnts?.lbl?.profileDetails}}</div>
         <div class="sb-modal-content o-y-visible pb-8">
             <div class="ui container">
                 <div class="mx-48 text-center">

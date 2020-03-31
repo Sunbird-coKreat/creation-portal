@@ -342,12 +342,12 @@ export class CollectionComponent implements OnInit, OnDestroy {
   }
 
   toggle(item: any) {
-    if (_.includes(this.selectedContentTypes, item.value)) {
+    if (_.includes(this.selectedContentTypes, item)) {
       _.remove(this.selectedContentTypes, (data) => {
-        return data === item.value;
+        return data === item;
       });
     } else {
-      this.selectedContentTypes.push(item.value);
+      this.selectedContentTypes.push(item);
     }
   }
 
@@ -411,17 +411,17 @@ export class CollectionComponent implements OnInit, OnDestroy {
           this.toasterService.success('Nomination sent');
           this.router.navigateByUrl('/contribute/myenrollprograms');
         }, error => {
-          this.toasterService.error('User onboarding failed');
+          this.toasterService.error('Nomination submit failed... Please try later');
         });
        } else {
         req['url'] = `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_ADD}`;
-        req.data.request['status'] = 'Initiated';
+        req.data.request['status'] = 'Pending';
         req.data.request['createdby'] = creator;
         this.programsService.post(req).subscribe((data) => {
           this.toasterService.success('Nomination sent');
           this.router.navigateByUrl('/contribute/myenrollprograms');
         }, error => {
-          this.toasterService.error('User onboarding failed');
+          this.toasterService.error('Nomination submit failed... Please try later');
         });
        }
     });
@@ -509,6 +509,11 @@ export class CollectionComponent implements OnInit, OnDestroy {
 
   toggleUploadSampleButton(data) {
     data.isSelected = !data.isSelected;
+  }
+
+  canNominate() {
+    const today = moment();
+    return moment(this.programContext.nomination_enddate).isSameOrAfter(today, 'day');
   }
 
   uploadSampleContent(event, collection) {

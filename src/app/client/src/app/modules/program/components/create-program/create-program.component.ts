@@ -241,6 +241,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programScope[element['code']] = sortedTermsArray;
   });
 
+  const Kindergarten = _.remove(this.programScope['gradeLevel'], (item) => {
+    return item.name === 'Kindergarten';
+  });
+  this.programScope['gradeLevel'] = [...Kindergarten, ...this.programScope['gradeLevel']];
+
   const mediumOption = this.programsService.getAssociationData(board.terms, 'medium', this.frameworkCategories);
 
   if (mediumOption.length) {
@@ -294,7 +299,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      name: ['', [Validators.required, Validators.maxLength(100)]],
      description: ['', Validators.maxLength(1000)],
      nomination_enddate: ['', Validators.required],
-     shortlisting_enddate: [''],
+     shortlisting_enddate: [],
      program_end_date: ['', Validators.required],
      content_submission_enddate: ['', Validators.required],
      content_types: ['', Validators.required],
@@ -343,7 +348,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      const control = formGroup.get(field);
      control.markAsTouched();
    });
-   this.validateDates();
  }
 
  navigateTo(stepNo) {
@@ -414,10 +418,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    this.handleContentTypes();
 
    if (this.createProgramForm.dirty && this.createProgramForm.valid) {
-     if (this.validateDates()) {
-      return false;
-     }
-
     const contentTypes = this.createProgramForm.value.content_types;
     this.createProgramForm.value.content_types = _.isEmpty(contentTypes) ?  [] : contentTypes;
     this.programData = {
@@ -461,6 +461,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      this.formIsInvalid = true;
      this.validateAllFormFields(this.createProgramForm);
    }
+
+   this.validateDates();
  }
 
  showTexbooklist() {
