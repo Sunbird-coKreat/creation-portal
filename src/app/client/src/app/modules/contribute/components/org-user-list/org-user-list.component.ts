@@ -2,10 +2,9 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ToasterService, ResourceService, NavigationHelperService, ConfigService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
-import { UserService, ProgramsService, RegistryService } from '@sunbird/core';
+import { UserService } from '@sunbird/core';
 import * as _ from 'lodash-es';
-import { forkJoin } from 'rxjs';
-import { join } from 'path';
+
 
 @Component({
   selector: 'app-org-user-list',
@@ -30,7 +29,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
 
   constructor(private toasterService: ToasterService, private configService: ConfigService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
-    private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router, private programsService: ProgramsService, public registryService: RegistryService) { }
+    private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router) { }
 
   ngOnInit() {
     this.position = 'top center';
@@ -50,8 +49,6 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
       ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
     this.orgLink = `${baseUrl}/contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
     this.orgName = this.userService.userProfile.userRegData.Org.name;
-    //this.searchUser()
-    this.getContributionOrgUsers()
   }
 
   ngAfterViewInit() {
@@ -111,47 +108,5 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
       pageid,
       extra
     }, _.isUndefined);
-  }
-  getContributionOrgUsers() {
-    const baseUrl = ( <HTMLInputElement> document.getElementById('portalBaseUrl')) ?
-      ( <HTMLInputElement> document.getElementById('portalBaseUrl')).value : '';
-    if (this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org) {
-      const orgUsers = this.registryService.getContributionOrgUsers(this.userService.userProfile.userRegData.User_Org.orgId);
-      this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
-      this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
-      this.orgDetails.orgLink = `${baseUrl}contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
-      orgUsers.subscribe(response => {
-        const result = _.get(response, 'result');
-        if (!result || _.isEmpty(result)) {
-          console.log('NO USER FOUND');
-        } else {
-          // get Ids of all users whose role is 'user'
-          const userIds = _.map(_.filter(result[_.first(_.keys(result))], ['roles', ['user']]), 'userId');
-          const getUserDetails = _.map(userIds, id => this.registryService.getUserDetails(id));
-          forkJoin(...getUserDetails)
-            .subscribe((res: any) => {
-              if (res) {
-                _.forEach(res, r => {
-                  if (r.result && r.result.User) {
-                    let creator = r.result.User.firstName;
-                    if (r.result.User.lastName) {
-                      creator = creator + r.result.User.lastName;
-                    }
-                    r.result.User.fullName = creator;
-                    this.contributorOrgUser.push(r.result.User);
-                  }
-                });
-                this.showLoader = false;
-              }
-            }, error => {
-              
-              console.log(error);
-              this.showLoader = false;
-            });
-        }
-      }, error => {
-        console.log(error);
-      });
-    }
   }
 }

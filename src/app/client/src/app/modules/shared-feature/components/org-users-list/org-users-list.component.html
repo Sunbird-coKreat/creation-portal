@@ -1,0 +1,38 @@
+<div class="sb-pageSection my-24 ui container">
+    <ng-container *ngIf="contributorOrgUser.length && !showLoader && contributorOrgUser !== undefined else noResult ">
+     <div class="sb-table-responsive" *ngIf="contributorOrgUser?.length != 0">
+       <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
+       <thead class="sb-table-header sb-table-thead-gray">
+           <tr>
+             <th>{{resourceService.frmelmnts.lbl.userName}}</th>
+             <th>{{resourceService.frmelmnts.lbl.grade}}</th>
+             <th>{{resourceService.frmelmnts.lbl.subject }}</th>
+             <th>{{resourceService.frmelmnts.lbl.ContentTypes}}</th>
+           </tr>
+         </thead>
+         <tbody class="sb-table-body">
+           <tr *ngFor="let userlist of contributorOrgUser; let i = index;"> 
+             <td>
+                 <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
+                  {{userlist.firstName}}  {{userlist.lastName}}
+                 </div>
+             </td>
+             <td>{{userlist?.gradeLevel?.join(', ')}}</td>
+             <td>{{userlist?.subject?.join(', ')}}</td>
+             <td>
+               <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold" style="width: 250px;">
+                 {{userlist?.contentTypes ? userlist?.contentTypes?.join(', ') : '-' }}
+               </div>
+             </td>
+           </tr>
+         </tbody>
+         </table>
+       </div>
+     </ng-container>
+     <ng-template #noResult>
+       <div class="ui tweleve wide column mb-20">
+         <app-loader *ngIf="showLoader"></app-loader>
+       </div>
+       <app-no-result *ngIf="!showLoader" [data]="{messageText: resourceService.messages.stmsg.m0006}"></app-no-result>
+     </ng-template>
+   </div>

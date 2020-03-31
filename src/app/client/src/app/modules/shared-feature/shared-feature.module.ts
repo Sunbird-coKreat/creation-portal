@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import {
   ViewAllComponent, ProfileFrameworkPopupComponent, TermsAndConditionsPopupComponent,
   OtpPopupComponent, BatchInfoComponent, SsoMergeConfirmationComponent, ValidateTeacherIdentifierPopupComponent,
-  UserLocationComponent, EnrollContributorComponent, TextbookListComponent, ProgramListComponent
+  UserLocationComponent, EnrollContributorComponent, TextbookListComponent, ProgramListComponent, OrgUsersListComponent
 } from './components';
 import { DaysToGoPipe } from './pipes';
 import { SlickModule } from 'ngx-slick';
@@ -30,10 +30,10 @@ import { SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, Su
   ],
   declarations: [ViewAllComponent, ProfileFrameworkPopupComponent, TermsAndConditionsPopupComponent,
     OtpPopupComponent, BatchInfoComponent, SsoMergeConfirmationComponent, ValidateTeacherIdentifierPopupComponent,
-    UserLocationComponent, EnrollContributorComponent, ProgramListComponent, DaysToGoPipe,  TextbookListComponent
+    UserLocationComponent, EnrollContributorComponent, ProgramListComponent, DaysToGoPipe,  TextbookListComponent, OrgUsersListComponent
   ],
   exports: [ViewAllComponent, ProfileFrameworkPopupComponent, TermsAndConditionsPopupComponent,
     OtpPopupComponent, BatchInfoComponent, SsoMergeConfirmationComponent, ValidateTeacherIdentifierPopupComponent,
-    UserLocationComponent, EnrollContributorComponent, ProgramListComponent, DaysToGoPipe, TextbookListComponent]
+    UserLocationComponent, EnrollContributorComponent, ProgramListComponent, DaysToGoPipe, TextbookListComponent, OrgUsersListComponent]
 })
 export class SharedFeatureModule { }
