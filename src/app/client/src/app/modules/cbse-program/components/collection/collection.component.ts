@@ -417,6 +417,9 @@ export class CollectionComponent implements OnInit, OnDestroy {
         req['url'] = `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_ADD}`;
         req.data.request['status'] = 'Pending';
         req.data.request['createdby'] = creator;
+        if (this.userProfile.userRegData && this.userProfile.userRegData.User_Org) {
+          req.data.request['organisation_id'] = this.userProfile.userRegData.User_Org.orgId;
+        }
         this.programsService.post(req).subscribe((data) => {
           this.toasterService.success('Nomination sent');
           this.router.navigateByUrl('/contribute/myenrollprograms');
