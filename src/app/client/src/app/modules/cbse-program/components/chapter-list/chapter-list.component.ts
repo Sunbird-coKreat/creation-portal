@@ -390,16 +390,25 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     return _.isEmpty(leafNodes) ? null : leafNodes;
   }
 
+
+
   shouldContentBeVisible(content) {
     const creatorViewRole = this.actions.showCreatorView.roles.includes(this.sessionContext.currentRoleId);
     const reviewerViewRole = this.actions.showReviewerView.roles.includes(this.sessionContext.currentRoleId);
-    if ((this.sessionContext.nominationDetails.status === 'Approved' || this.sessionContext.nominationDetails.status === 'Rejected')
-     && content.sampleContent === true) {
-      return false;
-    } else if (reviewerViewRole && content.status === 'Review' && this.currentUserID !== content.createdBy) {
-      return true;
-    } else if (creatorViewRole && this.currentUserID === content.createdBy) {
-      return true;
+    if (this.userService.userProfile.userRoles.includes('ORG_ADMIN')) {
+      if (reviewerViewRole && content.sampleContent === true
+        && this.sessionContext.nominationDetails.user_id === content.createdBy) {
+          return true;
+        }
+    } else {
+      if ((this.sessionContext.nominationDetails.status === 'Approved' || this.sessionContext.nominationDetails.status === 'Rejected')
+      && content.sampleContent === true) {
+        return false;
+      } else if (reviewerViewRole && content.status === 'Review' && this.currentUserID !== content.createdBy) {
+        return true;
+      } else if (creatorViewRole && this.currentUserID === content.createdBy) {
+        return true;
+      }
     }
     return false;
   }

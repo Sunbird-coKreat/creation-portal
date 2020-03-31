@@ -212,7 +212,8 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   }
   getSampleContentStatusCount(data) {
     const self = this;
-    if (data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' && data.sampleContent) {
+    if (data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' && data.sampleContent
+    && data.createdBy === this.sessionContext.nominationDetails.user_id) {
         self.sampleDataCount = self.sampleDataCount + 1;
     }
     const childData = data.children;
