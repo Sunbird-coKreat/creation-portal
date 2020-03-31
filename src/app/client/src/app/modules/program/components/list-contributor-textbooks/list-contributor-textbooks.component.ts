@@ -51,6 +51,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   role: any = {};
   collection;
   configData;
+  showAcceptRejectBtns = true;
   selectedNominationDetails: any;
   showRequestChangesPopup: boolean;
   public sampleDataCount = 0;
@@ -91,6 +92,10 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       if (this.sessionContext.framework) {
         this.fetchFrameWorkDetails();
       }
+
+      const shortlistingDate  = moment(this.programDetails.shortlisting_enddate);
+      const today = moment();
+      this.showAcceptRejectBtns = shortlistingDate.isSame(today) || shortlistingDate.isAfter(today);
     }, error => {
       // TODO: navigate to program list page
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
@@ -111,26 +116,6 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       this.toasterService.error(errorMes || 'Fetching framework details failed');
     });
   }
-
-  showHideNominationBtn() {
-    if (!this.programDetails) {
-      return false;
-    }
-    let isShortlistingDateFuture = true;
-    if (!_.isEmpty(this.programDetails.shortlisting_enddate)) {
-      isShortlistingDateFuture = this.isFutureDate(this.programDetails.shortlisting_enddate);
-    }
-    const isContributionDateFuture = this.isFutureDate(this.programDetails.content_submission_enddate);
-    const isEndDateFuture = this.isFutureDate(this.programDetails.enddate);
-    return isShortlistingDateFuture && isContributionDateFuture && isEndDateFuture;
-  }
-
-  isFutureDate(inputDate) {
-    const date  = moment(moment(inputDate).format('YYYY-MM-DD'));
-    const today = moment(moment().format('YYYY-MM-DD'));
-    return moment(date).isSameOrAfter(today);
-  }
-
   getNominationCounts() {
     this.fetchNominationCounts().subscribe((response) => {
       const statuses = _.get(response, 'result');
