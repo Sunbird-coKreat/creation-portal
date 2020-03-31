@@ -162,7 +162,7 @@
                           (click)="viewNominationDetails(nomination)">{{ resourceService?.frmelmnts?.lbl?.viewDetails }}</button>
                         <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                           *ngIf="nomination?.nominationData?.status === 'Accepted'"
-                          [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
+                          (click)="viewNominationDetails(nomination)">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
                       </td>
                       <td>
                         <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold" (click)="showNomineeProfile = true; getNomineeProfile(nomination)">
@@ -323,7 +323,7 @@
                       (click)="viewNominationDetails(nomination)">{{ resourceService?.frmelmnts?.lbl?.viewDetails }}</button>
                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                       *ngIf="nomination?.nominationData?.status === 'Approved'"
-                      [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
+                      (click)="viewNominationDetails(nomination)">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
                   </td>
                 </tr>
               </tbody>

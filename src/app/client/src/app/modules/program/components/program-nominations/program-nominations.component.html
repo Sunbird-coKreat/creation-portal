@@ -148,7 +148,7 @@
                                     class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
                                     <thead class="sb-table-header sb-table-thead-gray">
                                         <tr>
-                                            <th class="sb-sort-icon w-15">{{ resourceService?.frmelmnts?.lbl?.contributorName }}
+                                            <th class="sb-sort-icon w-15 cursor-pointer">{{ resourceService?.frmelmnts?.lbl?.contributorName }}
                                             </th>
                                             <th class="sb-sort-icon w-10">{{ resourceService?.frmelmnts?.lbl?.type }}</th>
                                             <th class="sb-sort-icon w-10">{{ resourceService?.frmelmnts?.lbl?.textbooks }}</th>
@@ -210,7 +210,7 @@
                                                         [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
                                                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                                                         *ngIf="nomination?.nominationData?.status === 'Accepted'"
-                                                        [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
+                                                        (click)="viewNominationDetails(nomination)">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
                                                 </td>
                                         </tr>
                                     </tbody>
@@ -376,7 +376,7 @@
                                         [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
                                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                                         *ngIf="nomination?.nominationData?.status === 'Approved'"
-                                        [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
+                                        (click)="viewNominationDetails(nomination)">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
                                 </td>
                             </tr>
                         </tbody>

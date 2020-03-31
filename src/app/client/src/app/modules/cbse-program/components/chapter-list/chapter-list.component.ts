@@ -334,7 +334,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   getContentStatusCount(data) {
     const self = this;
-    if (data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit') {
+    // tslint:disable-next-line:max-line-length
+    if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit') && (!data.sampleContent || data.sampleContent === undefined)) {
       this.countData['total'] = this.countData['total'] + 1;
       if (data.createdBy === this.currentUserID && data.status === 'Review') {
         this.countData['review'] = this.countData['review'] + 1;

@@ -1,7 +1,7 @@
 <div class="sb-bg-color-primary-0 py-15" *ngIf="currentStage === 'listContributorTextbook'" [appTelemetryImpression]="telemetryImpression">
 	<div class="sb-bg-color-primary-0 practical-header">
 		<div class="ui container">
-				<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn fs-0-92" (click)="goBack()"
+				<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn fs-0-92 pl-0" (click)="goBack()"
 						type="button"
 						appTelemetryInteract
 				[telemetryInteractEdata]="getTelemetryInteractEdata('list-textbooks', 'click', 'list-nominated-textbooks')"
@@ -142,7 +142,7 @@
 						</dl>
 						<dl class="sb-meta-data mb-0 pr-8">
 							<dt class="sb__ellipsis">{{resourceService.frmelmnts.lbl.status}}</dt>
-							<dd><span class="sb-label sb-label-table sb-label-warning-0">{{contributor?.nominationData?.status }}</span></dd>
+							<dd><span>{{contributor?.nominationData?.status }}</span></dd>
 						</dl>
 						<dl class="sb-meta-data mb-0 pr-8 w-30">
 							<dt class="sb__ellipsis">{{resourceService?.frmelmnts?.lbl?.contentType}}</dt>
@@ -260,7 +260,7 @@
 								class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ programDetails?.collection_ids?.length }}</span>
 						</h4>
 					</div>
-					<div class="" *ngIf="showAcceptRejectBtns">
+					<div class="" *ngIf="canAcceptorReject()">
 						<button class="sb-btn sb-btn-normal sb-btn-secondary mr-8"
 							*ngIf="contributor?.nominationData?.status === 'Pending'"
 							(click)="updateNomination('accept')"
@@ -304,11 +304,11 @@
 					<tbody class="sb-table-body" *ngIf="contributorTextbooks?.length">
 
 						<tr *ngFor="let contributorTextbook of contributorTextbooks">
-							<td>{{contributorTextbook.name}}</td>
-							<td>{{contributorTextbook.medium}}</td>
-							<td>{{contributorTextbook.gradeLevel}}</td>
-							<td>{{contributorTextbook.subject}}</td>
-							<td>3</td>
+							<td>{{contributorTextbook?.name}}</td>
+							<td>{{contributorTextbook?.medium}}</td>
+							<td>{{contributorTextbook?.gradeLevel}}</td>
+							<td>{{contributorTextbook?.subject}}</td>
+							<td>{{contributorTextbook?.sampleContentCount || 0}}</td>
 							<td data-label="Actions">
 								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
 									*ngIf="contributor?.nominationData?.status == 'Pending'" (click)="viewContribution(contributorTextbook)"
