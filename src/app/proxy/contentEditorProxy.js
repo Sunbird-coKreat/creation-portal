@@ -73,15 +73,15 @@ module.exports = function (app) {
     }
   }))
 
-  app.use('/action/content/v3/upload/*',  proxy(kp_learning_service_base_url, {
+  app.use('/action/content/v3/update/*',  proxy(kp_content_service_base_url, {
     proxyReqPathResolver: function (req) {
       var originalUrl = req.originalUrl
       originalUrl = originalUrl.replace('/action/', '')
-      return require('url').parse(kp_learning_service_base_url + originalUrl).path
+      return require('url').parse(kp_content_service_base_url + originalUrl).path
     }
   }))
 
-  app.use('/action/content/v3/update/*',  proxy(kp_learning_service_base_url, {
+  app.use('/action/content/v3/upload/*',  proxy(kp_learning_service_base_url, {
     proxyReqPathResolver: function (req) {
       var originalUrl = req.originalUrl
       originalUrl = originalUrl.replace('/action/', '')
