@@ -57,27 +57,27 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
  /**
  * List of textbooks for the program by BMGC
  */
- private userFramework;
- private userBoard;
- frameworkCategories;
- programScope: any = {};
- originalProgramScope: any = {};
- userprofile;
- programId: string;
- public programData: any = {};
- showTextBookSelector = false;
- formIsInvalid = false;
- subjectsOption = [];
- mediumOption = [];
- gradeLevelOption = [];
- pickerMinDate = new Date(new Date().setHours(0, 0, 0, 0));
- pickerMinDateForEndDate = new Date(new Date().setHours(0, 0, 0, 0));
- public telemetryImpression: IImpressionEventInput;
- public telemetryInteractCdata: any;
+  private userFramework;
+  private userBoard;
+  frameworkCategories;
+  programScope: any = {};
+  originalProgramScope: any = {};
+  userprofile;
+  programId: string;
+  public programData: any = {};
+  showTextBookSelector = false;
+  formIsInvalid = false;
+  subjectsOption = [];
+  mediumOption = [];
+  gradeLevelOption = [];
+  pickerMinDate = new Date(new Date().setHours(0, 0, 0, 0));
+  pickerMinDateForEndDate = new Date(new Date().setHours(0, 0, 0, 0));
+  public telemetryImpression: IImpressionEventInput;
+  public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
   public telemetryStart: IStartEventInput;
-   public telemetryEnd: IEndEventInput;
+  public telemetryEnd: IEndEventInput;
 
  constructor(
    public frameworkService: FrameworkService,
@@ -510,14 +510,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
        this.toasterService.warning(errorMes || 'Fetching textbooks failed');
      }
    );
- }
-
- onAllCollectionCheck(isChecked: boolean) {
-    _.forEach(this.collections, (collection, i) => {
-        setTimeout(() => {
-          this.onCollectionCheck(collection, isChecked);
-        }, i * 500);
-      });
  }
 
  onCollectionCheck(collection, isChecked: boolean) {
