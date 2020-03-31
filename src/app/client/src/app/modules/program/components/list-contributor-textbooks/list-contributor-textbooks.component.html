@@ -126,7 +126,7 @@
 						<dt>{{resourceService.frmelmnts.lbl.name}}</dt>
 						<dd class="sb__ellipsis">
 							<a class="cursor-pointer text-decoration-underline sb-color-primary"
-								(click)="show=true"
+								(click)="showcontributorProfile=true"
 								appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('name-contributor', 'click', 'list-nominated-textbooks')"
       [telemetryInteractObject]="telemetryInteractObject"
@@ -164,7 +164,7 @@
 
 
 
-<sui-modal [mustScroll]="true" [isClosable]="true" *ngIf="show" [transitionDuration]="0" [size]="'normal'"
+<sui-modal [mustScroll]="true" [isClosable]="true" *ngIf="showcontributorProfile" [transitionDuration]="0" [size]="'normal'" (dismissed)="showcontributorProfile = false"
 	class="sb-modal" #modal>
 	<div class="sb-modal-header"> {{resourceService.frmelmnts.lbl.profileDetails}} </div>
 	<div class="sb-modal-content o-y-visible pb-8">
