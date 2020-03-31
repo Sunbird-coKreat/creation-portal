@@ -241,6 +241,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   //   this.programScope[element['code']] = sortedTermsArray;
   // });
 
+  const Kindergarten = _.remove(this.programScope['gradeLevel'], (item) => {
+    return item.name === 'Kindergarten';
+  });
+  this.programScope['gradeLevel'] = [...Kindergarten, ...this.programScope['gradeLevel']];
+
   const mediumOption = this.programsService.getAssociationData(board.terms, 'medium', this.frameworkCategories);
 
   if (mediumOption.length) {
