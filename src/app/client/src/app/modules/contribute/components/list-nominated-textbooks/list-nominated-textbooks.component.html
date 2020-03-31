@@ -142,7 +142,7 @@
 				</div>
 			  </ng-container>
 			<div class="sb-meta-data-container sb-meta-data-column px-10">
-				<div class='practical-sb-buttons' *ngIf="nominated">
+				<div class='practical-sb-buttons' *ngIf="nominationDetails && nominationDetails.status">
 					<label class="m-0">{{ resourceService.frmelmnts.lbl.status }}</label>
 					<p>{{ nominationDetails?.status }}</p>
 				</div>
