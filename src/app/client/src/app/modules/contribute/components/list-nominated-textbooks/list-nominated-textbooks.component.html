@@ -227,7 +227,7 @@
 							<th>Grade</th>
 							<th>Subject</th>
 							<th>Content Type(s)</th>
-							<th>Roles</th>
+							<th class="text-center">Roles</th>
 						  </tr>
 						</thead>
 						<tbody class="sb-table-body">
@@ -242,9 +242,9 @@
 									{{orgUser?.contentTypes?.join(', ')}}
 								</div>
 							</td>
-							<td>
+							<td class="text-center">
 								<div *ngIf="nominationDetails?.status === 'Rejected'; else elseBlock">
-									{{ orgUser?.selectedRole }}
+									{{ (orgUser?.selectedRole) ? orgUser.selectedRole : '-' }}
 								</div>
 								<ng-template #elseBlock>
 									<sui-select class="selection" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="options" valueField="name"
