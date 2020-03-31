@@ -28,3 +28,6 @@
 .b-8 {
     @include border(border,8px,$gray-400);
 }
+.b-1-100{
+    border:solid 1px $gray-100;
+}

@@ -1,5 +1,6 @@
 <!-- Untitled Practice Set Section with text field -->
-<div class="sb-bg-color-gray-0 practical-header py-10 ui-container" [appTelemetryImpression]="telemetryImpression">
+<div class="sb-bg-color-gray-0" [appTelemetryImpression]="telemetryImpression">
+  <div class="ui container py-10">
   <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="handleBack()"
       type="button"
       appTelemetryInteract
@@ -15,9 +16,9 @@
                 Back
             </button>
   <div class="d-flex">
-      <div class="d-flex flex-ai-center practical-header__content ui container">
+      <div class="d-flex flex-ai-center practical-header__content w-100">
         <div class="mr-auto" *ngIf="!showTextArea">
-          <div class="d-flex flex-ai-center">
+          <div class="d-flex flex-ai-center mb-10">
             <span class="font-weight-bold fs-1 practical-header__title">{{resourceName}}</span>
             <a class="cursor-pointer fsmall sb-color-primary ml-16"
               appTelemetryInteract
@@ -100,6 +101,7 @@
         </div>
       </div>
     </div>
+</div>
 </div>
 <div class="ui container">
   <div class="ui twelve column grid m-0">
