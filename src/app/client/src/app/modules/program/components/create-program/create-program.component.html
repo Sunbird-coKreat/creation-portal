@@ -5,27 +5,12 @@
 		</div>
 
 		<div class="pb-8">
-			<!--div class="ui ordered steps">
-				<div class="completed step">
-					<div class="content">
-						<div class="title">Step 1</div>
-						<div class="description">Fill the Details</div>
-					</div>
-				</div>
-				<div class="completed step">
-					<div class="content">
-						<div class="title">Step 2</div>
-						<div class="description">Select Text Books</div>
-					</div>
-				</div>
-			</div-->
 			<sui-tabset>
 				<div class="ui pointing secondary menu sb-bg-color-primary-0">
 					<div class="item" suiTabHeader="1" [ngClass]="{'active' : !showTextBookSelector}">
 						{{resource.frmelmnts.lbl.details}}
 					</div>
-					<div class="item" suiTabHeader="2" [ngClass]="{'active' : showTextBookSelector}"
-					[isDisabled]="!showTextBookSelector">
+					<div class="item" suiTabHeader="2" [isDisabled]="!showTextBookSelector" [ngClass]="{'active' : showTextBookSelector}">
 						{{resource.frmelmnts.lbl.selectTextbooks}}
 					</div>
 				</div>
@@ -273,7 +258,7 @@
 											<th class="w-5">
 												<div class="sb-checkbox sb-checkbox-primary">
 													<input type="checkbox" id="checkall"
-														(change)="isSelected = !isSelected" name="checkall">
+														(click)="onAllCollectionCheck($event.target.checked)" name="checkall">
 													<label for="checkall"></label>
 												</div>
 											</th>
@@ -312,10 +297,10 @@
 										<tr *ngFor="let data of collections">
 											<td class="collapsing">
 												<div class="sb-checkbox sb-checkbox-primary">
-													<input type="checkbox" id="checkitem"
+													<input type="checkbox" id="checkitem_{{data.identifier}}"
 														(change)="onCollectionCheck(data, $event.target.checked)"
 														[checked]="collectionListForm.value.pcollections.indexOf(data.identifier) != -1" name="checkitem">
-													<label for="checkitem"></label>
+													<label for="checkitem_{{data.identifier}}"></label>
 												</div>
 											</td>
 											<td>
@@ -346,12 +331,12 @@
 							</div>
 						</div>
 						<div class="five wide column">
-							<div class="sb-bg-white b-1-100 br-4 o-y-auto fs-0-92">
-								<h5 class="py-15 px-10 font-weight-bold">
+							<div class="sb-bg-white b-1-100 br-4 o-y-auto">
+								<h5 class="py-15 px-10 font-weight-bold fs-0-92 text-capitalize">
 										{{tempCollections.length + ' ' + resource.frmelmnts.lbl.textbooksAdded}}
-									<hr>
 								</h5>
-								<div class="o-y-auto max-height">
+								<hr class="mt-0">
+								<div class="o-y-auto maxmin-h-375 fs-0-92 text-capitalize">
 									<div class="sb-program-collection ui container" *ngFor="let tempCollection of tempCollections">
 										<div class="ui grid">
 											<div class="eleven wide column">

@@ -136,9 +136,9 @@
                     <tr>
                       <th class="w-5 text-center"></th>
                       <th class="w-5 text-center"></th>
-                      <th class="sb-sort-icon">{{ resourceService?.frmelmnts?.lbl?.contributorName }}</th>
-                      <th class="sb-sort-icon">{{ resourceService?.frmelmnts?.lbl?.type }}</th>
-                      <th class="sb-sort-icon">{{ resourceService?.frmelmnts?.lbl?.textbooks }}</th>
+                      <th>{{ resourceService?.frmelmnts?.lbl?.contributorName }}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+                      <th>{{ resourceService?.frmelmnts?.lbl?.type }}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+                      <th>{{ resourceService?.frmelmnts?.lbl?.textbooks }}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
                       <th>
                         <span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
                           <div class="text">{{ resourceService?.frmelmnts?.lbl?.status }}</div>
@@ -162,7 +162,7 @@
                           (click)="viewNominationDetails(nomination)">{{ resourceService?.frmelmnts?.lbl?.viewDetails }}</button>
                         <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                           *ngIf="nomination?.nominationData?.status === 'Accepted'"
-                          [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
+                          (click)="viewNominationDetails(nomination)">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
                       </td>
                       <td>
                         <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold" (click)="showNomineeProfile = true; getNomineeProfile(nomination)">
@@ -278,9 +278,9 @@
             <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
               <thead class="sb-table-header sb-table-thead-gray">
                 <tr>
-                  <th class="sb-sort-icon">{{ resourceService?.frmelmnts?.lbl?.contributorName }}</th>
-                  <th class="sb-sort-icon">{{ resourceService?.frmelmnts?.lbl?.type }}</th>
-                  <th class="sb-sort-icon">{{ resourceService?.frmelmnts?.lbl?.textbooks }}</th>
+                  <th>{{ resourceService?.frmelmnts?.lbl?.contributorName }}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+                  <th>{{ resourceService?.frmelmnts?.lbl?.type }}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+                  <th>{{ resourceService?.frmelmnts?.lbl?.textbooks }}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
                   <th>
                     <span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
                       <div class="text">{{ resourceService?.frmelmnts?.lbl?.status }}</div>
@@ -323,7 +323,7 @@
                       (click)="viewNominationDetails(nomination)">{{ resourceService?.frmelmnts?.lbl?.viewDetails }}</button>
                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
                       *ngIf="nomination?.nominationData?.status === 'Approved'"
-                      [routerLink]="'/sourcing/contributor/' + nomination?.nominationData?.program_id">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
+                      (click)="viewNominationDetails(nomination)">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
                   </td>
                 </tr>
               </tbody>

@@ -79,12 +79,15 @@ export class ListNominationsComponent implements OnInit, AfterViewInit {
   }
 
   private getNominatedTextbooksCount(nomination) {
-    const count = nomination.collection_ids ? nomination.collection_ids.length : 0 ;
-
+    let count;
+    if (nomination.nominationData) {
+      count = nomination.nominationData.collection_ids ? nomination.nominationData.collection_ids.length : 0;
+    } else {
+      count = nomination.collection_ids ? nomination.collection_ids.length : 0;
+    }
     if (count < 2) {
       return count + ' ' + this.resourceService.frmelmnts.lbl.textbook;
     }
-
     return count + ' ' + this.resourceService.frmelmnts.lbl.textbooks;
   }
 

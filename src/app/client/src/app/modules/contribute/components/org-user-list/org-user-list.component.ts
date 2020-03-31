@@ -5,6 +5,7 @@ import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from
 import { UserService } from '@sunbird/core';
 import * as _ from 'lodash-es';
 
+
 @Component({
   selector: 'app-org-user-list',
   templateUrl: './org-user-list.component.html',
@@ -21,6 +22,10 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public telemetryInteractObject: any;
   orgLink;
   orgName;
+  public userLists: any;
+  public contributorOrgUser: any = [];
+  public orgDetails: any = {};
+  public showLoader = true;
 
   constructor(private toasterService: ToasterService, private configService: ConfigService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,

@@ -334,7 +334,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   getContentStatusCount(data) {
     const self = this;
-    if (data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit') {
+    // tslint:disable-next-line:max-line-length
+    if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit') && (!data.sampleContent || data.sampleContent === undefined)) {
       this.countData['total'] = this.countData['total'] + 1;
       if (data.createdBy === this.currentUserID && data.status === 'Review') {
         this.countData['review'] = this.countData['review'] + 1;
@@ -371,6 +372,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       createdBy: node.createdBy || null,
       parentId: node.parent || null,
       prevStatus: node.prevStatus || null,
+      sampleContent: node.sampleContent || null,
       sharedContext: {
         ...sharedMeta
       }
@@ -391,7 +393,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   shouldContentBeVisible(content) {
     const creatorViewRole = this.actions.showCreatorView.roles.includes(this.sessionContext.currentRoleId);
     const reviewerViewRole = this.actions.showReviewerView.roles.includes(this.sessionContext.currentRoleId);
-    if (reviewerViewRole && content.status === 'Review' && this.currentUserID !== content.createdBy) {
+    if ((this.sessionContext.nominationDetails.status === 'Approved' || this.sessionContext.nominationDetails.status === 'Rejected')
+     && content.sampleContent === true) {
+      return false;
+    } else if (reviewerViewRole && content.status === 'Review' && this.currentUserID !== content.createdBy) {
       return true;
     } else if (creatorViewRole && this.currentUserID === content.createdBy) {
       return true;
@@ -443,7 +448,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       }))
         .subscribe(result => {
           this.contentId = result.node_id;
-          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, result.node_id)
+          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, result.identifier)
             .subscribe(() => {
                // tslint:disable-next-line:max-line-length
                this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);

@@ -155,11 +155,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    this.initializeFormFields();
    this.fetchFrameWorkDetails();
    this.getProgramContentTypes();
-   // this.showTexbooklist();
    this.telemetryInteractCdata = [];
   this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
   this.telemetryInteractObject = {};
-   // this.showTexbooklist();
+  // this.showTexbooklist();
  }
 
  ngAfterViewInit() {
@@ -244,6 +243,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programScope[element['code']] = sortedTermsArray;
   });
 
+  const Kindergarten = _.remove(this.programScope['gradeLevel'], (item) => {
+    return item.name === 'Kindergarten';
+  });
+  this.programScope['gradeLevel'] = [...Kindergarten, ...this.programScope['gradeLevel']];
+
   const mediumOption = this.programsService.getAssociationData(board.terms, 'medium', this.frameworkCategories);
 
   if (mediumOption.length) {
@@ -297,7 +301,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      name: ['', [Validators.required, Validators.maxLength(100)]],
      description: ['', Validators.maxLength(1000)],
      nomination_enddate: ['', Validators.required],
-     shortlisting_enddate: [''],
+     shortlisting_enddate: [],
      program_end_date: ['', Validators.required],
      content_submission_enddate: ['', Validators.required],
      content_types: ['', Validators.required],
@@ -346,7 +350,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      const control = formGroup.get(field);
      control.markAsTouched();
    });
-   this.validateDates();
  }
 
  navigateTo(stepNo) {
@@ -417,10 +420,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    this.handleContentTypes();
 
    if (this.createProgramForm.dirty && this.createProgramForm.valid) {
-     if (this.validateDates()) {
-      return false;
-     }
-
     const contentTypes = this.createProgramForm.value.content_types;
     this.createProgramForm.value.content_types = _.isEmpty(contentTypes) ?  [] : contentTypes;
     this.programData = {
@@ -464,6 +463,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      this.formIsInvalid = true;
      this.validateAllFormFields(this.createProgramForm);
    }
+
+   this.validateDates();
  }
 
  showTexbooklist() {
@@ -512,6 +513,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
        this.toasterService.warning(errorMes || 'Fetching textbooks failed');
      }
    );
+ }
+
+ onAllCollectionCheck(isChecked: boolean) {
+    _.forEach(this.collections, (collection, i) => {
+        setTimeout(() => {
+          this.onCollectionCheck(collection, isChecked);
+        }, i * 500);
+      });
  }
 
  onCollectionCheck(collection, isChecked: boolean) {

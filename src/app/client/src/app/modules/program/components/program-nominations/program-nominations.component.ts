@@ -19,6 +19,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   nominations = [];
   nominationsCount;
   collectionsCount;
+  tempNominations;
+  tempNominationsCount;
+  filterApplied: any;
+  public selectedStatus = 'All';
   showNominationsComponent = false;
   public initiatedCount = 0;
   public pendingCount = 0;
@@ -55,6 +59,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.filterApplied = null;
     this.getNominationList();
     this.getProgramDetails();
     this.getNominationCounts();
@@ -90,6 +95,30 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
      });
   }
 
+  onStatusChange(status) {
+      if (this.selectedStatus !== status) {
+        this.selectedStatus = status;
+        if (status === 'All') {
+          this.filterApplied = false;
+          this.nominations = this.tempNominations;
+          this.nominationsCount = this.tempNominationsCount;
+        } else {
+          this.filterApplied = true;
+          this.nominations = _.filter(this.tempNominations, (o) => {
+           return o.nominationData.status === status;
+          });
+          this.nominationsCount = this.nominations.length;
+        }
+      }
+    }
+
+    resetStatusFilter() {
+      this.filterApplied = null;
+      this.selectedStatus = 'All';
+      this.nominations = this.tempNominations;
+      this.nominationsCount = this.tempNominationsCount;
+    }
+
   getNominationList() {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
@@ -116,6 +145,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
         });
       }
       this.nominationsCount = this.nominations.length;
+      this.tempNominations = this.nominations;
+      this.tempNominationsCount = this.nominationsCount;
       /*this.inputs = {
         nominations: this.nominations,
         nominationsCount: this.nominations.length
@@ -127,12 +158,15 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   }
 
   private getNominatedTextbooksCount(nomination) {
-    const count = nomination.collection_ids ? nomination.collection_ids.length : 0;
-
+    let count;
+    if (nomination.nominationData) {
+      count = nomination.nominationData.collection_ids ? nomination.nominationData.collection_ids.length : 0;
+    } else {
+      count = nomination.collection_ids ? nomination.collection_ids.length : 0;
+    }
     if (count < 2) {
       return count + ' ' + this.resourceService.frmelmnts.lbl.textbook;
     }
-
     return count + ' ' + this.resourceService.frmelmnts.lbl.textbooks;
   }
 

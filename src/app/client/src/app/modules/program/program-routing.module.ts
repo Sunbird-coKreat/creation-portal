@@ -6,7 +6,7 @@ import { ProgramComponent, CreateProgramComponent, ProgramNominationsComponent, 
 import { AuthGuard } from '../core/guard/auth-gard.service';
 
 const routes: Routes = [{
-  path: '', component: ListAllProgramsComponent, canActivate: [ProgramsService, AuthGuard],
+  path: '', component: ListAllProgramsComponent, canActivate: [ProgramsService],
   data: {
     roles: 'rootOrgAdmin',
     telemetry: {
