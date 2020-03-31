@@ -12,6 +12,7 @@ const telemetryHelper = require('../helpers/telemetryHelper')
 const learnerURL = envHelper.LEARNER_URL
 const kp_content_service_base_url = envHelper.kp_content_service_base_url
 const kp_learning_service_base_url = envHelper.kp_learning_service_base_url
+const kp_assessment_service_base_url = envHelper.kp_assessment_service_base_url
 
 module.exports = function (app) {
 
@@ -96,6 +97,23 @@ module.exports = function (app) {
       return require('url').parse(kp_learning_service_base_url + originalUrl).path
     }
   }))
+
+  app.use('/action/assessment/v3/items/*',  proxy(kp_learning_service_base_url, {
+    proxyReqPathResolver: function (req) {
+      var originalUrl = req.originalUrl
+      originalUrl = originalUrl.replace('/action/', '')
+      return require('url').parse(kp_learning_service_base_url + originalUrl).path
+    }
+  }))
+
+  app.use('/action/itemset/v3/*',  proxy(kp_assessment_service_base_url, {
+    proxyReqPathResolver: function (req) {
+      var originalUrl = req.originalUrl
+      originalUrl = originalUrl.replace('/action/', '')
+      return require('url').parse(kp_assessment_service_base_url + originalUrl).path
+    }
+  }))
+
   // Proxy for content create , update & review END
 
   app.use('/action/content/v3/unlisted/publish/:contentId', permissionsHelper.checkPermission(),

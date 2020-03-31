@@ -14,11 +14,8 @@
       </div>
     </div>
   </div>
-  <div class="sb-table-respoinsive">
-    <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0146'}"></app-no-result>
-  </div>
+  <app-org-users-list></app-org-users-list>
 </div>
-
 <!-- Modal popup for share link -->
 <sui-modal *ngIf="showNormalModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
   class="sb-modal" appBodyScroll (dismissed)="showNormalModal = !showNormalModal" #modal>
