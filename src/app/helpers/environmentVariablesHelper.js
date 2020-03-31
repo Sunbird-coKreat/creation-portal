@@ -116,6 +116,8 @@ let envVariables = {
   LEARNER_SERVICE_UPSTREAM_URL: env.sunbird_learner_service_upstream_url || 'http://localhost:9000/',
   DATASERVICE_URL: env.sunbird_dataservice_url || 'https://staging.open-sunbird.org/api/',
   PORTAL_EXT_PLUGIN_URL: process.env.sunbird_ext_plugin_url || 'http://player_player:3000/plugin/',
+  kp_content_service_base_url: env.sunbird_kp_content_service_base_url || 'http://content-service:9000',
+  kp_learning_service_base_url: env.sunbird_kp_learning_service_base_url,
 
 
   // Health Checks Configuration
