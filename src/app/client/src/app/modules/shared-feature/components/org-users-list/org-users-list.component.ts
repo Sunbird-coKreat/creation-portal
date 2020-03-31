@@ -49,13 +49,14 @@ export class OrgUsersListComponent implements OnInit {
                     this.contributorOrgUser.push(r.result.User);
                   }
                 });
-                this.showLoader = false;
               }
+              this.showLoader = false;
             }, error => {
               
               console.log(error);
               this.showLoader = false;
             });
+            this.showLoader = false;
         }
       }, error => {
         console.log(error);
