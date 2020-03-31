@@ -195,13 +195,15 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     // tslint:disable-next-line:max-line-length
     this.visibility['showDeleteQuestion'] = (_.includes(this.actions.showDeleteQuestion.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft' && this.questionList.length > 1);
     // tslint:disable-next-line:max-line-length
-    this.visibility['showRequestChanges'] = (_.includes(this.actions.showRequestChanges.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
+    this.visibility['showRequestChanges'] = !this.userService.userProfile.userRoles.includes('ORG_ADMIN') && !this.resourceDetails.sampleContent === true &&
+    (_.includes(this.actions.showRequestChanges.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showPublish'] = (_.includes(this.actions.showPublish.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
+    this.visibility['showPublish'] = !this.userService.userProfile.userRoles.includes('ORG_ADMIN') && !this.resourceDetails.sampleContent === true &&
+    (_.includes(this.actions.showPublish.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
     // tslint:disable-next-line:max-line-length
     this.visibility['showSubmit'] = (_.includes(this.actions.showSubmit.roles, this.sessionContext.currentRoleId)  && this.resourceStatus === 'Draft');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSave'] = (_.includes(this.actions.showSave.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
+    this.visibility['showSave'] = !this.resourceDetails.sampleContent === true && (_.includes(this.actions.showSave.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
      // tslint:disable-next-line:max-line-length
     this.visibility['showEdit'] = (_.includes(this.actions.showEdit.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
   }
