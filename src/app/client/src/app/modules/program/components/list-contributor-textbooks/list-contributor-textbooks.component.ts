@@ -93,9 +93,14 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
         this.fetchFrameWorkDetails();
       }
 
-      const shortlistingDate  = moment(this.programDetails.shortlisting_enddate);
       const today = moment();
-      this.showAcceptRejectBtns = shortlistingDate.isSame(today) || shortlistingDate.isAfter(today);
+      let date;
+      if (this.programDetails.shortlisting_enddate) {
+        date  = moment(this.programDetails.shortlisting_enddate);
+      } else {
+        date  = moment(this.programDetails.enddate);
+      }
+      this.showAcceptRejectBtns = date.isSame(today) || date.isAfter(today);
     }, error => {
       // TODO: navigate to program list page
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
