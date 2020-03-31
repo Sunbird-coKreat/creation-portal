@@ -10,6 +10,8 @@ const contentServiceBaseUrl = envHelper.CONTENT_URL
 const reqDataLimitOfContentUpload = '30mb'
 const telemetryHelper = require('../helpers/telemetryHelper')
 const learnerURL = envHelper.LEARNER_URL
+const kp_content_service_base_url = envHelper.kp_content_service_base_url
+const kp_learning_service_base_url = envHelper.kp_learning_service_base_url
 
 module.exports = function (app) {
 
@@ -52,6 +54,49 @@ module.exports = function (app) {
 
   // Log telemetry for action api's
   app.all('/action/*', telemetryHelper.generateTelemetryForProxy)
+
+
+  // Proxy for content create , update & review Start
+  app.use('/action/content/v3/create',  proxy(kp_content_service_base_url, {
+    proxyReqPathResolver: function (req) {
+      var originalUrl = req.originalUrl
+      originalUrl = originalUrl.replace('/action/', '')
+      return require('url').parse(kp_content_service_base_url + originalUrl).path
+    }
+  }))
+
+  app.use('/action/content/v3/hierarchy/add',  proxy(kp_content_service_base_url, {
+    proxyReqPathResolver: function (req) {
+      var originalUrl = req.originalUrl
+      originalUrl = originalUrl.replace('/action/', '')
+      return require('url').parse(kp_content_service_base_url + originalUrl).path
+    }
+  }))
+
+  app.use('/action/content/v3/update/*',  proxy(kp_content_service_base_url, {
+    proxyReqPathResolver: function (req) {
+      var originalUrl = req.originalUrl
+      originalUrl = originalUrl.replace('/action/', '')
+      return require('url').parse(kp_content_service_base_url + originalUrl).path
+    }
+  }))
+
+  app.use('/action/content/v3/upload/*',  proxy(kp_learning_service_base_url, {
+    proxyReqPathResolver: function (req) {
+      var originalUrl = req.originalUrl
+      originalUrl = originalUrl.replace('/action/', '')
+      return require('url').parse(kp_learning_service_base_url + originalUrl).path
+    }
+  }))
+
+  app.use('/action/content/v3/review/*',  proxy(kp_learning_service_base_url, {
+    proxyReqPathResolver: function (req) {
+      var originalUrl = req.originalUrl
+      originalUrl = originalUrl.replace('/action/', '')
+      return require('url').parse(kp_learning_service_base_url + originalUrl).path
+    }
+  }))
+  // Proxy for content create , update & review END
 
   app.use('/action/content/v3/unlisted/publish/:contentId', permissionsHelper.checkPermission(),
     bodyParser.json(), proxy(contentProxyUrl, {

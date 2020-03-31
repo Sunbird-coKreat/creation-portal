@@ -73,7 +73,7 @@
         </div>
       </ng-container>
 
-      <div class="practical-sb-buttons">
+      <div class="practical-sb-buttons" *ngIf="canNominate()">
         <div *ngIf="selectedCollectionIds.length === 0"> <button
             class="sb-btn sb-btn-disabled sb-btn-normal">Nominate</button></div>
         <div *ngIf="selectedCollectionIds.length > 0">
@@ -124,7 +124,7 @@
               </td>
               <td *ngIf="currentNominationStatus === 'Initiated' || currentNominationStatus=== 'Pending'">{{data.sampleContentCount || 0 }}</td>
               <td>
-                <input type="checkbox" *ngIf="!data.sampleContentCount" [checked]="data.isSelected || data.sampleContentCount" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
+                <input type="checkbox" *ngIf="!data.sampleContentCount && canNominate()" [checked]="data.isSelected || data.sampleContentCount" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
                 <button type="button" *ngIf="data.isSelected || data.sampleContentCount" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10 px-10">Upload Sample</button>
               </td>
             </tr>
@@ -275,7 +275,7 @@
     </div>
   </div>
   <div class="sb-modal-actions">
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="addNomination()"> {{resourceService.frmelmnts.btn.submit}} </button>
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="addNomination()" [disabled]="!selectedContentTypes.length"> {{resourceService.frmelmnts.btn.submit}} </button>
     <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showContentTypeModal = false"> {{resourceService.frmelmnts.btn.cancel}}
     </button>
   </div>

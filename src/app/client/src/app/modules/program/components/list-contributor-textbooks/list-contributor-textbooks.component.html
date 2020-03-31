@@ -260,7 +260,7 @@
 								class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ programDetails?.collection_ids?.length }}</span>
 						</h4>
 					</div>
-					<div class="" *ngIf="showAcceptRejectBtns">
+					<div class="" *ngIf="canAcceptorReject()">
 						<button class="sb-btn sb-btn-normal sb-btn-secondary mr-8"
 							*ngIf="contributor?.nominationData?.status === 'Pending'"
 							(click)="updateNomination('accept')"
