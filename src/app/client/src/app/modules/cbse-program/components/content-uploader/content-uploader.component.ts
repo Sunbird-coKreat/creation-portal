@@ -483,6 +483,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     contentData: this.contentMetaData
     };
    this.playerConfig = this.playerService.getConfig(contentDetails);
+   // tslint:disable-next-line:max-line-length
    this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
    .subscribe((data) => {
        this.toasterService.success(this.resourceService.messages.smsg.m0060);
