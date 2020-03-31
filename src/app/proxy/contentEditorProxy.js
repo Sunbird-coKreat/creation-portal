@@ -122,6 +122,14 @@ module.exports = function (app) {
     }
   }))
 
+  app.use('/action/itemset/v3/read/*',  proxy(kp_assessment_service_base_url, {
+    proxyReqPathResolver: function (req) {
+      var originalUrl = req.originalUrl
+      originalUrl = originalUrl.replace('/action/', '')
+      return require('url').parse(kp_assessment_service_base_url + originalUrl).path
+    }
+  }))
+
   app.use('/action/itemset/v3/review/*',  proxy(kp_assessment_service_base_url, {
     proxyReqPathResolver: function (req) {
       var originalUrl = req.originalUrl
