@@ -61,6 +61,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
  private userBoard;
  frameworkCategories;
  programScope: any = {};
+ originalProgramScope: any = {};
  userprofile;
  programId: string;
  public programData: any = {};
@@ -148,14 +149,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
  }
 
  ngOnInit() {
-   this.userprofile = this.userService.userProfile;
-   this.initializeFormFields();
-   this.fetchFrameWorkDetails();
-   this.getProgramContentTypes();
-   this.telemetryInteractCdata = [];
+  this.userprofile = this.userService.userProfile;
+  this.initializeFormFields();
+  this.fetchFrameWorkDetails();
+  this.getProgramContentTypes();
+  this.telemetryInteractCdata = [];
   this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
   this.telemetryInteractObject = {};
-  // this.showTexbooklist();
+  //this.showTexbooklist();
  }
 
  ngAfterViewInit() {
@@ -238,6 +239,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       return _.find(element['terms'], {name: name});
     });
     this.programScope[element['code']] = sortedTermsArray;
+    this.originalProgramScope[element['code']] = sortedTermsArray;
   });
 
   const mediumOption = this.programsService.getAssociationData(board.terms, 'medium', this.frameworkCategories);
@@ -264,6 +266,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      }
 
      this.onClassChange();
+   } else {
+    this.programScope['gradeLevel'] = this.originalProgramScope['gradeLevel'];
    }
  }
 
@@ -280,6 +284,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      if (subjectOption.length) {
        this.programScope['subject'] = subjectOption;
      }
+   } else {
+    this.programScope['subject'] = this.originalProgramScope['subject'];
    }
  }
 
