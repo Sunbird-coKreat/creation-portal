@@ -17,7 +17,7 @@ export class RegistryService extends DataService {
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService) {
     super(http);
     this.config = config;
-    this.baseUrl = 'http://dock.sunbirded.org/' || this.config.urlConFig.URLS.CONTENT_PREFIX;
+    this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;
   }
 
 
