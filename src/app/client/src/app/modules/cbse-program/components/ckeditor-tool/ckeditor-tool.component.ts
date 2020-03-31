@@ -589,6 +589,7 @@ getAllVideos(offset, query) {
         mimeType: fileType,
         createdBy: this.userProfile.userId,
         creator: `${this.userProfile.firstName} ${this.userProfile.lastName ? this.userProfile.lastName : ''}`,
+        channel: this.editorConfig.channel || 'sunbird'
       }
     };
   }
