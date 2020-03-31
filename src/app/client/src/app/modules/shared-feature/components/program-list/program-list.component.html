@@ -13,7 +13,7 @@
     <div class="sb-pageSection-content mt-12">
       <!-- <ng-container *ngIf="programs !== undefined"> -->
         <ng-container *ngIf="!showLoader && programs !== undefined && programs.length else noResult">
-          <div class="sb-table-responsive">
+          <div class="sb-table-responsive desktop-o-x-unset">
             <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
             <thead class="sb-table-header sb-table-thead-gray">
               <tr>
@@ -65,15 +65,15 @@
                   </div>
                 </td>
                 <td class="mouse-pointer">
-                  <div class="sb__ellipsis sb__ellipsis--breakAll"  suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.contentType }}" popupText="{{ getProgramContentTypes(program) }}">{{ getProgramContentTypes(program) }}</div>
+                  <div  class=" ui icon" [attr.data-tooltip]="getProgramContentTypes(program)"><span class="sb__ellipsis sb__ellipsis--breakAll">{{ getProgramContentTypes(program) }}</span></div>
                 </td>
                 <td class="mouse-pointer">
-                  <div class="sb__ellipsis sb__ellipsis--breakAll" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.mediums }}" popupText="{{ getProgramInfo(program, 'medium') }}">{{ getProgramInfo(program, 'medium') }}</div>
+                  <div class="ui icon" [attr.data-tooltip]="getProgramInfo(program, 'medium')"><span class="sb__ellipsis sb__ellipsis--breakAll">{{ getProgramInfo(program, 'medium') }}</span></div>
                   <hr class="divider">
 
-                  <div class="sb__ellipsis sb__ellipsis--breakAll" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.class }}" popupText="{{ getProgramInfo(program, 'gradeLevel') }}">{{ getProgramInfo(program, 'gradeLevel') }}</div>
+                  <div class="ui icon" [attr.data-tooltip]="getProgramInfo(program, 'gradeLevel')"><span class="sb__ellipsis sb__ellipsis--breakAll">{{ getProgramInfo(program, 'gradeLevel') }}</span></div>
                   <hr class="divider">
-                  <div class="sb__ellipsis sb__ellipsis--breakAll" suiPopup  popupDelay="1000" popupHeader="{{ resourceService.frmelmnts.lbl.subjects }}" popupText="{{ getProgramInfo(program, 'subject') }}">{{ getProgramInfo(program, 'subject') }}</div>
+                  <div class="ui icon" [attr.data-tooltip]="getProgramInfo(program, 'subject')"><span class="sb__ellipsis sb__ellipsis--breakAll">{{ getProgramInfo(program, 'subject') }}</span></div>
                 </td>
 
                 <td *ngIf="!isContributor || activeAllProgramsMenu" class="nowrap">
