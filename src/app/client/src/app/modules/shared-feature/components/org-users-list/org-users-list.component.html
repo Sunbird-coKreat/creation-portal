@@ -7,7 +7,6 @@
              <th>{{resourceService.frmelmnts.lbl.username}}</th>
              <th>{{resourceService.frmelmnts.lbl.grade}}</th>
              <th>{{resourceService.frmelmnts.lbl.subject }}</th>
-             <th>{{resourceService.frmelmnts.lbl.ContentTypes}}</th>
            </tr>
          </thead>
          <tbody class="sb-table-body">
@@ -19,11 +18,6 @@
              </td>
              <td>{{userlist?.gradeLevel?.join(', ')}}</td>
              <td>{{userlist?.subject?.join(', ')}}</td>
-             <td>
-               <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold" style="width: 250px;">
-                 {{userlist?.contentTypes ? userlist?.contentTypes?.join(', ') : '-' }}
-               </div>
-             </td>
            </tr>
          </tbody>
          </table>
