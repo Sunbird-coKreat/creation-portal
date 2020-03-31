@@ -124,11 +124,16 @@
 
 }
 
-
-
-
 .dynamicHeight {
     min-height: 700px;
     margin-bottom: -48px !important;
     padding-bottom: 48px !important;
+}
+
+
+.ui.container{
+  [data-tooltip]:after{
+      white-space: pre-wrap !important;
+      font-size: 12px !important;
+  }
 }
