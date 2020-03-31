@@ -101,7 +101,6 @@ export class CollectionComponent implements OnInit, OnDestroy {
       this.sessionContext.currentRole = this.userProfile.userRegData.User_Org.roles[0] === 'admin' ? 'CONTRIBUTOR' : 'REVIEWER';
     }
     this.filters = this.getImplicitFilters();
-    this.getCollectionCard();
 
     const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
     this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
@@ -118,6 +117,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID + '.programs');
     this.setActiveDate();
     this.getNominationStatus();
+    this.getCollectionCard();
   }
 
   getImplicitFilters(): string[] {
@@ -170,6 +170,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
               }
               return content;
             });
+            this.selectedCollectionIds = _.uniq(this.selectedCollectionIds);
         });
 
       } else {
@@ -268,6 +269,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
       this.currentStage  = _.last(this.state.stages).stage;
     }
     if (this.sessionContext && this.programContext && this.currentStage === 'collectionComponent') {
+      this.getNominationStatus();
       this.getCollectionCard();
     }
    }
