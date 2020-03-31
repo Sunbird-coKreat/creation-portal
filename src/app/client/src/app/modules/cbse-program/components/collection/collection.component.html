@@ -275,7 +275,7 @@
     </div>
   </div>
   <div class="sb-modal-actions">
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="addNomination()"> {{resourceService.frmelmnts.btn.submit}} </button>
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="addNomination()" [disabled]="!selectedContentTypes.length"> {{resourceService.frmelmnts.btn.submit}} </button>
     <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showContentTypeModal = false"> {{resourceService.frmelmnts.btn.cancel}}
     </button>
   </div>
