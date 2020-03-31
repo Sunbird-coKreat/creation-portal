@@ -459,7 +459,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     const reviewItemSet = this.itemsetService.reviewItemset(this.itemSetIdentifier);
     const reviewContent = this.helperService.reviewContent(this.sessionContext.resourceIdentifier);
     forkJoin([reviewItemSet, reviewContent]).subscribe((res: any) => {
-      const contentId = res[1].result.content_id;
+      const contentId = res[1].result.node_id || res[1].result.identifier;
       if (this.sessionContext.collection && this.sessionContext.textBookUnitIdentifier) {
         // tslint:disable-next-line:max-line-length
         this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, contentId )
@@ -481,7 +481,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   publishContent() {
     this.helperService.publishContent(this.sessionContext.resourceIdentifier, this.userService.userProfile.userId)
       .subscribe(res => {
-      const contentId = res.result.content_id;
+        const contentId = res.result.node_id || res.result.identifier;
       this.showPublishModal = false;
       if (this.sessionContext.collection && this.sessionContext.textBookUnitIdentifier) {
         // tslint:disable-next-line:max-line-length
@@ -504,7 +504,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.helperService.submitRequestChanges(this.sessionContext.resourceIdentifier, this.FormControl.value.contentRejectComment)
       .subscribe(res => {
         this.showRequestChangesPopup = false;
-        const contentId =  res.result.node_id || res.result.content_id;
+        const contentId = res.result.node_id || res.result.identifier;
         if (this.sessionContext.collection && this.sessionContext.textBookUnitIdentifier) {
           this.collectionHierarchyService.addResourceToHierarchy(
             this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, contentId
@@ -617,7 +617,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       };
       this.updateContent(reqBody, this.sessionContext.resourceIdentifier)
       .subscribe((res) => {
-        const contentId = res.result.content_id || res.result.node_id;
+        const contentId = res.result.node_id || res.result.identifier;
         if (this.sessionContext.collection && this.sessionContext.textBookUnitIdentifier) {
           this.collectionHierarchyService.addResourceToHierarchy(
             this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, contentId
