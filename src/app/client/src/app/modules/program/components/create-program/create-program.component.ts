@@ -57,26 +57,27 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
  /**
  * List of textbooks for the program by BMGC
  */
- private userFramework;
- private userBoard;
- frameworkCategories;
- programScope: any = {};
- userprofile;
- programId: string;
- public programData: any = {};
- showTextBookSelector = false;
- formIsInvalid = false;
- subjectsOption = [];
- mediumOption = [];
- gradeLevelOption = [];
- pickerMinDate = new Date(new Date().setHours(0, 0, 0, 0));
- pickerMinDateForEndDate = new Date(new Date().setHours(0, 0, 0, 0));
- public telemetryImpression: IImpressionEventInput;
- public telemetryInteractCdata: any;
+  private userFramework;
+  private userBoard;
+  frameworkCategories;
+  programScope: any = {};
+  originalProgramScope: any = {};
+  userprofile;
+  programId: string;
+  public programData: any = {};
+  showTextBookSelector = false;
+  formIsInvalid = false;
+  subjectsOption = [];
+  mediumOption = [];
+  gradeLevelOption = [];
+  pickerMinDate = new Date(new Date().setHours(0, 0, 0, 0));
+  pickerMinDateForEndDate = new Date(new Date().setHours(0, 0, 0, 0));
+  public telemetryImpression: IImpressionEventInput;
+  public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
   public telemetryStart: IStartEventInput;
-   public telemetryEnd: IEndEventInput;
+  public telemetryEnd: IEndEventInput;
 
  constructor(
    public frameworkService: FrameworkService,
@@ -148,15 +149,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
  }
 
  ngOnInit() {
-   this.userprofile = this.userService.userProfile;
-   this.initializeFormFields();
-   this.fetchFrameWorkDetails();
-   this.getProgramContentTypes();
-   // this.showTexbooklist();
-   this.telemetryInteractCdata = [];
+  this.userprofile = this.userService.userProfile;
+  this.initializeFormFields();
+  this.fetchFrameWorkDetails();
+  this.getProgramContentTypes();
+  this.telemetryInteractCdata = [];
   this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
   this.telemetryInteractObject = {};
-   // this.showTexbooklist();
+  //this.showTexbooklist();
  }
 
  ngAfterViewInit() {
@@ -239,6 +239,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       return _.find(element['terms'], {name: name});
     });
     this.programScope[element['code']] = sortedTermsArray;
+    this.originalProgramScope[element['code']] = sortedTermsArray;
   });
 
   const Kindergarten = _.remove(this.programScope['gradeLevel'], (item) => {
@@ -270,6 +271,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      }
 
      this.onClassChange();
+   } else {
+    this.programScope['gradeLevel'] = this.originalProgramScope['gradeLevel'];
    }
  }
 
@@ -286,6 +289,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      if (subjectOption.length) {
        this.programScope['subject'] = subjectOption;
      }
+   } else {
+    this.programScope['subject'] = this.originalProgramScope['subject'];
    }
  }
 

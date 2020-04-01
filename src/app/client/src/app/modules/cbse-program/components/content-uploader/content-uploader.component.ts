@@ -137,13 +137,15 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     // tslint:disable-next-line:max-line-length
     this.visibility['showChangeFile'] = (_.includes(this.actions.showChangeFile.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showRequestChanges'] = (_.includes(this.actions.showRequestChanges.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
+    this.visibility['showRequestChanges'] = !this.userService.userProfile.userRoles.includes('ORG_ADMIN') && !this.contentMetaData.sampleContent === true &&
+     (_.includes(this.actions.showRequestChanges.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showPublish'] = (_.includes(this.actions.showPublish.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
+    this.visibility['showPublish'] = !this.userService.userProfile.userRoles.includes('ORG_ADMIN') && !this.contentMetaData.sampleContent === true &&
+    (_.includes(this.actions.showPublish.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
     // tslint:disable-next-line:max-line-length
     this.visibility['showSubmit'] = (_.includes(this.actions.showSubmit.roles, this.sessionContext.currentRoleId)  && this.resourceStatus === 'Draft');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSave'] = (_.includes(this.actions.showSave.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
+    this.visibility['showSave'] = !this.contentMetaData.sampleContent === true && (_.includes(this.actions.showSave.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
     // tslint:disable-next-line:max-line-length
     this.visibility['showEdit'] = (_.includes(this.actions.showEdit.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
   }
@@ -483,7 +485,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     contentData: this.contentMetaData
     };
    this.playerConfig = this.playerService.getConfig(contentDetails);
-   this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.identifier)
+   // tslint:disable-next-line:max-line-length
+   this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
    .subscribe((data) => {
        this.toasterService.success(this.resourceService.messages.smsg.m0060);
      }, (err) => {
@@ -526,7 +529,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
         if (action === 'review') {
           this.sendForReview();
         } else if (this.sessionContext.collection && this.unitIdentifier && action !== 'review') {
-          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.identifier)
+          // tslint:disable-next-line:max-line-length
+          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
           .subscribe((data) => {
             this.toasterService.success(this.resourceService.messages.smsg.m0060);
           }, (err) => {
@@ -548,7 +552,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     this.helperService.reviewContent(this.contentMetaData.identifier)
        .subscribe((res) => {
         if (this.sessionContext.collection && this.unitIdentifier) {
-          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.identifier)
+          // tslint:disable-next-line:max-line-length
+          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
           .subscribe((data) => {
             this.toasterService.success(this.resourceService.messages.smsg.m0061);
             this.programStageService.removeLastStage();
@@ -570,7 +575,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
       .subscribe(res => {
         this.showRequestChangesPopup = false;
         if (this.sessionContext.collection && this.unitIdentifier) {
-          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.identifier)
+          // tslint:disable-next-line:max-line-length
+          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
           .subscribe((data) => {
             this.toasterService.success(this.resourceService.messages.smsg.m0062);
             this.programStageService.removeLastStage();
@@ -589,7 +595,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     this.helperService.publishContent(this.contentMetaData.identifier, this.userService.userProfile.userId)
        .subscribe(res => {
         if (this.sessionContext.collection && this.unitIdentifier) {
-          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.identifier)
+          // tslint:disable-next-line:max-line-length
+          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
           .subscribe((data) => {
             this.toasterService.success(this.resourceService.messages.smsg.m0063);
             this.programStageService.removeLastStage();

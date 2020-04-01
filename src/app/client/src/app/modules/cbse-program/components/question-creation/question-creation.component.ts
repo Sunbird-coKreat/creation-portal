@@ -168,7 +168,8 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   initialize() {
     const config: any = _.get(this.sessionContext.practiceSetConfig, 'config');
     this.editorConfig = { 'mode': 'create',
-    config
+    config,
+    channel: this.sessionContext.channel
     };
     this.editorState = {
       question : '',

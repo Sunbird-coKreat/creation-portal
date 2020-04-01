@@ -94,12 +94,12 @@
         <table class="sb-table sb-table-striped sb-table-sortable sb-table-fixed">
           <thead class="sb-table-header sb-table-thead-gray">
             <tr>
-              <th class="sb-sort-icon w-5">{{resourceService.frmelmnts.lbl.textbook}}</th>
-              <th class="sb-sort-icon w-5">{{resourceService.frmelmnts.lbl.profile.Medium}}</th>
-              <th class="sb-sort-icon w-5">{{resourceService.frmelmnts.lbl.class}}</th>
-              <th class="sb-sort-icon w-5">{{resourceService.frmelmnts.lbl.subject}}</th>
-              <th class="sb-sort-icon w-5">{{resourceService.frmelmnts.lbl.chapters}}</th>
-              <th class="sb-sort-icon w-5" *ngIf="currentNominationStatus === 'Initiated' || currentNominationStatus=== 'Pending'">Sample Content</th>
+              <th class="w-5">{{resourceService.frmelmnts.lbl.textbook}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+              <th class="w-5">{{resourceService.frmelmnts.lbl.profile.Medium}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+              <th class="w-5">{{resourceService.frmelmnts.lbl.class}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+              <th class="w-5">{{resourceService.frmelmnts.lbl.subject}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+              <th class="w-5">{{resourceService.frmelmnts.lbl.chapters}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+              <th class="w-5" *ngIf="currentNominationStatus === 'Initiated' || currentNominationStatus=== 'Pending'">Sample Content<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
               <th class="w-5"></th>
             </tr>
           </thead>
@@ -209,11 +209,11 @@
     <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
       <thead class="sb-table-header sb-table-thead-gray">
         <tr>
-          <th class="sb-sort-icon">Textbook</th>
-          <th class="sb-sort-icon">Grade</th>
-          <th class="sb-sort-icon">Medium</th>
-          <th class="sb-sort-icon">Chapters</th>
-          <th class="sb-sort-icon">Subject</th>
+          <th>Textbook<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+          <th>Grade<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+          <th>Medium<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+          <th>Chapters<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+          <th>Subject<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
           <th class="text-center">Select</th>
         </tr>
       </thead>

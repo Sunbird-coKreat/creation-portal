@@ -19,6 +19,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   nominations = [];
   nominationsCount;
   collectionsCount;
+  tempNominations;
+  tempNominationsCount;
+  filterApplied: any;
+  public selectedStatus = 'All';
   showNominationsComponent = false;
   public initiatedCount = 0;
   public pendingCount = 0;
@@ -55,6 +59,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.filterApplied = null;
     this.getNominationList();
     this.getProgramDetails();
     this.getNominationCounts();
@@ -90,13 +95,38 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
      });
   }
 
+  onStatusChange(status) {
+      if (this.selectedStatus !== status) {
+        this.selectedStatus = status;
+        if (status === 'All') {
+          this.filterApplied = false;
+          this.nominations = this.tempNominations;
+          this.nominationsCount = this.tempNominationsCount;
+        } else {
+          this.filterApplied = true;
+          this.nominations = _.filter(this.tempNominations, (o) => {
+           return o.nominationData.status === status;
+          });
+          this.nominationsCount = this.nominations.length;
+        }
+      }
+    }
+
+    resetStatusFilter() {
+      this.filterApplied = null;
+      this.selectedStatus = 'All';
+      this.nominations = this.tempNominations;
+      this.nominationsCount = this.tempNominationsCount;
+    }
+
   getNominationList() {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
       data: {
         request: {
           filters: {
-            program_id: this.activatedRoute.snapshot.params.programId
+            program_id: this.activatedRoute.snapshot.params.programId,
+            status: ["Pending", "Approved", "Rejected"]
           }
         }
       }
@@ -116,6 +146,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
         });
       }
       this.nominationsCount = this.nominations.length;
+      this.tempNominations = this.nominations;
+      this.tempNominationsCount = this.nominationsCount;
       /*this.inputs = {
         nominations: this.nominations,
         nominationsCount: this.nominations.length
@@ -173,10 +205,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
     this.fetchNominationCounts().subscribe((response) => {
       const statuses = _.get(response, 'result');
       statuses.forEach(nomination => {
-        if (nomination.status === 'Initiated') {
-          this.initiatedCount = nomination.count;
-        }
-
         if (nomination.status === 'Pending') {
           this.pendingCount = nomination.count;
         }
@@ -204,7 +232,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
       data: {
         request: {
           filters: {
-            program_id: this.programId
+            program_id: this.programId,
+            status: ["Pending", "Approved", "Rejected"]
           },
           facets: ['program_id', 'status']
         }

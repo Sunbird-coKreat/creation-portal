@@ -47,7 +47,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   };
   public currentStage: any;
   showChapterList = false;
-  show = false;
+  showcontributorProfile = false;
   role: any = {};
   collection;
   configData;
@@ -212,7 +212,8 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   }
   getSampleContentStatusCount(data) {
     const self = this;
-    if (data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' && data.sampleContent) {
+    if (data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' && data.sampleContent
+    && data.createdBy === this.sessionContext.nominationDetails.user_id) {
         self.sampleDataCount = self.sampleDataCount + 1;
     }
     const childData = data.children;
@@ -332,14 +333,11 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     if (!this.programDetails) {
       return false;
     }
-    let isShortlistingDateFuture = true;
+
     const today = moment();
-    if (!_.isEmpty(this.programDetails.shortlisting_enddate)) {
-      isShortlistingDateFuture = moment(this.programDetails.shortlisting_enddate).isSameOrAfter(today, 'day');
-    }
     const isContributionDateFuture = moment(this.programDetails.content_submission_enddate).isSameOrAfter(today, 'day');
     const isEndDateFuture = moment(this.programDetails.enddate).isSameOrAfter(today, 'day');
-    return isShortlistingDateFuture && isContributionDateFuture && isEndDateFuture;
+    return isContributionDateFuture && isEndDateFuture;
   }
 
   changeView() {

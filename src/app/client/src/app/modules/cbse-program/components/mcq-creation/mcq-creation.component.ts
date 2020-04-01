@@ -128,7 +128,10 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
 
   ngOnInit() {
     const config: any = _.get(this.sessionContext.practiceSetConfig, 'config');
-    this.editorConfig = { config };
+    this.editorConfig = {
+      config,
+      channel: this.sessionContext.channel
+    };
     this.userName = this.setUserName();
     this.solutionUUID = UUID.UUID();
     this.isReadOnlyMode = this.sessionContext.isReadOnlyMode;
