@@ -31,11 +31,16 @@ export class OrgUsersListComponent implements OnInit {
       orgUsers.subscribe(response => {
         const result = _.get(response, 'result');
         if (!result || _.isEmpty(result)) {
+          this.showLoader = false;
           console.log('NO USER FOUND');
         } else {
           // get Ids of all users whose role is 'user'
           const userIds = _.map(_.filter(result[_.first(_.keys(result))], ['roles', ['user']]), 'userId');
           const getUserDetails = _.map(userIds, id => this.registryService.getUserDetails(id));
+          if(getUserDetails.length == 0)
+          {
+              this.showLoader = false;
+          }
           forkJoin(...getUserDetails)
             .subscribe((res: any) => {
               if (res) {
@@ -49,18 +54,19 @@ export class OrgUsersListComponent implements OnInit {
                     this.contributorOrgUser.push(r.result.User);
                   }
                 });
-                this.showLoader = false;
+              this.showLoader = false;
               }
             }, error => {
-              
               console.log(error);
               this.showLoader = false;
             });
         }
       }, error => {
+        this.showLoader = false;
         console.log(error);
       });
-    }
+    } 
+    //this.showLoader = false;
   }
 
 }
