@@ -159,7 +159,12 @@
 		</div>
 	</div>
 
-<app-contributor-profile-popup [showProfile]="showcontributorProfile" [userId]="contributor?.nominationData?.user_id" (close)="showcontributorProfile = false;"></app-contributor-profile-popup>
+<app-contributor-profile-popup 
+	[showProfile]="showcontributorProfile" 
+	[orgId]="contributor?.nominationData?.organisation_id" 
+	[userId]="contributor?.nominationData?.user_id" 
+	(close)="showcontributorProfile = false;">
+</app-contributor-profile-popup>
 
 <sui-modal *ngIf="showRequestChangesPopup" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
 	[size]="'normal'" class="sb-modal" appBodyScroll #modal (dismissed)="showRequestChangesPopup = false;">

@@ -12,9 +12,13 @@ export class ContributorProfilePopupComponent implements OnInit, OnDestroy {
 
   @Output() close = new EventEmitter<any>();
   @ViewChild('modal') private modal;
-  @Input() userId: string;
+  @Input() userId?: string;
+  @Input() orgId?: string;
   @Input() showProfile: boolean;
-  private contributor: any;
+  contributor: any;
+  fullName: string;
+  isOrg: boolean;
+  showLoader = true;
 
   constructor(
     public userService: UserService,
@@ -24,11 +28,16 @@ export class ContributorProfilePopupComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    if (!this.userId) {
+    if (_.isEmpty(this.orgId) && _.isEmpty(this.userId)) {
       this.toasterService.error('Please provide either of userId or orgId');
       return;
     }
-    this.getUserProfile();
+
+    if (!_.isEmpty(this.orgId)) {
+      this.getOrgProfile();
+    } else if (!_.isEmpty(this.userId)) {
+      this.getUserProfile();
+    }
   }
 
   getUserProfile() {
@@ -44,17 +53,57 @@ export class ContributorProfilePopupComponent implements OnInit, OnDestroy {
           this.toasterService.warning(this.resourceService.messages.emsg.profile.m0001);
           return false;
         }
-
         this.contributor = response.result.User[0];
+        this.setFullName();
       },
       (err) => {
-        console.log(err);
-        // TODO: navigate to program list page
-        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-        this.toasterService.warning(errorMes || this.resourceService.messages.emsg.profile.m0002);
+        this.handleError(err, this.resourceService.messages.emsg.profile.m0002);
         return false;
       }
     );
+  }
+
+  getOrgProfile() {
+    const orgSearchReq = {
+      entityType: ['Org'],
+      filters: {
+        osid: {eq : this.orgId}
+      }
+    };
+    this.programsService.searchRegistry(orgSearchReq).subscribe(
+      (response) => {
+        if (_.isEmpty(response.result.Org)) {
+          this.toasterService.warning(this.resourceService.messages.emsg.contributorjoin.m0001);
+          return false;
+        }
+        this.contributor = response.result.Org[0];
+        this.setFullName();
+      },
+      (err) => {
+        this.handleError(err, this.resourceService.messages.fmsg.contributorjoin.m0001);
+        return false;
+      }
+    );
+  }
+
+  handleError(err, customErrMsg) {
+    console.log(err);
+    // TODO: navigate to program list page
+    const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+    this.toasterService.warning(errorMes || customErrMsg);
+  }
+
+  setFullName() {
+    this.isOrg = this.contributor['@type'] === 'Org';
+    if (this.isOrg) {
+      this.fullName = this.contributor.name;
+    } else {
+      this.fullName = this.contributor.firstName;
+      if (!_.isEmpty(this.contributor.lastName)) {
+        this.fullName  += ' ' + this.contributor.lastName;
+      }
+    }
+    this.showLoader = false;
   }
 
   ngOnDestroy() {
