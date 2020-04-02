@@ -123,9 +123,12 @@
                 {{ data.childNodes ? data.childNodes.length : 0 }}
               </td>
               <td *ngIf="currentNominationStatus === 'Initiated' || currentNominationStatus=== 'Pending'">{{data.sampleContentCount || 0 }}</td>
-              <td class="text-center">
-                <input  type="checkbox" *ngIf="(data.sampleContentCount === undefined || data.sampleContentCount === 0) && canNominate()" [checked]="data.isSelected || data.sampleContentCount" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
-                <button type="button" *ngIf="data.isSelected || data.sampleContentCount" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10 px-10">Upload Sample</button>
+              <td>
+                <div class="sb-checkbox sb-checkbox-primary d-inline-block">
+                  <label></label>
+                  <input  type="checkbox" *ngIf="(data.sampleContentCount === undefined || data.sampleContentCount === 0) && canNominate()" [checked]="data.isSelected || data.sampleContentCount" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
+               </div>
+                  <button type="button" *ngIf="data.isSelected || data.sampleContentCount" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10 px-10">Upload Sample</button>
               </td>
             </tr>
           </tbody>
