@@ -481,7 +481,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   publishContent() {
     this.helperService.publishContent(this.sessionContext.resourceIdentifier, this.userService.userProfile.userId)
       .subscribe(res => {
-        const contentId = res.result.node_id || res.result.identifier;
+        const contentId = res.result.node_id || res.result.identifier || res.result.content_id;
       this.showPublishModal = false;
       if (this.sessionContext.collection && this.sessionContext.textBookUnitIdentifier) {
         // tslint:disable-next-line:max-line-length
