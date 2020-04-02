@@ -187,7 +187,7 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <span class="sb-label sb-label-table sb-label-primary-100">
+                                                <span [ngClass]="{'sb-color-success':nomination?.nominationData?.status  == 'Approved','sb-color-warning':nomination?.nominationData?.status  == 'Pending'}">
                                                     {{ nomination?.nominationData?.status }}
                                                 </span>
                                             </td>

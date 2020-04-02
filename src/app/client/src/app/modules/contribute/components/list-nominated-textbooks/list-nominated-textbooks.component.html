@@ -144,7 +144,7 @@
 			<div class="sb-meta-data-container sb-meta-data-column px-10">
 				<div class='practical-sb-buttons' *ngIf="nominationDetails && nominationDetails.status">
 					<label class="m-0">{{ resourceService.frmelmnts.lbl.status }}</label>
-					<p>{{ nominationDetails?.status }}</p>
+					<p [ngClass]="{'sb-color-success':nominationDetails.status == 'Approved','sb-color-primary':nominationDetails.status == 'Rejected'}">{{ nominationDetails?.status }}</p>
 				</div>
 			</div>
 			<div class="sb-meta-data-container sb-meta-data-column  px-10">
@@ -247,7 +247,7 @@
 									{{ (orgUser?.selectedRole) ? orgUser.selectedRole : '-' }}
 								</div>
 								<ng-template #elseBlock>
-									<sui-select class="selection" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="options" valueField="name"
+									<sui-select class="selection pt-5" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="options" valueField="name"
 									(selectedOptionChange)="onRoleChange()">
 										<sui-select-option *ngFor="let option of roles;" [value]="option">
 										</sui-select-option>
