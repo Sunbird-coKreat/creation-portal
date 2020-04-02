@@ -55,6 +55,7 @@ export class ProgramListComponent implements OnInit {
    * Check if logged in user is contributor or sourcing org
    */
   private checkIfUserIsContributor() {
+    console.log('%c ProgramList - checking if user is a contributor! ', 'background: #222; color: #bada55');
     this.programsService.allowToContribute$.pipe(
       tap((isContributor: boolean) => {
         // TODO implement based on api and remove url checks
