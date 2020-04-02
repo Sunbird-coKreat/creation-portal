@@ -65,7 +65,7 @@ export class HelperService {
       }
     };
     const option = {
-      url: `${this.configService.urlConFig.URLS.CONTENT.PUBLISH}/${contentId}`,
+      url: `content/v3/publish/${contentId}`,
       data: requestBody
     };
     return this.contentService.post(option);

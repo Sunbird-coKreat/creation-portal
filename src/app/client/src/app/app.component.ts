@@ -174,6 +174,7 @@ export class AppComponent implements OnInit, OnDestroy {
               this.router.navigateByUrl('/contribute/myenrollprograms');
             // tslint:disable-next-line:max-line-length
             } else if ((this.userService.userProfile.userRegData.User_Org && this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) || !this.router.url.includes('/contribute/join/') ) {
+              console.log('/contribute----------->');
               this.router.navigateByUrl('/contribute');
             }
           }).catch((err) => {
