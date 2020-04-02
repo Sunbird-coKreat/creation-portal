@@ -155,7 +155,7 @@ export class AppComponent implements OnInit, OnDestroy {
           }
         }))
       .subscribe(data => {
-        console.log('%c userService Fetching Done! ', 'background: #378dd6; color: #bada55');
+        console.log('%c userService Fetching Done! ', 'background: #000; color: #fff');
         this.tenantService.getTenantInfo(this.slug);
         this.setPortalTitleLogo();
         this.telemetryService.initialize(this.getTelemetryContext());

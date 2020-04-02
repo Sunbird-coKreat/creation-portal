@@ -61,7 +61,9 @@ export class ProgramListComponent implements OnInit {
         // TODO implement based on api and remove url checks
         // this.isContributor = !isContributor;
         const orgId = this.activatedRoute.snapshot.params.orgId;
+        console.log('%c ProgramService - AllowTocontribute Subject Passed! ', 'background: #222; color: #bada55');
 
+        console.log(`%c checking router url - ${this.router.url}! `, 'background: #222; color: #bada55');
         // Check if user part of that organisation
         if (this.router.url.includes('/contribute/join/' + orgId)) {
             this.programsService.addUsertoContributorOrg(orgId);
