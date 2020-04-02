@@ -1,12 +1,14 @@
-<div class="ui container pb-48">
+<div class="ui container pb-48 ekta">
   <div class="sb-pageSection my-24">
     <div class="d-flex flex-ai-center flex-jc-space-between">
       <div class="sb-pageSection-header mb-0">
         <h4 class="sb-pageSection-title">
           <span *ngIf="!isContributor || activeMyProgramsMenu">{{ resourceService.frmelmnts.lbl.myPrograms }} </span>
           <span *ngIf="activeAllProgramsMenu">{{ resourceService.frmelmnts.lbl.explorePrograms }} </span>
-          <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8"
-            *ngIf="!showLoader && programs !== undefined && programs.length">{{count}}</span></h4>
+         </h4>
+         <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning"
+         *ngIf="!showLoader && programs !== undefined && programs.length">{{count}}
+        </span>
       </div>
       <!-- <button routerLink="sourcing/create-program" *ngIf="this.router.url.includes('/sourcing')" class="sb-btn sb-btn-normal sb-btn-primary"><i class="plus outline icon"></i> Add New Program</button> -->
     </div>
