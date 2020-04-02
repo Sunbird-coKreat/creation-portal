@@ -134,9 +134,12 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
     this.programsService.post(req).subscribe((data) => {
       if (data.result.length > 0) {
         _.forEach(data.result, (res) => {
-          let name = res.userData.firstName;
-          if (!_.isEmpty(res.userData.lastName)) {
-            name = name + ' ' + res.userData.lastName;
+          let name = 'not from api';
+          if (res.userData) {
+            name = res.userData.firstName;
+            if (!_.isEmpty(res.userData.lastName)) {
+              name = name + ' ' + res.userData.lastName;
+            }
           }
           this.nominations.push({
             'name': name,
