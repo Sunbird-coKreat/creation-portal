@@ -155,6 +155,7 @@ export class AppComponent implements OnInit, OnDestroy {
           }
         }))
       .subscribe(data => {
+        console.log('%c userService Fetching Done! ', 'background: #378dd6; color: #bada55');
         this.tenantService.getTenantInfo(this.slug);
         this.setPortalTitleLogo();
         this.telemetryService.initialize(this.getTelemetryContext());
@@ -162,6 +163,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.setFingerPrintTelemetry();
         this.checkTncAndFrameWorkSelected();
         if (this.userService.loggedIn) {
+          console.log('%c App Component - User Logged In! ', 'background: #222; color: #bada55');
           this.userService.openSaberRegistrySearch().then(() => {
             this.userService.userRegistryData = true;
             this.initApp = true;
