@@ -58,7 +58,9 @@ module.exports = function (app) {
 
 
   // Proxy for content create , update & review Start
-  app.use('/action/content/v3/create',  proxy(kp_content_service_base_url, {
+
+  app.use(['/action/content/v3/create', '/action/content/v3/hierarchy/add', '/action/content/v3/hierarchy/remove', '/action/content/v3/update/*'], 
+  proxy(kp_content_service_base_url, {
     proxyReqPathResolver: function (req) {
       var originalUrl = req.originalUrl
       originalUrl = originalUrl.replace('/action/', '')
@@ -66,23 +68,8 @@ module.exports = function (app) {
     }
   }))
 
-  app.use('/action/content/v3/hierarchy/add',  proxy(kp_content_service_base_url, {
-    proxyReqPathResolver: function (req) {
-      var originalUrl = req.originalUrl
-      originalUrl = originalUrl.replace('/action/', '')
-      return require('url').parse(kp_content_service_base_url + originalUrl).path
-    }
-  }))
-
-  app.use('/action/content/v3/update/*',  proxy(kp_content_service_base_url, {
-    proxyReqPathResolver: function (req) {
-      var originalUrl = req.originalUrl
-      originalUrl = originalUrl.replace('/action/', '')
-      return require('url').parse(kp_content_service_base_url + originalUrl).path
-    }
-  }))
-
-  app.use('/action/content/v3/upload/*',  proxy(kp_learning_service_base_url, {
+  app.use(['/action/content/v3/upload/*', '/action/content/v3/review/*', '/action/assessment/v3/items/*', '/action/content/v3/publish/*', '/action/content/v3/reject/*'],  
+    proxy(kp_learning_service_base_url, {
     proxyReqPathResolver: function (req) {
       var originalUrl = req.originalUrl
       originalUrl = originalUrl.replace('/action/', '')
@@ -90,47 +77,8 @@ module.exports = function (app) {
     }
   }))
 
-  app.use('/action/content/v3/review/*',  proxy(kp_learning_service_base_url, {
-    proxyReqPathResolver: function (req) {
-      var originalUrl = req.originalUrl
-      originalUrl = originalUrl.replace('/action/', '')
-      return require('url').parse(kp_learning_service_base_url + originalUrl).path
-    }
-  }))
-
-  app.use('/action/assessment/v3/items/*',  proxy(kp_learning_service_base_url, {
-    proxyReqPathResolver: function (req) {
-      var originalUrl = req.originalUrl
-      originalUrl = originalUrl.replace('/action/', '')
-      return require('url').parse(kp_learning_service_base_url + originalUrl).path
-    }
-  }))
-
-  app.use('/action/itemset/v3/create',  proxy(kp_assessment_service_base_url, {
-    proxyReqPathResolver: function (req) {
-      var originalUrl = req.originalUrl
-      originalUrl = originalUrl.replace('/action/', '')
-      return require('url').parse(kp_assessment_service_base_url + originalUrl).path
-    }
-  }))
-
-  app.use('/action/itemset/v3/update/*',  proxy(kp_assessment_service_base_url, {
-    proxyReqPathResolver: function (req) {
-      var originalUrl = req.originalUrl
-      originalUrl = originalUrl.replace('/action/', '')
-      return require('url').parse(kp_assessment_service_base_url + originalUrl).path
-    }
-  }))
-
-  app.use('/action/itemset/v3/read/*',  proxy(kp_assessment_service_base_url, {
-    proxyReqPathResolver: function (req) {
-      var originalUrl = req.originalUrl
-      originalUrl = originalUrl.replace('/action/', '')
-      return require('url').parse(kp_assessment_service_base_url + originalUrl).path
-    }
-  }))
-
-  app.use('/action/itemset/v3/review/*',  proxy(kp_assessment_service_base_url, {
+  app.use(['/action/itemset/v3/create', '/action/itemset/v3/update/*', '/action/itemset/v3/read/*', '/action/itemset/v3/review/*', '/action/itemset/v3/retire/*'],
+  proxy(kp_assessment_service_base_url, {
     proxyReqPathResolver: function (req) {
       var originalUrl = req.originalUrl
       originalUrl = originalUrl.replace('/action/', '')
