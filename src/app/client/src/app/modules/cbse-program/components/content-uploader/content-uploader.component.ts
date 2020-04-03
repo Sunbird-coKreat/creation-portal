@@ -97,7 +97,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
       this.getUploadedContentMeta(_.get(this.contentUploadComponentInput, 'contentId'));
     }
     // tslint:disable-next-line:max-line-length
-    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.contentUploadComponentInput.programContext.programId, 'Program');
+    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.contentUploadComponentInput.programContext.program_id, 'Program');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID + '.programs');
     // tslint:disable-next-line:max-line-length
@@ -110,7 +110,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     }
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-    const telemetryCdata = [{ 'type': 'Program', 'id': this.programContext.programId }];
+    const telemetryCdata = [{ 'type': 'Program', 'id': this.programContext.program_id }];
      setTimeout(() => {
       this.telemetryImpression = {
         context: {

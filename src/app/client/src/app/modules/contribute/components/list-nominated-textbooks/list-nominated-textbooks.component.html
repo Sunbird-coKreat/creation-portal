@@ -182,7 +182,7 @@
 											<th class="w-5"></th>
 										</tr>
 									</thead>
-									<tbody class="sb-table-body">
+									<tbody class="sb-table-body" *ngIf="contributorTextbooks.length">
 										<tr *ngFor="let contributorTextbook of contributorTextbooks; let i = index;">
 											<td class="hand">
 												{{contributorTextbook.name}}
@@ -190,7 +190,7 @@
 											<td>{{contributorTextbook.medium}}</td>
 											<td>{{contributorTextbook.gradeLevel}}</td>
 											<td>{{contributorTextbook.subject}}</td>
-											<td>5</td>
+											<td>{{contributorTextbook.chapterCount || 0}}</td>
 											<td>
 												<button *ngIf="currentNominationStatus === 'Approved'"
 												type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary"

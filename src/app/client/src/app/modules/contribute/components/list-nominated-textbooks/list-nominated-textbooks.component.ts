@@ -1,6 +1,6 @@
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService } from '@sunbird/shared';
-import { ProgramsService, PublicDataService, UserService, FrameworkService, RegistryService } from '@sunbird/core';
+import { ProgramsService, PublicDataService, UserService, FrameworkService, RegistryService, ActionService } from '@sunbird/core';
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { tap, first } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
@@ -56,18 +56,19 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any = {};
   public currentUserRole: any;
+  public chapterCount = 0;
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private configService: ConfigService, private publicDataService: PublicDataService,
   private activatedRoute: ActivatedRoute, private router: Router, public programStageService: ProgramStageService,
   public toasterService: ToasterService, private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
   public frameworkService: FrameworkService, public userService: UserService, public registryService: RegistryService,
-  public activeRoute: ActivatedRoute) {
+  public activeRoute: ActivatedRoute, public actionService: ActionService) {
     this.programId = this.activatedRoute.snapshot.params.programId;
    }
 
   ngOnInit() {
     this.getProgramDetails();
-    this.getProgramTextbooks();
+    this.getNominationStatus();
     this.programStageService.initialize();
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
@@ -83,7 +84,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       this.getContributionOrgUsers();
       this.showUsersTab = true;
     }
-    this.getNominationStatus();
     this.telemetryInteractCdata = [{
       id: this.activatedRoute.snapshot.params.programId,
       type: 'Program_ID'
@@ -154,12 +154,69 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     this.httpClient.post<any>(option.url, option.data).subscribe(
       (res) =>  {
         if (res && res.result && res.result.content) {
-          this.contributorTextbooks = res.result.content;
+          this.showTexbooklist(res);
         }
       },
       (err) => console.log(err)
     );
   }
+
+  showTexbooklist (res) {
+    // tslint:disable-next-line:max-line-length
+    const contributorTextbooks = (res.result.content.length && this.nominationDetails.collection_ids) ? _.filter(res.result.content, (collection) => {
+         return _.includes(this.nominationDetails.collection_ids, collection.identifier);
+    }) : [];
+    if (!_.isEmpty(contributorTextbooks)) {
+      const collectionIds = _.map(contributorTextbooks, 'identifier');
+      this.getCollectionHierarchy(collectionIds)
+        .subscribe(response => {
+          const hierarchies = _.map(response, r => {
+            if (r.result && r.result.content) {
+              return r.result.content;
+            } else {
+              return r.result;
+            }
+          });
+          const hierarchyContent = _.map(hierarchies, hierarchy => {
+            this.chapterCount = 0;
+            const {chapterCount} = this.getSampleContentStatusCount(hierarchy);
+              hierarchy.chapterCount = chapterCount;
+            return hierarchy;
+          });
+          this.contributorTextbooks = _.map(contributorTextbooks, content => {
+            const contentWithHierarchy =  _.find(hierarchyContent, {identifier: content.identifier});
+            content.chapterCount = contentWithHierarchy.chapterCount;
+            return content;
+          });
+        });
+    } else {
+      this.contributorTextbooks = contributorTextbooks;
+    }
+  }
+  getSampleContentStatusCount(data) {
+    const self = this;
+    if (data.contentType === 'TextBookUnit') {
+      self.chapterCount = self.chapterCount + 1;
+    }
+    const childData = data.children;
+    if (childData) {
+      childData.map(child => {
+        self.getSampleContentStatusCount(child);
+      });
+    }
+    return {chapterCount: self.chapterCount};
+  }
+
+  getCollectionHierarchy(collectionIds) {
+    const hierarchyRequest =  _.map(collectionIds, id => {
+       const req = {
+         url: 'content/v3/hierarchy/' + id,
+         param: { 'mode': 'edit' }
+       };
+       return this.actionService.get(req);
+     });
+     return forkJoin(hierarchyRequest);
+   }
 
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
@@ -282,6 +339,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
         }
       }
+      this.getProgramTextbooks();
     }, error => {
       this.toasterService.error('Failed fetching current nomination status');
     });
