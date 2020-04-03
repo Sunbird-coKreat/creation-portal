@@ -100,16 +100,20 @@ export class ProgramsService extends DataService implements CanActivate {
   */
  mapUsertoContributorOrgReg (orgOsid, UserOsid) {
   // Check if user is alredy part of the orgnisation
+  console.log('%c ProgramService - mapUsertoContributorOrgReg! ', 'background: #222; color: #bada55');
+
   if (!_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
     const userOrg = this.userService.userProfile.userRegData.User_Org;
 
     if (userOrg.orgId && userOrg.orgId === orgOsid) {
+      console.log('%c mapUsertoContributorOrgReg userOrg.orgId is orgOsId! ', 'background: #222; color: #bada55');
       this.toasterService.warning(this.resourceService.messages.emsg.contributorjoin.m0002);
       this.router.navigate(['contribute/myenrollprograms']);
       return false;
     }
 
     if (userOrg.orgId && userOrg.orgId !== orgOsid) {
+      console.log('%c mapUsertoContributorOrgReg userOrg.orgId isNot orgOsId! ', 'background: #222; color: #bada55');
       this.toasterService.warning(this.resourceService.messages.emsg.contributorjoin.m0003);
       this.router.navigate(['contribute/myenrollprograms']);
       return false;
@@ -126,6 +130,7 @@ export class ProgramsService extends DataService implements CanActivate {
 
   this.addToRegistry(userOrgAdd).subscribe(
       (res) => {
+        console.log('%c addToRegistry- added to registry! ', 'background: #222; color: #bada55');
         this.toasterService.success(this.resourceService.messages.smsg.contributorjoin.m0001);
         this.userService.openSaberRegistrySearch().then(() => {
           this.router.navigate(['contribute/myenrollprograms']);
@@ -147,9 +152,11 @@ export class ProgramsService extends DataService implements CanActivate {
    * logic which decides if user is with join link shoule we add him to the organisation or not
    */
   addUsertoContributorOrg(orgId) {
-      // Check if orgnisation exists
+      // Check if organisation exists
+      console.log('%c Program Service AddUserToContributorOrg! ', 'background: #222; color: #bada55');
+
       const orgSearch = {
-        entityType: ["Org"],
+        entityType: ['Org'],
         filters: {
           osid: {eq : orgId}
         }
@@ -165,6 +172,7 @@ export class ProgramsService extends DataService implements CanActivate {
           const orgOsid = contibutorOrg.osid;
           if (!this.userService.userProfile.userRegData.User) {
             // Add user to the registry
+            console.log('%c Adding user to registry! ', 'background: #222; color: #bada55');
             const userAdd = {
               User: {
                 firstName: this.userService.userProfile.firstName,
@@ -185,6 +193,8 @@ export class ProgramsService extends DataService implements CanActivate {
                 (error) => {}
             );
           } else {
+            console.log('%c Adding Exists - Mapping to Org! ', 'background: #222; color: #bada55');
+
             this.mapUsertoContributorOrgReg(orgOsid, this.userService.userProfile.userRegData.User.osid);
           }
         },

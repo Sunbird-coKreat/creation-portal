@@ -145,7 +145,8 @@ var programConfig = {
                 'label': 'Explanation',
                 'onClick': 'uploadComponent',
                 'mimeType': [
-                  'application/pdf'
+                  'application/pdf',
+                  'video/mp4'
                 ],
                 'metadata': {
                   'name': 'Explanation Resource',
@@ -159,7 +160,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf',
+                  'accepted': 'pdf, mp4',
                   'size': '50'
                 }
               },
