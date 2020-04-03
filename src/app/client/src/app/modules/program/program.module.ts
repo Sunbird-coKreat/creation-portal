@@ -10,6 +10,7 @@ import { ProgramRoutingModule } from './program-routing.module';
 import { ListAllProgramsComponent } from './components';
 import { ProgramComponent } from './components/program/program.component';
 import { OnboardPopupComponent } from './components/onboard-popup/onboard-popup.component';
+import { ContributorProfilePopupComponent } from './components/contributor-profile-popup/contributor-profile-popup.component';
 import { ProgramHeaderComponent } from './components/program-header/program-header.component';
 import { CreateProgramComponent } from './components/create-program/create-program.component';
 import { ProgramNominationsComponent } from './components/program-nominations/program-nominations.component';
@@ -28,7 +29,7 @@ import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
     ProgramComponent, OnboardPopupComponent,
     ProgramHeaderComponent, CreateProgramComponent,
     ProgramNominationsComponent, ListNominationsComponent,
-    ListContributorTextbooksComponent],
+    ListContributorTextbooksComponent, ContributorProfilePopupComponent],
   imports: [
   SuiModule,
     CommonModule,

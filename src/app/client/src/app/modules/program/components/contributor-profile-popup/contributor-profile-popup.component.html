@@ -1,0 +1,64 @@
+<sui-modal [mustScroll]="true" [isClosable]="true" *ngIf="showProfile" [transitionDuration]="0" [size]="'normal'" (dismissed)="closePopup()"
+	class="sb-modal" #modal>
+	<div class="sb-modal-header"> 
+    {{resourceService?.frmelmnts?.lbl?.profileDetails}} </div>
+	<div class="sb-modal-content o-y-visible">
+		<div class="ui container">
+			<ng-container *ngIf="!showLoader && contributor else noResult">
+				<div class="mx-48 text-center">
+					<div class="sb-profile-page__avatar">
+						<img src="assets/images/guest.svg" alt="guest" class="mb-24">
+					</div>
+					<div class="fs-2-5 font-weight-bold my-24">{{fullName}} </div>
+				</div>
+				<div class="mx-48 relative text-center">
+					<div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
+						<span class="fmedium white-space-nowrap">{{resourceService.frmelmnts.lbl.type}}
+							:</span>
+						<span class="fmedium font-weight-bold pl-4">{{ (isOrg) ? 'Organisation' : 'Individual'}}</span>
+					</div>
+					<div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
+						<span class="fmedium white-space-nowrap">{{resourceService.frmelmnts.lbl.website}}
+							:</span>
+						<span class="fmedium font-weight-bold pl-4">{{ (contributor?.website) ? contributor?.website : '-'}}</span>
+					</div>
+					<div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
+						<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Board}}
+							:</span>
+						<span class="fmedium font-weight-bold pl-4">{{contributor?.board?.join(', ')}}</span>
+					</div>
+					<div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
+						<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Medium}}
+							:</span>
+						<span class="fmedium font-weight-bold pl-4">
+							{{contributor?.medium?.join(', ')}}</span>
+					</div>
+					<div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
+						<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Classes}}
+							:</span>
+						<span class="fmedium font-weight-bold pl-4">
+							{{contributor?.gradeLevel?.join(', ')}}</span>
+					</div>
+					<div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
+						<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Subjects}}
+							:</span>
+						<span class="fmedium font-weight-bold pl-4">
+							{{contributor?.subject?.join(', ')}}</span>
+					</div>
+					<div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
+						<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.contentType}}
+							:</span>
+						<span class="fmedium font-weight-bold pl-4">
+							{{contributor?.contentTypes?.join(', ')}}</span>
+					</div>
+				</div>
+			</ng-container>
+			<ng-template #noResult>
+			<div class="ui tweleve wide column mb-20">
+				<app-loader *ngIf="showLoader"></app-loader>
+			</div>
+			<app-no-result *ngIf="!showLoader" [data]="{messageText: resourceService.messages.stmsg.m0006}"></app-no-result>
+			</ng-template>
+		</div>
+	</div>
+</sui-modal>

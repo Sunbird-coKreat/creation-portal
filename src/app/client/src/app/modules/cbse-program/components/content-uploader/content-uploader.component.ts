@@ -596,7 +596,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
        .subscribe(res => {
         if (this.sessionContext.collection && this.unitIdentifier) {
           // tslint:disable-next-line:max-line-length
-          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
+          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier || res.result.content_id)
           .subscribe((data) => {
             this.toasterService.success(this.resourceService.messages.smsg.m0063);
             this.programStageService.removeLastStage();

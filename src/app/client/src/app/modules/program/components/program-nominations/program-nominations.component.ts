@@ -34,8 +34,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   public userProfile: any;
   public mediums: any;
   public grades: any;
-  public selectedNomineeProfile: any;
-  showNomineeProfile;
+  public selectedNomination: any;
+  showContributorProfilePopup = false;
   public telemetryImpression: IImpressionEventInput;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
@@ -134,13 +134,19 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
     this.programsService.post(req).subscribe((data) => {
       if (data.result.length > 0) {
         _.forEach(data.result, (res) => {
-          let name = res.userData.firstName;
-          if (!_.isEmpty(res.userData.lastName)) {
-            name = name + ' ' + res.userData.lastName;
+          const isOrg = !_.isEmpty(res.organisation_id);
+          let name = '';
+          if (isOrg) {
+            name = res.userData.name;
+          } else {
+            name = res.userData.firstName;
+            if (!_.isEmpty(res.userData.lastName)) {
+              name  += ' ' + res.userData.lastName;
+            }
           }
           this.nominations.push({
             'name': name,
-            'type': res.organisation_id ? 'Organisation' : 'Individual',
+            'type': isOrg ? 'Organisation' : 'Individual',
             'nominationData': res
           });
         });
@@ -259,16 +265,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
     return type === 'board' ? config[type] : _.join(config[type], ', ');
   }
 
-  onApproveClick(nomination) {
-    this.tosterService.success('Nomination accepted for - ' + nomination.contributor_name);
-  }
-
-  onRejectClick(nomination) {
-    this.tosterService.warning('Nomination rejected for - ' + nomination.contributor_name);
-  }
-
-  getNomineeProfile(nominee) {
-    this.selectedNomineeProfile = nominee.nominationData.userData;
+  showSelectedContributorProfile(nomination) {
+    this.showContributorProfilePopup = true;
+    this.selectedNomination = nomination.nominationData;
   }
 
   viewNominationDetails(nomination) {
