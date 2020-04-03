@@ -86,10 +86,11 @@
 
   <div class="sb-bg-color-white py-24 dynamicHeight">
     <div class="ui container m-0 p-0">
-      <div class="sb-pageSection-header">
-        <h4 class="sb-pageSection-title six">{{resourceService.frmelmnts.lbl.textbooks}} <span
+      <div class="sb-pageSection-header mb-15">
+        <h4 class="sb-pageSection-title six  flex-basis-1">{{resourceService.frmelmnts.lbl.textbooks}} <span
             class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{collectionList.length || ''}}</span></h4>
-      </div>
+            <a href="#" target="_blank" class="text-right sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary flex-basis-1">{{resourceService.frmelmnts.lbl.viewGuideline}}</a>
+          </div>
       <div class="sb-table-responsive">
         <table class="sb-table sb-table-striped sb-table-sortable sb-table-fixed">
           <thead class="sb-table-header sb-table-thead-gray">
