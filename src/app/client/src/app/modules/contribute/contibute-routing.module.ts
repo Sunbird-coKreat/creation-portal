@@ -9,19 +9,20 @@ import { OrgUserListComponent } from './components/org-user-list/org-user-list.c
 import { OrgContriAdminComponent } from './components/org-contri-admin/org-contri-admin.component';
 import { ContriDashboardComponent } from './components/dashboard/dashboard.component';
 
-const routes: Routes = [{
+const routes: Routes = [
+{
+  path: 'join/:orgId', component: ListAllMyProgramsComponent, pathMatch: 'full',
+  data: {
+    telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
+  },
+},
+{
   path: '', component: ListAllProgramsComponent, canActivate: [ProgramsService],
   data: {
     telemetry: {
       env: 'creation-portal', pageid: 'list-all-programs', type: 'view', subtype: 'paginate'
     }
   }
-},
-{
-  path: 'join/:orgId', component: ListAllMyProgramsComponent, pathMatch: 'full',
-  data: {
-    telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
-  },
 },
 {
   path: 'myenrollprograms', component: ListAllMyProgramsComponent, pathMatch: 'full',
