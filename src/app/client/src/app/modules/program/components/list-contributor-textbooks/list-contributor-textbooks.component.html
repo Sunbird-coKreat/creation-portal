@@ -259,15 +259,15 @@
 							<td>{{contributorTextbook?.subject}}</td>
 							<td>{{contributorTextbook?.sampleContentCount || 0}}</td>
 							<td data-label="Actions">
-								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
+								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" [disabled]="contributorTextbook?.sampleContentCount === 0 ? true : false "
 									*ngIf="contributor?.nominationData?.status == 'Pending'" (click)="viewContribution(contributorTextbook)"
 									appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('view-content', 'click', 'list-nominated-textbooks')"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">View
-									Sample Content</button>
-								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
+									Sample Content </button>
+								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" 
 									*ngIf="contributor?.nominationData?.status == 'Accepted'"
 									(click)="viewContribution(contributorTextbook)"
 									appTelemetryInteract
