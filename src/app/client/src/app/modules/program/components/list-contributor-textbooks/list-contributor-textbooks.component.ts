@@ -53,6 +53,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   configData;
   selectedNominationDetails: any;
   showRequestChangesPopup: boolean;
+  rejectComment = '';
   public sampleDataCount = 0;
   @ViewChild('FormControl') FormControl: NgForm;
   public telemetryInteractCdata: any;
@@ -355,6 +356,11 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       pageid,
       extra
     }, _.isUndefined);
+  }
+
+  rejectNomination() {
+    this.showRequestChangesPopup = true;
+    this.rejectComment = '';
   }
 
   ngOnDestroy() {

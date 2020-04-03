@@ -177,11 +177,9 @@
 				<label>{{resourceService.frmelmnts.lbl.enterYourComments}}</label>
 				<div class="sb-field relative">
 					<textarea type="text" class="wmd-input width-100 sb-form-control" id="wmd-input"
-						[(ngModel)]="rejectComment" placeholder="Add comment" name="rejectComment" required></textarea>
+						[(ngModel)]="rejectComment" placeholder="{{resourceService.frmelmnts.lbl.addComment}}" name="rejectComment" required></textarea>
 					<label class="ui basic red error label pt-1 mt-5 width-100"
 						*ngIf="FormControl.form.controls.rejectComment?.touched && !FormControl.form.valid">{{resourceService.frmelmnts.lbl.fillComments}} </label>
-					<!-- <textarea rows="4" name="moretext" class="sb-form-control" placeholder="Type here..."></textarea>
-			<span class="characters-left">1000 Characters left</span> -->
 				</div>
 			</div>
 		</div>
@@ -220,7 +218,7 @@
       [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.accept}}</button>
 						<button class="sb-btn sb-btn-normal sb-btn-outline-error"
 							*ngIf="contributor?.nominationData?.status === 'Pending'"
-							(click)="showRequestChangesPopup = true"
+							(click)="rejectNomination();"
 							appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('reject-nomination', 'click', 'list-nominated-textbooks')"
       [telemetryInteractObject]="telemetryInteractObject"
