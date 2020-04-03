@@ -103,7 +103,7 @@
               <th class="w-5"></th>
             </tr>
           </thead>
-          <tbody class="sb-table-body">
+          <tbody class="sb-table-body" *ngIf="collectionList.length">
             <tr *ngFor="let data of collectionList">
               <td>
                 <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
@@ -120,7 +120,7 @@
                 <div class="sb__ellipsis">{{data.subject}}</div>
               </td>
               <td>
-                {{ data.childNodes ? data.childNodes.length : 0 }}
+                {{ data.chapterCount || 0 }}
               </td>
               <td *ngIf="currentNominationStatus === 'Initiated' || currentNominationStatus=== 'Pending'">{{data.sampleContentCount || 0 }}</td>
               <td class="text-center">
