@@ -167,6 +167,8 @@ export class AppComponent implements OnInit, OnDestroy {
           this.userService.openSaberRegistrySearch().then(() => {
             this.userService.userRegistryData = true;
             this.initApp = true;
+            const orgId = this.userService.userProfile.userRegData &&
+              this.userService.userProfile.userRegData.User_Org ? this.userService.userProfile.userRegData.User_Org.orgId : undefined;
             if (_.indexOf(this.userService.userProfile.userRoles, 'ORG_ADMIN') > -1) {
               this.router.navigateByUrl('/sourcing');
             } else if (this.userService.userProfile.userRegData &&
@@ -175,7 +177,11 @@ export class AppComponent implements OnInit, OnDestroy {
               !this.router.url.includes('/contribute/join/')) {
               this.router.navigateByUrl('/contribute/myenrollprograms');
             // tslint:disable-next-line:max-line-length
-            } else if ((this.userService.userProfile.userRegData.User_Org && this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) || !this.router.url.includes('/contribute/join/') ) {
+            } else if (this.router.url.includes('/contribute/join/' + orgId)) {
+                this.programsService.addUsertoContributorOrg(orgId);
+            } else if ((this.userService.userProfile.userRegData.User_Org &&
+              this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) ||
+              !this.router.url.includes('/contribute/join/') ) {
               console.log('/contribute----------->');
               this.router.navigateByUrl('/contribute');
             }
