@@ -66,6 +66,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
    }
 
   ngOnInit() {
+    this.srollTop()
     this.getProgramDetails();
     this.getProgramTextbooks();
     this.programStageService.initialize();
@@ -371,7 +372,9 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     }, _.isUndefined);
   }
 
-
+srollTop(){
+  window.scrollTo(0, 0)
+}
   ngOnDestroy() {
     this.stageSubscription.unsubscribe();
   }
