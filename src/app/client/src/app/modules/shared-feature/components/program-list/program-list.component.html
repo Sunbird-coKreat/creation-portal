@@ -17,33 +17,33 @@
             <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
             <thead class="sb-table-header sb-table-thead-gray">
               <tr>
-                <th class="w-15 cursor-pointer" (click)="sort('name')">
+                <th class="w-15 cursor-pointer sb-sorting" (click)="sort('name')">
                   {{ resourceService.frmelmnts.lbl.program }} &nbsp;&nbsp; 
                   <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumnName != 'name' "></i>      
-                  <span  *ngIf="sortColumnName == 'name'">
-                    <i class="fa fa-sort-asc" aria-hidden="true" *ngIf="direction == 'asc'"></i>
-                    <i class="fa fa-sort-desc" aria-hidden="true" *ngIf="direction == 'desc'"></i>
+                  <span  *ngIf="sortColumnName == 'name'" class="d-inline-block">
+                    <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+                    <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                   </span>
                 </th>
-                <th *ngIf="isContributor" class="w-10 cursor-pointer" (click)="sort('sourcing_org_name')" 
+                <th *ngIf="isContributor" class="w-10 cursor-pointer sb-sorting" (click)="sort('sourcing_org_name')" 
                 appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('sort-program-name', 'click', 'program-list')"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.sourcingOrganisation }} &nbsp;&nbsp; 
         <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumnName != 'sourcing_org_name'"></i>
-        <span *ngIf="sortColumnName == 'sourcing_org_name'">
-          <i class="fa fa-sort-asc" aria-hidden="true" *ngIf="direction == 'asc'"></i>
-          <i class="fa fa-sort-desc" aria-hidden="true" *ngIf="direction == 'desc'"></i>
+        <span *ngIf="sortColumnName == 'sourcing_org_name'" class="d-inline-block">
+          <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+          <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
         </span></th>
                 <th class="w-10">{{ resourceService.frmelmnts.lbl.contentType }}</th>
                 <th class="w-15">{{ resourceService.frmelmnts.lbl.MediumClassSubject }}</th>
                 <th *ngIf="!isContributor" class="w-10">{{ resourceService.frmelmnts.lbl.programDates }}</th>
-                <th *ngIf="activeMyProgramsMenu" class="w-10 cursor-pointer" (click)="sort('createdon')">{{ resourceService.frmelmnts.lbl.nominatedDate }}&nbsp;&nbsp; 
+                <th *ngIf="activeMyProgramsMenu" class="w-10 cursor-pointer sb-sorting" (click)="sort('createdon')">{{ resourceService.frmelmnts.lbl.nominatedDate }}&nbsp;&nbsp; 
                   <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumnName != 'createdon'"></i>
-                  <span *ngIf="sortColumnName == 'createdon'">
-                    <i class="fa fa-sort-asc" aria-hidden="true" *ngIf="direction == 'asc'"></i>
-                    <i class="fa fa-sort-desc" aria-hidden="true" *ngIf="direction == 'desc'"></i>
+                  <span *ngIf="sortColumnName == 'createdon'" class="d-inline-block">
+                    <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+                    <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                   </span>
                 </th>
                 <th *ngIf="activeAllProgramsMenu" class="w-10">{{ resourceService.frmelmnts.lbl.programDates }}</th>
