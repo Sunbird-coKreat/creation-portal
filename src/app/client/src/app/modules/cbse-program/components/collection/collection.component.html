@@ -39,7 +39,7 @@
         <div class="program-timeline px-16">
           <div class="program-timeline-item">
             <div class="status" [class.active]="activeDate === 'nomination_enddate'">
-              <div class="status__label">Nomination End Date</div>
+              <div class="status__label">{{resourceService.frmelmnts.lbl.nominationEndDate}}</div>
               <div class="status__date">
                 {{ programContext?.nomination_enddate |  date:'LLLL d, yyyy'  }}
                 <br />
@@ -50,7 +50,7 @@
           </div>
           <div class="program-timeline-item">
             <div class="status" [class.active]="activeDate === 'shortlisting_enddate'">
-              <div class="status__label">Shortlisting Nominations</div>
+              <div class="status__label">{{resourceService.frmelmnts.lbl.shortlistingNomination}}</div>
               <div class="status__date">
                 {{ programContext?.shortlisting_enddate |  date:'LLLL d, yyyy'  }}
                 <br />
@@ -61,7 +61,7 @@
           </div>
           <div class="program-timeline-item">
             <div class="status" [class.active]="activeDate === 'content_submission_enddate'">
-              <div class="status__label">Contribution & Review</div>
+              <div class="status__label">{{resourceService.frmelmnts.lbl.contributionReview}}</div>
               <div class="status__date">
                 {{ programContext?.content_submission_enddate |  date:'LLLL d, yyyy'  }}
                 <br />
@@ -86,10 +86,10 @@
 
       <div class="practical-sb-buttons" *ngIf="canNominate()">
         <div *ngIf="selectedCollectionIds.length === 0"> <button
-            class="sb-btn sb-btn-disabled sb-btn-normal">Nominate</button></div>
+            class="sb-btn sb-btn-disabled sb-btn-normal">{{resourceService.frmelmnts.btn.nominate}}</button></div>
         <div *ngIf="selectedCollectionIds.length > 0">
           <button class="sb-btn sb-btn-normal sb-btn-primary disabled {{selectedCollectionIds.length > 0 ? 'active' : 'disabled'}}"
-            (click)="showContentTypeModal= true;">Nominate</button>
+            (click)="showContentTypeModal= true;">{{resourceService.frmelmnts.btn.nominate}}</button>
         </div>
       </div>
     </div>
@@ -134,9 +134,12 @@
                 {{ data.chapterCount || 0 }}
               </td>
               <td *ngIf="currentNominationStatus === 'Initiated' || currentNominationStatus=== 'Pending'">{{data.sampleContentCount || 0 }}</td>
-              <td class="text-center">
-                <input  type="checkbox" *ngIf="(data.sampleContentCount === undefined || data.sampleContentCount === 0) && canNominate()" [checked]="data.isSelected || data.sampleContentCount" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
-                <button type="button" *ngIf="data.isSelected || data.sampleContentCount" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10 px-10">Upload Sample</button>
+              <td>
+                <div class="sb-checkbox sb-checkbox-primary d-inline-block">
+                  <label></label>
+                  <input  type="checkbox" *ngIf="(data.sampleContentCount === undefined || data.sampleContentCount === 0) && canNominate()" [checked]="data.isSelected || data.sampleContentCount" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
+               </div>
+                  <button type="button" *ngIf="data.isSelected || data.sampleContentCount" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10 px-10">Upload Sample</button>
               </td>
             </tr>
           </tbody>
@@ -156,18 +159,18 @@
         <ng-template #popupTemplate>
           <div class="content">
             <div class="textbook-details ml-8">
-              <div class="header"><strong>Subject</strong></div>
+              <div class="header"><strong>{{resourceService.frmelmnts.lbl.subject}}</strong></div>
               <div class="content">
                 <label class="d-block fsmall font-weight-normal mb-0">{{sharedContext.subject.join(', ')}}</label>
               </div>
               <hr />
-              <div class="header"><strong>Grades / Classes</strong></div>
+              <div class="header"><strong>{{resourceService.frmelmnts.lbl.profile.Classes}}</strong></div>
               <div class="content">
                 <label class="d-block fsmall font-weight-normal mb-0">{{sharedContext.gradeLevel.join(', ')}}</label>
               </div>
               <hr />
               <div class="header">
-                <strong>Nomination End Date</strong>
+                <strong>{{resourceService.frmelmnts.lbl.nominationEndDate}}</strong>
               </div>
               <div class="content">
                 <label class="d-block fsmall font-weight-normal mb-0">
@@ -176,7 +179,7 @@
               </div>
               <hr />
               <div class="header">
-                <strong>Nomination Shortlisting Date</strong>
+                <strong>{{resourceService.frmelmnts.lbl.nominationShortlistingDate}}</strong>
               </div>
               <div class="content">
                 <label class="d-block fsmall font-weight-normal mb-0">
@@ -185,7 +188,7 @@
               </div>
               <hr />
               <div class="header">
-                <strong>Contribution End Date</strong>
+                <strong>{{resourceService.frmelmnts.lbl.contributionEndDate}}</strong>
               </div>
               <div class="content">
                 <label class="d-block fsmall font-weight-normal mb-0">
@@ -193,7 +196,7 @@
                 </label>
               </div>
               <hr />
-              <div class="header"><strong>Program End Date</strong></div>
+              <div class="header"><strong>{{resourceService.frmelmnts.lbl.programEndDate}}</strong></div>
               <div class="content">
                 <label class="d-block fsmall font-weight-normal mb-0">
                   {{programContext.enddate | date: medium }}
@@ -209,10 +212,10 @@
         <div *ngIf="nominateButton === 'show'">
           <button
             class="sb-btn sb-btn-normal sb-btn-primary disabled {{nominateButton === 'show' ? 'active' : 'disabled'}}"
-            (click)="showContentTypeModal= true;">Nominate</button>
+            (click)="showContentTypeModal= true;">{{resourceService.frmelmnts.btn.nominate}}</button>
         </div>
         <div class="two wide column column " *ngIf="nominateButton === 'hide'">
-          <button class="sb-btn sb-btn-disabled sb-btn-normal">Nominate</button>
+          <button class="sb-btn sb-btn-disabled sb-btn-normal">{{resourceService.frmelmnts.btn.nominate}}</button>
         </div>
       </div>
     </div>
@@ -220,12 +223,12 @@
     <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
       <thead class="sb-table-header sb-table-thead-gray">
         <tr>
-          <th>Textbook<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-          <th>Grade<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-          <th>Medium<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-          <th>Chapters<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-          <th>Subject<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-          <th class="text-center">Select</th>
+          <th>{{resourceService.frmelmnts.lbl.textbook}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+          <th>{{resourceService.frmelmnts.lbl.class}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+          <th>{{resourceService.frmelmnts.lbl.profile.Medium}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+          <th>{{resourceService.frmelmnts.lbl.chapters}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+          <th>{{resourceService.frmelmnts.lbl.subject}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+          <th class="text-center"></th>
         </tr>
       </thead>
       <tbody class="sb-table-body">
