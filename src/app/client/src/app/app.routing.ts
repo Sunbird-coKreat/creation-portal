@@ -48,6 +48,9 @@ const appRoutes: Routes = [
     path: 'contribution-portal', loadChildren: 'app/modules/public/public.module#PublicModule'
   },
   {
+    path: 'contribute/join/:orgId', loadChildren: 'app/modules/contribute/contribute.module#ContributeModule'
+  },
+  {
     path: '', loadChildren: 'app/modules/public/public.module#PublicModule'
   },
   {

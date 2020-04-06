@@ -159,63 +159,12 @@
 		</div>
 	</div>
 
-
-
-
-
-
-<sui-modal [mustScroll]="true" [isClosable]="true" *ngIf="showcontributorProfile" [transitionDuration]="0" [size]="'normal'" (dismissed)="showcontributorProfile = false"
-	class="sb-modal" #modal>
-	<div class="sb-modal-header"> {{resourceService.frmelmnts.lbl.profileDetails}} </div>
-	<div class="sb-modal-content o-y-visible pb-8">
-		<div class="ui container">
-			<div class="mx-48 text-center">
-				<div class="sb-profile-page__avatar">
-					<img src="assets/images/guest.svg" alt="guest" class="mb-24">
-				</div>
-				<div class="fs-2-5 font-weight-bold my-24">{{contributor?.name}} </div>
-			</div>
-			<div class="mx-48 relative text-center">
-				<div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
-					<span class="fmedium white-space-nowrap">{{resourceService.frmelmnts.lbl.type}}
-						:</span>
-					<span class="fmedium font-weight-bold pl-4">{{contributor?.type}}</span>
-				</div>
-				<div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
-					<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Board}}
-						:</span>
-					<span class="fmedium font-weight-bold pl-4">{{contributor?.nominationData?.userData?.board?.join(', ')}}</span>
-				</div>
-				<div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
-					<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Medium}}
-						:</span>
-					<span class="fmedium font-weight-bold pl-4">
-						{{contributor?.nominationData?.userData?.medium?.join(', ')}}</span>
-				</div>
-				<div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
-					<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Subjects}}
-						:</span>
-					<span class="fmedium font-weight-bold pl-4">
-						{{contributor?.nominationData?.userData?.subject?.join(', ')}}</span>
-				</div>
-				<div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
-					<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Classes}}
-						:</span>
-					<span class="fmedium font-weight-bold pl-4">
-						{{contributor?.nominationData?.userData?.gradeLevel?.join(', ')}}</span>
-				</div>
-				<div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
-					<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.contentType}}
-						:</span>
-					<span class="fmedium font-weight-bold pl-4">
-						{{contributor?.nominationData?.userData?.contentTypes?.join(', ')}}</span>
-				</div>
-			</div>
-		</div>
-	</div>
-</sui-modal>
-
-
+<app-contributor-profile-popup 
+	[showProfile]="showcontributorProfile" 
+	[orgId]="contributor?.nominationData?.organisation_id" 
+	[userId]="contributor?.nominationData?.user_id" 
+	(close)="showcontributorProfile = false;">
+</app-contributor-profile-popup>
 
 <sui-modal *ngIf="showRequestChangesPopup" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
 	[size]="'normal'" class="sb-modal" appBodyScroll #modal (dismissed)="showRequestChangesPopup = false;">
@@ -228,11 +177,9 @@
 				<label>{{resourceService.frmelmnts.lbl.enterYourComments}}</label>
 				<div class="sb-field relative">
 					<textarea type="text" class="wmd-input width-100 sb-form-control" id="wmd-input"
-						[(ngModel)]="rejectComment" placeholder="Add comment" name="rejectComment" required></textarea>
+						[(ngModel)]="rejectComment" placeholder="{{resourceService.frmelmnts.lbl.addComment}}" name="rejectComment" required></textarea>
 					<label class="ui basic red error label pt-1 mt-5 width-100"
 						*ngIf="FormControl.form.controls.rejectComment?.touched && !FormControl.form.valid">{{resourceService.frmelmnts.lbl.fillComments}} </label>
-					<!-- <textarea rows="4" name="moretext" class="sb-form-control" placeholder="Type here..."></textarea>
-			<span class="characters-left">1000 Characters left</span> -->
 				</div>
 			</div>
 		</div>
@@ -270,7 +217,7 @@
       [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.accept}}</button>
 						<button class="sb-btn sb-btn-normal sb-btn-outline-error"
 							*ngIf="contributor?.nominationData?.status === 'Pending'"
-							(click)="showRequestChangesPopup = true"
+							(click)="rejectNomination();"
 							appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('reject-nomination', 'click', 'list-nominated-textbooks')"
       [telemetryInteractObject]="telemetryInteractObject"
@@ -309,7 +256,7 @@
 							<td>{{contributorTextbook?.subject}}</td>
 							<td>{{contributorTextbook?.sampleContentCount || 0}}</td>
 							<td data-label="Actions">
-								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
+								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" [disabled]="contributorTextbook?.sampleContentCount === 0 ? true : false "
 									*ngIf="contributor?.nominationData?.status == 'Pending'" (click)="viewContribution(contributorTextbook)"
 									appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('view-content', 'click', 'list-nominated-textbooks')"

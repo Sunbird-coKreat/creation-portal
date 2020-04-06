@@ -54,6 +54,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
   public currentStage: any;
   public contentType:any;
   public sampleDataCount = 0;
+  public chapterCount = 0;
   public currentNominationStatus: any;
   public nominationDetails: any;
   showContentTypeModal = false;
@@ -112,7 +113,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     (_.size(this.mediums) > 1) ? this.isMediumClickable = true : this.isMediumClickable = false;
 
     // tslint:disable-next-line:max-line-length
-    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.collectionComponentInput.programContext.programId, 'Program');
+    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.collectionComponentInput.programContext.program_id, 'Program');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID + '.programs');
     this.setActiveDate();
@@ -147,7 +148,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
       const collectionCards = this.utilService.getDataForCard(filteredTextbook, constantData, dynamicFields, metaData);
       this.collectionsWithCardImage = _.forEach(collectionCards, collection => this.addCardImage(collection));
       this.filterCollectionList(this.classes);
-      if ((this.currentNominationStatus === 'Initiated' || this.currentNominationStatus === 'Pending') && !_.isEmpty(res.result.content)) {
+      if (!_.isEmpty(res.result.content)) {
         const collectionIds = _.map(res.result.content, 'identifier');
         this.getCollectionHierarchy(collectionIds)
           .subscribe(response => {
@@ -160,12 +161,17 @@ export class CollectionComponent implements OnInit, OnDestroy {
             });
             _.forEach(hierarchies, hierarchy => {
               this.sampleDataCount = 0;
-              hierarchy.sampleContentCount = this.getSampleContentStatusCount(hierarchy);
+              this.chapterCount = 0;
+              const {sampleDataCount, chapterCount} = this.getSampleContentStatusCount(hierarchy);
+              hierarchy.sampleContentCount = sampleDataCount;
+              hierarchy.chapterCount = chapterCount;
             });
             this.collectionList = _.map(res.result.content, content => {
               const contentWithHierarchy =  _.find(hierarchies, {identifier: content.identifier});
-              content.sampleContentCount = contentWithHierarchy.sampleContentCount;
+              content.chapterCount = contentWithHierarchy.chapterCount;
+              // tslint:disable-next-line:max-line-length
               if (contentWithHierarchy.sampleContentCount > 0) {
+                content.sampleContentCount = contentWithHierarchy.sampleContentCount;
                 this.selectedCollectionIds.push(contentWithHierarchy.identifier);
               }
               return content;
@@ -173,8 +179,6 @@ export class CollectionComponent implements OnInit, OnDestroy {
             this.selectedCollectionIds = _.uniq(this.selectedCollectionIds);
         });
 
-      } else {
-        this.collectionList = res.result.content;
       }
       this.showLoader = false;
       this.showError = false;
@@ -184,9 +188,11 @@ export class CollectionComponent implements OnInit, OnDestroy {
 
   getSampleContentStatusCount(data) {
     const self = this;
-    if (data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' && data.sampleContent) {
-      if (data.createdBy === this.currentUserID) {
+    if (data.contentType !== 'TextBook') {
+      if (data.createdBy === this.currentUserID && data.contentType !== 'TextBookUnit' && data.sampleContent) {
         self.sampleDataCount = self.sampleDataCount + 1;
+      } else if (data.contentType === 'TextBookUnit') {
+        self.chapterCount = self.chapterCount + 1;
       }
     }
     const childData = data.children;
@@ -195,7 +201,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
         self.getSampleContentStatusCount(child);
       });
     }
-    return self.sampleDataCount;
+    return {sampleDataCount: self.sampleDataCount, chapterCount: self.chapterCount};
   }
 
   filterTextBook(filterArr) {
