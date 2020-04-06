@@ -320,7 +320,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           this.sessionContext.currentOrgRole = this.userService.userProfile.userRegData.User_Org.roles[0];
           if (this.userService.userProfile.userRegData.User_Org.roles[0] === 'admin') {
             // tslint:disable-next-line:max-line-length
-            this.sessionContext.currentRole = (this.currentNominationStatus === 'Approved' ||  this.currentNominationStatus === 'Rejected') ? 'Reviewer' : 'Contributor';
+            this.sessionContext.currentRole = (this.currentNominationStatus === 'Approved' ||  this.currentNominationStatus === 'Rejected') ? 'REVIEWER' : 'CONTRIBUTOR';
           } else if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.rolemapping) {
               _.find(this.sessionContext.nominationDetails.rolemapping, (users, role) => {
                 if (_.includes(users, this.userService.userProfile.userRegData.User.userId)) {
