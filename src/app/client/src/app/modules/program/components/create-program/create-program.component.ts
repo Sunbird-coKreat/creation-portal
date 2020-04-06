@@ -78,6 +78,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public telemetryInteractObject: any;
   public telemetryStart: IStartEventInput;
   public telemetryEnd: IEndEventInput;
+  public sortColumn = 'name';
+  public direction = 'asc';
+  public tempSortCollections = [];
 
  constructor(
    public frameworkService: FrameworkService,
@@ -93,9 +96,50 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    private navigationHelperService: NavigationHelperService,
    private configService: ConfigService,
    private deviceDetectorService: DeviceDetectorService) {
-
    this.sbFormBuilder = formBuilder;
+ }
 
+ sortCollections(column) {
+  if (!this.tempSortCollections.length) {
+    return;
+  }
+
+  if (this.direction === 'asc' || this.direction === '') {
+    this.collections = this.tempSortCollections.sort((a, b) => {
+      return this.sort(b, a, column);
+    });
+    this.direction = 'desc';
+  } else {
+    this.collections =  this.tempSortCollections.sort((a, b) => {
+      return this.sort(a, b, column);
+    });
+    this.direction = 'asc';
+  }
+  this.sortColumn = column;
+ }
+
+ isNotEmpty(obj, key) {
+  if (_.isEmpty(obj) || _.isEmpty(obj[key])) {
+    return false;
+  }
+  return true;
+ }
+
+ sort(a, b, column) {
+  if (!this.isNotEmpty(a, column) || !this.isNotEmpty(b, column)) {
+    return 1;
+  }
+  let aColumn = a[column];
+  let bColumn = b[column];
+  if (_.isArray(aColumn)) {
+    aColumn = _.join(aColumn, ', ');
+    a[column] = alphaNumSort(aColumn);
+  }
+  if (_.isArray(bColumn)) {
+    bColumn = _.join(bColumn, ', ');
+    b[column] = alphaNumSort(bColumn);
+  }
+  return bColumn.localeCompare(aColumn);
  }
 
  getMaxDate(date) {
@@ -156,7 +200,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   this.telemetryInteractCdata = [];
   this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
   this.telemetryInteractObject = {};
-  //this.showTexbooklist();
  }
 
  ngAfterViewInit() {
@@ -402,6 +445,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     return hasError;
   }
 
+  resetSorting() {
+    this.sortColumn = 'name';
+    this.direction = 'asc';
+  }
+
  resetFilters () {
     this.collectionListForm.controls['medium'].setValue('');
     this.collectionListForm.controls['gradeLevel'].setValue('');
@@ -471,7 +519,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
  }
 
  showTexbooklist() {
-
    const requestData =  {
      request: {
        filters: {
@@ -506,7 +553,15 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    return this.programsService.getCollectionList(requestData).subscribe(
      (res) => {
        this.showTextBookSelector = true;
-       this.collections = res.result.content;
+       if (res.result.count) {
+        this.collections = res.result.content; 
+        this.tempSortCollections = this.collections;
+        this.resetSorting();
+        this.sortCollections(this.sortColumn);
+       } else {
+        this.collections = [];
+        this.tempSortCollections = [];
+       }
      },
      (err) => {
        console.log(err);
@@ -597,9 +652,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     pageid,
     extra
   }, _.isUndefined);
-}
+ }
 
-generateTelemetryEvent(event) {
+ generateTelemetryEvent(event) {
   switch (event) {
     case 'START':
      const deviceInfo = this.deviceDetectorService.getDeviceInfo();
