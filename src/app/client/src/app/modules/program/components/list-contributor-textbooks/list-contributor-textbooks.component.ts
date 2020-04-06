@@ -23,6 +23,8 @@ import { throwError, forkJoin } from 'rxjs';
 export class ListContributorTextbooksComponent implements OnInit, AfterViewInit, OnDestroy {
   public contributor;
   public contributorTextbooks;
+  public contentTypes = [];
+  public nominatedContentTypes: string;
   public noResultFound;
   public telemetryImpression: IImpressionEventInput;
   public component: any;
@@ -98,8 +100,9 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     });
     this.contributor = this.selectedNominationDetails;
     this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program_ID'}];
-  this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
-  this.telemetryInteractObject = {};
+    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
+    this.telemetryInteractObject = {};
+    this.getAllContentTypes();
   }
   public fetchFrameWorkDetails() {
     this.frameworkService.initialize(this.sessionContext.framework);
@@ -282,7 +285,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     };
     this.programStageService.addStage('chapterListComponent');
   }
-   updateNomination(status) {
+  updateNomination(status) {
     let nominationStatus;
     (status === 'accept') ? (nominationStatus = 'Approved') : (nominationStatus = 'Rejected');
      const req = {
@@ -365,5 +368,36 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
 
   ngOnDestroy() {
     this.stageSubscription.unsubscribe();
+  }
+
+  getAllContentTypes () {
+    const option = {
+      url: 'program/v1/contenttypes/list',
+    };
+
+    this.programsService.get(option).subscribe(
+      (res) => {
+          this.contentTypes = res.result.contentType;
+          this.getNominatedContentTypes();
+        },
+      (err) => {
+        console.log(err);
+        // TODO: navigate to program list page
+        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+        this.toasterService.warning(errorMes || 'Fetching content types failed');
+      }
+    );
+  }
+
+  getNominatedContentTypes() {
+    const selectedContentTypes = [];
+    _.forEach(this.contributor.nominationData.content_types, (content_type) => {
+      const found = _.find(this.contentTypes, (o) => { return o.value === content_type;
+      });
+      if (found) {
+        selectedContentTypes.push(found.name);
+      }
+    });
+    this.nominatedContentTypes = selectedContentTypes.length ? _.join(selectedContentTypes, ', ') : '-';
   }
 }

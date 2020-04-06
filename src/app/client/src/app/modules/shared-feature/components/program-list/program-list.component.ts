@@ -39,6 +39,7 @@ export class ProgramListComponent implements OnInit {
   public nominationList;
   public sortColumnName = '';
   public showLoader = true;
+  public contentTypes = [];
   constructor(private programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService ) { }
@@ -69,6 +70,7 @@ export class ProgramListComponent implements OnInit {
         this.isContributor = this.router.url.includes('/contribute');
         this.activeAllProgramsMenu = this.router.isActive('/contribute', true);
         this.activeMyProgramsMenu = this.router.isActive('/contribute/myenrollprograms', true);
+        this.getAllContentTypes();
 
         if (this.isContributor) {
           if (this.activeAllProgramsMenu) {
@@ -83,6 +85,24 @@ export class ProgramListComponent implements OnInit {
         }
       })
     ).subscribe();
+  }
+
+  getAllContentTypes () {
+    const option = {
+      url: 'program/v1/contenttypes/list',
+    };
+
+    this.programsService.get(option).subscribe(
+      (res) => {
+          this.contentTypes = res.result.contentType;
+        },
+      (err) => {
+        console.log(err);
+        // TODO: navigate to program list page
+        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+        this.toasterService.warning(errorMes || 'Fetching content types failed');
+      }
+    );
   }
 
   /**
@@ -314,7 +334,15 @@ export class ProgramListComponent implements OnInit {
   }
 
   getProgramContentTypes(program) {
-    return _.join(program.content_types, ', ');
+    const selectedContentTypes = [];
+    _.forEach(program.content_types, (content_type) => {
+      const found = _.find(this.contentTypes, (o) => { return o.value === content_type;
+      });
+      if (found) {
+        selectedContentTypes.push(found.name);
+      }
+    });
+    return selectedContentTypes.length ? _.join(selectedContentTypes, ', ') : '-';
   }
 
   viewDetailsBtnClicked(program) {

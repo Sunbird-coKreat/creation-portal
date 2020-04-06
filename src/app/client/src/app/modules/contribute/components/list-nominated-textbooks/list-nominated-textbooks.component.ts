@@ -57,6 +57,8 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public telemetryInteractObject: any = {};
   public currentUserRole: any;
   public chapterCount = 0;
+  public contentTypes = [];
+  public programContentTypes: string;
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private configService: ConfigService, private publicDataService: PublicDataService,
   private activatedRoute: ActivatedRoute, private router: Router, public programStageService: ProgramStageService,
@@ -99,6 +101,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       this.programDetails = _.get(programDetails, 'result');
       this.roles = _.get(this.programDetails, 'config.roles');
       this.setActiveDate();
+      this.getAllContentTypes();
     }, error => {
       // TODO: navigate to program list page
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
@@ -429,8 +432,38 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     }, _.isUndefined);
   }
 
-
   ngOnDestroy() {
     this.stageSubscription.unsubscribe();
+  }
+
+  getAllContentTypes () {
+    const option = {
+      url: 'program/v1/contenttypes/list',
+    };
+
+    this.programsService.get(option).subscribe(
+      (res) => {
+          this.contentTypes = res.result.contentType;
+          this.getProgramContentTypes();
+        },
+      (err) => {
+        console.log(err);
+        // TODO: navigate to program list page
+        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+        this.toasterService.warning(errorMes || 'Fetching content types failed');
+      }
+    );
+  }
+
+  getProgramContentTypes() {
+    const selectedContentTypes = [];
+    _.forEach(this.programDetails.content_types, (content_type) => {
+      const found = _.find(this.contentTypes, (o) => { return o.value === content_type;
+      });
+      if (found) {
+        selectedContentTypes.push(found.name);
+      }
+    });
+    this.programContentTypes = selectedContentTypes.length ? _.join(selectedContentTypes, ', ') : '-';
   }
 }

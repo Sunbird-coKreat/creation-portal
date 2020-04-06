@@ -42,6 +42,8 @@ export class CollectionComponent implements OnInit, OnDestroy {
   public telemetryInteractPdata: any;
   public nominateButton = 'hide';
   public nominate = '';
+  public contentTypes = [];
+  public programContentTypes: string;
   isMediumClickable = false;
   showLoader = true;
   selectedIndex = -1;
@@ -119,6 +121,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.setActiveDate();
     this.getNominationStatus();
     this.getCollectionCard();
+    this.getAllContentTypes();
   }
 
   getImplicitFilters(): string[] {
@@ -568,5 +571,36 @@ export class CollectionComponent implements OnInit, OnDestroy {
       role: this.role
     };
     this.programStageService.addStage('chapterListComponent');
+  }
+
+  getAllContentTypes () {
+    const option = {
+      url: 'program/v1/contenttypes/list',
+    };
+
+    this.programsService.get(option).subscribe(
+      (res) => {
+          this.contentTypes = res.result.contentType;
+          this.getProgramContentTypes();
+        },
+      (err) => {
+        console.log(err);
+        // TODO: navigate to program list page
+        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+        this.toasterService.warning(errorMes || 'Fetching content types failed');
+      }
+    );
+  }
+
+  getProgramContentTypes() {
+    const selectedContentTypes = [];
+    _.forEach(this.programContext.content_types, (content_type) => {
+      const found = _.find(this.contentTypes, (o) => { return o.value === content_type;
+      });
+      if (found) {
+        selectedContentTypes.push(found.name);
+      }
+    });
+    this.programContentTypes = selectedContentTypes.length ? _.join(selectedContentTypes, ', ') : '-';
   }
 }
