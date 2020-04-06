@@ -17,6 +17,7 @@ import { first, filter, mergeMap, tap, map, skipWhile, startWith, takeUntil } fr
 import { CacheService } from 'ng2-cache-service';
 import { DOCUMENT } from '@angular/platform-browser';
 import { ShepherdService } from 'angular-shepherd';
+import { Location } from '@angular/common';
 
 /**
  * main app component
@@ -100,7 +101,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private telemetryService: TelemetryService, public router: Router, private configService: ConfigService,
     private orgDetailsService: OrgDetailsService, private activatedRoute: ActivatedRoute,
     private profileService: ProfileService, private toasterService: ToasterService, public utilService: UtilService,
-    public formService: FormService, private programsService: ProgramsService,
+    public formService: FormService, private programsService: ProgramsService, private location: Location,
     @Inject(DOCUMENT) private _document: any, public sessionExpiryInterceptor: SessionExpiryInterceptor,
     private shepherdService: ShepherdService) {
     this.instance = (<HTMLInputElement>document.getElementById('instance'))
@@ -155,7 +156,6 @@ export class AppComponent implements OnInit, OnDestroy {
           }
         }))
       .subscribe(data => {
-        console.log('%c userService Fetching Done! ', 'background: #000; color: #fff');
         this.tenantService.getTenantInfo(this.slug);
         this.setPortalTitleLogo();
         this.telemetryService.initialize(this.getTelemetryContext());
@@ -163,13 +163,13 @@ export class AppComponent implements OnInit, OnDestroy {
         this.setFingerPrintTelemetry();
         this.checkTncAndFrameWorkSelected();
         if (this.userService.loggedIn) {
-          console.log('%c App Component - User Logged In! ', 'background: #222; color: #bada55');
-          console.log(this.router.url.includes('/contribute/join/'), this.router.url);
           this.userService.openSaberRegistrySearch().then(() => {
             this.userService.userRegistryData = true;
             this.initApp = true;
             if (_.indexOf(this.userService.userProfile.userRoles, 'ORG_ADMIN') > -1) {
               this.router.navigateByUrl('/sourcing');
+            } else if (this.location.path().includes('/contribute/join/')) {
+              this.router.navigateByUrl(this.location.path());
             } else if (this.userService.userProfile.userRegData &&
               this.userService.userProfile.userRegData.User_Org &&
               !this.userService.userProfile.userRegData.User_Org.roles.includes('admin') &&
@@ -178,7 +178,6 @@ export class AppComponent implements OnInit, OnDestroy {
             } else if ((this.userService.userProfile.userRegData.User_Org &&
               this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) ||
               !this.router.url.includes('/contribute/join/') ) {
-              console.log('/contribute----------->');
               this.router.navigateByUrl('/contribute');
             }
           }).catch((err) => {
