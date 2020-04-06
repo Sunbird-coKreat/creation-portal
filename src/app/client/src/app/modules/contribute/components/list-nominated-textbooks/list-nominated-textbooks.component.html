@@ -13,7 +13,7 @@
 					Back to My/Explore Programs
 				</button> -->
 
-				<h5 class="m-0 p-0 font-weight-bold d-inline-block">{{ programDetails?.name }} </h5>
+				<h5 class="m-0 p-0 font-weight-bold d-inline-block text-capitalize">{{ programDetails?.name }} </h5>
 				<i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
 					<ng-template #popupTemplate>
 						<div class="content">
@@ -183,7 +183,7 @@
 									</thead>
 									<tbody class="sb-table-body" *ngIf="contributorTextbooks.length">
 										<tr *ngFor="let contributorTextbook of contributorTextbooks; let i = index;">
-											<td class="hand">
+											<td class="text-capitalize">
 												{{contributorTextbook.name}}
 											</td>
 											<td>{{contributorTextbook.medium}}</td>

@@ -17,7 +17,7 @@
 									</button>
 			 <div class="d-flex flex-jc-space-between practical-header__content py-10">
             <div class="practical-header__title flex-basis-1 pr-10">
-								<h5 class="mb-10 p-0 d-inline-block font-weight-bold">{{ programDetails?.name }} </h5>
+								<h5 class="mb-10 p-0 d-inline-block font-weight-bold text-capitalize">{{ programDetails?.name }} </h5>
 								<i class="info circle link icon" suiPopup
                         [popupTemplate]="popupTemplate" popupDelay="1000"></i>
                     <ng-template #popupTemplate>
@@ -236,9 +236,9 @@
 							<th class="w-5">{{resourceService.frmelmnts.lbl.medium}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
 							<th class="w-5">{{resourceService.frmelmnts.lbl.class}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
 							<th class="w-5">{{resourceService.frmelmnts.lbl.subjects}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-							<th class="w-5">
+							<th class="w-5 px-5">
 								<span *ngIf="contributor?.nominationData?.status == 'Pending'">
-									{{resourceService.frmelmnts.lbl.sampleContentCount}} <i class="fa fa-sort ml-4" aria-hidden="true"></i>
+									{{resourceService.frmelmnts.lbl.sampleContentCount}} <i class="fa fa-sort" aria-hidden="true"></i>
 								</span>
 								<span *ngIf="contributor?.nominationData?.status == 'Approved'">
 									{{resourceService.frmelmnts.lbl.contributionCount}} <i class="fa fa-sort ml-4" aria-hidden="true"></i>
@@ -250,7 +250,7 @@
 					<tbody class="sb-table-body" *ngIf="contributorTextbooks?.length">
 
 						<tr *ngFor="let contributorTextbook of contributorTextbooks">
-							<td>{{contributorTextbook?.name}}</td>
+							<td class="text-capitalize">{{contributorTextbook?.name}}</td>
 							<td>{{contributorTextbook?.medium}}</td>
 							<td>{{contributorTextbook?.gradeLevel}}</td>
 							<td>{{contributorTextbook?.subject}}</td>

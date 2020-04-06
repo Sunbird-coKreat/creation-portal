@@ -12,7 +12,7 @@
                     Back to My/Explore Programs
                 </button> -->
 
-                <h5 class="m-0 p-0 font-weight-bold d-inline-block">{{ programDetails?.name }} </h5>
+                <h5 class="m-0 p-0 font-weight-bold d-inline-block text-capitalize">{{ programDetails?.name }} </h5>
                 <i class="info circle link icon" suiPopup
                         [popupTemplate]="popupTemplate" popupDelay="1000"></i>
                     <ng-template #popupTemplate>
@@ -165,7 +165,7 @@
                                     </thead>
                                     <tbody class="sb-table-body">
                                         <tr *ngFor="let nomination of nominations; let i = index;">
-                                            <td class="cursor-pointer">
+                                            <td class="cursor-pointer text-capitalize">
                                                 <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold"
                                                     (click)="showSelectedContributorProfile(nomination)"
                                                     appTelemetryInteract
