@@ -1,7 +1,7 @@
 <div *ngIf="showNominationsComponent" [appTelemetryImpression]="telemetryImpression">
     <div class="sb-bg-color-primary-0 practical-header py-16">
         <div class="d-flex  flex-jc-space-between practical-header__content ui container pt-15">
-            <div class="practical-header__title">
+            <div class="practical-header__title w-20">
                 <!-- <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="goBack()"
                     type="button">
                     <i class="icon-svg icon-svg--xxs icon-back mr-4">
@@ -187,7 +187,7 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <span class="sb-label sb-label-table sb-label-primary-100">
+                                                <span [ngClass]="{'sb-color-success':nomination?.nominationData?.status  == 'Approved','sb-color-warning':nomination?.nominationData?.status  == 'Pending'}">
                                                     {{ nomination?.nominationData?.status }}
                                                 </span>
                                             </td>
@@ -232,5 +232,4 @@
 [userId]="selectedNomination?.user_id" 
 (close)="showContributorProfilePopup = false;">
 </app-contributor-profile-popup>
-
 </div>

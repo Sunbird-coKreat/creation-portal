@@ -137,3 +137,17 @@
       font-size: 12px !important;
   }
 }
+
+.sb-sorting{
+  .fa-sort{
+      font-size: 16px;
+  }
+  .fa-sort-asc{
+      display: block;
+      font-size: 16px; 
+  }
+  .fa-sort-desc{
+      @extend .fa-sort-asc;
+      margin-top: -16px;
+  }
+}

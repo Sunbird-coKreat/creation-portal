@@ -177,11 +177,9 @@
 				<label>{{resourceService.frmelmnts.lbl.enterYourComments}}</label>
 				<div class="sb-field relative">
 					<textarea type="text" class="wmd-input width-100 sb-form-control" id="wmd-input"
-						[(ngModel)]="rejectComment" placeholder="Add comment" name="rejectComment" required></textarea>
+						[(ngModel)]="rejectComment" placeholder="{{resourceService.frmelmnts.lbl.addComment}}" name="rejectComment" required></textarea>
 					<label class="ui basic red error label pt-1 mt-5 width-100"
 						*ngIf="FormControl.form.controls.rejectComment?.touched && !FormControl.form.valid">{{resourceService.frmelmnts.lbl.fillComments}} </label>
-					<!-- <textarea rows="4" name="moretext" class="sb-form-control" placeholder="Type here..."></textarea>
-			<span class="characters-left">1000 Characters left</span> -->
 				</div>
 			</div>
 		</div>
@@ -205,9 +203,8 @@
 			<div class="sb-pageSection-content">
 				<div class="d-flex flex-ai-center flex-jc-space-between">
 					<div class="sb-pageSection-header pt-16">
-						<h4 class="sb-pageSection-title">{{resourceService.frmelmnts.lbl.listOfTextbooks}} <span
-								class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ programDetails?.collection_ids?.length }}</span>
-						</h4>
+						<h4 class="sb-pageSection-title">{{resourceService.frmelmnts.lbl.listOfTextbooks}} </h4>
+						<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{ programDetails?.collection_ids?.length }}</span>
 					</div>
 					<div class="" *ngIf="canAcceptorReject()">
 						<button class="sb-btn sb-btn-normal sb-btn-secondary mr-8"
@@ -220,7 +217,7 @@
       [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.accept}}</button>
 						<button class="sb-btn sb-btn-normal sb-btn-outline-error"
 							*ngIf="contributor?.nominationData?.status === 'Pending'"
-							(click)="showRequestChangesPopup = true"
+							(click)="rejectNomination();"
 							appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('reject-nomination', 'click', 'list-nominated-textbooks')"
       [telemetryInteractObject]="telemetryInteractObject"
@@ -259,7 +256,7 @@
 							<td>{{contributorTextbook?.subject}}</td>
 							<td>{{contributorTextbook?.sampleContentCount || 0}}</td>
 							<td data-label="Actions">
-								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
+								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" [disabled]="contributorTextbook?.sampleContentCount === 0 ? true : false "
 									*ngIf="contributor?.nominationData?.status == 'Pending'" (click)="viewContribution(contributorTextbook)"
 									appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('view-content', 'click', 'list-nominated-textbooks')"
