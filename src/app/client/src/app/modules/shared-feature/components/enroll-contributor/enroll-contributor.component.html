@@ -164,7 +164,7 @@
                <div class="sb-field-group mb-8"  *ngIf="enrollAsOrg === true">
                   <label class="d-block">{{resourceService.frmelmnts.lbl.nameOfOrganisation}} <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.nameOfOrganisationHint}}"></i></label>
                   <div class="sb-field required field">
-                      <input class="sb-form-control" placeholder="Name of an Organisation" formControlName="name">
+                      <input class="sb-form-control" placeholder="{{resourceService.frmelmnts.lbl.nameOfOrganisation}}" formControlName="name">
                       <!-- <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['name'].errors && contributeForm.controls['name'].errors.required && (!contributeForm.controls['name'].pristine || formIsInvalid)">
                         This field is required
                      </div> -->
@@ -175,7 +175,7 @@
                <div class="sb-field-group mb-8" *ngIf="enrollAsOrg === true">
                   <label class="d-block">{{resourceService.frmelmnts.lbl.description}} <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.programRecognitionHint}}"></i></label>
                   <div class="sb-field required field">
-                     <textarea rows="4" class="sb-form-control" placeholder="Contributor Information" spellcheck="false" formControlName="description"></textarea>
+                     <textarea rows="4" class="sb-form-control" placeholder="{{resourceService.frmelmnts.lbl.description}}" spellcheck="false" formControlName="description"></textarea>
                      <span class="characters-left">{{resourceService.frmelmnts.lbl.thousandCharacterLeft}}</span>
                      <!-- <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['description'].errors && contributeForm.controls['description'].errors.required && (!contributeForm.controls['description'].pristine || formIsInvalid)">
                         This field is required
