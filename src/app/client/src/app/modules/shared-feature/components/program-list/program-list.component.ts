@@ -248,12 +248,12 @@ export class ProgramListComponent implements OnInit {
       if (obj.rolemapping
         && (( obj.rolemapping.REVIEWER.includes(_.get(this.userService, 'userProfile.userId' ))))
         && obj.status === 'Approved' && obj.program_id == programId ) {
-          roles = 'REVIEWER';
+          roles = 'Reviewer';
         }
       else if  (obj.rolemapping
         && (( obj.rolemapping.CONTRIBUTOR.includes(_.get(this.userService, 'userProfile.userId' ))))
         && obj.status === 'Approved' && obj.program_id == programId ) {
-          roles = 'CONTRIBUTOR'; 
+          roles = 'Contributor';  
         }
     }));
     return roles;
