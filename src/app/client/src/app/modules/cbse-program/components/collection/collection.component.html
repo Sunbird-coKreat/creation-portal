@@ -90,8 +90,8 @@
         <div *ngIf="selectedCollectionIds.length > 0">
           <button class="sb-btn sb-btn-normal sb-btn-primary disabled {{selectedCollectionIds.length > 0 ? 'active' : 'disabled'}}"
             (click)="showContentTypeModal= true;">{{resourceService.frmelmnts.btn.nominate}}</button>
-            <div class="py-10 nominateMessage">
-              {{resourceService.frmelmnts.lbl.nominationClickUi}}
+            <div class="py-5 nominateMessage">
+              {{resourceService.frmelmnts.lbl.nominationMessage}}
             </div>
         </div>
       </div>
