@@ -39,7 +39,6 @@ export class ProgramListComponent implements OnInit {
   public nominationList;
   public sortColumnName = '';
   public showLoader = true;
-  public contentTypes = [];
   constructor(private programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService ) { }

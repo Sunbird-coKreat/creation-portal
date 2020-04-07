@@ -23,7 +23,6 @@ import { throwError, forkJoin } from 'rxjs';
 export class ListContributorTextbooksComponent implements OnInit, AfterViewInit, OnDestroy {
   public contributor;
   public contributorTextbooks;
-  public contentTypes = [];
   public nominatedContentTypes: string;
   public noResultFound;
   public telemetryImpression: IImpressionEventInput;
