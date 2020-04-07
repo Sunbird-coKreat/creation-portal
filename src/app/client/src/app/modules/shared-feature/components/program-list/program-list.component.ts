@@ -334,7 +334,11 @@ export class ProgramListComponent implements OnInit {
   }
 
   getProgramContentTypes(program) {
-    return _.join(program.content_types, ', ');
+    if (_.isEmpty(program) || _.isEmpty(program.program_id)) {
+      return false;
+    }
+
+    return this.programsService.getContentTypesName(program.content_types);
   }
 
   viewDetailsBtnClicked(program) {
