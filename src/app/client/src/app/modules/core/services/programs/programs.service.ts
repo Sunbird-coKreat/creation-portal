@@ -14,6 +14,7 @@ import { DataService } from '../data/data.service';
 import { HttpClient } from '@angular/common/http';
 import { ContentService } from '../content/content.service';
 import { DatePipe } from '@angular/common';
+import * as alphaNumSort from 'alphanum-sort';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +34,7 @@ export class ProgramsService extends DataService implements CanActivate {
   baseUrl: string;
   public http: HttpClient;
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
-  private contentTypes: any[];
+  public contentTypes: any[];
 
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService,
@@ -502,5 +503,45 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     });
     return selectedContentTypes.length ? _.join(selectedContentTypes, ', ') : '-';
+  }
+
+  isNotEmpty(obj, key) {
+   if (_.isEmpty(obj) || _.isEmpty(obj[key])) {
+     return false;
+   }
+   return true;
+  }
+
+  private sort(a, b, column) {
+   if (!this.isNotEmpty(a, column) || !this.isNotEmpty(b, column)) {
+     return 1;
+   }
+   let aColumn = a[column];
+   let bColumn = b[column];
+   if (_.isArray(aColumn)) {
+     aColumn = _.join(aColumn, ', ');
+     a[column] = alphaNumSort(aColumn);
+   }
+   if (_.isArray(bColumn)) {
+     bColumn = _.join(bColumn, ', ');
+     b[column] = alphaNumSort(bColumn);
+   }
+   return bColumn.localeCompare(aColumn);
+  }
+
+  sortCollection(collection, column, direction) {
+   if (!collection.length) {
+     return collection;
+   }
+
+   if (direction === 'asc' || direction === '') {
+     return collection.sort((a, b) => {
+       return this.sort(b, a, column);
+     });
+   } else {
+    return collection.sort((a, b) => {
+       return this.sort(a, b, column);
+     });
+   }
   }
 }
