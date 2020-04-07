@@ -471,21 +471,14 @@ export class ProgramsService extends DataService implements CanActivate {
   }
 
   /**
-   * makes api call to get content types
+   * Get all the content types configured
    */
-  fetchContentTypeFromApi(): Observable<ServerResponse> {
+  private getContentTypes(): Observable<any[]> {
     const option = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.CONTENTTYPE_LIST}`,
     };
 
-    return this.get(option);
-  }
-
-  /**
-   * Get all the content types configured
-   */
-  private getContentTypes(): Observable<any[]> {
-    return this.fetchContentTypeFromApi().pipe(
+    return this.get(option).pipe(
       map(result => _.get(result, 'result.contentType')),
       catchError(err => of([]))
     ).pipe(
