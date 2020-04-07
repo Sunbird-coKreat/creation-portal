@@ -130,7 +130,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
     this.acceptPdfType = this.getAcceptType(this.assetConfig.pdf.accepted, 'pdf');
-    console.log(this.acceptPdfType);
   }
 
   initiateDocumentUploadModal() {
