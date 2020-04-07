@@ -39,6 +39,8 @@ export class ProgramListComponent implements OnInit {
   public nominationList;
   public sortColumnName = '';
   public showLoader = true;
+  public roleMapping = [];
+  public iscontributeOrgAdmin = true;
   constructor(private programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService ) { }
@@ -195,6 +197,7 @@ export class ProgramListComponent implements OnInit {
       const filters = {
         organisation_id: this.userService.userProfile.userRegData.User_Org.orgId
       };
+      this.iscontributeOrgAdmin = false;
       this.programsService.getNominationList(filters)
         .subscribe(
           (data) => {
@@ -205,10 +208,10 @@ export class ProgramListComponent implements OnInit {
                 && (( obj.rolemapping.CONTRIBUTOR.includes(_.get(this.userService, 'userProfile.userId' )))
                 || ( obj.rolemapping.REVIEWER.includes(_.get(this.userService, 'userProfile.userId' ))))
                 && obj.status === 'Approved') {
+                  this.roleMapping.push(obj);
                   return obj;
                 }
             }), 'program_id');
-
             const req = {
               request: {
                 filters: {
@@ -237,7 +240,24 @@ export class ProgramListComponent implements OnInit {
       this.getContributionProgramList(req);
     }
   }
-
+  getMyProgramRole(program)
+  {
+    let programId = program.program_id;
+    let roles = '';
+     _.map(_.find(this.roleMapping, obj => {
+      if (obj.rolemapping
+        && (( obj.rolemapping.REVIEWER.includes(_.get(this.userService, 'userProfile.userId' ))))
+        && obj.status === 'Approved' && obj.program_id == programId ) {
+          roles = 'Reviewer';
+        }
+      else if  (obj.rolemapping
+        && (( obj.rolemapping.CONTRIBUTOR.includes(_.get(this.userService, 'userProfile.userId' ))))
+        && obj.status === 'Approved' && obj.program_id == programId ) {
+          roles = 'Contributor';  
+        }
+    }));
+    return roles;
+  }
   getContributionOrgUsers(selectedProgram) {
     this.selectedProgramToAssignRoles = selectedProgram.program_id;
     this.showAssignRoleModal = true;
