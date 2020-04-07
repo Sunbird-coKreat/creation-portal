@@ -33,6 +33,7 @@ export class ProgramsService extends DataService implements CanActivate {
   baseUrl: string;
   public http: HttpClient;
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
+  private contentTypes: any[];
 
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService,
@@ -49,6 +50,7 @@ export class ProgramsService extends DataService implements CanActivate {
    */
   public initialize() {
     this.enableContributeMenu().subscribe();
+    this.getContentTypes().subscribe();
   }
 
   /**
@@ -456,7 +458,6 @@ export class ProgramsService extends DataService implements CanActivate {
     return _.sortBy(_.unionBy(resultArray, 'identifier'), 'index');
   }
 
-
   getNominationList(reqFilters) {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
@@ -469,4 +470,37 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.API_URL(req);
   }
 
+  /**
+   * Get all the content types configured
+   */
+  private getContentTypes(): Observable<any[]> {
+    const option = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.CONTENTTYPE_LIST}`,
+    };
+
+    return this.get(option).pipe(
+      map(result => _.get(result, 'result.contentType')),
+      catchError(err => of([]))
+    ).pipe(
+      tap(contentTypes => {
+        this.contentTypes = contentTypes;
+      })
+    );
+  }
+
+  /**
+   * Get program content types
+   */
+  getContentTypesName(programContentType) {
+    const selectedContentTypes = [];
+    _.forEach(programContentType, (contentType) => {
+      const found = _.find(this.contentTypes, (contentTypeObj) => {
+        return contentTypeObj.value === contentType;
+      });
+      if (found) {
+        selectedContentTypes.push(found.name);
+      }
+    });
+    return selectedContentTypes.length ? _.join(selectedContentTypes, ', ') : '-';
+  }
 }
