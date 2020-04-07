@@ -81,6 +81,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public sortColumn = 'name';
   public direction = 'asc';
   public tempSortCollections = [];
+  public filterApplied = false;
 
  constructor(
    public frameworkService: FrameworkService,
@@ -101,11 +102,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
  sortCollection(column) {
   this.collections =  this.programsService.sortCollection(this.tempSortCollections, column, this.direction);
-  if (this.direction === 'asc' || this.direction === '') {
-    this.direction = 'desc';
-  } else {
-    this.direction = 'asc';
-  }
+  this.direction = (this.direction === 'asc' || this.direction === '') ? 'desc' : 'asc';
   this.sortColumn = column;
  }
 
@@ -399,6 +396,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
  resetFilters () {
+    this.filterApplied = false;
+    this.resetSorting();
     this.collectionListForm.controls['medium'].setValue('');
     this.collectionListForm.controls['gradeLevel'].setValue('');
     this.collectionListForm.controls['subject'].setValue('');
@@ -439,6 +438,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      delete this.programData.medium;
      delete this.programData.subject;
      delete this.programData.program_end_date;
+     this.programData['program_id'] = '';
 
      if (!this.programId) {
       this.programData['status'] = 'Draft';
@@ -481,6 +481,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    };
 
    if (!_.isEmpty(this.collectionListForm.value.medium)) {
+     this.filterApplied = true;
      requestData.request.filters['medium'] = [];
      _.forEach(this.collectionListForm.value.medium, (medium) => {
        requestData.request.filters['medium'].push(medium.name);
@@ -488,6 +489,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    }
 
    if (!_.isEmpty(this.collectionListForm.value.gradeLevel)) {
+     this.filterApplied = true;
      requestData.request.filters['gradeLevel'] = [];
      _.forEach(this.collectionListForm.value.gradeLevel, (gradeLevel) => {
        requestData.request.filters['gradeLevel'].push(gradeLevel.name);
@@ -495,6 +497,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    }
 
    if (!_.isEmpty(this.collectionListForm.value.subject)) {
+     this.filterApplied = true;
      requestData.request.filters['subject'] = this.collectionListForm.value.subject;
    }
 
@@ -502,10 +505,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      (res) => {
        this.showTextBookSelector = true;
        if (res.result.count) {
-        this.collections = res.result.content; 
+        this.collections = res.result.content;
         this.tempSortCollections = this.collections;
-        this.resetSorting();
-        this.sortCollection(this.sortColumn);
+        if (!this.filterApplied) {
+          this.sortCollection(this.sortColumn);
+        }
        } else {
         this.collections = [];
         this.tempSortCollections = [];
@@ -593,6 +597,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      (err) => this.saveProgramError(err)
    );
  }
+
  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
   return _.omitBy({
     id,
