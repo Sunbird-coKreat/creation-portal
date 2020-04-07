@@ -41,6 +41,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
   public telemetryInteractPdata: any;
   public nominateButton = 'hide';
   public nominate = '';
+  public programContentTypes: string;
   isMediumClickable = false;
   showLoader = true;
   selectedIndex = -1;
@@ -116,6 +117,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.collectionComponentInput.programContext.program_id, 'Program');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID + '.programs');
+    this.programContentTypes = this.programsService.getContentTypesName(this.programContext.content_types);
     this.setActiveDate();
     this.getNominationStatus();
     this.getCollectionCard();

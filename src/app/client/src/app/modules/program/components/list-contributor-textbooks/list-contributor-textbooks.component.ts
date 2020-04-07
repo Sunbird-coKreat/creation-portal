@@ -23,6 +23,7 @@ import { throwError, forkJoin } from 'rxjs';
 export class ListContributorTextbooksComponent implements OnInit, AfterViewInit, OnDestroy {
   public contributor;
   public contributorTextbooks;
+  public nominatedContentTypes: string;
   public noResultFound;
   public telemetryImpression: IImpressionEventInput;
   public component: any;
@@ -97,9 +98,10 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
     });
     this.contributor = this.selectedNominationDetails;
+    this.nominatedContentTypes = this.programsService.getContentTypesName(this.contributor.nominationData.content_types);
     this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program_ID'}];
-  this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
-  this.telemetryInteractObject = {};
+    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
+    this.telemetryInteractObject = {};
   }
   public fetchFrameWorkDetails() {
     this.frameworkService.initialize(this.sessionContext.framework);
@@ -282,7 +284,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     };
     this.programStageService.addStage('chapterListComponent');
   }
-   updateNomination(status) {
+  updateNomination(status) {
     let nominationStatus;
     (status === 'accept') ? (nominationStatus = 'Approved') : (nominationStatus = 'Rejected');
      const req = {

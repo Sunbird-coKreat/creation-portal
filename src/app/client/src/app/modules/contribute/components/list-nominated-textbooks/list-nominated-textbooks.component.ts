@@ -58,6 +58,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public telemetryInteractObject: any = {};
   public currentUserRole: any;
   public chapterCount = 0;
+  public programContentTypes: string;
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private configService: ConfigService, private publicDataService: PublicDataService,
   private activatedRoute: ActivatedRoute, private router: Router, public programStageService: ProgramStageService,
@@ -99,6 +100,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     this.fetchProgramDetails().subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
       this.roles = _.get(this.programDetails, 'config.roles');
+      this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
       this.setActiveDate();
     }, error => {
       // TODO: navigate to program list page
@@ -407,7 +409,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       extra
     }, _.isUndefined);
   }
-
 
   ngOnDestroy() {
     this.stageSubscription.unsubscribe();

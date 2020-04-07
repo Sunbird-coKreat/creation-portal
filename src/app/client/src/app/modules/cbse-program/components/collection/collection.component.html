@@ -28,9 +28,9 @@
         <label class="m-0">{{ resourceService.frmelmnts.lbl.contentType}}</label>
         <p class="sb__ellipsis sb__ellipsis--one cursor-pointer"
         suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}"
-        popupText="{{programContext?.content_types?.join(', ')}}">
+        popupText="{{ programContentTypes }}">
           <span>
-            {{programContext?.content_types?.join(', ')}}
+            {{ programContentTypes }}
           </span>
         </p>
       </div>
