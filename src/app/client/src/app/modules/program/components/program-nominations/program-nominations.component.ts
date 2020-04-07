@@ -16,7 +16,6 @@ import * as moment from 'moment';
 export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   public programId: string;
   public programDetails: any;
-  public contentTypes = [];
   public programContentTypes: string;
   nominations = [];
   nominationsCount;
@@ -183,8 +182,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
     this.fetchProgramDetails().subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
       this.collectionsCount = _.get(this.programDetails, 'collection_ids').length;
+      this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
       this.setActiveDate();
-      this.getAllContentTypes();
     }, error => {
       // TODO: navigate to program list page
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
@@ -309,36 +308,5 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
       pageid,
       extra
     }, _.isUndefined);
-  }
-
-  getAllContentTypes () {
-    const option = {
-      url: 'program/v1/contenttypes/list',
-    };
-
-    this.programsService.get(option).subscribe(
-      (res) => {
-          this.contentTypes = res.result.contentType;
-          this.getProgramContentTypes();
-        },
-      (err) => {
-        console.log(err);
-        // TODO: navigate to program list page
-        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-        this.toasterService.warning(errorMes || 'Fetching content types failed');
-      }
-    );
-  }
-
-  getProgramContentTypes() {
-    const selectedContentTypes = [];
-    _.forEach(this.programDetails.content_types, (content_type) => {
-      const found = _.find(this.contentTypes, (o) => { return o.value === content_type;
-      });
-      if (found) {
-        selectedContentTypes.push(found.name);
-      }
-    });
-    this.programContentTypes = selectedContentTypes.length ? _.join(selectedContentTypes, ', ') : '-';
   }
 }
