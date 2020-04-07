@@ -8,6 +8,7 @@ import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ProgramStageService } from '../../../program/services/program-stage/program-stage.service';
+import { CollectionHierarchyService } from '../../../cbse-program/services/collection-hierarchy/collection-hierarchy.service';
 import { ChapterListComponent } from '../../../cbse-program/components/chapter-list/chapter-list.component';
 import { IChapterListComponentInput } from '../../../cbse-program/interfaces';
 import { InitialState, ISessionContext, IUserParticipantDetails } from '../../interfaces';
@@ -63,7 +64,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   private activatedRoute: ActivatedRoute, private router: Router, public programStageService: ProgramStageService,
   public toasterService: ToasterService, private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
   public frameworkService: FrameworkService, public userService: UserService, public registryService: RegistryService,
-  public activeRoute: ActivatedRoute, public actionService: ActionService) {
+  public activeRoute: ActivatedRoute, private collectionHierarchyService: CollectionHierarchyService, public actionService: ActionService) {
     this.programId = this.activatedRoute.snapshot.params.programId;
    }
 
@@ -170,7 +171,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     }) : [];
     if (!_.isEmpty(contributorTextbooks)) {
       const collectionIds = _.map(contributorTextbooks, 'identifier');
-      this.getCollectionHierarchy(collectionIds)
+      this.collectionHierarchyService.getCollectionHierarchy(collectionIds)
         .subscribe(response => {
           const hierarchies = _.map(response, r => {
             if (r.result && r.result.content) {
@@ -180,8 +181,10 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
             }
           });
           const hierarchyContent = _.map(hierarchies, hierarchy => {
-            this.chapterCount = 0;
-            const {chapterCount} = this.getSampleContentStatusCount(hierarchy);
+            this.collectionHierarchyService.chapterCount = 0;
+            this.collectionHierarchyService.sampleDataCount = 0;
+            // this.chapterCount = 0;
+            const {chapterCount} =  this.collectionHierarchyService.getSampleContentStatusCount(hierarchy);
               hierarchy.chapterCount = chapterCount;
             return hierarchy;
           });
@@ -195,30 +198,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       this.contributorTextbooks = contributorTextbooks;
     }
   }
-  getSampleContentStatusCount(data) {
-    const self = this;
-    if (data.contentType === 'TextBookUnit') {
-      self.chapterCount = self.chapterCount + 1;
-    }
-    const childData = data.children;
-    if (childData) {
-      childData.map(child => {
-        self.getSampleContentStatusCount(child);
-      });
-    }
-    return {chapterCount: self.chapterCount};
-  }
-
-  getCollectionHierarchy(collectionIds) {
-    const hierarchyRequest =  _.map(collectionIds, id => {
-       const req = {
-         url: 'content/v3/hierarchy/' + id,
-         param: { 'mode': 'edit' }
-       };
-       return this.actionService.get(req);
-     });
-     return forkJoin(hierarchyRequest);
-   }
 
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));

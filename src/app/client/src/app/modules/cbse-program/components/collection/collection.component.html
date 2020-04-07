@@ -26,8 +26,8 @@
 
       <div class="sb-meta-data-container sb-meta-data-column px-10 w-20">
         <label class="m-0">{{ resourceService.frmelmnts.lbl.contentType}}</label>
-        <p class="sb__ellipsis sb__ellipsis--one cursor-pointer" 
-        suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" 
+        <p class="sb__ellipsis sb__ellipsis--one cursor-pointer"
+        suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}"
         popupText="{{ programContentTypes }}">
           <span>
             {{ programContentTypes }}
@@ -135,9 +135,9 @@
               </td>
               <td *ngIf="currentNominationStatus === 'Initiated' || currentNominationStatus=== 'Pending'">{{data.sampleContentCount || 0 }}</td>
               <td>
-                <div class="sb-checkbox sb-checkbox-primary d-inline-block">
+                <div *ngIf="(data.sampleContentCount === undefined || data.sampleContentCount === 0) && canNominate()" class="sb-checkbox sb-checkbox-primary d-inline-block">
                   <label></label>
-                  <input  type="checkbox" *ngIf="(data.sampleContentCount === undefined || data.sampleContentCount === 0) && canNominate()" [checked]="data.isSelected || data.sampleContentCount" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
+                  <input  type="checkbox" [checked]="data.isSelected || data.sampleContentCount" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
                </div>
                   <button type="button" *ngIf="data.isSelected || data.sampleContentCount" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10 px-10">Upload Sample</button>
               </td>
