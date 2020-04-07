@@ -164,16 +164,14 @@ export class ProgramListComponent implements OnInit {
             nomination.program = _.merge({}, nomination.program, {
               contributionDate: nomination.createdon,
               nomination_status: nomination.status,
-              nominated_collection_ids: nomination.collection_ids,
-              roles:nomination.rolemapping
+              nominated_collection_ids: nomination.collection_ids
             });
             return  nomination.program;
           } else {
             nomination = _.merge({}, nomination, {
               contributionDate: nomination.createdon,
               nomination_status: nomination.status,
-              nominated_collection_ids: nomination.collection_ids,
-              roles:nomination.rolemapping
+              nominated_collection_ids: nomination.collection_ids
             });
             return  nomination;
           }
