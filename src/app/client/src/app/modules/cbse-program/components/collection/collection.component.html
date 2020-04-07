@@ -86,7 +86,7 @@
 
       <div class="practical-sb-buttons w-20">
         <div class="fxsmall font-italic sb-color-gray-300 mb-10">{{resourceService.frmelmnts.lbl.contentTypesLabels}}</div>
-        <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary">{{resourceService.frmelmnts.btn.contentTypes}}</button>
+        <button type="button" (click)="showContentTypeModal= true;" class="sb-btn sb-btn-normal sb-btn-outline-primary">{{resourceService.frmelmnts.btn.contentTypes}}</button>
         <hr>
         <div *ngIf="canNominate()" class="d-inline-block">
             <div *ngIf="selectedCollectionIds.length === 0"> 
@@ -94,7 +94,7 @@
             </div>
             <div *ngIf="selectedCollectionIds.length > 0">
               <button class="sb-btn sb-btn-normal sb-btn-primary disabled {{selectedCollectionIds.length > 0 ? 'active' : 'disabled'}}"
-                (click)="showContentTypeModal= true;">{{resourceService.frmelmnts.btn.nominate}}</button>
+                >{{resourceService.frmelmnts.btn.nominate}}</button>
             </div>  
           </div>
           <ng-template #popupContentType>
