@@ -275,6 +275,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.toasterService.success('Asset Successfully Uploaded...');
       this.showAddButton = true;
       this.uploadedDocument = res.artifactUrl;
+      this.showDocumentUploader = false;
       console.log(res);
     });
   }
@@ -513,9 +514,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       content_submission_enddate: ['', Validators.required],
       content_types: ['', Validators.required],
       rewards: [],
-      /*medium: ['', Validators.required],
-      gradeLevel: ['', Validators.required],
-      subject: ['', Validators.required],*/
     });
 
     this.collectionListForm = this.sbFormBuilder.group({
@@ -524,9 +522,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       gradeLevel: [],
       subject: [],
     });
-    /*this.createProgramForm.patchValue({
-      rootorg_id: this.userprofile.rootOrgId
-    });*/
   }
 
   saveProgramError(err) {
@@ -623,9 +618,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programData['slug'] = 'sunbird';
       this.programData['type'] = 'public',
 
-        this.programData['default_roles'] = ['CONTRIBUTOR'];
+      this.programData['default_roles'] = ['CONTRIBUTOR'];
       this.programData['enddate'] = this.programData.program_end_date;
       this.programData['config'] = programConfigObj;
+      this.programData['guidelines_document'] = this.uploadedDocument;
       delete this.programData.gradeLevel;
       delete this.programData.medium;
       delete this.programData.subject;
