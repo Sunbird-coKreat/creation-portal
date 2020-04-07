@@ -99,47 +99,19 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    this.sbFormBuilder = formBuilder;
  }
 
- sortCollections(column) {
-  if (!this.tempSortCollections.length) {
-    return;
-  }
-
+ sortCollection(column) {
+  this.collections =  this.programsService.sortCollection(this.tempSortCollections, column, this.direction);
   if (this.direction === 'asc' || this.direction === '') {
-    this.collections = this.tempSortCollections.sort((a, b) => {
-      return this.sort(b, a, column);
-    });
     this.direction = 'desc';
   } else {
-    this.collections =  this.tempSortCollections.sort((a, b) => {
-      return this.sort(a, b, column);
-    });
     this.direction = 'asc';
   }
   this.sortColumn = column;
  }
 
- isNotEmpty(obj, key) {
-  if (_.isEmpty(obj) || _.isEmpty(obj[key])) {
-    return false;
-  }
-  return true;
- }
-
- sort(a, b, column) {
-  if (!this.isNotEmpty(a, column) || !this.isNotEmpty(b, column)) {
-    return 1;
-  }
-  let aColumn = a[column];
-  let bColumn = b[column];
-  if (_.isArray(aColumn)) {
-    aColumn = _.join(aColumn, ', ');
-    a[column] = alphaNumSort(aColumn);
-  }
-  if (_.isArray(bColumn)) {
-    bColumn = _.join(bColumn, ', ');
-    b[column] = alphaNumSort(bColumn);
-  }
-  return bColumn.localeCompare(aColumn);
+ resetSorting() {
+  this.sortColumn = 'name';
+  this.direction = 'asc';
  }
 
  getMaxDate(date) {
@@ -194,9 +166,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
  ngOnInit() {
   this.userprofile = this.userService.userProfile;
+  this.programScope['purpose'] = this.programsService.contentTypes;
   this.initializeFormFields();
   this.fetchFrameWorkDetails();
-  this.getProgramContentTypes();
   this.telemetryInteractCdata = [];
   this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
   this.telemetryInteractObject = {};
@@ -368,25 +340,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    });*/
  }
 
- getProgramContentTypes () {
-   const option = {
-     url: 'program/v1/contenttypes/list',
-   };
-
-   this.programsService.get(option).subscribe(
-     (res) => {
-         this.programScope['purpose'] = res.result.contentType;
-       },
-     (err) => {
-       console.log(err);
-       // TODO: navigate to program list page
-       const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-       this.toasterService.warning(errorMes || 'Fetching content types failed');
-     }
-   );
-
- }
-
  saveProgramError(err) {
    console.log(err);
  }
@@ -443,11 +396,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
 
     return hasError;
-  }
-
-  resetSorting() {
-    this.sortColumn = 'name';
-    this.direction = 'asc';
   }
 
  resetFilters () {
@@ -557,7 +505,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         this.collections = res.result.content; 
         this.tempSortCollections = this.collections;
         this.resetSorting();
-        this.sortCollections(this.sortColumn);
+        this.sortCollection(this.sortColumn);
        } else {
         this.collections = [];
         this.tempSortCollections = [];
