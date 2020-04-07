@@ -262,10 +262,10 @@
 												</div-->
 											</th>
 											<th class="w-10 text-center">{{resource.frmelmnts.lbl.title}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-											<th class="w-10 text-center">{{resource.frmelmnts.lbl.medium}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-											<th class="w-10 text-center">{{resource.frmelmnts.lbl.class}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-											<th class="w-10 text-center">{{resource.frmelmnts.lbl.subject}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-											<th class="w-10 text-center">{{resource.frmelmnts.lbl.chapters}}</th>
+											<th class="w-10">{{resource.frmelmnts.lbl.medium}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+											<th class="w-10">{{resource.frmelmnts.lbl.class}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+											<th class="w-10">{{resource.frmelmnts.lbl.subject}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+											<th class="w-10">{{resource.frmelmnts.lbl.chapters}}</th>
 										</tr>
 									</thead>
 									<tbody class="sb-table-body d-block w-100 o-y-auto max-height">
@@ -280,26 +280,26 @@
 											</td>
 											<td>
 												<div
-													class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold text-center">
+													class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
 													{{data.name}}
 												</div>
 											</td>
 											<td>
-												<div class="text-center">
+												<div>
 													{{data.medium}}
 												</div>
 											</td>
 											<td>
-												<div class="sb__ellipsis sb__ellipsis--three text-center">
+												<div class="sb__ellipsis sb__ellipsis--three">
 													{{data.gradeLevel}}
 												</div>
 											</td>
 											<td>
-												<div class="text-center">
+												<div>
 													{{data.subject}}
 												</div>
 											</td>
-											<td class="text-center">{{ data.childNodes ? data.childNodes.length : 0 }}</td>
+											<td>{{ data.childNodes ? data.childNodes.length : 0 }}</td>
 										</tr>
 									</tbody>
 								</table>
@@ -307,16 +307,16 @@
 						</div>
 						<div class="five wide column">
 							<div class="sb-bg-white b-1-100 br-4 o-y-auto">
-								<h5 class="py-15 px-10 font-weight-bold fs-0-92 text-capitalize">
+								<h5 class="py-15 px-20 font-weight-bold fs-0-92 text-capitalize">
 										{{tempCollections.length + ' ' + resource.frmelmnts.lbl.textbooksAdded}}
 								</h5>
 								<hr class="mt-0">
 								<div class="o-y-auto maxmin-h-375 fs-0-92 text-capitalize">
 									<div class="sb-program-collection ui container" *ngFor="let tempCollection of tempCollections">
 										<div class="ui grid">
-											<div class="eleven wide column">
+											<div class="ten wide column">
 												<h5 class="mx-10 sb-color-gray-400 sb__ellipsis sb__ellipsis--three font-weight-bold">{{tempCollection.name}}</h5>
-												<small class="ui container d-flex mx-10">
+												<small class="d-flex mx-10">
 													<span>{{tempCollection.medium}}</span>
 													<span class="mx-8" style="border-left: 1px solid var(--gray-200);"></span>
 													<span>{{tempCollection.gradeLevel}}</span>
@@ -324,15 +324,15 @@
 													<span>{{tempCollection.subject}}</span>
 												</small>
 											</div>
-											<span class="one wide column text-align-right" (click)="onCollectionCheck(tempCollection, false)"
+											<div class="two wide column text-right cursor-pointer" (click)="onCollectionCheck(tempCollection, false)"
 											appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('collection-check', 'click', 'create-program')"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">
 												<i class="close outline icon sb-color-red-100" suiPopup popupHeader="close"></i>
-											</span>
-											<hr class="row p-0">
+										</div>
+											<hr class="row p-0 mt-0">
 										</div>
 									</div>
 								</div>
@@ -343,7 +343,7 @@
 				</div>
 			</sui-tabset>
 		</div>
-		<div class="text-align-right mt-10" [appTelemetryStart]="telemetryStart" [appTelemetryEnd]="telemetryEnd">
+		<div class="text-align-right" [appTelemetryStart]="telemetryStart" [appTelemetryEnd]="telemetryEnd">
 			<button *ngIf="!showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary"
 				(click)="saveProgram()"
 				appTelemetryInteract
