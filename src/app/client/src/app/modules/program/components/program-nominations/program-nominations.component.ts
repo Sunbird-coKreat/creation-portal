@@ -16,6 +16,7 @@ import * as moment from 'moment';
 export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   public programId: string;
   public programDetails: any;
+  public programContentTypes: string;
   nominations = [];
   nominationsCount;
   collectionsCount;
@@ -181,6 +182,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
     this.fetchProgramDetails().subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
       this.collectionsCount = _.get(this.programDetails, 'collection_ids').length;
+      this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
       this.setActiveDate();
     }, error => {
       // TODO: navigate to program list page
