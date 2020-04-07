@@ -1015,6 +1015,12 @@
         },
         "sampleContent": {
             "type": "boolean"
+        },
+        "collectionId" : {
+            "type": "string"
+        },
+        "organisationId" : {
+            "type": "string"
         }
     }
 }
