@@ -33,6 +33,7 @@ export class ProgramsService extends DataService implements CanActivate {
   baseUrl: string;
   public http: HttpClient;
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
+  private contentTypes: any[];
 
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService,
@@ -49,6 +50,7 @@ export class ProgramsService extends DataService implements CanActivate {
    */
   public initialize() {
     this.enableContributeMenu().subscribe();
+    this.getContentTypes().subscribe();
   }
 
   /**
@@ -100,20 +102,17 @@ export class ProgramsService extends DataService implements CanActivate {
   */
  mapUsertoContributorOrgReg (orgOsid, UserOsid) {
   // Check if user is alredy part of the orgnisation
-  console.log('%c ProgramService - mapUsertoContributorOrgReg! ', 'background: #222; color: #bada55');
 
   if (!_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
     const userOrg = this.userService.userProfile.userRegData.User_Org;
 
     if (userOrg.orgId && userOrg.orgId === orgOsid) {
-      console.log('%c mapUsertoContributorOrgReg userOrg.orgId is orgOsId! ', 'background: #222; color: #bada55');
       this.toasterService.warning(this.resourceService.messages.emsg.contributorjoin.m0002);
       this.router.navigate(['contribute/myenrollprograms']);
       return false;
     }
 
     if (userOrg.orgId && userOrg.orgId !== orgOsid) {
-      console.log('%c mapUsertoContributorOrgReg userOrg.orgId isNot orgOsId! ', 'background: #222; color: #bada55');
       this.toasterService.warning(this.resourceService.messages.emsg.contributorjoin.m0003);
       this.router.navigate(['contribute/myenrollprograms']);
       return false;
@@ -130,7 +129,6 @@ export class ProgramsService extends DataService implements CanActivate {
 
   this.addToRegistry(userOrgAdd).subscribe(
       (res) => {
-        console.log('%c addToRegistry- added to registry! ', 'background: #222; color: #bada55');
         this.toasterService.success(this.resourceService.messages.smsg.contributorjoin.m0001);
         this.userService.openSaberRegistrySearch().then(() => {
           this.router.navigate(['contribute/myenrollprograms']);
@@ -153,7 +151,6 @@ export class ProgramsService extends DataService implements CanActivate {
    */
   addUsertoContributorOrg(orgId) {
       // Check if organisation exists
-      console.log('%c Program Service AddUserToContributorOrg! ', 'background: #222; color: #bada55');
 
       const orgSearch = {
         entityType: ['Org'],
@@ -172,7 +169,6 @@ export class ProgramsService extends DataService implements CanActivate {
           const orgOsid = contibutorOrg.osid;
           if (!this.userService.userProfile.userRegData.User) {
             // Add user to the registry
-            console.log('%c Adding user to registry! ', 'background: #222; color: #bada55');
             const userAdd = {
               User: {
                 firstName: this.userService.userProfile.firstName,
@@ -193,7 +189,6 @@ export class ProgramsService extends DataService implements CanActivate {
                 (error) => {}
             );
           } else {
-            console.log('%c Adding Exists - Mapping to Org! ', 'background: #222; color: #bada55');
 
             this.mapUsertoContributorOrgReg(orgOsid, this.userService.userProfile.userRegData.User.osid);
           }
@@ -463,7 +458,6 @@ export class ProgramsService extends DataService implements CanActivate {
     return _.sortBy(_.unionBy(resultArray, 'identifier'), 'index');
   }
 
-
   getNominationList(reqFilters) {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
@@ -476,4 +470,37 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.API_URL(req);
   }
 
+  /**
+   * Get all the content types configured
+   */
+  private getContentTypes(): Observable<any[]> {
+    const option = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.CONTENTTYPE_LIST}`,
+    };
+
+    return this.get(option).pipe(
+      map(result => _.get(result, 'result.contentType')),
+      catchError(err => of([]))
+    ).pipe(
+      tap(contentTypes => {
+        this.contentTypes = contentTypes;
+      })
+    );
+  }
+
+  /**
+   * Get program content types
+   */
+  getContentTypesName(programContentType) {
+    const selectedContentTypes = [];
+    _.forEach(programContentType, (contentType) => {
+      const found = _.find(this.contentTypes, (contentTypeObj) => {
+        return contentTypeObj.value === contentType;
+      });
+      if (found) {
+        selectedContentTypes.push(found.name);
+      }
+    });
+    return selectedContentTypes.length ? _.join(selectedContentTypes, ', ') : '-';
+  }
 }

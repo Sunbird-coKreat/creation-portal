@@ -55,15 +55,12 @@ export class ProgramListComponent implements OnInit {
    * Check if logged in user is contributor or sourcing org
    */
   private checkIfUserIsContributor() {
-    console.log('%c ProgramList - checking if user is a contributor! ', 'background: #222; color: #bada55');
     this.programsService.allowToContribute$.pipe(
       tap((isContributor: boolean) => {
         // TODO implement based on api and remove url checks
         // this.isContributor = !isContributor;
         const orgId = this.activatedRoute.snapshot.params.orgId;
-        console.log('%c ProgramService - AllowTocontribute Subject Passed! ', 'background: #222; color: #bada55');
 
-        console.log(`%c checking router url - ${this.router.url}! `, 'background: #222; color: #bada55');
         // Check if user part of that organisation
         if (this.router.url.includes('/contribute/join/' + orgId)) {
             this.programsService.addUsertoContributorOrg(orgId);
@@ -317,7 +314,11 @@ export class ProgramListComponent implements OnInit {
   }
 
   getProgramContentTypes(program) {
-    return _.join(program.content_types, ', ');
+    if (_.isEmpty(program) || _.isEmpty(program.program_id)) {
+      return false;
+    }
+
+    return this.programsService.getContentTypesName(program.content_types);
   }
 
   viewDetailsBtnClicked(program) {

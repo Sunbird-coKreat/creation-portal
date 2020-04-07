@@ -3,14 +3,13 @@ import { ConfigService, UtilService, ResourceService, NavigationHelperService, T
 import { PublicDataService, ContentService, UserService, ProgramsService, LearnerService, ActionService  } from '@sunbird/core';
 import * as _ from 'lodash-es';
 import { catchError } from 'rxjs/operators';
-import { throwError, forkJoin } from 'rxjs';
-import { CbseProgramService } from '../../services';
+import { throwError } from 'rxjs';
+import { CbseProgramService, CollectionHierarchyService} from '../../services';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import { ISessionContext, IChapterListComponentInput } from '../../interfaces';
 import { InitialState } from '../../interfaces';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
-import { programContext } from '../../../program/components/list-contributor-textbooks/data';
 
 @Component({
   selector: 'app-collection',
@@ -42,6 +41,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
   public telemetryInteractPdata: any;
   public nominateButton = 'hide';
   public nominate = '';
+  public programContentTypes: string;
   isMediumClickable = false;
   showLoader = true;
   selectedIndex = -1;
@@ -54,6 +54,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
   public currentStage: any;
   public contentType:any;
   public sampleDataCount = 0;
+  public chapterCount = 0;
   public currentNominationStatus: any;
   public nominationDetails: any;
   showContentTypeModal = false;
@@ -64,8 +65,9 @@ export class CollectionComponent implements OnInit, OnDestroy {
 
   constructor(private configService: ConfigService, public publicDataService: PublicDataService,
     public actionService: ActionService,
-    private cbseService: CbseProgramService, public programStageService: ProgramStageService,
-    public resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService,
+    private cbseService: CbseProgramService, private collectionHierarchyService: CollectionHierarchyService,
+    public programStageService: ProgramStageService, public resourceService: ResourceService,
+    public programTelemetryService: ProgramTelemetryService,
     public userService: UserService, private navigationHelperService: NavigationHelperService,
     public utilService: UtilService, public contentService: ContentService,
     private activatedRoute: ActivatedRoute, private router: Router, public learnerService: LearnerService,
@@ -112,9 +114,10 @@ export class CollectionComponent implements OnInit, OnDestroy {
     (_.size(this.mediums) > 1) ? this.isMediumClickable = true : this.isMediumClickable = false;
 
     // tslint:disable-next-line:max-line-length
-    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.collectionComponentInput.programContext.programId, 'Program');
+    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.collectionComponentInput.programContext.program_id, 'Program');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID + '.programs');
+    this.programContentTypes = this.programsService.getContentTypesName(this.programContext.content_types);
     this.setActiveDate();
     this.getNominationStatus();
     this.getCollectionCard();
@@ -147,9 +150,9 @@ export class CollectionComponent implements OnInit, OnDestroy {
       const collectionCards = this.utilService.getDataForCard(filteredTextbook, constantData, dynamicFields, metaData);
       this.collectionsWithCardImage = _.forEach(collectionCards, collection => this.addCardImage(collection));
       this.filterCollectionList(this.classes);
-      if ((this.currentNominationStatus === 'Initiated' || this.currentNominationStatus === 'Pending') && !_.isEmpty(res.result.content)) {
+      if (!_.isEmpty(res.result.content)) {
         const collectionIds = _.map(res.result.content, 'identifier');
-        this.getCollectionHierarchy(collectionIds)
+        this.collectionHierarchyService.getCollectionHierarchy(collectionIds)
           .subscribe(response => {
             const hierarchies = _.map(response, r => {
               if (r.result && r.result.content) {
@@ -159,44 +162,34 @@ export class CollectionComponent implements OnInit, OnDestroy {
               }
             });
             _.forEach(hierarchies, hierarchy => {
-              this.sampleDataCount = 0;
-              hierarchy.sampleContentCount = this.getSampleContentStatusCount(hierarchy);
+              this.collectionHierarchyService.sampleDataCount = 0;
+              this.collectionHierarchyService.chapterCount = 0;
+              // tslint:disable-next-line:max-line-length
+              const {sampleDataCount, chapterCount} = this.collectionHierarchyService.getSampleContentStatusCount(hierarchy, this.currentUserID);
+              hierarchy.sampleContentCount = sampleDataCount;
+              hierarchy.chapterCount = chapterCount;
             });
+            this.selectedCollectionIds = [];
             this.collectionList = _.map(res.result.content, content => {
               const contentWithHierarchy =  _.find(hierarchies, {identifier: content.identifier});
-              content.sampleContentCount = contentWithHierarchy.sampleContentCount;
+              content.chapterCount = contentWithHierarchy.chapterCount;
+              // tslint:disable-next-line:max-line-length
               if (contentWithHierarchy.sampleContentCount > 0) {
+                content.sampleContentCount = contentWithHierarchy.sampleContentCount;
                 this.selectedCollectionIds.push(contentWithHierarchy.identifier);
               }
               return content;
             });
             this.selectedCollectionIds = _.uniq(this.selectedCollectionIds);
+            this.toggleNominationButton();
         });
 
-      } else {
-        this.collectionList = res.result.content;
       }
       this.showLoader = false;
       this.showError = false;
     });
   }
 
-
-  getSampleContentStatusCount(data) {
-    const self = this;
-    if (data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' && data.sampleContent) {
-      if (data.createdBy === this.currentUserID) {
-        self.sampleDataCount = self.sampleDataCount + 1;
-      }
-    }
-    const childData = data.children;
-    if (childData) {
-      childData.map(child => {
-        self.getSampleContentStatusCount(child);
-      });
-    }
-    return self.sampleDataCount;
-  }
 
   filterTextBook(filterArr) {
     const filteredTextbook = [];
@@ -213,18 +206,6 @@ export class CollectionComponent implements OnInit, OnDestroy {
     return filteredTextbook;
   }
 
-
-  getCollectionHierarchy(collectionIds) {
-   const hierarchyRequest =  _.map(collectionIds, id => {
-      const req = {
-        url: 'content/v3/hierarchy/' + id,
-        param: { 'mode': 'edit' }
-      };
-      return this.actionService.get(req);
-    });
-
-    return forkJoin(hierarchyRequest);
-  }
 
   setAndClearFilterIndex(index: number) {
     if (this.activeFilterIndex === index && this.selectedIndex >= 0)  {
@@ -331,14 +312,16 @@ export class CollectionComponent implements OnInit, OnDestroy {
     } else {
       this.selectedCollectionIds.push(rowId);
     }
+    this.toggleNominationButton();
+  }
+
+
+  toggleNominationButton() {
     if (this.selectedCollectionIds.length > 0) {
       this.nominateButton = 'show';
     } else {
       this.nominateButton = 'hide';
     }
-  }
-  redirect() {
-
   }
 
   toggle(item: any) {

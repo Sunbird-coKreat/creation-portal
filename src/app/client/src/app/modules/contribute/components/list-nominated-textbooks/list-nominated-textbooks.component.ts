@@ -1,6 +1,6 @@
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService } from '@sunbird/shared';
-import { ProgramsService, PublicDataService, UserService, FrameworkService, RegistryService } from '@sunbird/core';
+import { ProgramsService, PublicDataService, UserService, FrameworkService, RegistryService, ActionService } from '@sunbird/core';
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { tap, first } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
@@ -8,6 +8,7 @@ import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ProgramStageService } from '../../../program/services/program-stage/program-stage.service';
+import { CollectionHierarchyService } from '../../../cbse-program/services/collection-hierarchy/collection-hierarchy.service';
 import { ChapterListComponent } from '../../../cbse-program/components/chapter-list/chapter-list.component';
 import { IChapterListComponentInput } from '../../../cbse-program/interfaces';
 import { InitialState, ISessionContext, IUserParticipantDetails } from '../../interfaces';
@@ -56,19 +57,21 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any = {};
   public currentUserRole: any;
+  public chapterCount = 0;
+  public programContentTypes: string;
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private configService: ConfigService, private publicDataService: PublicDataService,
   private activatedRoute: ActivatedRoute, private router: Router, public programStageService: ProgramStageService,
   public toasterService: ToasterService, private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
   public frameworkService: FrameworkService, public userService: UserService, public registryService: RegistryService,
-  public activeRoute: ActivatedRoute) {
+  public activeRoute: ActivatedRoute, private collectionHierarchyService: CollectionHierarchyService, public actionService: ActionService) {
     this.programId = this.activatedRoute.snapshot.params.programId;
    }
 
   ngOnInit() {
     this.srollTop()
     this.getProgramDetails();
-    this.getProgramTextbooks();
+    this.getNominationStatus();
     this.programStageService.initialize();
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
@@ -84,7 +87,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       this.getContributionOrgUsers();
       this.showUsersTab = true;
     }
-    this.getNominationStatus();
     this.telemetryInteractCdata = [{
       id: this.activatedRoute.snapshot.params.programId,
       type: 'Program_ID'
@@ -99,6 +101,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     this.fetchProgramDetails().subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
       this.roles = _.get(this.programDetails, 'config.roles');
+      this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
       this.setActiveDate();
     }, error => {
       // TODO: navigate to program list page
@@ -155,11 +158,46 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     this.httpClient.post<any>(option.url, option.data).subscribe(
       (res) =>  {
         if (res && res.result && res.result.content) {
-          this.contributorTextbooks = res.result.content;
+          this.showTexbooklist(res);
         }
       },
       (err) => console.log(err)
     );
+  }
+
+  showTexbooklist (res) {
+    // tslint:disable-next-line:max-line-length
+    const contributorTextbooks = (res.result.content.length && this.nominationDetails.collection_ids) ? _.filter(res.result.content, (collection) => {
+         return _.includes(this.nominationDetails.collection_ids, collection.identifier);
+    }) : [];
+    if (!_.isEmpty(contributorTextbooks)) {
+      const collectionIds = _.map(contributorTextbooks, 'identifier');
+      this.collectionHierarchyService.getCollectionHierarchy(collectionIds)
+        .subscribe(response => {
+          const hierarchies = _.map(response, r => {
+            if (r.result && r.result.content) {
+              return r.result.content;
+            } else {
+              return r.result;
+            }
+          });
+          const hierarchyContent = _.map(hierarchies, hierarchy => {
+            this.collectionHierarchyService.chapterCount = 0;
+            this.collectionHierarchyService.sampleDataCount = 0;
+            // this.chapterCount = 0;
+            const {chapterCount} =  this.collectionHierarchyService.getSampleContentStatusCount(hierarchy);
+              hierarchy.chapterCount = chapterCount;
+            return hierarchy;
+          });
+          this.contributorTextbooks = _.map(contributorTextbooks, content => {
+            const contentWithHierarchy =  _.find(hierarchyContent, {identifier: content.identifier});
+            content.chapterCount = contentWithHierarchy.chapterCount;
+            return content;
+          });
+        });
+    } else {
+      this.contributorTextbooks = contributorTextbooks;
+    }
   }
 
   ngAfterViewInit() {
@@ -264,7 +302,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           this.sessionContext.currentOrgRole = this.userService.userProfile.userRegData.User_Org.roles[0];
           if (this.userService.userProfile.userRegData.User_Org.roles[0] === 'admin') {
             // tslint:disable-next-line:max-line-length
-            this.sessionContext.currentRole = (this.currentNominationStatus === 'Approved' ||  this.currentNominationStatus === 'Rejected') ? 'Reviewer' : 'Contributor';
+            this.sessionContext.currentRole = (this.currentNominationStatus === 'Approved' ||  this.currentNominationStatus === 'Rejected') ? 'REVIEWER' : 'CONTRIBUTOR';
           } else if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.rolemapping) {
               _.find(this.sessionContext.nominationDetails.rolemapping, (users, role) => {
                 if (_.includes(users, this.userService.userProfile.userRegData.User.userId)) {
@@ -283,6 +321,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
         }
       }
+      this.getProgramTextbooks();
     }, error => {
       this.toasterService.error('Failed fetching current nomination status');
     });

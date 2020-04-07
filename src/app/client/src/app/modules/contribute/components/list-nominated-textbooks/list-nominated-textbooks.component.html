@@ -70,7 +70,7 @@
 			</div>
 			<div class="sb-meta-data-container sb-meta-data-column px-10 w-20">
 				<label class="m-0">{{ resourceService.frmelmnts.lbl.contentType}}</label>
-				<p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{programDetails?.content_types?.join(', ')}}"><span>{{programDetails?.content_types?.join(', ')}}</span></p>
+				<p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{ programContentTypes }}"><span>{{ programContentTypes }}</span></p>
 			</div>
 				<!-- <div class="sb-meta-data-container sb-meta-data-column px-10">
 					<label class="width-100">Content Status </label>
@@ -101,7 +101,7 @@
 				<div class="program-timeline px-10 w-40">
 				  <div class="program-timeline-item">
 					<div class="status" [class.active]="activeDate === 'nomination_enddate'">
-					  <div class="status__label">Nomination End Date</div>
+					  <div class="status__label">{{resourceService.frmelmnts.lbl.nominationEndDate}}</div>
 					  <div class="status__date">
 						{{ programDetails?.nomination_enddate |  date:'LLLL d, yyyy'  }}
 						<br/>
@@ -111,7 +111,7 @@
 				  </div>
 				  <div class="program-timeline-item">
 					<div class="status"  [class.active]="activeDate === 'shortlisting_enddate'">
-					  <div class="status__label">Shortlisting Nominations</div>
+					  <div class="status__label">{{resourceService.frmelmnts.lbl.shortlistingNomination}}</div>
 					  <div class="status__date">
 						{{ programDetails?.shortlisting_enddate |  date:'LLLL d, yyyy'  }}
 						<br/>
@@ -121,7 +121,7 @@
 				  </div>
 				  <div class="program-timeline-item">
 					<div class="status"  [class.active]="activeDate === 'content_submission_enddate'">
-					  <div class="status__label">Contribution & Review</div>
+					  <div class="status__label">{{resourceService.frmelmnts.lbl.contributionReview}}</div>
 					  <div class="status__date">
 						{{ programDetails?.content_submission_enddate |  date:'LLLL d, yyyy'  }}
 						<br/>
@@ -144,7 +144,7 @@
 			<div class="sb-meta-data-container sb-meta-data-column px-10">
 				<div class='practical-sb-buttons' *ngIf="nominationDetails && nominationDetails.status">
 					<label class="m-0">{{ resourceService.frmelmnts.lbl.status }}</label>
-					<p>{{ nominationDetails?.status }}</p>
+					<p [ngClass]="{'sb-color-success':nominationDetails.status == 'Approved','sb-color-primary':nominationDetails.status == 'Rejected'}">{{ nominationDetails?.status }}</p>
 				</div>
 			</div>
 			<div class="sb-meta-data-container sb-meta-data-column  px-10">
@@ -181,7 +181,7 @@
 											<th class="w-5"></th>
 										</tr>
 									</thead>
-									<tbody class="sb-table-body">
+									<tbody class="sb-table-body" *ngIf="contributorTextbooks.length">
 										<tr *ngFor="let contributorTextbook of contributorTextbooks; let i = index;">
 											<td class="hand">
 												{{contributorTextbook.name}}
@@ -189,7 +189,7 @@
 											<td>{{contributorTextbook.medium}}</td>
 											<td>{{contributorTextbook.gradeLevel}}</td>
 											<td>{{contributorTextbook.subject}}</td>
-											<td>5</td>
+											<td>{{contributorTextbook.chapterCount || 0}}</td>
 											<td>
 												<button *ngIf="currentNominationStatus === 'Approved'"
 												type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary"
@@ -212,22 +212,21 @@
 					<div class="my-24">
 					  <div class="d-flex flex-ai-center flex-jc-space-between">
 						<div>
-						  <h4 class="sb-pageSection-title"> {{orgDetails.name}}
-							<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{contributorOrgUser.length || 0}}</span>
-						  </h4>
+						  <h4 class="sb-pageSection-title"> {{orgDetails.name}}</h4>
+						  <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{contributorOrgUser.length || 0}}</span>
 						</div>
 					  </div>
 					</div>
-					<div class="sb-table-responsive" *ngIf="contributorOrgUser?.length != 0">
-					  <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap desktop-o-x-unset">
+					<div class="sb-table-responsive desktop-o-x-unset" *ngIf="contributorOrgUser?.length != 0">
+					  <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
 						<thead class="sb-table-header sb-table-thead-gray">
 						  <tr>
 							<!-- <th></th> -->
-							<th>Username</th>
-							<th>Grade</th>
-							<th>Subject</th>
-							<th>Content Type(s)</th>
-							<th class="text-center">Roles</th>
+							<th>{{resourceService.frmelmnts.lbl.username}}</th>
+							<th>{{resourceService.frmelmnts.lbl.class}}</th>
+							<th>{{resourceService.frmelmnts.lbl.subject}}</th>
+							<th>{{resourceService.frmelmnts.lbl.contentType}}</th>
+							<th class="text-center">{{resourceService.frmelmnts.lbl.roles}}</th>
 						  </tr>
 						</thead>
 						<tbody class="sb-table-body">
@@ -247,7 +246,7 @@
 									{{ (orgUser?.selectedRole) ? orgUser.selectedRole : '-' }}
 								</div>
 								<ng-template #elseBlock>
-									<sui-select class="selection" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="options" valueField="name"
+									<sui-select class="selection pt-5" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="options" valueField="name"
 									(selectedOptionChange)="onRoleChange()">
 										<sui-select-option *ngFor="let option of roles;" [value]="option">
 										</sui-select-option>
