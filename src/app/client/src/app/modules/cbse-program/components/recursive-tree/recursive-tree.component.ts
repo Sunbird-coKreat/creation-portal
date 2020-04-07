@@ -27,6 +27,8 @@ export class RecursiveTreeComponent implements OnInit {
     public programTelemetryService: ProgramTelemetryService) { }
 
   ngOnInit() {
+    const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
+    this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
     this.visibility = {};
     // tslint:disable-next-line:max-line-length
     this.visibility['showAddresource'] = _.includes(this.programContext.config.actions.showAddResource.roles, this.sessionContext.currentRoleId);
