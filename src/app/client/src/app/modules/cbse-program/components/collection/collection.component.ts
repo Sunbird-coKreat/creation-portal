@@ -3,14 +3,13 @@ import { ConfigService, UtilService, ResourceService, NavigationHelperService, T
 import { PublicDataService, ContentService, UserService, ProgramsService, LearnerService, ActionService  } from '@sunbird/core';
 import * as _ from 'lodash-es';
 import { catchError } from 'rxjs/operators';
-import { throwError, forkJoin } from 'rxjs';
-import { CbseProgramService } from '../../services';
+import { throwError } from 'rxjs';
+import { CbseProgramService, CollectionHierarchyService} from '../../services';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import { ISessionContext, IChapterListComponentInput } from '../../interfaces';
 import { InitialState } from '../../interfaces';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
-import { programContext } from '../../../program/components/list-contributor-textbooks/data';
 
 @Component({
   selector: 'app-collection',
@@ -42,6 +41,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
   public telemetryInteractPdata: any;
   public nominateButton = 'hide';
   public nominate = '';
+  public programContentTypes: string;
   isMediumClickable = false;
   showLoader = true;
   selectedIndex = -1;
@@ -65,8 +65,9 @@ export class CollectionComponent implements OnInit, OnDestroy {
 
   constructor(private configService: ConfigService, public publicDataService: PublicDataService,
     public actionService: ActionService,
-    private cbseService: CbseProgramService, public programStageService: ProgramStageService,
-    public resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService,
+    private cbseService: CbseProgramService, private collectionHierarchyService: CollectionHierarchyService,
+    public programStageService: ProgramStageService, public resourceService: ResourceService,
+    public programTelemetryService: ProgramTelemetryService,
     public userService: UserService, private navigationHelperService: NavigationHelperService,
     public utilService: UtilService, public contentService: ContentService,
     private activatedRoute: ActivatedRoute, private router: Router, public learnerService: LearnerService,
@@ -116,6 +117,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.collectionComponentInput.programContext.program_id, 'Program');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID + '.programs');
+    this.programContentTypes = this.programsService.getContentTypesName(this.programContext.content_types);
     this.setActiveDate();
     this.getNominationStatus();
     this.getCollectionCard();
@@ -150,7 +152,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
       this.filterCollectionList(this.classes);
       if (!_.isEmpty(res.result.content)) {
         const collectionIds = _.map(res.result.content, 'identifier');
-        this.getCollectionHierarchy(collectionIds)
+        this.collectionHierarchyService.getCollectionHierarchy(collectionIds)
           .subscribe(response => {
             const hierarchies = _.map(response, r => {
               if (r.result && r.result.content) {
@@ -160,12 +162,14 @@ export class CollectionComponent implements OnInit, OnDestroy {
               }
             });
             _.forEach(hierarchies, hierarchy => {
-              this.sampleDataCount = 0;
-              this.chapterCount = 0;
-              const {sampleDataCount, chapterCount} = this.getSampleContentStatusCount(hierarchy);
+              this.collectionHierarchyService.sampleDataCount = 0;
+              this.collectionHierarchyService.chapterCount = 0;
+              // tslint:disable-next-line:max-line-length
+              const {sampleDataCount, chapterCount} = this.collectionHierarchyService.getSampleContentStatusCount(hierarchy, this.currentUserID);
               hierarchy.sampleContentCount = sampleDataCount;
               hierarchy.chapterCount = chapterCount;
             });
+            this.selectedCollectionIds = [];
             this.collectionList = _.map(res.result.content, content => {
               const contentWithHierarchy =  _.find(hierarchies, {identifier: content.identifier});
               content.chapterCount = contentWithHierarchy.chapterCount;
@@ -177,6 +181,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
               return content;
             });
             this.selectedCollectionIds = _.uniq(this.selectedCollectionIds);
+            this.toggleNominationButton();
         });
 
       }
@@ -185,24 +190,6 @@ export class CollectionComponent implements OnInit, OnDestroy {
     });
   }
 
-
-  getSampleContentStatusCount(data) {
-    const self = this;
-    if (data.contentType !== 'TextBook') {
-      if (data.createdBy === this.currentUserID && data.contentType !== 'TextBookUnit' && data.sampleContent) {
-        self.sampleDataCount = self.sampleDataCount + 1;
-      } else if (data.contentType === 'TextBookUnit') {
-        self.chapterCount = self.chapterCount + 1;
-      }
-    }
-    const childData = data.children;
-    if (childData) {
-      childData.map(child => {
-        self.getSampleContentStatusCount(child);
-      });
-    }
-    return {sampleDataCount: self.sampleDataCount, chapterCount: self.chapterCount};
-  }
 
   filterTextBook(filterArr) {
     const filteredTextbook = [];
@@ -219,18 +206,6 @@ export class CollectionComponent implements OnInit, OnDestroy {
     return filteredTextbook;
   }
 
-
-  getCollectionHierarchy(collectionIds) {
-   const hierarchyRequest =  _.map(collectionIds, id => {
-      const req = {
-        url: 'content/v3/hierarchy/' + id,
-        param: { 'mode': 'edit' }
-      };
-      return this.actionService.get(req);
-    });
-
-    return forkJoin(hierarchyRequest);
-  }
 
   setAndClearFilterIndex(index: number) {
     if (this.activeFilterIndex === index && this.selectedIndex >= 0)  {
@@ -337,14 +312,16 @@ export class CollectionComponent implements OnInit, OnDestroy {
     } else {
       this.selectedCollectionIds.push(rowId);
     }
+    this.toggleNominationButton();
+  }
+
+
+  toggleNominationButton() {
     if (this.selectedCollectionIds.length > 0) {
       this.nominateButton = 'show';
     } else {
       this.nominateButton = 'hide';
     }
-  }
-  redirect() {
-
   }
 
   toggle(item: any) {

@@ -34,7 +34,7 @@
             </div>
             <div class="sb-meta-data-container sb-meta-data-column w-10 px-10 w-30">
                     <label class="mb-0">{{resourceService?.frmelmnts?.lbl?.contentType}}</label>
-                    <p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{programDetails?.content_types?.join(', ')}}"><span>{{programDetails?.content_types?.join(', ')}}</span></p>
+                    <p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{ programContentTypes }}"><span>{{ programContentTypes }}</span></p>
 			</div>
             <div class="sb-meta-data-container sb-meta-data-column px-10">
                 <label class="width-100">{{ resourceService?.frmelmnts?.lbl?.nominations }} </label>
@@ -160,7 +160,7 @@
                                                     </div>
                                                 </span>
                                             </th>
-                                            <th class="w-5 text-center"></th>
+                                            <th class="w-10 text-center"></th>
                                         </tr>
                                     </thead>
                                     <tbody class="sb-table-body">
@@ -232,4 +232,5 @@
 [userId]="selectedNomination?.user_id" 
 (close)="showContributorProfilePopup = false;">
 </app-contributor-profile-popup>
+
 </div>
