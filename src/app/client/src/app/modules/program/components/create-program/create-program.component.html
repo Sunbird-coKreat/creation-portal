@@ -10,7 +10,8 @@
 					<div class="item" suiTabHeader="1" [ngClass]="{'active' : !showTextBookSelector}">
 						{{resource.frmelmnts.lbl.details}}
 					</div>
-					<div class="item" suiTabHeader="2" [isDisabled]="!showTextBookSelector" [ngClass]="{'active' : showTextBookSelector}">
+					<div class="item" suiTabHeader="2" [isDisabled]="!showTextBookSelector"
+						[ngClass]="{'active' : showTextBookSelector}">
 						{{resource.frmelmnts.lbl.selectTextbooks}}
 					</div>
 				</div>
@@ -19,10 +20,12 @@
 						<div class="ui grid">
 							<div class="twelve wide column">
 								<div class="required field">
-										<label class="d-block">{{resource.frmelmnts.lbl.name}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" [popupPlacement]="'left'" popupText="{{resource.frmelmnts.lbl.programNameHint}}"></i>
-										</label>
-										<div class="sb-field">
+									<label class="d-block">{{resource.frmelmnts.lbl.name}}
+										<i class="pull-right question circle link icon pull-right" suiPopup
+											popupDelay="500" [popupPlacement]="'left'"
+											popupText="{{resource.frmelmnts.lbl.programNameHint}}"></i>
+									</label>
+									<div class="sb-field">
 										<input autofocus="" formControlName="name"
 											class="sb-form-control ng-pristine ng-valid ng-touched" type="text"
 											placeholder="{{resource.frmelmnts.lbl.programNameHint}}">
@@ -32,8 +35,8 @@
 										</div>
 										<div class="ui pointing red basic label below"
 											*ngIf="createProgramForm.controls['name'].errors && createProgramForm.controls['name'].errors.maxlength && (!createProgramForm.controls['name'].pristine || formIsInvalid)">
-												{{resource.frmelmnts.lbl.characterLengthGreaterHundred}}
-											</div>
+											{{resource.frmelmnts.lbl.characterLengthGreaterHundred}}
+										</div>
 										<div *ngIf="createProgramForm.value.name.length" class="pull-right fsmall">
 											{{createProgramForm.value.name.length}} / 100
 										</div>
@@ -43,11 +46,14 @@
 							<div class="twelve wide column">
 								<div class="required field ">
 									<label class="d-block">{{resource.frmelmnts.lbl.description}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" [popupPlacement]="'left'" popupText="{{resource.frmelmnts.lbl.programDescriptionHint}}"></i>
+										<i class="pull-right question circle link icon pull-right" suiPopup
+											popupDelay="500" [popupPlacement]="'left'"
+											popupText="{{resource.frmelmnts.lbl.programDescriptionHint}}"></i>
 									</label>
 									<div class="sb-field relative">
 										<textarea formControlName="description" type="text"
-											class="wmd-input width-100 sb-form-control" placeholder="{{resource.frmelmnts.lbl.programDescriptionHint}}"
+											class="wmd-input width-100 sb-form-control"
+											placeholder="{{resource.frmelmnts.lbl.programDescriptionHint}}"
 											name="description" required></textarea>
 										<div class="ui pointing red basic label below "
 											*ngIf="createProgramForm.controls['description'].errors && createProgramForm.controls['description'].errors.required && (!createProgramForm.controls['description'].pristine || formIsInvalid)">
@@ -57,8 +63,9 @@
 											*ngIf="createProgramForm.controls['description'].errors && createProgramForm.controls['description'].errors.maxlength && (!createProgramForm.controls['description'].pristine || formIsInvalid)">
 											{{resource.frmelmnts.lbl.characterLengthGreaterThousand}}
 										</div>
-										<div *ngIf="createProgramForm.value.description.length" class="pull-right fsmall">
-											{{createProgramForm.value.description.length}} /	1000
+										<div *ngIf="createProgramForm.value.description.length"
+											class="pull-right fsmall">
+											{{createProgramForm.value.description.length}} / 1000
 										</div>
 									</div>
 								</div>
@@ -67,14 +74,17 @@
 							<div class="twelve wide tablet three wide computer column">
 								<div class="required field">
 									<label class="d-block">{{resource.frmelmnts.lbl.nominationEndDate}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" [popupPlacement]="'left'"  popupText="{{resource.frmelmnts.lbl.programNominationEnddateHint}}"></i>
+										<i class="pull-right question circle link icon pull-right" suiPopup
+											popupDelay="500" [popupPlacement]="'left'"
+											popupText="{{resource.frmelmnts.lbl.programNominationEnddateHint}}"></i>
 									</label>
 									<div class="ui read-only calendar mb-10 sb-field">
 										<div class="ui input right icon">
 											<i class="calendar icon date-calendar"></i>
-											<input [pickerMinDate]='getMinDate("nomination_enddate")'  formControlName="nomination_enddate"
-											[pickerMaxDate]='getMaxDate("nomination_enddate")'
-												suiDatepicker [pickerMode]="'date'">
+											<input [pickerMinDate]='getMinDate("nomination_enddate")'
+												formControlName="nomination_enddate"
+												[pickerMaxDate]='getMaxDate("nomination_enddate")' suiDatepicker
+												[pickerMode]="'date'">
 										</div>
 										<div class="ui pointing red basic label below "
 											*ngIf="createProgramForm.controls['nomination_enddate'].errors && createProgramForm.controls['nomination_enddate'].errors.required && (!createProgramForm.controls['nomination_enddate'].pristine || formIsInvalid)">
@@ -86,13 +96,15 @@
 							<div class="twelve wide tablet three wide computer column">
 								<div class="field">
 									<label class="d-block">{{resource.frmelmnts.lbl.nominationShortlistingDate}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" [popupPlacement]="'left'"  popupText="{{resource.frmelmnts.lbl.programShortlistingEnddateHint}}"></i>
+										<i class="pull-right question circle link icon pull-right" suiPopup
+											popupDelay="500" [popupPlacement]="'left'"
+											popupText="{{resource.frmelmnts.lbl.programShortlistingEnddateHint}}"></i>
 									</label>
 									<div class="ui read-only calendar mb-10">
 										<div class="ui input right icon">
 											<i class="calendar icon date-calendar"></i>
-											<input [pickerMinDate]='getMinDate("shortlisting_enddate")' 
-											[pickerMaxDate]='getMaxDate("shortlisting_enddate")'
+											<input [pickerMinDate]='getMinDate("shortlisting_enddate")'
+												[pickerMaxDate]='getMaxDate("shortlisting_enddate")'
 												formControlName="shortlisting_enddate" suiDatepicker
 												[pickerMode]="'date'">
 										</div>
@@ -103,13 +115,15 @@
 							<div class="twelve wide tablet three wide computer column">
 								<div class="required field">
 									<label class="d-block">{{resource.frmelmnts.lbl.contributionEndDate}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" [popupPlacement]="'left'"  popupText="{{resource.frmelmnts.lbl.programContributionEnddateHint}}"></i>
+										<i class="pull-right question circle link icon pull-right" suiPopup
+											popupDelay="500" [popupPlacement]="'left'"
+											popupText="{{resource.frmelmnts.lbl.programContributionEnddateHint}}"></i>
 									</label>
 									<div class="ui read-only calendar mb-10">
 										<div class="ui input right icon">
 											<i class="calendar icon date-calendar"></i>
-											<input [pickerMinDate]='getMinDate("content_submission_enddate")' 
-											[pickerMaxDate]='getMaxDate("content_submission_enddate")'
+											<input [pickerMinDate]='getMinDate("content_submission_enddate")'
+												[pickerMaxDate]='getMaxDate("content_submission_enddate")'
 												formControlName="content_submission_enddate" suiDatepicker
 												[pickerMode]="'date'">
 										</div>
@@ -124,13 +138,15 @@
 							<div class="twelve wide tablet three wide computer column">
 								<div class="required field">
 									<label class="d-block">{{resource.frmelmnts.lbl.programEndDate}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" [popupPlacement]="'left'"  popupText="{{resource.frmelmnts.lbl.programEnddateHint}}"></i>
+										<i class="pull-right question circle link icon pull-right" suiPopup
+											popupDelay="500" [popupPlacement]="'left'"
+											popupText="{{resource.frmelmnts.lbl.programEnddateHint}}"></i>
 									</label>
 									<div class="ui read-only calendasr mb-10">
 										<div class="ui input right icon">
 											<i class="calendar icon date-calendar"></i>
-											<input [pickerMinDate]='getMinDate("program_end_date")' formControlName="program_end_date"
-												suiDatepicker [pickerMode]="'date'">
+											<input [pickerMinDate]='getMinDate("program_end_date")'
+												formControlName="program_end_date" suiDatepicker [pickerMode]="'date'">
 										</div>
 										<div class="ui pointing red basic label below "
 											*ngIf="createProgramForm.controls['program_end_date'].errors && createProgramForm.controls['program_end_date'].errors.required && (!createProgramForm.controls['program_end_date'].pristine || formIsInvalid)">
@@ -139,10 +155,12 @@
 									</div>
 								</div>
 							</div>
-							<div class="twelve wide column">
+							<div class="six wide column">
 								<div class="required field">
 									<label class="d-block">{{resource.frmelmnts.lbl.contentType}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" [popupPlacement]="'left'"  popupText="{{resource.frmelmnts.lbl.contentTypesHint}}"></i>
+										<i class="pull-right question circle link icon pull-right" suiPopup
+											popupDelay="500" [popupPlacement]="'left'"
+											popupText="{{resource.frmelmnts.lbl.contentTypesHint}}"></i>
 									</label>
 									<sui-multi-select class="selection" labelField="name" [hasLabels]="true"
 										formControlName="content_types" [options]="programScope.purpose"
@@ -150,20 +168,41 @@
 										<sui-select-option *ngFor="let option of programScope.purpose" [value]="option">
 										</sui-select-option>
 									</sui-multi-select>
-									<div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['content_types'].errors && createProgramForm.controls['content_types'].errors.required && (!createProgramForm.controls['content_types'].pristine || formIsInvalid)">
+									<div class="ui pointing red basic label below "
+										*ngIf="createProgramForm.controls['content_types'].errors && createProgramForm.controls['content_types'].errors.required && (!createProgramForm.controls['content_types'].pristine || formIsInvalid)">
 										{{ resource.frmelmnts.lbl.contentTypesRequired }}
 									</div>
 								</div>
 							</div>
-
+							<div class="six wide column">
+								<div class="field">
+									<label class="d-block">{{resource.frmelmnts.lbl.uploadGuideline}}
+									</label>
+									<button
+										class="sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius"
+										(click)="initiateDocumentUploadModal()">
+										<i class="add icon mr-4"></i>{{ resource.frmelmnts.btn.upload}}
+									</button>
+									<div *ngIf="uploadedDocument">
+										<a class="ann-link-or-attachment" href="{{uploadedDocument}}" target="_blank">
+											{{uploadedDocument | slice:0:70}}
+											<span class="blue-text-color-sunbird" *ngIf="uploadedDocument && uploadedDocument.length > 70">...</span>
+										  </a>
+									</div>
+								</div>
+							</div>
 							<div class="twelve wide column">
 								<div class="field">
 									<label class="d-block">{{resource.frmelmnts.lbl.recongnitionToContributors}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" [popupPlacement]="'left'"  popupText="{{resource.frmelmnts.lbl.recongnitionToContributors}}"></i>
+										<i class="pull-right question circle link icon pull-right" suiPopup
+											popupDelay="500" [popupPlacement]="'left'"
+											popupText="{{resource.frmelmnts.lbl.recongnitionToContributors}}"></i>
 									</label>
 									<div class="sb-field relative">
-										<textarea type="text" formControlName="rewards" class="wmd-input width-100 sb-form-control"
-											placeholder="{{resource.frmelmnts.lbl.programRecognitionHint}}" name=""></textarea>
+										<textarea type="text" formControlName="rewards"
+											class="wmd-input width-100 sb-form-control"
+											placeholder="{{resource.frmelmnts.lbl.programRecognitionHint}}"
+											name=""></textarea>
 									</div>
 								</div>
 							</div>
@@ -176,13 +215,14 @@
 							<div class="three wide column">
 								<div class="field">
 									<label class="d-block">{{resource.frmelmnts.lbl.medium}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" [popupPlacement]="'left'" popupText="{{resource.frmelmnts.lbl.selectMedium}}"></i>
+										<i class="pull-right question circle link icon pull-right" suiPopup
+											popupDelay="500" [popupPlacement]="'left'"
+											popupText="{{resource.frmelmnts.lbl.selectMedium}}"></i>
 									</label>
-									<sui-multi-select
-										placeholder="{{resource.frmelmnts.lbl.selectMedium}}"
-										class="selection p-5" formControlName="medium" [options]="programScope['medium']"
-										[isDisabled]="!programScope['medium']" (ngModelChange)="onMediumChange()"
-										labelField="name" #mediums>
+									<sui-multi-select placeholder="{{resource.frmelmnts.lbl.selectMedium}}"
+										class="selection p-5" formControlName="medium"
+										[options]="programScope['medium']" [isDisabled]="!programScope['medium']"
+										(ngModelChange)="onMediumChange()" labelField="name" #mediums>
 										<sui-select-option *ngFor="let medium of mediums.filteredOptions"
 											[value]="medium"> </sui-select-option>
 									</sui-multi-select>
@@ -195,13 +235,14 @@
 							<div class="three wide column">
 								<div class="field">
 									<label class="d-block"> {{resource.frmelmnts.lbl.grade}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" [popupPlacement]="'left'"  popupText="{{resource.frmelmnts.lbl.selectGrade}}"></i>
-										</label>
-									<sui-multi-select
-										placeholder="{{resource.frmelmnts.lbl.selectGrade}}"
+										<i class="pull-right question circle link icon pull-right" suiPopup
+											popupDelay="500" [popupPlacement]="'left'"
+											popupText="{{resource.frmelmnts.lbl.selectGrade}}"></i>
+									</label>
+									<sui-multi-select placeholder="{{resource.frmelmnts.lbl.selectGrade}}"
 										class="selection p-5" formControlName="gradeLevel" labelField="name"
 										(ngModelChange)="onClassChange()" [options]="programScope['gradeLevel']"
-										 #graveLevels>
+										#graveLevels>
 										<sui-select-option *ngFor="let gradeLevel of graveLevels.filteredOptions"
 											[value]="gradeLevel">
 										</sui-select-option>
@@ -214,10 +255,11 @@
 							<div class="three wide column">
 								<div class="field">
 									<label class="d-block"> {{resource.frmelmnts.lbl.subject}}
-											<i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" [popupPlacement]="'left'"  popupText="{{resource.frmelmnts.lbl.selectSubject}}"></i>
+										<i class="pull-right question circle link icon pull-right" suiPopup
+											popupDelay="500" [popupPlacement]="'left'"
+											popupText="{{resource.frmelmnts.lbl.selectSubject}}"></i>
 									</label>
-									<sui-multi-select
-										placeholder="{{resource.frmelmnts.lbl.selectSubject}}"
+									<sui-multi-select placeholder="{{resource.frmelmnts.lbl.selectSubject}}"
 										class="selection p-5" formControlName="subject" labelField="name"
 										[hasLabels]="true" [options]="programScope['subject']" valueField="name"
 										#subjects>
@@ -233,16 +275,17 @@
 							<div class="three wide column">
 								<div class="field">
 									<label>&nbsp;</label>
-									<button class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="resetFilters()">
-											{{resource.frmelmnts.btn.reset}}
+									<button class="sb-btn sb-btn-normal sb-btn-outline-primary"
+										(click)="resetFilters()">
+										{{resource.frmelmnts.btn.reset}}
 									</button>
 									<button class="sb-btn sb-btn-normal sb-btn-primary ml-8" (click)="showTexbooklist()"
-									appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('show-textbook-list', 'click', 'create-program')"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">
-									{{resource.frmelmnts.btn.apply}}
+										appTelemetryInteract
+										[telemetryInteractEdata]="getTelemetryInteractEdata('show-textbook-list', 'click', 'create-program')"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">
+										{{resource.frmelmnts.btn.apply}}
 									</button>
 								</div>
 							</div>
@@ -251,8 +294,7 @@
 					<div class="ui grid">
 						<div class="seven wide column">
 							<div class="sb-table-responsive">
-								<table class="sb-table sb-table-striped sb-table-sortable"
-									*ngIf="showTextBookSelector">
+								<table class="sb-table sb-table-striped sb-table-sortable" *ngIf="showTextBookSelector">
 									<thead class="sb-table-header sb-table-thead-gray d-block">
 										<tr>
 											<th class="w-5">
@@ -261,38 +303,54 @@
 													<label for="checkall"></label>
 												</div-->
 											</th>
-											<th class="w-10 text-center cursor-pointer sb-sorting" (click)="sortCollection('name')">
-												{{resource.frmelmnts.lbl.title}}  &nbsp;&nbsp; 
-												<i class="fa fa-sort" aria-hidden="true" *ngIf="direction === '' || sortColumn !== 'name' "></i>
-												<span  *ngIf="sortColumn === 'name'" class="d-inline-block">
-													<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
-													<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
+											<th class="w-10 text-center cursor-pointer sb-sorting"
+												(click)="sortCollection('name')">
+												{{resource.frmelmnts.lbl.title}} &nbsp;&nbsp;
+												<i class="fa fa-sort" aria-hidden="true"
+													*ngIf="direction === '' || sortColumn !== 'name' "></i>
+												<span *ngIf="sortColumn === 'name'" class="d-inline-block">
+													<i class="fa fa-sort-asc" aria-hidden="true"
+														[ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
+													<i class="fa fa-sort-desc" aria-hidden="true"
+														[ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
 												</span>
 											</th>
-											<th class="w-10 text-center cursor-pointer sb-sorting" (click)="sortCollection('medium')">
-                                                {{resource.frmelmnts.lbl.medium}}  &nbsp;&nbsp; 
-												<i class="fa fa-sort" aria-hidden="true" *ngIf="direction === '' || sortColumn !== 'medium' "></i>
+											<th class="w-10 text-center cursor-pointer sb-sorting"
+												(click)="sortCollection('medium')">
+												{{resource.frmelmnts.lbl.medium}} &nbsp;&nbsp;
+												<i class="fa fa-sort" aria-hidden="true"
+													*ngIf="direction === '' || sortColumn !== 'medium' "></i>
 												<span *ngIf="sortColumn === 'medium'" class="d-inline-block">
-													<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
-													<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
+													<i class="fa fa-sort-asc" aria-hidden="true"
+														[ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
+													<i class="fa fa-sort-desc" aria-hidden="true"
+														[ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
 												</span>
-                                            </th>
-											<th class="w-10 text-center cursor-pointer sb-sorting" (click)="sortCollection('gradeLevel')">
-                                                {{resource.frmelmnts.lbl.class}}  &nbsp;&nbsp; 
-												<i class="fa fa-sort" aria-hidden="true" *ngIf="direction === '' || sortColumn !== 'gradeLevel' "></i>
+											</th>
+											<th class="w-10 text-center cursor-pointer sb-sorting"
+												(click)="sortCollection('gradeLevel')">
+												{{resource.frmelmnts.lbl.class}} &nbsp;&nbsp;
+												<i class="fa fa-sort" aria-hidden="true"
+													*ngIf="direction === '' || sortColumn !== 'gradeLevel' "></i>
 												<span *ngIf="sortColumn === 'gradeLevel'" class="d-inline-block">
-													<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
-													<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
+													<i class="fa fa-sort-asc" aria-hidden="true"
+														[ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
+													<i class="fa fa-sort-desc" aria-hidden="true"
+														[ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
 												</span>
-                                            </th>
-											<th class="w-10 text-center cursor-pointer sb-sorting" (click)="sortCollection('subject')">
-                                                {{resource.frmelmnts.lbl.subject}}  &nbsp;&nbsp; 
-												<i class="fa fa-sort" aria-hidden="true" *ngIf="direction === '' || sortColumn !== 'subject' "></i>
+											</th>
+											<th class="w-10 text-center cursor-pointer sb-sorting"
+												(click)="sortCollection('subject')">
+												{{resource.frmelmnts.lbl.subject}} &nbsp;&nbsp;
+												<i class="fa fa-sort" aria-hidden="true"
+													*ngIf="direction === '' || sortColumn !== 'subject' "></i>
 												<span *ngIf="sortColumn === 'subject'" class="d-inline-block">
-													<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
-													<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
+													<i class="fa fa-sort-asc" aria-hidden="true"
+														[ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
+													<i class="fa fa-sort-desc" aria-hidden="true"
+														[ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
 												</span>
-                                            </th>
+											</th>
 											<th class="w-10">{{resource.frmelmnts.lbl.chapters}}</th>
 										</tr>
 									</thead>
@@ -302,7 +360,8 @@
 												<div class="sb-checkbox sb-checkbox-primary">
 													<input type="checkbox" id="checkitem_{{data.identifier}}"
 														(change)="onCollectionCheck(data, $event.target.checked)"
-														[checked]="collectionListForm.value.pcollections.indexOf(data.identifier) != -1" name="checkitem">
+														[checked]="collectionListForm.value.pcollections.indexOf(data.identifier) != -1"
+														name="checkitem">
 													<label for="checkitem_{{data.identifier}}"></label>
 												</div>
 											</td>
@@ -336,30 +395,36 @@
 						<div class="five wide column">
 							<div class="sb-bg-white b-1-100 br-4 o-y-auto">
 								<h5 class="py-15 px-20 font-weight-bold fs-0-92 text-capitalize">
-										{{tempCollections.length + ' ' + resource.frmelmnts.lbl.textbooksAdded}}
+									{{tempCollections.length + ' ' + resource.frmelmnts.lbl.textbooksAdded}}
 								</h5>
 								<hr class="mt-0">
 								<div class="o-y-auto maxmin-h-375 fs-0-92 text-capitalize">
-									<div class="sb-program-collection ui container" *ngFor="let tempCollection of tempCollections">
+									<div class="sb-program-collection ui container"
+										*ngFor="let tempCollection of tempCollections">
 										<div class="ui grid">
 											<div class="ten wide column">
-												<h5 class="mx-10 sb-color-gray-400 sb__ellipsis sb__ellipsis--three font-weight-bold">{{tempCollection.name}}</h5>
+												<h5
+													class="mx-10 sb-color-gray-400 sb__ellipsis sb__ellipsis--three font-weight-bold">
+													{{tempCollection.name}}</h5>
 												<small class="d-flex mx-10">
 													<span>{{tempCollection.medium}}</span>
-													<span class="mx-8" style="border-left: 1px solid var(--gray-200);"></span>
+													<span class="mx-8"
+														style="border-left: 1px solid var(--gray-200);"></span>
 													<span>{{tempCollection.gradeLevel}}</span>
-													<span class="mx-8" style="border-left: 1px solid var(--gray-200);"></span>
+													<span class="mx-8"
+														style="border-left: 1px solid var(--gray-200);"></span>
 													<span>{{tempCollection.subject}}</span>
 												</small>
 											</div>
-											<div class="two wide column text-right cursor-pointer" (click)="onCollectionCheck(tempCollection, false)"
-											appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('collection-check', 'click', 'create-program')"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">
-												<i class="close outline icon sb-color-red-100" suiPopup popupHeader="close"></i>
-										</div>
+											<div class="two wide column text-right cursor-pointer"
+												(click)="onCollectionCheck(tempCollection, false)" appTelemetryInteract
+												[telemetryInteractEdata]="getTelemetryInteractEdata('collection-check', 'click', 'create-program')"
+												[telemetryInteractObject]="telemetryInteractObject"
+												[telemetryInteractCdata]="telemetryInteractCdata"
+												[telemetryInteractPdata]="telemetryInteractPdata">
+												<i class="close outline icon sb-color-red-100" suiPopup
+													popupHeader="close"></i>
+											</div>
 											<hr class="row p-0 mt-0">
 										</div>
 									</div>
@@ -372,27 +437,96 @@
 			</sui-tabset>
 		</div>
 		<div class="text-align-right" [appTelemetryStart]="telemetryStart" [appTelemetryEnd]="telemetryEnd">
-			<button *ngIf="!showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary"
-				(click)="saveProgram()"
+			<button *ngIf="!showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary" (click)="saveProgram()"
 				appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('next', 'click', 'create-program')"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.next}}</button>
+				[telemetryInteractEdata]="getTelemetryInteractEdata('next', 'click', 'create-program')"
+				[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+				[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.next}}</button>
 			<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-default mr-10"
-				(click)="navigateTo(1)"
-				appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('previous', 'click', 'create-program')"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.previous}}</button>
+				(click)="navigateTo(1)" appTelemetryInteract
+				[telemetryInteractEdata]="getTelemetryInteractEdata('previous', 'click', 'create-program')"
+				[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+				[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.previous}}</button>
 			<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary"
-				(click)="updateProgramCollection()"
-				appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('create-program', 'click', 'create-program')"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.createProgram}}</button>
+				(click)="updateProgramCollection()" appTelemetryInteract
+				[telemetryInteractEdata]="getTelemetryInteractEdata('create-program', 'click', 'create-program')"
+				[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+				[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.createProgram}}</button>
 		</div>
 	</div>
 </div>
+
+<sui-modal [isClosable]="isClosable" class="sb-modal" [isInverted]="true" (dismissed)="showDocumentUploader = false"
+	*ngIf="showDocumentUploader" [size]="'normal'" [isFullScreen]="false" [mustScroll]="true" #modal>
+	<div class="sb-modal-header">{{ resource.frmelmnts.lbl.uploadGuideline }}</div>
+	<div class="sb-modal-content p-0">
+		<div class="content">
+			<div type="text/template" id="qq-template-validation" #fineUploaderUI>
+				<div class="qq-uploader-selector qq-uploader custom-qq-uploader">
+					<div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
+						<span class="qq-upload-drop-area-text-selector"></span>
+					</div>
+					<span class="qq-drop-processing-selector qq-drop-processing">
+						<span>{{ resource.messages.imsg.uploadGuideline.m001 }}</span>
+						<span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
+					</span>
+					<ul class="qq-upload-list-selector qq-upload-list custom-qq-upload-list" aria-live="polite"
+						aria-relevant="additions removals">
+						<li>
+							<div class="qq-progress-bar-container-selector">
+								<div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+									class="qq-progress-bar-selector qq-progress-bar"></div>
+							</div>
+							<span class="qq-upload-spinner-selector qq-upload-spinner"></span>
+							<img class="qq-thumbnail-selector" qq-max-size="100" qq-server-scale>
+							<span class="qq-upload-file-selector qq-upload-file custom-qq-upload-file"></span>
+							<span class="qq-upload-size-selector qq-upload-size"></span>
+							<button type="button" class="qq-btn qq-upload-retry-selector qq-upload-retry">{{ resource.frmelmnts.btn.retry }}</button>
+							<button type="button"
+								class="qq-btn qq-upload-delete-selector qq-upload-delete">{{ resource.frmelmnts.btn.retry }}</button>
+							<span role="status" class="qq-upload-status-text-selector qq-upload-status-text"></span>
+						</li>
+					</ul>
+					<div id="qq-upload-actions" class="upload-file-description d-flex flex-ai-center flex-dc">
+						<h5 class="mb-8">{{ resource.frmelmnts.lbl.dragDrop }}</h5>
+						<span class="fs-0-92 mb-8">Or</span>
+						<div class="qq-upload-button-selector qq-upload-button sb-btn sb-btn-normal sb-btn-success">
+							<div>{{ resource.frmelmnts.btn.selectContentFiles }}</div>
+						</div>
+						<p class="mt-8">Upload {{assetConfig.pdf.accepted}} files ( Max size
+							{{assetConfig.pdf.size}} MB )</p>
+					</div>
+					<dialog class="qq-confirm-dialog-selector">
+						<div class="qq-dialog-message-selector"></div>
+						<div class="qq-dialog-buttons">
+							<button type="button" class="qq-cancel-button-selector">{{ resource.frmelmnts.btn.no }}</button>
+							<button type="button" class="qq-ok-button-selector">{{ resource.frmelmnts.btn.yes }}</button>
+						</div>
+					</dialog>
+					<dialog class="qq-prompt-dialog-selector">
+						<div class="qq-dialog-message-selector"></div>
+						<input type="text">
+						<div class="qq-dialog-buttons">
+							<button type="button" class="qq-cancel-button-selector">{{ resource.frmelmnts.btn.cancel }}</button>
+							<button type="button" class="qq-ok-button-selector">{{ resource.frmelmnts.btn.ok }}</button>
+						</div>
+					</dialog>
+				</div>
+			</div>
+			<div *ngIf="!loading">
+				<div id="upload-document-div" class="upload-file-section"></div>
+			</div>
+			<div *ngIf='loading' class="uploading-files">
+				<div class='d-flex flex-dc flex-jc-center flex-ai-center icon'>
+					<img src="assets/images/Spin.gif" class='process-icon'>
+				</div>
+			</div>
+			<p class="fsmall mt-8 terms-and-condition">{{ resource.messages.imsg.uploadGuideline.m002 }}</p>
+			<!-- New upload image design section ends here -->
+		</div>
+	</div>
+	<div class="sb-modal-actions">
+		<button (click)="addImageInEditor();" class="sb-btn sb-btn-primary sb-btn-normal"
+			[ngClass]="{'sb-btn-primary': showAddButton, 'sb-btn-disabled': !showAddButton}">{{ resource.frmelmnts.btn.add }}</button>
+	</div>
+</sui-modal>
