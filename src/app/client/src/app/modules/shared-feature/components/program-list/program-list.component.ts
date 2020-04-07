@@ -240,7 +240,7 @@ export class ProgramListComponent implements OnInit {
       this.getContributionProgramList(req);
     }
   }
-  getRoleMapping(program)
+  getMyProgramRole(program)
   {
     let programId = program.program_id;
     let roles = '';
