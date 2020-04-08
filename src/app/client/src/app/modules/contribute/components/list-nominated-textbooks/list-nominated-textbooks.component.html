@@ -167,12 +167,12 @@
 
 			<div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" isActive='true' suiTabContent="2">
 				<div class="ui container p-0 m-0">
-				<div class="pt-24 text-capitalize fs-0-785 line-height-1-3">
-					<div class="sb-color-gray-100 d-inline-block br-2 pr-10"><span class="fs-1-286 font-weight-bold">52</span> {{resourceService.frmelmnts.lbl.drafts}}</div>
-					<div class="sb-color-primary d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">14</span> {{resourceService.frmelmnts.lbl.pendingReview}}</div>
-					<div class="sb-color-error d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">03</span> {{resourceService.frmelmnts.lbl.rejected}}</div>
-					<div class="sb-color-success d-inline-block px-10"><span class="fs-1-286 font-weight-bold">10</span> {{resourceService.frmelmnts.lbl.approvedPublished}}</div>
-				</div>	
+				<div *ngIf="isUserOrg() && sessionContext.currentRole === 'REVIEWER'" class="pt-24 text-capitalize fs-0-785 line-height-1-3">
+					<div class="sb-color-gray-100 d-inline-block br-2 pr-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.draft}}</span> {{resourceService.frmelmnts.lbl.drafts}}</div>
+					<div class="sb-color-primary d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.review}}</span> {{resourceService.frmelmnts.lbl.pendingReview}}</div>
+					<div class="sb-color-error d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.rejected}}</span> {{resourceService.frmelmnts.lbl.rejected}}</div>
+					<div class="sb-color-success d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.live}}</span> {{resourceService.frmelmnts.lbl.approvedPublished}}</div>
+				</div>
 					<div class="sb-pageSection" [appTelemetryImpression]="telemetryImpression">
 						<div class="sb-bg-color-white pt-20">
 							<div class="sb-table-responsive">
@@ -183,7 +183,7 @@
 											<th class="w-5">{{resourceService.frmelmnts.lbl.medium}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
 											<th class="w-5">{{resourceService.frmelmnts.lbl.Class}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
 											<th class="w-5">{{resourceService.frmelmnts.lbl.subject}}</th>
-											<th class="w-15">{{resourceService.frmelmnts.lbl.chapters}}</th>
+											<th *ngIf="isUserOrg() && sessionContext.currentRole === 'REVIEWER'" class="w-15">{{resourceService.frmelmnts.lbl.chapters}}</th>
 											<th class="w-5"></th>
 										</tr>
 									</thead>
@@ -195,13 +195,13 @@
 											<td>{{contributorTextbook.medium}}</td>
 											<td>{{contributorTextbook.gradeLevel}}</td>
 											<td>{{contributorTextbook.subject}}</td>
-											<td>{{contributorTextbook.chapterCount || 0}}
+											<td *ngIf="isUserOrg() && sessionContext.currentRole === 'REVIEWER'">
 												<div class="text-capitalize fs-0-785">
-													<span class="sb-color-primary d-inline-block br-2 pr-5">14 {{resourceService.frmelmnts.lbl.pending}}</span>
-													<span class="sb-color-error d-inline-block br-2 px-5">03 {{resourceService.frmelmnts.lbl.rejected}}</span> 
-													<span class="sb-color-success d-inline-block px-5">10 {{resourceService.frmelmnts.lbl.published}}</span>
-												</div>	
-												
+													<span class="sb-color-primary d-inline-block br-2 pr-5">{{contributorTextbook.reviewCount || 0}} {{resourceService.frmelmnts.lbl.pending}}</span>
+													<span class="sb-color-error d-inline-block br-2 px-5">{{contributorTextbook.rejectedCount || 0}} {{resourceService.frmelmnts.lbl.rejected}}</span>
+													<span class="sb-color-success d-inline-block px-5">{{contributorTextbook.liveCount || 0}} {{resourceService.frmelmnts.lbl.published}}</span>
+												</div>
+
 											</td>
 											<td>
 												<button *ngIf="currentNominationStatus === 'Approved'"
@@ -210,7 +210,7 @@
 												[telemetryInteractEdata]="getTelemetryInteractEdata('upload-content', 'click', 'list-nominated-textbooks')"
 												[telemetryInteractObject]="telemetryInteractObject"
 												[telemetryInteractCdata]="telemetryInteractCdata"
-												[telemetryInteractPdata]="telemetryInteractPdata">{{this.sessionContext.currentRole === 'CONTRIBUTOR' ?  'Upload Content' : 'Review Content'}}</button>
+												[telemetryInteractPdata]="telemetryInteractPdata">{{sessionContext.currentRole === 'CONTRIBUTOR' ?  'Upload Content' : 'Review Content'}}</button>
 										</td>
 										</tr>
 									</tbody>
