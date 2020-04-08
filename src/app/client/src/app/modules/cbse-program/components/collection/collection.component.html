@@ -1,8 +1,7 @@
 <div *ngIf="!showLoader && !showError && currentStage === 'collectionComponent'">
   <div class="sb-bg-color-primary-0 practical-header py-20">
-    <div class=" ui container">
-    <div class="d-flex flex-jc-space-between practical-header__content py-10">
-      <div class="practical-header__title flex-basis-1 w-20">
+    <div class="d-flex flex-jc-space-between practical-header__content ui container py-10">
+      <div class="practical-header__title flex-basis-1">
         <h5 class="m-0 p-0 font-weight-bold d-inline-block">{{programContext.name}} </h5>
         <ng-template #popupTemplate>
           <div class="content">
@@ -37,7 +36,7 @@
       </div>
 
       <ng-container *ngIf="programContext">
-        <div class="program-timeline px-16 pt-10">
+        <div class="program-timeline px-16">
           <div class="program-timeline-item">
             <div class="status" [class.active]="activeDate === 'nomination_enddate'">
               <div class="status__label">{{resourceService.frmelmnts.lbl.nominationEndDate}}</div>
@@ -101,12 +100,12 @@
               </div>
           </div>  
         </div>
-      <div class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-20 va-top">{{resourceService.frmelmnts.lbl.nominationsNote}}</div>
+      </div>
+    </div>
   </div>
-</div>
 
   <div class="sb-bg-color-white py-24 dynamicHeight">
-    <div class="ui container m-0 p-0 sb-pageSection">
+    <div class="ui container m-0 p-0">
       <div class="sb-pageSection-header">
         <h4 class="sb-pageSection-title six">{{resourceService.frmelmnts.lbl.textbooks}}</h4>
           <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{collectionList.length || ''}}</span>
@@ -146,9 +145,9 @@
               <td *ngIf="currentNominationStatus === 'Initiated' || currentNominationStatus=== 'Pending'">{{data.sampleContentCount || 0 }}</td>
               <td>
                 <div *ngIf="(data.sampleContentCount === undefined || data.sampleContentCount === 0) && canNominate()" class="sb-checkbox sb-checkbox-primary d-inline-block">
-                  <input  type="checkbox" [checked]="data.isSelected || data.sampleContentCount" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
                   <label></label>
-                </div>
+                  <input  type="checkbox" [checked]="data.isSelected || data.sampleContentCount" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
+               </div>
                   <button type="button" *ngIf="data.isSelected || data.sampleContentCount" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10 px-10">Upload Sample</button>
               </td>
             </tr>
@@ -285,10 +284,10 @@
 <sui-modal *ngIf="showContentTypeModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
   [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showContentTypeModal = false" #modal>
   <div class="sb-modal-header">
-    {{resourceService.frmelmnts.lbl.contentTypesHint}}
+    {{resourceService.frmelmnts.lbl.submitNomination}}
    </div>
   <div class="sb-modal-content">
-    <p class="fs-0-785">{{resourceService.frmelmnts.lbl.contentTypesDescription}}</p>
+    <h5 class="font-weight-bold mb-10">{{resourceService.frmelmnts.lbl.listOfContentType}}</h5>
     <div class="mb-10" *ngFor="let contenttype of contentType">
       <div class="sb-checkbox sb-checkbox-primary">
         <input class="checking" [(ngModel)]="contenttype.isSelected" (change)="toggle(contenttype);"
