@@ -266,12 +266,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.loading = false;
     this.isClosable = true;
     this.cbseService.getVideo(videoId).pipe(map((data: any) => data.result.content), catchError(err => {
-      const errInfo = { errorMsg: 'Unable to read the Video, Please Try Again' };
+      const errInfo = { errorMsg: 'Unable to read the Document, Please Try Again' };
       this.loading = false;
       this.isClosable = true;
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
-  })).subscribe(res => {
-      this.toasterService.success('Asset Successfully Uploaded...');
+    })).subscribe(res => {
+      this.toasterService.success('Document Successfully Uploaded...');
       this.showAddButton = true;
       this.uploadedDocument = res.artifactUrl;
       this.showDocumentUploader = false;
@@ -617,7 +617,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programData['slug'] = 'sunbird';
       this.programData['type'] = 'public',
 
-      this.programData['default_roles'] = ['CONTRIBUTOR'];
+        this.programData['default_roles'] = ['CONTRIBUTOR'];
       this.programData['enddate'] = this.programData.program_end_date;
       this.programData['config'] = programConfigObj;
       this.programData['guidelines_document'] = this.uploadedDocument;
