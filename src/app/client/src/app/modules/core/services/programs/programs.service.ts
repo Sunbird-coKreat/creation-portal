@@ -35,7 +35,7 @@ export class ProgramsService extends DataService implements CanActivate {
   baseUrl: string;
   public http: HttpClient;
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
-  public contentTypes: any[];
+  private _contentTypes: any[];
   public orgUsers = [];
 
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
@@ -54,7 +54,7 @@ export class ProgramsService extends DataService implements CanActivate {
    */
   public initialize() {
     this.enableContributeMenu().subscribe();
-    this.getContentTypes().subscribe();
+    this.getAllContentTypes().subscribe();
   }
 
   /**
@@ -482,7 +482,12 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * Get all the content types configured
    */
-  private getContentTypes(): Observable<any[]> {
+
+  get contentTypes() {
+    return _.cloneDeep(this._contentTypes);
+  }
+
+  private getAllContentTypes(): Observable<any[]> {
     const option = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.CONTENTTYPE_LIST}`,
     };
@@ -492,7 +497,7 @@ export class ProgramsService extends DataService implements CanActivate {
       catchError(err => of([]))
     ).pipe(
       tap(contentTypes => {
-        this.contentTypes = contentTypes;
+        this._contentTypes = contentTypes;
       })
     );
   }
@@ -503,7 +508,7 @@ export class ProgramsService extends DataService implements CanActivate {
   getContentTypesName(programContentType) {
     const selectedContentTypes = [];
     _.forEach(programContentType, (contentType) => {
-      const found = _.find(this.contentTypes, (contentTypeObj) => {
+      const found = _.find(this._contentTypes, (contentTypeObj) => {
         return contentTypeObj.value === contentType;
       });
       if (found) {
@@ -562,6 +567,7 @@ export class ProgramsService extends DataService implements CanActivate {
         console.log('NO USER FOUND');
         return;
       }
+      this.orgUsers = [];
       const userIds = _.map(result[_.first(_.keys(result))], 'userId');
       const getUserDetails = _.map(userIds, id => this.registryService.getUserDetails(id));
       forkJoin(getUserDetails).subscribe((res: any) => {
@@ -581,8 +587,8 @@ export class ProgramsService extends DataService implements CanActivate {
   }
 
   checkIfUserBelongsToOrg(userId) {
-    const found = _.find(this.orgUsers, (u) => {
-      return u.userId === userId;
+    const found = _.find(this.orgUsers, (user) => {
+      return user.userId === userId;
     });
 
     return found ? true : false;
