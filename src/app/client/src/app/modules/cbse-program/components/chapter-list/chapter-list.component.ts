@@ -531,8 +531,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
        contentTypes = _.filter(contentTypes, (obj) => {
         return _.includes(this.sessionContext.nominationDetails.content_types, obj.metadata.contentType);
        });
-    } else {
-
     }
     this.resourceTemplateComponentInput = {
         templateList: contentTypes,

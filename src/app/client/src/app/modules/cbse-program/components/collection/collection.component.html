@@ -90,12 +90,7 @@
         <button type="button" (click)="showContentTypeModal= true;" class="sb-btn sb-btn-normal sb-btn-outline-primary">{{resourceService.frmelmnts.btn.contentTypes}}</button>
       </div>
       <div *ngIf="canNominate()" class="d-inline-block px-20">
-          <!-- <div *ngIf="selectedCollectionIds.length === 0"> 
-            <button class="sb-btn sb-btn-disabled sb-btn-normal px-40">{{resourceService.frmelmnts.btn.nominate}}</button>
-          </div> -->
           <div>
-            <!-- <button class="sb-btn sb-btn-normal sb-btn-primary px-40 disabled {{selectedCollectionIds.length > 0 ? 'active' : 'disabled'}}"
-              >{{resourceService.frmelmnts.btn.nominate}}</button> -->
               <div *ngIf="canNominate() && sessionContext?.nominationDetails?.status === 'Pending' || 'Initiated'" class="d-inline-block">
                 <button class="sb-btn sb-btn-normal sb-btn-primary px-40"  [disabled]="!(selectedContentTypes.length && selectedCollectionIds.length)"
                  (click)="addNomination()">{{resourceService.frmelmnts.btn.nominate}}</button>
