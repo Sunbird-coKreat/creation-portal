@@ -21,7 +21,7 @@
               <tr>
                 <th class="w-15 cursor-pointer sb-sorting" (click)="sortCollection('name')">
                   {{ resourceService.frmelmnts.lbl.program }} &nbsp;&nbsp; 
-                  <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>      
+                  <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>
                   <span  *ngIf="sortColumn == 'name'" class="d-inline-block">
                     <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
                     <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
@@ -49,7 +49,14 @@
                   </span>
                 </th>
                 <th *ngIf="activeAllProgramsMenu" class="w-10">{{ resourceService.frmelmnts.lbl.programDates }}</th>
-                <th *ngIf="activeMyProgramsMenu" class="w-5 text-center">{{ iscontributeOrgAdmin === true ? resourceService.frmelmnts.lbl.status : resourceService.frmelmnts.lbl.myRole }}</th>
+                <th *ngIf="activeMyProgramsMenu && iscontributeOrgAdmin" class="w-5 text-center cursor-pointer sb-sorting" (click)="sortCollection('nomination_status')">{{ resourceService.frmelmnts.lbl.status }} &nbsp;&nbsp;
+                  <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'nomination_status' "></i>
+                  <span  *ngIf="sortColumn == 'nomination_status'" class="d-inline-block">
+                    <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+                    <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+                  </span>
+                </th>
+                <th *ngIf="activeMyProgramsMenu && !iscontributeOrgAdmin" class="w-5 text-center">{{ resourceService.frmelmnts.lbl.myRole }}</th>
                 <th class="w-10 text-center"> &nbsp;</th>
               </tr>
             </thead>
