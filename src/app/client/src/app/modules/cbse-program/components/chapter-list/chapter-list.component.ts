@@ -521,9 +521,21 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         this.showResourceTemplatePopup = event.showPopup;
         break;
     }
+    this.resourceTemplateInputData();
+  }
+
+  resourceTemplateInputData() {
+    let contentTypes = _.get(this.chapterListComponentInput.config, 'config.contentTypes.value')
+    || _.get(this.chapterListComponentInput.config, 'config.contentTypes.defaultValue');
+    if (this.sessionContext.nominationDetails.content_types) {
+       contentTypes = _.filter(contentTypes, (obj) => {
+        return _.includes(this.sessionContext.nominationDetails.content_types, obj.metadata.contentType);
+       });
+    } else {
+
+    }
     this.resourceTemplateComponentInput = {
-      templateList: _.get(this.chapterListComponentInput.config, 'config.contentTypes.value')
-        || _.get(this.chapterListComponentInput.config, 'config.contentTypes.defaultValue'),
+        templateList: contentTypes,
         programContext: this.programContext,
         sessionContext: this.sessionContext,
         unitIdentifier: this.unitIdentifier
