@@ -396,7 +396,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   shouldContentBeVisible(content) {
-    console.log(content.organisationId, this.myOrgId, content.organisationId === this.myOrgId);
     const creatorViewRole = this.actions.showCreatorView.roles.includes(this.sessionContext.currentRoleId);
     const reviewerViewRole = this.actions.showReviewerView.roles.includes(this.sessionContext.currentRoleId);
     if (this.userService.userProfile.userRoles.includes('ORG_ADMIN')) {
@@ -446,10 +445,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               'createdBy': this.userService.userid,
               'contentType': this.templateDetails.metadata.contentType,
               'resourceType': this.templateDetails.metadata.resourceType || 'Learn',
-              'collectionId': this.sessionContext.collection,
-              ...(this.sessionContext.nominationDetails &&
-                  this.sessionContext.nominationDetails.organisation_id &&
-                  {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
               'creator': creator,
               'programId': this.sessionContext.programId,
               'sampleContent': this.sampleContent,
