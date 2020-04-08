@@ -1,7 +1,8 @@
 <div *ngIf="!showLoader && !showError && currentStage === 'collectionComponent'">
   <div class="sb-bg-color-primary-0 practical-header py-20">
-    <div class="d-flex flex-jc-space-between practical-header__content ui container py-10">
-      <div class="practical-header__title flex-basis-1 w-40">
+    <div class=" ui container">
+    <div class="d-flex flex-jc-space-between practical-header__content py-10">
+      <div class="practical-header__title flex-basis-1 w-20">
         <h5 class="m-0 p-0 font-weight-bold d-inline-block">{{programContext.name}} </h5>
         <ng-template #popupTemplate>
           <div class="content">
@@ -83,23 +84,30 @@
           </div>
         </div>
       </ng-container>
-
-      <div class="practical-sb-buttons w-20">
-        <div class="fxsmall font-italic sb-color-gray-300 mb-10">{{resourceService.frmelmnts.lbl.contentTypesLabels}}</div>
+    </div>   
+    <hr class="my-10">
+      <div class="d-inline-block br-2 pr-20">
         <button type="button" (click)="showContentTypeModal= true;" class="sb-btn sb-btn-normal sb-btn-outline-primary">{{resourceService.frmelmnts.btn.contentTypes}}</button>
-        <hr>
-        <div *ngIf="canNominate() && sessionContext?.nominationDetails?.status === 'Pending' || 'Initiated'" class="d-inline-block">
-              <button class="sb-btn sb-btn-normal sb-btn-primary"  [disabled]="!(selectedContentTypes.length && selectedCollectionIds.length)"
-               (click)="addNomination()">{{resourceService.frmelmnts.btn.nominate}}</button>
-          </div>
-          <ng-template #popupContentType>
-            <div class="font-italic">{{resourceService.frmelmnts.lbl.nominationsNote}}</div>
-            </ng-template>
-            <i class="info circle link icon" suiPopup [popupTemplate]="popupContentType">
-            </i>  
+      </div>
+      <div *ngIf="canNominate()" class="d-inline-block px-20">
+          <!-- <div *ngIf="selectedCollectionIds.length === 0"> 
+            <button class="sb-btn sb-btn-disabled sb-btn-normal px-40">{{resourceService.frmelmnts.btn.nominate}}</button>
+          </div> -->
+          <div>
+            <!-- <button class="sb-btn sb-btn-normal sb-btn-primary px-40 disabled {{selectedCollectionIds.length > 0 ? 'active' : 'disabled'}}"
+              >{{resourceService.frmelmnts.btn.nominate}}</button> -->
+              <div *ngIf="canNominate() && sessionContext?.nominationDetails?.status === 'Pending' || 'Initiated'" class="d-inline-block">
+                <button class="sb-btn sb-btn-normal sb-btn-primary px-40"  [disabled]="!(selectedContentTypes.length && selectedCollectionIds.length)"
+                 (click)="addNomination()">{{resourceService.frmelmnts.btn.nominate}}</button>
+            </div>
+              <div class="py-5">
+                {{resourceService.frmelmnts.lbl.nominationMessage}}
+              </div>
+          </div>  
         </div>
-    </div>
+      <div class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-20 va-top">{{resourceService.frmelmnts.lbl.nominationsNote}}</div>
   </div>
+</div>
 
   <div class="sb-bg-color-white py-24 dynamicHeight">
     <div class="ui container m-0 p-0 sb-pageSection">
