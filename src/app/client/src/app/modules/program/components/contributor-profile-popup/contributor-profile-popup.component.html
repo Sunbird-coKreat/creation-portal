@@ -5,52 +5,52 @@
 	<div class="sb-modal-content o-y-visible">
 		<div class="ui container">
 			<ng-container *ngIf="!showLoader && contributor else noResult">
-				<div class="text-center">
+				<div class="mx-48 text-center">
 					<div class="sb-profile-page__avatar">
 						<img src="assets/images/guest.svg" alt="guest" class="mb-24">
 					</div>
-					<div class="fs-1-7 font-weight-bold my-24">{{fullName}} </div>
+					<div class="fs-2-5 font-weight-bold my-24">{{fullName}} </div>
 				</div>
-				<div class="">
-					<dl class="my-5 d-inline-flex  w-50 sb-profile-page__category">
-						<dd>{{resourceService.frmelmnts.lbl.type}}
-							:</dd>
-						<dt class="pl-4">{{ (isOrg) ? 'Organisation' : 'Individual'}}</dt>
-					</dl>
-					<dl class="my-5 d-inline-flex  w-50 sb-profile-page__category">
-						<dd>{{resourceService.frmelmnts.lbl.website}}
-							:</dd>
-						<dt class="pl-4">{{ (contributor?.website) ? contributor?.website : '-'}}</dt>
-					</dl>
-					<dl class="my-5 d-inline-flex  w-50 sb-profile-page__category">
-						<dd>{{resourceService?.frmelmnts?.lbl?.profile?.Board}}
-							:</dd>
-						<dt class="pl-4">{{contributor?.board?.join(', ')}}</dt>
-					</dl>
-					<dl class="my-5 d-inline-flex  w-50 sb-profile-page__m-responsive-flex-dc">
-						<dd>{{resourceService?.frmelmnts?.lbl?.profile?.Medium}}
-							:</dd>
-						<dt class="pl-4">
-							{{contributor?.medium?.join(', ')}}</dt>
-					</dl>
-					<dl class="my-5 d-inline-flex  w-50 sb-profile-page__m-responsive-flex-dc">
-						<dd>{{resourceService?.frmelmnts?.lbl?.profile?.Classes}}
-							:</dd>
-						<dt class="pl-4">
-							{{contributor?.gradeLevel?.join(', ')}}</dt>
-					</dl>
-					<dl class="my-5 d-inline-flex  w-50 sb-profile-page__m-responsive-flex-dc">
-						<dd>{{resourceService?.frmelmnts?.lbl?.profile?.Subjects}}
-							:</dd>
-						<dt class="pl-4">
-							{{contributor?.subject?.join(', ')}}</dt>
-					</dl>
-					<dl class="my-5 d-flex sb-profile-page__m-responsive-flex-dc line-height-1-3">
-						<dd>{{resourceService?.frmelmnts?.lbl?.contentType}}
-							:</dd>
-						<dt class="pl-4">
-							{{contributor?.contentTypes?.join(', ')}}</dt>
-					</dl>
+				<div class="mx-48 relative text-center">
+					<div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
+						<span class="fmedium white-space-nowrap">{{resourceService.frmelmnts.lbl.type}}
+							:</span>
+						<span class="fmedium font-weight-bold pl-4">{{ (isOrg) ? 'Organisation' : 'Individual'}}</span>
+					</div>
+					<div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
+						<span class="fmedium white-space-nowrap">{{resourceService.frmelmnts.lbl.website}}
+							:</span>
+						<span class="fmedium font-weight-bold pl-4">{{ (contributor?.website) ? contributor?.website : '-'}}</span>
+					</div>
+					<div class="mb-16 d-flex flex-jc-center sb-profile-page__category">
+						<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Board}}
+							:</span>
+						<span class="fmedium font-weight-bold pl-4">{{contributor?.board?.join(', ')}}</span>
+					</div>
+					<div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
+						<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Medium}}
+							:</span>
+						<span class="fmedium font-weight-bold pl-4">
+							{{contributor?.medium?.join(', ')}}</span>
+					</div>
+					<div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
+						<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Classes}}
+							:</span>
+						<span class="fmedium font-weight-bold pl-4">
+							{{contributor?.gradeLevel?.join(', ')}}</span>
+					</div>
+					<div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
+						<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.profile?.Subjects}}
+							:</span>
+						<span class="fmedium font-weight-bold pl-4">
+							{{contributor?.subject?.join(', ')}}</span>
+					</div>
+					<div class="mb-16 d-flex flex-jc-center sb-profile-page__m-responsive-flex-dc">
+						<span class="fmedium white-space-nowrap">{{resourceService?.frmelmnts?.lbl?.contentType}}
+							:</span>
+						<span class="fmedium font-weight-bold pl-4">
+							{{contributor?.contentTypes?.join(', ')}}</span>
+					</div>
 				</div>
 			</ng-container>
 			<ng-template #noResult>
