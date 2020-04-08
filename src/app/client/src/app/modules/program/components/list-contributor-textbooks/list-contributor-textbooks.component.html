@@ -236,12 +236,12 @@
 							<th class="w-5">{{resourceService.frmelmnts.lbl.medium}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
 							<th class="w-5">{{resourceService.frmelmnts.lbl.class}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
 							<th class="w-5">{{resourceService.frmelmnts.lbl.subjects}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-							<th class="w-5">
+							<th class="w-5" px-5>
 								<span *ngIf="contributor?.nominationData?.status == 'Pending'">
-									{{resourceService.frmelmnts.lbl.sampleContentCount}} <i class="fa fa-sort ml-4" aria-hidden="true"></i>
+									{{resourceService.frmelmnts.lbl.sampleContentCount}} <i class="fa fa-sort" aria-hidden="true"></i>
 								</span>
 								<span *ngIf="contributor?.nominationData?.status == 'Approved'">
-									{{resourceService.frmelmnts.lbl.contributionCount}} <i class="fa fa-sort ml-4" aria-hidden="true"></i>
+									{{resourceService.frmelmnts.lbl.contributionCount}} <i class="fa fa-sort" aria-hidden="true"></i>
 								</span>
 							</th>
 							<th class="w-5">&nbsp;</th>
