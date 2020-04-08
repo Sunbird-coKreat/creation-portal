@@ -1,12 +1,12 @@
 import { Component, OnInit, Input, EventEmitter, Output, OnChanges, OnDestroy, ChangeDetectorRef, AfterViewInit } from '@angular/core';
-import { PublicDataService, UserService, ActionService } from '@sunbird/core';
+import { PublicDataService, UserService, ActionService, RegistryService, ProgramsService } from '@sunbird/core';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService } from '@sunbird/shared';
 import { TelemetryService, IInteractEventEdata , IImpressionEventInput} from '@sunbird/telemetry';
 import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
 import { CbseProgramService } from '../../services';
 import { map, catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { throwError, forkJoin } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   IChapterListComponentInput, ISessionContext,
@@ -77,6 +77,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public userProfile: any;
   public sampleContent = false;
   public telemetryPageId = 'chapter-list';
+  public orgUsers = [];
   constructor(public publicDataService: PublicDataService, private configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private cbseService: CbseProgramService,
@@ -84,7 +85,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     public programStageService: ProgramStageService, public programComponentsService: ProgramComponentsService,
     public activeRoute: ActivatedRoute, private ref: ChangeDetectorRef,
     private collectionHierarchyService: CollectionHierarchyService, private resourceService: ResourceService,
-    private navigationHelperService: NavigationHelperService) {
+    private navigationHelperService: NavigationHelperService,
+    public programService: ProgramsService) {
   }
 
   ngOnInit() {
@@ -108,7 +110,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       identifier: 'all',
       name: 'All Chapters'
     });
-
+    this.orgUsers = this.programService.orgUsers;
     this.selectedChapterOption = 'all';
     this.updateAccordianView();
     // clearing the selected questionId when user comes back from question list
@@ -120,7 +122,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       }
     };
   }
-
 
   ngOnChanges(changed: any) {
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
@@ -197,6 +198,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       }
     };
   }
+
   changeView() {
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage = _.last(this.state.stages).stage;
@@ -390,11 +392,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     return _.isEmpty(leafNodes) ? null : leafNodes;
   }
 
-
-
   shouldContentBeVisible(content) {
     const creatorViewRole = this.actions.showCreatorView.roles.includes(this.sessionContext.currentRoleId);
     const reviewerViewRole = this.actions.showReviewerView.roles.includes(this.sessionContext.currentRoleId);
+    const creatorBelongsToMyOrg = this.programService.checkIfUserBelongsToOrg(content.createdBy);
     if (this.userService.userProfile.userRoles.includes('ORG_ADMIN')) {
       if (reviewerViewRole && content.sampleContent === true
         && this.sessionContext.nominationDetails.user_id === content.createdBy) {
@@ -404,7 +405,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       if ((this.sessionContext.nominationDetails.status === 'Approved' || this.sessionContext.nominationDetails.status === 'Rejected')
       && content.sampleContent === true) {
         return false;
-      } else if (reviewerViewRole && content.status === 'Review' && this.currentUserID !== content.createdBy) {
+      } else if (reviewerViewRole && content.status === 'Review' && this.currentUserID !== content.createdBy && creatorBelongsToMyOrg) {
         return true;
       } else if (creatorViewRole && this.currentUserID === content.createdBy) {
         return true;
@@ -487,7 +488,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.creationComponent = component;
     this.programStageService.addStage(componentName);
   }
-
 
   showResourceTemplate(event) {
     this.unitIdentifier = event.collection.identifier;

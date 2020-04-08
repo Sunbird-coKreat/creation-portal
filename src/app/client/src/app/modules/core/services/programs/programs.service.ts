@@ -7,7 +7,8 @@ import { PublicDataService } from './../public-data/public-data.service';
 import { ConfigService, ServerResponse, ToasterService, ResourceService, HttpOptions } from '@sunbird/shared';
 import { Injectable } from '@angular/core';
 import { UserService } from '../user/user.service';
-import { combineLatest, of, iif, Observable, BehaviorSubject, throwError, merge } from 'rxjs';
+import { RegistryService } from '../registry/registry.service';
+import { combineLatest, of, iif, Observable, BehaviorSubject, throwError, merge, forkJoin } from 'rxjs';
 import * as _ from 'lodash-es';
 import { CanActivate, Router } from '@angular/router';
 import { DataService } from '../data/data.service';
@@ -35,12 +36,14 @@ export class ProgramsService extends DataService implements CanActivate {
   public http: HttpClient;
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
   public contentTypes: any[];
+  public orgUsers = [];
 
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService,
     private extFrameworkService: ExtPluginService, private datePipe: DatePipe,
     private contentService: ContentService, private router: Router,
-    private toasterService: ToasterService, private resourceService: ResourceService) {
+    private toasterService: ToasterService, private resourceService: ResourceService,
+    private registryService: RegistryService) {
       super(http);
       this.config = config;
       this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;
@@ -222,8 +225,13 @@ export class ProgramsService extends DataService implements CanActivate {
         }),
         tap(allowedToContribute => {
           this._allowToContribute$.next(allowedToContribute);
-        })
-      );
+          this.userService.openSaberRegistrySearch().then(() => {
+            const userRegData = this.userService.userProfile.userRegData;
+            if (this.userService.userRegistryData && !_.isEmpty(userRegData) && !_.isEmpty(userRegData.User_Org)) {
+              this.getContributionOrgUsers();
+            }
+          });
+        }));
   }
 
   /*
@@ -543,5 +551,40 @@ export class ProgramsService extends DataService implements CanActivate {
        return this.sort(a, b, column);
      });
    }
+  }
+
+  getContributionOrgUsers() {
+    const userRegData = this.userService.userProfile.userRegData;
+    this.registryService.getContributionOrgUsers(userRegData.User_Org.orgId)
+    .subscribe(response => {
+      const result = _.get(response, 'result');
+      if (!result || _.isEmpty(result)) {
+        console.log('NO USER FOUND');
+        return;
+      }
+      const userIds = _.map(result[_.first(_.keys(result))], 'userId');
+      const getUserDetails = _.map(userIds, id => this.registryService.getUserDetails(id));
+      forkJoin(getUserDetails).subscribe((res: any) => {
+        if (res) {
+          res.forEach((r) => {
+            if (r.result && r.result.User) {
+              this.orgUsers.push(r.result.User);
+            }
+          });
+        }
+      }, error => {
+        console.log(error);
+      });
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  checkIfUserBelongsToOrg(userId) {
+    const found = _.find(this.orgUsers, (u) => {
+      return u.userId === userId;
+    });
+
+    return found ? true : false;
   }
 }
