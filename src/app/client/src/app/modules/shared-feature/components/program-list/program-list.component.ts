@@ -30,15 +30,17 @@ export class ProgramListComponent implements OnInit {
   public roles;
   public selectedRole;
   public selectedProgramToAssignRoles;
-  public sortPrograms: any;
+  public tempSortPrograms: any;
   public direction = 'asc';
   public enrollPrograms: IProgram[];
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
   public nominationList;
-  public sortColumnName = '';
+  public sortColumn = '';
   public showLoader = true;
+  public roleMapping = [];
+  public iscontributeOrgAdmin = true;
   constructor(private programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService ) { }
@@ -91,8 +93,8 @@ export class ProgramListComponent implements OnInit {
   private getAllProgramsForContrib(type, status) {
     this.programsService.getAllProgramsByType(type, status).subscribe(
       response => {
-        let tempPrograms = _.get(response, 'result.programs');
-        if (tempPrograms.length) {
+        const allPrograms = _.get(response, 'result.programs');
+        if (allPrograms.length) {
           const req = {
             request: {
               filters: {
@@ -110,15 +112,15 @@ export class ProgramListComponent implements OnInit {
                 const enrolledPrograms = _.map(_.get(thisresponse, 'result.programs'), (nomination: any) => {
                   return nomination.program_id;
                 });
-                const temp = _.filter(tempPrograms, tempProgram => {
-                  return !enrolledPrograms.includes(tempProgram.program_id);
+                const temp = _.filter(allPrograms, program => {
+                  return !enrolledPrograms.includes(program.program_id);
                  });
                 this.programs = this.filterProgramByDate(temp);
               } else {
-                this.programs = this.filterProgramByDate(tempPrograms);
+                this.programs = this.filterProgramByDate(allPrograms);
               }
               this.count = this.programs.length;
-              this.sortPrograms = this.programs;
+              this.tempSortPrograms = this.programs;
               this.showLoader = false;
             }, error => {
               this.toasterService.error(_.get(error, 'error.params.errmsg') || 'Fetching Programs failed');
@@ -144,16 +146,21 @@ export class ProgramListComponent implements OnInit {
     return filteredProgram;
   }
 
-  sort(colName) {
-    if (this.direction === 'asc' || this.direction === ''){
-        this.programs = this.sortPrograms.sort((a,b) => b[colName].localeCompare(a[colName]))
+  sortCollection(column) {
+    this.programs =  this.programsService.sortCollection(this.tempSortPrograms, column, this.direction);
+    if (this.direction === 'asc' || this.direction === '') {
       this.direction = 'desc';
     } else {
-        this.programs =  this.sortPrograms.sort((a,b) => a[colName].localeCompare(b[colName]));
       this.direction = 'asc';
     }
-    this.sortColumnName = colName;
+    this.sortColumn = column;
   }
+
+  resetSorting() {
+    this.sortColumn = 'name';
+    this.direction = 'asc';
+  }
+
   public getContributionProgramList(req) {
     this.programsService.getMyProgramsForContrib(req)
         .subscribe((response) => {
@@ -177,7 +184,7 @@ export class ProgramListComponent implements OnInit {
         });
         this.showLoader = false;
         this.enrollPrograms = this.programs;
-        this.sortPrograms = this.programs;
+        this.tempSortPrograms = this.programs;
         this.count = _.get(response, 'result.count');
       }, error => {
         console.log(error);
@@ -195,6 +202,7 @@ export class ProgramListComponent implements OnInit {
       const filters = {
         organisation_id: this.userService.userProfile.userRegData.User_Org.orgId
       };
+      this.iscontributeOrgAdmin = false;
       this.programsService.getNominationList(filters)
         .subscribe(
           (data) => {
@@ -205,10 +213,10 @@ export class ProgramListComponent implements OnInit {
                 && (( obj.rolemapping.CONTRIBUTOR.includes(_.get(this.userService, 'userProfile.userId' )))
                 || ( obj.rolemapping.REVIEWER.includes(_.get(this.userService, 'userProfile.userId' ))))
                 && obj.status === 'Approved') {
+                  this.roleMapping.push(obj);
                   return obj;
                 }
             }), 'program_id');
-
             const req = {
               request: {
                 filters: {
@@ -237,7 +245,24 @@ export class ProgramListComponent implements OnInit {
       this.getContributionProgramList(req);
     }
   }
-
+  getMyProgramRole(program)
+  {
+    let programId = program.program_id;
+    let roles = '';
+     _.map(_.find(this.roleMapping, obj => {
+      if (obj.rolemapping
+        && (( obj.rolemapping.REVIEWER.includes(_.get(this.userService, 'userProfile.userId' ))))
+        && obj.status === 'Approved' && obj.program_id == programId ) {
+          roles = 'Reviewer';
+        }
+      else if  (obj.rolemapping
+        && (( obj.rolemapping.CONTRIBUTOR.includes(_.get(this.userService, 'userProfile.userId' ))))
+        && obj.status === 'Approved' && obj.program_id == programId ) {
+          roles = 'Contributor';  
+        }
+    }));
+    return roles;
+  }
   getContributionOrgUsers(selectedProgram) {
     this.selectedProgramToAssignRoles = selectedProgram.program_id;
     this.showAssignRoleModal = true;
@@ -276,7 +301,7 @@ export class ProgramListComponent implements OnInit {
     return this.programsService.getMyProgramsForOrg(status).subscribe((response) => {
       this.programs = _.get(response, 'result.programs');
       this.count = _.get(response, 'result.count');
-      this.sortPrograms = this.programs;
+      this.tempSortPrograms = this.programs;
       this.showLoader = false;
     }, error => {
       console.log(error);

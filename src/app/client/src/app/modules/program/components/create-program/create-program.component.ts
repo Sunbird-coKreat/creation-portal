@@ -78,6 +78,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public telemetryInteractObject: any;
   public telemetryStart: IStartEventInput;
   public telemetryEnd: IEndEventInput;
+  public sortColumn = 'name';
+  public direction = 'asc';
+  public tempSortCollections = [];
+  public filterApplied = false;
 
  constructor(
    public frameworkService: FrameworkService,
@@ -93,9 +97,18 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    private navigationHelperService: NavigationHelperService,
    private configService: ConfigService,
    private deviceDetectorService: DeviceDetectorService) {
-
    this.sbFormBuilder = formBuilder;
+ }
 
+ sortCollection(column) {
+  this.collections =  this.programsService.sortCollection(this.tempSortCollections, column, this.direction);
+  this.direction = (this.direction === 'asc' || this.direction === '') ? 'desc' : 'asc';
+  this.sortColumn = column;
+ }
+
+ resetSorting() {
+  this.sortColumn = 'name';
+  this.direction = 'asc';
  }
 
  getMaxDate(date) {
@@ -150,13 +163,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
  ngOnInit() {
   this.userprofile = this.userService.userProfile;
+  this.programScope['purpose'] = this.programsService.contentTypes;
   this.initializeFormFields();
   this.fetchFrameWorkDetails();
-  this.getProgramContentTypes();
   this.telemetryInteractCdata = [];
   this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
   this.telemetryInteractObject = {};
-  //this.showTexbooklist();
  }
 
  ngAfterViewInit() {
@@ -325,25 +337,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    });*/
  }
 
- getProgramContentTypes () {
-   const option = {
-     url: 'program/v1/contenttypes/list',
-   };
-
-   this.programsService.get(option).subscribe(
-     (res) => {
-         this.programScope['purpose'] = res.result.contentType;
-       },
-     (err) => {
-       console.log(err);
-       // TODO: navigate to program list page
-       const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-       this.toasterService.warning(errorMes || 'Fetching content types failed');
-     }
-   );
-
- }
-
  saveProgramError(err) {
    console.log(err);
  }
@@ -403,6 +396,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
  resetFilters () {
+    this.filterApplied = false;
+    this.resetSorting();
     this.collectionListForm.controls['medium'].setValue('');
     this.collectionListForm.controls['gradeLevel'].setValue('');
     this.collectionListForm.controls['subject'].setValue('');
@@ -443,6 +438,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      delete this.programData.medium;
      delete this.programData.subject;
      delete this.programData.program_end_date;
+     this.programData['program_id'] = '';
 
      if (!this.programId) {
       this.programData['status'] = 'Draft';
@@ -471,7 +467,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
  }
 
  showTexbooklist() {
-
    const requestData =  {
      request: {
        filters: {
@@ -486,6 +481,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    };
 
    if (!_.isEmpty(this.collectionListForm.value.medium)) {
+     this.filterApplied = true;
      requestData.request.filters['medium'] = [];
      _.forEach(this.collectionListForm.value.medium, (medium) => {
        requestData.request.filters['medium'].push(medium.name);
@@ -493,6 +489,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    }
 
    if (!_.isEmpty(this.collectionListForm.value.gradeLevel)) {
+     this.filterApplied = true;
      requestData.request.filters['gradeLevel'] = [];
      _.forEach(this.collectionListForm.value.gradeLevel, (gradeLevel) => {
        requestData.request.filters['gradeLevel'].push(gradeLevel.name);
@@ -500,13 +497,23 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    }
 
    if (!_.isEmpty(this.collectionListForm.value.subject)) {
+     this.filterApplied = true;
      requestData.request.filters['subject'] = this.collectionListForm.value.subject;
    }
 
    return this.programsService.getCollectionList(requestData).subscribe(
      (res) => {
        this.showTextBookSelector = true;
-       this.collections = res.result.content;
+       if (res.result.count) {
+        this.collections = res.result.content;
+        this.tempSortCollections = this.collections;
+        if (!this.filterApplied) {
+          this.sortCollection(this.sortColumn);
+        }
+       } else {
+        this.collections = [];
+        this.tempSortCollections = [];
+       }
      },
      (err) => {
        console.log(err);
@@ -590,6 +597,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      (err) => this.saveProgramError(err)
    );
  }
+
  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
   return _.omitBy({
     id,
@@ -597,9 +605,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     pageid,
     extra
   }, _.isUndefined);
-}
+ }
 
-generateTelemetryEvent(event) {
+ generateTelemetryEvent(event) {
   switch (event) {
     case 'START':
      const deviceInfo = this.deviceDetectorService.getDeviceInfo();
