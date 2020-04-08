@@ -102,6 +102,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       'accepted': 'pdf'
     }
   };
+  public programConfig: any;
 
   constructor(
     public frameworkService: FrameworkService,
@@ -124,6 +125,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.userprofile = this.userService.userProfile;
     this.programScope['purpose'] = this.programsService.contentTypes;
+    this.programConfig = _.cloneDeep(programConfigObj);
     this.initializeFormFields();
     this.fetchFrameWorkDetails();
     this.telemetryInteractCdata = [];
@@ -592,11 +594,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
   handleContentTypes() {
     const contentTypes = this.createProgramForm.value.content_types;
-    let configContentTypes = _.get(_.find(programConfigObj.components, { id: 'ng.sunbird.chapterList' }), 'config.contentTypes.value');
+    let configContentTypes = _.get(_.find(this.programConfig.components, { id: 'ng.sunbird.chapterList' }), 'config.contentTypes.value');
     configContentTypes = _.filter(configContentTypes, (type) => {
       return _.includes(contentTypes, type.metadata.contentType);
     });
-    _.find(programConfigObj.components, { id: 'ng.sunbird.chapterList' }).config.contentTypes.value = configContentTypes;
+    _.find(this.programConfig.components, { id: 'ng.sunbird.chapterList' }).config.contentTypes.value = configContentTypes;
   }
 
   saveProgram() {
@@ -619,7 +621,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
         this.programData['default_roles'] = ['CONTRIBUTOR'];
       this.programData['enddate'] = this.programData.program_end_date;
-      this.programData['config'] = programConfigObj;
+      this.programData['config'] = this.programConfig;
       this.programData['guidelines_url'] = this.uploadedDocument;
       delete this.programData.gradeLevel;
       delete this.programData.medium;
@@ -772,11 +774,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     data['program_id'] = this.programId;
     data['collection_ids'] = this.collectionListForm.value.pcollections;
 
-    programConfigObj.board = this.userBoard;
-    programConfigObj.gradeLevel = this.gradeLevelOption;
-    programConfigObj.medium = this.mediumOption;
-    programConfigObj.subject = this.subjectsOption;
-    data['config'] = programConfigObj;
+    this.programConfig.board = this.userBoard;
+    this.programConfig.gradeLevel = this.gradeLevelOption;
+    this.programConfig.medium = this.mediumOption;
+    this.programConfig.subject = this.subjectsOption;
+    data['config'] = this.programConfig;
     data['status'] = 'Live';
 
     this.programsService.updateProgram(data).subscribe(
