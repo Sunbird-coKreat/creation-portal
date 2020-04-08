@@ -164,11 +164,19 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     );
   }
 
-  showTexbooklist (res) {
+  showTexbooklist(res) {
     // tslint:disable-next-line:max-line-length
     const contributorTextbooks = (res.result.content.length && this.nominationDetails.collection_ids) ? _.filter(res.result.content, (collection) => {
-         return _.includes(this.nominationDetails.collection_ids, collection.identifier);
+      return _.includes(this.nominationDetails.collection_ids, collection.identifier);
     }) : [];
+    this.getContentAggregation().subscribe(
+      (aggregations) => {
+        if (aggregations && aggregations.result && aggregations.result.content) {
+          console.log(aggregations);
+        }
+      },
+      (err) => console.log(err)
+    );
     if (!_.isEmpty(contributorTextbooks)) {
       const collectionIds = _.map(contributorTextbooks, 'identifier');
       this.collectionHierarchyService.getCollectionHierarchy(collectionIds)
@@ -199,12 +207,36 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     }
   }
 
+  getContentAggregation() {
+    const option = {
+      url: 'content/composite/v1/search',
+      data: {
+        request: {
+          filters: {
+            objectType: 'content',
+            programId: this.activatedRoute.snapshot.params.programId,
+            status: []
+          },
+          'aggregations': [
+            {
+              'l1': 'collectionId',
+              'l2': 'organisationId',
+              'l3': 'status'
+            }
+          ]
+        }
+      }
+    };
+
+    return this.httpClient.post<any>(option.url, option.data);
+  }
+
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     const deviceId = <HTMLInputElement>document.getElementById('deviceId');
     const telemetryCdata = [{ 'type': 'Program_ID', 'id': this.activatedRoute.snapshot.params.programId }];
-     setTimeout(() => {
+    setTimeout(() => {
       this.telemetryImpression = {
         context: {
           env: this.activeRoute.snapshot.data.telemetry.env,
@@ -223,22 +255,22 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
-     });
+    });
   }
 
   viewContribution(collection) {
     this.component = ChapterListComponent;
     this.sessionContext.programId = this.programDetails.program_id;
-    this.sessionContext.collection =  collection.identifier;
+    this.sessionContext.collection = collection.identifier;
     this.sessionContext.collectionName = collection.name;
     this.dynamicInputs = {
       chapterListComponentInput: {
         sessionContext: this.sessionContext,
         collection: collection,
-        config: _.find(this.programContext.config.components, {'id': 'ng.sunbird.chapterList'}),
+        config: _.find(this.programContext.config.components, { 'id': 'ng.sunbird.chapterList' }),
         programContext: this.programContext,
         role: {
-          currentRole : this.sessionContext.currentRole
+          currentRole: this.sessionContext.currentRole
         }
       }
     };
