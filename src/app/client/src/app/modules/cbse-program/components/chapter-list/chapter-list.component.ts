@@ -1,12 +1,12 @@
 import { Component, OnInit, Input, EventEmitter, Output, OnChanges, OnDestroy, ChangeDetectorRef, AfterViewInit } from '@angular/core';
-import { PublicDataService, UserService, ActionService, RegistryService, ProgramsService } from '@sunbird/core';
+import { PublicDataService, UserService, ActionService } from '@sunbird/core';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService } from '@sunbird/shared';
 import { TelemetryService, IInteractEventEdata , IImpressionEventInput} from '@sunbird/telemetry';
 import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
 import { CbseProgramService } from '../../services';
 import { map, catchError } from 'rxjs/operators';
-import { throwError, forkJoin } from 'rxjs';
+import { throwError } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   IChapterListComponentInput, ISessionContext,
@@ -46,6 +46,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public levelOneChapterList: Array<any> = [];
   public selectedChapterOption: any = {};
   public showResourceTemplatePopup = false;
+  private myOrgId = '';
   public templateDetails;
   public unitIdentifier;
   public collection: any;
@@ -77,7 +78,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public userProfile: any;
   public sampleContent = false;
   public telemetryPageId = 'chapter-list';
-  public orgUsers = [];
   constructor(public publicDataService: PublicDataService, private configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private cbseService: CbseProgramService,
@@ -85,8 +85,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     public programStageService: ProgramStageService, public programComponentsService: ProgramComponentsService,
     public activeRoute: ActivatedRoute, private ref: ChangeDetectorRef,
     private collectionHierarchyService: CollectionHierarchyService, private resourceService: ResourceService,
-    private navigationHelperService: NavigationHelperService,
-    public programService: ProgramsService) {
+    private navigationHelperService: NavigationHelperService) {
   }
 
   ngOnInit() {
@@ -103,6 +102,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.collection = _.get(this.chapterListComponentInput, 'collection');
     this.actions = _.get(this.chapterListComponentInput, 'programContext.config.actions');
     this.sharedContext = _.get(this.chapterListComponentInput, 'programContext.config.sharedContext');
+    this.myOrgId = (this.userService.userRegistryData
+      && this.userService.userProfile.userRegData
+      && this.userService.userProfile.userRegData.User_Org
+      && this.userService.userProfile.userRegData.User_Org.orgId) ? this.userService.userProfile.userRegData.User_Org.orgId : '';
     /**
      * @description : this will fetch question Category configuration based on currently active route
      */
@@ -110,7 +113,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       identifier: 'all',
       name: 'All Chapters'
     });
-    this.orgUsers = this.programService.orgUsers;
     this.selectedChapterOption = 'all';
     this.updateAccordianView();
     // clearing the selected questionId when user comes back from question list
@@ -373,6 +375,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       creator: node.creator,
       createdBy: node.createdBy || null,
       parentId: node.parent || null,
+      organisationId: _.has(node, 'organisationId') ? node.organisationId : null,
       prevStatus: node.prevStatus || null,
       sampleContent: node.sampleContent || null,
       sharedContext: {
@@ -393,9 +396,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   shouldContentBeVisible(content) {
+    console.log(content.organisationId, this.myOrgId, content.organisationId === this.myOrgId);
     const creatorViewRole = this.actions.showCreatorView.roles.includes(this.sessionContext.currentRoleId);
     const reviewerViewRole = this.actions.showReviewerView.roles.includes(this.sessionContext.currentRoleId);
-    const creatorBelongsToMyOrg = this.programService.checkIfUserBelongsToOrg(content.createdBy);
     if (this.userService.userProfile.userRoles.includes('ORG_ADMIN')) {
       if (reviewerViewRole && content.sampleContent === true
         && this.sessionContext.nominationDetails.user_id === content.createdBy) {
@@ -405,7 +408,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       if ((this.sessionContext.nominationDetails.status === 'Approved' || this.sessionContext.nominationDetails.status === 'Rejected')
       && content.sampleContent === true) {
         return false;
-      } else if (reviewerViewRole && content.status === 'Review' && this.currentUserID !== content.createdBy && creatorBelongsToMyOrg) {
+      } else if (reviewerViewRole && content.status === 'Review'
+      && this.currentUserID !== content.createdBy
+      && content.organisationId === this.myOrgId) {
         return true;
       } else if (creatorViewRole && this.currentUserID === content.createdBy) {
         return true;
@@ -441,6 +446,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               'createdBy': this.userService.userid,
               'contentType': this.templateDetails.metadata.contentType,
               'resourceType': this.templateDetails.metadata.resourceType || 'Learn',
+              'collectionId': this.sessionContext.collection,
+              ...(this.sessionContext.nominationDetails &&
+                  this.sessionContext.nominationDetails.organisation_id &&
+                  {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
               'creator': creator,
               'programId': this.sessionContext.programId,
               'sampleContent': this.sampleContent,
