@@ -84,17 +84,10 @@
           </div>
         </div>
       </ng-container>
-
-      <div class="practical-sb-buttons" *ngIf="canNominate()">
-        <div *ngIf="selectedCollectionIds.length === 0"> <button
-            class="sb-btn sb-btn-disabled sb-btn-normal">{{resourceService.frmelmnts.btn.nominate}}</button></div>
-        <div *ngIf="selectedCollectionIds.length > 0">
-          <button class="sb-btn sb-btn-normal sb-btn-primary disabled {{selectedCollectionIds.length > 0 ? 'active' : 'disabled'}}"
-            (click)="showContentTypeModal= true;">{{resourceService.frmelmnts.btn.nominate}}</button>
-            <div class="py-5">
-              {{resourceService.frmelmnts.lbl.nominationMessage}}
-            </div>
-        </div>
+    </div>   
+    <hr class="my-10">
+      <div class="d-inline-block br-2 pr-20">
+        <button type="button" (click)="showContentTypeModal= true;" class="sb-btn sb-btn-normal sb-btn-outline-primary">{{resourceService.frmelmnts.btn.contentTypes}}</button>
       </div>
       <div *ngIf="canNominate()" class="d-inline-block px-20">
           <div *ngIf="selectedCollectionIds.length === 0"> 
@@ -103,6 +96,9 @@
           <div *ngIf="selectedCollectionIds.length > 0">
             <button class="sb-btn sb-btn-normal sb-btn-primary px-40 disabled {{selectedCollectionIds.length > 0 ? 'active' : 'disabled'}}"
               >{{resourceService.frmelmnts.btn.nominate}}</button>
+              <div class="py-5">
+                {{resourceService.frmelmnts.lbl.nominationMessage}}
+              </div>
           </div>  
         </div>
       <div class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-20 va-top">{{resourceService.frmelmnts.lbl.nominationsNote}}</div>
