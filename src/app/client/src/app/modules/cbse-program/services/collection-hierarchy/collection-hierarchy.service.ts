@@ -89,7 +89,9 @@ export class CollectionHierarchyService {
   }
 
   getContentCounts(contents, orgId) {
-    const totalOrgContents = _.filter(contents, content => content.organisationId === orgId);
+    const totalOrgContents = _.filter(contents, content => {
+      return content.organisationId === orgId && content.sampleContent !== true;
+    });
     console.log(totalOrgContents);
     const orgLevelDataWithoutReject = _.groupBy(totalOrgContents, 'status');
     const orgLevelDataWithReject = _.cloneDeep(orgLevelDataWithoutReject);
@@ -100,10 +102,8 @@ export class CollectionHierarchyService {
     orgLevelDataWithReject['Reject'] = _.has(orgLevelDataWithoutReject, 'Draft') ?
       this.getRejectOrDraft(orgLevelDataWithoutReject['Draft'], 'Reject') : [];
 
-    console.log(orgLevelDataWithReject);
     const groupedByCollectionId = _.groupBy(totalOrgContents, 'collectionId');
     const collectionsByStatus = this.groupStatusForCollections(groupedByCollectionId);
-    console.log(collectionsByStatus);
     return {
       total: totalOrgContents && totalOrgContents.length,
       review: _.has(orgLevelDataWithReject, 'Review') ? orgLevelDataWithReject.Review.length : 0,
