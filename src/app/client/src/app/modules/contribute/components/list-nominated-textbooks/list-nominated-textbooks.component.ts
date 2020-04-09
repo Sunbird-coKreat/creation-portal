@@ -23,6 +23,9 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
 
   public contributor;
   public contributorTextbooks: any = [];
+  public tempSortTextbooks = [];
+  public direction = 'asc';
+  public sortColumn = '';
   public noResultFound;
   public telemetryImpression: IImpressionEventInput;
   public component: any;
@@ -95,6 +98,16 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       id: this.userService.appId,
       pid: this.configService.appConfig.TELEMETRY.PID
     };
+  }
+
+  sortCollection(column) {
+    this.contributorTextbooks = this.programsService.sortCollection(this.tempSortTextbooks, column, this.direction);
+    if (this.direction === 'asc' || this.direction === '') {
+      this.direction = 'desc';
+    } else {
+      this.direction = 'asc';
+    }
+    this.sortColumn = column;
   }
 
   getProgramDetails() {

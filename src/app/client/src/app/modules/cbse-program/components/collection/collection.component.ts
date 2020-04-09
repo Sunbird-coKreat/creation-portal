@@ -32,6 +32,9 @@ export class CollectionComponent implements OnInit, OnDestroy {
   public collectionsWithCardImage;
   public role: any = {};
   public collectionList: any = [];
+  public tempSortCollectionList: any = [];
+  public direction = 'asc';
+  public sortColumn = '';
   public mediums;
   public showError = false;
   public classes;
@@ -125,6 +128,16 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.getCollectionCard();
   }
 
+  sortCollection(column) {
+    this.collectionList = this.programsService.sortCollection(this.tempSortCollectionList, column, this.direction);
+    if (this.direction === 'asc' || this.direction === '') {
+      this.direction = 'desc';
+    } else {
+      this.direction = 'asc';
+    }
+    this.sortColumn = column;
+  }
+
   getImplicitFilters(): string[] {
     const sharedContext = this.collectionComponentInput.programContext.config.sharedContext,
     implicitFilter = this.collectionComponentConfig.config.filters.implicit,
@@ -182,6 +195,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
               }
               return content;
             });
+            this.tempSortCollectionList = this.collectionList;
             this.selectedCollectionIds = _.uniq(this.selectedCollectionIds);
             this.toggleNominationButton();
         });
