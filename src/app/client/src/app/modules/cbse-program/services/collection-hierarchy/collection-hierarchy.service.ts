@@ -88,6 +88,60 @@ export class CollectionHierarchyService {
     return forkJoin(hierarchyRequest);
   }
 
+  getContentCounts(contents, orgId) {
+    const totalOrgContents = _.filter(contents, content => content.organisationId === orgId);
+    console.log(totalOrgContents);
+    const orgLevelDataWithoutReject = _.groupBy(totalOrgContents, 'status');
+    const orgLevelDataWithReject = _.cloneDeep(orgLevelDataWithoutReject);
+
+    orgLevelDataWithReject['Draft'] = _.has(orgLevelDataWithoutReject, 'Draft') ?
+      this.getRejectOrDraft(orgLevelDataWithoutReject['Draft'], 'Draft') : [];
+
+    orgLevelDataWithReject['Reject'] = _.has(orgLevelDataWithoutReject, 'Draft') ?
+      this.getRejectOrDraft(orgLevelDataWithoutReject['Draft'], 'Reject') : [];
+
+    console.log(orgLevelDataWithReject);
+    const groupedByCollectionId = _.groupBy(totalOrgContents, 'collectionId');
+    const collectionsByStatus = this.groupStatusForCollections(groupedByCollectionId);
+    console.log(collectionsByStatus);
+    return {
+      total: totalOrgContents && totalOrgContents.length,
+      review: _.has(orgLevelDataWithReject, 'Review') ? orgLevelDataWithReject.Review.length : 0,
+      draft: _.has(orgLevelDataWithReject, 'Draft') ? orgLevelDataWithReject.Draft.length : 0,
+      rejected: _.has(orgLevelDataWithReject, 'Reject') ? orgLevelDataWithReject.Reject.length : 0,
+      live: _.has(orgLevelDataWithReject, 'Live') ? orgLevelDataWithReject.Live.length : 0,
+      individualStatus: collectionsByStatus
+    };
+  }
+
+  getRejectOrDraft(contents, status) {
+    let splitter = [];
+    if (status === 'Draft') {
+      splitter = _.reject(contents, data =>  data.status === 'Draft' && data.prevStatus === 'Review');
+    } else if (status === 'Reject') {
+      splitter = _.filter(contents, data =>  data.status === 'Draft' && data.prevStatus === 'Review');
+    }
+    return splitter;
+  }
+
+  groupStatusForCollections(collections) {
+    const collectionIds = _.keys(collections);
+    const collectionWithoutReject = {};
+    const collectionWithReject = {};
+    _.forEach(collectionIds,  id => {
+      collectionWithoutReject[id] = _.groupBy(collections[id], 'status');
+      collectionWithReject[id] = _.cloneDeep(collectionWithoutReject[id]);
+
+      collectionWithReject[id]['Draft'] = _.has(collectionWithoutReject[id], 'Draft') ?
+        this.getRejectOrDraft(collectionWithoutReject[id]['Draft'], 'Draft') : [];
+
+        collectionWithReject[id]['Reject'] = _.has(collectionWithoutReject[id], 'Draft') ?
+        this.getRejectOrDraft(collectionWithoutReject[id]['Draft'], 'Reject') : [];
+    });
+    return collectionWithReject;
+  }
+
+
   apiErrorHandling(err, errorInfo) {
     this.toasterService.error(_.get(err, 'error.params.errmsg') || errorInfo.errorMsg);
     const telemetryErrorData = {
