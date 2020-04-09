@@ -41,6 +41,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
+  public activeTab = '';
+  nominationTabActive = false;
+  textbookTabActive = true;
 
   /*inputs = {};
   outputs = {
@@ -55,7 +58,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   constructor(public frameworkService: FrameworkService, private tosterService: ToasterService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService,
     private publicDataService: PublicDataService, private activatedRoute: ActivatedRoute, private router: Router,
-    private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService) {
+    private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService,) {
     this.programId = this.activatedRoute.snapshot.params.programId;
   }
 
@@ -70,6 +73,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    this.checkActiveTab();
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     const deviceId = <HTMLInputElement>document.getElementById('deviceId');
@@ -113,7 +117,24 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
       }
     }
 
-    resetStatusFilter() {
+    resetStatusFilter(tab) {
+      this.router.navigate([], { 
+      relativeTo: this.activatedRoute,
+      queryParams: {
+        tab: tab
+      },
+      queryParamsHandling: 'merge'
+      });
+      if(tab == 'textbook')
+        {
+          this.textbookTabActive = true;
+          this.nominationTabActive = false;
+        }
+        else if(tab == 'nomination')
+        {
+          this.textbookTabActive = false;
+          this.nominationTabActive = true;
+        }
       this.filterApplied = null;
       this.selectedStatus = 'All';
       this.nominations = this.tempNominations;
@@ -309,4 +330,23 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
       extra
     }, _.isUndefined);
   }
+
+  checkActiveTab()
+  {
+    this.activatedRoute.queryParamMap
+      .subscribe(params => { 
+        this.activeTab = params.get('tab');
+        if(this.activeTab == null || 'textbook')
+        {
+          this.textbookTabActive = true;
+          this.nominationTabActive = false;
+        }
+        if(this.activeTab == 'nomination')
+        {
+          this.textbookTabActive = false;
+          this.nominationTabActive = true;
+        }
+    });
+  }
+
 }

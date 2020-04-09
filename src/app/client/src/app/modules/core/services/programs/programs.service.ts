@@ -34,7 +34,7 @@ export class ProgramsService extends DataService implements CanActivate {
   baseUrl: string;
   public http: HttpClient;
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
-  public contentTypes: any[];
+  private _contentTypes: any[];
 
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService,
@@ -51,7 +51,7 @@ export class ProgramsService extends DataService implements CanActivate {
    */
   public initialize() {
     this.enableContributeMenu().subscribe();
-    this.getContentTypes().subscribe();
+    this.getAllContentTypes().subscribe();
   }
 
   /**
@@ -474,7 +474,12 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * Get all the content types configured
    */
-  private getContentTypes(): Observable<any[]> {
+
+  get contentTypes() {
+    return _.cloneDeep(this._contentTypes);
+  }
+
+  private getAllContentTypes(): Observable<any[]> {
     const option = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.CONTENTTYPE_LIST}`,
     };
@@ -484,7 +489,7 @@ export class ProgramsService extends DataService implements CanActivate {
       catchError(err => of([]))
     ).pipe(
       tap(contentTypes => {
-        this.contentTypes = contentTypes;
+        this._contentTypes = contentTypes;
       })
     );
   }
@@ -495,7 +500,7 @@ export class ProgramsService extends DataService implements CanActivate {
   getContentTypesName(programContentType) {
     const selectedContentTypes = [];
     _.forEach(programContentType, (contentType) => {
-      const found = _.find(this.contentTypes, (contentTypeObj) => {
+      const found = _.find(this._contentTypes, (contentTypeObj) => {
         return contentTypeObj.value === contentType;
       });
       if (found) {

@@ -68,7 +68,7 @@ export class HelperService {
       url: `content/v3/publish/${contentId}`,
       data: requestBody
     };
-    return this.contentService.post(option);
+    return this.actionService.post(option);
   }
 
   submitRequestChanges(contentId, comment) {

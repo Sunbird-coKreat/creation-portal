@@ -89,7 +89,9 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.sharedContext = this.collectionComponentInput.programContext.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});
-    this.contentType = _.get(this.programContext, 'content_types'),
+    this.contentType = _.filter(this.programsService.contentTypes, (type) => {
+      return _.includes(_.get(this.programContext, 'content_types'), type.value);
+    });
     this.sessionContext = _.assign(this.collectionComponentInput.sessionContext, {
       // currentRole: _.get(this.programContext, 'userDetails.roles[0]'),
       bloomsLevel: _.get(this.programContext, 'config.scope.bloomsLevel'),
@@ -325,13 +327,28 @@ export class CollectionComponent implements OnInit, OnDestroy {
   }
 
   toggle(item: any) {
-    if (_.includes(this.selectedContentTypes, item)) {
+    if (_.includes(this.selectedContentTypes, item.value)) {
       _.remove(this.selectedContentTypes, (data) => {
-        return data === item;
+        return data === item.value;
       });
     } else {
-      this.selectedContentTypes.push(item);
+      this.selectedContentTypes.push(item.value);
     }
+   this.markSelectedContentTypes();
+  }
+
+  markSelectedContentTypes(reset?) {
+    this.contentType = _.map(this.contentType, (type) => {
+      if (_.includes(this.selectedContentTypes, type.value) && !reset) {
+         type['isSelected'] = true;
+      } else {
+        type['isSelected'] = false;
+      }
+      return type;
+  });
+  if (reset) {
+    this.toasterService.error('Content Type Selection is Mandatory for Nomaination');
+  }
   }
 
   uploadSample(event, collection) {
@@ -430,7 +447,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     });
   }
 
-  expressInterest() {
+  expressInterest(apiCall) {
     const userProfile = this.userService.userProfile;
     const req = {
       url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_ADD}`,
@@ -439,9 +456,13 @@ export class CollectionComponent implements OnInit, OnDestroy {
           program_id: this.activatedRoute.snapshot.params.programId,
           user_id: this.userService.userProfile.userId,
           status: 'Initiated',
+          content_types: this.selectedContentTypes || null
         }
       }
     };
+    if (apiCall === 'update') {
+      req['url'] = `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_UPDATE}`;
+    }
     if (userProfile.userRegData && userProfile.userRegData.User_Org) {
       req.data.request['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
     }
@@ -469,6 +490,8 @@ export class CollectionComponent implements OnInit, OnDestroy {
       if (data.result && !_.isEmpty(data.result)) {
           this.currentNominationStatus =  _.get(_.first(data.result), 'status');
           this.sessionContext.nominationDetails = _.first(data.result);
+          this.selectedContentTypes = this.sessionContext.nominationDetails.content_types || [];
+          this.markSelectedContentTypes();
       }
       if (this.userProfile.userRegData && this.userProfile.userRegData.User_Org) {
         this.sessionContext.currentOrgRole = this.userProfile.userRegData.User_Org.roles[0];
@@ -503,16 +526,18 @@ export class CollectionComponent implements OnInit, OnDestroy {
   }
 
   uploadSampleContent(event, collection) {
+    let apiCall = 'add';
     if (this.sessionContext.nominationDetails) {
-      this.gotoChapterView(collection);
-    } else {
-      this.expressInterest().subscribe((data) => {
+      apiCall = 'update';
+    }
+      this.expressInterest(apiCall).subscribe((data) => {
         if (data.result && !_.isEmpty(data.result)) {
           this.sessionContext.nominationDetails = {
             osid: data.result.id,
             status: 'Initiated',
             program_id: data.result.program_id,
-            user_id: data.result.user_id
+            user_id: data.result.user_id,
+            content_types: this.selectedContentTypes
           };
           if (this.userService.userProfile.userRegData &&
             this.userService.userProfile.userRegData.User_Org) {
@@ -523,7 +548,6 @@ export class CollectionComponent implements OnInit, OnDestroy {
       }, error => {
         this.toasterService.error('User onboarding failed');
       });
-    }
   }
 
   gotoChapterView(collection) {

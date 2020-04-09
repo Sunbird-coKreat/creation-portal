@@ -46,6 +46,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public levelOneChapterList: Array<any> = [];
   public selectedChapterOption: any = {};
   public showResourceTemplatePopup = false;
+  private myOrgId = '';
   public templateDetails;
   public unitIdentifier;
   public collection: any;
@@ -101,6 +102,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.collection = _.get(this.chapterListComponentInput, 'collection');
     this.actions = _.get(this.chapterListComponentInput, 'programContext.config.actions');
     this.sharedContext = _.get(this.chapterListComponentInput, 'programContext.config.sharedContext');
+    this.myOrgId = (this.userService.userRegistryData
+      && this.userService.userProfile.userRegData
+      && this.userService.userProfile.userRegData.User_Org
+      && this.userService.userProfile.userRegData.User_Org.orgId) ? this.userService.userProfile.userRegData.User_Org.orgId : '';
     /**
      * @description : this will fetch question Category configuration based on currently active route
      */
@@ -108,7 +113,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       identifier: 'all',
       name: 'All Chapters'
     });
-
     this.selectedChapterOption = 'all';
     this.updateAccordianView();
     // clearing the selected questionId when user comes back from question list
@@ -120,7 +124,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       }
     };
   }
-
 
   ngOnChanges(changed: any) {
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
@@ -197,6 +200,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       }
     };
   }
+
   changeView() {
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage = _.last(this.state.stages).stage;
@@ -371,6 +375,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       creator: node.creator,
       createdBy: node.createdBy || null,
       parentId: node.parent || null,
+      organisationId: _.has(node, 'organisationId') ? node.organisationId : null,
       prevStatus: node.prevStatus || null,
       sampleContent: node.sampleContent || null,
       sharedContext: {
@@ -390,8 +395,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     return _.isEmpty(leafNodes) ? null : leafNodes;
   }
 
-
-
   shouldContentBeVisible(content) {
     const creatorViewRole = this.actions.showCreatorView.roles.includes(this.sessionContext.currentRoleId);
     const reviewerViewRole = this.actions.showReviewerView.roles.includes(this.sessionContext.currentRoleId);
@@ -404,7 +407,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       if ((this.sessionContext.nominationDetails.status === 'Approved' || this.sessionContext.nominationDetails.status === 'Rejected')
       && content.sampleContent === true) {
         return false;
-      } else if (reviewerViewRole && content.status === 'Review' && this.currentUserID !== content.createdBy) {
+      } else if (reviewerViewRole && content.status === 'Review'
+      && this.currentUserID !== content.createdBy
+      && content.organisationId === this.myOrgId) {
         return true;
       } else if (creatorViewRole && this.currentUserID === content.createdBy) {
         return true;
@@ -442,6 +447,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               'resourceType': this.templateDetails.metadata.resourceType || 'Learn',
               'creator': creator,
               'programId': this.sessionContext.programId,
+              'collectionId': this.sessionContext.collection,
+              ...(this.sessionContext.nominationDetails &&
+                this.sessionContext.nominationDetails.organisation_id &&
+                {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
               'sampleContent': this.sampleContent,
               ...(_.pickBy(reqBody, _.identity))
             }
@@ -488,7 +497,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.programStageService.addStage(componentName);
   }
 
-
   showResourceTemplate(event) {
     this.unitIdentifier = event.collection.identifier;
     this.selectedSharedContext = event.collection.sharedContext;
@@ -521,9 +529,19 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         this.showResourceTemplatePopup = event.showPopup;
         break;
     }
+    this.resourceTemplateInputData();
+  }
+
+  resourceTemplateInputData() {
+    let contentTypes = _.get(this.chapterListComponentInput.config, 'config.contentTypes.value')
+    || _.get(this.chapterListComponentInput.config, 'config.contentTypes.defaultValue');
+    if (this.sessionContext.nominationDetails.content_types) {
+       contentTypes = _.filter(contentTypes, (obj) => {
+        return _.includes(this.sessionContext.nominationDetails.content_types, obj.metadata.contentType);
+       });
+    }
     this.resourceTemplateComponentInput = {
-      templateList: _.get(this.chapterListComponentInput.config, 'config.contentTypes.value')
-        || _.get(this.chapterListComponentInput.config, 'config.contentTypes.defaultValue'),
+        templateList: contentTypes,
         programContext: this.programContext,
         sessionContext: this.sessionContext,
         unitIdentifier: this.unitIdentifier
