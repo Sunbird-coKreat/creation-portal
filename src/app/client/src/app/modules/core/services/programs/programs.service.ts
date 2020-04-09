@@ -525,11 +525,9 @@ export class ProgramsService extends DataService implements CanActivate {
    let bColumn = b[column];
    if (_.isArray(aColumn)) {
      aColumn = _.join(aColumn, ', ');
-     a[column] = alphaNumSort(aColumn);
    }
    if (_.isArray(bColumn)) {
      bColumn = _.join(bColumn, ', ');
-     b[column] = alphaNumSort(bColumn);
    }
    return bColumn.localeCompare(aColumn);
   }
