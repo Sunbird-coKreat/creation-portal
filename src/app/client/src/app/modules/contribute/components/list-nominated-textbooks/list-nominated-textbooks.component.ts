@@ -52,6 +52,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     stages: []
   };
   public contributorOrgUser: any = [];
+  public tempSortOrgUser: any = [];
   public orgDetails: any = {};
   public roles;
   public selectedRole;
@@ -63,6 +64,9 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public contentStatusCounts: any = {};
   public chapterCount = 0;
   public programContentTypes: string;
+  public directionOrgUsers = 'asc';
+  public sortColumnOrgUsers = '';
+
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private configService: ConfigService, private publicDataService: PublicDataService,
   private activatedRoute: ActivatedRoute, private router: Router, public programStageService: ProgramStageService,
@@ -301,6 +305,15 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     });
   }
 
+  sortOrgUsers(column) {
+    this.contributorOrgUser = this.programsService.sortCollection(this.tempSortOrgUser, column, this.directionOrgUsers);
+    if (this.directionOrgUsers === 'asc' || this.directionOrgUsers === '') {
+      this.directionOrgUsers = 'desc';
+    } else {
+      this.directionOrgUsers = 'asc';
+    }
+    this.sortColumnOrgUsers = column;
+  }
 
   getNominationStatus() {
     const req = {
@@ -392,6 +405,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
                     this.contributorOrgUser.push(r.result.User);
                   }
                 });
+                this.tempSortOrgUser = this.contributorOrgUser;
               }
             }, error => {
               console.log(error);
