@@ -42,16 +42,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
   public activeTab = '';
-
-  /*inputs = {};
-  outputs = {
-    approve: (nomination) => {
-      this.tosterService.success('Nomination accepted for - ' + nomination.contributor_name);
-    },
-    reject: (nomination) => {
-      this.tosterService.warning('Nomination rejected for - ' + nomination.contributor_name);
-    },
-  };*/
+  public direction = 'asc';
+  public sortColumn = '';
 
   constructor(public frameworkService: FrameworkService, private tosterService: ToasterService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService,
@@ -99,35 +91,47 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   }
 
   onStatusChange(status) {
-      if (this.selectedStatus !== status) {
-        this.selectedStatus = status;
-        if (status === 'All') {
-          this.filterApplied = false;
-          this.nominations = this.tempNominations;
-          this.nominationsCount = this.tempNominationsCount;
-        } else {
-          this.filterApplied = true;
-          this.nominations = _.filter(this.tempNominations, (o) => {
-           return o.nominationData.status === status;
-          });
-          this.nominationsCount = this.nominations.length;
-        }
+    if (this.selectedStatus !== status) {
+      this.selectedStatus = status;
+      if (status === 'All') {
+        this.filterApplied = false;
+        this.nominations = this.tempNominations;
+        this.nominationsCount = this.tempNominationsCount;
+      } else {
+        this.filterApplied = true;
+        this.nominations = _.filter(this.tempNominations, (o) => {
+          return o.nominationData.status === status;
+        });
+        this.nominationsCount = this.nominations.length;
       }
     }
+  }
 
-    resetStatusFilter(tab) {
-      this.router.navigate([], {
-      relativeTo: this.activatedRoute,
-        queryParams: {
-          tab: tab
-        },
-        queryParamsHandling: 'merge'
-      });
-      this.filterApplied = null;
-      this.selectedStatus = 'All';
-      this.nominations = this.tempNominations;
-      this.nominationsCount = this.tempNominationsCount;
+  resetStatusFilter(tab) {
+    this.router.navigate([], {
+    relativeTo: this.activatedRoute,
+    queryParams: {
+      tab: tab
+    },
+    queryParamsHandling: 'merge'
+    });
+    this.filterApplied = null;
+    this.selectedStatus = 'All';
+    this.sortColumn = '';
+    this.direction = 'asc';
+    this.nominations = this.tempNominations;
+    this.nominationsCount = this.tempNominationsCount;
+  }
+
+  sortCollection(column) {
+    this.nominations = this.programsService.sortCollection(this.nominations, column, this.direction);
+    if (this.direction === 'asc' || this.direction === '') {
+      this.direction = 'desc';
+    } else {
+      this.direction = 'asc';
     }
+    this.sortColumn = column;
+  }
 
   getNominationList() {
     const req = {
@@ -136,7 +140,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
         request: {
           filters: {
             program_id: this.activatedRoute.snapshot.params.programId,
-            status: ["Pending", "Approved", "Rejected"]
+            status: ['Pending', 'Approved', 'Rejected']
           }
         }
       }
@@ -164,17 +168,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
       this.nominationsCount = this.nominations.length;
       this.tempNominations = this.nominations;
       this.tempNominationsCount = this.nominationsCount;
-      /*this.inputs = {
-        nominations: this.nominations,
-        nominationsCount: this.nominations.length
-      };*/
       this.showNominationsComponent = true;
     }, error => {
       this.tosterService.error('User onboarding failed');
     });
   }
 
-  private getNominatedTextbooksCount(nomination) {
+  getNominatedTextbooksCount(nomination) {
     let count;
     if (nomination.nominationData) {
       count = nomination.nominationData.collection_ids ? nomination.nominationData.collection_ids.length : 0;
@@ -250,7 +250,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
         request: {
           filters: {
             program_id: this.programId,
-            status: ["Pending", "Approved", "Rejected"]
+            status: ['Pending', 'Approved', 'Rejected']
           },
           facets: ['program_id', 'status']
         }

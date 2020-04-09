@@ -144,13 +144,25 @@
                                     class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
                                     <thead class="sb-table-header sb-table-thead-gray">
                                         <tr>
-                                            <th class="w-15">{{ resourceService?.frmelmnts?.lbl?.contributorName }}<i class="fa fa-sort ml-4" aria-hidden="true"></i>
+                                            <th class="w-15 cursor-pointer sb-sorting" (click)="sortCollection('name')">{{ resourceService?.frmelmnts?.lbl?.contributorName }} &nbsp;&nbsp; 
+                                                <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>
+                                                <span  *ngIf="sortColumn == 'name'" class="d-inline-block">
+                                                    <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+                                                    <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+                                                </span>
                                             </th>
-                                            <th class="w-10">{{ resourceService?.frmelmnts?.lbl?.type }} <i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-                                            <th class="w-10">{{ resourceService?.frmelmnts?.lbl?.textbooks }} <i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+                                            <th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('type')">{{ resourceService?.frmelmnts?.lbl?.type }} &nbsp;&nbsp; 
+                                                <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'type' "></i>
+                                                <span  *ngIf="sortColumn == 'type'" class="d-inline-block">
+                                                    <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+                                                    <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+                                                </span>
+                                            </th>
+                                            <th class="w-10">{{ resourceService?.frmelmnts?.lbl?.textbooks }}</th>
                                             <th class="w-5">
                                                 <span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
                                                     <div class="text">{{ resourceService?.frmelmnts?.lbl?.status }}</div>
+                                                    &nbsp;&nbsp;
                                                     <i class="filter icon"></i>
                                                     <div class="menu" suiDropdownMenu>
                                                         <div class="item" (click)="onStatusChange('All')" [class.selected]="selectedStatus === 'All'">{{ resourceService?.frmelmnts?.lbl?.allStatus }}</div>
