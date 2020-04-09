@@ -228,6 +228,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
               'contentType': this.templateDetails.metadata.contentType,
               'resourceType': this.templateDetails.metadata.resourceType || 'Learn',
               'creator': creator,
+              'collectionId': this.sessionContext.collection,
+              ...(this.sessionContext.nominationDetails &&
+                this.sessionContext.nominationDetails.organisation_id &&
+                {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
+              'programId': this.sessionContext.programId,
               ...(_.pickBy(reqBody, _.identity))
               // 'framework': this.sessionContext.framework,
               // 'organisation': this.sessionContext.onBoardSchool ? [this.sessionContext.onBoardSchool] : [],
