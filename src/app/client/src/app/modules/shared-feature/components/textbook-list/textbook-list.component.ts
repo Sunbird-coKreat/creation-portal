@@ -27,14 +27,15 @@ export class TextbookListComponent implements OnInit {
   public filters;
   public apiUrl;
   public chapterCount = 0;
+  public direction = 'asc';
+  public sortColumn = '';
+  public tempSortcollections: Array<any> = [];
 
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
     public toasterService: ToasterService, public resource: ResourceService,
     public actionService: ActionService
-  ) {
-
-  }
+  ) { }
 
   ngOnInit(): void {
     this.programId = this.activatedRoute.snapshot.params.programId;
@@ -96,6 +97,16 @@ export class TextbookListComponent implements OnInit {
 
   }
 
+  sortCollection(column) {
+    this.collections =  this.programsService.sortCollection(this.tempSortcollections, column, this.direction);
+    if (this.direction === 'asc' || this.direction === '') {
+      this.direction = 'desc';
+    } else {
+      this.direction = 'asc';
+    }
+    this.sortColumn = column;
+  }
+
   showTexbooklist (data) {
     if (!_.isEmpty(data)) {
       const collectionIds = _.map(data, 'identifier');
@@ -119,6 +130,7 @@ export class TextbookListComponent implements OnInit {
             content.chapterCount = contentWithHierarchy.chapterCount;
             return content;
           });
+          this.tempSortcollections = this.collections;
         });
     }
   }

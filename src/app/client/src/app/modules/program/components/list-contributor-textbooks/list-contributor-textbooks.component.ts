@@ -23,6 +23,7 @@ import { throwError, forkJoin } from 'rxjs';
 export class ListContributorTextbooksComponent implements OnInit, AfterViewInit, OnDestroy {
   public contributor;
   public contributorTextbooks;
+  public tempSortTextbooks = [];
   public nominatedContentTypes: string;
   public noResultFound;
   public telemetryImpression: IImpressionEventInput;
@@ -43,6 +44,8 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   public mediums: any;
   public roles;
   public grades: any;
+  public direction = 'asc';
+  public sortColumn = '';
   public state: InitialState = {
     stages: []
   };
@@ -103,6 +106,17 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
   }
+
+  sortCollection(column) {
+    this.contributorTextbooks = this.programsService.sortCollection(this.tempSortTextbooks, column, this.direction);
+    if (this.direction === 'asc' || this.direction === '') {
+      this.direction = 'desc';
+    } else {
+      this.direction = 'asc';
+    }
+    this.sortColumn = column;
+  }
+
   public fetchFrameWorkDetails() {
     this.frameworkService.initialize(this.sessionContext.framework);
     this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
@@ -208,9 +222,11 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
             content.sampleContentCount = contentWithHierarchy.sampleContentCount;
             return content;
           });
+          this.tempSortTextbooks = this.contributorTextbooks;
         });
     } else {
       this.contributorTextbooks = contributorTextbooks;
+      this.tempSortTextbooks = contributorTextbooks;
     }
   }
   getSampleContentStatusCount(data) {
