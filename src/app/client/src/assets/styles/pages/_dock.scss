@@ -151,3 +151,23 @@
       margin-top: -16px;
   }
 }
+.sb-upload-btn{
+    text-align: left;
+    padding: 0.9rem 1rem 1rem 0 !important;
+    border-radius: .28571429rem !important;
+    outline: 0 !important;
+    .sb-upload-label{
+        background: var(--primary-800);
+        color:  var(--white);
+        vertical-align: top;
+        padding: 0.5rem 0.9rem;
+        line-height: 1px;
+        border-top-left-radius: .28571429rem;
+        border-bottom-left-radius: .28571429rem;
+    }
+    .sb-url{
+        vertical-align: text-top;
+        line-height: 0.3rem;
+        padding-left: 0.6rem;
+    }
+}

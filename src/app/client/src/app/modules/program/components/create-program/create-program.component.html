@@ -179,16 +179,16 @@
 									<label class="d-block">{{resource.frmelmnts.lbl.uploadGuideline}}
 									</label>
 									<button
-										class="sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius"
+										class="sb-btn sb-btn-outline-primary sb-upload-btn sb-btn-xs sb-left-icon-btn sb-btn-radius w-100"
 										(click)="initiateDocumentUploadModal()">
-										<i class="add icon mr-4"></i>{{ resource.frmelmnts.btn.upload}}
+										<span class="sb-upload-label"><i class="upload icon px-4 va-top"></i>{{ resource.frmelmnts.btn.upload}}</span>
+										<span *ngIf="uploadedDocument" class="sb-url">
+											<a href="{{uploadedDocument}}" class="text-decor-none" target="_blank">
+												{{uploadedDocument | slice:0:70}}
+												<span class="blue-text-color-sunbird" *ngIf="uploadedDocument && uploadedDocument.length > 70">...</span>
+											  </a>
+										</span>
 									</button>
-									<div *ngIf="uploadedDocument">
-										<a class="ann-link-or-attachment" href="{{uploadedDocument}}" target="_blank">
-											{{uploadedDocument | slice:0:70}}
-											<span class="blue-text-color-sunbird" *ngIf="uploadedDocument && uploadedDocument.length > 70">...</span>
-										  </a>
-									</div>
 								</div>
 							</div>
 							<div class="twelve wide column">
