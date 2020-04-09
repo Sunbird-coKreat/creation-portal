@@ -444,8 +444,10 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     return !!(this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.organisation_id);
   }
 
-  isUserOrg() {
-    return !!(this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org);
+  isUserOrgAdmin() {
+    return !!(this.userService.userProfile.userRegData &&
+      this.userService.userProfile.userRegData.User_Org &&
+      this.userService.userProfile.userRegData.User_Org.roles.includes('admin'));
   }
 
   ngOnDestroy() {
