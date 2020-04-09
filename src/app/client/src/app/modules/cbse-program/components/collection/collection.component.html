@@ -118,12 +118,40 @@
         <table class="sb-table sb-table-striped sb-table-sortable sb-table-fixed">
           <thead class="sb-table-header sb-table-thead-gray">
             <tr>
-              <th class="w-5">{{resourceService.frmelmnts.lbl.textbook}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-              <th class="w-5">{{resourceService.frmelmnts.lbl.profile.Medium}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-              <th class="w-5">{{resourceService.frmelmnts.lbl.class}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-              <th class="w-5">{{resourceService.frmelmnts.lbl.subject}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-              <th class="w-5">{{resourceService.frmelmnts.lbl.chapters}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-              <th class="w-5" *ngIf="currentNominationStatus === 'Initiated' || currentNominationStatus=== 'Pending'">Sample Content<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+              <th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('name')">
+                {{resourceService.frmelmnts.lbl.textbook}} &nbsp;&nbsp;
+								<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>
+								<span  *ngIf="sortColumn == 'name'" class="d-inline-block">
+									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+								</span>
+              </th>
+              <th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('medium')">
+                {{resourceService.frmelmnts.lbl.medium}} &nbsp;&nbsp;
+								<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'medium' "></i>
+								<span  *ngIf="sortColumn == 'medium'" class="d-inline-block">
+									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+								</span>
+              </th>
+							<th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('gradeLevel')">
+								{{resourceService.frmelmnts.lbl.class}} &nbsp;&nbsp;
+								<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'gradeLevel' "></i>
+								<span  *ngIf="sortColumn == 'gradeLevel'" class="d-inline-block">
+									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+								</span>
+							</th>
+							<th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('subject')">
+								{{resourceService.frmelmnts.lbl.subjects}} &nbsp;&nbsp;
+								<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'subject' "></i>
+								<span  *ngIf="sortColumn == 'subject'" class="d-inline-block">
+									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+								</span>
+							</th>
+              <th class="w-5">{{resourceService.frmelmnts.lbl.chapters}}</th>
+              <th class="w-5" *ngIf="currentNominationStatus === 'Initiated' || currentNominationStatus=== 'Pending'">Sample Content</th>
               <th class="w-5"></th>
             </tr>
           </thead>
@@ -135,10 +163,10 @@
                 </div>
               </td>
               <td>
-                <div suiPopup popupHeader="Grades" popupText="{{data.gradeLevel}}">{{data.gradeLevel}}</div>
+                <div class="sb__ellipsis">{{data.medium}}</div>
               </td>
               <td>
-                <div class="sb__ellipsis">{{data.medium}}</div>
+                <div suiPopup popupHeader="Grades" popupText="{{data.gradeLevel}}">{{data.gradeLevel}}</div>
               </td>
               <td>
                 <div class="sb__ellipsis">{{data.subject}}</div>
