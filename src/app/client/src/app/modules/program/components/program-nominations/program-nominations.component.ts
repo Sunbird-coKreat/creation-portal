@@ -42,8 +42,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
   public activeTab = '';
-  nominationTabActive = false;
-  textbookTabActive = true;
 
   /*inputs = {};
   outputs = {
@@ -70,10 +68,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
     this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program_ID'}];
   this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
   this.telemetryInteractObject = {};
+  this.checkActiveTab();
   }
 
   ngAfterViewInit() {
-    this.checkActiveTab();
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     const deviceId = <HTMLInputElement>document.getElementById('deviceId');
@@ -118,23 +116,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
     }
 
     resetStatusFilter(tab) {
-      this.router.navigate([], { 
+      this.router.navigate([], {
       relativeTo: this.activatedRoute,
-      queryParams: {
-        tab: tab
-      },
-      queryParamsHandling: 'merge'
+        queryParams: {
+          tab: tab
+        },
+        queryParamsHandling: 'merge'
       });
-      if(tab == 'textbook')
-        {
-          this.textbookTabActive = true;
-          this.nominationTabActive = false;
-        }
-        else if(tab == 'nomination')
-        {
-          this.textbookTabActive = false;
-          this.nominationTabActive = true;
-        }
       this.filterApplied = null;
       this.selectedStatus = 'All';
       this.nominations = this.tempNominations;
@@ -331,21 +319,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
     }, _.isUndefined);
   }
 
-  checkActiveTab()
-  {
+  checkActiveTab() {
     this.activatedRoute.queryParamMap
-      .subscribe(params => { 
-        this.activeTab = params.get('tab');
-        if(this.activeTab == null || 'textbook')
-        {
-          this.textbookTabActive = true;
-          this.nominationTabActive = false;
-        }
-        if(this.activeTab == 'nomination')
-        {
-          this.textbookTabActive = false;
-          this.nominationTabActive = true;
-        }
+      .subscribe(params => {
+        this.activeTab = !_.isEmpty(params.get('tab')) ? params.get('tab') : 'textbook';
     });
   }
 
