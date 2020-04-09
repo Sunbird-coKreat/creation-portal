@@ -185,7 +185,7 @@
 									</button>
 									<span *ngIf="uploadedDocument" class="sb-url">
 										<a href="{{uploadedDocument.artifactUrl}}" class="text-decor-none sb__ellipsis sb__ellipsis--breakAll" target="_blank">
-											{{uploadedDocument.name | slice:0:70}}
+											{{uploadedDocument.name}}
 											<span class="blue-text-color-sunbird" *ngIf="uploadedDocument.name && uploadedDocument.name.length > 70">...</span>
 										</a>
 									</span>
