@@ -338,25 +338,49 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   getContentStatusCount(data) {
     const self = this;
-    // tslint:disable-next-line:max-line-length
-    if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit') && (!data.sampleContent || data.sampleContent === undefined)) {
-      this.countData['total'] = this.countData['total'] + 1;
-      if (data.createdBy === this.currentUserID && data.status === 'Review') {
-        this.countData['review'] = this.countData['review'] + 1;
+    if (this.sessionContext.currentOrgRole === 'admin' ||
+    (this.sessionContext.currentOrgRole === 'user' && this.sessionContext.currentRole === 'REVIEWER')) {
+      // tslint:disable-next-line:max-line-length
+      if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' && this.myOrgId === data.organisationId)  && (!data.sampleContent || data.sampleContent === undefined)) {
+        this.countData['total'] = this.countData['total'] + 1;
+        if (data.createdBy === this.currentUserID && data.status === 'Review') {
+          this.countData['review'] = this.countData['review'] + 1;
+        }
+        if (data.createdBy === this.currentUserID && data.status === 'Draft' && data.prevStatus === 'Review') {
+          this.countData['reject'] = this.countData['reject'] + 1;
+        }
+        if (data.createdBy === this.currentUserID) {
+          this.countData['mycontribution'] = this.countData['mycontribution'] + 1;
+        }
+        if (data.status === 'Review') {
+          this.countData['totalreview'] = this.countData['totalreview'] + 1;
+        }
+        if (data.createdBy !== this.currentUserID && data.status === 'Review') {
+          this.countData['awaitingreview'] = this.countData['awaitingreview'] + 1;
+        }
       }
-      if (data.createdBy === this.currentUserID && data.status === 'Draft' && data.prevStatus === 'Review') {
-        this.countData['reject'] = this.countData['reject'] + 1;
-      }
-      if (data.createdBy === this.currentUserID) {
-        this.countData['mycontribution'] = this.countData['mycontribution'] + 1;
-      }
-      if (data.status === 'Review') {
-        this.countData['totalreview'] = this.countData['totalreview'] + 1;
-      }
-      if (data.createdBy !== this.currentUserID && data.status === 'Review') {
-        this.countData['awaitingreview'] = this.countData['awaitingreview'] + 1;
+    } else {
+      // tslint:disable-next-line:max-line-length
+      if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit')  && (!data.sampleContent || data.sampleContent === undefined)) {
+        this.countData['total'] = this.countData['total'] + 1;
+        if (data.createdBy === this.currentUserID && data.status === 'Review') {
+          this.countData['review'] = this.countData['review'] + 1;
+        }
+        if (data.createdBy === this.currentUserID && data.status === 'Draft' && data.prevStatus === 'Review') {
+          this.countData['reject'] = this.countData['reject'] + 1;
+        }
+        if (data.createdBy === this.currentUserID) {
+          this.countData['mycontribution'] = this.countData['mycontribution'] + 1;
+        }
+        if (data.status === 'Review') {
+          this.countData['totalreview'] = this.countData['totalreview'] + 1;
+        }
+        if (data.createdBy !== this.currentUserID && data.status === 'Review') {
+          this.countData['awaitingreview'] = this.countData['awaitingreview'] + 1;
+        }
       }
     }
+
     const childData = data.children;
     if (childData) {
       childData.map(child => {
