@@ -555,4 +555,7 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     });
   }
+  onRouteActivate() {
+    window.scrollTo(0, 0);
+  }
 }
