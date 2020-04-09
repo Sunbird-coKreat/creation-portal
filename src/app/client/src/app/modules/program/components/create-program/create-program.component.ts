@@ -621,7 +621,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programData['default_roles'] = ['CONTRIBUTOR'];
       this.programData['enddate'] = this.programData.program_end_date;
       this.programData['config'] = this.programConfig;
-      this.programData['guidelines_url'] = this.uploadedDocument.artifactUrl;
+      this.programData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : '';
       delete this.programData.gradeLevel;
       delete this.programData.medium;
       delete this.programData.subject;
