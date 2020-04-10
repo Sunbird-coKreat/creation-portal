@@ -75,9 +75,9 @@ export class CollectionComponent implements OnInit, OnDestroy {
     public utilService: UtilService, public contentService: ContentService,
     private activatedRoute: ActivatedRoute, private router: Router, public learnerService: LearnerService,
     private programsService: ProgramsService, private toasterService: ToasterService) {
-     }
+    }
 
-  ngOnInit() {
+    ngOnInit() {
     this.programStageService.initialize();
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
@@ -269,7 +269,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
       this.getNominationStatus();
       this.getCollectionCard();
     }
-   }
+  }
 
   searchCollection() {
     const req = {
@@ -359,10 +359,21 @@ export class CollectionComponent implements OnInit, OnDestroy {
         type['isSelected'] = false;
       }
       return type;
-  });
-  if (reset) {
-    this.toasterService.error('Content Type Selection is Mandatory for Nomaination');
+    });
   }
+
+  onContentTypeModalApproved() {
+    if (this.selectedContentTypes.length) {
+      this.toasterService.success(this.resourceService.messages.smsg.nomination.m001);
+    }
+    this.showContentTypeModal = false;
+  }
+
+  onContentTypeModalDenied() {
+    this.selectedContentTypes = [];
+    this.markSelectedContentTypes('reset');
+    this.toasterService.error(this.resourceService.messages.emsg.nomination.m001);
+    this.showContentTypeModal = false;
   }
 
   uploadSample(event, collection) {
