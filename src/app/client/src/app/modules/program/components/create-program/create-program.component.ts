@@ -88,7 +88,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public tempSortCollections = [];
   public filterApplied = false;
   public showDocumentUploader = false;
-  uploadedDocument = '';
+  uploadedDocument;
   showAddButton = false;
   loading = false;
   isClosable = true;
@@ -275,9 +275,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     })).subscribe(res => {
       this.toasterService.success('Document Successfully Uploaded...');
       this.showAddButton = true;
-      this.uploadedDocument = res.artifactUrl;
+      this.uploadedDocument = res;
       this.showDocumentUploader = false;
-      console.log(res);
     });
   }
 
@@ -619,10 +618,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programData['slug'] = 'sunbird';
       this.programData['type'] = 'public',
 
-        this.programData['default_roles'] = ['CONTRIBUTOR'];
+      this.programData['default_roles'] = ['CONTRIBUTOR'];
       this.programData['enddate'] = this.programData.program_end_date;
       this.programData['config'] = this.programConfig;
-      this.programData['guidelines_url'] = this.uploadedDocument;
+      this.programData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : '';
       delete this.programData.gradeLevel;
       delete this.programData.medium;
       delete this.programData.subject;

@@ -112,7 +112,7 @@
         <sui-tabset>
             <div class="ui pointing secondary menu sb-bg-color-primary-100">
                 <div class="ui container p-0 m-0 d-flex flex-ai-center flex-jc-center">
-                    <a class="item active" suiTabHeader="1" (click)="resetStatusFilter()"
+                    <a class="item" [isActive]="activeTab === 'textbook'"  suiTabHeader="2"  (click)="resetStatusFilter('textbook')"
                     appTelemetryInteract
                                         [telemetryInteractEdata]="getTelemetryInteractEdata('program-linked-textbooks', 'click', 'program-nominations')"
                                         [telemetryInteractObject]="telemetryInteractObject"
@@ -120,7 +120,7 @@
                                         [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.textbooks }}
                         <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ collectionsCount }}</span>
                     </a>
-                    <a class="item" suiTabHeader="2" (click)="resetStatusFilter()"
+                    <a class="item" [isActive]="activeTab === 'nomination'"  suiTabHeader="1"  (click)="resetStatusFilter('nomination')"
                     appTelemetryInteract
                                         [telemetryInteractEdata]="getTelemetryInteractEdata('nominations', 'click', 'program-nominations')"
                                         [telemetryInteractObject]="telemetryInteractObject"
@@ -130,12 +130,12 @@
                     </a>
                 </div>
             </div>
-            <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" isActive='true' suiTabContent="1">
+            <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="2">
                 <div class="ui container p-0 m-0">
                     <app-textbook-list></app-textbook-list>
                 </div>
             </div>
-            <div class="ui segment  p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="2">
+            <div class="ui segment  p-0 m-0 mt-4 sb-bg-color-white dynamicHeight"  suiTabContent="1">
                 <div class="ui container p-0 m-0">
                     <div class="sb-pageSection">
                         <div class="sb-bg-color-white pt-32">
@@ -144,13 +144,25 @@
                                     class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
                                     <thead class="sb-table-header sb-table-thead-gray">
                                         <tr>
-                                            <th class="w-15">{{ resourceService?.frmelmnts?.lbl?.contributorName }}<i class="fa fa-sort ml-4" aria-hidden="true"></i>
+                                            <th class="w-15 cursor-pointer sb-sorting" (click)="sortCollection('name')">{{ resourceService?.frmelmnts?.lbl?.contributorName }} &nbsp;&nbsp; 
+                                                <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>
+                                                <span  *ngIf="sortColumn == 'name'" class="d-inline-block">
+                                                    <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+                                                    <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+                                                </span>
                                             </th>
-                                            <th class="w-10">{{ resourceService?.frmelmnts?.lbl?.type }} <i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-                                            <th class="w-10">{{ resourceService?.frmelmnts?.lbl?.textbooks }} <i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+                                            <th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('type')">{{ resourceService?.frmelmnts?.lbl?.type }} &nbsp;&nbsp; 
+                                                <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'type' "></i>
+                                                <span  *ngIf="sortColumn == 'type'" class="d-inline-block">
+                                                    <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+                                                    <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+                                                </span>
+                                            </th>
+                                            <th class="w-10">{{ resourceService?.frmelmnts?.lbl?.textbooks }}</th>
                                             <th class="w-5">
                                                 <span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
                                                     <div class="text">{{ resourceService?.frmelmnts?.lbl?.status }}</div>
+                                                    &nbsp;&nbsp;
                                                     <i class="filter icon"></i>
                                                     <div class="menu" suiDropdownMenu>
                                                         <div class="item" (click)="onStatusChange('All')" [class.selected]="selectedStatus === 'All'">{{ resourceService?.frmelmnts?.lbl?.allStatus }}</div>
@@ -201,7 +213,7 @@
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
                                                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
-                                                        *ngIf="nomination?.nominationData?.status === 'Accepted'"
+                                                        *ngIf="nomination?.nominationData?.status === 'Approved'"
                                                         (click)="viewNominationDetails(nomination)">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
                                                 </td>
                                         </tr>

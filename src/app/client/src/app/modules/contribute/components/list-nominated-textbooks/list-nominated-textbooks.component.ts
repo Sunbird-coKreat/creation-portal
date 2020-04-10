@@ -23,6 +23,9 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
 
   public contributor;
   public contributorTextbooks: any = [];
+  public tempSortTextbooks = [];
+  public direction = 'asc';
+  public sortColumn = '';
   public noResultFound;
   public telemetryImpression: IImpressionEventInput;
   public component: any;
@@ -49,6 +52,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     stages: []
   };
   public contributorOrgUser: any = [];
+  public tempSortOrgUser: any = [];
   public orgDetails: any = {};
   public roles;
   public selectedRole;
@@ -57,8 +61,12 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any = {};
   public currentUserRole: any;
+  public contentStatusCounts: any = {};
   public chapterCount = 0;
   public programContentTypes: string;
+  public directionOrgUsers = 'asc';
+  public sortColumnOrgUsers = '';
+
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private configService: ConfigService, private publicDataService: PublicDataService,
   private activatedRoute: ActivatedRoute, private router: Router, public programStageService: ProgramStageService,
@@ -94,6 +102,16 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       id: this.userService.appId,
       pid: this.configService.appConfig.TELEMETRY.PID
     };
+  }
+
+  sortCollection(column) {
+    this.contributorTextbooks = this.programsService.sortCollection(this.tempSortTextbooks, column, this.direction);
+    if (this.direction === 'asc' || this.direction === '') {
+      this.direction = 'desc';
+    } else {
+      this.direction = 'asc';
+    }
+    this.sortColumn = column;
   }
 
   getProgramDetails() {
@@ -164,39 +182,55 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     );
   }
 
-  showTexbooklist (res) {
+  showTexbooklist(res) {
     // tslint:disable-next-line:max-line-length
     const contributorTextbooks = (res.result.content.length && this.nominationDetails.collection_ids) ? _.filter(res.result.content, (collection) => {
-         return _.includes(this.nominationDetails.collection_ids, collection.identifier);
+      return _.includes(this.nominationDetails.collection_ids, collection.identifier);
     }) : [];
-    if (!_.isEmpty(contributorTextbooks)) {
-      const collectionIds = _.map(contributorTextbooks, 'identifier');
-      this.collectionHierarchyService.getCollectionHierarchy(collectionIds)
-        .subscribe(response => {
-          const hierarchies = _.map(response, r => {
-            if (r.result && r.result.content) {
-              return r.result.content;
-            } else {
-              return r.result;
-            }
-          });
-          const hierarchyContent = _.map(hierarchies, hierarchy => {
-            this.collectionHierarchyService.chapterCount = 0;
-            this.collectionHierarchyService.sampleDataCount = 0;
-            // this.chapterCount = 0;
-            const {chapterCount} =  this.collectionHierarchyService.getSampleContentStatusCount(hierarchy);
-              hierarchy.chapterCount = chapterCount;
-            return hierarchy;
-          });
-          this.contributorTextbooks = _.map(contributorTextbooks, content => {
-            const contentWithHierarchy =  _.find(hierarchyContent, {identifier: content.identifier});
-            content.chapterCount = contentWithHierarchy.chapterCount;
-            return content;
-          });
-        });
+    if (!_.isEmpty(contributorTextbooks) && this.isNominationOrg()) {
+      this.getContentAggregation().subscribe(
+        (response) => {
+          if (response && response.result && response.result.content) {
+            const contents = _.get(response.result, 'content');
+            // tslint:disable-next-line:max-line-length
+            this.contentStatusCounts = this.collectionHierarchyService.getContentCounts(contents, this.sessionContext.nominationDetails.organisation_id);
+            this.contributorTextbooks = _.map(contributorTextbooks, textbook => {
+              const textbookMeta = _.get(this.contentStatusCounts.individualStatus, textbook.identifier);
+              if (textbookMeta) {
+                textbook.draftCount = _.has(textbookMeta, 'Draft') ? textbookMeta.Draft.length : 0;
+                textbook.reviewCount = _.has(textbookMeta, 'Review') ? textbookMeta.Review.length : 0;
+                textbook.rejectedCount = _.has(textbookMeta, 'Reject') ? textbookMeta.Reject.length : 0;
+                textbook.liveCount = _.has(textbookMeta, 'Live') ? textbookMeta.Live.length : 0;
+              }
+              return textbook;
+            });
+            console.log(this.contributorTextbooks);
+          }
+        },
+        (err) => console.log(err)
+      );
+
     } else {
       this.contributorTextbooks = contributorTextbooks;
     }
+  }
+
+  getContentAggregation() {
+    const option = {
+      url: 'content/composite/v1/search',
+      data: {
+        request: {
+          filters: {
+            objectType: 'content',
+            programId: this.activatedRoute.snapshot.params.programId,
+            status: [],
+            mimeType: {'!=': 'application/vnd.ekstep.content-collection'}
+          }
+        }
+      }
+    };
+
+    return this.httpClient.post<any>(option.url, option.data);
   }
 
   ngAfterViewInit() {
@@ -204,7 +238,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     const deviceId = <HTMLInputElement>document.getElementById('deviceId');
     const telemetryCdata = [{ 'type': 'Program_ID', 'id': this.activatedRoute.snapshot.params.programId }];
-     setTimeout(() => {
+    setTimeout(() => {
       this.telemetryImpression = {
         context: {
           env: this.activeRoute.snapshot.data.telemetry.env,
@@ -223,22 +257,22 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
-     });
+    });
   }
 
   viewContribution(collection) {
     this.component = ChapterListComponent;
     this.sessionContext.programId = this.programDetails.program_id;
-    this.sessionContext.collection =  collection.identifier;
+    this.sessionContext.collection = collection.identifier;
     this.sessionContext.collectionName = collection.name;
     this.dynamicInputs = {
       chapterListComponentInput: {
         sessionContext: this.sessionContext,
         collection: collection,
-        config: _.find(this.programContext.config.components, {'id': 'ng.sunbird.chapterList'}),
+        config: _.find(this.programContext.config.components, { 'id': 'ng.sunbird.chapterList' }),
         programContext: this.programContext,
         role: {
-          currentRole : this.sessionContext.currentRole
+          currentRole: this.sessionContext.currentRole
         }
       }
     };
@@ -271,6 +305,15 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     });
   }
 
+  sortOrgUsers(column) {
+    this.contributorOrgUser = this.programsService.sortCollection(this.tempSortOrgUser, column, this.directionOrgUsers);
+    if (this.directionOrgUsers === 'asc' || this.directionOrgUsers === '') {
+      this.directionOrgUsers = 'desc';
+    } else {
+      this.directionOrgUsers = 'asc';
+    }
+    this.sortColumnOrgUsers = column;
+  }
 
   getNominationStatus() {
     const req = {
@@ -362,6 +405,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
                     this.contributorOrgUser.push(r.result.User);
                   }
                 });
+                this.tempSortOrgUser = this.contributorOrgUser;
               }
             }, error => {
               console.log(error);
@@ -408,6 +452,16 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       pageid,
       extra
     }, _.isUndefined);
+  }
+
+  isNominationOrg() {
+    return !!(this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.organisation_id);
+  }
+
+  isUserOrgAdmin() {
+    return !!(this.userService.userProfile.userRegData &&
+      this.userService.userProfile.userRegData.User_Org &&
+      this.userService.userProfile.userRegData.User_Org.roles.includes('admin'));
   }
 
   ngOnDestroy() {

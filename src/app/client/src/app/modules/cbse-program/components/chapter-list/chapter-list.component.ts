@@ -46,6 +46,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public levelOneChapterList: Array<any> = [];
   public selectedChapterOption: any = {};
   public showResourceTemplatePopup = false;
+  private myOrgId = '';
   public templateDetails;
   public unitIdentifier;
   public collection: any;
@@ -101,6 +102,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.collection = _.get(this.chapterListComponentInput, 'collection');
     this.actions = _.get(this.chapterListComponentInput, 'programContext.config.actions');
     this.sharedContext = _.get(this.chapterListComponentInput, 'programContext.config.sharedContext');
+    this.myOrgId = (this.userService.userRegistryData
+      && this.userService.userProfile.userRegData
+      && this.userService.userProfile.userRegData.User_Org
+      && this.userService.userProfile.userRegData.User_Org.orgId) ? this.userService.userProfile.userRegData.User_Org.orgId : '';
     /**
      * @description : this will fetch question Category configuration based on currently active route
      */
@@ -108,7 +113,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       identifier: 'all',
       name: 'All Chapters'
     });
-
     this.selectedChapterOption = 'all';
     this.updateAccordianView();
     // clearing the selected questionId when user comes back from question list
@@ -120,7 +124,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       }
     };
   }
-
 
   ngOnChanges(changed: any) {
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
@@ -197,6 +200,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       }
     };
   }
+
   changeView() {
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage = _.last(this.state.stages).stage;
@@ -334,25 +338,49 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   getContentStatusCount(data) {
     const self = this;
-    // tslint:disable-next-line:max-line-length
-    if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit') && (!data.sampleContent || data.sampleContent === undefined)) {
-      this.countData['total'] = this.countData['total'] + 1;
-      if (data.createdBy === this.currentUserID && data.status === 'Review') {
-        this.countData['review'] = this.countData['review'] + 1;
+    if (this.sessionContext.currentOrgRole === 'admin' ||
+    (this.sessionContext.currentOrgRole === 'user' && this.sessionContext.currentRole === 'REVIEWER')) {
+      // tslint:disable-next-line:max-line-length
+      if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' && this.myOrgId === data.organisationId)  && (!data.sampleContent || data.sampleContent === undefined)) {
+        this.countData['total'] = this.countData['total'] + 1;
+        if (data.createdBy === this.currentUserID && data.status === 'Review') {
+          this.countData['review'] = this.countData['review'] + 1;
+        }
+        if (data.createdBy === this.currentUserID && data.status === 'Draft' && data.prevStatus === 'Review') {
+          this.countData['reject'] = this.countData['reject'] + 1;
+        }
+        if (data.createdBy === this.currentUserID) {
+          this.countData['mycontribution'] = this.countData['mycontribution'] + 1;
+        }
+        if (data.status === 'Review') {
+          this.countData['totalreview'] = this.countData['totalreview'] + 1;
+        }
+        if (data.createdBy !== this.currentUserID && data.status === 'Review') {
+          this.countData['awaitingreview'] = this.countData['awaitingreview'] + 1;
+        }
       }
-      if (data.createdBy === this.currentUserID && data.status === 'Draft' && data.prevStatus === 'Review') {
-        this.countData['reject'] = this.countData['reject'] + 1;
-      }
-      if (data.createdBy === this.currentUserID) {
-        this.countData['mycontribution'] = this.countData['mycontribution'] + 1;
-      }
-      if (data.status === 'Review') {
-        this.countData['totalreview'] = this.countData['totalreview'] + 1;
-      }
-      if (data.createdBy !== this.currentUserID && data.status === 'Review') {
-        this.countData['awaitingreview'] = this.countData['awaitingreview'] + 1;
+    } else {
+      // tslint:disable-next-line:max-line-length
+      if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit')  && (!data.sampleContent || data.sampleContent === undefined)) {
+        this.countData['total'] = this.countData['total'] + 1;
+        if (data.createdBy === this.currentUserID && data.status === 'Review') {
+          this.countData['review'] = this.countData['review'] + 1;
+        }
+        if (data.createdBy === this.currentUserID && data.status === 'Draft' && data.prevStatus === 'Review') {
+          this.countData['reject'] = this.countData['reject'] + 1;
+        }
+        if (data.createdBy === this.currentUserID) {
+          this.countData['mycontribution'] = this.countData['mycontribution'] + 1;
+        }
+        if (data.status === 'Review') {
+          this.countData['totalreview'] = this.countData['totalreview'] + 1;
+        }
+        if (data.createdBy !== this.currentUserID && data.status === 'Review') {
+          this.countData['awaitingreview'] = this.countData['awaitingreview'] + 1;
+        }
       }
     }
+
     const childData = data.children;
     if (childData) {
       childData.map(child => {
@@ -371,6 +399,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       creator: node.creator,
       createdBy: node.createdBy || null,
       parentId: node.parent || null,
+      organisationId: _.has(node, 'organisationId') ? node.organisationId : null,
       prevStatus: node.prevStatus || null,
       sampleContent: node.sampleContent || null,
       sharedContext: {
@@ -390,8 +419,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     return _.isEmpty(leafNodes) ? null : leafNodes;
   }
 
-
-
   shouldContentBeVisible(content) {
     const creatorViewRole = this.actions.showCreatorView.roles.includes(this.sessionContext.currentRoleId);
     const reviewerViewRole = this.actions.showReviewerView.roles.includes(this.sessionContext.currentRoleId);
@@ -404,7 +431,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       if ((this.sessionContext.nominationDetails.status === 'Approved' || this.sessionContext.nominationDetails.status === 'Rejected')
       && content.sampleContent === true) {
         return false;
-      } else if (reviewerViewRole && content.status === 'Review' && this.currentUserID !== content.createdBy) {
+      } else if (reviewerViewRole && content.status === 'Review'
+      && this.currentUserID !== content.createdBy
+      && content.organisationId === this.myOrgId) {
         return true;
       } else if (creatorViewRole && this.currentUserID === content.createdBy) {
         return true;
@@ -442,6 +471,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               'resourceType': this.templateDetails.metadata.resourceType || 'Learn',
               'creator': creator,
               'programId': this.sessionContext.programId,
+              'collectionId': this.sessionContext.collection,
+              ...(this.sessionContext.nominationDetails &&
+                this.sessionContext.nominationDetails.organisation_id &&
+                {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
               'sampleContent': this.sampleContent,
               ...(_.pickBy(reqBody, _.identity))
             }
@@ -487,7 +520,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.creationComponent = component;
     this.programStageService.addStage(componentName);
   }
-
 
   showResourceTemplate(event) {
     this.unitIdentifier = event.collection.identifier;
