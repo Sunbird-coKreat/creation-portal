@@ -86,8 +86,8 @@
       </ng-container>
     </div>   
     <hr class="my-10">
-      <div class="d-inline-block br-2 pr-20">
-        <button type="button" (click)="showContentTypeModal= true;" class="sb-btn sb-btn-normal sb-btn-outline-primary">{{resourceService.frmelmnts.btn.contentTypes}}</button>
+      <div *ngIf="canNominate()" class="d-inline-block br-2 pr-20">
+        <button type="button" (click)="showContentTypeModal= true; handleCancel(false)" class="sb-btn sb-btn-normal sb-btn-outline-primary">{{resourceService.frmelmnts.btn.contentTypes}}</button>
       </div>
       <div *ngIf="canNominate()" class="d-inline-block pl-20">
           <div>
@@ -333,7 +333,7 @@
   </div>
   <div class="sb-modal-actions">
     <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showContentTypeModal = false; toasterService.success('content type is successfuly selected...')" [disabled]="!selectedContentTypes.length"> {{resourceService.frmelmnts.btn.submit}} </button>
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showContentTypeModal = false; selectedContentTypes = []; markSelectedContentTypes('reset')"> {{resourceService.frmelmnts.btn.cancel}}
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showContentTypeModal = false; handleCancel(true)"> {{resourceService.frmelmnts.btn.cancel}}
     </button>
   </div>
 </sui-modal>

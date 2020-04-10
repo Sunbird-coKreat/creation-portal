@@ -65,6 +65,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
   selectedCollectionIds = [];
   public currentUserID;
   _slideConfig = {'slidesToShow': 10, 'slidesToScroll': 1, 'variableWidth': true};
+  public preSavedContentTypes = [];
 
   constructor(private configService: ConfigService, public publicDataService: PublicDataService,
     public actionService: ActionService,
@@ -351,18 +352,15 @@ export class CollectionComponent implements OnInit, OnDestroy {
    this.markSelectedContentTypes();
   }
 
-  markSelectedContentTypes(reset?) {
+  markSelectedContentTypes() {
     this.contentType = _.map(this.contentType, (type) => {
-      if (_.includes(this.selectedContentTypes, type.value) && !reset) {
+      if (_.includes(this.selectedContentTypes, type.value)) {
          type['isSelected'] = true;
       } else {
         type['isSelected'] = false;
       }
       return type;
   });
-  if (reset) {
-    this.toasterService.error('Content Type Selection is Mandatory for Nomaination');
-  }
   }
 
   uploadSample(event, collection) {
@@ -583,5 +581,13 @@ export class CollectionComponent implements OnInit, OnDestroy {
       role: this.role
     };
     this.programStageService.addStage('chapterListComponent');
+  }
+
+  handleCancel(event: boolean) {
+    !event ? this.preSavedContentTypes = _.clone(this.selectedContentTypes) : this.selectedContentTypes = this.preSavedContentTypes;
+    this.markSelectedContentTypes();
+    if (event && !this.selectedContentTypes.length) {
+      this.toasterService.error('Content type Selection is Manadatory For Namination...');
+    }
   }
 }
