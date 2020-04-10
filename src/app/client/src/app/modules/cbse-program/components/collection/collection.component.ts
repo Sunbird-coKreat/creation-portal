@@ -587,7 +587,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     !event ? this.preSavedContentTypes = _.clone(this.selectedContentTypes) : this.selectedContentTypes = this.preSavedContentTypes;
     this.markSelectedContentTypes();
     if (event && !this.selectedContentTypes.length) {
-      this.toasterService.error('Content type Selection is Manadatory For Namination...');
+      this.toasterService.error(this.resourceService.messages.emsg.nomination.m001);
     }
   }
 }

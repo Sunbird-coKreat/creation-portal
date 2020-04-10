@@ -332,7 +332,7 @@
     </div>
   </div>
   <div class="sb-modal-actions">
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showContentTypeModal = false; toasterService.success('content type is successfuly selected...')" [disabled]="!selectedContentTypes.length"> {{resourceService.frmelmnts.btn.submit}} </button>
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showContentTypeModal = false; toasterService.success(resourceService.messages.smsg.nomination.m001)" [disabled]="!selectedContentTypes.length"> {{resourceService.frmelmnts.btn.submit}} </button>
     <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showContentTypeModal = false; handleCancel(true)"> {{resourceService.frmelmnts.btn.cancel}}
     </button>
   </div>
