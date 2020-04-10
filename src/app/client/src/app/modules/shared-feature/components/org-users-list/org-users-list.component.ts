@@ -11,13 +11,12 @@ import { forkJoin } from 'rxjs';
   styleUrls: ['./org-users-list.component.scss']
 })
 export class OrgUsersListComponent implements OnInit {
-  public roles = [{ name: 'Select role', value: ''}, { name: 'Admin', value: 'admin'}];
   public contributorOrgUser: any = [];
   public tempSortOrgUser: any = [];
   public direction = 'asc';
   public sortColumn = '';
-  public orgDetails: any = {};
   public showLoader = true;
+  public roles = [{ name: 'User', value: 'user'}, { name: 'Admin', value: 'admin'}];
 
   constructor( public resourceService: ResourceService, public userService: UserService,
     public registryService: RegistryService, public programsService: ProgramsService, public toasterService: ToasterService) { }
@@ -36,66 +35,58 @@ export class OrgUsersListComponent implements OnInit {
   }
 
   getContributionOrgUsers() {
-    const baseUrl = ( <HTMLInputElement> document.getElementById('portalBaseUrl')) ?
-      ( <HTMLInputElement> document.getElementById('portalBaseUrl')).value : '';
-    if (this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org) {
-      const orgUsers = this.registryService.getContributionOrgUsers(this.userService.userProfile.userRegData.User_Org.orgId);
-      this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
-      this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
-      this.orgDetails.orgLink = `${baseUrl}contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
+    const userRegData = this.userService.userProfile.userRegData;
+    if (userRegData && userRegData.User_Org) {
+      const orgUsers = this.registryService.getContributionOrgUsers(userRegData.User_Org.orgId);
       orgUsers.subscribe(response => {
         const result = _.get(response, 'result');
         if (!result || _.isEmpty(result)) {
-          console.log('NO USER FOUND');
-        } else {
-          _.map(result.User_Org, userOrg => {
-            this.registryService.getUserDetails(userOrg.userId)
-              .subscribe((res: any) => {
-                  if (res.result && res.result.User) {
-                    const user = res.result.User;
-                    let creator = user.firstName;
-                    if (user.lastName) {
-                      creator = creator + ' ' + user.lastName;
-                    }
-                    user.fullName = creator;
-                    if (_.includes(userOrg.roles, 'admin')) {
-                      user.selectedRole = _.find(this.roles, (role) => role.value === 'admin' );
-                    } else {
-                      user.selectedRole = _.find(this.roles, (role) => role.value === '' );
-                    }
-                    this.contributorOrgUser.push(user);
-                  }
-                }, error => {
-                  console.log(error);
-                });
-          });
           this.showLoader = false;
+          console.log('NO USER FOUND');
+          return;
         }
+        _.map(result.User_Org, userOrg => {
+          this.registryService.getUserDetails(userOrg.userId)
+            .subscribe((res: any) => {
+              if (res.result && res.result.User) {
+                const user = res.result.User;
+                if (user.userId === userRegData.User.userId) {
+                  return;
+                }
+                user.fullName = user.firstName;
+                if (user.lastName) {
+                  user.fullName += ' ' + user.lastName;
+                }
+                user.selectedRole = _.first(userOrg.roles);
+                user.userOrg = userOrg;
+                this.contributorOrgUser.push(user);
+                this.tempSortOrgUser.push(user);
+              }
+            }, error => {
+              console.log(error);
+            });
+        });
+        this.showLoader = false;
       }, error => {
         console.log(error);
       });
     }
   }
 
-  onRoleChange() {
-    const roleMap = {};
-    _.forEach(this.roles, role => {
-      roleMap[role.name] = _.filter(this.contributorOrgUser, user => {
-        if (user.selectedRole === role.value) {  return user.userId; }
-      }).map(({userId}) => userId);
-    });
-    console.log(roleMap);
-    // const req = {
-    //   'request': {
-    //       'user_id': this.userService.userid,
-    //       'rolemapping': roleMap
-    //   }
-    // };
-    // const updateNomination = this.programsService.updateNomination(req);
-    // updateNomination.subscribe(response => {
-    //   this.toasterService.success('Roles updated');
-    // }, error => {
-    //   console.log(error);
-    // });
+  onRoleChange(user) {
+    const userOsId = user.osid;
+    const orgOsId = this.userService.userProfile.userRegData.Org.osid;
+
+    this.programsService.updateUserRole(orgOsId, userOsId, [user.selectedRole]).subscribe(
+      (res) => {
+        if (_.get(res, 'result.User_Org')) {
+          this.toasterService.success(this.resourceService.messages.smsg.m0065);
+        }
+      },
+      (error) => {
+        console.log(error);
+        this.toasterService.error(this.resourceService.messages.emsg.m0077);
+      }
+    );
   }
 }
