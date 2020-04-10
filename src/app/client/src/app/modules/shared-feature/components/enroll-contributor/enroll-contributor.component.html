@@ -17,8 +17,69 @@
     <div class="twelve wide tablet seven wide computer column form-fields">
       <form class="ui" [formGroup]="contributeForm" (submit)="saveUser()">
          <div class="ui grid m-0 p-0">
+            <div class="twelve wide column sb-field-group p-0 pr-16 mb-16">
+               <div class="sb-field-group mb-8 text-center">
+                  <label class="d-block">Do you want enroll as Organisation? <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.wantToEnrollContributorHint}}"></i></label>
+                  <!-- (click)="enrollAsOrg=true" -->
+                  <div class="sb-field mt-4 d-flex centered">
+                     <div class="sb-radio-btn-checkbox sb-radio-btn-primary ">
+                        <input type="radio" id="Organisation" name="enrollAsOrg"  (click)="chnageEnrollStatus(true)" 
+                        appTelemetryInteract
+                        [telemetryInteractEdata]="getTelemetryInteractEdata('enrol-as-org', 'click', 'enrol-contributor')"
+                        [telemetryInteractObject]="telemetryInteractObject"
+                        [telemetryInteractCdata]="telemetryInteractCdata"
+                        [telemetryInteractPdata]="telemetryInteractPdata">
+                        <label for="Organisation">Yes</label>
+                     </div>
+                     <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+                        <input type="radio" id="individual" name="enrollAsOrg"  (click)="chnageEnrollStatus(false)" checked
+                        appTelemetryInteract
+                        [telemetryInteractEdata]="getTelemetryInteractEdata('enrol-as-individual', 'click', 'enrol-contributor')"
+                        [telemetryInteractObject]="telemetryInteractObject"
+                        [telemetryInteractCdata]="telemetryInteractCdata"
+                        [telemetryInteractPdata]="telemetryInteractPdata">
+                        <label for="individual">No</label>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="twelve wide column sb-field-group p-0 mb-16" *ngIf="enrollAsOrg === true">
+               <div class="sb-field-group mb-8">
+                  <label class="d-block">{{resourceService.frmelmnts.lbl.nameOfOrganisation}} <span class="sb-color-warning">*</span> <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.nameOfOrganisationHint}}"></i></label>
+                  <div class="sb-field required field">
+                      <input class="sb-form-control" placeholder="{{resourceService.frmelmnts.lbl.nameOfOrganisation}}" formControlName="name">
+                      <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['name'].errors && contributeForm.controls['name'].errors.required && (!contributeForm.controls['name'].pristine || formIsInvalid)">
+                        This field is required
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="twelve wide column sb-field-group p-0 mb-16" *ngIf="enrollAsOrg === true">
+               <div class="sb-field-group mb-8">
+                  <label class="d-block">{{resourceService.frmelmnts.lbl.description}} <span class="sb-color-warning">*</span> <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.programRecognitionHint}}"></i></label>
+                  <div class="sb-field required field">
+                     <textarea rows="4" class="sb-form-control" placeholder="{{resourceService.frmelmnts.lbl.description}}" spellcheck="false" formControlName="description"></textarea>
+                     <span class="characters-left">{{resourceService.frmelmnts.lbl.thousandCharacterLeft}}</span>
+                     <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['description'].errors && contributeForm.controls['description'].errors.required && (!contributeForm.controls['description'].pristine || formIsInvalid)">
+                        This field is required
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="twelve wide column sb-field-group p-0 mb-16" *ngIf="enrollAsOrg === true">
+               <div class="sb-field-group mb-8">
+                  <label class="d-block">{{resourceService.frmelmnts.lbl.organisationWebsite
+                  }} <span class="sb-color-warning">*</span> <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="{{resourceService.frmelmnts.lbl.website}}" popupText="{{resourceService.frmelmnts.lbl.websiteHint}}"></i></label>
+                  <div class="sb-field field">
+                      <input class="sb-form-control" placeholder="{{resourceService.frmelmnts.lbl.websiteHint}}" formControlName="website">
+                  </div>
+                  <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['website'].errors && contributeForm.controls['website'].errors.required && (!contributeForm.controls['website'].pristine || formIsInvalid)">
+                     This field is required
+                  </div>
+               </div>
+            </div>
             <div class="six wide column sb-field-group p-0 pr-16 mb-16">
-               <label class="d-block">{{resourceService.frmelmnts.lbl.board}} <span class="sb-color-warning">*</span><i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.boardHint}}"></i>
+               <label class="d-block">{{resourceService.frmelmnts.lbl.board}} <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.boardHint}}"></i>
                 </label>
                <div class="sb-field required field">
                   <sui-multi-select class="selection"
@@ -39,7 +100,7 @@
             </div>
             <div class="six wide column sb-field-group p-0 mb-16">
                <label class="d-block">{{resourceService.frmelmnts.lbl.selectMedium}}
-                  <span class="sb-color-warning">*</span><i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupText="{{resourceService.frmelmnts.lbl.mediumHint}}"></i>
+                  <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupText="{{resourceService.frmelmnts.lbl.mediumHint}}"></i>
                </label>
                <div class="sb-field required field">
                   <sui-multi-select class="selection"
@@ -62,7 +123,7 @@
 
             <div class="six wide column sb-field-group p-0 pr-16 mb-16">
                <label class="d-block">{{resourceService.frmelmnts.lbl.class}}
-                  <span class="sb-color-warning">*</span><i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupText="{{resourceService.frmelmnts.lbl.classHint}}"></i>
+                  <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupText="{{resourceService.frmelmnts.lbl.classHint}}"></i>
                </label>
                <div class="sb-field required field">
                   <sui-multi-select  class="selection"
@@ -84,7 +145,7 @@
 
             <div class="six wide column sb-field-group p-0 mb-16">
                <label class="d-block">{{resourceService.frmelmnts.lbl.subject}}
-                  <span class="sb-color-warning">*</span><i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupText="{{resourceService.frmelmnts.lbl.subjectHint}}"></i>
+                  <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupText="{{resourceService.frmelmnts.lbl.subjectHint}}"></i>
                </label>
                <div class="sb-field required field">
                   <sui-multi-select class="selection"
@@ -106,7 +167,7 @@
 
             <div class="twelve wide column sb-field-group p-0 mb-16">
                <label class="d-block">{{resourceService.frmelmnts.lbl.typesOfContent}}
-                  <span class="sb-color-warning">*</span><i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupText="{{resourceService.frmelmnts.lbl.contentTypeHint}}"></i>
+                  <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupText="{{resourceService.frmelmnts.lbl.contentTypeHint}}"></i>
                </label>
                <div class="sb-field required field">
                   <sui-multi-select class="selection"
@@ -126,60 +187,11 @@
                </div>
             </div>
 
-            <div class="six wide column sb-field-group p-0 pr-16 mb-16">
-               <div class="sb-field-group mb-8">
-                  <label class="d-block">Do you want enroll as Organisation? <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.wantToEnrollContributorHint}}"></i></label>
-                  <!-- (click)="enrollAsOrg=true" -->
-                  <div class="sb-field mt-4 d-flex">
-                     <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-                        <input type="radio" id="Organisation" name="enrollAsOrg"  (click)="chnageEnrollStatus(true)"
-                        appTelemetryInteract
-                        [telemetryInteractEdata]="getTelemetryInteractEdata('enrol-as-org', 'click', 'enrol-contributor')"
-                        [telemetryInteractObject]="telemetryInteractObject"
-                        [telemetryInteractCdata]="telemetryInteractCdata"
-                        [telemetryInteractPdata]="telemetryInteractPdata">
-                        <label for="Organisation">Yes</label>
-                     </div>
-                     <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-                        <input type="radio" id="individual" name="enrollAsOrg"  (click)="chnageEnrollStatus(false)"
-                        appTelemetryInteract
-                        [telemetryInteractEdata]="getTelemetryInteractEdata('enrol-as-individual', 'click', 'enrol-contributor')"
-                        [telemetryInteractObject]="telemetryInteractObject"
-                        [telemetryInteractCdata]="telemetryInteractCdata"
-                        [telemetryInteractPdata]="telemetryInteractPdata">
-                        <label for="individual">No</label>
-                     </div>
-                  </div>
-               </div>
-            </div>
-            <div class="six wide column sb-field-group p-0 mb-16">
+            <div class="twelve wide column sb-field-group p-0 mb-16" *ngIf="enrollAsOrg === false">
                <div class="sb-field-group mb-8">
                   <label class="d-block">{{resourceService.frmelmnts.lbl.website}} <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="{{resourceService.frmelmnts.lbl.website}}" popupText="{{resourceService.frmelmnts.lbl.websiteHint}}"></i></label>
                   <div class="sb-field field">
                       <input class="sb-form-control" placeholder="{{resourceService.frmelmnts.lbl.websiteHint}}" formControlName="website">
-                  </div>
-               </div>
-            </div>
-            <div class="twelve wide column sb-field-group p-0 mb-16">
-               <div class="sb-field-group mb-8"  *ngIf="enrollAsOrg === true">
-                  <label class="d-block">{{resourceService.frmelmnts.lbl.nameOfOrganisation}} <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.nameOfOrganisationHint}}"></i></label>
-                  <div class="sb-field required field">
-                      <input class="sb-form-control" placeholder="{{resourceService.frmelmnts.lbl.nameOfOrganisation}}" formControlName="name">
-                      <!-- <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['name'].errors && contributeForm.controls['name'].errors.required && (!contributeForm.controls['name'].pristine || formIsInvalid)">
-                        This field is required
-                     </div> -->
-                  </div>
-               </div>
-            </div>
-            <div class="twelve wide column sb-field-group p-0 mb-16">
-               <div class="sb-field-group mb-8" *ngIf="enrollAsOrg === true">
-                  <label class="d-block">{{resourceService.frmelmnts.lbl.description}} <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.programRecognitionHint}}"></i></label>
-                  <div class="sb-field required field">
-                     <textarea rows="4" class="sb-form-control" placeholder="{{resourceService.frmelmnts.lbl.description}}" spellcheck="false" formControlName="description"></textarea>
-                     <span class="characters-left">{{resourceService.frmelmnts.lbl.thousandCharacterLeft}}</span>
-                     <!-- <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['description'].errors && contributeForm.controls['description'].errors.required && (!contributeForm.controls['description'].pristine || formIsInvalid)">
-                        This field is required
-                     </div> -->
                   </div>
                </div>
             </div>

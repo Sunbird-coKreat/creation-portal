@@ -136,11 +136,11 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
 
   initializeFormFields(): void {
     this.contributeForm = this.formBuilder.group({
-        board: ['', Validators.required],
-        medium: ['', Validators.required],
-        gradeLevel: ['', Validators.required],
-        subject: ['', Validators.required],
-        contentTypes: ['', Validators.required],
+        board: [[]],
+        medium: [[]],
+        gradeLevel: [[]],
+        subject: [[]],
+        contentTypes: [[]],
         name: [''],
         description: [''],
         website: [''],
@@ -152,9 +152,16 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
         const control = formGroup.get(field);
         control.markAsTouched();
     });
-}
+  }
   saveUser() {
-    if (this.contributeForm.dirty && this.contributeForm.valid) {
+    this.enrollAsOrg === true ? this.contributeForm.controls['website'].setValidators([Validators.required]) : this.contributeForm.controls['website'].setValidators(null); 
+    this.enrollAsOrg === true ? this.contributeForm.controls['description'].setValidators([Validators.required]) : this.contributeForm.controls['description'].setValidators(null);
+    this.enrollAsOrg === true ? this.contributeForm.controls['name'].setValidators([Validators.required]) : this.contributeForm.controls['name'].setValidators(null);
+    this.contributeForm.controls['name'].updateValueAndValidity();
+    this.contributeForm.controls['description'].updateValueAndValidity();
+    this.contributeForm.controls['website'].updateValueAndValidity();
+    
+    if (this.contributeForm.valid) {
           const User = {
             ...this.contributeForm.value
         };
@@ -195,10 +202,14 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
             this.tosterService.success('Enrolment is succesfully done...');
             this.modal.deny();
           }, (err) => {
+            console.log(err)
             this.tosterService.error('Failed! Please try later...');
           });
-        }
-}
+      } else {
+        this.formIsInvalid = true;
+        this.validateAllFormFields(this.contributeForm);
+      }
+  }
   chnageEnrollStatus(status) {
     this.enrollAsOrg = status;
   }
