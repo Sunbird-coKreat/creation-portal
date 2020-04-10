@@ -28,17 +28,27 @@
                  <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                </span>
               </th>
+              <th class="text-center w-5">{{resourceService.frmelmnts.lbl.roles}}</th>
            </tr>
          </thead>
          <tbody class="sb-table-body">
-           <tr *ngFor="let userlist of contributorOrgUser; let i = index;"> 
+           <tr *ngFor="let orgUser of contributorOrgUser; let i = index;">
              <td>
                  <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
-                  {{userlist.fullName}}
+                  {{orgUser.fullName}}
                  </div>
              </td>
-             <td>{{userlist?.gradeLevel?.join(', ')}}</td>
-             <td>{{userlist?.subject?.join(', ')}}</td>
+             <td>{{orgUser?.gradeLevel?.join(', ')}}</td>
+             <td>{{orgUser?.subject?.join(', ')}}</td>
+             <td class="text-center">
+               <div>
+                 <sui-select class="selection pt-5" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="options" valueField="value"
+                 (selectedOptionChange)="onRoleChange()">
+                   <sui-select-option *ngFor="let option of roles;" [value]="option">
+                   </sui-select-option>
+                 </sui-select>
+               </div>
+             </td>
            </tr>
          </tbody>
          </table>

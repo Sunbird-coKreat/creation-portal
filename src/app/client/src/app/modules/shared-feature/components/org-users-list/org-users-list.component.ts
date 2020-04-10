@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { ResourceService } from '@sunbird/shared';
+import { ResourceService, ToasterService } from '@sunbird/shared';
 import { UserService, RegistryService, ProgramsService } from '@sunbird/core';
 import * as _ from 'lodash-es';
 import { forkJoin } from 'rxjs';
@@ -11,6 +11,7 @@ import { forkJoin } from 'rxjs';
   styleUrls: ['./org-users-list.component.scss']
 })
 export class OrgUsersListComponent implements OnInit {
+  public roles = [{ name: 'Select role', value: ''}, { name: 'Admin', value: 'admin'}];
   public contributorOrgUser: any = [];
   public tempSortOrgUser: any = [];
   public direction = 'asc';
@@ -19,7 +20,7 @@ export class OrgUsersListComponent implements OnInit {
   public showLoader = true;
 
   constructor( public resourceService: ResourceService, public userService: UserService,
-    public registryService: RegistryService, public programsService: ProgramsService) { }
+    public registryService: RegistryService, public programsService: ProgramsService, public toasterService: ToasterService) { }
   ngOnInit(): void {
     this.getContributionOrgUsers();
   }
@@ -47,30 +48,28 @@ export class OrgUsersListComponent implements OnInit {
         if (!result || _.isEmpty(result)) {
           console.log('NO USER FOUND');
         } else {
-          // get Ids of all users whose role is 'user'
-          const userIds = _.map(_.filter(result[_.first(_.keys(result))], ['roles', ['user']]), 'userId');
-          const getUserDetails = _.map(userIds, id => this.registryService.getUserDetails(id));
-          forkJoin(...getUserDetails)
-            .subscribe((res: any) => {
-              if (res) {
-                _.forEach(res, r => {
-                  if (r.result && r.result.User) {
-                    let creator = r.result.User.firstName;
-                    if (r.result.User.lastName) {
-                      creator = creator + ' ' + r.result.User.lastName;
+          _.map(result.User_Org, userOrg => {
+            this.registryService.getUserDetails(userOrg.userId)
+              .subscribe((res: any) => {
+                  if (res.result && res.result.User) {
+                    const user = res.result.User;
+                    let creator = user.firstName;
+                    if (user.lastName) {
+                      creator = creator + ' ' + user.lastName;
                     }
-                    r.result.User.fullName = creator;
-                    this.contributorOrgUser.push(r.result.User);
+                    user.fullName = creator;
+                    if (_.includes(userOrg.roles, 'admin')) {
+                      user.selectedRole = _.find(this.roles, (role) => role.value === 'admin' );
+                    } else {
+                      user.selectedRole = _.find(this.roles, (role) => role.value === '' );
+                    }
+                    this.contributorOrgUser.push(user);
                   }
+                }, error => {
+                  console.log(error);
                 });
-                this.tempSortOrgUser = this.contributorOrgUser;
-              }
-              this.showLoader = false;
-            }, error => {
-              console.log(error);
-              this.showLoader = false;
-            });
-            this.showLoader = false;
+          });
+          this.showLoader = false;
         }
       }, error => {
         console.log(error);
@@ -78,4 +77,25 @@ export class OrgUsersListComponent implements OnInit {
     }
   }
 
+  onRoleChange() {
+    const roleMap = {};
+    _.forEach(this.roles, role => {
+      roleMap[role.name] = _.filter(this.contributorOrgUser, user => {
+        if (user.selectedRole === role.value) {  return user.userId; }
+      }).map(({userId}) => userId);
+    });
+    console.log(roleMap);
+    // const req = {
+    //   'request': {
+    //       'user_id': this.userService.userid,
+    //       'rolemapping': roleMap
+    //   }
+    // };
+    // const updateNomination = this.programsService.updateNomination(req);
+    // updateNomination.subscribe(response => {
+    //   this.toasterService.success('Roles updated');
+    // }, error => {
+    //   console.log(error);
+    // });
+  }
 }
