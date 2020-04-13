@@ -2,7 +2,8 @@ import {filter, first, map} from 'rxjs/operators';
 import { UserService, PermissionService, TenantService, OrgDetailsService, FormService, ProgramsService} from './../../services';
 import { Component, OnInit, ChangeDetectorRef, Input } from '@angular/core';
 import { ConfigService, ResourceService, IUserProfile, IUserData } from '@sunbird/shared';
-import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
+import { Router, ActivatedRoute, NavigationEnd, RoutesRecognized } from '@angular/router';
+import { Location } from '@angular/common';
 import * as _ from 'lodash-es';
 import { IInteractEventObject, IInteractEventEdata } from '@sunbird/telemetry';
 import { CacheService } from 'ng2-cache-service';
@@ -79,7 +80,7 @@ export class MainHeaderComponent implements OnInit {
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
     public orgDetailsService: OrgDetailsService, private _cacheService: CacheService, public formService: FormService,
     public activatedRoute: ActivatedRoute, private cacheService: CacheService, private cdr: ChangeDetectorRef,
-    public programsService: ProgramsService) {
+    public programsService: ProgramsService, private location: Location) {
       try {
         this.exploreButtonVisibility = (<HTMLInputElement>document.getElementById('exploreButtonVisibility')).value;
       } catch (error) {
@@ -90,6 +91,11 @@ export class MainHeaderComponent implements OnInit {
       this.myActivityRole = this.config.rolesConfig.headerDropdownRoles.myActivityRole;
       this.orgSetupRole = this.config.rolesConfig.headerDropdownRoles.orgSetupRole;
       this.orgAdminRole = this.config.rolesConfig.headerDropdownRoles.orgAdminRole;
+      router.events.subscribe((event) => {
+        if (event instanceof NavigationEnd) {
+          this.onRouterChange();
+        }
+      });
   }
   ngOnInit() {
     if (this.userService.loggedIn) {
@@ -116,6 +122,7 @@ export class MainHeaderComponent implements OnInit {
     this.setInteractEventData();
     this.cdr.detectChanges();
     this.setWindowConfig();
+    this.onRouterChange();
 
     // This subscription is only for offline and it checks whether the page is offline
     // help centre so that it can load its own header/footer
@@ -127,14 +134,6 @@ export class MainHeaderComponent implements OnInit {
           this.showOfflineHelpCentre = false;
         }
       });
-    }
-    // maintain active tab state
-    if (this.router.isActive('/contribute', true)) {
-      this.handleActiveTabState('allPrograms');
-    } else if (this.router.isActive('/contribute/orglist', true)) {
-      this.handleActiveTabState('manageUsers');
-    } else {
-      this.handleActiveTabState('myPrograms');
     }
     this.telemetryInteractCdata = [];
   this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
@@ -323,6 +322,17 @@ export class MainHeaderComponent implements OnInit {
   }
   showSideBar() {
     jQuery('.ui.sidebar').sidebar('setting', 'transition', 'overlay').sidebar('toggle');
+  }
+
+  onRouterChange() {
+     // maintain active tab state
+     if (this.location.path() === '/contribute') {
+      this.handleActiveTabState('allPrograms');
+      } else if (this.location.path() === '/contribute/orglist') {
+        this.handleActiveTabState('manageUsers');
+      } else if (this.location.path() === '/contribute/myenrollprograms' || this.location.path() === '/sourcing') {
+       this.handleActiveTabState('myPrograms');
+     }
   }
 
   handleActiveTabState(tab) {
