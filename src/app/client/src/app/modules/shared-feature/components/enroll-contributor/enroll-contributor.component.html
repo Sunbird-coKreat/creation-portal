@@ -17,11 +17,11 @@
     <div class="twelve wide tablet seven wide computer column form-fields">
       <form class="ui" [formGroup]="contributeForm" (submit)="saveUser()">
          <div class="ui grid m-0 p-0">
-            <div class="twelve wide column sb-field-group p-0 pr-16 mb-16">
+            <div class="twelve wide column sb-field-group p-0 centered grid center aligned">
                <div class="sb-field-group mb-8 text-center">
                   <label class="d-block">Do you want enroll as Organisation? <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.wantToEnrollContributorHint}}"></i></label>
                   <!-- (click)="enrollAsOrg=true" -->
-                  <div class="sb-field mt-4 d-flex centered">
+                  <div class="sb-field mt-4 d-flex centered flex-jc-center">
                      <div class="sb-radio-btn-checkbox sb-radio-btn-primary ">
                         <input type="radio" id="Organisation" name="enrollAsOrg"  (click)="chnageEnrollStatus(true)" 
                         appTelemetryInteract
@@ -66,18 +66,6 @@
                   </div>
                </div>
             </div>
-            <div class="twelve wide column sb-field-group p-0 mb-16" *ngIf="enrollAsOrg === true">
-               <div class="sb-field-group mb-8">
-                  <label class="d-block">{{resourceService.frmelmnts.lbl.organisationWebsite
-                  }} <span class="sb-color-warning">*</span> <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="{{resourceService.frmelmnts.lbl.website}}" popupText="{{resourceService.frmelmnts.lbl.websiteHint}}"></i></label>
-                  <div class="sb-field field">
-                      <input class="sb-form-control" placeholder="{{resourceService.frmelmnts.lbl.websiteHint}}" formControlName="website">
-                  </div>
-                  <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['website'].errors && contributeForm.controls['website'].errors.required && (!contributeForm.controls['website'].pristine || formIsInvalid)">
-                     This field is required
-                  </div>
-               </div>
-            </div>
             <div class="six wide column sb-field-group p-0 pr-16 mb-16">
                <label class="d-block">{{resourceService.frmelmnts.lbl.board}} <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.boardHint}}"></i>
                 </label>
@@ -93,9 +81,6 @@
                         [value]="option" >
                         </sui-select-option>
                   </sui-multi-select>
-                  <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['board'].errors && contributeForm.controls['board'].errors.required && (!contributeForm.controls['board'].pristine || formIsInvalid)">
-							This field is required
-						</div>
                </div>
             </div>
             <div class="six wide column sb-field-group p-0 mb-16">
@@ -114,10 +99,6 @@
                      [value]="option" >
                      </sui-select-option>
                   </sui-multi-select>
-                  <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['medium'].errors && contributeForm.controls['medium'].errors.required && (!contributeForm.controls['medium'].pristine || formIsInvalid)">
-							This field is required
-						</div>
-
                </div>
             </div>
 
@@ -137,9 +118,6 @@
                      [value]="option" >
 						   </sui-select-option>
                   </sui-multi-select>
-                  <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['gradeLevel'].errors && contributeForm.controls['gradeLevel'].errors.required && (!contributeForm.controls['gradeLevel'].pristine || formIsInvalid)">
-							This field is required
-						</div>
                </div>
             </div>
 
@@ -159,9 +137,6 @@
                         [value]="option" >
                         </sui-select-option>
                   </sui-multi-select>
-                  <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['subject'].errors && contributeForm.controls['subject'].errors.required && (!contributeForm.controls['subject'].pristine || formIsInvalid)">
-							This field is required
-						</div>
                </div>
             </div>
 
@@ -181,15 +156,12 @@
                      [value]="option" >
                      </sui-select-option>
                   </sui-multi-select>
-                  <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['contentTypes'].errors && contributeForm.controls['contentTypes'].errors.required && (!contributeForm.controls['contentTypes'].pristine || formIsInvalid)">
-							This field is required
-						</div>
                </div>
             </div>
 
-            <div class="twelve wide column sb-field-group p-0 mb-16" *ngIf="enrollAsOrg === false">
+            <div class="twelve wide column sb-field-group p-0 mb-16">
                <div class="sb-field-group mb-8">
-                  <label class="d-block">{{resourceService.frmelmnts.lbl.website}} <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="{{resourceService.frmelmnts.lbl.website}}" popupText="{{resourceService.frmelmnts.lbl.websiteHint}}"></i></label>
+                  <label class="d-block">{{enrollAsOrg === false ? resourceService.frmelmnts.lbl.website : resourceService.frmelmnts.lbl.organisationWebsite}} <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="{{resourceService.frmelmnts.lbl.website}}" popupText="{{resourceService.frmelmnts.lbl.websiteHint}}"></i></label>
                   <div class="sb-field field">
                       <input class="sb-form-control" placeholder="{{resourceService.frmelmnts.lbl.websiteHint}}" formControlName="website">
                   </div>

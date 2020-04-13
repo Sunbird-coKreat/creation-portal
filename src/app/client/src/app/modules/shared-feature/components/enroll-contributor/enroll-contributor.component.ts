@@ -154,13 +154,10 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
     });
   }
   saveUser() {
-    this.enrollAsOrg === true ? this.contributeForm.controls['website'].setValidators([Validators.required]) : this.contributeForm.controls['website'].setValidators(null); 
     this.enrollAsOrg === true ? this.contributeForm.controls['description'].setValidators([Validators.required]) : this.contributeForm.controls['description'].setValidators(null);
     this.enrollAsOrg === true ? this.contributeForm.controls['name'].setValidators([Validators.required]) : this.contributeForm.controls['name'].setValidators(null);
     this.contributeForm.controls['name'].updateValueAndValidity();
     this.contributeForm.controls['description'].updateValueAndValidity();
-    this.contributeForm.controls['website'].updateValueAndValidity();
-    
     if (this.contributeForm.valid) {
           const User = {
             ...this.contributeForm.value
