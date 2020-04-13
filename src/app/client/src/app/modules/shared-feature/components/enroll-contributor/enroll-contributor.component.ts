@@ -199,7 +199,6 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
             this.tosterService.success('Enrolment is succesfully done...');
             this.modal.deny();
           }, (err) => {
-            console.log(err)
             this.tosterService.error('Failed! Please try later...');
           });
       } else {
