@@ -25,6 +25,7 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
   @ViewChild('modal') modal;
   frameworkdetails;
   formIsInvalid = false;
+  isOrgNameExist = true;
   contentType = { };
   telemetryImpression: any;
   options;
@@ -158,6 +159,12 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
           const User = {
             ...this.contributeForm.value
         };
+      if (this.enrollAsOrg === true)
+          {
+            this.searchOrgnisation();
+          }
+      if(this.enrollAsOrg === false || (this.enrollAsOrg === true && this.isOrgNameExist === false))
+      {
           User['firstName'] =  this.userService.userProfile.firstName;
           User['lastName'] =  this.userService.userProfile.lastName || '';
           User['userId'] =  this.userService.userProfile.identifier;
@@ -167,16 +174,16 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
           this.enrollContributorService.enrolment({User: User}).pipe(
             switchMap((res1: any) => {
             this.mapUserId = res1.result.User.osid;
-               if (this.enrollAsOrg === true) {
+              if (this.enrollAsOrg === true) {
                 const Org = {
                   ...this.contributeForm.value
-               };
+              };
                 Org['createdBy'] =  res1.result.User.osid;
                 Org['code'] = this.contributeForm.controls['name'].value.toUpperCase();
                 return this.enrollContributorService.enrolment({Org: Org});
-               } else {
-                 return of(res1);
-               }
+              } else {
+                return of(res1);
+              }
           }), switchMap((res2: any) => {
             if (this.enrollAsOrg === true) {
               this.mapOrgId = res2.result.Org.osid;
@@ -186,9 +193,9 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
                         roles: ['admin']
                       };
               return this.enrollContributorService.enrolment({User_Org: User_Org});
-             } else {
-               return of(res2);
-             }
+            } else {
+              return of(res2);
+            }
           }), catchError(err => throwError(err)))
           .subscribe((res3) => {
             this.contributeForm.reset();
@@ -198,11 +205,37 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
             this.tosterService.error('Failed! Please try later...');
           });
         }
-}
+    }
+  }
   chnageEnrollStatus(status) {
     this.enrollAsOrg = status;
   }
 
+  searchOrgnisation()
+  {
+    var request = {
+      entityType:["Org"],
+      filters:{
+        name:{eq: this.contributeForm.get('name').value}
+      }
+    }
+    this.enrollContributorService.searchOrganisation(request).subscribe(
+      (res) => {
+       if(_.isEmpty(res.result.Org) || res.result.Org.length === 0)
+       {
+          this.isOrgNameExist = false;
+       }
+       else
+       {
+        this.isOrgNameExist = true;
+        this.tosterService.error('Organisation name is already registered.');
+       }
+        },
+      (err) => {
+
+      }
+    );
+  }
   closeModal() {
     this.close.emit();
   }

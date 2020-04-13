@@ -38,4 +38,15 @@ export class EnrollContributorService {
       };
       return this.saveData(option);
     }
+    searchOrganisation(Details) {
+      const option = {
+        url: 'reg/search',
+        data:
+        {
+          id : 'open-saber.registry.search',
+          request: Details
+        }
+      };
+      return this.saveData(option);
+    }
 }
