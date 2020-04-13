@@ -1,26 +1,34 @@
-<div class="sb-pageSection my-24 ui container">
+<div class="sb-pageSection my-24">
     <ng-container *ngIf="contributorOrgUser.length && !showLoader && contributorOrgUser !== undefined else noResult ">
      <div class="sb-table-responsive" *ngIf="contributorOrgUser?.length != 0">
        <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
        <thead class="sb-table-header sb-table-thead-gray">
            <tr>
-             <th class="cursor-pointer sb-sorting" (click)="sortCollection('fullName')">
-               {{resourceService.frmelmnts.lbl.username}} &nbsp;&nbsp;
+             <th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('fullName')">
+               {{resourceService.frmelmnts.lbl.user}} &nbsp;&nbsp;
                <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'fullName' "></i>
-               <span  *ngIf="sortColumn == 'fullName'" class="d-inline-block">
+               <span *ngIf="sortColumn == 'fullName'" class="d-inline-block">
                  <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
                  <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                </span>
               </th>
-             <th class="cursor-pointer sb-sorting" (click)="sortCollection('gradeLevel')">
-               {{resourceService.frmelmnts.lbl.grade}} &nbsp;&nbsp;
+              <th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('email')">
+                {{resourceService.frmelmnts.lbl.emailID}} &nbsp;&nbsp;
+                <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'email' "></i>
+                <span *ngIf="sortColumn == 'email'" class="d-inline-block">
+                  <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+                  <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+                </span>
+               </th>
+             <th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('gradeLevel')">
+               {{resourceService.frmelmnts.lbl.class}} &nbsp;&nbsp;
                <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'gradeLevel' "></i>
                <span  *ngIf="sortColumn == 'gradeLevel'" class="d-inline-block">
                  <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
                  <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                </span>
               </th>
-             <th class="cursor-pointer sb-sorting" (click)="sortCollection('subject')">
+             <th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('subject')">
                {{resourceService.frmelmnts.lbl.subject }} &nbsp;&nbsp;
                <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'subject' "></i>
                <span  *ngIf="sortColumn == 'subject'" class="d-inline-block">
@@ -28,17 +36,30 @@
                  <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                </span>
               </th>
+              <th class="w-5">{{resourceService.frmelmnts.lbl.roles}}</th>
            </tr>
          </thead>
          <tbody class="sb-table-body">
-           <tr *ngFor="let userlist of contributorOrgUser; let i = index;"> 
+           <tr *ngFor="let orgUser of contributorOrgUser; let i = index;">
              <td>
                  <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
-                  {{userlist.fullName}}
+                  {{orgUser.fullName}}
                  </div>
              </td>
-             <td>{{userlist?.gradeLevel?.join(', ')}}</td>
-             <td>{{userlist?.subject?.join(', ')}}</td>
+             <td>
+              {{ (orgUser?.email) ? orgUser?.email : '-' }}
+             </td>
+             <td>{{orgUser?.gradeLevel?.join(', ')}}</td>
+             <td>{{orgUser?.subject?.join(', ')}}</td>
+             <td>
+               <div>
+                 <sui-select class="selection pt-5" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="roles" valueField="value"
+                 (selectedOptionChange)="onRoleChange(orgUser)" #orgRole>
+                   <sui-select-option *ngFor="let option of orgRole.filteredOptions;" [value]="option" [class.active]="orgUser.selectedRole === option.value">
+                   </sui-select-option>
+                 </sui-select>
+               </div>
+             </td>
            </tr>
          </tbody>
          </table>
