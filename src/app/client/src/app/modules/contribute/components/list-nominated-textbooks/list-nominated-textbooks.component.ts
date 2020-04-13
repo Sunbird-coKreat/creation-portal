@@ -204,16 +204,18 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
               }
               return textbook;
             });
-            console.log(this.contributorTextbooks);
           } else {
             this.contributorTextbooks = contributorTextbooks;
           }
+
+          this.tempSortTextbooks = this.contributorTextbooks;
         },
         (err) => console.log(err)
       );
 
     } else {
       this.contributorTextbooks = contributorTextbooks;
+      this.tempSortTextbooks = this.contributorTextbooks;
     }
   }
 
