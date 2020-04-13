@@ -99,6 +99,20 @@ export class ProgramsService extends DataService implements CanActivate {
   }
 
 /**
+  * Function to update the role of org user
+  */
+  updateUserRole(orgOsid, UserOsid, newRoles) {
+    const userOrgAdd = {
+      User_Org: {
+        userId: UserOsid,
+        orgId: orgOsid,
+        roles: newRoles
+      }
+    };
+    return this.addToRegistry(userOrgAdd);
+  }
+
+/**
   * Function used map the user with user role in registry
   */
  mapUsertoContributorOrgReg (orgOsid, UserOsid) {
