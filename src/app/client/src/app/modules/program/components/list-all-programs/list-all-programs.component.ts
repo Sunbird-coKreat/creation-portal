@@ -18,10 +18,19 @@ export class ListAllProgramsComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     if (!this.programsService.sourcingOrgReviewers) {
-    // tslint:disable-next-line:max-line-length
-    this.programsService.getSourcingOrgUsers(['CONTENT_REVIEWER']).subscribe(() => {}, (err) => {
-      this.tosterService.error('Unable to Fetch Sourcing-Org-Users');
-    });
+      if (this.userService.userProfile.organisations && this.userService.userProfile.organisations.length) {
+        const OrgDetails = this.userService.userProfile.organisations[0];
+        const filters = {
+              'organisations.organisationId': OrgDetails.organisationId,
+              'organisations.roles': ['CONTENT_REVIEWER']
+              };
+      // tslint:disable-next-line:max-line-length
+      this.programsService.getSourcingOrgUsers(filters).subscribe((res) => {}, (err) => {
+        this.tosterService.error('Unable to Fetch Sourcing-Org-Users');
+      });
+      } else {
+        this.tosterService.error('Org details missing!');
+      }
     }
   }
 

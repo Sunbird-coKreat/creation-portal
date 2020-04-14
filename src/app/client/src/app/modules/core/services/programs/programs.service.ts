@@ -585,27 +585,20 @@ export class ProgramsService extends DataService implements CanActivate {
     return _.cloneDeep(this._sourcingOrgReviewers);
   }
 
-  getSourcingOrgUsers(roles) {
-    if (this.userService.userProfile.organisations.length) {
-      const OrgDetails = this.userService.userProfile.organisations[0];
+  getSourcingOrgUsers(reqFilters) {
       const req = {
         url: `user/v1/search`,
         data: {
           'request': {
-            'filters': {
-              'organisations.organisationId': OrgDetails.organisationId,
-              'organisations.roles': roles
-           }
+            'filters': reqFilters
           }
         }
       };
       return this.learnerService.post(req).pipe(tap((res) => {
-        if (roles.length === 1 && roles[0] === 'CONTENT_REVIEWER') {
+        if (reqFilters['organisations.roles'].length === 1 &&  reqFilters['organisations.roles'][0] === 'CONTENT_REVIEWER') {
           this._sourcingOrgReviewers = res.result.response.content;
         }
       }));
-    } else {
-      throwError('Missing OrgDetails');
-    }
     }
 }
+
