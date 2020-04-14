@@ -2,6 +2,7 @@ import { UserService, ProgramsService } from '@sunbird/core';
 import { ResourceService, ToasterService  } from '@sunbird/shared';
 import { Component, OnInit, Input, ViewChild, OnDestroy, Output, EventEmitter, } from '@angular/core';
 import * as _ from 'lodash-es';
+import { isArray } from 'util';
 
 @Component({
   selector: 'app-contributor-profile-popup',
@@ -15,6 +16,7 @@ export class ContributorProfilePopupComponent implements OnInit, OnDestroy {
   @Input() userId?: string;
   @Input() orgId?: string;
   @Input() showProfile: boolean;
+  @Input() hiddenFields?: [];
   contributor: any;
   fullName: string;
   isOrg: boolean;
@@ -28,6 +30,14 @@ export class ContributorProfilePopupComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    if (!this.showProfile) {
+      return;
+    }
+
+    if (!this.hiddenFields || !isArray(this.hiddenFields)) {
+      this.hiddenFields = [];
+    }
+
     if (_.isEmpty(this.orgId) && _.isEmpty(this.userId)) {
       this.toasterService.error('Please provide either of userId or orgId');
       return;

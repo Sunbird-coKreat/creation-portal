@@ -16,12 +16,19 @@ export class OrgUsersListComponent implements OnInit {
   public direction = 'asc';
   public sortColumn = '';
   public showLoader = true;
+  public selectedOrgUser: any;
+  public showcontributorProfile = false;
   public roles = [{ name: 'User', value: 'user'}, { name: 'Admin', value: 'admin'}];
 
   constructor( public resourceService: ResourceService, public userService: UserService,
     public registryService: RegistryService, public programsService: ProgramsService, public toasterService: ToasterService) { }
   ngOnInit(): void {
     this.getContributionOrgUsers();
+  }
+
+  showProfile(orgUser) {
+    this.selectedOrgUser = orgUser;
+    this.showcontributorProfile = true;
   }
 
   sortCollection(column) {

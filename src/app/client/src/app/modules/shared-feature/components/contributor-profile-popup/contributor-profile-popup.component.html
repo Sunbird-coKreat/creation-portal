@@ -1,0 +1,74 @@
+<sui-modal [mustScroll]="true" [isClosable]="true" *ngIf="showProfile" [transitionDuration]="0" [size]="'normal'" (dismissed)="closePopup()"
+	class="sb-modal" #modal>
+	<div class="sb-modal-header">
+    {{resourceService?.frmelmnts?.lbl?.profileDetails}} </div>
+	<div class="sb-modal-content o-y-visible">
+		<div class="ui container">
+			<ng-container *ngIf="!showLoader && contributor else noResult">
+				<div class="text-center">
+					<div class="sb-profile-page__avatar">
+						<img src="assets/images/guest.svg" alt="guest" class="mb-24">
+					</div>
+					<div class="fs-1-7 font-weight-bold my-24">{{fullName}} </div>
+				</div>
+				<div class="">
+					<dl class="my-5 d-inline-flex  w-50 sb-profile-page__category" *ngIf="!hiddenFields.includes('email')">
+						<dd>{{resourceService.frmelmnts.lbl.emailID}}
+							:</dd>
+						<dt class="pl-4">{{ (contributor?.website) ? contributor?.website : '-' }}</dt>
+					</dl>
+					<dl class="my-5 d-inline-flex  w-50 sb-profile-page__category"  *ngIf="!hiddenFields.includes('phone')">
+						<dd>{{resourceService.frmelmnts.lbl.phoneNumber}}
+							:</dd>
+						<dt class="pl-4">{{ (contributor?.phone) ? contributor?.phone : '-' }}</dt>
+					</dl>
+					<dl class="my-5 d-inline-flex  w-50 sb-profile-page__category" *ngIf="!hiddenFields.includes('type')">
+						<dd>{{resourceService.frmelmnts.lbl.type}}
+							:</dd>
+						<dt class="pl-4">{{ (isOrg) ? 'Organisation' : 'Individual'}}</dt>
+					</dl>
+					<dl class="my-5 d-inline-flex  w-50 sb-profile-page__category"  *ngIf="!hiddenFields.includes('website')">
+						<dd>{{resourceService.frmelmnts.lbl.website}}
+							:</dd>
+						<dt class="pl-4">{{ (contributor?.website) ? contributor?.website : '-'}}</dt>
+					</dl>
+					<dl class="my-5 d-inline-flex  w-50 sb-profile-page__category"  *ngIf="!hiddenFields.includes('board')">
+						<dd>{{resourceService?.frmelmnts?.lbl?.profile?.Board}}
+							:</dd>
+						<dt class="pl-4">{{ (contributor?.board?.length) ? contributor?.board?.join(', ') : '-' }}</dt>
+					</dl>
+					<dl class="my-5 d-inline-flex  w-50 sb-profile-page__m-responsive-flex-dc"  *ngIf="!hiddenFields.includes('medium')">
+						<dd>{{resourceService?.frmelmnts?.lbl?.profile?.Medium}}
+							:</dd>
+						<dt class="pl-4">
+							{{ (contributor?.medium?.length) ? contributor?.medium?.join(', ') : '-' }}</dt>
+					</dl>
+					<dl class="my-5 d-inline-flex  w-50 sb-profile-page__m-responsive-flex-dc"  *ngIf="!hiddenFields.includes('gradeLevel')">
+						<dd>{{resourceService?.frmelmnts?.lbl?.profile?.Classes}}
+							:</dd>
+						<dt class="pl-4">
+							{{ (contributor?.gradeLevel?.length) ? contributor?.gradeLevel?.join(', ') : '-' }}</dt>
+					</dl>
+					<dl class="my-5 d-inline-flex  w-50 sb-profile-page__m-responsive-flex-dc"  *ngIf="!hiddenFields.includes('subject')">
+						<dd>{{resourceService?.frmelmnts?.lbl?.profile?.Subjects}}
+							:</dd>
+						<dt class="pl-4">
+							{{ (contributor?.subject?.length) ? contributor?.subject?.join(', ') : '-' }}</dt>
+					</dl>
+					<dl class="my-5 d-flex sb-profile-page__m-responsive-flex-dc line-height-1-3"  *ngIf="!hiddenFields.includes('contentTypes')">
+						<dd>{{resourceService?.frmelmnts?.lbl?.contentType}}
+							:</dd>
+						<dt class="pl-4">
+							{{ (contributor?.contentTypes?.length) ? contributor?.contentTypes?.join(', ') : '-' }}</dt>
+					</dl>
+				</div>
+			</ng-container>
+			<ng-template #noResult>
+			<div class="ui tweleve wide column mb-20">
+				<app-loader *ngIf="showLoader"></app-loader>
+			</div>
+			<app-no-result *ngIf="!showLoader" [data]="{messageText: resourceService.messages.stmsg.m0006}"></app-no-result>
+			</ng-template>
+		</div>
+	</div>
+</sui-modal>
