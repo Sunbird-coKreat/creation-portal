@@ -128,6 +128,14 @@
                                         [telemetryInteractPdata]="telemetryInteractPdata">Nominations
                         <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ nominationsCount }}</span>
                     </a>
+                    <a class="item" [isActive]="activeTab === 'user'"  suiTabHeader="3"  (click)="resetStatusFilter('user')"
+                    appTelemetryInteract
+                                        [telemetryInteractEdata]="getTelemetryInteractEdata('nominations', 'click', 'program-nominations')"
+                                        [telemetryInteractObject]="telemetryInteractObject"
+                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                        [telemetryInteractPdata]="telemetryInteractPdata">Users
+                        <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ sourcingOrgUser.length || 0 }}</span>
+                    </a>
                 </div>
             </div>
             <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="2">
@@ -234,6 +242,59 @@
                     </div>
                 </div>
             </div>
+            <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="3">
+				<div class="ui container">
+					<div class="pt-24">
+					  <div class="d-flex flex-ai-center flex-jc-space-between sb-pageSection">
+						<div class="sb-pageSection-header">
+						  <h4 class="sb-pageSection-title"> {{userService.userProfile?.organisations[0]?.organisationId}}</h4>
+						  <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{sourcingOrgUser.length || 0}}</span>
+						</div>
+					  </div>
+					</div>
+					<div class="sb-table-responsive desktop-o-x-unset" *ngIf="sourcingOrgUser.length">
+					  <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
+						<thead class="sb-table-header sb-table-thead-gray">
+						  <tr>
+							<th class="w-10 cursor-pointer sb-sorting" (click)="sortOrgUsers('fullName')">
+								{{resourceService.frmelmnts.lbl.username}} &nbsp;&nbsp;
+                            </th>
+                            <th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('mediums')">
+								{{resourceService.frmelmnts.lbl.mediums}} &nbsp;&nbsp;
+							</th>
+							<th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('gradeLevel')">
+								{{resourceService.frmelmnts.lbl.class}} &nbsp;&nbsp;
+							</th>
+							<th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('subject')">
+								{{resourceService.frmelmnts.lbl.subject}} &nbsp;&nbsp;
+							</th>
+							<th class="text-center w-5">
+								{{resourceService.frmelmnts.lbl.roles}}
+							</th>
+						  </tr>
+						</thead>
+						<tbody class="sb-table-body">
+						  <tr *ngFor="let orgUser of sourcingOrgUser; let i= index;">
+                            <td>{{orgUser?.firstName}} {{orgUser?.lastName}}</td>
+                            <td>{{orgUser?.framework?.medium?.join(', ')}}</td>
+							<td>{{orgUser?.framework?.gradeLevel?.join(', ')}}</td>
+							<td>{{orgUser?.framework?.subject?.join(', ')}}</td>
+							<td class="text-center">
+							        <sui-select class="selection pt-5" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="options" valueField="name"
+									(selectedOptionChange)="onRoleChange()">
+										<sui-select-option *ngFor="let option of roles;" [value]="option">
+										</sui-select-option>
+									</sui-select>
+							</td>
+						  </tr>
+						</tbody>
+					  </table>
+					</div>
+					<div class="sb-table-responsive" *ngIf="!sourcingOrgUser.length">
+						<app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0146'}"></app-no-result>
+					</div>
+				  </div>
+			</div>
         </sui-tabset>
     </div>
 

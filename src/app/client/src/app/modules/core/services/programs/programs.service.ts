@@ -14,6 +14,7 @@ import { DataService } from '../data/data.service';
 import { HttpClient } from '@angular/common/http';
 import { ContentService } from '../content/content.service';
 import { DatePipe } from '@angular/common';
+import { LearnerService } from '../learner/learner.service';
 
 @Injectable({
   providedIn: 'root'
@@ -34,12 +35,13 @@ export class ProgramsService extends DataService implements CanActivate {
   public http: HttpClient;
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
   private _contentTypes: any[];
+  private _sourcingOrgUsers: Array<any>;
 
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService,
     private extFrameworkService: ExtPluginService, private datePipe: DatePipe,
     private contentService: ContentService, private router: Router,
-    private toasterService: ToasterService, private resourceService: ResourceService) {
+    private toasterService: ToasterService, private resourceService: ResourceService, public learnerService: LearnerService) {
       super(http);
       this.config = config;
       this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;
@@ -578,4 +580,28 @@ export class ProgramsService extends DataService implements CanActivate {
      });
    }
   }
+
+  get sourcingOrgUsers() {
+    return _.cloneDeep(this._sourcingOrgUsers);
+  }
+
+  getSourcingOrgUsers() {
+    if (this.userService.userProfile.organisations.length) {
+      const OrgDetails = this.userService.userProfile.organisations[0];
+      const req = {
+        url: `user/v1/search`,
+        data: {
+          'request': {
+            'filters': {
+              'organisations.organisationId': OrgDetails.organisationId,
+              'organisations.roles': ['CONTENT_REVIEWER']
+           }
+          }
+        }
+      };
+      return this.learnerService.post(req).pipe(tap(res => this._sourcingOrgUsers = res.result.response.content));
+    } else {
+      throwError('Missing OrgDetails');
+    }
+    }
 }

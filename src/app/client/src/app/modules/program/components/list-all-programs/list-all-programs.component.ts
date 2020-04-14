@@ -1,4 +1,4 @@
-import { ResourceService, ConfigService, ServerResponse, NavigationHelperService } from '@sunbird/shared';
+import { ResourceService, ConfigService, ServerResponse, NavigationHelperService, ToasterService } from '@sunbird/shared';
 import { ProgramsService, PublicDataService, UserService } from '@sunbird/core';
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,9 +14,15 @@ export class ListAllProgramsComponent implements OnInit, AfterViewInit {
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private config: ConfigService, private publicDataService: PublicDataService,
     private activatedRoute: ActivatedRoute, private router: Router, private navigationHelperService: NavigationHelperService,
-    public userService: UserService) { }
+    public userService: UserService, public tosterService: ToasterService) { }
 
   ngOnInit() {
+    if (!this.programsService.sourcingOrgUsers) {
+    // tslint:disable-next-line:max-line-length
+    this.programsService.getSourcingOrgUsers().subscribe(() => {}, (err) => {
+      this.tosterService.error('Unable to Fetch Sourcing-Org-Users');
+    });
+    }
   }
 
   ngAfterViewInit() {
