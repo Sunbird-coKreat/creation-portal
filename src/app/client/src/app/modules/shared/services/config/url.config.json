@@ -252,6 +252,14 @@
       "NOMINATION_LIST": "program/v1/nomination/list",
       "COLLECTION_LINK": "program/v1/collection/link",
       "CONTENTTYPE_LIST": "program/v1/contenttypes/list"
+    },
+    "DOCKCONTENT": {
+      "CREATE": "content/v3/create",
+      "PUBLISH": "content/v3/publish",
+      "GET": "content/v3/read",
+      "RETIRE": "content/v3/retire",
+      "REJECT": "content/v3/reject",
+      "FLAG": "content/v3/flag"
     }
   }
 }

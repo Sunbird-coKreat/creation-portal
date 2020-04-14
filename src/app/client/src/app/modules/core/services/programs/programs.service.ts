@@ -14,7 +14,6 @@ import { DataService } from '../data/data.service';
 import { HttpClient } from '@angular/common/http';
 import { ContentService } from '../content/content.service';
 import { DatePipe } from '@angular/common';
-import * as alphaNumSort from 'alphanum-sort';
 
 @Injectable({
   providedIn: 'root'
@@ -75,6 +74,25 @@ export class ProgramsService extends DataService implements CanActivate {
         return of(data);
       }));
   }
+  /**
+   * Function used to add user or org in registry
+  */
+  updateToRegistry(reqData) {
+    const option = {
+      url: 'reg/update',
+      data: {
+        id : 'open-saber.registry.update',
+        request: reqData
+      }
+    };
+    return this.contentService.post(option).pipe(
+      mergeMap((data: ServerResponse) => {
+        if (data.params.status !== 'SUCCESSFUL') {
+          return throwError(data);
+        }
+        return of(data);
+      }));
+  }
 
   /**
    * Function used to add user or org in registry
@@ -96,6 +114,19 @@ export class ProgramsService extends DataService implements CanActivate {
         }
         return of(data);
       }));
+  }
+
+/**
+  * Function to update the role of org user
+  */
+  updateUserRole(osid, newRoles) {
+    const userOrgUpdate = {
+      User_Org: {
+        osid: osid,
+        roles: newRoles
+      }
+    };
+    return this.updateToRegistry(userOrgUpdate);
   }
 
 /**
@@ -525,11 +556,9 @@ export class ProgramsService extends DataService implements CanActivate {
    let bColumn = b[column];
    if (_.isArray(aColumn)) {
      aColumn = _.join(aColumn, ', ');
-     a[column] = alphaNumSort(aColumn);
    }
    if (_.isArray(bColumn)) {
      bColumn = _.join(bColumn, ', ');
-     b[column] = alphaNumSort(bColumn);
    }
    return bColumn.localeCompare(aColumn);
   }

@@ -182,10 +182,13 @@ export class ProgramListComponent implements OnInit {
           }
 
         });
-        this.showLoader = false;
         this.enrollPrograms = this.programs;
         this.tempSortPrograms = this.programs;
         this.count = _.get(response, 'result.count');
+        this.sortColumn = 'createdon';
+        this.direction = 'desc';
+        this.sortCollection(this.sortColumn);
+        this.showLoader = false;
       }, error => {
         console.log(error);
         // TODO: Add error toaster
@@ -258,7 +261,7 @@ export class ProgramListComponent implements OnInit {
       else if  (obj.rolemapping
         && (( obj.rolemapping.CONTRIBUTOR.includes(_.get(this.userService, 'userProfile.userId' ))))
         && obj.status === 'Approved' && obj.program_id == programId ) {
-          roles = 'Contributor';  
+          roles = 'Contributor';
         }
     }));
     return roles;

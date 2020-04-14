@@ -86,10 +86,10 @@
       </ng-container>
     </div>   
     <hr class="my-10">
-      <div class="d-inline-block br-2 pr-20">
-        <button type="button" (click)="showContentTypeModal= true;" class="sb-btn sb-btn-normal sb-btn-outline-primary">{{resourceService.frmelmnts.btn.contentTypes}}</button>
+      <div *ngIf="canNominate()" class="d-inline-block br-2 pr-20">
+        <button type="button" (click)="showContentTypeModal= true; handleCancel(false)" class="sb-btn sb-btn-normal sb-btn-outline-primary">{{resourceService.frmelmnts.btn.contentTypes}}</button>
       </div>
-      <div *ngIf="canNominate()" class="d-inline-block px-20">
+      <div *ngIf="canNominate()" class="d-inline-block pl-20">
           <div>
               <div *ngIf="canNominate() && sessionContext?.nominationDetails?.status === 'Pending' || 'Initiated'" class="d-inline-block">
                 <button class="sb-btn sb-btn-normal sb-btn-primary px-40"  [disabled]="!(selectedContentTypes.length && selectedCollectionIds.length)"
@@ -97,19 +97,19 @@
             </div>
           </div>  
         </div>
-      <div class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-20 va-top">{{resourceService.frmelmnts.lbl.nominationMessage}}</div>
+      <div class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-20 va-top pl-20">{{resourceService.frmelmnts.lbl.nominationMessage}}</div>
   </div>
 </div>
 
   <div class="sb-bg-color-white py-24 dynamicHeight">
     <div class="ui container m-0 p-0 sb-pageSection">
-      <div class="sb-pageSection-header">
+      <div class="sb-pageSection-header mb-15">
         <div>
           <h4 class="sb-pageSection-title six">{{resourceService.frmelmnts.lbl.textbooks}}</h4>
           <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning mx-10">{{collectionList.length || ''}}</span>
         </div>
         <div class="sb-pageSection-document" *ngIf="programContext?.guidelines_url">
-          <a class="ann-link-or-attachment" href="{{ programContext?.guidelines_url }}" target="_blank">
+          <a class="fs-0-785 text-decor-none" href="{{ programContext?.guidelines_url }}" target="_blank">
             {{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
           </a>
         </div>
@@ -118,12 +118,40 @@
         <table class="sb-table sb-table-striped sb-table-sortable sb-table-fixed">
           <thead class="sb-table-header sb-table-thead-gray">
             <tr>
-              <th class="w-5">{{resourceService.frmelmnts.lbl.textbook}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-              <th class="w-5">{{resourceService.frmelmnts.lbl.profile.Medium}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-              <th class="w-5">{{resourceService.frmelmnts.lbl.class}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-              <th class="w-5">{{resourceService.frmelmnts.lbl.subject}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-              <th class="w-5">{{resourceService.frmelmnts.lbl.chapters}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-              <th class="w-5" *ngIf="currentNominationStatus === 'Initiated' || currentNominationStatus=== 'Pending'">Sample Content<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+              <th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('name')">
+                {{resourceService.frmelmnts.lbl.textbook}} &nbsp;&nbsp;
+								<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>
+								<span  *ngIf="sortColumn == 'name'" class="d-inline-block">
+									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+								</span>
+              </th>
+              <th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('medium')">
+                {{resourceService.frmelmnts.lbl.medium}} &nbsp;&nbsp;
+								<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'medium' "></i>
+								<span  *ngIf="sortColumn == 'medium'" class="d-inline-block">
+									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+								</span>
+              </th>
+							<th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('gradeLevel')">
+								{{resourceService.frmelmnts.lbl.class}} &nbsp;&nbsp;
+								<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'gradeLevel' "></i>
+								<span  *ngIf="sortColumn == 'gradeLevel'" class="d-inline-block">
+									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+								</span>
+							</th>
+							<th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('subject')">
+								{{resourceService.frmelmnts.lbl.subjects}} &nbsp;&nbsp;
+								<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'subject' "></i>
+								<span  *ngIf="sortColumn == 'subject'" class="d-inline-block">
+									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+								</span>
+							</th>
+              <th class="w-5">{{resourceService.frmelmnts.lbl.chapters}}</th>
+              <th class="w-5" *ngIf="currentNominationStatus === 'Initiated' || currentNominationStatus=== 'Pending'">Sample Content</th>
               <th class="w-5"></th>
             </tr>
           </thead>
@@ -135,10 +163,10 @@
                 </div>
               </td>
               <td>
-                <div suiPopup popupHeader="Grades" popupText="{{data.gradeLevel}}">{{data.gradeLevel}}</div>
+                <div class="sb__ellipsis">{{data.medium}}</div>
               </td>
               <td>
-                <div class="sb__ellipsis">{{data.medium}}</div>
+                <div suiPopup popupHeader="Grades" popupText="{{data.gradeLevel}}">{{data.gradeLevel}}</div>
               </td>
               <td>
                 <div class="sb__ellipsis">{{data.subject}}</div>
@@ -148,7 +176,7 @@
               </td>
               <td *ngIf="currentNominationStatus === 'Initiated' || currentNominationStatus=== 'Pending'">{{data.sampleContentCount || 0 }}</td>
               <td>
-                <div *ngIf = "selectedContentTypes.length || sessionContext?.nominationDetails?.content_types?.length">
+                <div *ngIf = "selectedContentTypes.length">
                 <div *ngIf="(data.sampleContentCount === undefined || data.sampleContentCount === 0) && canNominate()" class="sb-checkbox sb-checkbox-primary d-inline-block">
                   <input  type="checkbox" [checked]="data.isSelected || data.sampleContentCount" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
                   <label></label>
@@ -287,7 +315,7 @@
   <app-loader></app-loader>
 </div>
 
-<sui-modal *ngIf="showContentTypeModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
+<sui-modal *ngIf="showContentTypeModal" [mustScroll]="true" [isClosable]="false" [transitionDuration]="0"
   [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showContentTypeModal = false" #modal>
   <div class="sb-modal-header">
     {{resourceService.frmelmnts.lbl.contentTypesHint}}
@@ -304,8 +332,8 @@
     </div>
   </div>
   <div class="sb-modal-actions">
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showContentTypeModal = false" [disabled]="!selectedContentTypes.length"> {{resourceService.frmelmnts.btn.submit}} </button>
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showContentTypeModal = false; selectedContentTypes = []; markSelectedContentTypes('reset')"> {{resourceService.frmelmnts.btn.cancel}}
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showContentTypeModal = false; toasterService.success(resourceService.messages.smsg.nomination.m001)" [disabled]="!selectedContentTypes.length"> {{resourceService.frmelmnts.btn.submit}} </button>
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showContentTypeModal = false; handleCancel(true)"> {{resourceService.frmelmnts.btn.cancel}}
     </button>
   </div>
 </sui-modal>
