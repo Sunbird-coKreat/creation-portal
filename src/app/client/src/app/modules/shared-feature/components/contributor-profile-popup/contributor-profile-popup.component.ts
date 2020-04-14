@@ -2,7 +2,8 @@ import { UserService, ProgramsService } from '@sunbird/core';
 import { ResourceService, ToasterService  } from '@sunbird/shared';
 import { Component, OnInit, Input, ViewChild, OnDestroy, Output, EventEmitter, } from '@angular/core';
 import * as _ from 'lodash-es';
-import { isArray } from 'util';
+import { tap } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-contributor-profile-popup',
@@ -15,12 +16,19 @@ export class ContributorProfilePopupComponent implements OnInit, OnDestroy {
   @ViewChild('modal') private modal;
   @Input() userId?: string;
   @Input() orgId?: string;
-  @Input() showProfile: boolean;
-  @Input() hiddenFields?: [];
   contributor: any;
-  fullName: string;
-  isOrg: boolean;
+  name: string;
+  email: string;
+  phone: string;
+  website: string;
+  board: any[];
+  medium: any[];
+  gradeLevel: any[];
+  subject: any[];
+  contentTypes: any[];
   showLoader = true;
+  userType: string;
+  profile = {};
 
   constructor(
     public userService: UserService,
@@ -30,24 +38,81 @@ export class ContributorProfilePopupComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    if (!this.showProfile) {
-      return;
-    }
-
-    if (!this.hiddenFields || !isArray(this.hiddenFields)) {
-      this.hiddenFields = [];
-    }
-
     if (_.isEmpty(this.orgId) && _.isEmpty(this.userId)) {
-      this.toasterService.error('Please provide either of userId or orgId');
+      this.toasterService.error(this.resourceService.messages.emsg.contributor.profile.m0001);
       return;
     }
 
+    this.getUserprofileDetails();
+  }
+
+  getUserOrgProfile(osid) {
+    const orgSearchReq = {
+      entityType: ['User_Org'],
+      filters: {
+        userId: {eq: osid}
+      }
+    };
+    return this.programsService.searchRegistry(orgSearchReq);
+  }
+
+  getUserprofileDetails() {
+    const observables = [];
     if (!_.isEmpty(this.orgId)) {
-      this.getOrgProfile();
-    } else if (!_.isEmpty(this.userId)) {
-      this.getUserProfile();
+      observables.push(this.getOrgProfile());
     }
+    if (!_.isEmpty(this.userId)) {
+      observables.push(this.getUserProfile());
+    }
+    forkJoin(observables).subscribe((data) => {
+      let userOrg;
+      const user = _.get(this.profile, 'User');
+      const org = _.get(this.profile, 'Org');
+      this.getUserOrgProfile(user.osid).subscribe(
+        (response) => {
+          const userOrgs = _.get(response, 'result.User_Org');
+          if (!_.isEmpty(userOrgs)) {
+            userOrg = _.find(userOrgs, (o) => {
+              return o.orgId === this.orgId;
+            });
+          }
+
+        let details = user;
+        if (!_.isEmpty(org) && !_.isEmpty(user) && !_.isEmpty(userOrg) && !_.includes(userOrg.roles, 'admin')) {
+          this.userType = 'org_user';
+        } else if (!_.isEmpty(org)) {
+          this.userType = 'org';
+          details = org;
+        } else if (!_.isEmpty(user)) {
+          this.userType = 'individual_user';
+        }
+        this.setProfileDetails(details);
+        this.showLoader = false;
+      });
+    },
+    (err) => {
+      this.handleError(err, this.resourceService.messages.emsg.contributor.profile.m0001);
+      return false;
+    });
+  }
+
+  setProfileDetails(details) {
+    if (this.userType === 'org') {
+      this.name = details.name;
+    } else {
+      this.name = details.firstName;
+      if (!_.isEmpty(details.lastName)) {
+        this.name  += ' ' + details.lastName;
+      }
+    }
+    this.website = _.get(details, 'website');
+    this.phone = _.get(details, 'phone');
+    this.email = _.get(details, 'email');
+    this.contentTypes = _.get(details, 'contentTypes');
+    this.gradeLevel = _.get(details, 'gradeLevel');
+    this.medium = _.get(details, 'medium');
+    this.subject = _.get(details, 'subject');
+    this.board = _.get(details, 'board');
   }
 
   getUserProfile() {
@@ -57,63 +122,41 @@ export class ContributorProfilePopupComponent implements OnInit, OnDestroy {
         userId: { eq : this.userId }
       }
     };
-    this.programsService.searchRegistry(userSearchReq).subscribe(
-      (response) => {
-        if (_.isEmpty(response.result.User)) {
+    return this.programsService.searchRegistry(userSearchReq).pipe(
+      tap((response) => {
+        const users = _.get(response, 'result.User');
+        if (_.isEmpty(users)) {
           this.toasterService.warning(this.resourceService.messages.emsg.profile.m0001);
           return false;
         }
-        this.contributor = response.result.User[0];
-        this.setFullName();
-      },
-      (err) => {
-        this.handleError(err, this.resourceService.messages.emsg.profile.m0002);
-        return false;
+        this.profile['User'] = users[0];
       }
-    );
+    ));
   }
 
   getOrgProfile() {
     const orgSearchReq = {
       entityType: ['Org'],
       filters: {
-        osid: {eq : this.orgId}
+        osid: { eq : this.orgId }
       }
     };
-    this.programsService.searchRegistry(orgSearchReq).subscribe(
-      (response) => {
-        if (_.isEmpty(response.result.Org)) {
+    return this.programsService.searchRegistry(orgSearchReq).pipe(
+      tap((response) => {
+        const org = _.get(response, 'result.Org');
+        if (_.isEmpty(org)) {
           this.toasterService.warning(this.resourceService.messages.emsg.contributorjoin.m0001);
           return false;
         }
-        this.contributor = response.result.Org[0];
-        this.setFullName();
-      },
-      (err) => {
-        this.handleError(err, this.resourceService.messages.fmsg.contributorjoin.m0001);
-        return false;
-      }
+        this.profile['Org'] = org[0];
+      })
     );
   }
 
   handleError(err, customErrMsg) {
     console.log(err);
-    // TODO: navigate to program list page
     const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
     this.toasterService.warning(errorMes || customErrMsg);
-  }
-
-  setFullName() {
-    this.isOrg = this.contributor['@type'] === 'Org';
-    if (this.isOrg) {
-      this.fullName = this.contributor.name;
-    } else {
-      this.fullName = this.contributor.firstName;
-      if (!_.isEmpty(this.contributor.lastName)) {
-        this.fullName  += ' ' + this.contributor.lastName;
-      }
-    }
-    this.showLoader = false;
   }
 
   ngOnDestroy() {
@@ -123,7 +166,6 @@ export class ContributorProfilePopupComponent implements OnInit, OnDestroy {
   }
 
   closePopup() {
-    this.showProfile = false;
     this.modal.deny();
     this.close.emit();
   }

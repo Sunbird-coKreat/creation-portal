@@ -161,7 +161,6 @@
 
 <app-contributor-profile-popup
 	*ngIf="showcontributorProfile"
-	[showProfile]="showcontributorProfile"
 	[orgId]="contributor?.nominationData?.organisation_id"
 	[userId]="contributor?.nominationData?.user_id"
 	(close)="showcontributorProfile = false;">

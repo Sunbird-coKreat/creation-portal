@@ -57,8 +57,7 @@
 
 <app-contributor-profile-popup
 *ngIf="showcontributorProfile"
-[hiddenFields]="['type', 'website']"
-[showProfile]="showcontributorProfile"
+[orgId]="selectedOrgUser?.userOrg?.orgId"
 [userId]="selectedOrgUser?.userId"
 (close)="showcontributorProfile = false;">
 </app-contributor-profile-popup>
