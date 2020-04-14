@@ -213,7 +213,7 @@
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
                                                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
-                                                        *ngIf="nomination?.nominationData?.status === 'Accepted'"
+                                                        *ngIf="nomination?.nominationData?.status === 'Approved'"
                                                         (click)="viewNominationDetails(nomination)">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
                                                 </td>
                                         </tr>
