@@ -199,8 +199,9 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
       }, (err) => {
         this.tosterService.error('Failed! Please try later...');
       });
-      
+
   }
+  
   chnageEnrollStatus(status) {
     this.enrollAsOrg = status;
   }
