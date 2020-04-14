@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { map, catchError } from 'rxjs/operators';
 import { throwError, Observable } from 'rxjs';
 import { ActionService, UserService } from '@sunbird/core';
+import { HttpClient } from '@angular/common/http';
 import { ConfigService, ToasterService } from '@sunbird/shared';
 import { TelemetryService } from '@sunbird/telemetry';
 import { forkJoin } from 'rxjs';
@@ -16,7 +17,7 @@ export class CollectionHierarchyService {
 
   constructor(private actionService: ActionService, private configService: ConfigService,
     public toasterService: ToasterService, public userService: UserService,
-    public telemetryService: TelemetryService) {
+    public telemetryService: TelemetryService, private httpClient: HttpClient) {
       this.currentUserID = this.userService.userProfile.userId;
      }
 
@@ -139,6 +140,24 @@ export class CollectionHierarchyService {
         this.getRejectOrDraft(collectionWithoutReject[id]['Draft'], 'Reject') : [];
     });
     return collectionWithReject;
+  }
+
+  getContentAggregation(programId) {
+    const option = {
+      url: 'content/composite/v1/search',
+      data: {
+        request: {
+          filters: {
+            objectType: 'content',
+            programId: programId,
+            status: [],
+            mimeType: {'!=': 'application/vnd.ekstep.content-collection'}
+          }
+        }
+      }
+    };
+
+    return this.httpClient.post<any>(option.url, option.data);
   }
 
 
