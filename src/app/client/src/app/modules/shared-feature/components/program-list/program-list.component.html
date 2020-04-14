@@ -133,7 +133,7 @@
                   </div>
                 </td>
                 <td *ngIf="activeMyProgramsMenu && iscontributeOrgAdmin" class="text-center">
-                  <span  [ngClass]="{'sb-color-error':program.nomination_status  == 'Rejected','sb-color-success':program.nomination_status  == 'Approved','sb-color-warning':program.nomination_status  == 'Pending'}">{{ getProgramNominationStatus(program) }}</span>
+                  <span  [ngClass]="{'sb-color-error':program.nomination_status  == 'Rejected','sb-color-success':program.nomination_status  == 'Approved','sb-color-warning':program.nomination_status  == 'Pending','sb-color-gray-400':program.nomination_status  == 'Initiated'}">{{ getProgramNominationStatus(program) }}</span>
                 </td>
                 <td *ngIf="activeMyProgramsMenu && !iscontributeOrgAdmin" class="text-center">
                   <div>{{ getMyProgramRole(program) }}</div>
