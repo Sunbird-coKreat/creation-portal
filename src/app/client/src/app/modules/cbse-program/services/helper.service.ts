@@ -65,7 +65,7 @@ export class HelperService {
       }
     };
     const option = {
-      url: `content/v3/publish/${contentId}`,
+      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.PUBLISH}/${contentId}`,
       data: requestBody
     };
     return this.actionService.post(option);
@@ -80,10 +80,10 @@ export class HelperService {
       }
     };
     const option = {
-      url: `${this.configService.urlConFig.URLS.CONTENT.REJECT}/${contentId}`,
+      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.REJECT}/${contentId}`,
       data: requestBody
     };
-    return this.contentService.post(option);
+    return this.actionService.post(option);
   }
 
   apiErrorHandling(err, errorInfo) {
