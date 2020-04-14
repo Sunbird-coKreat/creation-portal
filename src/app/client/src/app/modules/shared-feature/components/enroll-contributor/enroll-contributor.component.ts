@@ -225,7 +225,7 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
           }
           else
           {
-            this.tosterService.error('Organisation name is already registered.');
+            this.tosterService.error(this.resourceService.messages.emsg.contributorRegister.m0001);
           }
             },
           (err) => {
