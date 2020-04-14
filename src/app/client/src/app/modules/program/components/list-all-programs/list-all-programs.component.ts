@@ -17,9 +17,9 @@ export class ListAllProgramsComponent implements OnInit, AfterViewInit {
     public userService: UserService, public tosterService: ToasterService) { }
 
   ngOnInit() {
-    if (!this.programsService.sourcingOrgUsers) {
+    if (!this.programsService.sourcingOrgReviewers) {
     // tslint:disable-next-line:max-line-length
-    this.programsService.getSourcingOrgUsers().subscribe(() => {}, (err) => {
+    this.programsService.getSourcingOrgUsers(['CONTENT_REVIEWER']).subscribe(() => {}, (err) => {
       this.tosterService.error('Unable to Fetch Sourcing-Org-Users');
     });
     }

@@ -35,7 +35,7 @@ export class ProgramsService extends DataService implements CanActivate {
   public http: HttpClient;
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
   private _contentTypes: any[];
-  private _sourcingOrgUsers: Array<any>;
+  private _sourcingOrgReviewers: Array<any>;
 
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService,
@@ -581,11 +581,11 @@ export class ProgramsService extends DataService implements CanActivate {
    }
   }
 
-  get sourcingOrgUsers() {
-    return _.cloneDeep(this._sourcingOrgUsers);
+  get sourcingOrgReviewers() {
+    return _.cloneDeep(this._sourcingOrgReviewers);
   }
 
-  getSourcingOrgUsers() {
+  getSourcingOrgUsers(roles) {
     if (this.userService.userProfile.organisations.length) {
       const OrgDetails = this.userService.userProfile.organisations[0];
       const req = {
@@ -594,12 +594,16 @@ export class ProgramsService extends DataService implements CanActivate {
           'request': {
             'filters': {
               'organisations.organisationId': OrgDetails.organisationId,
-              'organisations.roles': ['CONTENT_REVIEWER']
+              'organisations.roles': roles
            }
           }
         }
       };
-      return this.learnerService.post(req).pipe(tap(res => this._sourcingOrgUsers = res.result.response.content));
+      return this.learnerService.post(req).pipe(tap((res) => {
+        if (roles.length === 1 && roles[0] === 'CONTENT_REVIEWER') {
+          this._sourcingOrgReviewers = res.result.response.content;
+        }
+      }));
     } else {
       throwError('Missing OrgDetails');
     }

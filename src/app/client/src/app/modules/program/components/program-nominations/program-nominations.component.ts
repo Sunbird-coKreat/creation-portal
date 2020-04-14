@@ -63,7 +63,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
   this.telemetryInteractObject = {};
   this.checkActiveTab();
-  this.sourcingOrgUser = this.programsService.sourcingOrgUsers || [];
+  this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
   this.roles = [{name: 'REVIEWER'}];
   }
 
