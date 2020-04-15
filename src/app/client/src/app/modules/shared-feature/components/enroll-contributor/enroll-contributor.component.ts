@@ -20,12 +20,12 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
   public unsubscribe = new Subject<void>();
   public enrollAsOrg = false;
   public enrollDetails: any = {};
-  public programScope = {};
+  //public programScope = {};
   public enrolledDate: any;
   @ViewChild('modal') modal;
   frameworkdetails;
   formIsInvalid = false;
-  contentType = { };
+  //contentType = { };
   telemetryImpression: any;
   options;
   disableSubmit = false;
@@ -40,16 +40,14 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
    public telemetryInteractObject: any;
 
   constructor(private programsService: ProgramsService, private tosterService: ToasterService,
-    public userService: UserService, public frameworkService: FrameworkService, private configService: ConfigService,
+    public userService: UserService, private configService: ConfigService,
     public toasterService: ToasterService, public formBuilder: FormBuilder, private navigationHelperService: NavigationHelperService,
     public http: HttpClient, public enrollContributorService: EnrollContributorService, public router: Router,
     public resourceService: ResourceService, private datePipe: DatePipe, public activeRoute: ActivatedRoute  ) {
   }
 
   ngOnInit(): void {
-      this.fetchFrameWorkDetails();
       this.initializeFormFields();
-      this.getProgramContentTypes();
       this.enrolledDate = new Date();
       this.enrolledDate = this.datePipe.transform(this.enrolledDate, 'yyyy-MM-dd');
      this.telemetryInteractCdata = [];
@@ -83,64 +81,8 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
     });
   }
 
-  fetchFrameWorkDetails() {
-   const frameworkId = _.get(this.userService.userProfile.framework, 'id') ? _.get(this.userService.userProfile.framework, 'id')[0] : null;
-   if (frameworkId) {
-    this.frameworkService.getFrameworkCategories(frameworkId)
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((data) => {
-        if (data && _.get(data, 'result.framework.categories')) {
-          this.frameworkdetails = _.get(data, 'result.framework.categories');
-
-          this.frameworkdetails.forEach((element) => {
-            this.enrollDetails[element['code']] = element['terms'];
-          });
-          this.frameworkFetched = true;
-        }
-      }, error => {
-        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-        this.toasterService.warning(errorMes || 'Fetching framework details failed');
-        this.router.navigate(['']);
-      });
-   } else {
-    this.frameworkService.initialize();
-    this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
-      if (frameworkInfo && !frameworkInfo.err && frameworkInfo.frameworkdata && frameworkInfo.frameworkdata.defaultFramework) {
-        this.frameworkdetails  = frameworkInfo.frameworkdata.defaultFramework.categories;
-        this.frameworkdetails.forEach((element) => {
-          this.enrollDetails[element['code']] = element['terms'];
-        });
-        this.frameworkFetched = true;
-      }
-    });
-   }
-  }
-
-  getProgramContentTypes () {
-    const option = {
-      url: 'program/v1/contenttypes/list',
-    };
-
-    this.programsService.get(option).subscribe(
-      (res) => {
-        this.contentType['contentType'] = res.result.contentType;
-        },
-      (err) => {
-        console.log(err);
-        // TODO: navigate to program list page
-        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-        this.toasterService.warning(errorMes || 'Fetching content types failed');
-      }
-    );
-  }
-
   initializeFormFields(): void {
     this.contributeForm = this.formBuilder.group({
-        board: [[]],
-        medium: [[]],
-        gradeLevel: [[]],
-        subject: [[]],
-        contentTypes: [[]],
         name: [''],
         description: [''],
         website: [''],
@@ -208,7 +150,7 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
     this.enrollAsOrg === true ? this.contributeForm.controls['name'].setValidators([Validators.required]) : this.contributeForm.controls['name'].setValidators(null);
     this.contributeForm.controls['name'].updateValueAndValidity();
     this.contributeForm.controls['description'].updateValueAndValidity();
-    if (this.contributeForm.dirty && this.contributeForm.valid) {
+    if (this.contributeForm.valid) {
       if (this.enrollAsOrg === true)
       { 
         var request = {
