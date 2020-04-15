@@ -442,7 +442,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
           // tslint:disable-next-line:max-line-length
           obj.required ? controller[obj.code] = [preSavedValues[code], [Validators.required]] : controller[obj.code] = [preSavedValues[code]];
         } else if (obj.inputType === 'text') {
-          preSavedValues[code] = (this.contentMetaData[code]) ? this.contentMetaData[code] : '';
+          if (obj.dataType === 'list') {
+            const listValue = (this.contentMetaData[code]) ? this.contentMetaData[code] : '';
+            preSavedValues[code] = _.isArray(listValue) ? listValue.toString() : '';
+          } else {
+            preSavedValues[code] = (this.contentMetaData[code]) ? this.contentMetaData[code] : '';
+          }
           // tslint:disable-next-line:max-line-length
           obj.required ? controller[obj.code] = [{value: preSavedValues[code], disabled: this.disableFormField}, [Validators.required]] : controller[obj.code] = preSavedValues[code];
         }
@@ -524,6 +529,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
          } else {
            return value;
          }
+      });
+
+      _.forEach(this.textFields, field => {
+        if (field.dataType === 'list') {
+          trimmedValue[field.code] = trimmedValue[field.code] ? trimmedValue[field.code].split(', ') : [];
+        }
       });
       contentObj = _.pickBy(_.assign(contentObj, trimmedValue), _.identity);
       const request = {

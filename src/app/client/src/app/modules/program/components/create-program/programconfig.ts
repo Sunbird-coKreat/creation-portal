@@ -513,24 +513,28 @@ var programConfig = {
               'visible': true
             },
             {
-              'code': 'bloomslevel',
+              'code': 'attributions',
               'dataType': 'list',
-              'description': 'Learning Level For The Content',
+              'description': 'Enter Attributions',
               'editable': true,
-              'inputType': 'select',
-              'label': 'Learning Level',
-              'name': 'LearningLevel',
-              'placeholder': 'Select Learning Levels',
-              'required': true,
-              'visible': true,
-              'defaultValue': [
-                'remember',
-                'understand',
-                'apply',
-                'analyse',
-                'evaluate',
-                'create'
-              ]
+              'inputType': 'text',
+              'label': 'Attributions',
+              'name': 'Attributions',
+              'placeholder': 'Enter Attributions',
+              'required': false,
+              'visible': true
+            },
+            {
+              'code': 'copyright',
+              'dataType': 'text',
+              'description': 'Enter Copyright',
+              'editable': true,
+              'inputType': 'text',
+              'label': 'Copyright',
+              'name': 'Copyright',
+              'placeholder': 'Enter Copyright',
+              'required': false,
+              'visible': true
             },
             {
               'code': 'creator',
@@ -596,24 +600,28 @@ var programConfig = {
               'visible': true
             },
             {
-              'code': 'bloomsLevel',
+              'code': 'Attributions',
               'dataType': 'list',
-              'description': 'Learning Level For The Content',
+              'description': 'Enter Attributions',
               'editable': true,
-              'inputType': 'multiselect',
-              'label': 'Learning Level',
-              'name': 'LearningLevel',
-              'placeholder': 'Select Learning Levels',
-              'required': true,
-              'visible': true,
-              'defaultValue': [
-                'remember',
-                'understand',
-                'apply',
-                'analyse',
-                'evaluate',
-                'create'
-              ]
+              'inputType': 'text',
+              'label': 'Attributions',
+              'name': 'Attributions',
+              'placeholder': 'Enter Attributions',
+              'required': false,
+              'visible': true
+            },
+            {
+              'code': 'copyright',
+              'dataType': 'text',
+              'description': 'Enter Copyright',
+              'editable': true,
+              'inputType': 'text',
+              'label': 'Copyright',
+              'name': 'Copyright',
+              'placeholder': 'Enter Copyright',
+              'required': false,
+              'visible': true
             },
             {
               'code': 'creator',
