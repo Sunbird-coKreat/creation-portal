@@ -12,15 +12,10 @@
 					<div class="fs-1-7 font-weight-bold my-24">{{name}} </div>
 				</div>
 				<div class="">
-					<dl class="my-5 d-inline-flex  w-50 sb-profile-page__category">
-						<dd>{{resourceService.frmelmnts.lbl.emailID}}
+					<dl class="my-5 d-inline-flex  w-100 sb-profile-page__category">
+						<dd>{{resourceService.frmelmnts.lbl.emailOrMobile}}
 							:</dd>
-						<dt class="pl-4">{{ (email) ? email : '-' }}</dt>
-					</dl>
-					<dl class="my-5 d-inline-flex  w-50 sb-profile-page__category">
-						<dd>{{resourceService.frmelmnts.lbl.phoneNumber}}
-							:</dd>
-						<dt class="pl-4">{{ (phone) ? phone : '-' }}</dt>
+						<dt class="pl-4">{{ (contact) ? contact : '-' }}</dt>
 					</dl>
 					<dl class="my-5 d-inline-flex  w-50 sb-profile-page__category" *ngIf="this.userType !== 'org_user'">
 						<dd>{{resourceService.frmelmnts.lbl.type}}

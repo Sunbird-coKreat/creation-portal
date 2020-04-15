@@ -3,6 +3,7 @@ import { ResourceService, ToasterService } from '@sunbird/shared';
 import { UserService, RegistryService, ProgramsService } from '@sunbird/core';
 import * as _ from 'lodash-es';
 import { forkJoin } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 
 @Component({
@@ -13,6 +14,7 @@ import { forkJoin } from 'rxjs';
 export class OrgUsersListComponent implements OnInit {
   public contributorOrgUser: any = [];
   public tempSortOrgUser: any = [];
+  public userIds: any = [];
   public direction = 'asc';
   public sortColumn = '';
   public showLoader = true;
@@ -52,32 +54,68 @@ export class OrgUsersListComponent implements OnInit {
           console.log('NO USER FOUND');
           return;
         }
-        _.map(result.User_Org, userOrg => {
-          this.registryService.getUserDetails(userOrg.userId)
-            .subscribe((res: any) => {
-              if (res.result && res.result.User) {
-                const user = res.result.User;
-                if (user.userId === userRegData.User.userId) {
-                  return;
+        const getUserDetails = _.map(result.User_Org, userOrg => {
+          return this.registryService.getUserDetails(userOrg.userId)
+            .pipe(
+              tap((res: any) => {
+                if (res.result && res.result.User) {
+                  const user = res.result.User;
+                  if (user.userId === userRegData.User.userId) {
+                    return;
+                  }
+                  user.fullName = user.firstName;
+                  if (user.lastName) {
+                    user.fullName += ' ' + user.lastName;
+                  }
+                  user.selectedRole = _.first(userOrg.roles);
+                  user.userOrg = userOrg;
+                  this.contributorOrgUser.push(user);
+                  this.tempSortOrgUser.push(user);
+                  this.userIds.push(user.userId);
                 }
-                user.fullName = user.firstName;
-                if (user.lastName) {
-                  user.fullName += ' ' + user.lastName;
-                }
-                user.selectedRole = _.first(userOrg.roles);
-                user.userOrg = userOrg;
-                this.contributorOrgUser.push(user);
-                this.tempSortOrgUser.push(user);
-              }
-            }, error => {
-              console.log(error);
-            });
+            })
+          );
         });
-        this.showLoader = false;
+        forkJoin(...getUserDetails)
+          .subscribe((res: any) => {
+            this.getUsersDetails();
+          }, error => {
+            console.log(error);
+          });
       }, error => {
         console.log(error);
       });
     }
+  }
+
+  getUsersDetails() {
+    const req = {
+      'identifier': _.compact(this.userIds)
+    };
+    this.programsService.getOrgUsersDetails(req).subscribe((response) => {
+      const users = _.get(response, 'result.response.content');
+      if (_.isEmpty(users)) {
+        this.showLoader = false;
+        console.log('NO USER FOUND');
+        return;
+      }
+      _.forEach(users, (user, index) => {
+        const contribUser = _.find(this.contributorOrgUser, (u) => {
+          return u.userId === user.identifier;
+        });
+        if (contribUser) {
+          if (!_.isEmpty(user.maskedEmail)) {
+            contribUser.contact = user.maskedEmail;
+          }
+          if (!_.isEmpty(user.maskedPhone)) {
+            contribUser.contact = user.maskedPhone;
+          }
+        }
+        if (index === users.length - 1) {
+          this.showLoader = false;
+        }
+      });
+    });
   }
 
   onRoleChange(user) {
