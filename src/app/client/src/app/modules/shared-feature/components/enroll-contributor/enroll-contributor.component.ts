@@ -192,10 +192,10 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
           }), catchError(err => throwError(err)))
           .subscribe((res3) => {
             this.contributeForm.reset();
-            this.tosterService.success('Enrolment is succesfully done...');
+            this.tosterService.success(this.resourceService.messages.smsg.contributorRegister.m0001);
             this.modal.deny();
           }, (err) => {
-            this.tosterService.error('Failed! Please try later...');
+            this.tosterService.error(this.resourceService.messages.emsg.contributorRegister.m0002);
           });
       
   }
@@ -215,10 +215,10 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
         var request = {
           entityType:["Org"],
           filters:{
-            name:{eq: this.contributeForm.get('name').value}
+            code:{eq: this.contributeForm.get('name').value.toUpperCase()}
           }
         }
-        this.enrollContributorService.searchOrganisation(request).subscribe(
+        this.programsService.searchRegistry(request).subscribe(
           (res) => {
           if(_.isEmpty(res.result.Org) || res.result.Org.length === 0)
           {
