@@ -86,8 +86,8 @@
       </ng-container>
     </div>   
     <hr class="my-10">
-      <div class="d-inline-block br-2 pr-20">
-        <button type="button" (click)="showContentTypeModal= true;" class="sb-btn sb-btn-normal sb-btn-outline-primary">{{resourceService.frmelmnts.btn.contentTypes}}</button>
+      <div *ngIf="canNominate()" class="d-inline-block br-2 pr-20">
+        <button type="button" (click)="showContentTypeModal= true; handleCancel(false)" class="sb-btn sb-btn-normal sb-btn-outline-primary">{{resourceService.frmelmnts.btn.contentTypes}}</button>
       </div>
       <div *ngIf="canNominate()" class="d-inline-block pl-20">
           <div>
@@ -176,7 +176,7 @@
               </td>
               <td *ngIf="currentNominationStatus === 'Initiated' || currentNominationStatus=== 'Pending'">{{data.sampleContentCount || 0 }}</td>
               <td>
-                <div *ngIf = "selectedContentTypes.length || sessionContext?.nominationDetails?.content_types?.length">
+                <div *ngIf = "selectedContentTypes.length">
                 <div *ngIf="(data.sampleContentCount === undefined || data.sampleContentCount === 0) && canNominate()" class="sb-checkbox sb-checkbox-primary d-inline-block">
                   <input  type="checkbox" [checked]="data.isSelected || data.sampleContentCount" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
                   <label></label>
@@ -315,7 +315,7 @@
   <app-loader></app-loader>
 </div>
 
-<sui-modal *ngIf="showContentTypeModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
+<sui-modal *ngIf="showContentTypeModal" [mustScroll]="true" [isClosable]="false" [transitionDuration]="0"
   [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showContentTypeModal = false" #modal>
   <div class="sb-modal-header">
     {{resourceService.frmelmnts.lbl.contentTypesHint}}
@@ -332,8 +332,8 @@
     </div>
   </div>
   <div class="sb-modal-actions">
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showContentTypeModal = false" [disabled]="!selectedContentTypes.length"> {{resourceService.frmelmnts.btn.submit}} </button>
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showContentTypeModal = false; selectedContentTypes = []; markSelectedContentTypes('reset')"> {{resourceService.frmelmnts.btn.cancel}}
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showContentTypeModal = false; toasterService.success(resourceService.messages.smsg.nomination.m001)" [disabled]="!selectedContentTypes.length"> {{resourceService.frmelmnts.btn.submit}} </button>
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showContentTypeModal = false; handleCancel(true)"> {{resourceService.frmelmnts.btn.cancel}}
     </button>
   </div>
 </sui-modal>
