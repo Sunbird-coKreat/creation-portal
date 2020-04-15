@@ -136,9 +136,6 @@
                                         [telemetryInteractPdata]="telemetryInteractPdata">Users
                         <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ sourcingOrgUser.length || 0 }}</span>
                     </a>
-                    <a class="item" suiTabHeader="4">
-                        {{resourceService.frmelmnts.lbl.contributionDashboard}}
-                    </a>
                 </div>
             </div>
             <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="2">
@@ -297,45 +294,6 @@
 						<app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0146'}"></app-no-result>
 					</div>
 				  </div>
-            </div>
-            <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="4">
-                <div class="ui container pt-32">
-                    <div class="sb-table-responsive desktop-o-x-unset">
-                        <table
-                            class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
-                            <thead class="sb-table-header sb-table-thead-gray">
-                                <tr>
-                                    <th rowspan="2" class="va-top">{{resourceService.frmelmnts.lbl.contributor}} <i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-                                    <th rowspan="2" class="va-top">{{resourceService.frmelmnts.lbl.typeOfContributor}} <i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-                                    <th colspan="4" class="bb-0 pb-0">{{resourceService.frmelmnts.lbl.profile.contributingOrg}}</th>
-                                    <th colspan="3" class="bb-0 pb-0">{{resourceService.frmelmnts.lbl.yourOrganisation}}</th>
-                                </tr>
-                                <tr>
-                                    <th class="border-l">{{resourceService.frmelmnts.lbl.drafts}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-                                    <th class="">{{resourceService.frmelmnts.lbl.pending}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-                                    <th class="">{{resourceService.frmelmnts.lbl.accepted}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-                                    <th class="">{{resourceService.frmelmnts.lbl.rejected}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-                                    <th class="border-l">{{resourceService.frmelmnts.lbl.pending}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-                                    <th class="">{{resourceService.frmelmnts.lbl.accepted}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-                                    <th class="">{{resourceService.frmelmnts.lbl.rejected}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="sb-color-primary">John Doe</td>
-                                    <td>Individual</td>
-                                        <td class="sb-color-gray-300">52</td>
-                                        <td class="sb-color-warning">10</td>
-                                        <td class="sb-color-success">02</td>
-                                        <td class="sb-color-error">15</td>
-                                        <td class="sb-color-warning">15</td>
-                                        <td class="sb-color-success">05</td>
-                                        <td class="sb-color-error">25</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
             </div>
         </sui-tabset>
     </div>
