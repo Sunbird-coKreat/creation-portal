@@ -25,7 +25,6 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
   @ViewChild('modal') modal;
   frameworkdetails;
   formIsInvalid = false;
-  isOrgNameExist = false;
   contentType = { };
   telemetryImpression: any;
   options;
