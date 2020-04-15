@@ -1,5 +1,5 @@
 import { IProgram } from './../../interfaces';
-import { mergeMap, catchError, tap, retry, map, skipWhile } from 'rxjs/operators';
+import { mergeMap, catchError, tap, retry, map, skipWhile, switchMap} from 'rxjs/operators';
 import { OrgDetailsService } from './../org-details/org-details.service';
 import { FrameworkService } from './../framework/framework.service';
 import { ExtPluginService } from './../ext-plugin/ext-plugin.service';
@@ -7,13 +7,15 @@ import { PublicDataService } from './../public-data/public-data.service';
 import { ConfigService, ServerResponse, ToasterService, ResourceService, HttpOptions } from '@sunbird/shared';
 import { Injectable } from '@angular/core';
 import { UserService } from '../user/user.service';
-import { combineLatest, of, iif, Observable, BehaviorSubject, throwError, merge } from 'rxjs';
+import { combineLatest, of, iif, Observable, BehaviorSubject, throwError, merge, forkJoin} from 'rxjs';
 import * as _ from 'lodash-es';
 import { CanActivate, Router } from '@angular/router';
 import { DataService } from '../data/data.service';
 import { HttpClient } from '@angular/common/http';
 import { ContentService } from '../content/content.service';
 import { DatePipe } from '@angular/common';
+import { LearnerService } from '../learner/learner.service';
+import { RegistryService } from '../registry/registry.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +24,7 @@ export class ProgramsService extends DataService implements CanActivate {
 
   private _programsList$ = new BehaviorSubject(undefined);
   private _allowToContribute$ = new BehaviorSubject(undefined);
+  private _sourcingOrgReviewers: Array<any>;
 
   public readonly programsList$ = this._programsList$.asObservable()
     .pipe(skipWhile(data => data === undefined || data === null));
@@ -34,12 +37,14 @@ export class ProgramsService extends DataService implements CanActivate {
   public http: HttpClient;
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
   private _contentTypes: any[];
+  sourcingContribProfile;
 
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService,
     private extFrameworkService: ExtPluginService, private datePipe: DatePipe,
     private contentService: ContentService, private router: Router,
-    private toasterService: ToasterService, private resourceService: ResourceService) {
+    private toasterService: ToasterService, private resourceService: ResourceService,
+    public learnerService: LearnerService, private registryService: RegistryService) {
       super(http);
       this.config = config;
       this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;
@@ -183,7 +188,6 @@ export class ProgramsService extends DataService implements CanActivate {
    */
   addUsertoContributorOrg(orgId) {
       // Check if organisation exists
-
       const orgSearch = {
         entityType: ['Org'],
         filters: {
@@ -275,7 +279,7 @@ export class ProgramsService extends DataService implements CanActivate {
    */
   createProgram(request): Observable<ServerResponse> {
     const req = {
-      url: this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.CREATE,
+      url: this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.UPDATE,
       data: {
         request
       }
@@ -322,10 +326,202 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.API_URL(req);
   }
 
+ /**
+   * Logic to get the all the users of sourcing organisation and add it to the same cont org as sourcing admin
+   */
+  addSourcingUserstoContribOrg() {
+    let userOrgAdd;
+    let userAdd;
+    return this.getSourcingOrgUsers(['CONTENT_REVIEWER', 'CONTENT_CREATOR']).pipe(tap(
+      (res) => {
+        const sourcingOrgUser =  res.result.response.content;
+        _.forEach(sourcingOrgUser, (user) => {
+          const userProfile = { };
+
+          this.registryService.openSaberRegistrySearch(user.identifier, userProfile).then(() => {
+              // Add user to the org if not added to any org previously
+              console.log("check for user "+ user.identifier, userProfile);
+
+              if (_.isEmpty(_.get(userProfile, 'user'))) {
+                // Add user to the registry
+                 userAdd = {
+                  User: {
+                    firstName: user.firstName,
+                    lastName: user.lastName || '',
+                    userId: user.identifier,
+                    enrolledDate: this.datePipe.transform(new Date(), 'yyyy-MM-dd'),
+                  }
+                };
+
+                this.addToRegistry(userAdd).subscribe(
+                    (res) => {
+                      userOrgAdd = {
+                        User_Org: {
+                          userId: res.result.User.osid,
+                          orgId: this.userService.userProfile.userRegData.User_Org.orgId,
+                          roles: ['user']
+                        }
+                      };
+                      this.addToRegistry(userOrgAdd).subscribe(
+                        (userAddRes) => {console.log("User added to org"+ user.identifier, userAddRes);},
+                        (userAddErr) => {console.log("Errro while adding User added to org"+ user.identifier,userAddErr);}
+                      );
+                    },
+                    (error) => {console.log("Errro while adding User added to reg"+ user.identifier, error);}
+                );
+              } else if (!_.isEmpty(_.get(userProfile, 'user')) && _.isEmpty(_.get(userProfile, 'user_org'))) {
+                userOrgAdd = {
+                  User_Org: {
+                    userId: _.get(userProfile, 'user.osid'),
+                    orgId: this.userService.userProfile.userRegData.User_Org.orgId,
+                    roles: ['user']
+                  }
+                };
+                this.addToRegistry(userOrgAdd).subscribe(
+                  (userAddRes) => {console.log("User added to org"+ user.identifier, userAddRes);},
+                  (userAddErr) => {console.log("Errro while adding User added to org"+ user.identifier,userAddErr);}
+                );
+              }
+          }).catch((err) => {
+            console.log("errr", err);
+          });
+        });
+      }));
+  }
+
+  /**
+   * Logic add contrib user and org for the sourcing admin and make him its admin
+   */
+  enableContributorProfileForSourcing (programId, status, selectedContentTypes, selectedCollectionIds) {
+    this.makeContributorOrgForSourcing().subscribe(
+      (res) => {
+        this.userService.openSaberRegistrySearch().then(() => {
+          this.toasterService.success(this.resourceService.messages.smsg.contributorjoin.m0001);
+          this.addSourcingUserstoContribOrg().subscribe(
+            (res) => {
+              this.addorUpdateNomination(programId, status, selectedContentTypes, selectedCollectionIds).subscribe(
+                (res) => { console.log("Nomination added")},
+                (err) => { console.log("error added")}
+              )
+            },
+            (error) => {},
+          );
+        }).catch((err) => {
+          this.toasterService.error('Adding contributor profile failed...');
+        });
+      },
+      (error) => {
+        this.toasterService.error('Adding contributor profile failed...');
+      }
+    );
+  }
+
+  /**
+   * Logic add contrib user and org for the sourcing admin and make him its admin
+   */
+  makeContributorOrgForSourcing() {
+    let userOsId;
+    let orgOsId;
+
+    // if user is not added to registry
+    if (!this.userService.userProfile.userRegData.User) {
+        // Add user to the registry
+        const userAdd = {
+          User: {
+            firstName: this.userService.userProfile.firstName,
+            lastName: this.userService.userProfile.lastName || '',
+            userId: this.userService.userProfile.identifier,
+            enrolledDate: this.datePipe.transform(new Date(), 'yyyy-MM-dd'),
+            channel: 'sunbird'
+          }
+        };
+
+        return this.addToRegistry(userAdd).pipe(
+          switchMap((res1: any) => {
+            userOsId = res1.result.User.osid;
+            const orgName = 'Contributing org for ' + this.userService.userProfile.userName;
+            const orgAdd = {
+              Org: {
+                name: orgName,
+                code: orgName.toUpperCase(),
+                createdBy: res1.result.User.osid,
+                description: orgName
+              }
+            };
+
+            return this.addToRegistry(orgAdd);
+          }),
+          switchMap((res2: any) => {
+            orgOsId = res2.result.Org.osid;
+            const userOrgAdd = {
+              User_Org: {
+                userId: userOsId,
+                orgId: orgOsId,
+                roles: ['admin']
+              }
+            };
+            return this.addToRegistry(userOrgAdd);
+          }),
+          catchError(err => throwError(err))
+        );
+    } else if (!this.userService.userProfile.userRegData.User_Org) {
+          // Add user to the registry
+          userOsId = this.userService.userProfile.userRegData.User.osid;
+          const orgName = 'Contributing org for ' + this.userService.userProfile.userName;
+          const orgAdd = {
+            Org: {
+              name: orgName,
+              code: orgName.toUpperCase(),
+              createdBy: userOsId,
+              description: orgName
+            }
+          };
+        return this.addToRegistry(orgAdd).pipe(
+          switchMap((res1: any) => {
+            orgOsId = res1.result.Org.osid;
+            const userOrgAdd = {
+              User_Org: {
+                userId: userOsId,
+                orgId: orgOsId,
+                roles: ['admin']
+              }
+            };
+            return this.addToRegistry(userOrgAdd);
+          }),
+          catchError(err => throwError(err))
+        );
+     }
+  }
+
+  getSourcingOrgUsers(roles) {
+    if (this.userService.userProfile.organisations.length) {
+      const OrgDetails = this.userService.userProfile.organisations[0];
+      const req = {
+        url: `user/v1/search`,
+        data: {
+          'request': {
+            'filters': {
+              'organisations.organisationId': OrgDetails.organisationId,
+              'organisations.roles': roles
+           }
+          }
+        }
+      };
+      return this.learnerService.post(req).pipe(tap((res) => {
+        if (roles.length === 1 && roles[0] === 'CONTENT_REVIEWER') {
+          this._sourcingOrgReviewers = res.result.response.content;
+        }
+      }));
+    } else {
+      throwError('Missing OrgDetails');
+    }
+    }
+
   /**
    * makes api call to get the textbooks for program
    */
   updateProgram(request): Observable<ServerResponse> {
+
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.UPDATE}`,
       data: {
@@ -333,7 +529,35 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
 
-    return this.API_URL(req);
+    return this.API_URL(req).pipe(tap((res) => {
+      if (res.result.program_id) {
+        const programId = res.result.program_id;
+        if (request.status == 'Live') {
+          const req = {
+            url: `program/v1/read/${programId}`
+          };
+
+          this.get(req).subscribe(
+            (programDetails) => {
+              const selectedContentTypes = programDetails.result.content_types;
+              const selectedCollectionIds = programDetails.result.collection_ids;
+
+              if (!this.userService.userProfile.userRegData.User || !this.userService.userProfile.userRegData.User_Org) {
+                this.enableContributorProfileForSourcing(programId, "Approved", selectedContentTypes, selectedCollectionIds);
+              } else {
+                this.addorUpdateNomination(programId, "Approved", selectedContentTypes, selectedCollectionIds).subscribe(
+                  (res) => { console.log("Nomination added")},
+                  (err) => { console.log("error added")}
+                )
+              }
+           },
+           (err) => {
+            this.toasterService.error('Fetching Program details fetched');
+            }
+           );
+        }
+      }
+    }));
   }
 
   updateNomination(request) {
@@ -342,6 +566,58 @@ export class ProgramsService extends DataService implements CanActivate {
       data: request
     };
     return this.API_URL(req);
+  }
+
+  addorUpdateNomination(programId, status, selectedContentTypes, selectedCollectionIds) {
+    // check if nomination for the program already exists by org id
+    const filters = {
+      program_id: programId,
+    }
+
+    if (!_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
+      filters['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
+    }
+    else {
+      filters['user_id'] = this.userService.userProfile.identifier;
+    }
+
+    return this.getNominationList(filters).pipe(tap(data => {
+      const req = {
+        url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_ADD}`,
+        data: {
+          request: {
+            program_id: programId,
+            content_types: selectedContentTypes,
+            collection_ids: selectedCollectionIds,
+            status: status,
+            createdby: this.userService.userProfile.identifier
+          }
+        }
+      };
+
+      if (!_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
+        req.data.request['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
+      }
+
+      if (data.result && data.result.length) {
+        const prevNomination = data.result[0];
+        req.data.request['user_id'] = prevNomination.user_id;
+        req.data.request['updatedby'] = this.userService.userProfile.identifier;
+        req['url'] = `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_UPDATE}`,
+
+        this.post(req).subscribe(
+          (data) => this.toasterService.success('Nomination Updated'),
+          (error) => this.toasterService.error('Nomination update failed... Please try later')
+        );
+      } else {
+        req.data.request['createdby'] = this.userService.userProfile.identifier;
+        req.data.request['user_id'] = this.userService.userProfile.identifier;
+        this.post(req).subscribe(
+          (data) => this.toasterService.success('Nomination sent'),
+          (error) => this.toasterService.error('Nomination submit failed... Please try later')
+        );
+      }
+    }));
   }
 
   /**
