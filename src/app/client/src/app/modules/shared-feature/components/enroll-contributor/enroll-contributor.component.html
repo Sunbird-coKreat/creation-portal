@@ -15,7 +15,7 @@
   </div>
   <div class="sb-modal-content o-y-visible onBoardDropdown">
     <div class="twelve wide tablet seven wide computer column form-fields">
-      <form class="ui" [formGroup]="contributeForm" (submit)="saveUser()">
+      <form class="ui" [formGroup]="contributeForm" (submit)="validateFields()">
          <div class="ui grid m-0 p-0">
             <div class="twelve wide column sb-field-group p-0 centered grid center aligned">
                <div class="sb-field-group mb-8 text-center">
@@ -174,7 +174,7 @@
   <div class="sb-modal-actions">
    <!-- [disabled]="!disableSubmit" -->
     <button class="sb-btn sb-btn-normal sb-btn-primary"
-      (click)="saveUser()"
+      (click)="validateFields()"
       appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('enrol-data-save', 'click', 'enrol-contributor')"
       [telemetryInteractObject]="telemetryInteractObject"
