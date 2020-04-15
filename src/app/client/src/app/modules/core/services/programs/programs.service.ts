@@ -585,16 +585,20 @@ export class ProgramsService extends DataService implements CanActivate {
     return _.cloneDeep(this._sourcingOrgReviewers);
   }
 
-  getSourcingOrgUsers(reqFilters) {
-      const req = {
-        url: `user/v1/search`,
-        data: {
-          'request': {
-            'filters': reqFilters
-          }
+  getOrgUsersDetails(reqFilters) {
+    const req = {
+      url: this.config.urlConFig.URLS.ADMIN.USER_SEARCH,
+      data: {
+        'request': {
+          'filters': reqFilters
         }
-      };
-      return this.learnerService.post(req).pipe(tap((res) => {
+      }
+    };
+    return this.learnerService.post(req);
+  }
+
+  getSourcingOrgUsers(reqFilters) {
+      return this.getOrgUsersDetails(reqFilters).pipe(tap((res) => {
         if (reqFilters['organisations.roles'].length === 1 &&  reqFilters['organisations.roles'][0] === 'CONTENT_REVIEWER') {
           this._sourcingOrgReviewers = res.result.response.content;
         }

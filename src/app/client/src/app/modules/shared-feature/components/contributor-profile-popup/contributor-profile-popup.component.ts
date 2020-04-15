@@ -18,8 +18,7 @@ export class ContributorProfilePopupComponent implements OnInit, OnDestroy {
   @Input() orgId?: string;
   contributor: any;
   name: string;
-  email: string;
-  phone: string;
+  contact: string;
   website: string;
   board: any[];
   medium: any[];
@@ -77,6 +76,8 @@ export class ContributorProfilePopupComponent implements OnInit, OnDestroy {
             });
           }
 
+        this.getUsersDetails();
+
         let details = user;
         if (!_.isEmpty(org) && !_.isEmpty(user) && !_.isEmpty(userOrg) && !_.includes(userOrg.roles, 'admin')) {
           this.userType = 'org_user';
@@ -96,6 +97,24 @@ export class ContributorProfilePopupComponent implements OnInit, OnDestroy {
     });
   }
 
+  getUsersDetails() {
+    const req = {
+      'identifier': this.userId
+    };
+    this.programsService.getOrgUsersDetails(req).subscribe((response) => {
+      const users = _.get(response, 'result.response.content');
+      if (!_.isEmpty(users)) {
+        const user = users[0];
+        if (!_.isEmpty(user.maskedEmail)) {
+          this.contact = user.maskedEmail;
+        }
+        if (!_.isEmpty(user.maskedPhone)) {
+          this.contact = user.maskedPhone;
+        }
+      }
+    });
+  }
+
   setProfileDetails(details) {
     if (this.userType === 'org') {
       this.name = details.name;
@@ -106,8 +125,6 @@ export class ContributorProfilePopupComponent implements OnInit, OnDestroy {
       }
     }
     this.website = _.get(details, 'website');
-    this.phone = _.get(details, 'phone');
-    this.email = _.get(details, 'email');
     this.contentTypes = _.get(details, 'contentTypes');
     this.gradeLevel = _.get(details, 'gradeLevel');
     this.medium = _.get(details, 'medium');
