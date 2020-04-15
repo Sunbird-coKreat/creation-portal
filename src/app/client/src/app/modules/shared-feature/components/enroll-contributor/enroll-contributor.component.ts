@@ -20,12 +20,10 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
   public unsubscribe = new Subject<void>();
   public enrollAsOrg = false;
   public enrollDetails: any = {};
-  //public programScope = {};
   public enrolledDate: any;
   @ViewChild('modal') modal;
   frameworkdetails;
   formIsInvalid = false;
-  //contentType = { };
   telemetryImpression: any;
   options;
   disableSubmit = false;
