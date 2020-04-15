@@ -137,11 +137,11 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
 
   initializeFormFields(): void {
     this.contributeForm = this.formBuilder.group({
-        board: ['', Validators.required],
-        medium: ['', Validators.required],
-        gradeLevel: ['', Validators.required],
-        subject: ['', Validators.required],
-        contentTypes: ['', Validators.required],
+        board: [[]],
+        medium: [[]],
+        gradeLevel: [[]],
+        subject: [[]],
+        contentTypes: [[]],
         name: [''],
         description: [''],
         website: [''],
@@ -153,61 +153,62 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
         const control = formGroup.get(field);
         control.markAsTouched();
     });
-}
-  saveUser() {
-    
-      const User = {
-        ...this.contributeForm.value
-    };
-
-      User['firstName'] =  this.userService.userProfile.firstName;
-      User['lastName'] =  this.userService.userProfile.lastName || '';
-      User['userId'] =  this.userService.userProfile.identifier;
-      User['enrolledDate'] = this.enrolledDate;
-      User['certificates'] =  '';
-      User['channel'] = 'sunbird';
-      this.enrollContributorService.enrolment({User: User}).pipe(
-        switchMap((res1: any) => {
-        this.mapUserId = res1.result.User.osid;
-          if (this.enrollAsOrg === true) {
-            const Org = {
-              ...this.contributeForm.value
-          };
-            Org['createdBy'] =  res1.result.User.osid;
-            Org['code'] = this.contributeForm.controls['name'].value.toUpperCase();
-            return this.enrollContributorService.enrolment({Org: Org});
-          } else {
-            return of(res1);
-          }
-      }), switchMap((res2: any) => {
-        if (this.enrollAsOrg === true) {
-          this.mapOrgId = res2.result.Org.osid;
-          const User_Org = {
-                    userId: this.mapUserId,
-                    orgId: this.mapOrgId,
-                    roles: ['admin']
-                  };
-          return this.enrollContributorService.enrolment({User_Org: User_Org});
-        } else {
-          return of(res2);
-        }
-      }), catchError(err => throwError(err)))
-      .subscribe((res3) => {
-        this.contributeForm.reset();
-        this.tosterService.success('Enrolment is succesfully done...');
-        this.modal.deny();
-      }, (err) => {
-        this.tosterService.error('Failed! Please try later...');
-      });
-
   }
-  
+  saveUser() {
+          const User = {
+            ...this.contributeForm.value
+        };
+          User['firstName'] =  this.userService.userProfile.firstName;
+          User['lastName'] =  this.userService.userProfile.lastName || '';
+          User['userId'] =  this.userService.userProfile.identifier;
+          User['enrolledDate'] = this.enrolledDate;
+          User['certificates'] =  '';
+          User['channel'] = 'sunbird';
+          this.enrollContributorService.enrolment({User: User}).pipe(
+            switchMap((res1: any) => {
+            this.mapUserId = res1.result.User.osid;
+               if (this.enrollAsOrg === true) {
+                const Org = {
+                  ...this.contributeForm.value
+               };
+                Org['createdBy'] =  res1.result.User.osid;
+                Org['code'] = this.contributeForm.controls['name'].value.toUpperCase();
+                return this.enrollContributorService.enrolment({Org: Org});
+               } else {
+                 return of(res1);
+               }
+          }), switchMap((res2: any) => {
+            if (this.enrollAsOrg === true) {
+              this.mapOrgId = res2.result.Org.osid;
+              const User_Org = {
+                        userId: this.mapUserId,
+                        orgId: this.mapOrgId,
+                        roles: ['admin']
+                      };
+              return this.enrollContributorService.enrolment({User_Org: User_Org});
+             } else {
+               return of(res2);
+             }
+          }), catchError(err => throwError(err)))
+          .subscribe((res3) => {
+            this.contributeForm.reset();
+            this.tosterService.success('Enrolment is succesfully done...');
+            this.modal.deny();
+          }, (err) => {
+            this.tosterService.error('Failed! Please try later...');
+          });
+      
+  }
   chnageEnrollStatus(status) {
     this.enrollAsOrg = status;
   }
 
   validateFields()
   {
+    this.enrollAsOrg === true ? this.contributeForm.controls['description'].setValidators([Validators.required]) : this.contributeForm.controls['description'].setValidators(null);
+    this.enrollAsOrg === true ? this.contributeForm.controls['name'].setValidators([Validators.required]) : this.contributeForm.controls['name'].setValidators(null);
+    this.contributeForm.controls['name'].updateValueAndValidity();
+    this.contributeForm.controls['description'].updateValueAndValidity();
     if (this.contributeForm.dirty && this.contributeForm.valid) {
       if (this.enrollAsOrg === true)
       { 
