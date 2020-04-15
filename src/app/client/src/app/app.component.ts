@@ -166,16 +166,19 @@ export class AppComponent implements OnInit, OnDestroy {
           this.userService.openSaberRegistrySearch().then(() => {
             this.userService.userRegistryData = true;
             this.initApp = true;
-            console.log(this.userService.userProfile);
-            if (_.indexOf(this.userService.userProfile.userRoles, 'ORG_ADMIN') === -1 && this.router.url.includes('/sourcing')) {
-              this.toasterService.error("You are not authorised to view this page");
-              this.hideHeaderNFooter = true;
-              this.initApp = false;
-            } else if (this.location.path() === '/contribute' &&
-              this.userService.userProfile.userRegData &&
+            if (_.indexOf(this.userService.userProfile.userRoles, 'ORG_ADMIN') > -1) {
+              this.router.navigateByUrl('/sourcing');
+            } else if (this.location.path().includes('/contribute/join/')) {
+              this.router.navigateByUrl(this.location.path());
+            } else if (this.userService.userProfile.userRegData &&
               this.userService.userProfile.userRegData.User_Org &&
-              !this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
+              !this.userService.userProfile.userRegData.User_Org.roles.includes('admin') &&
+              !this.router.url.includes('/contribute/join/')) {
               this.router.navigateByUrl('/contribute/myenrollprograms');
+            } else if ((this.userService.userProfile.userRegData.User_Org &&
+              this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) ||
+              !this.router.url.includes('/contribute/join/') ) {
+              this.router.navigateByUrl('/contribute');
             }
           }).catch((err) => {
             this.initApp = true;
