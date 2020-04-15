@@ -96,6 +96,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.practiceSetConfig = _.get(this.practiceQuestionSetComponentInput, 'config');
     this.resourceTitleLimit = this.practiceSetConfig.config.resourceTitleLength;
     this.sessionContext.practiceSetConfig = this.practiceSetConfig;
+    this.sessionContext.topic = _.isEmpty(this.selectedSharedContext.topic) ? this.sessionContext.topic : this.selectedSharedContext.topic;
     this.getContentMetadata(this.sessionContext.resourceIdentifier);
     this.getLicences();
     this.preprareTelemetryEvents();

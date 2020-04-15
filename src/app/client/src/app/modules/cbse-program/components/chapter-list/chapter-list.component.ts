@@ -1,11 +1,11 @@
 import { Component, OnInit, Input, EventEmitter, Output, OnChanges, OnDestroy, ChangeDetectorRef, AfterViewInit } from '@angular/core';
-import { PublicDataService, UserService, ActionService } from '@sunbird/core';
+import { PublicDataService, UserService, ActionService, FrameworkService } from '@sunbird/core';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService } from '@sunbird/shared';
 import { TelemetryService, IInteractEventEdata , IImpressionEventInput} from '@sunbird/telemetry';
 import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
 import { CbseProgramService } from '../../services';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, first } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
@@ -81,7 +81,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   constructor(public publicDataService: PublicDataService, private configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private cbseService: CbseProgramService,
-    public toasterService: ToasterService, public router: Router,
+    public toasterService: ToasterService, public router: Router, public frameworkService: FrameworkService,
     public programStageService: ProgramStageService, public programComponentsService: ProgramComponentsService,
     public activeRoute: ActivatedRoute, private ref: ChangeDetectorRef,
     private collectionHierarchyService: CollectionHierarchyService, private resourceService: ResourceService,
@@ -106,6 +106,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       && this.userService.userProfile.userRegData
       && this.userService.userProfile.userRegData.User_Org
       && this.userService.userProfile.userRegData.User_Org.orgId) ? this.userService.userProfile.userRegData.User_Org.orgId : '';
+    if ( _.isUndefined(this.sessionContext.topicList)) {
+        this.fetchFrameWorkDetails();
+    }
     /**
      * @description : this will fetch question Category configuration based on currently active route
      */
@@ -165,6 +168,16 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     } else {
       if (!_.isEmpty(this.collectionHierarchy)) { this.lastOpenedUnit(this.collectionHierarchy[0].identifier)}
     }
+  }
+
+  public fetchFrameWorkDetails() {
+    this.frameworkService.initialize(this.sessionContext.framework);
+    this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
+      if (frameworkDetails && !frameworkDetails.err) {
+        const frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
+        this.sessionContext.topicList = _.get(_.find(frameworkData, { code: 'topic' }), 'terms');
+      }
+    });
   }
 
   public initiateInputs(action?, content?) {

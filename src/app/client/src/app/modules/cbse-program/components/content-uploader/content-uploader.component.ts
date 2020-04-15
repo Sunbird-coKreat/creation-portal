@@ -366,7 +366,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
       this.loading = false;
       this.handleActionButtons();
       // At the end of execution
-      this.fetchFrameWorkDetails();
+      if ( _.isUndefined(this.sessionContext.topicList)) {
+        this.fetchFrameWorkDetails();
+      }
       this.manageFormConfiguration();
       this.cd.detectChanges();
     });
@@ -422,9 +424,15 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
         return license.name;
       });
     });
+    if ( _.isArray(this.sessionContext.topic)) {
+      this.sessionContext.topic = _.first(this.sessionContext.topic);
+    }
+    this.sessionContext.topic = _.first(this.selectedSharedContext.topic) || this.sessionContext.topic ;
     const topicTerm = _.find(this.sessionContext.topicList, { name: this.sessionContext.topic });
     if (topicTerm && topicTerm.associations) {
-       this.selectOutcomeOption['learningOutcome'] = topicTerm.associations;
+       this.selectOutcomeOption['learningOutcome'] = _.map(topicTerm.associations, (learningOutcome) => {
+        return learningOutcome.name;
+      });
     }
 
      _.map(this.allFormFields, (obj) => {

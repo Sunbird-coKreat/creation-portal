@@ -600,7 +600,7 @@ var programConfig = {
               'visible': true
             },
             {
-              'code': 'Attributions',
+              'code': 'attributions',
               'dataType': 'list',
               'description': 'Enter Attributions',
               'editable': true,
@@ -819,7 +819,8 @@ var programConfig = {
       'board',
       'medium',
       'gradeLevel',
-      'subject'
+      'subject',
+      'topic'
     ]
 };
 

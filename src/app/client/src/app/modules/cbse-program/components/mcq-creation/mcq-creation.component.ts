@@ -390,6 +390,13 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
           metadata['solutions'] = [solutionObj];
         }
 
+        _.forEach(this.formConfiguration, field => {
+          if (field.inputType === 'text' && field.dataType === 'list') {
+            // tslint:disable-next-line:max-line-length
+            const dataVal = this.questionMetaForm.value[field.code];
+            this.questionMetaForm.value[field.code] = dataVal ? dataVal.split(', ') : [];
+          }
+        });
         metadata = _.pickBy(_.assign(metadata, this.questionMetaForm.value), _.identity);
         const req = {
           url: this.configService.urlConFig.URLS.ASSESSMENT.UPDATE + '/' + this.questionMetaData.data.identifier,
@@ -493,9 +500,17 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
       });
 
       this.selectOutcomeOption['license'] = this.sessionContext.licencesOptions;
+      if ( _.isArray(this.sessionContext.topic)) {
+        this.sessionContext.topic = _.first(this.sessionContext.topic);
+      }
+      if (_.isUndefined(this.sessionContext.topicList)) {
+        this.sessionContext.topicList = _.get(_.find(this.sessionContext.frameworkData, { code: 'topic' }), 'terms');
+      }
       const topicTerm = _.find(this.sessionContext.topicList, { name: this.sessionContext.topic });
       if (topicTerm && topicTerm.associations) {
-        this.selectOutcomeOption['learningOutcome'] = topicTerm.associations;
+        this.selectOutcomeOption['learningOutcome'] = _.map(topicTerm.associations, (learningOutcome) => {
+          return learningOutcome.name;
+        });
       }
 
       _.map(this.allFormFields, (obj) => {
@@ -513,7 +528,12 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
             // tslint:disable-next-line:max-line-length
             obj.required ? controller[obj.code] = [preSavedValues[code], [Validators.required]] : controller[obj.code] = [preSavedValues[code]];
           } else if (obj.inputType === 'text') {
-            preSavedValues[code] = (this.questionMetaData.data[code]) ? this.questionMetaData.data[code] : '';
+            if (obj.dataType === 'list') {
+              const listValue = (this.questionMetaData.data[code]) ? this.questionMetaData.data[code] : '';
+              preSavedValues[code] = _.isArray(listValue) ? listValue.toString() : '';
+            } else {
+              preSavedValues[code] = (this.questionMetaData.data[code]) ? this.questionMetaData.data[code] : '';
+            }
             // tslint:disable-next-line:max-line-length
             obj.required ? controller[obj.code] = [{value: preSavedValues[code], disabled: this.disableFormField}, Validators.required] : controller[obj.code] = preSavedValues[code];
           }
