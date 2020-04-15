@@ -7,6 +7,8 @@ import { ISessionContext } from '../../../cbse-program/interfaces';
 import * as _ from 'lodash-es';
 import { tap, first } from 'rxjs/operators';
 import * as moment from 'moment';
+import {Pipe, PipeTransform} from '@angular/core';
+import { LowerCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-program-nominations',
@@ -64,7 +66,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   this.telemetryInteractObject = {};
   this.checkActiveTab();
   this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
-  this.roles = [{name: 'REVIEWER'}];
+  this.roles = [{name: 'Reviewer'}];
   }
 
   ngAfterViewInit() {
