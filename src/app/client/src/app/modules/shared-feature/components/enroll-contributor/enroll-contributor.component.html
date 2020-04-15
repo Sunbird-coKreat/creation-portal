@@ -1,4 +1,4 @@
-<div *ngIf="frameworkFetched && !userService.userProfile.userRegData.User">
+<div *ngIf="!userService.userProfile.userRegData.User">
 
 <sui-modal [appTelemetryImpression]="telemetryImpression"
    [mustScroll]="true"
@@ -66,102 +66,10 @@
                   </div>
                </div>
             </div>
-            <div class="six wide column sb-field-group p-0 pr-16 mb-16">
-               <label class="d-block">{{resourceService.frmelmnts.lbl.board}} <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.boardHint}}"></i>
-                </label>
-               <div class="sb-field  field">
-                  <sui-multi-select class="selection"
-                  formControlName="board"
-                     labelField="name"
-                     [hasLabels]="true"
-                     [options]="enrollDetails.board"
-                     valueField="name"
-                     #multiSelect>
-                        <sui-select-option *ngFor="let option of enrollDetails.board"
-                        [value]="option" >
-                        </sui-select-option>
-                  </sui-multi-select>
-               </div>
-            </div>
-            <div class="six wide column sb-field-group p-0 mb-16">
-               <label class="d-block">{{resourceService.frmelmnts.lbl.selectMedium}}
-                  <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupText="{{resourceService.frmelmnts.lbl.mediumHint}}"></i>
-               </label>
-               <div class="sb-field  field">
-                  <sui-multi-select class="selection"
-                  formControlName="medium"
-                  labelField="name"
-                  [hasLabels]="true"
-                  [options]="options"
-                  valueField="name"
-                  #multiSelect>
-                     <sui-select-option *ngFor="let option of enrollDetails.medium"
-                     [value]="option" >
-                     </sui-select-option>
-                  </sui-multi-select>
-               </div>
-            </div>
-
-            <div class="six wide column sb-field-group p-0 pr-16 mb-16">
-               <label class="d-block">{{resourceService.frmelmnts.lbl.class}}
-                  <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupText="{{resourceService.frmelmnts.lbl.classHint}}"></i>
-               </label>
-               <div class="sb-field  field">
-                  <sui-multi-select  class="selection"
-                     formControlName="gradeLevel"
-                     labelField="name"
-                     [hasLabels]="true"
-                     [options]="enrollDetails.gradeLevel"
-                     valueField="name"
-                     #multiSelect>
-                     <sui-select-option *ngFor="let option of enrollDetails.gradeLevel"
-                     [value]="option" >
-						   </sui-select-option>
-                  </sui-multi-select>
-               </div>
-            </div>
-
-            <div class="six wide column sb-field-group p-0 mb-16">
-               <label class="d-block">{{resourceService.frmelmnts.lbl.subject}}
-                  <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupText="{{resourceService.frmelmnts.lbl.subjectHint}}"></i>
-               </label>
-               <div class="sb-field  field">
-                  <sui-multi-select class="selection"
-                     formControlName="subject"
-                     labelField="name"
-                     [hasLabels]="true"
-                     [options]="enrollDetails.subject"
-                     valueField="name"
-                     #multiSelect>
-                        <sui-select-option *ngFor="let option of enrollDetails.subject"
-                        [value]="option" >
-                        </sui-select-option>
-                  </sui-multi-select>
-               </div>
-            </div>
-
-            <div class="twelve wide column sb-field-group p-0 mb-16">
-               <label class="d-block">{{resourceService.frmelmnts.lbl.typesOfContent}}
-                  <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupText="{{resourceService.frmelmnts.lbl.contentTypeHint}}"></i>
-               </label>
-               <div class="sb-field  field">
-                  <sui-multi-select class="selection"
-                     formControlName="contentTypes"
-                     labelField="name"
-                     [hasLabels]="true"
-                     [options]="contentType.contentType"
-                     valueField="name"
-                     #multiSelect>
-                     <sui-select-option *ngFor="let option of contentType.contentType"
-                     [value]="option" >
-                     </sui-select-option>
-                  </sui-multi-select>
-               </div>
-            </div>
-
-            <div class="twelve wide column sb-field-group p-0 mb-16">
+           
+            <div class="twelve wide column sb-field-group p-0 mb-16" *ngIf="enrollAsOrg === true">
                <div class="sb-field-group mb-8">
-                  <label class="d-block">{{enrollAsOrg === false ? resourceService.frmelmnts.lbl.website : resourceService.frmelmnts.lbl.organisationWebsite}} <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="{{resourceService.frmelmnts.lbl.website}}" popupText="{{resourceService.frmelmnts.lbl.websiteHint}}"></i></label>
+                  <label class="d-block">{{resourceService.frmelmnts.lbl.organisationWebsite }} <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="{{resourceService.frmelmnts.lbl.website}}" popupText="{{resourceService.frmelmnts.lbl.websiteHint}}"></i></label>
                   <div class="sb-field field">
                       <input class="sb-form-control" placeholder="{{resourceService.frmelmnts.lbl.websiteHint}}" formControlName="website">
                   </div>
