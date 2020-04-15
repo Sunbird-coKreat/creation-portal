@@ -94,9 +94,7 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
     });
   }
   saveUser() {
-          const User = {
-            ...this.contributeForm.value
-        };
+          const User = {};
           User['firstName'] =  this.userService.userProfile.firstName;
           User['lastName'] =  this.userService.userProfile.lastName || '';
           User['userId'] =  this.userService.userProfile.identifier;
