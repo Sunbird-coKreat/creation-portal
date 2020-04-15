@@ -80,10 +80,10 @@ export class HelperService {
       }
     };
     const option = {
-      url: `${this.configService.urlConFig.URLS.CONTENT.REJECT}/${contentId}`,
+      url: `content/v3/reject/${contentId}`,
       data: requestBody
     };
-    return this.contentService.post(option);
+    return this.actionService.post(option);
   }
 
   apiErrorHandling(err, errorInfo) {
