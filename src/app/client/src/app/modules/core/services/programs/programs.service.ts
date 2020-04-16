@@ -279,7 +279,7 @@ export class ProgramsService extends DataService implements CanActivate {
    */
   createProgram(request): Observable<ServerResponse> {
     const req = {
-      url: this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.UPDATE,
+      url: this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.CREATE,
       data: {
         request
       }
