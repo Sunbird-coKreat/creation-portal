@@ -150,13 +150,17 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
         _.forEach(data.result, (res) => {
           const isOrg = !_.isEmpty(res.organisation_id);
           let name = '';
-          if (isOrg) {
+          /*if (isOrg) {
             name = res.userData.name;
           } else {
             name = res.userData.firstName;
             if (!_.isEmpty(res.userData.lastName)) {
               name  += ' ' + res.userData.lastName;
             }
+          }*/
+          name = res.userData.firstName;
+           if (!_.isEmpty(res.userData.lastName)) {
+            name  += ' ' + res.userData.lastName;
           }
           this.nominations.push({
             'name': name,
