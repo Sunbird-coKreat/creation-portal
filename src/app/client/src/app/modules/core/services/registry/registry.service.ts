@@ -62,7 +62,9 @@ export class RegistryService extends DataService {
     return this.contentService.post(req);
   }
 
-  public openSaberRegistrySearch(userId, userProfile) {
+  public openSaberRegistrySearch(userId) {
+    const userProfile = {};
+    userProfile['error'] = true;
     const option = {
       url: 'reg/search',
       data: {
@@ -85,7 +87,7 @@ export class RegistryService extends DataService {
   return new Promise((resolve, reject) => {
     this.contentService.post(option).pipe(tap((res1) => {
       if (res1.result.User.length) {
-        userProfile.user = res1.result.User[0];
+        userProfile['user'] = res1.result.User[0];
       }
     }), switchMap((res2) => {
       if (res2.result.User.length) {
@@ -101,7 +103,7 @@ export class RegistryService extends DataService {
     }
     }), tap((res3) => {
       if (res3 && res3.result.User_Org.length) {
-        userProfile.user_org = res3.result.User_Org[0];
+        userProfile['user_org'] = res3.result.User_Org[0];
       }
     }), switchMap((res4) => {
       if (res4 && res4.result.User_Org.length) {
@@ -119,11 +121,12 @@ export class RegistryService extends DataService {
     })
     ).subscribe((res: any) => {
       if (res && res.result.Org.length) {
-        userProfile.org = res.result.Org[0];
+        userProfile['org'] = res.result.Org[0];
         }
-        return resolve('done');
+        userProfile['error'] = false;
+        return resolve(userProfile);
      }, (err) => {
-      return reject('fail');
+      return reject(userProfile);
      });
     });
   }
