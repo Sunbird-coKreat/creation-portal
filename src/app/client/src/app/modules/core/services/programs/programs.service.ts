@@ -354,6 +354,7 @@ export class ProgramsService extends DataService implements CanActivate {
                     lastName: user.lastName || '',
                     userId: user.identifier,
                     enrolledDate: this.datePipe.transform(new Date(), 'yyyy-MM-dd'),
+                    channel: user.rootOrgId
                   }
                 };
 
@@ -437,7 +438,7 @@ export class ProgramsService extends DataService implements CanActivate {
             lastName: this.userService.userProfile.lastName || '',
             userId: this.userService.userProfile.identifier,
             enrolledDate: this.datePipe.transform(new Date(), 'yyyy-MM-dd'),
-            channel: 'sunbird'
+            channel: this.userService.userProfile.rootOrgId
           }
         };
 
