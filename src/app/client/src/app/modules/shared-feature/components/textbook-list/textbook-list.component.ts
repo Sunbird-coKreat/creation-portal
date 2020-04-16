@@ -30,6 +30,7 @@ export class TextbookListComponent implements OnInit {
   public direction = 'asc';
   public sortColumn = '';
   public tempSortcollections: Array<any> = [];
+  @Output() selectedCollection = new EventEmitter<any>();
 
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
@@ -157,5 +158,9 @@ export class TextbookListComponent implements OnInit {
        return this.actionService.get(req);
      });
      return forkJoin(hierarchyRequest);
+   }
+
+   viewContribution(collection) {
+     this.selectedCollection.emit(collection);
    }
 }

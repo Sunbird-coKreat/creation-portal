@@ -1,4 +1,4 @@
-<div *ngIf="showNominationsComponent" [appTelemetryImpression]="telemetryImpression">
+<div *ngIf="showNominationsComponent && (currentStage === 'programNominations')" [appTelemetryImpression]="telemetryImpression">
     <div class="sb-bg-color-primary-0 practical-header py-16">
         <div class="d-flex  flex-jc-space-between practical-header__content ui container pt-15">
             <div class="practical-header__title w-20">
@@ -128,7 +128,7 @@
                                         [telemetryInteractPdata]="telemetryInteractPdata">Nominations
                         <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ nominationsCount }}</span>
                     </a>
-                    <a class="item" [isActive]="activeTab === 'user'"  suiTabHeader="3"  (click)="resetStatusFilter('user')"
+                    <a  *ngIf="!sourcingOrgReviewer" class="item" [isActive]="activeTab === 'user'"  suiTabHeader="3"  (click)="resetStatusFilter('user')"
                     appTelemetryInteract
                                         [telemetryInteractEdata]="getTelemetryInteractEdata('users', 'click', 'program-nominations')"
                                         [telemetryInteractObject]="telemetryInteractObject"
@@ -140,7 +140,7 @@
             </div>
             <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="2">
                 <div class="ui container p-0 m-0">
-                    <app-textbook-list></app-textbook-list>
+                    <app-textbook-list (selectedCollection)="viewContribution($event)"></app-textbook-list>
                 </div>
             </div>
             <div class="ui segment  p-0 m-0 mt-4 sb-bg-color-white dynamicHeight"  suiTabContent="1">
@@ -306,3 +306,8 @@
 </app-contributor-profile-popup>
 
 </div>
+
+<ng-container *ngIf="currentStage !== 'programNominations'">
+	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs">
+	</ndc-dynamic>
+</ng-container>

@@ -3,10 +3,12 @@ import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from
 import { ProgramsService, PublicDataService, UserService, FrameworkService } from '@sunbird/core';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { ISessionContext } from '../../../cbse-program/interfaces';
+import { ISessionContext, InitialState } from '../../../cbse-program/interfaces';
 import * as _ from 'lodash-es';
 import { tap, first } from 'rxjs/operators';
 import * as moment from 'moment';
+import { ProgramStageService } from '../../services/program-stage/program-stage.service';
+import { ChapterListComponent } from '../../../cbse-program/components/chapter-list/chapter-list.component';
 
 @Component({
   selector: 'app-program-nominations',
@@ -46,11 +48,21 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   public sortColumn = '';
   public sourcingOrgUser = [];
   public roles;
+  public currentStage: string;
+  public dynamicInputs;
+  public programContext: any = {};
+  public state: InitialState = {
+    stages: []
+  };
+  public stageSubscription: any;
+  public component: any;
+  public sourcingOrgReviewer: boolean;
 
   constructor(public frameworkService: FrameworkService, private tosterService: ToasterService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService,
     private publicDataService: PublicDataService, private activatedRoute: ActivatedRoute, private router: Router,
-    private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService) {
+    private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService,
+    public programStageService: ProgramStageService) {
     this.programId = this.activatedRoute.snapshot.params.programId;
   }
 
@@ -65,6 +77,15 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   this.checkActiveTab();
   this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
   this.roles = [{name: 'REVIEWER'}];
+  this.sessionContext.currentRole = 'REVIEWER';
+  this.programStageService.addStage('programNominations');
+  this.currentStage = 'programNominations';
+  this.stageSubscription = this.programStageService.getStage().subscribe(state => {
+    this.state.stages = state.stages;
+    this.changeView();
+  });
+  // tslint:disable-next-line:max-line-length
+  this.sourcingOrgReviewer = (!this.userService.userProfile.userRoles.includes('ORG_ADMIN') && this.userService.userProfile.userRoles.includes('CONTENT_REVIEWER')) ? true : false;
   }
 
   ngAfterViewInit() {
@@ -194,10 +215,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   getProgramDetails() {
     this.fetchProgramDetails().subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
+      this.programContext = this.programDetails;
       this.collectionsCount = _.get(this.programDetails, 'collection_ids').length;
       this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
       this.setActiveDate();
       this.readRolesOfOrgUsers();
+      const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
+          this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
     }, error => {
       // TODO: navigate to program list page
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
@@ -363,5 +387,30 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
     }, error => {
       this.toasterService.error('Roles update failed!');
     });
+  }
+
+  changeView() {
+    if (!_.isEmpty(this.state.stages)) {
+      this.currentStage = _.last(this.state.stages).stage;
+    }
+  }
+
+  viewContribution(collection) {
+    this.component = ChapterListComponent;
+    this.sessionContext.programId = this.programDetails.program_id;
+    this.sessionContext.collection = collection.identifier;
+    this.sessionContext.collectionName = collection.name;
+    this.dynamicInputs = {
+      chapterListComponentInput: {
+        sessionContext: this.sessionContext,
+        collection: collection,
+        config: _.find(this.programContext.config.components, { 'id': 'ng.sunbird.chapterList' }),
+        programContext: this.programContext,
+        role: {
+          currentRole: this.sessionContext.currentRole
+        }
+      }
+    };
+    this.programStageService.addStage('chapterListComponent');
   }
 }

@@ -307,7 +307,7 @@ export class ProgramListComponent implements OnInit {
     };
     // tslint:disable-next-line:max-line-length
     if (!_.includes(this.userService.userProfile.userRoles, 'ORG_ADMIN') && _.includes(this.userService.userProfile.userRoles, 'CONTENT_REVIEWER')) {
-       filters['role'] = ['CONTENT_REVIEWER'];
+       filters['role'] = ['REVIEWER'];
        filters['user_id'] = this.userService.userProfile.userId;
     }
     return this.programsService.getMyProgramsForOrg(filters).subscribe((response) => {

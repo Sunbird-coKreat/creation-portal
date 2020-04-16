@@ -75,6 +75,7 @@ export class MainHeaderComponent implements OnInit {
   showOfflineHelpCentre = false;
   contributeTabActive: boolean;
   activeTab = {};
+  public sourcingOrgReviewer: boolean;
 
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
@@ -104,6 +105,8 @@ export class MainHeaderComponent implements OnInit {
           this.userProfile = user.userProfile;
           this.getLanguage(this.userService.channel);
           this.isCustodianOrgUser();
+          // tslint:disable-next-line:max-line-length
+          this.sourcingOrgReviewer = (!this.userProfile.userRoles.includes('ORG_ADMIN') && this.userProfile.userRoles.includes('CONTENT_REVIEWER')) ? true : false;
         }
       });
     } else {
