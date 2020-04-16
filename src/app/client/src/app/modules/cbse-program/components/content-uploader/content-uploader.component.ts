@@ -383,6 +383,14 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     }
   }
 
+  public closeRequestChangeModal() {
+    if (this.modal && this.modal.deny) {
+    this.showRequestChangesPopup = false;
+    this.FormControl.controls['rejectComment'].reset()
+    this.modal.deny();
+    }
+  }
+
   detectMimeType(fileName) {
     const extn = fileName.split('.').pop();
     switch (extn) {
