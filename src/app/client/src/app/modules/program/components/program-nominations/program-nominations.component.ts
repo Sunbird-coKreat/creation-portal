@@ -45,6 +45,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   public activeTab = '';
   public direction = 'asc';
   public sortColumn = '';
+  public sourcingOrgUser = [];
+  public roles;
   public programCollections: any;
   public contributionDashboardData;
   public approvedNominations: any = [];
@@ -66,6 +68,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
   this.telemetryInteractObject = {};
   this.checkActiveTab();
+  this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
+  this.roles = [{name: 'REVIEWER'}];
   }
 
   ngAfterViewInit() {
@@ -246,11 +250,26 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
       this.collectionsCount = _.get(this.programDetails, 'collection_ids').length;
       this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
       this.setActiveDate();
+      this.readRolesOfOrgUsers();
     }, error => {
       // TODO: navigate to program list page
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
       this.toasterService.error(errorMes || 'Fetching program details failed');
     });
+  }
+
+  readRolesOfOrgUsers() {
+    if (this.programDetails.rolemapping) {
+      _.forEach(this.roles, (role) => {
+        if (this.programDetails.rolemapping[role.name]) {
+          _.forEach(this.sourcingOrgUser, (user) => {
+            if (_.includes(this.programDetails.rolemapping[role.name], user.identifier)) {
+              user['selectedRole'] = role.name;
+            }
+          });
+        }
+      });
+    }
   }
 
   fetchProgramDetails() {
@@ -379,4 +398,23 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
     });
   }
 
+  onRoleChange() {
+    const roleMap = {};
+    _.forEach(this.roles, role => {
+      roleMap[role.name] = _.reduce(this.sourcingOrgUser, (result, user) => {
+        if (user.selectedRole === role.name) {  result.push(user.identifier); }
+        return result;
+      }, []);
+    });
+    const request = {
+          'program_id': this.activatedRoute.snapshot.params.programId,
+          'rolemapping': roleMap
+    };
+  this.programsService.updateProgram(request)
+    .subscribe(response => {
+      this.toasterService.success('Roles updated');
+    }, error => {
+      this.toasterService.error('Roles update failed!');
+    });
+  }
 }

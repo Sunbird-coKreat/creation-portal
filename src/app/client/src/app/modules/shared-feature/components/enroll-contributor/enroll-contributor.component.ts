@@ -20,12 +20,10 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
   public unsubscribe = new Subject<void>();
   public enrollAsOrg = false;
   public enrollDetails: any = {};
-  public programScope = {};
   public enrolledDate: any;
   @ViewChild('modal') modal;
   frameworkdetails;
   formIsInvalid = false;
-  contentType = { };
   telemetryImpression: any;
   options;
   disableSubmit = false;
@@ -40,16 +38,14 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
    public telemetryInteractObject: any;
 
   constructor(private programsService: ProgramsService, private tosterService: ToasterService,
-    public userService: UserService, public frameworkService: FrameworkService, private configService: ConfigService,
+    public userService: UserService, private configService: ConfigService,
     public toasterService: ToasterService, public formBuilder: FormBuilder, private navigationHelperService: NavigationHelperService,
     public http: HttpClient, public enrollContributorService: EnrollContributorService, public router: Router,
     public resourceService: ResourceService, private datePipe: DatePipe, public activeRoute: ActivatedRoute  ) {
   }
 
   ngOnInit(): void {
-      this.fetchFrameWorkDetails();
       this.initializeFormFields();
-      this.getProgramContentTypes();
       this.enrolledDate = new Date();
       this.enrolledDate = this.datePipe.transform(this.enrolledDate, 'yyyy-MM-dd');
      this.telemetryInteractCdata = [];
@@ -83,64 +79,8 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
     });
   }
 
-  fetchFrameWorkDetails() {
-   const frameworkId = _.get(this.userService.userProfile.framework, 'id') ? _.get(this.userService.userProfile.framework, 'id')[0] : null;
-   if (frameworkId) {
-    this.frameworkService.getFrameworkCategories(frameworkId)
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((data) => {
-        if (data && _.get(data, 'result.framework.categories')) {
-          this.frameworkdetails = _.get(data, 'result.framework.categories');
-
-          this.frameworkdetails.forEach((element) => {
-            this.enrollDetails[element['code']] = element['terms'];
-          });
-          this.frameworkFetched = true;
-        }
-      }, error => {
-        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-        this.toasterService.warning(errorMes || 'Fetching framework details failed');
-        this.router.navigate(['']);
-      });
-   } else {
-    this.frameworkService.initialize();
-    this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
-      if (frameworkInfo && !frameworkInfo.err && frameworkInfo.frameworkdata && frameworkInfo.frameworkdata.defaultFramework) {
-        this.frameworkdetails  = frameworkInfo.frameworkdata.defaultFramework.categories;
-        this.frameworkdetails.forEach((element) => {
-          this.enrollDetails[element['code']] = element['terms'];
-        });
-        this.frameworkFetched = true;
-      }
-    });
-   }
-  }
-
-  getProgramContentTypes () {
-    const option = {
-      url: 'program/v1/contenttypes/list',
-    };
-
-    this.programsService.get(option).subscribe(
-      (res) => {
-        this.contentType['contentType'] = res.result.contentType;
-        },
-      (err) => {
-        console.log(err);
-        // TODO: navigate to program list page
-        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-        this.toasterService.warning(errorMes || 'Fetching content types failed');
-      }
-    );
-  }
-
   initializeFormFields(): void {
     this.contributeForm = this.formBuilder.group({
-        board: [[]],
-        medium: [[]],
-        gradeLevel: [[]],
-        subject: [[]],
-        contentTypes: [[]],
         name: [''],
         description: [''],
         website: [''],
@@ -154,14 +94,7 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
     });
   }
   saveUser() {
-    this.enrollAsOrg === true ? this.contributeForm.controls['description'].setValidators([Validators.required]) : this.contributeForm.controls['description'].setValidators(null);
-    this.enrollAsOrg === true ? this.contributeForm.controls['name'].setValidators([Validators.required]) : this.contributeForm.controls['name'].setValidators(null);
-    this.contributeForm.controls['name'].updateValueAndValidity();
-    this.contributeForm.controls['description'].updateValueAndValidity();
-    if (this.contributeForm.valid) {
-          const User = {
-            ...this.contributeForm.value
-        };
+          const User = {};
           User['firstName'] =  this.userService.userProfile.firstName;
           User['lastName'] =  this.userService.userProfile.lastName || '';
           User['userId'] =  this.userService.userProfile.identifier;
@@ -196,18 +129,57 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
           }), catchError(err => throwError(err)))
           .subscribe((res3) => {
             this.contributeForm.reset();
-            this.tosterService.success('Enrolment is succesfully done...');
+            this.tosterService.success(this.resourceService.messages.smsg.contributorRegister.m0001);
             this.modal.deny();
           }, (err) => {
-            this.tosterService.error('Failed! Please try later...');
+            this.tosterService.error(this.resourceService.messages.emsg.contributorRegister.m0002);
           });
-      } else {
-        this.formIsInvalid = true;
-        this.validateAllFormFields(this.contributeForm);
-      }
+      
   }
   chnageEnrollStatus(status) {
     this.enrollAsOrg = status;
+  }
+
+  validateFields()
+  {
+    this.enrollAsOrg === true ? this.contributeForm.controls['description'].setValidators([Validators.required]) : this.contributeForm.controls['description'].setValidators(null);
+    this.enrollAsOrg === true ? this.contributeForm.controls['name'].setValidators([Validators.required]) : this.contributeForm.controls['name'].setValidators(null);
+    this.contributeForm.controls['name'].updateValueAndValidity();
+    this.contributeForm.controls['description'].updateValueAndValidity();
+    if (this.contributeForm.valid) {
+      if (this.enrollAsOrg === true)
+      { 
+        var request = {
+          entityType:["Org"],
+          filters:{
+            code:{eq: this.contributeForm.get('name').value.toUpperCase()}
+          }
+        }
+        this.programsService.searchRegistry(request).subscribe(
+          (res) => {
+          if(_.isEmpty(res.result.Org) || res.result.Org.length === 0)
+          {
+              this.saveUser();
+          }
+          else
+          {
+            this.tosterService.error(this.resourceService.messages.emsg.contributorRegister.m0001);
+          }
+            },
+          (err) => {
+          }
+        );
+      }
+      else
+      {
+        this.saveUser();
+      }
+    }
+    else
+    {
+      this.formIsInvalid = true;
+      this.validateAllFormFields(this.contributeForm);
+    }
   }
 
   closeModal() {
