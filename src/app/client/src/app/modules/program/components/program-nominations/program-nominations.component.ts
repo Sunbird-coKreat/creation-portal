@@ -48,7 +48,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   public sourcingOrgUser = [];
   public roles;
   public programCollections: any;
-  public contributionDashboardData;
+  public contributionDashboardData: any = [];
   public approvedNominations: any = [];
 
   constructor(public frameworkService: FrameworkService, private tosterService: ToasterService, private programsService: ProgramsService,

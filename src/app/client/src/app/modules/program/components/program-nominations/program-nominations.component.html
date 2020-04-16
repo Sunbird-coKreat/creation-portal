@@ -148,7 +148,7 @@
                 </div>
             </div>
             <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="2">
-                <div class="ui container p-0 m-0">
+                <div *ngIf="programCollections && programCollections.length" class="ui container p-0 m-0">
                     <app-textbook-list [collectionsInput]="programCollections"></app-textbook-list>
                 </div>
             </div>
@@ -304,7 +304,7 @@
 				  </div>
             </div>
             <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="4">
-                <div class="ui container pt-32">
+                <div *ngIf="programCollections && programCollections.length && contributionDashboardData.length" class="ui container pt-32">
                     <div class="sb-table-responsive desktop-o-x-unset">
                         <table
                             class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
@@ -357,9 +357,9 @@
                                     <td class="sb-color-warning">{{contributor.type !== 'individual' ? contributor.review: '-'}}</td>
                                     <td class="sb-color-success">{{contributor.live}}</td>
                                     <td class="sb-color-error">{{contributor.type !== 'individual' ? contributor.rejected: '-'}}</td>
-                                    <td class="sb-color-warning">{{contributor.sourcingOrgStatus.pending}}</td>
-                                    <td class="sb-color-success">{{contributor.sourcingOrgStatus.accepted}}</td>
-                                    <td class="sb-color-error">{{contributor.sourcingOrgStatus.rejected}}</td>
+                                    <td class="sb-color-warning">{{contributor.sourcingOrgStatus.pending || 0}}</td>
+                                    <td class="sb-color-success">{{contributor.sourcingOrgStatus.accepted || 0}}</td>
+                                    <td class="sb-color-error">{{contributor.sourcingOrgStatus.rejected || 0}}</td>
                                 </tr>
                             </tbody>
                         </table>
