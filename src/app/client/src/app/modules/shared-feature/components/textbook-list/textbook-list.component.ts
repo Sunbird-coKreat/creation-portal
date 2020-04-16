@@ -1,7 +1,7 @@
 import { HttpOptions, ConfigService, ResourceService, ToasterService, RouterNavigationService,
   ServerResponse, NavigationHelperService } from '@sunbird/shared';
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { ProgramsService, DataService, FrameworkService, ActionService } from '@sunbird/core';
+import { ProgramsService, DataService, FrameworkService, ActionService, UserService } from '@sunbird/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { tap, filter, map } from 'rxjs/operators';
@@ -27,6 +27,7 @@ export class TextbookListComponent implements OnInit {
   public filters;
   public apiUrl;
   public chapterCount = 0;
+  public pendingReview = 0;
   public direction = 'asc';
   public sortColumn = '';
   public tempSortcollections: Array<any> = [];
@@ -37,15 +38,19 @@ export class TextbookListComponent implements OnInit {
     rejected: 0,
     pending: 0
   };
+  public sourcingOrgReviewer: boolean;
+  public collectionData: any;
 
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
     public toasterService: ToasterService, public resourceService: ResourceService,
-    public actionService: ActionService
+    public actionService: ActionService, private userService: UserService
   ) { }
 
   ngOnInit(): void {
     this.programId = this.activatedRoute.snapshot.params.programId;
+    // tslint:disable-next-line:max-line-length
+    this.sourcingOrgReviewer = (this.userService.userProfile.userRoles.includes('ORG_ADMIN') || this.userService.userProfile.userRoles.includes('CONTENT_REVIEWER')) ? true : false;
 
     if (this.router.url.includes('sourcing/nominations/' + this.programId)) {
 
@@ -128,13 +133,16 @@ export class TextbookListComponent implements OnInit {
           });
           const hierarchyContent = _.map(hierarchies, hierarchy => {
             this.chapterCount = 0;
-            const {chapterCount} = this.getSampleContentStatusCount(hierarchy);
+            this.pendingReview = 0;
+            const {chapterCount, pendingReview} = this.getSampleContentStatusCount(hierarchy);
               hierarchy.chapterCount = chapterCount;
+              hierarchy.pendingReview = pendingReview;
             return hierarchy;
           });
           this.collections = _.map(data, content => {
             const contentWithHierarchy =  _.find(hierarchyContent, {identifier: content.identifier});
             content.chapterCount = contentWithHierarchy.chapterCount;
+            content.pendingReview = contentWithHierarchy.pendingReview;
             return content;
           });
           this.tempSortcollections = this.collections;
@@ -166,8 +174,15 @@ export class TextbookListComponent implements OnInit {
   }
   getSampleContentStatusCount(data) {
     const self = this;
+    if (data.contentType === 'TextBook') {
+      self.collectionData = data;
+    }
     if (data.contentType === 'TextBookUnit') {
       self.chapterCount = self.chapterCount + 1;
+    } else if (data.contentType !== 'TextBook' && data.status === 'Live' &&
+    // tslint:disable-next-line:max-line-length
+    _.includes([...self.collectionData.acceptedContents, ...self.collectionData.rejectedContents], data.identifier)) {
+      self.pendingReview = self.pendingReview + 1;
     }
     const childData = data.children;
     if (childData) {
@@ -175,7 +190,7 @@ export class TextbookListComponent implements OnInit {
         self.getSampleContentStatusCount(child);
       });
     }
-    return {chapterCount: self.chapterCount};
+    return {chapterCount: self.chapterCount, pendingReview: self.pendingReview};
   }
 
   getCollectionHierarchy(collectionIds) {

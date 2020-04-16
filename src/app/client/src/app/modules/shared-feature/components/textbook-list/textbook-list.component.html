@@ -39,6 +39,7 @@
 							</span>
 						</th>
 						<th class="w-10">{{resourceService.frmelmnts.lbl.chapters}}</th>
+						<th>{{resourceService.frmelmnts.lbl.status}}</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -65,8 +66,9 @@
 							</div>
 						</td>
 						<td>{{ data.chapterCount || 0 }}</td>
+						<td>{{ data.pendingReview || 0 }} Pending Review</td>
 						<td>
-						<button type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(data)">Review Content</button>
+						<button type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(data)">Open</button>
 						</td>
 					</tr>
 				</tbody>
