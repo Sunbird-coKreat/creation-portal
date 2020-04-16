@@ -1,0 +1,10 @@
+.border-l ::after{
+  content: "";
+  display: inline-block;
+  margin: 0 auto;
+  position: absolute;
+  left: 0;
+  padding-top: 53px;
+  top: -19px;
+  border-left: 1px solid #ccc;
+}

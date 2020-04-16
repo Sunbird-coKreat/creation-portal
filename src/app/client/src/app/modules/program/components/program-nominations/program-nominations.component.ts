@@ -4,6 +4,7 @@ import { ProgramsService, PublicDataService, UserService, FrameworkService } fro
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ISessionContext } from '../../../cbse-program/interfaces';
+import { CollectionHierarchyService } from '../../../cbse-program/services/collection-hierarchy/collection-hierarchy.service';
 import * as _ from 'lodash-es';
 import { tap, first } from 'rxjs/operators';
 import * as moment from 'moment';
@@ -44,11 +45,14 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   public activeTab = '';
   public direction = 'asc';
   public sortColumn = '';
+  public programCollections: any;
+  public contributionDashboardData;
+  public approvedNominations: any = [];
 
   constructor(public frameworkService: FrameworkService, private tosterService: ToasterService, private programsService: ProgramsService,
-    public resourceService: ResourceService, private config: ConfigService,
+    public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
     private publicDataService: PublicDataService, private activatedRoute: ActivatedRoute, private router: Router,
-    private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService,) {
+    private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService) {
     this.programId = this.activatedRoute.snapshot.params.programId;
   }
 
@@ -57,6 +61,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
     this.getNominationList();
     this.getProgramDetails();
     this.getNominationCounts();
+    this.getProgramCollection();
     this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program_ID'}];
   this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
   this.telemetryInteractObject = {};
@@ -146,7 +151,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
       }
     };
     this.programsService.post(req).subscribe((data) => {
-      if (data.result.length > 0) {
+      if (data.result && data.result.length > 0) {
+        this.getDashboardData(data.result);
         _.forEach(data.result, (res) => {
           const isOrg = !_.isEmpty(res.organisation_id);
           let name = '';
@@ -172,6 +178,53 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
     }, error => {
       this.tosterService.error('User onboarding failed');
     });
+  }
+
+  getProgramCollection () {
+    this.collectionHierarchyService.getCollectionWithProgramId(this.programId).subscribe(
+      (res: any) => {
+        if (res && res.result && res.result.content && res.result.content.length) {
+          this.programCollections = res.result.content;
+        }
+      },
+      (err) => {
+        console.log(err);
+        // TODO: navigate to program list page
+        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+        this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+      }
+    );
+
+  }
+
+  getDashboardData(nominations) {
+    // tslint:disable-next-line:max-line-length
+    this.approvedNominations = _.filter(nominations, nomination => nomination.status === 'Approved' );
+    if (this.approvedNominations.length) {
+    this.collectionHierarchyService.getContentAggregation(this.programId)
+      .subscribe(
+        (response) => {
+          if (response && response.result && response.result.content) {
+            const contents = _.get(response.result, 'content');
+            this.contributionDashboardData = _.map(this.approvedNominations, nomination => {
+              if (nomination.organisation_id) {
+                return {
+                  ...this.collectionHierarchyService.getContentCounts(contents, nomination.organisation_id, this.programCollections),
+                  contributorDetails: nomination,
+                  type: 'org'
+                };
+              } else {
+                return {
+                  ...this.collectionHierarchyService.getContentCountsForIndividual(contents, nomination.user_id, this.programCollections),
+                  contributorDetails: nomination,
+                  type: 'individual'
+                };
+              }
+            });
+          }
+        }
+      );
+    }
   }
 
   getNominatedTextbooksCount(nomination) {

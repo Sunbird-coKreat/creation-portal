@@ -219,24 +219,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     }
   }
 
-  // getContentAggregation() {
-  //   const option = {
-  //     url: 'content/composite/v1/search',
-  //     data: {
-  //       request: {
-  //         filters: {
-  //           objectType: 'content',
-  //           programId: this.activatedRoute.snapshot.params.programId,
-  //           status: [],
-  //           mimeType: {'!=': 'application/vnd.ekstep.content-collection'}
-  //         }
-  //       }
-  //     }
-  //   };
-
-  //   return this.httpClient.post<any>(option.url, option.data);
-  // }
-
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
