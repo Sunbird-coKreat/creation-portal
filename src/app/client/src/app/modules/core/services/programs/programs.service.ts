@@ -24,7 +24,6 @@ export class ProgramsService extends DataService implements CanActivate {
 
   private _programsList$ = new BehaviorSubject(undefined);
   private _allowToContribute$ = new BehaviorSubject(undefined);
-  private _sourcingOrgReviewers: Array<any>;
 
   public readonly programsList$ = this._programsList$.asObservable()
     .pipe(skipWhile(data => data === undefined || data === null));
@@ -37,10 +36,7 @@ export class ProgramsService extends DataService implements CanActivate {
   public http: HttpClient;
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
   private _contentTypes: any[];
-<<<<<<< HEAD
-=======
   private _sourcingOrgReviewers: Array<any>;
->>>>>>> 0e22ca1f954873f4e29ec42fdbeff09ac3a358e6
 
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService,
@@ -48,10 +44,6 @@ export class ProgramsService extends DataService implements CanActivate {
     private contentService: ContentService, private router: Router,
     private toasterService: ToasterService, private resourceService: ResourceService,
     public learnerService: LearnerService, private registryService: RegistryService) {
-<<<<<<< HEAD
-=======
-
->>>>>>> 0e22ca1f954873f4e29ec42fdbeff09ac3a358e6
       super(http);
       this.config = config;
       this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;
