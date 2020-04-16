@@ -64,7 +64,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   this.telemetryInteractObject = {};
   this.checkActiveTab();
   this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
-  this.roles = [{name: 'Reviewer'}];
+  this.roles = [{name: 'REVIEWER'}];
   }
 
   ngAfterViewInit() {
