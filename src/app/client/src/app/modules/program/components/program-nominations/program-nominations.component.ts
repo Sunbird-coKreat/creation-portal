@@ -132,8 +132,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
     this.nominationsCount = this.tempNominationsCount;
   }
 
-  sortCollection(column) {
-    this.nominations = this.programsService.sortCollection(this.nominations, column, this.direction);
+  sortCollection(column, object) {
+    this.nominations = this.programsService.sortCollection(object, column, this.direction);
     if (this.direction === 'asc' || this.direction === '') {
       this.direction = 'desc';
     } else {
@@ -141,6 +141,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
     }
     this.sortColumn = column;
   }
+
 
   getNominationList() {
     const req = {
@@ -161,7 +162,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
           const isOrg = !_.isEmpty(res.organisation_id);
           let name = '';
           if (isOrg) {
-            name = res.userData.name;
+            name = res.userData.name || `${res.userData.firstName} ${res.userData.lastName}`;
           } else {
             name = res.userData.firstName;
             if (!_.isEmpty(res.userData.lastName)) {
@@ -169,7 +170,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
             }
           }
           this.nominations.push({
-            'name': name,
+            'name': name.trim(),
             'type': isOrg ? 'Organisation' : 'Individual',
             'nominationData': res
           });
@@ -224,6 +225,20 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
                   type: 'individual'
                 };
               }
+            });
+          } else {
+            this.contributionDashboardData = _.map(this.approvedNominations, nomination => {
+              return {
+                total: 0,
+                review: 0,
+                draft: 0,
+                rejected: 0,
+                live: 0,
+                individualStatus: {},
+                sourcingOrgStatus : {accepted: 0, rejected: 0, pending: 0},
+                contributorDetails: nomination,
+                type: nomination.organisation_id ? 'org' : 'individual'
+              };
             });
           }
         }

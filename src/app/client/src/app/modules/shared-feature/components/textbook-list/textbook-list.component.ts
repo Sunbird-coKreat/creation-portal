@@ -67,7 +67,7 @@ export class TextbookListComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    this.initialize();
+    // this.initialize();
   }
 
   fetchProgramDetails() {
@@ -135,12 +135,12 @@ export class TextbookListComponent implements OnInit, OnChanges {
           this.getContentAggregation().subscribe((responseData) => {
               if (responseData && responseData.result && responseData.result.content) {
                   const contents = _.get(responseData.result, 'content');
-                  this.contentStatusCounts.total = this.contentStatusCounts.total + 1;
                   _.forEach(contents,  content => {
                     const index = _.findIndex(this.collections, collection => {
                       return collection.identifier === content.collectionId;
                     });
                     if (index > -1) {
+                      this.contentStatusCounts.total = this.contentStatusCounts.total + 1;
                       const collectionData = this.collections[index];
                       if ( _.indexOf(collectionData.acceptedContents, content.identifier) > -1) {
                         this.contentStatusCounts.accepted = this.contentStatusCounts.accepted + 1;
