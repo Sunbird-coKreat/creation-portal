@@ -167,7 +167,9 @@ export class AppComponent implements OnInit, OnDestroy {
             console.log(this.userService.userProfile);
             this.userService.userRegistryData = true;
             this.initApp = true;
-            if (_.indexOf(this.userService.userProfile.userRoles, 'ORG_ADMIN') === -1 && this.router.url.includes('/sourcing')) {
+            if (_.indexOf(this.userService.userProfile.userRoles, 'ORG_ADMIN') === -1 &&
+               _.indexOf(this.userService.userProfile.userRoles, 'CONTENT_REVIEWER') === -1 &&
+            this.router.url.includes('/sourcing')) {
               this.toasterService.error(this.resourceService.messages.emsg.sourcing.m001);
               this.hideHeaderNFooter = true;
               this.initApp = false;
