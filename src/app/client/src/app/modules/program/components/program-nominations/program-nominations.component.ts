@@ -46,6 +46,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   public sortColumn = '';
   public sourcingOrgUser = [];
   public roles;
+  public showUsersTab = false;
 
   constructor(public frameworkService: FrameworkService, private tosterService: ToasterService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService,
@@ -65,6 +66,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   this.checkActiveTab();
   this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
   this.roles = [{name: 'REVIEWER'}];
+  this.showUsersTab = this.canAssignUsers();
   }
 
   ngAfterViewInit() {
@@ -93,6 +95,12 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
       };
      });
   }
+
+  canAssignUsers() {
+    return _.includes(this.userService.userProfile.userRoles, 'ORG_ADMIN') &&
+    this.router.url.includes('/sourcing');
+  }
+
 
   onStatusChange(status) {
     if (this.selectedStatus !== status) {

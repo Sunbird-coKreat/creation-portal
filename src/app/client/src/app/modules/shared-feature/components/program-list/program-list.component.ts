@@ -301,14 +301,15 @@ export class ProgramListComponent implements OnInit {
    * fetch the list of programs.
    */
   private getMyProgramsForOrg(status) {
+    const userProfile = _.get(this.userService, 'userProfile');
     const filters = {
-      rootorg_id: _.get(this.userService, 'userProfile.rootOrg.rootOrgId'),
+      rootorg_id: _.get(userProfile, 'rootOrg.rootOrgId'),
       status: status
     };
-    // tslint:disable-next-line:max-line-length
-    if (!_.includes(this.userService.userProfile.userRoles, 'ORG_ADMIN') && _.includes(this.userService.userProfile.userRoles, 'CONTENT_REVIEWER')) {
-       filters['role'] = ['CONTENT_REVIEWER'];
-       filters['user_id'] = this.userService.userProfile.userId;
+    const roles = _.get(userProfile, 'userRoles');
+    if (!_.includes(roles, 'ORG_ADMIN') && _.includes(roles, 'CONTENT_REVIEWER')) {
+       filters['role'] = ['REVIEWER'];
+       filters['user_id'] = _.get(userProfile, 'userId');
     }
     return this.programsService.getMyProgramsForOrg(filters).subscribe((response) => {
       this.programs = _.get(response, 'result.programs');
