@@ -7,7 +7,7 @@
 		<div class="pb-8">
 			<sui-tabset>
 				<div class="ui pointing secondary menu sb-bg-color-primary-0">
-					<div class="item" suiTabHeader="1" [ngClass]="{'active' : !showTextBookSelector}">
+					<div class="item" suiTabHeader="1" [ngClass]="{'active' : !showTextBookSelector}" [isDisabled]="showTextBookSelector">
 						{{resource.frmelmnts.lbl.details}}
 					</div>
 					<div class="item" suiTabHeader="2" [isDisabled]="!showTextBookSelector"

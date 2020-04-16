@@ -31,10 +31,16 @@ export class TextbookListComponent implements OnInit {
   public sortColumn = '';
   public tempSortcollections: Array<any> = [];
   @Output() selectedCollection = new EventEmitter<any>();
+  public contentStatusCounts = {
+    total: 0,
+    accepted: 0,
+    rejected: 0,
+    pending: 0
+  };
 
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
-    public toasterService: ToasterService, public resource: ResourceService,
+    public toasterService: ToasterService, public resourceService: ResourceService,
     public actionService: ActionService
   ) { }
 
@@ -132,6 +138,29 @@ export class TextbookListComponent implements OnInit {
             return content;
           });
           this.tempSortcollections = this.collections;
+          this.getContentAggregation().subscribe((responseData) => {
+              if (responseData && responseData.result && responseData.result.content) {
+                  const contents = _.get(responseData.result, 'content');
+                  this.contentStatusCounts.total = this.contentStatusCounts.total + 1;
+                  _.forEach(contents,  content => {
+                    const index = _.findIndex(this.collections, collection => {
+                      return collection.identifier === content.collectionId;
+                    });
+                    if (index > -1) {
+                      const collectionData = this.collections[index];
+                      if ( _.indexOf(collectionData.acceptedContents, content.identifier) > -1) {
+                        this.contentStatusCounts.accepted = this.contentStatusCounts.accepted + 1;
+                      } else if ( _.indexOf(collectionData.rejectedContents, content.identifier) > -1) {
+                        this.contentStatusCounts.rejected = this.contentStatusCounts.rejected + 1;
+                      } else {
+                        this.contentStatusCounts.pending = this.contentStatusCounts.pending + 1;
+                      }
+                    }
+                  });
+              }
+            },
+              (err) => console.log(err)
+          );
         });
     }
   }
@@ -163,4 +192,21 @@ export class TextbookListComponent implements OnInit {
    viewContribution(collection) {
      this.selectedCollection.emit(collection);
    }
+   getContentAggregation() {
+    const option = {
+      url: 'content/composite/v1/search',
+      data: {
+        request: {
+          filters: {
+            objectType: 'content',
+            programId: this.programId,
+            status: ['Live'],
+            mimeType: {'!=': 'application/vnd.ekstep.content-collection'}
+          }
+        }
+      }
+    };
+
+    return this.httpClient.post<any>(option.url, option.data);
+  }
 }
