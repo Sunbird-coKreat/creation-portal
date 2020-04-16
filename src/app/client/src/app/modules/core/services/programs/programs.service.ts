@@ -341,12 +341,11 @@ export class ProgramsService extends DataService implements CanActivate {
       (res) => {
         const sourcingOrgUser =  res.result.response.content;
         _.forEach(sourcingOrgUser, (user) => {
-          const userProfile = { };
 
-          this.registryService.openSaberRegistrySearch(user.identifier, userProfile).then(() => {
+          this.registryService.openSaberRegistrySearch(user.identifier).then((userProfile) => {
+
+            if (_.get(userProfile, 'error') === false) {
               // Add user to the org if not added to any org previously
-              console.log("check for user "+ user.identifier, userProfile);
-
               if (_.isEmpty(_.get(userProfile, 'user'))) {
                 // Add user to the registry
                  userAdd = {
@@ -387,6 +386,7 @@ export class ProgramsService extends DataService implements CanActivate {
                   (userAddErr) => {console.log("Errro while adding User added to org"+ user.identifier,userAddErr);}
                 );
               }
+            }
           }).catch((err) => {
             console.log("errr", err);
           });
