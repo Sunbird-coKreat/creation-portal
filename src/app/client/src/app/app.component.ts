@@ -164,6 +164,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.checkTncAndFrameWorkSelected();
         if (this.userService.loggedIn) {
           this.userService.openSaberRegistrySearch().then(() => {
+            console.log(this.userService.userProfile);
             this.userService.userRegistryData = true;
             this.initApp = true;
             if (_.indexOf(this.userService.userProfile.userRoles, 'ORG_ADMIN') === -1 && this.router.url.includes('/sourcing')) {
