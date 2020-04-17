@@ -499,7 +499,10 @@ export class CollectionComponent implements OnInit, OnDestroy {
       req.data.request.filters['user_id'] = this.userService.userProfile.userId;
     }
     this.programsService.post(req).subscribe((data) => {
-      if (data.result && !_.isEmpty(data.result)) {
+      if (data.result && !_.isEmpty(data.result)
+      && this.router.url.includes('/contribute/program/' + this.activatedRoute.snapshot.params.programId)) {
+          this.router.navigateByUrl('/contribute/nominatedtextbooks/' + this.activatedRoute.snapshot.params.programId);
+      } else if (data.result && !_.isEmpty(data.result)) {
           this.currentNominationStatus =  _.get(_.first(data.result), 'status');
           this.sessionContext.nominationDetails = _.first(data.result);
           this.selectedContentTypes = this.sessionContext.nominationDetails.content_types || [];

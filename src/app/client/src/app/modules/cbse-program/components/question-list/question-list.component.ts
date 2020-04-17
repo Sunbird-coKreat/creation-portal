@@ -451,7 +451,11 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((res) => {
           if (res.responseCode === 'OK' && (res.result.content_id || res.result.node_id)) {
             this.toasterService.success(this.resourceService.messages.smsg.m0060);
-            if (actionStatus === 'review') { this.sendForReview(); }
+            if (actionStatus === 'review' && this.isIndividualAndNotSample()) {
+              this.publishContent();
+            } else if (actionStatus === 'review') {
+              this.sendForReview();
+            }
           }
         });
     });
@@ -807,6 +811,11 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     this.sessionContext.questionList = [];
   }
+
+  isIndividualAndNotSample() {
+    return !!(this.sessionContext.currentOrgRole === 'individual' && this.sessionContext.sampleContent !== true);
+  }
+
 
   handleBack() {
     this.programStageService.removeLastStage();

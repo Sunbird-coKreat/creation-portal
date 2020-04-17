@@ -1,7 +1,8 @@
 import { HttpOptions, ConfigService, ResourceService, ToasterService, RouterNavigationService,
   ServerResponse, NavigationHelperService } from '@sunbird/shared';
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { ProgramsService, DataService, FrameworkService, ActionService, UserService } from '@sunbird/core';
+import { CollectionHierarchyService } from '../../../cbse-program/services/collection-hierarchy/collection-hierarchy.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { tap, filter, map } from 'rxjs/operators';
@@ -14,7 +15,9 @@ import { forkJoin } from 'rxjs';
   templateUrl: './textbook-list.component.html',
   styleUrls: ['./textbook-list.component.scss']
 })
-export class TextbookListComponent implements OnInit {
+export class TextbookListComponent implements OnInit, OnChanges {
+
+  @Input() collectionsInput: Array<any> = [];
 
   public programId: string;
   public programDetails: any = {};
@@ -44,10 +47,14 @@ export class TextbookListComponent implements OnInit {
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
     public toasterService: ToasterService, public resourceService: ResourceService,
-    public actionService: ActionService, private userService: UserService
+    public actionService: ActionService, private collectionHierarchyService: CollectionHierarchyService, private userService: UserService
   ) { }
 
   ngOnInit(): void {
+   this.initialize();
+  }
+
+  initialize() {
     this.programId = this.activatedRoute.snapshot.params.programId;
     // tslint:disable-next-line:max-line-length
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
@@ -55,12 +62,18 @@ export class TextbookListComponent implements OnInit {
     if (this.router.url.includes('sourcing/nominations/' + this.programId)) {
 
       this.fetchProgramDetails().subscribe((programDetails) => {
-        this.getProgramCollection();
+        // this.getProgramCollection();
+        this.showTexbooklist(this.collectionsInput);
+        this.collectionsCnt = this.collectionsInput && this.collectionsInput.length;
       }, error => {
         // TODO: navigate to program list page
         const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
       });
     }
+  }
+
+  ngOnChanges() {
+    // this.initialize();
   }
 
   fetchProgramDetails() {
@@ -73,41 +86,23 @@ export class TextbookListComponent implements OnInit {
     }));
   }
 
-  getProgramCollection () {
-    const httpOptions: HttpOptions = {
-      headers: {
-        'content-type': 'application/json',
-      }
-    };
-    const option = {
-      url: 'content/composite/v1/search',
-      data: {
-        request: {
-          filters: {
-            programId: this.programId,
-            objectType: 'content',
-            status: ['Draft'],
-            contentType: 'Textbook'
-          }
-        }
-      }
-    };
-    this.httpClient.post<any>(option.url, option.data, httpOptions).subscribe(
-      (res: any) => {
-        if (res && res.result && res.result.content && res.result.content.length) {
-          this.showTexbooklist(res.result.content);
-          this.collectionsCnt = res.result.content.length;
-        }
-      },
-      (err) => {
-        console.log(err);
-        // TODO: navigate to program list page
-        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-        this.toasterService.warning(errorMes || 'Fetching textbooks failed');
-      }
-    );
+  // getProgramCollection () {
+  //   this.collectionHierarchyService.getCollectionWithProgramId(this.programId).subscribe(
+  //     (res: any) => {
+  //       if (res && res.result && res.result.content && res.result.content.length) {
+  //         this.showTexbooklist(res.result.content);
+  //         this.collectionsCnt = res.result.content.length;
+  //       }
+  //     },
+  //     (err) => {
+  //       console.log(err);
+  //       // TODO: navigate to program list page
+  //       const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+  //       this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+  //     }
+  //   );
 
-  }
+  // }
 
   sortCollection(column) {
     this.collections =  this.programsService.sortCollection(this.tempSortcollections, column, this.direction);
@@ -122,7 +117,7 @@ export class TextbookListComponent implements OnInit {
   showTexbooklist (data) {
     if (!_.isEmpty(data)) {
       const collectionIds = _.map(data, 'identifier');
-      this.getCollectionHierarchy(collectionIds)
+      this.collectionHierarchyService.getCollectionHierarchy(collectionIds)
         .subscribe(response => {
           const hierarchies = _.map(response, r => {
             if (r.result && r.result.content) {
@@ -149,12 +144,12 @@ export class TextbookListComponent implements OnInit {
           this.getContentAggregation().subscribe((responseData) => {
               if (responseData && responseData.result && responseData.result.content) {
                   const contents = _.get(responseData.result, 'content');
-                  this.contentStatusCounts.total = this.contentStatusCounts.total + 1;
                   _.forEach(contents,  content => {
                     const index = _.findIndex(this.collections, collection => {
                       return collection.identifier === content.collectionId;
                     });
                     if (index > -1) {
+                      this.contentStatusCounts.total = this.contentStatusCounts.total + 1;
                       const collectionData = this.collections[index];
                       if ( _.indexOf(collectionData.acceptedContents, content.identifier) > -1) {
                         this.contentStatusCounts.accepted = this.contentStatusCounts.accepted + 1;

@@ -6,9 +6,9 @@ import { ProgramComponent, CreateProgramComponent, ProgramNominationsComponent, 
 import { AuthGuard } from '../core/guard/auth-gard.service';
 
 const routes: Routes = [{
-  path: '', component: ListAllProgramsComponent, canActivate: [ProgramsService],
+  path: '', component: ListAllProgramsComponent, canActivate: [ProgramsService, AuthGuard],
   data: {
-    roles: 'rootOrgAdmin',
+    roles: 'programSourcingRole',
     telemetry: {
       env: 'sourcing-portal', pageid: 'programs-list', type: 'view', subtype: 'paginate'
     }
