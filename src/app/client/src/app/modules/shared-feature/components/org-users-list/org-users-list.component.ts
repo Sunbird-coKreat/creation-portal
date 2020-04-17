@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit ,Input} from '@angular/core';
 import { ResourceService, ToasterService } from '@sunbird/shared';
 import { UserService, RegistryService, ProgramsService } from '@sunbird/core';
 import * as _ from 'lodash-es';
@@ -21,11 +21,16 @@ export class OrgUsersListComponent implements OnInit {
   public selectedOrgUser: any;
   public showcontributorProfile = false;
   public roles = [{ name: 'User', value: 'user'}, { name: 'Admin', value: 'admin'}];
-
+  IsShowCount = false;
+  @Input() isShowCountFromChild: boolean;
   constructor( public resourceService: ResourceService, public userService: UserService,
     public registryService: RegistryService, public programsService: ProgramsService, public toasterService: ToasterService) { }
   ngOnInit(): void {
     this.getContributionOrgUsers();
+    if(this.isShowCountFromChild)
+    {
+      this.IsShowCount = this.isShowCountFromChild;
+    }
   }
 
   showProfile(orgUser) {

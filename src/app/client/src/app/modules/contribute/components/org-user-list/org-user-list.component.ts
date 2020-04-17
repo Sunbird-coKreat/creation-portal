@@ -28,6 +28,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public orgDetails: any = {};
   public showLoader = true;
   count = 0;
+  isShowCountFromChild = false;
 
   constructor(private toasterService: ToasterService, private configService: ConfigService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
