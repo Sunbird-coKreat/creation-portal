@@ -42,8 +42,7 @@
             <span class="item-status">
               <span class="sb-label sb-label-table sb-label-warning-0" *ngIf="content.status === 'Draft' && content.prevStatus === null">{{content.status}}</span>
               <span class="sb-label sb-label-table sb-label-primary-100" *ngIf="!content.sampleContent && content.status === 'Review'">Review in Progress</span>
-              <span class="sb-label sb-label-table sb-label-success-0" *ngIf="content.status === 'Live'">Published</span>
-              <span class="sb-label sb-label-table sb-label-success-0" *ngIf="content.status === 'Live' && router.url.includes('/sourcing')">Pending For Review</span>
+              <span class="sb-label sb-label-table sb-label-success-0" *ngIf="content.status === 'Live'">{{router.url.includes('/sourcing') ? 'Pending For Review' : 'Published'}}</span>
               <span class="sb-label sb-label-table sb-label-error-0" *ngIf="content.status === 'Draft' && content.prevStatus === 'Review'">Rejected</span>
             </span>
             <div class="item-dropdown absolute position" (click)="menuClick($event)" *ngIf="content.status === 'Draft'">
