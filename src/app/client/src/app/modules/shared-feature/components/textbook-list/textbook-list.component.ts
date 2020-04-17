@@ -1,7 +1,7 @@
 import { HttpOptions, ConfigService, ResourceService, ToasterService, RouterNavigationService,
   ServerResponse, NavigationHelperService } from '@sunbird/shared';
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
-import { ProgramsService, DataService, FrameworkService, ActionService } from '@sunbird/core';
+import { ProgramsService, DataService, FrameworkService, ActionService, UserService } from '@sunbird/core';
 import { CollectionHierarchyService } from '../../../cbse-program/services/collection-hierarchy/collection-hierarchy.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -30,20 +30,24 @@ export class TextbookListComponent implements OnInit, OnChanges {
   public filters;
   public apiUrl;
   public chapterCount = 0;
+  public pendingReview = 0;
   public direction = 'asc';
   public sortColumn = '';
   public tempSortcollections: Array<any> = [];
+  @Output() selectedCollection = new EventEmitter<any>();
   public contentStatusCounts = {
     total: 0,
     accepted: 0,
     rejected: 0,
     pending: 0
   };
+  public sourcingOrgReviewer: boolean;
+  public collectionData: any;
 
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
     public toasterService: ToasterService, public resourceService: ResourceService,
-    public actionService: ActionService, private collectionHierarchyService: CollectionHierarchyService
+    public actionService: ActionService, private collectionHierarchyService: CollectionHierarchyService, private userService: UserService
   ) { }
 
   ngOnInit(): void {
@@ -52,6 +56,8 @@ export class TextbookListComponent implements OnInit, OnChanges {
 
   initialize() {
     this.programId = this.activatedRoute.snapshot.params.programId;
+    // tslint:disable-next-line:max-line-length
+    this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
 
     if (this.router.url.includes('sourcing/nominations/' + this.programId)) {
 
@@ -122,13 +128,16 @@ export class TextbookListComponent implements OnInit, OnChanges {
           });
           const hierarchyContent = _.map(hierarchies, hierarchy => {
             this.chapterCount = 0;
-            const {chapterCount} = this.getSampleContentStatusCount(hierarchy);
+            this.pendingReview = 0;
+            const {chapterCount, pendingReview} = this.getSampleContentStatusCount(hierarchy);
               hierarchy.chapterCount = chapterCount;
+              hierarchy.pendingReview = pendingReview;
             return hierarchy;
           });
           this.collections = _.map(data, content => {
             const contentWithHierarchy =  _.find(hierarchyContent, {identifier: content.identifier});
             content.chapterCount = contentWithHierarchy.chapterCount;
+            content.pendingReview = contentWithHierarchy.pendingReview;
             return content;
           });
           this.tempSortcollections = this.collections;
@@ -160,8 +169,15 @@ export class TextbookListComponent implements OnInit, OnChanges {
   }
   getSampleContentStatusCount(data) {
     const self = this;
+    if (data.contentType === 'TextBook') {
+      self.collectionData = data;
+    }
     if (data.contentType === 'TextBookUnit') {
       self.chapterCount = self.chapterCount + 1;
+    } else if (data.contentType !== 'TextBook' && data.status === 'Live' &&
+    // tslint:disable-next-line:max-line-length
+    _.includes([...self.collectionData.acceptedContents, ...self.collectionData.rejectedContents], data.identifier)) {
+      self.pendingReview = self.pendingReview + 1;
     }
     const childData = data.children;
     if (childData) {
@@ -169,9 +185,23 @@ export class TextbookListComponent implements OnInit, OnChanges {
         self.getSampleContentStatusCount(child);
       });
     }
-    return {chapterCount: self.chapterCount};
+    return {chapterCount: self.chapterCount, pendingReview: self.pendingReview};
   }
 
+  getCollectionHierarchy(collectionIds) {
+    const hierarchyRequest =  _.map(collectionIds, id => {
+       const req = {
+         url: 'content/v3/hierarchy/' + id,
+         param: { 'mode': 'edit' }
+       };
+       return this.actionService.get(req);
+     });
+     return forkJoin(hierarchyRequest);
+   }
+
+   viewContribution(collection) {
+     this.selectedCollection.emit(collection);
+   }
    getContentAggregation() {
     const option = {
       url: 'content/composite/v1/search',
