@@ -62,7 +62,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.changeView();
     });
     if (['null', null, undefined, 'undefined'].includes(this.programId)) {
-      console.log('no programId found'); // TODO: need to handle this case
+      console.log('no projectId found'); // TODO: need to handle this case
     }
   }
   ngAfterViewInit() {
@@ -97,7 +97,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     }, error => {
       // TODO: navigate to program list page
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-      this.toasterService.error(errorMes || 'Fetching program details failed');
+      this.toasterService.error(errorMes || this.resourceService.messages.emsg.project.m0001);
       this.initiateHeader('failed');
     });
   }
@@ -210,7 +210,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       this.initiateInputs();
     } else {
-      this.toasterService.error('Fetching program details failed');
+      this.toasterService.error(this.resourceService.messages.emsg.project.m0001);
     }
   }
   changeView() {

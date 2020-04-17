@@ -107,7 +107,7 @@ export const collectionComponentInput = {
       'defaultRoles': [
         'CONTRIBUTOR'
       ],
-      'name': 'Filter Check Program',
+      'name': 'Filter Check Project',
       'programId': '18cc8a70-2889-11ea-9bc0-fd6cea67ce9f',
       'userDetails': {
         'programId': '18cc8a70-2889-11ea-9bc0-fd6cea67ce9f',
