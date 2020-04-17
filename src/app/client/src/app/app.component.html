@@ -6,7 +6,7 @@
   <app-validate-teacher-identifier-popup *ngIf="showUserVerificationPopup && labels" [labels]="labels" [userFeedData]="userFeed"> </app-validate-teacher-identifier-popup>
   <app-user-location (close)="onLocationSubmit()" *ngIf="!isLocationConfirmed" [isCustodianOrgUser]="isCustodianOrgUser" [deviceProfile]="deviceProfile" [userProfile]="usersProfile">
   </app-user-location>
-  <div *ngIf="!isContributor && this.router.isActive('/contribute', true) && initApp">
+  <div *ngIf="showEnrollPopup && !isContributor && this.router.isActive('/contribute', true) && initApp">
   <app-enroll-contributor  (close)="onContributorModalSubmit()" >
   </app-enroll-contributor>
 </div>

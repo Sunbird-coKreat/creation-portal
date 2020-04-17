@@ -50,6 +50,8 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   public showTermsAndCondPopUp = false;
 
+
+  public showEnrollPopup = false;
   /**
    * Used to fetch tenant details and org details for Anonymous user. Possible values
    * 1. url slug param will be slug for Anonymous user
@@ -336,6 +338,7 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   public onAcceptTnc() {
     this.showTermsAndCondPopUp = false;
+    this.showEnrollPopup = true;
     this.checkFrameworkSelected();
   }
 
