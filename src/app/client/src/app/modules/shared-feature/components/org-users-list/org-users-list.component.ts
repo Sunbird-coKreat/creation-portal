@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit,  Input, } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ResourceService, ToasterService } from '@sunbird/shared';
 import { UserService, RegistryService, ProgramsService } from '@sunbird/core';
 import * as _ from 'lodash-es';
