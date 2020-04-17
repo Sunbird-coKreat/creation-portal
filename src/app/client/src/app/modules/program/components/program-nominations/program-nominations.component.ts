@@ -82,6 +82,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
   this.roles = [{name: 'REVIEWER'}];
   this.sessionContext.currentRole = 'REVIEWER';
+  this.programStageService.initialize();
   this.programStageService.addStage('programNominations');
   this.currentStage = 'programNominations';
   this.stageSubscription = this.programStageService.getStage().subscribe(state => {
