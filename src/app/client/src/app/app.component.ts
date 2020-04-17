@@ -207,41 +207,41 @@ export class AppComponent implements OnInit, OnDestroy {
       return;
     }
     this.usersProfile = this.userService.userProfile;
-    const deviceRegister = this.deviceRegisterService.getDeviceProfile();
+    // const deviceRegister = this.deviceRegisterService.getDeviceProfile();
     const custodianOrgDetails = this.orgDetailsService.getCustodianOrgDetails();
-    forkJoin([deviceRegister, custodianOrgDetails]).subscribe((res) => {
-      const deviceProfile = res[0];
-      this.deviceProfile = deviceProfile;
-      if (_.get(this.userService, 'userProfile.rootOrg.rootOrgId') === _.get(res[1], 'result.response.value')) {
-        // non state user
-        this.isCustodianOrgUser = true;
-        this.deviceProfile = deviceProfile;
-        if (this.userService.loggedIn) {
-          if (!deviceProfile.userDeclaredLocation ||
-            !(this.usersProfile && this.usersProfile.userLocations && this.usersProfile.userLocations.length >= 1)) {
-            this.isLocationConfirmed = false;
-          }
-        } else {
-          if (!deviceProfile.userDeclaredLocation) {
-            this.isLocationConfirmed = false;
-          }
-        }
-      } else {
-        // state user
-        this.isCustodianOrgUser = false;
-        if (this.userService.loggedIn) {
-          if (!deviceProfile.userDeclaredLocation) {
-            this.isLocationConfirmed = false;
-          }
-        } else {
-          if (!deviceProfile.userDeclaredLocation) {
-            this.isLocationConfirmed = false;
-          }
-        }
-      }
-    }, (err) => {
-      this.isLocationConfirmed = true;
-    });
+    // forkJoin([deviceRegister, custodianOrgDetails]).subscribe((res) => {
+    //   const deviceProfile = res[0];
+    //   this.deviceProfile = deviceProfile;
+    //   if (_.get(this.userService, 'userProfile.rootOrg.rootOrgId') === _.get(res[1], 'result.response.value')) {
+    //     // non state user
+    //     this.isCustodianOrgUser = true;
+    //     this.deviceProfile = deviceProfile;
+    //     if (this.userService.loggedIn) {
+    //       if (!deviceProfile.userDeclaredLocation ||
+    //         !(this.usersProfile && this.usersProfile.userLocations && this.usersProfile.userLocations.length >= 1)) {
+    //         this.isLocationConfirmed = false;
+    //       }
+    //     } else {
+    //       if (!deviceProfile.userDeclaredLocation) {
+    //         this.isLocationConfirmed = false;
+    //       }
+    //     }
+    //   } else {
+    //     // state user
+    //     this.isCustodianOrgUser = false;
+    //     if (this.userService.loggedIn) {
+    //       if (!deviceProfile.userDeclaredLocation) {
+    //         this.isLocationConfirmed = false;
+    //       }
+    //     } else {
+    //       if (!deviceProfile.userDeclaredLocation) {
+    //         this.isLocationConfirmed = false;
+    //       }
+    //     }
+    //   }
+    // }, (err) => {
+    //   this.isLocationConfirmed = true;
+    // });
     this.getUserFeedData();
   }
 

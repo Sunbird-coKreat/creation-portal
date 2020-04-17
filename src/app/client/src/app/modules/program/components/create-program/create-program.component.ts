@@ -610,6 +610,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programData = {
         ...this.createProgramForm.value
       };
+      if (this.userFramework) {
+        this.programConfig.framework = this.userFramework;
+      }
       this.programData['sourcing_org_name'] = this.userprofile.rootOrgName;
       this.programData['rootorg_id'] = this.userprofile.rootOrgId;
       this.programData['createdby'] = this.userprofile.id;

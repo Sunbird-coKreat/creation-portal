@@ -2,7 +2,7 @@
 var programConfig = {
     '_comments': '',
     'loginReqired': true,
-    'framework': 'NCFCOPY',
+    'framework': 'NCF',
     'board':'', 
     'gradeLevel':[],
     'medium':[],
