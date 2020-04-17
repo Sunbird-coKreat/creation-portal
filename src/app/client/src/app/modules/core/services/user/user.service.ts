@@ -339,6 +339,7 @@ export class UserService {
       if (res && res.result.Org.length) {
           userRegData['Org'] = res.result.Org[0];
       }
+      this.userRegistryData = true;
       return resolve(userRegData);
      }, (err) => {
       return reject(userRegData);
