@@ -163,13 +163,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this.setFingerPrintTelemetry();
         this.checkTncAndFrameWorkSelected();
         if (this.userService.loggedIn) {
-          this.userService.openSaberRegistrySearch().then(() => {
-            this.userService.userRegistryData = true;
-            this.initApp = true;
-          }).catch((err) => {
-            this.initApp = true;
-          });
-        } else {
           this.initApp = true;
         }
       }, error => {

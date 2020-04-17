@@ -132,8 +132,8 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
           .subscribe((res3) => {
             this.contributeForm.reset();
             this.modal.deny();
-            this.userService.openSaberRegistrySearch().then(() => {
-              this.userService.userRegistryData = true;
+            this.userService.openSaberRegistrySearch().then((userRegData) => {
+              this.userService.userProfile.userRegData = userRegData;
               this.tosterService.success(this.resourceService.messages.smsg.contributorRegister.m0001);
             });
           }, (err) => {
