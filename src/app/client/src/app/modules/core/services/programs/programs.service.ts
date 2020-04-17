@@ -325,7 +325,7 @@ export class ProgramsService extends DataService implements CanActivate {
  /**
    * Logic to get the all the users of sourcing organisation and add it to the same cont org as sourcing admin
    */
-  addSourcingUserstoContribOrg() {
+  addSourcingUserstoContribOrg(userRegData) {
     let userOrgAdd;
     let userAdd;
 
@@ -360,7 +360,7 @@ export class ProgramsService extends DataService implements CanActivate {
                       userOrgAdd = {
                         User_Org: {
                           userId: res.result.User.osid,
-                          orgId: this.userService.userProfile.userRegData.User_Org.orgId,
+                          orgId: userRegData.User_Org.orgId,
                           roles: ['user']
                         }
                       };
@@ -375,7 +375,7 @@ export class ProgramsService extends DataService implements CanActivate {
                 userOrgAdd = {
                   User_Org: {
                     userId: _.get(userProfile, 'user.osid'),
-                    orgId: this.userService.userProfile.userRegData.User_Org.orgId,
+                    orgId: userRegData.User_Org.orgId,
                     roles: ['user']
                   }
                 };
@@ -401,7 +401,7 @@ export class ProgramsService extends DataService implements CanActivate {
         this.userService.openSaberRegistrySearch().then((userRegData) => {
           this.userService.userProfile.userRegData = userRegData;
           this.toasterService.success(this.resourceService.messages.smsg.contributorjoin.m0001);
-          this.addSourcingUserstoContribOrg().subscribe(
+          this.addSourcingUserstoContribOrg(userRegData).subscribe(
             (res) => {
               this.addorUpdateNomination(programId, status, selectedContentTypes, selectedCollectionIds).subscribe(
                 (res) => { console.log("Nomination added")},
