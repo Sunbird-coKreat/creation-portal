@@ -176,7 +176,7 @@ export class TextbookListComponent implements OnInit, OnChanges {
       self.chapterCount = self.chapterCount + 1;
     } else if (data.contentType !== 'TextBook' && data.status === 'Live' &&
     // tslint:disable-next-line:max-line-length
-    _.includes([...self.collectionData.acceptedContents, ...self.collectionData.rejectedContents], data.identifier)) {
+    !_.includes([...self.collectionData.acceptedContents, ...self.collectionData.rejectedContents], data.identifier)) {
       self.pendingReview = self.pendingReview + 1;
     }
     const childData = data.children;
