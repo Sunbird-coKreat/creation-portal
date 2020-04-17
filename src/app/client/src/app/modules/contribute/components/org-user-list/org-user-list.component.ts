@@ -52,7 +52,6 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     this.orgLink = `${baseUrl}/contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
   }
   ngAfterViewInit() {
-    this.count = this.childUserlistComponent.contributorOrgUser.length
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     const deviceId = <HTMLInputElement>document.getElementById('deviceId');
