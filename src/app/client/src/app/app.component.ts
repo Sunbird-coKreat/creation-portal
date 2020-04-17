@@ -312,6 +312,7 @@ export class AppComponent implements OnInit, OnDestroy {
       _.has(this.userProfile, 'tncLatestVersion') && this.userProfile.promptTnC === true) {
       this.showTermsAndCondPopUp = true;
     } else {
+      this.showEnrollPopup = true;
       this.checkFrameworkSelected();
     }
   }
