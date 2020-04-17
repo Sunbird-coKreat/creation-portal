@@ -56,7 +56,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
   };
   public stageSubscription: any;
   public component: any;
-  public sourcingOrgReviewer: boolean;
 
   constructor(public frameworkService: FrameworkService, private tosterService: ToasterService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService,
@@ -84,8 +83,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
     this.state.stages = state.stages;
     this.changeView();
   });
-  // tslint:disable-next-line:max-line-length
-  this.sourcingOrgReviewer = (!this.userService.userProfile.userRoles.includes('ORG_ADMIN') && this.userService.userProfile.userRoles.includes('CONTENT_REVIEWER')) ? true : false;
   }
 
   ngAfterViewInit() {

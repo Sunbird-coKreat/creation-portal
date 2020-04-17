@@ -50,7 +50,7 @@ export class TextbookListComponent implements OnInit {
   ngOnInit(): void {
     this.programId = this.activatedRoute.snapshot.params.programId;
     // tslint:disable-next-line:max-line-length
-    this.sourcingOrgReviewer = (this.userService.userProfile.userRoles.includes('ORG_ADMIN') || this.userService.userProfile.userRoles.includes('CONTENT_REVIEWER')) ? true : false;
+    this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
 
     if (this.router.url.includes('sourcing/nominations/' + this.programId)) {
 

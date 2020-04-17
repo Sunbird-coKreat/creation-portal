@@ -126,7 +126,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       }
     };
     // tslint:disable-next-line:max-line-length
-    this.sourcingOrgReviewer = (this.userService.userProfile.userRoles.includes('ORG_ADMIN') || this.userService.userProfile.userRoles.includes('CONTENT_REVIEWER')) ? true : false;
+    this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
   }
 
   ngOnChanges(changed: any) {

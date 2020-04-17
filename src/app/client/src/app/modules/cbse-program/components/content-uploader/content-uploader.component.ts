@@ -98,7 +98,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
       this.getUploadedContentMeta(_.get(this.contentUploadComponentInput, 'contentId'));
     }
     // tslint:disable-next-line:max-line-length
-    this.sourcingOrgReviewer = (this.userService.userProfile.userRoles.includes('ORG_ADMIN') || this.userService.userProfile.userRoles.includes('CONTENT_REVIEWER')) ? true : false;
+    this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.contentUploadComponentInput.programContext.program_id, 'Program');
     // tslint:disable-next-line:max-line-length
