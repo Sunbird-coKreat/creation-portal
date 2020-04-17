@@ -135,6 +135,8 @@
   [data-tooltip]:after{
       white-space: pre-wrap !important;
       font-size: 12px !important;
+      width: 9rem;
+      z-index: 999;
   }
 }
 
@@ -156,4 +158,29 @@
   width: 70%;
   font-size: 0.9rem;
   display: inline-block;
+}
+.sb-dock-tab{
+  .ui.segment{
+    background: none;
+    padding: 0;
+    border: none;
+  }
+  .tabular.menu .item{
+    padding: .25rem 1rem !important;
+    font-weight: normal !important;
+    color: #333;
+    cursor: pointer;
+    margin: 0.6rem 0;
+    border-left: .125rem solid transparent ;
+  }
+  .tabular.menu .active.item{
+    border-radius: 0!important;
+    background: var(--primary-0) !important;
+    border-left: .125rem solid var(--primary-600) !important;
+    color: var(--primary-800) !important;
+    border-radius: 0!important;
+    border-top: none !important;
+    border-right: none !important;
+    margin: 0.6rem 0 !important;
+  }
 }

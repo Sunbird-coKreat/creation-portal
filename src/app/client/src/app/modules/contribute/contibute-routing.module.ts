@@ -8,6 +8,7 @@ import { ListNominatedTextbooksComponent} from './components/list-nominated-text
 import { OrgUserListComponent } from './components/org-user-list/org-user-list.component';
 import { OrgContriAdminComponent } from './components/org-contri-admin/org-contri-admin.component';
 import { ContriDashboardComponent } from './components/dashboard/dashboard.component';
+import { HelpPageComponent } from './components/help-page/help-page.component';
 
 const routes: Routes = [
 {
@@ -58,6 +59,12 @@ const routes: Routes = [
   path: 'dashboard', component: ContriDashboardComponent, pathMatch: 'full',
   data: {
     telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'dashboard' }
+  },
+},
+{
+  path: 'help', component: HelpPageComponent, pathMatch: 'full',
+  data: {
+    telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'help-page' }
   },
 }
 ];

@@ -170,7 +170,7 @@ export class AppComponent implements OnInit, OnDestroy {
             this.initApp = true;
             if (_.indexOf(this.userService.userProfile.userRoles, 'ORG_ADMIN') > -1) {
               this.router.navigateByUrl('/sourcing');
-            } else if (this.location.path().includes('/contribute/join/') || this.location.path().includes('/contribute/program/')) {
+            } else if (this.location.path().includes('/contribute/join/') || this.location.path().includes('/contribute/program/') ||  this.location.path().includes('/contribute/help')) {
               this.router.navigateByUrl(this.location.path());
             } else if (this.userService.userProfile.userRegData &&
               this.userService.userProfile.userRegData.User_Org &&

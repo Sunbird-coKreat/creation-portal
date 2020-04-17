@@ -1,17 +1,21 @@
 <!--Computer-->
 <div class="ui text menu m-0 d-flex flex-jc-center flex-ai-center computer only">
+	
 	<!--Logged in user-->
 	<ng-container *ngIf="userService.loggedIn">
 		<!-- <a *ngIf="showContributeTab" class="item" [class.active]="router.isActive('/contribute')"
-			routerLink="/contribute" appTelemetryInteract [telemetryInteractEdata]="contributeMenuEdata"
+			routerLink="/contribute" appTele	metryInteract [telemetryInteractEdata]="contributeMenuEdata"
 			[telemetryInteractCdata]="getFeatureId('user:program:contribute', 'SB-15591')">
 			{{resourceService?.frmelmnts?.tab?.contribute}}
 		</a> -->
-		<!-- <a class="item" appTelemetryInteract [telemetryInteractEdata]="helpMenuIntractEdata"
+		<a class="item sb-color-primary font-weight-bold br-2 py-2" *ngIf="router.url.includes('/contribute') && userProfile?.userRegData?.Org" [routerLink]="'/contribute/help'" target="_blank">
+			<i class="info question circle link icon mr-5 fs-1-16"></i><span class="fs-0-785">Do you need any help?</span>
+		</a>
+		<a class="item" appTelemetryInteract [telemetryInteractEdata]="helpMenuIntractEdata"
 			*ngIf='permissionService.permissionAvailable && helpLinkVisibility.toLowerCase() === "true"' appPermission
 			[permission]='workSpaceRole' href="/help/creator/content-lifecycle/index.html" target="_blank">
 			{{resourceService?.frmelmnts?.tab?.help}}
-		</a> -->
+		</a>
 
 		<span class="item" *ngIf="router.url.includes('/sourcing') && userProfile?.organisationNames?.length">
 			{{ resourceService?.frmelmnts?.lbl?.organization + ' : ' + userProfile?.organisationNames?.join(', ') }}
