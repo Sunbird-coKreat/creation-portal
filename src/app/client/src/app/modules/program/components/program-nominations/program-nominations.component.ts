@@ -2,7 +2,7 @@ import { ResourceService, ConfigService, NavigationHelperService, ToasterService
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
 import { ProgramsService, PublicDataService, UserService, FrameworkService } from '@sunbird/core';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ISessionContext, InitialState } from '../../../cbse-program/interfaces';
 import { CollectionHierarchyService } from '../../../cbse-program/services/collection-hierarchy/collection-hierarchy.service';
 import * as _ from 'lodash-es';
@@ -16,7 +16,7 @@ import { ChapterListComponent } from '../../../cbse-program/components/chapter-l
   templateUrl: './program-nominations.component.html',
   styleUrls: ['./program-nominations.component.scss']
 })
-export class ProgramNominationsComponent implements OnInit, AfterViewInit {
+export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDestroy {
   public programId: string;
   public programDetails: any;
   public programContentTypes: string;
@@ -116,6 +116,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
         }
       };
      });
+  }
+
+  ngOnDestroy() {
+    this.stageSubscription.unsubscribe();
   }
 
   onStatusChange(status) {
