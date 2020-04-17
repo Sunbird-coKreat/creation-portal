@@ -123,12 +123,12 @@ export class ProgramListComponent implements OnInit {
               this.tempSortPrograms = this.programs;
               this.showLoader = false;
             }, error => {
-              this.toasterService.error(_.get(error, 'error.params.errmsg') || 'Fetching Programs failed');
+              this.toasterService.error(_.get(error, 'error.params.errmsg') || this.resourceService.messages.emsg.projects.m0001);
             }
           );
         }
       }, error => {
-        this.toasterService.error(_.get(error, 'error.params.errmsg') || 'Fetching Programs failed');
+        this.toasterService.error(_.get(error, 'error.params.errmsg') || this.resourceService.messages.emsg.projects.m0001);
       }
     );
   }
@@ -229,7 +229,7 @@ export class ProgramListComponent implements OnInit {
           }
         }, (error) => {
           console.log(error);
-          this.toasterService.error('Fetching nominated program failed');
+          this.toasterService.error(this.resourceService.messages.emsg.projects.m0002);
         });
     } else {
       const req = {
