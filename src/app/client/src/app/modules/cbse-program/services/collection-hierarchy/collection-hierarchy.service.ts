@@ -115,7 +115,6 @@ export class CollectionHierarchyService {
     const totalOrgContents = _.filter(contents, content => {
       return content.organisationId === orgId && content.sampleContent !== true;
     });
-    console.log(totalOrgContents);
     let sourcingOrgStatus = {};
     const orgLevelDataWithoutReject = _.groupBy(totalOrgContents, 'status');
     const orgLevelDataWithReject = _.cloneDeep(orgLevelDataWithoutReject);
@@ -133,10 +132,10 @@ export class CollectionHierarchyService {
     }
     return {
       total: totalOrgContents && totalOrgContents.length,
-      review: _.has(orgLevelDataWithReject, 'Review') ? orgLevelDataWithReject.Review.length : 0,
-      draft: _.has(orgLevelDataWithReject, 'Draft') ? orgLevelDataWithReject.Draft.length : 0,
-      rejected: _.has(orgLevelDataWithReject, 'Reject') ? orgLevelDataWithReject.Reject.length : 0,
-      live: _.has(orgLevelDataWithReject, 'Live') ? orgLevelDataWithReject.Live.length : 0,
+      review: _.has(orgLevelDataWithReject, 'Review') ? _.toString(orgLevelDataWithReject.Review.length) : '0',
+      draft: _.has(orgLevelDataWithReject, 'Draft') ? _.toString(orgLevelDataWithReject.Draft.length) : '0',
+      rejected: _.has(orgLevelDataWithReject, 'Reject') ? _.toString(orgLevelDataWithReject.Reject.length) : '0',
+      live: _.has(orgLevelDataWithReject, 'Live') ? _.toString(orgLevelDataWithReject.Live.length) : '0',
       individualStatus: collectionsByStatus,
       ...(!_.isUndefined(collections) && {sourcingOrgStatus : sourcingOrgStatus})
     };
@@ -149,18 +148,15 @@ export class CollectionHierarchyService {
       const liveContentIds = _.map(liveContents, 'identifier');
       const allAcceptedContentIds = _.flatten(_.map(collections, 'acceptedContents'));
       const allRejectedContentIds = _.flatten(_.map(collections, 'rejectedContents'));
-      console.log('LiveContentIds:', liveContentIds);
-      console.log('AllAcceptedContentIDs:', allAcceptedContentIds);
-      console.log('AllRejectedContentIDs:', allRejectedContentIds);
 
       acceptedOrgContents = _.intersection(liveContentIds, allAcceptedContentIds);
       rejectedOrgContents = _.intersection(liveContentIds, allRejectedContentIds);
       pendingOrgContents = _.difference(liveContentIds, _.concat(acceptedOrgContents, rejectedOrgContents));
       }
       return  {
-        accepted: acceptedOrgContents ? acceptedOrgContents.length : 0,
-        rejected: rejectedOrgContents ? rejectedOrgContents.length : 0,
-        pending: pendingOrgContents ? pendingOrgContents.length : 0
+        accepted: acceptedOrgContents ? _.toString(acceptedOrgContents.length) : '0', // converting to string to enable table sorting
+        rejected: rejectedOrgContents ? _.toString(rejectedOrgContents.length) : '0',
+        pending: pendingOrgContents ? _.toString(pendingOrgContents.length) : '0'
       };
   }
 
@@ -175,8 +171,10 @@ export class CollectionHierarchyService {
     }
     return  {
       total: totalUserContents && totalUserContents.length,
-      draft: _.has(contentGroupByStatus, 'Draft') ? contentGroupByStatus.Draft.length : 0,
-      live: _.has(contentGroupByStatus, 'Live') ? contentGroupByStatus.Live.length : 0,
+      draft: _.has(contentGroupByStatus, 'Draft') ? _.toString(contentGroupByStatus.Draft.length) : '0',
+      review: '0', // forcefully setting to enable table sorting
+      rejected: '0', // forcefully setting to enable table sorting
+      live: _.has(contentGroupByStatus, 'Live') ? _.toString(contentGroupByStatus.Live.length) : '0',
       ...(!_.isUndefined(collections) && {sourcingOrgStatus : sourcingOrgStatus})
      };
   }
