@@ -500,7 +500,8 @@ export class CollectionComponent implements OnInit, OnDestroy {
     }
     this.programsService.post(req).subscribe((data) => {
       if (data.result && !_.isEmpty(data.result)
-      && this.router.url.includes('/contribute/program/' + this.activatedRoute.snapshot.params.programId)) {
+      && this.router.url.includes('/contribute/program/' + this.activatedRoute.snapshot.params.programId) &&
+      _.get(_.first(data.result), 'status') !== 'Initiated') {
           this.router.navigateByUrl('/contribute/nominatedtextbooks/' + this.activatedRoute.snapshot.params.programId);
       } else if (data.result && !_.isEmpty(data.result)) {
           this.currentNominationStatus =  _.get(_.first(data.result), 'status');
