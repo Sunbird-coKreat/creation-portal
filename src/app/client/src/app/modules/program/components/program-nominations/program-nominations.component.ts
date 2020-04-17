@@ -49,6 +49,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public sortColumn = '';
   public sourcingOrgUser = [];
   public roles;
+  public showUsersTab = false;
   public currentStage: string;
   public dynamicInputs;
   public programContext: any = {};
@@ -79,6 +80,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
   this.telemetryInteractObject = {};
   this.checkActiveTab();
+  this.showUsersTab = this.canAssignUsers();
   this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
   this.roles = [{name: 'REVIEWER'}];
   this.sessionContext.currentRole = 'REVIEWER';
@@ -116,6 +118,11 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         }
       };
      });
+  }
+
+  canAssignUsers() {
+    return _.includes(this.userService.userProfile.userRoles, 'ORG_ADMIN') &&
+    this.router.url.includes('/sourcing');
   }
 
   ngOnDestroy() {
