@@ -75,10 +75,10 @@ export class ProgramListComponent implements OnInit {
         if (this.isContributor) {
           if (this.activeAllProgramsMenu) {
             this.getAllProgramsForContrib('public', 'Live');
-          }
-
-          if (this.activeMyProgramsMenu) {
+          } else if (this.activeMyProgramsMenu) {
             this.getMyProgramsForContrib('Live');
+          } else {
+            this.showLoader = false;
           }
         } else {
           this.getMyProgramsForOrg('Live');
@@ -459,7 +459,7 @@ export class ProgramListComponent implements OnInit {
     };
     // tslint:disable-next-line:max-line-length
     if (!_.includes(this.userService.userProfile.userRoles, 'ORG_ADMIN') && _.includes(this.userService.userProfile.userRoles, 'CONTENT_REVIEWER')) {
-       filters['role'] = ['CONTENT_REVIEWER'];
+       filters['role'] = ['REVIEWER'];
        filters['user_id'] = this.userService.userProfile.userId;
     }
     return this.programsService.getMyProgramsForOrg(filters).subscribe((response) => {

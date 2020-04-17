@@ -188,7 +188,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       return _.includes(this.nominationDetails.collection_ids, collection.identifier);
     }) : [];
     if (!_.isEmpty(contributorTextbooks) && this.isNominationOrg()) {
-      this.getContentAggregation().subscribe(
+      this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId).subscribe(
         (response) => {
           if (response && response.result && response.result.content) {
             const contents = _.get(response.result, 'content');
@@ -217,24 +217,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       this.contributorTextbooks = contributorTextbooks;
       this.tempSortTextbooks = this.contributorTextbooks;
     }
-  }
-
-  getContentAggregation() {
-    const option = {
-      url: 'content/composite/v1/search',
-      data: {
-        request: {
-          filters: {
-            objectType: 'content',
-            programId: this.activatedRoute.snapshot.params.programId,
-            status: [],
-            mimeType: {'!=': 'application/vnd.ekstep.content-collection'}
-          }
-        }
-      }
-    };
-
-    return this.httpClient.post<any>(option.url, option.data);
   }
 
   ngAfterViewInit() {
