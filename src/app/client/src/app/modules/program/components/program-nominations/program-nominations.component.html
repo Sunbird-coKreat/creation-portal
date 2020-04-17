@@ -36,7 +36,7 @@
                     <label class="mb-0">{{resourceService?.frmelmnts?.lbl?.contentType}}</label>
                     <p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{ programContentTypes }}"><span>{{ programContentTypes }}</span></p>
 			</div>
-            <div class="sb-meta-data-container sb-meta-data-column px-10">
+            <div *ngIf="!isContributionDashboardTabActive" class="sb-meta-data-container sb-meta-data-column px-10">
                 <label class="width-100">{{ resourceService?.frmelmnts?.lbl?.nominations }} </label>
                 <div class="d-flex">
                     <dl class="sb-meta-data">
@@ -53,6 +53,27 @@
                     </dl>
                     <dl class="sb-meta-data">
                         <dt>{{ totalCount }}</dt>
+                        <dd>{{ resourceService?.frmelmnts?.lbl?.total }}</dd>
+                    </dl>
+                </div>
+            </div>
+            <div *ngIf="isContributionDashboardTabActive" class="sb-meta-data-container sb-meta-data-column px-10">
+                <label class="width-100">{{ resourceService?.frmelmnts?.lbl?.contributions }} </label>
+                <div class="d-flex">
+                    <dl class="sb-meta-data">
+                        <dt>{{ overAllContentCount?.sourcingPending || 0 }}</dt>
+                        <dd>{{ resourceService?.frmelmnts?.lbl?.pending }}</dd>
+                    </dl>
+                    <dl class="sb-meta-data">
+                        <dt>{{ overAllContentCount?.sourcingAccepted || 0 }}</dt>
+                        <dd>{{ resourceService?.frmelmnts?.lbl?.approved }}</dd>
+                    </dl>
+                    <dl class="sb-meta-data">
+                        <dt>{{ overAllContentCount?.sourcingRejected || 0 }}</dt>
+                        <dd>{{ resourceService?.frmelmnts?.lbl?.rejected }}</dd>
+                    </dl>
+                    <dl class="sb-meta-data">
+                        <dt>{{ overAllContentCount?.sourcingTotal || 0 }}</dt>
                         <dd>{{ resourceService?.frmelmnts?.lbl?.total }}</dd>
                     </dl>
                 </div>
@@ -310,9 +331,9 @@
                             class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
                             <thead class="sb-table-header sb-table-thead-gray">
                                 <tr>
-                                    <th rowspan="2" (click)="sortCollection('name', contributionDashboardData)" class="va-top sb-sorting">{{resourceService.frmelmnts.lbl.contributor}} &nbsp;&nbsp;
-                                        <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>
-                                        <span  *ngIf="sortColumn == 'name'" class="d-inline-block">
+                                    <th rowspan="2" (click)="sortCollection('contributorName', contributionDashboardData)" class="va-top sb-sorting">{{resourceService.frmelmnts.lbl.contributor}} &nbsp;&nbsp;
+                                        <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'contributorName' "></i>
+                                        <span  *ngIf="sortColumn == 'contributorName'" class="d-inline-block">
                                             <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
                                             <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                         </span>
@@ -335,31 +356,49 @@
                                             <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                         </span>
                                     </th>
-                                    <th (click)="sortCollection('review', contributionDashboardData)" class="va-top sb-sorting">{{resourceService.frmelmnts.lbl.pending}}
+                                    <th (click)="sortCollection('review', contributionDashboardData)" class="va-top sb-sorting">{{resourceService.frmelmnts.lbl.pending}} &nbsp;&nbsp;
                                         <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'review' "></i>
                                         <span  *ngIf="sortColumn == 'review'" class="d-inline-block">
                                             <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
                                             <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                         </span>
                                     </th>
-                                    <th class="">{{resourceService.frmelmnts.lbl.accepted}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-                                    <th class="">{{resourceService.frmelmnts.lbl.rejected}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-                                    <th class="border-l">{{resourceService.frmelmnts.lbl.pending}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+                                    <th (click)="sortCollection('live', contributionDashboardData)" class="va-top sb-sorting">{{resourceService.frmelmnts.lbl.accepted}} &nbsp;&nbsp;
+                                        <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'live' "></i>
+                                        <span  *ngIf="sortColumn == 'live'" class="d-inline-block">
+                                            <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+                                            <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th (click)="sortCollection('rejected', contributionDashboardData)" class="va-top sb-sorting">{{resourceService.frmelmnts.lbl.rejected}} &nbsp;&nbsp;
+                                        <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'rejected' "></i>
+                                        <span  *ngIf="sortColumn == 'rejected'" class="d-inline-block">
+                                            <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+                                            <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th (click)="sortCollection('sourcingPending', contributionDashboardData)" class="border-l va-top sb-sorting">{{resourceService.frmelmnts.lbl.pending}} &nbsp;&nbsp;
+                                        <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'sourcingPending' "></i>
+                                        <span  *ngIf="sortColumn == 'sourcingPending'" class="d-inline-block">
+                                            <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+                                            <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+                                        </span>
+                                    </th>
                                     <th class="">{{resourceService.frmelmnts.lbl.accepted}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
                                     <th class="">{{resourceService.frmelmnts.lbl.rejected}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let contributor of contributionDashboardData; let i = index;">
-                                    <td class="sb-color-primary">{{contributor.contributorDetails.userData.firstName}}</td>
+                                    <td class="sb-color-primary">{{contributor?.contributorName}}</td>
                                     <td>{{contributor.type === 'org' ? 'Organisation' : 'Individual'}}</td>
-                                    <td class="sb-color-gray-300">{{contributor.draft}}</td>
+                                    <td class="sb-color-gray-300">{{contributor.draft || 0}}</td>
                                     <td class="sb-color-warning">{{contributor.type !== 'individual' ? contributor.review: '-'}}</td>
-                                    <td class="sb-color-success">{{contributor.live}}</td>
+                                    <td class="sb-color-success">{{contributor.live || 0}}</td>
                                     <td class="sb-color-error">{{contributor.type !== 'individual' ? contributor.rejected: '-'}}</td>
-                                    <td class="sb-color-warning">{{contributor.sourcingOrgStatus.pending || 0}}</td>
-                                    <td class="sb-color-success">{{contributor.sourcingOrgStatus.accepted || 0}}</td>
-                                    <td class="sb-color-error">{{contributor.sourcingOrgStatus.rejected || 0}}</td>
+                                    <td class="sb-color-warning">{{contributor?.sourcingPending || 0}}</td>
+                                    <td class="sb-color-success">{{contributor?.sourcingAccepted || 0}}</td>
+                                    <td class="sb-color-error">{{contributor?.sourcingRejected || 0}}</td>
                                 </tr>
                             </tbody>
                         </table>

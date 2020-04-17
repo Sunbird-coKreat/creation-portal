@@ -60,6 +60,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public programCollections: any;
   public contributionDashboardData: any = [];
   public approvedNominations: any = [];
+  public overAllContentCount: any = {};
+  public isContributionDashboardTabActive = false;
 
   constructor(public frameworkService: FrameworkService, private tosterService: ToasterService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
@@ -153,6 +155,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.direction = 'asc';
     this.nominations = this.tempNominations;
     this.nominationsCount = this.tempNominationsCount;
+    this.isContributionDashboardTabActive  = (tab === 'contributionDashboard') ? true : false;
   }
 
   sortCollection(column, object) {
@@ -236,37 +239,77 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
             const contents = _.get(response.result, 'content');
             this.contributionDashboardData = _.map(this.approvedNominations, nomination => {
               if (nomination.organisation_id) {
+                // tslint:disable-next-line:max-line-length
+                const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCounts(contents, nomination.organisation_id, this.programCollections));
+                // This is enable sorting table. So duping the data at the root of the dashboardData object
+                dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus['pending'];
+                dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus['accepted'];
+                dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus['rejected'];
+                dashboardData['contributorName'] = this.setContributorName(nomination, 'org');
                 return {
-                  ...this.collectionHierarchyService.getContentCounts(contents, nomination.organisation_id, this.programCollections),
+                  ...dashboardData,
                   contributorDetails: nomination,
                   type: 'org'
                 };
               } else {
+                // tslint:disable-next-line:max-line-length
+                const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCountsForIndividual(contents, nomination.user_id, this.programCollections));
+                dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus['pending'];
+                dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus['accepted'];
+                dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus['rejected'];
+                dashboardData['contributorName'] = this.setContributorName(nomination, 'individual');
                 return {
-                  ...this.collectionHierarchyService.getContentCountsForIndividual(contents, nomination.user_id, this.programCollections),
+                  ...dashboardData,
                   contributorDetails: nomination,
                   type: 'individual'
                 };
               }
             });
+            this.getOverAllCounts(this.contributionDashboardData);
           } else {
             this.contributionDashboardData = _.map(this.approvedNominations, nomination => {
               return {
                 total: 0,
-                review: 0,
-                draft: 0,
-                rejected: 0,
-                live: 0,
+                review: '0',
+                draft: '0',
+                rejected: '0',
+                live: '0',
+                sourcingPending: '1',
+                sourcingAccepted: '0',
+                sourcingRejected: '0',
+                // tslint:disable-next-line:max-line-length
+                contributorName: this.setContributorName(nomination, nomination.organisation_id ? 'org' : 'individual'),
                 individualStatus: {},
-                sourcingOrgStatus : {accepted: 0, rejected: 0, pending: 0},
+                sourcingOrgStatus : {accepted: '0', rejected: '0', pending: '0'},
                 contributorDetails: nomination,
                 type: nomination.organisation_id ? 'org' : 'individual'
               };
             });
+            this.getOverAllCounts(this.contributionDashboardData);
           }
         }
       );
     }
+  }
+
+  getOverAllCounts(dashboardData) {
+    this.overAllContentCount = dashboardData.reduce((obj, v)  => {
+      obj['sourcingPending'] += _.toNumber(v.sourcingPending);
+      obj['sourcingAccepted'] += _.toNumber(v.sourcingAccepted);
+      obj['sourcingRejected'] += _.toNumber(v.sourcingRejected);
+      return obj;
+    }, {sourcingPending: 0, sourcingAccepted: 0, sourcingRejected: 0});
+    // tslint:disable-next-line:max-line-length
+    this.overAllContentCount['sourcingTotal'] = this.overAllContentCount.sourcingPending + this.overAllContentCount.sourcingAccepted + this.overAllContentCount.sourcingRejected;
+  }
+
+  setContributorName(nomination, type) {
+    if (type === 'org') {
+      const name = (nomination.userData && nomination.userData.name)
+      ? nomination.userData.name : `${nomination.userData.firstName} ${nomination.userData.lastName}`;
+      return _.trim(name);
+    }
+    return _.trim(`${nomination.userData.firstName} ${nomination.userData.lastName}`);
   }
 
   getNominatedTextbooksCount(nomination) {
