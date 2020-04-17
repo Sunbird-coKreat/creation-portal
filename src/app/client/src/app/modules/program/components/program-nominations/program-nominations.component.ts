@@ -281,7 +281,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
                 draft: '0',
                 rejected: '0',
                 live: '0',
-                sourcingPending: '1',
+                sourcingPending: '0',
                 sourcingAccepted: '0',
                 sourcingRejected: '0',
                 // tslint:disable-next-line:max-line-length
