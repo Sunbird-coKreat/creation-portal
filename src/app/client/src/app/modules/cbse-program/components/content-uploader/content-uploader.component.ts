@@ -70,6 +70,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
   public telemetryPageId = 'content-uploader';
+  public sourcingOrgReviewer: boolean;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -96,6 +97,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
       this.cd.detectChanges();
       this.getUploadedContentMeta(_.get(this.contentUploadComponentInput, 'contentId'));
     }
+    // tslint:disable-next-line:max-line-length
+    this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.contentUploadComponentInput.programContext.program_id, 'Program');
     // tslint:disable-next-line:max-line-length
@@ -539,7 +542,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
       };
       this.helperService.updateContent(request, this.contentMetaData.identifier).subscribe((res) => {
         this.contentMetaData.versionKey = res.result.versionKey;
-        if (action === 'review') {
+        if (action === 'review' && this.isIndividualAndNotSample()) {
+          this.publishContent();
+        } else if (action === 'review') {
           this.sendForReview();
         } else if (this.sessionContext.collection && this.unitIdentifier && action !== 'review') {
           // tslint:disable-next-line:max-line-length
@@ -604,7 +609,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     }
   }
 
-  publichContent() {
+  publishContent() {
     this.helperService.publishContent(this.contentMetaData.identifier, this.userService.userProfile.userId)
        .subscribe(res => {
         if (this.sessionContext.collection && this.unitIdentifier) {
@@ -637,6 +642,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     this.programStageService.removeLastStage();
   }
 
+  isIndividualAndNotSample() {
+    return !!(this.sessionContext.currentOrgRole === 'individual' && this.sessionContext.sampleContent !== true);
+  }
+
   changeFile() {
     this.changeFile_instance = true;
     this.uploadButton = false;
@@ -645,4 +654,35 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
       this.initiateUploadModal();
     }, 0);
   }
+
+  attachContentToTextbook(action) {
+    // read textbook data
+    const option = {
+      url: 'content/v3/read/' + this.sessionContext.collection,
+      param: { 'mode': 'edit' }
+    };
+    this.actionService.get(option).pipe(map((res: any) => res.result.content)).subscribe((data) => {
+      const request = {
+        content: {
+        'versionKey': data.versionKey
+        }
+      };
+      const acceptedContents = data.acceptedContents ? data.acceptedContents : [];
+      const rejectedContents = data.rejectedContents ? data.rejectedContents : [];
+      // tslint:disable-next-line:max-line-length
+      action === 'accept' ? request.content['acceptedContents'] = [...acceptedContents, this.contentMetaData.identifier] : request.content['rejectedContents'] = [...rejectedContents, this.contentMetaData.identifier];
+      this.helperService.updateContent(request, this.sessionContext.collection).subscribe(() => {
+        action === 'accept' ? this.toasterService.success(this.resourceService.messages.smsg.m0066) :
+                              this.toasterService.success(this.resourceService.messages.smsg.m0067);
+        this.programStageService.removeLastStage();
+      }, (err) => {
+        action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
+                              this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+      });
+    }, (err) => {
+      action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
+                              this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+    });
+  }
+
 }

@@ -100,17 +100,19 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
           User['userId'] =  this.userService.userProfile.identifier;
           User['enrolledDate'] = this.enrolledDate;
           User['certificates'] =  '';
-          User['channel'] = 'sunbird';
+          User['channel'] = this.userService.userProfile.channel || 'sunbird';
           this.enrollContributorService.enrolment({User: User}).pipe(
             switchMap((res1: any) => {
             this.mapUserId = res1.result.User.osid;
                if (this.enrollAsOrg === true) {
-                const Org = {
-                  ...this.contributeForm.value
-               };
-                Org['createdBy'] =  res1.result.User.osid;
-                Org['code'] = this.contributeForm.controls['name'].value.toUpperCase();
-                return this.enrollContributorService.enrolment({Org: Org});
+                 const Org = {
+                   ...this.contributeForm.value
+                 };
+                 Org['createdBy'] = res1.result.User.osid;
+                 Org['code'] = this.contributeForm.controls['name'].value.toUpperCase();
+                 return this.enrollContributorService.enrolment({
+                   Org: Org
+                 });
                } else {
                  return of(res1);
                }
@@ -129,54 +131,57 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
           }), catchError(err => throwError(err)))
           .subscribe((res3) => {
             this.contributeForm.reset();
-            this.tosterService.success(this.resourceService.messages.smsg.contributorRegister.m0001);
             this.modal.deny();
+            this.userService.openSaberRegistrySearch().then((userRegData) => {
+              this.userService.userProfile.userRegData = userRegData;
+              this.tosterService.success(this.resourceService.messages.smsg.contributorRegister.m0001);
+            });
           }, (err) => {
             this.tosterService.error(this.resourceService.messages.emsg.contributorRegister.m0002);
           });
-      
+
   }
-  chnageEnrollStatus(status) {
+  changeEnrollStatus(status) {
     this.enrollAsOrg = status;
   }
 
-  validateFields()
-  {
-    this.enrollAsOrg === true ? this.contributeForm.controls['description'].setValidators([Validators.required]) : this.contributeForm.controls['description'].setValidators(null);
-    this.enrollAsOrg === true ? this.contributeForm.controls['name'].setValidators([Validators.required]) : this.contributeForm.controls['name'].setValidators(null);
+  validateFields() {
+    if (this.enrollAsOrg === true) {
+      this.contributeForm.controls['description'].setValidators([Validators.required]);
+      this.contributeForm.controls['name'].setValidators([Validators.required]);
+    } else {
+      this.contributeForm.controls['description'].setValidators(null);
+      this.contributeForm.controls['name'].setValidators(null);
+    }
+
     this.contributeForm.controls['name'].updateValueAndValidity();
     this.contributeForm.controls['description'].updateValueAndValidity();
     if (this.contributeForm.valid) {
-      if (this.enrollAsOrg === true)
-      { 
-        var request = {
-          entityType:["Org"],
-          filters:{
-            code:{eq: this.contributeForm.get('name').value.toUpperCase()}
+      if (this.enrollAsOrg === true) {
+        const request = {
+          entityType: ['Org'],
+          filters: {
+            code: {
+              eq: this.contributeForm.get('name').value.toUpperCase()
+            }
           }
-        }
+        };
         this.programsService.searchRegistry(request).subscribe(
           (res) => {
-          if(_.isEmpty(res.result.Org) || res.result.Org.length === 0)
-          {
+            if (_.isEmpty(res.result.Org) || res.result.Org.length === 0) {
               this.saveUser();
-          }
-          else
-          {
-            this.tosterService.error(this.resourceService.messages.emsg.contributorRegister.m0001);
-          }
-            },
+            } else {
+              this.tosterService.error(this.resourceService.messages.emsg.contributorRegister.m0001);
+            }
+          },
           (err) => {
+            console.log(err);
           }
         );
-      }
-      else
-      {
+      } else {
         this.saveUser();
       }
-    }
-    else
-    {
+    } else {
       this.formIsInvalid = true;
       this.validateAllFormFields(this.contributeForm);
     }
