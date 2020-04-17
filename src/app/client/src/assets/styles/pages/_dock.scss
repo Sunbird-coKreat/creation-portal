@@ -168,19 +168,21 @@
     border-radius: 0!important;
     border-top: none !important;
     border-right: none !important;
+    margin: 0.6rem 0 !important;
    }
   }
-  a{
-    padding: .25rem 1rem !important;
-    color: #333;
-    cursor: pointer;
-    margin: 0.6rem 0;
-    border-left: .125rem solid transparent;
- }
   .ui.segment{
     background: none;
     padding: 0;
     border: none;
+  }
+  .tabular.menu .item{
+    padding: .25rem 1rem !important;
+    font-weight: normal !important;
+    color: #333;
+    cursor: pointer;
+    margin: 0.6rem 0;
+    border-left: .125rem solid transparent !important;
   }
   .tabular.menu .active.item{
     border-radius: 0!important;
