@@ -533,7 +533,7 @@ var programConfig = {
               'label': 'Copyright',
               'name': 'Copyright',
               'placeholder': 'Enter Copyright',
-              'required': false,
+              'required': true,
               'visible': true
             },
             {
@@ -620,7 +620,7 @@ var programConfig = {
               'label': 'Copyright',
               'name': 'Copyright',
               'placeholder': 'Enter Copyright',
-              'required': false,
+              'required': true,
               'visible': true
             },
             {

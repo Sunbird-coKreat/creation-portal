@@ -62,7 +62,7 @@ footerAlign() {
     // (document.querySelector('body') as HTMLElement).style.paddingBottom = footerHeight + mobileHeight + 'px';
   } else {
     (document.querySelector('.footer-fix') as HTMLElement).style.minHeight = bodyHeight - footerHeight + 'px';
-    (document.querySelector('.download-mobile-app-logo') as HTMLElement).style.minHeight = footerHeight + 'px';
+    // (document.querySelector('.download-mobile-app-logo') as HTMLElement).style.minHeight = footerHeight + 'px';
     // (document.querySelector('.download-mobile-app') as HTMLElement).style.bottom = 0 + 'px';
     // (document.querySelector('body') as HTMLElement).style.paddingBottom = footerHeight + 'px';
   }

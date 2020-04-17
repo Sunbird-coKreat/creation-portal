@@ -158,9 +158,12 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit {
               name  += ' ' + res.userData.lastName;
             }
           }*/
-          name = res.userData.firstName;
-           if (!_.isEmpty(res.userData.lastName)) {
-            name  += ' ' + res.userData.lastName;
+
+          if (res.userData) {
+            name = res.userData.firstName;
+            if (!_.isEmpty(res.userData.lastName)) {
+              name  += ' ' + res.userData.lastName;
+            }
           }
           this.nominations.push({
             'name': name,
