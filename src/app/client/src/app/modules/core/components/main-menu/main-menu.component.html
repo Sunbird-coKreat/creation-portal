@@ -20,7 +20,7 @@
 		<span class="item" *ngIf="router.url.includes('/sourcing') && userProfile?.organisationNames?.length">
 			{{ resourceService?.frmelmnts?.lbl?.organisation + ' : ' + userProfile?.organisationNames?.join(', ') }}
 		</span>
-		<span class="item" *ngIf="router.url.includes('/contribute') && userProfile?.userRegData?.Org">
+		<span class="item" *ngIf="router.url.includes('/contribute')">
 			{{ resourceService?.frmelmnts?.lbl?.organisation + ' : ' + userProfile?.userRegData?.Org?.name }}
 		</span>
 	</ng-container>
