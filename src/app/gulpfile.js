@@ -94,7 +94,7 @@ gulp.task('clean:index:file', () => {
 gulp.task('prepare:app:dist', () => {
     return gulp.src(['dist/**/*',
         'libs/**/*',
-        'tenant/vidyadaan/**/*',
+        'tenant/**/*',
         'termOfUse/**/*',
         'helpers/**/*',
         'proxy/**/*',
