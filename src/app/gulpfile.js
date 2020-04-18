@@ -95,7 +95,7 @@ gulp.task('prepare:app:dist', () => {
     return gulp.src(['dist/**/*',
         'libs/**/*',
         'tenant/vidyadaan/**/*',
-        'termOfUse//**/*',
+        'termOfUse/**/*',
         'helpers/**/*',
         'proxy/**/*',
         'resourcebundles/**/*',
