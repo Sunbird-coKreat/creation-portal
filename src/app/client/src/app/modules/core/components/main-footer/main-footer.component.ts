@@ -5,6 +5,7 @@ import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { IInteractEventEdata } from '@sunbird/telemetry';
 import { combineLatest as observableCombineLatest } from 'rxjs';
 import * as _ from 'lodash-es';
+import { UserService} from './../../services';
 
 @Component({
   selector: 'app-footer',
@@ -28,7 +29,7 @@ export class MainFooterComponent implements OnInit, AfterViewInit {
   isOffline: boolean = environment.isOffline;
   instance: string;
   bodyPaddingBottom: string;
-  constructor(resourceService: ResourceService, public router: Router, public activatedRoute: ActivatedRoute,
+  constructor(resourceService: ResourceService, public userService: UserService, public router: Router, public activatedRoute: ActivatedRoute,
     public configService: ConfigService, private renderer: Renderer2, private cdr: ChangeDetectorRef
 ) {
     this.resourceService = resourceService;
