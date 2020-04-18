@@ -30,7 +30,7 @@
           <li class="mb-15">
             <a appTelemetryInteract [telemetryInteractEdata]="setTelemetryInteractEdata('help-center')"
               [routerLink]="'/contribute/help'" target="_blank"
-              *ngIf="router.url.includes('/contribute') && userService.userProfile?.userRegData?.User_Org?.roles?.includes('admin')">
+              *ngIf="router.url.includes('/contribute')">
               {{resourceService.frmelmnts?.lnk?.footerHelpCenter}}
             </a>
           </li>
