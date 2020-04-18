@@ -313,7 +313,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.showTermsAndCondPopUp = true;
     } else {
       this.showEnrollPopup = true;
-      this.checkFrameworkSelected();
+      // this.checkFrameworkSelected();
     }
   }
 
@@ -340,7 +340,7 @@ export class AppComponent implements OnInit, OnDestroy {
   public onAcceptTnc() {
     this.showTermsAndCondPopUp = false;
     this.showEnrollPopup = true;
-    this.checkFrameworkSelected();
+    // this.checkFrameworkSelected();
   }
 
   /**
