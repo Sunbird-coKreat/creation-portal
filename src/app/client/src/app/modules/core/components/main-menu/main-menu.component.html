@@ -8,9 +8,6 @@
 			[telemetryInteractCdata]="getFeatureId('user:program:contribute', 'SB-15591')">
 			{{resourceService?.frmelmnts?.tab?.contribute}}
 		</a> -->
-		<a class="item sb-color-primary font-weight-bold br-2 py-2" *ngIf="router.url.includes('/contribute') && userProfile?.userRegData?.Org" [routerLink]="'/contribute/help'" target="_blank">
-			<i class="info question circle link icon mr-5 fs-1-16"></i><span class="fs-0-785">{{resourceService.frmelmnts.lbl.doYouNeedAnyHelp}}</span>
-		</a>
 		<!-- <a class="item" appTelemetryInteract [telemetryInteractEdata]="helpMenuIntractEdata"
 			*ngIf='permissionService.permissionAvailable && helpLinkVisibility.toLowerCase() === "true"' appPermission
 			[permission]='workSpaceRole' href="/help/creator/content-lifecycle/index.html" target="_blank">
