@@ -8,8 +8,8 @@ let envVariables = {
   // Environment variables
   APPID: process.env.sunbird_environment + '.' + process.env.sunbird_instance + '.portal',
   sunbird_instance_name: env.sunbird_instance || 'Sunbird',
-  DEFAULT_CHANNEL: env.sunbird_default_channel,
-
+  DEFAULT_CHANNEL: env.sunbird_default_channel || 'vidyadaan',
+  
 
   // Application Start-up - Hosts and PORT Configuration
   PORTAL_PORT: env.sunbird_port || 3000,
