@@ -1,96 +1,107 @@
 <div *ngIf="!userService.userProfile.userRegData.User">
 
-<sui-modal [appTelemetryImpression]="telemetryImpression"
-   [mustScroll]="true"
-    [isClosable]="false"
-    [transitionDuration]="0"
-    [size]="'normal'"
-    class="sb-modal"
-    appBodyScroll
-    (dismissed)="closeModal();"
-    #modal
-    >
-  <div class="sb-modal-header">
-    {{resourceService.frmelmnts.lbl.enrollAsContributor}}
-  </div>
-  <div class="sb-modal-content o-y-visible onBoardDropdown">
-    <div class="twelve wide tablet seven wide computer column form-fields">
-      <form class="ui" [formGroup]="contributeForm" (submit)="validateFields()">
-         <div class="ui grid m-0 p-0">
-            <div class="twelve wide column sb-field-group p-0 centered grid center aligned">
-               <div class="sb-field-group mb-8 text-center">
-                  <label class="d-block">Do you want enroll as Organisation? <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.wantToEnrollContributorHint}}"></i></label>
-                  <!-- (click)="enrollAsOrg=true" -->
-                  <div class="sb-field mt-4 d-flex centered flex-jc-center">
-                     <div class="sb-radio-btn-checkbox sb-radio-btn-primary ">
-                        <input type="radio" id="Organisation" name="enrollAsOrg"  (click)="chnageEnrollStatus(true)" 
-                        appTelemetryInteract
-                        [telemetryInteractEdata]="getTelemetryInteractEdata('enrol-as-org', 'click', 'enrol-contributor')"
-                        [telemetryInteractObject]="telemetryInteractObject"
-                        [telemetryInteractCdata]="telemetryInteractCdata"
-                        [telemetryInteractPdata]="telemetryInteractPdata">
-                        <label for="Organisation">Yes</label>
-                     </div>
-                     <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-                        <input type="radio" id="individual" name="enrollAsOrg"  (click)="chnageEnrollStatus(false)" checked
-                        appTelemetryInteract
-                        [telemetryInteractEdata]="getTelemetryInteractEdata('enrol-as-individual', 'click', 'enrol-contributor')"
-                        [telemetryInteractObject]="telemetryInteractObject"
-                        [telemetryInteractCdata]="telemetryInteractCdata"
-                        [telemetryInteractPdata]="telemetryInteractPdata">
-                        <label for="individual">No</label>
-                     </div>
-                  </div>
-               </div>
-            </div>
-            <div class="twelve wide column sb-field-group p-0 mb-16" *ngIf="enrollAsOrg === true">
-               <div class="sb-field-group mb-8">
-                  <label class="d-block">{{resourceService.frmelmnts.lbl.nameOfOrganisation}} <span class="sb-color-warning">*</span> <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.nameOfOrganisationHint}}"></i></label>
-                  <div class="sb-field required field">
-                      <input class="sb-form-control" placeholder="{{resourceService.frmelmnts.lbl.nameOfOrganisation}}" formControlName="name">
-                      <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['name'].errors && contributeForm.controls['name'].errors.required && (!contributeForm.controls['name'].pristine || formIsInvalid)">
-                        This field is required
+   <sui-modal [appTelemetryImpression]="telemetryImpression"
+      [mustScroll]="true"
+       [isClosable]="false"
+       [transitionDuration]="0"
+       [size]="'normal'"
+       class="sb-modal"
+       appBodyScroll
+       (dismissed)="closeModal();"
+       #modal
+       >
+     <div class="sb-modal-header">
+       {{resourceService.frmelmnts.lbl.enrollAsContributor}}
+     </div>
+     <div class="sb-modal-content o-y-visible onBoardDropdown">
+       <div class="twelve wide tablet seven wide computer column form-fields">
+         <form class="ui" [formGroup]="contributeForm" (submit)="validateFields()">
+            <div class="ui grid m-0 p-0">
+               <div class="twelve wide column sb-field-group p-0 centered grid center aligned">
+                  <div class="sb-field-group mb-8 text-center">
+                     <label class="d-block">Do you want enroll as Organisation? <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.wantToEnrollContributorHint}}"></i></label>
+                     <!-- (click)="enrollAsOrg=true" -->
+                     <div class="sb-field mt-4 d-flex centered flex-jc-center">
+                        <div class="sb-radio-btn-checkbox sb-radio-btn-primary ">
+                           <input type="radio" id="Organisation" name="enrollAsOrg"  (click)="chnageEnrollStatus(true)" 
+                           appTelemetryInteract
+                           [telemetryInteractEdata]="getTelemetryInteractEdata('enrol-as-org', 'click', 'enrol-contributor')"
+                           [telemetryInteractObject]="telemetryInteractObject"
+                           [telemetryInteractCdata]="telemetryInteractCdata"
+                           [telemetryInteractPdata]="telemetryInteractPdata">
+                           <label for="Organisation">Yes</label>
+                        </div>
+                        <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+                           <input type="radio" id="individual" name="enrollAsOrg"  (click)="chnageEnrollStatus(false)" checked
+                           appTelemetryInteract
+                           [telemetryInteractEdata]="getTelemetryInteractEdata('enrol-as-individual', 'click', 'enrol-contributor')"
+                           [telemetryInteractObject]="telemetryInteractObject"
+                           [telemetryInteractCdata]="telemetryInteractCdata"
+                           [telemetryInteractPdata]="telemetryInteractPdata">
+                           <label for="individual">No</label>
+                        </div>
                      </div>
                   </div>
                </div>
-            </div>
-            <div class="twelve wide column sb-field-group p-0 mb-16" *ngIf="enrollAsOrg === true">
-               <div class="sb-field-group mb-8">
-                  <label class="d-block">{{resourceService.frmelmnts.lbl.description}} <span class="sb-color-warning">*</span> <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.programRecognitionHint}}"></i></label>
-                  <div class="sb-field required field">
-                     <textarea rows="4" class="sb-form-control" placeholder="{{resourceService.frmelmnts.lbl.description}}" spellcheck="false" formControlName="description"></textarea>
-                     <span class="characters-left">{{resourceService.frmelmnts.lbl.thousandCharacterLeft}}</span>
-                     <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['description'].errors && contributeForm.controls['description'].errors.required && (!contributeForm.controls['description'].pristine || formIsInvalid)">
-                        This field is required
+               <div class="twelve wide column sb-field-group p-0 mb-16" *ngIf="enrollAsOrg === true">
+                  <div class="sb-field-group mb-8">
+                     <label class="d-block">{{resourceService.frmelmnts.lbl.nameOfOrganisation}} <span class="sb-color-warning">*</span> <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.nameOfOrganisationHint}}"></i></label>
+                     <div class="sb-field required field">
+                         <input class="sb-form-control" placeholder="{{resourceService.frmelmnts.lbl.nameOfOrganisation}}" formControlName="name">
+                         <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['name'].errors && contributeForm.controls['name'].errors.required && (!contributeForm.controls['name'].pristine || formIsInvalid)">
+                           This field is required
+                        </div>
                      </div>
                   </div>
                </div>
-            </div>
-           
-            <div class="twelve wide column sb-field-group p-0 mb-16" *ngIf="enrollAsOrg === true">
-               <div class="sb-field-group mb-8">
-                  <label class="d-block">{{resourceService.frmelmnts.lbl.organisationWebsite }} <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="{{resourceService.frmelmnts.lbl.website}}" popupText="{{resourceService.frmelmnts.lbl.websiteHint}}"></i></label>
-                  <div class="sb-field field">
-                      <input class="sb-form-control" placeholder="{{resourceService.frmelmnts.lbl.websiteHint}}" formControlName="website">
+               <div class="twelve wide column sb-field-group p-0 mb-16" *ngIf="enrollAsOrg === true">
+                  <div class="sb-field-group mb-8">
+                     <label class="d-block">{{resourceService.frmelmnts.lbl.description}} <span class="sb-color-warning">*</span> <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.programRecognitionHint}}"></i></label>
+                     <div class="sb-field required field">
+                        <textarea rows="4" class="sb-form-control" placeholder="{{resourceService.frmelmnts.lbl.description}}" spellcheck="false" formControlName="description"></textarea>
+                        <span class="characters-left">{{resourceService.frmelmnts.lbl.thousandCharacterLeft}}</span>
+                        <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['description'].errors && contributeForm.controls['description'].errors.required && (!contributeForm.controls['description'].pristine || formIsInvalid)">
+                           This field is required
+                        </div>
+                     </div>
+                  </div>
+               </div>
+   
+               <div class="twelve wide column sb-field-group p-0 mb-16" *ngIf="enrollAsOrg === true">
+                  <div class="sb-field-group mb-8">
+                     <label class="d-block">{{resourceService.frmelmnts.lbl.organisationWebsite }} <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="{{resourceService.frmelmnts.lbl.website}}" popupText="{{resourceService.frmelmnts.lbl.websiteHint}}"></i></label>
+                     <div class="sb-field field">
+                         <input class="sb-form-control" placeholder="{{resourceService.frmelmnts.lbl.websiteHint}}" formControlName="website">
+                     </div>
+                  </div>
+               </div>
+   
+               <div class="twelve wide column sb-field-group p-0 mb-16">
+                  <div class="required sb-checkbox sb-checkbox-primary sb-field mb-8">
+                     <input type="checkbox" id="tncAccepted" role="checkbox" formControlName="tncAccepted" name="tncAccepted" class="mr-10 cursor-pointer" required>
+                     <label for="tncAccepted" class="fsmall mr-0">{{resourceService?.frmelmnts?.lbl?.tncLabel}}
+                     <a class="text-underline fsmall" href="{{ termsAndConditionLink }}" target="_blank">
+                        {{resourceService?.frmelmnts?.lbl?.tncLabelLink | interpolate:'{instance}': instance}}
+                     </a>
+                  </label>
                   </div>
                </div>
             </div>
-         </div>
-        </form>
-    </div>
-  </div>
-  <div class="sb-modal-actions">
-   <!-- [disabled]="!disableSubmit" -->
-    <button class="sb-btn sb-btn-normal sb-btn-primary"
-      (click)="validateFields()"
-      appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('enrol-data-save', 'click', 'enrol-contributor')"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">
-      {{resourceService.frmelmnts.btn.submit}}
-    </button>
-  </div>
-</sui-modal>
-
-</div>
+           </form>
+       </div>
+     </div>
+     <div class="sb-modal-actions">
+      <!-- [disabled]="!disableSubmit" -->
+       <button class="sb-btn sb-btn-normal sb-btn-primary"
+         (click)="validateFields()" [disabled]="!contributeForm.valid"
+         appTelemetryInteract
+         [telemetryInteractEdata]="getTelemetryInteractEdata('enrol-data-save', 'click', 'enrol-contributor')"
+         [telemetryInteractObject]="telemetryInteractObject"
+         [telemetryInteractCdata]="telemetryInteractCdata"
+         [telemetryInteractPdata]="telemetryInteractPdata">
+         {{resourceService.frmelmnts.btn.submit}}
+       </button>
+     </div>
+   </sui-modal>
+   
+   </div>

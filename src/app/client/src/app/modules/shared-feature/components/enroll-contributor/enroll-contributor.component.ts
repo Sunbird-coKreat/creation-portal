@@ -34,8 +34,10 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
   public telemetryPageId = 'enroll-contributor';
   @Output() close = new EventEmitter<any>();
   public telemetryInteractCdata: any;
-   public telemetryInteractPdata: any;
-   public telemetryInteractObject: any;
+  public telemetryInteractPdata: any;
+  public telemetryInteractObject: any;
+  termsAndConditionLink: string;
+  instance: string;
 
   constructor(private programsService: ProgramsService, private tosterService: ToasterService,
     public userService: UserService, private configService: ConfigService,
@@ -45,12 +47,14 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-      this.initializeFormFields();
-      this.enrolledDate = new Date();
-      this.enrolledDate = this.datePipe.transform(this.enrolledDate, 'yyyy-MM-dd');
-     this.telemetryInteractCdata = [];
-     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
-     this.telemetryInteractObject = {};
+    this.termsAndConditionLink = "https://preprodall.blob.core.windows.net/termsandcond/terms-and-conditions-v4.html";
+    this.instance = _.upperCase(this.resourceService.instance || 'DIKSHA');
+    this.initializeFormFields();
+    this.enrolledDate = new Date();
+    this.enrolledDate = this.datePipe.transform(this.enrolledDate, 'yyyy-MM-dd');
+    this.telemetryInteractCdata = [];
+    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
+    this.telemetryInteractObject = {};
   }
 
   ngAfterViewInit() {
@@ -84,6 +88,7 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
         name: [''],
         description: [''],
         website: [''],
+        tncAccepted: ['', Validators.required],
     });
   }
 
@@ -108,6 +113,7 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
                 const Org = {
                   ...this.contributeForm.value
                };
+                delete Org.tncAccepted;
                 Org['createdBy'] =  res1.result.User.osid;
                 Org['code'] = this.contributeForm.controls['name'].value.toUpperCase();
                 return this.enrollContributorService.enrolment({Org: Org});
@@ -134,21 +140,19 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
           }, (err) => {
             this.tosterService.error(this.resourceService.messages.emsg.contributorRegister.m0002);
           });
-      
   }
   chnageEnrollStatus(status) {
     this.enrollAsOrg = status;
   }
 
-  validateFields()
-  {
+  validateFields() {
     this.enrollAsOrg === true ? this.contributeForm.controls['description'].setValidators([Validators.required]) : this.contributeForm.controls['description'].setValidators(null);
     this.enrollAsOrg === true ? this.contributeForm.controls['name'].setValidators([Validators.required]) : this.contributeForm.controls['name'].setValidators(null);
     this.contributeForm.controls['name'].updateValueAndValidity();
     this.contributeForm.controls['description'].updateValueAndValidity();
     if (this.contributeForm.valid) {
       if (this.enrollAsOrg === true)
-      { 
+      {
         var request = {
           entityType:["Org"],
           filters:{
@@ -194,5 +198,4 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
       extra
     }, _.isUndefined);
   }
-
 }
