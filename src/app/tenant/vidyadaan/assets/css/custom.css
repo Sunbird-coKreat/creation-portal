@@ -1,0 +1,351 @@
+header{
+    padding: 0 80px;
+    position: absolute;
+}
+
+.contents {
+    margin: 0;
+    clear: both;
+}
+
+.logo{
+    height: 97px;
+    width: 169px;
+    border-radius: 0 0 4px 4px;
+    background-color: #FFFFFF;
+    box-shadow: 0 20px 40px -7px #D8D8D8;
+    display: inline-block;
+    padding: 20px 35px;
+}
+
+.logo img {
+    height: 56px;
+    width: 98px;
+}
+
+.intro-section{
+    background: url("../imgs/background/intro.svg");
+    background-size:1000px 667px;
+    background-repeat: no-repeat;
+    background-position: 100% 0;
+    min-height: 775px;
+    height: auto;
+}
+
+.intro-section .intro-content{
+    padding: 0 80px 0 120px;
+    padding-top: 97px;
+}
+
+.intro-section .intro-content h1 {
+    color: #333333;
+    font-family: "Noto Sans";
+    font-size: 60px;
+    font-weight: 900;
+    letter-spacing: 0;
+    line-height: 82px;
+    margin-top: 75px;
+    margin-bottom: 0;
+}
+
+.intro-section .intro-content p{
+    color: #333333;
+    font-family: "Noto Sans";
+    font-size: 20px;
+    letter-spacing: 0;
+    line-height: 32px;
+    padding: 0;
+}
+
+.intro-section .intro-content h2 {
+    height: 170px;
+    width: 334px;
+    color: #333333;
+    font-family: "Noto Sans";
+    font-size: 44px;
+    font-weight: bold;
+    letter-spacing: 0;
+    line-height: 60px;
+    margin-top: 60px;
+    margin-bottom: 0;
+}
+
+.intro-section .intro-content .p2 {
+    height: 31px;
+    width: 521px;
+    color: #333333;
+    font-family: "Noto Sans";
+    font-size: 18px;
+    letter-spacing: 0;
+    line-height: 32px;
+    margin-top: 25px;
+}
+
+.intro-section .intro-content .explore-button {
+    border-radius: 46.5px;
+    background-color: #FFFFFF;
+    box-shadow: 0 20px 40px -10px #D8D8D8;
+    color: #EF6938;
+    font-family: "Noto Sans";
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 0;
+    line-height: 33px;
+    padding: 16px 36px;
+    margin-top: 40px;
+    border: none;
+    cursor: pointer;
+    outline: 0;
+    -webkit-transition: all 0.4s ease-in;
+    transition: all 0.4s ease-in;
+}
+
+  span {
+    display: block;
+    position: relative;
+    z-index: 1;
+    cursor: pointer;
+  }
+  span::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: calc(50% - 15px);
+    left: calc(50% - 15px);
+    background: rgba(255,255,255, 0.7);
+    width: 193px;
+    height: 33px;
+    border-radius: 100%;
+    transform: scale(0);
+  }
+  button:focus:not(:active) span::after {
+    animation: circleGrow 0.3s linear;
+  }
+
+
+@keyframes circleGrow {
+    0% {
+      transform: scale(0);
+      opacity: 0;
+    } 
+    20% {
+      opacity: 1;
+    }
+    100% {
+      transform: scale(5);
+      opacity: 0;
+    }
+  }
+
+  .contents-section{
+      background: #FAF8FF;
+      padding: 30px 0;
+  }
+
+  .footer-section{
+    height: 300px;
+    background: #333333;
+    padding: 0;
+}
+
+.footer-section footer#footer {
+    background-image: url("../imgs/background/footer.svg");
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-position: 100% 17rem;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.footer-section footer .row {
+    padding-top: 5rem;
+}
+.footer-section footer .row p {
+    margin-bottom: 0;
+}
+
+.footer-section footer .row label, .footer-section footer .row p a {
+    color: #FFFFFF;
+    font-size: 16px;
+    line-height: 22px;
+    text-align: center;
+    margin-bottom: 0;
+    text-decoration: none;
+}
+
+.footer-section footer .row a i.fa{
+    font-size: 26px;
+    color: #fff;
+    margin: 10px 15px;
+}
+
+.download-diksha {
+    border-radius: 20px 20px 0 0;
+    position: absolute;
+    bottom: 0;
+    padding: 32px 12px 0;
+    background: #333;
+    box-shadow: 0 20px 20px 10px rgba(0, 0, 0, 0.2);
+    max-width: 250px;
+    right: 0;
+    left: 0;
+    margin: 0 auto;
+    z-index: 9;
+  }
+  .download-diksha .diksha-logo {
+    background: #fff;
+    color: #000;
+    border-radius: 8px 8px 0 0;
+    text-align: center;
+    padding: 15px;
+  }
+  .download-diksha .diksha-logo .playStore-img {
+    width: 120px;
+  }
+  .download-diksha .diksha-logo .app-download {
+    line-height: 0;
+  }
+  .download-diksha .diksha-logo .app-download:hover {
+    opacity: inherit;
+  }
+  .download-diksha .diksha-logo label,
+  .download-diksha .diksha-logo p {
+    font-size: 12px;
+  }
+  .download-diksha .diksha-logo p {
+    line-height: 16px;
+    padding-top: 10px;
+    margin-bottom: 0;
+  }
+  .download-diksha .diksha-logo p a,
+  .download-diksha a,
+  .download-diksha label a {
+    text-decoration: none;
+    color: #333;
+  }
+  .download-diksha label {
+    font-weight: 700;
+    padding-bottom: 10px;
+  }
+  .download-diksha .mobile-circles {
+    position: absolute;
+    top: 10px;
+    display: flex;
+    align-items: center;
+    margin: 0 20px;
+  }
+  .download-diksha .mobile-circles .border-round {
+    border: none;
+    background: #464646;
+  }
+  .download-diksha .mobile-circles .border-r50 {
+    border-radius: 50%;
+  }
+  .download-diksha .mobile-circles .big-box {
+    height: 14px;
+    width: 14px;
+  }
+  .download-diksha .mobile-circles .oval-box {
+    height: 6px;
+    width: 76px;
+    border-radius: 3px;
+    margin-left: 20px;
+  }
+  .download-diksha .mobile-circles .small-box.border-round.border-r50 {
+    margin: 0;
+    height: 8px;
+    width: 8px;
+  }
+  .download-diksha .mobile-circles .small-box.ml-20.mr-10 {
+    height: 8px;
+    width: 8px;
+    margin-right: 10px;
+    margin-left: 20px;
+  }
+
+  span.bar {
+    box-sizing: border-box;
+    height: 23px;
+    width: 1px;
+    border: 0.5px solid #FFFFFF;
+    margin: 0 15px;
+    display: inline-block;
+    top: 2px;
+  }
+
+  .intro-image{
+      display: none;
+  }
+
+  @media only screen and (max-width: 1024px){
+    .intro-section{
+        background: none;
+        min-height: auto;
+        height: auto;
+        margin-bottom: 30px;
+    }
+
+    header {
+        padding: 0 20px;
+    }
+
+    .logo {
+        padding: 8px 16px;
+        height: 53px;
+        width: 100px;
+    }
+
+    .logo img {
+        height: 36px;
+        width: 67px;
+    }
+
+    .intro-image{
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+    .intro-section .intro-content {
+        padding: 0 25px;
+        padding-top: 0;
+    }
+
+    .intro-section .intro-content h1 {
+        font-size: 40px;
+        letter-spacing: 0;
+        line-height: 40px;
+        margin-top: -35px;
+        margin-bottom: 10px;
+    }
+
+    .intro-section .intro-content h2 {
+        font-size: 16px;
+        font-weight: bold;
+        letter-spacing: 0;
+        line-height: 22px;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    .intro-section .intro-content .p2 {
+        font-size: 12px;
+        letter-spacing: 0;
+        line-height: 22px;
+        margin-top: 10px;
+        margin-bottom: 0;
+    }
+
+    .intro-section .intro-content h2,
+    .intro-section .intro-content .p2 {
+        width: 100%;
+        height: auto;
+    }
+  }
+
+  @media only screen and (max-width: 540px){
+    .download-diksha {
+      max-width: 200px;
+    }
+  }

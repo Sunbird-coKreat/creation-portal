@@ -220,7 +220,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
     if (this.currentStage === 'chapterListComponent') {
       this.updateAccordianView(this.unitIdentifier);
+      this.resetContentId();
     }
+  }
+  public resetContentId() {
+    this.contentId = '';
   }
 
   public getCollectionHierarchy(identifier: string, unitIdentifier: string) {

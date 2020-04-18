@@ -66,6 +66,7 @@ module.exports = (app, keycloak) => {
       next()
   })
 
+  app.use(express.static(path.join(__dirname, '../termOfUse')))
   app.use(express.static(path.join(__dirname, '../dist'), { extensions: ['ejs'], index: false }))
 
   app.use('/dist', express.static(path.join(__dirname, '../dist'), { extensions: ['ejs'], index: false }))
