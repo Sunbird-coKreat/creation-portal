@@ -36,7 +36,6 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
-  termsAndConditionLink: string;
   instance: string;
 
   constructor(private programsService: ProgramsService, private tosterService: ToasterService,
@@ -47,7 +46,6 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.termsAndConditionLink = "https://preprodall.blob.core.windows.net/termsandcond/terms-and-conditions-v4.html";
     this.instance = _.upperCase(this.resourceService.instance || 'DIKSHA');
     this.initializeFormFields();
     this.enrolledDate = new Date();
