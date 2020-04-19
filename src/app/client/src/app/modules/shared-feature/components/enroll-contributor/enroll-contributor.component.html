@@ -17,11 +17,11 @@
        <div class="twelve wide tablet seven wide computer column form-fields">
          <form class="ui" [formGroup]="contributeForm" (submit)="validateFields()">
             <div class="ui grid m-0 p-0">
-               <div class="twelve wide column sb-field-group p-0 centered grid center aligned">
-                  <div class="sb-field-group mb-8 text-center">
-                     <label class="d-block">Do you want enroll as Organisation? <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.wantToEnrollContributorHint}}"></i></label>
+               <div class="twelve wide column sb-field-group p-0 grid">
+                  <div class="sb-field-group mb-8">
+                     <label class="d-block">{{resourceService.frmelmnts.lbl.doYouWantToEnrollAs}} <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.wantToEnrollContributorHint}}"></i></label>
                      <!-- (click)="enrollAsOrg=true" -->
-                     <div class="sb-field mt-4 d-flex centered flex-jc-center">
+                     <div class="sb-field mt-4 d-flex">
                         <div class="sb-radio-btn-checkbox sb-radio-btn-primary ">
                            <input type="radio" id="Organisation" name="enrollAsOrg"  (click)="chnageEnrollStatus(true)" 
                            appTelemetryInteract
@@ -29,7 +29,7 @@
                            [telemetryInteractObject]="telemetryInteractObject"
                            [telemetryInteractCdata]="telemetryInteractCdata"
                            [telemetryInteractPdata]="telemetryInteractPdata">
-                           <label for="Organisation">Yes</label>
+                           <label for="Organisation">{{resourceService.frmelmnts.lbl.organisation}}</label>
                         </div>
                         <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
                            <input type="radio" id="individual" name="enrollAsOrg"  (click)="chnageEnrollStatus(false)" checked
@@ -38,7 +38,7 @@
                            [telemetryInteractObject]="telemetryInteractObject"
                            [telemetryInteractCdata]="telemetryInteractCdata"
                            [telemetryInteractPdata]="telemetryInteractPdata">
-                           <label for="individual">No</label>
+                           <label for="individual">{{resourceService.frmelmnts.lbl.individual}}</label>
                         </div>
                      </div>
                   </div>
@@ -76,12 +76,12 @@
                   </div>
                </div>
    
-               <div class="twelve wide column sb-field-group p-0 mb-16">
+               <div class="twelve wide column sb-field-group p-0 mb-5">
                   <div class="required sb-checkbox sb-checkbox-primary sb-field mb-8">
                      <input type="checkbox" id="tncAccepted" role="checkbox" formControlName="tncAccepted" name="tncAccepted" class="mr-10 cursor-pointer" required>
                      <label for="tncAccepted" class="fsmall mr-0">{{resourceService?.frmelmnts?.lbl?.tncLabel}}
                      <a class="text-underline fsmall" href="/term-of-use.html" target="_blank">
-                        {{resourceService?.frmelmnts?.lbl?.tncLabelLink | interpolate:'{instance}': instance}}
+                        {{resourceService?.frmelmnts?.lbl?.tncLabelLink}}
                      </a>
                   </label>
                   </div>
