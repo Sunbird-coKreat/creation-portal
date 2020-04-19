@@ -10,6 +10,7 @@ $(document).ready(function () {
   $(".readMore").on('click',function(){
     if(!($(".more").is(":visible"))){
       $(".more").show();
+      $(".dots").hide();
       $(this).text("Read Less");
       var h = $(".about-section").innerHeight();
       if(window.innerWidth < 1024){
@@ -19,11 +20,12 @@ $(document).ready(function () {
       }
     }else{
       $(".more").hide();
+      $(".dots").show();
       $(this).text("Read More");
       if(window.innerWidth < 1024){
-        $(".eresourcesContents").css("padding-top","140px");
-      }else{
         $(".eresourcesContents").css("padding-top","166px");
+      }else{
+        $(".eresourcesContents").css("padding-top","140px");
       }
     }
   })
@@ -34,7 +36,7 @@ function getEnvironment(a){
     case "vdn.diksha.gov.in": return "https://http://vdn.diksha.gov.in/contribute"; break;
     case "preprod.ntp.net.in": return "https://dock.preprod.ntp.net.in/contribute"; break;
     case "diksha.gov.in": return "https://http://vdn.diksha.gov.in/contribute"; break;
-    default: return "/contribute"; break;
+    default: return "https://dock.preprod.ntp.net.in/contribute"; break;
   }
 }
 

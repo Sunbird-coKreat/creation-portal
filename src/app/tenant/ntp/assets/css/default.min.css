@@ -12131,16 +12131,6 @@ h2.title {
         font-size: 16px
     }
 
-    p {
-        font-size: 14px !important;
-        line-height: 24px
-    }
-
-    ul,
-    ol {
-        font-size: 12px
-    }
-
     .landingPage-footer {
         padding-top: 300px
     }
@@ -12483,6 +12473,13 @@ body {
     width: 98px;
 }
 
+.eResources .about-section .aboutVidyadaan,
+.eResources .about-section .description,
+.eResources .about-section .readMore,
+h3, label, ul li, a, p, button {
+    font-family: "Noto Sans";
+}
+
 .intro-section {
     padding: 80px 80px 180px;
     /* margin-bottom: 30px; */
@@ -12510,7 +12507,6 @@ body {
     height: auto;
     width: auto;
     color: #000000;
-    font-family: "Noto Sans";
     font-size: 32px;
     font-weight: bold;
     letter-spacing: 0;
@@ -12534,7 +12530,6 @@ body {
     align-items: center;
     justify-content: center;
 }
-
 
 .eResources {
     position: relative;
@@ -12562,7 +12557,6 @@ body {
 .eResources .about-section .aboutVidyadaan {
     width: 100%;
     color: #333333;
-    font-family: "Noto Sans";
     font-size: 22px;
     font-weight: bold;
     letter-spacing: 0;
@@ -12572,7 +12566,6 @@ body {
 .eResources .about-section .description {
     width: 100%;
     color: #000000;
-    font-family: "Noto Sans";
     font-size: 18px;
     letter-spacing: 0;
     line-height: 32px;
@@ -12586,7 +12579,6 @@ body {
     height: 32px;
     width: 100%;
     color: #0076FE;
-    font-family: "Noto Sans";
     font-size: 18px;
     letter-spacing: 0;
     line-height: 32px;
@@ -12602,7 +12594,6 @@ body {
 
 .eResources .eresourcesContents h3 {
     color: #333333;
-    font-family: "Noto Sans";
     font-size: 22px;
     font-weight: bold;
     letter-spacing: 0;
@@ -12624,7 +12615,6 @@ body {
 
 .eResources .eresourcesContents label {
     color: #333333;
-    font-family: "Noto Sans";
     font-size: 18px;
     letter-spacing: 0;
     line-height: 25px;
@@ -12640,7 +12630,6 @@ body {
 
 .guideLines h3 {
     color: #333333;
-    font-family: "Noto Sans";
     font-size: 22px;
     font-weight: bold;
     letter-spacing: 0;
@@ -12658,7 +12647,6 @@ body {
 
 .guideLines .box label {
     color: #333333;
-    font-family: "Noto Sans";
     font-size: 20px;
     font-weight: bold;
     letter-spacing: 0;
@@ -12668,20 +12656,31 @@ body {
 
 .guideLines .box p {
     color: #333333;
-    font-family: "Noto Sans";
     font-size: 18px;
     letter-spacing: 0;
     line-height: 24px;
-    margin-top: 16px;
-    margin-bottom: 0;
+    margin-bottom: 28px;
 }
 
 .guideLines .box a {
     color: #024F9D;
-    font-family: "Noto Sans";
     font-size: 18px;
     letter-spacing: 0;
     line-height: 20px;
+    text-decoration: underline;
+}
+
+.guideLines .box ul{
+    padding-left: 20px;
+    margin-bottom: 0;
+}
+
+.guideLines .box ul li {
+    color: #333333;
+    font-size: 18px;
+    letter-spacing: 0;
+    line-height: 24px;
+    margin-bottom: 16px;
 }
 
 .guideLines .box .rectangle {
@@ -12706,7 +12705,6 @@ body {
 
 .latestPrograms h3 {
     color: #333333;
-    font-family: "Noto Sans";
     font-size: 22px;
     font-weight: bold;
     letter-spacing: 0;
@@ -12729,7 +12727,6 @@ body {
 
 .latestPrograms .program-cards .topSection label {
     color: #333333;
-    font-family: "Noto Sans";
     font-size: 20px;
     font-weight: bold;
     letter-spacing: 0;
@@ -12737,8 +12734,7 @@ body {
 }
 
 .latestPrograms .program-cards .topSection p {
-    color: #0076FE;
-    font-family: "Noto Sans";
+    color: #666666;
     font-size: 20px;
     font-style: italic;
     letter-spacing: 0;
@@ -12754,7 +12750,6 @@ body {
 
 .latestPrograms .program-cards .bottomSection label {
     color: #FFFFFF;
-    font-family: "Noto Sans";
     font-size: 20px;
     font-weight: bold;
     letter-spacing: 0;
@@ -12763,7 +12758,6 @@ body {
 
 .latestPrograms .context {
     color: #007DC6;
-    font-family: "Noto Sans";
     font-size: 18px;
     font-weight: bold;
     letter-spacing: 0;
@@ -12775,8 +12769,7 @@ body {
 }
 
 .latestPrograms .contribute-button {
-    padding: 24px 118px;
-    color: #fff;
+    padding: 24px 36px;
     border-radius: 8px;
     background-color: #0076FE;
     box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.25);
@@ -12789,6 +12782,11 @@ body {
     border: 1px solid transparent;
     transition: 0.3s;
     cursor: pointer;
+    color: #FFFFFF;
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 0;
+    line-height: 30px;
 }
 
 .contribute-button a,
@@ -12838,7 +12836,7 @@ body {
 }
 
 .footer-section footer .row {
-    padding-top: 50px
+    padding-top: 30px
 }
 
 .footer-section footer .row p {
@@ -12865,26 +12863,15 @@ body {
 
 .more {display: none;}
 
+.intro-section .intro-content img {
+    width: 352px;
+    margin-top: 40px
+}
+
 @media only screen and (max-width:1250px)and (min-width:1024px) {
     .intro-section h3 {
         font-size: 20px;
         margin-top: 15px
-    }
-
-    .intro-section .intro-content img {
-        width: 160px;
-        margin-top: 40px
-    }
-
-    .intro-section .intro-content img#dopt {
-        width: 160px;
-        margin: 65px 0
-    }
-
-    .intro-section .intro-content .explore-button,
-    .explore-button {
-        font-size: 18px;
-        padding: 10px 30px
     }
 }
 
@@ -12938,6 +12925,7 @@ body {
 .intro-section .intro-content img {
     width: 253px;
     height: auto;
+    margin-top: 0;
 }
 
 .intro-section .intro-content h3{
@@ -13021,13 +13009,13 @@ border-radius: 1px;
     }
 
     .latestPrograms .contribute-button {
-        padding: 14px 106px;
+        padding: 14px 38px;
+        font-size: 18px;
     }
 
     .latestPrograms .context {
         padding: 0 16px;
         color: #007DC6;
-        font-family: "Noto Sans";
         font-size: 16px;
         font-weight: bold;
         letter-spacing: 0;
@@ -13039,7 +13027,6 @@ border-radius: 1px;
 
     .latestPrograms .program-cards .topSection label {
         color: #333333;
-        font-family: "Noto Sans";
         font-size: 14px;
         font-weight: bold;
         letter-spacing: 0;
@@ -13048,7 +13035,6 @@ border-radius: 1px;
 
     .latestPrograms .program-cards .topSection p {
         color: #0076FE;
-        font-family: "Noto Sans";
         font-size: 14px;
         font-style: italic;
         letter-spacing: 0;
@@ -13059,7 +13045,6 @@ border-radius: 1px;
 
     .latestPrograms .program-cards .bottomSection label,
     .guideLines .box label {
-        font-family: "Noto Sans";
         font-size: 14px;
         font-weight: bold;
         letter-spacing: 0;
@@ -13074,7 +13059,6 @@ border-radius: 1px;
     .latestPrograms h3,
     .guideLines h3 {
         color: #333333;
-        font-family: "Noto Sans";
         font-size: 16px;
         font-weight: bold;
         letter-spacing: 0;
@@ -13090,16 +13074,25 @@ border-radius: 1px;
         padding: 21px 16px;
     }
 
+    .guideLines .box label {
+        margin-bottom: 16px;
+    }
+
     .guideLines .box p,
     .guideLines .box a {
         font-size: 12px;
-        letter-spacing: 0;
-        line-height: 24px;
+        margin-bottom: 16px;
     }
 
     .guideLines .box a {
         display: block;
         margin-top: 16px;
+        margin-bottom: 0;
+    }
+
+    .guideLines .box ul li{
+        font-size: 12px;
+        line-height: 16px;
     }
 
     .guideLines .box .rectangle{
@@ -13146,6 +13139,34 @@ border-radius: 1px;
 
     .col-xs-6 {
         padding: 0 8px;
+    }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+    .guideLines .box .rectangle {
+        width: 276px;
+        height: 138px;
+        padding: 44px 113px;
+    }
+    .hidden-lg-up .worldCloud, .hidden-lg-up .intro-content {
+        width: 50%;
+        display: inline-block;
+        height: auto;
+    }
+
+    .intro-section {
+        padding: 60px 24px 130px;
+    }
+
+    .intro-content {
+        float: left;
+    }
+
+    .hidden-lg-up {
+        display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row-reverse;
     }
 }
 
