@@ -26,7 +26,7 @@
             [telemetryInteractPdata]="telemetryInteractPdata">
             <i class="plus outline icon"></i> {{resourceService.frmelmnts?.lbl?.createNewProgram}}</button>
                 <div class="item flex-jc-flex-end" *ngIf="router.url.includes('/sourcing') && userProfile?.organisationNames?.length">
-                    <span> {{ resourceService?.frmelmnts?.lbl?.organisation + ' : ' }} </span>
+                    <span> {{ resourceService?.frmelmnts?.lbl?.organisation + ': ' }} </span>
                     <span class="pl-5"> {{ userProfile?.organisationNames?.join(', ') }} </span>
                 </div> 
                 <div class="item" *ngIf="router.url.includes('/contribute')&& userProfile?.userRegData?.Org">
