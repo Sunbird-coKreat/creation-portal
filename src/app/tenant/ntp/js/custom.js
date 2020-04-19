@@ -36,7 +36,7 @@ function getEnvironment(a){
     case "vdn.diksha.gov.in": return "https://http://vdn.diksha.gov.in/contribute"; break;
     case "preprod.ntp.net.in": return "https://dock.preprod.ntp.net.in/contribute"; break;
     case "diksha.gov.in": return "https://http://vdn.diksha.gov.in/contribute"; break;
-    default: return "https://dock.preprod.ntp.net.in/contribute"; break;
+    default: return "/contribute"; break;
   }
 }
 
