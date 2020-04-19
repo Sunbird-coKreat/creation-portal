@@ -9,13 +9,6 @@
     <!--Header White Section-->
     <div class="ui container">
         <div class="ui grid padded width-100 relative">
-            <button routerLink="sourcing/create-program" class="sb-btn sb-btn-normal sb-btn-outline-primary sb-dock-new-program" *ngIf="this.router.url.includes('/sourcing') && !this.router.url.includes('sourcing/create-program')"
-            appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('create-program', 'click', 'main-header')"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">
-      <i class="plus outline icon"></i> {{resourceService.frmelmnts?.lbl?.createNewProgram}}</button>
             <div class="six wide column p-0">
                 <!--Logo-->
                 <a class="d-flex logo" tabindex="0" title="{{tenantInfo.titleName}}" role="banner">
@@ -24,11 +17,26 @@
                 <!--/Logo-->
             </div>
             <div class="six wide column p-0 d-flex flex-jc-flex-end flex-ai-center">
+                <app-main-menu class="d-flex computer only ml-auto"></app-main-menu>
+                <button routerLink="sourcing/create-program" class="px-10 sb-btn sb-btn-normal sb-btn-outline-primary" *ngIf="this.router.url.includes('/sourcing') && !this.router.url.includes('sourcing/create-program')"
+                    appTelemetryInteract
+            [telemetryInteractEdata]="getTelemetryInteractEdata('create-program', 'click', 'main-header')"
+            [telemetryInteractObject]="telemetryInteractObject"
+            [telemetryInteractCdata]="telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryInteractPdata">
+            <i class="plus outline icon"></i> {{resourceService.frmelmnts?.lbl?.createNewProgram}}</button>
+                <div class="item flex-jc-flex-end" *ngIf="router.url.includes('/sourcing') && userProfile?.organisationNames?.length">
+                    <span> {{ resourceService?.frmelmnts?.lbl?.organisation + ' : ' }} </span>
+                    <span class="pl-5"> {{ userProfile?.organisationNames?.join(', ') }} </span>
+                </div> 
+                <div class="item" *ngIf="router.url.includes('/contribute')&& userProfile?.userRegData?.Org">
+                    <span>{{ resourceService?.frmelmnts?.lbl?.organisation + ' : '}}</span>
+                    <span> {{ userProfile?.userRegData?.Org?.name }}</span>
+                </div>
                 <!--Hamburger Icon-->
                 <i class="large bars icon link primary-color mobile only" (click)="showSideBar()" tabindex="0"></i>
                 <!--/Hamburger Icon-->
                 <!--Main Menu-->
-                <app-main-menu class="d-flex computer only ml-auto"></app-main-menu>
                 <!--/Main Menu-->
                 <!--Avtar Dropdown-->
                 <a class="profile-avtar computer only p-0 ml-15" *ngIf="userService.loggedIn && !isOffline"
@@ -123,7 +131,8 @@
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService.frmelmnts.lbl.manageUsers }}</a>
                     <a class="sb-btn sb-btn-outline-primary sb-btn-normal sb-color-primary py-0 px-10 fs-0-92 sb-bg-white" target="_blank"
-                    *ngIf="router.url.includes('/contribute')" [routerLink]="'/contribute/help'" [class.active]="activeTab['contributorHelp']" (click)="handleActiveTabState('manageUsers')"><i class="icon play circle fs-1-16 mr-5"></i>{{resourceService.frmelmnts.lbl.clickHereToGetStarted}}</a>
+                    *ngIf="router.url.includes('/contribute') && !router.url.includes('/contribute/help')" [routerLink]="'/contribute/help'" (click)="handleActiveTabState('manageUsers')"><i class="icon play circle fs-1-16 mr-5"></i>{{resourceService.frmelmnts.lbl.clickHereToGetStarted}}</a>
+                    <a  *ngIf="router.url.includes('/contribute/help')" [routerLink]="'/contribute/help'" [class.active]="activeTab['contributorHelp']" (click)="handleActiveTabState('manageUsers')">{{resourceService.frmelmnts.lbl.help}}</a>
 
                 <!--QR Button-->
                 <!-- <button class="ui button qr-code-btn d-flex flex-ai-center computer only mr-0" appTelemetryInteract
