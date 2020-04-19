@@ -56,6 +56,13 @@ export class HelperService {
     return this.actionService.post(option);
   }
 
+  retireContent(contentId): Observable<ServerResponse>  {
+    const option = {
+      url: this.configService.urlConFig.URLS.DOCKCONTENT.RETIRE + '/' + contentId
+    };
+    return this.actionService.delete(option);
+  }
+
   publishContent(contentId, userId) {
     const requestBody = {
       request: {

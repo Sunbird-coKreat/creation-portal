@@ -16,6 +16,7 @@ import { ProgramStageService } from '../../../program/services';
 import { ProgramComponentsService } from '../../../program/services/program-components/program-components.service';
 import { InitialState } from '../../interfaces';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
+import { HelperService } from '../../services/helper.service';
 
 interface IDynamicInput {
   contentUploadComponentInput?: IContentUploadComponentInput;
@@ -85,7 +86,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     public programStageService: ProgramStageService, public programComponentsService: ProgramComponentsService,
     public activeRoute: ActivatedRoute, private ref: ChangeDetectorRef,
     private collectionHierarchyService: CollectionHierarchyService, private resourceService: ResourceService,
-    private navigationHelperService: NavigationHelperService) {
+    private navigationHelperService: NavigationHelperService, private helperService: HelperService) {
   }
 
   ngOnInit() {
@@ -646,8 +647,24 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
        .subscribe(() => {
          this.showConfirmationModal = false;
          this.updateAccordianView(this.unitIdentifier);
-        this.toasterService.success(this.resourceService.messages.smsg.m0064);
+         this.resetContentId();
+         this.toasterService.success(this.resourceService.messages.smsg.m0064);
        });
+  }
+  deleteContent() {
+    this.helperService.retireContent(this.contentId)
+      .subscribe(
+        (response) => {
+          if (response && response.result && response.result.node_id) {
+            this.removeResourceFromHierarchy();
+          } else {
+            this.toasterService.error(this.resourceService.messages.fmsg.m00103);
+          }
+        },
+        (error) => {
+          this.toasterService.error(this.resourceService.messages.fmsg.m00103);
+        }
+      );
   }
 
   handleBack() {
