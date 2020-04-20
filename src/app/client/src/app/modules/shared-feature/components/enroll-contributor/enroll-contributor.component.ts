@@ -133,8 +133,11 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
           }), catchError(err => throwError(err)))
           .subscribe((res3) => {
             this.contributeForm.reset();
-            this.tosterService.success(this.resourceService.messages.smsg.contributorRegister.m0001);
             this.modal.deny();
+            this.userService.openSaberRegistrySearch().then((userRegData) => {
+              this.userService.userProfile.userRegData = userRegData;
+              this.tosterService.success(this.resourceService.messages.smsg.contributorRegister.m0001);
+            });
           }, (err) => {
             this.tosterService.error(this.resourceService.messages.emsg.contributorRegister.m0002);
           });

@@ -336,7 +336,7 @@ export class UserService {
       if (res && res.result.Org.length) {
         this._userProfile.userRegData['Org'] = res.result.Org[0];
         }
-        return resolve('done');
+        return resolve(this._userProfile.userRegData);
      }, (err) => {
       return reject('fail');
      });
