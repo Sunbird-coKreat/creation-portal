@@ -12879,6 +12879,15 @@ h3, label, ul li, a, p, button {
     margin-top: 40px
 }
 
+#vidyaDaanVideoModal .modal-header{
+    padding-bottom: 0;
+    border: 0;
+}
+
+#vidyaDaanVideoModal video {
+    width: 100%;
+}
+
 @media only screen and (max-width:1250px)and (min-width:1024px) {
     .intro-section h3 {
         font-size: 20px;
