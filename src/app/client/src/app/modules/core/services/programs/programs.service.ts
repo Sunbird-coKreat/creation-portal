@@ -184,17 +184,24 @@ export class ProgramsService extends DataService implements CanActivate {
   }
 
   /**
+   * Function to get org details from orgId
+   */
+  getOrgDetails(orgId) {
+    const orgSearch = {
+      entityType: ['Org'],
+      filters: {
+        osid: {eq : orgId}
+      }
+    };
+    return this.searchRegistry(orgSearch);
+  }
+
+  /**
    * logic which decides if user is with join link shoule we add him to the organisation or not
    */
   addUsertoContributorOrg(orgId) {
       // Check if organisation exists
-      const orgSearch = {
-        entityType: ['Org'],
-        filters: {
-          osid: {eq : orgId}
-        }
-      };
-      this.searchRegistry(orgSearch).subscribe(
+      this.getOrgDetails(orgId).subscribe(
         (response) => {
           if (_.isEmpty(response.result.Org)) {
             this.toasterService.warning(this.resourceService.messages.emsg.contributorjoin.m0001);

@@ -175,7 +175,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.sortColumn = column;
   }
 
-
   getNominationList() {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
@@ -195,18 +194,27 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           const isOrg = !_.isEmpty(res.organisation_id);
           let name = '';
           if (isOrg) {
-            name = res.userData.name || `${res.userData.firstName} ${res.userData.lastName}`;
+            this.programsService.getOrgDetails(res.organisation_id).subscribe(
+              (response) => {
+                const org = _.get(response, 'result.Org[0]');
+                name = (!_.isEmpty(org) && !_.isEmpty(org.name)) ? org.name : '-';
+                this.nominations.push({
+                  'name': name.trim(),
+                  'type': 'Organisation',
+                  'nominationData': res
+                });
+              });
           } else {
             name = res.userData.firstName;
             if (!_.isEmpty(res.userData.lastName)) {
               name  += ' ' + res.userData.lastName;
             }
+            this.nominations.push({
+              'name': name.trim(),
+              'type': 'Individual',
+              'nominationData': res
+            });
           }
-          this.nominations.push({
-            'name': name.trim(),
-            'type': isOrg ? 'Organisation' : 'Individual',
-            'nominationData': res
-          });
         });
       }
       this.nominationsCount = this.nominations.length;
