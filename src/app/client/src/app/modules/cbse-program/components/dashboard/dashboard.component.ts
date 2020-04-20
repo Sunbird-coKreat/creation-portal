@@ -55,7 +55,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.sessionContext.programId, 'Program');
     // tslint:disable-next-line:max-line-length
-    this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID + '.programs');
+    this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
   }
 
   ngAfterViewInit() {
@@ -70,7 +70,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           pdata: {
             id: this.userService.appId,
             ver: version,
-            pid: `${this.configService.appConfig.TELEMETRY.PID}.programs`
+            pid: `${this.configService.appConfig.TELEMETRY.PID}`
           }
         },
         edata: {
