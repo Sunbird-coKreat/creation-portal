@@ -1,5 +1,5 @@
 <div *ngIf="!showLoader && !showError && currentStage === 'collectionComponent'">
-  <div class="sb-bg-color-primary-0 practical-header py-20">
+  <div class="sb-bg-color-primary-0 practical-header py-20" [appTelemetryImpression]="telemetryImpression">
     <div class=" ui container">
     <div class="d-flex flex-jc-space-between practical-header__content py-10">
       <div class="practical-header__title flex-basis-1 w-20">
@@ -84,7 +84,7 @@
           </div>
         </div>
       </ng-container>
-    </div>   
+    </div>
     <hr class="my-10">
       <div *ngIf="canNominate()" class="d-inline-block br-2 pr-20">
         <button type="button" (click)="showContentTypeModal= true; handleCancel(false)" class="sb-btn sb-btn-normal sb-btn-outline-primary" appTelemetryInteract
@@ -103,7 +103,7 @@
                  [telemetryInteractCdata]="telemetryInteractCdata"
                  [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.nominate}}</button>
             </div>
-          </div>  
+          </div>
         </div>
       <div class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-20 va-top pl-20">{{resourceService.frmelmnts.lbl.nominationMessage}}</div>
   </div>
