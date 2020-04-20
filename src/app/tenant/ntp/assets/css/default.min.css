@@ -12875,7 +12875,7 @@ h3, label, ul li, a, p, button {
 .more {display: none;}
 
 .intro-section .intro-content img {
-    width: 352px;
+    width: 430px;
     margin-top: 40px
 }
 
@@ -12883,6 +12883,10 @@ h3, label, ul li, a, p, button {
     .intro-section h3 {
         font-size: 20px;
         margin-top: 15px
+    }
+
+    .intro-section .intro-content img {
+        width: 350px;
     }
 }
 
@@ -12927,14 +12931,13 @@ h3, label, ul li, a, p, button {
     }
 .worldCloud{
     width: 253px;
-    height: 177px;
     text-align: right;
     clear: both;
     margin: 0 0 0 auto;
 }
 
 .intro-section .intro-content img {
-    width: 253px;
+    width: 232px;
     height: auto;
     margin-top: 0;
 }
