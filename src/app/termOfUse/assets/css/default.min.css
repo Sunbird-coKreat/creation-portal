@@ -12576,7 +12576,6 @@ h3, label, ul li, a, p, button {
 .eResources .about-section .readMore:hover,
 .eResources .about-section .readMore:focus,
 .eResources .about-section .readMore:active {
-    height: 32px;
     width: 100%;
     color: #0076FE;
     font-size: 18px;
@@ -12751,7 +12750,7 @@ h3, label, ul li, a, p, button {
 .latestPrograms .program-cards .bottomSection label {
     color: #FFFFFF;
     font-size: 20px;
-    font-weight: bold;
+    font-weight: normal;
     letter-spacing: 0;
     line-height: 24px;
 }
@@ -12761,9 +12760,21 @@ h3, label, ul li, a, p, button {
     font-size: 18px;
     font-weight: bold;
     letter-spacing: 0;
-    line-height: 32px;
+    line-height: 24px;
     text-align: center;
-    margin: 0 0 24px;
+    margin: 0 0 8px;
+    display: block;
+    width: 100%;
+}
+
+.latestPrograms .sub-P {
+    color: #007DC6;
+    font-size: 16px;
+    font-weight: normal;
+    letter-spacing: 0;
+    line-height: 24px;
+    text-align: center;
+    margin: 0 0 16px;
     display: block;
     width: 100%;
 }
@@ -12970,20 +12981,17 @@ border-radius: 1px;
     .eResources .about-section .description {
         font-size: 14px;
         letter-spacing: 0;
-        line-height: 18px;
+        line-height: 20px;
         text-align: center;
         margin-bottom: 26px;
     }
 
     .eResources .about-section .readMore {
-        height: 24px;
-        font-size: 16px;
+        font-size: 16px !important;
         letter-spacing: 0;
-        line-height: 24px;
+        line-height: 24px !important;
         text-align: center;
-
     }
-
 
     .latestPrograms .program-cards {
         margin-bottom: 16px;
@@ -13021,8 +13029,13 @@ border-radius: 1px;
         letter-spacing: 0;
         line-height: 22px;
         text-align: center;
-        margin-bottom: 16px;
+        margin-bottom: 8px;
         margin-top: 14px;
+    }
+
+    .latestPrograms .sub-P{
+        font-size: 14px;
+        line-height: 22px;
     }
 
     .latestPrograms .program-cards .topSection label {
@@ -13034,7 +13047,7 @@ border-radius: 1px;
     }
 
     .latestPrograms .program-cards .topSection p {
-        color: #0076FE;
+        color: #666666;
         font-size: 14px;
         font-style: italic;
         letter-spacing: 0;
@@ -13049,6 +13062,10 @@ border-radius: 1px;
         font-weight: bold;
         letter-spacing: 0;
         line-height: 20px;
+    }
+
+    .latestPrograms .program-cards .bottomSection label {
+        font-weight: normal;
     }
 
     .latestPrograms .program-cards .topSection,
@@ -13086,7 +13103,7 @@ border-radius: 1px;
 
     .guideLines .box a {
         display: block;
-        margin-top: 16px;
+        margin-top: 0px;
         margin-bottom: 0;
     }
 
