@@ -12459,7 +12459,7 @@ body {
 
 .logo {
     height: 93px;
-    width: 164px;
+    /* width: 164px; */
     border-radius: 0 0 4px 4px;
     background-color: #FFF;
     box-shadow: 0 20px 40px -7px #D8D8D8;
@@ -12470,7 +12470,7 @@ body {
 
 .logo img {
     height: 56px;
-    width: 98px;
+    /* width: 98px; */
 }
 
 .eResources .about-section .aboutVidyadaan,
