@@ -519,3 +519,13 @@ $btnSquaresizes: "xs" 1.5rem 1.5rem 1rem null, "normal" 4rem 4rem 0.75rem null,
 *[lang="hi"] .sb-btn-normal {
   line-height: 1.5;
 }
+.sb-btn-orange-link{
+    background-color: var(--tertiary-400);
+    border-color: var(--tertiary-400);
+    border: none !important;
+    border-radius: 0 !important;
+    &:hover{
+      background-color: var(--tertiary-400) !important;
+      border-color: var(--tertiary-400) !important; 
+    }
+}
