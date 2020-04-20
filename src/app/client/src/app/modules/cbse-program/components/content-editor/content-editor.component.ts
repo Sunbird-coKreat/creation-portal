@@ -91,7 +91,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.contentEditorComponentInput.programContext.program_id, 'Program');
     // tslint:disable-next-line:max-line-length
-    this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID + '.programs');
+    this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.contentEditorComponentInput.contentId, 'Content', '1.0', { l1: this.sessionContext.collection, l2: this.contentEditorComponentInput.unitIdentifier});
     if (
@@ -135,7 +135,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
         pdata: {
           id: this.userService.appId,
           ver: this.portalVersion,
-          pid: `${this.configService.appConfig.TELEMETRY.PID}.programs`
+          pid: `${this.configService.appConfig.TELEMETRY.PID}`
         }
       },
       edata: {
@@ -242,7 +242,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       pdata: {
         id: this.userService.appId,
         ver: this.portalVersion,
-        pid: `${this.configService.appConfig.TELEMETRY.PID}.programs`
+        pid: `${this.configService.appConfig.TELEMETRY.PID}`
       },
       contextRollUp: this.telemetryService.getRollUpData(
         this.userProfile.organisationIds

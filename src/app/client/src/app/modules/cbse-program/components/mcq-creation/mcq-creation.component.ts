@@ -149,7 +149,7 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
           pdata: {
             id: this.userService.appId,
             ver: version,
-            pid: `${this.configService.appConfig.TELEMETRY.PID}.programs`
+            pid: `${this.configService.appConfig.TELEMETRY.PID}`
           }
         },
         edata: {

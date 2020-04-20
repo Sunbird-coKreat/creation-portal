@@ -99,7 +99,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.contentUploadComponentInput.programContext.program_id, 'Program');
     // tslint:disable-next-line:max-line-length
-    this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID + '.programs');
+    this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.contentUploadComponentInput.contentId, 'Content', '1.0', { l1: this.sessionContext.collection, l2: this.unitIdentifier});
   }
@@ -119,7 +119,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
           pdata: {
             id: this.userService.appId,
             ver: version,
-            pid: `${this.configService.appConfig.TELEMETRY.PID}.programs`
+            pid: `${this.configService.appConfig.TELEMETRY.PID}`
           }
         },
         edata: {
@@ -355,7 +355,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
         this.resourceStatusText = this.resourceStatus;
       }
       this.playerConfig = this.playerService.getConfig(contentDetails);
-      this.playerConfig.context.pdata.pid = 'cbse-program-portal';
+      this.playerConfig.context.pdata.pid = `${this.configService.appConfig.TELEMETRY.PID}`;
       this.showPreview = this.contentMetaData.artifactUrl ? true : false;
       this.showUploadModal = this.contentMetaData.artifactUrl ? false : true;
       if (this.showUploadModal) {
