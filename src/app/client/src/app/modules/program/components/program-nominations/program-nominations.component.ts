@@ -1,6 +1,6 @@
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService } from '@sunbird/shared';
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
-import { ProgramsService, PublicDataService, UserService, FrameworkService } from '@sunbird/core';
+import { ProgramsService, PublicDataService, UserService, FrameworkService, RegistryService } from '@sunbird/core';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ISessionContext, InitialState } from '../../../cbse-program/interfaces';
@@ -68,7 +68,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
     private publicDataService: PublicDataService, private activatedRoute: ActivatedRoute, private router: Router,
     private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService,
-    public programStageService: ProgramStageService) {
+    public programStageService: ProgramStageService, public registryService: RegistryService) {
     this.programId = this.activatedRoute.snapshot.params.programId;
   }
 
@@ -194,7 +194,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           const isOrg = !_.isEmpty(res.organisation_id);
           let name = '';
           if (isOrg) {
-            this.programsService.getOrgDetails(res.organisation_id).subscribe(
+            this.registryService.getOrgDetails(res.organisation_id).subscribe(
               (response) => {
                 const org = _.get(response, 'result.Org[0]');
                 name = (!_.isEmpty(org) && !_.isEmpty(org.name)) ? org.name : '-';

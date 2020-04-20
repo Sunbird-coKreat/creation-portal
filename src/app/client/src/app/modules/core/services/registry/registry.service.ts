@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { DataService } from '../data/data.service';
 import { HttpClient } from '@angular/common/http';
 import { ContentService } from './../content/content.service';
-import { ConfigService, ServerResponse, ToasterService, ResourceService } from '@sunbird/shared';
-import { Observable, of} from 'rxjs';
-import { switchMap, tap} from 'rxjs/operators';
+import { ConfigService, ServerResponse } from '@sunbird/shared';
+import { Observable, of, throwError} from 'rxjs';
+import { switchMap, mergeMap, tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -61,7 +61,28 @@ export class RegistryService extends DataService {
     };
     return this.contentService.post(req);
   }
+  public getOrgDetails(orgId): Observable<ServerResponse>  {
+    const option = {
+      url: 'reg/search',
+      data: {
+        id : 'open-saber.registry.search',
+        request: {
+          entityType: ['Org'],
+          filters: {
+            osid: { eq : orgId }
+          }
+        }
+      }
+    };
 
+    return this.contentService.post(option).pipe(
+      mergeMap((data: ServerResponse) => {
+        if (data.params.status !== 'SUCCESSFUL') {
+          return throwError(data);
+        }
+        return of(data);
+      }));
+  }
   public openSaberRegistrySearch(userId) {
     const userProfile = {};
     userProfile['error'] = true;
