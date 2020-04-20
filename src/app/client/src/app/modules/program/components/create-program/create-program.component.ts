@@ -19,6 +19,7 @@ import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEvent
 import { DeviceDetectorService } from 'ngx-device-detector';
 import * as moment from 'moment';
 import * as alphaNumSort from 'alphanum-sort';
+import { ProgramTelemetryService } from '../../services/program-telemetry/program-telemetry.service';
 
 @Component({
   selector: 'app-create-program',
@@ -118,7 +119,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     private httpClient: HttpClient,
     private navigationHelperService: NavigationHelperService,
     private configService: ConfigService,
-    private deviceDetectorService: DeviceDetectorService) {
+    private deviceDetectorService: DeviceDetectorService,
+    public programTelemetryService: ProgramTelemetryService) {
     this.sbFormBuilder = formBuilder;
   }
 
@@ -784,15 +786,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       (res) => { this.router.navigate(['/sourcing']); this.generateTelemetryEvent('END'); },
       (err) => this.saveProgramError(err)
     );
-  }
-
-  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
-    return _.omitBy({
-      id,
-      type,
-      pageid,
-      extra
-    }, _.isUndefined);
   }
 
   generateTelemetryEvent(event) {

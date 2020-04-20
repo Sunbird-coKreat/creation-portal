@@ -180,7 +180,11 @@
 									</label>
 									<button
 										class="sb-btn sb-btn-primary sb-btn-normal"
-										(click)="initiateDocumentUploadModal()">
+										(click)="initiateDocumentUploadModal()" appTelemetryInteract
+										[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('upload-guideline-doc', 'click', 'create-program')"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">
 										<i class="upload icon"></i>{{ resource.frmelmnts.btn.upload}}
 									</button>
 									<span *ngIf="uploadedDocument" class="sb-url">
@@ -281,7 +285,7 @@
 									</button>
 									<button class="sb-btn sb-btn-normal sb-btn-primary ml-8" (click)="showTexbooklist()"
 										appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('show-textbook-list', 'click', 'create-program')"
+										[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('show-textbook-list', 'click', 'create-program')"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">
@@ -361,7 +365,11 @@
 													<input type="checkbox" id="checkitem_{{data.identifier}}"
 														(change)="onCollectionCheck(data, $event.target.checked)"
 														[checked]="collectionListForm.value.pcollections.indexOf(data.identifier) != -1"
-														name="checkitem">
+														name="checkitem" appTelemetryInteract
+														[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('textbook-selection-checkbox', 'click', 'create-program', {values: [data.identifier]})"
+														[telemetryInteractObject]="telemetryInteractObject"
+														[telemetryInteractCdata]="telemetryInteractCdata"
+														[telemetryInteractPdata]="telemetryInteractPdata">
 													<label for="checkitem_{{data.identifier}}"></label>
 												</div>
 											</td>
@@ -418,7 +426,7 @@
 											</div>
 											<div class="two wide column text-right cursor-pointer"
 												(click)="onCollectionCheck(tempCollection, false)" appTelemetryInteract
-												[telemetryInteractEdata]="getTelemetryInteractEdata('collection-check', 'click', 'create-program')"
+												[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('collection-check', 'click', 'create-program')"
 												[telemetryInteractObject]="telemetryInteractObject"
 												[telemetryInteractCdata]="telemetryInteractCdata"
 												[telemetryInteractPdata]="telemetryInteractPdata">
@@ -439,17 +447,17 @@
 		<div class="text-align-right" [appTelemetryStart]="telemetryStart" [appTelemetryEnd]="telemetryEnd">
 			<button *ngIf="!showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary" (click)="saveProgram()"
 				appTelemetryInteract
-				[telemetryInteractEdata]="getTelemetryInteractEdata('next', 'click', 'create-program')"
+				[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('next', 'click', 'create-program')"
 				[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
 				[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.next}}</button>
 			<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-default mr-10"
 				(click)="navigateTo(1)" appTelemetryInteract
-				[telemetryInteractEdata]="getTelemetryInteractEdata('previous', 'click', 'create-program')"
+				[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('previous', 'click', 'create-program')"
 				[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
 				[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.previous}}</button>
 			<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary"
 				(click)="updateProgramCollection()" appTelemetryInteract
-				[telemetryInteractEdata]="getTelemetryInteractEdata('create-program', 'click', 'create-program')"
+				[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('create-program', 'click', 'create-program')"
 				[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
 				[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.createProgram}}</button>
 		</div>
@@ -526,6 +534,9 @@
 	</div>
 	<div class="sb-modal-actions">
 		<button (click)="addImageInEditor();" class="sb-btn sb-btn-primary sb-btn-normal"
-			[ngClass]="{'sb-btn-primary': showAddButton, 'sb-btn-disabled': !showAddButton}">{{ resource.frmelmnts.btn.add }}</button>
+			[ngClass]="{'sb-btn-primary': showAddButton, 'sb-btn-disabled': !showAddButton}" appTelemetryInteract
+			[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add-guidelines', 'click', 'create-program')"
+			[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+			[telemetryInteractPdata]="telemetryInteractPdata">{{ resource.frmelmnts.btn.add }}</button>
 	</div>
 </sui-modal>
