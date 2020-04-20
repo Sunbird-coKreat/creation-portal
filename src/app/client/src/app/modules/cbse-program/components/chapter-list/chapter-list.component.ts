@@ -146,7 +146,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           pdata: {
             id: this.userService.appId,
             ver: version,
-            pid: `${this.configService.appConfig.TELEMETRY.PID}.programs`
+            pid: `${this.configService.appConfig.TELEMETRY.PID}`
           }
         },
         edata: {

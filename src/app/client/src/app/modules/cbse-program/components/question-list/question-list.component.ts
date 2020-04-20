@@ -114,7 +114,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           pdata: {
             id: this.userService.appId,
             ver: version,
-            pid: `${this.configService.appConfig.TELEMETRY.PID}.programs`
+            pid: `${this.configService.appConfig.TELEMETRY.PID}`
           }
         },
         edata: {
@@ -133,7 +133,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     // tslint:disable-next-line:max-line-length
     this.telemetryEventsInput.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata('Program', this.sessionContext.programId);
     // tslint:disable-next-line:max-line-length
-    this.telemetryEventsInput.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID + '.programs');
+    this.telemetryEventsInput.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
   }
 
   getContentMetadata(contentId: string) {

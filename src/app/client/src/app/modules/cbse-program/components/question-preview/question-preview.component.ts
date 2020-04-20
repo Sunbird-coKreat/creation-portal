@@ -2,6 +2,7 @@ import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { CbseProgramService } from '../../services';
 import * as _ from 'lodash-es';
 import {UserService} from '@sunbird/core';
+import { ConfigService } from '@sunbird/shared';
 import {PlayerConfig} from './player.config';
 @Component({
   selector: 'app-question-preview',
@@ -13,7 +14,8 @@ export class QuestionPreviewComponent implements OnInit, OnChanges {
   public playerConfig: any;
   public theme: any;
   previewInitialized: boolean;
-  constructor(private toEcml: CbseProgramService, private userService: UserService ) {}
+  constructor(private toEcml: CbseProgramService, private userService: UserService,
+    private configService: ConfigService ) {}
   ngOnInit() {
     this.previewInitialized = true;
     if (this.sessionContext && this.sessionContext.contentMetadata) {
@@ -78,7 +80,7 @@ export class QuestionPreviewComponent implements OnInit, OnChanges {
       'pdata': {
         'id': this.userService.appId,
         'ver': version,
-        'pid': 'cbse-program-portal'
+        'pid': `${this.configService.appConfig.TELEMETRY.PID}`
       },
       'contentId': this.sessionContext.contentMetadata.identifier,
       'sid': this.userService.sessionId,
