@@ -62,7 +62,7 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.telemetryImpression = {
         context: {
-          env: 'creation-portal',
+          env: 'contribute-program',
           cdata: [],
           pdata: {
             id: this.userService.appId,

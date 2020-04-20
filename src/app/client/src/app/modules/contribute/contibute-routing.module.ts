@@ -21,50 +21,50 @@ const routes: Routes = [
   path: '', component: ListAllProgramsComponent, canActivate: [ProgramsService],
   data: {
     telemetry: {
-      env: 'creation-portal', pageid: 'list-all-programs', type: 'view', subtype: 'paginate'
+      env: 'contribute-program', pageid: 'list-all-programs', type: 'view', subtype: 'paginate'
     }
   }
 },
 {
   path: 'myenrollprograms', component: ListAllMyProgramsComponent, pathMatch: 'full',
   data: {
-    telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'list-my-programs' }
+    telemetry: { env: 'contribute-program', type: 'view', subtype: 'paginate', pageid: 'list-my-programs' }
   },
 },
 {
   path: 'program/:programId', component: ProgramComponent,
   data: {
-    telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'program' }
+    telemetry: { env: 'contribute-program', type: 'view', subtype: 'paginate', pageid: 'program' }
   },
 },
 {
   path: 'nominatedtextbooks/:programId', component: ListNominatedTextbooksComponent,
   data: {
-    telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'list-nominated-textbooks' }
+    telemetry: { env: 'contribute-program', type: 'view', subtype: 'paginate', pageid: 'list-nominated-textbooks' }
   },
 },
 {
   path: 'orglist', component: OrgUserListComponent, pathMatch: 'full',
   data: {
-    telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'list-org-users' }
+    telemetry: { env: 'contribute-program', type: 'view', subtype: 'paginate', pageid: 'list-org-users' }
   },
 },
 {
   path: 'contriadmin', component: OrgContriAdminComponent, pathMatch: 'full',
   data: {
-    telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'org-admin' }
+    telemetry: { env: 'contribute-program', type: 'view', subtype: 'paginate', pageid: 'org-admin' }
   },
 },
 {
   path: 'dashboard', component: ContriDashboardComponent, pathMatch: 'full',
   data: {
-    telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'dashboard' }
+    telemetry: { env: 'contribute-program', type: 'view', subtype: 'paginate', pageid: 'dashboard' }
   },
 },
 {
   path: 'help', component: HelpPageComponent, pathMatch: 'full',
   data: {
-    telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'help-page' }
+    telemetry: { env: 'contribute-program', type: 'view', subtype: 'paginate', pageid: 'help-page' }
   },
 }
 ];
