@@ -199,6 +199,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
             this.tempSortCollectionList = this.collectionList;
             this.selectedCollectionIds = _.uniq(this.selectedCollectionIds);
             this.toggleNominationButton();
+            this.handlePreviousSelectedCollection();
         });
 
       }
@@ -270,6 +271,17 @@ export class CollectionComponent implements OnInit, OnDestroy {
       this.getNominationStatus();
       this.getCollectionCard();
     }
+   }
+
+   handlePreviousSelectedCollection() {
+      _.forEach(this.collectionList, (data) => {
+        if (data.identifier === this.sessionContext.collection) {
+          data['isSelected'] = true;
+          if (!_.includes(this.selectedCollectionIds, this.sessionContext.collection)) {
+          this.selectedCollectionIds.push(this.sessionContext.collection);
+          }
+        }
+      });
    }
 
   searchCollection() {
