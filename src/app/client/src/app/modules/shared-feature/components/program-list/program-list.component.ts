@@ -227,6 +227,7 @@ export class ProgramListComponent implements OnInit {
             };
             this.getContributionProgramList(req);
           }
+          this.showLoader = false;
         }, (error) => {
           console.log(error);
           this.toasterService.error(this.resourceService.messages.emsg.projects.m0002);

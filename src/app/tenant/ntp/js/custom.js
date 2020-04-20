@@ -40,4 +40,17 @@ function getEnvironment(a){
   }
 }
 
+  var $videoSrc;  
+  $('.video-btn').click(function() {
+      $videoSrc = $(this).data( "src" );
+      $('#vidyaDaanVideoModal').modal("show");
+  });
+  
+  $('#vidyaDaanVideoModal').on('shown.bs.modal', function (e) {
+    $("#vidyaDaanVideoModal video").attr('src',$videoSrc + "?autoplay=1&amp;modestbranding=1&amp;showinfo=0" ); 
+  })
+    
+  $('#vidyaDaanVideoModal').on('hide.bs.modal', function (e) {
+      $("#vidyaDaanVideoModal video").attr('src',''); 
+  }) 
 });
