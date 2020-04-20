@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import { UserService } from '@sunbird/core';
 import { ConfigService } from '@sunbird/shared';
 import { ProgramTelemetryService } from '../../../program/services';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-recursive-tree',
@@ -24,7 +25,7 @@ export class RecursiveTreeComponent implements OnInit {
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   constructor(public userService: UserService, public configService: ConfigService,
-    public programTelemetryService: ProgramTelemetryService) { }
+    public programTelemetryService: ProgramTelemetryService, private router: Router) { }
 
   ngOnInit() {
     const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});

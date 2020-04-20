@@ -46,7 +46,6 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.instance = _.upperCase(this.resourceService.instance || 'DIKSHA');
     this.initializeFormFields();
     this.enrolledDate = new Date();
     this.enrolledDate = this.datePipe.transform(this.enrolledDate, 'yyyy-MM-dd');
@@ -142,8 +141,7 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
             this.tosterService.error(this.resourceService.messages.emsg.contributorRegister.m0002);
           });
   }
-
-  chnageEnrollStatus(status) {
+  changeEnrollStatus(status) {
     this.enrollAsOrg = status;
     this.contributeForm.controls['description'].setValidators(null);
     this.contributeForm.controls['name'].setValidators(null);
@@ -182,6 +180,48 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
       } else {
         this.saveUser();
       }
+    }
+  }
+
+  validateFields() {
+    if (this.enrollAsOrg === true) {
+      this.contributeForm.controls['description'].setValidators([Validators.required]);
+      this.contributeForm.controls['name'].setValidators([Validators.required]);
+    } else {
+      this.contributeForm.controls['description'].setValidators(null);
+      this.contributeForm.controls['name'].setValidators(null);
+    }
+
+    this.contributeForm.controls['name'].updateValueAndValidity();
+    this.contributeForm.controls['description'].updateValueAndValidity();
+    if (this.contributeForm.valid) {
+      if (this.enrollAsOrg === true) {
+        const request = {
+          entityType: ['Org'],
+          filters: {
+            code: {
+              eq: this.contributeForm.get('name').value.toUpperCase()
+            }
+          }
+        };
+        this.programsService.searchRegistry(request).subscribe(
+          (res) => {
+            if (_.isEmpty(res.result.Org) || res.result.Org.length === 0) {
+              this.saveUser();
+            } else {
+              this.tosterService.error(this.resourceService.messages.emsg.contributorRegister.m0001);
+            }
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+      } else {
+        this.saveUser();
+      }
+    } else {
+      this.formIsInvalid = true;
+      this.validateAllFormFields(this.contributeForm);
     }
   }
 

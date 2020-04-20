@@ -75,6 +75,7 @@ export class MainHeaderComponent implements OnInit {
   showOfflineHelpCentre = false;
   contributeTabActive: boolean;
   activeTab = {};
+  showCreateProgram = false;
 
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
@@ -104,6 +105,7 @@ export class MainHeaderComponent implements OnInit {
           this.userProfile = user.userProfile;
           this.getLanguage(this.userService.channel);
           this.isCustodianOrgUser();
+          this.showCreateProgram = this.canCreateProgram();
         }
       });
     } else {
@@ -135,6 +137,7 @@ export class MainHeaderComponent implements OnInit {
         }
       });
     }
+
     // maintain active tab state
     if (this.router.isActive('/contribute', true)) {
       this.handleActiveTabState('allPrograms');
@@ -145,9 +148,15 @@ export class MainHeaderComponent implements OnInit {
     } else {
       this.handleActiveTabState('myPrograms');
     }
+
     this.telemetryInteractCdata = [];
-  this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
-  this.telemetryInteractObject = {};
+    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
+    this.telemetryInteractObject = {};
+  }
+
+  canCreateProgram() {
+    return _.includes(_.get(this.userService, 'userProfile.userRoles'), 'ORG_ADMIN') &&
+    this.router.url.includes('/sourcing') && !this.router.url.includes('sourcing/create-program');
   }
 
   private isCustodianOrgUser() {
@@ -332,6 +341,17 @@ export class MainHeaderComponent implements OnInit {
   }
   showSideBar() {
     jQuery('.ui.sidebar').sidebar('setting', 'transition', 'overlay').sidebar('toggle');
+  }
+
+  onRouterChange() {
+     // maintain active tab state
+     if (this.location.path() === '/contribute') {
+      this.handleActiveTabState('allPrograms');
+      } else if (this.location.path() === '/contribute/orglist') {
+        this.handleActiveTabState('manageUsers');
+      } else if (this.location.path() === '/contribute/myenrollprograms' || this.location.path() === '/sourcing') {
+       this.handleActiveTabState('myPrograms');
+     }
   }
 
   handleActiveTabState(tab) {

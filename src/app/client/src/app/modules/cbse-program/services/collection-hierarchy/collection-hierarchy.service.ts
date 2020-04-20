@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { map, catchError } from 'rxjs/operators';
 import { throwError, Observable } from 'rxjs';
 import { ActionService, UserService } from '@sunbird/core';
-import { ConfigService, ToasterService } from '@sunbird/shared';
+import { HttpClient } from '@angular/common/http';
+import { HttpOptions, ConfigService, ToasterService } from '@sunbird/shared';
 import { TelemetryService } from '@sunbird/telemetry';
 import { forkJoin } from 'rxjs';
 import * as _ from 'lodash-es';
@@ -16,7 +17,7 @@ export class CollectionHierarchyService {
 
   constructor(private actionService: ActionService, private configService: ConfigService,
     public toasterService: ToasterService, public userService: UserService,
-    public telemetryService: TelemetryService) {
+    public telemetryService: TelemetryService, private httpClient: HttpClient) {
       this.currentUserID = this.userService.userProfile.userId;
      }
 
@@ -69,7 +70,7 @@ export class CollectionHierarchyService {
         }
       }
     };
-    return this.actionService.patch(req).pipe(map((data) => {
+    return this.actionService.patch(req).pipe(map((data: any) => {
       return data.result;
     }), catchError(err => {
         const errInfo = { errorMsg: 'Adding Resource To Selected-Unit Failed, Please Try Again' };
@@ -88,11 +89,33 @@ export class CollectionHierarchyService {
     return forkJoin(hierarchyRequest);
   }
 
-  getContentCounts(contents, orgId) {
+  getCollectionWithProgramId(programId) {
+    const httpOptions: HttpOptions = {
+      headers: {
+        'content-type': 'application/json',
+      }
+    };
+    const option = {
+      url: 'content/composite/v1/search',
+      data: {
+        request: {
+          filters: {
+            programId: programId,
+            objectType: 'content',
+            status: ['Draft'],
+            contentType: 'Textbook'
+          }
+        }
+      }
+    };
+    return this.httpClient.post<any>(option.url, option.data, httpOptions);
+  }
+
+  getContentCounts(contents, orgId, collections?) {
     const totalOrgContents = _.filter(contents, content => {
       return content.organisationId === orgId && content.sampleContent !== true;
     });
-    console.log(totalOrgContents);
+    let sourcingOrgStatus = {};
     const orgLevelDataWithoutReject = _.groupBy(totalOrgContents, 'status');
     const orgLevelDataWithReject = _.cloneDeep(orgLevelDataWithoutReject);
 
@@ -104,14 +127,56 @@ export class CollectionHierarchyService {
 
     const groupedByCollectionId = _.groupBy(totalOrgContents, 'collectionId');
     const collectionsByStatus = this.groupStatusForCollections(groupedByCollectionId);
+    if (!_.isUndefined(collections)) {
+      sourcingOrgStatus = this.getSourcingOrgStatus(collections, orgLevelDataWithReject, orgId);
+    }
     return {
       total: totalOrgContents && totalOrgContents.length,
-      review: _.has(orgLevelDataWithReject, 'Review') ? orgLevelDataWithReject.Review.length : 0,
-      draft: _.has(orgLevelDataWithReject, 'Draft') ? orgLevelDataWithReject.Draft.length : 0,
-      rejected: _.has(orgLevelDataWithReject, 'Reject') ? orgLevelDataWithReject.Reject.length : 0,
-      live: _.has(orgLevelDataWithReject, 'Live') ? orgLevelDataWithReject.Live.length : 0,
-      individualStatus: collectionsByStatus
+      review: _.has(orgLevelDataWithReject, 'Review') ? _.toString(orgLevelDataWithReject.Review.length) : '0',
+      draft: _.has(orgLevelDataWithReject, 'Draft') ? _.toString(orgLevelDataWithReject.Draft.length) : '0',
+      rejected: _.has(orgLevelDataWithReject, 'Reject') ? _.toString(orgLevelDataWithReject.Reject.length) : '0',
+      live: _.has(orgLevelDataWithReject, 'Live') ? _.toString(orgLevelDataWithReject.Live.length) : '0',
+      individualStatus: collectionsByStatus,
+      ...(!_.isUndefined(collections) && {sourcingOrgStatus : sourcingOrgStatus})
     };
+  }
+
+  getSourcingOrgStatus(collections, orgContents, orgId) {
+    const liveContents = _.has(orgContents, 'Live') ? orgContents.Live : [];
+    let acceptedOrgContents, rejectedOrgContents , pendingOrgContents = [];
+    if (liveContents.length) {
+      const liveContentIds = _.map(liveContents, 'identifier');
+      const allAcceptedContentIds = _.flatten(_.map(collections, 'acceptedContents'));
+      const allRejectedContentIds = _.flatten(_.map(collections, 'rejectedContents'));
+
+      acceptedOrgContents = _.intersection(liveContentIds, allAcceptedContentIds);
+      rejectedOrgContents = _.intersection(liveContentIds, allRejectedContentIds);
+      pendingOrgContents = _.difference(liveContentIds, _.concat(acceptedOrgContents, rejectedOrgContents));
+      }
+      return  {
+        accepted: acceptedOrgContents ? _.toString(acceptedOrgContents.length) : '0', // converting to string to enable table sorting
+        rejected: rejectedOrgContents ? _.toString(rejectedOrgContents.length) : '0',
+        pending: pendingOrgContents ? _.toString(pendingOrgContents.length) : '0'
+      };
+  }
+
+  getContentCountsForIndividual(contents, userId, collections?) {
+    const totalUserContents = _.filter(contents, content => {
+      return content.createdBy === userId && content.sampleContent !== true;
+    });
+    let sourcingOrgStatus = {};
+    const contentGroupByStatus = _.groupBy(totalUserContents, 'status');
+    if (!_.isUndefined(collections)) {
+      sourcingOrgStatus = this.getSourcingOrgStatus(collections, contentGroupByStatus, userId);
+    }
+    return  {
+      total: totalUserContents && totalUserContents.length,
+      draft: _.has(contentGroupByStatus, 'Draft') ? _.toString(contentGroupByStatus.Draft.length) : '0',
+      review: '0', // forcefully setting to enable table sorting
+      rejected: '0', // forcefully setting to enable table sorting
+      live: _.has(contentGroupByStatus, 'Live') ? _.toString(contentGroupByStatus.Live.length) : '0',
+      ...(!_.isUndefined(collections) && {sourcingOrgStatus : sourcingOrgStatus})
+     };
   }
 
   getRejectOrDraft(contents, status) {
@@ -139,6 +204,24 @@ export class CollectionHierarchyService {
         this.getRejectOrDraft(collectionWithoutReject[id]['Draft'], 'Reject') : [];
     });
     return collectionWithReject;
+  }
+
+  getContentAggregation(programId) {
+    const option = {
+      url: 'content/composite/v1/search',
+      data: {
+        request: {
+          filters: {
+            objectType: 'content',
+            programId: programId,
+            status: [],
+            mimeType: {'!=': 'application/vnd.ekstep.content-collection'}
+          }
+        }
+      }
+    };
+
+    return this.httpClient.post<any>(option.url, option.data);
   }
 
 

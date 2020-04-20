@@ -75,10 +75,10 @@ export class ProgramListComponent implements OnInit {
         if (this.isContributor) {
           if (this.activeAllProgramsMenu) {
             this.getAllProgramsForContrib('public', 'Live');
-          }
-
-          if (this.activeMyProgramsMenu) {
+          } else if (this.activeMyProgramsMenu) {
             this.getMyProgramsForContrib('Live');
+          } else {
+            this.showLoader = false;
           }
         } else {
           this.getMyProgramsForOrg('Live');
@@ -182,10 +182,13 @@ export class ProgramListComponent implements OnInit {
           }
 
         });
-        this.showLoader = false;
         this.enrollPrograms = this.programs;
         this.tempSortPrograms = this.programs;
         this.count = _.get(response, 'result.count');
+        this.sortColumn = 'createdon';
+        this.direction = 'desc';
+        this.sortCollection(this.sortColumn);
+        this.showLoader = false;
       }, error => {
         console.log(error);
         // TODO: Add error toaster
@@ -258,7 +261,7 @@ export class ProgramListComponent implements OnInit {
       else if  (obj.rolemapping
         && (( obj.rolemapping.CONTRIBUTOR.includes(_.get(this.userService, 'userProfile.userId' ))))
         && obj.status === 'Approved' && obj.program_id == programId ) {
-          roles = 'Contributor';  
+          roles = 'Contributor';
         }
     }));
     return roles;
@@ -298,7 +301,17 @@ export class ProgramListComponent implements OnInit {
    * fetch the list of programs.
    */
   private getMyProgramsForOrg(status) {
-    return this.programsService.getMyProgramsForOrg(status).subscribe((response) => {
+    const userProfile = _.get(this.userService, 'userProfile');
+    const filters = {
+      rootorg_id: _.get(userProfile, 'rootOrg.rootOrgId'),
+      status: status
+    };
+    const roles = _.get(userProfile, 'userRoles');
+    if (!_.includes(roles, 'ORG_ADMIN') && _.includes(roles, 'CONTENT_REVIEWER')) {
+       filters['role'] = ['REVIEWER'];
+       filters['user_id'] = _.get(userProfile, 'userId');
+    }
+    return this.programsService.getMyProgramsForOrg(filters).subscribe((response) => {
       this.programs = _.get(response, 'result.programs');
       this.count = _.get(response, 'result.count');
       this.tempSortPrograms = this.programs;

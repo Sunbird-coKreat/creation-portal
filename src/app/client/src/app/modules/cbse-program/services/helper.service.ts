@@ -44,6 +44,13 @@ export class HelperService {
     return this.actionService.patch(option);
   }
 
+  retireContent(contentId): Observable<ServerResponse>  {
+    const option = {
+      url: this.configService.urlConFig.URLS.DOCKCONTENT.RETIRE + '/' + contentId
+    };
+    return this.actionService.delete(option);
+  }
+
   reviewContent(contentId): Observable<ServerResponse>  {
     const option = {
       url: this.configService.urlConFig.URLS.CONTENT.REVIEW + '/' + contentId,
@@ -72,7 +79,7 @@ export class HelperService {
       }
     };
     const option = {
-      url: `content/v3/publish/${contentId}`,
+      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.PUBLISH}/${contentId}`,
       data: requestBody
     };
     return this.actionService.post(option);
@@ -87,7 +94,7 @@ export class HelperService {
       }
     };
     const option = {
-      url: `content/v3/reject/${contentId}`,
+      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.REJECT}/${contentId}`,
       data: requestBody
     };
     return this.actionService.post(option);

@@ -4,7 +4,7 @@
 <div *ngIf="showAccountMergemodal">
     <app-account-merge-modal (closeAccountMergeModal)="showAccountMergemodal = false"></app-account-merge-modal>
 </div>
-<div class="ui fixed relative main menu bs-0 d-block sb-dock-header">
+<div class="ui fixed relative main menu bs-0 d-block sb-dock-header"><div *ngIf="isUserOrgAdmin()" class="sb-color-primary d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.review || 0}}</span> {{resourceService.frmelmnts.lbl.pendingReview}}</div>
     <extension-point [name]="'network-status-notify'" *ngIf="isOffline"></extension-point>
     <!--Header White Section-->
     <div class="ui container">
