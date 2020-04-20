@@ -119,11 +119,9 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       this.programDetails = _.get(programDetails, 'result');
       this.roles = _.get(this.programDetails, 'config.roles');
       _.forEach(this.roles, role => {
-        if(role.name == 'CONTRIBUTOR')
-        {
+        if(role.name == 'CONTRIBUTOR') {
           role.displayName = 'Contributor'
-        } else if(role.name == 'REVIEWER')
-        {
+        } else if(role.name == 'REVIEWER'){
           role.displayName = 'Reviewer'
         }
       });
