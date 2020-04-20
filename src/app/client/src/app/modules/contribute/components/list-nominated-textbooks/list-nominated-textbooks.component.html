@@ -310,7 +310,7 @@
 							<td>{{orgUser?.subject?.join(', ')}}</td>
 							<td>
 								<div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold" style="width: 250px;">
-									{{orgUser?.contentTypes?.join(', ')}}
+									{{(orgUser?.contentTypes) ? orgUser?.contentTypes?.join(', ') : '-'}}
 								</div>
 							</td>
 							<td class="text-center">
