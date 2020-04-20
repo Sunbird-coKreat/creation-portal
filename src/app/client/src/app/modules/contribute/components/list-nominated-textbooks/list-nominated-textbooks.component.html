@@ -318,7 +318,7 @@
 									{{ (orgUser?.selectedRole) ? orgUser.selectedRole : '-' }}
 								</div>
 								<ng-template #elseBlock>
-									<sui-select class="selection pt-5" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="options" valueField="name"
+									<sui-select class="selection pt-5" [(ngModel)]="orgUser.selectedRole" labelField="displayName" [options]="options" valueField="name"
 									(selectedOptionChange)="onRoleChange()">
 										<sui-select-option *ngFor="let option of roles;" [value]="option">
 										</sui-select-option>
