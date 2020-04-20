@@ -263,7 +263,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
             });
         });
     } else {
-      this.uploadFile(mimeType, this.contentMetaData.identifier || this.contentUploadComponentInput.contentId);
+      this.uploadFile(mimeType, this.contentMetaData ? this.contentMetaData.identifier : this.contentUploadComponentInput.contentId);
     }
   }
 
