@@ -3,6 +3,7 @@ import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from
 import { UserService } from '@sunbird/core';
 import { ConfigService } from '@sunbird/shared';
 import * as _ from 'lodash-es';
+
 interface Extra {
   pos: Array<any>;
   values: [];
