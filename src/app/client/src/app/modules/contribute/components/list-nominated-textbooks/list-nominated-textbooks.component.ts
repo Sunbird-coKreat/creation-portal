@@ -118,6 +118,9 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     this.fetchProgramDetails().subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
       this.roles = _.get(this.programDetails, 'config.roles');
+      _.forEach(this.roles, role => {
+          role.displayName = _.capitalize(role.name);
+      });
       this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
       this.setActiveDate();
     }, error => {
@@ -314,8 +317,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     };
 
     if (!_.isEmpty(this.userService.userProfile.userRegData)
-    && this.userService.userProfile.userRegData.User_Org
-    && !this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
+    && this.userService.userProfile.userRegData.User_Org) {
       req.data.request.filters['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
     } else {
       req.data.request.filters['user_id'] = this.userService.userProfile.userId;

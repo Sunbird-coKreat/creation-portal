@@ -63,6 +63,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public approvedNominations: any = [];
   public overAllContentCount: any = {};
   public isContributionDashboardTabActive = false;
+  public canAssignUsers = false;
 
   constructor(public frameworkService: FrameworkService, private tosterService: ToasterService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
@@ -82,7 +83,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
   this.telemetryInteractObject = {};
   this.checkActiveTab();
-  this.showUsersTab = this.canAssignUsers();
+  this.showUsersTab = this.isSourcingOrgAdmin();
   this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
   this.roles = [{name: 'REVIEWER'}];
   this.sessionContext.currentRole = 'REVIEWER';
@@ -122,7 +123,12 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
      });
   }
 
-  canAssignUsers() {
+  canAssignUsersToProgram() {
+    const today = moment();
+    this.canAssignUsers = moment(this.programContext.content_submission_enddate).isSameOrAfter(today, 'day');
+  }
+
+  isSourcingOrgAdmin() {
     return _.includes(this.userService.userProfile.userRoles, 'ORG_ADMIN') &&
     this.router.url.includes('/sourcing');
   }
@@ -338,6 +344,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.programContext = this.programDetails;
       this.collectionsCount = _.get(this.programDetails, 'collection_ids').length;
       this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
+      this.canAssignUsersToProgram();
       this.setActiveDate();
       this.readRolesOfOrgUsers();
       const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
