@@ -58,7 +58,7 @@ export class TermsAndConditionsPopupComponent implements OnInit, OnDestroy {
     this.tenantDataSubscription = this.tenantService.tenantData$.subscribe(
       data => {
         if (data && !data.err) {
-          this.logo = data.tenantData.logo;
+          this.logo = data.tenantData.appLogo;
           this.tenantName = data.tenantData.titleName;
         }
       }

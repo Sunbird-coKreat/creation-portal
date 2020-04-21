@@ -75,10 +75,10 @@ export class ProgramListComponent implements OnInit {
         if (this.isContributor) {
           if (this.activeAllProgramsMenu) {
             this.getAllProgramsForContrib('public', 'Live');
-          }
-
-          if (this.activeMyProgramsMenu) {
+          } else if (this.activeMyProgramsMenu) {
             this.getMyProgramsForContrib('Live');
+          } else {
+            this.showLoader = false;
           }
         } else {
           this.getMyProgramsForOrg('Live');
@@ -227,6 +227,7 @@ export class ProgramListComponent implements OnInit {
             };
             this.getContributionProgramList(req);
           }
+          this.showLoader = false;
         }, (error) => {
           console.log(error);
           this.toasterService.error(this.resourceService.messages.emsg.projects.m0002);
@@ -245,24 +246,24 @@ export class ProgramListComponent implements OnInit {
       this.getContributionProgramList(req);
     }
   }
-  getMyProgramRole(program)
-  {
+
+  getMyProgramRole(program) {
     let programId = program.program_id;
     let roles = '';
      _.map(_.find(this.roleMapping, obj => {
       if (obj.rolemapping
         && (( obj.rolemapping.REVIEWER.includes(_.get(this.userService, 'userProfile.userId' ))))
-        && obj.status === 'Approved' && obj.program_id == programId ) {
+        && obj.status === 'Approved' && obj.program_id === programId ) {
           roles = 'Reviewer';
-        }
-      else if  (obj.rolemapping
+        } else if  (obj.rolemapping
         && (( obj.rolemapping.CONTRIBUTOR.includes(_.get(this.userService, 'userProfile.userId' ))))
-        && obj.status === 'Approved' && obj.program_id == programId ) {
-          roles = 'Contributor';  
+        && obj.status === 'Approved' && obj.program_id === programId ) {
+          roles = 'Contributor';
         }
     }));
     return roles;
   }
+
   getContributionOrgUsers(selectedProgram) {
     this.selectedProgramToAssignRoles = selectedProgram.program_id;
     this.showAssignRoleModal = true;
