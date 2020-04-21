@@ -122,7 +122,7 @@ export class TextbookListComponent implements OnInit {
           const hierarchyContent = _.map(hierarchies, hierarchy => {
             this.chapterCount = 0;
             const {chapterCount} = this.getSampleContentStatusCount(hierarchy);
-              hierarchy.chapterCount = chapterCount;
+            hierarchy.chapterCount = hierarchy.children ? hierarchy.children.length : 0;
             return hierarchy;
           });
           this.collections = _.map(data, content => {
