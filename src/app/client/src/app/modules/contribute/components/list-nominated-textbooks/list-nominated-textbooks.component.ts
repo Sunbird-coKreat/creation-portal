@@ -118,6 +118,9 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     this.fetchProgramDetails().subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
       this.roles = _.get(this.programDetails, 'config.roles');
+      _.forEach(this.roles, role => {
+          role.displayName = _.capitalize(role.name);
+      });
       this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
       this.setActiveDate();
     }, error => {
