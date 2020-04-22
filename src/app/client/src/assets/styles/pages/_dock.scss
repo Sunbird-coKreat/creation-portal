@@ -184,3 +184,80 @@
     margin: 0.6rem 0 !important;
   }
 }
+
+
+.sb-dock-toc-accor {
+  .sb-toc-accor-2{
+    .title{
+      padding:0 0 0 1rem !important;
+    }
+    .sb-accordion-title{
+      border-left: .0625rem dashed var(--gray-300);
+      padding: 1rem;
+    }
+    // &:nth-child(1){
+    //   .title{
+    //     padding:0.625rem 0 0.625rem 1rem !important;
+    //   }
+    // }
+    // &:first-child{
+    //   .title{
+    //     padding:0.625rem 0 0 1rem !important;
+    //   }
+    // }
+    // &:last-child{
+    //   .title{
+    //     padding:0 0 0.625rem 1rem !important;
+    //   }
+    // } 
+  }
+  .sb-toc-accor-3{
+    .title{
+      padding:0 0 0 2.7rem !important;
+    }
+    .sb-accordion-title{
+      @extend .sb-accordion-title;
+      padding-left: 1.2rem !important;
+    }
+    // &:first-child{
+    //   .title{
+    //     padding:0.625rem 0 0 2.7rem !important;
+    //   }
+    // }
+    // &:last-child{
+    //   .title{
+    //     padding:0 0 0.625rem 2.7rem !important;
+    //   }
+    // }
+    // &:nth-child(1){
+    //   .title{
+    //     padding:0.625rem 0 0.625rem 2.7rem !important;
+    //   }
+    // }
+  }
+  .sb-toc-accor-4{
+    .title{
+      padding:0 0 0 4rem !important;
+    }
+    .sb-accordion-title{
+      @extend .sb-accordion-title;
+      padding-left: 1.5rem !important;
+    }
+    // &:first-child{
+    //   .title{
+    //     padding:0.625rem 0 0 4rem !important;
+    //   }
+    // }
+    // &:last-child{
+    //   .title{
+    //     padding:0.625rem 0 0.625rem 4rem !important;
+    //   }
+    // }
+    // &:nth-child(1){
+    //   .title{
+    //     padding:0.625rem 0 0.625rem 4rem !important;
+    //   }
+    // }
+  }
+}
+
