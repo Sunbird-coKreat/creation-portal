@@ -2492,7 +2492,7 @@ if (typeof module != 'undefined') {
       "pdata": {
         "id": pdataId,
         "ver": "2.8.0",
-        "pid": "creation-portal.programs"
+        "pid": "creation-portal"
       }
     }
   }
