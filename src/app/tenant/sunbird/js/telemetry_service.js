@@ -2471,7 +2471,7 @@ if (typeof module != 'undefined') {
 (function () {
   let pdataId = "";
   if (window.location.origin.indexOf("vdn.diksha.gov.in") >= 0) {
-    pdataId = "prod.vdn.portal";
+    pdataId = "prod.vidyadaan.portal";
   } else if (window.location.origin.indexOf("dock.preprod.ntp.net.in") >= 0) {
     pdataId = "preprod.dock.portal";
   } else {
