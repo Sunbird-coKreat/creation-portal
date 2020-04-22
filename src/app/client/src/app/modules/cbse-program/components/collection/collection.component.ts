@@ -51,6 +51,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   public programContentTypes: string;
   isMediumClickable = false;
   showLoader = true;
+  showLoaderTexbooks = true;
   selectedIndex = -1;
   activeFilterIndex = -1;
   public state: InitialState = {
@@ -229,8 +230,10 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
             this.tempSortCollectionList = this.collectionList;
             this.selectedCollectionIds = _.uniq(this.selectedCollectionIds);
             this.toggleNominationButton();
+            this.showLoaderTexbooks = false;
         });
-
+      } else {
+        this.showLoaderTexbooks = false;
       }
       this.showLoader = false;
       this.showError = false;
