@@ -66,6 +66,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public programContentTypes: string;
   public directionOrgUsers = 'asc';
   public sortColumnOrgUsers = '';
+  public showLoaderTexbooks = true;
 
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private configService: ConfigService, private publicDataService: PublicDataService,
@@ -209,12 +210,14 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           }
 
           this.tempSortTextbooks = this.contributorTextbooks;
+          this.showLoaderTexbooks = false;
         },
         (err) => console.log(err)
       );
     } else {
       this.contributorTextbooks = contributorTextbooks;
       this.tempSortTextbooks = this.contributorTextbooks;
+      this.showLoaderTexbooks = false;
     }
   }
 

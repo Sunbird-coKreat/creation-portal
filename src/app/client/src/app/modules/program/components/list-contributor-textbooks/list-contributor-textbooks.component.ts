@@ -59,6 +59,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   showRequestChangesPopup: boolean;
   rejectComment = '';
   public sampleDataCount = 0;
+  public showLoaderTexbooks = true;
   @ViewChild('FormControl') FormControl: NgForm;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
@@ -69,7 +70,6 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   private activatedRoute: ActivatedRoute, private router: Router, public programStageService: ProgramStageService,
   private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
   public toasterService: ToasterService, public actionService: ActionService) { }
-
 
   ngOnInit() {
     this.programId = this.activatedRoute.snapshot.params.programId;
@@ -223,10 +223,12 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
             return content;
           });
           this.tempSortTextbooks = this.contributorTextbooks;
+          this.showLoaderTexbooks = false;
         });
     } else {
       this.contributorTextbooks = contributorTextbooks;
       this.tempSortTextbooks = contributorTextbooks;
+      this.showLoaderTexbooks = false;
     }
   }
   getSampleContentStatusCount(data) {
