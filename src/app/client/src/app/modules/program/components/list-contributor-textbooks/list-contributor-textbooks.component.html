@@ -200,7 +200,7 @@
 <div class="sb-bg-color-white dynamicHeight" *ngIf="!showChapterList">
 	<div class="ui container">
 		<div class="sb-pageSection pt-24" [appTelemetryImpression]="telemetryImpression">
-			<div class="sb-pageSection-content" *ngIf="!showLoaderTexbooks">
+			<div class="sb-pageSection-content" *ngIf="!showLoader">
 				<div class="d-flex flex-ai-center flex-jc-space-between">
 					<div class="sb-pageSection-header pt-16">
 						<h4 class="sb-pageSection-title">{{resourceService.frmelmnts.lbl.listOfTextbooks}} </h4>
@@ -304,7 +304,7 @@
 					</tbody>
 				</table>
 			</div>
-			<div class="ui" *ngIf="showLoaderTexbooks">
+			<div class="ui" *ngIf="showLoader">
 				<app-loader></app-loader>
 			</div>
 		</div>

@@ -59,7 +59,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   showRequestChangesPopup: boolean;
   rejectComment = '';
   public sampleDataCount = 0;
-  public showLoaderTexbooks = true;
+  public showLoader = true;
   @ViewChild('FormControl') FormControl: NgForm;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
@@ -223,12 +223,12 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
             return content;
           });
           this.tempSortTextbooks = this.contributorTextbooks;
-          this.showLoaderTexbooks = false;
+          this.showLoader = false;
         });
     } else {
       this.contributorTextbooks = contributorTextbooks;
       this.tempSortTextbooks = contributorTextbooks;
-      this.showLoaderTexbooks = false;
+      this.showLoader = false;
     }
   }
   getSampleContentStatusCount(data) {

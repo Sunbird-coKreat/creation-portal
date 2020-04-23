@@ -1,6 +1,6 @@
 <div class="sb-pageSection">
 	<div class="sb-bg-color-white pt-32">
-		<div class="sb-table-responsive" *ngIf="!showLoaderTexbooks && collectionsCnt > 0">
+		<div class="sb-table-responsive" *ngIf="!showLoader && collectionsCnt > 0">
 			<table class="sb-table sb-table-striped  sb-table-sortable">
 				<thead class="sb-table-header sb-table-thead-gray">
 					<tr>
@@ -62,11 +62,11 @@
 				</tbody>
 			</table>
 		</div>
-		<div class="mt-12" *ngIf="!showLoaderTexbooks && collectionsCnt === 0">
+		<div class="mt-12" *ngIf="!showLoader && collectionsCnt === 0">
 			<app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0146'}">
 			</app-no-result>
 		</div>
-		<div class="ui" *ngIf="showLoaderTexbooks">
+		<div class="ui" *ngIf="showLoader">
 			<app-loader></app-loader>
 		</div>
 	</div>
