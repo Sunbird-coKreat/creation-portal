@@ -185,11 +185,35 @@
   }
 }
 
-
+.sb-toc-accor-1{
+  .chapter-lists--item{
+    .item-name{
+      border-left: 0.0625rem dashed var(--gray-300);
+      margin-left: 1.1rem;
+      padding-left: 1.6rem !important;
+    }
+  }    
+}
+.sb-toc-accor-2{
+  .chapter-lists--item{
+    .item-name{
+      @extend .item-name;
+      margin-left: 2.3rem;
+    }
+  }  
+}
+.sb-toc-accor-3{
+  .chapter-lists--item{
+    .item-name{
+      @extend .item-name;
+      margin-left: 4rem;
+    }
+  }  
+}
 .sb-dock-toc-accor {
   .sb-toc-accor-2{
     .title{
-      padding:0 0 0 1rem !important;
+      padding:0 0 0 1.1rem !important;
     }
     .sb-accordion-title{
       border-left: .0625rem dashed var(--gray-300);
@@ -198,7 +222,7 @@
   }
   .sb-toc-accor-3{
     .title{
-      padding:0 0 0 2.7rem !important;
+      padding:0 0 0 2.3rem !important;
     }
     .sb-accordion-title{
       @extend .sb-accordion-title;
