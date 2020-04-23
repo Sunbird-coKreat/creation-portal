@@ -46,8 +46,8 @@
           </div>
         </div>
         <div class="sb-field-group textbook-edit mr-auto" *ngIf="showTextArea">
-          <div class="sb-field relative">
-            <label class="font-weight-bold fsmall">Name:</label><span class="sb-color-red pl-4 pr-4">*</span>
+          <div class="sb-field relative required field">
+            <label class="font-weight-bold fsmall">{{resourceService.frmelmnts.lbl.anncmnttblname}}:</label><span class="sb-color-red pl-4 pr-4">*</span>
             <textarea rows="4" name="resourceName" class="sb-form-control fs-1" #resourceTtlTextarea placeholder="Type here..." [(ngModel)]='resourceName' (keydown)="onResourceNameChange($event)" (blur)="onResourceNameBlur()">{{resourceName}}</textarea>
             <span class="characters-left">{{resourceTitleLimit - resourceName.length}} Characters left</span>
             <span class="sb-error-text" *ngIf="resourceName.length > resourceTitleLimit">Title should be maximum 100 characters.</span>
