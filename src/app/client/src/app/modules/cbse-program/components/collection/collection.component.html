@@ -117,7 +117,7 @@
           <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning mx-10">{{collectionList.length || ''}}</span>
         </div>
         <div class="sb-pageSection-document" *ngIf="programContext?.guidelines_url">
-          <a class="fs-0-785 text-decor-none" href="{{ programContext?.guidelines_url }}" target="_blank">
+          <a class="fs-0-785 text-decor-none font-weight-bold" href="{{ programContext?.guidelines_url }}" target="_blank">
             {{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
           </a>
         </div>
@@ -185,15 +185,15 @@
               <td *ngIf="currentNominationStatus === 'Initiated' || currentNominationStatus=== 'Pending'">{{data.sampleContentCount || 0 }}</td>
               <td>
                 <div *ngIf = "selectedContentTypes.length">
-                <div *ngIf="(data.sampleContentCount === undefined || data.sampleContentCount === 0) && canNominate()" class="sb-checkbox sb-checkbox-primary d-inline-block">
+                <div *ngIf="(data.sampleContentCount === undefined || data.sampleContentCount === 0) && canNominate()" class="sb-checkbox sb-checkbox-primary d-inline-block p-0 m-0">
                   <input  type="checkbox" [checked]="data.isSelected || data.sampleContentCount" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
                   <label></label>
                 </div>
-                <button type="button" *ngIf="data.isSelected || data.sampleContentCount" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10 px-10" appTelemetryInteract
+                <button type="button" *ngIf="data.isSelected || data.sampleContentCount" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary d-inline-block m-0 px-10" appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('upload-sample', 'click', 'collection-list', {values: selectedCollectionIds})"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
-                [telemetryInteractPdata]="telemetryInteractPdata">Upload Sample</button>
+                [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.uploadSample}}</button>
                 </div>
               </td>
             </tr>

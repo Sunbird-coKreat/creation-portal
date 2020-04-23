@@ -184,3 +184,35 @@
     margin: 0.6rem 0 !important;
   }
 }
+
+
+.sb-dock-toc-accor {
+  .sb-toc-accor-2{
+    .title{
+      padding:0 0 0 1rem !important;
+    }
+    .sb-accordion-title{
+      border-left: .0625rem dashed var(--gray-300);
+      padding: 1rem;
+    } 
+  }
+  .sb-toc-accor-3{
+    .title{
+      padding:0 0 0 2.7rem !important;
+    }
+    .sb-accordion-title{
+      @extend .sb-accordion-title;
+      padding-left: 1.2rem !important;
+    }
+  }
+  .sb-toc-accor-4{
+    .title{
+      padding:0 0 0 4rem !important;
+    }
+    .sb-accordion-title{
+      @extend .sb-accordion-title;
+      padding-left: 1.5rem !important;
+    }
+  }
+}
+
