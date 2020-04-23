@@ -57,10 +57,6 @@ export class ProgramListComponent implements OnInit {
    * Check if logged in user is contributor or sourcing org
    */
   private checkIfUserIsContributor() {
-    this.programsService.allowToContribute$.pipe(
-      tap((isContributor: boolean) => {
-        // TODO implement based on api and remove url checks
-        // this.isContributor = !isContributor;
         const orgId = this.activatedRoute.snapshot.params.orgId;
 
         // Check if user part of that organisation
@@ -83,8 +79,6 @@ export class ProgramListComponent implements OnInit {
         } else {
           this.getMyProgramsForOrg('Live');
         }
-      })
-    ).subscribe();
   }
 
   /**
