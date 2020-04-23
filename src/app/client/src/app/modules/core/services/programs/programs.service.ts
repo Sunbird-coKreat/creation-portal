@@ -50,7 +50,6 @@ export class ProgramsService extends DataService implements CanActivate {
    * initializes the service is the user is logged in;
    */
   public initialize() {
-    // this.enableContributeMenu().subscribe();
     this.getAllContentTypes().subscribe();
   }
 
@@ -203,29 +202,6 @@ export class ProgramsService extends DataService implements CanActivate {
       );
   }
 
-  /**
-   * logic which decides whether or not to show contribute tab menu
-   */
-  // enableContributeMenu(): Observable<boolean> {
-  //   return combineLatest([this.userService.userData$, this.orgDetailsService.getCustodianOrgDetails()])
-  //     .pipe(
-  //       mergeMap(([userData, custodianOrgDetails]) => {
-  //         return iif(() => _.get(userData, 'userProfile.rootOrgId') === _.get(custodianOrgDetails, 'result.response.value') ||
-  //           !_.get(userData, 'userProfile.stateValidated'),
-  //           of(false),
-  //           this.moreThanOneProgram());
-  //       }),
-  //       retry(1),
-  //       catchError(err => {
-  //         console.error(err);
-  //         return of(false);
-  //       }),
-  //       tap(allowedToContribute => {
-  //         this._allowToContribute$.next(allowedToContribute);
-  //       })
-  //     );
-  // }
-
   /*
   * Logic to decide if the All programs should be shown to the contributor
   */
@@ -316,22 +292,6 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * makes api call to get list of programs from ext framework Service
    */
-  // searchProgramsAPICall(): Observable<ServerResponse> {
-  //   const req = {
-  //     url: _.get(this.config, 'urlConFig.URLS.CONTRIBUTION_PROGRAMS.SEARCH'),
-  //     param: _.get(this.config, 'urlConFig.params.programSearch'),
-  //     data: {
-  //       request: {
-  //         rootOrgId: _.get(this.userService, 'userProfile.rootOrgId')
-  //       }
-  //     }
-  //   };
-  //   return this.extFrameworkService.post(req);
-  // }
-
-  /**
-   * makes api call to get list of programs from ext framework Service
-   */
   getMyProgramsForOrg(status): Observable<ServerResponse> {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
@@ -375,37 +335,6 @@ export class ProgramsService extends DataService implements CanActivate {
         };
         return this.API_URL(request);
     }
-
-  /**
-   * gets list of programs
-   */
-  // private getPrograms(): Observable<IProgram[]> {
-  //   return this.searchProgramsAPICall().pipe(
-  //     map(result => _.get(result, 'result.programs')),
-  //     catchError(err => of([]))
-  //   );
-  // }
-
-  /**
-   * filters out programs which are open to enrollment
-   */
-  // private filterPublicPrograms(): Observable<IProgram> {
-  //   return this.getPrograms().pipe(
-  //     map(programs => _.filter(programs, { type: 'public' })),
-  //     tap(programs => {
-  //       this._programsList$.next(programs);
-  //     })
-  //   );
-  // }
-
-  /**
-   * returns true if more than one programs exists else false
-   */
-  // private moreThanOneProgram(): Observable<boolean> {
-  //   return this.filterPublicPrograms().pipe(
-  //     map(programs => !_.isEmpty(programs))
-  //   );
-  // }
 
   /**
    * auth guard to prevent unauthorized access to the route
