@@ -233,7 +233,7 @@
 												[telemetryInteractEdata]="getTelemetryInteractEdata('upload-content', 'click', 'list-nominated-textbooks')"
 												[telemetryInteractObject]="telemetryInteractObject"
 												[telemetryInteractCdata]="telemetryInteractCdata"
-												[telemetryInteractPdata]="telemetryInteractPdata">{{sessionContext.currentRole === 'CONTRIBUTOR' ?  'Upload Content' : 'Review Content'}}</button>
+												[telemetryInteractPdata]="telemetryInteractPdata">{{sessionContext.currentRole === 'CONTRIBUTOR' ?  resourceService.frmelmnts.lbl.uploadContent : resourceService.frmelmnts.lbl.reviewContent}}</button>
 										</td>
 										</tr>
 									</tbody>

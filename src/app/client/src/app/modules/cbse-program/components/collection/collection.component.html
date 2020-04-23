@@ -111,11 +111,11 @@
 
   <div class="sb-bg-color-white py-24 dynamicHeight">
     <div class="ui container m-0 p-0 sb-pageSection">
-      <ng-container *ngIf="!showLoaderTexbooks">
+      <ng-container *ngIf="!showLoader">
         <div class="sb-pageSection-header mb-15">
           <div>
             <h4 class="sb-pageSection-title six">{{resourceService.frmelmnts.lbl.textbooks}}</h4>
-            <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning mx-10">{{collectionList.length || ''}}</span>
+            <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning mx-10">{{collectionList.length || 0}}</span>
           </div>
           <div class="sb-pageSection-document" *ngIf="programContext?.guidelines_url">
             <a class="fs-0-785 text-decor-none" href="{{ programContext?.guidelines_url }}" target="_blank">
@@ -160,7 +160,7 @@
                   </span>
                 </th>
                 <th class="w-5">{{resourceService.frmelmnts.lbl.chapters}}</th>
-                <th class="w-5" *ngIf="currentNominationStatus === 'Initiated' || currentNominationStatus=== 'Pending'">Sample Content</th>
+                <th class="w-5" *ngIf="currentNominationStatus === 'Initiated' || currentNominationStatus=== 'Pending'">{{resourceService.frmelmnts.lbl.sampleContent}}</th>
                 <th class="w-5"></th>
               </tr>
             </thead>
@@ -194,7 +194,7 @@
                   [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('upload-sample', 'click', 'collection-list', {values: selectedCollectionIds})"
                   [telemetryInteractObject]="telemetryInteractObject"
                   [telemetryInteractCdata]="telemetryInteractCdata"
-                  [telemetryInteractPdata]="telemetryInteractPdata">Upload Sample</button>
+                  [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.uploadSample}}</button>
                   </div>
                 </td>
               </tr>
@@ -205,7 +205,7 @@
           <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0006'}"></app-no-result>
         </div>
       </ng-container>
-      <div *ngIf="showLoaderTexbooks" class="ui">
+      <div *ngIf="showLoader" class="ui">
         <app-loader></app-loader>
       </div>
     </div>
