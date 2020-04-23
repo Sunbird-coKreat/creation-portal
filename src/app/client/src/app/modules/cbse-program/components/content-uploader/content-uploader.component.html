@@ -41,6 +41,7 @@
               </div>
             </div>
             <div class="sb-field-group textbook-edit" *ngIf="showTextArea">
+              <label class="font-weight-bold fsmall">Name:</label><span class="sb-color-red pl-4 pr-4">*</span>
               <div class="sb-field relative">
                 <textarea #titleTextArea rows="4" name="moretext" class="sb-form-control" placeholder="Type here..." [(ngModel)]="editTitle" autofocus (blur)="(showTextArea = false); saveTitle()"></textarea>
                 <span class="characters-left">{{titleCharacterLimit - editTitle.length}} Characters left</span>

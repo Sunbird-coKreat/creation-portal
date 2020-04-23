@@ -363,6 +363,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
           this.initiateUploadModal();
         }, 0);
       }
+      this.editContentTitle();
       this.loading = false;
       this.handleActionButtons();
       // At the end of execution
@@ -484,7 +485,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
    if (this.editTitle === '' || (this.editTitle.length > this.titleCharacterLimit)) {
     this.editContentTitle();
    } else {
-    if (this.editTitle === this.contentMetaData.name) {
+    if (_.trim(this.editTitle) === _.trim(this.contentMetaData.name)) {
       return;
     } else {
    this.editTitle = _.trim(this.editTitle);

@@ -165,6 +165,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.fetchQuestionList();
       }
       this.handleActionButtons();
+      this.showResourceTitleEditor();
     });
   }
 
@@ -610,27 +611,31 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public onResourceNameBlur() {
     if (this.resourceName.length > 0 && this.resourceName.length <= this.resourceTitleLimit) {
       this.showTextArea = false;
-      const reqBody = {
-        'content': {
-            'versionKey': this.existingContentVersionKey,
-            'name' : this.resourceName
-        }
-      };
-      this.updateContent(reqBody, this.sessionContext.resourceIdentifier)
-      .subscribe((res) => {
-        const contentId = res.result.node_id || res.result.identifier;
-        if (this.sessionContext.collection && this.sessionContext.textBookUnitIdentifier) {
-          this.collectionHierarchyService.addResourceToHierarchy(
-            this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, contentId
-          )
-          .subscribe((data) => {
-            this.toasterService.success(this.resourceService.messages.smsg.m0060);
-            this.sessionContext.contentMetadata.name = this.resourceName;
-          }, (err) => {
-            this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-          });
-        }
-      });
+      if (_.trim(this.resourceName) === (_.trim(this.resourceDetails.name) || _.trim(this.templateDetails.metadata.name))) {
+        return;
+      } else {
+        const reqBody = {
+          'content': {
+              'versionKey': this.existingContentVersionKey,
+              'name' : this.resourceName
+          }
+        };
+        this.updateContent(reqBody, this.sessionContext.resourceIdentifier)
+        .subscribe((res) => {
+          const contentId = res.result.node_id || res.result.identifier;
+          if (this.sessionContext.collection && this.sessionContext.textBookUnitIdentifier) {
+            this.collectionHierarchyService.addResourceToHierarchy(
+              this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, contentId
+            )
+            .subscribe((data) => {
+              this.toasterService.success(this.resourceService.messages.smsg.m0060);
+              this.sessionContext.contentMetadata.name = this.resourceName;
+            }, (err) => {
+              this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+            });
+          }
+        });
+      }
     }
   }
 
