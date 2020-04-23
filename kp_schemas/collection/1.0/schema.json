@@ -1006,6 +1006,9 @@
     },
     "sampleContentCount": {
       "type": "string"
+    },
+    "chapterCount": {
+      "type": "string"
     }
   }
 }

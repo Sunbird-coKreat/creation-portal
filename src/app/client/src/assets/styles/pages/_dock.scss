@@ -210,6 +210,13 @@
     }
   }  
 }
+.sb-chapterlist-accordion{
+  .chapter-lists--item{
+    &:hover{
+      background: none !important;
+    }
+  }
+}
 .sb-dock-toc-accor {
   .sb-toc-accor-2{
     .title{
