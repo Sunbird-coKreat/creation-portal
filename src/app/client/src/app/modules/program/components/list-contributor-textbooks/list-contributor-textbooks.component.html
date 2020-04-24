@@ -159,10 +159,10 @@
 		</div>
 	</div>
 
-<app-contributor-profile-popup 
-	[showProfile]="showcontributorProfile" 
-	[orgId]="contributor?.nominationData?.organisation_id" 
-	[userId]="contributor?.nominationData?.user_id" 
+<app-contributor-profile-popup
+	[showProfile]="showcontributorProfile"
+	[orgId]="contributor?.nominationData?.organisation_id"
+	[userId]="contributor?.nominationData?.user_id"
 	(close)="showcontributorProfile = false;">
 </app-contributor-profile-popup>
 
@@ -200,11 +200,11 @@
 <div class="sb-bg-color-white dynamicHeight" *ngIf="!showChapterList">
 	<div class="ui container">
 		<div class="sb-pageSection pt-24" [appTelemetryImpression]="telemetryImpression">
-			<div class="sb-pageSection-content">
+			<div class="sb-pageSection-content" *ngIf="!showLoader">
 				<div class="d-flex flex-ai-center flex-jc-space-between">
 					<div class="sb-pageSection-header pt-16">
 						<h4 class="sb-pageSection-title">{{resourceService.frmelmnts.lbl.listOfTextbooks}} </h4>
-						<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{ programDetails?.collection_ids?.length }}</span>
+						<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{ programDetails?.collection_ids?.length || 0 }}</span>
 					</div>
 					<div class="" *ngIf="canAcceptorReject()">
 						<button class="sb-btn sb-btn-normal sb-btn-secondary mr-8"
@@ -233,7 +233,7 @@
 					<thead class="sb-table-header sb-table-thead-gray">
 						<tr>
 							<th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('name')">
-								{{resourceService.frmelmnts.lbl.textbook}} &nbsp;&nbsp; 
+								{{resourceService.frmelmnts.lbl.textbook}} &nbsp;&nbsp;
 								<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>
 								<span  *ngIf="sortColumn == 'name'" class="d-inline-block">
 									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
@@ -241,7 +241,7 @@
 								</span>
 							</th>
 							<th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('medium')">
-								{{resourceService.frmelmnts.lbl.medium}} &nbsp;&nbsp; 
+								{{resourceService.frmelmnts.lbl.medium}} &nbsp;&nbsp;
 								<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'medium' "></i>
 								<span  *ngIf="sortColumn == 'medium'" class="d-inline-block">
 									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
@@ -249,7 +249,7 @@
 								</span>
 							</th>
 							<th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('gradeLevel')">
-								{{resourceService.frmelmnts.lbl.class}} &nbsp;&nbsp; 
+								{{resourceService.frmelmnts.lbl.class}} &nbsp;&nbsp;
 								<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'gradeLevel' "></i>
 								<span  *ngIf="sortColumn == 'gradeLevel'" class="d-inline-block">
 									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
@@ -257,7 +257,7 @@
 								</span>
 							</th>
 							<th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('subject')">
-								{{resourceService.frmelmnts.lbl.subjects}} &nbsp;&nbsp; 
+								{{resourceService.frmelmnts.lbl.subjects}} &nbsp;&nbsp;
 								<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'subject' "></i>
 								<span  *ngIf="sortColumn == 'subject'" class="d-inline-block">
 									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
@@ -290,8 +290,7 @@
       [telemetryInteractEdata]="getTelemetryInteractEdata('view-content', 'click', 'list-nominated-textbooks')"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">View
-									Sample Content</button>
+      [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.viewSampleContent}}</button>
 								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
 									*ngIf="contributor?.nominationData?.status == 'Accepted'"
 									(click)="viewContribution(contributorTextbook)"
@@ -304,6 +303,9 @@
 						</tr>
 					</tbody>
 				</table>
+			</div>
+			<div class="ui" *ngIf="showLoader">
+				<app-loader></app-loader>
 			</div>
 		</div>
 	</div>
