@@ -40,14 +40,16 @@
                 </span>
               </div>
             </div>
-            <div class="sb-field-group textbook-edit" *ngIf="showTextArea">
-              <label class="font-weight-bold fsmall">{{resourceService.frmelmnts.lbl.anncmnttblname}}:</label><span class="sb-color-red pl-4 pr-4">*</span>
-              <div class="sb-field relative">
-                <textarea #titleTextArea rows="4" name="moretext" class="sb-form-control" placeholder="Type here..." [(ngModel)]="editTitle" autofocus (blur)="(showTextArea = false); saveTitle()"></textarea>
-                <span class="characters-left">{{titleCharacterLimit - editTitle.length}} Characters left</span>
+            <div class="sb-field-group textbook-edit ui form" *ngIf="showTextArea">
+              <div class="required inline field">
+                <label class="font-weight-bold fsmall">{{resourceService.frmelmnts.lbl.contentName}}:</label>
+                <div class="sb-field relative">
+                  <textarea #titleTextArea rows="4" name="moretext" class="sb-form-control" placeholder="Type here..." [(ngModel)]="editTitle" autofocus (keyup.enter)="(showTextArea = false); saveTitle()"></textarea>
+                  <span class="characters-left">{{titleCharacterLimit - editTitle.length}} {{resourceService.frmelmnts.lbl.characterLeft }}</span>
+                </div>
+                <div class="warning-message" *ngIf="editTitle.length === 0">{{resourceService.frmelmnts.lbl.contentNameRequired}}</div>
+                <div class="warning-message" *ngIf="editTitle.length > titleCharacterLimit">{{resourceService.frmelmnts.lbl.contentNameLength }} {{titleCharacterLimit}}</div>
               </div>
-              <div class="warning-message" *ngIf="editTitle.length === 0">* Title is mandatory!</div>
-              <div class="warning-message" *ngIf="editTitle.length > titleCharacterLimit">* Characters in title should be less than {{titleCharacterLimit}}</div>
             </div>
             <div class='practical-sb-buttons'>
               <button id="saveContent" suiPopup popupText="Save" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSave" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="saveContent()"

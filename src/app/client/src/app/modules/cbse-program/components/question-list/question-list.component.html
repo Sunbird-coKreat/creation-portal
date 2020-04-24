@@ -45,13 +45,13 @@
             *ngIf="resourceDetails && resourceDetails.rejectComment && (sessionContext.currentRoleId === 1)"><i class="comment alternate outline icon sb-color-primary"></i><a>View Comments</a></span>
           </div>
         </div>
-        <div class="sb-field-group textbook-edit mr-auto" *ngIf="showTextArea">
-          <div class="sb-field relative required field">
-            <label class="font-weight-bold fsmall">{{resourceService.frmelmnts.lbl.anncmnttblname}}:</label><span class="sb-color-red pl-4 pr-4">*</span>
-            <textarea rows="4" name="resourceName" class="sb-form-control fs-1" #resourceTtlTextarea placeholder="Type here..." [(ngModel)]='resourceName' (keydown)="onResourceNameChange($event)" (blur)="onResourceNameBlur()">{{resourceName}}</textarea>
-            <span class="characters-left">{{resourceTitleLimit - resourceName.length}} Characters left</span>
-            <span class="sb-error-text" *ngIf="resourceName.length > resourceTitleLimit">Title should be maximum 100 characters.</span>
-            <span class="sb-error-text" *ngIf="!resourceName.length">Title required.</span>
+        <div class="sb-field-group textbook-edit mr-auto ui form" *ngIf="showTextArea">
+          <div class="required inline field">
+            <label class="font-weight-bold fsmall">{{resourceService.frmelmnts.lbl.contentName}}:</label>
+            <textarea rows="4" name="resourceName" class="sb-form-control fs-1" #resourceTtlTextarea placeholder="Type here..." [(ngModel)]='resourceName' (keydown)="onResourceNameChange($event)" (keyup.enter)="saveResourceName()">{{resourceName}}</textarea>
+            <span class="characters-left">{{resourceTitleLimit - resourceName.length}} {{resourceService.frmelmnts.lbl.characterLeft }}</span>
+            <span class="sb-error-text" *ngIf="resourceName.length > resourceTitleLimit">{{resourceService.frmelmnts.lbl.contentNameLength }} {{resourceTitleLimit}}</span>
+            <span class="sb-error-text" *ngIf="!resourceName.length">{{resourceService.frmelmnts.lbl.contentNameRequired}}</span>
           </div>
         </div>
         <div class='practical-sb-buttons'>

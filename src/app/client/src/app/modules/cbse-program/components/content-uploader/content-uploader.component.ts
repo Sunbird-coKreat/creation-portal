@@ -486,6 +486,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     this.editContentTitle();
    } else {
     if (_.trim(this.editTitle) === _.trim(this.contentMetaData.name)) {
+      this.showTextArea = true;
       return;
     } else {
    this.editTitle = _.trim(this.editTitle);

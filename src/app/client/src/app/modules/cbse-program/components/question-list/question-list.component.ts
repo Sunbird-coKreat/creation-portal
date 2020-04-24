@@ -608,12 +608,12 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  public onResourceNameBlur() {
+  public saveResourceName() {
     if (this.resourceName.length > 0 && this.resourceName.length <= this.resourceTitleLimit) {
-      this.showTextArea = false;
       if (_.trim(this.resourceName) === (_.trim(this.resourceDetails.name) || _.trim(this.templateDetails.metadata.name))) {
         return;
       } else {
+        this.showTextArea = false;
         const reqBody = {
           'content': {
               'versionKey': this.existingContentVersionKey,
