@@ -40,11 +40,11 @@
                 </span>
               </div>
             </div>
-            <div class="textbook-edit ui form" *ngIf="showTextArea && !loading">
+            <div class="textbook-edit ui form" *ngIf="showTextArea">
               <div class="required inline field ai-end">
                   <label class="font-weight-bold fsmall four wide column pt-5 d-inline-block va-top">{{resourceService.frmelmnts.lbl.contentName}}:</label>
                 <div class="eight wide column  d-inline-block">
-                  <textarea #titleTextArea rows="3" name="moretext" class="sb-form-control" placeholder="Type here..." [(ngModel)]="editTitle" autofocus (keyup.enter)="(showTextArea = false); saveTitle()"></textarea>
+                  <textarea #titleTextArea rows="2" name="moretext" class="sb-form-control" placeholder="Type here..." [(ngModel)]="editTitle" autofocus (keyup.enter)="(showTextArea = false); saveTitle()"></textarea>
                   <span class="characters-left">{{titleCharacterLimit - editTitle.length}} {{resourceService.frmelmnts.lbl.characterLeft }}</span>
                   <div class="warning-message" *ngIf="editTitle.length === 0">{{resourceService.frmelmnts.lbl.contentNameRequired}}</div>
                   <div class="warning-message" *ngIf="editTitle.length > titleCharacterLimit">{{resourceService.frmelmnts.lbl.contentNameLength }} {{titleCharacterLimit}}</div>
