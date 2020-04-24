@@ -36,7 +36,7 @@
 </sui-modal>
 
 <sui-modal [mustScroll]="false" [isClosable]="false" [transitionDuration]="0" [size]="'small'" class="sb-modal"
-  (dismissed)="devicePopupShown = true" #deviceCheckPopUp *ngIf="!isDesktopDevice && !devicePopupShown">
+  (dismissed)="onCloseDeviceNoticePopUp()" #deviceCheckPopUp *ngIf="!devicePopupShown">
   <div class="sb-modal-header">
     {{ resourceService?.frmelmnts?.lbl?.devicePopUpTitle }}
     </div>
@@ -46,7 +46,7 @@
     </div>
   </div>
   <div class="sb-modal-actions">
-    <button type="button" (click)="devicePopupShown=true" class="sb-btn sb-btn-normal sb-btn-primary">
+    <button type="button" (click)="onCloseDeviceNoticePopUp()" class="sb-btn sb-btn-normal sb-btn-primary">
       {{ resourceService?.frmelmnts?.btn?.ok }}
     </button>
   </div>

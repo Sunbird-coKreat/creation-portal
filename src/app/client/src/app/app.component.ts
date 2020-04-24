@@ -113,9 +113,7 @@ export class AppComponent implements OnInit, OnDestroy {
       ? (<HTMLInputElement>document.getElementById('instance')).value : 'sunbird';
      this.isDesktopDevice = this.deviceDetectorService.isDesktop();
 
-     if (this.isDesktopDevice) {
-      this.devicePopupShown = true;
-     }
+     this.checkIfDeviceNoticeShown();
   }
   /**
    * dispatch telemetry window unload event before browser closes
@@ -323,6 +321,24 @@ export class AppComponent implements OnInit, OnDestroy {
       this.showEnrollPopup = true;
       // this.checkFrameworkSelected();
     }
+  }
+
+  /**
+   * checks if user has shown the device notice popup
+   */
+  public checkIfDeviceNoticeShown() {
+    const deviceNotice: boolean = this.cacheService.get('deviceNoticeShown');
+
+    if (!this.isDesktopDevice && !deviceNotice) {
+      this.devicePopupShown = false;
+    } else {
+        this.devicePopupShown = true;
+    }
+  }
+
+  onCloseDeviceNoticePopUp() {
+    this.devicePopupShown = true;
+    this.cacheService.set('deviceNoticeShown', true);
   }
 
   /**
