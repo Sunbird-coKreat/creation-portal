@@ -111,9 +111,9 @@ export class AppComponent implements OnInit, OnDestroy {
     private shepherdService: ShepherdService, public deviceDetectorService: DeviceDetectorService,) {
     this.instance = (<HTMLInputElement>document.getElementById('instance'))
       ? (<HTMLInputElement>document.getElementById('instance')).value : 'sunbird';
-     this.isDesktopDevice = this.deviceDetectorService.isDesktop();
 
-     this.checkIfDeviceNoticeShown();
+    this.isDesktopDevice = this.deviceDetectorService.isDesktop();
+    this.checkIfDeviceNoticeShown();
   }
   /**
    * dispatch telemetry window unload event before browser closes
