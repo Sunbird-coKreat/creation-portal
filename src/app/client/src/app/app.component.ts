@@ -18,6 +18,7 @@ import { CacheService } from 'ng2-cache-service';
 import { DOCUMENT } from '@angular/platform-browser';
 import { ShepherdService } from 'angular-shepherd';
 import { Location } from '@angular/common';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 /**
  * main app component
@@ -96,6 +97,8 @@ export class AppComponent implements OnInit, OnDestroy {
   showUserVerificationPopup = false;
   feedCategory = 'OrgMigrationAction';
   labels: {};
+  isDesktopDevice = true;
+  devicePopupShown = false;
   constructor(private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService,
     public userService: UserService, private navigationHelperService: NavigationHelperService,
     private permissionService: PermissionService, public resourceService: ResourceService,
@@ -105,9 +108,14 @@ export class AppComponent implements OnInit, OnDestroy {
     private profileService: ProfileService, private toasterService: ToasterService, public utilService: UtilService,
     public formService: FormService, private programsService: ProgramsService, private location: Location,
     @Inject(DOCUMENT) private _document: any, public sessionExpiryInterceptor: SessionExpiryInterceptor,
-    private shepherdService: ShepherdService) {
+    private shepherdService: ShepherdService, public deviceDetectorService: DeviceDetectorService,) {
     this.instance = (<HTMLInputElement>document.getElementById('instance'))
       ? (<HTMLInputElement>document.getElementById('instance')).value : 'sunbird';
+     this.isDesktopDevice = this.deviceDetectorService.isDesktop();
+
+     if (this.isDesktopDevice) {
+      this.devicePopupShown = true;
+     }
   }
   /**
    * dispatch telemetry window unload event before browser closes
