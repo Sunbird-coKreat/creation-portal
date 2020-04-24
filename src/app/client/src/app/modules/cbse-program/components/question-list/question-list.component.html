@@ -1,7 +1,7 @@
 <!-- Untitled Practice Set Section with text field -->
 <div class="sb-bg-color-gray-0" [appTelemetryImpression]="telemetryImpression">
   <div class="ui container py-10">
-  <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="handleBack()"
+  <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn pl-0" (click)="handleBack()"
       type="button"
       appTelemetryInteract
     [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('go-back', 'click', 'question-list')"
@@ -45,13 +45,15 @@
             *ngIf="resourceDetails && resourceDetails.rejectComment && (sessionContext.currentRoleId === 1)"><i class="comment alternate outline icon sb-color-primary"></i><a>View Comments</a></span>
           </div>
         </div>
-        <div class="sb-field-group textbook-edit mr-auto ui form" *ngIf="showTextArea">
-          <div class="required inline field">
-            <label class="font-weight-bold fsmall">{{resourceService.frmelmnts.lbl.contentName}}:</label>
-            <textarea rows="4" name="resourceName" class="sb-form-control fs-1" #resourceTtlTextarea placeholder="Type here..." [(ngModel)]='resourceName' (keydown)="onResourceNameChange($event)" (keyup.enter)="saveResourceName()">{{resourceName}}</textarea>
-            <span class="characters-left">{{resourceTitleLimit - resourceName.length}} {{resourceService.frmelmnts.lbl.characterLeft }}</span>
-            <span class="sb-error-text" *ngIf="resourceName.length > resourceTitleLimit">{{resourceService.frmelmnts.lbl.contentNameLength }} {{resourceTitleLimit}}</span>
-            <span class="sb-error-text" *ngIf="!resourceName.length">{{resourceService.frmelmnts.lbl.contentNameRequired}}</span>
+        <div class="textbook-edit mr-auto ui form" *ngIf="showTextArea">
+          <div class="required inline field ai-end">
+               <label class="font-weight-bold fsmall four wide column pt-5 d-inline-block va-top">{{resourceService.frmelmnts.lbl.contentName}}:</label>
+            <div class="eight wide column d-inline-block">
+                <textarea rows="3" name="resourceName" class="sb-form-control fs-1" #resourceTtlTextarea placeholder="Type here..." [(ngModel)]='resourceName' (keydown)="onResourceNameChange($event)" (keyup.enter)="saveResourceName()">{{resourceName}}</textarea>
+                <span class="characters-left">{{resourceTitleLimit - resourceName.length}} {{resourceService.frmelmnts.lbl.characterLeft }}</span>
+                <span class="sb-error-text" *ngIf="resourceName.length > resourceTitleLimit">{{resourceService.frmelmnts.lbl.contentNameLength }} {{resourceTitleLimit}}</span>
+                <span class="sb-error-text" *ngIf="!resourceName.length">{{resourceService.frmelmnts.lbl.contentNameRequired}}</span>
+            </div>
           </div>
         </div>
         <div class='practical-sb-buttons'>

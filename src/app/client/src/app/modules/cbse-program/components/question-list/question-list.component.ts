@@ -610,7 +610,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public saveResourceName() {
     if (this.resourceName.length > 0 && this.resourceName.length <= this.resourceTitleLimit) {
-      if (_.trim(this.resourceName) === (_.trim(this.resourceDetails.name) || _.trim(this.templateDetails.metadata.name))) {
+      if ( _.trim(!_.isEmpty(this.resourceName)) || _.trim(this.resourceName) === (_.trim(this.resourceDetails.name) || _.trim(this.templateDetails.metadata.name))) {
         return;
       } else {
         this.showTextArea = false;

@@ -1,6 +1,6 @@
 <div class="sb-bg-color-gray-0" [appTelemetryImpression]="telemetryImpression">
   <div class="ui container py-10">
-  <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="handleBack()"
+  <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn mb-10" (click)="handleBack()"
   type="button"
   appTelemetryInteract
 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('go-back', 'click', 'content-uploader')"
@@ -40,15 +40,15 @@
                 </span>
               </div>
             </div>
-            <div class="sb-field-group textbook-edit ui form" *ngIf="showTextArea">
-              <div class="required inline field">
-                <label class="font-weight-bold fsmall">{{resourceService.frmelmnts.lbl.contentName}}:</label>
-                <div class="sb-field relative">
-                  <textarea #titleTextArea rows="4" name="moretext" class="sb-form-control" placeholder="Type here..." [(ngModel)]="editTitle" autofocus (keyup.enter)="(showTextArea = false); saveTitle()"></textarea>
+            <div class="textbook-edit ui form" *ngIf="showTextArea && !loading">
+              <div class="required inline field ai-end">
+                  <label class="font-weight-bold fsmall four wide column pt-5 d-inline-block va-top">{{resourceService.frmelmnts.lbl.contentName}}:</label>
+                <div class="eight wide column  d-inline-block">
+                  <textarea #titleTextArea rows="3" name="moretext" class="sb-form-control" placeholder="Type here..." [(ngModel)]="editTitle" autofocus (keyup.enter)="(showTextArea = false); saveTitle()"></textarea>
                   <span class="characters-left">{{titleCharacterLimit - editTitle.length}} {{resourceService.frmelmnts.lbl.characterLeft }}</span>
+                  <div class="warning-message" *ngIf="editTitle.length === 0">{{resourceService.frmelmnts.lbl.contentNameRequired}}</div>
+                  <div class="warning-message" *ngIf="editTitle.length > titleCharacterLimit">{{resourceService.frmelmnts.lbl.contentNameLength }} {{titleCharacterLimit}}</div>
                 </div>
-                <div class="warning-message" *ngIf="editTitle.length === 0">{{resourceService.frmelmnts.lbl.contentNameRequired}}</div>
-                <div class="warning-message" *ngIf="editTitle.length > titleCharacterLimit">{{resourceService.frmelmnts.lbl.contentNameLength }} {{titleCharacterLimit}}</div>
               </div>
             </div>
             <div class='practical-sb-buttons'>
