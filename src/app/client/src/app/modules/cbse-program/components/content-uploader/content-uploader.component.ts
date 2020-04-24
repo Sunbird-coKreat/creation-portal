@@ -482,7 +482,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
   }
 
   saveTitle() {
-   if (_.trim(!_.isEmpty(this.editTitle)) || (this.editTitle.length > this.titleCharacterLimit)) {
+   if ((_.isEmpty(_.trim(this.editTitle))) || (this.editTitle.length > this.titleCharacterLimit)) {
     this.editContentTitle();
    } else {
     if (_.trim(this.editTitle) === _.trim(this.contentMetaData.name)) {
