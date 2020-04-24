@@ -33,15 +33,18 @@ export class FrameworkService {
     const channelKey =  hashTagId ? hashTagId : this.userService.hashTagId;
     const  channelData = this.cacheService.get(channelKey);
     const frameWorkKey = framework ? framework : _.get(channelData, 'defaultFramework');
-    if ( frameWorkKey && this.cacheService.get(frameWorkKey)) {
+    if (framework && _.get(this._frameworkData, framework)) {
+      this._frameworkData$.next({ err: null, frameworkdata: this._frameworkData });
+      this._channelData$.next({ err: null, channelData: channelData });
+      this._channelData = channelData;
+    } else if ( frameWorkKey && this.cacheService.get(frameWorkKey)) {
       const data = this.cacheService.get(frameWorkKey);
       const frameWorkName = framework ? framework : 'defaultFramework';
       this._frameworkData[frameWorkName] = data;
       this._frameworkData$.next({ err: null, frameworkdata: this._frameworkData });
       this._channelData$.next({ err: null, channelData: channelData });
       this._channelData = channelData;
-    } else {
-      if (framework && !_.get(this._frameworkData, framework)) {
+    } else if (framework && !_.get(this._frameworkData, framework)) {
 
         this.getFrameworkCategories(framework).subscribe(
           (frameworkData: ServerResponse) => {
@@ -53,8 +56,7 @@ export class FrameworkService {
           err => {
             this._frameworkData$.next({ err: err, frameworkdata: null });
           });
-      } else {
-        if (!_.get(this._frameworkData, 'defaultFramework')) {
+      } else if (!_.get(this._frameworkData, 'defaultFramework')) {
           this.getDefaultFrameWork(hashTagId ? hashTagId : this.userService.hashTagId)
             .pipe(mergeMap(data => {
               this.setChannelData(hashTagId ? hashTagId : this.userService.hashTagId, data);
@@ -72,8 +74,6 @@ export class FrameworkService {
                 this._frameworkData$.next({ err: err, frameworkdata: null });
               });
         }
-      }
-    }
   }
   private getDefaultFrameWork(hashTagId) {
     const channelOptions = {
