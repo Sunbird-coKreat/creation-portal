@@ -229,10 +229,11 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
             this.tempSortCollectionList = this.collectionList;
             this.selectedCollectionIds = _.uniq(this.selectedCollectionIds);
             this.toggleNominationButton();
+            this.showLoader = false;
         });
-
+      } else {
+        this.showLoader = false;
       }
-      this.showLoader = false;
       this.showError = false;
     });
   }

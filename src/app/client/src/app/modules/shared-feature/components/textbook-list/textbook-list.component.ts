@@ -30,6 +30,7 @@ export class TextbookListComponent implements OnInit {
   public direction = 'asc';
   public sortColumn = '';
   public tempSortcollections: Array<any> = [];
+  public showLoader = true;
 
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
@@ -131,7 +132,10 @@ export class TextbookListComponent implements OnInit {
             return content;
           });
           this.tempSortcollections = this.collections;
+          this.showLoader = false;
         });
+    } else {
+      this.showLoader = false;
     }
   }
   getSampleContentStatusCount(data) {
