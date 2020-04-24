@@ -184,3 +184,8 @@
     margin: 0.6rem 0 !important;
   }
 }
+.sb-pageSection-document{
+  i.icon.file.outline:before{
+      content: "\f15c" !important;
+    }
+}
