@@ -228,6 +228,9 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
           },
           (error) => {
             console.log(error);
+            this.showLoader = false;
+            const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+            this.toasterService.error(errorMes || 'Fetching textbooks failed. Please try again...');
           }
         );
     } else {
