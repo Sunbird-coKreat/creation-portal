@@ -1,6 +1,6 @@
 <!--Computer-->
 <div class="ui text menu m-0 d-flex flex-jc-center flex-ai-center computer only">
-	
+
 	<!--Logged in user-->
 	<ng-container *ngIf="userService.loggedIn">
 		<!-- <a *ngIf="showContributeTab" class="item" [class.active]="router.isActive('/contribute')"
@@ -77,7 +77,7 @@
 				</div>
 			</div>
 			<div class="ui divider mt-0"></div>
-			<a class="item" [class.active]="router.isActive('/search/Library') || router.isActive('/resources')"
+			<!-- <a class="item" [class.active]="router.isActive('/search/Library') || router.isActive('/resources')"
 				(click)="showSideBar()" appTelemetryInteract [telemetryInteractEdata]="libraryMenuIntractEdata"
 				routerLink="/resources">
 				{{resourceService?.frmelmnts?.tab?.resources}}
@@ -91,7 +91,7 @@
 				(click)="showSideBar()" appTelemetryInteract [telemetryInteractEdata]="contributeMenuEdata"
 				routerLink="/contribute" [telemetryInteractCdata]="getFeatureId('user:program:contribute', 'SB-15591')">
 				{{resourceService?.frmelmnts?.tab?.contribute}}
-			</a>
+			</a> -->
 			<!--a class="item" [class.active]="router.isActive('/search/profile') || router.isActive('/profile')"
 				(click)="showSideBar()" routerLink="/profile">
 				{{resourceService.frmelmnts?.lnk?.profile}}
