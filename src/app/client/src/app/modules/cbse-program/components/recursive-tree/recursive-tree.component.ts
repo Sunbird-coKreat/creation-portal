@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import * as _ from 'lodash-es';
 import { UserService } from '@sunbird/core';
-import { ConfigService } from '@sunbird/shared';
+import { ConfigService, ResourceService } from '@sunbird/shared';
 import { ProgramTelemetryService } from '../../../program/services';
 
 @Component({
@@ -15,18 +15,21 @@ export class RecursiveTreeComponent implements OnInit {
   @Input() selectedChapter;
   @Input() programContext;
   @Input() sessionContext;
+  @Input() level;
   @Output() emitSelectedNode = new EventEmitter<any>();
   @Output() nodeMeta = new EventEmitter<any>();
   public showModal = false;
   public showAddresource = false;
   visibility: any;
   public unitIdentifier;
+  public childlevel;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   constructor(public userService: UserService, public configService: ConfigService,
-    public programTelemetryService: ProgramTelemetryService) { }
+    public programTelemetryService: ProgramTelemetryService,public resourceService: ResourceService) { }
 
   ngOnInit() {
+    this.childlevel = this.level + 1;
     const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
     this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
     this.visibility = {};
