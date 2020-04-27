@@ -49,7 +49,7 @@
           <div class="required inline field ai-end">
                <label class="font-weight-bold fsmall four wide column pt-5 d-inline-block va-top">{{resourceService.frmelmnts.lbl.contentName}}:</label>
             <div class="eight wide column d-inline-block">
-                <textarea rows="2" name="resourceName" class="sb-form-control fs-1" #resourceTtlTextarea placeholder="Type here..." [(ngModel)]='resourceName' (keydown)="onResourceNameChange($event)" (keyup.enter)="saveResourceName()">{{resourceName}}</textarea>
+                <textarea rows="2" name="resourceName" class="sb-form-control fs-1" #resourceTtlTextarea placeholder="{{resourceService.frmelmnts.lbl.TypeHere}}" [(ngModel)]='resourceName' (keydown)="onResourceNameChange($event)" (keyup.enter)="saveResourceName()">{{resourceName}}</textarea>
                 <span class="characters-left">{{resourceTitleLimit - resourceName.length}} {{resourceService.frmelmnts.lbl.characterLeft }}</span>
                 <span class="sb-error-text" *ngIf="resourceName.length > resourceTitleLimit">{{resourceService.frmelmnts.lbl.contentNameLength }} {{resourceTitleLimit}}</span>
                 <span class="sb-error-text" *ngIf="!resourceName.length">{{resourceService.frmelmnts.lbl.contentNameRequired}}</span>
