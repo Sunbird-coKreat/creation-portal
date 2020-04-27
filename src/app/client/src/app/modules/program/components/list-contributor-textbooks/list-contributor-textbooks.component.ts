@@ -8,8 +8,8 @@ import { HttpClient } from '@angular/common/http';
 import { IChapterListComponentInput } from '../../../cbse-program/interfaces';
 import { InitialState, ISessionContext, IUserParticipantDetails } from '../../interfaces';
 import { ProgramStageService } from '../../services/';
-import { ProgramComponentsService} from '../../services/program-components/program-components.service';
 import { ChapterListComponent } from '../../../cbse-program/components/chapter-list/chapter-list.component';
+import { CollectionHierarchyService } from '../../../cbse-program/services/collection-hierarchy/collection-hierarchy.service';
 import { tap, filter, first, map } from 'rxjs/operators';
 import { NgForm } from '@angular/forms';
 import * as moment from 'moment';
@@ -69,7 +69,8 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     private config: ConfigService, private publicDataService: PublicDataService,
   private activatedRoute: ActivatedRoute, private router: Router, public programStageService: ProgramStageService,
   private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
-  public toasterService: ToasterService, public actionService: ActionService) { }
+  public toasterService: ToasterService, public actionService: ActionService,
+  private collectionHierarchyService: CollectionHierarchyService) { }
 
   ngOnInit() {
     this.programId = this.activatedRoute.snapshot.params.programId;
@@ -202,59 +203,39 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
          return _.includes(this.selectedNominationDetails.nominationData.collection_ids, collection.identifier);
     }) : [];
     if (!_.isEmpty(contributorTextbooks)) {
-      const collectionIds = _.map(contributorTextbooks, 'identifier');
-      this.getCollectionHierarchy(collectionIds)
-        .subscribe(response => {
-          const hierarchies = _.map(response, r => {
-            if (r.result && r.result.content) {
-              return r.result.content;
+      this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId)
+        .subscribe(
+          (response) => {
+            if (response && response.result && response.result.content) {
+              const contents = _.get(response.result, 'content');
+              let contentStatusCounts: any = {};
+              if (this.isNominationOrg()) {
+                // tslint:disable-next-line:max-line-length
+                contentStatusCounts = this.collectionHierarchyService.getContentCounts(contents, this.sessionContext.nominationDetails.organisation_id, contributorTextbooks);
+              } else {
+                // tslint:disable-next-line:max-line-length
+                contentStatusCounts = this.collectionHierarchyService.getContentCountsForIndividual(contents, this.sessionContext.nominationDetails.user_id, contributorTextbooks);
+              }
+              // tslint:disable-next-line:max-line-length
+              this.contributorTextbooks = this.collectionHierarchyService.getIndividualCollectionStatus(contentStatusCounts, contributorTextbooks);
+              this.tempSortTextbooks = this.contributorTextbooks;
+              this.showLoader = false;
             } else {
-              return r.result;
+              this.contributorTextbooks = this.collectionHierarchyService.getIndividualCollectionStatus([], contributorTextbooks);
+              this.tempSortTextbooks = this.contributorTextbooks;
+              this.showLoader = false;
             }
-          });
-          const hierarchyContent = _.map(hierarchies, hierarchy => {
-            this.sampleDataCount = 0;
-            hierarchy.sampleContentCount = this.getSampleContentStatusCount(hierarchy);
-            return hierarchy;
-          });
-          this.contributorTextbooks = _.map(contributorTextbooks, content => {
-            const contentWithHierarchy =  _.find(hierarchyContent, {identifier: content.identifier});
-            content.sampleContentCount = contentWithHierarchy.sampleContentCount;
-            return content;
-          });
-          this.tempSortTextbooks = this.contributorTextbooks;
-          this.showLoader = false;
-        });
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
     } else {
       this.contributorTextbooks = contributorTextbooks;
       this.tempSortTextbooks = contributorTextbooks;
       this.showLoader = false;
     }
   }
-  getSampleContentStatusCount(data) {
-    const self = this;
-    if (data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' && data.sampleContent
-    && data.createdBy === this.sessionContext.nominationDetails.user_id) {
-        self.sampleDataCount = self.sampleDataCount + 1;
-    }
-    const childData = data.children;
-    if (childData) {
-      childData.map(child => {
-        self.getSampleContentStatusCount(child);
-      });
-    }
-    return self.sampleDataCount;
-  }
-  getCollectionHierarchy(collectionIds) {
-    const hierarchyRequest =  _.map(collectionIds, id => {
-       const req = {
-         url: 'content/v3/hierarchy/' + id,
-         param: { 'mode': 'edit' }
-       };
-       return this.actionService.get(req);
-     });
-     return forkJoin(hierarchyRequest);
-   }
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
@@ -382,7 +363,9 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     this.showRequestChangesPopup = true;
     this.rejectComment = '';
   }
-
+  isNominationOrg() {
+    return !!(this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.organisation_id);
+  }
   ngOnDestroy() {
     this.stageSubscription.unsubscribe();
   }
