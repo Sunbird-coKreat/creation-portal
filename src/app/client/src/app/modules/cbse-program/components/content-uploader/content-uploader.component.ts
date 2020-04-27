@@ -363,9 +363,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
           this.initiateUploadModal();
         }, 0);
       }
-      this.editContentTitle();
       this.loading = false;
       this.handleActionButtons();
+      this.editContentTitle();
       // At the end of execution
       if ( _.isUndefined(this.sessionContext.topicList)) {
         this.fetchFrameWorkDetails();
@@ -476,9 +476,16 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
   }
 
   editContentTitle() {
-    this.showTextArea = true;
-    this.cd.detectChanges();
-    this.titleTextAreaa.nativeElement.focus();
+    if(this.visibility && this.visibility.showEdit)
+    {
+      console.log("This is true", this.visibility)
+      this.showTextArea = true;
+      this.cd.detectChanges();
+      this.titleTextAreaa.nativeElement.focus();
+    } else {
+      this.showTextArea = false;
+      console.log("This is false", this.visibility)
+    }
   }
 
   saveTitle() {
