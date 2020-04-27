@@ -595,9 +595,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public showTitleTextBox() {
     this.showTextArea = true;
-        setTimeout(() => {
-          this.resourceTtlTextarea.nativeElement.focus();
-        }, 500);
+      setTimeout(() => {
+        this.resourceTtlTextarea.nativeElement.focus();
+      }, 500);
   }
 
   public onResourceNameChange(event: any) {
