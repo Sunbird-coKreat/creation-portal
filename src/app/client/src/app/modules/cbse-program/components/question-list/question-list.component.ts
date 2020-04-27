@@ -580,10 +580,14 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public showResourceTitleEditor() {
     if (this.visibility && this.visibility.showSave) {
-      this.showTextArea = true;
-      setTimeout(() => {
-        this.resourceTtlTextarea.nativeElement.focus();
-      }, 500);
+      if (this.resourceStatus === 'Draft' && this.resourceDetails.rejectComment && this.resourceDetails.rejectComment !== '') {
+        this.showTextArea = false ;
+      } else {
+        this.showTextArea = true;
+        setTimeout(() => {
+          this.resourceTtlTextarea.nativeElement.focus();
+        }, 500);
+      }
     } else {
       this.showTextArea = false;
     }
