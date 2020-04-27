@@ -579,7 +579,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public showResourceTitleEditor() {
-    if (this.visibility && this.visibility.showSave) { 
+    if (this.visibility && this.visibility.showSave) {
       this.showTextArea = true;
       setTimeout(() => {
         this.resourceTtlTextarea.nativeElement.focus();
@@ -614,7 +614,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public saveResourceName() {
     if (this.resourceName.length > 0 && this.resourceName.length <= this.resourceTitleLimit) {
-      if ((_.isEmpty(_.trim(this.resourceName))) || _.trim(this.resourceName) === (_.trim(this.resourceDetails.name) || _.trim(this.templateDetails.metadata.name))) {
+      if ((_.isEmpty(_.trim(this.resourceName))) || _.trim(this.resourceName) === (_.trim(this.resourceDetails.name) ||
+       _.trim(this.templateDetails.metadata.name))) {
         return;
       } else {
         this.showTextArea = false;

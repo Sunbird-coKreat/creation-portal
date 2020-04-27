@@ -476,8 +476,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
   }
 
   editContentTitle() {
-    if(this.visibility && this.visibility.showEdit)
-    {
+    if (this.visibility && this.visibility.showEdit) {
       this.showTextArea = true;
       this.cd.detectChanges();
       this.titleTextAreaa.nativeElement.focus();
