@@ -65,6 +65,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public overAllContentCount: any = {};
   public isContributionDashboardTabActive = false;
   public canAssignUsers = false;
+  public showLoader = true;
 
   constructor(public frameworkService: FrameworkService, private tosterService: ToasterService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
@@ -220,6 +221,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.showNominationsComponent = true;
     }, error => {
       this.tosterService.error('User onboarding failed');
+      this.showLoader = false;
     });
   }
 
@@ -229,12 +231,14 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         if (res && res.result && res.result.content && res.result.content.length) {
           this.programCollections = res.result.content;
         }
+      this.showLoader = false;
       },
       (err) => {
         console.log(err);
         // TODO: navigate to program list page
         const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
         this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+        this.showLoader = false;
       }
     );
 
@@ -353,6 +357,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       // TODO: navigate to program list page
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
       this.toasterService.error(errorMes || this.resourceService.messages.emsg.project.m0001);
+      this.showLoader = false;
     });
   }
 
@@ -410,6 +415,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       // TODO: navigate to program list page
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
       this.toasterService.error(errorMes || this.resourceService.messages.emsg.project.m0001);
+      this.showLoader = false;
     });
   }
 
