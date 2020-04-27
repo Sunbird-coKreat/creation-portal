@@ -593,6 +593,13 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  public showTitleTextBox() {
+    this.showTextArea = true;
+        setTimeout(() => {
+          this.resourceTtlTextarea.nativeElement.focus();
+        }, 500);
+  }
+
   public onResourceNameChange(event: any) {
     const remainChar = this.resourceTitleLimit - this.resourceName.length;
     if (remainChar <= 0 && event.keyCode !== 8) {
@@ -623,6 +630,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         return;
       } else {
         this.showTextArea = false;
+        this.resourceName = _.trim(this.resourceName);
         const reqBody = {
           'content': {
               'versionKey': this.existingContentVersionKey,

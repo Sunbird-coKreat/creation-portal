@@ -489,6 +489,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     }
   }
 
+  public showTitleTextBox() {
+    this.showTextArea = true;
+    this.cd.detectChanges();
+    this.titleTextAreaa.nativeElement.focus();
+  }
+
   saveTitle() {
    if ((_.isEmpty(_.trim(this.editTitle))) || (this.editTitle.length > this.titleCharacterLimit)) {
     this.editContentTitle();

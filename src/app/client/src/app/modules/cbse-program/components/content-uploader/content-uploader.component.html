@@ -23,7 +23,7 @@
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
-                (click)="editContentTitle()">Edit</a></span></div>
+                (click)="showTitleTextBox()">Edit</a></span></div>
               <div class="mt-8 practice-set__status">
                 <span class="sb-label sb-label-table sb-label-success-0"
                 [ngClass]="{ 'sb-label-success-0': resourceStatus === 'Live', 'sb-label-warning-0': (resourceStatus === 'Draft'),  'sb-label-error-0': (resourceStatus === 'Draft' && contentMetaData.prevStatus === 'Review') ,  'sb-label-gray-0': resourceStatus === 'Review' }">{{ resourceStatusText }}</span>
