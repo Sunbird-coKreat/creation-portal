@@ -478,13 +478,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
   editContentTitle() {
     if(this.visibility && this.visibility.showEdit)
     {
-      console.log("This is true", this.visibility)
       this.showTextArea = true;
       this.cd.detectChanges();
       this.titleTextAreaa.nativeElement.focus();
     } else {
       this.showTextArea = false;
-      console.log("This is false", this.visibility)
     }
   }
 
