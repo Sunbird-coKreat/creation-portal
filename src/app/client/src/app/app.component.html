@@ -6,7 +6,7 @@
   <app-validate-teacher-identifier-popup *ngIf="showUserVerificationPopup && labels" [labels]="labels" [userFeedData]="userFeed"> </app-validate-teacher-identifier-popup>
   <app-user-location (close)="onLocationSubmit()" *ngIf="!isLocationConfirmed" [isCustodianOrgUser]="isCustodianOrgUser" [deviceProfile]="deviceProfile" [userProfile]="usersProfile">
   </app-user-location>
-  <div *ngIf="!isContributor && this.router.isActive('/contribute', true) && initApp">
+  <div *ngIf="!isContributor && this.router.isActive('/contribute', true) && initApp && devicePopupShown">
   <app-enroll-contributor  (close)="onContributorModalSubmit()" >
   </app-enroll-contributor>
 </div>
@@ -31,6 +31,23 @@
   <div class="sb-modal-actions">
     <button type="button" (click)="handleLogin()" class="sb-btn sb-btn-normal sb-btn-primary">
       {{ resourceService?.frmelmnts?.btn?.login }}
+    </button>
+  </div>
+</sui-modal>
+
+<sui-modal [mustScroll]="false" [isClosable]="false" [transitionDuration]="0" [size]="'small'" class="sb-modal"
+  (dismissed)="onCloseDeviceNoticePopUp()" #deviceCheckPopUp *ngIf="!devicePopupShown">
+  <div class="sb-modal-header">
+    {{ resourceService?.frmelmnts?.lbl?.devicePopUpTitle }}
+    </div>
+  <div class="sb-modal-content">
+    <div class="ui center aligned segment">
+      <span class="font-weight-bold sb-color-error">{{ resourceService?.frmelmnts?.lbl?.devicePopUpText }}</span>
+    </div>
+  </div>
+  <div class="sb-modal-actions">
+    <button type="button" (click)="onCloseDeviceNoticePopUp()" class="sb-btn sb-btn-normal sb-btn-primary">
+      {{ resourceService?.frmelmnts?.btn?.ok }}
     </button>
   </div>
 </sui-modal>

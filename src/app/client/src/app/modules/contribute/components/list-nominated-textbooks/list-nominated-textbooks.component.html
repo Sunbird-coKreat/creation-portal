@@ -170,7 +170,7 @@
 					  </div>
 				</div>
 					<div class="sb-pageSection" [appTelemetryImpression]="telemetryImpression">
-						<div class="sb-bg-color-white pt-20">
+						<div class="sb-bg-color-white pt-20" *ngIf="!showLoader">
 							<div class="sb-table-responsive">
 								<table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
 									<thead class="sb-table-header sb-table-thead-gray">
@@ -233,12 +233,15 @@
 												[telemetryInteractEdata]="getTelemetryInteractEdata('upload-content', 'click', 'list-nominated-textbooks')"
 												[telemetryInteractObject]="telemetryInteractObject"
 												[telemetryInteractCdata]="telemetryInteractCdata"
-												[telemetryInteractPdata]="telemetryInteractPdata">{{sessionContext.currentRole === 'CONTRIBUTOR' ?  'Upload Content' : 'Review Content'}}</button>
+												[telemetryInteractPdata]="telemetryInteractPdata">{{sessionContext.currentRole === 'CONTRIBUTOR' ?  resourceService.frmelmnts.lbl.uploadContent : resourceService.frmelmnts.lbl.reviewContent}}</button>
 										</td>
 										</tr>
 									</tbody>
 								</table>
 							</div>
+						</div>
+						<div class="ui" *ngIf="showLoader">
+							<app-loader></app-loader>
 						</div>
 					</div>
 				</div>
