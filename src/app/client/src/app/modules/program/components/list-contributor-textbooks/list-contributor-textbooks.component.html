@@ -264,12 +264,9 @@
 									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 								</span>
 							</th>
-							<th class="w-5 px-5">
-								<span *ngIf="contributor?.nominationData?.status == 'Pending'">
+							<th class="w-5 px-5" *ngIf="contributor?.nominationData?.status == 'Pending'">
+								<span>
 									{{resourceService.frmelmnts.lbl.sampleContentCount}}
-								</span>
-								<span *ngIf="contributor?.nominationData?.status == 'Approved'">
-									{{resourceService.frmelmnts.lbl.contributionCount}}
 								</span>
 							</th>
 							<th class="w-5">&nbsp;</th>
@@ -282,9 +279,9 @@
 							<td>{{contributorTextbook?.medium}}</td>
 							<td>{{contributorTextbook?.gradeLevel}}</td>
 							<td>{{contributorTextbook?.subject}}</td>
-							<td>{{contributorTextbook?.sampleContentCount || 0}}</td>
+							<td *ngIf="contributor?.nominationData?.status == 'Pending'">{{contributorTextbook?.totalSampleContent || 0}}</td>
 							<td data-label="Actions">
-								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" [disabled]="contributorTextbook?.sampleContentCount === 0 ? true : false "
+								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" [disabled]="contributorTextbook?.totalSampleContent === 0 ? true : false "
 									*ngIf="contributor?.nominationData?.status == 'Pending'" (click)="viewContribution(contributorTextbook)"
 									appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('view-content', 'click', 'list-nominated-textbooks')"

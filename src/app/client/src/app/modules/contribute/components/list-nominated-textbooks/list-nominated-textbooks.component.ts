@@ -195,18 +195,13 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
             const contents = _.get(response.result, 'content');
             // tslint:disable-next-line:max-line-length
             this.contentStatusCounts = this.collectionHierarchyService.getContentCounts(contents, this.sessionContext.nominationDetails.organisation_id);
-            this.contributorTextbooks = _.map(contributorTextbooks, textbook => {
-              const textbookMeta = _.get(this.contentStatusCounts.individualStatus, textbook.identifier);
-              if (textbookMeta) {
-                textbook.draftCount = _.has(textbookMeta, 'Draft') ? textbookMeta.Draft.length : 0;
-                textbook.reviewCount = _.has(textbookMeta, 'Review') ? textbookMeta.Review.length : 0;
-                textbook.rejectedCount = _.has(textbookMeta, 'Reject') ? textbookMeta.Reject.length : 0;
-                textbook.liveCount = _.has(textbookMeta, 'Live') ? textbookMeta.Live.length : 0;
-              }
-              return textbook;
-            });
+            // tslint:disable-next-line:max-line-length
+            this.contributorTextbooks = this.collectionHierarchyService.getIndividualCollectionStatus(this.contentStatusCounts, contributorTextbooks);
           } else {
-            this.contributorTextbooks = contributorTextbooks;
+            // tslint:disable-next-line:max-line-length
+            this.contentStatusCounts = this.collectionHierarchyService.getContentCounts([], this.sessionContext.nominationDetails.organisation_id);
+            // tslint:disable-next-line:max-line-length
+            this.contributorTextbooks = this.collectionHierarchyService.getIndividualCollectionStatus(this.contentStatusCounts, contributorTextbooks);
           }
 
           this.tempSortTextbooks = this.contributorTextbooks;

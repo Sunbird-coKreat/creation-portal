@@ -43,6 +43,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   public filters;
   public telemetryPageId = 'collection';
   public telemetryInteractCdata: any;
+  public contentStatusCounts: any = {};
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
   public telemetryImpression: IImpressionEventInput;
@@ -197,43 +198,31 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       this.collectionsWithCardImage = _.forEach(collectionCards, collection => this.addCardImage(collection));
       this.filterCollectionList(this.classes);
       if (!_.isEmpty(res.result.content)) {
-        const collectionIds = _.map(res.result.content, 'identifier');
-        this.collectionHierarchyService.getCollectionHierarchy(collectionIds)
-          .subscribe(response => {
-            const hierarchies = _.map(response, r => {
-              if (r.result && r.result.content) {
-                return r.result.content;
+        const collections = res.result.content;
+        this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId)
+          .subscribe(
+            (response) => {
+              if (response && response.result && response.result.content) {
+                const contents = _.get(response.result, 'content');
+                if (this.isContributorOrgUser()) {
+                  this.contentStatusCounts = this.collectionHierarchyService.getContentCounts(contents, this.getUserOrgId(), collections);
+                } else {
+                  // tslint:disable-next-line:max-line-length
+                  this.contentStatusCounts = this.collectionHierarchyService.getContentCountsForIndividual(contents, this.getUserId(), collections);
+                }
               } else {
-                return r.result;
+                this.contentStatusCounts = this.collectionHierarchyService.getContentCountsForAll([], collections);
               }
-            });
-            _.forEach(hierarchies, hierarchy => {
-              this.collectionHierarchyService.sampleDataCount = 0;
-              this.collectionHierarchyService.chapterCount = 0;
-              // tslint:disable-next-line:max-line-length
-              const {sampleDataCount, chapterCount} = this.collectionHierarchyService.getSampleContentStatusCount(hierarchy, this.currentUserID);
-              hierarchy.sampleContentCount = sampleDataCount;
-              hierarchy.chapterCount = hierarchy.children ? hierarchy.children.length : 0;
-            });
-            this.selectedCollectionIds = [];
-            this.collectionList = _.map(res.result.content, content => {
-              const contentWithHierarchy =  _.find(hierarchies, {identifier: content.identifier});
-              content.chapterCount = contentWithHierarchy.chapterCount;
-              // tslint:disable-next-line:max-line-length
-              if (contentWithHierarchy.sampleContentCount > 0) {
-                content.sampleContentCount = contentWithHierarchy.sampleContentCount;
-                this.selectedCollectionIds.push(contentWithHierarchy.identifier);
-              }
-              return content;
-            });
-            this.tempSortCollectionList = this.collectionList;
-            this.selectedCollectionIds = _.uniq(this.selectedCollectionIds);
-            this.toggleNominationButton();
-            this.showLoader = false;
-        });
-      } else {
-        this.showLoader = false;
+              this.collectionList = this.collectionHierarchyService.getIndividualCollectionStatus(this.contentStatusCounts, collections);
+              this.selectedCollectionIds = _.map(_.filter(this.collectionList, c => c.totalSampleContent > 0), 'identifier');
+              this.tempSortCollectionList = this.collectionList;
+              this.selectedCollectionIds = _.uniq(this.selectedCollectionIds);
+              this.toggleNominationButton();
+            },
+            (err) => console.log(err)
+          );
       }
+      this.showLoader = false;
       this.showError = false;
     });
   }
@@ -460,8 +449,8 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
         req['url'] = `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_ADD}`;
         req.data.request['status'] = 'Pending';
         req.data.request['createdby'] = creator;
-        if (this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org) {
-          req.data.request['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
+        if (this.isContributorOrgUser()) {
+          req.data.request['organisation_id'] = this.getUserOrgId();
         }
         this.programsService.post(req).subscribe((data) => {
           this.toasterService.success('Nomination sent');
@@ -506,8 +495,8 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     if (apiCall === 'update') {
       req['url'] = `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_UPDATE}`;
     }
-    if (userProfile.userRegData && userProfile.userRegData.User_Org) {
-      req.data.request['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
+    if (this.isContributorOrgUser()) {
+      req.data.request['organisation_id'] = this.getUserOrgId();
     }
 
     return this.programsService.post(req);
@@ -584,7 +573,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
           };
           if (this.userService.userProfile.userRegData &&
             this.userService.userProfile.userRegData.User_Org) {
-            this.sessionContext.nominationDetails['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
+            this.sessionContext.nominationDetails['organisation_id'] = this.getUserOrgId();
           }
           this.gotoChapterView(collection);
         }
@@ -620,5 +609,23 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     if (event && !this.selectedContentTypes.length) {
       this.toasterService.error(this.resourceService.messages.emsg.nomination.m001);
     }
+  }
+  isContributorOrgUser() {
+    return !!(this.userService.userProfile.userRegData &&
+      this.userService.userProfile.userRegData.User_Org);
+  }
+
+  getUserOrgId() {
+   return this.userService.userProfile.userRegData.User_Org.orgId;
+  }
+
+  getUserId() {
+    return this.userService.userProfile.userId;
+  }
+
+  isContributorOrgAdmin() {
+    return !!(this.userService.userProfile.userRegData &&
+      this.userService.userProfile.userRegData.User_Org &&
+      this.userService.userProfile.userRegData.User_Org.roles.includes('admin'));
   }
 }
