@@ -481,7 +481,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         data: {
           request: {
             content: {
-              'name': this.templateDetails.metadata.name,
+              'name': 'Untitled',
               'code': UUID.UUID(),
               'mimeType': this.templateDetails.mimeType[0],
               'createdBy': this.userService.userid,
