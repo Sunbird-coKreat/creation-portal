@@ -223,7 +223,7 @@ export class CollectionHierarchyService {
     return collectionWithReject;
   }
 
-  getContentAggregation(programId) {
+  getContentAggregation(programId, sampleContentCheck?) {
     const option = {
       url: 'content/composite/v1/search',
       data: {
@@ -237,6 +237,9 @@ export class CollectionHierarchyService {
         }
       }
     };
+    if (sampleContentCheck !== 'undefined') {
+      option.data.request['sampleContent'] = sampleContentCheck;
+    }
     return this.httpClient.post<any>(option.url, option.data);
   }
 
