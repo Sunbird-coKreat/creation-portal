@@ -616,7 +616,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public saveResourceName() {
-    //this.resourceName = (_.trim(this.resourceName) !== 'Untitled') ? _.trim(this.resourceName) : '' ;
+    this.resourceName = (_.trim(this.resourceName) !== 'Untitled') ? _.trim(this.resourceName) : '' ;
     if (this.resourceName.length > 0 && this.resourceName.length <= this.resourceTitleLimit) {
       this.showTextArea = false;
       const reqBody = {
