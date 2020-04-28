@@ -26,12 +26,12 @@
             [telemetryInteractPdata]="telemetryInteractPdata">
             <i class="plus outline icon"></i> {{resourceService.frmelmnts?.lbl?.createNewProgram}}</button>
                 <div class="item flex-jc-flex-end" *ngIf="router.url.includes('/sourcing') && userProfile?.organisationNames?.length">
-                    <span> {{ resourceService?.frmelmnts?.lbl?.organisation + ': ' }} </span>
-                    <span class="pl-5"> {{ userProfile?.organisationNames?.join(', ') }} </span>
+                    <span> {{ resourceService?.frmelmnts?.lbl?.organisation + ' : ' }} </span>
+                    <span class="pl-5 font-weight-bold"> {{ userProfile?.organisationNames?.join(', ') }} </span>
                 </div> 
                 <div class="item" *ngIf="router.url.includes('/contribute')&& userProfile?.userRegData?.Org?.name">
                     <span>{{ resourceService?.frmelmnts?.lbl?.organisation + ' : '}}</span>
-                    <span> {{ userProfile?.userRegData?.Org?.name }}</span>
+                    <span class="pl-5 font-weight-bold"> {{ userProfile?.userRegData?.Org?.name }}</span>
                 </div>
                 <!--Hamburger Icon-->
                 <i class="large bars icon link primary-color mobile only" (click)="showSideBar()" tabindex="0"></i>
