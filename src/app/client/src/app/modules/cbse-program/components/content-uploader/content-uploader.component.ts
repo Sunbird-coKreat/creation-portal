@@ -221,7 +221,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
         data: {
           request: {
             content: {
-              'name': this.templateDetails.metadata.name,
+              'name': 'Untitled',
               'code': UUID.UUID(),
               'mimeType': this.detectMimeType(this.uploader.getName(0)),
               'createdBy': this.userService.userid,
@@ -343,7 +343,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
         contentData: res
       };
       this.contentMetaData = res;
-      this.editTitle = this.contentMetaData.name;
+      this.editTitle = (this.contentMetaData.name !== 'Untitled') ? this.contentMetaData.name : '' ;
       this.resourceStatus = this.contentMetaData.status;
       if (this.resourceStatus === 'Review') {
         this.resourceStatusText = 'Review in Progress';
@@ -363,9 +363,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
           this.initiateUploadModal();
         }, 0);
       }
-      this.editContentTitle();
       this.loading = false;
       this.handleActionButtons();
+
+      if (this.visibility && this.visibility.showEdit && !this.editTitle) {
+        this.editContentTitle();
+      }
+
       // At the end of execution
       if ( _.isUndefined(this.sessionContext.topicList)) {
         this.fetchFrameWorkDetails();
@@ -482,6 +486,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
   }
 
   saveTitle() {
+   this.editTitle = (_.trim(this.editTitle) !== 'Untitled') ? _.trim(this.editTitle) : '' ;
+
    if (this.editTitle === '' || (this.editTitle.length > this.titleCharacterLimit)) {
     this.editContentTitle();
    } else {
