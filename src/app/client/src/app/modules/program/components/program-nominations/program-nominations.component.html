@@ -36,27 +36,6 @@
                     <label class="mb-0">{{resourceService?.frmelmnts?.lbl?.contentType}}</label>
                     <p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{ programContentTypes }}"><span>{{ programContentTypes }}</span></p>
 			</div>
-            <!-- <div *ngIf="isContributionDashboardTabActive" class="sb-meta-data-container sb-meta-data-column px-10">
-                <label class="width-100">{{ resourceService?.frmelmnts?.lbl?.contributions }} </label>
-                <div class="d-flex">
-                    <dl class="sb-meta-data">
-                        <dt>{{ overAllContentCount?.sourcingPending || 0 }}</dt>
-                        <dd>{{ resourceService?.frmelmnts?.lbl?.pending }}</dd>
-                    </dl>
-                    <dl class="sb-meta-data">
-                        <dt>{{ overAllContentCount?.sourcingAccepted || 0 }}</dt>
-                        <dd>{{ resourceService?.frmelmnts?.lbl?.approved }}</dd>
-                    </dl>
-                    <dl class="sb-meta-data">
-                        <dt>{{ overAllContentCount?.sourcingRejected || 0 }}</dt>
-                        <dd>{{ resourceService?.frmelmnts?.lbl?.rejected }}</dd>
-                    </dl>
-                    <dl class="sb-meta-data">
-                        <dt>{{ overAllContentCount?.sourcingTotal || 0 }}</dt>
-                        <dd>{{ resourceService?.frmelmnts?.lbl?.total }}</dd>
-                    </dl>
-                </div>
-            </div> -->
             <ng-container *ngIf="programDetails">
                 <div class="program-timeline w-30">
                     <div class="program-timeline-item">
@@ -128,22 +107,6 @@
                                         [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.nominations}}
                         <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ nominationsCount }}</span>
                     </a>
-                    <!-- <a class="item" *ngIf="showUsersTab" [isActive]="activeTab === 'user'"  suiTabHeader="3"  (click)="resetStatusFilter('user')"
-                    appTelemetryInteract
-                                        [telemetryInteractEdata]="getTelemetryInteractEdata('users', 'click', 'program-nominations')"
-                                        [telemetryInteractObject]="telemetryInteractObject"
-                                        [telemetryInteractCdata]="telemetryInteractCdata"
-                                        [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.tab.users}}
-                        <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ sourcingOrgUser.length || 0 }}</span>
-                    </a>
-                    <a *ngIf="approvedNominations && approvedNominations.length" class="item" suiTabHeader="4" (click)="resetStatusFilter('contributionDashboard')"
-                    appTelemetryInteract
-                                        [telemetryInteractEdata]="getTelemetryInteractEdata('contributionDashboard', 'click', 'program-nominations')"
-                                        [telemetryInteractObject]="telemetryInteractObject"
-                                        [telemetryInteractCdata]="telemetryInteractCdata"
-                                        [telemetryInteractPdata]="telemetryInteractPdata">
-                        {{resourceService.frmelmnts.lbl.contributionDashboard}}
-                    </a> -->
                 </div>
             </div>
             <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="2">
@@ -180,7 +143,7 @@
                                <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ counts.nominatedContentType || 0}}</span> {{resourceService.frmelmnts.lbl.nominated}}
                             </span>
                             <ng-template #contentTypeTemplate>
-                                <p class="my-0 fs-0-785">{{nominatedcontentTypes}}</p>
+                                <p class="my-0 fs-0-785">{{nominatedcontentTypes}} </p>
                             </ng-template>
                         </div>
                         <div class="br-1 text-right flex-grow-1 bl-2"> {{resourceService.frmelmnts.lbl.samples}}:
