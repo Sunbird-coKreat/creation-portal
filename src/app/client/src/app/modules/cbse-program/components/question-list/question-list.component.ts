@@ -58,7 +58,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public itemSetIdentifier: string;
   public deleteAssessmentItemIdentifier: string;
   public showTextArea = false;
-  public resourceName: string;
+  public resourceName = '';
   public licencesOptions = [];
   public commentCharLimit = 1000;
   public contentRejectComment: string;
@@ -154,7 +154,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       this.sessionContext.resourceStatus = this.resourceStatus;
       this.resourceName = this.resourceDetails.name || this.templateDetails.metadata.name;
-      this.resourceName = (this.resourceName !== 'Untitled') ? this.resourceName : '' ;
       this.contentRejectComment = this.resourceDetails.rejectComment || '';
       if (!this.resourceDetails.itemSets) {
         this.createDefaultQuestionAndItemset();
@@ -164,12 +163,12 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           this.itemSetIdentifier = itemSet[0].identifier;
         }
         this.fetchQuestionList();
+        this.resourceName = (this.resourceName !== 'Untitled') ? this.resourceName : '' ;
+        if (this.visibility && this.visibility.showSave && !this.resourceName) {
+          this.showResourceTitleEditor();
+        }
       }
       this.handleActionButtons();
-
-      if (this.visibility && this.visibility.showSave && !this.resourceName) {
-        this.showResourceTitleEditor();
-      }
     });
   }
 
@@ -245,6 +244,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     .subscribe(() => {
       this.handleQuestionTabChange(this.selectedQuestionId);
       this.goToNextQuestionStatus = false;
+      this.resourceName = (this.resourceName !== 'Untitled') ? this.resourceName : '' ;
+      if (this.visibility && this.visibility.showSave && !this.resourceName) {
+        this.showResourceTitleEditor();
+      }
     });
   }
 
@@ -613,7 +616,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public saveResourceName() {
-    this.resourceName = (_.trim(this.resourceName) !== 'Untitled') ? _.trim(this.resourceName) : '' ;
+    //this.resourceName = (_.trim(this.resourceName) !== 'Untitled') ? _.trim(this.resourceName) : '' ;
     if (this.resourceName.length > 0 && this.resourceName.length <= this.resourceTitleLimit) {
       this.showTextArea = false;
       const reqBody = {
