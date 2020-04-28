@@ -226,9 +226,11 @@ export class ProgramListComponent implements OnInit {
               }
             };
             this.getContributionProgramList(req);
+          } else {
+            this.showLoader = false;
           }
-          this.showLoader = false;
         }, (error) => {
+          this.showLoader = false;
           console.log(error);
           this.toasterService.error(this.resourceService.messages.emsg.projects.m0002);
         });
@@ -299,7 +301,16 @@ export class ProgramListComponent implements OnInit {
    * fetch the list of programs.
    */
   private getMyProgramsForOrg(status) {
-    return this.programsService.getMyProgramsForOrg(status).subscribe((response) => {
+    const filters = {
+      rootorg_id: _.get(this.userService, 'userProfile.rootOrg.rootOrgId'),
+      status: status
+    };
+    // tslint:disable-next-line:max-line-length
+    if (!_.includes(this.userService.userProfile.userRoles, 'ORG_ADMIN') && _.includes(this.userService.userProfile.userRoles, 'CONTENT_REVIEWER')) {
+       filters['role'] = ['CONTENT_REVIEWER'];
+       filters['user_id'] = this.userService.userProfile.userId;
+    }
+    return this.programsService.getMyProgramsForOrg(filters).subscribe((response) => {
       this.programs = _.get(response, 'result.programs');
       this.count = _.get(response, 'result.count');
       this.tempSortPrograms = this.programs;

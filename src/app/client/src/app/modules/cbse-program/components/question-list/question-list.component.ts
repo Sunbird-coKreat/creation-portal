@@ -58,7 +58,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public itemSetIdentifier: string;
   public deleteAssessmentItemIdentifier: string;
   public showTextArea = false;
-  public resourceName: string;
+  public resourceName = '';
   public licencesOptions = [];
   public commentCharLimit = 1000;
   public contentRejectComment: string;
@@ -163,9 +163,12 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           this.itemSetIdentifier = itemSet[0].identifier;
         }
         this.fetchQuestionList();
+        this.resourceName = (this.resourceName !== 'Untitled') ? this.resourceName : '' ;
+        if (this.visibility && this.visibility.showSave && !this.resourceName) {
+          this.showResourceTitleEditor();
+        }
       }
       this.handleActionButtons();
-      this.showResourceTitleEditor();
     });
   }
 
@@ -241,6 +244,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     .subscribe(() => {
       this.handleQuestionTabChange(this.selectedQuestionId);
       this.goToNextQuestionStatus = false;
+      this.resourceName = (this.resourceName !== 'Untitled') ? this.resourceName : '' ;
+      if (this.visibility && this.visibility.showSave && !this.resourceName) {
+        this.showResourceTitleEditor();
+      }
     });
   }
 
@@ -609,33 +616,30 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public saveResourceName() {
+    this.resourceName = (_.trim(this.resourceName) !== 'Untitled') ? _.trim(this.resourceName) : '' ;
     if (this.resourceName.length > 0 && this.resourceName.length <= this.resourceTitleLimit) {
-      if (_.trim(this.resourceName) === (_.trim(this.resourceDetails.name) || _.trim(this.templateDetails.metadata.name))) {
-        return;
-      } else {
-        this.showTextArea = false;
-        const reqBody = {
-          'content': {
-              'versionKey': this.existingContentVersionKey,
-              'name' : this.resourceName
-          }
-        };
-        this.updateContent(reqBody, this.sessionContext.resourceIdentifier)
-        .subscribe((res) => {
-          const contentId = res.result.node_id || res.result.identifier;
-          if (this.sessionContext.collection && this.sessionContext.textBookUnitIdentifier) {
-            this.collectionHierarchyService.addResourceToHierarchy(
-              this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, contentId
-            )
-            .subscribe((data) => {
-              this.toasterService.success(this.resourceService.messages.smsg.m0060);
-              this.sessionContext.contentMetadata.name = this.resourceName;
-            }, (err) => {
-              this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-            });
-          }
-        });
-      }
+      this.showTextArea = false;
+      const reqBody = {
+        'content': {
+            'versionKey': this.existingContentVersionKey,
+            'name' : this.resourceName
+        }
+      };
+      this.updateContent(reqBody, this.sessionContext.resourceIdentifier)
+      .subscribe((res) => {
+        const contentId = res.result.node_id || res.result.identifier;
+        if (this.sessionContext.collection && this.sessionContext.textBookUnitIdentifier) {
+          this.collectionHierarchyService.addResourceToHierarchy(
+            this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, contentId
+          )
+          .subscribe((data) => {
+            this.toasterService.success(this.resourceService.messages.smsg.m0060);
+            this.sessionContext.contentMetadata.name = this.resourceName;
+          }, (err) => {
+            this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+          });
+        }
+      });
     }
   }
 

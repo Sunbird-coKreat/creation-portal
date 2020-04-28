@@ -219,7 +219,12 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
               this.selectedCollectionIds = _.uniq(this.selectedCollectionIds);
               this.toggleNominationButton();
             },
-            (err) => console.log(err)
+            (error) => {
+              console.log(error);
+              this.showLoader = false;
+              const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+              this.toasterService.error(errorMes || 'Fetching textbooks failed. Please try again...');
+            }
           );
       }
       this.showLoader = false;

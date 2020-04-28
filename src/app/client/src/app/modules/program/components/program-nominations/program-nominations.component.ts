@@ -87,7 +87,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.telemetryInteractObject = {};
     this.checkActiveTab();
     this.showUsersTab = this.isSourcingOrgAdmin();
-    // this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
+    this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
     this.roles = [{name: 'REVIEWER'}];
     this.sessionContext.currentRole = 'REVIEWER';
     this.programStageService.initialize();
@@ -397,7 +397,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
       this.canAssignUsersToProgram();
       this.setActiveDate();
-      // this.readRolesOfOrgUsers();
+      this.readRolesOfOrgUsers();
       const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
       this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
     }, error => {
@@ -407,19 +407,19 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     });
   }
 
-  // readRolesOfOrgUsers() {
-  //   if (this.programDetails.rolemapping) {
-  //     _.forEach(this.roles, (role) => {
-  //       if (this.programDetails.rolemapping[role.name]) {
-  //         _.forEach(this.sourcingOrgUser, (user) => {
-  //           if (_.includes(this.programDetails.rolemapping[role.name], user.identifier)) {
-  //             user['selectedRole'] = role.name;
-  //           }
-  //         });
-  //       }
-  //     });
-  //   }
-  // }
+  readRolesOfOrgUsers() {
+    if (this.programDetails.rolemapping) {
+      _.forEach(this.roles, (role) => {
+        if (this.programDetails.rolemapping[role.name]) {
+          _.forEach(this.sourcingOrgUser, (user) => {
+            if (_.includes(this.programDetails.rolemapping[role.name], user.identifier)) {
+              user['selectedRole'] = role.name;
+            }
+          });
+        }
+      });
+    }
+  }
 
   fetchProgramDetails() {
     const req = {
@@ -519,9 +519,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     };
   this.programsService.updateProgram(request)
     .subscribe(response => {
-      this.toasterService.success('Roles updated');
+      this.toasterService.success(this.resourceService.messages.smsg.roles.m0001);
     }, error => {
-      this.toasterService.error('Roles update failed!');
+      this.toasterService.error(this.resourceService.messages.emsg.roles.m0001);
     });
   }
 
