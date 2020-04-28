@@ -15,6 +15,7 @@ import { HttpClient } from '@angular/common/http';
 import { ContentService } from '../content/content.service';
 import { DatePipe } from '@angular/common';
 import * as alphaNumSort from 'alphanum-sort';
+import { LearnerService } from '../learner/learner.service';
 
 @Injectable({
   providedIn: 'root'
@@ -35,12 +36,13 @@ export class ProgramsService extends DataService implements CanActivate {
   public http: HttpClient;
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
   private _contentTypes: any[];
+  private _sourcingOrgReviewers: Array<any>;
 
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService,
     private extFrameworkService: ExtPluginService, private datePipe: DatePipe,
     private contentService: ContentService, private router: Router,
-    private toasterService: ToasterService, private resourceService: ResourceService) {
+    private toasterService: ToasterService, private resourceService: ResourceService, public learnerService: LearnerService) {
       super(http);
       this.config = config;
       this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;
@@ -332,15 +334,12 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * makes api call to get list of programs from ext framework Service
    */
-  getMyProgramsForOrg(status): Observable<ServerResponse> {
+  getMyProgramsForOrg(reqFilters): Observable<ServerResponse> {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
       data: {
         request: {
-          filters: {
-            rootorg_id: _.get(this.userService, 'userProfile.rootOrgId'),
-            status: status
-          }
+          filters: reqFilters
         }
       }
     };
@@ -553,4 +552,25 @@ export class ProgramsService extends DataService implements CanActivate {
      });
    }
   }
+
+  get sourcingOrgReviewers() {
+    return _.cloneDeep(this._sourcingOrgReviewers);
+  }
+
+  getSourcingOrgUsers(reqFilters) {
+      const req = {
+        url: `user/v1/search`,
+        data: {
+          'request': {
+            'filters': reqFilters
+          }
+        }
+      };
+      return this.learnerService.post(req).pipe(tap((res) => {
+        if (reqFilters['organisations.roles'].length === 1 &&  reqFilters['organisations.roles'][0] === 'CONTENT_REVIEWER') {
+          this._sourcingOrgReviewers = res.result.response.content;
+        }
+      }));
+    }
+
 }
