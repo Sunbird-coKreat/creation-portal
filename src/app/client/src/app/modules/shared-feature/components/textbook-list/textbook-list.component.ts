@@ -37,7 +37,7 @@ export class TextbookListComponent implements OnInit {
   @Output() selectedCollection = new EventEmitter<any>();
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
-    public toasterService: ToasterService, public resource: ResourceService,
+    public toasterService: ToasterService, public resourceService: ResourceService,
     public actionService: ActionService, private collectionHierarchyService: CollectionHierarchyService
   ) { }
 
