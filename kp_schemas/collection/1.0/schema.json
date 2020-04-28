@@ -1009,6 +1009,12 @@
     },
     "chapterCount": {
       "type": "number"
+    },
+    "acceptedContents": {
+      "type": "array"
+    },
+    "rejectedContents": {
+      "type": "array"
     }
   }
 }
