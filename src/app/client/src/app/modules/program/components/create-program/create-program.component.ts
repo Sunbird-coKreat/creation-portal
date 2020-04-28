@@ -607,12 +607,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     if (this.createProgramForm.dirty && this.createProgramForm.valid) {
       const contentTypes = this.createProgramForm.value.content_types;
       this.createProgramForm.value.content_types = _.isEmpty(contentTypes) ? [] : contentTypes;
-      this.programData = {
-        ...this.createProgramForm.value
-      };
       if (this.userFramework) {
         this.programConfig.framework = this.userFramework;
       }
+      this.programData = {
+        ...this.createProgramForm.value
+      };
       this.programData['sourcing_org_name'] = this.userprofile.rootOrgName;
       this.programData['rootorg_id'] = this.userprofile.rootOrgId;
       this.programData['createdby'] = this.userprofile.id;
@@ -746,7 +746,15 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     };
 
     this.programsService.copyCollectionForPlatform(requestData).subscribe(
-      (res) => { this.addCollectionsToProgram(); },
+      (res) => {
+        let copiedCollections = [];
+        if (res && res.result) {
+          copiedCollections = _.map(res.result, (collection) => {
+            return collection.result.content_id;
+          });
+          this.addCollectionsToProgram(this.programData.content_types, copiedCollections);
+        }
+      },
       (err) => {
         console.log(err);
         // TODO: navigate to program list page
@@ -756,7 +764,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     );
   }
 
-  addCollectionsToProgram() {
+  addCollectionsToProgram(contentTypes, copiedCollections) {
     _.forEach(this.tempCollections, (collection) => {
 
       if (this.mediumOption.indexOf(collection.medium) === -1) {
@@ -776,6 +784,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     const data = {};
     data['program_id'] = this.programId;
     data['collection_ids'] = this.collectionListForm.value.pcollections;
+    data['copiedCollections'] = copiedCollections;
+    data['programContentTypes'] = contentTypes;
 
     this.programConfig.board = this.userBoard;
     this.programConfig.gradeLevel = this.gradeLevelOption;
