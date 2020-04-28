@@ -184,3 +184,66 @@
     margin: 0.6rem 0 !important;
   }
 }
+
+.sb-toc-accor-1{
+  .chapter-lists--item{
+    .item-name{
+      border-left: 0.0625rem dashed var(--gray-300);
+      margin-left: 1.1rem;
+      padding-left: 1.6rem !important;
+    }
+  }    
+}
+.sb-toc-accor-2{
+  .chapter-lists--item{
+    .item-name{
+      @extend .item-name;
+      margin-left: 2.3rem;
+    }
+  }  
+}
+.sb-toc-accor-3{
+  .chapter-lists--item{
+    .item-name{
+      @extend .item-name;
+      margin-left: 4rem;
+    }
+  }  
+}
+.sb-chapterlist-accordion{
+  .chapter-lists--item{
+    &:hover{
+      background: none !important;
+    }
+  }
+}
+.sb-dock-toc-accor {
+  .sb-toc-accor-2{
+    .title{
+      padding:0 0 0 1.1rem !important;
+    }
+    .sb-accordion-title{
+      border-left: .0625rem dashed var(--gray-300);
+      padding: 1rem;
+    } 
+  }
+  .sb-toc-accor-3{
+    .title{
+      padding:0 0 0 2.3rem !important;
+    }
+    .sb-accordion-title{
+      @extend .sb-accordion-title;
+      padding-left: 1.2rem !important;
+    }
+  }
+  .sb-toc-accor-4{
+    .title{
+      padding:0 0 0 4rem !important;
+    }
+    .sb-accordion-title{
+      @extend .sb-accordion-title;
+      padding-left: 1.5rem !important;
+    }
+  }
+}
+

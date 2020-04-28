@@ -511,7 +511,7 @@ export class ProgramsService extends DataService implements CanActivate {
   }
 
   isNotEmpty(obj, key) {
-   if (_.isEmpty(obj) || _.isEmpty(obj[key])) {
+   if (_.isNil(obj) || _.isNil(obj[key])) {
      return false;
    }
    return true;
@@ -529,6 +529,12 @@ export class ProgramsService extends DataService implements CanActivate {
    if (_.isArray(bColumn)) {
      bColumn = _.join(bColumn, ', ');
    }
+   if (_.isNumber(aColumn)) {
+    aColumn = _.toString(aColumn);
+  }
+  if (_.isNumber(bColumn)) {
+   bColumn = _.toString(bColumn);
+  }
    return bColumn.localeCompare(aColumn);
   }
 

@@ -2471,7 +2471,7 @@ if (typeof module != 'undefined') {
 (function () {
   let pdataId = "";
   if (window.location.origin.indexOf("vdn.diksha.gov.in") >= 0) {
-    pdataId = "prod.vdn.portal";
+    pdataId = "prod.vidyadaan.portal";
   } else if (window.location.origin.indexOf("dock.preprod.ntp.net.in") >= 0) {
     pdataId = "preprod.dock.portal";
   } else {
@@ -2492,14 +2492,14 @@ if (typeof module != 'undefined') {
       "pdata": {
         "id": pdataId,
         "ver": "2.8.0",
-        "pid": "creation-portal.programs"
+        "pid": "creation-portal"
       }
     }
   }
   var tenantId, tenantInfo, orgInfo;
   var hostURL = window.__landing_page_config.hostURL || null;
   function OnLoad() {
-    var channelname = 'ntp';
+    var channelname = 'sunbird';
       getOrgInfo(tenantId).done(function () {
         initTelemetryService();
         logImpressionEvent("init");
@@ -2514,7 +2514,7 @@ if (typeof module != 'undefined') {
         request: {
           filters: {
             isRootOrg: true,
-            slug: 'ntp'
+            slug: 'sunbird'
           }
         }
       }),
