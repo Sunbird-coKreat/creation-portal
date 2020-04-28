@@ -751,25 +751,31 @@ export class ProgramsService extends DataService implements CanActivate {
   }
 
   isNotEmpty(obj, key) {
-   if (_.isEmpty(obj) || _.isEmpty(obj[key])) {
+   if (_.isNil(obj) || _.isNil(obj[key])) {
      return false;
    }
    return true;
   }
 
   private sort(a, b, column) {
-   if (!this.isNotEmpty(a, column) || !this.isNotEmpty(b, column)) {
-     return 1;
-   }
-   let aColumn = a[column];
-   let bColumn = b[column];
-   if (_.isArray(aColumn)) {
-     aColumn = _.join(aColumn, ', ');
-   }
-   if (_.isArray(bColumn)) {
-     bColumn = _.join(bColumn, ', ');
-   }
-   return bColumn.localeCompare(aColumn);
+    if (!this.isNotEmpty(a, column) || !this.isNotEmpty(b, column)) {
+      return 1;
+    }
+    let aColumn = a[column];
+    let bColumn = b[column];
+    if (_.isArray(aColumn)) {
+      aColumn = _.join(aColumn, ', ');
+    }
+    if (_.isArray(bColumn)) {
+      bColumn = _.join(bColumn, ', ');
+    }
+    if (_.isNumber(aColumn)) {
+    aColumn = _.toString(aColumn);
+    }
+    if (_.isNumber(bColumn)) {
+    bColumn = _.toString(bColumn);
+    }
+    return bColumn.localeCompare(aColumn);
   }
 
   sortCollection(collection, column, direction) {
