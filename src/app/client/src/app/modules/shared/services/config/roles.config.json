@@ -36,6 +36,7 @@
                 
     },
      "ROLES":{
+       "programSourcingRole": ["ORG_ADMIN","CONTENT_REVIEWER"],
        "announcement": ["ANNOUNCEMENT_SENDER"],
        "workspace":["CONTENT_CREATOR" , "CONTENT_CREATION" , "CONTENT_REVIEWER" , "CONTENT_REVIEW" , "FLAG_REVIEWER" , "COURSE_MENTOR" ,"BOOK_REVIEWER","BOOK_CREATOR"],
        "createRole": ["CONTENT_CREATOR","CONTENT_CREATION","CONTENT_REVIEWER","CONTENT_REVIEW","BOOK_CREATOR"],

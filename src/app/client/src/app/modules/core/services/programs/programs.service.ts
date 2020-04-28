@@ -35,6 +35,7 @@ export class ProgramsService extends DataService implements CanActivate {
   public http: HttpClient;
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
   private _contentTypes: any[];
+  private _sourcingOrgReviewers: Array<any>;
 
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService,
@@ -332,15 +333,12 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * makes api call to get list of programs from ext framework Service
    */
-  getMyProgramsForOrg(status): Observable<ServerResponse> {
+  getMyProgramsForOrg(reqFilters): Observable<ServerResponse> {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
       data: {
         request: {
-          filters: {
-            rootorg_id: _.get(this.userService, 'userProfile.rootOrgId'),
-            status: status
-          }
+          filters: reqFilters
         }
       }
     };
@@ -599,4 +597,16 @@ export class ProgramsService extends DataService implements CanActivate {
     };
     return this.learnerService.post(req);
   }
+
+  get sourcingOrgReviewers() {
+    return _.cloneDeep(this._sourcingOrgReviewers);
+  }
+
+  getSourcingOrgUsers(reqFilters) {
+      return this.getOrgUsersDetails(reqFilters).pipe(tap((res) => {
+        if (reqFilters['organisations.roles'].length === 1 &&  reqFilters['organisations.roles'][0] === 'CONTENT_REVIEWER') {
+          this._sourcingOrgReviewers = res.result.response.content;
+        }
+      }));
+    }
 }
