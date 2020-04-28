@@ -207,7 +207,12 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           this.tempSortTextbooks = this.contributorTextbooks;
           this.showLoader = false;
         },
-        (err) => console.log(err)
+        (error) => {
+          console.log(error);
+          this.showLoader = false;
+          const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+          this.toasterService.error(errorMes || 'Fetching textbooks failed. Please try again...');
+        }
       );
     } else {
       this.contributorTextbooks = contributorTextbooks;
