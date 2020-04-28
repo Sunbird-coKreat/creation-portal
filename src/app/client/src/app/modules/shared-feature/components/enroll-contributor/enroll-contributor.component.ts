@@ -148,7 +148,7 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
     this.contributeForm.controls['description'].setValidators(null);
     this.contributeForm.controls['name'].setValidators(null);
     if (this.enrollAsOrg) {
-      this.contributeForm.controls['description'].setValidators([Validators.required]);
+      this.contributeForm.controls['description'].setValidators([Validators.required, Validators.maxLength(1000)]);
       this.contributeForm.controls['name'].setValidators([Validators.required]);
     }
     this.contributeForm.controls['name'].updateValueAndValidity();

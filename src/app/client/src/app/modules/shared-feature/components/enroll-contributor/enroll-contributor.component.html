@@ -23,7 +23,7 @@
                      <!-- (click)="enrollAsOrg=true" -->
                      <div class="sb-field mt-4 d-flex">
                         <div class="sb-radio-btn-checkbox sb-radio-btn-primary ">
-                           <input type="radio" id="Organisation" name="enrollAsOrg"  (click)="chnageEnrollStatus(true)" 
+                           <input type="radio" id="Organisation" name="enrollAsOrg"  (click)="chnageEnrollStatus(true)"
                            appTelemetryInteract
                            [telemetryInteractEdata]="getTelemetryInteractEdata('enrol-as-org', 'click', 'enrol-contributor')"
                            [telemetryInteractObject]="telemetryInteractObject"
@@ -49,7 +49,7 @@
                      <div class="sb-field required field">
                          <input class="sb-form-control" placeholder="{{resourceService.frmelmnts.lbl.nameOfOrganisation}}" formControlName="name">
                          <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['name'].errors && contributeForm.controls['name'].errors.required && (!contributeForm.controls['name'].pristine || formIsInvalid)">
-                           This field is required
+                           {{ resourceService?.messages?.emsg?.m0025 }}
                         </div>
                      </div>
                   </div>
@@ -59,14 +59,18 @@
                      <label class="d-block">{{resourceService.frmelmnts.lbl.description}} <span class="sb-color-warning">*</span> <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.programRecognitionHint}}"></i></label>
                      <div class="sb-field required field">
                         <textarea rows="4" class="sb-form-control" placeholder="{{resourceService.frmelmnts.lbl.description}}" spellcheck="false" formControlName="description"></textarea>
-                        <span class="characters-left">{{resourceService.frmelmnts.lbl.thousandCharacterLeft}}</span>
+                        <span class="fs-0-785 text-right sb-color-gray-200 d-block py-5">{{ resourceService.frmelmnts.lbl.nCharactersLeft | interpolate:'{noOfChars}': 1000 - (contributeForm.controls['description'].value.length > 1000 ? 1000 : contributeForm.controls['description'].value.length) }}
+                        </span>
+                        <div class="ui pointing red basic label below" *ngIf="contributeForm.controls['description'].errors && contributeForm.controls['description'].errors.maxlength">
+                           {{ resourceService?.messages?.emsg?.m0026 }}
+                        </div>
                         <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['description'].errors && contributeForm.controls['description'].errors.required && (!contributeForm.controls['description'].pristine || formIsInvalid)">
-                           This field is required
+                           {{ resourceService?.messages?.emsg?.m0025 }}
                         </div>
                      </div>
                   </div>
                </div>
-   
+
                <div class="twelve wide column sb-field-group p-0 mb-16" *ngIf="enrollAsOrg === true">
                   <div class="sb-field-group mb-8">
                      <label class="d-block">{{resourceService.frmelmnts.lbl.organisationWebsite }} <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="{{resourceService.frmelmnts.lbl.website}}" popupText="{{resourceService.frmelmnts.lbl.websiteHint}}"></i></label>
@@ -75,7 +79,7 @@
                      </div>
                   </div>
                </div>
-   
+
                <div class="twelve wide column sb-field-group p-0 mb-5">
                   <div class="required sb-checkbox sb-checkbox-primary sb-field mb-8">
                      <input type="checkbox" id="tncAccepted" role="checkbox" formControlName="tncAccepted" name="tncAccepted" class="mr-10 cursor-pointer" required>
@@ -103,5 +107,5 @@
        </button>
      </div>
    </sui-modal>
-   
+
    </div>
