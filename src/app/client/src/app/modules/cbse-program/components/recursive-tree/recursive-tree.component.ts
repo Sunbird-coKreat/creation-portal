@@ -97,4 +97,9 @@ export class RecursiveTreeComponent implements OnInit {
     e.stopPropagation();
   }
 
+  isSourcingOrgReviewer () {
+    return !!(this.userService.userProfile.userRoles.includes('ORG_ADMIN') ||
+    this.userService.userProfile.userRoles.includes('CONTENT_REVIEWER'));
+  }
+
 }

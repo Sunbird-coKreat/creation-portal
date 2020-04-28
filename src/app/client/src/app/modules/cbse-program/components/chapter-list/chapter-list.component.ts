@@ -256,6 +256,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         instance.countData['sampleContenttotal'] = 0;
         instance.countData['sampleMycontribution'] = 0;
         this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
+        this.getFolderLevelCount(this.collectionHierarchy);
         hierarchy = instance.hierarchyObj;
         this.sessionContext.hierarchyObj = { hierarchy };
         this.showLoader = false;
@@ -264,6 +265,18 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
          resolve('Done');
       });
     });
+  }
+
+  getFolderLevelCount(collections) {
+    if (this.isNominationByOrg()) {
+      _.forEach(collections, collection => {
+        this.getContentCountPerFolder(collection , undefined , true, this.getNominationId('org'), undefined);
+      });
+    } else {
+      _.forEach(collections, collection => {
+        this.getContentCountPerFolder(collection , undefined , true, undefined, this.getNominationId('individual'));
+      });
+    }
   }
 
   setCollectionTree(data, identifier) {
@@ -682,5 +695,51 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       pageid,
       extra
     }, _.isUndefined);
+  }
+
+
+  getContentCountPerFolder(collection, contentStatus?: string, onlySample?: boolean, organisationId?: string, createdBy?: string) {
+    const self = this;
+    collection.totalLeaf = 0;
+    _.each(collection.children, child => {
+      collection.totalLeaf += self.getContentCountPerFolder(child, contentStatus, onlySample, organisationId, createdBy);
+    });
+
+    // tslint:disable-next-line:max-line-length
+    collection.totalLeaf += collection.leaf ? this.filterContentsForCount(collection.leaf, contentStatus, onlySample, organisationId, createdBy) : 0;
+    return collection.totalLeaf;
+  }
+
+
+  filterContentsForCount (contents, status?, onlySample?, organisationId?, createdBy?) {
+    const filter = {
+      ...(status && {status}),
+      ...(onlySample && {sampleContent: true}),
+      ...(createdBy && {createdBy}),
+      ...(organisationId && {organisationId}),
+    };
+    const leaves = _.filter(contents, filter);
+    return leaves.length;
+  }
+
+  isNominationByOrg() {
+    return !!(this.sessionContext.nominationDetails &&
+      this.sessionContext.nominationDetails.organisation_id);
+  }
+
+  getNominationId(type) {
+    if (type === 'individual') {
+      return this.getNominatedUserId();
+    } else if (type === 'org') {
+      return this.getNominatedOrgId();
+    }
+  }
+
+  getNominatedUserId() {
+   return this.sessionContext && this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.user_id;
+  }
+
+  getNominatedOrgId() {
+    return this.sessionContext && this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.organisation_id;
   }
 }
