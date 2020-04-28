@@ -266,9 +266,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
               } else {
                 // tslint:disable-next-line:max-line-length
                 const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCountsForIndividual(contents, nomination.user_id, this.programCollections));
-                dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus['pending'];
-                dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus['accepted'];
-                dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus['rejected'];
+                dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
+                dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
+                dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
                 dashboardData['contributorName'] = this.setContributorName(nomination, 'individual');
                 return {
                   ...dashboardData,
@@ -282,17 +282,17 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
             this.contributionDashboardData = _.map(this.approvedNominations, nomination => {
               return {
                 total: 0,
-                review: '0',
-                draft: '0',
-                rejected: '0',
-                live: '0',
-                sourcingPending: '0',
-                sourcingAccepted: '0',
-                sourcingRejected: '0',
+                review: 0,
+                draft: 0,
+                rejected: 0,
+                live: 0,
+                sourcingPending: 0,
+                sourcingAccepted: 0,
+                sourcingRejected: 0,
                 // tslint:disable-next-line:max-line-length
                 contributorName: this.setContributorName(nomination, nomination.organisation_id ? 'org' : 'individual'),
                 individualStatus: {},
-                sourcingOrgStatus : {accepted: '0', rejected: '0', pending: '0'},
+                sourcingOrgStatus : {accepted: 0, rejected: 0, pending: 0},
                 contributorDetails: nomination,
                 type: nomination.organisation_id ? 'org' : 'individual'
               };

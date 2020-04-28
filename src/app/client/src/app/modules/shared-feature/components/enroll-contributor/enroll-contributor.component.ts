@@ -103,18 +103,19 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
           User['userId'] =  this.userService.userProfile.identifier;
           User['enrolledDate'] = this.enrolledDate;
           User['certificates'] =  '';
-          User['channel'] = this.userService.userProfile.rootOrgId;
+          User['channel'] = this.userService.userProfile.channel || 'sunbird';
           this.enrollContributorService.enrolment({User: User}).pipe(
             switchMap((res1: any) => {
             this.mapUserId = res1.result.User.osid;
                if (this.enrollAsOrg === true) {
                 const Org = {
                   ...this.contributeForm.value
-               };
-                delete Org.tncAccepted;
-                Org['createdBy'] =  res1.result.User.osid;
+                };
+                Org['createdBy'] = res1.result.User.osid;
                 Org['code'] = this.contributeForm.controls['name'].value.toUpperCase();
-                return this.enrollContributorService.enrolment({Org: Org});
+                return this.enrollContributorService.enrolment({
+                  Org: Org
+                });
                } else {
                  return of(res1);
                }
@@ -143,7 +144,7 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
           });
   }
 
-  chnageEnrollStatus(status) {
+  changeEnrollStatus(status) {
     this.enrollAsOrg = status;
     this.contributeForm.controls['description'].setValidators(null);
     this.contributeForm.controls['name'].setValidators(null);

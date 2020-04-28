@@ -98,7 +98,7 @@
           [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
           [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
-          >Submit</button>
+          >{{isIndividualAndNotSample() ? 'Publish' : 'Submit' }}</button>
         </div>
       </div>
     </div>

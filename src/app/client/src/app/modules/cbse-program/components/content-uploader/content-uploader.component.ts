@@ -558,7 +558,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
       };
       this.helperService.updateContent(request, this.contentMetaData.identifier).subscribe((res) => {
         this.contentMetaData.versionKey = res.result.versionKey;
-        if (action === 'review') {
+        if (action === 'review' && this.isIndividualAndNotSample()) {
+          this.publishContent();
+        } else if (action === 'review') {
           this.sendForReview();
         } else if (this.sessionContext.collection && this.unitIdentifier && action !== 'review') {
           // tslint:disable-next-line:max-line-length
@@ -623,7 +625,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     }
   }
 
-  publichContent() {
+  publishContent() {
     this.helperService.publishContent(this.contentMetaData.identifier, this.userService.userProfile.userId)
        .subscribe(res => {
         if (this.sessionContext.collection && this.unitIdentifier) {
@@ -640,6 +642,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
       }, (err) => {
         this.toasterService.error(this.resourceService.messages.fmsg.m00101);
       });
+  }
+
+  isIndividualAndNotSample() {
+    return !!(this.sessionContext.currentOrgRole === 'individual' && this.sessionContext.sampleContent !== true);
   }
 
   markFormGroupTouched(formGroup: FormGroup) {

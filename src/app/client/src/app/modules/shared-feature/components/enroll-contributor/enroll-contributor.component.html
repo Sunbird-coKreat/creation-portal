@@ -23,7 +23,7 @@
                      <!-- (click)="enrollAsOrg=true" -->
                      <div class="sb-field mt-4 d-flex">
                         <div class="sb-radio-btn-checkbox sb-radio-btn-primary ">
-                           <input type="radio" id="Organisation" name="enrollAsOrg"  (click)="chnageEnrollStatus(true)" 
+                           <input type="radio" id="Organisation" name="enrollAsOrg"  (click)="changeEnrollStatus(true)"
                            appTelemetryInteract
                            [telemetryInteractEdata]="getTelemetryInteractEdata('enrol-as-org', 'click', 'enrol-contributor')"
                            [telemetryInteractObject]="telemetryInteractObject"
@@ -32,7 +32,7 @@
                            <label for="Organisation">{{resourceService.frmelmnts.lbl.organisation}}</label>
                         </div>
                         <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-                           <input type="radio" id="individual" name="enrollAsOrg"  (click)="chnageEnrollStatus(false)" checked
+                           <input type="radio" id="individual" name="enrollAsOrg"  (click)="changeEnrollStatus(false)" checked
                            appTelemetryInteract
                            [telemetryInteractEdata]="getTelemetryInteractEdata('enrol-as-individual', 'click', 'enrol-contributor')"
                            [telemetryInteractObject]="telemetryInteractObject"
@@ -66,7 +66,7 @@
                      </div>
                   </div>
                </div>
-   
+
                <div class="twelve wide column sb-field-group p-0 mb-16" *ngIf="enrollAsOrg === true">
                   <div class="sb-field-group mb-8">
                      <label class="d-block">{{resourceService.frmelmnts.lbl.organisationWebsite }} <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500" popupHeader="{{resourceService.frmelmnts.lbl.website}}" popupText="{{resourceService.frmelmnts.lbl.websiteHint}}"></i></label>
@@ -75,7 +75,7 @@
                      </div>
                   </div>
                </div>
-   
+
                <div class="twelve wide column sb-field-group p-0 mb-5">
                   <div class="required sb-checkbox sb-checkbox-primary sb-field mb-8">
                      <input type="checkbox" id="tncAccepted" role="checkbox" formControlName="tncAccepted" name="tncAccepted" class="mr-10 cursor-pointer" required>
@@ -103,5 +103,5 @@
        </button>
      </div>
    </sui-modal>
-   
+
    </div>
