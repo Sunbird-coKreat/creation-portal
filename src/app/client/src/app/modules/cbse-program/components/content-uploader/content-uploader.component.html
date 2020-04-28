@@ -42,7 +42,7 @@
             </div>
             <div class="sb-field-group textbook-edit ui form" *ngIf="showTextArea">
               <div class="required inline field">
-                <label class="font-weight-bold fsmall">{{resourceService.frmelmnts.lbl.contentName}}:</label>
+                <label class="font-weight-bold fsmall">Name:</label>
                 <div class="sb-field relative">
                   <textarea #titleTextArea rows="4" name="moretext" class="sb-form-control" placeholder="Type here..." [(ngModel)]="editTitle" autofocus (keyup.enter)="(showTextArea = false); saveTitle()"></textarea>
                   <span class="characters-left">{{titleCharacterLimit - editTitle.length}} {{resourceService.frmelmnts.lbl.characterLeft }}</span>
