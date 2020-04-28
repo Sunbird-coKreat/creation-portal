@@ -14,7 +14,7 @@ import { DataService } from '../data/data.service';
 import { HttpClient } from '@angular/common/http';
 import { ContentService } from '../content/content.service';
 import { DatePipe } from '@angular/common';
-import * as alphaNumSort from 'alphanum-sort';
+import { LearnerService } from '../learner/learner.service';
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +40,7 @@ export class ProgramsService extends DataService implements CanActivate {
     private orgDetailsService: OrgDetailsService, private userService: UserService,
     private extFrameworkService: ExtPluginService, private datePipe: DatePipe,
     private contentService: ContentService, private router: Router,
-    private toasterService: ToasterService, private resourceService: ResourceService) {
+    private toasterService: ToasterService, private resourceService: ResourceService, public learnerService: LearnerService) {
       super(http);
       this.config = config;
       this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;
@@ -552,5 +552,51 @@ export class ProgramsService extends DataService implements CanActivate {
        return this.sort(a, b, column);
      });
    }
+  }
+
+  /**
+  * Function to update the role of org user
+  */
+  updateUserRole(osid, newRoles) {
+    const userOrgUpdate = {
+      User_Org: {
+        osid: osid,
+        roles: newRoles
+      }
+    };
+    return this.updateToRegistry(userOrgUpdate);
+  }
+
+
+  /**
+   * Function used to add user or org in registry
+  */
+  updateToRegistry(reqData) {
+    const option = {
+      url: 'reg/update',
+      data: {
+        id : 'open-saber.registry.update',
+        request: reqData
+      }
+    };
+    return this.contentService.post(option).pipe(
+      mergeMap((data: ServerResponse) => {
+        if (data.params.status !== 'SUCCESSFUL') {
+          return throwError(data);
+        }
+        return of(data);
+      }));
+  }
+
+  getOrgUsersDetails(reqFilters) {
+    const req = {
+      url: this.config.urlConFig.URLS.ADMIN.USER_SEARCH,
+      data: {
+        request: {
+          filters: reqFilters
+        }
+      }
+    };
+    return this.learnerService.post(req);
   }
 }
