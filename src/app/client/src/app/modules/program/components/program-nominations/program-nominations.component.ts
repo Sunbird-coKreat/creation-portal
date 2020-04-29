@@ -85,7 +85,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.telemetryInteractObject = {};
     this.checkActiveTab();
     this.showUsersTab = this.isSourcingOrgAdmin();
-    // this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
+    this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
     this.roles = [{name: 'REVIEWER'}];
     this.sessionContext.currentRole = 'REVIEWER';
     this.programStageService.initialize();
@@ -266,9 +266,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
               } else {
                 // tslint:disable-next-line:max-line-length
                 const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCountsForIndividual(contents, nomination.user_id, this.programCollections));
-                dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus['pending'];
-                dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus['accepted'];
-                dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus['rejected'];
+                dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
+                dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
+                dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
                 dashboardData['contributorName'] = this.setContributorName(nomination, 'individual');
                 return {
                   ...dashboardData,
@@ -282,17 +282,17 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
             this.contributionDashboardData = _.map(this.approvedNominations, nomination => {
               return {
                 total: 0,
-                review: '0',
-                draft: '0',
-                rejected: '0',
-                live: '0',
-                sourcingPending: '0',
-                sourcingAccepted: '0',
-                sourcingRejected: '0',
+                review: 0,
+                draft: 0,
+                rejected: 0,
+                live: 0,
+                sourcingPending: 0,
+                sourcingAccepted: 0,
+                sourcingRejected: 0,
                 // tslint:disable-next-line:max-line-length
                 contributorName: this.setContributorName(nomination, nomination.organisation_id ? 'org' : 'individual'),
                 individualStatus: {},
-                sourcingOrgStatus : {accepted: '0', rejected: '0', pending: '0'},
+                sourcingOrgStatus : {accepted: 0, rejected: 0, pending: 0},
                 contributorDetails: nomination,
                 type: nomination.organisation_id ? 'org' : 'individual'
               };
@@ -346,7 +346,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
       this.canAssignUsersToProgram();
       this.setActiveDate();
-      // this.readRolesOfOrgUsers();
+      this.readRolesOfOrgUsers();
       const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
       this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
     }, error => {
@@ -356,19 +356,19 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     });
   }
 
-  // readRolesOfOrgUsers() {
-  //   if (this.programDetails.rolemapping) {
-  //     _.forEach(this.roles, (role) => {
-  //       if (this.programDetails.rolemapping[role.name]) {
-  //         _.forEach(this.sourcingOrgUser, (user) => {
-  //           if (_.includes(this.programDetails.rolemapping[role.name], user.identifier)) {
-  //             user['selectedRole'] = role.name;
-  //           }
-  //         });
-  //       }
-  //     });
-  //   }
-  // }
+  readRolesOfOrgUsers() {
+    if (this.programDetails.rolemapping) {
+      _.forEach(this.roles, (role) => {
+        if (this.programDetails.rolemapping[role.name]) {
+          _.forEach(this.sourcingOrgUser, (user) => {
+            if (_.includes(this.programDetails.rolemapping[role.name], user.identifier)) {
+              user['selectedRole'] = role.name;
+            }
+          });
+        }
+      });
+    }
+  }
 
   fetchProgramDetails() {
     const req = {
@@ -509,9 +509,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     };
   this.programsService.updateProgram(request)
     .subscribe(response => {
-      this.toasterService.success('Roles updated');
+      this.toasterService.success(this.resourceService.messages.smsg.roles.m0001);
     }, error => {
-      this.toasterService.error('Roles update failed!');
+      this.toasterService.error(this.resourceService.messages.emsg.roles.m0001);
     });
   }
 
