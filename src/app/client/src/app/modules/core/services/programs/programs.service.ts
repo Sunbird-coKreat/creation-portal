@@ -24,6 +24,7 @@ export class ProgramsService extends DataService implements CanActivate {
 
   private _programsList$ = new BehaviorSubject(undefined);
   private _allowToContribute$ = new BehaviorSubject(undefined);
+  private _orgnisations = {};
 
   public readonly programsList$ = this._programsList$.asObservable()
     .pipe(skipWhile(data => data === undefined || data === null));
@@ -55,8 +56,30 @@ export class ProgramsService extends DataService implements CanActivate {
   public initialize() {
     this.enableContributeMenu().subscribe();
     this.getAllContentTypes().subscribe();
+    this.mapSlugstoOrgId();
   }
 
+  mapSlugstoOrgId () {
+    const urlSlug = this.userService.slug;
+    if (urlSlug && _.isEmpty(this._orgnisations[urlSlug])) {
+     const orgFilters = {
+         slug: urlSlug,
+         isRootOrg: true
+     };
+
+     this.getOrganisationDetails(orgFilters).subscribe
+     ((data: ServerResponse) => {
+       if (data.result && _.get(data, 'result.response.count')) {
+         const orgnisationsDetails = _.get(data, 'result.response.content');
+         this._orgnisations[urlSlug] = orgnisationsDetails[0].identifier;
+       }
+     },
+     (err: ServerResponse) => {
+       console.log('error while fetching the org details');
+     }
+     );
+   }
+  }
   /**
    * Function used to serach user or org in registry
    */
@@ -587,6 +610,20 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.API_URL(req);
   }
 
+  /* Get the org details by filters*/
+  getOrganisationDetails(filters) {
+    const option = {
+      url: this.config.urlConFig.URLS.ADMIN.ORG_SEARCH,
+      data: {
+        request: {
+          filters: filters
+        }
+      }
+    };
+
+    return this.API_URL(option);
+  }
+
   /**
    * makes api call to get list of programs from ext framework Service
    */
@@ -602,7 +639,15 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
-    return this.API_URL(req);
+
+    // Check if slug is present in the URL, if yes then fetch the program those slug org only
+    const urlSlug = this.userService.slug;
+    if (urlSlug && !_.isEmpty(this._orgnisations[urlSlug])) {
+      req.data.request.filters['rootorg_id'] = this._orgnisations[urlSlug];
+      return this.API_URL(req);
+    } else {
+      return this.API_URL(req);
+    }
   }
 
   /**
