@@ -88,23 +88,25 @@
               </div>
             </ng-container>
           </div>
-          <hr class="my-10">
-          <div class="d-flex sb-steps flex-jc-flex-end pt-10">
-            <div class="fs-0-92 pr-30">
-              {{resourceService.frmelmnts.lbl.nominationProcess}}
-            </div>
-            <div class="sb-bx">
-              <span class="sb-step-circle">1</span>
-              <span class="sb-step-label">{{resourceService.frmelmnts.lbl.clickSelectContentType}}</span>
-            </div>
-            <div class="sb-bx">
-              <span class="sb-step-circle">2</span>
-              <span class="sb-step-label">{{resourceService.frmelmnts.lbl.uploadSampleConntentToTextbook}}</span>
-            </div>
-            <div class="sb-bx">
-              <span class="sb-step-circle">3</span>
-              <span class="sb-step-label">{{resourceService.frmelmnts.lbl.onceUploadedSampleClick}}</span>
-            </div>
+          <div *ngIf="canNominate()">
+            <hr class="my-10">
+            <div class="d-flex sb-steps flex-jc-flex-end pt-10">
+              <div class="fs-0-92 pr-30">
+                {{resourceService.frmelmnts.lbl.nominationProcess}}
+              </div>
+              <div class="sb-bx">
+                <span class="sb-step-circle">1</span>
+                <span class="sb-step-label">{{resourceService.frmelmnts.lbl.clickSelectContentType}}</span>
+              </div>
+              <div class="sb-bx">
+                <span class="sb-step-circle">2</span>
+                <span class="sb-step-label">{{resourceService.frmelmnts.lbl.uploadSampleConntentToTextbook}}</span>
+              </div>
+              <div class="sb-bx">
+                <span class="sb-step-circle">3</span>
+                <span class="sb-step-label">{{resourceService.frmelmnts.lbl.onceUploadedSampleClick}}</span>
+              </div>
+          </div>
         </div>
       </div>
     <div class="bt-1 w-100 py-20 pl-0">
