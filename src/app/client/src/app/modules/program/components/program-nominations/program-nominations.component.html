@@ -36,7 +36,7 @@
                     <label class="mb-0">{{resourceService?.frmelmnts?.lbl?.contentType}}</label>
                     <p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{ programContentTypes }}"><span>{{ programContentTypes }}</span></p>
 			</div>
-            <!-- <div *ngIf="!isContributionDashboardTabActive" class="sb-meta-data-container sb-meta-data-column px-10">
+            <div *ngIf="!isContributionDashboardTabActive" class="sb-meta-data-container sb-meta-data-column px-10">
                 <label class="width-100">{{ resourceService?.frmelmnts?.lbl?.nominations }} </label>
                 <div class="d-flex">
                     <dl class="sb-meta-data">
@@ -56,7 +56,7 @@
                         <dd>{{ resourceService?.frmelmnts?.lbl?.total }}</dd>
                     </dl>
                 </div>
-            </div> -->
+            </div>
             <div *ngIf="isContributionDashboardTabActive" class="sb-meta-data-container sb-meta-data-column px-10">
                 <label class="width-100">{{ resourceService?.frmelmnts?.lbl?.contributions }} </label>
                 <div class="d-flex">
@@ -305,12 +305,13 @@
                     </div>
                 </div>
             </div>
-            <!-- <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="3">
+            <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="3">
 				<div class="ui container">
 					<div class="pt-24">
 					  <div class="d-flex flex-ai-center flex-jc-space-between sb-pageSection">
-						<div class="sb-pageSection-header mb-15">
-						  <h4 class="sb-pageSection-title"> {{userService.userProfile?.organisations[0]?.orgName}}</h4>
+						<div class="sb-pageSection-header">
+						  <h4 class="sb-pageSection-title"> {{userService.userProfile?.organisations[0]?.organisationId}}</h4>
+						  <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{sourcingOrgUser.length || 0}}</span>
 						</div>
 					  </div>
 					</div>
@@ -322,7 +323,7 @@
 								{{resourceService.frmelmnts.lbl.username}} &nbsp;&nbsp;
                             </th>
                             <th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('mediums')">
-								{{resourceService.frmelmnts.lbl.medium}} &nbsp;&nbsp;
+								{{resourceService.frmelmnts.lbl.mediums}} &nbsp;&nbsp;
 							</th>
 							<th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('gradeLevel')">
 								{{resourceService.frmelmnts.lbl.class}} &nbsp;&nbsp;
@@ -342,7 +343,8 @@
 							<td>{{orgUser?.framework?.gradeLevel?.join(', ')}}</td>
 							<td>{{orgUser?.framework?.subject?.join(', ')}}</td>
 							<td class="text-center">
-							        <sui-select class="selection pt-5" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="options" valueField="name" (selectedOptionChange)="onRoleChange()" [isDisabled]="!canAssignUsers">
+							        <sui-select class="selection pt-5" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="options" valueField="name"
+									(selectedOptionChange)="onRoleChange()">
 										<sui-select-option *ngFor="let option of roles;" [value]="option">
 										</sui-select-option>
 									</sui-select>
