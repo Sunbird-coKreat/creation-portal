@@ -200,8 +200,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         }
       }
     };
-
-
     const textbooks = [];
     this.programsService.post(req).subscribe((data) => {
       if (data.result && data.result.length > 0) {
@@ -248,7 +246,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
          });
         });
       }
-      console.log(this.nominations, 'This is Nomination');
       this.nominatedContentTypeCount = this.nominatedcontentTypes.length;
       this.nominatedcontentTypes = this.programsService.getContentTypesName(this.nominatedcontentTypes);
       this.nominatedTextbook = textbooks.length;
