@@ -36,27 +36,6 @@
                     <label class="mb-0">{{resourceService?.frmelmnts?.lbl?.contentType}}</label>
                     <p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{ programContentTypes }}"><span>{{ programContentTypes }}</span></p>
 			</div>
-            <!-- <div *ngIf="!isContributionDashboardTabActive" class="sb-meta-data-container sb-meta-data-column px-10">
-                <label class="width-100">{{ resourceService?.frmelmnts?.lbl?.nominations }} </label>
-                <div class="d-flex">
-                    <dl class="sb-meta-data">
-                        <dt>{{ pendingCount }}</dt>
-                        <dd>{{ resourceService?.frmelmnts?.lbl?.pending }}</dd>
-                    </dl>
-                    <dl class="sb-meta-data">
-                        <dt>{{ approvedCount }}</dt>
-                        <dd>{{ resourceService?.frmelmnts?.lbl?.approved }}</dd>
-                    </dl>
-                    <dl class="sb-meta-data">
-                        <dt>{{ rejectedCount }}</dt>
-                        <dd>{{ resourceService?.frmelmnts?.lbl?.rejected }}</dd>
-                    </dl>
-                    <dl class="sb-meta-data">
-                        <dt>{{ totalCount }}</dt>
-                        <dd>{{ resourceService?.frmelmnts?.lbl?.total }}</dd>
-                    </dl>
-                </div>
-            </div> -->
             <div *ngIf="isContributionDashboardTabActive" class="sb-meta-data-container sb-meta-data-column px-10">
                 <label class="width-100">{{ resourceService?.frmelmnts?.lbl?.contributions }} </label>
                 <div class="d-flex">
