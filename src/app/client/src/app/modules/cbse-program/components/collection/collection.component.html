@@ -132,28 +132,21 @@
 </div>
 </div>
 
-  <div class="sb-bg-color-white py-24 dynamicHeight">
-    <div class="ui container m-0 p-0 sb-pageSection">
-      <ng-container *ngIf="!showLoader">
-        <div class="sb-pageSection-header mb-15">
-          <div>
-            <h4 class="sb-pageSection-title six">{{resourceService.frmelmnts.lbl.textbooks}}</h4>
-            <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning mx-10">{{collectionList.length || 0}}</span>
-          </div>
-          <div class="sb-pageSection-document" *ngIf="programContext?.guidelines_url">
-            <a class="fs-0-785 text-decor-none font-weight-bold" href="{{ programContext?.guidelines_url }}" target="_blank">
-              <i class="file sb-file-icon outline icon pr-10 sb-color-primary"></i>
-              {{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
-            </a>
-          </div>
-        </div>
-        <div class="sb-pageSection-document" *ngIf="programContext?.guidelines_url">
-          <a class="fs-0-785 text-decor-none font-weight-bold" href="{{ programContext?.guidelines_url }}" target="_blank">
-            <i class="file sb-file-icon outline icon pr-10 sb-color-primary"></i>
-            {{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
-          </a>
-        </div>
+<div class="ui container m-0 p-0 sb-pageSection">
+  <ng-container *ngIf="!showLoader">
+    <div class="sb-pageSection-header mb-15">
+      <div>
+        <h4 class="sb-pageSection-title six">{{resourceService.frmelmnts.lbl.textbooks}}</h4>
+        <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning mx-10">{{collectionList.length || 0}}</span>
       </div>
+      <div class="sb-pageSection-document" *ngIf="programContext?.guidelines_url">
+        <a class="fs-0-785 text-decor-none font-weight-bold" href="{{ programContext?.guidelines_url }}" target="_blank">
+          <i class="file sb-file-icon outline icon pr-10 sb-color-primary"></i>
+          {{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
+        </a>
+      </div>
+    </div>
+  </ng-container>
       <div class="sb-table-responsive">
         <table class="sb-table sb-table-striped sb-table-sortable sb-table-fixed">
           <thead class="sb-table-header sb-table-thead-gray">

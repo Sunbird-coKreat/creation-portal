@@ -302,7 +302,7 @@ export class ProgramListComponent implements OnInit {
    */
   private getMyProgramsForOrg(status) {
     const filters = {
-      rootorg_id: _.get(this.userService, 'userProfile.rootOrg.rootOrgId'),
+      rootorg_id: _.get(this.userService, 'userProfile.rootOrgId'),
       status: status
     };
     // tslint:disable-next-line:max-line-length
