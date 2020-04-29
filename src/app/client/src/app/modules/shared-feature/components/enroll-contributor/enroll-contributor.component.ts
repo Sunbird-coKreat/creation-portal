@@ -150,24 +150,22 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
     this.contributeForm.controls['name'].setValidators(null);
     if (this.enrollAsOrg) {
       this.contributeForm.controls['description'].setValidators([Validators.required, Validators.maxLength(1000)]);
-      this.contributeForm.controls['name'].setValidators([Validators.required]);
+      this.contributeForm.controls['name'].setValidators([Validators.required, Validators.maxLength(100)]);
     }
     this.contributeForm.controls['name'].updateValueAndValidity();
     this.contributeForm.controls['description'].updateValueAndValidity();
   }
 
   validateFields() {
-
-    if (!this.contributeForm.valid)
-    {
+    if (!this.contributeForm.valid) {
       this.formIsInvalid = true;
       this.validateAllFormFields(this.contributeForm);
     } else {
       if (this.enrollAsOrg === true) {
-        var request = {
-          entityType:["Org"],
-          filters:{
-            code:{eq: this.contributeForm.get('name').value.toUpperCase()}
+        const request = {
+          entityType: ['Org'],
+          filters: {
+            code: { eq: this.contributeForm.get('name').value.toUpperCase() }
           }
         };
         this.programsService.searchRegistry(request).subscribe(

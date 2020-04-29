@@ -48,9 +48,14 @@
                      <label class="d-block">{{resourceService.frmelmnts.lbl.nameOfOrganisation}} <span class="sb-color-warning">*</span> <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.nameOfOrganisationHint}}"></i></label>
                      <div class="sb-field required field">
                          <input class="sb-form-control" placeholder="{{resourceService.frmelmnts.lbl.nameOfOrganisation}}" formControlName="name">
-                         <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['name'].errors && contributeForm.controls['name'].errors.required && (!contributeForm.controls['name'].pristine || formIsInvalid)">
-                           {{ resourceService?.messages?.emsg?.m0025 }}
+                        <span class="fs-0-785 text-right sb-color-gray-200 d-block py-5 pull-right">{{ resourceService.frmelmnts.lbl.nCharactersLeft | interpolate:'{noOfChars}': 100 - (contributeForm.controls['name'].value.length > 100 ? 100 : contributeForm.controls['name'].value.length) }}
+                        </span>
+                        <div class="ui pointing red basic label below" *ngIf="contributeForm.controls['name'].errors && contributeForm.controls['name'].errors.maxlength">
+                           {{ resourceService.frmelmnts.lbl.characterLengthGreaterHundred }}
                         </div>
+                        <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['name'].errors && contributeForm.controls['name'].errors.required && (!contributeForm.controls['name'].pristine || formIsInvalid)">
+                          {{ resourceService?.messages?.emsg?.m0025 }}
+                       </div>
                      </div>
                   </div>
                </div>
@@ -59,10 +64,10 @@
                      <label class="d-block">{{resourceService.frmelmnts.lbl.description}} <span class="sb-color-warning">*</span> <i class="pull-right question circle link icon pull-right" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.programRecognitionHint}}"></i></label>
                      <div class="sb-field required field">
                         <textarea rows="4" class="sb-form-control" placeholder="{{resourceService.frmelmnts.lbl.description}}" spellcheck="false" formControlName="description"></textarea>
-                        <span class="fs-0-785 text-right sb-color-gray-200 d-block py-5">{{ resourceService.frmelmnts.lbl.nCharactersLeft | interpolate:'{noOfChars}': 1000 - (contributeForm.controls['description'].value.length > 1000 ? 1000 : contributeForm.controls['description'].value.length) }}
+                        <span class="fs-0-785 text-right sb-color-gray-200 d-block py-5 pull-right">{{ resourceService.frmelmnts.lbl.nCharactersLeft | interpolate:'{noOfChars}': 1000 - (contributeForm.controls['description'].value.length > 1000 ? 1000 : contributeForm.controls['description'].value.length) }}
                         </span>
                         <div class="ui pointing red basic label below" *ngIf="contributeForm.controls['description'].errors && contributeForm.controls['description'].errors.maxlength">
-                           {{ resourceService?.messages?.emsg?.m0026 }}
+                           {{ resourceService.frmelmnts.lbl.characterLengthGreaterThousand }}
                         </div>
                         <div class="ui pointing red basic label below " *ngIf="contributeForm.controls['description'].errors && contributeForm.controls['description'].errors.required && (!contributeForm.controls['description'].pristine || formIsInvalid)">
                            {{ resourceService?.messages?.emsg?.m0025 }}
