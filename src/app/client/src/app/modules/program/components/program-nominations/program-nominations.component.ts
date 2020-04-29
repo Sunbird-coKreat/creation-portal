@@ -200,7 +200,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         }
       }
     };
-    const textbooks = [];
+    let textbooks = [];
     this.programsService.post(req).subscribe((data) => {
       if (data.result && data.result.length > 0) {
         this.getDashboardData(data.result);
@@ -233,16 +233,18 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           if (res.status === 'Rejected') {
             this.rejectedCount = this.rejectedCount + 1;
           }
-          _.forEach(res.collection_ids, (collectionId) => {
-              if (!_.includes(textbooks, collectionId)) {
-                textbooks.push(collectionId);
-              }
-           });
-           _.forEach(res.content_types, (content_types) => {
-            if (!_.includes(this.nominatedcontentTypes, content_types)) {
-              this.nominatedcontentTypes.push(content_types);
-            }
-         });
+          // _.forEach(res.collection_ids, (collectionId) => {
+          //     if (!_.includes(textbooks, collectionId)) {
+          //       textbooks.push(collectionId);
+          //     }
+          //  });
+        //    _.forEach(res.content_types, (content_types) => {
+        //     if (!_.includes(this.nominatedcontentTypes, content_types)) {
+        //       this.nominatedcontentTypes.push(content_types);
+        //     }
+        //  });
+        textbooks = _.merge(textbooks, res.collection_ids);
+        this.nominatedcontentTypes = _.merge(this.nominatedcontentTypes, res.content_types);
         });
       }
       this.nominatedContentTypeCount = this.nominatedcontentTypes.length;
