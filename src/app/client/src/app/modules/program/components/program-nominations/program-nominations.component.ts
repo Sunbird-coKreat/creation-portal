@@ -219,11 +219,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
               'nominationData': res
             });
           }
-          if (isOrg) {
-            this.contributedByOrganisation = this.contributedByOrganisation + 1;
-          } else {
-            this.contributedByIndividual = this.contributedByIndividual  + 1;
-          }
+          (isOrg) ? this.contributedByOrganisation++ : this.contributedByIndividual++;
           if (res.status === 'Pending') {
             this.pendingCount = this.pendingCount + 1;
           }
