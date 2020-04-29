@@ -22,7 +22,7 @@
           </ng-template>
           <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate">
           </i>
-  
+
           <p class="fs-0-785 font-weight-normal">{{programContext.description}}</p>
         </div>
       </div>
@@ -38,7 +38,7 @@
                 </span>
               </p>
             </div>
-      
+
             <ng-container *ngIf="programContext">
               <div class="program-timeline px-16 pt-10">
                 <div class="program-timeline-item">
@@ -94,16 +94,16 @@
               {{resourceService.frmelmnts.lbl.nominationProcess}}
             </div>
             <div class="sb-bx">
-              <span class="sb-step-circle">1</span> 
-              <span class="sb-step-label">{{resourceService.frmelmnts.lbl.clickSelectContentType}}</span> 
+              <span class="sb-step-circle">1</span>
+              <span class="sb-step-label">{{resourceService.frmelmnts.lbl.clickSelectContentType}}</span>
             </div>
             <div class="sb-bx">
               <span class="sb-step-circle">2</span>
-              <span class="sb-step-label">{{resourceService.frmelmnts.lbl.uploadSampleConntentToTextbook}}</span> 
+              <span class="sb-step-label">{{resourceService.frmelmnts.lbl.uploadSampleConntentToTextbook}}</span>
             </div>
-            <div class="sb-bx"> 
+            <div class="sb-bx">
               <span class="sb-step-circle">3</span>
-              <span class="sb-step-label">{{resourceService.frmelmnts.lbl.onceUploadedSampleClick}}</span> 
+              <span class="sb-step-label">{{resourceService.frmelmnts.lbl.onceUploadedSampleClick}}</span>
             </div>
         </div>
       </div>
@@ -207,14 +207,14 @@
               <td>
                 {{ data.chapterCount || 0 }}
               </td>
-              <td *ngIf="currentNominationStatus === 'Initiated' || currentNominationStatus=== 'Pending'">{{data.sampleContentCount || 0 }}</td>
+              <td *ngIf="currentNominationStatus === 'Initiated' || currentNominationStatus=== 'Pending'">{{data.totalSampleContent || 0 }}</td>
               <td>
-                <div *ngIf = "selectedContentTypes.length">
-                <div *ngIf="(data.sampleContentCount === undefined || data.sampleContentCount === 0) && canNominate()" class="sb-checkbox sb-checkbox-primary d-inline-block">
-                  <input  type="checkbox" [checked]="data.isSelected || data.sampleContentCount" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
+                <div *ngIf="selectedContentTypes.length">
+                <div *ngIf="(data.totalSampleContent === undefined || data.totalSampleContent === 0) && canNominate()" class="sb-checkbox sb-checkbox-primary d-inline-block">
+                  <input  type="checkbox" [checked]="data.isSelected || data.totalSampleContent" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
                   <label></label>
                 </div>
-                <button type="button" *ngIf="data.isSelected || data.sampleContentCount" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10 px-10" appTelemetryInteract
+                <button type="button" *ngIf="data.isSelected || data.totalSampleContent" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10 px-10" appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('upload-sample', 'click', 'collection-list', {values: selectedCollectionIds})"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
