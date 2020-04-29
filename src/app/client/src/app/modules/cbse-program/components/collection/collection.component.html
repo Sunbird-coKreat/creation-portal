@@ -214,7 +214,7 @@
                   <input  type="checkbox" [checked]="data.isSelected || data.totalSampleContent" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
                   <label></label>
                 </div>
-                <button type="button" *ngIf="data.isSelected || data.totalSampleContent && canNominate()" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10 px-10" appTelemetryInteract
+                <button type="button" *ngIf="(data.isSelected || data.totalSampleContent) && canNominate()" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10 px-10" appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('upload-sample', 'click', 'collection-list', {values: selectedCollectionIds})"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
