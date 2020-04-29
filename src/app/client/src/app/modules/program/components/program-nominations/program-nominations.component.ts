@@ -233,7 +233,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           if (res.status === 'Rejected') {
             this.rejectedCount = this.rejectedCount + 1;
           }
-          console.log(res, 'this is res');
           _.forEach(res.collection_ids, (collectionId) => {
               if (!_.includes(textbooks, collectionId)) {
                 textbooks.push(collectionId);
