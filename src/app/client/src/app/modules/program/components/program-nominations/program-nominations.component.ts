@@ -65,8 +65,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public overAllContentCount: any = {};
   public isContributionDashboardTabActive = false;
   public canAssignUsers = false;
-  public counts: any = {};
   nominatedcontentTypes: any = [];
+  public contributedByOrganisation = 0;
+  public contributedByIndividual = 0;
+  public nominatedTextbook = 0;
+  public nominatedContentTypeCount = 0;
+  public samplesCount = 0;
+  public totalContentTypeCount = 0;
 
   constructor(public frameworkService: FrameworkService, private tosterService: ToasterService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
@@ -195,14 +200,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         }
       }
     };
-    this.counts.contributedByOrganisation = 0;
-    this.counts.contributedByIndividual = 0;
-    this.counts.nominatedTextbook = 0;
-    this.counts.nominatedContentType = 0;
-    this.counts.pendingNomination = 0;
-    this.counts.approvedNomination = 0;
-    this.counts.rejectedNomination = 0;
-    this.counts.TotalNomination = 0;
+
+
     const textbooks = [];
     this.programsService.post(req).subscribe((data) => {
       if (data.result && data.result.length > 0) {
@@ -223,19 +222,20 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
             });
           }
           if (isOrg) {
-            this.counts.contributedByOrganisation = this.counts.contributedByOrganisation + 1;
+            this.contributedByOrganisation = this.contributedByOrganisation + 1;
           } else {
-            this.counts.contributedByIndividual = this.counts.contributedByIndividual  + 1;
+            this.contributedByIndividual = this.contributedByIndividual  + 1;
           }
           if (res.status === 'Pending') {
-            this.counts.pendingNomination = this.counts.pendingNomination + 1;
+            this.pendingCount = this.pendingCount + 1;
           }
           if (res.status === 'Approved') {
-            this.counts.approvedNomination  = this.counts.approvedNomination + 1;
+            this.approvedCount  = this.approvedCount + 1;
           }
           if (res.status === 'Rejected') {
-            this.counts.rejectedNomination = this.counts.rejectedNomination + 1;
+            this.rejectedCount = this.rejectedCount + 1;
           }
+          console.log(res, 'this is res');
           _.forEach(res.collection_ids, (collectionId) => {
               if (!_.includes(textbooks, collectionId)) {
                 textbooks.push(collectionId);
@@ -248,9 +248,11 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
          });
         });
       }
-      this.counts.totalNomination = this.counts.pendingNomination +  this.counts.approvedNomination + this.counts.rejectedNomination;
-      this.counts.nominatedContentType = this.nominatedcontentTypes.length;
-      this.counts.nominatedTextbook = textbooks.length;
+      console.log(this.nominations, 'This is Nomination');
+      this.nominatedContentTypeCount = this.nominatedcontentTypes.length;
+      this.nominatedcontentTypes = this.programsService.getContentTypesName(this.nominatedcontentTypes);
+      this.nominatedTextbook = textbooks.length;
+      this.totalCount = this.nominationsCount;
       this.nominationsCount = this.nominations.length;
       this.tempNominations = this.nominations;
       this.tempNominationsCount = this.nominationsCount;
@@ -261,12 +263,11 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   public getSampleContent() {
-    this.counts.samples = 0;
     this.collectionHierarchyService.getContentAggregation(this.programId, true)
     .subscribe(
       (response) => {
         if (response && response.result && response.result.count) {
-          this.counts.samples = response.result.count;
+          this.samplesCount = response.result.count;
         }
       });
   }
@@ -386,14 +387,11 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   getProgramDetails() {
-    this.counts.totalTextbook = 0;
-    this.counts.totalContentType = 0;
     this.fetchProgramDetails().subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
       this.programContext = this.programDetails;
       this.collectionsCount = _.get(this.programDetails, 'collection_ids').length;
-      this.counts.totalTextbook = this.collectionsCount ;
-      this.counts.totalContentType = _.get(this.programDetails, 'content_types').length;
+      this.totalContentTypeCount = _.get(this.programDetails, 'content_types').length;
       this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
       this.canAssignUsersToProgram();
       this.setActiveDate();

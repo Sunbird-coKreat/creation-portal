@@ -36,7 +36,7 @@
                     <label class="mb-0">{{resourceService?.frmelmnts?.lbl?.contentType}}</label>
                     <p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{ programContentTypes }}"><span>{{ programContentTypes }}</span></p>
 			</div>
-            <div *ngIf="!isContributionDashboardTabActive" class="sb-meta-data-container sb-meta-data-column px-10">
+            <!-- <div *ngIf="!isContributionDashboardTabActive" class="sb-meta-data-container sb-meta-data-column px-10">
                 <label class="width-100">{{ resourceService?.frmelmnts?.lbl?.nominations }} </label>
                 <div class="d-flex">
                     <dl class="sb-meta-data">
@@ -56,7 +56,7 @@
                         <dd>{{ resourceService?.frmelmnts?.lbl?.total }}</dd>
                     </dl>
                 </div>
-            </div>
+            </div> -->
             <div *ngIf="isContributionDashboardTabActive" class="sb-meta-data-container sb-meta-data-column px-10">
                 <label class="width-100">{{ resourceService?.frmelmnts?.lbl?.contributions }} </label>
                 <div class="d-flex">
@@ -175,37 +175,37 @@
             <div class="ui segment  p-0 m-0 mt-4 sb-bg-color-white dynamicHeight"  suiTabContent="1">
                 <div class="ui container p-0 m-0">
                     <div class="pt-24 text-capitalize fs-0-785 line-height-1-3">
-                        <div class="sb-color-gray-400 d-inline-block br-2 pr-10"><span class="fs-1-286 font-weight-bold">{{ counts.totalNomination || 0}}</span> {{resourceService.frmelmnts.lbl.total}}</div>
-                        <div class="sb-color-success d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{counts.approvedNomination || 0}}</span> {{resourceService.frmelmnts.lbl.approved}}</div>
-                        <div class="sb-color-error d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{counts.rejectedNomination|| 0}}</span> {{resourceService.frmelmnts.lbl.rejected}}</div>
-                        <div class="sb-color-warning d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{ counts.pendingNomination || 0}}</span> {{resourceService.frmelmnts.lbl.pending}}</div>
+                        <div class="sb-color-gray-400 d-inline-block br-2 pr-10"><span class="fs-1-286 font-weight-bold">{{ nominationsCount || 0}}</span> {{resourceService.frmelmnts.lbl.total}}</div>
+                        <div class="sb-color-success d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{approvedCount || 0}}</span> {{resourceService.frmelmnts.lbl.approved}}</div>
+                        <div class="sb-color-error d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{rejectedCount|| 0}}</span> {{resourceService.frmelmnts.lbl.rejected}}</div>
+                        <div class="sb-color-warning d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{ pendingCount || 0}}</span> {{resourceService.frmelmnts.lbl.pending}}</div>
                     </div>
                     <hr class="my-10">
                     <div class="pt-10 text-capitalize fs-0-785 line-height-1-3 sb-color-gray-400 d-flex">
                         <div class="text-left flex-grow-1"> {{resourceService.frmelmnts.lbl.contributedBy}}:
-                            <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ counts.contributedByIndividual  || 0}}</span> {{resourceService.frmelmnts.lbl.individual}}
-                            <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ counts.contributedByOrganisation || 0}}</span> {{resourceService.frmelmnts.lbl.organisation}}
+                            <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ contributedByIndividual  || 0}}</span> {{resourceService.frmelmnts.lbl.individual}}
+                            <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ contributedByOrganisation || 0}}</span> {{resourceService.frmelmnts.lbl.organisation}}
                         </div>
                         <div class="br-1 text-center flex-grow-1 bl-2"> {{resourceService.frmelmnts.lbl.textbooks}}:
-                            <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ counts.totalTextbook || 0}}</span> {{resourceService.frmelmnts.lbl.total}}
-                            <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ counts.nominatedTextbook || 0}}</span> {{resourceService.frmelmnts.lbl.nominated}}
+                            <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ collectionsCount || 0}}</span> {{resourceService.frmelmnts.lbl.total}}
+                            <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ nominatedTextbook || 0}}</span> {{resourceService.frmelmnts.lbl.nominated}}
                         </div>
                         <div class="br-1 text-center flex-grow-1 bl-2"> {{resourceService.frmelmnts.lbl.contentType}}:
                           <span suiPopup [popupTemplate]="contentTotalTemplate" popupDelay="1000" class="cursor-pointer">
-                               <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ counts.totalContentType || 0}}</span> {{resourceService.frmelmnts.lbl.total}}
+                               <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ totalContentTypeCount || 0}}</span> {{resourceService.frmelmnts.lbl.total}}
                             </span>
                             <ng-template #contentTotalTemplate>
                                     <p class="my-0 fs-0-785">{{programContentTypes}} </p>
                             </ng-template>
                             <span suiPopup [popupTemplate]="contentTypeTemplate" popupDelay="1000" class="cursor-pointer">
-                               <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ counts.nominatedContentType || 0}}</span> {{resourceService.frmelmnts.lbl.nominated}}
+                               <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ nominatedContentTypeCount || 0}}</span> {{resourceService.frmelmnts.lbl.nominated}}
                             </span>
                             <ng-template #contentTypeTemplate>
                                 <p class="my-0 fs-0-785">{{nominatedcontentTypes}} </p>
                             </ng-template>
                         </div>
                         <div class="br-1 text-right flex-grow-1 bl-2"> {{resourceService.frmelmnts.lbl.samples}}:
-                            <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ counts.samples}}</span> {{resourceService.frmelmnts.lbl.uploaded}}
+                            <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ samplesCount }}</span> {{resourceService.frmelmnts.lbl.uploaded}}
                         </div>
                     </div>
                     <div class="sb-pageSection">
