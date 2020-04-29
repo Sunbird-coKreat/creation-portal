@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { of, throwError, forkJoin } from 'rxjs';
-import { ResourceService, ToasterService, ServerResponse, ConfigService } from '@sunbird/shared';
+import { ResourceService, ToasterService, ServerResponse } from '@sunbird/shared';
 import { mergeMap } from 'rxjs/operators';
-import { RegistryService } from '../registry/registry.service';
-import { ContentService } from '../content/content.service';
 import { LearnerService } from '../learner/learner.service';
+import { ProgramsService } from '../programs/programs.service';
 import * as _ from 'lodash-es';
 
 @Injectable({
@@ -12,26 +11,10 @@ import * as _ from 'lodash-es';
 })
 export class NotificationService {
 
-  constructor(private config: ConfigService,
-    private registryService: RegistryService,
-    private resourceService: ResourceService,
+  constructor(private resourceService: ResourceService,
     private toasterService: ToasterService,
     private learnerService: LearnerService,
-    private contentService: ContentService) { }
-
-  getUserDetails(userId) {
-    const req = {
-      url: this.config.urlConFig.URLS.ADMIN.USER_SEARCH,
-      data: {
-        request: {
-          filters: {
-            identifier : userId
-          }
-        }
-      }
-    };
-    return this.learnerService.post(req);
-  }
+    private programsService: ProgramsService) { }
 
   sendNotification(reqData) {
     const option = {
@@ -54,7 +37,9 @@ export class NotificationService {
 
   onAfterNominationUpdate(nomination) {
     // console.log('nomination', nomination);
-    this.getUserDetails(nomination.user_id)
+    const requestFilter = { identifier : nomination.user_id };
+
+    this.programsService.getOrgUsersDetails(requestFilter)
     .subscribe((res: any) => {
       const user = _.get(res, 'result.response.content[0]');
       if (_.isEmpty(user)) {
