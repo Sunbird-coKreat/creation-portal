@@ -94,7 +94,29 @@ export class ProgramListComponent implements OnInit {
     this.programsService.getAllProgramsByType(type, status).subscribe(
       response => {
         const allPrograms = _.get(response, 'result.programs');
-        if (allPrograms.length) {
+        if (!allPrograms.length) {
+          return;
+        }
+        const user_Org = _.get(this.userService, 'userProfile.userRegData.User_Org');
+        if (!_.isEmpty(user_Org) && !_.isEmpty(user_Org.roles) && _.includes(user_Org.roles, 'admin')) {
+          this.iscontributeOrgAdmin = true;
+          const filters = {
+            organisation_id: user_Org.orgId
+          };
+          this.programsService.getNominationList(filters)
+            .subscribe(
+              (nominationsResponse) => {
+              const nominations = _.get(nominationsResponse, 'result');
+              if (!_.isEmpty(nominations)) {
+                const enrolledPrograms = _.uniq(_.map(nominations, 'program_id'));
+                this.filterOutEnrolledPrograms(allPrograms, enrolledPrograms);
+              }
+            }, (error) => {
+              console.log(error);
+              this.toasterService.error('Fetching nominated program failed');
+            });
+        } else {
+          this.iscontributeOrgAdmin = false;
           const req = {
             request: {
               filters: {
@@ -107,21 +129,11 @@ export class ProgramListComponent implements OnInit {
           };
 
           this.programsService.getMyProgramsForContrib(req)
-          .subscribe((thisresponse) => {
-              if (!_.isEmpty(_.get(thisresponse, 'result.programs'))) {
-                const enrolledPrograms = _.map(_.get(thisresponse, 'result.programs'), (nomination: any) => {
-                  return nomination.program_id;
-                });
-                const temp = _.filter(allPrograms, program => {
-                  return !enrolledPrograms.includes(program.program_id);
-                 });
-                this.programs = this.filterProgramByDate(temp);
-              } else {
-                this.programs = this.filterProgramByDate(allPrograms);
-              }
-              this.count = this.programs.length;
-              this.tempSortPrograms = this.programs;
-              this.showLoader = false;
+            .subscribe((myProgramsResponse) => {
+              const enrolledPrograms = _.map(_.get(myProgramsResponse, 'result.programs'), (nomination: any) => {
+                return nomination.program_id;
+              });
+              this.filterOutEnrolledPrograms(allPrograms, enrolledPrograms);
             }, error => {
               this.toasterService.error(_.get(error, 'error.params.errmsg') || this.resourceService.messages.emsg.projects.m0001);
             }
@@ -131,6 +143,20 @@ export class ProgramListComponent implements OnInit {
         this.toasterService.error(_.get(error, 'error.params.errmsg') || this.resourceService.messages.emsg.projects.m0001);
       }
     );
+  }
+
+  filterOutEnrolledPrograms(allPrograms, enrolledPrograms) {
+    if (!_.isEmpty(enrolledPrograms)) {
+      const temp = _.filter(allPrograms, program => {
+        return !enrolledPrograms.includes(program.program_id);
+      });
+      this.programs = this.filterProgramByDate(temp);
+    } else {
+      this.programs = this.filterProgramByDate(allPrograms);
+    }
+    this.count = this.programs.length;
+    this.tempSortPrograms = this.programs;
+    this.showLoader = false;
   }
 
   filterProgramByDate(programs) {
@@ -196,44 +222,170 @@ export class ProgramListComponent implements OnInit {
    * fetch the list of programs.
    */
   private getMyProgramsForContrib(status) {
-    if (!_.isEmpty(this.userService.userProfile.userRegData)
-    && this.userService.userProfile.userRegData.User_Org
-    && this.userService.userProfile.userRegData.User_Org.roles.indexOf('admin') === -1) {
-      const filters = {
-        organisation_id: this.userService.userProfile.userRegData.User_Org.orgId
-      };
-      this.iscontributeOrgAdmin = false;
-      this.programsService.getNominationList(filters)
+    const user_Org = _.get(this.userService, 'userProfile.userRegData.User_Org');
+    const roles = _.get(user_Org, 'roles');
+    if (!_.isEmpty(user_Org) && !_.isEmpty(roles)) {
+      if (!_.includes(roles, 'admin')) {
+        const filters = {
+          organisation_id: user_Org.orgId
+        };
+        this.iscontributeOrgAdmin = false;
+        this.programsService.getNominationList(filters)
         .subscribe(
           (data) => {
-          // Get only those programs for which user has been added contributor or reviewer and the nomination is in "Approved" state
-          if (data.result && data.result.length > 0) {
-            this.nominationList = _.map(_.filter(data.result, obj => {
-              if (obj.rolemapping
-                && (( obj.rolemapping.CONTRIBUTOR.includes(_.get(this.userService, 'userProfile.userId' )))
-                || ( obj.rolemapping.REVIEWER.includes(_.get(this.userService, 'userProfile.userId' ))))
-                && obj.status === 'Approved') {
-                  this.roleMapping.push(obj);
-                  return obj;
+            // Get only those programs for which user has been added contributor or reviewer and the nomination is in "Approved" state
+            if (data.result && data.result.length > 0) {
+              this.nominationList = _.map(_.filter(data.result, obj => {
+                if (obj.rolemapping
+                  && (( obj.rolemapping.CONTRIBUTOR.includes(_.get(this.userService, 'userProfile.userId' )))
+                  || ( obj.rolemapping.REVIEWER.includes(_.get(this.userService, 'userProfile.userId' ))))
+                  && obj.status === 'Approved') {
+                    this.roleMapping.push(obj);
+                    return obj;
+                  }
+              }), 'program_id');
+              const req = {
+                request: {
+                  filters: {
+                    program_id: this.nominationList,
+                    status: status
+                  }
                 }
-            }), 'program_id');
-            const req = {
-              request: {
-                filters: {
-                  program_id: this.nominationList,
-                  status: status
+              };
+              this.getContributionProgramList(req);
+            }
+          }, (error) => {
+            console.log(error);
+            this.toasterService.error('Fetching nominated program failed');
+          });
+        } else {
+          const filters = {
+            organisation_id: this.userService.userProfile.userRegData.User_Org.orgId
+          };
+          this.iscontributeOrgAdmin = true;
+          this.programsService.getNominationList(filters)
+            .subscribe(
+              (nominationsResponse) => {
+              const nominations = _.get(nominationsResponse, 'result');
+              if (!_.isEmpty(nominations)) {
+                this.nominationList = _.uniq(_.map(nominations, 'program_id'));
+                const req = {
+                  request: {
+                    filters: {
+                      program_id: this.nominationList,
+                      status: status
+                    }
+                  }
+                };
+                this.programsService.getMyProgramsForContrib(req).subscribe((programsResponse) => {
+                  const programs = _.get(programsResponse, 'result.programs');
+                  this.programs = _.map(programs, (program) => {
+                    const nomination = _.find(nominations, (n) => {
+                      return n.program_id === program.program_id;
+                    });
+                    if (nomination) {
+                      program = _.merge(program , {
+                        contributionDate: nomination.createdon,
+                        nomination_status: nomination.status,
+                        nominated_collection_ids: nomination.collection_ids
+                      });
+                      return program;
+                    }
+                });
+                this.enrollPrograms = this.programs;
+                this.tempSortPrograms = this.programs;
+                this.count = this.programs.length;
+                this.sortColumn = 'createdon';
+                this.direction = 'desc';
+                this.sortCollection(this.sortColumn);
+                this.showLoader = false;
+              });
+            }
+          }, (error) => {
+            console.log(error);
+            this.toasterService.error('Fetching nominated program failed');
+          });
+      } if (!_.isEmpty(user_Org) && !_.isEmpty(user_Org.roles) && !_.includes(user_Org.roles, 'admin')) {
+        const filters = {
+          organisation_id: user_Org.orgId
+        };
+        this.iscontributeOrgAdmin = false;
+        this.programsService.getNominationList(filters)
+          .subscribe(
+            (data) => {
+            // Get only those programs for which user has been added contributor or reviewer and the nomination is in "Approved" state
+            if (data.result && data.result.length > 0) {
+              this.nominationList = _.map(_.filter(data.result, obj => {
+                if (obj.rolemapping
+                  && (( obj.rolemapping.CONTRIBUTOR.includes(_.get(this.userService, 'userProfile.userId' )))
+                  || ( obj.rolemapping.REVIEWER.includes(_.get(this.userService, 'userProfile.userId' ))))
+                  && obj.status === 'Approved') {
+                    this.roleMapping.push(obj);
+                    return obj;
+                  }
+              }), 'program_id');
+              const req = {
+                request: {
+                  filters: {
+                    program_id: this.nominationList,
+                    status: status
+                  }
                 }
-              }
-            };
-            this.getContributionProgramList(req);
-          } else {
-            this.showLoader = false;
-          }
-        }, (error) => {
-          this.showLoader = false;
-          console.log(error);
-          this.toasterService.error(this.resourceService.messages.emsg.projects.m0002);
-        });
+              };
+              this.getContributionProgramList(req);
+            }
+          }, (error) => {
+            console.log(error);
+            this.toasterService.error('Fetching nominated program failed');
+          });
+      } else if (!_.isEmpty(user_Org) && !_.isEmpty(user_Org.roles) && _.includes(user_Org.roles, 'admin')) {
+        const filters = {
+          organisation_id: this.userService.userProfile.userRegData.User_Org.orgId
+        };
+        this.iscontributeOrgAdmin = true;
+        this.programsService.getNominationList(filters)
+          .subscribe(
+            (nominationsResponse) => {
+            const nominations = _.get(nominationsResponse, 'result');
+            if (!_.isEmpty(nominations)) {
+              this.nominationList = _.uniq(_.map(nominations, 'program_id'));
+              const req = {
+                request: {
+                  filters: {
+                    program_id: this.nominationList,
+                    status: status
+                  }
+                }
+              };
+              this.programsService.getMyProgramsForContrib(req).subscribe((programsResponse) => {
+                const programs = _.get(programsResponse, 'result.programs');
+                this.programs = _.map(programs, (program) => {
+                    const nomination = _.find(nominations, (n) => {
+                      return n.program_id === program.program_id;
+                    });
+                    if (nomination) {
+                      program = _.merge(program , {
+                        contributionDate: nomination.createdon,
+                        nomination_status: nomination.status,
+                        nominated_collection_ids: nomination.collection_ids
+                      });
+                      return program;
+                    }
+                });
+                this.enrollPrograms = this.programs;
+                this.tempSortPrograms = this.programs;
+                this.count = this.programs.length;
+                this.sortColumn = 'createdon';
+                this.direction = 'desc';
+                this.sortCollection(this.sortColumn);
+                this.showLoader = false;
+              });
+            }
+          }, (error) => {
+            console.log(error);
+            this.toasterService.error('Fetching nominated program failed');
+          });
+      }
     } else {
       const req = {
         request: {
@@ -250,7 +402,7 @@ export class ProgramListComponent implements OnInit {
   }
 
   getMyProgramRole(program) {
-    let programId = program.program_id;
+    const programId = program.program_id;
     let roles = '';
      _.map(_.find(this.roleMapping, obj => {
       if (obj.rolemapping

@@ -70,7 +70,7 @@ export class OrgUsersListComponent implements OnInit {
             })
           );
         });
-        forkJoin([getUserDetails])
+        forkJoin(getUserDetails)
         .subscribe((res: any) => {
           this.getUsersDetails();
         }, error => {
