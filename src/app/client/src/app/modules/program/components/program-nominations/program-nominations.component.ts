@@ -233,20 +233,12 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           if (res.status === 'Rejected') {
             this.rejectedCount = this.rejectedCount + 1;
           }
-          // _.forEach(res.collection_ids, (collectionId) => {
-          //     if (!_.includes(textbooks, collectionId)) {
-          //       textbooks.push(collectionId);
-          //     }
-          //  });
-        //    _.forEach(res.content_types, (content_types) => {
-        //     if (!_.includes(this.nominatedcontentTypes, content_types)) {
-        //       this.nominatedcontentTypes.push(content_types);
-        //     }
-        //  });
-        textbooks = _.merge(textbooks, res.collection_ids);
-        this.nominatedcontentTypes = _.merge(this.nominatedcontentTypes, res.content_types);
+        textbooks = _.concat(textbooks, res.collection_ids);
+        this.nominatedcontentTypes = _.concat(this.nominatedcontentTypes, res.content_types);
         });
       }
+      this.nominatedcontentTypes =  _.uniq(this.nominatedcontentTypes);
+      textbooks = _.uniq(textbooks);
       this.nominatedContentTypeCount = this.nominatedcontentTypes.length;
       this.nominatedcontentTypes = this.programsService.getContentTypesName(this.nominatedcontentTypes);
       this.nominatedTextbook = textbooks.length;
