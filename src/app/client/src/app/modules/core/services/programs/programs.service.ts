@@ -209,7 +209,7 @@ export class ProgramsService extends DataService implements CanActivate {
     return combineLatest([this.userService.userData$, this.orgDetailsService.getCustodianOrgDetails()])
       .pipe(
         mergeMap(([userData, custodianOrgDetails]) => {
-          return iif(() => _.get(userData, 'userProfile.rootOrg.rootOrgId') === _.get(custodianOrgDetails, 'result.response.value') ||
+          return iif(() => _.get(userData, 'userProfile.rootOrgId') === _.get(custodianOrgDetails, 'result.response.value') ||
             !_.get(userData, 'userProfile.stateValidated'),
             of(false),
             this.moreThanOneProgram());
@@ -565,7 +565,7 @@ export class ProgramsService extends DataService implements CanActivate {
       param: _.get(this.config, 'urlConFig.params.programSearch'),
       data: {
         request: {
-          rootOrgId: _.get(this.userService, 'userProfile.rootOrg.rootOrgId')
+          rootOrgId: _.get(this.userService, 'userProfile.rootOrgId')
         }
       }
     };
