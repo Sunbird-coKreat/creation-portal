@@ -70,10 +70,11 @@
           <label class="d-block width-100" >Number of Samples</label>
           <div class="d-flex">
             <dl class="sb-meta-data">
-              <dt>{{countData['sampleContenttotal'] || 0}}</dt>
+              <dt *ngIf="!isSourcingOrgReviewer()">{{countData['sampleContenttotal'] || 0}}</dt>
+              <dt *ngIf="isSourcingOrgReviewer()">{{countData['nominatedUserSample'] || 0}}</dt>
               <dd>Total</dd>
             </dl>
-            <dl class="sb-meta-data">
+            <dl *ngIf="!isSourcingOrgReviewer()" class="sb-meta-data">
               <dt>{{countData['sampleMycontribution'] || 0 }}</dt>
               <dd>My Content</dd>
             </dl>

@@ -439,7 +439,7 @@ export class ProgramsService extends DataService implements CanActivate {
     } else if (!this.userService.userProfile.userRegData.User_Org) {
           // Add user to the registry
           userOsId = this.userService.userProfile.userRegData.User.osid;
-          const orgName = 'Contributing org for ' + this.userService.userProfile.userName;
+          const orgName = this.userService.userProfile.rootOrgName;
           const orgAdd = {
             Org: {
               name: orgName,
