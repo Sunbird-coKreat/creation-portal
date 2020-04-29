@@ -1012,6 +1012,9 @@
     },
     "rejectedContents": {
       "type": "array"
+    },
+    "chapterCount": {
+      "type": "number"
     }
   }
 }
