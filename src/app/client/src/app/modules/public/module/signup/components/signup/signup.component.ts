@@ -141,7 +141,7 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
       password: new FormControl(null, [Validators.required, Validators.minLength(8)]),
       confirmPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
       phone: new FormControl(null, [Validators.required, Validators.pattern(/^[6-9]\d{9}$/)]),
-      email: new FormControl(null, [Validators.email]),
+      // email: new FormControl(null, [Validators.email]),
       contactType: new FormControl('phone'),
       uniqueContact: new FormControl(null, [Validators.required]),
       tncAccepted: new FormControl(false, [Validators.requiredTrue])
@@ -189,24 +189,25 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onContactTypeValueChanges(): void {
-    const emailControl = this.signUpForm.get('email');
+    // const emailControl = this.signUpForm.get('email');
     const phoneControl = this.signUpForm.get('phone');
     this.signUpForm.get('contactType').valueChanges.subscribe(
       (mode: string) => {
         this.setInteractEventData();
         this.signUpForm.controls['uniqueContact'].setValue('');
-        if (mode === 'email') {
-          this.signUpForm.controls['phone'].setValue('');
-          emailControl.setValidators([Validators.required, Validators.pattern(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,4}$/)]);
-          phoneControl.clearValidators();
-          this.onEmailChange();
-        } else if (mode === 'phone') {
-          this.signUpForm.controls['email'].setValue('');
-          emailControl.clearValidators();
+        // if (mode === 'email') {
+        //   this.signUpForm.controls['phone'].setValue('');
+        //   emailControl.setValidators([Validators.required, Validators.pattern(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,4}$/)]);
+        //   phoneControl.clearValidators();
+        //   this.onEmailChange();
+        // } else
+        if (mode === 'phone') {
+          // this.signUpForm.controls['email'].setValue('');
+          // emailControl.clearValidators();
           phoneControl.setValidators([Validators.required, Validators.pattern('^\\d{10}$')]);
           this.onPhoneChange();
         }
-        emailControl.updateValueAndValidity();
+        // emailControl.updateValueAndValidity();
         phoneControl.updateValueAndValidity();
       });
   }

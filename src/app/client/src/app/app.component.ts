@@ -170,11 +170,9 @@ export class AppComponent implements OnInit, OnDestroy {
         this.logCdnStatus();
         this.setFingerPrintTelemetry();
         this.checkTncAndFrameWorkSelected();
-        if (this.userService.loggedIn) {
-          this.initApp = true;
-        }
+        this.initApp = true;
       }, error => {
-         // this.initApp = true;
+         this.initApp = true;
       });
 
     this.changeLanguageAttribute();
