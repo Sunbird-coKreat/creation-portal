@@ -58,11 +58,11 @@ export class NotificationService {
       forkJoin(requests).subscribe((response: any) => {
         console.log('success ', response);
       }, error => {
-        this.toasterService.error(this.resourceService.messages.emsg.profile.m0002);
+        this.toasterService.error(this.resourceService.messages.emsg.m0026);
         console.log(error);
       });
     }, error => {
-      this.toasterService.error(this.resourceService.messages.emsg.profile.m0002);
+      this.toasterService.error(this.resourceService.messages.emsg.m0026);
       console.log(error);
     });
   }
@@ -90,14 +90,11 @@ export class NotificationService {
 
   getTemplate(status, type) {
     let template = '';
-    if (status === 'Approved') {
+    if (status === 'Approved' || status === 'Pending') {
       template = 'approved_' + type + '_template';
     }
     if (status === 'Rejected') {
       template = 'rejected_' + type + '_template';
-    }
-    if (status === 'Pending') {
-      template = 'pending_' + type + '_template';
     }
     return template;
   }
