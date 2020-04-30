@@ -218,6 +218,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
               this.tempSortCollectionList = this.collectionList;
               this.selectedCollectionIds = _.uniq(this.selectedCollectionIds);
               this.toggleNominationButton();
+              this.showLoader = false;
             },
             (error) => {
               console.log(error);
@@ -227,7 +228,6 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
             }
           );
       }
-      this.showLoader = false;
       this.showError = false;
     });
   }
