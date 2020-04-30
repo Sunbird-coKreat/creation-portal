@@ -260,6 +260,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         instance.countData['sampleContenttotal'] = 0;
         instance.countData['sampleMycontribution'] = 0;
         instance.countData['pendingreview'] = 0;
+        instance.countData['nominatedUserSample'] = 0;
         this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
         this.getFolderLevelCount(this.collectionHierarchy);
         hierarchy = instance.hierarchyObj;
@@ -360,6 +361,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     const self = this;
     if (data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' && data.sampleContent) {
       this.countData['sampleContenttotal'] = this.countData['sampleContenttotal'] + 1;
+      if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.user_id === data.createdBy) {
+        this.countData['nominatedUserSample'] += 1;
+      }
       if (data.createdBy === this.currentUserID) {
         this.countData['sampleMycontribution'] = this.countData['sampleMycontribution'] + 1;
       }
@@ -760,5 +764,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   getNominatedOrgId() {
     return this.sessionContext && this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.organisation_id;
+  }
+
+  isSourcingOrgReviewer () {
+    return !!(this.userService.userProfile.userRoles.includes('ORG_ADMIN') ||
+    this.userService.userProfile.userRoles.includes('CONTENT_REVIEWER'));
   }
 }

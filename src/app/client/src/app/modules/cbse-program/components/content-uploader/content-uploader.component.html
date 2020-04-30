@@ -45,7 +45,8 @@
                 <label class="font-weight-bold fsmall">{{resourceService.frmelmnts.lbl.contentName}}:</label>
                 <div class="sb-field relative">
                   <textarea #titleTextArea rows="4" name="moretext" class="sb-form-control" placeholder="Type here..." [(ngModel)]="editTitle" autofocus (keyup.enter)="(showTextArea = false); saveTitle()"></textarea>
-                  <span class="characters-left">{{titleCharacterLimit - editTitle.length}} {{resourceService.frmelmnts.lbl.characterLeft }}</span>
+										<span class="fs-0-785 text-right sb-color-gray-200 d-block py-5 pull-right">{{ resourceService.frmelmnts.lbl.nCharactersLeft | interpolate:'{noOfChars}': titleCharacterLimit - (editTitle.length > titleCharacterLimit ? titleCharacterLimit : editTitle.length) }}
+										</span>
                 </div>
                 <div class="warning-message" *ngIf="editTitle.length === 0">{{resourceService.frmelmnts.lbl.contentNameRequired}}</div>
                 <div class="warning-message" *ngIf="editTitle.length > titleCharacterLimit">{{resourceService.frmelmnts.lbl.contentNameLength }} {{titleCharacterLimit}}</div>
@@ -348,9 +349,9 @@
             </div>
       </div>
       <p class="paragraph fsmall">
-        By submitting / publishing this Content, you confirm that this Content complies with prescribed guidelines, 
-        including the Content Policy and that you consent to publish it in accordance with the 
-        <a class="link font-weight-bold"  href="/terms-of-use.html" target="_blank">Content Policy.</a> 
+        By submitting / publishing this Content, you confirm that this Content complies with prescribed guidelines,
+        including the Content Policy and that you consent to publish it in accordance with the
+        <a class="link font-weight-bold"  href="/terms-of-use.html" target="_blank">Content Policy.</a>
         Please choose the applicable <a class="link font-weight-bold"  href="https://creativecommons.org/licenses" target="_blank">Creative Commons license</a> you wish to apply to your content.
         <span class="fs-0-785 font-weight-bold">Please make sure you do not violate others’ copyright or privacy rights.</span>
       </p>
