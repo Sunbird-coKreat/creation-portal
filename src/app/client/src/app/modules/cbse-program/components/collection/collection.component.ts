@@ -227,6 +227,8 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
               this.toasterService.error(errorMes || 'Fetching textbooks failed. Please try again...');
             }
           );
+      } else {
+        this.showLoader = false;
       }
       this.showError = false;
     });
