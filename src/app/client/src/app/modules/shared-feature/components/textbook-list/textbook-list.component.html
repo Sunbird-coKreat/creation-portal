@@ -65,7 +65,7 @@
 							</div>
 						</td>
 						<td>{{ data.chapterCount || 0 }}</td>
-						<!-- <td>{{ data?.pendingBySourceOrg?.length || 0 }} Pending Review</td> -->
+						<!-- <td>{{ (data?.pendingBySourceOrg?.length || 0) + " " + resourceService?.frmelmnts?.lbl?.pendingReview }} <button type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(data)">{{resourceService.frmelmnts.lbl.open}}</button></td> -->
 					</tr>
 				</tbody>
 			</table>

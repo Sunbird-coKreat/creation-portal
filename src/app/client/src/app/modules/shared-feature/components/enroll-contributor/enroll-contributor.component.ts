@@ -111,6 +111,7 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
                 const Org = {
                   ...this.contributeForm.value
                 };
+                delete Org.tncAccepted;
                 Org['createdBy'] = res1.result.User.osid;
                 Org['code'] = this.contributeForm.controls['name'].value.toUpperCase();
                 return this.enrollContributorService.enrolment({
