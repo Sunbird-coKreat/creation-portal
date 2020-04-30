@@ -421,7 +421,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         if (this.sourcingOrgReviewer && data.status === 'Live' &&
         // tslint:disable-next-line:max-line-length
         !_.includes([...this.storedCollectionData.acceptedContents || [], ...this.storedCollectionData.rejectedContents || []], data.identifier)) {
-          this.countData['pendingreview'] = this.countData['pendingreview'] + 1;
+          this.countData['pendingReview'] = this.countData['pendingReview'] + 1;
         }
       }
     }
