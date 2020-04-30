@@ -65,7 +65,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public overAllContentCount: any = {};
   public isContributionDashboardTabActive = false;
   public canAssignUsers = false;
-  nominatedcontentTypes: any = [];
+  nominatedContentTypes: any = [];
   public contributedByOrganisation = 0;
   public contributedByIndividual = 0;
   public nominatedTextbook = 0;
@@ -230,13 +230,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
             this.rejectedCount = this.rejectedCount + 1;
           }
         textbooks = _.concat(textbooks, res.collection_ids);
-        this.nominatedcontentTypes = _.concat(this.nominatedcontentTypes, res.content_types);
+        this.nominatedContentTypes = _.concat(this.nominatedContentTypes, res.content_types);
         });
       }
-      this.nominatedcontentTypes =  _.uniq(this.nominatedcontentTypes);
+      this.nominatedContentTypes =  _.uniq(this.nominatedContentTypes);
       textbooks = _.uniq(textbooks);
-      this.nominatedContentTypeCount = this.nominatedcontentTypes.length;
-      this.nominatedcontentTypes = this.programsService.getContentTypesName(this.nominatedcontentTypes);
+      this.nominatedContentTypeCount = this.nominatedContentTypes.length;
+      this.nominatedContentTypes = this.programsService.getContentTypesName(this.nominatedContentTypes);
       this.nominatedTextbook = textbooks.length;
       this.totalCount = this.nominationsCount;
       this.nominationsCount = this.nominations.length;

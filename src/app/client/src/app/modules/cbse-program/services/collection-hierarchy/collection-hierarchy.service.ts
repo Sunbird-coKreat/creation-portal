@@ -237,8 +237,8 @@ export class CollectionHierarchyService {
         }
       }
     };
-    if (sampleContentCheck !== 'undefined') {
-      option.data.request['sampleContent'] = sampleContentCheck;
+    if (!_.isUndefined(sampleContentCheck)) {
+      option.data.request.filters['sampleContent'] = sampleContentCheck;
     }
     return this.httpClient.post<any>(option.url, option.data);
   }
