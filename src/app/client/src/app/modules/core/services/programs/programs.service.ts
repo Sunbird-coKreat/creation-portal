@@ -24,7 +24,7 @@ export class ProgramsService extends DataService implements CanActivate {
 
   private _programsList$ = new BehaviorSubject(undefined);
   private _allowToContribute$ = new BehaviorSubject(undefined);
-  private _orgnisations = {};
+  private _organisations = {};
 
   public readonly programsList$ = this._programsList$.asObservable()
     .pipe(skipWhile(data => data === undefined || data === null));
@@ -61,7 +61,7 @@ export class ProgramsService extends DataService implements CanActivate {
 
   mapSlugstoOrgId () {
     const urlSlug = this.userService.slug;
-    if (urlSlug && _.isEmpty(this._orgnisations[urlSlug])) {
+    if (urlSlug && _.isEmpty(this._organisations[urlSlug])) {
      const orgFilters = {
          slug: urlSlug,
          isRootOrg: true
@@ -70,8 +70,8 @@ export class ProgramsService extends DataService implements CanActivate {
      this.getOrganisationDetails(orgFilters).subscribe
      ((data: ServerResponse) => {
        if (data.result && _.get(data, 'result.response.count')) {
-         const orgnisationsDetails = _.get(data, 'result.response.content');
-         this._orgnisations[urlSlug] = orgnisationsDetails[0].identifier;
+         const organisationDetails = _.get(data, 'result.response.content');
+         this._organisations[urlSlug] = organisationDetails[0].identifier;
        }
      },
      (err: ServerResponse) => {
@@ -81,7 +81,7 @@ export class ProgramsService extends DataService implements CanActivate {
    }
   }
   /**
-   * Function used to serach user or org in registry
+   * Function used to search user or org in registry
    */
   searchRegistry(reqData) {
     const option = {
@@ -128,7 +128,7 @@ export class ProgramsService extends DataService implements CanActivate {
   * Function used map the user with user role in registry
   */
  mapUsertoContributorOrgReg (orgOsid, UserOsid) {
-  // Check if user is alredy part of the orgnisation
+  // Check if user is already part of the organisation
 
   if (!_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
     const userOrg = this.userService.userProfile.userRegData.User_Org;
@@ -642,8 +642,8 @@ export class ProgramsService extends DataService implements CanActivate {
 
     // Check if slug is present in the URL, if yes then fetch the program those slug org only
     const urlSlug = this.userService.slug;
-    if (urlSlug && !_.isEmpty(this._orgnisations[urlSlug])) {
-      req.data.request.filters['rootorg_id'] = this._orgnisations[urlSlug];
+    if (urlSlug && !_.isEmpty(this._organisations[urlSlug])) {
+      req.data.request.filters['rootorg_id'] = this._organisations[urlSlug];
       return this.API_URL(req);
     } else {
       return this.API_URL(req);

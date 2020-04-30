@@ -145,7 +145,7 @@ function getLocals(req) {
   locals.logFingerprintDetails = envHelper.LOG_FINGERPRINT_DETAILS,
   locals.deviceId = '';
   locals.deviceProfileApi = envHelper.DEVICE_PROFILE_API;
-  locals.slug = slug ? slug : '';
+  locals.slug = slug || '';
   return locals
 }
 
