@@ -69,6 +69,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   visibility: any;
   telemetryImpression: any;
   public telemetryPageId = 'question-list';
+  public sourcingOrgReviewer: boolean;
 
   constructor(
     private configService: ConfigService, private userService: UserService,
@@ -100,6 +101,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getContentMetadata(this.sessionContext.resourceIdentifier);
     this.getLicences();
     this.preprareTelemetryEvents();
+    this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
   }
 
   ngAfterViewInit() {
@@ -827,5 +829,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.programStageService.removeLastStage();
   }
 
-
+  attachContentToTextbook(action) {
+    this.helperService.attachContentToTextbook(action, this.sessionContext.collection, this.resourceDetails.identifier);
+  }
 }

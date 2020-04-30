@@ -45,11 +45,11 @@
             <span class="item-status">
               <span [ngClass]="{'sb-color-primary':content.status === 'Draft'}" *ngIf="content.status === 'Draft' && content.prevStatus === null">{{content.status}}</span>
               <span [ngClass]="{'sb-color-warning':content.status == 'Review'}"  *ngIf="content.status === 'Review'">{{resourceService.frmelmnts.lbl.reviewInProgress}}</span>
-              <span [ngClass]="{'sb-color-success':content.status == 'Live'}"  *ngIf="content.status === 'Live'">{{resourceService.frmelmnts.lbl.published}}</span>
+              <span [ngClass]="{'sb-color-success':content.status == 'Live'}"  *ngIf="content.status === 'Live'">{{router.url.includes('/sourcing') ? resourceService.frmelmnts.lbl.reviewInProgress : resourceService.frmelmnts.lbl.published}}</span>
               <span [ngClass]="{'sb-color-gray-100':content.status == 'Draft'}"  *ngIf="content.status === 'Draft' && content.prevStatus === 'Review'">{{resourceService.frmelmnts.lbl.rejected}}</span>
             </span>
             <div class="item-dropdown absolute position" (click)="menuClick($event)" *ngIf="content.status === 'Draft'">
-              <div class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
+              <div *ngIf="visibility && visibility['showActionMenu']" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
                 suiDropdown
                 appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('context-menu', 'click', 'chapter-list')"

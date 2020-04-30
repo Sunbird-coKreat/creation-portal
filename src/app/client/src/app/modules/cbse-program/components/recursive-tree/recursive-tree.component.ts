@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import { UserService } from '@sunbird/core';
 import { ConfigService, ResourceService } from '@sunbird/shared';
 import { ProgramTelemetryService } from '../../../program/services';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-recursive-tree',
@@ -26,7 +27,7 @@ export class RecursiveTreeComponent implements OnInit {
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   constructor(public userService: UserService, public configService: ConfigService,
-    public programTelemetryService: ProgramTelemetryService,public resourceService: ResourceService) { }
+    public programTelemetryService: ProgramTelemetryService, public resourceService: ResourceService, public router: Router) { }
 
   ngOnInit() {
     this.childlevel = this.level + 1;
@@ -43,12 +44,21 @@ export class RecursiveTreeComponent implements OnInit {
     this.visibility['showDeleteResource'] = _.includes(this.programContext.config.actions.showDeleteResource.roles, this.sessionContext.currentRoleId);
     // tslint:disable-next-line:max-line-length
     this.visibility['showPreviewResource'] = _.includes(this.programContext.config.actions.showPreviewResource.roles, this.sessionContext.currentRoleId);
+    this.visibility['showActionMenu'] = this.shouldActionMenuBeVisible();
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.sessionContext.programId, 'Program');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
   }
 
+  shouldActionMenuBeVisible() {
+    return !!(
+      this.visibility['showAddresource'] ||
+      this.visibility['showEditResource'] ||
+      this.visibility['showMoveResource'] ||
+      this.visibility['showDeleteResource']
+    );
+  }
   nodeMetaEmitter(event) {
     this.nodeMeta.emit({
       action: event.action,

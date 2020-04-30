@@ -411,7 +411,7 @@ export class ProgramsService extends DataService implements CanActivate {
         return this.addToRegistry(userAdd).pipe(
           switchMap((res1: any) => {
             userOsId = res1.result.User.osid;
-            const orgName = 'Contributing org for ' + this.userService.userProfile.userName;
+            const orgName = this.userService.userProfile.rootOrgName;
             const orgAdd = {
               Org: {
                 name: orgName,
@@ -439,7 +439,7 @@ export class ProgramsService extends DataService implements CanActivate {
     } else if (!this.userService.userProfile.userRegData.User_Org) {
           // Add user to the registry
           userOsId = this.userService.userProfile.userRegData.User.osid;
-          const orgName = 'Contributing org for ' + this.userService.userProfile.userName;
+          const orgName = this.userService.userProfile.rootOrgName;
           const orgAdd = {
             Org: {
               name: orgName,
