@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import { UserService } from '@sunbird/core';
 import { ConfigService, ResourceService } from '@sunbird/shared';
 import { ProgramTelemetryService } from '../../../program/services';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-recursive-tree',
@@ -26,7 +27,7 @@ export class RecursiveTreeComponent implements OnInit {
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   constructor(public userService: UserService, public configService: ConfigService,
-    public programTelemetryService: ProgramTelemetryService,public resourceService: ResourceService) { }
+    public programTelemetryService: ProgramTelemetryService, public resourceService: ResourceService, public router: Router) { }
 
   ngOnInit() {
     this.childlevel = this.level + 1;

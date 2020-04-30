@@ -1,6 +1,6 @@
 import { ResourceService, ToasterService  } from '@sunbird/shared';
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { ProgramsService, ActionService } from '@sunbird/core';
+import { ProgramsService, ActionService, UserService } from '@sunbird/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CollectionHierarchyService } from '../../../cbse-program/services/collection-hierarchy/collection-hierarchy.service';
 import { HttpClient } from '@angular/common/http';
@@ -38,7 +38,8 @@ export class TextbookListComponent implements OnInit {
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
     public toasterService: ToasterService, public resourceService: ResourceService,
-    public actionService: ActionService, private collectionHierarchyService: CollectionHierarchyService
+    public actionService: ActionService, private collectionHierarchyService: CollectionHierarchyService,
+    private userService: UserService
   ) { }
 
   ngOnInit(): void {
