@@ -103,18 +103,20 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
           User['userId'] =  this.userService.userProfile.identifier;
           User['enrolledDate'] = this.enrolledDate;
           User['certificates'] =  '';
-          User['channel'] = this.userService.userProfile.rootOrgId;
+          User['channel'] = this.userService.userProfile.channel || 'sunbird';
           this.enrollContributorService.enrolment({User: User}).pipe(
             switchMap((res1: any) => {
             this.mapUserId = res1.result.User.osid;
                if (this.enrollAsOrg === true) {
                 const Org = {
                   ...this.contributeForm.value
-               };
+                };
                 delete Org.tncAccepted;
-                Org['createdBy'] =  res1.result.User.osid;
+                Org['createdBy'] = res1.result.User.osid;
                 Org['code'] = this.contributeForm.controls['name'].value.toUpperCase();
-                return this.enrollContributorService.enrolment({Org: Org});
+                return this.enrollContributorService.enrolment({
+                  Org: Org
+                });
                } else {
                  return of(res1);
                }
@@ -143,30 +145,28 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
           });
   }
 
-  chnageEnrollStatus(status) {
+  changeEnrollStatus(status) {
     this.enrollAsOrg = status;
     this.contributeForm.controls['description'].setValidators(null);
     this.contributeForm.controls['name'].setValidators(null);
     if (this.enrollAsOrg) {
-      this.contributeForm.controls['description'].setValidators([Validators.required]);
-      this.contributeForm.controls['name'].setValidators([Validators.required]);
+      this.contributeForm.controls['description'].setValidators([Validators.required, Validators.maxLength(1000)]);
+      this.contributeForm.controls['name'].setValidators([Validators.required, Validators.maxLength(100)]);
     }
     this.contributeForm.controls['name'].updateValueAndValidity();
     this.contributeForm.controls['description'].updateValueAndValidity();
   }
 
   validateFields() {
-
-    if (!this.contributeForm.valid)
-    {
+    if (!this.contributeForm.valid) {
       this.formIsInvalid = true;
       this.validateAllFormFields(this.contributeForm);
     } else {
       if (this.enrollAsOrg === true) {
-        var request = {
-          entityType:["Org"],
-          filters:{
-            code:{eq: this.contributeForm.get('name').value.toUpperCase()}
+        const request = {
+          entityType: ['Org'],
+          filters: {
+            code: { eq: this.contributeForm.get('name').value.toUpperCase() }
           }
         };
         this.programsService.searchRegistry(request).subscribe(

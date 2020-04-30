@@ -70,6 +70,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
   public telemetryPageId = 'content-uploader';
+  public sourcingOrgReviewer: boolean;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -96,6 +97,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
       this.cd.detectChanges();
       this.getUploadedContentMeta(_.get(this.contentUploadComponentInput, 'contentId'));
     }
+    this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.contentUploadComponentInput.programContext.program_id, 'Program');
     // tslint:disable-next-line:max-line-length
@@ -558,7 +560,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
       };
       this.helperService.updateContent(request, this.contentMetaData.identifier).subscribe((res) => {
         this.contentMetaData.versionKey = res.result.versionKey;
-        if (action === 'review') {
+        if (action === 'review' && this.isIndividualAndNotSample()) {
+          this.publishContent();
+        } else if (action === 'review') {
           this.sendForReview();
         } else if (this.sessionContext.collection && this.unitIdentifier && action !== 'review') {
           // tslint:disable-next-line:max-line-length
@@ -623,7 +627,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     }
   }
 
-  publichContent() {
+  publishContent() {
     this.helperService.publishContent(this.contentMetaData.identifier, this.userService.userProfile.userId)
        .subscribe(res => {
         if (this.sessionContext.collection && this.unitIdentifier) {
@@ -640,6 +644,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
       }, (err) => {
         this.toasterService.error(this.resourceService.messages.fmsg.m00101);
       });
+  }
+
+  isIndividualAndNotSample() {
+    return !!(this.sessionContext.currentOrgRole === 'individual' && this.sessionContext.sampleContent !== true);
   }
 
   markFormGroupTouched(formGroup: FormGroup) {
@@ -663,5 +671,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.initiateUploadModal();
     }, 0);
+  }
+
+  attachContentToTextbook(action) {
+    this.helperService.attachContentToTextbook(action, this.sessionContext.collection, this.contentMetaData.identifier);
   }
 }

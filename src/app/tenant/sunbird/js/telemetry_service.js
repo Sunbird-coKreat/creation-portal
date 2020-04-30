@@ -2499,7 +2499,7 @@ if (typeof module != 'undefined') {
   var tenantId, tenantInfo, orgInfo;
   var hostURL = window.__landing_page_config.hostURL || null;
   function OnLoad() {
-    var channelname = 'ntp';
+    var channelname = 'sunbird';
       getOrgInfo(tenantId).done(function () {
         initTelemetryService();
         logImpressionEvent("init");
@@ -2514,7 +2514,7 @@ if (typeof module != 'undefined') {
         request: {
           filters: {
             isRootOrg: true,
-            slug: 'ntp'
+            slug: 'sunbird'
           }
         }
       }),

@@ -66,6 +66,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public isContributionDashboardTabActive = false;
   public canAssignUsers = false;
   public showLoader = true;
+  nominatedContentTypes: any = [];
+  public contributedByOrganisation = 0;
+  public contributedByIndividual = 0;
+  public nominatedTextbook = 0;
+  public nominatedContentTypeCount = 0;
+  public samplesCount = 0;
+  public totalContentTypeCount = 0;
 
   constructor(public frameworkService: FrameworkService, private tosterService: ToasterService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
@@ -78,15 +85,15 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   ngOnInit() {
     this.filterApplied = null;
     this.getNominationList();
+    this.getSampleContent();
     this.getProgramDetails();
-    this.getNominationCounts();
     this.getProgramCollection();
     this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program_ID'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
     this.checkActiveTab();
     this.showUsersTab = this.isSourcingOrgAdmin();
-    // this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
+    this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
     this.roles = [{name: 'REVIEWER'}];
     this.sessionContext.currentRole = 'REVIEWER';
     this.programStageService.initialize();
@@ -194,6 +201,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         }
       }
     };
+    let textbooks = [];
     this.programsService.post(req).subscribe((data) => {
       if (data.result && data.result.length > 0) {
         this.getDashboardData(data.result);
@@ -205,7 +213,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           } else if (!_.isEmpty(res.userData)) {
             name = `${res.userData.firstName} ${res.userData.lastName || ''}`;
           }
-
           if (name) {
             this.nominations.push({
               'name': name.trim(),
@@ -213,8 +220,26 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
               'nominationData': res
             });
           }
+          (isOrg) ? this.contributedByOrganisation++ : this.contributedByIndividual++;
+          if (res.status === 'Pending') {
+            this.pendingCount = this.pendingCount + 1;
+          }
+          if (res.status === 'Approved') {
+            this.approvedCount  = this.approvedCount + 1;
+          }
+          if (res.status === 'Rejected') {
+            this.rejectedCount = this.rejectedCount + 1;
+          }
+        textbooks = _.concat(textbooks, res.collection_ids);
+        this.nominatedContentTypes = _.concat(this.nominatedContentTypes, res.content_types);
         });
       }
+      this.nominatedContentTypes =  _.uniq(this.nominatedContentTypes);
+      textbooks = _.uniq(textbooks);
+      this.nominatedContentTypeCount = this.nominatedContentTypes.length;
+      this.nominatedContentTypes = this.programsService.getContentTypesName(this.nominatedContentTypes);
+      this.nominatedTextbook = textbooks.length;
+      this.totalCount = this.nominationsCount;
       this.nominationsCount = this.nominations.length;
       this.tempNominations = this.nominations;
       this.tempNominationsCount = this.nominationsCount;
@@ -225,6 +250,15 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     });
   }
 
+  public getSampleContent() {
+    this.collectionHierarchyService.getContentAggregation(this.programId, true)
+    .subscribe(
+      (response) => {
+        if (response && response.result && response.result.count) {
+          this.samplesCount = response.result.count;
+        }
+      });
+  }
   getProgramCollection () {
     this.collectionHierarchyService.getCollectionWithProgramId(this.programId).subscribe(
       (res: any) => {
@@ -270,9 +304,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
               } else {
                 // tslint:disable-next-line:max-line-length
                 const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCountsForIndividual(contents, nomination.user_id, this.programCollections));
-                dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus['pending'];
-                dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus['accepted'];
-                dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus['rejected'];
+                dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
+                dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
+                dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
                 dashboardData['contributorName'] = this.setContributorName(nomination, 'individual');
                 return {
                   ...dashboardData,
@@ -286,17 +320,17 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
             this.contributionDashboardData = _.map(this.approvedNominations, nomination => {
               return {
                 total: 0,
-                review: '0',
-                draft: '0',
-                rejected: '0',
-                live: '0',
-                sourcingPending: '0',
-                sourcingAccepted: '0',
-                sourcingRejected: '0',
+                review: 0,
+                draft: 0,
+                rejected: 0,
+                live: 0,
+                sourcingPending: 0,
+                sourcingAccepted: 0,
+                sourcingRejected: 0,
                 // tslint:disable-next-line:max-line-length
                 contributorName: this.setContributorName(nomination, nomination.organisation_id ? 'org' : 'individual'),
                 individualStatus: {},
-                sourcingOrgStatus : {accepted: '0', rejected: '0', pending: '0'},
+                sourcingOrgStatus : {accepted: 0, rejected: 0, pending: 0},
                 contributorDetails: nomination,
                 type: nomination.organisation_id ? 'org' : 'individual'
               };
@@ -347,10 +381,11 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.programDetails = _.get(programDetails, 'result');
       this.programContext = this.programDetails;
       this.collectionsCount = _.get(this.programDetails, 'collection_ids').length;
+      this.totalContentTypeCount = _.get(this.programDetails, 'content_types').length;
       this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
       this.canAssignUsersToProgram();
       this.setActiveDate();
-      // this.readRolesOfOrgUsers();
+      this.readRolesOfOrgUsers();
       const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
       this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
     }, error => {
@@ -361,19 +396,19 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     });
   }
 
-  // readRolesOfOrgUsers() {
-  //   if (this.programDetails.rolemapping) {
-  //     _.forEach(this.roles, (role) => {
-  //       if (this.programDetails.rolemapping[role.name]) {
-  //         _.forEach(this.sourcingOrgUser, (user) => {
-  //           if (_.includes(this.programDetails.rolemapping[role.name], user.identifier)) {
-  //             user['selectedRole'] = role.name;
-  //           }
-  //         });
-  //       }
-  //     });
-  //   }
-  // }
+  readRolesOfOrgUsers() {
+    if (this.programDetails.rolemapping) {
+      _.forEach(this.roles, (role) => {
+        if (this.programDetails.rolemapping[role.name]) {
+          _.forEach(this.sourcingOrgUser, (user) => {
+            if (_.includes(this.programDetails.rolemapping[role.name], user.identifier)) {
+              user['selectedRole'] = role.name;
+            }
+          });
+        }
+      });
+    }
+  }
 
   fetchProgramDetails() {
     const req = {
@@ -391,48 +426,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         this.fetchFrameWorkDetails();
       }
     }));
-  }
-
-  getNominationCounts() {
-    this.fetchNominationCounts().subscribe((response) => {
-      const statuses = _.get(response, 'result');
-      statuses.forEach(nomination => {
-        if (nomination.status === 'Pending') {
-          this.pendingCount = nomination.count;
-        }
-
-        if (nomination.status === 'Approved') {
-          this.approvedCount = nomination.count;
-        }
-
-        if (nomination.status === 'Rejected') {
-          this.rejectedCount = nomination.count;
-        }
-        // tslint:disable-next-line: radix
-        this.totalCount += parseInt(nomination.count);
-      });
-    }, error => {
-      // TODO: navigate to program list page
-      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-      this.toasterService.error(errorMes || this.resourceService.messages.emsg.project.m0001);
-      this.showLoader = false;
-    });
-  }
-
-  fetchNominationCounts() {
-    const req = {
-      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
-      data: {
-        request: {
-          filters: {
-            program_id: this.programId,
-            status: ['Pending', 'Approved', 'Rejected']
-          },
-          facets: ['program_id', 'status']
-        }
-      }
-    };
-    return this.programsService.post(req);
   }
 
   public fetchFrameWorkDetails() {
@@ -515,9 +508,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     };
   this.programsService.updateProgram(request)
     .subscribe(response => {
-      this.toasterService.success('Roles updated');
+      this.toasterService.success(this.resourceService.messages.smsg.roles.m0001);
     }, error => {
-      this.toasterService.error('Roles update failed!');
+      this.toasterService.error(this.resourceService.messages.emsg.roles.m0001);
     });
   }
 

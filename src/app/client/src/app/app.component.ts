@@ -170,32 +170,9 @@ export class AppComponent implements OnInit, OnDestroy {
         this.logCdnStatus();
         this.setFingerPrintTelemetry();
         this.checkTncAndFrameWorkSelected();
-        if (this.userService.loggedIn) {
-          this.userService.openSaberRegistrySearch().then(() => {
-            this.userService.userRegistryData = true;
-            this.initApp = true;
-            if (_.indexOf(this.userService.userProfile.userRoles, 'ORG_ADMIN') > -1) {
-              this.router.navigateByUrl('/sourcing');
-            } else if (this.location.path().includes('/contribute/join/') || this.location.path().includes('/contribute/program/') ||  this.location.path().includes('/contribute/help')) {
-              this.router.navigateByUrl(this.location.path());
-            } else if (this.userService.userProfile.userRegData &&
-              this.userService.userProfile.userRegData.User_Org &&
-              !this.userService.userProfile.userRegData.User_Org.roles.includes('admin') &&
-              !this.router.url.includes('/contribute/join/')) {
-              this.router.navigateByUrl('/contribute/myenrollprograms');
-            } else if ((this.userService.userProfile.userRegData.User_Org &&
-              this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) ||
-              !this.router.url.includes('/contribute/join/') ) {
-              this.router.navigateByUrl('/contribute');
-            }
-          }).catch((err) => {
-            this.initApp = true;
-          });
-        } else {
-          this.initApp = true;
-        }
+        this.initApp = true;
       }, error => {
-         // this.initApp = true;
+         this.initApp = true;
       });
 
     this.changeLanguageAttribute();

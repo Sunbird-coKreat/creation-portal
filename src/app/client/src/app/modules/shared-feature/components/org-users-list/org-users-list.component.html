@@ -13,7 +13,7 @@
                </span>
               </th>
              <th class="cursor-pointer sb-sorting" (click)="sortCollection('gradeLevel')">
-               {{resourceService.frmelmnts.lbl.grade}} &nbsp;&nbsp;
+               {{resourceService.frmelmnts.lbl.class}} &nbsp;&nbsp;
                <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'gradeLevel' "></i>
                <span  *ngIf="sortColumn == 'gradeLevel'" class="d-inline-block">
                  <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>

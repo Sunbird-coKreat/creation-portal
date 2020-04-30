@@ -37,9 +37,8 @@
 											*ngIf="createProgramForm.controls['name'].errors && createProgramForm.controls['name'].errors.maxlength && (!createProgramForm.controls['name'].pristine || formIsInvalid)">
 											{{resource.frmelmnts.lbl.characterLengthGreaterHundred}}
 										</div>
-										<div *ngIf="createProgramForm.value.name.length" class="pull-right fsmall">
-											{{createProgramForm.value.name.length}} / 100
-										</div>
+										<span class="fs-0-785 text-right sb-color-gray-200 d-block py-5 pull-right">{{ resource.frmelmnts.lbl.nCharactersLeft | interpolate:'{noOfChars}': 100 - (createProgramForm.controls['name'].value.length > 100 ? 100 : createProgramForm.controls['name'].value.length) }}
+										</span>
 									</div>
 								</div>
 							</div>
@@ -59,13 +58,11 @@
 											*ngIf="createProgramForm.controls['description'].errors && createProgramForm.controls['description'].errors.required && (!createProgramForm.controls['description'].pristine || formIsInvalid)">
 											{{ resource.frmelmnts.lbl.programDescriptionRequired }}
 										</div>
+										<span class="fs-0-785 text-right sb-color-gray-200 d-block py-5 pull-right">{{ resource.frmelmnts.lbl.nCharactersLeft | interpolate:'{noOfChars}': 1000 - (createProgramForm.controls['description'].value.length > 1000 ? 1000 : createProgramForm.controls['description'].value.length) }}
+										</span>
 										<div class="ui pointing red basic label below"
 											*ngIf="createProgramForm.controls['description'].errors && createProgramForm.controls['description'].errors.maxlength && (!createProgramForm.controls['description'].pristine || formIsInvalid)">
 											{{resource.frmelmnts.lbl.characterLengthGreaterThousand}}
-										</div>
-										<div *ngIf="createProgramForm.value.description.length"
-											class="pull-right fsmall">
-											{{createProgramForm.value.description.length}} / 1000
 										</div>
 									</div>
 								</div>

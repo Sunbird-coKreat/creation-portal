@@ -61,7 +61,7 @@
               <dd>Total</dd>
             </dl>
             <dl *ngIf="actions.showAawaitingReview.roles.includes(sessionContext.currentRoleId)" class="sb-meta-data">
-              <dt>{{countData['awaitingreview']}}</dt>
+              <dt>{{sourcingOrgReviewer ? countData['pendingReview'] : countData['awaitingreview']}}</dt>
               <dd>Awaiting my review</dd>
             </dl>
           </div>
@@ -70,13 +70,14 @@
           <label class="d-block width-100" >Number of Samples</label>
           <div class="d-flex">
             <dl class="sb-meta-data">
-              <dt>{{countData['sampleContenttotal'] || 0}}</dt>
-              <dd>Total</dd>
+              <!-- <dt *ngIf="!isSourcingOrgReviewer()">{{countData['sampleContenttotal'] || 0}}</dt> -->
+              <dt *ngIf="isNominationPendingOrInitiated()">{{countData['nominatedUserSample'] || 0}}</dt>
+              <dd>Total Content</dd>
             </dl>
-            <dl class="sb-meta-data">
+            <!-- <dl *ngIf="!isSourcingOrgReviewer() && !isNominationPendingOrInitiated()" class="sb-meta-data">
               <dt>{{countData['sampleMycontribution'] || 0 }}</dt>
               <dd>My Content</dd>
-            </dl>
+            </dl> -->
           </div>
         </div>
 
@@ -97,7 +98,7 @@
         <div class="ui container sb-textbook-details-container mb-24">
           <div class="sb-chapterlist">
             <sui-accordion class="styled fluid sb-accordion sb-chapterlist-accordion" [closeOthers]="true">
-              <app-recursive-tree [collectionUnits]="collectionHierarchy" [programContext]="programContext" [sessionContext]="sessionContext" [selectedChapter]="selectedChapterOption"
+              <app-recursive-tree [collectionUnits]="collectionHierarchy" [level]="1" [programContext]="programContext" [sessionContext]="sessionContext" [selectedChapter]="selectedChapterOption"
                 (nodeMeta)="showResourceTemplate($event)"></app-recursive-tree>
             </sui-accordion>
           </div>

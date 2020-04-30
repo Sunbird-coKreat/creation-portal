@@ -69,6 +69,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   visibility: any;
   telemetryImpression: any;
   public telemetryPageId = 'question-list';
+  public sourcingOrgReviewer: boolean;
 
   constructor(
     private configService: ConfigService, private userService: UserService,
@@ -100,6 +101,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getContentMetadata(this.sessionContext.resourceIdentifier);
     this.getLicences();
     this.preprareTelemetryEvents();
+    this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
   }
 
   ngAfterViewInit() {
@@ -457,11 +459,19 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((res) => {
           if (res.responseCode === 'OK' && (res.result.content_id || res.result.node_id)) {
             this.toasterService.success(this.resourceService.messages.smsg.m0060);
-            if (actionStatus === 'review') { this.sendForReview(); }
+            if (actionStatus === 'review' && this.isIndividualAndNotSample()) {
+              this.publishContent();
+            } else if (actionStatus === 'review') {
+              this.sendForReview();
+            }
           }
         });
     });
 
+  }
+
+  isIndividualAndNotSample() {
+    return !!(this.sessionContext.currentOrgRole === 'individual' && this.sessionContext.sampleContent !== true);
   }
 
   sendForReview() {
@@ -819,5 +829,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.programStageService.removeLastStage();
   }
 
-
+  attachContentToTextbook(action) {
+    this.helperService.attachContentToTextbook(action, this.sessionContext.collection, this.resourceDetails.identifier);
+  }
 }

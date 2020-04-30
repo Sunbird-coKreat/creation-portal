@@ -158,7 +158,9 @@ export class UserService {
           // data.ts is taken from header and not from api response ts, and format in IST
           this.timeDiff = data.ts;
         }
-        this.setUserProfile(data);
+        this.openSaberRegistrySearch().then((userRegData) => {
+          this.setUserProfile(data, userRegData);
+        });
       },
       (err: ServerResponse) => {
         this._userData$.next({ err: err, userProfile: this._userProfile });
@@ -186,7 +188,7 @@ export class UserService {
   /**
    * method to set user profile to behavior subject.
    */
-  private setUserProfile(res: ServerResponse) {
+  private setUserProfile(res: ServerResponse, userRegData) {
     const profileData = res.result.response;
     const orgRoleMap = {};
     const hashTagIds = [];
@@ -223,6 +225,7 @@ export class UserService {
     organisationIds = _.uniq(organisationIds);
     this._dims = _.concat(organisationIds, this.channel);
     this._userProfile = profileData;
+    this._userProfile.userRegData = userRegData;
     this._userProfile.userRoles = _.uniq(userRoles);
     this._userProfile.orgRoleMap = orgRoleMap;
     this._userProfile.organisationIds = organisationIds;
@@ -277,7 +280,7 @@ export class UserService {
   }
 
   openSaberRegistrySearch() {
-    this._userProfile['userRegData'] = {};
+    const userRegData = {};
     const option = {
       url: 'reg/search',
       data: {
@@ -296,27 +299,27 @@ export class UserService {
       filters: {
         userId: {eq: this.userid}
       }
-   };
+    };
   return new Promise((resolve, reject) => {
     this.contentService.post(option).pipe(tap((res1) => {
       if (res1.result.User.length) {
-        this._userProfile.userRegData['User'] = res1.result.User[0];
+        userRegData['User'] = res1.result.User[0];
       }
     }), switchMap((res2) => {
       if (res2.result.User.length) {
-      option.data['request'] = {
-        entityType: ['User_Org'],
-        filters: {
-        userId: {eq: res2.result.User[0].osid}
-        }
-     };
-     return this.contentService.post(option);
-    } else {
-      return of(null);
-    }
+        option.data['request'] = {
+          entityType: ['User_Org'],
+          filters: {
+            userId: {eq: res2.result.User[0].osid}
+          }
+        };
+        return this.contentService.post(option);
+      } else {
+        return of(null);
+      }
     }), tap((res3) => {
       if (res3 && res3.result.User_Org.length) {
-      this._userProfile.userRegData['User_Org'] = res3.result.User_Org[0];
+        userRegData['User_Org'] = res3.result.User_Org[0];
       }
     }), switchMap((res4) => {
       if (res4 && res4.result.User_Org.length) {
@@ -326,19 +329,25 @@ export class UserService {
           filters: {
             osid: {or: orgList}
           }
-      };
-       return this.contentService.post(option);
+        };
+        return this.contentService.post(option);
       } else {
         return of(null);
       }
     })
     ).subscribe((res: any) => {
       if (res && res.result.Org.length) {
-        this._userProfile.userRegData['Org'] = res.result.Org[0];
-        }
+        userRegData['Org'] = res.result.Org[0];
+      }
+      this.userRegistryData = true;
+      if (this._userProfile) {
+        this._userProfile.userRegData = userRegData;
         return resolve(this._userProfile.userRegData);
+      } else {
+        return resolve(userRegData);
+      }
      }, (err) => {
-      return reject('fail');
+      return reject('failed');
      });
     });
   }
