@@ -259,7 +259,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         instance.countData['awaitingreview'] = 0;
         instance.countData['sampleContenttotal'] = 0;
         instance.countData['sampleMycontribution'] = 0;
-        instance.countData['pendingreview'] = 0;
+        instance.countData['pendingReview'] = 0;
         instance.countData['nominatedUserSample'] = 0;
         this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
         this.getFolderLevelCount(this.collectionHierarchy);
@@ -467,8 +467,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   shouldContentBeVisible(content) {
     const creatorViewRole = this.actions.showCreatorView.roles.includes(this.sessionContext.currentRoleId);
     const reviewerViewRole = this.actions.showReviewerView.roles.includes(this.sessionContext.currentRoleId);
-    if (this.userService.userProfile.userRoles.includes('ORG_ADMIN') ||
-        this.userService.userProfile.userRoles.includes('CONTENT_REVIEWER')) {
+    if (this.isSourcingOrgReviewer()) {
       if (reviewerViewRole && content.sampleContent === true
         && this.getNominatedUserId === content.createdBy) {
           return true;

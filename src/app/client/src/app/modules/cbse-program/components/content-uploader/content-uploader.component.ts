@@ -674,32 +674,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
   }
 
   attachContentToTextbook(action) {
-    // read textbook data
-    const option = {
-      url: 'content/v3/read/' + this.sessionContext.collection,
-      param: { 'mode': 'edit' }
-    };
-    this.actionService.get(option).pipe(map((res: any) => res.result.content)).subscribe((data) => {
-      const request = {
-        content: {
-        'versionKey': data.versionKey
-        }
-      };
-      const acceptedContents = data.acceptedContents ? data.acceptedContents : [];
-      const rejectedContents = data.rejectedContents ? data.rejectedContents : [];
-      // tslint:disable-next-line:max-line-length
-      action === 'accept' ? request.content['acceptedContents'] = [...acceptedContents, this.contentMetaData.identifier] : request.content['rejectedContents'] = [...rejectedContents, this.contentMetaData.identifier];
-      this.helperService.updateContent(request, this.sessionContext.collection).subscribe(() => {
-        action === 'accept' ? this.toasterService.success(this.resourceService.messages.smsg.m0066) :
-                              this.toasterService.success(this.resourceService.messages.smsg.m0067);
-        this.programStageService.removeLastStage();
-      }, (err) => {
-        action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
-                              this.toasterService.error(this.resourceService.messages.fmsg.m00100);
-      });
-    }, (err) => {
-      action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
-                              this.toasterService.error(this.resourceService.messages.fmsg.m00100);
-    });
+    this.helperService.attachContentToTextbook(action, this.sessionContext.collection, this.contentMetaData.identifier);
   }
 }
