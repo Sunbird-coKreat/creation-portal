@@ -70,6 +70,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
   public telemetryPageId = 'content-uploader';
+  public sourcingOrgReviewer: boolean;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -96,6 +97,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
       this.cd.detectChanges();
       this.getUploadedContentMeta(_.get(this.contentUploadComponentInput, 'contentId'));
     }
+    this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.contentUploadComponentInput.programContext.program_id, 'Program');
     // tslint:disable-next-line:max-line-length
@@ -669,5 +671,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.initiateUploadModal();
     }, 0);
+  }
+
+  attachContentToTextbook(action) {
+    this.helperService.attachContentToTextbook(action, this.sessionContext.collection, this.contentMetaData.identifier);
   }
 }
