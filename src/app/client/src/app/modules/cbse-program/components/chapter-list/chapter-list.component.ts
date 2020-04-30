@@ -421,7 +421,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         if (this.sourcingOrgReviewer && data.status === 'Live' &&
         // tslint:disable-next-line:max-line-length
         !_.includes([...this.storedCollectionData.acceptedContents || [], ...this.storedCollectionData.rejectedContents || []], data.identifier)) {
-          this.countData['pendingreview'] = this.countData['pendingreview'] + 1;
+          this.countData['pendingReview'] = this.countData['pendingReview'] + 1;
         }
       }
     }
@@ -768,5 +768,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   isSourcingOrgReviewer () {
     return !!(this.userService.userProfile.userRoles.includes('ORG_ADMIN') ||
     this.userService.userProfile.userRoles.includes('CONTENT_REVIEWER'));
+  }
+
+  isNominationPendingOrInitiated() {
+    return !!(this.sessionContext &&
+      this.sessionContext.nominationDetails &&
+      _.includes(['Pending', 'Initiated'], this.sessionContext.nominationDetails.status));
   }
 }
