@@ -61,7 +61,7 @@
               <dd>Total</dd>
             </dl>
             <dl *ngIf="actions.showAawaitingReview.roles.includes(sessionContext.currentRoleId)" class="sb-meta-data">
-              <dt>{{sourcingOrgReviewer ? countData['pendingreview'] : countData['awaitingreview']}}</dt>
+              <dt>{{sourcingOrgReviewer ? countData['pendingReview'] : countData['awaitingreview']}}</dt>
               <dd>Awaiting my review</dd>
             </dl>
           </div>
