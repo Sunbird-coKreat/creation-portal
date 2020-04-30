@@ -769,4 +769,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     return !!(this.userService.userProfile.userRoles.includes('ORG_ADMIN') ||
     this.userService.userProfile.userRoles.includes('CONTENT_REVIEWER'));
   }
+
+  isNominationPendingOrInitiated() {
+    return !!(this.sessionContext &&
+      this.sessionContext.nominationDetails &&
+      _.includes(['Pending', 'Initiated'], this.sessionContext.nominationDetails.status));
+  }
 }
