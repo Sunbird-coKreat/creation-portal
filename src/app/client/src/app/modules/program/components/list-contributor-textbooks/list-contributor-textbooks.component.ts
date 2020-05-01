@@ -305,15 +305,13 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
          return;
        }
       }
-    this.contributor.nominationData.programData = this.programDetails;
      this.programsService.updateNomination(req).subscribe((res) => {
+      this.contributor.nominationData.status = nominationStatus;
+      this.contributor.nominationData.programData = this.programDetails;
        this.notificationService.onAfterNominationUpdate(this.contributor.nominationData)
        .subscribe(
-         response => {
-          this.toasterService.success(this.resourceService.messages.smsg.m0068);
-         },
+         response => { },
          error => {
-          this.toasterService.error(this.resourceService.messages.emsg.m0026);
           console.log(error);
          }
        );

@@ -103,7 +103,7 @@ export class NotificationService {
   getTemplate(status, type) {
     let template = '';
     if (type === 'email') {
-      if (status === 'Approved' || status === 'Pending') {
+      if (status === 'Approved') {
         template = 'emailNominationAccept';
       }
       if (status === 'Rejected') {
