@@ -45,8 +45,7 @@ export class OrgUsersListComponent implements OnInit {
   getContributionOrgUsers() {
     const userRegData = _.get(this.userService, 'userProfile.userRegData');
     if (this.checkIfUserBelongsToOrg()) {
-      const orgUsers = this.registryService.getContributionOrgUsers(userRegData.User_Org.orgId);
-      orgUsers.subscribe(response => {
+      this.registryService.getContributionOrgUsers(userRegData.User_Org.orgId).subscribe(response => {
         const result = _.get(response, 'result');
         if (!result || _.isEmpty(result)) {
           this.showLoader = false;
