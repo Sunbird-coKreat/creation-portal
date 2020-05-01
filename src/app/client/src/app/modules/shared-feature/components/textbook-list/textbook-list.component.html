@@ -1,81 +1,83 @@
 <div class="pt-24 text-capitalize fs-0-785 line-height-1-3" *ngIf="collectionsCnt > 0">
-	<div class="sb-color-gray-100 d-inline-block br-2 pr-10"><span class="fs-1-286 font-weight-bold">{{ contentStatusCounts?.sourcingOrgStatus?.total || 0 }}</span> {{resourceService.frmelmnts.lbl.total}}</div>
-	<div class="sb-color-warning d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{ contentStatusCounts?.sourcingOrgStatus?.pending || 0 }}</span> {{resourceService.frmelmnts.lbl.pendingReview}}</div>
-	<div class="sb-color-success d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{ contentStatusCounts?.sourcingOrgStatus?.accepted || 0 }}</span> {{resourceService.frmelmnts.lbl.approved}}</div>
-	<div class="sb-color-error d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{ contentStatusCounts?.sourcingOrgStatus?.rejected || 0 }}</span> {{resourceService.frmelmnts.lbl.rejected}}</div>
+    <div class="sb-color-gray-100 d-inline-block br-2 pr-10"><span class="fs-1-286 font-weight-bold">{{ contentStatusCounts?.sourcingOrgStatus?.total || 0 }}</span> {{resourceService.frmelmnts.lbl.total}}</div>
+    <div class="sb-color-warning d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{ contentStatusCounts?.sourcingOrgStatus?.pending || 0 }}</span> {{resourceService.frmelmnts.lbl.pendingReview}}</div>
+    <div class="sb-color-success d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{ contentStatusCounts?.sourcingOrgStatus?.accepted || 0 }}</span> {{resourceService.frmelmnts.lbl.approved}}</div>
+    <div class="sb-color-error d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{ contentStatusCounts?.sourcingOrgStatus?.rejected || 0 }}</span> {{resourceService.frmelmnts.lbl.rejected}}</div>
 </div>
 <div class="sb-pageSection">
-	<div class="sb-bg-color-white pt-32">
-		<div class="sb-table-responsive" *ngIf="!showLoader && collectionsCnt > 0">
-			<table class="sb-table sb-table-striped  sb-table-sortable">
-				<thead class="sb-table-header sb-table-thead-gray">
-					<tr>
-						<th class="w-15 cursor-pointer sb-sorting" (click)="sortCollection('name')">{{resourceService.frmelmnts.lbl.title}} &nbsp;&nbsp;
-							<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>
-							<span  *ngIf="sortColumn == 'name'" class="d-inline-block">
+    <div class="sb-bg-color-white pt-32">
+        <div class="sb-table-responsive" *ngIf="!showLoader && collectionsCnt > 0">
+            <table class="sb-table sb-table-striped  sb-table-sortable">
+                <thead class="sb-table-header sb-table-thead-gray">
+                    <tr>
+                        <th class="w-15 cursor-pointer sb-sorting" (click)="sortCollection('name')">{{resourceService.frmelmnts.lbl.title}} &nbsp;&nbsp;
+                            <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>
+                            <span *ngIf="sortColumn == 'name'" class="d-inline-block">
 								<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
 								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 							</span>
-						</th>
-						<th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('medium')">{{resourceService.frmelmnts.lbl.medium}} &nbsp;&nbsp;
-							<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'medium' "></i>
-							<span  *ngIf="sortColumn == 'medium'" class="d-inline-block">
+                        </th>
+                        <th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('medium')">{{resourceService.frmelmnts.lbl.medium}} &nbsp;&nbsp;
+                            <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'medium' "></i>
+                            <span *ngIf="sortColumn == 'medium'" class="d-inline-block">
 								<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
 								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 							</span>
-						</th>
-						<th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('gradeLevel')">{{resourceService.frmelmnts.lbl.class}} &nbsp;&nbsp;
-							<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'gradeLevel' "></i>
-							<span  *ngIf="sortColumn == 'gradeLevel'" class="d-inline-block">
+                        </th>
+                        <th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('gradeLevel')">{{resourceService.frmelmnts.lbl.class}} &nbsp;&nbsp;
+                            <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'gradeLevel' "></i>
+                            <span *ngIf="sortColumn == 'gradeLevel'" class="d-inline-block">
 								<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
 								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 							</span>
-						</th>
-						<th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('subject')">{{resourceService.frmelmnts.lbl.subject}} &nbsp;&nbsp;
-							<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'subject' "></i>
-							<span  *ngIf="sortColumn == 'subject'" class="d-inline-block">
+                        </th>
+                        <th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('subject')">{{resourceService.frmelmnts.lbl.subject}} &nbsp;&nbsp;
+                            <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'subject' "></i>
+                            <span *ngIf="sortColumn == 'subject'" class="d-inline-block">
 								<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
 								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 							</span>
-						</th>
-						<th class="w-10">{{resourceService?.frmelmnts?.lbl?.chapters}}</th>
-						<th>{{resourceService.frmelmnts.lbl.status}}</th>
-					</tr>
-				</thead>
-				<tbody class="sb-table-body w-100 o-y-auto max-height" *ngIf="collections.length">
-					<tr *ngFor="let data of collections">
-						<td>
-							<div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
-								{{data.name}}
-							</div>
-						</td>
-						<td>
-							<div>
-								{{data.medium}}
-							</div>
-						</td>
-						<td>
-							<div class="sb__ellipsis sb__ellipsis--three">
-								{{data.gradeLevel}}
-							</div>
-						</td>
-						<td>
-							<div>
-								{{data.subject}}
-							</div>
-						</td>
-						<td>{{ data.chapterCount || 0 }}</td>
-						<td>{{ (data?.pendingBySourceOrg?.length || 0) + " " + resourceService?.frmelmnts?.lbl?.pendingReview }} <button type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(data)">{{resourceService.frmelmnts.lbl.open}}</button></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-		<div class="mt-12" *ngIf="!showLoader && collectionsCnt === 0">
-			<app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0146'}">
-			</app-no-result>
-		</div>
-		<div class="ui" *ngIf="showLoader">
-			<app-loader></app-loader>
-		</div>
-	</div>
+                        </th>
+                        <th class="w-10">{{resourceService?.frmelmnts?.lbl?.chapters}}</th>
+                        <th class="w-10">{{resourceService.frmelmnts.lbl.status}}</th>
+                        <th class="w-10"></th>
+                    </tr>
+                </thead>
+                <tbody class="sb-table-body w-100 o-y-auto max-height" *ngIf="collections.length">
+                    <tr *ngFor="let data of collections">
+                        <td>
+                            <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
+                                {{data.name}}
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                {{data.medium}}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="sb__ellipsis sb__ellipsis--three">
+                                {{data.gradeLevel}}
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                {{data.subject}}
+                            </div>
+                        </td>
+                        <td>{{ data.chapterCount || 0 }}</td>
+                        <td>{{ (data?.pendingBySourceOrg?.length || 0) + " " + resourceService?.frmelmnts?.lbl?.pendingReview }} </td>
+                        <td><button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(data)">{{resourceService.frmelmnts.lbl.open}}</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-12" *ngIf="!showLoader && collectionsCnt === 0">
+            <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0146'}">
+            </app-no-result>
+        </div>
+        <div class="ui" *ngIf="showLoader">
+            <app-loader></app-loader>
+        </div>
+    </div>
 </div>
