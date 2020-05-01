@@ -70,7 +70,6 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   public currentNominationStatus: any;
   public nominationDetails: any;
   showContentTypeModal = false;
-  showNominateModal;
   selectedContentTypes = [];
   selectedCollectionIds = [];
   public currentUserID;
@@ -422,12 +421,6 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       this.nominationConfirmationModalClose.emit();
       this.router.navigateByUrl('/contribute');
     }
-  // onAfterNominationSubmit() {
-  //     this.nominationConfirmationModal.deny();
-  //     this.nominationConfirmationModalClose.emit();
-  //     this.toasterService.success('Nomination sent');
-  //     this.router.navigateByUrl('/contribute/myenrollprograms');
-  //   }
 
   addNomination() {
     this.showContentTypeModal = false;

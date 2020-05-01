@@ -20,8 +20,7 @@
                                 </div>
                             </div>
                         </ng-template>
-                        <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate">
-            </i>
+                        <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate"> </i>
                         <p class="fs-0-785 font-weight-normal">{{programContext.description}}</p>
                     </div>
                 </div>
@@ -30,9 +29,7 @@
                         <div class="sb-meta-data-container sb-meta-data-column px-10 w-20">
                             <label class="m-0">{{ resourceService.frmelmnts.lbl.contentType}}</label>
                             <p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{ programContentTypes }}">
-                                <span>
-                    {{ programContentTypes }}
-                  </span>
+                                <span>  {{ programContentTypes }}</span>
                             </p>
                         </div>
 
@@ -363,7 +360,6 @@
     </button>
     </div>
 </sui-modal>
-
 <sui-modal *ngIf="showNominateModal" [mustScroll]="true" [isClosable]="false" [transitionDuration]="0" [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showNominateModal = false" #nominationConfirmationModal>
     <div class="sb-modal-header">
         {{resourceService.frmelmnts.lbl.submitNomination}}
