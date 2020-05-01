@@ -434,7 +434,7 @@ export class ProgramsService extends DataService implements CanActivate {
         return this.addToRegistry(userAdd).pipe(
           switchMap((res1: any) => {
             userOsId = res1.result.User.osid;
-            const orgName = 'Contributing org for ' + this.userService.userProfile.userName;
+            const orgName = this.userService.userProfile.rootOrgName;
             const orgAdd = {
               Org: {
                 name: orgName,

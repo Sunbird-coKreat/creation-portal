@@ -25,7 +25,7 @@
                 [telemetryInteractPdata]="telemetryInteractPdata"
                 (click)="editContentTitle()">Edit</a></span></div>
               <div class="mt-8 practice-set__status">
-                <span class="sb-label sb-label-table sb-label-success-0"
+                <span class="sb-label sb-label-table sb-label-success-0" *ngIf="!sourcingOrgReviewer"
                 [ngClass]="{ 'sb-label-success-0': resourceStatus === 'Live', 'sb-label-warning-0': (resourceStatus === 'Draft'),  'sb-label-error-0': (resourceStatus === 'Draft' && contentMetaData.prevStatus === 'Review') ,  'sb-label-gray-0': resourceStatus === 'Review' }">{{ resourceStatusText }}</span>
                 <span class="cursor-pointer fs-0-785 ml-8"
                   *ngIf="contentMetaData && contentMetaData.rejectComment && (sessionContext.currentRoleId === 1) && this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Review'">
@@ -89,6 +89,20 @@
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{isIndividualAndNotSample() ? 'Publish' : 'Submit' }}</button>
+              <!-- <button id="acceptContent" suiPopup popupText="Accept Content For Textbook" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live'" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="attachContentToTextbook('accept')"
+              appTelemetryInteract
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('accept-content-for-textbook', 'click', 'content-uploader')"
+                [telemetryInteractObject]="telemetryInteractObject"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata"
+              >Accept</button>
+              <button id="rejectContent" suiPopup popupText="Reject Content For Textbook" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live'" class="sb-btn sb-btn-error sb-btn-normal" (click)="attachContentToTextbook('reject')"
+              appTelemetryInteract
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-content-for-textbook', 'click', 'content-uploader')"
+                [telemetryInteractObject]="telemetryInteractObject"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata"
+              >Reject</button> -->
             </div>
           </div>
         </div>

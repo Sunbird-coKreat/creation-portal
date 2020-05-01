@@ -75,6 +75,7 @@ export class MainHeaderComponent implements OnInit {
   showOfflineHelpCentre = false;
   contributeTabActive: boolean;
   activeTab = {};
+  public sourcingOrgAdmin: boolean;
 
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
@@ -104,6 +105,7 @@ export class MainHeaderComponent implements OnInit {
           this.userProfile = user.userProfile;
           this.getLanguage(this.userService.channel);
           this.isCustodianOrgUser();
+          this.sourcingOrgAdmin = this.userProfile.userRoles.includes('ORG_ADMIN') ? true : false;
         }
       });
     } else {

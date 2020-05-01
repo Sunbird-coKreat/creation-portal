@@ -79,6 +79,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public userProfile: any;
   public sampleContent = false;
   public telemetryPageId = 'chapter-list';
+  public storedCollectionData: any;
+  public sourcingOrgReviewer: boolean;
   constructor(public publicDataService: PublicDataService, private configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private cbseService: CbseProgramService,
@@ -127,6 +129,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         this.uploadHandler(contentMeta);
       }
     };
+    this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
   }
 
   ngOnChanges(changed: any) {
@@ -246,6 +249,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }))
       .subscribe((response) => {
         this.collectionData = response.result.content;
+        this.storedCollectionData = unitIdentifier ?  this.storedCollectionData : _.cloneDeep(this.collectionData);
         const textBookMetaData = [];
         instance.countData['total'] = 0;
         instance.countData['review'] = 0;
@@ -255,6 +259,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         instance.countData['awaitingreview'] = 0;
         instance.countData['sampleContenttotal'] = 0;
         instance.countData['sampleMycontribution'] = 0;
+        instance.countData['pendingReview'] = 0;
+        instance.countData['nominatedUserSample'] = 0;
         this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
         this.getFolderLevelCount(this.collectionHierarchy);
         hierarchy = instance.hierarchyObj;
@@ -355,6 +361,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     const self = this;
     if (data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' && data.sampleContent) {
       this.countData['sampleContenttotal'] = this.countData['sampleContenttotal'] + 1;
+      if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.user_id === data.createdBy) {
+        this.countData['nominatedUserSample'] += 1;
+      }
       if (data.createdBy === this.currentUserID) {
         this.countData['sampleMycontribution'] = this.countData['sampleMycontribution'] + 1;
       }
@@ -409,6 +418,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         if (data.createdBy !== this.currentUserID && data.status === 'Review') {
           this.countData['awaitingreview'] = this.countData['awaitingreview'] + 1;
         }
+        if (this.sourcingOrgReviewer && data.status === 'Live' &&
+        // tslint:disable-next-line:max-line-length
+        !_.includes([...this.storedCollectionData.acceptedContents || [], ...this.storedCollectionData.rejectedContents || []], data.identifier)) {
+          this.countData['pendingReview'] = this.countData['pendingReview'] + 1;
+        }
       }
     }
 
@@ -453,9 +467,17 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   shouldContentBeVisible(content) {
     const creatorViewRole = this.actions.showCreatorView.roles.includes(this.sessionContext.currentRoleId);
     const reviewerViewRole = this.actions.showReviewerView.roles.includes(this.sessionContext.currentRoleId);
-    if (this.userService.userProfile.userRoles.includes('ORG_ADMIN')) {
+    if (this.isSourcingOrgReviewer()) {
       if (reviewerViewRole && content.sampleContent === true
-        && this.sessionContext.nominationDetails.user_id === content.createdBy) {
+        && this.getNominatedUserId() === content.createdBy) {
+          return true;
+        } else if (reviewerViewRole && content.status === 'Live') {
+          if (content.contentType !== 'TextBook' && content.contentType !== 'TextBookUnit' &&
+               (this.storedCollectionData.acceptedContents || this.storedCollectionData.rejectedContents) &&
+                 // tslint:disable-next-line:max-line-length
+                 _.includes([...this.storedCollectionData.acceptedContents || [], ...this.storedCollectionData.rejectedContents || []], content.identifier)) {
+            return false;
+          }
           return true;
         }
     } else {
@@ -590,7 +612,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   resourceTemplateInputData() {
     let contentTypes = _.get(this.chapterListComponentInput.config, 'config.contentTypes.value')
     || _.get(this.chapterListComponentInput.config, 'config.contentTypes.defaultValue');
-    if (this.sessionContext.nominationDetails.content_types) {
+    if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.content_types) {
        contentTypes = _.filter(contentTypes, (obj) => {
         return _.includes(this.sessionContext.nominationDetails.content_types, obj.metadata.contentType);
        });
@@ -741,5 +763,16 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   getNominatedOrgId() {
     return this.sessionContext && this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.organisation_id;
+  }
+
+  isSourcingOrgReviewer () {
+    return !!(this.userService.userProfile.userRoles.includes('ORG_ADMIN') ||
+    this.userService.userProfile.userRoles.includes('CONTENT_REVIEWER'));
+  }
+
+  isNominationPendingOrInitiated() {
+    return !!(this.sessionContext &&
+      this.sessionContext.nominationDetails &&
+      _.includes(['Pending', 'Initiated'], this.sessionContext.nominationDetails.status));
   }
 }
