@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, AfterViewInit, ViewChild } from '@angular/core';
 import { ConfigService, UtilService, ResourceService, NavigationHelperService, ToasterService } from '@sunbird/shared';
 import { PublicDataService, ContentService, UserService, ProgramsService, LearnerService, ActionService  } from '@sunbird/core';
 import * as _ from 'lodash-es';
@@ -21,6 +21,10 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Input() collectionComponentInput: any;
   @Output() isCollectionSelected  = new EventEmitter<any>();
+  @ViewChild('nominationConfirmationModal') nominationConfirmationModal;
+  @Output() nominationConfirmationModalClose = new EventEmitter<any>();
+
+
   public sessionContext: ISessionContext = {};
   public chapterListComponentInput: IChapterListComponentInput = {};
   public programContext: any;
@@ -66,6 +70,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   public currentNominationStatus: any;
   public nominationDetails: any;
   showContentTypeModal = false;
+  showNominateModal;
   selectedContentTypes = [];
   selectedCollectionIds = [];
   public currentUserID;
@@ -410,6 +415,17 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     this.programStageService.addStage('chapterListComponent');
     this.isCollectionSelected.emit(collection.metaData.identifier ? true : false);
   }
+  cancelNomination() {
+      this.nominationConfirmationModal.deny();
+      this.nominationConfirmationModalClose.emit();
+      this.router.navigateByUrl('/contribute');
+    }
+  // onAfterNominationSubmit() {
+  //     this.nominationConfirmationModal.deny();
+  //     this.nominationConfirmationModalClose.emit();
+  //     this.toasterService.success('Nomination sent');
+  //     this.router.navigateByUrl('/contribute/myenrollprograms');
+  //   }
 
   addNomination() {
     this.showContentTypeModal = false;
@@ -445,6 +461,8 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       };
        if (res.result && res.result.length) {
         this.programsService.post(req).subscribe((data) => {
+          this.nominationConfirmationModal.deny();
+          this.nominationConfirmationModalClose.emit();
           this.toasterService.success('Nomination sent');
           this.router.navigateByUrl('/contribute/myenrollprograms');
         }, error => {
@@ -458,6 +476,8 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
           req.data.request['organisation_id'] = this.getUserOrgId();
         }
         this.programsService.post(req).subscribe((data) => {
+          this.nominationConfirmationModal.deny();
+          this.nominationConfirmationModalClose.emit();
           this.toasterService.success('Nomination sent');
           this.router.navigateByUrl('/contribute/myenrollprograms');
         }, error => {
@@ -615,6 +635,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       this.toasterService.error(this.resourceService.messages.emsg.nomination.m001);
     }
   }
+  
   isContributorOrgUser() {
     return !!(this.userService.userProfile.userRegData &&
       this.userService.userProfile.userRegData.User_Org);
