@@ -76,7 +76,7 @@ export class NotificationService {
 
   getEmailSubject(nomination: any) {
     let status = '';
-    let subject = 'VidyaDaan: Your nomination for {PROJECT_NAME} VidyaDaan project is {NOMINATION_STATUS}';
+    let subject = 'VidyaDaan: Your nomination for {PROJECT_NAME} project is {NOMINATION_STATUS}';
     subject = _.replace(subject, /{PROJECT_NAME}/g, nomination.programData.name);
     if (nomination.status === 'Approved' || nomination.status === 'Pending') {
       status = 'accepted';
