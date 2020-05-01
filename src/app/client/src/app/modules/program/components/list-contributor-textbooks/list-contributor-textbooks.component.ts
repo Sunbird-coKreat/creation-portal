@@ -288,9 +288,6 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     this.programStageService.addStage('chapterListComponent');
   }
   updateNomination(status) {
-    this.contributor.nominationData.programData = this.programDetails;
-    this.notificationService.onAfterNominationUpdate(this.contributor.nominationData);
-    return;
     let nominationStatus;
     (status === 'accept') ? (nominationStatus = 'Approved') : (nominationStatus = 'Rejected');
      const req = {
@@ -308,8 +305,18 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
          return;
        }
       }
+    this.contributor.nominationData.programData = this.programDetails;
      this.programsService.updateNomination(req).subscribe((res) => {
-       this.notificationService.onAfterNominationUpdate(this.contributor.nominationData);
+       this.notificationService.onAfterNominationUpdate(this.contributor.nominationData)
+       .subscribe(
+         response => {
+          this.toasterService.success(this.resourceService.messages.smsg.m0068);
+         },
+         error => {
+          this.toasterService.error(this.resourceService.messages.emsg.m0026);
+          console.log(error);
+         }
+       );
        this.showRequestChangesPopup = false;
        setTimeout(() => {
          this.router.navigate(['/sourcing/nominations/' + this.programId]);
