@@ -1,7 +1,7 @@
 import { IImpressionEventInput, IInteractEventEdata} from '@sunbird/telemetry';
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService } from '@sunbird/shared';
 import { ProgramsService, PublicDataService, UserService, FrameworkService, ActionService } from '@sunbird/core';
-import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, Output, EventEmitter, Input } from '@angular/core';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -71,7 +71,9 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
   public toasterService: ToasterService, public actionService: ActionService,
   private collectionHierarchyService: CollectionHierarchyService) { }
-
+  @ViewChild('nominationConfirmationModal') nominationConfirmationModal;
+  @Output() nominationConfirmationModalClose = new EventEmitter<any>();
+ 
   ngOnInit() {
     this.programId = this.activatedRoute.snapshot.params.programId;
     this.activatedRoute.fragment.pipe(map(fragment => fragment || 'None')).subscribe((frag) => {
@@ -118,6 +120,12 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     this.sortColumn = column;
   }
 
+  cancelNomination() {
+    this.nominationConfirmationModal.deny();
+    this.nominationConfirmationModalClose.emit();
+    this.router.navigateByUrl('/sourcing');
+  }
+
   public fetchFrameWorkDetails() {
     this.frameworkService.initialize(this.sessionContext.framework);
     this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
@@ -129,6 +137,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       this.toasterService.error(errorMes || 'Fetching framework details failed');
     });
   }
+  
   getNominationCounts() {
     this.fetchNominationCounts().subscribe((response) => {
       const statuses = _.get(response, 'result');
@@ -309,6 +318,8 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
        setTimeout(() => {
          this.router.navigate(['/sourcing/nominations/' + this.programId]);
        });
+       this.nominationConfirmationModal.deny();
+        this.nominationConfirmationModalClose.emit();
         this.toasterService.success(this.resourceService.messages.smsg.m0010);
      },
      (err) => {
