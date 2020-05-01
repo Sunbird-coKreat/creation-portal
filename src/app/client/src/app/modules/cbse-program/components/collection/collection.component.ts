@@ -223,6 +223,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
               this.tempSortCollectionList = this.collectionList;
               this.selectedCollectionIds = _.uniq(this.selectedCollectionIds);
               this.toggleNominationButton();
+              this.showLoader = false;
             },
             (error) => {
               console.log(error);
@@ -231,8 +232,9 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
               this.toasterService.error(errorMes || 'Fetching textbooks failed. Please try again...');
             }
           );
+      } else {
+        this.showLoader = false;
       }
-      this.showLoader = false;
       this.showError = false;
     });
   }
