@@ -69,14 +69,14 @@ export class ProgramListComponent implements OnInit {
         }
 
         this.isContributor = this.router.url.includes('/contribute');
-        this.activeAllProgramsMenu = this.router.isActive('/contribute', true);
-        this.activeMyProgramsMenu = this.router.isActive('/contribute/myenrollprograms', true);
+        this.activeAllProgramsMenu =  this.router.isActive('/contribute', true);
+        this.activeMyProgramsMenu = this.isContributorOrgUser() || this.router.isActive('/contribute/myenrollprograms', true);
 
         if (this.isContributor) {
-          if (this.activeAllProgramsMenu) {
-            this.getAllProgramsForContrib('public', 'Live');
-          } else if (this.activeMyProgramsMenu) {
+          if (this.activeMyProgramsMenu) {
             this.getMyProgramsForContrib('Live');
+          } else if (this.activeAllProgramsMenu) {
+            this.getAllProgramsForContrib('public', 'Live');
           } else {
             this.showLoader = false;
           }
@@ -85,6 +85,18 @@ export class ProgramListComponent implements OnInit {
         }
       })
     ).subscribe();
+  }
+
+  isUserOrgAdmin() {
+    return !!(this.userService.userProfile.userRegData &&
+      this.userService.userProfile.userRegData.User_Org &&
+      this.userService.userProfile.userRegData.User_Org.roles.includes('admin'));
+  }
+
+  isContributorOrgUser() {
+    return !!(this.userService.userProfile.userRegData &&
+      this.userService.userProfile.userRegData.User_Org &&
+      this.userService.userProfile.userRegData.User_Org.roles.includes('user'));
   }
 
   /**
