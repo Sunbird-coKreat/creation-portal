@@ -311,9 +311,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
        this.notificationService.onAfterNominationUpdate(this.contributor.nominationData)
        .subscribe(
          response => { },
-         error => {
-          console.log(error);
-         }
+         error => console.log(error)
        );
        this.showRequestChangesPopup = false;
        setTimeout(() => {
