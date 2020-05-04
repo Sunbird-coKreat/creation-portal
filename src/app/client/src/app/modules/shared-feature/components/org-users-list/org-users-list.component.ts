@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit,Input } from '@angular/core';
 import { ResourceService } from '@sunbird/shared';
 import { UserService, RegistryService, ProgramsService } from '@sunbird/core';
 import * as _ from 'lodash-es';
@@ -17,11 +17,16 @@ export class OrgUsersListComponent implements OnInit {
   public sortColumn = '';
   public orgDetails: any = {};
   public showLoader = true;
+  isShowCount = false;
+  @Input() isShowCountFromChild: boolean;
 
   constructor( public resourceService: ResourceService, public userService: UserService,
     public registryService: RegistryService, public programsService: ProgramsService) { }
   ngOnInit(): void {
     this.getContributionOrgUsers();
+    if (this.isShowCountFromChild) {
+      this.isShowCount = this.isShowCountFromChild;
+    }
   }
 
   sortCollection(column) {
