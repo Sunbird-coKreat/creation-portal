@@ -225,12 +225,6 @@
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.reject}}</button>
-						<span
-							*ngIf="contributor?.nominationData?.status === 'Initiated' || contributor?.nominationData?.status === 'Approved' || contributor?.nominationData?.status === 'Rejected'">
-							{{resourceService.frmelmnts.lbl.status}}: <span class="fs-0-92" [ngClass]="{'sb-color-gray-100':contributor?.nominationData?.status  == 'Initiated','sb-color-success':contributor?.nominationData?.status  == 'Approved',
-							'sb-color-warning':contributor?.nominationData?.status  == 'Pending'}">
-							{{contributor?.nominationData?.status}}</span>
-						</span>
 					</div>
 				</div>
 				<table class="sb-table sb-table-striped sb-table-sortable sb-table-fixed">
