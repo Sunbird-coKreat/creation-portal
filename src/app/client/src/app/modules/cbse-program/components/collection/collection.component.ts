@@ -50,6 +50,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   public nominateButton = 'hide';
   public nominate = '';
   public programContentTypes: string;
+  showNominateModal = false;
   isMediumClickable = false;
   showLoader = true;
   selectedIndex = -1;
@@ -158,6 +159,14 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       };
     });
+  }
+
+  cancelNomination() {
+    this.showNominateModal = false;
+    const router = this.router;
+    setTimeout(function() {
+      router.navigateByUrl('/contribute');
+    }, 10);
   }
 
   sortCollection(column) {
@@ -447,8 +456,12 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       };
        if (res.result && res.result.length) {
         this.programsService.post(req).subscribe((data) => {
+          this.showNominateModal = false;
+          const router = this.router;
+          setTimeout(function() {
+            router.navigateByUrl('/contribute/myenrollprograms');
+          }, 10);
           this.toasterService.success('Nomination sent');
-          this.router.navigateByUrl('/contribute/myenrollprograms');
         }, error => {
           this.toasterService.error('Nomination submit failed... Please try later');
         });
@@ -460,8 +473,12 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
           req.data.request['organisation_id'] = this.getUserOrgId();
         }
         this.programsService.post(req).subscribe((data) => {
+          this.showNominateModal = false;
+          const router = this.router;
+          setTimeout(function() {
+            router.navigateByUrl('/contribute/myenrollprograms');
+          }, 10);
           this.toasterService.success('Nomination sent');
-          this.router.navigateByUrl('/contribute/myenrollprograms');
         }, error => {
           this.toasterService.error('Nomination submit failed... Please try later');
         });
