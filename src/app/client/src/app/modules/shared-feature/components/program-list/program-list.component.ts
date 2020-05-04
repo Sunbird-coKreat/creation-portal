@@ -67,7 +67,9 @@ export class ProgramListComponent implements OnInit {
         if (this.router.url.includes('/contribute/join/' + orgId)) {
             this.programsService.addUsertoContributorOrg(orgId);
         }
-        if (this.isContributorOrgUser() && !this.router.isActive('/contribute/myenrollprograms', true)) {
+        if (this.isContributorOrgUser()
+        && !this.router.url.includes('/sourcing')
+        &&  !this.router.isActive('/contribute/myenrollprograms', true)) {
           return this.router.navigateByUrl('/contribute/myenrollprograms');
         }
 
