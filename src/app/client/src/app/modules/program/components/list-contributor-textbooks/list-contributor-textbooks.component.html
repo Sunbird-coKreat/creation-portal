@@ -1,13 +1,8 @@
 <div class="sb-bg-color-primary-0 py-15" *ngIf="currentStage === 'listContributorTextbook'" [appTelemetryImpression]="telemetryImpression">
-	<div class="sb-bg-color-primary-0 practical-header">
-		<div class="ui container">
-				<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn fs-0-92 pl-0" (click)="goBack()"
-						type="button"
-						appTelemetryInteract
-				[telemetryInteractEdata]="getTelemetryInteractEdata('list-textbooks', 'click', 'list-nominated-textbooks')"
-				[telemetryInteractObject]="telemetryInteractObject"
-				[telemetryInteractCdata]="telemetryInteractCdata"
-				[telemetryInteractPdata]="telemetryInteractPdata">
+    <div class="sb-bg-color-primary-0 practical-header">
+        <div class="ui container">
+            <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn fs-0-92 pl-0" (click)="goBack()" type="button" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('list-textbooks', 'click', 'list-nominated-textbooks')"
+                [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata" [telemetryInteractPdata]="telemetryInteractPdata">
 											<i class="icon-svg icon-svg--xxs icon-back mr-4">
 													<svg class="icon icon-svg--primary">
 															<use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
@@ -15,11 +10,10 @@
 											</i>
 											{{resourceService.frmelmnts.lbl.back}}
 									</button>
-			 <div class="d-flex flex-jc-space-between practical-header__content py-10">
-            <div class="practical-header__title flex-basis-1 pr-10">
-								<h5 class="mb-10 p-0 d-inline-block font-weight-bold">{{ programDetails?.name }} </h5>
-								<i class="info circle link icon" suiPopup
-                        [popupTemplate]="popupTemplate" popupDelay="1000"></i>
+            <div class="d-flex flex-jc-space-between practical-header__content py-10">
+                <div class="practical-header__title flex-basis-1 pr-10">
+                    <h5 class="mb-10 p-0 d-inline-block font-weight-bold">{{ programDetails?.name }} </h5>
+                    <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
                     <ng-template #popupTemplate>
                         <div class="content">
                             <div class="textbook-details ml-8">
@@ -35,282 +29,239 @@
                             </div>
                         </div>
                     </ng-template>
-                <p class="fs-0-785 font-weight-normal sb__ellipsis sb__ellipsis--three">{{ programDetails?.description }} </p>
-            </div>
-            <div class="sb-meta-data-container sb-meta-data-column">
-                <label class="width-100">{{ resourceService.frmelmnts.lbl.nominations }} </label>
-                <div class="d-flex">
-                    <dl class="sb-meta-data">
-                        <dt>{{ initiatedCount }}</dt>
-                        <dd>{{ resourceService.frmelmnts.lbl.initiated }}</dd>
-                    </dl>
-                    <dl class="sb-meta-data">
-                        <dt>{{ pendingCount }}</dt>
-                        <dd>{{ resourceService.frmelmnts.lbl.pending }}</dd>
-                    </dl>
-                    <dl class="sb-meta-data">
-                        <dt>{{ approvedCount }}</dt>
-                        <dd>{{ resourceService.frmelmnts.lbl.approved }}</dd>
-                    </dl>
-                    <dl class="sb-meta-data">
-                        <dt>{{ rejectedCount }}</dt>
-                        <dd>{{ resourceService.frmelmnts.lbl.rejected }}</dd>
-                    </dl>
-                    <dl class="sb-meta-data">
-                        <dt>{{ totalCount }}</dt>
-                        <dd>{{ resourceService.frmelmnts.lbl.total }}</dd>
-                    </dl>
+                    <p class="fs-0-785 font-weight-normal sb__ellipsis sb__ellipsis--three">{{ programDetails?.description }} </p>
                 </div>
-            </div>
-            <ng-container *ngIf="programDetails">
-                <div class="program-timeline px-16">
-                    <div class="program-timeline-item">
-                        <div class="status" [class.active]="activeDate === 'nomination_enddate'">
-                            <div class="status__label">{{ resourceService.frmelmnts.lbl.nominationSubmission }}</div>
-                            <div class="status__date">
-                                {{ programDetails?.nomination_enddate |  date:'LLLL d, yyyy'  }}
-                                <br />
-                                <em [class.sb-color-warning]="activeDate === 'nomination_enddate'"
-                                    *ngIf="activeDate === 'nomination_enddate'">{{ programDetails?.nomination_enddate | daysToGo  }}</em>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="program-timeline-item">
-                        <div class="status" [class.active]="activeDate === 'shortlisting_enddate'">
-                            <div class="status__label">{{ resourceService.frmelmnts.lbl.shortlistingNomination }}</div>
-                            <div class="status__date">
-                                {{ programDetails?.shortlisting_enddate |  date:'LLLL d, yyyy'  }}
-                                <br />
-                                <em [class.sb-color-warning]="activeDate === 'shortlisting_enddate'"
-                                    *ngIf="activeDate === 'shortlisting_enddate'">{{ programDetails?.shortlisting_enddate | daysToGo  }}</em>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="program-timeline-item">
-                        <div class="status" [class.active]="activeDate === 'content_submission_enddate'">
-                            <div class="status__label">{{ resourceService.frmelmnts.lbl.contributions }}</div>
-                            <div class="status__date">
-                                {{ programDetails?.content_submission_enddate |  date:'LLLL d, yyyy'  }}
-                                <br />
-                                <em [class.sb-color-warning]="activeDate === 'content_submission_enddate'"
-                                    *ngIf="activeDate === 'content_submission_enddate'">{{ programDetails?.content_submission_enddate | daysToGo  }}</em>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="program-timeline-item">
-                        <div class="status" [class.active]="activeDate === 'enddate'">
-                            <div class="status__label">{{ resourceService.frmelmnts.lbl.programEndDate }}</div>
-                            <div class="status__date">
-                                {{ programDetails?.enddate |  date:'LLLL d, yyyy'  }}
-                                <br />
-                                <em [class.sb-color-warning]="activeDate === 'enddate'"
-                                    *ngIf="activeDate === 'enddate'">{{ programDetails?.enddate | daysToGo  }}</em>
-                            </div>
-                        </div>
+                <div class="sb-meta-data-container sb-meta-data-column">
+                    <label class="width-100">{{ resourceService.frmelmnts.lbl.nominations }} </label>
+                    <div class="d-flex">
+                        <dl class="sb-meta-data">
+                            <dt>{{ initiatedCount }}</dt>
+                            <dd>{{ resourceService.frmelmnts.lbl.initiated }}</dd>
+                        </dl>
+                        <dl class="sb-meta-data">
+                            <dt>{{ pendingCount }}</dt>
+                            <dd>{{ resourceService.frmelmnts.lbl.pending }}</dd>
+                        </dl>
+                        <dl class="sb-meta-data">
+                            <dt>{{ approvedCount }}</dt>
+                            <dd>{{ resourceService.frmelmnts.lbl.approved }}</dd>
+                        </dl>
+                        <dl class="sb-meta-data">
+                            <dt>{{ rejectedCount }}</dt>
+                            <dd>{{ resourceService.frmelmnts.lbl.rejected }}</dd>
+                        </dl>
+                        <dl class="sb-meta-data">
+                            <dt>{{ totalCount }}</dt>
+                            <dd>{{ resourceService.frmelmnts.lbl.total }}</dd>
+                        </dl>
                     </div>
                 </div>
-            </ng-container>
+                <ng-container *ngIf="programDetails">
+                    <div class="program-timeline px-16">
+                        <div class="program-timeline-item">
+                            <div class="status" [class.active]="activeDate === 'nomination_enddate'">
+                                <div class="status__label">{{ resourceService.frmelmnts.lbl.nominationSubmission }}</div>
+                                <div class="status__date">
+                                    {{ programDetails?.nomination_enddate | date:'LLLL d, yyyy' }}
+                                    <br />
+                                    <em [class.sb-color-warning]="activeDate === 'nomination_enddate'" *ngIf="activeDate === 'nomination_enddate'">{{ programDetails?.nomination_enddate | daysToGo  }}</em>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="program-timeline-item">
+                            <div class="status" [class.active]="activeDate === 'shortlisting_enddate'">
+                                <div class="status__label">{{ resourceService.frmelmnts.lbl.shortlistingNomination }}</div>
+                                <div class="status__date">
+                                    {{ programDetails?.shortlisting_enddate | date:'LLLL d, yyyy' }}
+                                    <br />
+                                    <em [class.sb-color-warning]="activeDate === 'shortlisting_enddate'" *ngIf="activeDate === 'shortlisting_enddate'">{{ programDetails?.shortlisting_enddate | daysToGo  }}</em>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="program-timeline-item">
+                            <div class="status" [class.active]="activeDate === 'content_submission_enddate'">
+                                <div class="status__label">{{ resourceService.frmelmnts.lbl.contributions }}</div>
+                                <div class="status__date">
+                                    {{ programDetails?.content_submission_enddate | date:'LLLL d, yyyy' }}
+                                    <br />
+                                    <em [class.sb-color-warning]="activeDate === 'content_submission_enddate'" *ngIf="activeDate === 'content_submission_enddate'">{{ programDetails?.content_submission_enddate | daysToGo  }}</em>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="program-timeline-item">
+                            <div class="status" [class.active]="activeDate === 'enddate'">
+                                <div class="status__label">{{ resourceService.frmelmnts.lbl.programEndDate }}</div>
+                                <div class="status__date">
+                                    {{ programDetails?.enddate | date:'LLLL d, yyyy' }}
+                                    <br />
+                                    <em [class.sb-color-warning]="activeDate === 'enddate'" *ngIf="activeDate === 'enddate'">{{ programDetails?.enddate | daysToGo  }}</em>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
         </div>
-		</div>
-	</div>
-	<div class="ui container pb-10" [appTelemetryImpression]="telemetryImpression">
+    </div>
+    <div class="ui container pb-10" [appTelemetryImpression]="telemetryImpression">
 
-		<div class="d-flex flex-ai-center flex-jc-space-between">
-			<div class="flex-basis-1 pr-16">
-				<!-- <button  class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" type="button"><i class="icon-svg icon-svg--xxs icon-back mr-4"><svg  class="icon icon-svg--primary"><use xlink:href="assets/images/libdemo/sprite.svg#arrow-long-left"></use></svg></i> Back</button> -->
-				<h4 class="sb-pageSection-title six wide column">
-				{{resourceService.frmelmnts.lbl.contributorDetails}}
-				</h4>
-				<div class="d-flex flex-ai-center fnormal mt-8">
-					<dl class="sb-meta-data mb-0 pr-8">
-						<dt>{{resourceService.frmelmnts.lbl.name}}</dt>
-						<dd class="sb__ellipsis">
-							<a class="cursor-pointer text-decoration-underline sb-color-primary"
-								(click)="showcontributorProfile=true"
-								appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('name-contributor', 'click', 'list-nominated-textbooks')"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">{{contributor?.name}} </a>
-						</dd>
-					</dl>
-					<div class="d-flex flex-ai-center flex-jc-space-around flex-basis-1">
+        <div class="d-flex flex-ai-center flex-jc-space-between">
+            <div class="flex-basis-1 pr-16">
+                <!-- <button  class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" type="button"><i class="icon-svg icon-svg--xxs icon-back mr-4"><svg  class="icon icon-svg--primary"><use xlink:href="assets/images/libdemo/sprite.svg#arrow-long-left"></use></svg></i> Back</button> -->
+                <h4 class="sb-pageSection-title six wide column">
+                    {{resourceService.frmelmnts.lbl.contributorDetails}}
+                </h4>
+                <div class="d-flex flex-ai-center fnormal mt-8">
+                    <dl class="sb-meta-data mb-0 pr-8">
+                        <dt>{{resourceService.frmelmnts.lbl.name}}</dt>
+                        <dd class="sb__ellipsis">
+                            <a class="cursor-pointer text-decoration-underline sb-color-primary" (click)="showcontributorProfile=true" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('name-contributor', 'click', 'list-nominated-textbooks')" [telemetryInteractObject]="telemetryInteractObject"
+                                [telemetryInteractCdata]="telemetryInteractCdata" [telemetryInteractPdata]="telemetryInteractPdata">{{contributor?.name}} </a>
+                        </dd>
+                    </dl>
+                    <div class="d-flex flex-ai-center flex-jc-space-around flex-basis-1">
 
-						<dl class="sb-meta-data mb-0 pr-8">
-							<dt class="sb__ellipsis">{{resourceService.frmelmnts.lbl.type}}</dt>
-							<dd popupText="Org/Individual">{{contributor?.type}}</dd>
-						</dl>
-						<dl class="sb-meta-data mb-0 pr-8">
-							<dt class="sb__ellipsis">{{resourceService.frmelmnts.lbl.status}}</dt>
-							<dd><span>{{contributor?.nominationData?.status }}</span></dd>
-						</dl>
-						<dl class="sb-meta-data mb-0 pr-8 w-30">
-							<dt class="sb__ellipsis">{{resourceService?.frmelmnts?.lbl?.contentType}}</dt>
-							<dd class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{ nominatedContentTypes }}"><span>{{ nominatedContentTypes }}</span></dd>
+                        <dl class="sb-meta-data mb-0 pr-8">
+                            <dt class="sb__ellipsis">{{resourceService.frmelmnts.lbl.type}}</dt>
+                            <dd popupText="Org/Individual">{{contributor?.type}}</dd>
+                        </dl>
+                        <dl class="sb-meta-data mb-0 pr-8">
+                            <dt class="sb__ellipsis">{{resourceService.frmelmnts.lbl.status}}</dt>
+                            <dd><span [ngClass]="{'sb-color-success':contributor?.nominationData?.status  == 'Approved',
+								'sb-color-warning':contributor?.nominationData?.status  == 'Pending'}">
+								{{contributor?.nominationData?.status }}</span></dd>
+                        </dl>
+                        <dl class="sb-meta-data mb-0 pr-8 w-30">
+                            <dt class="sb__ellipsis">{{resourceService?.frmelmnts?.lbl?.contentType}}</dt>
+                            <dd class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{ nominatedContentTypes }}"><span>{{ nominatedContentTypes }}</span></dd>
 
-						</dl>
-						<dl class="sb-meta-data mb-0 pr-8">
-							<dt class="sb__ellipsis">{{resourceService?.frmelmnts?.lbl?.submittedDate}}</dt>
-							<dd>{{contributor?.nominationData?.createdon | date:'LLLL d, yyyy'}}</dd>
-						</dl>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                        </dl>
+                        <dl class="sb-meta-data mb-0 pr-8">
+                            <dt class="sb__ellipsis">{{resourceService?.frmelmnts?.lbl?.submittedDate}}</dt>
+                            <dd>{{contributor?.nominationData?.createdon | date:'LLLL d, yyyy'}}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<app-contributor-profile-popup
-	[showProfile]="showcontributorProfile"
-	[orgId]="contributor?.nominationData?.organisation_id"
-	[userId]="contributor?.nominationData?.user_id"
-	(close)="showcontributorProfile = false;">
-</app-contributor-profile-popup>
+    <app-contributor-profile-popup [showProfile]="showcontributorProfile" [orgId]="contributor?.nominationData?.organisation_id" [userId]="contributor?.nominationData?.user_id" (close)="showcontributorProfile = false;">
+    </app-contributor-profile-popup>
 
-<sui-modal *ngIf="showRequestChangesPopup" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
-	[size]="'normal'" class="sb-modal" appBodyScroll #modal (dismissed)="showRequestChangesPopup = false;">
-	<div class="sb-modal-header">
-			{{resourceService.frmelmnts.lbl.reasonsForRejection}}
-	</div>
-	<form #FormControl="ngForm" class="ui form">
-		<div class="sb-modal-content">
-			<div class="sb-field-group">
-				<label>{{resourceService.frmelmnts.lbl.enterYourComments}}</label>
-				<div class="sb-field relative">
-					<textarea type="text" class="wmd-input width-100 sb-form-control" id="wmd-input"
-						[(ngModel)]="rejectComment" placeholder="{{resourceService.frmelmnts.lbl.addComment}}" name="rejectComment" required></textarea>
-					<label class="ui basic red error label pt-1 mt-5 width-100"
-						*ngIf="FormControl.form.controls.rejectComment?.touched && !FormControl.form.valid">{{resourceService.frmelmnts.lbl.fillComments}} </label>
-				</div>
-			</div>
-		</div>
-		<div class="sb-modal-actions">
-			<button id="submitReview" type="submit" class="sb-btn sb-btn-normal"
-				[ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid}"
-				(click)="updateNomination('reject')"
-				appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('rejection-feedback', 'click', 'list-nominated-textbooks')"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.submit}} </button>
-		</div>
-	</form>
-</sui-modal>
+    <sui-modal *ngIf="showRequestChangesPopup" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'" class="sb-modal" appBodyScroll #modal (dismissed)="showRequestChangesPopup = false;">
+        <div class="sb-modal-header">
+            {{resourceService.frmelmnts.lbl.reasonsForRejection}}
+        </div>
+        <form #FormControl="ngForm" class="ui form">
+            <div class="sb-modal-content">
+                <div class="sb-field-group">
+                    <label>{{resourceService.frmelmnts.lbl.enterYourComments}}</label>
+                    <div class="sb-field relative">
+                        <textarea type="text" class="wmd-input width-100 sb-form-control" id="wmd-input" [(ngModel)]="rejectComment" placeholder="{{resourceService.frmelmnts.lbl.addComment}}" name="rejectComment" required></textarea>
+                        <label class="ui basic red error label pt-1 mt-5 width-100" *ngIf="FormControl.form.controls.rejectComment?.touched && !FormControl.form.valid">{{resourceService.frmelmnts.lbl.fillComments}} </label>
+                    </div>
+                </div>
+            </div>
+            <div class="sb-modal-actions">
+                <button id="submitReview" type="submit" class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid}" (click)="updateNomination('reject')" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('rejection-feedback', 'click', 'list-nominated-textbooks')"
+                    [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata" [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.submit}} </button>
+            </div>
+        </form>
+    </sui-modal>
 
 
-<div class="sb-bg-color-white dynamicHeight" *ngIf="!showChapterList">
-	<div class="ui container">
-		<div class="sb-pageSection pt-24" [appTelemetryImpression]="telemetryImpression">
-			<div class="sb-pageSection-content" *ngIf="!showLoader">
-				<div class="d-flex flex-ai-center flex-jc-space-between">
-					<div class="sb-pageSection-header pt-16">
-						<h4 class="sb-pageSection-title">{{resourceService.frmelmnts.lbl.listOfTextbooks}} </h4>
-						<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{ programDetails?.collection_ids?.length || 0 }}</span>
-					</div>
-					<div class="" *ngIf="canAcceptorReject()">
-						<button class="sb-btn sb-btn-normal sb-btn-secondary mr-8"
-							*ngIf="contributor?.nominationData?.status === 'Pending'"
-							(click)="updateNomination('accept')"
-							appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('accept-nomination', 'click', 'list-nominated-textbooks')"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.accept}}</button>
-						<button class="sb-btn sb-btn-normal sb-btn-outline-error"
-							*ngIf="contributor?.nominationData?.status === 'Pending'"
-							(click)="rejectNomination();"
-							appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('reject-nomination', 'click', 'list-nominated-textbooks')"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.reject}}</button>
-						<span
-							*ngIf="contributor?.nominationData?.status === 'Initiated' || contributor?.nominationData?.status === 'Approved' || contributor?.nominationData?.status === 'Rejected'">
-							Status: {{contributor?.nominationData?.status}}
-						</span>
-					</div>
-				</div>
-				<table class="sb-table sb-table-striped sb-table-sortable sb-table-fixed">
-					<thead class="sb-table-header sb-table-thead-gray">
-						<tr>
-							<th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('name')">
-								{{resourceService.frmelmnts.lbl.textbook}} &nbsp;&nbsp;
-								<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>
-								<span  *ngIf="sortColumn == 'name'" class="d-inline-block">
+    <div class="sb-bg-color-white dynamicHeight" *ngIf="!showChapterList">
+        <div class="ui container">
+            <div class="sb-pageSection pt-24" [appTelemetryImpression]="telemetryImpression">
+                <div class="sb-pageSection-content" *ngIf="!showLoader">
+                    <div class="d-flex flex-ai-center flex-jc-space-between">
+                        <div class="sb-pageSection-header pt-16">
+                            <h4 class="sb-pageSection-title">{{resourceService.frmelmnts.lbl.listOfTextbooks}} </h4>
+                            <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{ programDetails?.collection_ids?.length || 0 }}</span>
+                        </div>
+                        <div class="" *ngIf="canAcceptorReject()">
+                            <button class="sb-btn sb-btn-normal sb-btn-secondary mr-8" *ngIf="contributor?.nominationData?.status === 'Pending'" (click)="updateNomination('accept')" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('accept-nomination', 'click', 'list-nominated-textbooks')"
+                                [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata" [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.accept}}</button>
+                            <button class="sb-btn sb-btn-normal sb-btn-outline-error" *ngIf="contributor?.nominationData?.status === 'Pending'" (click)="rejectNomination();" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('reject-nomination', 'click', 'list-nominated-textbooks')"
+                                [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata" [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.reject}}</button>
+                            <span *ngIf="contributor?.nominationData?.status === 'Initiated' || contributor?.nominationData?.status === 'Approved' || contributor?.nominationData?.status === 'Rejected'">
+							Status: <span class="fs-0-92" [ngClass]="{'sb-color-gray-100':contributor?.nominationData?.status  == 'Initiated','sb-color-success':contributor?.nominationData?.status  == 'Approved',
+							'sb-color-warning':contributor?.nominationData?.status  == 'Pending'}">
+							{{contributor?.nominationData?.status}}</span>
+                            </span>
+                        </div>
+                    </div>
+                    <table class="sb-table sb-table-striped sb-table-sortable sb-table-fixed">
+                        <thead class="sb-table-header sb-table-thead-gray">
+                            <tr>
+                                <th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('name')">
+                                    {{resourceService.frmelmnts.lbl.textbook}} &nbsp;&nbsp;
+                                    <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>
+                                    <span *ngIf="sortColumn == 'name'" class="d-inline-block">
 									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
 									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 								</span>
-							</th>
-							<th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('medium')">
-								{{resourceService.frmelmnts.lbl.medium}} &nbsp;&nbsp;
-								<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'medium' "></i>
-								<span  *ngIf="sortColumn == 'medium'" class="d-inline-block">
+                                </th>
+                                <th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('medium')">
+                                    {{resourceService.frmelmnts.lbl.medium}} &nbsp;&nbsp;
+                                    <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'medium' "></i>
+                                    <span *ngIf="sortColumn == 'medium'" class="d-inline-block">
 									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
 									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 								</span>
-							</th>
-							<th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('gradeLevel')">
-								{{resourceService.frmelmnts.lbl.class}} &nbsp;&nbsp;
-								<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'gradeLevel' "></i>
-								<span  *ngIf="sortColumn == 'gradeLevel'" class="d-inline-block">
+                                </th>
+                                <th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('gradeLevel')">
+                                    {{resourceService.frmelmnts.lbl.class}} &nbsp;&nbsp;
+                                    <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'gradeLevel' "></i>
+                                    <span *ngIf="sortColumn == 'gradeLevel'" class="d-inline-block">
 									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
 									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 								</span>
-							</th>
-							<th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('subject')">
-								{{resourceService.frmelmnts.lbl.subjects}} &nbsp;&nbsp;
-								<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'subject' "></i>
-								<span  *ngIf="sortColumn == 'subject'" class="d-inline-block">
+                                </th>
+                                <th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('subject')">
+                                    {{resourceService.frmelmnts.lbl.subjects}} &nbsp;&nbsp;
+                                    <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'subject' "></i>
+                                    <span *ngIf="sortColumn == 'subject'" class="d-inline-block">
 									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
 									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 								</span>
-							</th>
-							<th class="w-5 px-5" *ngIf="contributor?.nominationData?.status == 'Pending'">
-								<span>
+                                </th>
+                                <th class="w-5 px-5" *ngIf="contributor?.nominationData?.status == 'Pending'">
+                                    <span>
 									{{resourceService.frmelmnts.lbl.sampleContentCount}}
 								</span>
-							</th>
-							<th class="w-5">&nbsp;</th>
-						</tr>
-					</thead>
-					<tbody class="sb-table-body" *ngIf="contributorTextbooks?.length">
+                                </th>
+                                <th class="w-5">&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody class="sb-table-body" *ngIf="contributorTextbooks?.length">
 
-						<tr *ngFor="let contributorTextbook of contributorTextbooks">
-							<td>{{contributorTextbook?.name}}</td>
-							<td>{{contributorTextbook?.medium}}</td>
-							<td>{{contributorTextbook?.gradeLevel}}</td>
-							<td>{{contributorTextbook?.subject}}</td>
-							<td *ngIf="contributor?.nominationData?.status == 'Pending'">{{contributorTextbook?.totalSampleContent || 0}}</td>
-							<td data-label="Actions">
-								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" [disabled]="contributorTextbook?.totalSampleContent === 0 ? true : false "
-									*ngIf="contributor?.nominationData?.status == 'Pending'" (click)="viewContribution(contributorTextbook)"
-									appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('view-content', 'click', 'list-nominated-textbooks')"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.viewSampleContent}}</button>
-								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
-									*ngIf="contributor?.nominationData?.status == 'Accepted'"
-									(click)="viewContribution(contributorTextbook)"
-									appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('view-contribution', 'click', 'list-nominated-textbooks')"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.viewContributions}}</button>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<div class="ui" *ngIf="showLoader">
-				<app-loader></app-loader>
-			</div>
-		</div>
-	</div>
-</div>
+                            <tr *ngFor="let contributorTextbook of contributorTextbooks">
+                                <td>{{contributorTextbook?.name}}</td>
+                                <td>{{contributorTextbook?.medium}}</td>
+                                <td>{{contributorTextbook?.gradeLevel}}</td>
+                                <td>{{contributorTextbook?.subject}}</td>
+                                <td *ngIf="contributor?.nominationData?.status == 'Pending'">{{contributorTextbook?.totalSampleContent || 0}}</td>
+                                <td data-label="Actions">
+                                    <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" [disabled]="contributorTextbook?.totalSampleContent === 0 ? true : false " *ngIf="contributor?.nominationData?.status == 'Pending'" (click)="viewContribution(contributorTextbook)" appTelemetryInteract
+                                        [telemetryInteractEdata]="getTelemetryInteractEdata('view-content', 'click', 'list-nominated-textbooks')" [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata" [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.viewSampleContent}}</button>
+                                    <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" *ngIf="contributor?.nominationData?.status == 'Accepted'" (click)="viewContribution(contributorTextbook)" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('view-contribution', 'click', 'list-nominated-textbooks')"
+                                        [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata" [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.viewContributions}}</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="ui" *ngIf="showLoader">
+                    <app-loader></app-loader>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <ng-container *ngIf="currentStage !== 'listContributorTextbook'">
-	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs">
-	</ndc-dynamic>
+    <ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs">
+    </ndc-dynamic>
 </ng-container>
-
