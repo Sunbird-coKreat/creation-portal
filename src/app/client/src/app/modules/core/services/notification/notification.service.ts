@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { of, throwError, forkJoin } from 'rxjs';
-import { ResourceService, ToasterService, ServerResponse } from '@sunbird/shared';
+import { ResourceService, ServerResponse } from '@sunbird/shared';
 import { mergeMap, tap } from 'rxjs/operators';
 import { LearnerService } from '../learner/learner.service';
 import { ProgramsService } from '../programs/programs.service';
@@ -12,7 +12,6 @@ import * as _ from 'lodash-es';
 export class NotificationService {
 
   constructor(private resourceService: ResourceService,
-    private toasterService: ToasterService,
     private learnerService: LearnerService,
     private programsService: ProgramsService) { }
 
@@ -23,7 +22,6 @@ export class NotificationService {
         request: reqData
       }
     };
-    console.log('option', option);
     return this.learnerService.post(option).pipe(
       mergeMap((data: ServerResponse) => {
         const response = _.get(data, 'result.response');
