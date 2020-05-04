@@ -249,7 +249,7 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <span [ngClass]="{'sb-color-success':nomination?.nominationData?.status  == 'Approved','sb-color-warning':nomination?.nominationData?.status  == 'Pending'}">
+                                                <span [ngClass]="{'sb-color-success':nomination?.nominationData?.status  == 'Approved','sb-color-warning':nomination?.nominationData?.status  == 'Pending','sb-color-error':nomination?.nominationData?.status  == 'Rejected'}">
                                                     {{ nomination?.nominationData?.status }}
                                                 </span>
                                             </td>
