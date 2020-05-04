@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, AfterViewInit } from '@angular/core';
 import { ConfigService, UtilService, ResourceService, NavigationHelperService, ToasterService } from '@sunbird/shared';
 import { PublicDataService, ContentService, UserService, ProgramsService, LearnerService, ActionService  } from '@sunbird/core';
 import * as _ from 'lodash-es';
@@ -21,9 +21,8 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Input() collectionComponentInput: any;
   @Output() isCollectionSelected  = new EventEmitter<any>();
-  @ViewChild('nominationConfirmationModal') nominationConfirmationModal;
-  @Output() nominationConfirmationModalClose = new EventEmitter<any>();
 
+  showNominateModal: boolean = false;
 
   public sessionContext: ISessionContext = {};
   public chapterListComponentInput: IChapterListComponentInput = {};
@@ -417,9 +416,11 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isCollectionSelected.emit(collection.metaData.identifier ? true : false);
   }
   cancelNomination() {
-      this.nominationConfirmationModal.deny();
-      this.nominationConfirmationModalClose.emit();
-      this.router.navigateByUrl('/contribute');
+      this.showNominateModal = false;
+      const router = this.router;
+      setTimeout(function() {
+        router.navigateByUrl('/contribute');
+      }, 10);
     }
 
   addNomination() {
@@ -456,10 +457,12 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       };
        if (res.result && res.result.length) {
         this.programsService.post(req).subscribe((data) => {
-          this.nominationConfirmationModal.deny();
-          this.nominationConfirmationModalClose.emit();
+          this.showNominateModal = false;
+          const router = this.router;
+          setTimeout(function() {
+            router.navigateByUrl('/contribute/myenrollprograms');
+          }, 10);
           this.toasterService.success('Nomination sent');
-          this.router.navigateByUrl('/contribute/myenrollprograms');
         }, error => {
           this.toasterService.error('Nomination submit failed... Please try later');
         });
@@ -471,10 +474,12 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
           req.data.request['organisation_id'] = this.getUserOrgId();
         }
         this.programsService.post(req).subscribe((data) => {
-          this.nominationConfirmationModal.deny();
-          this.nominationConfirmationModalClose.emit();
+          this.showNominateModal = false;
+          const router = this.router;
+          setTimeout(function() {
+            router.navigateByUrl('/contribute/myenrollprograms');
+          }, 10);
           this.toasterService.success('Nomination sent');
-          this.router.navigateByUrl('/contribute/myenrollprograms');
         }, error => {
           this.toasterService.error('Nomination submit failed... Please try later');
         });
