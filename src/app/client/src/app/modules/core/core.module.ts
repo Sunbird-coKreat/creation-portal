@@ -1,7 +1,7 @@
 import { PermissionDirective, BodyScrollDirective, StickyHeaderDirective } from './directives';
 import { RouterModule } from '@angular/router';
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, APP_BASE_HREF, PlatformLocation} from '@angular/common';
 import {
   SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule,
   SuiProgressModule, SuiRatingModule, SuiCollapseModule
@@ -40,7 +40,14 @@ import { TelemetryModule } from '@sunbird/telemetry';
   exports: [MainHeaderComponent, MainFooterComponent, PermissionDirective, BodyScrollDirective,
     DataDrivenFilterComponent, SortByComponent, FlagContentComponent,
     TelemetryModule, LanguageDropdownComponent, ProminentFilterComponent, TopicPickerComponent],
-  providers: [CacheService, AuthGuard]
+  providers: [
+    {
+      provide: APP_BASE_HREF,
+      useFactory: (s: PlatformLocation) => s.getBaseHrefFromDOM(),
+      deps: [PlatformLocation]
+    },
+    CacheService,
+    AuthGuard]
 })
 export class CoreModule {
 }

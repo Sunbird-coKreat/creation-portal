@@ -24,6 +24,7 @@ export class ProgramsService extends DataService implements CanActivate {
 
   private _programsList$ = new BehaviorSubject(undefined);
   private _allowToContribute$ = new BehaviorSubject(undefined);
+  private _organisations = {};
 
   public readonly programsList$ = this._programsList$.asObservable()
     .pipe(skipWhile(data => data === undefined || data === null));
@@ -55,10 +56,32 @@ export class ProgramsService extends DataService implements CanActivate {
   public initialize() {
     this.enableContributeMenu().subscribe();
     this.getAllContentTypes().subscribe();
+    this.mapSlugstoOrgId();
   }
 
+  mapSlugstoOrgId () {
+    const urlSlug = this.userService.slug;
+    if (urlSlug && _.isEmpty(this._organisations[urlSlug])) {
+     const orgFilters = {
+         slug: urlSlug,
+         isRootOrg: true
+     };
+
+     this.getOrganisationDetails(orgFilters).subscribe
+     ((data: ServerResponse) => {
+       if (data.result && _.get(data, 'result.response.count')) {
+         const organisationDetails = _.get(data, 'result.response.content');
+         this._organisations[urlSlug] = organisationDetails[0].identifier;
+       }
+     },
+     (err: ServerResponse) => {
+       console.log('error while fetching the org details');
+     }
+     );
+   }
+  }
   /**
-   * Function used to serach user or org in registry
+   * Function used to search user or org in registry
    */
   searchRegistry(reqData) {
     const option = {
@@ -105,7 +128,7 @@ export class ProgramsService extends DataService implements CanActivate {
   * Function used map the user with user role in registry
   */
  mapUsertoContributorOrgReg (orgOsid, UserOsid) {
-  // Check if user is alredy part of the orgnisation
+  // Check if user is already part of the organisation
 
   if (!_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
     const userOrg = this.userService.userProfile.userRegData.User_Org;
@@ -587,6 +610,20 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.API_URL(req);
   }
 
+  /* Get the org details by filters*/
+  getOrganisationDetails(filters) {
+    const option = {
+      url: this.config.urlConFig.URLS.ADMIN.ORG_SEARCH,
+      data: {
+        request: {
+          filters: filters
+        }
+      }
+    };
+
+    return this.API_URL(option);
+  }
+
   /**
    * makes api call to get list of programs from ext framework Service
    */
@@ -602,7 +639,15 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
-    return this.API_URL(req);
+
+    // Check if slug is present in the URL, if yes then fetch the program those slug org only
+    const urlSlug = this.userService.slug;
+    if (urlSlug && !_.isEmpty(this._organisations[urlSlug])) {
+      req.data.request.filters['rootorg_id'] = this._organisations[urlSlug];
+      return this.API_URL(req);
+    } else {
+      return this.API_URL(req);
+    }
   }
 
   /**
