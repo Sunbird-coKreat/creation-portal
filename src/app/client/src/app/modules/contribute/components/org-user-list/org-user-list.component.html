@@ -4,6 +4,9 @@
       <div>
         <h4 class="sb-pageSection-title">{{orgName}}
         </h4>
+        <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8"
+         *ngIf="!showLoader">{{count}}
+        </span>
       </div>
       <div>
         <button class="sb-btn sb-btn-outline-primary sb-btn-normal ml-10 " (click)="copyOnLoad()"><i
@@ -14,7 +17,7 @@
       </div>
     </div>
   </div>
-  <app-org-users-list></app-org-users-list>
+  <app-org-users-list [isShowCountFromChild]="isShowCountFromChild"></app-org-users-list>
 </div>
 <!-- Modal popup for share link -->
 <sui-modal *ngIf="showNormalModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"

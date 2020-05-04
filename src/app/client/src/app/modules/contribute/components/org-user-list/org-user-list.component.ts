@@ -1,9 +1,10 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { ToasterService, ResourceService, NavigationHelperService, ConfigService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
 import { UserService } from '@sunbird/core';
 import * as _ from 'lodash-es';
+import { OrgUsersListComponent } from '../../../shared-feature/components/org-users-list/org-users-list.component';
 
 
 @Component({
@@ -12,6 +13,7 @@ import * as _ from 'lodash-es';
   styleUrls: ['./org-user-list.component.scss']
 })
 export class OrgUserListComponent implements OnInit, AfterViewInit {
+  @ViewChild(OrgUsersListComponent) childUserListComponent;
   data;
   position;
   options;
@@ -26,6 +28,8 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public contributorOrgUser: any = [];
   public orgDetails: any = {};
   public showLoader = true;
+  count = 0;
+  isShowCountFromChild = false;
 
   constructor(private toasterService: ToasterService, private configService: ConfigService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
@@ -76,6 +80,16 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
         }
       };
      });
+  }
+
+  ngDoCheck() {
+    if (this.count === this.childUserListComponent.contributorOrgUser.length) {
+    } else {
+      if (this.childUserListComponent.showLoader === false) {
+        this.count = this.childUserListComponent.contributorOrgUser.length;
+      }
+    }
+    this.showLoader = this.childUserListComponent.showLoader;
   }
 
   copyOnLoad() {

@@ -18,7 +18,7 @@ import { HttpClient } from '@angular/common/http';
 import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEventInput } from '@sunbird/telemetry';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import * as moment from 'moment';
-import * as alphaNumSort from 'alphanum-sort';
+//import * as alphaNumSort from 'alphanum-sort';
 
 @Component({
   selector: 'app-create-program',
@@ -435,17 +435,17 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.userBoard = this.userprofile.framework.board[0];
     }
 
-    this.frameworkCategories.forEach((element) => {
-      const sortedArray = alphaNumSort(_.reduce(element['terms'], (result, value) => {
-        result.push(value['name']);
-        return result;
-      }, []));
-      const sortedTermsArray = _.map(sortedArray, (name) => {
-        return _.find(element['terms'], { name: name });
-      });
-      this.programScope[element['code']] = sortedTermsArray;
-      this.originalProgramScope[element['code']] = sortedTermsArray;
-    });
+    //this.frameworkCategories.forEach((element) => {
+    //   const sortedArray = alphaNumSort(_.reduce(element['terms'], (result, value) => {
+    //     result.push(value['name']);
+    //     return result;
+    //   }, []));
+    //   const sortedTermsArray = _.map(sortedArray, (name) => {
+    //     return _.find(element['terms'], { name: name });
+    //   });
+    //   this.programScope[element['code']] = sortedTermsArray;
+    //   this.originalProgramScope[element['code']] = sortedTermsArray;
+    // });
 
     const Kindergarten = _.remove(this.programScope['gradeLevel'], (item) => {
       return item.name === 'Kindergarten';
