@@ -142,7 +142,9 @@
 						</dl>
 						<dl class="sb-meta-data mb-0 pr-8">
 							<dt class="sb__ellipsis">{{resourceService.frmelmnts.lbl.status}}</dt>
-							<dd><span>{{contributor?.nominationData?.status }}</span></dd>
+							<dd><span [ngClass]="{'sb-color-success':contributor?.nominationData?.status  == 'Approved',
+								'sb-color-warning':contributor?.nominationData?.status  == 'Pending'}">
+								{{contributor?.nominationData?.status }}</span></dd>
 						</dl>
 						<dl class="sb-meta-data mb-0 pr-8 w-30">
 							<dt class="sb__ellipsis">{{resourceService?.frmelmnts?.lbl?.contentType}}</dt>
@@ -225,7 +227,9 @@
       [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.reject}}</button>
 						<span
 							*ngIf="contributor?.nominationData?.status === 'Initiated' || contributor?.nominationData?.status === 'Approved' || contributor?.nominationData?.status === 'Rejected'">
-							Status: {{contributor?.nominationData?.status}}
+							Status: <span class="fs-0-92" [ngClass]="{'sb-color-gray-100':contributor?.nominationData?.status  == 'Initiated','sb-color-success':contributor?.nominationData?.status  == 'Approved',
+							'sb-color-warning':contributor?.nominationData?.status  == 'Pending'}">
+							{{contributor?.nominationData?.status}}</span>
 						</span>
 					</div>
 				</div>
