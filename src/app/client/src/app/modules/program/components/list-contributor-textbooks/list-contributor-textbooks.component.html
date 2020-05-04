@@ -227,7 +227,7 @@
       [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.reject}}</button>
 						<span
 							*ngIf="contributor?.nominationData?.status === 'Initiated' || contributor?.nominationData?.status === 'Approved' || contributor?.nominationData?.status === 'Rejected'">
-							Status: <span class="fs-0-92" [ngClass]="{'sb-color-gray-100':contributor?.nominationData?.status  == 'Initiated','sb-color-success':contributor?.nominationData?.status  == 'Approved',
+							{{resourceService.frmelmnts.lbl.status}}: <span class="fs-0-92" [ngClass]="{'sb-color-gray-100':contributor?.nominationData?.status  == 'Initiated','sb-color-success':contributor?.nominationData?.status  == 'Approved',
 							'sb-color-warning':contributor?.nominationData?.status  == 'Pending'}">
 							{{contributor?.nominationData?.status}}</span>
 						</span>
