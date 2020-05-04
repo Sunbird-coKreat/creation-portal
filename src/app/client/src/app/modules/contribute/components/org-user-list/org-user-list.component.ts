@@ -21,7 +21,6 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
   orgLink;
-  orgName;
   public userLists: any;
   public contributorOrgUser: any = [];
   public orgDetails: any = {};
@@ -48,7 +47,6 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
       ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
     this.orgLink = `${baseUrl}/contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
-    this.orgName = this.userService.userProfile.userRegData.Org.name;
   }
 
   ngAfterViewInit() {

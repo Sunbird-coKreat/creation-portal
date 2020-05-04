@@ -208,7 +208,7 @@
                                         <input type="checkbox" [checked]="data.isSelected || data.totalSampleContent" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
                                         <label></label>
                                     </div>
-                                    <button type="button" *ngIf="data.isSelected || data.totalSampleContent" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10 px-10" appTelemetryInteract [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('upload-sample', 'click', 'collection-list', {values: selectedCollectionIds})"
+                                    <button type="button" *ngIf="(data.isSelected || data.totalSampleContent) && canNominate()" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10 px-10" appTelemetryInteract [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('upload-sample', 'click', 'collection-list', {values: selectedCollectionIds})"
                                         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata" [telemetryInteractPdata]="telemetryInteractPdata">Upload Sample</button>
                                 </div>
                             </td>
@@ -220,156 +220,155 @@
                 <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0006'}"></app-no-result>
             </div>
         </div>
-    </div>
 
-    <div class="ui container pb-48 hidden hide">
-        <div class="sb-pageSection-header row my-20">
-            <h4 class="sb-pageSection-title six">{{programContext.name}}
-                <ng-template #popupTemplate>
-                    <div class="content">
-                        <div class="textbook-details ml-8">
-                            <div class="header"><strong>{{resourceService.frmelmnts.lbl.subject}}</strong></div>
-                            <div class="content">
-                                <label class="d-block fsmall font-weight-normal mb-0">{{sharedContext.subject.join(', ')}}</label>
-                            </div>
-                            <hr />
-                            <div class="header"><strong>{{resourceService.frmelmnts.lbl.profile.Classes}}</strong></div>
-                            <div class="content">
-                                <label class="d-block fsmall font-weight-normal mb-0">{{sharedContext.gradeLevel.join(', ')}}</label>
-                            </div>
-                            <hr />
-                            <div class="header">
-                                <strong>{{resourceService.frmelmnts.lbl.nominationEndDate}}</strong>
-                            </div>
-                            <div class="content">
-                                <label class="d-block fsmall font-weight-normal mb-0">
+        <div class="ui container pb-48 hidden hide">
+            <div class="sb-pageSection-header row my-20">
+                <h4 class="sb-pageSection-title six">{{programContext.name}}
+                    <ng-template #popupTemplate>
+                        <div class="content">
+                            <div class="textbook-details ml-8">
+                                <div class="header"><strong>{{resourceService.frmelmnts.lbl.subject}}</strong></div>
+                                <div class="content">
+                                    <label class="d-block fsmall font-weight-normal mb-0">{{sharedContext.subject.join(', ')}}</label>
+                                </div>
+                                <hr />
+                                <div class="header"><strong>{{resourceService.frmelmnts.lbl.profile.Classes}}</strong></div>
+                                <div class="content">
+                                    <label class="d-block fsmall font-weight-normal mb-0">{{sharedContext.gradeLevel.join(', ')}}</label>
+                                </div>
+                                <hr />
+                                <div class="header">
+                                    <strong>{{resourceService.frmelmnts.lbl.nominationEndDate}}</strong>
+                                </div>
+                                <div class="content">
+                                    <label class="d-block fsmall font-weight-normal mb-0">
                   {{programContext.nomination_enddate | date: medium }}
                 </label>
-                            </div>
-                            <hr />
-                            <div class="header">
-                                <strong>{{resourceService.frmelmnts.lbl.nominationShortlistingDate}}</strong>
-                            </div>
-                            <div class="content">
-                                <label class="d-block fsmall font-weight-normal mb-0">
+                                </div>
+                                <hr />
+                                <div class="header">
+                                    <strong>{{resourceService.frmelmnts.lbl.nominationShortlistingDate}}</strong>
+                                </div>
+                                <div class="content">
+                                    <label class="d-block fsmall font-weight-normal mb-0">
                   {{programContext.shortlisting_enddate | date: medium }}
                 </label>
-                            </div>
-                            <hr />
-                            <div class="header">
-                                <strong>{{resourceService.frmelmnts.lbl.contributionEndDate}}</strong>
-                            </div>
-                            <div class="content">
-                                <label class="d-block fsmall font-weight-normal mb-0">
+                                </div>
+                                <hr />
+                                <div class="header">
+                                    <strong>{{resourceService.frmelmnts.lbl.contributionEndDate}}</strong>
+                                </div>
+                                <div class="content">
+                                    <label class="d-block fsmall font-weight-normal mb-0">
                   {{programContext.content_submission_enddate | date: medium }}
                 </label>
-                            </div>
-                            <hr />
-                            <div class="header"><strong>{{resourceService.frmelmnts.lbl.programEndDate}}</strong></div>
-                            <div class="content">
-                                <label class="d-block fsmall font-weight-normal mb-0">
+                                </div>
+                                <hr />
+                                <div class="header"><strong>{{resourceService.frmelmnts.lbl.programEndDate}}</strong></div>
+                                <div class="content">
+                                    <label class="d-block fsmall font-weight-normal mb-0">
                   {{programContext.enddate | date: medium }}
                 </label>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </ng-template>
-                <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate">
+                    </ng-template>
+                    <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate">
         </i>
-            </h4>
-            <div class="pull-right">
-                <div *ngIf="nominateButton === 'show'">
-                    <button class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="!(selectedContentTypes.length || sessionContext?.nominationDetails?.content_types?.length)" (click)="showContentTypeModal= true;">{{resourceService.frmelmnts.btn.nominate}}</button>
-                </div>
-                <div class="two wide column column " *ngIf="nominateButton === 'hide'">
-                    <button class="sb-btn sb-btn-disabled sb-btn-normal">{{resourceService.frmelmnts.btn.nominate}}</button>
+                </h4>
+                <div class="pull-right">
+                    <div *ngIf="nominateButton === 'show'">
+                        <button class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="!(selectedContentTypes.length || sessionContext?.nominationDetails?.content_types?.length)" (click)="showContentTypeModal= true;">{{resourceService.frmelmnts.btn.nominate}}</button>
+                    </div>
+                    <div class="two wide column column " *ngIf="nominateButton === 'hide'">
+                        <button class="sb-btn sb-btn-disabled sb-btn-normal">{{resourceService.frmelmnts.btn.nominate}}</button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
-            <thead class="sb-table-header sb-table-thead-gray">
-                <tr>
-                    <th>{{resourceService.frmelmnts.lbl.textbook}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-                    <th>{{resourceService.frmelmnts.lbl.class}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-                    <th>{{resourceService.frmelmnts.lbl.profile.Medium}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-                    <th>{{resourceService.frmelmnts.lbl.chapters}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-                    <th>{{resourceService.frmelmnts.lbl.subject}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-                    <th class="text-center"></th>
-                </tr>
-            </thead>
-            <tbody class="sb-table-body">
-                <tr *ngFor="let data of collectionList">
-                    <td>
-                        <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
-                            {{data.name}}
-                        </div>
-                    </td>
-                    <td>
-                        <div suiPopup popupHeader="Grades" popupText="{{data.gradeLevel}}">{{data.gradeLevel}}</div>
-                    </td>
-                    <td>
-                        <div class="sb__ellipsis">{{data.medium}}</div>
-                    </td>
-                    <td>
-                        {{ data.childNodes ? data.childNodes.length : 0 }}
-                    </td>
-                    <td>
-                        <div class="sb__ellipsis">{{data.subject}}</div>
-                    </td>
-                    <td class="text-center">
-                        <input type="checkbox" name="{{data.identifier}}" (click)="nominationChecked(data.identifier)">
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div *ngIf="!objectKey(collectionList).length">
-            <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0006'}"></app-no-result>
-        </div>
-    </div>
-</div>
-<div *ngIf="currentStage !== 'collectionComponent'" style="margin-bottom: -60px;">
-    <app-chapter-list [chapterListComponentInput]="chapterListComponentInput" (selectedQuestionTypeTopic)="selectedQuestionTypeTopic"></app-chapter-list>
-</div>
-<div class="twelve wide column" *ngIf="!showLoader && showError">
-    <app-no-result [data]="{ messageText: 'resourceService.messages.fmsg.m0004'}"></app-no-result>
-</div>
-<div *ngIf='showLoader && !showError' class="ui container sb-chapter-list && currentStage === 'collectionComponent'">
-    <app-loader></app-loader>
-</div>
-
-<sui-modal *ngIf="showContentTypeModal" [mustScroll]="true" [isClosable]="false" [transitionDuration]="0" [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showContentTypeModal = false" #modal>
-    <div class="sb-modal-header">
-        {{resourceService.frmelmnts.lbl.contentTypesHint}}
-    </div>
-    <div class="sb-modal-content">
-        <p class="fs-0-785">{{resourceService.frmelmnts.lbl.contentTypesDescription}}</p>
-        <div class="mb-10" *ngFor="let contenttype of contentType">
-            <div class="sb-checkbox sb-checkbox-primary">
-                <input class="checking" [(ngModel)]="contenttype.isSelected" (change)="toggle(contenttype);" (click)="$event.stopPropagation()" type="checkbox">
-                <label for="check1" class="mb-0"> {{contenttype.name}}</label>
+            <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
+                <thead class="sb-table-header sb-table-thead-gray">
+                    <tr>
+                        <th>{{resourceService.frmelmnts.lbl.textbook}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+                        <th>{{resourceService.frmelmnts.lbl.class}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+                        <th>{{resourceService.frmelmnts.lbl.profile.Medium}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+                        <th>{{resourceService.frmelmnts.lbl.chapters}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+                        <th>{{resourceService.frmelmnts.lbl.subject}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+                        <th class="text-center"></th>
+                    </tr>
+                </thead>
+                <tbody class="sb-table-body">
+                    <tr *ngFor="let data of collectionList">
+                        <td>
+                            <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
+                                {{data.name}}
+                            </div>
+                        </td>
+                        <td>
+                            <div suiPopup popupHeader="Grades" popupText="{{data.gradeLevel}}">{{data.gradeLevel}}</div>
+                        </td>
+                        <td>
+                            <div class="sb__ellipsis">{{data.medium}}</div>
+                        </td>
+                        <td>
+                            {{ data.childNodes ? data.childNodes.length : 0 }}
+                        </td>
+                        <td>
+                            <div class="sb__ellipsis">{{data.subject}}</div>
+                        </td>
+                        <td class="text-center">
+                            <input type="checkbox" name="{{data.identifier}}" (click)="nominationChecked(data.identifier)">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div *ngIf="!objectKey(collectionList).length">
+                <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0006'}"></app-no-result>
             </div>
-            <!-- <sui-checkbox name="{{contenttype.name}}" (click)="toggle($event, contenttype, contenttype.value);">{{contenttype.name}}</sui-checkbox> -->
         </div>
     </div>
-    <div class="sb-modal-actions">
-        <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showContentTypeModal = false; toasterService.success(resourceService.messages.smsg.nomination.m001)" [disabled]="!selectedContentTypes.length" appTelemetryInteract [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('contentType-submit-button', 'click', 'collection-list', {values: selectedContentTypes})"
-            [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata" [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.submit}} </button>
-        <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showContentTypeModal = false; handleCancel(true)" appTelemetryInteract [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('contentType-cancel-button', 'click', 'collection-list')"
-            [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata" [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.cancel}}
+    <div *ngIf="currentStage !== 'collectionComponent'" style="margin-bottom: -60px;">
+        <app-chapter-list [chapterListComponentInput]="chapterListComponentInput" (selectedQuestionTypeTopic)="selectedQuestionTypeTopic"></app-chapter-list>
+    </div>
+    <div class="twelve wide column" *ngIf="!showLoader && showError">
+        <app-no-result [data]="{ messageText: 'resourceService.messages.fmsg.m0004'}"></app-no-result>
+    </div>
+    <div *ngIf='showLoader && !showError' class="ui container sb-chapter-list && currentStage === 'collectionComponent'">
+        <app-loader></app-loader>
+    </div>
+
+    <sui-modal *ngIf="showContentTypeModal" [mustScroll]="true" [isClosable]="false" [transitionDuration]="0" [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showContentTypeModal = false" #modal>
+        <div class="sb-modal-header">
+            {{resourceService.frmelmnts.lbl.contentTypesHint}}
+        </div>
+        <div class="sb-modal-content">
+            <p class="fs-0-785">{{resourceService.frmelmnts.lbl.contentTypesDescription}}</p>
+            <div class="mb-10" *ngFor="let contenttype of contentType">
+                <div class="sb-checkbox sb-checkbox-primary">
+                    <input class="checking" [(ngModel)]="contenttype.isSelected" (change)="toggle(contenttype);" (click)="$event.stopPropagation()" type="checkbox">
+                    <label for="check1" class="mb-0"> {{contenttype.name}}</label>
+                </div>
+                <!-- <sui-checkbox name="{{contenttype.name}}" (click)="toggle($event, contenttype, contenttype.value);">{{contenttype.name}}</sui-checkbox> -->
+            </div>
+        </div>
+        <div class="sb-modal-actions">
+            <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showContentTypeModal = false; toasterService.success(resourceService.messages.smsg.nomination.m001)" [disabled]="!selectedContentTypes.length" appTelemetryInteract [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('contentType-submit-button', 'click', 'collection-list', {values: selectedContentTypes})"
+                [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata" [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.submit}} </button>
+            <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showContentTypeModal = false; handleCancel(true)" appTelemetryInteract [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('contentType-cancel-button', 'click', 'collection-list')"
+                [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata" [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.cancel}}
     </button>
-    </div>
-</sui-modal>
-<sui-modal *ngIf="showNominateModal" [mustScroll]="true" [isClosable]="false" [transitionDuration]="0" [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showNominateModal = false" #nominationConfirmationModal>
-    <div class="sb-modal-header">
-        {{resourceService.frmelmnts.lbl.submitNomination}}
-    </div>
-    <div class="sb-modal-content">
-        <p class="mt-10">{{resourceService.frmelmnts.lbl.nominationDescription}}</p>
-    </div>
-    <div class="sb-modal-actions">
-        <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="addNomination();"> {{resourceService.frmelmnts.btn.submit}} </button>
-        <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="cancelNomination();" appTelemetryInteract> {{resourceService.frmelmnts.btn.cancel}}
+        </div>
+    </sui-modal>
+    <sui-modal *ngIf="showNominateModal" [mustScroll]="true" [isClosable]="false" [transitionDuration]="0" [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showNominateModal = false" #nominationConfirmationModal>
+        <div class="sb-modal-header">
+            {{resourceService.frmelmnts.lbl.submitNomination}}
+        </div>
+        <div class="sb-modal-content">
+            <p class="mt-10">{{resourceService.frmelmnts.lbl.nominationDescription}}</p>
+        </div>
+        <div class="sb-modal-actions">
+            <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="addNomination();"> {{resourceService.frmelmnts.btn.submit}} </button>
+            <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="cancelNomination();" appTelemetryInteract> {{resourceService.frmelmnts.btn.cancel}}
     </button>
-    </div>
-</sui-modal>
+        </div>
+    </sui-modal>
