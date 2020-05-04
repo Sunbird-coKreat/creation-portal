@@ -50,6 +50,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   public nominateButton = 'hide';
   public nominate = '';
   public programContentTypes: string;
+  showNominateModal = false;
   isMediumClickable = false;
   showLoader = true;
   selectedIndex = -1;
@@ -160,6 +161,14 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  cancelNomination() {
+    this.showNominateModal = false;
+    const router = this.router;
+    setTimeout(function() {
+      router.navigateByUrl('/contribute');
+    }, 10);
+  }
+
   sortCollection(column) {
     this.collectionList = this.programsService.sortCollection(this.tempSortCollectionList, column, this.direction);
     if (this.direction === 'asc' || this.direction === '') {
@@ -218,6 +227,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
               this.tempSortCollectionList = this.collectionList;
               this.selectedCollectionIds = _.uniq(this.selectedCollectionIds);
               this.toggleNominationButton();
+              this.showLoader = false;
             },
             (error) => {
               console.log(error);
@@ -226,8 +236,9 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
               this.toasterService.error(errorMes || 'Fetching textbooks failed. Please try again...');
             }
           );
+      } else {
+        this.showLoader = false;
       }
-      this.showLoader = false;
       this.showError = false;
     });
   }
@@ -445,8 +456,12 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       };
        if (res.result && res.result.length) {
         this.programsService.post(req).subscribe((data) => {
+          this.showNominateModal = false;
+          const router = this.router;
+          setTimeout(function() {
+            router.navigateByUrl('/contribute/myenrollprograms');
+          }, 10);
           this.toasterService.success('Nomination sent');
-          this.router.navigateByUrl('/contribute/myenrollprograms');
         }, error => {
           this.toasterService.error('Nomination submit failed... Please try later');
         });
@@ -458,8 +473,12 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
           req.data.request['organisation_id'] = this.getUserOrgId();
         }
         this.programsService.post(req).subscribe((data) => {
+          this.showNominateModal = false;
+          const router = this.router;
+          setTimeout(function() {
+            router.navigateByUrl('/contribute/myenrollprograms');
+          }, 10);
           this.toasterService.success('Nomination sent');
-          this.router.navigateByUrl('/contribute/myenrollprograms');
         }, error => {
           this.toasterService.error('Nomination submit failed... Please try later');
         });

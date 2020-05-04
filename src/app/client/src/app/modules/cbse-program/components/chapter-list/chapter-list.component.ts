@@ -421,7 +421,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         if (this.sourcingOrgReviewer && data.status === 'Live' &&
         // tslint:disable-next-line:max-line-length
         !_.includes([...this.storedCollectionData.acceptedContents || [], ...this.storedCollectionData.rejectedContents || []], data.identifier)) {
-          this.countData['pendingreview'] = this.countData['pendingreview'] + 1;
+          this.countData['pendingReview'] = this.countData['pendingReview'] + 1;
         }
       }
     }
@@ -467,9 +467,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   shouldContentBeVisible(content) {
     const creatorViewRole = this.actions.showCreatorView.roles.includes(this.sessionContext.currentRoleId);
     const reviewerViewRole = this.actions.showReviewerView.roles.includes(this.sessionContext.currentRoleId);
-    if (this.isSourcingOrgReviewer()) {
+    if (this.isSourcingOrgReviewer() && this.sourcingOrgReviewer) {
       if (reviewerViewRole && content.sampleContent === true
-        && this.getNominatedUserId === content.createdBy) {
+        && this.getNominatedUserId() === content.createdBy) {
           return true;
         } else if (reviewerViewRole && content.status === 'Live') {
           if (content.contentType !== 'TextBook' && content.contentType !== 'TextBookUnit' &&
@@ -768,5 +768,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   isSourcingOrgReviewer () {
     return !!(this.userService.userProfile.userRoles.includes('ORG_ADMIN') ||
     this.userService.userProfile.userRoles.includes('CONTENT_REVIEWER'));
+  }
+
+  isNominationPendingOrInitiated() {
+    return !!(this.sessionContext &&
+      this.sessionContext.nominationDetails &&
+      _.includes(['Pending', 'Initiated'], this.sessionContext.nominationDetails.status));
   }
 }

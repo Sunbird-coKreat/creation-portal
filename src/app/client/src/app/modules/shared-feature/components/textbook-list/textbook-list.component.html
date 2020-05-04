@@ -39,7 +39,8 @@
 							</span>
 						</th>
 						<th class="w-10">{{resourceService?.frmelmnts?.lbl?.chapters}}</th>
-						<!-- <th>{{resourceService.frmelmnts.lbl.status}}</th> -->
+						<th>{{resourceService.frmelmnts.lbl.status}}</th>
+						<th>&nbsp;</th>
 					</tr>
 				</thead>
 				<tbody class="sb-table-body w-100 o-y-auto max-height" *ngIf="collections.length">
@@ -65,7 +66,8 @@
 							</div>
 						</td>
 						<td>{{ data.chapterCount || 0 }}</td>
-						<!-- <td>{{ (data?.pendingBySourceOrg?.length || 0) + " " + resourceService?.frmelmnts?.lbl?.pendingReview }} <button type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(data)">{{resourceService.frmelmnts.lbl.open}}</button></td> -->
+						<td>{{ (data?.pendingBySourceOrg?.length || 0) + " " + resourceService?.frmelmnts?.lbl?.pendingReview }}</td>
+						<td><button type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(data)">{{resourceService.frmelmnts.lbl.open}}</button></td>
 					</tr>
 				</tbody>
 			</table>

@@ -41,7 +41,7 @@ export class ProgramListComponent implements OnInit {
   public showLoader = true;
   public roleMapping = [];
   public iscontributeOrgAdmin = true;
-  constructor(private programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
+  constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService ) { }
 
@@ -69,14 +69,14 @@ export class ProgramListComponent implements OnInit {
         }
 
         this.isContributor = this.router.url.includes('/contribute');
-        this.activeAllProgramsMenu = this.router.isActive('/contribute', true);
-        this.activeMyProgramsMenu = this.router.isActive('/contribute/myenrollprograms', true);
+        this.activeAllProgramsMenu =  this.router.isActive('/contribute', true);
+        this.activeMyProgramsMenu = this.isContributorOrgUser() || this.router.isActive('/contribute/myenrollprograms', true);
 
         if (this.isContributor) {
-          if (this.activeAllProgramsMenu) {
-            this.getAllProgramsForContrib('public', 'Live');
-          } else if (this.activeMyProgramsMenu) {
+          if (this.activeMyProgramsMenu) {
             this.getMyProgramsForContrib('Live');
+          } else if (this.activeAllProgramsMenu) {
+            this.getAllProgramsForContrib('public', 'Live');
           } else {
             this.showLoader = false;
           }
@@ -85,6 +85,18 @@ export class ProgramListComponent implements OnInit {
         }
       })
     ).subscribe();
+  }
+
+  isUserOrgAdmin() {
+    return !!(this.userService.userProfile.userRegData &&
+      this.userService.userProfile.userRegData.User_Org &&
+      this.userService.userProfile.userRegData.User_Org.roles.includes('admin'));
+  }
+
+  isContributorOrgUser() {
+    return !!(this.userService.userProfile.userRegData &&
+      this.userService.userProfile.userRegData.User_Org &&
+      this.userService.userProfile.userRegData.User_Org.roles.includes('user'));
   }
 
   /**
@@ -126,8 +138,11 @@ export class ProgramListComponent implements OnInit {
               this.toasterService.error(_.get(error, 'error.params.errmsg') || this.resourceService.messages.emsg.projects.m0001);
             }
           );
+        } else {
+          this.showLoader = false;
         }
       }, error => {
+        this.showLoader = false;
         this.toasterService.error(_.get(error, 'error.params.errmsg') || this.resourceService.messages.emsg.projects.m0001);
       }
     );
