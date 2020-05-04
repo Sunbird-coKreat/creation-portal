@@ -71,6 +71,8 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
   public toasterService: ToasterService, public actionService: ActionService,
   private collectionHierarchyService: CollectionHierarchyService) { }
+  showNominateModal = false;
+
 
   ngOnInit() {
     this.programId = this.activatedRoute.snapshot.params.programId;
@@ -154,6 +156,14 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       this.toasterService.error(errorMes || this.resourceService.messages.emsg.project.m0001);
     });
   }
+  cancelNomination() {
+    this.showNominateModal = false;
+    const router = this.router;
+    setTimeout(function() {
+      router.navigateByUrl('/sourcing');
+    }, 10);
+  }
+
   fetchNominationCounts() {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
@@ -306,9 +316,14 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       }
      this.programsService.updateNomination(req).subscribe((res) => {
        this.showRequestChangesPopup = false;
-       setTimeout(() => {
-         this.router.navigate(['/sourcing/nominations/' + this.programId]);
-       });
+      //  setTimeout(() => {
+      //    this.router.navigate(['/sourcing/nominations/' + this.programId]);
+      //  });
+       this.showNominateModal = false;
+          const router = this.router;
+          setTimeout(function() {
+            router.navigate(['/sourcing/nominations/' + this.programId])
+          }, 10);
         this.toasterService.success(this.resourceService.messages.smsg.m0010);
      },
      (err) => {
