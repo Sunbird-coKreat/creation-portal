@@ -5,12 +5,12 @@
   [telemetryInteractCdata]="telemetryInteractCdata"
   [telemetryInteractPdata]="telemetryInteractPdata"
   [isOpen]=" (collection.identifier === sessionContext.lastOpenedUnitChild || collection.identifier === sessionContext.lastOpenedUnitParent) ? true : false">
-    <div title class="sb-accordion-title d-flex flex-ai-center sb-color-primary"><span class="chapter-status mr-16"></span>
-      {{collection.name}}
-      <div class="ml-auto pr-40 sb-color-black" *ngIf="isSourcingOrgReviewer() && sourcingOrgReviewer && sessionContext.nominationDetails && sessionContext.nominationDetails.status !== 'Approved'">
+    <div title class="sb-accordion-title d-flex flex-jc-flex-end sb-color-primary"><span class="chapter-status mr-16"></span>
+     <span class="flex-14"> {{collection.name}}</span>
+      <div class="sb-color-black flex-3" *ngIf="isSourcingOrgReviewer() && sourcingOrgReviewer && sessionContext.nominationDetails && sessionContext.nominationDetails.status !== 'Approved'">
         <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.totalContent}}:</span> <span class="font-weight-bold"> {{collection.totalLeaf}}</span>
       </div>
-     <div class="ml-auto d-flex">
+     <div class="d-flex">
       <button class="sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius"
         *ngIf="visibility && visibility['showAddresource']"
         appTelemetryInteract
