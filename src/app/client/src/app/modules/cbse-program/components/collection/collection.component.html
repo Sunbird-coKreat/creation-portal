@@ -121,7 +121,7 @@
           <div>
               <div *ngIf="canNominate() && sessionContext?.nominationDetails?.status === 'Pending' || 'Initiated'" class="d-inline-block">
                 <button class="sb-btn sb-btn-normal sb-btn-primary px-40"  [disabled]="!(selectedContentTypes.length && selectedCollectionIds.length)"
-                 (click)="addNomination()" appTelemetryInteract
+                 (click)="showNominateModal= true;" appTelemetryInteract
                  [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('nominate-program', 'click', 'collection-list')"
                  [telemetryInteractObject]="telemetryInteractObject"
                  [telemetryInteractCdata]="telemetryInteractCdata"
@@ -382,5 +382,18 @@
     [telemetryInteractCdata]="telemetryInteractCdata"
     [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.cancel}}
     </button>
+  </div>
+</sui-modal>
+<sui-modal *ngIf="showNominateModal" [mustScroll]="true" [isClosable]="false" [transitionDuration]="0" [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showNominateModal = false" #nominationConfirmationModal>
+  <div class="sb-modal-header">
+      {{resourceService.frmelmnts.lbl.submitNomination}}
+  </div>
+  <div class="sb-modal-content">
+      <p class="mt-10">{{resourceService.frmelmnts.lbl.nominationDescription}}</p>
+  </div>
+  <div class="sb-modal-actions">
+      <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="addNomination();"> {{resourceService.frmelmnts.btn.submit}} </button>
+      <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="cancelNomination();" appTelemetryInteract> {{resourceService.frmelmnts.btn.cancel}}
+</button>
   </div>
 </sui-modal>
