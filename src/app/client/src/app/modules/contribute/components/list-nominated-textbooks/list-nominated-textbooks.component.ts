@@ -316,9 +316,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       }
     };
 
-    if (!_.isEmpty(this.userService.userProfile.userRegData)
-    && this.userService.userProfile.userRegData.User_Org
-    && !this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
+    if (this.checkIfUserBelongsToOrg()) {
       req.data.request.filters['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
     } else {
       req.data.request.filters['user_id'] = this.userService.userProfile.userId;
@@ -448,9 +446,13 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   }
 
   isUserOrgAdmin() {
-    return !!(this.userService.userProfile.userRegData &&
-      this.userService.userProfile.userRegData.User_Org &&
+    return !!(this.checkIfUserBelongsToOrg() &&
       this.userService.userProfile.userRegData.User_Org.roles.includes('admin'));
+  }
+
+  checkIfUserBelongsToOrg() {
+    return !!(this.userService.userProfile.userRegData &&
+      this.userService.userProfile.userRegData.User_Org);
   }
 
   ngOnDestroy() {
