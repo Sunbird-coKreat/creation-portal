@@ -26,6 +26,7 @@ export class RecursiveTreeComponent implements OnInit {
   public childlevel;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
+  public sourcingOrgReviewer: boolean;
   constructor(public userService: UserService, public configService: ConfigService,
     public programTelemetryService: ProgramTelemetryService, public resourceService: ResourceService, public router: Router) { }
 
@@ -33,6 +34,8 @@ export class RecursiveTreeComponent implements OnInit {
     this.childlevel = this.level + 1;
     const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
     this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
+    this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
+
     this.visibility = {};
     // tslint:disable-next-line:max-line-length
     this.visibility['showAddresource'] = _.includes(this.programContext.config.actions.showAddResource.roles, this.sessionContext.currentRoleId);
