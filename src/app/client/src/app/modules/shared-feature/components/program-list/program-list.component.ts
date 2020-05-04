@@ -138,8 +138,11 @@ export class ProgramListComponent implements OnInit {
               this.toasterService.error(_.get(error, 'error.params.errmsg') || this.resourceService.messages.emsg.projects.m0001);
             }
           );
+        } else {
+          this.showLoader = false;
         }
       }, error => {
+        this.showLoader = false;
         this.toasterService.error(_.get(error, 'error.params.errmsg') || this.resourceService.messages.emsg.projects.m0001);
       }
     );

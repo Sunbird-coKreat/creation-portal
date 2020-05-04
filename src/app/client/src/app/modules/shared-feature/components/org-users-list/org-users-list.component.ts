@@ -1,8 +1,9 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { ResourceService } from '@sunbird/shared';
+import { ResourceService, ToasterService } from '@sunbird/shared';
 import { UserService, RegistryService, ProgramsService } from '@sunbird/core';
 import * as _ from 'lodash-es';
 import { forkJoin } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 
 @Component({
@@ -16,10 +17,12 @@ export class OrgUsersListComponent implements OnInit {
   public direction = 'asc';
   public sortColumn = '';
   public orgDetails: any = {};
+  public userIds: any = [];
   public showLoader = true;
+  public roles = [{ name: 'User', value: 'user'}, { name: 'Admin', value: 'admin'}];
 
   constructor( public resourceService: ResourceService, public userService: UserService,
-    public registryService: RegistryService, public programsService: ProgramsService) { }
+    public registryService: RegistryService, public programsService: ProgramsService, public toasterService: ToasterService) { }
   ngOnInit(): void {
     this.getContributionOrgUsers();
   }
@@ -34,48 +37,99 @@ export class OrgUsersListComponent implements OnInit {
     this.sortColumn = column;
   }
 
+  checkIfUserBelongsToOrg() {
+    return !!(this.userService.userProfile.userRegData &&
+      this.userService.userProfile.userRegData.User_Org);
+  }
+
   getContributionOrgUsers() {
-    const baseUrl = ( <HTMLInputElement> document.getElementById('portalBaseUrl')) ?
-      ( <HTMLInputElement> document.getElementById('portalBaseUrl')).value : '';
-    if (this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org) {
-      const orgUsers = this.registryService.getContributionOrgUsers(this.userService.userProfile.userRegData.User_Org.orgId);
-      this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
-      this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
-      this.orgDetails.orgLink = `${baseUrl}contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
-      orgUsers.subscribe(response => {
+    const userRegData = _.get(this.userService, 'userProfile.userRegData');
+    if (this.checkIfUserBelongsToOrg()) {
+      this.registryService.getContributionOrgUsers(userRegData.User_Org.orgId).subscribe(response => {
         const result = _.get(response, 'result');
         if (!result || _.isEmpty(result)) {
+          this.showLoader = false;
           console.log('NO USER FOUND');
-        } else {
-          // get Ids of all users whose role is 'user'
-          const userIds = _.map(_.filter(result[_.first(_.keys(result))], ['roles', ['user']]), 'userId');
-          const getUserDetails = _.map(userIds, id => this.registryService.getUserDetails(id));
-          forkJoin(...getUserDetails)
-            .subscribe((res: any) => {
-              if (res) {
-                _.forEach(res, r => {
-                  if (r.result && r.result.User) {
-                    let creator = r.result.User.firstName;
-                    if (r.result.User.lastName) {
-                      creator = creator + ' ' + r.result.User.lastName;
-                    }
-                    r.result.User.fullName = creator;
-                    this.contributorOrgUser.push(r.result.User);
-                  }
-                });
-                this.tempSortOrgUser = this.contributorOrgUser;
-              }
-              this.showLoader = false;
-            }, error => {
-              console.log(error);
-              this.showLoader = false;
-            });
-            this.showLoader = false;
+          return;
         }
+        const getUserDetails = _.map(result.User_Org, userOrg => {
+          return this.registryService.getUserDetails(userOrg.userId)
+          .pipe(
+            tap((res: any) => {
+              const user = _.get(res, 'result.User');
+              // Currently logged in user should not be in the list
+              if (_.isEmpty(user) || user.userId === userRegData.User.userId) {
+                return;
+              }
+              user.fullName = user.firstName;
+              if (user.lastName) {
+                user.fullName += ' ' + user.lastName;
+              }
+              user.selectedRole = _.first(userOrg.roles);
+              user.userOrg = userOrg;
+              this.contributorOrgUser.push(user);
+              this.tempSortOrgUser.push(user);
+              this.userIds.push(user.userId);
+            }
+          ));
+        });
+        forkJoin(getUserDetails)
+        .subscribe((res: any) => {
+          this.getUsersDetails();
+        }, error => {
+          console.log(error);
+        });
       }, error => {
         console.log(error);
       });
     }
   }
 
+  getUsersDetails() {
+    const req = {
+      'identifier': _.compact(this.userIds)
+    };
+    this.programsService.getOrgUsersDetails(req).subscribe((response) => {
+      const users = _.get(response, 'result.response.content');
+      if (_.isEmpty(users)) {
+        this.showLoader = false;
+        console.log('NO USER FOUND');
+        return;
+      }
+      _.forEach(users, (user, index) => {
+        const contribUser = _.find(this.contributorOrgUser, (u) => {
+          return u.userId === user.identifier;
+        });
+        if (contribUser) {
+          if (!_.isEmpty(user.maskedEmail)) {
+            contribUser.contact = user.maskedEmail;
+          }
+          if (!_.isEmpty(user.maskedPhone)) {
+            contribUser.contact = user.maskedPhone;
+          }
+        }
+        if (index === users.length - 1) {
+          this.showLoader = false;
+        }
+      });
+    }, error => {
+      this.showLoader = false;
+      console.log(error);
+    });
+  }
+
+  onRoleChange(user) {
+    const selectedRole = _.get(user, 'selectedRole');
+    const osid = _.get(user, 'userOrg.osid');
+
+    this.programsService.updateUserRole(osid, [selectedRole]).subscribe(
+      (res) => {
+        this.toasterService.success(this.resourceService.messages.smsg.m0065);
+      },
+      (error) => {
+        console.log(error);
+        this.toasterService.error(this.resourceService.messages.emsg.m0077);
+      }
+    );
+  }
 }
