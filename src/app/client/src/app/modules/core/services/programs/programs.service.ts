@@ -621,7 +621,7 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
 
-    return this.API_URL(option);
+    return this.publicDataService.post(option);
   }
 
   /**
