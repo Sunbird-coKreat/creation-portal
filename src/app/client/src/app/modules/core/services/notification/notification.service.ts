@@ -23,7 +23,7 @@ export class NotificationService {
         request: reqData
       }
     };
-
+    console.log('option', option);
     return this.learnerService.post(option).pipe(
       mergeMap((data: ServerResponse) => {
         const response = _.get(data, 'result.response');
@@ -47,9 +47,9 @@ export class NotificationService {
         if (!_.isEmpty(user.email)) {
           requests.push(this.sendEmailNotification(nomination));
         }
-        // if (!_.isEmpty(user.phone)) {
-        //   requests.push(this.sendSmsNotification(nomination));
-        // }
+        if (!_.isEmpty(user.phone)) {
+          requests.push(this.sendSmsNotification(nomination));
+        }
         forkJoin(requests).subscribe((response: any) => {
           return of(response);
         }, error => {
@@ -95,6 +95,7 @@ export class NotificationService {
       recipientUserIds: [nomination.user_id],
       emailTemplateType: this.getTemplate(nomination.status, mode),
       orgName: nomination.programData.name,
+      subject: 'VidyaDaan',
       body: 'VidyaDaan'
     };
     return this.sendNotification(request);
@@ -102,13 +103,11 @@ export class NotificationService {
 
   getTemplate(status, type) {
     let template = '';
-    if (type === 'email') {
-      if (status === 'Approved') {
-        template = 'emailNominationAccept';
-      }
-      if (status === 'Rejected') {
-        template = 'emailNominationReject';
-      }
+    if (status === 'Approved') {
+      template = type + 'NominationAccept';
+    }
+    if (status === 'Rejected') {
+      template = type + 'NominationReject';
     }
     return template;
   }
