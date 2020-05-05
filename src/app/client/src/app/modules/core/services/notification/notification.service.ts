@@ -73,7 +73,7 @@ export class NotificationService {
 
   getEmailSubject(nomination: any) {
     let status = '';
-    let subject = 'VidyaDaan: Your nomination for {PROJECT_NAME} project is {NOMINATION_STATUS}';
+    let subject = this.resourceService.messages.stmsg.notification.subject;
     subject = _.replace(subject, '{PROJECT_NAME}', nomination.programData.name);
     if (nomination.status === 'Approved' || nomination.status === 'Pending') {
       status = 'accepted';
@@ -109,7 +109,7 @@ export class NotificationService {
         if (_.isEmpty(configuration)) {
           return throwError('Failed to get the sms template');
         }
-        const url = `${window.location.protocol}//${window.location.host}/`;
+        const url = window.location.origin;
         let body = configuration.value;
         body = _.replace(body, '$url', url);
         body = _.replace(body, '$projectName', nomination.programData.name);
@@ -118,7 +118,6 @@ export class NotificationService {
           mode: 'sms',
           subject: 'VidyaDaan',
           body: body,
-          emailTemplateType: template,
           recipientUserIds: [nomination.user_id]
         };
         return this.sendNotification(request).subscribe();
