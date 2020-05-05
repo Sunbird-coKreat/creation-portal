@@ -22,6 +22,7 @@ import { DynamicModule } from 'ng-dynamic-component';
 import { CbseProgramModule } from '../../modules/cbse-program/cbse-program.module';
 import { CollectionComponent, DashboardComponent, ChapterListComponent } from '../cbse-program';
 import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
+import{ HelpPageComponent } from '../contribute/components/help-page/help-page.component';
 
 @NgModule({
   declarations: [ListAllProgramsComponent,
@@ -29,7 +30,7 @@ import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
     ProgramComponent, OnboardPopupComponent,
     ProgramHeaderComponent, CreateProgramComponent,
     ProgramNominationsComponent, ListNominationsComponent,
-    ListContributorTextbooksComponent, ContributorProfilePopupComponent],
+    ListContributorTextbooksComponent, ContributorProfilePopupComponent,HelpPageComponent],
   imports: [
   SuiModule,
     CommonModule,
