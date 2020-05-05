@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ProgramComponent, CreateProgramComponent, ProgramNominationsComponent, ListContributorTextbooksComponent } from './components';
 import { AuthGuard } from '../core/guard/auth-gard.service';
-import { HelpPageComponent } from '../contribute/components/help-page/help-page.component';
+import { HelpPageComponent } from '../shared-feature/components/help-page/help-page.component';
 
 const routes: Routes = [{
   path: '', component: ListAllProgramsComponent, canActivate: [ProgramsService, AuthGuard],

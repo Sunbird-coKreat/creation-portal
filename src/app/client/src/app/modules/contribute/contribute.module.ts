@@ -22,7 +22,6 @@ import { OrgUserListComponent } from './components/org-user-list/org-user-list.c
 import { OrgContriAdminComponent } from './components/org-contri-admin/org-contri-admin.component';
 import { ContriDashboardComponent } from './components/dashboard/dashboard.component';
 import { SharedFeatureModule } from '../shared-feature/shared-feature.module';
-import { HelpPageComponent } from './components/help-page/help-page.component';
 
 @NgModule({
   declarations: [
@@ -34,8 +33,7 @@ import { HelpPageComponent } from './components/help-page/help-page.component';
     ListNominatedTextbooksComponent,
     OrgUserListComponent,
     OrgContriAdminComponent,
-    ContriDashboardComponent,
-    HelpPageComponent],
+    ContriDashboardComponent],
   imports: [
     SuiModule,
     CommonModule,

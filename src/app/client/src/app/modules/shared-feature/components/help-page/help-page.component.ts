@@ -1,5 +1,5 @@
 import { UserService } from '@sunbird/core';
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import * as _ from 'lodash-es';
 import { ConfigService, NavigationHelperService } from '@sunbird/shared';
 import { IImpressionEventInput} from '@sunbird/telemetry';
@@ -13,8 +13,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class HelpPageComponent implements OnInit, AfterViewInit {
 
   public telemetryImpression: IImpressionEventInput;
+  @ViewChild('video1') video1: ElementRef;
+  @ViewChild('video2') video2: ElementRef;
   constructor(public userService: UserService, private configService: ConfigService, private activatedRoute: ActivatedRoute,
-              private router: Router, private navigationHelperService: NavigationHelperService) { }
+              public router: Router, private navigationHelperService: NavigationHelperService) { }
 
   ngOnInit() {
   }
@@ -41,5 +43,13 @@ export class HelpPageComponent implements OnInit, AfterViewInit {
         }
       };
     });
+  }
+
+  pauseVideo(videoId) {
+    if (videoId === 'video1') {
+      this.video1.nativeElement.pause();
+    } else {
+      this.video2.nativeElement.pause();
+    }
   }
 }
