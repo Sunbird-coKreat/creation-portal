@@ -67,10 +67,15 @@ export class ProgramListComponent implements OnInit {
         if (this.router.url.includes('/contribute/join/' + orgId)) {
             this.programsService.addUsertoContributorOrg(orgId);
         }
+        if (this.isContributorOrgUser()
+        && !this.router.url.includes('/sourcing')
+        &&  !this.router.isActive('/contribute/myenrollprograms', true)) {
+          return this.router.navigateByUrl('/contribute/myenrollprograms');
+        }
 
         this.isContributor = this.router.url.includes('/contribute');
         this.activeAllProgramsMenu =  this.router.isActive('/contribute', true);
-        this.activeMyProgramsMenu = this.isContributorOrgUser() || this.router.isActive('/contribute/myenrollprograms', true);
+        this.activeMyProgramsMenu = this.router.isActive('/contribute/myenrollprograms', true);
 
         if (this.isContributor) {
           if (this.activeMyProgramsMenu) {
