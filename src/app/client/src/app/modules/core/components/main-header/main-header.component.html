@@ -18,7 +18,7 @@
             </div>
             <div class="six wide column p-0 d-flex flex-jc-flex-end flex-ai-center">
                 <app-main-menu class="d-flex computer only ml-auto"></app-main-menu>
-                <button routerLink="sourcing/create-program" class="px-10 sb-btn sb-btn-normal sb-btn-outline-primary" *ngIf="sourcingOrgAdmin && this.router.url.includes('/sourcing') && !this.router.url.includes('sourcing/create-program')"
+                <button routerLink="sourcing/create-program" class="px-10 sb-btn sb-btn-normal sb-btn-outline-primary" *ngIf="sourcingOrgAdmin && this.router.url.includes('/sourcing') && !this.router.url.includes('sourcing/create-program') && !this.router.url.includes('sourcing/help')"
                     appTelemetryInteract
             [telemetryInteractEdata]="getTelemetryInteractEdata('create-program', 'click', 'main-header')"
             [telemetryInteractObject]="telemetryInteractObject"
