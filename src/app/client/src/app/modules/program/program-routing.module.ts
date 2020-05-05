@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ProgramComponent, CreateProgramComponent, ProgramNominationsComponent, ListContributorTextbooksComponent } from './components';
 import { AuthGuard } from '../core/guard/auth-gard.service';
+import { HelpPageComponent } from '../contribute/components/help-page/help-page.component';
 
 const routes: Routes = [{
   path: '', component: ListAllProgramsComponent, canActivate: [ProgramsService, AuthGuard],
@@ -38,6 +39,12 @@ const routes: Routes = [{
   data: {
     telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'contributor-details' }
   }
+},
+{
+  path: 'help', component: HelpPageComponent, pathMatch: 'full',
+  data: {
+    telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'help-page' }
+  },
 }
 ];
 
