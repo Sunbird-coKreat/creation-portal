@@ -446,7 +446,8 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   }
 
   isUserOrgAdmin() {
-    return !!(this.checkIfUserBelongsToOrg() &&
+    return !!(this.userService.userProfile.userRegData &&
+      this.userService.userProfile.userRegData.User_Org &&
       this.userService.userProfile.userRegData.User_Org.roles.includes('admin'));
   }
 

@@ -93,12 +93,14 @@ export class ProgramListComponent implements OnInit {
   }
 
   isUserOrgAdmin() {
-    return !!(this.checkIfUserBelongsToOrg() &&
+    return !!(this.userService.userProfile.userRegData &&
+      this.userService.userProfile.userRegData.User_Org &&
       this.userService.userProfile.userRegData.User_Org.roles.includes('admin'));
   }
 
   isContributorOrgUser() {
-    return !!(this.checkIfUserBelongsToOrg() &&
+    return !!(this.userService.userProfile.userRegData &&
+      this.userService.userProfile.userRegData.User_Org &&
       this.userService.userProfile.userRegData.User_Org.roles.includes('user'));
   }
 
