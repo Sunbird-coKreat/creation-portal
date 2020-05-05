@@ -262,6 +262,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       (res: any) => {
         if (res && res.result && res.result.content && res.result.content.length) {
           this.programCollections = res.result.content;
+          this.programCollections.nominationsList =  this.nominations;
         }
       },
       (err) => {

@@ -93,6 +93,16 @@ export class TextbookListComponent implements OnInit {
               this.contentStatusCounts = this.collectionHierarchyService.getContentCountsForAll([], data);
             }
             this.collections = this.collectionHierarchyService.getIndividualCollectionStatus(this.contentStatusCounts, data);
+            _.forEach(this.collections, (collection) => {
+              let nominationCount = 0;
+              _.forEach(data.nominationsList
+                , (nominations) => {
+                  if (_.includes(nominations.nominationData.collection_ids, collection.identifier)) {
+                    nominationCount++;
+                  }
+              });
+              collection['nominationCount'] = nominationCount;
+            });
             this.tempSortCollections = this.collections;
             this.showLoader = false;
           },
@@ -110,5 +120,33 @@ export class TextbookListComponent implements OnInit {
 
   viewContribution(collection) {
     this.selectedCollection.emit(collection);
+  }
+
+  downloadTextbookList() {
+    const filename = `Textbook list for project - ${this.programDetails.name}`;
+    const title = filename;
+    let tableData = [];
+      _.forEach(this.collections
+      , (collection) => {
+        tableData.push({
+            'title': collection.name,
+            'medium': collection.medium,
+            'gradeLevel': _.toString(collection.gradeLevel),
+            'subject': collection.subject,
+            'chapterCount': collection.chapterCount,
+            'nominationCount': collection.nominationCount,
+            'totalSampleContent': collection.totalSampleContent,
+          });
+    });
+    const headers = [
+      this.resourceService.frmelmnts.lbl.title,
+      this.resourceService.frmelmnts.lbl.medium,
+      this.resourceService.frmelmnts.lbl.class,
+      this.resourceService.frmelmnts.lbl.subject,
+      this.resourceService.frmelmnts.lbl.chapters,
+      this.resourceService.frmelmnts.lbl.nominations,
+      this.resourceService.frmelmnts.lbl.samples,
+    ];
+    this.programsService.downloadReport(filename, title, headers, tableData);
   }
 }
