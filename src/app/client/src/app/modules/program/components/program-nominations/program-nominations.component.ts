@@ -8,6 +8,7 @@ import { CollectionHierarchyService } from '../../../cbse-program/services/colle
 import * as _ from 'lodash-es';
 import { tap, first } from 'rxjs/operators';
 import * as moment from 'moment';
+import { DatePipe } from '@angular/common';
 import { ProgramStageService } from '../../services/program-stage/program-stage.service';
 import { ChapterListComponent } from '../../../cbse-program/components/chapter-list/chapter-list.component';
 
@@ -15,7 +16,8 @@ import { ChapterListComponent } from '../../../cbse-program/components/chapter-l
 @Component({
   selector: 'app-program-nominations',
   templateUrl: './program-nominations.component.html',
-  styleUrls: ['./program-nominations.component.scss']
+  styleUrls: ['./program-nominations.component.scss'],
+  providers: [DatePipe]
 })
 export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDestroy {
   public programId: string;
@@ -77,7 +79,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
     private publicDataService: PublicDataService, private activatedRoute: ActivatedRoute, private router: Router,
     private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService,
-    public programStageService: ProgramStageService) {
+    public programStageService: ProgramStageService, private datePipe: DatePipe) {
     this.programId = this.activatedRoute.snapshot.params.programId;
   }
 
@@ -214,8 +216,11 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           }
           if (name) {
             this.nominations.push({
-              'name': name.trim(),
-              'type': isOrg ? 'Organisation' : 'Individual',
+              name: name.trim(),
+              type: isOrg ? 'Organisation' : 'Individual',
+              createdon: res.createdon,
+              samples: res.samples || 0,
+              textbooks: res.collection_ids || [],
               'nominationData': res
             });
           }
@@ -356,20 +361,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       return _.trim(name);
     }
     return _.trim(`${nomination.userData.firstName} ${nomination.userData.lastName}`);
-  }
-
-
-  getNominatedTextbooksCount(nomination) {
-    let count;
-    if (nomination.nominationData) {
-      count = nomination.nominationData.collection_ids ? nomination.nominationData.collection_ids.length : 0;
-    } else {
-      count = nomination.collection_ids ? nomination.collection_ids.length : 0;
-    }
-    if (count < 2) {
-      return count + ' ' + this.resourceService.frmelmnts.lbl.textbook;
-    }
-    return count + ' ' + this.resourceService.frmelmnts.lbl.textbooks;
   }
 
   getProgramDetails() {
@@ -532,5 +523,27 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       }
     };
     this.programStageService.addStage('chapterListComponent');
+  }
+
+  downloadNomitationList() {
+    const filename = `Nomination list for project - ${this.programDetails.name}`;
+    const title = filename;
+    const tableData = _.filter(_.cloneDeep(this.nominations), (nomination) => {
+      nomination.createdon = this.datePipe.transform(nomination.createdon, 'LLLL d, yyyy'),
+      nomination.textbooks = nomination.textbooks.length;
+      nomination.status = nomination.nominationData.status;
+      delete nomination.nominationData;
+      return nomination;
+    });
+    const headers = [
+      this.resourceService.frmelmnts.lbl.contributorName,
+      this.resourceService.frmelmnts.lbl.type,
+      this.resourceService.frmelmnts.lbl.nominatedDate,
+      this.resourceService.frmelmnts.lbl.samples,
+      this.resourceService.frmelmnts.lbl.textbooks,
+      this.resourceService.frmelmnts.lbl.status,
+    ];
+    console.log('tableData', tableData);
+    this.programsService.downloadReport(filename, title, headers, tableData);
   }
 }

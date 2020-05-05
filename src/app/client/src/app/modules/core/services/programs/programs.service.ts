@@ -9,6 +9,7 @@ import { Injectable } from '@angular/core';
 import { UserService } from '../user/user.service';
 import { combineLatest, of, iif, Observable, BehaviorSubject, throwError, merge, forkJoin} from 'rxjs';
 import * as _ from 'lodash-es';
+import { ExportToCsv } from 'export-to-csv';
 import { CanActivate, Router } from '@angular/router';
 import { DataService } from '../data/data.service';
 import { HttpClient } from '@angular/common/http';
@@ -894,5 +895,24 @@ export class ProgramsService extends DataService implements CanActivate {
         }
         return of(data);
       }));
+  }
+
+  downloadReport(filename, title, headers, tableData) {
+    const options = {
+      filename: filename,
+      fieldSeparator: ',',
+      quoteStrings: '"',
+      decimalSeparator: '.',
+      showLabels: true,
+      showTitle: true,
+      title: title,
+      useTextFile: false,
+      useBom: true,
+      headers: headers
+      // useKeysAsHeaders: true,
+    };
+
+    const csvExporter = new ExportToCsv(options);
+    csvExporter.generateCsv(tableData);
   }
 }
