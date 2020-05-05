@@ -77,7 +77,7 @@ module.exports = function (app) {
     }
   }))
 
-  app.use(['/action/itemset/v3/create', '/action/itemset/v3/update/*', '/action/itemset/v3/read/*', '/action/itemset/v3/review/*', '/action/itemset/v3/retire/*'],
+  app.use(['/action/itemset/v3/create', '/action/itemset/v3/update/*', '/action/itemset/v3/read/*', '/action/itemset/v3/review/*', '/action/itemset/v3/retire/*', '/action/assessment/v3/itemsets/retire/*'],
   proxy(kp_assessment_service_base_url, {
     proxyReqPathResolver: function (req) {
       var originalUrl = req.originalUrl
