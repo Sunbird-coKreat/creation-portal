@@ -621,7 +621,7 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
 
-    return this.API_URL(option);
+    return this.publicDataService.post(option);
   }
 
   /**
@@ -862,5 +862,37 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }));
     }
-}
 
+  /**
+  * Function to update the role of org user
+  */
+  updateUserRole(osid, newRoles) {
+    const userOrgUpdate = {
+      User_Org: {
+        osid: osid,
+        roles: newRoles
+      }
+    };
+    return this.updateToRegistry(userOrgUpdate);
+  }
+
+  /**
+   * Function used to add user or org in registry
+  */
+  updateToRegistry(reqData) {
+    const option = {
+      url: 'reg/update',
+      data: {
+        id : 'open-saber.registry.update',
+        request: reqData
+      }
+    };
+    return this.contentService.post(option).pipe(
+      mergeMap((data: ServerResponse) => {
+        if (data.params.status !== 'SUCCESSFUL') {
+          return throwError(data);
+        }
+        return of(data);
+      }));
+  }
+}

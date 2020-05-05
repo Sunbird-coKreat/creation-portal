@@ -467,7 +467,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   shouldContentBeVisible(content) {
     const creatorViewRole = this.actions.showCreatorView.roles.includes(this.sessionContext.currentRoleId);
     const reviewerViewRole = this.actions.showReviewerView.roles.includes(this.sessionContext.currentRoleId);
-    if (this.isSourcingOrgReviewer()) {
+    if (this.isSourcingOrgReviewer() && this.sourcingOrgReviewer) {
       if (reviewerViewRole && content.sampleContent === true
         && this.getNominatedUserId() === content.createdBy) {
           return true;
