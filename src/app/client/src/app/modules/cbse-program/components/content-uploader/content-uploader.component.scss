@@ -286,3 +286,12 @@
     position: relative;
     bottom:calculateRem(8px);
   }
+  .sb-dock-form-field{
+    .sb-field{
+      &:last-child{
+        width: 100% !important;
+        padding-bottom: 2rem;
+      }
+    }
+  }
+  

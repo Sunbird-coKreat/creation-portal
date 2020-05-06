@@ -71,6 +71,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
   public telemetryInteractObject: any;
   public telemetryPageId = 'content-uploader';
   public sourcingOrgReviewer: boolean;
+  checkboxFields;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -419,6 +420,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     const compConfiguration = _.find(_.get(this.contentUploadComponentInput, 'programContext.config.components'), {compId: 'uploadContentComponent'});
     this.formConfiguration = compConfiguration.config.formConfiguration;
     this.textFields = _.filter(this.formConfiguration, {'inputType': 'text', 'visible': true});
+    this.checkboxFields = _.filter(this.formConfiguration, {'inputType': 'checkbox', 'visible': true});
     this.allFormFields = _.filter(this.formConfiguration, {'visible': true});
 
     this.disableFormField = (this.sessionContext.currentRole === 'CONTRIBUTOR' && this.resourceStatus === 'Draft') ? false : true ;

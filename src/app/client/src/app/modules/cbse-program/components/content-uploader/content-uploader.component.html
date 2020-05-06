@@ -1,6 +1,6 @@
 <div class="sb-bg-color-gray-0" [appTelemetryImpression]="telemetryImpression">
   <div class="ui container py-10">
-  <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="handleBack()"
+  <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn pl-0" (click)="handleBack()"
   type="button"
   appTelemetryInteract
 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('go-back', 'click', 'content-uploader')"
@@ -276,15 +276,15 @@
 </sui-modal>
 
 <div *ngIf="showForm && showPreview">
-  <form #contentForm [formGroup]="contentDetailsForm" class='ui container licence-form mt-24' >
+  <form #contentForm [formGroup]="contentDetailsForm" class='ui container licence-form mt-24'>
     <div class="middle-section-set">
       <div class="licence-form__content">
-          <div class='licence-form__content__fields py-16 ui stackable grid'>
+          <div class='licence-form__content__fields py-16 ui stackable grid sb-dock-form-field'>
 
               <div *ngFor = "let field of allFormFields; let i = index " class="sb-field">
                 <div *ngIf="field.inputType === 'select'" class="width-100">
                   <div>
-                    <label class="font-weight-bold fsmall">{{field.label}}:</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span>
+                    <label class="font-weight-bold fsmall">{{field.label}}:</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span><i *ngIf="field.helpText" class="info circle link icon pull-right" suiPopup popupText="{{field.helpText}}"></i>
                     <sui-select *ngIf="!disableFormField" formControlName="{{field.code}}" class="selection" [isDisabled]="disableFormField" placeholder="{{field.placeholder}}"
                     appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('select-' + field.code, 'click', 'content-uploader')"
@@ -332,7 +332,7 @@
 
                 <div *ngIf="field.inputType === 'text'" class="width-100">
                   <div>
-                    <label class="font-weight-bold fsmall">{{field.label}}:</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span>
+                    <label class="font-weight-bold fsmall">{{field.label}}:</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span><i *ngIf="field.helpText" class="info circle link icon pull-right" suiPopup popupText="{{field.helpText}}"></i>
                       <input *ngIf="!disableFormField" formControlName="{{field.code}}" type="{{field.inputType}}" name="{{field.code}}" class="sb-form-control" placeholder="{{field.placeholder}}"
                       appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('input-' + field.code, 'click', 'content-uploader')"
@@ -344,21 +344,22 @@
                     <label class="warning-message" *ngIf="((contentDetailsForm.get(field.code).touched) && (field.required) && (contentDetailsForm.value[field.code].trim().length === 0))">* This field is mandatory</label>
                   </div>
                 </div>
+                <div class="sb-checkbox sb-checkbox-primary pt-20 pb-30" *ngIf="field.inputType === 'checkbox'">
+                  <input type="{{field.inputType}}" id="check1" name="{{field.inputType}}">
+                  <label for="check1" class="fs-0-785 sb-color-gray-200"> 
+                      By submitting / publishing this Content, you confirm that this Content complies with prescribed guidelines,
+                      including the Content Policy and that you consent to publish it in accordance with the
+                      <a class="link font-weight-bold"  href="/terms-of-use.html" target="_blank">Content Policy.</a>
+                      Please choose the applicable <a class="link font-weight-bold"  href="https://creativecommons.org/licenses" target="_blank">Creative Commons license</a> you wish to apply to your content.
+                      <span class="fs-0-785 font-weight-bold">Please make sure you do not violate others’ copyright or privacy rights.</span>
+                  </label>
+                </div>
+                <!-- <label class="warning-message" *ngIf="((contentDetailsForm.get(field.code).touched) && (field.required) && (contentDetailsForm.value[field.code].trim().length === 0))">* This field is mandatory</label> -->
               </div>
 
             </div>
       </div>
-      <p class="paragraph fsmall">
-        By submitting / publishing this Content, you confirm that this Content complies with prescribed guidelines,
-        including the Content Policy and that you consent to publish it in accordance with the
-        <a class="link font-weight-bold"  href="/terms-of-use.html" target="_blank">Content Policy.</a>
-        Please choose the applicable <a class="link font-weight-bold"  href="https://creativecommons.org/licenses" target="_blank">Creative Commons license</a> you wish to apply to your content.
-        <span class="fs-0-785 font-weight-bold">Please make sure you do not violate others’ copyright or privacy rights.</span>
-      </p>
+     
     </div>
-
-
-
-
   </form>
   </div>
