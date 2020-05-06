@@ -208,10 +208,10 @@
 						<h4 class="sb-pageSection-title">{{resourceService.frmelmnts.lbl.listOfTextbooks}} </h4>
 						<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{ programDetails?.collection_ids?.length || 0 }}</span>
 					</div>
-					<div class="" *ngIf="canAcceptorReject()">
+					<div *ngIf="canAcceptorReject()">
 						<button class="sb-btn sb-btn-normal sb-btn-secondary mr-8"
 							*ngIf="contributor?.nominationData?.status === 'Pending'"
-							(click)="updateNomination('accept')"
+							(click)="showNominateModal= true;"
 							appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('accept-nomination', 'click', 'list-nominated-textbooks')"
       [telemetryInteractObject]="telemetryInteractObject"
@@ -312,3 +312,16 @@
 	</ndc-dynamic>
 </ng-container>
 
+<sui-modal *ngIf="showNominateModal" [mustScroll]="true" [isClosable]="false" [transitionDuration]="0" [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showNominateModal = false" #nominationConfirmationModal>
+    <div class="sb-modal-header">
+        {{resourceService.frmelmnts.lbl.submitNomination}}
+    </div>
+    <div class="sb-modal-content">
+        <p class="mt-10">{{resourceService.frmelmnts.lbl.nominationDescription}}</p>
+    </div>
+    <div class="sb-modal-actions">
+        <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="updateNomination('accept')"> {{resourceService.frmelmnts.btn.submit}} </button>
+        <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="cancelNomination();" appTelemetryInteract> {{resourceService.frmelmnts.btn.cancel}}
+    </button>
+    </div>
+</sui-modal>

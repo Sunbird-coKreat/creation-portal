@@ -72,6 +72,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   public toasterService: ToasterService, public actionService: ActionService,
   private collectionHierarchyService: CollectionHierarchyService,
   private notificationService: NotificationService) { }
+  showNominateModal = false;
 
   ngOnInit() {
     this.programId = this.activatedRoute.snapshot.params.programId;
@@ -130,6 +131,16 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       this.toasterService.error(errorMes || 'Fetching framework details failed');
     });
   }
+  cancelNomination() {
+    this.showNominateModal = false;
+    //this.navigationHelperService.navigateToPreviousUrl();
+   // this.goBack();
+   const router = this.router;
+    setTimeout(() => {
+      router.navigateByUrl('/sourcing/nominations/' + this.programId + '?tab=nomination');
+    });
+  }
+
   getNominationCounts() {
     this.fetchNominationCounts().subscribe((response) => {
       const statuses = _.get(response, 'result');
@@ -313,6 +324,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
          response => { },
          error => console.log(error)
        );
+       this.showNominateModal = false;
        this.showRequestChangesPopup = false;
        setTimeout(() => {
          this.router.navigate(['/sourcing/nominations/' + this.programId]);
