@@ -1,4 +1,4 @@
-<div *ngIf="currentStage === 'listNominatedTextbookComponent'">
+<div *ngIf="currentStage === 'listNominatedTextbookComponent' && !showLoader">
 
 	<div class="sb-bg-color-primary-0 practical-header py-16">
 		<div class="d-flex  flex-jc-space-between practical-header__content ui container pt-10">
@@ -332,8 +332,10 @@
 		</sui-tabset>
 	</div>
 </div>
-
-<ng-container *ngIf="currentStage !== 'listNominatedTextbookComponent'">
+<div *ngIf="showLoader" class="ui container">
+	<app-loader></app-loader>
+</div>
+<ng-container *ngIf="currentStage !== 'listNominatedTextbookComponent' && !showLoader">
 	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs">
 	</ndc-dynamic>
 </ng-container>
