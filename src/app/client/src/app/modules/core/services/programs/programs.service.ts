@@ -572,7 +572,7 @@ export class ProgramsService extends DataService implements CanActivate {
         req.data.request['createdby'] = this.userService.userProfile.identifier;
         req.data.request['user_id'] = this.userService.userProfile.identifier;
         this.post(req).subscribe(
-          (data) => this.toasterService.success('Nomination sent'),
+          (data) => this.toasterService.success(this.resourceService.messages.smsg.projectCreateSuccess),
           (error) => this.toasterService.error('Nomination submit failed... Please try later')
         );
       }
