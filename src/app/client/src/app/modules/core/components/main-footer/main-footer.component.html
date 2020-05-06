@@ -29,8 +29,8 @@
           </li> -->
           <li class="mb-15">
             <a appTelemetryInteract [telemetryInteractEdata]="setTelemetryInteractEdata('help-center')"
-              [routerLink]="'/contribute/help'" target="_blank"
-              *ngIf="router.url.includes('/contribute')">
+              [routerLink]="router.url.includes('/contribute') ? '/contribute/help' : '/sourcing/help'" target="_blank"
+              *ngIf="router.url.includes('/contribute') || router.url.includes('/sourcing')">
               {{resourceService.frmelmnts?.lnk?.footerHelpCenter}}
             </a>
           </li>

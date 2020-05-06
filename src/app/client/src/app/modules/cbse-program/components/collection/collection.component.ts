@@ -163,10 +163,6 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
 
   cancelNomination() {
     this.showNominateModal = false;
-    const router = this.router;
-    setTimeout(function() {
-      router.navigateByUrl('/contribute');
-    }, 10);
   }
 
   sortCollection(column) {
