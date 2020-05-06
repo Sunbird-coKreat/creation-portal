@@ -74,6 +74,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public nominatedContentTypeCount = 0;
   public samplesCount = 0;
   public totalContentTypeCount = 0;
+  public nominationSampleCounts = {};
 
   constructor(public frameworkService: FrameworkService, private tosterService: ToasterService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
@@ -104,6 +105,14 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.state.stages = state.stages;
       this.changeView();
     });
+  }
+
+  assignSampleCounts() {
+    this.nominations = _.map(this.nominations, n => {
+      n.samples = this.getNominationSampleCounts(n);
+      return n;
+    });
+    this.tempNominations = this.nominations;
   }
 
   ngAfterViewInit() {
@@ -156,7 +165,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       } else {
         this.filterApplied = true;
         this.nominations = _.filter(this.tempNominations, (o) => {
-          return o.nominationData.status === status;
+          return o.status === status;
         });
         this.nominationsCount = this.nominations.length;
       }
@@ -216,12 +225,16 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           }
           if (name) {
             this.nominations.push({
+              programName: this.programDetails && this.programDetails.name.trim() || '',
               name: name.trim(),
               type: isOrg ? 'Organisation' : 'Individual',
+              textbooks: res.collection_ids.length,
+              samples: 0,
               createdon: res.createdon,
-              samples: res.samples || 0,
-              textbooks: res.collection_ids || [],
-              'nominationData': res
+              status: res.status,
+              user_id: res.user_id,
+              organisation_id: res.organisation_id,
+              nominationData: res,
             });
           }
           (isOrg) ? this.contributedByOrganisation++ : this.contributedByIndividual++;
@@ -234,8 +247,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           if (res.status === 'Rejected') {
             this.rejectedCount = this.rejectedCount + 1;
           }
-        textbooks = _.concat(textbooks, res.collection_ids);
-        this.nominatedContentTypes = _.concat(this.nominatedContentTypes, res.content_types);
+          textbooks = _.concat(textbooks, res.collection_ids);
+          this.nominatedContentTypes = _.concat(this.nominatedContentTypes, res.content_types);
         });
       }
       this.nominatedContentTypes =  _.uniq(this.nominatedContentTypes);
@@ -282,65 +295,88 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   getDashboardData(nominations) {
     // tslint:disable-next-line:max-line-length
     this.approvedNominations = _.filter(nominations, nomination => nomination.status === 'Approved' );
-    if (this.approvedNominations.length) {
     this.collectionHierarchyService.getContentAggregation(this.programId)
       .subscribe(
         (response) => {
           if (response && response.result && response.result.content) {
-            const contents = _.get(response.result, 'content');
-            this.contributionDashboardData = _.map(this.approvedNominations, nomination => {
-              if (nomination.organisation_id) {
-                // tslint:disable-next-line:max-line-length
-                const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCounts(contents, nomination.organisation_id, this.programCollections));
-                // This is enable sorting table. So duping the data at the root of the dashboardData object
-                dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus['pending'];
-                dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus['accepted'];
-                dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus['rejected'];
-                dashboardData['contributorName'] = this.setContributorName(nomination, 'org');
+            this.setNominationSampleCounts(response.result.content);
+
+            if (this.approvedNominations.length) {
+              const contents = _.get(response.result, 'content');
+              this.contributionDashboardData = _.map(this.approvedNominations, nomination => {
+                if (nomination.organisation_id) {
+                  // tslint:disable-next-line:max-line-length
+                  const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCounts(contents, nomination.organisation_id, this.programCollections));
+                  // This is enable sorting table. So duping the data at the root of the dashboardData object
+                  dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus['pending'];
+                  dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus['accepted'];
+                  dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus['rejected'];
+                  dashboardData['contributorName'] = this.setContributorName(nomination, 'org');
+                  return {
+                    ...dashboardData,
+                    contributorDetails: nomination,
+                    type: 'org'
+                  };
+                } else {
+                  // tslint:disable-next-line:max-line-length
+                  const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCountsForIndividual(contents, nomination.user_id, this.programCollections));
+                  dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
+                  dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
+                  dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
+                  dashboardData['contributorName'] = this.setContributorName(nomination, 'individual');
+                  return {
+                    ...dashboardData,
+                    contributorDetails: nomination,
+                    type: 'individual'
+                  };
+                }
+              });
+              this.getOverAllCounts(this.contributionDashboardData);
+            } else if (this.approvedNominations.length) {
+              this.contributionDashboardData = _.map(this.approvedNominations, nomination => {
                 return {
-                  ...dashboardData,
+                  total: 0,
+                  review: 0,
+                  draft: 0,
+                  rejected: 0,
+                  live: 0,
+                  sourcingPending: 0,
+                  sourcingAccepted: 0,
+                  sourcingRejected: 0,
+                  // tslint:disable-next-line:max-line-length
+                  contributorName: this.setContributorName(nomination, nomination.organisation_id ? 'org' : 'individual'),
+                  individualStatus: {},
+                  sourcingOrgStatus : {accepted: 0, rejected: 0, pending: 0},
                   contributorDetails: nomination,
-                  type: 'org'
+                  type: nomination.organisation_id ? 'org' : 'individual'
                 };
-              } else {
-                // tslint:disable-next-line:max-line-length
-                const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCountsForIndividual(contents, nomination.user_id, this.programCollections));
-                dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
-                dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
-                dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
-                dashboardData['contributorName'] = this.setContributorName(nomination, 'individual');
-                return {
-                  ...dashboardData,
-                  contributorDetails: nomination,
-                  type: 'individual'
-                };
-              }
-            });
-            this.getOverAllCounts(this.contributionDashboardData);
-          } else {
-            this.contributionDashboardData = _.map(this.approvedNominations, nomination => {
-              return {
-                total: 0,
-                review: 0,
-                draft: 0,
-                rejected: 0,
-                live: 0,
-                sourcingPending: 0,
-                sourcingAccepted: 0,
-                sourcingRejected: 0,
-                // tslint:disable-next-line:max-line-length
-                contributorName: this.setContributorName(nomination, nomination.organisation_id ? 'org' : 'individual'),
-                individualStatus: {},
-                sourcingOrgStatus : {accepted: 0, rejected: 0, pending: 0},
-                contributorDetails: nomination,
-                type: nomination.organisation_id ? 'org' : 'individual'
-              };
-            });
-            this.getOverAllCounts(this.contributionDashboardData);
+              });
+              this.getOverAllCounts(this.contributionDashboardData);
+            }
           }
         }
       );
     }
+
+  setNominationSampleCounts(contentResult) {
+    let orgSampleUploads = _.filter(contentResult, contribution => !_.isEmpty(contribution.organisationId) && contribution.sampleContent);
+    orgSampleUploads = _.groupBy(orgSampleUploads, 'organisationId');
+    _.forEach(orgSampleUploads, (temp, index) => {
+      this.nominationSampleCounts[index] = temp.length;
+    });
+
+    // tslint:disable-next-line: max-line-length
+    let individualSampleUploads = _.filter(contentResult, contribution => _.isEmpty(contribution.organisationId) && contribution.sampleContent);
+    individualSampleUploads = _.groupBy(individualSampleUploads, 'createdBy');
+    _.forEach(individualSampleUploads, (temp, index) => {
+      this.nominationSampleCounts[index] = temp.length;
+    });
+    this.assignSampleCounts();
+  }
+
+  getNominationSampleCounts(nomination) {
+    // tslint:disable-next-line:max-line-length
+    return (nomination.organisation_id) ? this.nominationSampleCounts[nomination.organisation_id] || 0 : this.nominationSampleCounts[nomination.user_id] || 0;
   }
 
   getOverAllCounts(dashboardData) {
@@ -525,25 +561,25 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.programStageService.addStage('chapterListComponent');
   }
 
-  downloadNomitationList() {
-    const filename = `Nomination list for project - ${this.programDetails.name}`;
-    const title = filename;
+  downloadNominationList() {
+    const filename = this.programDetails && this.programDetails.name.trim() || '';
+    const title = 'Nomination list for project - ' + filename;
     const tableData = _.filter(_.cloneDeep(this.nominations), (nomination) => {
-      nomination.createdon = this.datePipe.transform(nomination.createdon, 'LLLL d, yyyy'),
-      nomination.textbooks = nomination.textbooks.length;
-      nomination.status = nomination.nominationData.status;
+      nomination.createdon = this.datePipe.transform(nomination.createdon, 'LLLL d, yyyy');
       delete nomination.nominationData;
+      delete nomination.user_id;
+      delete nomination.organisation_id;
       return nomination;
     });
     const headers = [
+      this.resourceService.frmelmnts.lbl.projectName,
       this.resourceService.frmelmnts.lbl.contributorName,
       this.resourceService.frmelmnts.lbl.type,
-      this.resourceService.frmelmnts.lbl.nominatedDate,
-      this.resourceService.frmelmnts.lbl.samples,
       this.resourceService.frmelmnts.lbl.textbooks,
+      this.resourceService.frmelmnts.lbl.samples,
+      this.resourceService.frmelmnts.lbl.nominationDate,
       this.resourceService.frmelmnts.lbl.status,
     ];
-    console.log('tableData', tableData);
     this.programsService.downloadReport(filename, title, headers, tableData);
   }
 }
