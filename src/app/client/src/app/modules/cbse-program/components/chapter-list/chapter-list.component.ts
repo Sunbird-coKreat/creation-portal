@@ -254,6 +254,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         instance.countData['total'] = 0;
         instance.countData['review'] = 0;
         instance.countData['reject'] = 0;
+        instance.countData['live'] = 0;
+        instance.countData['draft'] = 0;
         instance.countData['mycontribution'] = 0;
         instance.countData['totalreview'] = 0;
         instance.countData['awaitingreview'] = 0;
@@ -405,6 +407,12 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         this.countData['total'] = this.countData['total'] + 1;
         if (data.createdBy === this.currentUserID && data.status === 'Review') {
           this.countData['review'] = this.countData['review'] + 1;
+        }
+        if (data.createdBy === this.currentUserID && data.status === 'Draft') {
+          this.countData['draft'] = this.countData['draft'] + 1;
+        }
+        if (data.createdBy === this.currentUserID && data.status === 'Live') {
+          this.countData['live'] = this.countData['live'] + 1;
         }
         if (data.createdBy === this.currentUserID && data.status === 'Draft' && data.prevStatus === 'Review') {
           this.countData['reject'] = this.countData['reject'] + 1;
