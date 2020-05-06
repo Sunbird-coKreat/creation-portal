@@ -101,13 +101,14 @@ module.exports = (app, keycloak) => {
   app.all(['/announcement', '/announcement/*', '/search', '/search/*',
     '/orgType', '/orgType/*', '/dashBoard', '/dashBoard/*',
     '/workspace', '/workspace/*', '/profile', '/profile/*', '/learn', '/learn/*', '/resources', '/sourcing', '/sourcing/*',
-    '/resources/*', '/myActivity', '/myActivity/*', '/org/*', '/manage', '/contribute','/contribute/*'], keycloak.protect(), indexPage(true))
+    '/resources/*', '/myActivity', '/myActivity/*', '/org/*', '/manage', '/:slug/contribute', '/:slug/contribute/*', '/contribute','/contribute/*'], keycloak.protect(), indexPage(true))
 
   app.all('/:tenantName', renderTenantPage)
 }
 
 function getLocals(req) {
-  var locals = {}
+  var locals = {};
+  const slug = req.params.slug;
   if(req.includeUserDetail){
     locals.userId = _.get(req, 'session.userId') ? req.session.userId : null
     locals.sessionId = _.get(req, 'sessionID') && _.get(req, 'session.userId') ? req.sessionID : null
@@ -144,6 +145,7 @@ function getLocals(req) {
   locals.logFingerprintDetails = envHelper.LOG_FINGERPRINT_DETAILS,
   locals.deviceId = '';
   locals.deviceProfileApi = envHelper.DEVICE_PROFILE_API;
+  locals.slug = slug || '';
   return locals
 }
 

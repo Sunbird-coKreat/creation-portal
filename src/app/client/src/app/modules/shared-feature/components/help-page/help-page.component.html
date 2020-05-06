@@ -1,0 +1,44 @@
+<div class="ui container py-24 sb-dock-tab" [appTelemetryImpression]="telemetryImpression">
+  <h2 class="py-5">Welcome to VidyaDaan Help Center</h2>
+  <p  *ngIf="router.url.includes('/contribute/help')">Watch below videos to know how to nominate and contribute to a project.</p>
+  <p *ngIf="router.url.includes('/sourcing/help')">Watch below videos to know how to create project, review and shortlist nominations and review content contributions.</p>
+          <sui-tabset class="ui grid pt-40"  *ngIf="router.url.includes('/contribute/help')">
+              <div class="ui top attached tabular menu twelve wide tablet four wide computer column sb-sidebar-menu b-0">
+                  <a class="item" suiTabHeader="1">How to nominate</a>
+              </div>
+              <div class="twelve wide tablet eight wide computer column">
+              <div class="ui bottom attached segment" suiTabContent="1">
+                  <h4 class="pb-10 font-weight-bold">How to nominate</h4>
+                  <div>
+                      <video controls class="w-90">
+                          <source src="assets/videos/how_to_nominate.mp4" type="video/mp4">
+                      </video>
+                  </div>
+              </div>
+          </div>
+          </sui-tabset>   
+          <sui-tabset class="ui grid pt-40" *ngIf="router.url.includes('/sourcing/help')">
+              <div class="ui top attached tabular menu twelve wide tablet four wide computer column sb-sidebar-menu b-0">
+                  <a class="item" suiTabHeader="1" (click)="pauseVideo('video2')">How to create a project</a>
+                  <a class="item" suiTabHeader="2" (click)="pauseVideo('video1')">How to review nominations to a project</a>
+              </div>
+              <div class="twelve wide tablet eight wide computer column">
+              <div class="ui bottom attached segment" suiTabContent="1">
+                  <h4 class="pb-10 font-weight-bold">How to create a project</h4>
+                      <div>
+                          <video controls class="w-90" #video1>
+                              <source src="assets/videos/how_to_create_project.mp4" type="video/mp4">
+                          </video>
+                      </div>
+                  </div>
+                  <div class="ui bottom attached segment" suiTabContent="2">
+                      <h4 class="pb-10 font-weight-bold">How to review nominations to a project</h4>
+                          <div>
+                              <video controls class="w-90" #video2>
+                                  <source src="assets/videos/How_to_review_nominations.mp4" type="video/mp4">
+                              </video>
+                          </div>
+                      </div>
+              </div>
+          </sui-tabset> 
+  </div>

@@ -26,3 +26,4 @@ export * from './action/action.service';
 export * from './enroll-contributor/enroll-contributor.service';
 export * from './textbook-list/textbook-list.service';
 export * from './registry/registry.service';
+export * from './notification/notification.service';

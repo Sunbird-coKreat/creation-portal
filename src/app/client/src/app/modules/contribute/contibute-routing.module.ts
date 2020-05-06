@@ -8,7 +8,7 @@ import { ListNominatedTextbooksComponent} from './components/list-nominated-text
 import { OrgUserListComponent } from './components/org-user-list/org-user-list.component';
 import { OrgContriAdminComponent } from './components/org-contri-admin/org-contri-admin.component';
 import { ContriDashboardComponent } from './components/dashboard/dashboard.component';
-import { HelpPageComponent } from './components/help-page/help-page.component';
+import { HelpPageComponent } from '../shared-feature/components/help-page/help-page.component';
 
 const routes: Routes = [
 {
