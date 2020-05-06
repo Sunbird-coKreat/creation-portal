@@ -68,7 +68,7 @@ module.exports = function (app) {
     }
   }))
 
-  app.use(['/action/content/v3/upload/*', '/action/content/v3/review/*', '/action/assessment/v3/items/*', '/action/content/v3/publish/*', '/action/content/v3/reject/*', '/action/content/v3/retire/*'],  
+  app.use(['/action/content/v3/upload/*', '/action/content/v3/review/*', '/action/assessment/v3/items/*', '/action/content/v3/publish/*', '/action/content/v3/reject/*', '/action/content/v3/retire/*', '/action/assessment/v3/items/retire/*'],  
     proxy(kp_learning_service_base_url, {
     proxyReqPathResolver: function (req) {
       var originalUrl = req.originalUrl

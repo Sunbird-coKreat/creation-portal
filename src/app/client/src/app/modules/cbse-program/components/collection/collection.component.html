@@ -216,11 +216,11 @@
                   <input  type="checkbox" [checked]="data.isSelected || data.totalSampleContent" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
                   <label></label>
                 </div>
-                <button type="button" *ngIf="(data.isSelected || data.totalSampleContent) && canNominate()" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10 px-10" appTelemetryInteract
+                <button type="button" *ngIf="(data.isSelected || data.totalSampleContent) && canNominate()" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary px-10" appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('upload-sample', 'click', 'collection-list', {values: selectedCollectionIds})"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
-                [telemetryInteractPdata]="telemetryInteractPdata">Upload Sample</button>
+                [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.uploadSample}}</button>
                 </div>
               </td>
             </tr>
@@ -361,11 +361,10 @@
    </div>
   <div class="sb-modal-content">
     <p class="fs-0-785">{{resourceService.frmelmnts.lbl.contentTypesDescription}}</p>
-    <div class="mb-10" *ngFor="let contenttype of contentType">
+    <div class="mb-10" *ngFor="let contenttype of contentType; index as i">
       <div class="sb-checkbox sb-checkbox-primary">
-        <input class="checking" [(ngModel)]="contenttype.isSelected" (change)="toggle(contenttype);"
-          (click)="$event.stopPropagation()" type="checkbox">
-        <label for="check1" class="mb-0"> {{contenttype.name}}</label>
+          <input class="checking" [(ngModel)]="contenttype.isSelected" (change)="toggle(contenttype);" (click)="$event.stopPropagation()" type="checkbox" id="{{i+1}}">
+          <label for="{{i+1}}" class="mb-0"> {{contenttype.name}}</label>
       </div>
       <!-- <sui-checkbox name="{{contenttype.name}}" (click)="toggle($event, contenttype, contenttype.value);">{{contenttype.name}}</sui-checkbox> -->
     </div>
