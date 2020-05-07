@@ -375,8 +375,9 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           forkJoin(...getUserDetails)
             .subscribe((res: any) => {
               if (res) {
+                const programReviewers = _.get(this.programDetails, 'rolemapping.REVIEWER') || [];
                 _.forEach(res, r => {
-                  if (r.result && r.result.User) {
+                  if (r.result && r.result.User && !_.includes(programReviewers, r.result.User.userId)) {
                     let creator = r.result.User.firstName;
                     if (r.result.User.lastName) {
                       creator = creator + r.result.User.lastName;

@@ -318,9 +318,9 @@
 						<tbody class="sb-table-body">
 						  <tr *ngFor="let orgUser of sourcingOrgUser; let i= index;">
                             <td>{{orgUser?.firstName}} {{orgUser?.lastName}}</td>
-                            <td>{{orgUser?.framework?.medium?.join(', ')}}</td>
-							<td>{{orgUser?.framework?.gradeLevel?.join(', ')}}</td>
-							<td>{{orgUser?.framework?.subject?.join(', ')}}</td>
+                            <td>{{orgUser?.framework?.medium?.join(', ') || '-' }}</td>
+							<td>{{orgUser?.framework?.gradeLevel?.join(', ') || '-' }}</td>
+							<td>{{orgUser?.framework?.subject?.join(', ') || '-' }}</td>
 							<td class="text-center">
 							        <sui-select class="selection pt-5" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="options" valueField="name"
 									(selectedOptionChange)="onRoleChange()">

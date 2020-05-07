@@ -301,16 +301,16 @@
 						<tbody class="sb-table-body">
 						  <tr *ngFor="let orgUser of contributorOrgUser; let i= index;">
 							<td>{{orgUser.fullName}}</td>
-							<td>{{orgUser?.gradeLevel?.join(', ')}}</td>
-							<td>{{orgUser?.subject?.join(', ')}}</td>
+							<td>{{orgUser?.gradeLevel?.join(', ') || '-' }}</td>
+							<td>{{orgUser?.subject?.join(', ') || '-' }}</td>
 							<td>
 								<div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold" style="width: 250px;">
-									{{orgUser?.contentTypes?.join(', ')}}
+									{{orgUser?.contentTypes?.join(', ') || '-' }}
 								</div>
 							</td>
 							<td class="text-center">
 								<div *ngIf="nominationDetails?.status === 'Rejected'; else elseBlock">
-									{{ (orgUser?.selectedRole) ? orgUser.selectedRole : '-' }}
+									{{ orgUser?.selectedRole || '-' }}
 								</div>
 								<ng-template #elseBlock>
 									<sui-select class="selection pt-5" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="options" valueField="name"
