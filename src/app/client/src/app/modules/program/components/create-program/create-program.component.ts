@@ -280,6 +280,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     });
   }
 
+  removeUploadedDocument() {
+    this.uploadedDocument = null;
+  }
+
   generateAssetCreateRequest(fileName, fileType, mediaType) {
     console.log(this.userprofile);
     return {
