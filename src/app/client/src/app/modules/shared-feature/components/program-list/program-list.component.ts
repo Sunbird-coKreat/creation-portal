@@ -132,7 +132,7 @@ export class ProgramListComponent implements OnInit {
                 }
               }, (error) => {
                 console.log(error);
-                this.toasterService.error(this.resourceService.messages.emsg.m0014);
+                this.toasterService.error(this.resourceService.messages.emsg.projects.m0002);
               });
           } else {
             this.iscontributeOrgAdmin = false;
@@ -279,7 +279,7 @@ export class ProgramListComponent implements OnInit {
             }
           }, (error) => {
             console.log(error);
-            this.toasterService.error(this.resourceService.messages.emsg.m0014);
+            this.toasterService.error(this.resourceService.messages.emsg.projects.m0002);
           });
         } else {
           // If user is an org admin
