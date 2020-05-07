@@ -804,7 +804,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     );
   }
 
-  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: object): IInteractEventEdata {
     return _.omitBy({
       id,
       type,
