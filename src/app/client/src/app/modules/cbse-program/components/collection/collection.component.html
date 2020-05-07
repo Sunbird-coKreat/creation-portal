@@ -212,7 +212,7 @@
               <td *ngIf="currentNominationStatus === 'Initiated' || currentNominationStatus=== 'Pending'">{{data.totalSampleContent || 0 }}</td>
               <td>
                 <div *ngIf="selectedContentTypes.length">
-                <div *ngIf="(data.totalSampleContent === undefined || data.totalSampleContent === 0) && canNominate()" class="sb-checkbox sb-checkbox-primary d-inline-block">
+                <div *ngIf="canNominate()" class="sb-checkbox sb-checkbox-primary d-inline-block">
                   <input  type="checkbox" [checked]="data.isSelected || data.totalSampleContent" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
                   <label></label>
                 </div>
