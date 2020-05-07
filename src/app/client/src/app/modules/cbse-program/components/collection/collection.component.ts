@@ -446,7 +446,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
             status: 'Pending',
             content_types: this.selectedContentTypes,
             collection_ids: this.selectedCollectionIds,
-            updatedby: creator
+            updatedby: this.userService.userProfile.userRegData.User.osid
           }
         }
       };
@@ -464,7 +464,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
        } else {
         req['url'] = `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_ADD}`;
         req.data.request['status'] = 'Pending';
-        req.data.request['createdby'] = creator;
+        req.data.request['createdby'] = this.userService.userProfile.userRegData.User.osid;
         if (this.isContributorOrgUser()) {
           req.data.request['organisation_id'] = this.getUserOrgId();
         }
@@ -512,9 +512,15 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     };
+    if (apiCall === 'add') {
+      req.data.request['createdBy'] = this.userService.userProfile.userRegData.User.osid;
+    }
+
     if (apiCall === 'update') {
+      req.data.request['updatedBy'] = this.userService.userProfile.userRegData.User.osid;
       req['url'] = `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_UPDATE}`;
     }
+
     if (this.isContributorOrgUser()) {
       req.data.request['organisation_id'] = this.getUserOrgId();
     }
