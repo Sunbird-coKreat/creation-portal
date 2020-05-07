@@ -237,12 +237,12 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
     } else {
       this.disableSubmit = true;
       if (this.enrollAsOrg === true) {
-        var request = {
-          entityType: ["Org"],
+        const request = {
+          entityType: ['Org'],
           filters: {
             code: { eq: this.contributeForm.get('name').value.toUpperCase() }
           }
-        }
+        };
         this.programsService.searchRegistry(request).subscribe(
           (res) => {
             if (_.isEmpty(res.result.Org) || res.result.Org.length === 0) {
