@@ -218,19 +218,20 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
               'type': isOrg ? 'Organisation' : 'Individual',
               'nominationData': res
             });
+
+            (isOrg) ? this.contributedByOrganisation++ : this.contributedByIndividual++;
+            if (res.status === 'Pending') {
+              this.pendingCount = this.pendingCount + 1;
+            }
+            if (res.status === 'Approved') {
+              this.approvedCount  = this.approvedCount + 1;
+            }
+            if (res.status === 'Rejected') {
+              this.rejectedCount = this.rejectedCount + 1;
+            }
+           textbooks = _.concat(textbooks, res.collection_ids);
+            this.nominatedContentTypes = _.concat(this.nominatedContentTypes, res.content_types);
           }
-          (isOrg) ? this.contributedByOrganisation++ : this.contributedByIndividual++;
-          if (res.status === 'Pending') {
-            this.pendingCount = this.pendingCount + 1;
-          }
-          if (res.status === 'Approved') {
-            this.approvedCount  = this.approvedCount + 1;
-          }
-          if (res.status === 'Rejected') {
-            this.rejectedCount = this.rejectedCount + 1;
-          }
-        textbooks = _.concat(textbooks, res.collection_ids);
-        this.nominatedContentTypes = _.concat(this.nominatedContentTypes, res.content_types);
         });
       }
       this.nominatedContentTypes =  _.uniq(this.nominatedContentTypes);

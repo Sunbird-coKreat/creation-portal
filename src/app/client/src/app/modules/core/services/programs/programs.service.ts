@@ -394,7 +394,16 @@ export class ProgramsService extends DataService implements CanActivate {
           this.toasterService.success(this.resourceService.messages.smsg.contributorjoin.m0001);
           this.addSourcingUserstoContribOrg(userRegData).subscribe(
             (res) => {
-              this.addorUpdateNomination(programId, status, selectedContentTypes, selectedCollectionIds).subscribe(
+
+              const request = {
+                program_id: programId,
+                user_id: this.userService.userProfile.userId,
+                status: status,
+                content_types: selectedContentTypes,
+                collection_ids: selectedCollectionIds
+              }
+
+              this.addorUpdateNomination(request).subscribe(
                 (res) => { console.log("Nomination added")},
                 (err) => { console.log("error added")}
               )
@@ -510,10 +519,18 @@ export class ProgramsService extends DataService implements CanActivate {
           if (!this.userService.userProfile.userRegData.User || !this.userService.userProfile.userRegData.User_Org) {
             this.enableContributorProfileForSourcing(programId, "Approved", selectedContentTypes, selectedCollectionIds);
           } else {
-            this.addorUpdateNomination(programId, "Approved", selectedContentTypes, selectedCollectionIds).subscribe(
-              (res) => { console.log("Nomination added")},
-              (err) => { console.log("error added")}
-            )
+
+            const request = {
+              program_id: programId,
+              status: status,
+              content_types: selectedContentTypes,
+              collection_ids: selectedCollectionIds
+            };
+
+            this.addorUpdateNomination(request).subscribe(
+              (res) => { console.log("Nomination added") },
+              (err) => { console.log("error added") }
+            );
           }
         }
       }
@@ -528,11 +545,11 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.API_URL(req);
   }
 
-  addorUpdateNomination(programId, status, selectedContentTypes, selectedCollectionIds) {
+  addorUpdateNomination(request: any) {
     // check if nomination for the program already exists by org id
     const filters = {
-      program_id: programId,
-    }
+      program_id: request.program_id,
+    };
 
     if (!_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
       filters['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
@@ -540,43 +557,27 @@ export class ProgramsService extends DataService implements CanActivate {
       filters['user_id'] = this.userService.userProfile.identifier;
     }
 
-    return this.getNominationList(filters).pipe(tap(data => {
-      const req = {
-        url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_ADD}`,
-        data: {
-          request: {
-            program_id: programId,
-            content_types: selectedContentTypes,
-            collection_ids: selectedCollectionIds,
-            status: status,
-            createdby: this.userService.userProfile.identifier
+    return this.getNominationList(filters).pipe(
+      switchMap((data: any) => {
+        const req = {
+          url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_ADD}`,
+          data: {
+            request: request
           }
-        }
-      };
-
-      if (!_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
-        req.data.request['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
-      }
-
-      if (data.result && data.result.length) {
-        const prevNomination = data.result[0];
-        req.data.request['user_id'] = prevNomination.user_id;
-        req.data.request['updatedby'] = this.userService.userProfile.identifier;
-        req['url'] = `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_UPDATE}`,
-
-        this.post(req).subscribe(
-          (data) => this.toasterService.success('Nomination Updated'),
-          (error) => this.toasterService.error('Nomination update failed... Please try later')
-        );
-      } else {
-        req.data.request['createdby'] = this.userService.userProfile.identifier;
+        };
         req.data.request['user_id'] = this.userService.userProfile.identifier;
-        this.post(req).subscribe(
-          (data) => this.toasterService.success('Nomination sent'),
-          (error) => this.toasterService.error('Nomination submit failed... Please try later')
-        );
-      }
-    }));
+        if (!_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
+          req.data.request['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
+        }
+        if (data.result && data.result.length) {
+          req['url'] = `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_UPDATE}`;
+          const prevNomination = data.result[0];
+          req.data.request['updatedby'] = this.userService.userProfile.userRegData.User.osid;
+        } else {
+          req.data.request['createdby'] = this.userService.userProfile.userRegData.User.osid;
+        }
+        return this.post(req);
+      }), catchError(err => throwError(err) ));
   }
 
   /**
