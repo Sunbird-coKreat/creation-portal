@@ -95,13 +95,18 @@ export class TextbookListComponent implements OnInit {
             this.collections = this.collectionHierarchyService.getIndividualCollectionStatus(this.contentStatusCounts, data);
             _.forEach(this.collections, (collection) => {
               let nominationCount = 0;
+              let nominationAccepted = 0;
               _.forEach(data.nominationsList
                 , (nominations) => {
                   if (_.includes(nominations.nominationData.collection_ids, collection.identifier)) {
                     nominationCount++;
+                    if (nominations.nominationData.status === 'Approved') {
+                      nominationAccepted++;
+                    }
                   }
               });
               collection['nominationCount'] = nominationCount;
+              collection['nominationAccepted'] = nominationAccepted;
             });
             this.tempSortCollections = this.collections;
             this.showLoader = false;
@@ -129,23 +134,31 @@ export class TextbookListComponent implements OnInit {
       _.forEach(this.collections
       , (collection) => {
         tableData.push({
+            'projectName': this.programDetails.name,
             'title': collection.name,
-            'medium': collection.medium,
-            'gradeLevel': _.toString(collection.gradeLevel),
-            'subject': collection.subject,
+            'MediumClassSubject': collection.medium + ' ' + _.toString(collection.gradeLevel) + ' ' + collection.subject,
             'chapterCount': collection.chapterCount,
             'nominationCount': collection.nominationCount,
             'totalSampleContent': collection.totalSampleContent,
+            'nominationAccepted': collection.nominationAccepted,
+            'contributionsReceived': 1,
+            'contributionsAccepted': 1,
+            'contributionsRejected': 2,
+            'contributionsPending': 3,
           });
     });
     const headers = [
-      this.resourceService.frmelmnts.lbl.title,
-      this.resourceService.frmelmnts.lbl.medium,
-      this.resourceService.frmelmnts.lbl.class,
-      this.resourceService.frmelmnts.lbl.subject,
-      this.resourceService.frmelmnts.lbl.chapters,
-      this.resourceService.frmelmnts.lbl.nominations,
-      this.resourceService.frmelmnts.lbl.samples,
+      this.resourceService.frmelmnts.lbl.projectName,
+      this.resourceService.frmelmnts.lbl.textbookName,
+      _.toString(this.resourceService.frmelmnts.lbl.MediumClassSubject),
+      this.resourceService.frmelmnts.lbl.numberOfChapters,
+      this.resourceService.frmelmnts.lbl.nominationsReceived,
+      this.resourceService.frmelmnts.lbl.samplesReceived,
+      this.resourceService.frmelmnts.lbl.nominationsAccepted,
+      this.resourceService.frmelmnts.lbl.contributionsReceived,
+      this.resourceService.frmelmnts.lbl.contributionsAccepted,
+      this.resourceService.frmelmnts.lbl.contributionsRejected,
+      this.resourceService.frmelmnts.lbl.contributionsPending
     ];
     this.programsService.downloadReport(filename, title, headers, tableData);
   }
