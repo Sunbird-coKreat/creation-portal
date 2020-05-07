@@ -72,7 +72,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public nominatedContentTypeCount = 0;
   public samplesCount = 0;
   public totalContentTypeCount = 0;
-  public nominationSampleCounts = {};
 
   constructor(public frameworkService: FrameworkService, private tosterService: ToasterService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
@@ -118,7 +117,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           pdata: {
             id: this.userService.appId,
             ver: version,
-            pid: ''//this.config.appConfig.TELE6a321c05-b5e5-4433-a7bf-d843b536e15dMETRY.PID
+            pid: this.config.appConfig.TELEMETRY.PID
           },
           did: deviceId ? deviceId.value : ''
         },
@@ -217,8 +216,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
             this.nominations.push({
               'name': name.trim(),
               'type': isOrg ? 'Organisation' : 'Individual',
-              'user_id': res.user_id,
-              'organisation_id': res.organisation_id,
               'nominationData': res
             });
           }
@@ -280,92 +277,65 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   getDashboardData(nominations) {
     // tslint:disable-next-line:max-line-length
     this.approvedNominations = _.filter(nominations, nomination => nomination.status === 'Approved' );
-
+    if (this.approvedNominations.length) {
     this.collectionHierarchyService.getContentAggregation(this.programId)
       .subscribe(
         (response) => {
           if (response && response.result && response.result.content) {
-            this.setNominationSampleCounts(response.result.content);
-
-            if (this.approvedNominations.length) {
-              const contents = _.get(response.result, 'content');
-              this.contributionDashboardData = _.map(this.approvedNominations, nomination => {
-                if (nomination.organisation_id) {
-                  // tslint:disable-next-line:max-line-length
-                  const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCounts(contents, nomination.organisation_id, this.programCollections));
-                  // This is enable sorting table. So duping the data at the root of the dashboardData object
-                  dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus['pending'];
-                  dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus['accepted'];
-                  dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus['rejected'];
-                  dashboardData['contributorName'] = this.setContributorName(nomination, 'org');
-                  return {
-                    ...dashboardData,
-                    contributorDetails: nomination,
-                    type: 'org'
-                  };
-                } else {
-                  // tslint:disable-next-line:max-line-length
-                  const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCountsForIndividual(contents, nomination.user_id, this.programCollections));
-                  dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
-                  dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
-                  dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
-                  dashboardData['contributorName'] = this.setContributorName(nomination, 'individual');
-                  return {
-                    ...dashboardData,
-                    contributorDetails: nomination,
-                    type: 'individual'
-                  };
-                }
-              });
-              this.getOverAllCounts(this.contributionDashboardData);
-            }
+            const contents = _.get(response.result, 'content');
+            this.contributionDashboardData = _.map(this.approvedNominations, nomination => {
+              if (nomination.organisation_id) {
+                // tslint:disable-next-line:max-line-length
+                const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCounts(contents, nomination.organisation_id, this.programCollections));
+                // This is enable sorting table. So duping the data at the root of the dashboardData object
+                dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus['pending'];
+                dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus['accepted'];
+                dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus['rejected'];
+                dashboardData['contributorName'] = this.setContributorName(nomination, 'org');
+                return {
+                  ...dashboardData,
+                  contributorDetails: nomination,
+                  type: 'org'
+                };
+              } else {
+                // tslint:disable-next-line:max-line-length
+                const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCountsForIndividual(contents, nomination.user_id, this.programCollections));
+                dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
+                dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
+                dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
+                dashboardData['contributorName'] = this.setContributorName(nomination, 'individual');
+                return {
+                  ...dashboardData,
+                  contributorDetails: nomination,
+                  type: 'individual'
+                };
+              }
+            });
+            this.getOverAllCounts(this.contributionDashboardData);
+          } else {
+            this.contributionDashboardData = _.map(this.approvedNominations, nomination => {
+              return {
+                total: 0,
+                review: 0,
+                draft: 0,
+                rejected: 0,
+                live: 0,
+                sourcingPending: 0,
+                sourcingAccepted: 0,
+                sourcingRejected: 0,
+                // tslint:disable-next-line:max-line-length
+                contributorName: this.setContributorName(nomination, nomination.organisation_id ? 'org' : 'individual'),
+                individualStatus: {},
+                sourcingOrgStatus : {accepted: 0, rejected: 0, pending: 0},
+                contributorDetails: nomination,
+                type: nomination.organisation_id ? 'org' : 'individual'
+              };
+            });
+            this.getOverAllCounts(this.contributionDashboardData);
+          }
         }
-        else if (this.approvedNominations.length) {
-          this.contributionDashboardData = _.map(this.approvedNominations, nomination => {
-            return {
-              total: 0,
-              review: 0,
-              draft: 0,
-              rejected: 0,
-              live: 0,
-              sourcingPending: 0,
-              sourcingAccepted: 0,
-              sourcingRejected: 0,
-              // tslint:disable-next-line:max-line-length
-              contributorName: this.setContributorName(nomination, nomination.organisation_id ? 'org' : 'individual'),
-              individualStatus: {},
-              sourcingOrgStatus : {accepted: 0, rejected: 0, pending: 0},
-              contributorDetails: nomination,
-              type: nomination.organisation_id ? 'org' : 'individual'
-            };
-          });
-          this.getOverAllCounts(this.contributionDashboardData);
-        }
-      }
-    );
-  }
-
-  setNominationSampleCounts(contentResult) {
-    let orgSampleUploads = _.filter(contentResult, contribution => !_.isEmpty(contribution.organisationId) && contribution.sampleContent);
-    orgSampleUploads = _.groupBy(orgSampleUploads, 'organisationId');
-    _.forEach(orgSampleUploads, (temp, index) => {
-      this.nominationSampleCounts[index] = temp.length;
-      //const nomIndex = _.findIndex(this.nominations, function(o) { return o.organisation_id == index; });
-      //this.nominations[nomIndex].samplesCount = temp.length;
-    });
-
-    let individualSampleUploads = _.filter(contentResult, contribution => _.isEmpty(contribution.organisationId) && contribution.sampleContent);
-    individualSampleUploads = _.groupBy(individualSampleUploads, 'createdBy');
-    _.forEach(individualSampleUploads, (temp, index) => {
-      this.nominationSampleCounts[index] = temp.length;
-      //const nomIndex = _.findIndex(this.nominations, function(o) { return o.user_id == index; });
-      //this.nominations[nomIndex].samplesCount = temp.length;
-    });
-  }
-
-  getNominationSampleCounts(nomination) {
-    // tslint:disable-next-line:max-line-length
-    return (nomination.organisation_id) ? this.nominationSampleCounts[nomination.organisation_id] || 0 : this.nominationSampleCounts[nomination.user_id] || 0;
+      );
+    }
   }
 
   getOverAllCounts(dashboardData) {
