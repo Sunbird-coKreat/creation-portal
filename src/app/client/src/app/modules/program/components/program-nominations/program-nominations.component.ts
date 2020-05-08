@@ -563,8 +563,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   downloadNominationList() {
     const filename = this.programDetails && this.programDetails.name.trim() || '';
-    const title = 'Nomination list for project - ' + filename;
-    const tableData = _.filter(_.cloneDeep(this.nominations), (nomination) => {
+    const title = _.replace(this.resourceService.messages.stmsg.nominationListCsvTitle, '{PROJECT_NAME}', filename).trim();
+    const tableData = _.filter(_.cloneDeep(this.tempNominations), (nomination) => {
       nomination.createdon = this.datePipe.transform(nomination.createdon, 'LLLL d, yyyy');
       delete nomination.nominationData;
       delete nomination.user_id;

@@ -909,7 +909,6 @@ export class ProgramsService extends DataService implements CanActivate {
       useTextFile: false,
       useBom: true,
       headers: headers
-      // useKeysAsHeaders: true,
     };
 
     const csvExporter = new ExportToCsv(options);
