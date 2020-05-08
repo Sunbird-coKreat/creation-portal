@@ -133,7 +133,6 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     this.programContentTypes = this.programsService.getContentTypesName(this.programContext.content_types);
     this.setActiveDate();
     this.getNominationStatus();
-    this.getCollectionCard();
   }
 
   ngAfterViewInit() {
@@ -204,7 +203,18 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       this.filterCollectionList(this.classes);
       if (!_.isEmpty(res.result.content)) {
         const collections = res.result.content;
-        this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId)
+        let sampleValue, organisation_id, createdBy;
+        // tslint:disable-next-line:max-line-length
+        if (_.isUndefined(this.currentNominationStatus) || this.currentNominationStatus === 'Initiated' ||  this.currentNominationStatus === 'Pending') {
+          sampleValue = true;
+        }
+        if (this.isContributorOrgUser()) {
+          organisation_id = this.getUserOrgId();
+        } else {
+          createdBy = this.getUserId();
+        }
+        // tslint:disable-next-line:max-line-length
+        this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId, sampleValue, organisation_id, createdBy)
           .subscribe(
             (response) => {
               if (response && response.result && response.result.content) {
@@ -300,7 +310,6 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     if (this.sessionContext && this.programContext && this.currentStage === 'collectionComponent') {
       this.getNominationStatus();
-      this.getCollectionCard();
     }
    }
 
@@ -501,9 +510,11 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
         this.sessionContext.currentRole = 'CONTRIBUTOR';
         this.sessionContext.currentOrgRole = 'individual';
       }
+      this.getCollectionCard();
       const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
       this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
     }, error => {
+      this.getCollectionCard();
       this.toasterService.error('Failed fetching current nomination status');
     });
   }
