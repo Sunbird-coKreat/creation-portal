@@ -137,8 +137,9 @@
                         <div class="sb-color-success d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{approvedCount || 0}}</span> {{resourceService.frmelmnts.lbl.approved}}</div>
                         <div class="sb-color-error d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{rejectedCount|| 0}}</span> {{resourceService.frmelmnts.lbl.rejected}}</div>
                         <div class="sb-color-warning d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{ pendingCount || 0}}</span> {{resourceService.frmelmnts.lbl.pending}}</div>
+                        <button type="button" class="pull-right sb-btn sb-btn-normal sb-btn-outline-primary mb-5" [class.sb-btn-disabled]="tempNominationsCount === 0" (click)="downloadNominationList()"> <i class="download icon"></i> {{ resourceService?.frmelmnts?.btn?.downloadNominationsList }}</button>
                     </div>
-                    <hr class="my-10">
+                    <hr class="mt-20 mb-10">
                     <div class="pt-10 text-capitalize fs-0-785 line-height-1-3 sb-color-gray-400 d-flex">
                         <div class="text-left flex-grow-1"> {{resourceService.frmelmnts.lbl.contributedBy}}:
                             <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ contributedByIndividual  || 0}}</span> {{resourceService.frmelmnts.lbl.individual}}
@@ -187,7 +188,27 @@
                                                     <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                                 </span>
                                             </th>
-                                            <th class="w-10">{{ resourceService?.frmelmnts?.lbl?.textbooks }}</th>
+                                            <th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('textbooks', nominations)">{{ resourceService?.frmelmnts?.lbl?.textbooks }} &nbsp;&nbsp;
+                                                <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'textbooks' "></i>
+                                                <span  *ngIf="sortColumn == 'textbooks'" class="d-inline-block">
+                                                    <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+                                                    <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+                                                </span>
+                                            </th>
+                                            <th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('samples', nominations)">{{ resourceService?.frmelmnts?.lbl?.samples }} &nbsp;&nbsp;
+                                                <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'samples' "></i>
+                                                <span  *ngIf="sortColumn == 'samples'" class="d-inline-block">
+                                                    <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+                                                    <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+                                                </span>
+                                            </th>
+                                            <th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('createdon', nominations)">{{ resourceService?.frmelmnts?.lbl?.nominatedDate }} &nbsp;&nbsp;
+                                                <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'createdon' "></i>
+                                                <span  *ngIf="sortColumn == 'createdon'" class="d-inline-block">
+                                                    <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+                                                    <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+                                                </span>
+                                            </th>
                                             <th class="w-5">
                                                 <span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
                                                     <div class="text">{{ resourceService?.frmelmnts?.lbl?.status }}</div>
@@ -221,20 +242,24 @@
                                                 <div>{{ nomination?.type }}</div>
                                             </td>
                                             <td>
-                                                <div suiPopup popupDelay="1000"
-                                                    popupHeader="{{ resourceService?.frmelmnts?.lbl?.textbooks }}"
-                                                    popupText="{{ nomination?.textbooks }}">
-                                                    {{ getNominatedTextbooksCount(nomination) }}
+                                                <div>{{ nomination?.textbooks || 0 }}</div>
+                                            </td>
+                                            <td>
+                                                <div>{{ nomination?.samples || 0 }}</div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    {{ nomination?.createdon | date:'LLLL d, yyyy' }}
                                                 </div>
                                             </td>
                                             <td>
-                                                <span [ngClass]="{'sb-color-success':nomination?.nominationData?.status  == 'Approved','sb-color-warning':nomination?.nominationData?.status  == 'Pending','sb-color-error':nomination?.nominationData?.status  == 'Rejected'}">
-                                                    {{ nomination?.nominationData?.status }}
+                                                <span [ngClass]="{'sb-color-success':nomination?.status  == 'Approved','sb-color-warning':nomination?.status  == 'Pending','sb-color-error':nomination?.status  == 'Rejected'}">
+                                                    {{ nomination?.status }}
                                                 </span>
                                             </td>
                                             <td class="text-center w-10">
                                                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
-                                                        *ngIf="nomination?.nominationData?.status === 'Pending'"
+                                                        *ngIf="nomination?.status === 'Pending'"
                                                         (click)="viewNominationDetails(nomination)"
                                                         appTelemetryInteract
                                                         [telemetryInteractEdata]="getTelemetryInteractEdata('view-nomination', 'click', 'program-nominations')"
@@ -242,7 +267,7 @@
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
                                                     <button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
-                                                        *ngIf="nomination?.nominationData?.status === 'Approved'"
+                                                        *ngIf="nomination?.status === 'Approved'"
                                                         (click)="viewNominationDetails(nomination)">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
                                                 </td>
                                         </tr>
