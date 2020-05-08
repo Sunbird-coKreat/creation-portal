@@ -452,7 +452,13 @@
                 "ConceptMap",
                 "SelfAssess",
                 "PracticeResource",
-                "eTextBook"
+                "eTextBook",
+                "ClassroomTeachingVideo",
+                "ExplanationVideo",
+                "ExplanationReadingMaterial",
+                "LearningActivity",
+                "PreviousBoardExamPapers",
+                "LessonPlanResource"        
             ]
         },
         "resourceType": {
