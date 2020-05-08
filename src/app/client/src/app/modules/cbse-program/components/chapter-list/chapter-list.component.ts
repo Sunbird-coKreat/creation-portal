@@ -260,7 +260,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         instance.countData['sampleContenttotal'] = 0;
         instance.countData['sampleMycontribution'] = 0;
         instance.countData['pendingReview'] = 0;
-        instance.countData['nominatedUserSample'] = 0;
+        if (this.selectedChapterOption === 'all') {
+          instance.countData['nominatedUserSample'] = 0;
+        }
         this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
         this.getFolderLevelCount(this.collectionHierarchy);
         hierarchy = instance.hierarchyObj;
@@ -290,7 +292,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     if (this.sessionContext.currentOrgRole !== 'user' && this.sessionContext.nominationDetails && !_.includes(['Approved', 'Rejected'], this.sessionContext.nominationDetails.status)) {
       this.sampleContent = true;
       this.sessionContext['sampleContent'] = true;
-      this.getSampleContentStatusCount(data);
+      // tslint:disable-next-line:no-unused-expression
+      if (this.selectedChapterOption === 'all') { this.getSampleContentStatusCount(data); }
     } else {
       this.sampleContent = false;
       this.sessionContext['sampleContent'] = false;
