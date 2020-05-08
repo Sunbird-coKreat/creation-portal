@@ -213,7 +213,7 @@
               <td>
                 <div *ngIf="selectedContentTypes.length">
                 <div *ngIf="canNominate()" class="sb-checkbox sb-checkbox-primary d-inline-block">
-                  <input  type="checkbox" [checked]="data.isSelected || data.totalSampleContent" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
+                  <input  type="checkbox" [attr.disabled]="data.totalSampleContent ? 'disabled' : null" [checked]="data.isSelected || data.totalSampleContent" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
                   <label></label>
                 </div>
                 <button type="button" *ngIf="(data.isSelected || data.totalSampleContent) && canNominate()" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary px-10" appTelemetryInteract
