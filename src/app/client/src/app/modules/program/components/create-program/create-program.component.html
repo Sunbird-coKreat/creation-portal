@@ -360,11 +360,6 @@
 														(change)="onCollectionCheck(data, $event.target.checked)"
 														[checked]="collectionListForm.value.pcollections.indexOf(data.identifier) != -1"
 														name="checkitem"
-														appTelemetryInteract
-														[telemetryInteractEdata]="getTelemetryInteractEdata('select-textbook', 'click', 'create-program',{type:'reference',identifier:data.identifier})"
-														[telemetryInteractObject]="telemetryInteractObject"
-														[telemetryInteractCdata]="telemetryInteractCdata"
-														[telemetryInteractPdata]="telemetryInteractPdata"
 														>
 													<label for="checkitem_{{data.identifier}}"></label>
 												</div>
