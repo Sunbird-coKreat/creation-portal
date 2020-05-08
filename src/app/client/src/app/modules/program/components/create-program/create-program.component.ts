@@ -795,7 +795,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     data['status'] = 'Live';
 
     this.programsService.updateProgram(data).subscribe(
-      (res) => { this.router.navigate(['/sourcing']); this.generateTelemetryEvent('END'); },
+      (res) => {
+        this.toasterService.success(this.resource.messages.smsg.projectCreateSuccess);
+        this.router.navigate(['/sourcing']);
+        this.generateTelemetryEvent('END');
+      },
       (err) => this.saveProgramError(err)
     );
   }
