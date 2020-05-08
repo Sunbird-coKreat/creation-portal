@@ -69,19 +69,15 @@
             <dl *ngIf="actions.showTotalContribution.roles.includes(sessionContext.currentRoleId)"
               class="sb-meta-data">
               <dt>{{countData['mycontribution']}}</dt>
-              <dd>Total</dd>
+              <dd>{{resourceService.frmelmnts.lbl.total}}</dd>
             </dl>
             <dl *ngIf="actions.showUnderReview.roles.includes(sessionContext.currentRoleId)" class="sb-meta-data">
               <dt>{{countData['draft']}}</dt>
-              <dd>Draft</dd>
+              <dd>{{resourceService.frmelmnts.lbl.draft}}</dd>
             </dl>
             <dl *ngIf="actions.showRejected.roles.includes(sessionContext.currentRoleId)" class="sb-meta-data">
               <dt>{{countData['live']}}</dt>
-              <dd>Published</dd>
-            </dl>
-            <dl *ngIf="actions.showAawaitingReview.roles.includes(sessionContext.currentRoleId)" class="sb-meta-data">
-              <dt>{{sourcingOrgReviewer ? countData['pendingReview'] : countData['awaitingreview']}}</dt>
-              <dd>Awaiting my review</dd>
+              <dd>{{resourceService.frmelmnts.lbl.published}}</dd>
             </dl>
           </div>
         </div>
