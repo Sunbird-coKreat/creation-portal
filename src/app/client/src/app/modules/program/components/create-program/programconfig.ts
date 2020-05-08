@@ -3,7 +3,7 @@ var programConfig = {
     '_comments': '',
     'loginReqired': true,
     'framework': 'NCF',
-    'board':'', 
+    'board':'',
     'gradeLevel':[],
     'medium':[],
     'subject':[],
@@ -165,6 +165,30 @@ var programConfig = {
                 }
               },
               {
+                'id': 'learningActivity',
+                'label': 'Learning Activity',
+                'onClick': 'uploadComponent',
+                'mimeType': [
+                  'application/pdf',
+                  'video/mp4'
+                ],
+                'metadata': {
+                  'name': 'Learning Activity',
+                  'description': 'LearningActivity',
+                  'resourceType': 'Read',
+                  'contentType': 'LearningActivity',
+                  'audience': [
+                    'Learner'
+                  ],
+                  'appIcon': '',
+                  'marks': 5
+                },
+                'filesConfig': {
+                  'accepted': 'pdf, mp4',
+                  'size': '50'
+                }
+              },
+              {
                 'id': 'experientialContent',
                 'label': 'Experiential',
                 'onClick': 'uploadComponent',
@@ -184,6 +208,121 @@ var programConfig = {
                 },
                 'filesConfig': {
                   'accepted': 'mp4',
+                  'size': '50'
+                }
+              },
+              {
+                'id': 'classroomTeachingVideo',
+                'label': 'Classroom Teaching Video',
+                'onClick': 'uploadComponent',
+                'mimeType': [
+                  'video/mp4'
+                ],
+                'metadata': {
+                  'name': 'Classroom Teaching Video',
+                  'description': 'ClassroomTeachingVideo',
+                  'resourceType': 'Read',
+                  'contentType': 'ClassroomTeachingVideo',
+                  'audience': [
+                    'Learner'
+                  ],
+                  'appIcon': '',
+                  'marks': 5
+                },
+                'filesConfig': {
+                  'accepted': 'mp4',
+                  'size': '50'
+                }
+              },
+              {
+                'id': 'explanationVideo',
+                'label': 'Explanation Video',
+                'onClick': 'uploadComponent',
+                'mimeType': [
+                  'video/mp4'
+                ],
+                'metadata': {
+                  'name': 'Explanation Video',
+                  'description': 'ExplanationVideo',
+                  'resourceType': 'Read',
+                  'contentType': 'ExplanationVideo',
+                  'audience': [
+                    'Learner'
+                  ],
+                  'appIcon': '',
+                  'marks': 5
+                },
+                'filesConfig': {
+                  'accepted': 'mp4',
+                  'size': '50'
+                }
+              },
+              {
+                'id': 'explanationReadingMaterial',
+                'label': 'Explanation Reading Material',
+                'onClick': 'uploadComponent',
+                'mimeType': [
+                  'application/pdf'
+                ],
+                'metadata': {
+                  'name': 'Explanation Reading Material',
+                  'description': 'ExplanationReadingMaterial',
+                  'resourceType': 'Read',
+                  'contentType': 'ExplanationReadingMaterial',
+                  'audience': [
+                    'Learner'
+                  ],
+                  'appIcon': '',
+                  'marks': 5
+                },
+                'filesConfig': {
+                  'accepted': 'pdf',
+                  'size': '50'
+                }
+              },
+              {
+                'id': 'previousBoardExamPapers',
+                'label': 'Previous Board Exam Papers',
+                'onClick': 'uploadComponent',
+                'mimeType': [
+                  'application/pdf'
+                ],
+                'metadata': {
+                  'name': 'Previous Board Exam Papers',
+                  'description': 'PreviousBoardExamPapers',
+                  'resourceType': 'Read',
+                  'contentType': 'PreviousBoardExamPapers',
+                  'audience': [
+                    'Learner'
+                  ],
+                  'appIcon': '',
+                  'marks': 5
+                },
+                'filesConfig': {
+                  'accepted': 'pdf',
+                  'size': '50'
+                }
+              },
+              {
+                'id': 'lessonPlanResource',
+                'label': 'Lesson Plan',
+                'onClick': 'uploadComponent',
+                'mimeType': [
+                  'application/pdf'
+                ],
+                'metadata': {
+                  'name': 'Lesson Plan',
+                  'description': 'LessonPlanResource',
+                  'resourceType': 'Read',
+                  'contentType': 'LessonPlanResource',
+                  'audience': [
+                    'Learner'
+                  ],
+                  'appIcon': '',
+                  'marks': 5
+                },
+                'filesConfig': {
+                  'accepted': 'pdf',
                   'size': '50'
                 }
               },
