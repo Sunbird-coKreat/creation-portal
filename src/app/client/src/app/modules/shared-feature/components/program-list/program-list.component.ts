@@ -232,6 +232,9 @@ export class ProgramListComponent implements OnInit {
 
         });
         this.showLoader = false;
+        this.programs = this.programs.sort((a, b) => {
+          return (new Date(b['contributionDate']).valueOf()) - new Date(a['contributionDate']).valueOf();
+        });
         this.enrollPrograms = this.programs;
         this.tempSortPrograms = this.programs;
         this.count = _.get(response, 'result.count');
