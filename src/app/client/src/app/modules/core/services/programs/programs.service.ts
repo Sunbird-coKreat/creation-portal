@@ -386,7 +386,7 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * Logic add contrib user and org for the sourcing admin and make him its admin
    */
-  enableContributorProfileForSourcing (programId, status, selectedContentTypes, selectedCollectionIds) {
+  enableContributorProfileForSourcing (request) {
     this.makeContributorOrgForSourcing().subscribe(
       (res) => {
         this.userService.openSaberRegistrySearch().then((userRegData) => {
@@ -394,15 +394,6 @@ export class ProgramsService extends DataService implements CanActivate {
           this.toasterService.success(this.resourceService.messages.smsg.contributorjoin.m0001);
           this.addSourcingUserstoContribOrg(userRegData).subscribe(
             (res) => {
-
-              const request = {
-                program_id: programId,
-                user_id: this.userService.userProfile.userId,
-                status: status,
-                content_types: selectedContentTypes,
-                collection_ids: selectedCollectionIds
-              }
-
               this.addorUpdateNomination(request).subscribe(
                 (res) => { console.log("Nomination added")},
                 (err) => { console.log("error added")}
@@ -508,26 +499,21 @@ export class ProgramsService extends DataService implements CanActivate {
         request
       }
     };
-
     return this.API_URL(req).pipe(tap((res) => {
       if (res.result.program_id) {
         const programId = res.result.program_id;
         if (request.status == 'Live') {
-          const selectedContentTypes = request.programContentTypes;
-          const selectedCollectionIds = request.copiedCollections;
+          const nomRequest = {
+            program_id: programId,
+            status: 'Approved',
+            content_types: request.programContentTypes,
+            collection_ids: request.copiedCollections
+          };
 
           if (!this.userService.userProfile.userRegData.User || !this.userService.userProfile.userRegData.User_Org) {
-            this.enableContributorProfileForSourcing(programId, "Approved", selectedContentTypes, selectedCollectionIds);
+            this.enableContributorProfileForSourcing(nomRequest);
           } else {
-
-            const request = {
-              program_id: programId,
-              status: status,
-              content_types: selectedContentTypes,
-              collection_ids: selectedCollectionIds
-            };
-
-            this.addorUpdateNomination(request).subscribe(
+            this.addorUpdateNomination(nomRequest).subscribe(
               (res) => { console.log("Nomination added") },
               (err) => { console.log("error added") }
             );
