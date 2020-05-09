@@ -133,7 +133,6 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     this.programContentTypes = this.programsService.getContentTypesName(this.programContext.content_types);
     this.setActiveDate();
     this.getNominationStatus();
-    this.getCollectionCard();
   }
 
   ngAfterViewInit() {
@@ -194,7 +193,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  getCollectionCard() {
+  getCollectionCard(contentAggregationFlag) {
     this.searchCollection().subscribe((res) => {
       const { constantData, metaData, dynamicFields } = this.configService.appConfig.LibrarySearch;
       const filterArr = _.groupBy(res.result.content, 'identifier');
@@ -204,7 +203,8 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       this.filterCollectionList(this.classes);
       if (!_.isEmpty(res.result.content)) {
         const collections = res.result.content;
-        this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId)
+        if (contentAggregationFlag === true) {
+          this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId)
           .subscribe(
             (response) => {
               if (response && response.result && response.result.content) {
@@ -232,6 +232,13 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
               this.toasterService.error(errorMes || 'Fetching textbooks failed. Please try again...');
             }
           );
+        } else {
+          this.collectionList = collections;
+          this.selectedCollectionIds = _.map(_.filter(this.collectionList, c => c.totalSampleContent > 0), 'identifier');
+          this.tempSortCollectionList = this.collectionList;
+          this.selectedCollectionIds = _.uniq(this.selectedCollectionIds);
+          this.showLoader = false;
+        }
       } else {
         this.showLoader = false;
       }
@@ -300,7 +307,6 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     if (this.sessionContext && this.programContext && this.currentStage === 'collectionComponent') {
       this.getNominationStatus();
-      this.getCollectionCard();
     }
    }
 
@@ -313,8 +319,9 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
             objectType: 'content',
             programId: this.sessionContext.programId || this.programContext.program_id,
             status: this.sessionContext.collectionStatus || ['Draft', 'Live'],
-            contentType: this.sessionContext.collectionType || 'Textbook'
-          }
+            contentType: this.sessionContext.collectionType || 'Textbook',
+            fields : ['subject', 'medium', 'class']
+          },
         }
       }
     };
@@ -544,6 +551,10 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
           this.sessionContext.nominationDetails = _.first(data.result);
           this.selectedContentTypes = this.sessionContext.nominationDetails.content_types || [];
           this.markSelectedContentTypes();
+          this.getCollectionCard(true);
+      }
+      else {
+        this.getCollectionCard(false);
       }
       if (this.userProfile.userRegData && this.userProfile.userRegData.User_Org) {
         this.sessionContext.currentOrgRole = this.userProfile.userRegData.User_Org.roles[0];
