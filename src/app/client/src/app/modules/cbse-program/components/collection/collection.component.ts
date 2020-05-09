@@ -332,7 +332,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
             status: this.sessionContext.collectionStatus || ['Draft', 'Live'],
             contentType: this.sessionContext.collectionType || 'Textbook'
           },
-          fields: ["name", "gradeLevel", "mimeType", "medium", "subject", "status"],
+          fields: ["name", "gradeLevel", "mimeType", "medium", "subject", "status", "chapterCount"],
           limit: 1000
         }
       }
