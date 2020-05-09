@@ -7,6 +7,8 @@ const reqDataLimitOfContentUpload = '50mb'
 const proxy = require('express-http-proxy')
 const healthService = require('../helpers/healthCheckService.js')
 const logger = require('sb_logger_util_v2')
+var morgan = require('morgan')
+const logApiStatus = envHelper.dock_api_call_log_status
 
 module.exports = function (app) {
 
@@ -35,6 +37,29 @@ module.exports = function (app) {
   // Generate telemetry fot proxy service
   app.all('/learner/*', telemetryHelper.generateTelemetryForLearnerService,
     telemetryHelper.generateTelemetryForProxy)
+
+  if(logApiStatus){
+      app.use('/learner/*', morgan(function (tokens, req, res) {
+          var message = '';
+          if(tokens['response-time'](req, res) < '500'){
+              message = 'below 500ms';
+          } else if(tokens['response-time'](req, res) >= '500' && tokens['response-time'](req, res) < '1000') {
+              message = 'below 1 sec';
+          } else if(tokens['response-time'](req, res) >= '1000' && tokens['response-time'](req, res) < '2000') {
+              message = 'below 2 sec';
+          } else if(tokens['response-time'](req, res) >= '2000') {
+              message = 'above 2 sec';
+          }
+          logger.info({msg: [
+              tokens.method(req, res),
+              tokens.url(req, res),
+              tokens.status(req, res),
+              tokens.res(req, res, 'content-length'), '-',
+              tokens['response-time'](req, res), 'ms',
+              message
+              ].join(' ')});
+      }))
+  }
 
   app.all('/learner/data/v1/role/read',
     permissionsHelper.checkPermission(),
@@ -82,7 +107,6 @@ module.exports = function (app) {
       proxyReqPathResolver: function (req) {
         let urlParam = req.params['0']
         let query = require('url').parse(req.url).query
-        console.log('learnerURL + urlParam ', learnerURL + urlParam + 'sadasd ' +require('url').parse(learnerURL + urlParam).path);
         if (query) {
           return require('url').parse(learnerURL + urlParam + '?' + query).path
         } else {
