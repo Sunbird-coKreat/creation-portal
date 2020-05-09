@@ -439,7 +439,7 @@ export class UserService {
     const deviceId = (<HTMLInputElement>document.getElementById('deviceId'))
       ? (<HTMLInputElement>document.getElementById('deviceId')).value : '';
     const url = `/v1/user/session/start/${deviceId}`;
-    this.http.get(url).subscribe();
+    // this.http.get(url).subscribe();
   }
 
   getUserByKey(key) {

@@ -104,7 +104,7 @@ export class MainHeaderComponent implements OnInit {
         if (user && !user.err) {
           this.userProfile = user.userProfile;
           this.getLanguage(this.userService.channel);
-          this.isCustodianOrgUser();
+          // this.isCustodianOrgUser();
           this.sourcingOrgAdmin = this.userProfile.userRoles.includes('ORG_ADMIN') ? true : false;
         }
       });
