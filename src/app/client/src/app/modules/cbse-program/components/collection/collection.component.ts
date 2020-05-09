@@ -204,15 +204,16 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       if (!_.isEmpty(res.result.content)) {
         const collections = res.result.content;
         let sampleValue, organisation_id, createdBy;
-        // tslint:disable-next-line:max-line-length
-        if (_.isUndefined(this.currentNominationStatus) || this.currentNominationStatus === 'Initiated' ||  this.currentNominationStatus === 'Pending') {
-          sampleValue = true;
-        }
-        if (this.isContributorOrgUser()) {
-          organisation_id = this.getUserOrgId();
-        } else {
-          createdBy = this.getUserId();
-        }
+        if (!_.isUndefined(this.currentNominationStatus)) {
+          // tslint:disable-next-line:max-line-length
+          if (this.currentNominationStatus === 'Initiated' ||  this.currentNominationStatus === 'Pending') {
+            sampleValue = true;
+          }
+          if (this.isContributorOrgUser()) {
+            organisation_id = this.getUserOrgId();
+          } else {
+            createdBy = this.getUserId();
+          }
         // tslint:disable-next-line:max-line-length
         this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId, sampleValue, organisation_id, createdBy)
           .subscribe(
@@ -242,6 +243,13 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
               this.toasterService.error(errorMes || 'Fetching textbooks failed. Please try again...');
             }
           );
+        } else {
+          this.collectionList = collections;
+          this.selectedCollectionIds = _.map(_.filter(this.collectionList, c => c.totalSampleContent > 0), 'identifier');
+          this.tempSortCollectionList = this.collectionList;
+          this.selectedCollectionIds = _.uniq(this.selectedCollectionIds);
+          this.showLoader = false;
+        }
       } else {
         this.showLoader = false;
       }
@@ -323,7 +331,9 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
             programId: this.sessionContext.programId || this.programContext.program_id,
             status: this.sessionContext.collectionStatus || ['Draft', 'Live'],
             contentType: this.sessionContext.collectionType || 'Textbook'
-          }
+          },
+          fields: ["name", "gradeLevel", "mimeType", "medium", "subject", "status", "chapterCount"],
+          limit: 1000
         }
       }
     };
