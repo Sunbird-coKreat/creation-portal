@@ -319,7 +319,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
             objectType: 'content',
             programId: this.sessionContext.programId || this.programContext.program_id,
             status: this.sessionContext.collectionStatus || ['Draft', 'Live'],
-            contentType: this.sessionContext.collectionType || 'Textbook',
+            contentType: this.sessionContext.collectionType || 'Textbook'
           }
         }
       }
