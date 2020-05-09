@@ -46,6 +46,10 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   public grades: any;
   public direction = 'asc';
   public sortColumn = '';
+  public tbSelectionSortColumn = '';
+  public tbSelectionDirection = 'asc';
+  public textbooksSelected = [];
+  public contentTypesSelected = [];
   public state: InitialState = {
     stages: []
   };
@@ -60,6 +64,14 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   rejectComment = '';
   public sampleDataCount = 0;
   public showLoader = true;
+  public textbooksForSelection = [];
+  public contentTypesForSelection = [];
+  public selectedTextbooks = [];
+  public selectedContentTypes = [];
+  public showTextbookSelectionPopup = false;
+  public showContentTypeSelectionPopup = false;
+  @ViewChild('textbookSelectionPopup') textbookSelectionPopup;
+  @ViewChild('contentTypeSelectionPopup') contentTypeSelectionPopup;
   @ViewChild('FormControl') FormControl: NgForm;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
@@ -95,6 +107,9 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       this.configData = _.find(this.programContext.config.components, {'id': 'ng.sunbird.chapterList'});
       this.sessionContext.framework = _.get(this.programContext, 'config.framework');
       this.sessionContext.nominationDetails = this.selectedNominationDetails && this.selectedNominationDetails.nominationData;
+      this.contentTypesForSelection = _.filter(this.programsService.contentTypes, (type) => {
+      return _.includes(_.get(this.sessionContext, 'nominationDetails.content_types'), type.value);
+    });
       if (this.sessionContext.framework) {
         this.fetchFrameWorkDetails();
       }
@@ -287,7 +302,91 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     };
     this.programStageService.addStage('chapterListComponent');
   }
+
+  tbSelectionSort(column) {
+    this.textbooksForSelection = this.programsService.sortCollection(this.textbooksForSelection, column, this.tbSelectionDirection);
+    if (this.tbSelectionDirection === 'asc' || this.tbSelectionDirection === '') {
+      this.tbSelectionDirection = 'desc';
+    } else {
+      this.tbSelectionDirection = 'asc';
+    }
+    this.tbSelectionSortColumn = column;
+  }
+
+  toggleTextbook(item: any) {
+    if (_.includes(this.selectedTextbooks, item.identifier)) {
+      _.remove(this.selectedTextbooks, (identifier) => identifier === item.identifier);
+    } else {
+      this.selectedTextbooks.push(item.identifier);
+    }
+   this.markSelectedTextbooks();
+  }
+
+  markSelectedTextbooks() {
+    this.textbooksForSelection = _.map(this.textbooksForSelection, (textbook) => {
+      textbook['isSelected'] = _.includes(this.selectedTextbooks, textbook.identifier);
+      return textbook;
+    });
+    /*this.textbooksSelected = _.filter(this.textbooksForSelection,
+      (collection) => collection.isSelected === true );*/
+  }
+
+  checkAll($event) {
+    this.textbooksForSelection = _.map(this.textbooksForSelection, (textbook) => {
+      textbook['isSelected'] = $event.target.checked;
+      return textbook;
+    });
+  }
+
+  isAllChecked() {
+    return _.every(this.textbooksForSelection, ['isSelected', true]);
+  }
+
+  anyOneTextbookChecked() {
+    const textbooks = _.filter(this.textbooksForSelection,
+      (textbook) => textbook.isSelected === true);
+      return textbooks.length > 0;
+  }
+
+  toggleContentType(item: any) {
+    if (_.includes(this.selectedContentTypes, item.value)) {
+      _.remove(this.selectedContentTypes, (contentType) => contentType === item.value);
+    } else {
+      this.selectedContentTypes.push(item.value);
+    }
+    this.markSelectedContentTypes();
+  }
+
+  markSelectedContentTypes() {
+    this.contentTypesForSelection = _.map(this.contentTypesForSelection, (contentType) => {
+      contentType['isSelected'] = _.includes(this.selectedContentTypes, contentType.value);
+      return contentType;
+    });
+    this.contentTypesSelected = _.filter(this.contentTypesForSelection,
+      (contentType) => contentType.isSelected === true);
+  }
+
+  acceptNomination() {
+    console.log('acceptNomination');
+    console.log('this.textbooksSelected ', this.textbooksSelected );
+    console.log('this.contentTypesSelected ', this.contentTypesSelected);
+  }
+
+  showContentTypePopup() {
+    this.textbookSelectionPopup.approve();
+    this.showContentTypeSelectionPopup = true;
+  }
+
   updateNomination(status) {
+    if (status === 'accept') {
+      console.log('accept clicked');
+      this.showTextbookSelectionPopup = true;
+      this.textbooksForSelection = _.cloneDeep(this.contributorTextbooks);
+      this.markSelectedTextbooks();
+    } else {
+      console.log('reject clicked');
+    }
+    return;
     let nominationStatus;
     (status === 'accept') ? (nominationStatus = 'Approved') : (nominationStatus = 'Rejected');
      const req = {

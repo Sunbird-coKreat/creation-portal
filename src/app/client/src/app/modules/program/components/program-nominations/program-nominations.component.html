@@ -188,6 +188,7 @@
                                                 </span>
                                             </th>
                                             <th class="w-10">{{ resourceService?.frmelmnts?.lbl?.textbooks }}</th>
+											<th class="w-5">{{resourceService.frmelmnts.lbl.contentType}}</th>
                                             <th class="w-5">
                                                 <span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
                                                     <div class="text">{{ resourceService?.frmelmnts?.lbl?.status }}</div>
@@ -226,6 +227,11 @@
                                                     popupText="{{ nomination?.textbooks }}">
                                                     {{ getNominatedTextbooksCount(nomination) }}
                                                 </div>
+                                            </td>
+                                            <td class="mouse-pointer">
+                                                <div class="ui icon" [attr.data-tooltip]="nomination?.content_types || '-'">
+													<span class="sb__ellipsis sb__ellipsis--breakAll">{{  nomination?.content_types || '-' }}</span>
+												</div>
                                             </td>
                                             <td>
                                                 <span [ngClass]="{'sb-color-success':nomination?.nominationData?.status  == 'Approved','sb-color-warning':nomination?.nominationData?.status  == 'Pending','sb-color-error':nomination?.nominationData?.status  == 'Rejected'}">

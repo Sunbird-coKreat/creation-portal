@@ -216,7 +216,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
             this.nominations.push({
               'name': name.trim(),
               'type': isOrg ? 'Organisation' : 'Individual',
-              'nominationData': res
+              'nominationData': res,
+              'content_types': this.programsService.getContentTypesName(res.content_types)
             });
           }
           (isOrg) ? this.contributedByOrganisation++ : this.contributedByIndividual++;

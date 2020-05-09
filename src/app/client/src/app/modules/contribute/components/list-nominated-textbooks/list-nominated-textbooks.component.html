@@ -208,6 +208,7 @@
 													<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 												</span>
 											</th>
+											<th class="w-5">{{resourceService.frmelmnts.lbl.contentType}}</th>
 											<th *ngIf="isUserOrgAdmin()" class="w-15">{{resourceService.frmelmnts.lbl.contentStatus}}</th>
 											<th class="w-5"></th>
 										</tr>
@@ -220,6 +221,11 @@
 											<td>{{contributorTextbook.medium}}</td>
 											<td>{{contributorTextbook.gradeLevel}}</td>
 											<td>{{contributorTextbook.subject}}</td>
+                                            <td class="mouse-pointer">
+												<div class="ui icon" [attr.data-tooltip]="contributorTextbook?.content_types || '-'">
+													<span class="sb__ellipsis sb__ellipsis--breakAll">{{ contributorTextbook?.content_types || '-' }}</span>
+												</div>
+                                            </td>
 											<td *ngIf="isUserOrgAdmin()">
 												<div class="text-capitalize fs-0-785">
 													<span class="sb-color-primary d-inline-block br-2 pr-5">{{contributorTextbook.reviewCount || 0}}  {{resourceService.frmelmnts.lbl.pending}}</span>

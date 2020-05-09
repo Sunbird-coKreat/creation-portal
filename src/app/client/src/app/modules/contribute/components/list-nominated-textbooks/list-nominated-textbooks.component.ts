@@ -186,6 +186,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   showTexbooklist(res) {
     // tslint:disable-next-line:max-line-length
     const contributorTextbooks = (res.result.content.length && this.nominationDetails.collection_ids) ? _.filter(res.result.content, (collection) => {
+      collection.content_types = this.programsService.getContentTypesName(this.nominationDetails.content_types);
       return _.includes(this.nominationDetails.collection_ids, collection.identifier);
     }) : [];
     if (!_.isEmpty(contributorTextbooks) && this.isNominationOrg()) {

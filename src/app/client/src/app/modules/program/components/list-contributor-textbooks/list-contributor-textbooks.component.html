@@ -199,6 +199,110 @@
 </sui-modal>
 
 
+<sui-modal *ngIf="showTextbookSelectionPopup" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
+	[size]="'large'" class="sb-modal" appBodyScroll #textbookSelectionPopup (dismissed)="showTextbookSelectionPopup = false;">
+	<div class="sb-modal-header">
+		Select Textbooks for Contribution
+	</div>
+	<form #FormControl="ngForm" class="ui form">
+		<div class="sb-modal-content">
+			<table class="sb-table sb-table-striped sb-table-sortable sb-table-fixed">
+				<thead class="sb-table-header sb-table-thead-gray">
+					<tr>
+						<th class="w-5">
+							<div class="sb-checkbox sb-checkbox-primary">
+								<input name="cbAllTextbook" class="checking"  [checked]="isAllChecked()" (change)="checkAll($event)" type="checkbox" id="cbAllTextbook"><label for="cbAllTextbook" class="mb-0"></label>
+							</div>
+						</th>
+						<th class="w-10 cursor-pointer sb-sorting" (click)="tbSelectionSort('name')">
+							{{resourceService.frmelmnts.lbl.textbook}} &nbsp;&nbsp;
+							<i class="fa fa-sort" aria-hidden="true" *ngIf="tbSelectionDirection == '' || sortColumn != 'name' "></i>
+							<span  *ngIf="sortColumn == 'name'" class="d-inline-block">
+								<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':tbSelectionDirection == 'asc'}"></i>
+								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':tbSelectionDirection == 'desc'}"></i>
+							</span>
+						</th>
+						<th class="w-10 cursor-pointer sb-sorting" (click)="tbSelectionSort('medium')">
+							{{resourceService.frmelmnts.lbl.medium}} &nbsp;&nbsp;
+							<i class="fa fa-sort" aria-hidden="true" *ngIf="tbSelectionDirection == '' || sortColumn != 'medium' "></i>
+							<span  *ngIf="sortColumn == 'medium'" class="d-inline-block">
+								<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':tbSelectionDirection == 'asc'}"></i>
+								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':tbSelectionDirection == 'desc'}"></i>
+							</span>
+						</th>
+						<th class="w-10 cursor-pointer sb-sorting" (click)="tbSelectionSort('gradeLevel')">
+							{{resourceService.frmelmnts.lbl.class}} &nbsp;&nbsp;
+							<i class="fa fa-sort" aria-hidden="true" *ngIf="tbSelectionDirection == '' || sortColumn != 'gradeLevel' "></i>
+							<span  *ngIf="sortColumn == 'gradeLevel'" class="d-inline-block">
+								<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':tbSelectionDirection == 'asc'}"></i>
+								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':tbSelectionDirection == 'desc'}"></i>
+							</span>
+						</th>
+						<th class="w-10 cursor-pointer sb-sorting" (click)="tbSelectionSort('subject')">
+							{{resourceService.frmelmnts.lbl.subjects}} &nbsp;&nbsp;
+							<i class="fa fa-sort" aria-hidden="true" *ngIf="tbSelectionDirection == '' || sortColumn != 'subject' "></i>
+							<span  *ngIf="sortColumn == 'subject'" class="d-inline-block">
+								<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':tbSelectionDirection == 'asc'}"></i>
+								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':tbSelectionDirection == 'desc'}"></i>
+							</span>
+						</th>
+						<th *ngIf="contributor?.nominationData?.status == 'Pending'"  class="w-10 px-5 cursor-pointer sb-sorting" (click)="tbSelectionSort('totalSampleContent')">
+							{{resourceService.frmelmnts.lbl.samples}} &nbsp;&nbsp;
+							<i class="fa fa-sort" aria-hidden="true" *ngIf="tbSelectionDirection == '' || sortColumn != 'totalSampleContent' "></i>
+							<span  *ngIf="sortColumn == 'totalSampleContent'" class="d-inline-block">
+								<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':tbSelectionDirection == 'asc'}"></i>
+								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':tbSelectionDirection == 'desc'}"></i>
+							</span>
+						</th>
+					</tr>
+				</thead>
+				<tbody class="sb-table-body" *ngIf="textbooksForSelection?.length">
+					<tr *ngFor="let textbook of textbooksForSelection; let i = index;">
+						<td class="collapsing">
+							<div class="sb-checkbox sb-checkbox-primary">
+								<input name="cbTextbook{{i+1}}" class="checking" [(ngModel)]="textbook.isSelected" (change)="toggleTextbook(textbook);" (click)="$event.stopPropagation()" type="checkbox" id="cbTextbook{{i+1}}"><label for="cbTextbook{{i+1}}" class="mb-0"></label>
+							</div>
+						</td>
+						<td>{{textbook?.name}}</td>
+						<td>{{textbook?.medium}}</td>
+						<td>{{textbook?.gradeLevel}}</td>
+						<td>{{textbook?.subject}}</td>
+						<td *ngIf="contributor?.nominationData?.status == 'Pending'">{{textbook?.totalSampleContent || 0}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="sb-modal-actions">
+			<button id="submitReview" type="submit" class="sb-btn sb-btn-normal"
+				[ngClass]="{'sb-btn-primary': anyOneTextbookChecked(), 'sb-btn-disabled': !anyOneTextbookChecked()}"
+				(click)="showContentTypePopup()">Next</button>
+		</div>
+	</form>
+</sui-modal>
+
+<sui-modal *ngIf="showContentTypeSelectionPopup" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
+	[size]="'normal'" class="sb-modal" appBodyScroll #contentTypeSelectionPopup (dismissed)="showContentTypeSelectionPopup = false;">
+	<div class="sb-modal-header">
+		Select content type(s) for contribution
+	</div>
+	<form #FormControl="ngForm" class="ui form">
+		<div class="sb-modal-content">
+			<div class="mb-10" *ngFor="let contentType of contentTypesForSelection; index as i">
+				<div class="sb-checkbox sb-checkbox-primary">
+					<input name="cbContentType{{i+1}}" class="checking" [(ngModel)]="contentType.isSelected" (change)="toggleContentType(contentType);" (click)="$event.stopPropagation()" type="checkbox" id="cbContentType{{i+1}}">
+					<label for="cbContentType{{i+1}}" class="mb-0"> {{contentType.name}}</label>
+				</div>
+			  </div>
+		</div>
+		<div class="sb-modal-actions">
+			<button id="submitReview" type="submit" class="sb-btn sb-btn-normal"
+				[ngClass]="{'sb-btn-primary': contentTypesSelected.length, 'sb-btn-disabled': !contentTypesSelected.length}"
+				(click)="acceptNomination()">Accept</button>
+		</div>
+	</form>
+</sui-modal>
+
+
 <div class="sb-bg-color-white dynamicHeight" *ngIf="!showChapterList">
 	<div class="ui container">
 		<div class="sb-pageSection pt-24" [appTelemetryImpression]="telemetryImpression">
