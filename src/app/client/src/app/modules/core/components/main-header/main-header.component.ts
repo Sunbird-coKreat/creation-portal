@@ -171,13 +171,14 @@ export class MainHeaderComponent implements OnInit {
         formAction: this.languageFormQuery.formAction,
         contentType: this.languageFormQuery.filterEnv
       };
-      this.formService.getFormConfig(formServiceInputParams, channelId).subscribe((data: any) => {
-        this.languages = data[0].range;
-        this._cacheService.set(this.languageFormQuery.filterEnv + this.languageFormQuery.formAction, data,
-          { maxAge: this.config.appConfig.cacheServiceConfig.setTimeInMinutes * this.config.appConfig.cacheServiceConfig.setTimeInSeconds});
-      }, (err: any) => {
+      // this.formService.getFormConfig(formServiceInputParams, channelId).subscribe((data: any) => {
+      //   this.languages = data[0].range;
+      //   this._cacheService.set(this.languageFormQuery.filterEnv + this.languageFormQuery.formAction, data,
+      // tslint:disable-next-line:max-line-length
+      //     { maxAge: this.config.appConfig.cacheServiceConfig.setTimeInMinutes * this.config.appConfig.cacheServiceConfig.setTimeInSeconds});
+      // }, (err: any) => {
         this.languages = [{ 'value': 'en', 'label': 'English', 'dir': 'ltr' }];
-      });
+      // });
     }
   }
   navigateToHome() {
