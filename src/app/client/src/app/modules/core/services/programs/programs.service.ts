@@ -23,14 +23,14 @@ import { RegistryService } from '../registry/registry.service';
 export class ProgramsService extends DataService implements CanActivate {
 
   private _programsList$ = new BehaviorSubject(undefined);
-  private _allowToContribute$ = new BehaviorSubject(undefined);
+  // private _allowToContribute$ = new BehaviorSubject(undefined);
   private _organisations = {};
 
   public readonly programsList$ = this._programsList$.asObservable()
     .pipe(skipWhile(data => data === undefined || data === null));
 
-  public readonly allowToContribute$ = this._allowToContribute$.asObservable()
-    .pipe(skipWhile(data => data === undefined || data === null));
+  // public readonly allowToContribute$ = this._allowToContribute$.asObservable()
+  //   .pipe(skipWhile(data => data === undefined || data === null));
 
   public config: ConfigService;
   baseUrl: string;
@@ -54,7 +54,7 @@ export class ProgramsService extends DataService implements CanActivate {
    * initializes the service is the user is logged in;
    */
   public initialize() {
-    this.enableContributeMenu().subscribe();
+    // this.enableContributeMenu().subscribe();
     this.getAllContentTypes().subscribe();
     this.mapSlugstoOrgId();
   }
@@ -229,11 +229,10 @@ export class ProgramsService extends DataService implements CanActivate {
    * logic which decides whether or not to show contribute tab menu
    */
   enableContributeMenu(): Observable<boolean> {
-    return combineLatest([this.userService.userData$, this.orgDetailsService.getCustodianOrgDetails()])
+    return combineLatest([this.userService.userData$])
       .pipe(
-        mergeMap(([userData, custodianOrgDetails]) => {
-          return iif(() => _.get(userData, 'userProfile.rootOrgId') === _.get(custodianOrgDetails, 'result.response.value') ||
-            !_.get(userData, 'userProfile.stateValidated'),
+        mergeMap(([userData]) => {
+          return iif(() => !_.get(userData, 'userProfile.stateValidated'),
             of(false),
             this.moreThanOneProgram());
         }),
@@ -243,7 +242,7 @@ export class ProgramsService extends DataService implements CanActivate {
           return of(false);
         }),
         tap(allowedToContribute => {
-          this._allowToContribute$.next(allowedToContribute);
+          // this._allowToContribute$.next(allowedToContribute);
         })
       );
   }

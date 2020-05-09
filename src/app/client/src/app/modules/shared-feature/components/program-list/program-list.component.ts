@@ -57,39 +57,35 @@ export class ProgramListComponent implements OnInit {
    * Check if logged in user is contributor or sourcing org
    */
   private checkIfUserIsContributor() {
-    this.programsService.allowToContribute$.pipe(
-      tap((isContributor: boolean) => {
-        // TODO implement based on api and remove url checks
-        // this.isContributor = !isContributor;
-        const orgId = this.activatedRoute.snapshot.params.orgId;
+      // TODO implement based on api and remove url checks
+      // this.isContributor = !isContributor;
+      const orgId = this.activatedRoute.snapshot.params.orgId;
 
-        // Check if user part of that organisation
-        if (this.router.url.includes('/contribute/join/' + orgId)) {
-            this.programsService.addUsertoContributorOrg(orgId);
-        }
-        if (this.isContributorOrgUser()
-        && !this.router.url.includes('/sourcing')
-        &&  !this.router.isActive('/contribute/myenrollprograms', true)) {
-          return this.router.navigateByUrl('/contribute/myenrollprograms');
-        }
+      // Check if user part of that organisation
+      if (this.router.url.includes('/contribute/join/' + orgId)) {
+          this.programsService.addUsertoContributorOrg(orgId);
+      }
+      if (this.isContributorOrgUser()
+      && !this.router.url.includes('/sourcing')
+      &&  !this.router.isActive('/contribute/myenrollprograms', true)) {
+        return this.router.navigateByUrl('/contribute/myenrollprograms');
+      }
 
-        this.isContributor = this.router.url.includes('/contribute');
-        this.activeAllProgramsMenu =  this.router.isActive('/contribute', true);
-        this.activeMyProgramsMenu = this.router.isActive('/contribute/myenrollprograms', true);
+      this.isContributor = this.router.url.includes('/contribute');
+      this.activeAllProgramsMenu =  this.router.isActive('/contribute', true);
+      this.activeMyProgramsMenu = this.router.isActive('/contribute/myenrollprograms', true);
 
-        if (this.isContributor) {
-          if (this.activeMyProgramsMenu) {
-            this.getMyProgramsForContrib('Live');
-          } else if (this.activeAllProgramsMenu) {
-            this.getAllProgramsForContrib('public', 'Live');
-          } else {
-            this.showLoader = false;
-          }
+      if (this.isContributor) {
+        if (this.activeMyProgramsMenu) {
+          this.getMyProgramsForContrib('Live');
+        } else if (this.activeAllProgramsMenu) {
+          this.getAllProgramsForContrib('public', 'Live');
         } else {
-          this.getMyProgramsForOrg('Live');
+          this.showLoader = false;
         }
-      })
-    ).subscribe();
+      } else {
+        this.getMyProgramsForOrg('Live');
+      }
   }
 
   isUserOrgAdmin() {
