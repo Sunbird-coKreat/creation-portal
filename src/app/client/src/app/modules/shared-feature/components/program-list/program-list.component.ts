@@ -264,7 +264,7 @@ export class ProgramListComponent implements OnInit {
                     return obj;
                   }
               }), 'program_id'));
-              if (!_.isUndefined(this.nominationList) && this.nominationList.length > 0){
+              if (!_.isUndefined(this.nominationList) && this.nominationList.length > 0) {
                 const req = {
                   request: {
                     filters: {
@@ -277,8 +277,9 @@ export class ProgramListComponent implements OnInit {
               } else {
                 this.showLoader = false;
               }
+            } else {
+              this.showLoader = false;
             }
-            this.showLoader = false;
           }, (error) => {
             console.log(error);
             this.toasterService.error('Fetching nominated program failed');
@@ -327,8 +328,9 @@ export class ProgramListComponent implements OnInit {
                   this.sortCollection(this.sortColumn);
                   this.showLoader = false;
               });
+            } else {
+              this.showLoader = false;
             }
-            this.showLoader = false;
           }, (error) => {
             this.showLoader = false;
             console.log(error);
