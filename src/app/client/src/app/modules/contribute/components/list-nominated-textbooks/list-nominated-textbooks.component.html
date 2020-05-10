@@ -257,7 +257,7 @@
 						</div>
 					  </div>
 					</div>
-					<div class="sb-table-responsive desktop-o-x-unset" *ngIf="contributorOrgUser?.length != 0">
+					<div class="sb-table-responsive desktop-o-x-unset">
 					  <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
 						<thead class="sb-table-header sb-table-thead-gray">
 						  <tr>
@@ -294,11 +294,21 @@
 								</span>
 							</th>
 							<th class="text-center w-5">
-								{{resourceService.frmelmnts.lbl.roles}}
+								<span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
+									<div class="text">{{resourceService.frmelmnts.lbl.roles}}</div>
+									&nbsp;&nbsp;
+									<i class="filter icon"></i>
+									<div class="menu" suiDropdownMenu>
+										<div class="item" (click)="onRoleFilter('All')"  [ngClass]="{'selected': selectedRoleFiltered === 'All', 'active': selectedRoleFiltered === 'All'}" >{{resourceService.frmelmnts.tab.all}}</div>
+										<div class="item" (click)="onRoleFilter('CONTRIBUTOR')" [ngClass]="{'selected': selectedRoleFiltered === 'CONTRIBUTOR', 'active': selectedRoleFiltered === 'CONTRIBUTOR'}" >{{resourceService.frmelmnts.lbl.contributor}}</div>
+										<div class="item" (click)="onRoleFilter('REVIEWER')"  [ngClass]="{'selected': selectedRoleFiltered === 'REVIEWER', 'active': selectedRoleFiltered === 'REVIEWER'}">{{resourceService.frmelmnts.lbl.Reviewer}}</div>
+										<div class="item" (click)="onRoleFilter('NotAssigned')"  [ngClass]="{'selected': selectedRoleFiltered === 'NotAssigned', 'active': selectedRoleFiltered === 'NotAssigned'}">{{resourceService.frmelmnts.lbl.NotAssigned}}</div>
+									</div>
+								</span>
 							</th>
 						  </tr>
 						</thead>
-						<tbody class="sb-table-body">
+						<tbody class="sb-table-body" *ngIf="contributorOrgUser?.length != 0">
 						  <tr *ngFor="let orgUser of contributorOrgUser; let i= index;">
 							<td>{{orgUser.fullName}}</td>
 							<td>{{orgUser?.gradeLevel?.join(', ')}}</td>

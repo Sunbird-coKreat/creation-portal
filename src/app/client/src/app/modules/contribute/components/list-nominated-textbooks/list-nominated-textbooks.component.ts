@@ -67,6 +67,8 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public directionOrgUsers = 'asc';
   public sortColumnOrgUsers = '';
   public showLoader = true;
+  public selectedRoleFiltered = 'All';
+  public FilterOrgUser: any = [];
 
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private configService: ConfigService, private publicDataService: PublicDataService,
@@ -386,6 +388,8 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
                       _.find(this.nominationDetails.rolemapping, (users, role) => {
                         if (_.includes(users, r.result.User.userId)) {
                           r.result.User.selectedRole = role;
+                        } else {
+                          r.result.User.selectedRole = 'NotAssigned';
                         }
                       });
                     }
@@ -393,6 +397,9 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
                   }
                 });
                 this.tempSortOrgUser = this.contributorOrgUser;
+                this.FilterOrgUser = this.contributorOrgUser;
+                console.log(this.contributorOrgUser,'user aray')
+                console.log(this.nominationDetails.rolemapping, 'this.nominationDetails.rolemapping')
               }
             }, error => {
               console.log(error);
@@ -424,6 +431,21 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     }, error => {
       console.log(error);
     });
+  }
+
+  onRoleFilter(role) {
+    if (this.selectedRoleFiltered !== role) {
+      this.selectedRoleFiltered = role;
+      if (role === 'All') {
+        this.contributorOrgUser = this.FilterOrgUser ;
+      } else {
+        this.contributorOrgUser = _.filter(this.FilterOrgUser, (o) => {
+          return o.selectedRole === role;
+        });
+      }
+      this.tempSortOrgUser = this.contributorOrgUser;
+      console.log(this.selectedRoleFiltered ,'filtered value')
+    }
   }
 
   changeView() {

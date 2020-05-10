@@ -72,6 +72,11 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public nominatedContentTypeCount = 0;
   public samplesCount = 0;
   public totalContentTypeCount = 0;
+  public directionOrgUsers = 'asc';
+  public sortColumnOrgUsers = '';
+  public tempSortOrgUser: any = [];
+  public selectedRoleFiltered = 'All';
+  public FilterOrgUser: any = [];
 
   constructor(public frameworkService: FrameworkService, private tosterService: ToasterService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
@@ -93,6 +98,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.checkActiveTab();
     this.showUsersTab = this.isSourcingOrgAdmin();
     this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
+    this.tempSortOrgUser = this.sourcingOrgUser;
+    this.FilterOrgUser = this.sourcingOrgUser;
     this.roles = [{name: 'REVIEWER'}];
     this.sessionContext.currentRole = 'REVIEWER';
     this.programStageService.initialize();
@@ -509,6 +516,38 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     });
   }
 
+  sortOrgUsers(column) {
+    this.sourcingOrgUser = this.programsService.sortCollection(this.tempSortOrgUser, column, this.directionOrgUsers);
+    if (this.directionOrgUsers === 'asc' || this.directionOrgUsers === '') {
+      this.directionOrgUsers = 'desc';
+    } else {
+      this.directionOrgUsers = 'asc';
+    }
+    this.sortColumnOrgUsers = column;
+  }
+
+  onRoleFilter(role) {
+    const rolesNotAssignedUser =[];
+    if (this.selectedRoleFiltered !== role) {
+      this.selectedRoleFiltered = role;
+      if (role === 'All') {
+        this.sourcingOrgUser = this.FilterOrgUser ;
+      } else if (role === 'NotAssigned') {
+        _.forEach(this.FilterOrgUser
+          , (user) => {
+            if (!user.selectedRole) {
+              rolesNotAssignedUser.push(user);
+            }
+        });
+        this.sourcingOrgUser = rolesNotAssignedUser;
+      } else {
+        this.sourcingOrgUser = _.filter(this.FilterOrgUser, (o) => {
+          return o.selectedRole === role;
+        });
+      }
+      this.tempSortOrgUser = this.sourcingOrgUser;
+    }
+  }
   changeView() {
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage = _.last(this.state.stages).stage;
