@@ -122,10 +122,11 @@ export class ProgramListComponent implements OnInit {
               .subscribe(
                 (nominationsResponse) => {
                 const nominations = _.get(nominationsResponse, 'result');
+                let enrolledPrograms = [];
                 if (!_.isEmpty(nominations)) {
-                  const enrolledPrograms = _.uniq(_.map(nominations, 'program_id'));
-                  this.filterOutEnrolledPrograms(allPrograms, enrolledPrograms);
+                  enrolledPrograms = _.uniq(_.map(nominations, 'program_id'));
                 }
+                this.filterOutEnrolledPrograms(allPrograms, enrolledPrograms);
               }, (error) => {
                 console.log(error);
                 this.toasterService.error('Fetching nominated program failed');
@@ -142,7 +143,6 @@ export class ProgramListComponent implements OnInit {
                 }
               }
             };
-
             this.programsService.getMyProgramsForContrib(req)
             .subscribe((myProgramsResponse) => {
                 const enrolledPrograms = _.map(_.get(myProgramsResponse, 'result.programs'), (nomination: any) => {
@@ -150,6 +150,7 @@ export class ProgramListComponent implements OnInit {
                 });
                 this.filterOutEnrolledPrograms(allPrograms, enrolledPrograms);
               }, error => {
+                this.showLoader = false;
                 this.toasterService.error(_.get(error, 'error.params.errmsg') || this.resourceService.messages.emsg.projects.m0001);
               }
             );
@@ -263,16 +264,21 @@ export class ProgramListComponent implements OnInit {
                     return obj;
                   }
               }), 'program_id'));
-              const req = {
-                request: {
-                  filters: {
-                    program_id: this.nominationList,
-                    status: status
+              if (!_.isUndefined(this.nominationList) && this.nominationList.length > 0){
+                const req = {
+                  request: {
+                    filters: {
+                      program_id: this.nominationList,
+                      status: status
+                    }
                   }
-                }
-              };
-              this.getContributionProgramList(req);
+                };
+                this.getContributionProgramList(req);
+              } else {
+                this.showLoader = false;
+              }
             }
+            this.showLoader = false;
           }, (error) => {
             console.log(error);
             this.toasterService.error('Fetching nominated program failed');
@@ -312,16 +318,17 @@ export class ProgramListComponent implements OnInit {
                       });
                       return program;
                     }
-                });
-                this.enrollPrograms = this.programs;
-                this.tempSortPrograms = this.programs;
-                this.count = this.programs.length;
-                this.sortColumn = 'createdon';
-                this.direction = 'desc';
-                this.sortCollection(this.sortColumn);
-                this.showLoader = false;
+                  });
+                  this.enrollPrograms = this.programs;
+                  this.tempSortPrograms = this.programs;
+                  this.count = this.programs.length;
+                  this.sortColumn = 'createdon';
+                  this.direction = 'desc';
+                  this.sortCollection(this.sortColumn);
+                  this.showLoader = false;
               });
             }
+            this.showLoader = false;
           }, (error) => {
             this.showLoader = false;
             console.log(error);
@@ -411,6 +418,7 @@ export class ProgramListComponent implements OnInit {
       this.tempSortPrograms = this.programs;
       this.showLoader = false;
     }, error => {
+      this.showLoader = false;
       console.log(error);
       // TODO: Add error toaster
     });
