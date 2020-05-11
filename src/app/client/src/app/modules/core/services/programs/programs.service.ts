@@ -883,15 +883,14 @@ export class ProgramsService extends DataService implements CanActivate {
       }));
   }
 
-  downloadReport(filename, title, headers, tableData) {
+  downloadReport(filename, headers, tableData) {
     const options = {
       filename: filename,
       fieldSeparator: ',',
       quoteStrings: '"',
       decimalSeparator: '.',
       showLabels: true,
-      showTitle: true,
-      title: title,
+      showTitle: false,
       useTextFile: false,
       useBom: true,
       headers: headers
