@@ -528,12 +528,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               ...(this.sessionContext.nominationDetails &&
                 this.sessionContext.nominationDetails.organisation_id &&
                 {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
-              'sampleContent': this.sampleContent,
               ...(_.pickBy(reqBody, _.identity))
             }
           }
         }
       };
+      if (this.sampleContent) {
+        option.data.request.content.sampleContent = this.sampleContent;
+      }
       if (this.templateDetails.metadata.appIcon) {
         option.data.request.content.appIcon = this.templateDetails.metadata.appIcon;
       }

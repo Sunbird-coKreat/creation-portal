@@ -67,7 +67,9 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
         this.toasterService.error(_.get(this.resourceService, 'messages.fmsg.m0004'));
       }
     );
-    this.instance = _.upperCase(this.resourceService.instance || 'SUNBIRD');
+    this.instance = _.upperCase('DIKSHA' || 'SUNBIRD');
+    this.logo = '/tenant/ntp/appLogo.png';
+    this.tenantName = 'dock';
     this.tenantDataSubscription = this.tenantService.tenantData$.subscribe(
       data => {
         if (data && !data.err) {
