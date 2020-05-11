@@ -398,8 +398,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
                 });
                 this.tempSortOrgUser = this.contributorOrgUser;
                 this.FilterOrgUser = this.contributorOrgUser;
-                console.log(this.contributorOrgUser,'user aray')
-                console.log(this.nominationDetails.rolemapping, 'this.nominationDetails.rolemapping')
               }
             }, error => {
               console.log(error);
@@ -444,7 +442,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
         });
       }
       this.tempSortOrgUser = this.contributorOrgUser;
-      console.log(this.selectedRoleFiltered ,'filtered value')
     }
   }
 
