@@ -68,7 +68,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public sortColumnOrgUsers = '';
   public showLoader = true;
   public selectedRoleFiltered = 'All';
-  public FilterOrgUser: any = [];
 
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private configService: ConfigService, private publicDataService: PublicDataService,
@@ -397,7 +396,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
                   }
                 });
                 this.tempSortOrgUser = this.contributorOrgUser;
-                this.FilterOrgUser = this.contributorOrgUser;
               }
             }, error => {
               console.log(error);
@@ -431,17 +429,22 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     });
   }
 
-  onRoleFilter(role) {
+  sortOrgUsersByRole(role) {
     if (this.selectedRoleFiltered !== role) {
       this.selectedRoleFiltered = role;
       if (role === 'All') {
-        this.contributorOrgUser = this.FilterOrgUser ;
+        this.contributorOrgUser = this.tempSortOrgUser ;
       } else {
-        this.contributorOrgUser = _.filter(this.FilterOrgUser, (o) => {
-          return o.selectedRole === role;
+          this.contributorOrgUser.sort((a, b) => {
+            if (a.selectedRole === role) {
+              return -1;
+            } else if (b.selectedRole === role) {
+              return 1;
+            } else {
+              return a.selectedRole - b.selectedRole;
+            }
         });
       }
-      this.tempSortOrgUser = this.contributorOrgUser;
     }
   }
 
