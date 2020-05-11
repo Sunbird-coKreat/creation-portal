@@ -278,7 +278,7 @@ export class ProgramsService extends DataService implements CanActivate {
    * makes api call to get the textbooks for program
    */
   getCollectionList(request): Observable<ServerResponse> {
-    return this.http.post('learner/composite/v1/search', request).pipe(
+    return this.http.post('content/composite/v1/search', request).pipe(
       mergeMap((data: ServerResponse) => {
         if (data.responseCode !== 'OK') {
           return throwError(data);
