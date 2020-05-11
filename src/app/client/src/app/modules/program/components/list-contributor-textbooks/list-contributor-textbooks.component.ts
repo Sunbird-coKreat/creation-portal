@@ -327,8 +327,6 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       textbook['isSelected'] = _.includes(this.selectedTextbooks, textbook.identifier);
       return textbook;
     });
-    /*this.textbooksSelected = _.filter(this.textbooksForSelection,
-      (collection) => collection.isSelected === true );*/
   }
 
   checkAll($event) {
@@ -373,6 +371,8 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   }
 
   showContentTypePopup() {
+    this.textbooksSelected = _.filter(this.textbooksForSelection,
+      (textbook) => textbook.isSelected === true );
     this.textbookSelectionPopup.approve();
     this.showContentTypeSelectionPopup = true;
   }
