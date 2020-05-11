@@ -109,7 +109,7 @@
           </div>
         </div>
       </div>
-    <div class="bt-1 w-100 py-20 pl-0">
+    <div class="bt-1 w-100 py-20">
       <div *ngIf="canNominate()" class="d-inline-block br-2 pr-20">
         <button type="button" (click)="showContentTypeModal= true; handleCancel(false)" class="sb-btn sb-btn-normal sb-btn-outline-primary" appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('select-contentType', 'click', 'collection-list')"
@@ -391,7 +391,7 @@
       <p class="mt-10">{{resourceService.frmelmnts.lbl.nominationDescription}}</p>
   </div>
   <div class="sb-modal-actions">
-      <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="addNomination();"> {{resourceService.frmelmnts.btn.submit}} </button>
+      <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="disableNominate" (click)="disableNominate=true; addNomination();"> {{resourceService.frmelmnts.btn.submit}} </button>
       <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="cancelNomination();" appTelemetryInteract> {{resourceService.frmelmnts.btn.cancel}}
 </button>
   </div>

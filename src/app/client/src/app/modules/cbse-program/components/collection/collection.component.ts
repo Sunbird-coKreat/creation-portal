@@ -72,7 +72,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   public currentUserID;
   _slideConfig = {'slidesToShow': 10, 'slidesToScroll': 1, 'variableWidth': true};
   public preSavedContentTypes = [];
-
+  public disableNominate = false;
   constructor(private configService: ConfigService, public publicDataService: PublicDataService,
     public actionService: ActionService,
     private cbseService: CbseProgramService, private collectionHierarchyService: CollectionHierarchyService,
@@ -133,7 +133,6 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     this.programContentTypes = this.programsService.getContentTypesName(this.programContext.content_types);
     this.setActiveDate();
     this.getNominationStatus();
-    this.getCollectionCard();
   }
 
   ngAfterViewInit() {
@@ -204,7 +203,19 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       this.filterCollectionList(this.classes);
       if (!_.isEmpty(res.result.content)) {
         const collections = res.result.content;
-        this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId)
+        let sampleValue, organisation_id, createdBy;
+        if (!_.isUndefined(this.currentNominationStatus)) {
+          // tslint:disable-next-line:max-line-length
+          if (this.currentNominationStatus === 'Initiated' ||  this.currentNominationStatus === 'Pending') {
+            sampleValue = true;
+          }
+          if (this.isContributorOrgUser()) {
+            organisation_id = this.getUserOrgId();
+          } else {
+            createdBy = this.getUserId();
+          }
+        // tslint:disable-next-line:max-line-length
+        this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId, sampleValue, organisation_id, createdBy)
           .subscribe(
             (response) => {
               if (response && response.result && response.result.content) {
@@ -232,6 +243,13 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
               this.toasterService.error(errorMes || 'Fetching textbooks failed. Please try again...');
             }
           );
+        } else {
+          this.collectionList = collections;
+          this.selectedCollectionIds = _.map(_.filter(this.collectionList, c => c.totalSampleContent > 0), 'identifier');
+          this.tempSortCollectionList = this.collectionList;
+          this.selectedCollectionIds = _.uniq(this.selectedCollectionIds);
+          this.showLoader = false;
+        }
       } else {
         this.showLoader = false;
       }
@@ -300,7 +318,6 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     if (this.sessionContext && this.programContext && this.currentStage === 'collectionComponent') {
       this.getNominationStatus();
-      this.getCollectionCard();
     }
    }
 
@@ -314,7 +331,9 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
             programId: this.sessionContext.programId || this.programContext.program_id,
             status: this.sessionContext.collectionStatus || ['Draft', 'Live'],
             contentType: this.sessionContext.collectionType || 'Textbook'
-          }
+          },
+          fields: ["name", "gradeLevel", "mimeType", "medium", "subject", "status", "chapterCount"],
+          limit: 1000
         }
       }
     };
@@ -350,7 +369,6 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   ChangeUploadStatus(rowId) {
     this.nominate = rowId;
     this.nominate = 'uploadSample';
-    // this.uploadSample = 'uploadSample';
   }
 
   nominationChecked(rowId) {
@@ -420,67 +438,31 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
 
   addNomination() {
     this.showContentTypeModal = false;
-    let creator = this.userService.userProfile.firstName;
-    if (!_.isEmpty(this.userService.userProfile.lastName)) {
-      creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
-    }
-    // check nomination available
+    this.disableNominate = true;
+    const programId = this.activatedRoute.snapshot.params.programId;
     const request = {
-      url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
-      data: {
-        request: {
-          filters: {
-          program_id: this.activatedRoute.snapshot.params.programId,
-          user_id: this.userService.userProfile.userId
-          }
-        }
-      }
+      program_id: programId,
+      status: 'Pending',
+      content_types: this.selectedContentTypes,
+      collection_ids: this.selectedCollectionIds,
     };
-    this.programsService.post(request).subscribe((res) => {
-      const req = {
-        url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_UPDATE}`,
-        data: {
-          request: {
-            program_id: this.activatedRoute.snapshot.params.programId,
-            user_id: this.userService.userProfile.userId,
-            status: 'Pending',
-            content_types: this.selectedContentTypes,
-            collection_ids: this.selectedCollectionIds,
-            updatedby: creator
+
+    this.programsService.addorUpdateNomination(request).subscribe(
+      (data) => {
+        if (data.result && !_.isEmpty(data.result)) {
+            this.showNominateModal = false;
+            const router = this.router;
+            setTimeout(function() {
+              router.navigateByUrl('/contribute/myenrollprograms');
+            }, 10);
+            this.toasterService.success('Nomination sent');
           }
-        }
-      };
-       if (res.result && res.result.length) {
-        this.programsService.post(req).subscribe((data) => {
-          this.showNominateModal = false;
-          const router = this.router;
-          setTimeout(function() {
-            router.navigateByUrl('/contribute/myenrollprograms');
-          }, 10);
-          this.toasterService.success('Nomination sent');
-        }, error => {
-          this.toasterService.error('Nomination submit failed... Please try later');
-        });
-       } else {
-        req['url'] = `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_ADD}`;
-        req.data.request['status'] = 'Pending';
-        req.data.request['createdby'] = creator;
-        if (this.isContributorOrgUser()) {
-          req.data.request['organisation_id'] = this.getUserOrgId();
-        }
-        this.programsService.post(req).subscribe((data) => {
-          this.showNominateModal = false;
-          const router = this.router;
-          setTimeout(function() {
-            router.navigateByUrl('/contribute/myenrollprograms');
-          }, 10);
-          this.toasterService.success('Nomination sent');
-        }, error => {
-          this.toasterService.error('Nomination submit failed... Please try later');
-        });
-       }
+      }, (error) => {
+        this.disableNominate = false;
+        this.toasterService.error('Nomination submit failed... Please try later');
     });
   }
+
   setActiveDate() {
     const dates = [ 'nomination_enddate', 'shortlisting_enddate', 'content_submission_enddate', 'enddate'];
 
@@ -497,29 +479,6 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
         this.activeDate = key;
       }
     });
-  }
-
-  expressInterest(apiCall) {
-    const userProfile = this.userService.userProfile;
-    const req = {
-      url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_ADD}`,
-      data: {
-        request: {
-          program_id: this.activatedRoute.snapshot.params.programId,
-          user_id: this.userService.userProfile.userId,
-          status: 'Initiated',
-          content_types: this.selectedContentTypes || null
-        }
-      }
-    };
-    if (apiCall === 'update') {
-      req['url'] = `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_UPDATE}`;
-    }
-    if (this.isContributorOrgUser()) {
-      req.data.request['organisation_id'] = this.getUserOrgId();
-    }
-
-    return this.programsService.post(req);
   }
 
   getNominationStatus() {
@@ -561,9 +520,11 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
         this.sessionContext.currentRole = 'CONTRIBUTOR';
         this.sessionContext.currentOrgRole = 'individual';
       }
+      this.getCollectionCard();
       const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
       this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
     }, error => {
+      this.getCollectionCard();
       this.toasterService.error('Failed fetching current nomination status');
     });
   }
@@ -578,28 +539,36 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   uploadSampleContent(event, collection) {
-    let apiCall = 'add';
-    if (this.sessionContext.nominationDetails) {
-      apiCall = 'update';
-    }
-      this.expressInterest(apiCall).subscribe((data) => {
-        if (data.result && !_.isEmpty(data.result)) {
-          this.sessionContext.nominationDetails = {
-            osid: data.result.id,
-            status: 'Initiated',
-            program_id: data.result.program_id,
-            user_id: data.result.user_id,
-            content_types: this.selectedContentTypes
-          };
-          if (this.userService.userRegistryData && this.userService.userProfile.userRegData &&
-            this.userService.userProfile.userRegData.User_Org) {
-            this.sessionContext.nominationDetails['organisation_id'] = this.getUserOrgId();
+    if (!this.selectedContentTypes.length) {
+        this.toasterService.error(this.resourceService.messages.emsg.nomination.m001);
+    } else {
+      const programId = this.activatedRoute.snapshot.params.programId;
+      const userId = this.getUserId();
+      const request = {
+        program_id: programId,
+        status: 'Initiated',
+        content_types: this.selectedContentTypes
+      };
+
+      this.programsService.addorUpdateNomination(request).subscribe(
+        (data) => {
+          if (data.result && !_.isEmpty(data.result)) {
+            this.sessionContext.nominationDetails = {
+              osid: data.result.id,
+              status: 'Initiated',
+              program_id: programId,
+              user_id: userId,
+              content_types: this.selectedContentTypes
+            };
+            if (this.isContributorOrgUser()) {
+              this.sessionContext.nominationDetails['organisation_id'] = this.getUserOrgId();
+            }
+            this.gotoChapterView(collection);
           }
-          this.gotoChapterView(collection);
-        }
-      }, error => {
-        this.toasterService.error('User onboarding failed');
-      });
+        }, error => {
+          this.toasterService.error('User onboarding failed');
+        });
+    }
   }
 
   gotoChapterView(collection) {

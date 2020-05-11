@@ -8,11 +8,37 @@ const proxy = require('express-http-proxy')
 const healthService = require('../helpers/healthCheckService.js')
 const _ = require('lodash')
 const logger = require('sb_logger_util_v2')
+var morgan = require('morgan')
+const logApiStatus = envHelper.dock_api_call_log_status
+
 
 module.exports = (app) => {
     // Generate telemetry fot proxy service
     app.all('/content/*', telemetryHelper.generateTelemetryForContentService,
         telemetryHelper.generateTelemetryForProxy)
+
+    if(logApiStatus){
+        app.use('/content/*', morgan(function (tokens, req, res) {
+            var message = '';
+            if(tokens['response-time'](req, res) < '500'){
+                message = 'below 500ms';
+            } else if(tokens['response-time'](req, res) >= '500' && tokens['response-time'](req, res) < '1000') {
+                message = 'below 1 sec';
+            } else if(tokens['response-time'](req, res) >= '1000' && tokens['response-time'](req, res) < '2000') {
+                message = 'below 2 sec';
+            } else if(tokens['response-time'](req, res) >= '2000') {
+                message = 'above 2 sec';
+            }
+            logger.info({msg: [
+                tokens.method(req, res),
+                tokens.url(req, res),
+                tokens.status(req, res),
+                tokens.res(req, res, 'content-length'), '-',
+                tokens['response-time'](req, res), 'ms',
+                message
+                ].join(' ')});
+        }))
+    }
 
     app.all('/content/course/v1/search',
         healthService.checkDependantServiceHealth(['CONTENT', 'CASSANDRA']),

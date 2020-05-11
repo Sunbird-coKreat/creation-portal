@@ -16,6 +16,7 @@ import { ContentService } from '../content/content.service';
 import { DatePipe } from '@angular/common';
 import { LearnerService } from '../learner/learner.service';
 import { RegistryService } from '../registry/registry.service';
+import { ExportToCsv } from 'export-to-csv';
 
 @Injectable({
   providedIn: 'root'
@@ -23,14 +24,14 @@ import { RegistryService } from '../registry/registry.service';
 export class ProgramsService extends DataService implements CanActivate {
 
   private _programsList$ = new BehaviorSubject(undefined);
-  private _allowToContribute$ = new BehaviorSubject(undefined);
+  // private _allowToContribute$ = new BehaviorSubject(undefined);
   private _organisations = {};
 
   public readonly programsList$ = this._programsList$.asObservable()
     .pipe(skipWhile(data => data === undefined || data === null));
 
-  public readonly allowToContribute$ = this._allowToContribute$.asObservable()
-    .pipe(skipWhile(data => data === undefined || data === null));
+  // public readonly allowToContribute$ = this._allowToContribute$.asObservable()
+  //   .pipe(skipWhile(data => data === undefined || data === null));
 
   public config: ConfigService;
   baseUrl: string;
@@ -54,7 +55,7 @@ export class ProgramsService extends DataService implements CanActivate {
    * initializes the service is the user is logged in;
    */
   public initialize() {
-    this.enableContributeMenu().subscribe();
+    // this.enableContributeMenu().subscribe();
     this.getAllContentTypes().subscribe();
     this.mapSlugstoOrgId();
   }
@@ -229,11 +230,10 @@ export class ProgramsService extends DataService implements CanActivate {
    * logic which decides whether or not to show contribute tab menu
    */
   enableContributeMenu(): Observable<boolean> {
-    return combineLatest([this.userService.userData$, this.orgDetailsService.getCustodianOrgDetails()])
+    return combineLatest([this.userService.userData$])
       .pipe(
-        mergeMap(([userData, custodianOrgDetails]) => {
-          return iif(() => _.get(userData, 'userProfile.rootOrgId') === _.get(custodianOrgDetails, 'result.response.value') ||
-            !_.get(userData, 'userProfile.stateValidated'),
+        mergeMap(([userData]) => {
+          return iif(() => !_.get(userData, 'userProfile.stateValidated'),
             of(false),
             this.moreThanOneProgram());
         }),
@@ -243,7 +243,7 @@ export class ProgramsService extends DataService implements CanActivate {
           return of(false);
         }),
         tap(allowedToContribute => {
-          this._allowToContribute$.next(allowedToContribute);
+          // this._allowToContribute$.next(allowedToContribute);
         })
       );
   }
@@ -386,7 +386,7 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * Logic add contrib user and org for the sourcing admin and make him its admin
    */
-  enableContributorProfileForSourcing (programId, status, selectedContentTypes, selectedCollectionIds) {
+  enableContributorProfileForSourcing (request) {
     this.makeContributorOrgForSourcing().subscribe(
       (res) => {
         this.userService.openSaberRegistrySearch().then((userRegData) => {
@@ -394,7 +394,7 @@ export class ProgramsService extends DataService implements CanActivate {
           this.toasterService.success(this.resourceService.messages.smsg.contributorjoin.m0001);
           this.addSourcingUserstoContribOrg(userRegData).subscribe(
             (res) => {
-              this.addorUpdateNomination(programId, status, selectedContentTypes, selectedCollectionIds).subscribe(
+              this.addorUpdateNomination(request).subscribe(
                 (res) => { console.log("Nomination added")},
                 (err) => { console.log("error added")}
               )
@@ -499,25 +499,28 @@ export class ProgramsService extends DataService implements CanActivate {
         request
       }
     };
-
     return this.API_URL(req).pipe(tap((res) => {
       if (res.result.program_id) {
         const programId = res.result.program_id;
         if (request.status == 'Live') {
-          const selectedContentTypes = request.programContentTypes;
-          const selectedCollectionIds = request.copiedCollections;
+          const nomRequest = {
+            program_id: programId,
+            status: 'Approved',
+            content_types: request.programContentTypes,
+            collection_ids: request.copiedCollections
+          };
 
-          this.userService.openSaberRegistrySearch().then((userRegData) => {
+        this.userService.openSaberRegistrySearch().then((userRegData) => {
             this.userService.userProfile.userRegData = userRegData;
-            if (!this.userService.userProfile.userRegData.User || !this.userService.userProfile.userRegData.User_Org) {
-              this.enableContributorProfileForSourcing(programId, "Approved", selectedContentTypes, selectedCollectionIds);
-            } else {
-              this.addorUpdateNomination(programId, "Approved", selectedContentTypes, selectedCollectionIds).subscribe(
-                (res) => { console.log("Nomination added")},
-                (err) => { console.log("error added")}
-              )
-            }
-          });
+          if (!this.userService.userProfile.userRegData.User || !this.userService.userProfile.userRegData.User_Org) {
+            this.enableContributorProfileForSourcing(nomRequest);
+          } else {
+            this.addorUpdateNomination(nomRequest).subscribe(
+              (res) => { console.log("Nomination added") },
+              (err) => { console.log("error added") }
+            );
+          }
+        });
         }
       }
     }));
@@ -531,11 +534,11 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.API_URL(req);
   }
 
-  addorUpdateNomination(programId, status, selectedContentTypes, selectedCollectionIds) {
+  addorUpdateNomination(request: any) {
     // check if nomination for the program already exists by org id
     const filters = {
-      program_id: programId,
-    }
+      program_id: request.program_id,
+    };
 
     if (!_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
       filters['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
@@ -543,43 +546,27 @@ export class ProgramsService extends DataService implements CanActivate {
       filters['user_id'] = this.userService.userProfile.identifier;
     }
 
-    return this.getNominationList(filters).pipe(tap(data => {
-      const req = {
-        url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_ADD}`,
-        data: {
-          request: {
-            program_id: programId,
-            content_types: selectedContentTypes,
-            collection_ids: selectedCollectionIds,
-            status: status,
-            createdby: this.userService.userProfile.identifier
+    return this.getNominationList(filters).pipe(
+      switchMap((data: any) => {
+        const req = {
+          url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_ADD}`,
+          data: {
+            request: request
           }
-        }
-      };
-
-      if (!_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
-        req.data.request['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
-      }
-
-      if (data.result && data.result.length) {
-        const prevNomination = data.result[0];
-        req.data.request['user_id'] = prevNomination.user_id;
-        req.data.request['updatedby'] = this.userService.userProfile.identifier;
-        req['url'] = `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_UPDATE}`,
-
-        this.post(req).subscribe(
-          (data) => this.toasterService.success('Nomination Updated'),
-          (error) => this.toasterService.error('Nomination update failed... Please try later')
-        );
-      } else {
-        req.data.request['createdby'] = this.userService.userProfile.identifier;
+        };
         req.data.request['user_id'] = this.userService.userProfile.identifier;
-        this.post(req).subscribe(
-          (data) => this.toasterService.success('Nomination sent'),
-          (error) => this.toasterService.error('Nomination submit failed... Please try later')
-        );
-      }
-    }));
+        if (!_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
+          req.data.request['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
+        }
+        if (data.result && data.result.length) {
+          req['url'] = `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_UPDATE}`;
+          const prevNomination = data.result[0];
+          req.data.request['updatedby'] = this.userService.userProfile.userRegData.User.osid;
+        } else {
+          req.data.request['createdby'] = this.userService.userProfile.userRegData.User.osid;
+        }
+        return this.post(req);
+      }), catchError(err => throwError(err) ));
   }
 
   /**
@@ -897,5 +884,23 @@ export class ProgramsService extends DataService implements CanActivate {
         }
         return of(data);
       }));
+  }
+
+  downloadReport(filename, title, headers, tableData) {
+    const options = {
+      filename: filename,
+      fieldSeparator: ',',
+      quoteStrings: '"',
+      decimalSeparator: '.',
+      showLabels: true,
+      showTitle: true,
+      title: title,
+      useTextFile: false,
+      useBom: true,
+      headers: headers
+    };
+
+    const csvExporter = new ExportToCsv(options);
+    csvExporter.generateCsv(tableData);
   }
 }
