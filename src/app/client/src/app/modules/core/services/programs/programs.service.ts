@@ -16,6 +16,7 @@ import { ContentService } from '../content/content.service';
 import { DatePipe } from '@angular/common';
 import { LearnerService } from '../learner/learner.service';
 import { RegistryService } from '../registry/registry.service';
+import { ExportToCsv } from 'export-to-csv';
 
 @Injectable({
   providedIn: 'root'
@@ -880,5 +881,23 @@ export class ProgramsService extends DataService implements CanActivate {
         }
         return of(data);
       }));
+  }
+
+  downloadReport(filename, title, headers, tableData) {
+    const options = {
+      filename: filename,
+      fieldSeparator: ',',
+      quoteStrings: '"',
+      decimalSeparator: '.',
+      showLabels: true,
+      showTitle: true,
+      title: title,
+      useTextFile: false,
+      useBom: true,
+      headers: headers
+    };
+
+    const csvExporter = new ExportToCsv(options);
+    csvExporter.generateCsv(tableData);
   }
 }
