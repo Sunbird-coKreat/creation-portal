@@ -551,24 +551,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.sortColumnOrgUsers = column;
   }
 
-  onRoleFilter(role) {
-    if (this.selectedRoleFiltered !== role) {
-      this.selectedRoleFiltered = role;
-      if (role === 'All') {
-        this.sourcingOrgUser = this.sourcingOrgUser ;
-      } else {
-          this.sourcingOrgUser.sort((a, b) => {
-            if (a.selectedRole === role) {
-              return -1;
-            } else if (b.selectedRole === role) {
-              return 1;
-            } else {
-              return a.selectedRole - b.selectedRole;
-            }
-        });
-      }
-    }
-  }
   changeView() {
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage = _.last(this.state.stages).stage;

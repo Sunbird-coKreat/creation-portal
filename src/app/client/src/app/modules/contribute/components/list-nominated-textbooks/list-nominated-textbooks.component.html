@@ -299,7 +299,6 @@
 									&nbsp;&nbsp;
 									<i class="filter icon"></i>
 									<div class="menu" suiDropdownMenu>
-										<div class="item" (click)="sortOrgUsersByRole('All')"  [ngClass]="{'selected': selectedRoleFiltered === 'All', 'active': selectedRoleFiltered === 'All'}" >{{resourceService.frmelmnts.tab.all}}</div>
 										<div class="item" (click)="sortOrgUsersByRole('CONTRIBUTOR')" [ngClass]="{'selected': selectedRoleFiltered === 'CONTRIBUTOR', 'active': selectedRoleFiltered === 'CONTRIBUTOR'}" >{{resourceService.frmelmnts.lbl.contributor}}</div>
 										<div class="item" (click)="sortOrgUsersByRole('REVIEWER')"  [ngClass]="{'selected': selectedRoleFiltered === 'REVIEWER', 'active': selectedRoleFiltered === 'REVIEWER'}">{{resourceService.frmelmnts.lbl.Reviewer}}</div>
 										<div class="item" (click)="sortOrgUsersByRole('NotAssigned')"  [ngClass]="{'selected': selectedRoleFiltered === 'NotAssigned', 'active': selectedRoleFiltered === 'NotAssigned'}">{{resourceService.frmelmnts.lbl.NotAssigned}}</div>

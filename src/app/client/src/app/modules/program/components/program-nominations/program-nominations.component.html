@@ -298,7 +298,7 @@
 						</div>
 					  </div>
 					</div>
-					<div class="sb-table-responsive desktop-o-x-unset">
+					<div class="sb-table-responsive desktop-o-x-unset" *ngIf="sourcingOrgUser.length">
 					  <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
 						<thead class="sb-table-header sb-table-thead-gray">
 						  <tr>
@@ -334,8 +334,14 @@
 									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
 								</span>
 							</th>
-                            <th class="text-center w-5">
-								<span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
+                            <th class="text-center w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('selectedRole')">
+                                {{resourceService.frmelmnts.lbl.roles}} &nbsp;&nbsp;
+                                <i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || sortColumnOrgUsers != 'selectedRole' "></i>
+								<span  *ngIf="sortColumnOrgUsers == 'selectedRole'" class="d-inline-block">
+									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'asc'}"></i>
+									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
+								</span>
+								<!-- <span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
 									<div class="text">{{resourceService.frmelmnts.lbl.roles}}</div>
 									&nbsp;&nbsp;
 									<i class="filter icon"></i>
@@ -344,11 +350,11 @@
 										<div class="item" (click)="onRoleFilter('REVIEWER')"  [ngClass]="{'selected': selectedRoleFiltered === 'REVIEWER', 'active': selectedRoleFiltered === 'REVIEWER'}">{{resourceService.frmelmnts.lbl.Reviewer}}</div>
 										<div class="item" (click)="onRoleFilter('NotAssigned')"  [ngClass]="{'selected': selectedRoleFiltered === 'NotAssigned', 'active': selectedRoleFiltered === 'NotAssigned'}">{{resourceService.frmelmnts.lbl.NotAssigned}}</div>
 									</div>
-								</span>
+								</span> -->
 							</th>
 						  </tr>
 						</thead>
-						<tbody class="sb-table-body" *ngIf="sourcingOrgUser.length">
+						<tbody class="sb-table-body">
 						  <tr *ngFor="let orgUser of sourcingOrgUser; let i= index;">
                             <td>{{orgUser?.firstName}} {{orgUser?.lastName}}</td>
                             <td>{{orgUser?.framework?.medium?.join(', ')}}</td>
