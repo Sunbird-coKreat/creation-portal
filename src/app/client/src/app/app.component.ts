@@ -155,7 +155,7 @@ export class AppComponent implements OnInit, OnDestroy {
           this.userService.initialize(this.userService.loggedIn);
           if (this.userService.loggedIn) {
             this.permissionService.initialize();
-            this.courseService.initialize();
+            // this.courseService.initialize();
             this.programsService.initialize();
             this.userService.startSession();
             return this.setUserDetails();
@@ -164,7 +164,7 @@ export class AppComponent implements OnInit, OnDestroy {
           }
         }))
       .subscribe(data => {
-        this.tenantService.getTenantInfo(this.slug);
+        // this.tenantService.getTenantInfo(this.slug);
         this.setPortalTitleLogo();
         this.telemetryService.initialize(this.getTelemetryContext());
         this.logCdnStatus();
@@ -193,7 +193,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
     this.usersProfile = this.userService.userProfile;
     // const deviceRegister = this.deviceRegisterService.getDeviceProfile();
-    const custodianOrgDetails = this.orgDetailsService.getCustodianOrgDetails();
+    // const custodianOrgDetails = this.orgDetailsService.getCustodianOrgDetails();
     // forkJoin([deviceRegister, custodianOrgDetails]).subscribe((res) => {
     //   const deviceProfile = res[0];
     //   this.deviceProfile = deviceProfile;
@@ -227,7 +227,7 @@ export class AppComponent implements OnInit, OnDestroy {
     // }, (err) => {
     //   this.isLocationConfirmed = true;
     // });
-    this.getUserFeedData();
+    // this.getUserFeedData();
   }
 
   setFingerPrintTelemetry() {

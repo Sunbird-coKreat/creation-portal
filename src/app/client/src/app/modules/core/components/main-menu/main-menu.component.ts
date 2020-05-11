@@ -90,18 +90,13 @@ export class MainMenuComponent implements OnInit {
     }
     this.setInteractData();
     this.getUrl();
-    merge(this.programsService.allowToContribute$.pipe(
-      tap((showTab: boolean) => {
-        this.showContributeTab = showTab;
-      })
-    ), this.userService.userData$.pipe(
+    this.userService.userData$.pipe(
       tap((user: IUserData) => {
         if (user && !user.err) {
           this.userProfile = _.get(user, 'userProfile');
         }
-      }),
-      first()
-    )).subscribe();
+      })
+    );
   }
   setInteractData() {
     this.homeMenuIntractEdata = {
