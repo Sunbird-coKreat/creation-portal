@@ -130,7 +130,7 @@ export class ProgramsService extends DataService implements CanActivate {
  mapUsertoContributorOrgReg (orgOsid, UserOsid) {
   // Check if user is already part of the organisation
 
-  if (!_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
+  if (this.userService.userRegistryData && !_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
     const userOrg = this.userService.userProfile.userRegData.User_Org;
 
     if (userOrg.orgId && userOrg.orgId === orgOsid) {
@@ -507,14 +507,17 @@ export class ProgramsService extends DataService implements CanActivate {
           const selectedContentTypes = request.programContentTypes;
           const selectedCollectionIds = request.copiedCollections;
 
-          if (!this.userService.userProfile.userRegData.User || !this.userService.userProfile.userRegData.User_Org) {
-            this.enableContributorProfileForSourcing(programId, "Approved", selectedContentTypes, selectedCollectionIds);
-          } else {
-            this.addorUpdateNomination(programId, "Approved", selectedContentTypes, selectedCollectionIds).subscribe(
-              (res) => { console.log("Nomination added")},
-              (err) => { console.log("error added")}
-            )
-          }
+          this.userService.openSaberRegistrySearch().then((userRegData) => {
+            this.userService.userProfile.userRegData = userRegData;
+            if (!this.userService.userProfile.userRegData.User || !this.userService.userProfile.userRegData.User_Org) {
+              this.enableContributorProfileForSourcing(programId, "Approved", selectedContentTypes, selectedCollectionIds);
+            } else {
+              this.addorUpdateNomination(programId, "Approved", selectedContentTypes, selectedCollectionIds).subscribe(
+                (res) => { console.log("Nomination added")},
+                (err) => { console.log("error added")}
+              )
+            }
+          });
         }
       }
     }));
