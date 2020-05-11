@@ -233,7 +233,20 @@ export class CollectionHierarchyService {
             programId: programId,
             status: [],
             mimeType: {'!=': 'application/vnd.ekstep.content-collection'}
-          }
+          },
+          fields: [
+                  'name',
+                  'identifier',
+                  'programId',
+                  'mimeType',
+                  'status',
+                  'sampleContent',
+                  'createdBy',
+                  'organisationId',
+                  'collectionId',
+                  'prevStatus',
+                  'contentType'
+                ],
         }
       }
     };
@@ -244,6 +257,10 @@ export class CollectionHierarchyService {
     }
     if (!_.isUndefined(sampleContentCheck)) {
       option.data.request.filters['sampleContent'] = sampleContentCheck;
+      option.data.request.filters['status'] = ['Draft', 'Review'];
+    }
+    if (!_.isUndefined(sampleContentCheck) && _.isUndefined(organisationId) && _.isUndefined(userId)) {
+      option.data.request['limit'] = 0;
     }
     return this.httpClient.post<any>(option.url, option.data);
   }

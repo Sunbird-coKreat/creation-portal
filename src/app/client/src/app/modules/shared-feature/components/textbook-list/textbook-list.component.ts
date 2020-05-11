@@ -15,6 +15,7 @@ import { forkJoin } from 'rxjs';
 })
 export class TextbookListComponent implements OnInit {
   @Input() collectionsInput: Array<any> = [];
+  @Input() contentAggregationInput: Array<any> = [];
   public programId: string;
   public programDetails: any = {};
   public config: any;
@@ -53,7 +54,7 @@ export class TextbookListComponent implements OnInit {
     if (this.router.url.includes('sourcing/nominations/' + this.programId)) {
       this.fetchProgramDetails().subscribe((programDetails) => {
         // this.getProgramCollection();
-        this.showTexbooklist(this.collectionsInput);
+        this.showTexbooklist(this.collectionsInput, this.contentAggregationInput);
         this.collectionsCnt = this.collectionsInput && this.collectionsInput.length;
       }, error => {
         // TODO: navigate to program list page
@@ -81,28 +82,16 @@ export class TextbookListComponent implements OnInit {
     this.sortColumn = column;
   }
 
-  showTexbooklist (data) {
+  showTexbooklist (data, contentAggregationData) {
     if (!_.isEmpty(data)) {
-      this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId)
-        .subscribe(
-          (response) => {
-            if (response && response.result && response.result.content) {
-              const contents = _.get(response.result, 'content');
-              this.contentStatusCounts = this.collectionHierarchyService.getContentCountsForAll(contents, data);
-            } else {
-              this.contentStatusCounts = this.collectionHierarchyService.getContentCountsForAll([], data);
-            }
-            this.collections = this.collectionHierarchyService.getIndividualCollectionStatus(this.contentStatusCounts, data);
-            this.tempSortCollections = this.collections;
-            this.showLoader = false;
-          },
-          (error) => {
-            console.log(error);
-            this.showLoader = false;
-            const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-            this.toasterService.error(errorMes || 'Fetching textbooks failed. Please try again...');
-          }
-        );
+        if (contentAggregationData) {
+          this.contentStatusCounts = this.collectionHierarchyService.getContentCountsForAll(contentAggregationData, data);
+        } else {
+          this.contentStatusCounts = this.collectionHierarchyService.getContentCountsForAll([], data);
+        }
+        this.collections = this.collectionHierarchyService.getIndividualCollectionStatus(this.contentStatusCounts, data);
+        this.tempSortCollections = this.collections;
+        this.showLoader = false;
     } else {
       this.showLoader = false;
     }

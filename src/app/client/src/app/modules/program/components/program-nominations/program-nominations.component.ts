@@ -60,6 +60,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public stageSubscription: any;
   public component: any;
   public programCollections: any;
+  public contentAggregationData: any;
   public contributionDashboardData: any = [];
   public approvedNominations: any = [];
   public overAllContentCount: any = {};
@@ -284,14 +285,15 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         (response) => {
           if (response && response.result && response.result.content) {
             const contents = _.get(response.result, 'content');
+            this.contentAggregationData = _.cloneDeep(contents);
             this.contributionDashboardData = _.map(this.approvedNominations, nomination => {
               if (nomination.organisation_id) {
                 // tslint:disable-next-line:max-line-length
                 const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCounts(contents, nomination.organisation_id, this.programCollections));
                 // This is enable sorting table. So duping the data at the root of the dashboardData object
-                dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus['pending'];
-                dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus['accepted'];
-                dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus['rejected'];
+                dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
+                dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
+                dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
                 dashboardData['contributorName'] = this.setContributorName(nomination, 'org');
                 return {
                   ...dashboardData,
