@@ -74,6 +74,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public samplesCount = 0;
   public totalContentTypeCount = 0;
   public nominationSampleCounts = {};
+  public showDownloadCsvBtn = false;
 
   constructor(public frameworkService: FrameworkService, private tosterService: ToasterService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
@@ -560,10 +561,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       return n;
     });
     this.tempNominations = this.nominations;
+    if (!_.isEmpty(this.programDetails)) {
+      this.showDownloadCsvBtn = this.nominations.length > 0;
+    }
   }
 
   downloadNominationList() {
-    const filename = this.programDetails && this.programDetails.name.trim() || '';
+    const filename = this.programDetails.name.trim();
     const title = _.replace(this.resourceService.messages.stmsg.nominationListCsvTitle, '{PROJECT_NAME}', filename).trim();
     const tableData = _.filter(_.cloneDeep(this.tempNominations), (nomination) => {
       nomination.createdon = this.datePipe.transform(nomination.createdon, 'LLLL d, yyyy');
