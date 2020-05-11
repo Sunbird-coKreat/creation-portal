@@ -439,7 +439,13 @@
         "MarkingSchemeRubric",
         "ExplanationResource",
         "ExperientialResource",
-        "eTextBook"
+        "eTextBook",
+        "ClassroomTeachingVideo",
+        "ExplanationVideo",
+        "ExplanationReadingMaterial",
+        "LearningActivity",
+        "PreviousBoardExamPapers",
+        "LessonPlanResource"
       ]
     },
     "resourceType": {

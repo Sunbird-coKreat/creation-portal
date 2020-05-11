@@ -223,7 +223,7 @@ export class CollectionHierarchyService {
     return collectionWithReject;
   }
 
-  getContentAggregation(programId, sampleContentCheck?) {
+  getContentAggregation(programId, sampleContentCheck?, organisationId?, userId?) {
     const option = {
       url: 'content/composite/v1/search',
       data: {
@@ -237,6 +237,11 @@ export class CollectionHierarchyService {
         }
       }
     };
+    if (!_.isUndefined(organisationId)) {
+      option.data.request.filters['organisationId'] = organisationId;
+    } else if (!_.isUndefined(userId)) {
+      option.data.request.filters['createdBy'] = userId;
+    }
     if (!_.isUndefined(sampleContentCheck)) {
       option.data.request.filters['sampleContent'] = sampleContentCheck;
     }
