@@ -465,9 +465,15 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
           }
           // tslint:disable-next-line:max-line-length
           obj.required ? controller[obj.code] = [{value: preSavedValues[code], disabled: this.disableFormField}, [Validators.required]] : controller[obj.code] = preSavedValues[code];
+        } else if (obj.inputType === 'checkbox') {
+          // tslint:disable-next-line:max-line-length
+          preSavedValues[code] = (this.contentMetaData[code]) ? this.contentMetaData[code] : false;
+          // tslint:disable-next-line:max-line-length
+          obj.required ? controller[obj.code] = [{value:preSavedValues[code], disabled: this.contentMetaData[code]}, [Validators.requiredTrue]] : controller[obj.code] = preSavedValues[code];
         }
       }
     });
+
     this.contentDetailsForm = this.formBuilder.group(controller);
   }
 
@@ -526,6 +532,15 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
    });
   }
    }
+  }
+
+  changeConsentValue (event) {
+    if ( event.target.checked ) {
+      this.contentDetailsForm.controls.consentcheck.setValue(true);
+    }
+    else {
+      this.contentDetailsForm.controls.consentcheck.setValue(false);
+    }
   }
 
   saveContent(action?) {
