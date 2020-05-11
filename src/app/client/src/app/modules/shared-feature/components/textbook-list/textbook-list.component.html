@@ -3,6 +3,7 @@
 	<div class="sb-color-warning d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{ contentStatusCounts?.sourcingOrgStatus?.pending || 0 }}</span> {{resourceService.frmelmnts.lbl.pendingReview}}</div>
 	<div class="sb-color-success d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{ contentStatusCounts?.sourcingOrgStatus?.accepted || 0 }}</span> {{resourceService.frmelmnts.lbl.approved}}</div>
 	<div class="sb-color-error d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{ contentStatusCounts?.sourcingOrgStatus?.rejected || 0 }}</span> {{resourceService.frmelmnts.lbl.rejected}}</div>
+	<button *ngIf="sourcingOrgReviewer" type="button" class="pull-right sb-btn sb-btn-normal sb-btn-outline-primary mb-5" (click)="downloadCSV()"> <i class="download icon"></i> {{resourceService.frmelmnts.lbl.downloadList}}</button>
 </div>
 <div class="sb-pageSection">
 	<div class="sb-bg-color-white pt-32">

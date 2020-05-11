@@ -35,6 +35,7 @@ export class TextbookListComponent implements OnInit {
   public sourcingOrgReviewer: boolean;
   public collectionData: any;
   @Output() selectedCollection = new EventEmitter<any>();
+  @Output() downloadCSVData = new EventEmitter<any>();
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
     public toasterService: ToasterService, public resourceService: ResourceService,
@@ -110,5 +111,9 @@ export class TextbookListComponent implements OnInit {
 
   viewContribution(collection) {
     this.selectedCollection.emit(collection);
+  }
+
+  downloadCSV() {
+    this.downloadCSVData.emit();
   }
 }

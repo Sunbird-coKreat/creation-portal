@@ -9,8 +9,9 @@ import * as _ from 'lodash-es';
 import { tap, first } from 'rxjs/operators';
 import * as moment from 'moment';
 import { ProgramStageService } from '../../services/program-stage/program-stage.service';
+import { ProgramSearchService } from '../../services/program-search/program-search.service';
 import { ChapterListComponent } from '../../../cbse-program/components/chapter-list/chapter-list.component';
-
+import { ExportToCsv } from 'export-to-csv';
 
 @Component({
   selector: 'app-program-nominations',
@@ -72,12 +73,14 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public nominatedContentTypeCount = 0;
   public samplesCount = 0;
   public totalContentTypeCount = 0;
+  public CSVErrorMsg: string;
+  public tableData: Array<any>;
 
   constructor(public frameworkService: FrameworkService, private tosterService: ToasterService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
     private publicDataService: PublicDataService, private activatedRoute: ActivatedRoute, private router: Router,
     private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService,
-    public programStageService: ProgramStageService) {
+    public programStageService: ProgramStageService, public programSearchService: ProgramSearchService) {
     this.programId = this.activatedRoute.snapshot.params.programId;
   }
 
@@ -533,4 +536,34 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     };
     this.programStageService.addStage('chapterListComponent');
   }
+
+  setTableData(tableData) {
+    if (_.isArray(tableData) && tableData.length) {
+      this.tableData = tableData;
+    } else {
+      this.CSVErrorMsg = this.resourceService.messages.emsg.projects.m0003;
+    }
+  }
+
+  exportToCSV() {
+    if (!this.CSVErrorMsg) {
+    const options = {
+     filename: _.get(this.programDetails, 'name'),
+     fieldSeparator: ',',
+     quoteStrings: '"',
+     decimalSeparator: '.',
+     showLabels: true,
+     showTitle: true,
+     title: `Project: ${_.get(this.programDetails, 'name')}`,
+     useTextFile: false,
+     useBom: true,
+     useKeysAsHeaders: true
+   };
+
+   const csvExporter = new ExportToCsv(options);
+   csvExporter.generateCsv(this.tableData);
+ } else {
+   this.toasterService.error(this.CSVErrorMsg);
+ }
+ }
 }
