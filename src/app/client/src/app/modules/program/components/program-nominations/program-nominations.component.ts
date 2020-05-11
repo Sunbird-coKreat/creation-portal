@@ -178,6 +178,11 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.nominations = this.tempNominations;
     this.nominationsCount = this.tempNominationsCount;
     this.isContributionDashboardTabActive  = (tab === 'contributionDashboard') ? true : false;
+    if (tab === 'nomination') {
+      this.direction = 'desc';
+      this.sortColumn = 'createdon';
+      this.sortCollection(this.sortColumn, this.nominations);
+    }
   }
 
   sortCollection(column, object) {
