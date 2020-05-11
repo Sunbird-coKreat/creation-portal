@@ -1,5 +1,4 @@
 <div *ngIf="!userService.userProfile.userRegData.User">
-
    <sui-modal [appTelemetryImpression]="telemetryImpression"
       [mustScroll]="true"
        [isClosable]="false"
@@ -101,8 +100,8 @@
      </div>
      <div class="sb-modal-actions">
       <!-- [disabled]="!disableSubmit" -->
-       <button class="sb-btn sb-btn-normal sb-btn-primary"
-         (click)="validateFields()" [disabled]="!contributeForm.valid"
+       <button class="sb-btn sb-btn-normal sb-btn-primary" #enrollSubmitButton
+         (click)="validateFields(enrollSubmitButton)" [disabled]="disableSubmit || !contributeForm.valid"
          appTelemetryInteract
          [telemetryInteractEdata]="getTelemetryInteractEdata('enrol-data-save', 'click', 'enrol-contributor')"
          [telemetryInteractObject]="telemetryInteractObject"
