@@ -107,7 +107,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           user['selectedRole'] = 'NotAssigned';
         }
     });
-    //this.FilterOrgUser = this.sourcingOrgUser;
     this.roles = [{name: 'REVIEWER'}];
     this.sessionContext.currentRole = 'REVIEWER';
     this.programStageService.initialize();
