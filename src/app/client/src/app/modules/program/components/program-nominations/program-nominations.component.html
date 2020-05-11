@@ -255,10 +255,23 @@
                                     </tbody>
                                 </table>
                             </div>
+
                             <div class="mt-12" *ngIf="nominations.length === 0 && filterApplied === null">
                                 <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0146'}">
                                 </app-no-result>
                             </div>
+                        </div>
+                    </div>
+                    <div class="sb-pagination-container flex-jc-flex-end pt-16">
+                        <div class="sb-pagination">
+                            <a class="sb-item">&laquo;</a>
+                            <a class="sb-item">&lt;</a>
+                            <a class="sb-item sb-item-active">1</a>
+                            <a class="sb-item">2</a>
+                            <a class="sb-item">3</a>
+                            <a class="sb-item">4</a>
+                            <a class="sb-item">&gt;</a>
+                            <a class="sb-item">&raquo;</a>
                         </div>
                     </div>
                 </div>

@@ -276,3 +276,11 @@
   }
 }
 
+.sb-pagination-container{
+    .sb-item{
+      &.sb-item-active{
+        border: .03125rem solid var(--primary-300) !important;
+        background: var(--primary-250) !important;
+      }
+    }
+  }
