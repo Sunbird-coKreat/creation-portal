@@ -12813,7 +12813,6 @@ h3, label, ul li, a, p, button {
 .cb {
     display: block;
     text-align: center;
-    width: 100%;
     cursor: pointer;
 }
 
@@ -13210,4 +13209,10 @@ border-radius: 1px;
     margin-bottom: 0;
     margin-top: 20px;
     width: 100%;
+}
+.btn-text{
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: normal;
+    text-transform: initial;
 }
