@@ -74,6 +74,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public samplesCount = 0;
   public totalContentTypeCount = 0;
   public nominationSampleCounts = {};
+  public showDownloadCsvBtn = false;
 
   constructor(public frameworkService: FrameworkService, private tosterService: ToasterService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
@@ -178,6 +179,11 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.nominations = this.tempNominations;
     this.nominationsCount = this.tempNominationsCount;
     this.isContributionDashboardTabActive  = (tab === 'contributionDashboard') ? true : false;
+    if (tab === 'nomination') {
+      this.direction = 'desc';
+      this.sortColumn = 'createdon';
+      this.sortCollection(this.sortColumn, this.nominations);
+    }
   }
 
   sortCollection(column, object) {
@@ -560,10 +566,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       return n;
     });
     this.tempNominations = this.nominations;
+    this.showDownloadCsvBtn = !_.isEmpty(this.programDetails) && this.nominations.length > 0;
   }
 
   downloadNominationList() {
-    const filename = this.programDetails && this.programDetails.name.trim() || '';
     const tableData = _.filter(_.cloneDeep(this.tempNominations), (nomination) => {
       nomination.createdon = this.datePipe.transform(nomination.createdon, 'LLLL d, yyyy');
       delete nomination.nominationData;
@@ -580,6 +586,12 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.resourceService.frmelmnts.lbl.nominationDate,
       this.resourceService.frmelmnts.lbl.status,
     ];
-    this.programsService.downloadReport(filename, headers, tableData);
+    const csvDownloadConfig = {
+      filename: this.programDetails.name.trim(),
+      tableData: tableData,
+      headers: headers,
+      showTitle: false
+    };
+    this.programsService.downloadReport(csvDownloadConfig);
   }
 }

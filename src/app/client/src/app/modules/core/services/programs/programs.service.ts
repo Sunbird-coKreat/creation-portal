@@ -883,19 +883,22 @@ export class ProgramsService extends DataService implements CanActivate {
       }));
   }
 
-  downloadReport(filename, headers, tableData) {
-    const options = {
-      filename: filename,
+  downloadReport(csvDownloadConfig) {
+    const tableData = csvDownloadConfig.tableData;
+    delete csvDownloadConfig.tableData;
+    let options = {
       fieldSeparator: ',',
       quoteStrings: '"',
       decimalSeparator: '.',
       showLabels: true,
-      showTitle: false,
       useTextFile: false,
       useBom: true,
-      headers: headers
+      showTitle: true,
+      title: '',
+      filename: '',
+      headers: []
     };
-
+    options = _.merge(options, csvDownloadConfig);
     const csvExporter = new ExportToCsv(options);
     csvExporter.generateCsv(tableData);
   }
