@@ -111,7 +111,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       collectionType: _.get(this.collectionComponentConfig, 'collectionType'),
       collectionStatus: _.get(this.collectionComponentConfig, 'status')
     }, this.sharedContext);
-    if (this.userProfile.userRegData && this.userProfile.userRegData.User_Org) {
+    if (this.userService.userRegistryData && this.userProfile.userRegData && this.userProfile.userRegData.User_Org) {
       this.sessionContext.currentRole = this.userProfile.userRegData.User_Org.roles[0] === 'admin' ? 'CONTRIBUTOR' : 'REVIEWER';
     }
     this.filters = this.getImplicitFilters();
@@ -492,7 +492,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     };
-    if (this.userProfile.userRegData && this.userProfile.userRegData.User_Org) {
+    if (this.userService.userRegistryData && this.userService.userRegistryData && this.userProfile.userRegData && this.userProfile.userRegData.User_Org) {
       req.data.request.filters['organisation_id'] = this.userProfile.userRegData.User_Org.orgId;
     } else {
       req.data.request.filters['user_id'] = this.userService.userProfile.userId;
@@ -504,7 +504,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
           this.selectedContentTypes = this.sessionContext.nominationDetails.content_types || [];
           this.markSelectedContentTypes();
       }
-      if (this.userProfile.userRegData && this.userProfile.userRegData.User_Org) {
+      if (this.userService.userRegistryData && this.userProfile.userRegData && this.userProfile.userRegData.User_Org) {
         this.sessionContext.currentOrgRole = this.userProfile.userRegData.User_Org.roles[0];
         if (this.userProfile.userRegData.User_Org.roles[0] === 'admin') {
           // tslint:disable-next-line:max-line-length
@@ -599,8 +599,9 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       this.toasterService.error(this.resourceService.messages.emsg.nomination.m001);
     }
   }
+
   isContributorOrgUser() {
-    return !!(this.userService.userProfile.userRegData &&
+    return !!(this.userService.userRegistryData && this.userService.userProfile.userRegData &&
       this.userService.userProfile.userRegData.User_Org);
   }
 
@@ -613,7 +614,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   isContributorOrgAdmin() {
-    return !!(this.userService.userProfile.userRegData &&
+    return !!(this.userService.userRegistryData && this.userService.userProfile.userRegData &&
       this.userService.userProfile.userRegData.User_Org &&
       this.userService.userProfile.userRegData.User_Org.roles.includes('admin'));
   }

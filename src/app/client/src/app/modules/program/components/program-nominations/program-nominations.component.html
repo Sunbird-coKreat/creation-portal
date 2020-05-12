@@ -126,8 +126,8 @@
                 </div>
             </div>
             <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="2">
-                <div *ngIf="programCollections && programCollections.length && contentAggregationData" class="ui container p-0 m-0">
-                    <app-textbook-list [collectionsInput]="programCollections" [contentAggregationInput]="contentAggregationData" (selectedCollection)="viewContribution($event)"></app-textbook-list>
+                <div *ngIf="programCollections && programCollections.length && contentAggregationData && !isEmptyObject(programContext)" class="ui container p-0 m-0">
+                    <app-textbook-list [programDetails]="programContext" [collectionsInput]="programCollections" [contentAggregationInput]="contentAggregationData" (selectedCollection)="viewContribution($event)"></app-textbook-list>
                 </div>
             </div>
             <div class="ui segment  p-0 m-0 mt-4 sb-bg-color-white dynamicHeight"  suiTabContent="1">

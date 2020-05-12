@@ -578,6 +578,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.programStageService.addStage('chapterListComponent');
   }
 
+  public isEmptyObject(obj) {
+    return !!(_.isEmpty(obj));
+  }
+
   assignSampleCounts() {
     this.nominations = _.map(this.nominations, n => {
       n.programName = this.programDetails.name.trim();

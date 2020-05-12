@@ -15,13 +15,12 @@ import { forkJoin } from 'rxjs';
 })
 export class TextbookListComponent implements OnInit {
   @Input() collectionsInput: Array<any> = [];
+  @Input() programDetails: any = {};
   @Input() contentAggregationInput: Array<any> = [];
   public programId: string;
-  public programDetails: any = {};
   public config: any;
   public collections: Array<any> = [];
   public collectionsCnt = 0;
-  public programContext: any;
   public sharedContext: any = {};
   public collectionComponentConfig: any;
   public filters;
@@ -51,27 +50,12 @@ export class TextbookListComponent implements OnInit {
     this.programId = this.activatedRoute.snapshot.params.programId;
     // tslint:disable-next-line:max-line-length
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
-    if (this.router.url.includes('sourcing/nominations/' + this.programId)) {
-      this.fetchProgramDetails().subscribe((programDetails) => {
-        // this.getProgramCollection();
-        this.showTexbooklist(this.collectionsInput, this.contentAggregationInput);
-        this.collectionsCnt = this.collectionsInput && this.collectionsInput.length;
-      }, error => {
-        // TODO: navigate to program list page
-        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-      });
+    if (this.router.url.includes('sourcing/nominations/' + this.programId) && this.programDetails.program_id) {
+      this.showTexbooklist(this.collectionsInput, this.contentAggregationInput);
+      this.collectionsCnt = this.collectionsInput && this.collectionsInput.length;
     }
   }
 
-  fetchProgramDetails() {
-    const req = {
-      url: `program/v1/read/${this.programId}`
-    };
-    return this.programsService.get(req).pipe(tap((programDetails: any) => {
-      programDetails.result.config = JSON.parse(programDetails.result.config);
-      this.programDetails = programDetails.result;
-    }));
-  }
   sortCollection(column) {
     this.collections =  this.programsService.sortCollection(this.tempSortCollections, column, this.direction);
     if (this.direction === 'asc' || this.direction === '') {

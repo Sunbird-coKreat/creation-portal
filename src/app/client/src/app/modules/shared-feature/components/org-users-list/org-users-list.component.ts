@@ -38,7 +38,7 @@ export class OrgUsersListComponent implements OnInit {
   }
 
   checkIfUserBelongsToOrg() {
-    return !!(this.userService.userProfile.userRegData &&
+    return !!(this.userService.userRegistryData && this.userService.userProfile.userRegData &&
       this.userService.userProfile.userRegData.User_Org);
   }
 

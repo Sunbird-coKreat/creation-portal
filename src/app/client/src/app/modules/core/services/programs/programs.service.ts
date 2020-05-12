@@ -131,7 +131,7 @@ export class ProgramsService extends DataService implements CanActivate {
  mapUsertoContributorOrgReg (orgOsid, UserOsid) {
   // Check if user is already part of the organisation
 
-  if (!_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
+  if (this.userService.userRegistryData && !_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
     const userOrg = this.userService.userProfile.userRegData.User_Org;
 
     if (userOrg.orgId && userOrg.orgId === orgOsid) {
@@ -510,6 +510,8 @@ export class ProgramsService extends DataService implements CanActivate {
             collection_ids: request.copiedCollections
           };
 
+        this.userService.openSaberRegistrySearch().then((userRegData) => {
+            this.userService.userProfile.userRegData = userRegData;
           if (!this.userService.userProfile.userRegData.User || !this.userService.userProfile.userRegData.User_Org) {
             this.enableContributorProfileForSourcing(nomRequest);
           } else {
@@ -518,6 +520,7 @@ export class ProgramsService extends DataService implements CanActivate {
               (err) => { console.log("error added") }
             );
           }
+        });
         }
       }
     }));
