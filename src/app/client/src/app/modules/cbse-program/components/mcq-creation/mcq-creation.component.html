@@ -204,7 +204,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="row" *ngIf="solutionValue">
             <div class="twelve wide column p-0">
                 <div class="ckeditor-tool width-100">
@@ -235,19 +235,19 @@
     <div class='licence-form__content mt-15'>
       <div class="ui stackable grid licence-form__content__fields">
           <div class="row">
-            <div *ngFor = "let field of allFormFields; let i = index " class="sb-field six wide column mb-16">
-              <div class="six wide column mb-16" *ngIf="field.inputType === 'select'" class="width-100">
+            <div *ngFor = "let field of allFormFields; let i = index " class="sb-field mb-16" [ngClass]="{'six wide column':field.code !== 'contentPolicyCheck' }" [ngClass]="{'wide column':field.code === 'contentPolicyCheck' }">
+              <div *ngIf="field.inputType === 'select'" class="width-100">
                 <div>
                   <label class="font-weight-bold fsmall">{{field.label}}:</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span>
                   <sui-select *ngIf="!disableFormField" formControlName="{{field.code}}" class="selection" [isDisabled]="disableFormField" placeholder="{{field.placeholder}}"
                   appTelemetryInteract
-                  [telemetryInteractEdata]="{id:'select-' + field.code,type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}" 
+                  [telemetryInteractEdata]="{id:'select-' + field.code,type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
                   [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
                   [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
                   [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
                   >
                     <sui-select-option *ngFor="let option of selectOutcomeOption[field.code]" [value]="option"
-                    appTelemetryInteract 
+                    appTelemetryInteract
                     [telemetryInteractEdata]="{id:'selectoption-' + option,type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
                     [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
                     [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
@@ -259,19 +259,19 @@
                   <label class="sb-color-error mb-0 font-weight-normal" *ngIf="((questionMetaForm.get(field.code).touched) && (questionMetaForm.get(field.code).errors?.required))">* This field is mandatory</label>
                 </div>
               </div>
-    
-              <div class="six wide column mb-16" *ngIf="field.inputType === 'multiselect'" class="width-100">
+
+              <div *ngIf="field.inputType === 'multiselect'" class="width-100">
                   <div>
                       <label class="font-weight-bold fsmall">{{field.label}}:</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span>
                       <sui-multi-select *ngIf="!disableFormField" formControlName="{{field.code}}" class="selection" [isDisabled]="disableFormField" placeholder="{{field.placeholder}}"
                       appTelemetryInteract
-                      [telemetryInteractEdata]="{id:'multiselect-' + field.code,type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"  
+                      [telemetryInteractEdata]="{id:'multiselect-' + field.code,type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
                       [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
                       [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
                       [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
                       >
                         <sui-select-option *ngFor="let option of selectOutcomeOption[field.code]" [value]="option"
-                        appTelemetryInteract 
+                        appTelemetryInteract
                         [telemetryInteractEdata]="{id:'selectoption-' + option,type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
                         [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
                         [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
@@ -283,12 +283,12 @@
                       <label class="sb-color-error mb-0 font-weight-normal" *ngIf="((questionMetaForm.get(field.code).touched) && (questionMetaForm.get(field.code).errors?.required))">* This field is mandatory</label>
                   </div>
               </div>
-    
-              <div class="six wide column mb-16" *ngIf="field.inputType === 'text'" class="width-100">
+
+              <div *ngIf="field.inputType === 'text'" class="width-100">
                 <div>
                   <label class="font-weight-bold fsmall">{{field.label}}:</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span>
                     <input *ngIf="!disableFormField" formControlName="{{field.code}}" type="{{field.inputType}}" name="{{field.code}}" class="sb-form-control" placeholder="{{field.placeholder}}"
-                    appTelemetryInteract 
+                    appTelemetryInteract
                     [telemetryInteractEdata]="{id:'input-' + field.code,type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
                     [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
                     [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
@@ -296,8 +296,24 @@
                     >
                     <div *ngIf="disableFormField"><span class="sb-color-gray-200 fs-0-785">{{questionMetaData.data[field.code]}}</span></div>
                   <label class="sb-color-error mb-0 font-weight-normal" *ngIf="((questionMetaForm.get(field.code).touched) && (questionMetaForm.get(field.code).errors?.required))">* This field is mandatory</label>
-                  
+
                 </div>
+              </div>
+
+              <div *ngIf="field.inputType === 'checkbox' && field.code === 'contentPolicyCheck'" class="width-100 pt-20 pb-30">
+                <div class="sb-checkbox sb-checkbox-primary">
+                  <input type="{{field.inputType}}" id="{{field.code}}" name="{{field.code}}" [checked]='questionMetaData.data[field.code]' formControlName="{{field.code}}" (change)="changePolicyCheckValue($event)">
+                  <label for="{{field.code}}" class="fs-0-785 sb-color-gray-400 font-italic">
+                    “I agree that by submitting / publishing this Content,
+                    I confirm that this Content complies with prescribed guidelines,
+                     including the Terms of Use and Content Policy and that I consent
+                      to publish it under the <a class="link font-weight-bold"  href="https://creativecommons.org/licenses" target="_blank">
+                        Creative Commons Framework in </a>
+                      accordance with the  <a class="link font-weight-bold"  href="/terms-of-use.html" target="_blank">
+                        Content Policy.</a> I have made sure that I do not violate others’ copyright or privacy rights.”
+                  </label>
+                </div>
+                <label class="sb-color-error mb-0 font-weight-normal" *ngIf="((questionMetaForm.get(field.code).touched) && (questionMetaForm.get(field.code).errors?.required))">{{resourceService.frmelmnts.lbl.mandatoryField}}</label>
               </div>
             </div>
           </div>
@@ -307,7 +323,7 @@
     <div class='practical-sb-buttons'>
         <button id="requestChanges" *ngIf="role.currentRole === 'REVIEWER' && sessionContext.resourceStatus === 'Review'" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true"
         appTelemetryInteract
-        [telemetryInteractEdata]="{id:'reject-question',type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}" 
+        [telemetryInteractEdata]="{id:'reject-question',type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
         [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
         [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
@@ -315,14 +331,6 @@
             {{  rejectComment === '' ? 'Request Changes' : 'Edit Comments' }}
         </button>
     </div>
-    
-    <p class="paragraph fs-0-785 pt-15 mt-0">
-      By submitting / publishing this Content, you confirm that this Content complies with prescribed guidelines, 
-      including the Content Policy and that you consent to publish it in accordance with the 
-      <a class="link font-weight-bold"  href="/terms-of-use.html" target="_blank">Content Policy.</a> 
-      Please choose the applicable <a class="link font-weight-bold"  href="https://creativecommons.org/licenses" target="_blank">Creative Commons license</a> you wish to apply to your content.
-      <span class="fs-0-785 font-weight-bold">Please make sure you do not violate others’ copyright or privacy rights.</span>
-    </p>   
   </form>
 </div>
 
