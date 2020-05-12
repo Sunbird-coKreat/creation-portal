@@ -103,12 +103,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     if (!_.isUndefined(this.programsService.sourcingOrgReviewers)) {
       this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
       this.tempSortOrgUser = this.sourcingOrgUser;
-      _.forEach(this.tempSortOrgUser
-        , (user) => {
-          if (_.isUndefined(user.selectedRole)) {
-            user['selectedRole'] = 'NotAssigned';
-          }
-      });
     } else {
       this.fetchSourcingOrgUsers();
     }
@@ -459,6 +453,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           _.forEach(this.sourcingOrgUser, (user) => {
             if (_.includes(this.programDetails.rolemapping[role.name], user.identifier)) {
               user['selectedRole'] = role.name;
+            } else {
+              user['selectedRole'] = 'NotAssigned';
             }
           });
         }
@@ -592,12 +588,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.programsService.getSourcingOrgUsers(filters).subscribe((res) => {
         this.sourcingOrgUser = res.result.response.content;
         this.tempSortOrgUser = this.sourcingOrgUser;
-        _.forEach(this.tempSortOrgUser
-          , (user) => {
-            if (_.isUndefined(user.selectedRole)) {
-              user['selectedRole'] = 'NotAssigned';
-            }
-        });
         this.readRolesOfOrgUsers();
       }, (err) => {
         this.tosterService.error(this.resourceService.messages.emsg.organisation.m0001);
