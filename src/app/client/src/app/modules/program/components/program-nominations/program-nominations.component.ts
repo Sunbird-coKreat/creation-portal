@@ -566,9 +566,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       return n;
     });
     this.tempNominations = this.nominations;
-    if (!_.isEmpty(this.programDetails)) {
-      this.showDownloadCsvBtn = this.nominations.length > 0;
-    }
+    this.showDownloadCsvBtn = !_.isEmpty(this.programDetails) && this.nominations.length > 0;
   }
 
   downloadNominationList() {
