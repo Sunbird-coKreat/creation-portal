@@ -99,14 +99,19 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.telemetryInteractObject = {};
     this.checkActiveTab();
     this.showUsersTab = this.isSourcingOrgAdmin();
-    this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
-    this.tempSortOrgUser = this.sourcingOrgUser;
-    _.forEach(this.tempSortOrgUser
-      , (user) => {
-        if (!user.selectedRole) {
-          user['selectedRole'] = 'NotAssigned';
-        }
-    });
+    if (!_.isUndefined(this.programsService.sourcingOrgReviewers)) {
+      this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
+      this.tempSortOrgUser = this.sourcingOrgUser;
+      _.forEach(this.tempSortOrgUser
+        , (user) => {
+          if (_.isUndefined(user.selectedRole)) {
+            user['selectedRole'] = 'NotAssigned';
+          }
+      });
+    } else {
+      this.fetchSourcingOrgUsers();
+    }
+
     this.roles = [{name: 'REVIEWER'}];
     this.sessionContext.currentRole = 'REVIEWER';
     this.programStageService.initialize();
@@ -550,6 +555,30 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.sortColumnOrgUsers = column;
   }
 
+  fetchSourcingOrgUsers() {
+    if (_.isUndefined(this.programsService.sourcingOrgReviewers)) {
+      if (this.userService.userProfile.organisations && this.userService.userProfile.organisations.length) {
+        const OrgDetails = this.userService.userProfile.organisations[0];
+        const filters = {
+              'organisations.organisationId': OrgDetails.organisationId,
+              'organisations.roles': ['CONTENT_REVIEWER']
+              };
+      // tslint:disable-next-line:max-line-length
+      this.programsService.getSourcingOrgUsers(filters).subscribe((res) => {
+        this.sourcingOrgUser = res.result.response.content;
+        this.tempSortOrgUser = this.sourcingOrgUser;
+        _.forEach(this.tempSortOrgUser
+          , (user) => {
+            if (_.isUndefined(user.selectedRole)) {
+              user['selectedRole'] = 'NotAssigned';
+            }
+        });
+      }, (err) => {
+        this.tosterService.error(this.resourceService.messages.emsg.organisation.m0001);
+      });
+      }
+    }
+  }
   changeView() {
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage = _.last(this.state.stages).stage;
