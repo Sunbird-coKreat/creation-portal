@@ -93,6 +93,18 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   ngOnInit() {
     this.filterApplied = null;
     this.getNominationList();
+    if (!_.isUndefined(this.programsService.sourcingOrgReviewers)) {
+      this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
+      this.tempSortOrgUser = this.sourcingOrgUser;
+      _.forEach(this.tempSortOrgUser
+        , (user) => {
+          if (_.isUndefined(user.selectedRole)) {
+            user['selectedRole'] = 'NotAssigned';
+          }
+      });
+    } else {
+      this.fetchSourcingOrgUsers();
+    }
     this.getProgramDetails();
     this.getProgramCollection();
     this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program_ID'}];
@@ -100,19 +112,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.telemetryInteractObject = {};
     this.checkActiveTab();
     this.showUsersTab = this.isSourcingOrgAdmin();
-    if (this.programsService.sourcingOrgReviewers) {
-      this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
-      this.tempSortOrgUser = this.sourcingOrgUser;
-      _.forEach(this.tempSortOrgUser
-        , (user) => {
-          if (!user.selectedRole) {
-            user['selectedRole'] = 'NotAssigned';
-          }
-      });
-    } else {
-      this.fetchSourcingOrgUsers();
-    }
-
     this.roles = [{name: 'REVIEWER'}];
     this.sessionContext.currentRole = 'REVIEWER';
     this.programStageService.initialize();
@@ -581,7 +580,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   fetchSourcingOrgUsers() {
-    if (!this.programsService.sourcingOrgReviewers) {
+    if (_.isUndefined(this.programsService.sourcingOrgReviewers)) {
       if (this.userService.userProfile.organisations && this.userService.userProfile.organisations.length) {
         const OrgDetails = this.userService.userProfile.organisations[0];
         const filters = {
@@ -594,7 +593,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         this.tempSortOrgUser = this.sourcingOrgUser;
         _.forEach(this.tempSortOrgUser
           , (user) => {
-            if (!user.selectedRole) {
+            if (_.isUndefined(user.selectedRole)) {
               user['selectedRole'] = 'NotAssigned';
             }
         });
