@@ -89,7 +89,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
 
     this.currentStage = 'listNominatedTextbookComponent';
 
-    if (!_.isEmpty(this.userService.userProfile.userRegData) &&
+    if (this.userService.userRegistryData && !_.isEmpty(this.userService.userProfile.userRegData) &&
       this.userService.userProfile.userRegData.User_Org &&
       this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
       this.getContributionOrgUsers();
@@ -327,7 +327,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
         this.nominationDetails = _.first(data.result);
         this.sessionContext.nominationDetails = _.first(data.result);
         this.currentNominationStatus =  _.get(_.first(data.result), 'status');
-        if (this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org) {
+        if (this.userService.userRegistryData && this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org) {
           this.sessionContext.currentOrgRole = this.userService.userProfile.userRegData.User_Org.roles[0];
           if (this.userService.userProfile.userRegData.User_Org.roles[0] === 'admin') {
             // tslint:disable-next-line:max-line-length
@@ -359,7 +359,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   getContributionOrgUsers() {
     const baseUrl = ( <HTMLInputElement> document.getElementById('portalBaseUrl')) ?
       ( <HTMLInputElement> document.getElementById('portalBaseUrl')).value : '';
-    if (this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org) {
+    if (this.userService.userRegistryData && this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org) {
       const orgUsers = this.registryService.getContributionOrgUsers(this.userService.userProfile.userRegData.User_Org.orgId);
       this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
       this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
@@ -446,13 +446,13 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   }
 
   isUserOrgAdmin() {
-    return !!(this.userService.userProfile.userRegData &&
+    return !!(this.userService.userRegistryData && this.userService.userProfile.userRegData &&
       this.userService.userProfile.userRegData.User_Org &&
       this.userService.userProfile.userRegData.User_Org.roles.includes('admin'));
   }
 
   checkIfUserBelongsToOrg() {
-    return !!(this.userService.userProfile.userRegData &&
+    return !!(this.userService.userRegistryData && this.userService.userProfile.userRegData &&
       this.userService.userProfile.userRegData.User_Org);
   }
 

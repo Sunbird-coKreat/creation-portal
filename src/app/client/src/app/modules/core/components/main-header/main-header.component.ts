@@ -186,7 +186,7 @@ export class MainHeaderComponent implements OnInit {
       this.router.navigate(['']);
     } else if (this.userService.loggedIn) {
       if (this.router.url.includes('/contribute')) {
-        if (this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org &&
+        if (this.userService.userRegistryData && this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org &&
           !this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
           this.router.navigateByUrl('/contribute/myenrollprograms');
         } else {
