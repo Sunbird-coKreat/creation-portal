@@ -223,7 +223,7 @@ export class CollectionHierarchyService {
     return collectionWithReject;
   }
 
-  getContentAggregation(programId, sampleContentCheck?, organisationId?, userId?) {
+  getContentAggregation(programId, sampleContentCheck?, organisationId?, userId?, onlyCount?) {
     const option = {
       url: 'content/composite/v1/search',
       data: {
@@ -232,7 +232,8 @@ export class CollectionHierarchyService {
             objectType: 'content',
             programId: programId,
             status: [],
-            mimeType: {'!=': 'application/vnd.ekstep.content-collection'}
+            mimeType: {'!=': 'application/vnd.ekstep.content-collection'},
+            contentType: {'!=': 'Asset'}
           },
           fields: [
                   'name',
@@ -250,16 +251,23 @@ export class CollectionHierarchyService {
         }
       }
     };
+
     if (!_.isUndefined(organisationId)) {
       option.data.request.filters['organisationId'] = organisationId;
     } else if (!_.isUndefined(userId)) {
       option.data.request.filters['createdBy'] = userId;
     }
+
     if (!_.isUndefined(sampleContentCheck)) {
       option.data.request.filters['sampleContent'] = sampleContentCheck;
       option.data.request.filters['status'] = ['Draft', 'Review'];
+    } else {
+      option.data.request['not_exists'] = ['sampleContent'];
+      option.data.request['limit'] = 10000;
     }
-    if (!_.isUndefined(sampleContentCheck) && _.isUndefined(organisationId) && _.isUndefined(userId)) {
+
+
+    if (!_.isUndefined(onlyCount)) {
       option.data.request['limit'] = 0;
     }
     return this.httpClient.post<any>(option.url, option.data);
