@@ -93,6 +93,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   ngOnInit() {
     this.filterApplied = null;
     this.getNominationList();
+    this.getProgramDetails();
+    this.getProgramCollection();
+    this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program_ID'}];
+    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
+    this.telemetryInteractObject = {};
+    this.checkActiveTab();
+    this.showUsersTab = this.isSourcingOrgAdmin();
     if (!_.isUndefined(this.programsService.sourcingOrgReviewers)) {
       this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
       this.tempSortOrgUser = this.sourcingOrgUser;
@@ -105,13 +112,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     } else {
       this.fetchSourcingOrgUsers();
     }
-    this.getProgramDetails();
-    this.getProgramCollection();
-    this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program_ID'}];
-    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
-    this.telemetryInteractObject = {};
-    this.checkActiveTab();
-    this.showUsersTab = this.isSourcingOrgAdmin();
+
     this.roles = [{name: 'REVIEWER'}];
     this.sessionContext.currentRole = 'REVIEWER';
     this.programStageService.initialize();
@@ -597,6 +598,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
               user['selectedRole'] = 'NotAssigned';
             }
         });
+        this.readRolesOfOrgUsers();
       }, (err) => {
         this.tosterService.error(this.resourceService.messages.emsg.organisation.m0001);
       });
