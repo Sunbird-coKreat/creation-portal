@@ -1019,7 +1019,7 @@
         "board" : {
             "type": "string"
         },
-        "sampleContent": {
+        "sampleContent" : {
             "type": "boolean"
         },
         "collectionId" : {
@@ -1027,6 +1027,9 @@
         },
         "organisationId" : {
             "type": "string"
+        },
+        "contentPolicyCheck" : {
+            "type": "boolean"
         }
     }
 }
