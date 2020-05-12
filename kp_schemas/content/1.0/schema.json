@@ -1027,6 +1027,9 @@
         },
         "organisationId" : {
             "type": "string"
+        },
+        "contentPolicyCheck" : {
+            "type": "boolean"
         }
     }
 }
