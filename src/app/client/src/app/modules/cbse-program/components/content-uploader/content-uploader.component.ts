@@ -534,12 +534,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
    }
   }
 
-  changeConsentValue (event) {
+  changePolicyCheckValue (event) {
     if ( event.target.checked ) {
-      this.contentDetailsForm.controls.consentcheck.setValue(true);
+      this.contentDetailsForm.controls.contentPolicyCheck.setValue(true);
     }
     else {
-      this.contentDetailsForm.controls.consentcheck.setValue(false);
+      this.contentDetailsForm.controls.contentPolicyCheck.setValue(false);
     }
   }
 

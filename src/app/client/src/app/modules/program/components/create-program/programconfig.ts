@@ -704,11 +704,11 @@ var programConfig = {
               'helpText': 'Choose the most appropriate Creative Commons License for this Content'
             },
             {
-              'code': 'consentcheck',
+              'code': 'contentPolicyCheck',
               'dataType': 'boolean',
               'editable': false,
               'inputType': 'checkbox',
-              'name': 'Consent',
+              'name': 'Content Policy Check',
               'required': true,
               'visible': true
             }
@@ -804,11 +804,11 @@ var programConfig = {
               'helpText': 'Choose the most appropriate Creative Commons License for this Content'
             },
             {
-              'code': 'consentcheck',
+              'code': 'contentPolicyCheck',
               'dataType': 'boolean',
               'editable': false,
               'inputType': 'checkbox',
-              'name': 'Consent',
+              'name': 'Content Policy Check',
               'required': true,
               'visible': true
             }

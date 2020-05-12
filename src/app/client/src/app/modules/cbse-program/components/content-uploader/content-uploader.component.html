@@ -281,7 +281,7 @@
       <div class="licence-form__content">
           <div class='licence-form__content__fields py-16 ui stackable grid'>
 
-              <div *ngFor = "let field of allFormFields; let i = index " class="sb-field " [ngClass]="{'width-100':field.code==='consentcheck' }">
+              <div *ngFor = "let field of allFormFields; let i = index " class="sb-field " [ngClass]="{'width-100':field.code==='contentPolicyCheck' }">
                 <div *ngIf="field.inputType === 'select'" class="width-100">
                   <div>
                     <label class="font-weight-bold fsmall">{{field.label}}:</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span><i *ngIf="field.helpText" class="info circle link icon pull-right" suiPopup popupText="{{field.helpText}}"></i>
@@ -345,9 +345,9 @@
                   </div>
                 </div>
 
-                <div *ngIf="field.inputType === 'checkbox' && field.code === 'consentcheck'" class="width-100 pt-20 pb-30">
+                <div *ngIf="field.inputType === 'checkbox' && field.code === 'contentPolicyCheck'" class="width-100 pt-20 pb-30">
                   <div class="sb-checkbox sb-checkbox-primary">
-                    <input type="{{field.inputType}}" id="{{field.code}}" name="{{field.code}}" [checked]='contentMetaData[field.code]' formControlName="{{field.code}}" (change)="changeConsentValue($event)">
+                    <input type="{{field.inputType}}" id="{{field.code}}" name="{{field.code}}" [checked]='contentMetaData[field.code]' formControlName="{{field.code}}" (change)="changePolicyCheckValue($event)">
                     <label for="{{field.code}}" class="fs-0-785 sb-color-gray-400 font-italic">
                       “I agree that by submitting / publishing this Content,
                       I confirm that this Content complies with prescribed guidelines,
