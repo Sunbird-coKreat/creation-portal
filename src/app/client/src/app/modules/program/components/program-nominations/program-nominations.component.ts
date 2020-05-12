@@ -570,8 +570,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   downloadNominationList() {
-    const filename = this.programDetails.name.trim();
-    const title = _.replace(this.resourceService.messages.stmsg.nominationListCsvTitle, '{PROJECT_NAME}', filename).trim();
     const tableData = _.filter(_.cloneDeep(this.tempNominations), (nomination) => {
       nomination.createdon = this.datePipe.transform(nomination.createdon, 'LLLL d, yyyy');
       delete nomination.nominationData;
@@ -588,6 +586,12 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.resourceService.frmelmnts.lbl.nominationDate,
       this.resourceService.frmelmnts.lbl.status,
     ];
-    this.programsService.downloadReport(filename, title, headers, tableData);
+    const csvDownloadConfig = {
+      filename: this.programDetails.name.trim(),
+      tableData: tableData,
+      headers: headers,
+      showTitle: false
+    };
+    this.programsService.downloadReport(csvDownloadConfig);
   }
 }
