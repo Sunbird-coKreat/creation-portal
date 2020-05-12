@@ -204,7 +204,17 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
          return _.includes(this.selectedNominationDetails.nominationData.collection_ids, collection.identifier);
     }) : [];
     if (!_.isEmpty(contributorTextbooks)) {
-      this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId)
+      const isSample = (this.sessionContext.nominationDetails &&
+      (this.sessionContext.nominationDetails.status !== 'Approved' ||
+      this.sessionContext.nominationDetails.status !== 'Rejected')) ? true : undefined;
+
+      const orgId =  (this.sessionContext.nominationDetails && this.isNominationOrg()) ?
+       this.sessionContext.nominationDetails.organisation_id : undefined;
+      const userId = (this.sessionContext.nominationDetails && !this.isNominationOrg()) ?
+      this.sessionContext.nominationDetails.user_id : undefined;
+
+
+      this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId, isSample, orgId, userId)
         .subscribe(
           (response) => {
             if (response && response.result && response.result.content) {

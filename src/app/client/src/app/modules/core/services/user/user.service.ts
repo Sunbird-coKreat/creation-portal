@@ -9,7 +9,7 @@ import * as _ from 'lodash-es';
 import { HttpClient } from '@angular/common/http';
 import { PublicDataService } from './../public-data/public-data.service';
 import { skipWhile } from 'rxjs/operators';
-import { APP_BASE_HREF } from '@angular/common';
+import { APP_BASE_HREF, Location } from '@angular/common';
 
 /**
  * Service to fetch user details from server
@@ -107,7 +107,7 @@ export class UserService {
   */
   constructor(config: ConfigService, learner: LearnerService,
     private http: HttpClient, contentService: ContentService, publicDataService: PublicDataService,
-    @Inject(APP_BASE_HREF) baseHref: string) {
+    public location: Location, @Inject(APP_BASE_HREF) baseHref: string) {
     this.config = config;
     this.learnerService = learner;
     this.contentService = contentService;
@@ -169,9 +169,14 @@ export class UserService {
           // data.ts is taken from header and not from api response ts, and format in IST
           this.timeDiff = data.ts;
         }
-        this.openSaberRegistrySearch().then((userRegData) => {
-          this.setUserProfile(data, userRegData);
-        });
+
+        if (this.location.path().includes('/sourcing')) {
+          this.setUserProfile(data);
+        } else {
+          this.openSaberRegistrySearch().then((userRegData) => {
+            this.setUserProfile(data, userRegData);
+          });
+        }
       },
       (err: ServerResponse) => {
         this._userData$.next({ err: err, userProfile: this._userProfile });
@@ -199,7 +204,7 @@ export class UserService {
   /**
    * method to set user profile to behavior subject.
    */
-  private setUserProfile(res: ServerResponse, userRegData) {
+  private setUserProfile(res: ServerResponse, userRegData?) {
     const profileData = res.result.response;
     const orgRoleMap = {};
     const hashTagIds = [];
@@ -236,7 +241,6 @@ export class UserService {
     organisationIds = _.uniq(organisationIds);
     this._dims = _.concat(organisationIds, this.channel);
     this._userProfile = profileData;
-    this._userProfile.userRegData = userRegData;
     this._userProfile.userRoles = _.uniq(userRoles);
     this._userProfile.orgRoleMap = orgRoleMap;
     this._userProfile.organisationIds = organisationIds;
@@ -244,6 +248,9 @@ export class UserService {
     this._userProfile.userId = this.userid; // this line is added to handle userId not returned from user service
     this._rootOrgId = this._userProfile.rootOrgId;
     this._hashTagId = this._userProfile.rootOrg.hashTagId;
+    if (!_.isUndefined(userRegData)) {
+      this._userProfile.userRegData = userRegData;
+    }
     this.getOrganisationDetails(organisationIds);
     this.setRoleOrgMap(profileData);
     this.setOrgDetailsToRequestHeaders();

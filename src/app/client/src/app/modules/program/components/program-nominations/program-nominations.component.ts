@@ -61,6 +61,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public stageSubscription: any;
   public component: any;
   public programCollections: any;
+  public contentAggregationData: any;
   public contributionDashboardData: any = [];
   public approvedNominations: any = [];
   public overAllContentCount: any = {};
@@ -79,6 +80,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public selectedRoleFiltered = 'All';
   public FilterOrgUser: any = [];
   public nominationSampleCounts = {};
+  public showDownloadCsvBtn = false;
 
   constructor(public frameworkService: FrameworkService, private tosterService: ToasterService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
@@ -91,7 +93,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   ngOnInit() {
     this.filterApplied = null;
     this.getNominationList();
-    this.getSampleContent();
     this.getProgramDetails();
     this.getProgramCollection();
     this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program_ID'}];
@@ -195,6 +196,11 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.nominations = this.tempNominations;
     this.nominationsCount = this.tempNominationsCount;
     this.isContributionDashboardTabActive  = (tab === 'contributionDashboard') ? true : false;
+    if (tab === 'nomination') {
+      this.direction = 'desc';
+      this.sortColumn = 'createdon';
+      this.sortCollection(this.sortColumn, this.nominations);
+    }
   }
 
   sortCollection(column, object) {
@@ -221,6 +227,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     };
     let textbooks = [];
     this.programsService.post(req).subscribe((data) => {
+      this.getSampleContent();
       if (data.result && data.result.length > 0) {
         this.getDashboardData(data.result);
         _.forEach(data.result, (res) => {
@@ -271,6 +278,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.tempNominationsCount = this.nominationsCount;
       this.showNominationsComponent = true;
     }, error => {
+      this.getSampleContent();
       this.tosterService.error('User onboarding failed');
     });
   }
@@ -280,7 +288,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     .subscribe(
       (response) => {
         if (response && response.result && response.result.count) {
+          const contents = _.get(response.result, 'content');
           this.samplesCount = response.result.count;
+          this.setNominationSampleCounts(contents);
         }
       });
   }
@@ -308,18 +318,17 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       .subscribe(
         (response) => {
           if (response && response.result && response.result.content) {
-            this.setNominationSampleCounts(response.result.content);
-
+            const contents = _.get(response.result, 'content');
+            this.contentAggregationData = _.cloneDeep(contents);
             if (this.approvedNominations.length) {
-              const contents = _.get(response.result, 'content');
               this.contributionDashboardData = _.map(this.approvedNominations, nomination => {
                 if (nomination.organisation_id) {
                   // tslint:disable-next-line:max-line-length
                   const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCounts(contents, nomination.organisation_id, this.programCollections));
                   // This is enable sorting table. So duping the data at the root of the dashboardData object
-                  dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus['pending'];
-                  dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus['accepted'];
-                  dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus['rejected'];
+                  dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
+                  dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
+                  dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
                   dashboardData['contributorName'] = this.setContributorName(nomination, 'org');
                   return {
                     ...dashboardData,
@@ -343,29 +352,45 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
               this.getOverAllCounts(this.contributionDashboardData);
             } else if (this.approvedNominations.length) {
               this.contributionDashboardData = _.map(this.approvedNominations, nomination => {
-                return {
-                  total: 0,
-                  review: 0,
-                  draft: 0,
-                  rejected: 0,
-                  live: 0,
-                  sourcingPending: 0,
-                  sourcingAccepted: 0,
-                  sourcingRejected: 0,
-                  // tslint:disable-next-line:max-line-length
-                  contributorName: this.setContributorName(nomination, nomination.organisation_id ? 'org' : 'individual'),
-                  individualStatus: {},
-                  sourcingOrgStatus : {accepted: 0, rejected: 0, pending: 0},
-                  contributorDetails: nomination,
-                  type: nomination.organisation_id ? 'org' : 'individual'
-                };
+                return this.dashboardObject(nomination);
               });
               this.getOverAllCounts(this.contributionDashboardData);
             }
+          } else if (this.approvedNominations.length) {
+            this.contentAggregationData = [];
+            this.contributionDashboardData = _.map(this.approvedNominations, nomination => {
+              return this.dashboardObject(nomination);
+            });
+            this.getOverAllCounts(this.contributionDashboardData);
+          } else  {
+            this.contentAggregationData = [];
           }
-        }
-      );
+        },
+        (error) => {
+          console.log(error);
+          const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+          this.toasterService.error(errorMes || 'Fetching textbooks failed. Please try again...');
+        });
     }
+
+  dashboardObject(nomination) {
+    return {
+      total: 0,
+      review: 0,
+      draft: 0,
+      rejected: 0,
+      live: 0,
+      sourcingPending: 0,
+      sourcingAccepted: 0,
+      sourcingRejected: 0,
+      // tslint:disable-next-line:max-line-length
+      contributorName: this.setContributorName(nomination, nomination.organisation_id ? 'org' : 'individual'),
+      individualStatus: {},
+      sourcingOrgStatus : {accepted: 0, rejected: 0, pending: 0},
+      contributorDetails: nomination,
+      type: nomination.organisation_id ? 'org' : 'individual'
+    };
+  }
 
   setNominationSampleCounts(contentResult) {
     let orgSampleUploads = _.filter(contentResult, contribution => !_.isEmpty(contribution.organisationId) && contribution.sampleContent);
@@ -604,6 +629,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.programStageService.addStage('chapterListComponent');
   }
 
+  public isEmptyObject(obj) {
+    return !!(_.isEmpty(obj));
+  }
+
   assignSampleCounts() {
     this.nominations = _.map(this.nominations, n => {
       n.programName = this.programDetails.name.trim();
@@ -611,11 +640,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       return n;
     });
     this.tempNominations = this.nominations;
+    this.showDownloadCsvBtn = !_.isEmpty(this.programDetails) && this.nominations.length > 0;
   }
 
   downloadNominationList() {
-    const filename = this.programDetails && this.programDetails.name.trim() || '';
-    const title = _.replace(this.resourceService.messages.stmsg.nominationListCsvTitle, '{PROJECT_NAME}', filename).trim();
     const tableData = _.filter(_.cloneDeep(this.tempNominations), (nomination) => {
       nomination.createdon = this.datePipe.transform(nomination.createdon, 'LLLL d, yyyy');
       delete nomination.nominationData;
@@ -632,6 +660,12 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.resourceService.frmelmnts.lbl.nominationDate,
       this.resourceService.frmelmnts.lbl.status,
     ];
-    this.programsService.downloadReport(filename, title, headers, tableData);
+    const csvDownloadConfig = {
+      filename: this.programDetails.name.trim(),
+      tableData: tableData,
+      headers: headers,
+      showTitle: false
+    };
+    this.programsService.downloadReport(csvDownloadConfig);
   }
 }
