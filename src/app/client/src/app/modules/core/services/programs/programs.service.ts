@@ -883,9 +883,9 @@ export class ProgramsService extends DataService implements CanActivate {
       }));
   }
 
-  downloadReport(csvDownloadConfig) {
-    const tableData = csvDownloadConfig.tableData;
-    delete csvDownloadConfig.tableData;
+  downloadReport(config) {
+    const tableData = config.tableData;
+    delete config.tableData;
     let options = {
       fieldSeparator: ',',
       quoteStrings: '"',
@@ -898,7 +898,7 @@ export class ProgramsService extends DataService implements CanActivate {
       filename: '',
       headers: []
     };
-    options = _.merge(options, csvDownloadConfig);
+    options = _.merge(options, config);
     const csvExporter = new ExportToCsv(options);
     csvExporter.generateCsv(tableData);
   }
