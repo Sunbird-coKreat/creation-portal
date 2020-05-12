@@ -100,12 +100,12 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.telemetryInteractObject = {};
     this.checkActiveTab();
     this.showUsersTab = this.isSourcingOrgAdmin();
-    if (!_.isUndefined(this.programsService.sourcingOrgReviewers)) {
+    if (this.programsService.sourcingOrgReviewers) {
       this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
       this.tempSortOrgUser = this.sourcingOrgUser;
       _.forEach(this.tempSortOrgUser
         , (user) => {
-          if (_.isUndefined(user.selectedRole)) {
+          if (!user.selectedRole) {
             user['selectedRole'] = 'NotAssigned';
           }
       });
@@ -581,7 +581,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   fetchSourcingOrgUsers() {
-    if (_.isUndefined(this.programsService.sourcingOrgReviewers)) {
+    if (!this.programsService.sourcingOrgReviewers) {
       if (this.userService.userProfile.organisations && this.userService.userProfile.organisations.length) {
         const OrgDetails = this.userService.userProfile.organisations[0];
         const filters = {
@@ -594,7 +594,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         this.tempSortOrgUser = this.sourcingOrgUser;
         _.forEach(this.tempSortOrgUser
           , (user) => {
-            if (_.isUndefined(user.selectedRole)) {
+            if (!user.selectedRole) {
               user['selectedRole'] = 'NotAssigned';
             }
         });
