@@ -3,8 +3,8 @@
     <div class="d-flex flex-ai-center flex-jc-space-between">
       <div class="sb-pageSection-header mb-0">
         <h4 class="sb-pageSection-title">
-          <span *ngIf="!isContributor || activeMyProgramsMenu">{{ resourceService.frmelmnts.lbl.myPrograms }} </span>
-          <span *ngIf="activeAllProgramsMenu && programsService.checkforshowAllPrograms()">{{ resourceService.frmelmnts.lbl.explorePrograms }} </span>
+          <span *ngIf="!isContributor || activeMyProgramsMenu">{{ resourceService?.frmelmnts?.lbl?.myPrograms }} </span>
+          <span *ngIf="activeAllProgramsMenu && programsService.checkforshowAllPrograms()">{{ resourceService?.frmelmnts?.lbl?.explorePrograms }} </span>
          </h4>
          <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning"
          *ngIf="!showLoader && programs !== undefined && programs.length">{{count}}
@@ -20,43 +20,43 @@
             <thead class="sb-table-header sb-table-thead-gray">
               <tr>
                 <th class="w-15 cursor-pointer sb-sorting" (click)="sortCollection('name')">
-                  {{ resourceService.frmelmnts.lbl.program }} &nbsp;&nbsp; 
+                  {{ resourceService?.frmelmnts?.lbl?.program }} &nbsp;&nbsp;
                   <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>
                   <span  *ngIf="sortColumn == 'name'" class="d-inline-block">
                     <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
                     <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                   </span>
                 </th>
-                <th *ngIf="isContributor" class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('sourcing_org_name')" 
+                <th *ngIf="isContributor" class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('sourcing_org_name')"
                 appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('sort-program-name', 'click', 'program-list')"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.sourcingOrganisation }} &nbsp;&nbsp; 
+      [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService?.frmelmnts?.lbl?.sourcingOrganisation }} &nbsp;&nbsp;
         <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'sourcing_org_name'"></i>
         <span *ngIf="sortColumn == 'sourcing_org_name'" class="d-inline-block">
           <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
           <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
         </span></th>
-                <th class="w-10">{{ resourceService.frmelmnts.lbl.contentType }}</th>
-                <th class="w-15">{{ resourceService.frmelmnts.lbl.MediumClassSubject }}</th>
-                <th *ngIf="!isContributor" class="w-10">{{ resourceService.frmelmnts.lbl.programDates }}</th>
-                <th *ngIf="activeMyProgramsMenu" class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('createdon')">{{ resourceService.frmelmnts.lbl.nominatedDate }}&nbsp;&nbsp; 
+                <th class="w-10">{{ resourceService?.frmelmnts?.lbl?.contentType }}</th>
+                <th class="w-15">{{ resourceService?.frmelmnts?.lbl?.MediumClassSubject }}</th>
+                <th *ngIf="!isContributor" class="w-10">{{ resourceService?.frmelmnts?.lbl?.programDates }}</th>
+                <th *ngIf="activeMyProgramsMenu" class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('createdon')">{{ resourceService?.frmelmnts?.lbl?.nominatedDate }}&nbsp;&nbsp;
                   <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'createdon'"></i>
                   <span *ngIf="sortColumn == 'createdon'" class="d-inline-block">
                     <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
                     <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                   </span>
                 </th>
-                <th *ngIf="activeAllProgramsMenu" class="w-10">{{ resourceService.frmelmnts.lbl.programDates }}</th>
-                <th *ngIf="activeMyProgramsMenu && iscontributeOrgAdmin" class="w-5 text-center cursor-pointer sb-sorting" (click)="sortCollection('nomination_status')">{{ resourceService.frmelmnts.lbl.status }} &nbsp;&nbsp;
+                <th *ngIf="activeAllProgramsMenu" class="w-10">{{ resourceService?.frmelmnts?.lbl?.programDates }}</th>
+                <th *ngIf="activeMyProgramsMenu && iscontributeOrgAdmin" class="w-5 text-center cursor-pointer sb-sorting" (click)="sortCollection('nomination_status')">{{ resourceService?.frmelmnts?.lbl?.status }} &nbsp;&nbsp;
                   <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'nomination_status' "></i>
                   <span  *ngIf="sortColumn == 'nomination_status'" class="d-inline-block">
                     <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
                     <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                   </span>
                 </th>
-                <th *ngIf="activeMyProgramsMenu && !iscontributeOrgAdmin" class="w-5 text-center">{{ resourceService.frmelmnts.lbl.myRole }}</th>
+                <th *ngIf="activeMyProgramsMenu && !iscontributeOrgAdmin" class="w-5 text-center">{{ resourceService?.frmelmnts?.lbl?.myRole }}</th>
                 <th class="w-10 text-center"> &nbsp;</th>
               </tr>
             </thead>
@@ -89,7 +89,7 @@
                   <div class="program-timeline">
                     <div class="program-timeline-item">
                       <div class="status" [class.active]="isActive(program, 'nomination_enddate', i)">
-                        <div class="status__label">{{ resourceService.frmelmnts.lbl.nominationSubmission }}</div>
+                        <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.nominationSubmission }}</div>
                         <div class="status__date">
                           {{ program?.nomination_enddate | date:'LLLL d, yyyy'  }}
                           <em class="d-block" *ngIf="isActive(program, 'nomination_enddate', i)" [class.sb-color-warning]="isActive(program, 'nomination_enddate', i)">{{ program?.nomination_enddate | daysToGo  }}</em>
@@ -98,7 +98,7 @@
                     </div>
                          <div class="program-timeline-item">
                       <div class="status" [class.active]="isActive(program, 'shortlisting_enddate', i)">
-                        <div class="status__label">{{ resourceService.frmelmnts.lbl.shortlistingNomination }}</div>
+                        <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.shortlistingNomination }}</div>
                         <div class="status__date">
                           {{ program?.shortlisting_enddate | date:'LLLL d, yyyy'  }}
                           <em class="d-block" *ngIf="isActive(program, 'shortlisting_enddate', i)" [class.sb-color-warning]="isActive(program, 'shortlisting_enddate', i)">{{ program?.shortlisting_enddate | daysToGo  }}</em>
@@ -107,7 +107,7 @@
                     </div>
                     <div class="program-timeline-item">
                       <div class="status" [class.active]="isActive(program, 'content_submission_enddate', i)">
-                        <div class="status__label">{{ resourceService.frmelmnts.lbl.contributions }}</div>
+                        <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.contributions }}</div>
                         <div class="status__date">
                           {{ program?.content_submission_enddate | date:'LLLL d, yyyy'  }}
                           <em class="d-block" *ngIf="isActive(program, 'content_submission_enddate', i)" [class.sb-color-warning]="isActive(program, 'content_submission_enddate', i)">{{ program?.content_submission_enddate | daysToGo  }}</em>
@@ -116,7 +116,7 @@
                     </div>
                     <div class="program-timeline-item" *ngIf="!isContributor">
                       <div class="status" [class.active]="isActive(program, 'enddate', i)">
-                        <div class="status__label">{{ resourceService.frmelmnts.lbl.programEndDate }}</div>
+                        <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.programEndDate }}</div>
                         <div class="status__date">
                           {{ program?.enddate | date:'LLLL d, yyyy' }}
                           <em class="d-block" *ngIf="isActive(program, 'enddate', i)" [class.sb-color-warning]="isActive(program, 'enddate', i)">{{ program?.enddate | daysToGo }}</em>
@@ -144,13 +144,13 @@
       [telemetryInteractEdata]="getTelemetryInteractEdata('view-detail', 'click', 'program-list')"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService.frmelmnts.lbl.open }}</button>
+      [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
       <button class="sb-btn sb-btn-normal sb-btn-outline-primary"  *ngIf="isContributor" (click)="viewDetailsBtnClicked(program)"
                           appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('view-detail', 'click', 'program-list')"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService.frmelmnts.lbl.open }}</button>
+      [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
                     <!-- <div class="ui dropdown sb-btn sb-btn-normal sb-btn-outline-primary sb-btn-dropdown" suiDropdown autoClose="itemClick" *ngIf="isContributor">
                         <div class="text">{{ resourceService.frmelmnts.lbl.actions }}</div>
                         <i class="dropdown icon"></i>
@@ -179,7 +179,7 @@
           <div class="ui tweleve wide column mb-20">
             <app-loader *ngIf="showLoader"></app-loader>
           </div>
-          <app-no-result *ngIf="!showLoader" [data]="{messageText: resourceService.messages.stmsg.m0006}"></app-no-result>
+          <app-no-result *ngIf="!showLoader" [data]="{messageText: resourceService?.messages?.stmsg?.m0006}"></app-no-result>
         </ng-template>
       <!-- </ng-container> -->
     </div>
