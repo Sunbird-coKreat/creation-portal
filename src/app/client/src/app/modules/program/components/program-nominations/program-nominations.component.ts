@@ -285,6 +285,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           const contents = _.get(response.result, 'content');
           this.samplesCount = response.result.count;
           this.setNominationSampleCounts(contents);
+        } else {
+          this.assignSampleCounts();
         }
       });
   }

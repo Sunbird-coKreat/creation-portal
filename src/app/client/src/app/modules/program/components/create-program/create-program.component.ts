@@ -607,12 +607,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     if (this.createProgramForm.dirty && this.createProgramForm.valid) {
       const contentTypes = this.createProgramForm.value.content_types;
       this.createProgramForm.value.content_types = _.isEmpty(contentTypes) ? [] : contentTypes;
-      if (this.userFramework) {
-        this.programConfig.framework = this.userFramework;
-      }
       this.programData = {
         ...this.createProgramForm.value
       };
+      if (this.userFramework) {
+        this.programConfig.framework = this.userFramework;
+        // tslint:disable-next-line:max-line-length
+        _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'framework' }).defaultValue = this.userFramework;
+      }
       this.programData['sourcing_org_name'] = this.userprofile.rootOrgName;
       this.programData['rootorg_id'] = this.userprofile.rootOrgId;
       this.programData['createdby'] = this.userprofile.id;
@@ -788,6 +790,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     data['programContentTypes'] = contentTypes;
 
     this.programConfig.board = this.userBoard;
+    // tslint:disable-next-line:max-line-length
+    _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'board' }).defaultValue = this.userBoard;
     this.programConfig.gradeLevel = this.gradeLevelOption;
     this.programConfig.medium = this.mediumOption;
     this.programConfig.subject = this.subjectsOption;
