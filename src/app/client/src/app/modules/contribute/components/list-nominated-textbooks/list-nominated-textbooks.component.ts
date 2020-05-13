@@ -387,14 +387,18 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
                       _.find(this.nominationDetails.rolemapping, (users, role) => {
                         if (_.includes(users, r.result.User.userId)) {
                           r.result.User.selectedRole = role;
-                        } else {
-                          r.result.User.selectedRole = 'NotAssigned';
                         }
                       });
                     }
                     this.contributorOrgUser.push(r.result.User);
                   }
                 });
+                _.forEach(this.contributorOrgUser
+                  , (user) => {
+                      if (_.isUndefined(user.selectedRole)) {
+                        user['selectedRole'] = 'NotAssigned';
+                      }
+                   });
                 this.tempSortOrgUser = this.contributorOrgUser;
               }
             }, error => {
