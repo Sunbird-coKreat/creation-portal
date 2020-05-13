@@ -462,6 +462,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         }
       });
     }
+    this.directionOrgUsers = 'desc';
+    this.sortOrgUsers('selectedRole');
   }
 
   fetchProgramDetails() {

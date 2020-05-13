@@ -402,6 +402,8 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
                     });
                   }
                 this.tempSortOrgUser = this.contributorOrgUser;
+                this.sortOrgUsersByRole('REVIEWER');
+                this.sortOrgUsersByRole('CONTRIBUTOR');
               }
             }, error => {
               console.log(error);
