@@ -23,17 +23,14 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public programDetails: any;
   public programContentTypes: string;
   nominations = [];
-  nominationsCount;
+  pageNominations = [];
   collectionsCount;
   tempNominations;
-  tempNominationsCount;
   filterApplied: any;
   public selectedStatus = 'All';
   showNominationsComponent = false;
   public initiatedCount = 0;
-  public pendingCount = 0;
-  public approvedCount = 0;
-  public rejectedCount = 0;
+  public statusCount = {};
   public totalCount = 0;
   public activeDate = '';
   public sessionContext: ISessionContext = {};
@@ -74,8 +71,16 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public nominatedContentTypeCount = 0;
   public samplesCount = 0;
   public totalContentTypeCount = 0;
-  public nominationSampleCounts = {};
+  public nominationSampleCounts: any;
   public showDownloadCsvBtn = false;
+  public totalPages: number;
+  public nominationsPerPage = 200;
+  public currentPage: number;
+  public totalNominations: number;
+  public showLoader = true;
+  public tableLoader = false;
+  public disablePagination = {};
+  public pageNumArray: Array<number>;
 
   constructor(public frameworkService: FrameworkService, private tosterService: ToasterService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
@@ -87,9 +92,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   ngOnInit() {
     this.filterApplied = null;
-    this.getNominationList();
     this.getProgramDetails();
-    this.getProgramCollection();
     this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program_ID'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
@@ -152,14 +155,12 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.selectedStatus = status;
       if (status === 'All') {
         this.filterApplied = false;
-        this.nominations = this.tempNominations;
-        this.nominationsCount = this.tempNominationsCount;
+        this.nominations = _.cloneDeep(this.tempNominations);
       } else {
         this.filterApplied = true;
         this.nominations = _.filter(this.tempNominations, (o) => {
           return o.status === status;
         });
-        this.nominationsCount = this.nominations.length;
       }
     }
   }
@@ -176,8 +177,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.selectedStatus = 'All';
     this.sortColumn = '';
     this.direction = 'asc';
-    this.nominations = this.tempNominations;
-    this.nominationsCount = this.tempNominationsCount;
+    this.nominations = _.cloneDeep(this.tempNominations);
     this.isContributionDashboardTabActive  = (tab === 'contributionDashboard') ? true : false;
     if (tab === 'nomination') {
       this.direction = 'desc';
@@ -204,65 +204,23 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           filters: {
             program_id: this.activatedRoute.snapshot.params.programId,
             status: ['Pending', 'Approved', 'Rejected']
-          }
+          },
+          limit: 1000
         }
       }
     };
-    let textbooks = [];
     this.programsService.post(req).subscribe((data) => {
-      this.getSampleContent();
       if (data.result && data.result.length > 0) {
-        this.getDashboardData(data.result);
+        const filteredArr = _.filter(data.result, (obj) => obj.userData);
+        this.getDashboardData(filteredArr);
         _.forEach(data.result, (res) => {
-          const isOrg = !_.isEmpty(res.organisation_id);
-          let name = '';
-          if (isOrg && !_.isEmpty(res.orgData)) {
-            name = res.orgData.name;
-          } else if (!_.isEmpty(res.userData)) {
-            name = `${res.userData.firstName} ${res.userData.lastName || ''}`;
-          }
-          if (name) {
-            this.nominations.push({
-              programName: '',
-              name: name.trim(),
-              type: isOrg ? 'Organisation' : 'Individual',
-              textbooks: res.collection_ids.length,
-              samples: 0,
-              createdon: res.createdon,
-              status: res.status,
-              user_id: res.user_id,
-              organisation_id: res.organisation_id,
-              nominationData: res,
-            });
-
-            (isOrg) ? this.contributedByOrganisation++ : this.contributedByIndividual++;
-            if (res.status === 'Pending') {
-              this.pendingCount = this.pendingCount + 1;
-            }
-            if (res.status === 'Approved') {
-              this.approvedCount  = this.approvedCount + 1;
-            }
-            if (res.status === 'Rejected') {
-              this.rejectedCount = this.rejectedCount + 1;
-            }
-           textbooks = _.concat(textbooks, res.collection_ids);
             this.nominatedContentTypes = _.concat(this.nominatedContentTypes, res.content_types);
-          }
         });
       }
       this.nominatedContentTypes =  _.uniq(this.nominatedContentTypes);
-      textbooks = _.uniq(textbooks);
-      this.nominatedContentTypeCount = this.nominatedContentTypes.length;
       this.nominatedContentTypes = this.programsService.getContentTypesName(this.nominatedContentTypes);
-      this.nominatedTextbook = textbooks.length;
-      this.totalCount = this.nominationsCount;
-      this.nominationsCount = this.nominations.length;
-      this.tempNominations = this.nominations;
-      this.tempNominationsCount = this.nominationsCount;
-      this.showNominationsComponent = true;
     }, error => {
-      this.getSampleContent();
-      this.tosterService.error('User onboarding failed');
+      this.toasterService.error(this.resourceService.messages.emsg.projects.m0003);
     });
   }
 
@@ -274,9 +232,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           const contents = _.get(response.result, 'content');
           this.samplesCount = response.result.count;
           this.setNominationSampleCounts(contents);
-        } else {
-          this.assignSampleCounts();
         }
+        this.showLoader = false;
       });
   }
   getProgramCollection () {
@@ -359,25 +316,26 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     }
 
   dashboardObject(nomination) {
-    return {
-      total: 0,
-      review: 0,
-      draft: 0,
-      rejected: 0,
-      live: 0,
-      sourcingPending: 0,
-      sourcingAccepted: 0,
-      sourcingRejected: 0,
-      // tslint:disable-next-line:max-line-length
-      contributorName: this.setContributorName(nomination, nomination.organisation_id ? 'org' : 'individual'),
-      individualStatus: {},
-      sourcingOrgStatus : {accepted: 0, rejected: 0, pending: 0},
-      contributorDetails: nomination,
-      type: nomination.organisation_id ? 'org' : 'individual'
-    };
-  }
+                return {
+                  total: 0,
+                  review: 0,
+                  draft: 0,
+                  rejected: 0,
+                  live: 0,
+                  sourcingPending: 0,
+                  sourcingAccepted: 0,
+                  sourcingRejected: 0,
+                  // tslint:disable-next-line:max-line-length
+                  contributorName: this.setContributorName(nomination, nomination.organisation_id ? 'org' : 'individual'),
+                  individualStatus: {},
+                  sourcingOrgStatus : {accepted: 0, rejected: 0, pending: 0},
+                  contributorDetails: nomination,
+                  type: nomination.organisation_id ? 'org' : 'individual'
+                };
+            }
 
   setNominationSampleCounts(contentResult) {
+    this.nominationSampleCounts = {};
     let orgSampleUploads = _.filter(contentResult, contribution => !_.isEmpty(contribution.organisationId) && contribution.sampleContent);
     orgSampleUploads = _.groupBy(orgSampleUploads, 'organisationId');
     _.forEach(orgSampleUploads, (temp, index) => {
@@ -430,6 +388,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.readRolesOfOrgUsers();
       const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
       this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
+      this.getProgramCollection();
+      this.getAggregatedNominationsCount();
+      this.getNominationList();
+      this.getPaginatedNominations(0);
     }, error => {
       // TODO: navigate to program list page
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
@@ -590,7 +552,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       n.samples = this.getNominationSampleCounts(n);
       return n;
     });
-    this.tempNominations = this.nominations;
+    this.tempNominations = _.cloneDeep(this.nominations);
     this.showDownloadCsvBtn = !_.isEmpty(this.programDetails) && this.nominations.length > 0;
   }
 
@@ -619,4 +581,142 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     };
     this.programsService.downloadReport(csvDownloadConfig);
   }
+
+
+getPaginatedNominations(offset) {
+  const req = {
+    url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
+    data: {
+      request: {
+        filters: {
+          program_id: this.activatedRoute.snapshot.params.programId,
+          status: ['Pending', 'Approved', 'Rejected']
+        },
+        offset: offset,
+        limit: this.nominationsPerPage
+      }
+    }
+  };
+this.programsService.post(req).subscribe((data) => {
+      if (data.result && data.result.length > 0) {
+        this.nominations = [];
+        _.forEach(data.result, (res) => {
+          const isOrg = !_.isEmpty(res.organisation_id);
+          let name = '';
+          if (isOrg && !_.isEmpty(res.orgData)) {
+            name = res.orgData.name;
+          } else if (!_.isEmpty(res.userData)) {
+            name = `${res.userData.firstName} ${res.userData.lastName || ''}`;
+          }
+          if (name) {
+            this.nominations.push({
+              programName: '',
+              name: name.trim(),
+              type: isOrg ? 'Organisation' : 'Individual',
+              textbooks: res.collection_ids.length,
+              samples: 0,
+              createdon: res.createdon,
+              status: res.status,
+              user_id: res.user_id,
+              organisation_id: res.organisation_id,
+              nominationData: res,
+            });
+          }
+        });
+        if (!this.nominationSampleCounts) {
+          this.getSampleContent();
+        } else {
+          this.assignSampleCounts();
+        }
+      }
+      this.tempNominations = _.cloneDeep(this.nominations);
+      this.showNominationsComponent = true;
+      this.tableLoader = false;
+}, error => {
+  this.tableLoader = false;
+  this.toasterService.error(this.resourceService.messages.emsg.projects.m0003);
+});
+}
+
+getAggregatedNominationsCount() {
+const req = {
+  url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
+  data: {
+    request: {
+      filters: {
+        program_id: this.activatedRoute.snapshot.params.programId,
+        status: ['Pending', 'Approved', 'Rejected']
+      },
+      fields: ['organisation_id', 'collection_ids', 'content_types', 'status'],
+      limit: 0
+    }
+  }
+};
+this.programsService.post(req).subscribe((data) => {
+  const aggregatedCount = data.result.nomination;
+  this.totalNominations = aggregatedCount.count;
+  if (aggregatedCount.fields && aggregatedCount.fields.length) {
+  this.statusCount = _.get(_.find(aggregatedCount.fields, {name: 'status'}), 'fields');
+  this.contributedByOrganisation = _.get(_.find(aggregatedCount.fields, {name: 'organisation_id'}), 'count');
+  this.contributedByIndividual = this.totalNominations - this.contributedByOrganisation;
+  this.nominatedTextbook = _.get(_.find(aggregatedCount.fields, {name: 'collection_ids'}), 'count');
+  this.nominatedContentTypeCount = _.get(_.find(aggregatedCount.fields, {name: 'content_types'}), 'count');
+  }
+  this.currentPage = 1;
+  this.totalPages = Math.ceil(this.totalNominations / this.nominationsPerPage);
+  this.handlePageNumArray();
+  this.disablePaginationButtons();
+}, err => {
+  this.toasterService.error(this.resourceService.messages.emsg.projects.m0003);
+});
+}
+
+navigatePage(pageNum) {
+    switch (pageNum) {
+      case 'first':
+        this.currentPage = 1;
+        break;
+      case 'last':
+        this.currentPage = this.totalPages;
+        break;
+      case 'prev':
+        this.currentPage = this.currentPage - 1;
+        break;
+      case 'next':
+        this.currentPage = this.currentPage + 1;
+        break;
+      default:
+        this.currentPage = pageNum;
+    }
+    this.handlePagination(this.currentPage);
+}
+
+handlePagination(pageNum) {
+const offset = (pageNum - 1) * this.nominationsPerPage;
+this.tableLoader = true;
+this.getPaginatedNominations(offset);
+this.handlePageNumArray();
+this.disablePaginationButtons();
+}
+
+disablePaginationButtons() {
+ this.disablePagination = {};
+ if (this.currentPage === 1) {
+   this.disablePagination['first'] = true;
+   this.disablePagination['prev'] = true;
+ }
+ if (this.currentPage === this.totalPages) {
+  this.disablePagination['last'] = true;
+  this.disablePagination['next'] = true;
+}
+}
+
+handlePageNumArray() {
+if ((this.currentPage + 5) >= (this.totalPages + 1)) {
+  const initValue = this.totalPages - 4 <= 0 ? 1 : this.totalPages - 4;
+  this.pageNumArray = _.range(initValue , (this.totalPages + 1));
+} else {
+  this.pageNumArray = _.range(this.currentPage, (this.currentPage + 5));
+}
+}
 }
