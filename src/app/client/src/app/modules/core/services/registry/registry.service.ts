@@ -3,8 +3,13 @@ import { DataService } from '../data/data.service';
 import { HttpClient } from '@angular/common/http';
 import { ContentService } from './../content/content.service';
 import { ConfigService, ServerResponse, ToasterService, ResourceService } from '@sunbird/shared';
-import { Observable, of} from 'rxjs';
-import { switchMap, tap} from 'rxjs/operators';
+import { Observable, of, throwError, BehaviorSubject } from 'rxjs';
+import { switchMap, tap, catchError, skipWhile } from 'rxjs/operators';
+import { UserService } from './../user/user.service';
+import { LearnerService } from '../learner/learner.service';
+import { CacheService } from 'ng2-cache-service';
+import * as _ from 'lodash-es';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -12,11 +17,114 @@ export class RegistryService extends DataService {
   public config: ConfigService;
   baseUrl: string;
   public http: HttpClient;
-  constructor(config: ConfigService, http: HttpClient, public contentService: ContentService) {
+
+  constructor(config: ConfigService, http: HttpClient, public contentService: ContentService,
+    public userService: UserService, public learnerService: LearnerService, public cacheService: CacheService) {
     super(http);
     this.config = config;
     this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;
   }
+
+  checkIfUserBelongsToOrg() {
+    return !!(this.userService.userProfile.userRegData &&
+      this.userService.userProfile.userRegData.User_Org && this.userService.userProfile.userRegData.Org);
+  }
+
+  public getcontributingOrgUsersDetails() {
+    const userRegData = _.get(this.userService, 'userProfile.userRegData');
+    const orgId = userRegData.User_Org.orgId;
+    return new Promise((resolve, reject) => {
+      if (this.checkIfUserBelongsToOrg()) {
+        const orgUsersData: boolean = this.cacheService.get('orgUsersData');
+        if (orgUsersData) {
+          return resolve(this.cacheService.get('orgUsersDetails'))
+        }
+        else {
+          let orgUsersDetails = {};
+          const tempMapping = [];
+          const tempUser = [];
+          return this.getContributionOrgUsers(orgId).pipe(
+            switchMap((res1: any) => {
+              if (res1.result.User_Org.length) {
+                const userList = _.uniq(_.map(
+                _.filter(res1.result.User_Org, obj => { if(obj.userId !== userRegData.User.osid) {return obj }}),
+                  (mapObj) => {
+                    tempMapping.push(mapObj);
+                  return mapObj.userId.slice(2);
+                }));
+
+                return this.getUserdetailsByOsIds(userList);
+              } else {
+                return of(null);
+              }
+            }),
+            switchMap((res2: any) => {
+              if (res2 && res2.result.User.length) {
+                const userList = _.map(res2.result.User, (obj) => {
+                  tempUser.push(obj);
+                  return obj.userId;
+                });
+
+                const req = {
+                  url: this.config.urlConFig.URLS.ADMIN.USER_SEARCH,
+                  data: {
+                    'request': {
+                      'filters': {
+                          'identifier': _.compact(userList)
+                      }
+                    }
+                  }
+                };
+                return this.learnerService.post(req);
+              } else {
+                return of(null);
+              }
+            })).subscribe((res) => {
+              orgUsersDetails = _.get(res, 'result.response.content');
+              const userList = _.map(orgUsersDetails, (obj) => {
+                const tempUserObj = _.find(tempUser, {'userId': obj.identifier});
+                obj.name = `${obj.firstName} ${obj.lastName || ''}`;
+                obj.User = _.find(tempUser, {'userId': obj.identifier});
+                obj.User_Org = _.find(tempMapping, {'userId': _.get(tempUserObj, 'osid') });
+                obj.selectedRole = _.first(obj.User_Org.roles);
+                return obj;
+              });
+
+              this.cacheService.set('orgUsersData',true);
+              this.cacheService.set('orgUsersDetails', _.get(res, 'result.response.content'));
+              return resolve(this.cacheService.get('orgUsersDetails'));
+            }, (err) => { console.log(err); return reject([]); });
+         }
+      } else {
+        return resolve([]);
+      }
+    });
+  }
+
+  private getUserdetailsByOsIds(userList: []): Observable<ServerResponse> {
+    const option = {
+      url: 'reg/search',
+      data: {
+        id: 'open-saber.registry.search',
+        ver: '1.0',
+        ets: '11234',
+        params: {
+          did: '',
+          key: '',
+          msgid: ''
+        },
+        request: {
+          entityType: ['User'],
+          filters: {
+            osid: {or: userList}
+          }
+        }
+      }
+    };
+
+    return this.contentService.post(option);
+  }
+
   public getContributionOrgUsers(orgId): Observable<ServerResponse> {
     const req = {
       url: `reg/search`,

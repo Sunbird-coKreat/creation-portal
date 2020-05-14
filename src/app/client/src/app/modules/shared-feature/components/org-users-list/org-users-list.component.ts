@@ -12,7 +12,7 @@ import { tap } from 'rxjs/operators';
   styleUrls: ['./org-users-list.component.scss']
 })
 export class OrgUsersListComponent implements OnInit {
-  public contributorOrgUser: any = [];
+  public contributorOrgUsers: any = [];
   public tempSortOrgUser: any = [];
   public direction = 'asc';
   public sortColumn = '';
@@ -28,7 +28,7 @@ export class OrgUsersListComponent implements OnInit {
   }
 
   sortCollection(column) {
-    this.contributorOrgUser = this.programsService.sortCollection(this.tempSortOrgUser, column, this.direction);
+    this.contributorOrgUsers = this.programsService.sortCollection(this.tempSortOrgUser, column, this.direction);
     if (this.direction === 'asc' || this.direction === '') {
       this.direction = 'desc';
     } else {
@@ -43,84 +43,16 @@ export class OrgUsersListComponent implements OnInit {
   }
 
   getContributionOrgUsers() {
-    const userRegData = _.get(this.userService, 'userProfile.userRegData');
-    if (this.checkIfUserBelongsToOrg()) {
-      this.registryService.getContributionOrgUsers(userRegData.User_Org.orgId).subscribe(response => {
-        const result = _.get(response, 'result');
-        if (!result || _.isEmpty(result)) {
-          this.showLoader = false;
-          console.log('NO USER FOUND');
-          return;
-        }
-        const getUserDetails = _.map(result.User_Org, userOrg => {
-          return this.registryService.getUserDetails(userOrg.userId)
-          .pipe(
-            tap((res: any) => {
-              const user = _.get(res, 'result.User');
-              // Currently logged in user should not be in the list
-              if (_.isEmpty(user) || user.userId === userRegData.User.userId) {
-                return;
-              }
-              user.fullName = user.firstName;
-              if (user.lastName) {
-                user.fullName += ' ' + user.lastName;
-              }
-              user.selectedRole = _.first(userOrg.roles);
-              user.userOrg = userOrg;
-              this.contributorOrgUser.push(user);
-              this.tempSortOrgUser.push(user);
-              this.userIds.push(user.userId);
-            }
-          ));
-        });
-        forkJoin(getUserDetails)
-        .subscribe((res: any) => {
-          this.getUsersDetails();
-        }, error => {
-          console.log(error);
-        });
-      }, error => {
-        console.log(error);
-      });
-    }
-  }
-
-  getUsersDetails() {
-    const req = {
-      'identifier': _.compact(this.userIds)
-    };
-    this.programsService.getOrgUsersDetails(req).subscribe((response) => {
-      const users = _.get(response, 'result.response.content');
-      if (_.isEmpty(users)) {
-        this.showLoader = false;
-        console.log('NO USER FOUND');
-        return;
-      }
-      _.forEach(users, (user, index) => {
-        const contribUser = _.find(this.contributorOrgUser, (u) => {
-          return u.userId === user.identifier;
-        });
-        if (contribUser) {
-          if (!_.isEmpty(user.maskedEmail)) {
-            contribUser.contact = user.maskedEmail;
-          }
-          if (!_.isEmpty(user.maskedPhone)) {
-            contribUser.contact = user.maskedPhone;
-          }
-        }
-        if (index === users.length - 1) {
-          this.showLoader = false;
-        }
-      });
-    }, error => {
+    this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
+      this.contributorOrgUsers = orgUsers;
+      this.tempSortOrgUser = orgUsers;
       this.showLoader = false;
-      console.log(error);
     });
   }
 
   onRoleChange(user) {
     const selectedRole = _.get(user, 'selectedRole');
-    const osid = _.get(user, 'userOrg.osid');
+    const osid = _.get(user, 'User_Org.osid');
 
     this.programsService.updateUserRole(osid, [selectedRole]).subscribe(
       (res) => {
