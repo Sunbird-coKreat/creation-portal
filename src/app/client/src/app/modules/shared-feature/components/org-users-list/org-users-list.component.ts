@@ -12,7 +12,7 @@ import { tap } from 'rxjs/operators';
   styleUrls: ['./org-users-list.component.scss']
 })
 export class OrgUsersListComponent implements OnInit {
-  public contributorOrgUser: any = [];
+  public contributorOrgUsers: any = [];
   public tempSortOrgUser: any = [];
   public direction = 'asc';
   public sortColumn = '';
@@ -28,7 +28,7 @@ export class OrgUsersListComponent implements OnInit {
   }
 
   sortCollection(column) {
-    this.contributorOrgUser = this.programsService.sortCollection(this.tempSortOrgUser, column, this.direction);
+    this.contributorOrgUsers = this.programsService.sortCollection(this.tempSortOrgUser, column, this.direction);
     if (this.direction === 'asc' || this.direction === '') {
       this.direction = 'desc';
     } else {
@@ -43,7 +43,13 @@ export class OrgUsersListComponent implements OnInit {
   }
 
   getContributionOrgUsers() {
-    const userRegData = _.get(this.userService, 'userProfile.userRegData');
+    this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
+      this.contributorOrgUsers = orgUsers;
+      this.tempSortOrgUser = orgUsers;
+      this.showLoader = false;
+    });
+
+   /* const userRegData = _.get(this.userService, 'userProfile.userRegData');
     if (this.checkIfUserBelongsToOrg()) {
       this.registryService.getContributionOrgUsers(userRegData.User_Org.orgId).subscribe(response => {
         const result = _.get(response, 'result');
@@ -82,10 +88,10 @@ export class OrgUsersListComponent implements OnInit {
       }, error => {
         console.log(error);
       });
-    }
+    }*/
   }
 
-  getUsersDetails() {
+  /*getUsersDetails() {
     const req = {
       'identifier': _.compact(this.userIds)
     };
@@ -97,7 +103,7 @@ export class OrgUsersListComponent implements OnInit {
         return;
       }
       _.forEach(users, (user, index) => {
-        const contribUser = _.find(this.contributorOrgUser, (u) => {
+        const contribUser = _.find(this.contributorOrgUsers, (u) => {
           return u.userId === user.identifier;
         });
         if (contribUser) {
@@ -116,11 +122,11 @@ export class OrgUsersListComponent implements OnInit {
       this.showLoader = false;
       console.log(error);
     });
-  }
+  }*/
 
   onRoleChange(user) {
     const selectedRole = _.get(user, 'selectedRole');
-    const osid = _.get(user, 'userOrg.osid');
+    const osid = _.get(user, 'User_Org.osid');
 
     this.programsService.updateUserRole(osid, [selectedRole]).subscribe(
       (res) => {

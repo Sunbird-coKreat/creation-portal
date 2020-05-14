@@ -88,13 +88,15 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     this.programStageService.addStage('listNominatedTextbookComponent');
 
     this.currentStage = 'listNominatedTextbookComponent';
-
-    if (this.userService.userRegistryData && !_.isEmpty(this.userService.userProfile.userRegData) &&
+    if (this.isUserOrgAdmin()) {
+      this.showUsersTab = true;
+    }
+    /*if (this.userService.userRegistryData && !_.isEmpty(this.userService.userProfile.userRegData) &&
       this.userService.userProfile.userRegData.User_Org &&
       this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
       this.getContributionOrgUsers();
       this.showUsersTab = true;
-    }
+    }*/
     this.telemetryInteractCdata = [{
       id: this.activatedRoute.snapshot.params.programId,
       type: 'Program_ID'
@@ -327,7 +329,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
         this.nominationDetails = _.first(data.result);
         this.sessionContext.nominationDetails = _.first(data.result);
         this.currentNominationStatus =  _.get(_.first(data.result), 'status');
-        if (this.userService.userRegistryData && this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org) {
+        if (this.checkIfUserBelongsToOrg()) {
           this.sessionContext.currentOrgRole = this.userService.userProfile.userRegData.User_Org.roles[0];
           if (this.userService.userProfile.userRegData.User_Org.roles[0] === 'admin') {
             // tslint:disable-next-line:max-line-length
@@ -349,6 +351,10 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
           this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
         }
+        if (this.isUserOrgAdmin()) {
+          this.showUsersTab = true;
+          this.getContributionOrgUsers();
+        }
       }
       this.getProgramTextbooks();
     }, error => {
@@ -357,67 +363,46 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   }
 
   getContributionOrgUsers() {
-    const baseUrl = ( <HTMLInputElement> document.getElementById('portalBaseUrl')) ?
-      ( <HTMLInputElement> document.getElementById('portalBaseUrl')).value : '';
-    if (this.userService.userRegistryData && this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org) {
-      const orgUsers = this.registryService.getContributionOrgUsers(this.userService.userProfile.userRegData.User_Org.orgId);
       this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
       this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
-      this.orgDetails.orgLink = `${baseUrl}contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
-      orgUsers.subscribe(response => {
-        const result = _.get(response, 'result');
-        if (!result || _.isEmpty(result)) {
-          console.log('NO USER FOUND');
-        } else {
-          // get Ids of all users whose role is 'user'
-          const userIds = _.map(_.filter(result[_.first(_.keys(result))], ['roles', ['user']]), 'userId');
-          const getUserDetails = _.map(userIds, id => this.registryService.getUserDetails(id));
-          forkJoin(...getUserDetails)
-            .subscribe((res: any) => {
-              if (res) {
-                _.forEach(res, r => {
-                  if (r.result && r.result.User) {
-                    let creator = r.result.User.firstName;
-                    if (r.result.User.lastName) {
-                      creator = creator + r.result.User.lastName;
-                    }
-                    r.result.User.fullName = creator;
-                    if (this.nominationDetails.rolemapping) {
-                      _.find(this.nominationDetails.rolemapping, (users, role) => {
-                        if (_.includes(users, r.result.User.userId)) {
-                          r.result.User.selectedRole = role;
-                        }
-                      });
-                    }
-                    this.contributorOrgUser.push(r.result.User);
-                  }
-                });
-                this.tempSortOrgUser = this.contributorOrgUser;
-              }
-            }, error => {
-              console.log(error);
-            });
+      this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
+        let tempcontributorOrgUser = this.tempSortOrgUser = orgUsers;
+        if (!_.isEmpty(tempcontributorOrgUser)) {
+          tempcontributorOrgUser = _.filter(tempcontributorOrgUser, {"selectedRole": "user"});
+          _.forEach(tempcontributorOrgUser, r => {
+            if (this.nominationDetails.rolemapping) {
+              _.find(this.nominationDetails.rolemapping, (users, role) => {
+                if (_.includes(users, r.identifier)) {
+                  r.selectedRole = role;
+                }
+              });
+            }
+            this.contributorOrgUser.push(r);
+         });
+         this.tempSortOrgUser = this.contributorOrgUser;
+          this.sortCollection('selectedRole');
+          this.showLoader = false;
         }
-      }, error => {
-        console.log(error);
+        else {
+          this.showLoader = false;
+        }
       });
-    }
   }
 
   onRoleChange() {
     const roleMap = {};
     _.forEach(this.roles, role => {
-      roleMap[role.name] = _.filter(this.contributorOrgUser, user => {
-        if (user.selectedRole === role.name) {  return user.userId; }
-      }).map(({userId}) => userId);
+      roleMap[role.name] = _.map(
+        _.filter(this.contributorOrgUser, user => { if (user.selectedRole === role.name) {  return user.identifier; }}), 'identifier');
     });
     const req = {
       'request': {
           'program_id': this.activatedRoute.snapshot.params.programId,
-          'user_id': this.userService.userid,
+          'user_id': this.nominationDetails.user_id,
           'rolemapping': roleMap
-      }
-    };
+        }
+      };
+
     const updateNomination = this.programsService.updateNomination(req);
     updateNomination.subscribe(response => {
       this.toasterService.success('Roles updated');
