@@ -74,7 +74,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public nominationSampleCounts: any;
   public showDownloadCsvBtn = false;
   public totalPages: number;
-  public nominationsPerPage = 2;
+  public nominationsPerPage = 200;
   public currentPage: number;
   public totalNominations: number;
   public showLoader = false;
