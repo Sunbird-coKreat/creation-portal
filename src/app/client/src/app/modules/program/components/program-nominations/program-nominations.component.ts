@@ -77,7 +77,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public nominationsPerPage = 200;
   public currentPage: number;
   public totalNominations: number;
-  public showLoader = false;
+  public showLoader = true;
+  public tableLoader = false;
   public disablePagination = {};
   public pageNumArray: Array<number>;
 
@@ -210,7 +211,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     };
     this.programsService.post(req).subscribe((data) => {
       if (data.result && data.result.length > 0) {
-        this.getDashboardData(data.result);
+        const filteredArr = _.filter(data.result, (obj) => obj.userData);
+        this.getDashboardData(filteredArr);
         _.forEach(data.result, (res) => {
             this.nominatedContentTypes = _.concat(this.nominatedContentTypes, res.content_types);
         });
@@ -218,7 +220,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.nominatedContentTypes =  _.uniq(this.nominatedContentTypes);
       this.nominatedContentTypes = this.programsService.getContentTypesName(this.nominatedContentTypes);
     }, error => {
-      this.tosterService.error('User onboarding failed');
+      this.toasterService.error(this.resourceService.messages.emsg.projects.m0003);
     });
   }
 
@@ -231,6 +233,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           this.samplesCount = response.result.count;
           this.setNominationSampleCounts(contents);
         }
+        this.showLoader = false;
       });
   }
   getProgramCollection () {
@@ -628,9 +631,9 @@ this.programsService.post(req).subscribe((data) => {
       }
       this.tempNominations = _.cloneDeep(this.nominations);
       this.showNominationsComponent = true;
-      this.showLoader = false;
+      this.tableLoader = false;
 }, error => {
-  this.showLoader = false;
+  this.tableLoader = false;
   this.toasterService.error(this.resourceService.messages.emsg.projects.m0003);
 });
 }
@@ -690,7 +693,7 @@ this.handlePagination(this.currentPage);
 
 handlePagination(pageNum) {
 const offset = (pageNum - 1) * this.nominationsPerPage;
-this.showLoader = true;
+this.tableLoader = true;
 this.getPaginatedNominations(offset);
 this.handlePageNumArray();
 this.disablePaginationButtons();

@@ -1,4 +1,4 @@
-<div *ngIf="showNominationsComponent && (currentStage === 'programNominations')" [appTelemetryImpression]="telemetryImpression">
+<div *ngIf="!showLoader && showNominationsComponent && (currentStage === 'programNominations')" [appTelemetryImpression]="telemetryImpression">
     <div class="sb-bg-color-primary-0 practical-header py-16">
         <div class="d-flex  flex-jc-space-between practical-header__content ui container pt-15">
             <div class="practical-header__title w-20">
@@ -178,7 +178,7 @@
                                     <a class="sb-item" [ngClass]="{'disabled': disablePagination.last}" (click)="disablePagination.last ? $event.stopPropagation() : navigatePage('last')">&raquo;</a>
                                 </div>
                             </div>
-                            <app-loader *ngIf='showLoader'></app-loader>
+                            <app-loader *ngIf='tableLoader'></app-loader>
                             <div class="sb-table-responsive desktop-o-x-unset" *ngIf="!showLoader && nominations.length > 0 || filterApplied">
                                 <table
                                     class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
@@ -444,6 +444,8 @@
 </app-contributor-profile-popup>
 
 </div>
+
+<app-loader *ngIf='showLoader'></app-loader>
 
 <ng-container *ngIf="currentStage !== 'programNominations'">
 	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs">
