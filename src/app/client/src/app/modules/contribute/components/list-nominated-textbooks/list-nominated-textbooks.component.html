@@ -294,7 +294,16 @@
 								</span>
 							</th>
 							<th class="text-center w-5">
-								{{resourceService.frmelmnts.lbl.roles}}
+								<span class="ui dropdown sb-table-dropdown d-inline-flex" suiDropdown>
+									<div class="text">{{resourceService.frmelmnts.lbl.roles}}</div>
+									&nbsp;&nbsp;
+									<i class="filter icon"></i>
+									<div class="menu" suiDropdownMenu>
+										<div class="item" (click)="sortOrgUsersByRole('CONTRIBUTOR')" [ngClass]="{'selected': selectedRoleFiltered === 'CONTRIBUTOR', 'active': selectedRoleFiltered === 'CONTRIBUTOR'}" >{{resourceService.frmelmnts.lbl.contributor}}</div>
+										<div class="item" (click)="sortOrgUsersByRole('REVIEWER')"  [ngClass]="{'selected': selectedRoleFiltered === 'REVIEWER', 'active': selectedRoleFiltered === 'REVIEWER'}">{{resourceService.frmelmnts.lbl.Reviewer}}</div>
+										<div class="item" (click)="sortOrgUsersByRole('NotAssigned')"  [ngClass]="{'selected': selectedRoleFiltered === 'NotAssigned', 'active': selectedRoleFiltered === 'NotAssigned'}">{{resourceService.frmelmnts.lbl.NotAssigned}}</div>
+									</div>
+								</span>
 							</th>
 						  </tr>
 						</thead>

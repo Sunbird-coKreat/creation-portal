@@ -67,6 +67,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public directionOrgUsers = 'asc';
   public sortColumnOrgUsers = '';
   public showLoader = true;
+  public selectedRoleFiltered = '';
 
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private configService: ConfigService, private publicDataService: PublicDataService,
@@ -392,7 +393,17 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
                     this.contributorOrgUser.push(r.result.User);
                   }
                 });
+                if (this.contributorOrgUser) {
+                  _.forEach(this.contributorOrgUser
+                    , (user) => {
+                        if (_.isUndefined(user.selectedRole)) {
+                          user['selectedRole'] = 'NotAssigned';
+                        }
+                    });
+                  }
                 this.tempSortOrgUser = this.contributorOrgUser;
+                this.sortOrgUsersByRole('REVIEWER');
+                this.sortOrgUsersByRole('CONTRIBUTOR');
               }
             }, error => {
               console.log(error);
@@ -424,6 +435,21 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     }, error => {
       console.log(error);
     });
+  }
+
+  sortOrgUsersByRole(role) {
+    if (this.selectedRoleFiltered !== role) {
+      this.selectedRoleFiltered = role;
+      this.contributorOrgUser.sort((a, b) => {
+        if (a.selectedRole === role) {
+          return -1;
+        } else if (b.selectedRole === role) {
+          return 1;
+        } else {
+          return a.selectedRole - b.selectedRole;
+        }
+      });
+    }
   }
 
   changeView() {
