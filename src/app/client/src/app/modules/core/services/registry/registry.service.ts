@@ -35,68 +35,63 @@ export class RegistryService extends DataService {
     const orgId = userRegData.User_Org.orgId;
     return new Promise((resolve, reject) => {
       if (this.checkIfUserBelongsToOrg()) {
-        const orgUsersData: boolean = this.cacheService.get('orgUsersData');
-        if (orgUsersData) {
-          return resolve(this.cacheService.get('orgUsersDetails'))
-        }
-        else {
-          let orgUsersDetails = {};
-          const tempMapping = [];
-          const tempUser = [];
-          return this.getContributionOrgUsers(orgId).pipe(
-            switchMap((res1: any) => {
-              if (res1.result.User_Org.length) {
-                const userList = _.uniq(_.map(
-                _.filter(res1.result.User_Org, obj => { if(obj.userId !== userRegData.User.osid) {return obj }}),
-                  (mapObj) => {
-                    tempMapping.push(mapObj);
-                  return mapObj.userId.slice(2);
-                }));
-
-                return this.getUserdetailsByOsIds(userList);
+          return this.getContributionOrgUsers(orgId).subscribe(
+            (res1) => {
+              if (res1.result.User_Org.length && res1.result.User_Org.length !== this.cacheService.get('orgUsersDetails').length) {
+                return resolve(this.cacheService.get('orgUsersDetails'));
               } else {
-                return of(null);
-              }
-            }),
-            switchMap((res2: any) => {
-              if (res2 && res2.result.User.length) {
-                const userList = _.map(res2.result.User, (obj) => {
-                  tempUser.push(obj);
-                  return obj.userId;
-                });
+                let orgUsersDetails = {};
+                const tempMapping = [];
+                const tempUser = [];
+                if (res1.result.User_Org.length) {
+                  const userList = _.uniq(_.map(
+                  _.filter(res1.result.User_Org, obj => { if(obj.userId !== userRegData.User.osid) {return obj }}),
+                    (mapObj) => {
+                      tempMapping.push(mapObj);
+                    return mapObj.userId.slice(2);
+                  }));
 
-                const req = {
-                  url: this.config.urlConFig.URLS.ADMIN.USER_SEARCH,
-                  data: {
-                    'request': {
-                      'filters': {
-                          'identifier': _.compact(userList)
-                      }
+                return this.getUserdetailsByOsIds(userList).pipe(
+                  switchMap((res2: any) => {
+                    if (res2 && res2.result.User.length) {
+                      const userList = _.map(res2.result.User, (obj) => {
+                        tempUser.push(obj);
+                        return obj.userId;
+                      });
+
+                      const req = {
+                        url: this.config.urlConFig.URLS.ADMIN.USER_SEARCH,
+                        data: {
+                          'request': {
+                            'filters': {
+                                'identifier': _.compact(userList)
+                            }
+                          }
+                        }
+                      };
+                      return this.learnerService.post(req);
+                    } else {
+                      return of(null);
                     }
-                  }
-                };
-                return this.learnerService.post(req);
-              } else {
-                return of(null);
+                  })).subscribe((res) => {
+                    orgUsersDetails = _.get(res, 'result.response.content');
+                    const userList = _.map(orgUsersDetails, (obj) => {
+                      const tempUserObj = _.find(tempUser, {'userId': obj.identifier});
+                      obj.name = `${obj.firstName} ${obj.lastName || ''}`;
+                      obj.User = _.find(tempUser, {'userId': obj.identifier});
+                      obj.User_Org = _.find(tempMapping, {'userId': _.get(tempUserObj, 'osid') });
+                      obj.selectedRole = _.first(obj.User_Org.roles);
+                      return obj;
+                    });
+                    this.cacheService.set('orgUsersDetails', _.get(res, 'result.response.content'));
+                    return resolve(this.cacheService.get('orgUsersDetails'));
+                  }, (err) => { console.log(err); return reject([]); });
+                } else { return resolve([]); }
               }
-            })).subscribe((res) => {
-              orgUsersDetails = _.get(res, 'result.response.content');
-              const userList = _.map(orgUsersDetails, (obj) => {
-                const tempUserObj = _.find(tempUser, {'userId': obj.identifier});
-                obj.name = `${obj.firstName} ${obj.lastName || ''}`;
-                obj.User = _.find(tempUser, {'userId': obj.identifier});
-                obj.User_Org = _.find(tempMapping, {'userId': _.get(tempUserObj, 'osid') });
-                obj.selectedRole = _.first(obj.User_Org.roles);
-                return obj;
-              });
-
-              this.cacheService.set('orgUsersData',true);
-              this.cacheService.set('orgUsersDetails', _.get(res, 'result.response.content'));
-              return resolve(this.cacheService.get('orgUsersDetails'));
-            }, (err) => { console.log(err); return reject([]); });
-         }
+            }, (error) => { console.log(error); return reject([]);
+          });
       } else {
-        return resolve([]);
+        return reject([]);
       }
     });
   }
