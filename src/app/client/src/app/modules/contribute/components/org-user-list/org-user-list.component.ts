@@ -99,7 +99,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     this.programsService.updateUserRole(osid, [selectedRole]).subscribe(
       (res) => {
         this.toasterService.success(this.resourceService.messages.smsg.m0065);
-        this.cacheService.remove('orgUsersData');
+        this.cacheService.remove('orgUsersDetails');
       },
       (error) => {
         console.log(error);
