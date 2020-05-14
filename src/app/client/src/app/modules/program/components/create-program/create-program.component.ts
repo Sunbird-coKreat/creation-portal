@@ -103,6 +103,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
   };
   public programConfig: any;
+  public disableCreateProgramBtn = false;
 
   constructor(
     public frameworkService: FrameworkService,
@@ -735,7 +736,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   updateProgramCollection() {
+    this.disableCreateProgramBtn = true;
     if (_.isEmpty(this.collectionListForm.value.pcollections)) {
+      this.disableCreateProgramBtn = false;
       this.toasterService.warning('Please select at least a textbook');
       return false;
     }
@@ -758,6 +761,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         }
       },
       (err) => {
+        this.disableCreateProgramBtn = false;
         console.log(err);
         // TODO: navigate to program list page
         const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
@@ -804,7 +808,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         this.router.navigate(['/sourcing']);
         this.generateTelemetryEvent('END');
       },
-      (err) => this.saveProgramError(err)
+      (err) => {
+        this.disableCreateProgramBtn = false;
+        this.saveProgramError(err);
+      }
     );
   }
 
