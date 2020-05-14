@@ -91,12 +91,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     if (this.isUserOrgAdmin()) {
       this.showUsersTab = true;
     }
-    /*if (this.userService.userRegistryData && !_.isEmpty(this.userService.userProfile.userRegData) &&
-      this.userService.userProfile.userRegData.User_Org &&
-      this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
-      this.getContributionOrgUsers();
-      this.showUsersTab = true;
-    }*/
+
     this.telemetryInteractCdata = [{
       id: this.activatedRoute.snapshot.params.programId,
       type: 'Program_ID'
