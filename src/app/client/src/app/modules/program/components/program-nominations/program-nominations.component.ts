@@ -631,7 +631,7 @@ this.programsService.post(req).subscribe((data) => {
       this.showLoader = false;
 }, error => {
   this.showLoader = false;
-  this.tosterService.error('User onboarding failed');
+  this.toasterService.error(this.resourceService.messages.emsg.projects.m0003);
 });
 }
 
@@ -663,6 +663,8 @@ this.programsService.post(req).subscribe((data) => {
   this.totalPages = Math.ceil(this.totalNominations / this.nominationsPerPage);
   this.handlePageNumArray();
   this.disablePaginationButtons();
+}, err => {
+  this.toasterService.error(this.resourceService.messages.emsg.projects.m0003);
 });
 }
 
