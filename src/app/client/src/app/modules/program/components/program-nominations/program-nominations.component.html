@@ -312,20 +312,46 @@
 					  <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
 						<thead class="sb-table-header sb-table-thead-gray">
 						  <tr>
-							<th class="w-10 cursor-pointer sb-sorting" (click)="sortOrgUsers('fullName')">
-								{{resourceService.frmelmnts.lbl.username}} &nbsp;&nbsp;
+                            <th class="w-10 cursor-pointer sb-sorting" (click)="sortOrgUsers('firstName')">
+                                {{resourceService.frmelmnts.lbl.username}} &nbsp;&nbsp;
+                                <i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || columnOrgUsers != 'firstName' "></i>
+                                <span  *ngIf="columnOrgUsers == 'firstName'" class="d-inline-block">
+                                    <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'asc'}"></i>
+                                    <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
+                                </span>
                             </th>
+
                             <th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('mediums')">
-								{{resourceService.frmelmnts.lbl.mediums}} &nbsp;&nbsp;
-							</th>
-							<th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('gradeLevel')">
-								{{resourceService.frmelmnts.lbl.class}} &nbsp;&nbsp;
-							</th>
-							<th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('subject')">
-								{{resourceService.frmelmnts.lbl.subject}} &nbsp;&nbsp;
-							</th>
-							<th class="text-center w-5">
-								{{resourceService.frmelmnts.lbl.roles}}
+                                {{resourceService.frmelmnts.lbl.mediums}} &nbsp;&nbsp;
+                                <i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || columnOrgUsers != 'mediums' "></i>
+                                <span  *ngIf="columnOrgUsers == 'mediums'" class="d-inline-block">
+                                    <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'asc'}"></i>
+                                    <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
+                                </span>
+                            </th>
+                            <th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('gradeLevel')">
+                                {{resourceService.frmelmnts.lbl.class}} &nbsp;&nbsp;
+                                <i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || columnOrgUsers != 'gradeLevel' "></i>
+                                <span  *ngIf="columnOrgUsers == 'gradeLevel'" class="d-inline-block">
+                                    <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'asc'}"></i>
+                                    <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
+                                </span>
+                            </th>
+                            <th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('subject')">
+                                {{resourceService.frmelmnts.lbl.subject}} &nbsp;&nbsp;
+                                <i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || columnOrgUsers != 'subject' "></i>
+                                <span  *ngIf="columnOrgUsers == 'subject'" class="d-inline-block">
+                                    <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'asc'}"></i>
+                                    <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
+                                </span>
+                            </th>
+                            <th class="text-center w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('selectedRole')">
+                                {{resourceService.frmelmnts.lbl.roles}} &nbsp;&nbsp;
+                                <i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || columnOrgUsers != 'selectedRole' "></i>
+								<span  *ngIf="columnOrgUsers == 'selectedRole'" class="d-inline-block">
+									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'asc'}"></i>
+									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
+								</span>
 							</th>
 						  </tr>
 						</thead>

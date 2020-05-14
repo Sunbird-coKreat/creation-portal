@@ -17,6 +17,7 @@ import { DatePipe } from '@angular/common';
 import { LearnerService } from '../learner/learner.service';
 import { RegistryService } from '../registry/registry.service';
 import { ExportToCsv } from 'export-to-csv';
+import { CacheService } from 'ng2-cache-service';
 
 @Injectable({
   providedIn: 'root'
@@ -45,7 +46,8 @@ export class ProgramsService extends DataService implements CanActivate {
     private extFrameworkService: ExtPluginService, private datePipe: DatePipe,
     private contentService: ContentService, private router: Router,
     private toasterService: ToasterService, private resourceService: ResourceService,
-    public learnerService: LearnerService, private registryService: RegistryService) {
+    public learnerService: LearnerService, private registryService: RegistryService,
+    public cacheService: CacheService) {
       super(http);
       this.config = config;
       this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;
@@ -830,7 +832,23 @@ export class ProgramsService extends DataService implements CanActivate {
   }
 
   get sourcingOrgReviewers() {
-    return _.cloneDeep(this._sourcingOrgReviewers);
+    const orgUsersData: boolean = this.cacheService.get('sourcingOrgUsersData');
+    const OrgDetails = this.userService.userProfile.organisations[0];
+    if (orgUsersData) {
+      return this.cacheService.get('sourcingOrgUsersDetails');
+    } else {
+      const filters = {
+        'organisations.organisationId': OrgDetails.organisationId,
+        'organisations.roles': ['CONTENT_REVIEWER']
+        };
+        this.getSourcingOrgUsers(filters).subscribe((res) => {
+          this.cacheService.set('sourcingOrgUsersData', true);
+          this.cacheService.set('sourcingOrgUsersDetails', res.result.response.content);
+          return this.cacheService.get('sourcingOrgUsersDetails');
+        }, (err) => {
+          return [];
+        });
+    }
   }
 
   getOrgUsersDetails(reqFilters) {

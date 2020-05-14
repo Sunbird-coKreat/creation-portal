@@ -73,6 +73,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public totalContentTypeCount = 0;
   public nominationSampleCounts: any;
   public showDownloadCsvBtn = false;
+  public directionOrgUsers = 'desc';
+  public columnOrgUsers = '';
   public totalPages: number;
   public nominationsPerPage = 200;
   public currentPage: number;
@@ -194,6 +196,16 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.direction = 'asc';
     }
     this.sortColumn = column;
+  }
+
+  sortOrgUsers(column) {
+    this.sourcingOrgUser = this.programsService.sortCollection(this.sourcingOrgUser, column, this.directionOrgUsers);
+    if (this.directionOrgUsers === 'asc' || this.directionOrgUsers === '') {
+      this.directionOrgUsers = 'desc';
+    } else {
+      this.directionOrgUsers = 'asc';
+    }
+    this.columnOrgUsers = column;
   }
 
   getNominationList() {
@@ -406,10 +418,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           _.forEach(this.sourcingOrgUser, (user) => {
             if (_.includes(this.programDetails.rolemapping[role.name], user.identifier)) {
               user['selectedRole'] = role.name;
+            } else {
+              user['selectedRole'] = '-';
             }
           });
         }
       });
+      this.sortOrgUsers('selectedRole');
     }
   }
 
