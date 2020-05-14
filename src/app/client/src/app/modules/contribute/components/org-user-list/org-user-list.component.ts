@@ -3,6 +3,7 @@ import { ToasterService, ResourceService, NavigationHelperService, ConfigService
 import { ActivatedRoute, Router } from '@angular/router';
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
 import { UserService, RegistryService, ProgramsService } from '@sunbird/core';
+import { CacheService } from 'ng2-cache-service';
 import * as _ from 'lodash-es';
 
 
@@ -31,7 +32,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   constructor(private toasterService: ToasterService, private configService: ConfigService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
-    public registryService: RegistryService, public programsService: ProgramsService ) {
+    public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService ) {
       this.getContributionOrgUsers();
     }
 
@@ -98,6 +99,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     this.programsService.updateUserRole(osid, [selectedRole]).subscribe(
       (res) => {
         this.toasterService.success(this.resourceService.messages.smsg.m0065);
+        this.cacheService.remove('orgUsersData');
       },
       (error) => {
         console.log(error);
