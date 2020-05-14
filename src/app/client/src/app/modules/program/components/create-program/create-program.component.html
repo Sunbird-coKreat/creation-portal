@@ -444,7 +444,7 @@
 				[telemetryInteractEdata]="getTelemetryInteractEdata('previous', 'click', 'create-program')"
 				[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
 				[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.previous}}</button>
-			<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="disableCreateProgramBtn || tempCollections.length === 0"
+			<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="disableCreateProgramBtn"
 				(click)="updateProgramCollection()" appTelemetryInteract
 				[telemetryInteractEdata]="getTelemetryInteractEdata('create-program', 'click', 'create-program')"
 				[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
