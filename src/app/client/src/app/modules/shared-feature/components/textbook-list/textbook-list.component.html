@@ -38,8 +38,8 @@
 								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 							</span>
 						</th>
-						<th class="text-right">{{resourceService?.frmelmnts?.lbl?.chapters}}</th>
-						<th class="text-right"> {{resourceService.frmelmnts.lbl.status}}</th>
+						<th>{{resourceService?.frmelmnts?.lbl?.chapters}}</th>
+						<th> {{resourceService.frmelmnts.lbl.status}}</th>
 						<th>&nbsp;</th>
 					</tr>
 				</thead>
@@ -65,8 +65,8 @@
 								{{data.subject}}
 							</div>
 						</td>
-						<td class="text-right">{{ data.chapterCount || 0 }}</td>
-						<td class="text-right fsmall"><span class="d-inline-block mr-5">{{ (data?.pendingBySourceOrg?.length || 0) }}<span class="sb-color-warning"> {{ resourceService?.frmelmnts?.lbl?.pendingReview }}</span></span></td>
+						<td>{{ data.chapterCount || 0 }}</td>
+						<td class="fsmall"><span class="d-inline-block mr-5">{{ (data?.pendingBySourceOrg?.length || 0) }}<span class="sb-color-warning"> {{ resourceService?.frmelmnts?.lbl?.pendingReview }}</span></span></td>
 						<td class="text-center"><button type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(data)">{{resourceService.frmelmnts.lbl.open}}</button></td>
 					</tr>
 				</tbody>
