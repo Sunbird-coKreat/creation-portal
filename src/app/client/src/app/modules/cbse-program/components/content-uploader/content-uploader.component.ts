@@ -235,6 +235,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
                 this.sessionContext.nominationDetails.organisation_id &&
                 {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
               'programId': this.sessionContext.programId,
+              'unitIdentifiers': [this.unitIdentifier],
               ...(_.pickBy(reqBody, _.identity))
               // 'framework': this.sessionContext.framework,
               // 'organisation': this.sessionContext.onBoardSchool ? [this.sessionContext.onBoardSchool] : [],
