@@ -667,12 +667,12 @@ var programConfig = {
             {
               'code': 'copyright',
               'dataType': 'text',
-              'description': 'Enter Copyright',
+              'description': 'Enter Copyright and Year',
               'editable': true,
               'inputType': 'text',
-              'label': 'Copyright',
+              'label': 'Copyright and Year',
               'name': 'Copyright',
-              'placeholder': 'Enter Copyright',
+              'placeholder': 'Enter Copyright and Year',
               'required': true,
               'visible': true,
               'helpText': 'If you are an individual, creating original Content, you are the copyright holder. If you are creating Content on behalf of an organisation, the organisation may be the copyright holder. Please fill as <Name of copyright holder>, <Year of publication>'
@@ -767,12 +767,12 @@ var programConfig = {
             {
               'code': 'copyright',
               'dataType': 'text',
-              'description': 'Enter Copyright',
+              'description': 'Enter Copyright and Year',
               'editable': true,
               'inputType': 'text',
-              'label': 'Copyright',
+              'label': 'Copyright and Year',
               'name': 'Copyright',
-              'placeholder': 'Enter Copyright',
+              'placeholder': 'Enter Copyright and Year',
               'required': true,
               'visible': true,
               'helpText': 'If you are an individual, creating original Content, you are the copyright holder. If you are creating Content on behalf of an organisation, the organisation may be the copyright holder. Please fill as <Name of copyright holder>, <Year of publication>'
