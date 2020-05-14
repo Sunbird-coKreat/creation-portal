@@ -672,23 +672,23 @@ this.programsService.post(req).subscribe((data) => {
 }
 
 navigatePage(pageNum) {
-switch (pageNum) {
-  case 'first':
-    this.currentPage = 1;
-    break;
-  case 'last':
-    this.currentPage = this.totalPages;
-    break;
-  case 'prev':
-    this.currentPage = this.currentPage - 1;
-    break;
-  case 'next':
-    this.currentPage = this.currentPage + 1;
-    break;
-  default:
-    this.currentPage = pageNum;
-}
-this.handlePagination(this.currentPage);
+    switch (pageNum) {
+      case 'first':
+        this.currentPage = 1;
+        break;
+      case 'last':
+        this.currentPage = this.totalPages;
+        break;
+      case 'prev':
+        this.currentPage = this.currentPage - 1;
+        break;
+      case 'next':
+        this.currentPage = this.currentPage + 1;
+        break;
+      default:
+        this.currentPage = pageNum;
+    }
+    this.handlePagination(this.currentPage);
 }
 
 handlePagination(pageNum) {
