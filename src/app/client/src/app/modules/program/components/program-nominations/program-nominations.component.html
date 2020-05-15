@@ -115,7 +115,7 @@
                                         [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.tab.users}}
                         <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ sourcingOrgUser.length || 0 }}</span>
                     </a>
-                    <a class="item" suiTabHeader="4" (click)="resetStatusFilter('contributionDashboard')"
+                    <a class="item" suiTabHeader="4" (click)="resetStatusFilter('contributionDashboard'); (contributionDashboardData && contributionDashboardData.length) ? $event.stopPropagation() : getNominationList()"
                     appTelemetryInteract
                                         [telemetryInteractEdata]="getTelemetryInteractEdata('contributionDashboard', 'click', 'program-nominations')"
                                         [telemetryInteractObject]="telemetryInteractObject"
@@ -375,7 +375,8 @@
 				  </div>
             </div>
             <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="4">
-                <div *ngIf="programCollections && programCollections.length && contributionDashboardData.length" class="ui container pt-32">
+                <div class="ui container" *ngIf='tableLoader'><app-loader *ngIf='tableLoader'></app-loader></div>
+                <div *ngIf="!tableLoader && programCollections && programCollections.length && contributionDashboardData.length" class="ui container pt-32">
                     <div class="sb-table-responsive">
                         <table
                             class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">

@@ -221,6 +221,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         }
       }
     };
+    this.tableLoader = true;
     this.programsService.post(req).subscribe((data) => {
       if (data.result && data.result.length > 0) {
         const filteredArr = _.filter(data.result, (obj) => obj.userData);
@@ -253,6 +254,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       (res: any) => {
         if (res && res.result && res.result.content && res.result.content.length) {
           this.programCollections = res.result.content;
+          this.getContentAggregation();
         }
       },
       (err) => {
@@ -265,20 +267,34 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   }
 
-  getDashboardData(nominations) {
-    // tslint:disable-next-line:max-line-length
-    this.approvedNominations = _.filter(nominations, nomination => nomination.status === 'Approved' );
-    this.collectionHierarchyService.getContentAggregation(this.programId)
+  getContentAggregation() {
+      this.collectionHierarchyService.getContentAggregation(this.programId)
       .subscribe(
         (response) => {
           if (response && response.result && response.result.content) {
             const contents = _.get(response.result, 'content');
-            this.contentAggregationData = _.cloneDeep(contents);
+              this.contentAggregationData = _.cloneDeep(contents);
+          } else  {
+            this.contentAggregationData = [];
+          }
+          this.tableLoader = false;
+        },
+          (error) => {
+            console.log(error);
+            const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+            this.toasterService.error(errorMes || 'Fetching textbooks failed. Please try again...');
+          });
+  }
+
+  getDashboardData(nominations) {
+    // tslint:disable-next-line:max-line-length
+    this.approvedNominations = _.filter(nominations, nomination => nomination.status === 'Approved' );
+          if (this.contentAggregationData.length) {
             if (this.approvedNominations.length) {
               this.contributionDashboardData = _.map(this.approvedNominations, nomination => {
                 if (nomination.organisation_id) {
                   // tslint:disable-next-line:max-line-length
-                  const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCounts(contents, nomination.organisation_id, this.programCollections));
+                  const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCounts(this.contentAggregationData, nomination.organisation_id, this.programCollections));
                   // This is enable sorting table. So duping the data at the root of the dashboardData object
                   dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
                   dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
@@ -291,7 +307,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
                   };
                 } else {
                   // tslint:disable-next-line:max-line-length
-                  const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCountsForIndividual(contents, nomination.user_id, this.programCollections));
+                  const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCountsForIndividual(this.contentAggregationData, nomination.user_id, this.programCollections));
                   dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
                   dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
                   dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
@@ -316,15 +332,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
               return this.dashboardObject(nomination);
             });
             this.getOverAllCounts(this.contributionDashboardData);
-          } else  {
-            this.contentAggregationData = [];
           }
-        },
-        (error) => {
-          console.log(error);
-          const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-          this.toasterService.error(errorMes || 'Fetching textbooks failed. Please try again...');
-        });
+          this.tableLoader = false;
     }
 
   dashboardObject(nomination) {
@@ -402,7 +411,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
       this.getProgramCollection();
       this.getAggregatedNominationsCount();
-      this.getNominationList();
       this.getPaginatedNominations(0);
     }, error => {
       // TODO: navigate to program list page
