@@ -361,21 +361,21 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
       this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
       this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
-        let tempcontributorOrgUser = this.tempSortOrgUser = orgUsers;
-        if (!_.isEmpty(tempcontributorOrgUser)) {
-          tempcontributorOrgUser = _.filter(tempcontributorOrgUser, {"selectedRole": "user"});
-          _.forEach(tempcontributorOrgUser, r => {
+        if (!_.isEmpty(orgUsers)) {
+          orgUsers = _.filter(orgUsers, {"selectedRole": "user"});
+          _.forEach(orgUsers, r => {
+              r.projectselectedRole = 'Select';
             if (this.nominationDetails.rolemapping) {
               _.find(this.nominationDetails.rolemapping, (users, role) => {
                 if (_.includes(users, r.identifier)) {
-                  r.selectedRole = role;
+                  r.projectselectedRole = role;
                 }
               });
             }
             this.contributorOrgUser.push(r);
-         });
-         this.tempSortOrgUser = this.contributorOrgUser;
-          this.sortCollection('selectedRole');
+          });
+          this.tempSortOrgUser = this.contributorOrgUser;
+          this.sortOrgUsers('projectselectedRole');
           this.showLoader = false;
         }
         else {
@@ -388,7 +388,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     const roleMap = {};
     _.forEach(this.roles, role => {
       roleMap[role.name] = _.map(
-        _.filter(this.contributorOrgUser, user => { if (user.selectedRole === role.name) {  return user.identifier; }}), 'identifier');
+        _.filter(this.contributorOrgUser, user => { if (user.projectselectedRole === role.name) {  return user.identifier; }}), 'identifier');
     });
     const req = {
       'request': {
