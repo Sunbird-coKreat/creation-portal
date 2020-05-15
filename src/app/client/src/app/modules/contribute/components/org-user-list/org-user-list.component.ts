@@ -77,7 +77,9 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
       this.contributorOrgUsers = orgUsers;
       this.tempSortOrgUser = orgUsers;
-      this.sortCollection('selectedRole');
+      if (!_.isEmpty(this.contributorOrgUsers) && this.contributorOrgUsers.length > 0) {
+        this.sortCollection('selectedRole');
+      }
       this.showLoader = false;
     });
   }
