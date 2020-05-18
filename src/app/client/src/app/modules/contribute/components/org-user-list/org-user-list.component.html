@@ -63,7 +63,6 @@
     <div class="ui tweleve wide column mb-20" *ngIf="showLoader">
       <app-loader></app-loader>
     </div>
-<<<<<<< HEAD
     <div *ngIf="totalPages > 1" class="sb-pagination-container flex-jc-flex-end pt-16">
       <div class="sb-pagination">
           <a class="sb-item" [ngClass]="{'disabled': disablePagination.first}" (click)="disablePagination.first ? $event.stopPropagation() :navigatePage('first')">&laquo;</a>
@@ -73,10 +72,7 @@
           <a class="sb-item" [ngClass]="{'disabled': disablePagination.last}" (click)="disablePagination.last ? $event.stopPropagation() : navigatePage('last')">&raquo;</a>
       </div>
   </div>
-    <app-no-result *ngIf="!showLoader && contributorOrgUsers.length === 0" [data]="{messageText: resourceService.messages.stmsg.m0006}"></app-no-result>
-=======
     <app-no-result *ngIf="!showLoader && !contributorOrgUsers" [data]="{messageText: resourceService.messages.stmsg.m0006}"></app-no-result>
->>>>>>> upstream/sprint-8
   </div>
 </div>
 <!-- Modal popup for share link -->
