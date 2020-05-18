@@ -163,9 +163,6 @@
                                 <p class="my-0 fs-0-785">{{nominatedContentTypes}} </p>
                             </ng-template>
                         </div>
-                        <div class="br-1 text-right flex-grow-1 bl-2"> {{resourceService.frmelmnts.lbl.samples}}:
-                            <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ samplesCount }}</span> {{resourceService.frmelmnts.lbl.uploaded}}
-                        </div>
                     </div>
                     <div class="sb-pageSection">
                         <div class="sb-bg-color-white pt-32">
@@ -189,14 +186,14 @@
                                                     <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                                 </span>
                                             </th>
-                                            <th class="w-10 cursor-pointer sb-sorting text-center" (click)="sortCollection('textbooks', nominations)">{{ resourceService?.frmelmnts?.lbl?.textbooks }} &nbsp;&nbsp;
+                                            <th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('textbooks', nominations)">{{ resourceService?.frmelmnts?.lbl?.textbooks }} &nbsp;&nbsp;
                                                 <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'textbooks' "></i>
                                                 <span  *ngIf="sortColumn == 'textbooks'" class="d-inline-block">
                                                     <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
                                                     <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                                 </span>
                                             </th>
-                                            <th class="w-10 cursor-pointer sb-sorting text-center" (click)="sortCollection('samples', nominations)">{{ resourceService?.frmelmnts?.lbl?.samples }} &nbsp;&nbsp;
+                                            <th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('samples', nominations)">{{ resourceService?.frmelmnts?.lbl?.samples }} &nbsp;&nbsp;
                                                 <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'samples' "></i>
                                                 <span  *ngIf="sortColumn == 'samples'" class="d-inline-block">
                                                     <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
@@ -242,10 +239,10 @@
                                             <td>
                                                 <div>{{ nomination?.type }}</div>
                                             </td>
-                                            <td class="text-center">
+                                            <td>
                                                 <div>{{ nomination?.textbooks || 0 }}</div>
                                             </td>
-                                            <td class="text-center">
+                                            <td>
                                                 <div>{{ nomination?.samples || 0 }}</div>
                                             </td>
                                             <td>

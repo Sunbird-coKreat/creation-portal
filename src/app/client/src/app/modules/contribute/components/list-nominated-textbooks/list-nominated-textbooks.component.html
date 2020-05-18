@@ -294,8 +294,13 @@
 									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
 								</span>
 							</th>
-							<th class="text-center w-5">
-								{{resourceService.frmelmnts.lbl.roles}}
+							<th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('projectselectedRole')">
+								{{resourceService.frmelmnts.lbl.roles}} &nbsp;&nbsp;
+								<i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || sortColumnOrgUsers != 'projectselectedRole' "></i>
+								<span  *ngIf="sortColumnOrgUsers == 'projectselectedRole'" class="d-inline-block">
+									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'asc'}"></i>
+									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
+								</span>
 							</th>
 						  </tr>
 						</thead>
@@ -311,10 +316,10 @@
 							</td>
 							<td class="text-center">
 								<div *ngIf="nominationDetails?.status === 'Rejected'; else elseBlock">
-									{{ (orgUser?.selectedRole) ? orgUser.selectedRole : '-' }}
+									{{ (orgUser?.projectselectedRole) ? orgUser.projectselectedRole : '-' }}
 								</div>
 								<ng-template #elseBlock>
-									<sui-select class="selection pt-5" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="options" valueField="name"
+									<sui-select class="selection pt-5" [(ngModel)]="orgUser.projectselectedRole" labelField="name" [options]="options" valueField="name"
 									(selectedOptionChange)="onRoleChange()">
 										<sui-select-option *ngFor="let option of roles;" [value]="option">
 										</sui-select-option>

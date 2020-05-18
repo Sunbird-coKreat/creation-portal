@@ -98,7 +98,9 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     this.registryService.getcontributingOrgUsersDetails(this.usersPerPage, offset).then((orgUsers) => {
       this.contributorOrgUsers = orgUsers;
       this.tempSortOrgUser = orgUsers;
-      this.sortCollection('selectedRole');
+      if (!_.isEmpty(this.contributorOrgUsers) && this.contributorOrgUsers.length > 0) {
+        this.sortCollection('selectedRole');
+      }
       this.showLoader = false;
     });
   }
@@ -169,7 +171,7 @@ handlePagination(pageNum) {
     this.programsService.updateUserRole(osid, [selectedRole]).subscribe(
       (res) => {
         this.toasterService.success(this.resourceService.messages.smsg.m0065);
-        this.cacheService.remove('orgUsersData');
+        this.cacheService.remove('orgUsersDetails');
       },
       (error) => {
         console.log(error);

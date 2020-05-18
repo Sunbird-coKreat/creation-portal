@@ -283,7 +283,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
                   dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
                   dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
                   dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
-                  dashboardData['contributorName'] = this.setContributorName(nomination, 'org');
+                  dashboardData['contributorName'] = nomination.name;
                   return {
                     ...dashboardData,
                     contributorDetails: nomination,
@@ -295,7 +295,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
                   dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
                   dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
                   dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
-                  dashboardData['contributorName'] = this.setContributorName(nomination, 'individual');
+                  dashboardData['contributorName'] = nomination.name;
                   return {
                     ...dashboardData,
                     contributorDetails: nomination,
@@ -364,8 +364,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   getNominationSampleCounts(nomination) {
-    // tslint:disable-next-line:max-line-length
-    return (nomination.organisation_id) ? this.nominationSampleCounts[nomination.organisation_id] || 0 : this.nominationSampleCounts[nomination.user_id] || 0;
+    return (nomination.organisation_id) ?
+    _.get(this.nominationSampleCounts, nomination.organisation_id) || 0 :
+    _.get(this.nominationSampleCounts, nomination.user_id) || 0;
   }
 
   getOverAllCounts(dashboardData) {
@@ -379,13 +380,14 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.overAllContentCount['sourcingTotal'] = this.overAllContentCount.sourcingPending + this.overAllContentCount.sourcingAccepted + this.overAllContentCount.sourcingRejected;
   }
 
-  setContributorName(nomination, type) {
-    if (type === 'org') {
-      const name = (nomination.userData && nomination.userData.name)
-      ? nomination.userData.name : `${nomination.userData.firstName} ${nomination.userData.lastName}`;
-      return _.trim(name);
+  setContributorName(nomination, isOrg) {
+    if (isOrg && !_.isEmpty(nomination.orgData)) {
+      return _.trim(nomination.orgData.name);
+    } else  if (!_.isEmpty(nomination.userData)) {
+     return _.trim(`${nomination.userData.firstName} ${nomination.userData.lastName || ''}`);
+    } else {
+      return null;
     }
-    return _.trim(`${nomination.userData.firstName} ${nomination.userData.lastName}`);
   }
 
   getProgramDetails() {
@@ -617,12 +619,7 @@ this.programsService.post(req).subscribe((data) => {
         this.nominations = [];
         _.forEach(data.result, (res) => {
           const isOrg = !_.isEmpty(res.organisation_id);
-          let name = '';
-          if (isOrg && !_.isEmpty(res.orgData)) {
-            name = res.orgData.name;
-          } else if (!_.isEmpty(res.userData)) {
-            name = `${res.userData.firstName} ${res.userData.lastName || ''}`;
-          }
+          const name = this.setContributorName(res, isOrg);
           if (name) {
             this.nominations.push({
               programName: '',
@@ -640,11 +637,10 @@ this.programsService.post(req).subscribe((data) => {
         });
         if (!this.nominationSampleCounts) {
           this.getSampleContent();
-        } else {
-          this.assignSampleCounts();
         }
       }
       this.tempNominations = _.cloneDeep(this.nominations);
+      this.assignSampleCounts();
       this.showNominationsComponent = true;
       this.tableLoader = false;
 }, error => {
