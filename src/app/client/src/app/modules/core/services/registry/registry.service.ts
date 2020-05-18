@@ -142,7 +142,7 @@ export class RegistryService extends DataService {
           'entityType': ['User_Org'],
           'filters': {
             'orgId': { 'eq': orgId }
-          },
+          }
         }
       }
     };
