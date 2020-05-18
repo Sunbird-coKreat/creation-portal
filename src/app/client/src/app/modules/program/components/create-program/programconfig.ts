@@ -166,14 +166,14 @@ var programConfig = {
               },
               {
                 'id': 'learningActivity',
-                'label': 'Learning Activity',
+                'label': 'Activity for Learning',
                 'onClick': 'uploadComponent',
                 'mimeType': [
                   'application/pdf',
                   'video/mp4'
                 ],
                 'metadata': {
-                  'name': 'Learning Activity',
+                  'name': 'Activity for Learning',
                   'description': 'LearningActivity',
                   'resourceType': 'Read',
                   'contentType': 'LearningActivity',
