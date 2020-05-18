@@ -27,6 +27,15 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public tempSortOrgUser: any = [];
   public direction = 'asc';
   public sortColumn = '';
+  public totalPages: number;
+  public usersPerPage = 18;
+  public currentPage: number;
+  public totalUsers: number;
+  //public showLoader = true;
+  public userCount: any;
+  public tableLoader = false;
+  public disablePagination = {};
+  public pageNumArray: Array<number>;
   public roles = [{ name: 'User', value: 'user'}, { name: 'Admin', value: 'admin'}];
 
   constructor(private toasterService: ToasterService, private configService: ConfigService,
@@ -34,6 +43,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
     public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService ) {
       this.getContributionOrgUsers();
+      this.getPaginatedUsers(0);
     }
 
   ngOnInit() {
@@ -75,12 +85,72 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
 
   getContributionOrgUsers() {
     this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
+      this.userCount = orgUsers;
+      this.currentPage = 1;
+      this.totalUsers = this.userCount.length;
+      this.totalPages = Math.ceil(this.totalUsers / this.usersPerPage);
+      this.handlePageNumArray();
+      this.disablePaginationButtons();
+    });
+  }
+
+  getPaginatedUsers(offset) {
+    this.registryService.getcontributingOrgUsersDetails(this.usersPerPage, offset).then((orgUsers) => {
       this.contributorOrgUsers = orgUsers;
       this.tempSortOrgUser = orgUsers;
       this.sortCollection('selectedRole');
       this.showLoader = false;
     });
   }
+
+  navigatePage(pageNum) {
+    switch (pageNum) {
+      case 'first':
+        this.currentPage = 1;
+        break;
+      case 'last':
+        this.currentPage = this.totalPages;
+        break;
+      case 'prev':
+        this.currentPage = this.currentPage - 1;
+        break;
+      case 'next':
+        this.currentPage = this.currentPage + 1;
+        break;
+      default:
+        this.currentPage = pageNum;
+    }
+    this.handlePagination(this.currentPage);
+}
+
+handlePagination(pageNum) {
+  const offset = (pageNum - 1) * this.usersPerPage;
+  this.showLoader = true;
+  this.getPaginatedUsers(offset);
+  this.handlePageNumArray();
+  this.disablePaginationButtons();
+  }
+
+  disablePaginationButtons() {
+    this.disablePagination = {};
+    if (this.currentPage === 1) {
+      this.disablePagination['first'] = true;
+      this.disablePagination['prev'] = true;
+    }
+    if (this.currentPage === this.totalPages) {
+     this.disablePagination['last'] = true;
+     this.disablePagination['next'] = true;
+    }
+   }
+
+   handlePageNumArray() {
+    if ((this.currentPage + 5) >= (this.totalPages + 1)) {
+      const initValue = this.totalPages - 4 <= 0 ? 1 : this.totalPages - 4;
+      this.pageNumArray = _.range(initValue , (this.totalPages + 1));
+    } else {
+      this.pageNumArray = _.range(this.currentPage, (this.currentPage + 5));
+      }
+    }
 
   sortCollection(column) {
     this.contributorOrgUsers = this.programsService.sortCollection(this.tempSortOrgUser, column, this.direction);

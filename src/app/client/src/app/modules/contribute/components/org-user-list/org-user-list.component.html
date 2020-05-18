@@ -4,7 +4,7 @@
       <div class="sb-pageSection-header mb-0">
         <h4 class="sb-pageSection-title">{{ resourceService.frmelmnts.lbl.allUsers }}</h4>
         <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-5 px-5"
-        *ngIf="!showLoader && contributorOrgUsers.length">{{contributorOrgUsers.length}}</span>
+        *ngIf="!showLoader">{{totalUsers || 0}}</span>
       </div>
       <div>
         <button class="sb-btn sb-btn-outline-primary sb-btn-normal ml-10 " (click)="copyOnLoad()"><i
@@ -63,6 +63,15 @@
     <div class="ui tweleve wide column mb-20" *ngIf="showLoader">
       <app-loader></app-loader>
     </div>
+    <div *ngIf="totalPages > 1" class="sb-pagination-container flex-jc-flex-end pt-16">
+      <div class="sb-pagination">
+          <a class="sb-item" [ngClass]="{'disabled': disablePagination.first}" (click)="disablePagination.first ? $event.stopPropagation() :navigatePage('first')">&laquo;</a>
+          <a class="sb-item" [ngClass]="{'disabled': disablePagination.prev}" (click)="disablePagination.prev ? $event.stopPropagation() :navigatePage('prev')">&lt;</a>
+          <a class="sb-item" [ngClass]="{'active': currentPage === page}" *ngFor="let page of pageNumArray" (click)="(currentPage === page) ? $event.stopPropagation() : navigatePage(page)">{{page}}</a>
+          <a class="sb-item" [ngClass]="{'disabled': disablePagination.next}" (click)="disablePagination.next ? $event.stopPropagation() :navigatePage('next')">&gt;</a>
+          <a class="sb-item" [ngClass]="{'disabled': disablePagination.last}" (click)="disablePagination.last ? $event.stopPropagation() : navigatePage('last')">&raquo;</a>
+      </div>
+  </div>
     <app-no-result *ngIf="!showLoader && contributorOrgUsers.length === 0" [data]="{messageText: resourceService.messages.stmsg.m0006}"></app-no-result>
   </div>
 </div>

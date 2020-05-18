@@ -67,6 +67,15 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public directionOrgUsers = 'asc';
   public sortColumnOrgUsers = '';
   public showLoader = true;
+  public totalPages: number;
+  public usersPerPage = 4;
+  public currentPage: number;
+  public totalUsers: number;
+  //public showLoader = true;
+  public userCount: any;
+  public tableLoader = false;
+  public disablePagination = {};
+  public pageNumArray: Array<number>;
 
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private configService: ConfigService, private publicDataService: PublicDataService,
@@ -348,7 +357,9 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
         }
         if (this.isUserOrgAdmin()) {
           this.showUsersTab = true;
-          this.getContributionOrgUsers();
+          this.getContributionOrgUsersCount();
+          this.getContributionOrgUsers(0);
+          //this.getPaginatedUsers(0);
         }
       }
       this.getProgramTextbooks();
@@ -356,11 +367,22 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       this.toasterService.error('Failed fetching current nomination status');
     });
   }
+  getContributionOrgUsersCount() {
+    this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
+      this.userCount = orgUsers;
+      this.currentPage = 1;
+      this.totalUsers = this.userCount.length;
+      this.totalPages = Math.ceil(this.totalUsers / this.usersPerPage);
+      this.handlePageNumArray();
+      this.disablePaginationButtons();
+    });
+  }
 
-  getContributionOrgUsers() {
+  getContributionOrgUsers(offset) {
       this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
       this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
-      this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
+      this.contributorOrgUser = [];
+      this.registryService.getcontributingOrgUsersDetails(this.usersPerPage, offset).then((orgUsers) => {
         let tempcontributorOrgUser = this.tempSortOrgUser = orgUsers;
         if (!_.isEmpty(tempcontributorOrgUser)) {
           tempcontributorOrgUser = _.filter(tempcontributorOrgUser, {"selectedRole": "user"});
@@ -377,9 +399,11 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
          this.tempSortOrgUser = this.contributorOrgUser;
           this.sortCollection('selectedRole');
           this.showLoader = false;
+          this.tableLoader = false;
         }
         else {
           this.showLoader = false;
+          this.tableLoader = false;
         }
       });
   }
@@ -435,6 +459,57 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     return !!(this.userService.userRegistryData && this.userService.userProfile.userRegData &&
       this.userService.userProfile.userRegData.User_Org);
   }
+
+  navigatePage(pageNum) {
+    switch (pageNum) {
+      case 'first':
+        this.currentPage = 1;
+        break;
+      case 'last':
+        this.currentPage = this.totalPages;
+        break;
+      case 'prev':
+        this.currentPage = this.currentPage - 1;
+        break;
+      case 'next':
+        this.currentPage = this.currentPage + 1;
+        break;
+      default:
+        this.currentPage = pageNum;
+    }
+    this.handlePagination(this.currentPage);
+}
+
+handlePagination(pageNum) {
+  const offset = (pageNum - 1) * this.usersPerPage;
+  this.tableLoader = true;
+  this.getContributionOrgUsers(offset);
+  this.handlePageNumArray();
+  this.disablePaginationButtons();
+  }
+
+  disablePaginationButtons() {
+    this.disablePagination = {};
+    if (this.currentPage === 1) {
+      this.disablePagination['first'] = true;
+      this.disablePagination['prev'] = true;
+    }
+    if (this.currentPage === this.totalPages) {
+     this.disablePagination['last'] = true;
+     this.disablePagination['next'] = true;
+    }
+   }
+
+   handlePageNumArray() {
+    if ((this.currentPage + 5) >= (this.totalPages + 1)) {
+      const initValue = this.totalPages - 4 <= 0 ? 1 : this.totalPages - 4;
+      this.pageNumArray = _.range(initValue , (this.totalPages + 1));
+    } else {
+      this.pageNumArray = _.range(this.currentPage, (this.currentPage + 5));
+      }
+    }
+
+
 
   ngOnDestroy() {
     this.stageSubscription.unsubscribe();

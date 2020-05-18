@@ -30,29 +30,30 @@ export class RegistryService extends DataService {
       this.userService.userProfile.userRegData.User_Org && this.userService.userProfile.userRegData.Org);
   }
 
-  public getcontributingOrgUsersDetails() {
+  public getcontributingOrgUsersDetails(limit?, offset?) {
     const userRegData = _.get(this.userService, 'userProfile.userRegData');
     const orgId = userRegData.User_Org.orgId;
     return new Promise((resolve, reject) => {
       if (this.checkIfUserBelongsToOrg()) {
         const orgUsersData: boolean = this.cacheService.get('orgUsersData');
-        if (orgUsersData) {
-          return resolve(this.cacheService.get('orgUsersDetails'))
-        }
-        else {
+        // if (!orgUsersData) {
+        //   return resolve(this.cacheService.get('orgUsersDetails'))
+        // }
+        // else {
           let orgUsersDetails = {};
           const tempMapping = [];
           const tempUser = [];
-          return this.getContributionOrgUsers(orgId).pipe(
+          return this.getContributionOrgUsers(orgId, limit, offset).pipe(
             switchMap((res1: any) => {
               if (res1.result.User_Org.length) {
+                console.log(res1.result.User_Org.length, 'this is user data')
                 const userList = _.uniq(_.map(
                 _.filter(res1.result.User_Org, obj => { if(obj.userId !== userRegData.User.osid) {return obj }}),
                   (mapObj) => {
                     tempMapping.push(mapObj);
                   return mapObj.userId.slice(2);
                 }));
-
+                console.log(userList,'this is userlist')
                 return this.getUserdetailsByOsIds(userList);
               } else {
                 return of(null);
@@ -94,7 +95,7 @@ export class RegistryService extends DataService {
               this.cacheService.set('orgUsersDetails', _.get(res, 'result.response.content'));
               return resolve(this.cacheService.get('orgUsersDetails'));
             }, (err) => { console.log(err); return reject([]); });
-         }
+        // }
       } else {
         return resolve([]);
       }
@@ -125,7 +126,7 @@ export class RegistryService extends DataService {
     return this.contentService.post(option);
   }
 
-  public getContributionOrgUsers(orgId): Observable<ServerResponse> {
+  public getContributionOrgUsers(orgId, limit?, offset?): Observable<ServerResponse> {
     const req = {
       url: `reg/search`,
       data: {
@@ -141,10 +142,16 @@ export class RegistryService extends DataService {
           'entityType': ['User_Org'],
           'filters': {
             'orgId': { 'eq': orgId }
-          }
+          },
         }
       }
     };
+    if (!_.isUndefined(limit)) {
+      req.data.request['limit'] = limit;
+    }
+    if (!_.isUndefined(offset)) {
+      req.data.request['offset'] = offset;
+    }
     return this.contentService.post(req);
   }
   public getUserDetails(userId): Observable<ServerResponse> {

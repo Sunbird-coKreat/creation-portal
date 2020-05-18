@@ -253,11 +253,12 @@
 					  <div class="d-flex flex-ai-center flex-jc-space-between sb-pageSection">
 						<div class="sb-pageSection-header">
 						  <h4 class="sb-pageSection-title"> {{orgDetails.name}}</h4>
-						  <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{contributorOrgUser.length || 0}}</span>
+						  <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{totalUsers || 0}}</span>
 						</div>
 					  </div>
 					</div>
-					<div class="sb-table-responsive desktop-o-x-unset" *ngIf="contributorOrgUser?.length != 0">
+					<app-loader *ngIf='tableLoader'></app-loader>
+					<div class="sb-table-responsive desktop-o-x-unset" *ngIf="!tableLoader && contributorOrgUser?.length != 0">
 					  <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
 						<thead class="sb-table-header sb-table-thead-gray">
 						  <tr>
@@ -324,7 +325,16 @@
 						</tbody>
 					  </table>
 					</div>
-					<div class="sb-table-responsive" *ngIf="contributorOrgUser?.length === 0">
+					<div *ngIf="totalPages > 1" class="sb-pagination-container flex-jc-flex-end pt-16">
+						<div class="sb-pagination">
+							<a class="sb-item" [ngClass]="{'disabled': disablePagination.first}" (click)="disablePagination.first ? $event.stopPropagation() :navigatePage('first')">&laquo;</a>
+							<a class="sb-item" [ngClass]="{'disabled': disablePagination.prev}" (click)="disablePagination.prev ? $event.stopPropagation() :navigatePage('prev')">&lt;</a>
+							<a class="sb-item" [ngClass]="{'active': currentPage === page}" *ngFor="let page of pageNumArray" (click)="(currentPage === page) ? $event.stopPropagation() : navigatePage(page)">{{page}}</a>
+							<a class="sb-item" [ngClass]="{'disabled': disablePagination.next}" (click)="disablePagination.next ? $event.stopPropagation() :navigatePage('next')">&gt;</a>
+							<a class="sb-item" [ngClass]="{'disabled': disablePagination.last}" (click)="disablePagination.last ? $event.stopPropagation() : navigatePage('last')">&raquo;</a>
+						</div>
+					</div>
+					<div class="sb-table-responsive" *ngIf="!tableLoader && contributorOrgUser?.length === 0">
 						<app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0146'}"></app-no-result>
 					</div>
 				  </div>
