@@ -175,7 +175,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   contentStatusNotification(status) {
-    this.notificationService.notificationAlertForContentUpdate(this.resourceDetails, this.sessionContext.nominationDetails, status);
+    // this.notificationService.notificationAlertForContentUpdate(this.resourceDetails, this.sessionContext.nominationDetails, status);
   }
 
   setResourceStatus() {

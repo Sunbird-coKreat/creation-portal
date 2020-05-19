@@ -664,7 +664,20 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
   }
 
   contentStatusNotification(status) {
-    this.notificationService.notificationAlertForContentUpdate(this.contentMetaData, this.sessionContext.nominationDetails, status);
+  const notificationForContributor = {
+    user_id: this.contentMetaData.createdBy,
+    programData: { name: this.programContext.name },
+    status: status
+  };
+  this.notificationService.onAfterNominationUpdate(notificationForContributor);
+  if (!_.isUndefined(this.sessionContext.nominationDetails.user_id)) {
+    const notificationForPublisher = {
+      user_id: this.sessionContext.nominationDetails.user_id,
+      programData: { name: this.programContext.name },
+      status: status
+    };
+    this.notificationService.onAfterNominationUpdate(notificationForPublisher);
+  }
   }
 
   isIndividualAndNotSample() {
