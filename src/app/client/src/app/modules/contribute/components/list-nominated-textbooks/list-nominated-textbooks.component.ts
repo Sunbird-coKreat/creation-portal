@@ -379,6 +379,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   }
 
   getContributionOrgUsers(offset) {
+    this.contributorOrgUser = [];
       this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
       this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
       this.registryService.getcontributingOrgUsersDetails(this.usersPerPage, offset).then((orgUsers) => {
