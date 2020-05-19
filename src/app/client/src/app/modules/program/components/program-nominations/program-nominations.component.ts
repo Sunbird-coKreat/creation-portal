@@ -283,7 +283,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
                   dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
                   dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
                   dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
-                  dashboardData['contributorName'] = nomination.name;
+                  dashboardData['contributorName'] = this.setContributorName(nomination, nomination.organisation_id ? true : false);
                   return {
                     ...dashboardData,
                     contributorDetails: nomination,
@@ -295,7 +295,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
                   dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
                   dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
                   dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
-                  dashboardData['contributorName'] = nomination.name;
+                  dashboardData['contributorName'] = this.setContributorName(nomination, nomination.organisation_id ? true : false);
                   return {
                     ...dashboardData,
                     contributorDetails: nomination,
@@ -338,7 +338,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
                   sourcingAccepted: 0,
                   sourcingRejected: 0,
                   // tslint:disable-next-line:max-line-length
-                  contributorName: this.setContributorName(nomination, nomination.organisation_id ? 'org' : 'individual'),
+                  contributorName: this.setContributorName(nomination, nomination.organisation_id ? true : false),
                   individualStatus: {},
                   sourcingOrgStatus : {accepted: 0, rejected: 0, pending: 0},
                   contributorDetails: nomination,
