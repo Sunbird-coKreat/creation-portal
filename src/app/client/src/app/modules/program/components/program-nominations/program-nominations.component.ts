@@ -766,6 +766,7 @@ getPaginatedSourcingUserList(offset) {
     };
   this.programsService.getOrgUsersDetails(filters, offset, this.usersPerPage ).subscribe((data) => {
     this.sourcingOrgUser = data.result.response.content || [];
+    this.readRolesOfOrgUsers();
     this.userListTableLoader = false;
   }, err => {
     this.userListTableLoader = false;
