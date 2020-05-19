@@ -30,6 +30,12 @@ const routes: Routes = [
         children: [
             { path: 'flag', component: FlagContentComponent }
         ]
+    }, {
+        path: 'content/:contentId/:contentStatus', component: ContentPlayerComponent,
+        data: {
+            breadcrumbs: [{ label: 'Home', url: '/home' }, { label: 'Library', url: '' }],
+            telemetry: { env: telemetryEnv, pageid: 'content-player-unlisted', type: 'play' }
+        }
     }
 ];
 @NgModule({
