@@ -84,6 +84,15 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public disablePagination = {};
   public pageNumArray: Array<number>;
 
+
+  public userListTotalPages: number;
+  public usersPerPage = 3;
+  public userListCurrentPage: number;
+  public totalUsers: number;
+  public userListTableLoader = false;
+  public disableUserListPagination = {};
+  public userListPageNumArray: Array<number>;
+
   constructor(public frameworkService: FrameworkService, private tosterService: ToasterService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
     private publicDataService: PublicDataService, private activatedRoute: ActivatedRoute, private router: Router,
@@ -100,7 +109,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.telemetryInteractObject = {};
     this.checkActiveTab();
     this.showUsersTab = this.isSourcingOrgAdmin();
-    this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
+    //this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
+    this.getSourcingUserCount();
+    this.getPaginatedSourcingUserList(0);
     this.roles = [{name: 'REVIEWER'}];
     this.sessionContext.currentRole = 'REVIEWER';
     this.programStageService.initialize();
@@ -730,4 +741,83 @@ if ((this.currentPage + 5) >= (this.totalPages + 1)) {
   this.pageNumArray = _.range(this.currentPage, (this.currentPage + 5));
 }
 }
+getSourcingUserCount() {
+  const OrgDetails = this.userService.userProfile.organisations[0];
+  const filters = {
+    'organisations.organisationId': OrgDetails.organisationId,
+    'organisations.roles': ['CONTENT_REVIEWER']
+    };
+  this.programsService.getOrgUsersDetails(filters).subscribe((data) => {
+    this.totalUsers = data.result.response.count;
+    this.userListCurrentPage = 1;
+    this.userListTotalPages = Math.ceil(this.totalUsers / this.usersPerPage);
+    this.userListHandlePageNumArray();
+    this.userListDisablePaginationButtons();
+
+  }, err => {
+    // this.toasterService.error(this.resourceService.messages.emsg.projects.m0003);
+  });
+}
+getPaginatedSourcingUserList(offset) {
+  const OrgDetails = this.userService.userProfile.organisations[0];
+  const filters = {
+    'organisations.organisationId': OrgDetails.organisationId,
+    'organisations.roles': ['CONTENT_REVIEWER']
+    };
+  this.programsService.getOrgUsersDetails(filters, offset, this.usersPerPage ).subscribe((data) => {
+    this.sourcingOrgUser = data.result.response.content || [];
+    this.userListTableLoader = false;
+  }, err => {
+    this.userListTableLoader = false;
+    // this.toasterService.error(this.resourceService.messages.emsg.projects.m0003);
+  });
+}
+userListNavigatePage(pageNum) {
+  switch (pageNum) {
+    case 'first':
+      this.userListCurrentPage = 1;
+      break;
+    case 'last':
+      this.userListCurrentPage = this.userListTotalPages;
+      break;
+    case 'prev':
+      this.userListCurrentPage = this.userListCurrentPage - 1;
+      break;
+    case 'next':
+      this.userListCurrentPage = this.userListCurrentPage + 1;
+      break;
+    default:
+      this.userListCurrentPage = pageNum;
+  }
+  this.userListHandlePagination(this.userListCurrentPage);
+}
+
+userListHandlePagination(pageNum) {
+  const offset = (pageNum - 1) * this.usersPerPage;
+  this.userListTableLoader = true;
+  this.getPaginatedSourcingUserList(offset);
+  this.userListHandlePageNumArray();
+  this.userListDisablePaginationButtons();
+}
+
+userListDisablePaginationButtons() {
+  this.disableUserListPagination = {};
+  if (this.userListCurrentPage === 1) {
+  this.disableUserListPagination['first'] = true;
+  this.disableUserListPagination['prev'] = true;
+  }
+  if (this.userListCurrentPage === this.userListTotalPages) {
+  this.disableUserListPagination['last'] = true;
+  this.disableUserListPagination['next'] = true;
+  }
+}
+
+userListHandlePageNumArray() {
+  if ((this.userListCurrentPage + 5) >= (this.userListTotalPages + 1)) {
+  const initValue = this.userListTotalPages - 4 <= 0 ? 1 : this.userListTotalPages - 4;
+  this.userListPageNumArray = _.range(initValue , (this.userListTotalPages + 1));
+  } else {
+  this.userListPageNumArray = _.range(this.userListCurrentPage, (this.userListCurrentPage + 5));
+    }
+  }
 }

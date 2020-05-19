@@ -843,7 +843,9 @@ export class ProgramsService extends DataService implements CanActivate {
         'organisations.roles': ['CONTENT_REVIEWER']
         };
         this.getSourcingOrgUsers(filters).subscribe((res) => {
+          console.log(res.result, 'result');
           this.cacheService.set('sourcingOrgUsersData', true);
+          this.cacheService.set('sourcingOrgUsersCount', res.result.response.count);
           this.cacheService.set('sourcingOrgUsersDetails', res.result.response.content);
           return this.cacheService.get('sourcingOrgUsersDetails');
         }, (err) => {
@@ -852,7 +854,7 @@ export class ProgramsService extends DataService implements CanActivate {
     }
   }
 
-  getOrgUsersDetails(reqFilters) {
+  getOrgUsersDetails(reqFilters, offset?, limit?) {
     const req = {
       url: this.config.urlConFig.URLS.ADMIN.USER_SEARCH,
       data: {
@@ -861,6 +863,12 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
+    if (!_.isUndefined(limit)) {
+      req.data.request['limit'] = limit;
+    }
+    if (!_.isUndefined(offset)) {
+      req.data.request['offset'] = offset;
+    }
     return this.learnerService.post(req);
   }
 
