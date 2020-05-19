@@ -33,9 +33,9 @@ $(document).ready(function () {
 function getEnvironment(a){
   switch(a){
     case "dock.preprod.ntp.net.in": return "https://dock.preprod.ntp.net.in/contribute"; break;
-    case "vdn.diksha.gov.in": return "https://vdn.diksha.gov.in/contribute"; break;
+    case "vdn.diksha.gov.in": return "https://vdn.diksha.gov.in/cbse/contribute"; break;
     case "preprod.ntp.net.in": return "https://dock.preprod.ntp.net.in/contribute"; break;
-    case "diksha.gov.in": return "https://vdn.diksha.gov.in/contribute"; break;
+    case "diksha.gov.in": return "https://vdn.diksha.gov.in/cbse/contribute"; break;
     default: return "/contribute"; break;
   }
 }

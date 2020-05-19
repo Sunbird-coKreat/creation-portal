@@ -378,8 +378,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   getNominationSampleCounts(nomination) {
-    // tslint:disable-next-line:max-line-length
-    return (nomination.organisation_id) ? this.nominationSampleCounts[nomination.organisation_id] || 0 : this.nominationSampleCounts[nomination.user_id] || 0;
+    return (nomination.organisation_id) ?
+    _.get(this.nominationSampleCounts, nomination.organisation_id) || 0 :
+    _.get(this.nominationSampleCounts, nomination.user_id) || 0;
   }
 
   getOverAllCounts(dashboardData) {
@@ -650,11 +651,10 @@ this.programsService.post(req).subscribe((data) => {
         });
         if (!this.nominationSampleCounts) {
           this.getSampleContent();
-        } else {
-          this.assignSampleCounts();
         }
       }
       this.tempNominations = _.cloneDeep(this.nominations);
+      this.assignSampleCounts();
       this.showNominationsComponent = true;
       this.tableLoader = false;
 }, error => {

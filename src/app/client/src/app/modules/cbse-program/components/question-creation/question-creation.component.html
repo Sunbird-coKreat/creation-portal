@@ -164,7 +164,7 @@
                 <div *ngFor = "let field of allFormFields; let i = index " class="sb-field mb-16" [ngClass]="{'six wide column':field.code !== 'contentPolicyCheck' }" [ngClass]="{'wide column':field.code === 'contentPolicyCheck' }">
                     <div *ngIf="field.inputType === 'select'" class="width-100">
                       <div>
-                        <label class="font-weight-bold fsmall">{{field.label}}:</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span><i *ngIf="field.helpText" class="info circle link icon pull-right" suiPopup popupText="{{field.helpText}}"></i>
+                        <label class="font-weight-bold fsmall">{{field.label}}:</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span><i *ngIf="field.helpText" class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{field.helpText}}"></i>
                         <sui-select *ngIf="!disableFormField" formControlName="{{field.code}}" class="selection" [isDisabled]="disableFormField" placeholder="{{field.placeholder}}"
                         appTelemetryInteract
                         [telemetryInteractEdata]="{id:'select-' + field.code,type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}" 
@@ -188,7 +188,7 @@
 
                     <div *ngIf="field.inputType === 'multiselect'" class="width-100">
                         <div>
-                            <label class="font-weight-bold fsmall">{{field.label}}:</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span><i *ngIf="field.helpText" class="info circle link icon pull-right" suiPopup popupText="{{field.helpText}}"></i>
+                            <label class="font-weight-bold fsmall">{{field.label}}:</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span><i *ngIf="field.helpText" class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{field.helpText}}"></i>
                             <sui-multi-select *ngIf="!disableFormField" formControlName="{{field.code}}" class="selection" [isDisabled]="disableFormField" placeholder="{{field.placeholder}}"
                             appTelemetryInteract
                             [telemetryInteractEdata]="{id:'multiselect-' + field.code,type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"  
@@ -212,7 +212,7 @@
 
                     <div *ngIf="field.inputType === 'text'" class="width-100">
                       <div>
-                        <label class="font-weight-bold fsmall">{{field.label}}:</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span><i *ngIf="field.helpText" class="info circle link icon pull-right" suiPopup popupText="{{field.helpText}}"></i>
+                        <label class="font-weight-bold fsmall">{{field.label}}:</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span><i *ngIf="field.helpText" class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{field.helpText}}"></i>
                           <input *ngIf="!disableFormField" formControlName="{{field.code}}" type="{{field.inputType}}" name="{{field.code}}" class="sb-form-control" placeholder="{{field.placeholder}}"
                           appTelemetryInteract 
                           [telemetryInteractEdata]="{id:'input-' + field.code,type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
