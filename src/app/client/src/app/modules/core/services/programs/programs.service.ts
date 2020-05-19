@@ -832,25 +832,15 @@ export class ProgramsService extends DataService implements CanActivate {
    }
   }
 
-  get sourcingOrgReviewers() {
-    const orgUsersData: boolean = this.cacheService.get('sourcingOrgUsersData');
+  /*getsourcingOrgReviewers() {
     const OrgDetails = this.userService.userProfile.organisations[0];
-    if (orgUsersData) {
-      return this.cacheService.get('sourcingOrgUsersDetails');
-    } else {
-      const filters = {
-        'organisations.organisationId': OrgDetails.organisationId,
-        'organisations.roles': ['CONTENT_REVIEWER']
-        };
-        this.getSourcingOrgUsers(filters).subscribe((res) => {
-          this.cacheService.set('sourcingOrgUsersData', true);
-          this.cacheService.set('sourcingOrgUsersDetails', res.result.response.content);
-          return this.cacheService.get('sourcingOrgUsersDetails');
-        }, (err) => {
-          return [];
-        });
-    }
-  }
+    const filters = {
+      'organisations.organisationId': OrgDetails.organisationId,
+      'organisations.roles': ['CONTENT_REVIEWER']
+      };
+
+    return this.getSourcingOrgUsers(filters);
+  }*/
 
   getOrgUsersDetails(reqFilters) {
     const req = {

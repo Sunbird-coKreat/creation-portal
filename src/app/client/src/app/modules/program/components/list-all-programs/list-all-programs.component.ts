@@ -17,7 +17,7 @@ export class ListAllProgramsComponent implements OnInit, AfterViewInit {
     public userService: UserService, public tosterService: ToasterService) { }
 
   ngOnInit() {
-    if (!this.programsService.sourcingOrgReviewers) {
+    /*if (!this.programsService.sourcingOrgReviewers) {
       if (this.userService.userProfile.organisations && this.userService.userProfile.organisations.length) {
         const OrgDetails = this.userService.userProfile.organisations[0];
         const filters = {
@@ -31,7 +31,7 @@ export class ListAllProgramsComponent implements OnInit, AfterViewInit {
       } else {
         this.tosterService.error(this.resourceService.messages.emsg.organisation.m0002);
       }
-    }
+    }*/
   }
 
   ngAfterViewInit() {
