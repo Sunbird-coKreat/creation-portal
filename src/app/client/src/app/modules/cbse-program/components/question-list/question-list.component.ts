@@ -3,7 +3,7 @@ import { Component, OnInit, Output, EventEmitter, Input, ChangeDetectorRef, View
 import { FormGroup, FormArray, FormBuilder, Validators, NgForm, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigService, ToasterService, ResourceService, NavigationHelperService } from '@sunbird/shared';
-import { UserService, ActionService, ContentService } from '@sunbird/core';
+import { UserService, ActionService, ContentService, NotificationService } from '@sunbird/core';
 import { TelemetryService} from '@sunbird/telemetry';
 import { tap, map, catchError, mergeMap } from 'rxjs/operators';
 import * as _ from 'lodash-es';
@@ -76,7 +76,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     public actionService: ActionService,
     private cdr: ChangeDetectorRef, public toasterService: ToasterService,
     public telemetryService: TelemetryService, private fb: FormBuilder,
-    private cbseService: CbseProgramService, public contentService: ContentService,
+    private notificationService: NotificationService, private cbseService: CbseProgramService, public contentService: ContentService,
     private itemsetService: ItemsetService, private helperService: HelperService,
     private resourceService: ResourceService, private collectionHierarchyService: CollectionHierarchyService,
     public programStageService: ProgramStageService, public activeRoute: ActivatedRoute,
@@ -172,6 +172,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       this.handleActionButtons();
     });
+  }
+
+  contentStatusNotification(status) {
+    this.notificationService.notificationAlertForContentUpdate(this.resourceDetails, this.sessionContext.nominationDetails, status);
   }
 
   setResourceStatus() {

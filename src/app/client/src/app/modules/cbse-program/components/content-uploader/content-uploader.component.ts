@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef,
   AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { FineUploader } from 'fine-uploader';
 import { ToasterService, ConfigService, ResourceService, NavigationHelperService } from '@sunbird/shared';
-import { PublicDataService, UserService, ActionService, PlayerService, FrameworkService } from '@sunbird/core';
+import { PublicDataService, UserService, ActionService, PlayerService, FrameworkService, NotificationService } from '@sunbird/core';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import * as _ from 'lodash-es';
 import { catchError, map, first } from 'rxjs/operators';
@@ -79,6 +79,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     public programStageService: ProgramStageService, private helperService: HelperService,
     private collectionHierarchyService: CollectionHierarchyService, private cd: ChangeDetectorRef,
     private resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService,
+    private notificationService: NotificationService,
     public activeRoute: ActivatedRoute, public router: Router, private navigationHelperService: NavigationHelperService) { }
 
   ngOnInit() {
@@ -660,6 +661,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
       }, (err) => {
         this.toasterService.error(this.resourceService.messages.fmsg.m00101);
       });
+  }
+
+  contentStatusNotification(status) {
+    this.notificationService.notificationAlertForContentUpdate(this.contentMetaData, this.sessionContext.nominationDetails, status);
   }
 
   isIndividualAndNotSample() {
