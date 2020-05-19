@@ -563,6 +563,7 @@ export class ProgramsService extends DataService implements CanActivate {
         if (data.result && data.result.length) {
           req['url'] = `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_UPDATE}`;
           const prevNomination = data.result[0];
+          req.data.request['user_id'] = prevNomination.user_id;
           req.data.request['updatedby'] = this.userService.userProfile.userRegData.User.osid;
         } else {
           req.data.request['createdby'] = this.userService.userProfile.userRegData.User.osid;
