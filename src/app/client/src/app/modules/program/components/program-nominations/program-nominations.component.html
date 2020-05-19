@@ -1,4 +1,4 @@
-<div *ngIf="showNominationsComponent && (currentStage === 'programNominations')" [appTelemetryImpression]="telemetryImpression">
+<div *ngIf="!showLoader && showNominationsComponent && (currentStage === 'programNominations')" [appTelemetryImpression]="telemetryImpression">
     <div class="sb-bg-color-primary-0 practical-header py-16">
         <div class="d-flex  flex-jc-space-between practical-header__content ui container pt-15">
             <div class="practical-header__title w-20">
@@ -105,7 +105,7 @@
                                         [telemetryInteractObject]="telemetryInteractObject"
                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                         [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.nominations}}
-                        <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ tempNominationsCount || 0  }}</span>
+                        <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ totalNominations || 0  }}</span>
                     </a>
                     <a class="item" *ngIf="showUsersTab" [isActive]="activeTab === 'user'"  suiTabHeader="3"  (click)="resetStatusFilter('user')"
                     appTelemetryInteract
@@ -115,7 +115,7 @@
                                         [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.tab.users}}
                         <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ sourcingOrgUser.length || 0 }}</span>
                     </a>
-                    <a *ngIf="approvedNominations && approvedNominations.length" class="item" suiTabHeader="4" (click)="resetStatusFilter('contributionDashboard')"
+                    <a class="item" suiTabHeader="4" (click)="resetStatusFilter('contributionDashboard')"
                     appTelemetryInteract
                                         [telemetryInteractEdata]="getTelemetryInteractEdata('contributionDashboard', 'click', 'program-nominations')"
                                         [telemetryInteractObject]="telemetryInteractObject"
@@ -133,10 +133,10 @@
             <div class="ui segment  p-0 m-0 mt-4 sb-bg-color-white dynamicHeight"  suiTabContent="1">
                 <div class="ui container p-0 m-0">
                     <div class="pt-24 text-capitalize fs-0-785 line-height-1-3">
-                        <div class="sb-color-gray-400 d-inline-block br-2 pr-10"><span class="fs-1-286 font-weight-bold">{{ tempNominationsCount || 0}}</span> {{resourceService.frmelmnts.lbl.total}}</div>
-                        <div class="sb-color-success d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{approvedCount || 0}}</span> {{resourceService.frmelmnts.lbl.approved}}</div>
-                        <div class="sb-color-error d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{rejectedCount|| 0}}</span> {{resourceService.frmelmnts.lbl.rejected}}</div>
-                        <div class="sb-color-warning d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{ pendingCount || 0}}</span> {{resourceService.frmelmnts.lbl.pending}}</div>
+                        <div class="sb-color-gray-400 d-inline-block br-2 pr-10"><span class="fs-1-286 font-weight-bold">{{ totalNominations || 0}}</span> {{resourceService.frmelmnts.lbl.total}}</div>
+                        <div class="sb-color-success d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{statusCount.Approved || 0}}</span> {{resourceService.frmelmnts.lbl.approved}}</div>
+                        <div class="sb-color-error d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{statusCount.Rejected|| 0}}</span> {{resourceService.frmelmnts.lbl.rejected}}</div>
+                        <div class="sb-color-warning d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{ statusCount.Pending || 0}}</span> {{resourceService.frmelmnts.lbl.pending}}</div>
                         <button type="button" class="pull-right sb-btn sb-btn-normal sb-btn-outline-primary mb-5" *ngIf="showDownloadCsvBtn" (click)="downloadNominationList()"> <i class="download icon"></i> {{ resourceService?.frmelmnts?.btn?.downloadNominationsList }}</button>
                     </div>
                     <hr class="mt-20 mb-10">
@@ -163,13 +163,11 @@
                                 <p class="my-0 fs-0-785">{{nominatedContentTypes}} </p>
                             </ng-template>
                         </div>
-                        <div class="br-1 text-right flex-grow-1 bl-2"> {{resourceService.frmelmnts.lbl.samples}}:
-                            <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ samplesCount }}</span> {{resourceService.frmelmnts.lbl.uploaded}}
-                        </div>
                     </div>
                     <div class="sb-pageSection">
                         <div class="sb-bg-color-white pt-32">
-                            <div class="sb-table-responsive desktop-o-x-unset" *ngIf="nominations.length > 0 || filterApplied">
+                            <app-loader *ngIf='tableLoader'></app-loader>
+                            <div class="sb-table-responsive desktop-o-x-unset" *ngIf="!tableLoader && nominations.length > 0 || filterApplied">
                                 <table
                                     class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
                                     <thead class="sb-table-header sb-table-thead-gray">
@@ -188,14 +186,14 @@
                                                     <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                                 </span>
                                             </th>
-                                            <th class="w-10 cursor-pointer sb-sorting text-center" (click)="sortCollection('textbooks', nominations)">{{ resourceService?.frmelmnts?.lbl?.textbooks }} &nbsp;&nbsp;
+                                            <th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('textbooks', nominations)">{{ resourceService?.frmelmnts?.lbl?.textbooks }} &nbsp;&nbsp;
                                                 <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'textbooks' "></i>
                                                 <span  *ngIf="sortColumn == 'textbooks'" class="d-inline-block">
                                                     <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
                                                     <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                                 </span>
                                             </th>
-                                            <th class="w-10 cursor-pointer sb-sorting text-center" (click)="sortCollection('samples', nominations)">{{ resourceService?.frmelmnts?.lbl?.samples }} &nbsp;&nbsp;
+                                            <th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('samples', nominations)">{{ resourceService?.frmelmnts?.lbl?.samples }} &nbsp;&nbsp;
                                                 <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'samples' "></i>
                                                 <span  *ngIf="sortColumn == 'samples'" class="d-inline-block">
                                                     <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
@@ -241,10 +239,10 @@
                                             <td>
                                                 <div>{{ nomination?.type }}</div>
                                             </td>
-                                            <td class="text-center">
+                                            <td>
                                                 <div>{{ nomination?.textbooks || 0 }}</div>
                                             </td>
-                                            <td class="text-center">
+                                            <td>
                                                 <div>{{ nomination?.samples || 0 }}</div>
                                             </td>
                                             <td>
@@ -280,6 +278,15 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <div *ngIf="totalPages > 1" class="sb-pagination-container flex-jc-flex-end pt-16">
+                                <div class="sb-pagination">
+                                    <a class="sb-item" [ngClass]="{'disabled': disablePagination.first}" (click)="disablePagination.first ? $event.stopPropagation() :navigatePage('first')">&laquo;</a>
+                                    <a class="sb-item" [ngClass]="{'disabled': disablePagination.prev}" (click)="disablePagination.prev ? $event.stopPropagation() :navigatePage('prev')">&lt;</a>
+                                    <a class="sb-item" [ngClass]="{'active': currentPage === page}" *ngFor="let page of pageNumArray" (click)="(currentPage === page) ? $event.stopPropagation() : navigatePage(page)">{{page}}</a>
+                                    <a class="sb-item" [ngClass]="{'disabled': disablePagination.next}" (click)="disablePagination.next ? $event.stopPropagation() :navigatePage('next')">&gt;</a>
+                                    <a class="sb-item" [ngClass]="{'disabled': disablePagination.last}" (click)="disablePagination.last ? $event.stopPropagation() : navigatePage('last')">&raquo;</a>
+                                </div>
+                            </div>
                             <div class="mt-12" *ngIf="nominations.length === 0 && filterApplied === null">
                                 <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0146'}">
                                 </app-no-result>
@@ -302,20 +309,46 @@
 					  <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
 						<thead class="sb-table-header sb-table-thead-gray">
 						  <tr>
-							<th class="w-10 cursor-pointer sb-sorting" (click)="sortOrgUsers('fullName')">
-								{{resourceService.frmelmnts.lbl.username}} &nbsp;&nbsp;
+                            <th class="w-10 cursor-pointer sb-sorting" (click)="sortOrgUsers('firstName')">
+                                {{resourceService.frmelmnts.lbl.username}} &nbsp;&nbsp;
+                                <i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || columnOrgUsers != 'firstName' "></i>
+                                <span  *ngIf="columnOrgUsers == 'firstName'" class="d-inline-block">
+                                    <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'asc'}"></i>
+                                    <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
+                                </span>
                             </th>
+
                             <th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('mediums')">
-								{{resourceService.frmelmnts.lbl.mediums}} &nbsp;&nbsp;
-							</th>
-							<th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('gradeLevel')">
-								{{resourceService.frmelmnts.lbl.class}} &nbsp;&nbsp;
-							</th>
-							<th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('subject')">
-								{{resourceService.frmelmnts.lbl.subject}} &nbsp;&nbsp;
-							</th>
-							<th class="text-center w-5">
-								{{resourceService.frmelmnts.lbl.roles}}
+                                {{resourceService.frmelmnts.lbl.mediums}} &nbsp;&nbsp;
+                                <i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || columnOrgUsers != 'mediums' "></i>
+                                <span  *ngIf="columnOrgUsers == 'mediums'" class="d-inline-block">
+                                    <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'asc'}"></i>
+                                    <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
+                                </span>
+                            </th>
+                            <th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('gradeLevel')">
+                                {{resourceService.frmelmnts.lbl.class}} &nbsp;&nbsp;
+                                <i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || columnOrgUsers != 'gradeLevel' "></i>
+                                <span  *ngIf="columnOrgUsers == 'gradeLevel'" class="d-inline-block">
+                                    <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'asc'}"></i>
+                                    <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
+                                </span>
+                            </th>
+                            <th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('subject')">
+                                {{resourceService.frmelmnts.lbl.subject}} &nbsp;&nbsp;
+                                <i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || columnOrgUsers != 'subject' "></i>
+                                <span  *ngIf="columnOrgUsers == 'subject'" class="d-inline-block">
+                                    <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'asc'}"></i>
+                                    <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
+                                </span>
+                            </th>
+                            <th class="text-center w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('selectedRole')">
+                                {{resourceService.frmelmnts.lbl.roles}} &nbsp;&nbsp;
+                                <i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || columnOrgUsers != 'selectedRole' "></i>
+								<span  *ngIf="columnOrgUsers == 'selectedRole'" class="d-inline-block">
+									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'asc'}"></i>
+									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
+								</span>
 							</th>
 						  </tr>
 						</thead>
@@ -343,19 +376,19 @@
             </div>
             <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="4">
                 <div *ngIf="programCollections && programCollections.length && contributionDashboardData.length" class="ui container pt-32">
-                    <div class="sb-table-responsive desktop-o-x-unset">
+                    <div class="sb-table-responsive">
                         <table
                             class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
                             <thead class="sb-table-header sb-table-thead-gray">
                                 <tr>
-                                    <th rowspan="2" (click)="sortCollection('contributorName', contributionDashboardData)" class="va-top sb-sorting">{{resourceService.frmelmnts.lbl.contributor}} &nbsp;&nbsp;
+                                    <th rowspan="2" (click)="sortCollection('contributorName', contributionDashboardData)" class="va-top sb-sorting cursor-pointer">{{resourceService.frmelmnts.lbl.contributor}} &nbsp;&nbsp;
                                         <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'contributorName' "></i>
                                         <span  *ngIf="sortColumn == 'contributorName'" class="d-inline-block">
                                             <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
                                             <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                         </span>
                                     </th>
-                                    <th rowspan="2" (click)="sortCollection('type', contributionDashboardData)" class="va-top sb-sorting">{{resourceService.frmelmnts.lbl.typeOfContributor}} &nbsp;&nbsp;
+                                    <th rowspan="2" (click)="sortCollection('type', contributionDashboardData)" class="va-top sb-sorting cursor-pointer">{{resourceService.frmelmnts.lbl.typeOfContributor}} &nbsp;&nbsp;
                                         <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'type' "></i>
                                         <span  *ngIf="sortColumn == 'type'" class="d-inline-block">
                                             <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
@@ -366,35 +399,35 @@
                                     <th colspan="3" class="bb-0 pb-0">{{resourceService.frmelmnts.lbl.profile.yourOrganisation}}</th>
                                 </tr>
                                 <tr>
-                                    <th (click)="sortCollection('draft', contributionDashboardData)" class="border-l va-top sb-sorting">{{resourceService.frmelmnts.lbl.drafts}} &nbsp;&nbsp;
+                                    <th (click)="sortCollection('draft', contributionDashboardData)" class="border-l va-top sb-sorting cursor-pointer">{{resourceService.frmelmnts.lbl.drafts}} &nbsp;&nbsp;
                                         <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'draft' "></i>
                                         <span  *ngIf="sortColumn == 'draft'" class="d-inline-block">
                                             <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
                                             <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                         </span>
                                     </th>
-                                    <th (click)="sortCollection('review', contributionDashboardData)" class="va-top sb-sorting">{{resourceService.frmelmnts.lbl.pending}} &nbsp;&nbsp;
+                                    <th (click)="sortCollection('review', contributionDashboardData)" class="va-top sb-sorting cursor-pointer">{{resourceService.frmelmnts.lbl.pending}} &nbsp;&nbsp;
                                         <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'review' "></i>
                                         <span  *ngIf="sortColumn == 'review'" class="d-inline-block">
                                             <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
                                             <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                         </span>
                                     </th>
-                                    <th (click)="sortCollection('live', contributionDashboardData)" class="va-top sb-sorting">{{resourceService.frmelmnts.lbl.accepted}} &nbsp;&nbsp;
+                                    <th (click)="sortCollection('live', contributionDashboardData)" class="va-top sb-sorting cursor-pointer">{{resourceService.frmelmnts.lbl.accepted}} &nbsp;&nbsp;
                                         <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'live' "></i>
                                         <span  *ngIf="sortColumn == 'live'" class="d-inline-block">
                                             <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
                                             <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                         </span>
                                     </th>
-                                    <th (click)="sortCollection('rejected', contributionDashboardData)" class="va-top sb-sorting">{{resourceService.frmelmnts.lbl.rejected}} &nbsp;&nbsp;
+                                    <th (click)="sortCollection('rejected', contributionDashboardData)" class="va-top sb-sorting cursor-pointer">{{resourceService.frmelmnts.lbl.rejected}} &nbsp;&nbsp;
                                         <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'rejected' "></i>
                                         <span  *ngIf="sortColumn == 'rejected'" class="d-inline-block">
                                             <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
                                             <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                         </span>
                                     </th>
-                                    <th (click)="sortCollection('sourcingPending', contributionDashboardData)" class="border-l va-top sb-sorting">{{resourceService.frmelmnts.lbl.pending}} &nbsp;&nbsp;
+                                    <th (click)="sortCollection('sourcingPending', contributionDashboardData)" class="border-l va-top sb-sorting cursor-pointer">{{resourceService.frmelmnts.lbl.pending}} &nbsp;&nbsp;
                                         <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'sourcingPending' "></i>
                                         <span  *ngIf="sortColumn == 'sourcingPending'" class="d-inline-block">
                                             <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
@@ -434,6 +467,8 @@
 </app-contributor-profile-popup>
 
 </div>
+
+<div class="ui container"> <app-loader *ngIf='showLoader'></app-loader> </div>
 
 <ng-container *ngIf="currentStage !== 'programNominations'">
 	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs">

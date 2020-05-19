@@ -2,7 +2,8 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ToasterService, ResourceService, NavigationHelperService, ConfigService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
-import { UserService } from '@sunbird/core';
+import { UserService, RegistryService, ProgramsService } from '@sunbird/core';
+import { CacheService } from 'ng2-cache-service';
 import * as _ from 'lodash-es';
 
 
@@ -12,41 +13,37 @@ import * as _ from 'lodash-es';
   styleUrls: ['./org-user-list.component.scss']
 })
 export class OrgUserListComponent implements OnInit, AfterViewInit {
-  data;
-  position;
-  options;
-  showNormalModal;
+  public position;
+  public showNormalModal;
   public telemetryImpression: IImpressionEventInput;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
-  orgLink;
-  public userLists: any;
+  public orgLink;
   public contributorOrgUser: any = [];
   public orgDetails: any = {};
   public showLoader = true;
+  public contributorOrgUsers: any = [];
+  public tempSortOrgUser: any = [];
+  public direction = 'asc';
+  public sortColumn = '';
+  public roles = [{ name: 'User', value: 'user'}, { name: 'Admin', value: 'admin'}];
 
   constructor(private toasterService: ToasterService, private configService: ConfigService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
-    private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router) { }
+    private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
+    public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService ) {
+      this.getContributionOrgUsers();
+    }
 
   ngOnInit() {
     this.position = 'top center';
-    this.data = {
-      'board': [{
-          'name': 'admin',
-          'value': 'Admin'
-      }, {
-          'name': 'reviewer',
-          'value': 'Reviewer'
-      }]
-    };
-  this.telemetryInteractCdata = [{id: this.userService.userProfile.rootOrgId || '', type: 'Organisation_id'}];
-  this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
-  this.telemetryInteractObject = {};
     const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
       ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
     this.orgLink = `${baseUrl}/contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
+    this.telemetryInteractCdata = [{id: this.userService.userProfile.rootOrgId || '', type: 'Organisation_id'}];
+    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
+    this.telemetryInteractObject = {};
   }
 
   ngAfterViewInit() {
@@ -76,6 +73,41 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
      });
   }
 
+  getContributionOrgUsers() {
+    this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
+      this.contributorOrgUsers = orgUsers;
+      this.tempSortOrgUser = orgUsers;
+      this.sortCollection('selectedRole');
+      this.showLoader = false;
+    });
+  }
+
+  sortCollection(column) {
+    this.contributorOrgUsers = this.programsService.sortCollection(this.tempSortOrgUser, column, this.direction);
+    if (this.direction === 'asc' || this.direction === '') {
+      this.direction = 'desc';
+    } else {
+      this.direction = 'asc';
+    }
+    this.sortColumn = column;
+  }
+
+  onRoleChange(user) {
+    const selectedRole = _.get(user, 'selectedRole');
+    const osid = _.get(user, 'User_Org.osid');
+
+    this.programsService.updateUserRole(osid, [selectedRole]).subscribe(
+      (res) => {
+        this.toasterService.success(this.resourceService.messages.smsg.m0065);
+        this.cacheService.remove('orgUsersDetails');
+      },
+      (error) => {
+        console.log(error);
+        this.toasterService.error(this.resourceService.messages.emsg.m0077);
+      }
+    );
+  }
+
   copyOnLoad() {
     this.showNormalModal = true;
     setTimeout(() => {
@@ -89,8 +121,6 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
       this.showNormalModal = false;
       return ;
     }
-    console.log(this.showNormalModal);
-
     if (this.showNormalModal) {
       const input = document.getElementById('copyLinkData') as HTMLInputElement;
       input.select();

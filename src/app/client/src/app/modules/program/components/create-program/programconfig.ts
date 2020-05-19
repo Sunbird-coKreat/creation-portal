@@ -661,19 +661,21 @@ var programConfig = {
               'name': 'Attributions',
               'placeholder': 'Enter Attributions',
               'required': false,
-              'visible': true
+              'visible': true,
+              'helpText': 'If you have relied on another work to create this Content, provide the name of that creator and the source of that work.'
             },
             {
               'code': 'copyright',
               'dataType': 'text',
-              'description': 'Enter Copyright',
+              'description': 'Enter Copyright and Year',
               'editable': true,
               'inputType': 'text',
-              'label': 'Copyright',
+              'label': 'Copyright and Year',
               'name': 'Copyright',
-              'placeholder': 'Enter Copyright',
+              'placeholder': 'Enter Copyright and Year',
               'required': true,
-              'visible': true
+              'visible': true,
+              'helpText': 'If you are an individual, creating original Content, you are the copyright holder. If you are creating Content on behalf of an organisation, the organisation may be the copyright holder. Please fill as <Name of copyright holder>, <Year of publication>'
             },
             {
               'code': 'creator',
@@ -685,7 +687,8 @@ var programConfig = {
               'name': 'Author',
               'placeholder': 'Enter Author Name',
               'required': true,
-              'visible': true
+              'visible': true,
+              'helpText': 'Provide name of creator of this Content.'
             },
             {
               'code': 'license',
@@ -696,6 +699,16 @@ var programConfig = {
               'label': 'License',
               'name': 'License',
               'placeholder': 'Select License',
+              'required': true,
+              'visible': true,
+              'helpText': 'Choose the most appropriate Creative Commons License for this Content'
+            },
+            {
+              'code': 'contentPolicyCheck',
+              'dataType': 'boolean',
+              'editable': false,
+              'inputType': 'checkbox',
+              'name': 'Content Policy Check',
               'required': true,
               'visible': true
             }
@@ -748,19 +761,21 @@ var programConfig = {
               'name': 'Attributions',
               'placeholder': 'Enter Attributions',
               'required': false,
-              'visible': true
+              'visible': true,
+              'helpText': 'If you have relied on another work to create this Content, provide the name of that creator and the source of that work.'
             },
             {
               'code': 'copyright',
               'dataType': 'text',
-              'description': 'Enter Copyright',
+              'description': 'Enter Copyright and Year',
               'editable': true,
               'inputType': 'text',
-              'label': 'Copyright',
+              'label': 'Copyright and Year',
               'name': 'Copyright',
-              'placeholder': 'Enter Copyright',
+              'placeholder': 'Enter Copyright and Year',
               'required': true,
-              'visible': true
+              'visible': true,
+              'helpText': 'If you are an individual, creating original Content, you are the copyright holder. If you are creating Content on behalf of an organisation, the organisation may be the copyright holder. Please fill as <Name of copyright holder>, <Year of publication>'
             },
             {
               'code': 'creator',
@@ -772,7 +787,8 @@ var programConfig = {
               'name': 'Author',
               'placeholder': 'Enter Author Name',
               'required': true,
-              'visible': true
+              'visible': true,
+              'helpText': 'Provide name of creator of this Content.'
             },
             {
               'code': 'license',
@@ -783,6 +799,16 @@ var programConfig = {
               'label': 'License',
               'name': 'License',
               'placeholder': 'Select License',
+              'required': true,
+              'visible': true,
+              'helpText': 'Choose the most appropriate Creative Commons License for this Content'
+            },
+            {
+              'code': 'contentPolicyCheck',
+              'dataType': 'boolean',
+              'editable': false,
+              'inputType': 'checkbox',
+              'name': 'Content Policy Check',
               'required': true,
               'visible': true
             }

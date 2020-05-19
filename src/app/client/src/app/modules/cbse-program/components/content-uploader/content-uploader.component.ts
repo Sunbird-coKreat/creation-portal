@@ -235,6 +235,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
                 this.sessionContext.nominationDetails.organisation_id &&
                 {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
               'programId': this.sessionContext.programId,
+              'unitIdentifiers': [this.unitIdentifier],
               ...(_.pickBy(reqBody, _.identity))
               // 'framework': this.sessionContext.framework,
               // 'organisation': this.sessionContext.onBoardSchool ? [this.sessionContext.onBoardSchool] : [],
@@ -465,9 +466,15 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
           }
           // tslint:disable-next-line:max-line-length
           obj.required ? controller[obj.code] = [{value: preSavedValues[code], disabled: this.disableFormField}, [Validators.required]] : controller[obj.code] = preSavedValues[code];
+        } else if (obj.inputType === 'checkbox') {
+          // tslint:disable-next-line:max-line-length
+          preSavedValues[code] = (this.contentMetaData[code]) ? this.contentMetaData[code] : false;
+          // tslint:disable-next-line:max-line-length
+          obj.required ? controller[obj.code] = [{value:preSavedValues[code], disabled: this.contentMetaData[code]}, [Validators.requiredTrue]] : controller[obj.code] = preSavedValues[code];
         }
       }
     });
+
     this.contentDetailsForm = this.formBuilder.group(controller);
   }
 
@@ -526,6 +533,15 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
    });
   }
    }
+  }
+
+  changePolicyCheckValue (event) {
+    if ( event.target.checked ) {
+      this.contentDetailsForm.controls.contentPolicyCheck.setValue(true);
+    }
+    else {
+      this.contentDetailsForm.controls.contentPolicyCheck.setValue(false);
+    }
   }
 
   saveContent(action?) {

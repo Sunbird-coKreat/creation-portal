@@ -103,6 +103,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
   };
   public programConfig: any;
+  public disableCreateProgramBtn = false;
 
   constructor(
     public frameworkService: FrameworkService,
@@ -607,12 +608,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     if (this.createProgramForm.dirty && this.createProgramForm.valid) {
       const contentTypes = this.createProgramForm.value.content_types;
       this.createProgramForm.value.content_types = _.isEmpty(contentTypes) ? [] : contentTypes;
-      if (this.userFramework) {
-        this.programConfig.framework = this.userFramework;
-      }
       this.programData = {
         ...this.createProgramForm.value
       };
+      if (this.userFramework) {
+        this.programConfig.framework = this.userFramework;
+        // tslint:disable-next-line:max-line-length
+        _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'framework' }).defaultValue = this.userFramework;
+      }
       this.programData['sourcing_org_name'] = this.userprofile.rootOrgName;
       this.programData['rootorg_id'] = this.userprofile.rootOrgId;
       this.programData['createdby'] = this.userprofile.id;
@@ -733,7 +736,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   updateProgramCollection() {
+    this.disableCreateProgramBtn = true;
     if (_.isEmpty(this.collectionListForm.value.pcollections)) {
+      this.disableCreateProgramBtn = false;
       this.toasterService.warning('Please select at least a textbook');
       return false;
     }
@@ -756,6 +761,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         }
       },
       (err) => {
+        this.disableCreateProgramBtn = false;
         console.log(err);
         // TODO: navigate to program list page
         const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
@@ -788,6 +794,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     data['programContentTypes'] = contentTypes;
 
     this.programConfig.board = this.userBoard;
+    // tslint:disable-next-line:max-line-length
+    _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'board' }).defaultValue = this.userBoard;
     this.programConfig.gradeLevel = this.gradeLevelOption;
     this.programConfig.medium = this.mediumOption;
     this.programConfig.subject = this.subjectsOption;
@@ -800,7 +808,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         this.router.navigate(['/sourcing']);
         this.generateTelemetryEvent('END');
       },
-      (err) => this.saveProgramError(err)
+      (err) => {
+        this.disableCreateProgramBtn = false;
+        this.saveProgramError(err);
+      }
     );
   }
 

@@ -1,4 +1,4 @@
-<div *ngIf="!userService.userProfile.userRegData.User">
+<div *ngIf="userService.userRegistryData && !userService.userProfile.userRegData.User">
    <sui-modal [appTelemetryImpression]="telemetryImpression"
       [mustScroll]="true"
        [isClosable]="false"

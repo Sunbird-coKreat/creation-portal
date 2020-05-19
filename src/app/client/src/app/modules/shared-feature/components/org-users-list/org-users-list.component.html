@@ -1,12 +1,12 @@
 <div class="sb-pageSection my-24">
-  <div class="sb-table-responsive desktop-o-x-unset" *ngIf="contributorOrgUser.length > 0 && !showLoader">
+  <div class="sb-table-responsive desktop-o-x-unset" *ngIf="contributorOrgUsers && contributorOrgUsers.length > 0 && !showLoader">
     <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
       <thead class="sb-table-header sb-table-thead-gray">
         <tr>
-          <th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('fullName')">
+          <th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('name')">
             {{resourceService.frmelmnts.lbl.user}} &nbsp;&nbsp;
-            <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'fullName' "></i>
-            <span  *ngIf="sortColumn == 'fullName'" class="d-inline-block">
+            <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>
+            <span  *ngIf="sortColumn == 'name'" class="d-inline-block">
               <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
               <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
             </span>
@@ -16,13 +16,13 @@
         </tr>
       </thead>
       <tbody class="sb-table-body">
-        <tr *ngFor="let orgUser of contributorOrgUser; let i = index;">
+        <tr *ngFor="let orgUser of contributorOrgUsers; let i = index;">
           <td>
               <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
-              {{orgUser.fullName}}
+              {{orgUser.name}}
               </div>
           </td>
-          <td>{{ orgUser?.contact ||  '-' }}</td>
+          <td>{{ orgUser?.email || orgUser?.phone || '-' }}</td>
           <td>
           <div>
             <sui-select class="selection pt-5" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="roles" valueField="value"
@@ -39,5 +39,5 @@
   <div class="ui tweleve wide column mb-20" *ngIf="showLoader">
     <app-loader></app-loader>
   </div>
-  <app-no-result *ngIf="!showLoader && contributorOrgUser.length === 0" [data]="{messageText: resourceService.messages.stmsg.m0006}"></app-no-result>
+  <app-no-result *ngIf="!showLoader && contributorOrgUsers.length === 0" [data]="{messageText: resourceService.messages.stmsg.m0006}"></app-no-result>
 </div>
