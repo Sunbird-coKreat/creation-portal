@@ -341,7 +341,7 @@ export class UserService {
       }
     }), switchMap((res4) => {
       if (res4 && res4.result.User_Org.length) {
-        const orgList = res4.result.User_Org.map((value) => value.orgId.slice(2));
+        const orgList = res4.result.User_Org.map((value) => value.orgId);
         option.data['request'] = {
           entityType: ['Org'],
           filters: {
