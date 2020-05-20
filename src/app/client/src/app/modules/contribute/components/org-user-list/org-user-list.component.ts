@@ -28,11 +28,10 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public direction = 'asc';
   public sortColumn = '';
   public totalPages: number;
-  public usersPerPage = 18;
+  public usersPerPage = 3;
   public currentPage: number;
   public totalUsers: number;
-  //public showLoader = true;
-  public userCount: any;
+  public allUsersList: any;
   public tableLoader = false;
   public disablePagination = {};
   public pageNumArray: Array<number>;
@@ -43,7 +42,6 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
     public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService ) {
       this.getContributionOrgUsers();
-      this.getPaginatedUsers(0);
     }
 
   ngOnInit() {
@@ -85,24 +83,24 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
 
   getContributionOrgUsers() {
     this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
-      this.userCount = orgUsers;
+      this.allUsersList = orgUsers;
       this.currentPage = 1;
-      this.totalUsers = this.userCount.length;
+      this.totalUsers = this.allUsersList.length;
       this.totalPages = Math.ceil(this.totalUsers / this.usersPerPage);
       this.handlePageNumArray();
       this.disablePaginationButtons();
+      this.getPaginatedUsers(0);
     });
   }
 
   getPaginatedUsers(offset) {
-    this.registryService.getcontributingOrgUsersDetails(this.usersPerPage, offset).then((orgUsers) => {
-      this.contributorOrgUsers = orgUsers;
-      this.tempSortOrgUser = orgUsers;
+      this.contributorOrgUsers = this.allUsersList.slice(offset, offset + this.usersPerPage );
+      this.tempSortOrgUser = this.contributorOrgUsers;
       if (!_.isEmpty(this.contributorOrgUsers) && this.contributorOrgUsers.length > 0) {
+        this.direction = 'asc';
         this.sortCollection('selectedRole');
       }
       this.showLoader = false;
-    });
   }
 
   navigatePage(pageNum) {

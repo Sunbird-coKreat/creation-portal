@@ -30,13 +30,13 @@ export class RegistryService extends DataService {
       this.userService.userProfile.userRegData.User_Org && this.userService.userProfile.userRegData.Org);
   }
 
-  public getcontributingOrgUsersDetails(limit?, offset?) {
+  public getcontributingOrgUsersDetails() {
     const userRegData = _.get(this.userService, 'userProfile.userRegData');
     const orgId = userRegData.User_Org.orgId;
     const storedOrglist = this.cacheService.get('orgUsersDetails')
     return new Promise((resolve, reject) => {
       if (this.checkIfUserBelongsToOrg()) {
-        return this.getContributionOrgUsers(orgId, limit, offset).subscribe(
+        return this.getContributionOrgUsers(orgId).subscribe(
           (res1) => {
             const tempMapping = [];
 
@@ -47,7 +47,6 @@ export class RegistryService extends DataService {
                   tempMapping.push(mapObj);
                   return mapObj.userId;
                 }));
-
               if (userList && storedOrglist && userList.length === storedOrglist.length) {
                 return resolve(this.cacheService.get('orgUsersDetails'));
               } else {
@@ -126,7 +125,7 @@ export class RegistryService extends DataService {
     return this.contentService.post(option);
   }
 
-  public getContributionOrgUsers(orgId, limit?, offset?): Observable<ServerResponse> {
+  public getContributionOrgUsers(orgId): Observable<ServerResponse> {
     const req = {
       url: `reg/search`,
       data: {
@@ -146,12 +145,6 @@ export class RegistryService extends DataService {
         }
       }
     };
-    if (!_.isUndefined(limit)) {
-      req.data.request['limit'] = limit;
-    }
-    if (!_.isUndefined(offset)) {
-      req.data.request['offset'] = offset;
-    }
     return this.contentService.post(req);
   }
   public getUserDetails(userId): Observable<ServerResponse> {

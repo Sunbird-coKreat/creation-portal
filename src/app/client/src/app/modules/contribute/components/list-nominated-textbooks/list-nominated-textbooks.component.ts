@@ -71,11 +71,11 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public usersPerPage = 4;
   public currentPage: number;
   public totalUsers: number;
-  //public showLoader = true;
   public userCount: any;
   public tableLoader = false;
   public disablePagination = {};
   public pageNumArray: Array<number>;
+  public allContributorOrgUser: any = [];
 
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private configService: ConfigService, private publicDataService: PublicDataService,
@@ -357,9 +357,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
         }
         if (this.isUserOrgAdmin()) {
           this.showUsersTab = true;
-          this.getContributionOrgUsersCount();
-          this.getContributionOrgUsers(0);
-          //this.getPaginatedUsers(0);
+          this.getContributionOrgUsers();
         }
       }
       this.getProgramTextbooks();
@@ -367,22 +365,21 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       this.toasterService.error('Failed fetching current nomination status');
     });
   }
-  getContributionOrgUsersCount() {
-    this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
-      this.userCount = orgUsers;
-      this.currentPage = 1;
-      this.totalUsers = this.userCount.length;
-      this.totalPages = Math.ceil(this.totalUsers / this.usersPerPage);
-      this.handlePageNumArray();
-      this.disablePaginationButtons();
-    });
+
+  getPaginatedUsers(offset) {
+    this.contributorOrgUser = this.allContributorOrgUser.slice(offset, offset + this.usersPerPage );
+      this.tempSortOrgUser = this.contributorOrgUser;
+      if (!_.isEmpty(this.tempSortOrgUser) && this.tempSortOrgUser.length > 0) {
+        this.directionOrgUsers = 'asc';
+        this.sortOrgUsers('projectselectedRole');
+      }
+      this.tableLoader = false;
   }
 
-  getContributionOrgUsers(offset) {
-    this.contributorOrgUser = [];
+  getContributionOrgUsers() {
       this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
       this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
-      this.registryService.getcontributingOrgUsersDetails(this.usersPerPage, offset).then((orgUsers) => {
+      this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
         if (!_.isEmpty(orgUsers)) {
           orgUsers = _.filter(orgUsers, {"selectedRole": "user"});
           _.forEach(orgUsers, r => {
@@ -394,16 +391,17 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
                 }
               });
             }
-            this.contributorOrgUser.push(r);
+            this.allContributorOrgUser.push(r);
           });
-          this.tempSortOrgUser = this.contributorOrgUser;
-          this.sortOrgUsers('projectselectedRole');
+          this.currentPage = 1;
+          this.totalUsers = this.allContributorOrgUser.length;
+          this.totalPages = Math.ceil(this.totalUsers / this.usersPerPage);
+          this.handlePageNumArray();
+          this.disablePaginationButtons();
+          this.getPaginatedUsers(0);
           this.showLoader = false;
-          this.tableLoader = false;
-        }
-        else {
+        } else {
           this.showLoader = false;
-          this.tableLoader = false;
         }
       });
   }
@@ -412,7 +410,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     const roleMap = {};
     _.forEach(this.roles, role => {
       roleMap[role.name] = _.map(
-        _.filter(this.contributorOrgUser, user => { if (user.projectselectedRole === role.name) {  return user.identifier; }}), 'identifier');
+        _.filter(this.allContributorOrgUser, user => { if (user.projectselectedRole === role.name) {  return user.identifier; }}), 'identifier');
     });
     const req = {
       'request': {
@@ -483,7 +481,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
 handlePagination(pageNum) {
   const offset = (pageNum - 1) * this.usersPerPage;
   this.tableLoader = true;
-  this.getContributionOrgUsers(offset);
+  this.getPaginatedUsers(offset);
   this.handlePageNumArray();
   this.disablePaginationButtons();
   }
