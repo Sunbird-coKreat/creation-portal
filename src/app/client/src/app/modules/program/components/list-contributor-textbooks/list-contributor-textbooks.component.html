@@ -287,7 +287,7 @@
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.viewSampleContent}}</button>
 								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
-									*ngIf="contributor?.nominationData?.status == 'Accepted'"
+									*ngIf="contributor?.nominationData?.status == 'Approved'"
 									(click)="viewContribution(contributorTextbook)"
 									appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('view-contribution', 'click', 'list-nominated-textbooks')"
