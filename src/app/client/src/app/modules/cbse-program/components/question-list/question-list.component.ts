@@ -542,6 +542,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.helperService.submitRequestChanges(this.sessionContext.resourceIdentifier, this.FormControl.value.contentRejectComment)
       .subscribe(res => {
         this.showRequestChangesPopup = false;
+        this.contentStatusNotify('Request');
         const contentId = res.result.node_id || res.result.identifier;
         if (this.sessionContext.collection && this.sessionContext.textBookUnitIdentifier) {
           this.collectionHierarchyService.addResourceToHierarchy(

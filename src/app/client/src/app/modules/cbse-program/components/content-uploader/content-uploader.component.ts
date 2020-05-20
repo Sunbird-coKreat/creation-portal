@@ -627,6 +627,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
       this.helperService.submitRequestChanges(this.contentMetaData.identifier, this.FormControl.value.rejectComment)
       .subscribe(res => {
         this.showRequestChangesPopup = false;
+        this.contentStatusNotify('Request');
         if (this.sessionContext.collection && this.unitIdentifier) {
           // tslint:disable-next-line:max-line-length
           this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
