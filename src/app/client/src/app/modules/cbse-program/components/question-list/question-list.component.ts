@@ -174,29 +174,23 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  contentStatusNotification(status) {
+  contentStatusNotify(status) {
     const notificationForContributor = {
       user_id: this.resourceDetails.createdBy,
-      programData: { name: this.resourceDetails.name },
+      content: { name: this.resourceDetails.name },
+      org: { name:  this.resourceDetails.orgName},
       status: status
     };
-    this.notificationService.onAfterNominationUpdate(notificationForContributor);
+    this.notificationService.onAfterContentStatusChange(notificationForContributor);
     if (!_.isUndefined(this.sessionContext.nominationDetails.user_id)) {
       const notificationForPublisher = {
         user_id: this.sessionContext.nominationDetails.user_id,
-        programData: { name: this.resourceDetails.name },
+        content: { name: this.resourceDetails.name },
+        org: { name:  this.resourceDetails.orgName},
         status: status
       };
-      this.notificationService.onAfterNominationUpdate(notificationForPublisher);
-      }
+      this.notificationService.onAfterContentStatusChange(notificationForPublisher);
     }
-    contentPublishNotify(status){
-      const notificationForContributor = {
-        user_id: this.resourceDetails.createdBy,
-        programData: { name: this.resourceDetails.name },
-        status: status
-      };
-      this.notificationService.onAfterNominationUpdate(notificationForContributor);
     }
 
   setResourceStatus() {

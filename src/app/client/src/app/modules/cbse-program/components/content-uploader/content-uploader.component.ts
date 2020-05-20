@@ -663,30 +663,23 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
       });
   }
 
-  contentStatusNotification(status) {
+  contentStatusNotify(status) {
   const notificationForContributor = {
     user_id: this.contentMetaData.createdBy,
-    programData: { name: this.contentMetaData.name },
+    content: { name: this.contentMetaData.name },
+    org: { name:  this.contentMetaData.orgName},
     status: status
   };
-  this.notificationService.onAfterNominationUpdate(notificationForContributor);
+  this.notificationService.onAfterContentStatusChange(notificationForContributor);
   if (!_.isUndefined(this.sessionContext.nominationDetails.user_id)) {
     const notificationForPublisher = {
       user_id: this.sessionContext.nominationDetails.user_id,
-      programData: { name: this.programContext.name },
+      content: { name: this.contentMetaData.name },
+      org: { name:  this.contentMetaData.orgName},
       status: status
     };
-    this.notificationService.onAfterNominationUpdate(notificationForPublisher);
+    this.notificationService.onAfterContentStatusChange(notificationForPublisher);
   }
-  }
-
-  contentPublishNotify(status){
-    const notificationForContributor = {
-      user_id: this.contentMetaData.createdBy,
-      programData: { name: this.contentMetaData.name },
-      status: status
-    };
-    this.notificationService.onAfterNominationUpdate(notificationForContributor);
   }
 
   isIndividualAndNotSample() {

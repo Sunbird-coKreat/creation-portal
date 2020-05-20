@@ -68,14 +68,14 @@
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >Replace
                 File</button>
-              <button id="requestChanges" suiPopup popupText="Request Changes" [popupPlacement]="'top'" *ngIf="visibility && visibility.showRequestChanges && resourceStatus === 'Review'" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true;contentPublishNotify('reject')"
+              <button id="requestChanges" suiPopup popupText="Request Changes" [popupPlacement]="'top'" *ngIf="visibility && visibility.showRequestChanges && resourceStatus === 'Review'" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true;contentStatusNotify('Request')"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-resource', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >Request Changes</button>
-              <button id="publishContent" suiPopup popupText="Publish" [popupPlacement]="'top'" *ngIf="visibility && visibility.showPublish && resourceStatus === 'Review'" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="publishContent();contentPublishNotify('accept')"
+              <button id="publishContent" suiPopup popupText="Publish" [popupPlacement]="'top'" *ngIf="visibility && visibility.showPublish && resourceStatus === 'Review'" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="publishContent();contentStatusNotify('Published')"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('publish-resource', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
@@ -90,14 +90,14 @@
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{isIndividualAndNotSample() ? 'Publish' : 'Submit' }}</button>
               <button id="acceptContent" suiPopup
-              popupText="Accept Content For Textbook" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live'" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="attachContentToTextbook('accept');contentStatusNotification('accept')"
+              popupText="Accept Content For Textbook" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live'" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="attachContentToTextbook('accept');contentStatusNotify('Accept')"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('accept-content-for-textbook', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >Accept</button>
-              <button id="rejectContent" suiPopup popupText="Reject Content For Textbook" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live'" class="sb-btn sb-btn-error sb-btn-normal" (click)="attachContentToTextbook('reject');contentStatusNotification('reject')"
+              <button id="rejectContent" suiPopup popupText="Reject Content For Textbook" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live'" class="sb-btn sb-btn-error sb-btn-normal" (click)="attachContentToTextbook('reject');contentStatusNotify('Reject')"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-content-for-textbook', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
