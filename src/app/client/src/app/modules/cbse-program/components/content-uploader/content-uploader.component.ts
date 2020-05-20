@@ -669,6 +669,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     user_id: this.contentMetaData.createdBy,
     content: { name: this.contentMetaData.name },
     org: { name:  this.contentMetaData.orgName},
+    program: { name: this.programContext.name },
     status: status
   };
   this.notificationService.onAfterContentStatusChange(notificationForContributor);
@@ -677,6 +678,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
       user_id: this.sessionContext.nominationDetails.user_id,
       content: { name: this.contentMetaData.name },
       org: { name:  this.contentMetaData.orgName},
+      program: { name: this.programContext.name },
       status: status
     };
     this.notificationService.onAfterContentStatusChange(notificationForPublisher);
