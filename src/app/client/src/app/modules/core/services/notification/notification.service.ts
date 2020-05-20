@@ -159,7 +159,7 @@ export class NotificationService {
           requests.push(this.sendEmailNotificationForContent(nomination));
         }
         if (!_.isEmpty(user.phone)) {
-          requests.push(this.sendSmsNotification(nomination));
+          requests.push(this.sendSmsNotificationForContent(nomination));
         }
         forkJoin(requests).subscribe(
           (response) => of(response),
