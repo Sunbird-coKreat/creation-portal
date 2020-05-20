@@ -184,7 +184,7 @@ export class NotificationService {
   getEmailSubjectForContent(nomination: any) {
     let status = '';
     let subject = this.resourceService.messages.stmsg.content.notification.status.subject;
-    subject = _.replace(subject, '{CONTENT_NAME}', nomination.content.name);
+    subject = _.replace(subject, '{PROJECT_NAME}', nomination.content.name);
     if (nomination.status === 'Published') {
       status = 'published';
     }
