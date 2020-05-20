@@ -105,10 +105,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.collection = _.get(this.chapterListComponentInput, 'collection');
     this.actions = _.get(this.chapterListComponentInput, 'programContext.config.actions');
     this.sharedContext = _.get(this.chapterListComponentInput, 'programContext.config.sharedContext');
-    this.myOrgId = (this.userService.userRegistryData
-      && this.userService.userProfile.userRegData
-      && this.userService.userProfile.userRegData.User_Org
-      && this.userService.userProfile.userRegData.User_Org.orgId) ? this.userService.userProfile.userRegData.User_Org.orgId : '';
+    const orgId = _.get(this.userService, 'userProfile.userRegData.User_Org.orgId');
+    this.myOrgId = (orgId) ? '1-' + orgId : '';
     if ( _.isUndefined(this.sessionContext.topicList)) {
         this.fetchFrameWorkDetails();
     }
@@ -739,6 +737,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
 
   filterContentsForCount (contents, status?, onlySample?, organisationId?, createdBy?) {
+    if (organisationId) {
+      organisationId = '1-' + organisationId;
+    }
     const filter = {
       ...(status && {status}),
       ...(onlySample && {sampleContent: true}),
@@ -747,14 +748,16 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       ...(organisationId && {organisationId}),
     };
     if (this.isContributingOrgContributor()) {
-      console.log('old createdBy : ', filter.createdBy);
       filter.createdBy = this.currentUserID;
     }
     if (this.isContributingOrgReviewer()) {
-      console.log('old status : ', filter.status);
       filter.status = 'Review';
     }
+    if (this.isSourcingOrgReviewer()) {
+      filter['visibility'] = true;
+    }
     console.log('filter', filter);
+    _.map(contents, leaf => console.log(leaf.name + ' == ' + leaf.status + ' == ' + leaf.createdBy + ' == ' + leaf.sampleContent + ' == ' + leaf.organisationId));
     const leaves = _.filter(contents, filter);
     return leaves.length;
   }
