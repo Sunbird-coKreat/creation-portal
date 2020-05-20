@@ -175,8 +175,21 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   contentStatusNotification(status) {
-    // this.notificationService.notificationAlertForContentUpdate(this.resourceDetails, this.sessionContext.nominationDetails, status);
-  }
+    const notificationForContributor = {
+      user_id: this.resourceDetails.createdBy,
+      programData: { name: this.programContext.name },
+      status: status
+    };
+    this.notificationService.onAfterNominationUpdate(notificationForContributor);
+    if (!_.isUndefined(this.sessionContext.nominationDetails.user_id)) {
+      const notificationForPublisher = {
+        user_id: this.sessionContext.nominationDetails.user_id,
+        programData: { name: this.programContext.name },
+        status: status
+      };
+      this.notificationService.onAfterNominationUpdate(notificationForPublisher);
+      }
+    }
 
   setResourceStatus() {
     if (this.resourceStatus === 'Review') {

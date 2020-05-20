@@ -666,7 +666,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
   contentStatusNotification(status) {
   const notificationForContributor = {
     user_id: this.contentMetaData.createdBy,
-    programData: { name: this.programContext.name },
+    programData: { name: this.contentMetaData.name },
     status: status
   };
   this.notificationService.onAfterNominationUpdate(notificationForContributor);
@@ -678,6 +678,15 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     };
     this.notificationService.onAfterNominationUpdate(notificationForPublisher);
   }
+  }
+
+  contentPublishNotify(status){
+    const notificationForContributor = {
+      user_id: this.contentMetaData.createdBy,
+      programData: { name: this.contentMetaData.name },
+      status: status
+    };
+    this.notificationService.onAfterNominationUpdate(notificationForContributor);
   }
 
   isIndividualAndNotSample() {
