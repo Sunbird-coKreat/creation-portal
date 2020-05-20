@@ -47,6 +47,7 @@ export class RegistryService extends DataService {
                   tempMapping.push(mapObj);
                   return mapObj.userId;
                 }));
+
               if (userList && storedOrglist && userList.length === storedOrglist.length) {
                 return resolve(this.cacheService.get('orgUsersDetails'));
               } else {
