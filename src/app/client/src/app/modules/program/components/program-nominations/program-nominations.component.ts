@@ -410,7 +410,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
       this.canAssignUsersToProgram();
       this.setActiveDate();
-      this.readRolesOfOrgUsers();
+      // this.readRolesOfOrgUsers();
       const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
       this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
       this.getProgramCollection();
