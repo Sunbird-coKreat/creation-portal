@@ -28,7 +28,7 @@ export class TextbookListComponent implements OnInit {
   public chapterCount = 0;
   public pendingReview = 0;
   public direction = 'asc';
-  public sortColumn = '';
+  public sortColumn = 'name';
   public tempSortCollections: Array<any> = [];
   public showLoader = true;
   public contentStatusCounts: any = {};
@@ -75,6 +75,7 @@ export class TextbookListComponent implements OnInit {
         }
         this.collections = this.collectionHierarchyService.getIndividualCollectionStatus(this.contentStatusCounts, data);
         this.tempSortCollections = this.collections;
+        this.sortCollection(this.sortColumn);
         this.showLoader = false;
     } else {
       this.showLoader = false;
