@@ -145,8 +145,8 @@ export class NotificationService {
       }));
   }
 
-  onAfterContentStatusChange(nomination) {
-    const requestFilter = { identifier : nomination.user_id };
+  onAfterContentStatusChange(notificationData) {
+    const requestFilter = { identifier : notificationData.user_id };
     return this.programsService.getOrgUsersDetails(requestFilter)
     .pipe(
       tap((res: any) => {
@@ -156,10 +156,10 @@ export class NotificationService {
         }
         const requests = [];
         if (!_.isEmpty(user.email)) {
-          requests.push(this.sendEmailNotificationForContent(nomination));
+          requests.push(this.sendEmailNotificationForContent(notificationData));
         }
         if (!_.isEmpty(user.phone)) {
-          requests.push(this.sendSmsNotificationForContent(nomination));
+          requests.push(this.sendSmsNotificationForContent(notificationData));
         }
         forkJoin(requests).subscribe(
           (response) => of(response),
@@ -168,34 +168,34 @@ export class NotificationService {
     );
   }
 
-  sendEmailNotificationForContent(nomination) {
+  sendEmailNotificationForContent(notificationData) {
     const mode = 'email';
     const request = {
       mode: mode,
-      subject: this.getEmailSubjectForContent(nomination),
-      recipientUserIds: [nomination.user_id],
-      emailTemplateType: this.getTemplateForContent(nomination.status, mode),
-      orgName: nomination.org.name,
+      subject: this.getEmailSubjectForContent(notificationData),
+      recipientUserIds: [notificationData.user_id],
+      emailTemplateType: this.getTemplateForContent(notificationData.status, mode),
+      orgName: notificationData.org.name,
       body: 'VidyaDaan'
     };
     return this.sendNotification(request).subscribe();
   }
 
-  getEmailSubjectForContent(nomination: any) {
+  getEmailSubjectForContent(notificationData: any) {
     let status = '';
     let subject = this.resourceService.messages.stmsg.content.notification.status.subject;
-    subject = _.replace(subject, '{PROJECT_NAME}', nomination.program.name);
-    subject = _.replace(subject, '{CONTENT_NAME}', nomination.content.name);
-    if (nomination.status === 'Published') {
+    subject = _.replace(subject, '{PROJECT_NAME}', notificationData.program.name);
+    subject = _.replace(subject, '{CONTENT_NAME}', notificationData.content.name);
+    if (notificationData.status === 'Published') {
       status = 'published';
     }
-    if (nomination.status === 'Request') {
+    if (notificationData.status === 'Request') {
       status = 'requested changes';
     }
-    if (nomination.status === 'Accept') {
+    if (notificationData.status === 'Accept') {
       status = 'accepted';
     }
-    if (nomination.status === 'Reject') {
+    if (notificationData.status === 'Reject') {
       status = 'rejected';
     }
     subject = _.replace(subject, '{CONTENT_STATUS}', status);
@@ -219,9 +219,9 @@ export class NotificationService {
     return template;
   }
 
-  sendSmsNotificationForContent(nomination) {
+  sendSmsNotificationForContent(notificationData) {
     const mode = 'sms';
-    const template = this.getTemplateForContent(nomination.status, mode);
+    const template = this.getTemplateForContent(notificationData.status, mode);
     const templateRequest = {
       key: template,
       status: 'active'
@@ -235,13 +235,14 @@ export class NotificationService {
         const url = window.location.origin;
         let body = configuration.value;
         body = _.replace(body, '$url', url);
-        body = _.replace(body, '$contentName', nomination.content.name);
+        body = _.replace(body, '$contentName', notificationData.content.name);
+        body = _.replace(body, '$projectName', notificationData.program.name);
 
         const request = {
           mode: 'sms',
           subject: 'VidyaDaan',
           body: body,
-          recipientUserIds: [nomination.user_id]
+          recipientUserIds: [notificationData.user_id]
         };
         return this.sendNotification(request).subscribe();
       },
