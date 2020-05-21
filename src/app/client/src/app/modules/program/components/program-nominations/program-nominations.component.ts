@@ -109,7 +109,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.telemetryInteractObject = {};
     this.checkActiveTab();
     this.showUsersTab = this.isSourcingOrgAdmin();
-    //this.sourcingOrgUser = this.programsService.sourcingOrgReviewers || [];
     this.getSourcingUserCount();
     this.getPaginatedSourcingUserList(0);
     this.roles = [{name: 'REVIEWER'}];
@@ -437,6 +436,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           });
         }
       });
+      this.directionOrgUsers = 'desc';
       this.sortOrgUsers('selectedRole');
     }
   }
@@ -741,6 +741,7 @@ if ((this.currentPage + 5) >= (this.totalPages + 1)) {
   this.pageNumArray = _.range(this.currentPage, (this.currentPage + 5));
 }
 }
+
 getSourcingUserCount() {
   const OrgDetails = this.userService.userProfile.organisations[0];
   const filters = {
@@ -755,9 +756,9 @@ getSourcingUserCount() {
     this.userListDisablePaginationButtons();
 
   }, err => {
-    // this.toasterService.error(this.resourceService.messages.emsg.projects.m0003);
   });
 }
+
 getPaginatedSourcingUserList(offset) {
   const OrgDetails = this.userService.userProfile.organisations[0];
   const filters = {
@@ -770,9 +771,9 @@ getPaginatedSourcingUserList(offset) {
     this.userListTableLoader = false;
   }, err => {
     this.userListTableLoader = false;
-    // this.toasterService.error(this.resourceService.messages.emsg.projects.m0003);
   });
 }
+
 userListNavigatePage(pageNum) {
   switch (pageNum) {
     case 'first':
@@ -804,21 +805,21 @@ userListHandlePagination(pageNum) {
 userListDisablePaginationButtons() {
   this.disableUserListPagination = {};
   if (this.userListCurrentPage === 1) {
-  this.disableUserListPagination['first'] = true;
-  this.disableUserListPagination['prev'] = true;
+    this.disableUserListPagination['first'] = true;
+    this.disableUserListPagination['prev'] = true;
   }
   if (this.userListCurrentPage === this.userListTotalPages) {
-  this.disableUserListPagination['last'] = true;
-  this.disableUserListPagination['next'] = true;
+    this.disableUserListPagination['last'] = true;
+    this.disableUserListPagination['next'] = true;
   }
 }
 
 userListHandlePageNumArray() {
   if ((this.userListCurrentPage + 5) >= (this.userListTotalPages + 1)) {
-  const initValue = this.userListTotalPages - 4 <= 0 ? 1 : this.userListTotalPages - 4;
-  this.userListPageNumArray = _.range(initValue , (this.userListTotalPages + 1));
+    const initValue = this.userListTotalPages - 4 <= 0 ? 1 : this.userListTotalPages - 4;
+    this.userListPageNumArray = _.range(initValue , (this.userListTotalPages + 1));
   } else {
-  this.userListPageNumArray = _.range(this.userListCurrentPage, (this.userListCurrentPage + 5));
+      this.userListPageNumArray = _.range(this.userListCurrentPage, (this.userListCurrentPage + 5));
     }
   }
 }
