@@ -207,13 +207,13 @@ export class NotificationService {
     if (status === 'Published') {
       template = type + 'ContentPublished';
     }
-    if (status === 'Rejected') {
+    if (status === 'Request') {
       template = type + 'ContentRequestedChanges';
     }
     if (status === 'Accept') {
       template = type + 'ContentAccept';
     }
-    if (status === 'Rejected') {
+    if (status === 'Reject') {
       template = type + 'ContentReject';
     }
     return template;

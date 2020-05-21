@@ -672,7 +672,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     program: { name: this.programContext.name },
     status: status
   };
-  this.notificationService.onAfterContentStatusChange(notificationForContributor);
+  this.notificationService.onAfterContentStatusChange(notificationForContributor)
+  .subscribe((res) => {  });
   if (!_.isUndefined(this.sessionContext.nominationDetails.user_id)) {
     const notificationForPublisher = {
       user_id: this.sessionContext.nominationDetails.user_id,
@@ -681,7 +682,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
       program: { name: this.programContext.name },
       status: status
     };
-    this.notificationService.onAfterContentStatusChange(notificationForPublisher);
+    this.notificationService.onAfterContentStatusChange(notificationForPublisher)
+    .subscribe((res) => {  });
   }
   }
 
