@@ -45,7 +45,7 @@ export class RegistryService extends DataService {
                 _.filter(res1.result.User_Org, obj => { if (obj.userId !== userRegData.User.osid) { return obj } }),
                 (mapObj) => {
                   tempMapping.push(mapObj);
-                  return mapObj.userId.slice(2);
+                  return mapObj.userId;
                 }));
 
               if (userList && storedOrglist && userList.length === storedOrglist.length) {
@@ -215,7 +215,7 @@ export class RegistryService extends DataService {
         }
       }), switchMap((res4) => {
         if (res4 && res4.result.User_Org.length) {
-          const orgList = res4.result.User_Org.map((value) => value.orgId.slice(2));
+          const orgList = res4.result.User_Org.map((value) => value.orgId);
           option.data['request'] = {
             entityType: ['Org'],
             filters: {

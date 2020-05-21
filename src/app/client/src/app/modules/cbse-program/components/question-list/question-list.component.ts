@@ -178,7 +178,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     const notificationForContributor = {
       user_id: this.resourceDetails.createdBy,
       content: { name: this.resourceDetails.name },
-      org: { name:  this.resourceDetails.orgName},
+      org: { name:  this.sessionContext.nominationDetails.orgData.name},
       program: { name: this.programContext.name },
       status: status
     };
@@ -187,7 +187,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       const notificationForPublisher = {
         user_id: this.sessionContext.nominationDetails.user_id,
         content: { name: this.resourceDetails.name },
-        org: { name:  this.resourceDetails.orgName},
+        org: { name:  this.sessionContext.nominationDetails.orgData.name},
         program: { name: this.programContext.name },
         status: status
       };

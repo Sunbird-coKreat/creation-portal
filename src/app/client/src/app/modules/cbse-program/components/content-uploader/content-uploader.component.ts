@@ -668,7 +668,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
   const notificationForContributor = {
     user_id: this.contentMetaData.createdBy,
     content: { name: this.contentMetaData.name },
-    org: { name:  this.contentMetaData.orgName},
+    org: { name:  this.sessionContext.nominationDetails.orgData.name},
     program: { name: this.programContext.name },
     status: status
   };
@@ -677,7 +677,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
     const notificationForPublisher = {
       user_id: this.sessionContext.nominationDetails.user_id,
       content: { name: this.contentMetaData.name },
-      org: { name:  this.contentMetaData.orgName},
+      org: { name:  this.sessionContext.nominationDetails.orgData.name},
       program: { name: this.programContext.name },
       status: status
     };
