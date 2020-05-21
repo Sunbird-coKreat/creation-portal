@@ -145,7 +145,7 @@ export class NotificationService {
       }));
   }
 
-  onAfterContentStatusChange(nomination, status) {
+  onAfterContentStatusChange(nomination) {
     const requestFilter = { identifier : nomination.user_id };
     return this.programsService.getOrgUsersDetails(requestFilter)
     .pipe(
