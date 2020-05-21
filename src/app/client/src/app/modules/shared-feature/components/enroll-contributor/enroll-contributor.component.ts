@@ -20,7 +20,6 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
   public unsubscribe = new Subject<void>();
   public enrollAsOrg = false;
   public enrollDetails: any = {};
-  public enrolledDate: any;
   @ViewChild('modal') modal;
   frameworkdetails;
   formIsInvalid = false;
@@ -48,8 +47,6 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.initializeFormFields();
-    this.enrolledDate = new Date();
-    this.enrolledDate = this.datePipe.transform(this.enrolledDate, 'yyyy-MM-dd');
     this.telemetryInteractCdata = [];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
@@ -153,7 +150,7 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
         firstName: this.userService.userProfile.firstName,
         lastName: this.userService.userProfile.lastName || '',
         userId: this.userService.userProfile.identifier,
-        enrolledDate: this.datePipe.transform(new Date(), 'yyyy-MM-dd'),
+        enrolledDate: new Date().toISOString(),
         channel: this.userService.userProfile.rootOrgId
       }
     };
