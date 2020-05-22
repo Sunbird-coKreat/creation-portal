@@ -84,4 +84,51 @@ export class TextbookListComponent implements OnInit {
   viewContribution(collection) {
     this.selectedCollection.emit(collection);
   }
+
+  downloadCSV() {
+    const req = {
+      url: `program/v1/list/download`,
+      data: {
+          'request': {
+              'filters': {
+                  program_id: [this.programId]
+          }
+        }
+      }
+    };
+    return this.programsService.post(req).subscribe((res) => {
+      if (res.result && res.result.tableData && res.result.tableData.length) {
+        try {
+        const headers = [
+          this.resourceService.frmelmnts.lbl.textbookName,
+          this.resourceService.frmelmnts.lbl.profile.Medium,
+          this.resourceService.frmelmnts.lbl.profile.Classes,
+          this.resourceService.frmelmnts.lbl.profile.Subjects,
+          this.resourceService.frmelmnts.lbl.chapterCount,
+          this.resourceService.frmelmnts.lbl.nominationReceived,
+          this.resourceService.frmelmnts.lbl.samplesRecieved,
+          this.resourceService.frmelmnts.lbl.nominationAccepted,
+          this.resourceService.frmelmnts.lbl.contributionReceived,
+          this.resourceService.frmelmnts.lbl.contributionAccepted,
+          this.resourceService.frmelmnts.lbl.contributionRejected,
+          this.resourceService.frmelmnts.lbl.contributionPending
+        ];
+        const tableData = _.get(_.find(res.result.tableData, {program_id: this.programId}), 'values');
+        const csvDownloadConfig = {
+          filename: this.programDetails.name.trim(),
+          tableData: tableData || [],
+          headers: headers,
+          showTitle: false
+        };
+          this.programsService.downloadReport(csvDownloadConfig);
+        } catch (err) {
+          this.toasterService.error(this.resourceService.messages.emsg.projects.m0004);
+        }
+      } else {
+        this.toasterService.error(this.resourceService.messages.emsg.projects.m0004);
+      }
+    }, (err) => {
+      this.toasterService.error(this.resourceService.messages.emsg.projects.m0004);
+    });
+  }
 }
