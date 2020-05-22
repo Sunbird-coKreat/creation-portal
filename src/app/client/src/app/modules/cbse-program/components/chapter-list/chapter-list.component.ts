@@ -105,7 +105,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.collection = _.get(this.chapterListComponentInput, 'collection');
     this.actions = _.get(this.chapterListComponentInput, 'programContext.config.actions');
     this.sharedContext = _.get(this.chapterListComponentInput, 'programContext.config.sharedContext');
-    const orgId = _.get(this.userService, 'userProfile.userRegData.User_Org.orgId');
     this.myOrgId = (this.userService.userRegistryData
       && this.userService.userProfile.userRegData
       && this.userService.userProfile.userRegData.User_Org
@@ -791,10 +790,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     return !!(this.sessionContext &&
       this.sessionContext.nominationDetails &&
       _.includes(['Pending', 'Initiated'], this.sessionContext.nominationDetails.status));
-  }
-
-  isIndividualContributor() {
-    return _.isEmpty(_.get(this.userService, 'userProfile.userRegData.Org'));
   }
 
   isContributingOrgAdmin() {
