@@ -274,16 +274,16 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   getFolderLevelCount(collections) {
-    let status = this.sampleContent ? 'Review' : undefined;
+    let status = this.sampleContent ? ['Review', 'Draft'] : [];
     let createdBy;
     if (this.sampleContent === false && this.isSourcingOrgReviewer()) {
-      status = 'Live';
+      status = ['Live'];
     }
     if (this.isContributingOrgContributor()) {
       createdBy = this.currentUserID;
     }
     if (this.isContributingOrgReviewer()) {
-      status = 'Review';
+      status = ['Review'];
     }
     if (this.isNominationByOrg()) {
       _.forEach(collections, collection => {
@@ -737,7 +737,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
 
-  getContentCountPerFolder(collection, contentStatus?: string, onlySample?: boolean, organisationId?: string, createdBy?: string) {
+  getContentCountPerFolder(collection, contentStatus?: string[], onlySample?: boolean, organisationId?: string, createdBy?: string) {
     const self = this;
     collection.totalLeaf = 0;
     _.each(collection.children, child => {
@@ -752,12 +752,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   filterContentsForCount (contents, status?, onlySample?, organisationId?, createdBy?) {
     const filter = {
-      ...(status && {status}),
       ...(onlySample && {sampleContent: true}),
       ...(!onlySample && {sampleContent: null}),
       ...(createdBy && {createdBy}),
       ...(organisationId && {organisationId}),
     };
+    if (status && status.length > 0) {
+      contents = _.filter(contents, leaf => _.includes(status, leaf.status));
+    }
     const leaves = _.filter(contents, filter);
     return leaves.length;
   }
