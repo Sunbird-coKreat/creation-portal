@@ -39,6 +39,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public role: any;
   public templateDetails: any;
   public actions: any;
+  public notify;
   public questionList: Array<any> = [];
   public selectedQuestionId: any;
   public questionReadApiDetails: any = {};
@@ -102,6 +103,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getLicences();
     this.preprareTelemetryEvents();
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
+
+    this.notify = this.helperService.getNotification().subscribe((action) => {
+      this.contentStatusNotify(action);
+    });
   }
 
   ngAfterViewInit() {
@@ -847,6 +852,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.sessionContext.questionList = [];
+    this.notify.unsubscribe();
   }
 
   handleBack() {

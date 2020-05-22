@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef,
-  AfterViewInit, ChangeDetectorRef } from '@angular/core';
+  AfterViewInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FineUploader } from 'fine-uploader';
 import { ToasterService, ConfigService, ResourceService, NavigationHelperService } from '@sunbird/shared';
 import { PublicDataService, UserService, ActionService, PlayerService, FrameworkService, NotificationService } from '@sunbird/core';
@@ -20,7 +20,7 @@ import { UUID } from 'angular2-uuid';
   templateUrl: './content-uploader.component.html',
   styleUrls: ['./content-uploader.component.scss']
 })
-export class ContentUploaderComponent implements OnInit, AfterViewInit {
+export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('modal') modal;
   @ViewChild('fineUploaderUI') fineUploaderUI: ElementRef;
   @ViewChild('qq-upload-actions') actionButtons: ElementRef;
@@ -43,6 +43,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
   public showPreview = false;
   public resourceStatus;
   public resourceStatusText;
+  public notify;
   public config: any;
   showForm;
   uploader;
@@ -98,6 +99,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
       this.cd.detectChanges();
       this.getUploadedContentMeta(_.get(this.contentUploadComponentInput, 'contentId'));
     }
+
+    this.notify = this.helperService.getNotification().subscribe((action) => {
+      this.contentStatusNotify(action);
+    });
+
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.contentUploadComponentInput.programContext.program_id, 'Program');
@@ -717,4 +723,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit {
   attachContentToTextbook(action) {
     this.helperService.attachContentToTextbook(action, this.sessionContext.collection, this.contentMetaData.identifier);
   }
+
+ngOnDestroy() {
+  this.notify.unsubscribe();
+}
 }
