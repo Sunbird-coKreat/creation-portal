@@ -15,6 +15,10 @@ export class HelpPageComponent implements OnInit, AfterViewInit {
   public telemetryImpression: IImpressionEventInput;
   @ViewChild('video1') video1: ElementRef;
   @ViewChild('video2') video2: ElementRef;
+  @ViewChild('video3') video3: ElementRef;
+  @ViewChild('video4') video4: ElementRef;
+  @ViewChild('video5') video5: ElementRef;
+  @ViewChild('video6') video6: ElementRef;
   constructor(public userService: UserService, private configService: ConfigService, private activatedRoute: ActivatedRoute,
               public router: Router, private navigationHelperService: NavigationHelperService) { }
 
@@ -45,11 +49,12 @@ export class HelpPageComponent implements OnInit, AfterViewInit {
     });
   }
 
-  pauseVideo(videoId) {
-    if (videoId === 'video1') {
-      this.video1.nativeElement.pause();
-    } else {
-      this.video2.nativeElement.pause();
-    }
+  pauseVideo() {
+    this.video1.nativeElement.pause();
+    this.video2.nativeElement.pause();
+    this.video3.nativeElement.pause();
+    this.video4.nativeElement.pause();
+    this.video5.nativeElement.pause();
+    this.video6.nativeElement.pause();
   }
 }
