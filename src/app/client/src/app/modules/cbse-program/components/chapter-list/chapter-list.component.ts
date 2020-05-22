@@ -274,14 +274,25 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   getFolderLevelCount(collections) {
-    const status = this.sampleContent ? 'Review' : undefined;
+    let status = this.sampleContent ? 'Review' : undefined;
+    let createdBy;
+    if (this.sampleContent === false && this.isSourcingOrgReviewer()) {
+      status = 'Live';
+    }
+    if (this.isContributingOrgContributor()) {
+      createdBy = this.currentUserID;
+    }
+    if (this.isContributingOrgReviewer()) {
+      status = 'Review';
+    }
     if (this.isNominationByOrg()) {
       _.forEach(collections, collection => {
-        this.getContentCountPerFolder(collection , status , this.sampleContent, this.getNominationId('org'), undefined);
+        this.getContentCountPerFolder(collection , status , this.sampleContent, this.getNominationId('org'), createdBy);
       });
     } else {
       _.forEach(collections, collection => {
-        this.getContentCountPerFolder(collection , status , this.sampleContent, undefined, this.getNominationId('individual'));
+        createdBy = this.getNominationId('individual');
+        this.getContentCountPerFolder(collection , status , this.sampleContent, undefined, createdBy);
       });
     }
   }
@@ -747,15 +758,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       ...(createdBy && {createdBy}),
       ...(organisationId && {organisationId}),
     };
-    if (onlySample === false && this.isSourcingOrgReviewer()) {
-      filter.status = 'Live';
-    }
-    if (this.isContributingOrgContributor()) {
-      filter.createdBy = this.currentUserID;
-    }
-    if (this.isContributingOrgReviewer()) {
-      filter.status = 'Review';
-    }
     const leaves = _.filter(contents, filter);
     return leaves.length;
   }
