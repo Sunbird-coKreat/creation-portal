@@ -20,9 +20,6 @@
       "@sunbird/announcement": [
         "app/modules/announcement"
       ],
-      "@sunbird/notes": [
-        "app/modules/notes"
-      ],
       "@sunbird/admin": [
         "app/modules/admin"
       ],
@@ -49,9 +46,6 @@
       ],
       "@sunbird/telemetry": [
         "app/modules/telemetry"
-      ],
-      "@sunbird/badge": [
-        "app/modules/badging"
       ],
       "@sunbird/shared-feature": [
         "app/modules/shared-feature"
