@@ -121,7 +121,7 @@ export class TextbookListComponent implements OnInit {
           headers: headers,
           showTitle: false
         };
-          this.programsService.downloadReport(csvDownloadConfig);
+          this.programsService.generateCSV(csvDownloadConfig);
         } catch (err) {
           this.toasterService.error(this.resourceService.messages.emsg.projects.m0004);
         }

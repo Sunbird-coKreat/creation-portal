@@ -6,7 +6,8 @@ import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ISessionContext, InitialState } from '../../../cbse-program/interfaces';
 import { CollectionHierarchyService } from '../../../cbse-program/services/collection-hierarchy/collection-hierarchy.service';
 import * as _ from 'lodash-es';
-import { tap, first } from 'rxjs/operators';
+import { tap, first, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import * as moment from 'moment';
 import { ProgramStageService } from '../../services/program-stage/program-stage.service';
 import { ChapterListComponent } from '../../../cbse-program/components/chapter-list/chapter-list.component';
@@ -22,10 +23,12 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public programId: string;
   public programDetails: any;
   public programContentTypes: string;
+  public unsubscribe = new Subject<void>();
   nominations = [];
   pageNominations = [];
   collectionsCount;
   tempNominations;
+  public downloadInProgress = false;
   filterApplied: any;
   public selectedStatus = 'All';
   showNominationsComponent = false;
@@ -150,6 +153,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   ngOnDestroy() {
     this.stageSubscription.unsubscribe();
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   onStatusChange(status) {
@@ -574,13 +579,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   downloadNominationList() {
-    const tableData = _.filter(_.cloneDeep(this.tempNominations), (nomination) => {
-      nomination.createdon = this.datePipe.transform(nomination.createdon, 'LLLL d, yyyy');
-      delete nomination.nominationData;
-      delete nomination.user_id;
-      delete nomination.organisation_id;
-      return nomination;
-    });
+    this.downloadInProgress = true;
     const headers = [
       this.resourceService.frmelmnts.lbl.projectName,
       this.resourceService.frmelmnts.lbl.contributorName,
@@ -590,14 +589,34 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.resourceService.frmelmnts.lbl.nominationDate,
       this.resourceService.frmelmnts.lbl.status,
     ];
-    const csvDownloadConfig = {
+    const csvDownloadConfig: any = {
       filename: this.programDetails.name.trim(),
-      tableData: tableData,
       headers: headers,
       showTitle: false
     };
-    this.programsService.downloadReport(csvDownloadConfig);
-  }
+    const nominationList$ = this.programsService.downloadReport(this.programId, this.programDetails.name.trim());
+    nominationList$
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(
+      (response) => {
+        const csvData = _.get(response, 'result.stats');
+        if (csvData && !_.isEmpty(csvData)) {
+          csvDownloadConfig['tableData'] = csvData;
+          this.programsService.generateCSV(csvDownloadConfig);
+        } else {
+          this.toasterService.error('Unable to download list. Please try again.');
+        }
+      },
+      (error) => {
+        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+        this.toasterService.error(errorMes || 'Fetching framework details failed');
+        this.downloadInProgress = false;
+      },
+      () => {
+        this.downloadInProgress = false;
+      }
+    );
+}
 
 
 getPaginatedNominations(offset) {
@@ -722,12 +741,12 @@ disablePaginationButtons() {
 }
 }
 
-handlePageNumArray() {
-if ((this.currentPage + 5) >= (this.totalPages + 1)) {
-  const initValue = this.totalPages - 4 <= 0 ? 1 : this.totalPages - 4;
-  this.pageNumArray = _.range(initValue , (this.totalPages + 1));
-} else {
-  this.pageNumArray = _.range(this.currentPage, (this.currentPage + 5));
-}
-}
+  handlePageNumArray() {
+    if ((this.currentPage + 5) >= (this.totalPages + 1)) {
+      const initValue = this.totalPages - 4 <= 0 ? 1 : this.totalPages - 4;
+      this.pageNumArray = _.range(initValue , (this.totalPages + 1));
+    } else {
+      this.pageNumArray = _.range(this.currentPage, (this.currentPage + 5));
+    }
+  }
 }
