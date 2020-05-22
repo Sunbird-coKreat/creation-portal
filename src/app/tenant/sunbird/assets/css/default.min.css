@@ -388,27 +388,24 @@ small {
         flex: 0 0 100%;
         max-width: 100%
     }
-}
-
-@media(min-width:768px) {
-    .container {
-        max-width: 720px
+    .modal-dialog {
+        position: relative;
+        width: auto;
+        margin: .5rem;
+        pointer-events: none
     }
-    .col-md-4 {
-        -ms-flex: 0 0 33.333333%;
-        flex: 0 0 33.333333%;
-        max-width: 33.333333%
+    .modal-dialog-centered {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-align: center;
+        align-items: center;
+        min-height: calc(100% - (.5rem * 2))
     }
-    .col-md-6 {
-        -ms-flex: 0 0 50%;
-        flex: 0 0 50%;
-        max-width: 50%
-    }
-   
-    .col-md-12 {
-        -ms-flex: 0 0 100%;
-        flex: 0 0 100%;
-        max-width: 100%
+    
+    .modal-dialog-centered::before {
+        display: block;
+        height: calc(100vh - (.5rem * 2));
+        content: ""
     }
 }
 
@@ -444,6 +441,27 @@ small {
     }
 }
 
+@media(min-width:768px) {
+    .container {
+        max-width: 720px
+    }
+    .col-md-4 {
+        -ms-flex: 0 0 33.333333%;
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%
+    }
+    .col-md-6 {
+        -ms-flex: 0 0 50%;
+        flex: 0 0 50%;
+        max-width: 50%
+    }
+   
+    .col-md-12 {
+        -ms-flex: 0 0 100%;
+        flex: 0 0 100%;
+        max-width: 100%
+    }
+}
 
 @media(min-width:992px) {
     .modal-lg {
@@ -622,13 +640,6 @@ button.close {
     outline: 0
 }
 
-.modal-dialog {
-    position: relative;
-    width: auto;
-    margin: .5rem;
-    pointer-events: none
-}
-
 .modal.fade .modal-dialog {
     transition: -webkit-transform .3s ease-out;
     transition: transform .3s ease-out;
@@ -646,20 +657,6 @@ button.close {
 .modal.show .modal-dialog {
     -webkit-transform: translate(0, 0);
     transform: translate(0, 0)
-}
-
-.modal-dialog-centered {
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-align: center;
-    align-items: center;
-    min-height: calc(100% - (.5rem * 2))
-}
-
-.modal-dialog-centered::before {
-    display: block;
-    height: calc(100vh - (.5rem * 2));
-    content: ""
 }
 
 .modal-content {
@@ -1398,7 +1395,6 @@ h3, label, ul li, a, p, button {
     margin-right: auto;
     margin-left: auto
 }
-
 
 @media only screen and (max-width:1250px)and (min-width:1024px) {
     .intro-section h3 {
