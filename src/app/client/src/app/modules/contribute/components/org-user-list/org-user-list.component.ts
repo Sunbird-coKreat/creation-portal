@@ -28,13 +28,15 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public direction = 'asc';
   public sortColumn = '';
   public totalPages: number;
-  public usersPerPage = 3;
+  public usersPerPage = 200;
   public currentPage: number;
   public totalUsers: number;
-  public allUsersList: any;
+  public allUsersList: any = [];
   public tableLoader = false;
   public disablePagination = {};
   public pageNumArray: Array<number>;
+  public  offset = 0;
+  public limit = 200;
   public roles = [{ name: 'User', value: 'user'}, { name: 'Admin', value: 'admin'}];
 
   constructor(private toasterService: ToasterService, private configService: ConfigService,
@@ -82,14 +84,20 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   }
 
   getContributionOrgUsers() {
-    this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
-      this.allUsersList = orgUsers;
-      this.currentPage = 1;
-      this.totalUsers = this.allUsersList.length;
-      this.totalPages = Math.ceil(this.totalUsers / this.usersPerPage);
-      this.handlePageNumArray();
-      this.disablePaginationButtons();
-      this.getPaginatedUsers(0);
+    this.registryService.getcontributingOrgUsersDetails(this.offset, this.limit).then((orgUsers: any) => {
+      if (orgUsers && orgUsers.length > 0) {
+        this.offset = this.offset + this.limit;
+        this.limit = this.limit + 200;
+        this.allUsersList = _.concat(this.allUsersList, orgUsers);
+        this.getContributionOrgUsers();
+      } else {
+        this.currentPage = 1;
+        this.totalUsers = this.allUsersList.length;
+        this.totalPages = Math.ceil(this.totalUsers / this.usersPerPage);
+        this.getPaginatedUsers(0);
+        this.handlePageNumArray();
+        this.disablePaginationButtons();
+      }
     });
   }
 

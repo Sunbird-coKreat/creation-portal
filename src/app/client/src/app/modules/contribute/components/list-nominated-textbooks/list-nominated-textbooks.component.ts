@@ -76,6 +76,9 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public disablePagination = {};
   public pageNumArray: Array<number>;
   public allContributorOrgUser: any = [];
+  public allUsersList: any = [];
+  public  offset = 0;
+  public limit = 200;
 
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private configService: ConfigService, private publicDataService: PublicDataService,
@@ -379,29 +382,36 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   getContributionOrgUsers() {
       this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
       this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
-      this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
-        if (!_.isEmpty(orgUsers)) {
-          orgUsers = _.filter(orgUsers, {"selectedRole": "user"});
-          _.forEach(orgUsers, r => {
-              r.projectselectedRole = 'Select';
-            if (this.nominationDetails.rolemapping) {
-              _.find(this.nominationDetails.rolemapping, (users, role) => {
-                if (_.includes(users, r.identifier)) {
-                  r.projectselectedRole = role;
-                }
-              });
-            }
-            this.allContributorOrgUser.push(r);
-          });
-          this.currentPage = 1;
-          this.totalUsers = this.allContributorOrgUser.length;
-          this.totalPages = Math.ceil(this.totalUsers / this.usersPerPage);
-          this.handlePageNumArray();
-          this.disablePaginationButtons();
-          this.getPaginatedUsers(0);
-          this.showLoader = false;
+      this.registryService.getcontributingOrgUsersDetails(this.offset, this.limit).then((orgUsers: any) => {
+        if (orgUsers && orgUsers.length > 0) {
+          this.offset = this.offset + this.limit;
+          this.limit = this.limit + 200;
+          this.allUsersList = _.concat(this.allUsersList, orgUsers);
+          this.getContributionOrgUsers();
         } else {
-          this.showLoader = false;
+          if (!_.isEmpty(this.allUsersList)) {
+            this.allUsersList = _.filter(this.allUsersList, {"selectedRole": "user"});
+            _.forEach(this.allUsersList, r => {
+                r.projectselectedRole = 'Select';
+              if (this.nominationDetails.rolemapping) {
+                _.find(this.nominationDetails.rolemapping, (users, role) => {
+                  if (_.includes(users, r.identifier)) {
+                    r.projectselectedRole = role;
+                  }
+                });
+              }
+              this.allContributorOrgUser.push(r);
+            });
+            this.currentPage = 1;
+            this.totalUsers = this.allContributorOrgUser.length;
+            this.totalPages = Math.ceil(this.totalUsers / this.usersPerPage);
+            this.handlePageNumArray();
+            this.disablePaginationButtons();
+            this.getPaginatedUsers(0);
+            this.showLoader = false;
+          } else {
+            this.showLoader = false;
+          }
         }
       });
   }

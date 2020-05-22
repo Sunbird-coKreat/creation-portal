@@ -30,16 +30,15 @@ export class RegistryService extends DataService {
       this.userService.userProfile.userRegData.User_Org && this.userService.userProfile.userRegData.Org);
   }
 
-  public getcontributingOrgUsersDetails() {
+  public getcontributingOrgUsersDetails(offset?, limit?) {
     const userRegData = _.get(this.userService, 'userProfile.userRegData');
     const orgId = userRegData.User_Org.orgId;
     const storedOrglist = this.cacheService.get('orgUsersDetails')
     return new Promise((resolve, reject) => {
       if (this.checkIfUserBelongsToOrg()) {
-        return this.getContributionOrgUsers(orgId).subscribe(
+        return this.getContributionOrgUsers(orgId, offset, limit).subscribe(
           (res1) => {
             const tempMapping = [];
-
             if (res1.result.User_Org.length) {
               const userList = _.uniq(_.map(
                 _.filter(res1.result.User_Org, obj => { if (obj.userId !== userRegData.User.osid) { return obj } }),
@@ -47,7 +46,6 @@ export class RegistryService extends DataService {
                   tempMapping.push(mapObj);
                   return mapObj.userId;
                 }));
-
               if (userList && storedOrglist && userList.length === storedOrglist.length) {
                 return resolve(this.cacheService.get('orgUsersDetails'));
               } else {
@@ -61,7 +59,6 @@ export class RegistryService extends DataService {
                         tempUser.push(obj);
                         return obj.userId;
                       });
-
                       const req = {
                         url: this.config.urlConFig.URLS.ADMIN.USER_SEARCH,
                         data: {
@@ -126,7 +123,7 @@ export class RegistryService extends DataService {
     return this.contentService.post(option);
   }
 
-  public getContributionOrgUsers(orgId): Observable<ServerResponse> {
+  public getContributionOrgUsers(orgId,offset?, limit?): Observable<ServerResponse> {
     const req = {
       url: `reg/search`,
       data: {
@@ -146,6 +143,12 @@ export class RegistryService extends DataService {
         }
       }
     };
+    if (!_.isUndefined(limit)) {
+      req.data.request['limit'] = limit;
+    }
+    if (!_.isUndefined(offset)) {
+      req.data.request['offset'] = offset;
+    }
     return this.contentService.post(req);
   }
   public getUserDetails(userId): Observable<ServerResponse> {
