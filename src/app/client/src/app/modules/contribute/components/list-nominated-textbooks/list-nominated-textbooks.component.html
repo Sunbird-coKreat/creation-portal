@@ -262,10 +262,10 @@
 					  <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
 						<thead class="sb-table-header sb-table-thead-gray">
 						  <tr>
-							<th class="w-10 cursor-pointer sb-sorting" (click)="sortOrgUsers('fullName')">
+							<th class="w-10 cursor-pointer sb-sorting" (click)="sortOrgUsers('name')">
 								{{resourceService.frmelmnts.lbl.username}} &nbsp;&nbsp;
-								<i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || sortColumnOrgUsers != 'fullName' "></i>
-								<span  *ngIf="sortColumnOrgUsers == 'fullName'" class="d-inline-block">
+								<i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || sortColumnOrgUsers != 'name' "></i>
+								<span  *ngIf="sortColumnOrgUsers == 'name'" class="d-inline-block">
 									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'asc'}"></i>
 									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
 								</span>

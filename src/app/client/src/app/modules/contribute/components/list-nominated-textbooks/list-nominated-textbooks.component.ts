@@ -68,7 +68,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public sortColumnOrgUsers = '';
   public showLoader = true;
   public totalPages: number;
-  public usersPerPage = 4;
+  public usersPerPage = 200;
   public currentPage: number;
   public totalUsers: number;
   public userCount: any;
