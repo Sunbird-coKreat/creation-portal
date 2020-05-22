@@ -482,7 +482,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     const contributingOrgAdmin = this.isContributingOrgAdmin();
     if (this.isSourcingOrgReviewer() && this.sourcingOrgReviewer) {
       if (reviewerViewRole && content.sampleContent === true
-        && this.getNominatedUserId() === content.createdBy && content.status === 'Review') {
+        && this.getNominatedUserId() === content.createdBy) {
           return true;
         } else if (reviewerViewRole && content.status === 'Live') {
           if (content.contentType !== 'TextBook' && content.contentType !== 'TextBookUnit' &&

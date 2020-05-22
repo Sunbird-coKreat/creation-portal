@@ -260,7 +260,7 @@ export class CollectionHierarchyService {
 
     if (!_.isUndefined(sampleContentCheck)) {
       option.data.request.filters['sampleContent'] = sampleContentCheck;
-      option.data.request.filters['status'] = ['Review'];
+      option.data.request.filters['status'] = ['Draft', 'Review'];
     } else {
       option.data.request['not_exists'] = ['sampleContent'];
       option.data.request['limit'] = 10000;
