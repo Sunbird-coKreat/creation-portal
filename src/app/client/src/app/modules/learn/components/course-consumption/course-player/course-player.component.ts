@@ -9,7 +9,6 @@ import {
   ToasterService, ResourceService, ExternalUrlPreviewService, ContentUtilsServiceService
 } from '@sunbird/shared';
 import { CourseConsumptionService, CourseBatchService, CourseProgressService, AssessmentScoreService } from './../../../services';
-import { INoteData } from '@sunbird/notes';
 import { IImpressionEventInput, IEndEventInput, IStartEventInput, IInteractEventObject, IInteractEventEdata } from '@sunbird/telemetry';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import * as TreeModel from 'tree-model';
@@ -57,7 +56,6 @@ export class CoursePlayerComponent implements OnInit, OnDestroy {
 
   public readMore = false;
 
-  public createNoteData: INoteData;
 
   public curriculum = [];
 
@@ -407,9 +405,7 @@ export class CoursePlayerComponent implements OnInit, OnDestroy {
       }, 100);
     }
   }
-  public createEventEmitter(data) {
-    this.createNoteData = data;
-  }
+
   showContentCreditsPopup() {
     this.showContentCreditsModal = true;
   }

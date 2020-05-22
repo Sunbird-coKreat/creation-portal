@@ -35,7 +35,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   public collectionList: any = [];
   public tempSortCollectionList: any = [];
   public direction = 'asc';
-  public sortColumn = '';
+  public sortColumn = 'name';
   public mediums;
   public showError = false;
   public classes;
@@ -234,6 +234,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
               this.tempSortCollectionList = this.collectionList;
               this.selectedCollectionIds = _.uniq(this.selectedCollectionIds);
               this.toggleNominationButton();
+              this.sortCollection(this.sortColumn);
               this.showLoader = false;
             },
             (error) => {
@@ -248,6 +249,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
           this.selectedCollectionIds = _.map(_.filter(this.collectionList, c => c.totalSampleContent > 0), 'identifier');
           this.tempSortCollectionList = this.collectionList;
           this.selectedCollectionIds = _.uniq(this.selectedCollectionIds);
+          this.sortCollection(this.sortColumn);
           this.showLoader = false;
         }
       } else {
