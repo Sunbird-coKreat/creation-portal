@@ -204,7 +204,7 @@ export class ProgramsService extends DataService implements CanActivate {
                 firstName: this.userService.userProfile.firstName,
                 lastName: this.userService.userProfile.lastName || '',
                 userId: this.userService.userProfile.identifier,
-                enrolledDate: this.datePipe.transform(new Date(), 'yyyy-MM-dd'),
+                enrolledDate: new Date().toISOString(),
                 board : contibutorOrg.board,
                 medium: contibutorOrg.medium,
                 gradeLevel: contibutorOrg.gradeLevel,
@@ -343,7 +343,7 @@ export class ProgramsService extends DataService implements CanActivate {
                     firstName: user.firstName,
                     lastName: user.lastName || '',
                     userId: user.identifier,
-                    enrolledDate: this.datePipe.transform(new Date(), 'yyyy-MM-dd'),
+                    enrolledDate: new Date().toISOString(),
                     channel: user.rootOrgId
                   }
                 };
@@ -428,7 +428,7 @@ export class ProgramsService extends DataService implements CanActivate {
             firstName: this.userService.userProfile.firstName,
             lastName: this.userService.userProfile.lastName || '',
             userId: this.userService.userProfile.identifier,
-            enrolledDate: this.datePipe.transform(new Date(), 'yyyy-MM-dd'),
+            enrolledDate: new Date().toISOString(),
             channel: this.userService.userProfile.rootOrgId
           }
         };
