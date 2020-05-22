@@ -45,7 +45,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   public roles;
   public grades: any;
   public direction = 'asc';
-  public sortColumn = '';
+  public sortColumn = 'name';
   public state: InitialState = {
     stages: []
   };
@@ -230,10 +230,12 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
               // tslint:disable-next-line:max-line-length
               this.contributorTextbooks = this.collectionHierarchyService.getIndividualCollectionStatus(contentStatusCounts, contributorTextbooks);
               this.tempSortTextbooks = this.contributorTextbooks;
+              this.sortCollection(this.sortColumn);
               this.showLoader = false;
             } else {
               this.contributorTextbooks = this.collectionHierarchyService.getIndividualCollectionStatus([], contributorTextbooks);
               this.tempSortTextbooks = this.contributorTextbooks;
+              this.sortCollection(this.sortColumn);
               this.showLoader = false;
             }
           },
