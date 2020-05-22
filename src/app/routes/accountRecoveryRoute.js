@@ -9,12 +9,11 @@ const logger = require('sb_logger_util_v2');
 
 module.exports = (app) => {
 
-  app.post('/learner/user/v1/fuzzy/search', proxy(envHelper.LEARNER_URL, {
+  app.post('/learner/user/v1/fuzzy/search', proxy(envHelper.SUNBIRD_PORTAL_URL, {
     proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
     proxyReqPathResolver: (req) => {
       logger.info({msg: '/learner/user/v1/fuzzy/search called'});
-      return require('url').parse(envHelper.LEARNER_URL.replace('/api/', '')+ req.originalUrl).path
-      // return '/private/user/v1/search';
+      return require('url').parse(envHelper.SUNBIRD_PORTAL_URL.replace('/api/', '')+ req.originalUrl).path
     }
   }))
 
@@ -24,7 +23,6 @@ module.exports = (app) => {
       proxyReqPathResolver: (req) => {
         logger.info({msg: '/learner/user/v1/password/reset called'});
         return require('url').parse(envHelper.LEARNER_URL.replace('/api/', '')+ req.originalUrl).path
-        // return '/private/user/v1/password/reset'; // /private/user/v1/reset/password
       }
   }))
 
