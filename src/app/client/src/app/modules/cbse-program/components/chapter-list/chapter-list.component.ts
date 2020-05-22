@@ -274,13 +274,25 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   getFolderLevelCount(collections) {
+    let status = this.sampleContent ? 'Review' : undefined;
+    let createdBy;
+    if (this.sampleContent === false && this.isSourcingOrgReviewer()) {
+      status = 'Live';
+    }
+    if (this.isContributingOrgContributor()) {
+      createdBy = this.currentUserID;
+    }
+    if (this.isContributingOrgReviewer()) {
+      status = 'Review';
+    }
     if (this.isNominationByOrg()) {
       _.forEach(collections, collection => {
-        this.getContentCountPerFolder(collection , undefined , true, this.getNominationId('org'), undefined);
+        this.getContentCountPerFolder(collection , status , this.sampleContent, this.getNominationId('org'), createdBy);
       });
     } else {
       _.forEach(collections, collection => {
-        this.getContentCountPerFolder(collection , undefined , true, undefined, this.getNominationId('individual'));
+        createdBy = this.getNominationId('individual');
+        this.getContentCountPerFolder(collection , status , this.sampleContent, undefined, createdBy);
       });
     }
   }
@@ -467,6 +479,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   shouldContentBeVisible(content) {
     const creatorViewRole = this.actions.showCreatorView.roles.includes(this.sessionContext.currentRoleId);
     const reviewerViewRole = this.actions.showReviewerView.roles.includes(this.sessionContext.currentRoleId);
+    const contributingOrgAdmin = this.isContributingOrgAdmin();
     if (this.isSourcingOrgReviewer() && this.sourcingOrgReviewer) {
       if (reviewerViewRole && content.sampleContent === true
         && this.getNominatedUserId() === content.createdBy) {
@@ -489,6 +502,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       && content.organisationId === this.myOrgId) {
         return true;
       } else if (creatorViewRole && this.currentUserID === content.createdBy) {
+        return true;
+      } else if (contributingOrgAdmin && content.organisationId === this.myOrgId) {
         return true;
       }
     }
@@ -739,6 +754,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     const filter = {
       ...(status && {status}),
       ...(onlySample && {sampleContent: true}),
+      ...(!onlySample && {sampleContent: null}),
       ...(createdBy && {createdBy}),
       ...(organisationId && {organisationId}),
     };
@@ -776,5 +792,20 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     return !!(this.sessionContext &&
       this.sessionContext.nominationDetails &&
       _.includes(['Pending', 'Initiated'], this.sessionContext.nominationDetails.status));
+  }
+
+  isContributingOrgAdmin() {
+    const roles = _.get(this.userService, 'userProfile.userRegData.User_Org.roles');
+    return !_.isEmpty(roles) && _.includes(roles, 'admin');
+  }
+
+  isContributingOrgContributor() {
+    const contributors = _.get(this.sessionContext, 'nominationDetails.rolemapping.CONTRIBUTOR');
+    return !_.isEmpty(contributors) && _.includes(contributors, _.get(this.userService, 'userProfile.userId'));
+  }
+
+  isContributingOrgReviewer() {
+    const reviewers = _.get(this.sessionContext, 'nominationDetails.rolemapping.REVIEWER');
+    return !_.isEmpty(reviewers) && _.includes(reviewers, _.get(this.userService, 'userProfile.userId'));
   }
 }
