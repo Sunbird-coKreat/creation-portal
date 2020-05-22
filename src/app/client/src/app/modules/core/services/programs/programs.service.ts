@@ -905,7 +905,23 @@ export class ProgramsService extends DataService implements CanActivate {
       }));
   }
 
-  downloadReport(config) {
+  downloadReport(programId, programName) {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST_DOWNLOAD}`,
+      data: {
+        request: {
+          filters: {
+            program_name: programName,
+            program_id: programId,
+            status: ['Pending', 'Approved', 'Rejected']
+          }
+        }
+      }
+    };
+    return this.API_URL(req);
+  }
+
+  generateCSV(config) {
     const tableData = config.tableData;
     delete config.tableData;
     let options = {
