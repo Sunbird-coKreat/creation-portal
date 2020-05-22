@@ -747,7 +747,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       ...(createdBy && {createdBy}),
       ...(organisationId && {organisationId}),
     };
-    if (this.isSourcingOrgReviewer()) {
+    if (onlySample === false && this.isSourcingOrgReviewer()) {
       filter.status = 'Live';
     }
     if (this.isContributingOrgContributor()) {
