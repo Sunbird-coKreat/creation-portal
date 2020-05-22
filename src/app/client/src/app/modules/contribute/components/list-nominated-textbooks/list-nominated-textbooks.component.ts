@@ -380,6 +380,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   }
 
   getContributionOrgUsers() {
+    this.tableLoader = true;
       this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
       this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
       this.registryService.getcontributingOrgUsersDetails(this.offset, this.limit).then((orgUsers: any) => {
@@ -409,8 +410,10 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
             this.disablePaginationButtons();
             this.getPaginatedUsers(0);
             this.showLoader = false;
+            this.tableLoader = false;
           } else {
             this.showLoader = false;
+            this.tableLoader = false;
           }
         }
       });
