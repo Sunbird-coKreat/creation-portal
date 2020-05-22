@@ -609,7 +609,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       },
       (error) => {
         const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-        this.toasterService.error(errorMes || 'Fetching framework details failed');
+        this.toasterService.error(errorMes || 'Unable to download nomination list. Please try later.');
         this.downloadInProgress = false;
       },
       () => {
