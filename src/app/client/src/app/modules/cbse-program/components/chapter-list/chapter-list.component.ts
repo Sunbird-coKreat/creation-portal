@@ -106,7 +106,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.actions = _.get(this.chapterListComponentInput, 'programContext.config.actions');
     this.sharedContext = _.get(this.chapterListComponentInput, 'programContext.config.sharedContext');
     const orgId = _.get(this.userService, 'userProfile.userRegData.User_Org.orgId');
-    this.myOrgId = (orgId) ? '1-' + orgId : '';
+    this.myOrgId = (this.userService.userRegistryData
+      && this.userService.userProfile.userRegData
+      && this.userService.userProfile.userRegData.User_Org
+      && this.userService.userProfile.userRegData.User_Org.orgId) ? this.userService.userProfile.userRegData.User_Org.orgId : '';
     if ( _.isUndefined(this.sessionContext.topicList)) {
         this.fetchFrameWorkDetails();
     }
@@ -272,13 +275,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   getFolderLevelCount(collections) {
+    const status = this.sampleContent ? 'Review' : undefined;
     if (this.isNominationByOrg()) {
       _.forEach(collections, collection => {
-        this.getContentCountPerFolder(collection , undefined , this.sampleContent, this.getNominationId('org'), undefined);
+        this.getContentCountPerFolder(collection , status , this.sampleContent, this.getNominationId('org'), undefined);
       });
     } else {
       _.forEach(collections, collection => {
-        this.getContentCountPerFolder(collection , undefined , this.sampleContent, undefined, this.getNominationId('individual'));
+        this.getContentCountPerFolder(collection , status , this.sampleContent, undefined, this.getNominationId('individual'));
       });
     }
   }
@@ -468,7 +472,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     const contributingOrgAdmin = this.isContributingOrgAdmin();
     if (this.isSourcingOrgReviewer() && this.sourcingOrgReviewer) {
       if (reviewerViewRole && content.sampleContent === true
-        && this.getNominatedUserId() === content.createdBy) {
+        && this.getNominatedUserId() === content.createdBy && content.status === 'Review') {
           return true;
         } else if (reviewerViewRole && content.status === 'Live') {
           if (content.contentType !== 'TextBook' && content.contentType !== 'TextBookUnit' &&
@@ -737,9 +741,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
 
   filterContentsForCount (contents, status?, onlySample?, organisationId?, createdBy?) {
-    if (organisationId) {
-      organisationId = '1-' + organisationId;
-    }
     const filter = {
       ...(status && {status}),
       ...(onlySample && {sampleContent: true}),
@@ -747,17 +748,15 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       ...(createdBy && {createdBy}),
       ...(organisationId && {organisationId}),
     };
+    if (this.isSourcingOrgReviewer()) {
+      filter.status = 'Live';
+    }
     if (this.isContributingOrgContributor()) {
       filter.createdBy = this.currentUserID;
     }
     if (this.isContributingOrgReviewer()) {
       filter.status = 'Review';
     }
-    if (this.isSourcingOrgReviewer()) {
-      filter['visibility'] = true;
-    }
-    console.log('filter', filter);
-    _.map(contents, leaf => console.log(leaf.name + ' == ' + leaf.status + ' == ' + leaf.createdBy + ' == ' + leaf.sampleContent + ' == ' + leaf.organisationId));
     const leaves = _.filter(contents, filter);
     return leaves.length;
   }
