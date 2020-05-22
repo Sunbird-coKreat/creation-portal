@@ -85,7 +85,7 @@
           >Edit</button>
           <button id="publishContent" *ngIf="visibility && visibility.showPublish && resourceStatus === 'Review'" class="sb-btn sb-btn-normal mr-8"
           [ngClass]="isPublishBtnDisable ? 'sb-btn-disabled' : 'sb-btn-secondary'"
-          [disabled] = "isPublishBtnDisable" (click)="publishContent();contentStatusNotify('Published')"
+          [disabled] = "isPublishBtnDisable" (click)="publishContent();
           appTelemetryInteract
           [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('publish-resource', 'click', 'question-list')"
           [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
