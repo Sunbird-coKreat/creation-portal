@@ -204,7 +204,7 @@ export class ProgramsService extends DataService implements CanActivate {
                 firstName: this.userService.userProfile.firstName,
                 lastName: this.userService.userProfile.lastName || '',
                 userId: this.userService.userProfile.identifier,
-                enrolledDate: this.datePipe.transform(new Date(), 'yyyy-MM-dd'),
+                enrolledDate: new Date().toISOString(),
                 board : contibutorOrg.board,
                 medium: contibutorOrg.medium,
                 gradeLevel: contibutorOrg.gradeLevel,
@@ -343,7 +343,7 @@ export class ProgramsService extends DataService implements CanActivate {
                     firstName: user.firstName,
                     lastName: user.lastName || '',
                     userId: user.identifier,
-                    enrolledDate: this.datePipe.transform(new Date(), 'yyyy-MM-dd'),
+                    enrolledDate: new Date().toISOString(),
                     channel: user.rootOrgId
                   }
                 };
@@ -428,7 +428,7 @@ export class ProgramsService extends DataService implements CanActivate {
             firstName: this.userService.userProfile.firstName,
             lastName: this.userService.userProfile.lastName || '',
             userId: this.userService.userProfile.identifier,
-            enrolledDate: this.datePipe.transform(new Date(), 'yyyy-MM-dd'),
+            enrolledDate: new Date().toISOString(),
             channel: this.userService.userProfile.rootOrgId
           }
         };
@@ -842,7 +842,7 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.getSourcingOrgUsers(filters);
   }*/
 
-  getOrgUsersDetails(reqFilters) {
+  getOrgUsersDetails(reqFilters, offset?, limit?) {
     const req = {
       url: this.config.urlConFig.URLS.ADMIN.USER_SEARCH,
       data: {
@@ -851,11 +851,19 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
+
+    if (!_.isUndefined(limit)) {
+      req.data.request['limit'] = limit;
+    }
+    if (!_.isUndefined(offset)) {
+      req.data.request['offset'] = offset;
+    }
+
     return this.learnerService.post(req);
   }
 
-  getSourcingOrgUsers(reqFilters) {
-      return this.getOrgUsersDetails(reqFilters).pipe(tap((res) => {
+  getSourcingOrgUsers(reqFilters, offset?, limit?) {
+      return this.getOrgUsersDetails(reqFilters, offset, limit).pipe(tap((res) => {
         if (reqFilters['organisations.roles'].length === 1 &&  reqFilters['organisations.roles'][0] === 'CONTENT_REVIEWER') {
           this._sourcingOrgReviewers = res.result.response.content;
         }

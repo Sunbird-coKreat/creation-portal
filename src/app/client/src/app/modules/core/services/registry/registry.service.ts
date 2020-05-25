@@ -45,7 +45,7 @@ export class RegistryService extends DataService {
                 _.filter(res1.result.User_Org, obj => { if (obj.userId !== userRegData.User.osid) { return obj } }),
                 (mapObj) => {
                   tempMapping.push(mapObj);
-                  return mapObj.userId.slice(2);
+                  return mapObj.userId;
                 }));
 
               if (userList && storedOrglist && userList.length === storedOrglist.length) {
