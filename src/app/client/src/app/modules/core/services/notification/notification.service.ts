@@ -176,6 +176,8 @@ export class NotificationService {
       recipientUserIds: [notificationData.user_id],
       emailTemplateType: this.getTemplateForContent(notificationData.status, mode),
       orgName: notificationData.org.name,
+      contentName: notificationData.content.name,
+      projectName: notificationData.program.name,
       body: 'VidyaDaan'
     };
     return this.sendNotification(request).subscribe();
