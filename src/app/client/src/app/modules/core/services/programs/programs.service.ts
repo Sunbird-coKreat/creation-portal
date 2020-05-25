@@ -832,16 +832,6 @@ export class ProgramsService extends DataService implements CanActivate {
    }
   }
 
-  /*getsourcingOrgReviewers() {
-    const OrgDetails = this.userService.userProfile.organisations[0];
-    const filters = {
-      'organisations.organisationId': OrgDetails.organisationId,
-      'organisations.roles': ['CONTENT_REVIEWER']
-      };
-
-    return this.getSourcingOrgUsers(filters);
-  }*/
-
   getOrgUsersDetails(reqFilters, offset?, limit?) {
     const req = {
       url: this.config.urlConFig.URLS.ADMIN.USER_SEARCH,

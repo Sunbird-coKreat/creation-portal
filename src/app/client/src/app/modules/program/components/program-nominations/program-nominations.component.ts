@@ -1,12 +1,11 @@
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService, PaginationService } from '@sunbird/shared';
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
-import { ProgramsService, PublicDataService, UserService, FrameworkService } from '@sunbird/core';
+import { ProgramsService, UserService, FrameworkService } from '@sunbird/core';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ISessionContext, InitialState, IPagination} from '../../../cbse-program/interfaces';
 import { CollectionHierarchyService } from '../../../cbse-program/services/collection-hierarchy/collection-hierarchy.service';
 import * as _ from 'lodash-es';
-import { tap, first, catchError } from 'rxjs/operators';
 import { tap, first, catchError, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import * as moment from 'moment';
@@ -29,21 +28,16 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public programContentTypes: string;
   public unsubscribe = new Subject<void>();
   nominations = [];
-  /*pageNominations = [];*/
   collectionsCount;
   tempNominations;
   public downloadInProgress = false;
   filterApplied: any;
   public selectedStatus = 'All';
   showNominationsComponent = false;
-  //public initiatedCount = 0;
   public statusCount = {};
-  //public totalCount = 0;
   public activeDate = '';
   public sessionContext: ISessionContext = {};
   public userProfile: any;
-  //public mediums: any;
-  //public grades: any;
   public selectedNomination: any;
   public showContributorProfilePopup = false;
   public telemetryImpression: IImpressionEventInput;
@@ -59,7 +53,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public roles;
   public currentStage: string;
   public dynamicInputs;
-  //public programContext: any = {};
   public state: InitialState = {
     stages: []
   };
@@ -71,20 +64,18 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public approvedNominations: any = [];
   public overAllContentCount: any = {};
   public isContributionDashboardTabActive = false;
-  //public canAssignUsers = false;
   nominatedContentTypes: any = [];
   public contributedByOrganisation = 0;
   public contributedByIndividual = 0;
   public nominatedTextbook = 0;
   public nominatedContentTypeCount = 0;
-  //public samplesCount = 0;
   public totalNominations = 0;
   public totalContentTypeCount = 0;
   public nominationSampleCounts: any;
   public showDownloadCsvBtn = false;
   public directionOrgUsers = 'desc';
   public columnOrgUsers = '';
-  /*public totalPages: number;*/
+  paginatedSourcingUsers;
   showLoader = true;
   showTextbookLoader = false;
   showNominationLoader = false;
@@ -97,19 +88,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   pagerUsers: IPagination;
   pageNumberUsers = 1;
 
-  /*public nominationsPerPage = 200;
-  public currentPage: number;
-  public totalNominations: number;
-  public showLoader = true;
-  public tableLoader = false;
-  public disablePagination = {};
-  public pageNumArray: Array<number>;*/
-  public paginatedSourcingUsers;
-  public tempprogramSelectedUsers;
-
-  constructor(public frameworkService: FrameworkService, private tosterService: ToasterService, private programsService: ProgramsService,
+  constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
-    private publicDataService: PublicDataService, private activatedRoute: ActivatedRoute, private router: Router,
+     private activatedRoute: ActivatedRoute, private router: Router,
     private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService,
     public programStageService: ProgramStageService, private datePipe: DatePipe, private paginationService: PaginationService) {
     this.userProfile = this.userService.userProfile;
@@ -192,12 +173,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   resetStatusFilter(tab) {
     this.router.navigate([], { relativeTo: this.activatedRoute, queryParams: { tab: tab }, queryParamsHandling: 'merge' });
-    /*this.filterApplied = null;
-    this.selectedStatus = 'All';
-    this.sortColumn = '';
-    this.direction = 'asc';
-    this.nominations = _.cloneDeep(this.tempNominations);
-    this.isContributionDashboardTabActive  = (tab === 'contributionDashboard') ? true : false;*/
 
     if (tab === 'textbook' && !_.includes(this.visitedTab, 'textbook')) {
       this.showTextbookLoader =  true;
@@ -217,7 +192,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.direction = 'desc';
       this.sortColumn = 'createdon';
       this.getPaginatedNominations(0);
-      //this.sortCollection(this.sortColumn, this.nominations);
+      this.sortCollection(this.sortColumn, this.nominations);
     }
     if (tab === 'user' && !_.includes(this.visitedTab, 'user')) {
       this.showUsersLoader = true;
@@ -360,7 +335,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       (response) => {
         if (response && response.result && response.result.count) {
           const contents = _.get(response.result, 'content');
-          //this.samplesCount = response.result.count;
           this.setNominationSampleCounts(contents);
         }
 
@@ -398,56 +372,43 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   getDashboardData(approvedNominations) {
     // tslint:disable-next-line:max-line-length
-    //this.approvedNominations = _.filter(nominations, nomination => nomination.status === 'Approved' );
-    /*this.collectionHierarchyService.getContentAggregation(this.programId)
-      .subscribe(
-        (response) => {
-          if (response && response.result && response.result.content) {
-            const contents = _.get(response.result, 'content');
-            this.contentAggregationData = _.cloneDeep(contents);*/
         if (!_.isEmpty(this.contentAggregationData) && approvedNominations.length && !_.isEmpty(this.programCollections)) {
-              const contents = _.cloneDeep(this.contentAggregationData);
-              this.contributionDashboardData = _.map(approvedNominations, nomination => {
-                if (nomination.organisation_id) {
-                  // tslint:disable-next-line:max-line-length
-                  const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCounts(contents, nomination.organisation_id, this.programCollections));
-                  // This is enable sorting table. So duping the data at the root of the dashboardData object
-                  dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
-                  dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
-                  dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
-                  dashboardData['contributorName'] = this.setContributorName(nomination, nomination.organisation_id ? true : false);
-                  return {
-                    ...dashboardData,
-                    contributorDetails: nomination,
-                    type: 'org'
-                  };
-                } else {
-                  // tslint:disable-next-line:max-line-length
-                  const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCountsForIndividual(contents, nomination.user_id, this.programCollections));
-                  dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
-                  dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
-                  dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
-                  dashboardData['contributorName'] = this.setContributorName(nomination, nomination.organisation_id ? true : false);
-                  return {
-                    ...dashboardData,
-                    contributorDetails: nomination,
-                    type: 'individual'
-                  };
-                }
-              });
-              this.getOverAllCounts(this.contributionDashboardData);
-            } else if (approvedNominations.length) {
-              this.contributionDashboardData = _.map(approvedNominations, nomination => {
-                return this.dashboardObject(nomination);
-              });
-              this.getOverAllCounts(this.contributionDashboardData);
+          const contents = _.cloneDeep(this.contentAggregationData);
+          this.contributionDashboardData = _.map(approvedNominations, nomination => {
+            if (nomination.organisation_id) {
+              // tslint:disable-next-line:max-line-length
+              const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCounts(contents, nomination.organisation_id, this.programCollections));
+              // This is enable sorting table. So duping the data at the root of the dashboardData object
+              dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
+              dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
+              dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
+              dashboardData['contributorName'] = this.setContributorName(nomination, nomination.organisation_id ? true : false);
+              return {
+                ...dashboardData,
+                contributorDetails: nomination,
+                type: 'org'
+              };
+            } else {
+              // tslint:disable-next-line:max-line-length
+              const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCountsForIndividual(contents, nomination.user_id, this.programCollections));
+              dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
+              dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
+              dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
+              dashboardData['contributorName'] = this.setContributorName(nomination, nomination.organisation_id ? true : false);
+              return {
+                ...dashboardData,
+                contributorDetails: nomination,
+                type: 'individual'
+              };
             }
-        /*},
-        (error) => {
-          console.log(error);
-          const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-          this.toasterService.error(errorMes || 'Fetching textbooks failed. Please try again...');
-        });*/
+          });
+          this.getOverAllCounts(this.contributionDashboardData);
+        } else if (approvedNominations.length) {
+          this.contributionDashboardData = _.map(approvedNominations, nomination => {
+            return this.dashboardObject(nomination);
+          });
+          this.getOverAllCounts(this.contributionDashboardData);
+        }
     }
 
   dashboardObject(nomination) {
@@ -483,7 +444,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     _.forEach(individualSampleUploads, (temp, index) => {
       this.nominationSampleCounts[index] = temp.length;
     });
-    //this.assignSampleCounts();
   }
 
   getNominationSampleCounts(nomination) {
@@ -562,20 +522,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.sortOrgUsers('selectedRole');
     }
   }
-
-  /*fetchProgramDetails() {
-    const req = {
-      url: `program/v1/read/${this.programId}`
-    };
-    return this.programsService.get(req).pipe(tap((programDetails: any) => {
-      //programDetails.result.config = JSON.parse(programDetails.result.config);
-      //this.programDetails = programDetails.result;
-      //this.mediums = _.join(this.programDetails.config['medium'], ', ');
-      //this.grades = _.join(this.programDetails.config['gradeLevel'], ', ');
-
-        this.fetchFrameWorkDetails();
-    }));
-  }*/
 
   public fetchFrameWorkDetails() {
     this.sessionContext.framework = _.get(this.programDetails, 'config.framework');
@@ -816,9 +762,7 @@ this.programsService.post(req).subscribe((data) => {
             });
           }
         });
-        //if (!this.nominationSampleCounts) {
-          this.getSampleContent();
-       // }
+        this.getSampleContent();
       }
       this.tempNominations = _.cloneDeep(this.nominations);
   }, error => {
@@ -860,54 +804,4 @@ getAggregatedNominationsCount() {
     })
   );
 }
-
-/*navigatePage(pageNum) {
-    switch (pageNum) {
-      case 'first':
-        this.currentPage = 1;
-        break;
-      case 'last':
-        this.currentPage = this.totalPages;
-        break;
-      case 'prev':
-        this.currentPage = this.currentPage - 1;
-        break;
-      case 'next':
-        this.currentPage = this.currentPage + 1;
-        break;
-      default:
-        this.currentPage = pageNum;
-    }
-    this.handlePagination(this.currentPage);
-}*/
-
-/*handlePagination(pageNum) {
-const offset = (pageNum - 1) * this.nominationsPerPage;
-this.tableLoader = true;
-this.getPaginatedNominations(offset);
-this.handlePageNumArray();
-this.disablePaginationButtons();
-}
-
-disablePaginationButtons() {
- this.disablePagination = {};
- if (this.currentPage === 1) {
-   this.disablePagination['first'] = true;
-   this.disablePagination['prev'] = true;
- }
- if (this.currentPage === this.totalPages) {
-  this.disablePagination['last'] = true;
-  this.disablePagination['next'] = true;
-}
-}
-
-handlePageNumArray() {
-if ((this.currentPage + 5) >= (this.totalPages + 1)) {
-  const initValue = this.totalPages - 4 <= 0 ? 1 : this.totalPages - 4;
-  this.pageNumArray = _.range(initValue , (this.totalPages + 1));
-} else {
-  this.pageNumArray = _.range(this.currentPage, (this.currentPage + 5));
-}
-}*/
-
 }
