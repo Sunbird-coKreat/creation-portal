@@ -104,8 +104,8 @@ input[type=number]::-webkit-inner-spin-button {
     font-size:  calculateRem(14px) !important;
     font-weight: normal;
 }
-.width-300 {
-    width: 300px !important;
+.width-320 {
+    width: 320px !important;
 }
 .ui.form.borderd [type="radio"]:checked + label:before,
 .ui.form.borderd [type="radio"]:not(:checked) + label:before {
@@ -190,7 +190,7 @@ input[type=number]::-webkit-inner-spin-button {
 }
   @media only screen and (max-width: 767px){
     .signup-background {
-        max-width: 320px!important;
+        max-width: 345px!important;
         margin: 0 auto!important;
         box-shadow: none!important;
         height: 100vh;

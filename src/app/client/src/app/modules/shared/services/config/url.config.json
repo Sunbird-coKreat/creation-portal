@@ -250,6 +250,7 @@
       "NOMINATION_UPDATE": "program/v1/nomination/update",
       "NOMINATION_REMOVE": "program/v1/nomination/remove",
       "NOMINATION_LIST": "program/v1/nomination/list",
+      "NOMINATION_LIST_DOWNLOAD": "program/v1/nomination/list/download",
       "COLLECTION_LINK": "program/v1/collection/link",
       "CONTENTTYPE_LIST": "program/v1/contenttypes/list",
       "CONFIGURATION_SEARCH": "program/v1/configuration/search"

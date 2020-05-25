@@ -144,4 +144,111 @@ export class NotificationService {
         return of(data);
       }));
   }
+
+  onAfterContentStatusChange(notificationData) {
+    const requestFilter = { identifier : notificationData.user_id };
+    return this.programsService.getOrgUsersDetails(requestFilter)
+    .pipe(
+      tap((res: any) => {
+        const user = _.get(res, 'result.response.content[0]');
+        if (_.isEmpty(user)) {
+          return throwError(new Error(this.resourceService.messages.emsg.profile.m0002));
+        }
+        const requests = [];
+        if (!_.isEmpty(user.email)) {
+          requests.push(this.sendEmailNotificationForContent(notificationData));
+        }
+        if (!_.isEmpty(user.phone)) {
+          requests.push(this.sendSmsNotificationForContent(notificationData));
+        }
+        forkJoin(requests).subscribe(
+          (response) => of(response),
+          (error) => throwError(error));
+      })
+    );
+  }
+
+  sendEmailNotificationForContent(notificationData) {
+    const mode = 'email';
+    const request = {
+      mode: mode,
+      subject: this.getEmailSubjectForContent(notificationData),
+      recipientUserIds: [notificationData.user_id],
+      emailTemplateType: this.getTemplateForContent(notificationData.status, mode),
+      orgName: notificationData.org.name,
+      body: 'VidyaDaan'
+    };
+    return this.sendNotification(request).subscribe();
+  }
+
+  getEmailSubjectForContent(notificationData: any) {
+    let status = '';
+    let subject = this.resourceService.messages.stmsg.content.notification.status.subject;
+    subject = _.replace(subject, '{PROJECT_NAME}', notificationData.program.name);
+    subject = _.replace(subject, '{CONTENT_NAME}', notificationData.content.name);
+    if (notificationData.status === 'Published') {
+      status = 'published';
+    }
+    if (notificationData.status === 'Request') {
+      status = 'requested changes';
+    }
+    if (notificationData.status === 'Accept') {
+      status = 'accepted';
+    }
+    if (notificationData.status === 'Reject') {
+      status = 'rejected';
+    }
+    subject = _.replace(subject, '{CONTENT_STATUS}', status);
+    return subject;
+  }
+
+  getTemplateForContent(status, type) {
+    let template = '';
+    if (status === 'Published') {
+      template = type + 'ContentPublished';
+    }
+    if (status === 'Request') {
+      template = type + 'ContentRequestedChanges';
+    }
+    if (status === 'Accept') {
+      template = type + 'ContentAccept';
+    }
+    if (status === 'Reject') {
+      template = type + 'ContentReject';
+    }
+    return template;
+  }
+
+  sendSmsNotificationForContent(notificationData) {
+    const mode = 'sms';
+    const template = this.getTemplateForContent(notificationData.status, mode);
+    const templateRequest = {
+      key: template,
+      status: 'active'
+    };
+    return this.getSmsTemplate(templateRequest).subscribe(
+      (response) => {
+        const configuration = _.get(response, 'result.configuration');
+        if (_.isEmpty(configuration)) {
+          return throwError('Failed to get the sms template');
+        }
+        const url = window.location.origin;
+        let body = configuration.value;
+        body = _.replace(body, '$url', url);
+        body = _.replace(body, '$contentName', notificationData.content.name);
+        body = _.replace(body, '$projectName', notificationData.program.name);
+
+        const request = {
+          mode: 'sms',
+          subject: 'VidyaDaan',
+          body: body,
+          recipientUserIds: [notificationData.user_id]
+        };
+        return this.sendNotification(request).subscribe();
+      },
+      (error) => {
+        return throwError(error);
+      }
+    );
+  }
 }
