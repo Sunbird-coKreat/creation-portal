@@ -680,7 +680,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   };
   this.notificationService.onAfterContentStatusChange(notificationForContributor)
   .subscribe((res) => {  });
-  if (!_.isUndefined(this.sessionContext.nominationDetails.user_id)) {
+  if (!_.isUndefined(this.sessionContext.nominationDetails.user_id) && status !== 'Request') {
     const notificationForPublisher = {
       user_id: this.sessionContext.nominationDetails.user_id,
       content: { name: this.contentMetaData.name },
