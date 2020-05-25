@@ -78,7 +78,6 @@
           </a>
         </span>
         <!-- /Print Button for printable contents-->
-        <app-content-badge [data]="badgeData" class="ml-20 m-responsive-cp-badge-ml"></app-content-badge>
         <!-- Temporarily disable flagging-->
           <!-- <a routerLink="flag" class="pr-10 blue-text-color-sunbird">
             <i class="ui large blue flag outline icon"></i>
@@ -87,11 +86,7 @@
       </div>
       <div class="ui divider"></div>
   </div>
-  <div class="row pt-0">
-    <div class="twelve wide column">
-      <app-assign-badges-content *ngIf="contentType === 'TextBook'" [data]="badgeData"></app-assign-badges-content>
-    </div>
-  </div>
+
   <div class="row" *ngIf="!loader">
     <div class="twelve wide column">
       <app-collection-tree *ngIf="collectionTreeNodes.data && collectionTreeNodes.data.children && collectionTreeNodes.data.children.length >0 ; else dataCommingSoon" (contentSelect)="OnPlayContent($event)" [nodes]="collectionTreeNodes" [options]="collectionTreeOptions">        

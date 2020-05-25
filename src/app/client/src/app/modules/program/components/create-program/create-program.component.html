@@ -181,10 +181,11 @@
 										<i class="upload icon"></i>{{ resource.frmelmnts.btn.upload}}
 									</button>
 									<span *ngIf="uploadedDocument" class="sb-url">
-										<a href="{{uploadedDocument.artifactUrl}}" class="text-decor-none sb__ellipsis sb__ellipsis--breakAll" target="_blank">
+										<a href="{{uploadedDocument.artifactUrl}}" class="max-w-90 pull-left text-decor-none sb__ellipsis sb__ellipsis--breakAll" target="_blank">
 											{{uploadedDocument.name}}
 											<span class="blue-text-color-sunbird" *ngIf="uploadedDocument.name && uploadedDocument.name.length > 70">...</span>
 										</a>
+										<i class="icon remove sb-color-error va-top cursor-pointer" (click)="removeUploadedDocument();" ></i>
 									</span>
 								</div>
 							</div>

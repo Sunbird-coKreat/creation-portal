@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ConfigService, ToasterService, ServerResponse, ResourceService } from '@sunbird/shared';
 import { ContentService, ActionService, PublicDataService } from '@sunbird/core';
-import { throwError, Observable, of } from 'rxjs';
+import { throwError, Observable, of, Subject } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 import { ProgramStageService } from '../../program/services';
@@ -10,6 +10,8 @@ import { ProgramStageService } from '../../program/services';
   providedIn: 'root'
 })
 export class HelperService {
+
+private sendNotification = new Subject<string>();
 
   constructor(private configService: ConfigService, private contentService: ContentService,
     private toasterService: ToasterService, private publicDataService: PublicDataService,
@@ -34,6 +36,9 @@ export class HelperService {
         const errInfo = { errorMsg: 'search failed' };
         return throwError(this.apiErrorHandling(err, errInfo));
       }));
+  }
+  getNotification(): Observable<any> {
+    return this.sendNotification.asObservable();
   }
 
   updateContent(req, contentId): Observable<ServerResponse> {
@@ -113,6 +118,7 @@ export class HelperService {
         action === 'accept' ? this.toasterService.success(this.resourceService.messages.smsg.m0066) :
                               this.toasterService.success(this.resourceService.messages.smsg.m0067);
        this.programStageService.removeLastStage();
+       this.sendNotification.next(_.capitalize(action));
       }, (err) => {
         action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
                               this.toasterService.error(this.resourceService.messages.fmsg.m00100);
