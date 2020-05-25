@@ -111,11 +111,11 @@
                 </div>
             </div>
             <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="2">
-                <app-loader *ngIf='showNominationLoader'></app-loader>
+                <app-loader *ngIf='showTextbookLoader'></app-loader>
                 <div *ngIf="!showTextbookLoader && programCollections && programCollections.length && contentAggregationData && !isEmptyObject(programDetails)" class="ui container p-0 m-0">
                     <app-textbook-list [programDetails]="programDetails" [collectionsInput]="programCollections" [contentAggregationInput]="contentAggregationData" (selectedCollection)="viewContribution($event)"></app-textbook-list>
                 </div>
-                <div class="mt-12" *ngIf="!showNominationLoader && programCollections && programCollections.length === 0">
+                <div class="mt-12" *ngIf="!showTextbookLoader && programCollections && programCollections.length === 0">
                     <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0146'}"> </app-no-result>
                 </div>
             </div>
