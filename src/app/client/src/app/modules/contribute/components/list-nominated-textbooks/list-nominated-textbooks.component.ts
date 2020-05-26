@@ -1,7 +1,7 @@
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService } from '@sunbird/shared';
 import { ProgramsService, PublicDataService, UserService, FrameworkService, RegistryService, ActionService } from '@sunbird/core';
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { tap, first } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
 import * as _ from 'lodash-es';
@@ -85,7 +85,8 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   private activatedRoute: ActivatedRoute, private router: Router, public programStageService: ProgramStageService,
   public toasterService: ToasterService, private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
   public frameworkService: FrameworkService, public userService: UserService, public registryService: RegistryService,
-  public activeRoute: ActivatedRoute, private collectionHierarchyService: CollectionHierarchyService, public actionService: ActionService) {
+  public activeRoute: ActivatedRoute, private collectionHierarchyService: CollectionHierarchyService, public actionService: ActionService,
+   private cdr: ChangeDetectorRef) {
     this.programId = this.activatedRoute.snapshot.params.programId;
    }
 
@@ -409,6 +410,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
             this.handlePageNumArray();
             this.disablePaginationButtons();
             this.getPaginatedUsers(0);
+            this.cdr.detectChanges();
             this.showLoader = false;
             this.tableLoader = false;
           } else {

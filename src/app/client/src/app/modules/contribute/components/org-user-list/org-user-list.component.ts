@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ChangeDetectorRef} from '@angular/core';
 import { ToasterService, ResourceService, NavigationHelperService, ConfigService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
@@ -42,7 +42,8 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   constructor(private toasterService: ToasterService, private configService: ConfigService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
-    public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService ) {
+    public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService,
+    private cdr: ChangeDetectorRef ) {
       this.getContributionOrgUsers();
     }
 
@@ -97,6 +98,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
         this.getPaginatedUsers(0);
         this.handlePageNumArray();
         this.disablePaginationButtons();
+        this.cdr.detectChanges();
       }
     });
   }
