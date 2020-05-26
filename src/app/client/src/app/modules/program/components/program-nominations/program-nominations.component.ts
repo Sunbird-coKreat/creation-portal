@@ -642,12 +642,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
             }
        });
 
-    /*_.forEach(this.roles, role => {
-      roleMap[role.name] = _.reduce(this.sourcingOrgUser, (result, user) => {
-        if (user.selectedRole === role.name) {  result.push(user.identifier); }
-        return result;
-      }, []);
-    });*/
       const request = {
             'program_id': this.activatedRoute.snapshot.params.programId,
             'rolemapping': progRoleMapping
