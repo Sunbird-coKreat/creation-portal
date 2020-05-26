@@ -481,7 +481,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     const creatorViewRole = this.actions.showCreatorView.roles.includes(this.sessionContext.currentRoleId);
     const reviewerViewRole = this.actions.showReviewerView.roles.includes(this.sessionContext.currentRoleId);
     const contributingOrgAdmin = this.isContributingOrgAdmin();
-    if (this.isSourcingOrgReviewer() && this.sourcingOrgReviewer && this.isNominationPendingOrInitiated()) {
+    if (this.isSourcingOrgReviewer() && this.sourcingOrgReviewer) {
       if (reviewerViewRole && content.sampleContent === true
         && this.getNominatedUserId() === content.createdBy) {
           return true;
@@ -496,7 +496,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         }
     } else {
       if ((this.sessionContext.nominationDetails.status === 'Approved' || this.sessionContext.nominationDetails.status === 'Rejected')
-      && content.sampleContent === true) {
+       && content.sampleContent === true) {
         return false;
       } else if (reviewerViewRole && content.status === 'Review'
       && this.currentUserID !== content.createdBy
