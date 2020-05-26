@@ -359,7 +359,7 @@
 							<td>{{orgUser?.framework?.subject?.join(', ')}}</td>
 							<td class="text-center">
 							        <sui-select class="selection pt-5" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="options" valueField="name"
-									(selectedOptionChange)="onRoleChange()">
+									(selectedOptionChange)="onRoleChange(orgUser)">
 										<sui-select-option *ngFor="let option of roles;" [value]="option">
 										</sui-select-option>
 									</sui-select>
