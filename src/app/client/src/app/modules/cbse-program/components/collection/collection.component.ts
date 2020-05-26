@@ -202,6 +202,8 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       this.collectionsWithCardImage = _.forEach(collectionCards, collection => this.addCardImage(collection));
       this.filterCollectionList(this.classes);
       if (!_.isEmpty(res.result.content)) {
+        this.sortColumn = 'name';
+        this.direction = 'asc';
         const collections = res.result.content;
         let sampleValue, organisation_id, createdBy;
         if (!_.isUndefined(this.currentNominationStatus)) {
@@ -230,11 +232,16 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.contentStatusCounts = this.collectionHierarchyService.getContentCountsForAll([], collections);
               }
               this.collectionList = this.collectionHierarchyService.getIndividualCollectionStatus(this.contentStatusCounts, collections);
-              this.selectedCollectionIds = _.map(_.filter(this.collectionList, c => c.totalSampleContent > 0), 'identifier');
+              if (_.isEmpty(this.selectedCollectionIds)) {
+                this.selectedCollectionIds = _.map(_.filter(this.collectionList, c => c.totalSampleContent > 0), 'identifier');
+              }
               this.tempSortCollectionList = this.collectionList;
               this.selectedCollectionIds = _.uniq(this.selectedCollectionIds);
               this.toggleNominationButton();
               this.sortCollection(this.sortColumn);
+              _.map(this.collectionList, textbook => {
+                textbook.isSelected = _.includes(this.selectedCollectionIds, textbook.identifier);
+              });
               this.showLoader = false;
             },
             (error) => {
@@ -246,10 +253,15 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
           );
         } else {
           this.collectionList = collections;
-          this.selectedCollectionIds = _.map(_.filter(this.collectionList, c => c.totalSampleContent > 0), 'identifier');
+          if (_.isEmpty(this.selectedCollectionIds)) {
+            this.selectedCollectionIds = _.map(_.filter(this.collectionList, c => c.totalSampleContent > 0), 'identifier');
+          }
           this.tempSortCollectionList = this.collectionList;
           this.selectedCollectionIds = _.uniq(this.selectedCollectionIds);
           this.sortCollection(this.sortColumn);
+          _.map(this.collectionList, textbook => {
+            textbook.isSelected = _.includes(this.selectedCollectionIds, textbook.identifier);
+          });
           this.showLoader = false;
         }
       } else {

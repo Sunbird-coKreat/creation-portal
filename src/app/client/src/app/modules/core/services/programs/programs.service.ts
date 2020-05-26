@@ -832,27 +832,7 @@ export class ProgramsService extends DataService implements CanActivate {
    }
   }
 
-  get sourcingOrgReviewers() {
-    const orgUsersData: boolean = this.cacheService.get('sourcingOrgUsersData');
-    const OrgDetails = this.userService.userProfile.organisations[0];
-    if (orgUsersData) {
-      return this.cacheService.get('sourcingOrgUsersDetails');
-    } else {
-      const filters = {
-        'organisations.organisationId': OrgDetails.organisationId,
-        'organisations.roles': ['CONTENT_REVIEWER']
-        };
-        this.getSourcingOrgUsers(filters).subscribe((res) => {
-          this.cacheService.set('sourcingOrgUsersData', true);
-          this.cacheService.set('sourcingOrgUsersDetails', res.result.response.content);
-          return this.cacheService.get('sourcingOrgUsersDetails');
-        }, (err) => {
-          return [];
-        });
-    }
-  }
-
-  getOrgUsersDetails(reqFilters) {
+  getOrgUsersDetails(reqFilters, offset?, limit?) {
     const req = {
       url: this.config.urlConFig.URLS.ADMIN.USER_SEARCH,
       data: {
@@ -861,11 +841,19 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
+
+    if (!_.isUndefined(limit)) {
+      req.data.request['limit'] = limit;
+    }
+    if (!_.isUndefined(offset)) {
+      req.data.request['offset'] = offset;
+    }
+
     return this.learnerService.post(req);
   }
 
-  getSourcingOrgUsers(reqFilters) {
-      return this.getOrgUsersDetails(reqFilters).pipe(tap((res) => {
+  getSourcingOrgUsers(reqFilters, offset?, limit?) {
+      return this.getOrgUsersDetails(reqFilters, offset, limit).pipe(tap((res) => {
         if (reqFilters['organisations.roles'].length === 1 &&  reqFilters['organisations.roles'][0] === 'CONTENT_REVIEWER') {
           this._sourcingOrgReviewers = res.result.response.content;
         }
@@ -905,7 +893,23 @@ export class ProgramsService extends DataService implements CanActivate {
       }));
   }
 
-  downloadReport(config) {
+  downloadReport(programId, programName) {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST_DOWNLOAD}`,
+      data: {
+        request: {
+          filters: {
+            program_name: programName,
+            program_id: programId,
+            status: ['Pending', 'Approved', 'Rejected']
+          }
+        }
+      }
+    };
+    return this.API_URL(req);
+  }
+
+  generateCSV(config) {
     const tableData = config.tableData;
     delete config.tableData;
     let options = {

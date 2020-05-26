@@ -101,6 +101,7 @@ export class TextbookListComponent implements OnInit {
       if (res.result && res.result.tableData && res.result.tableData.length) {
         try {
         const headers = [
+          this.resourceService.frmelmnts.lbl.projectName,
           this.resourceService.frmelmnts.lbl.textbookName,
           this.resourceService.frmelmnts.lbl.profile.Medium,
           this.resourceService.frmelmnts.lbl.profile.Classes,
@@ -114,14 +115,20 @@ export class TextbookListComponent implements OnInit {
           this.resourceService.frmelmnts.lbl.contributionRejected,
           this.resourceService.frmelmnts.lbl.contributionPending
         ];
-        const tableData = _.get(_.find(res.result.tableData, {program_id: this.programId}), 'values');
+        const resObj = _.get(_.find(res.result.tableData, {program_id: this.programId}), 'values');
+        const tableData = [];
+        if (_.isArray(resObj) && resObj.length) {
+          _.forEach(resObj, (obj) => {
+            tableData.push(_.assign({'Project Name': this.programDetails.name.trim()}, obj));
+          });
+        }
         const csvDownloadConfig = {
           filename: this.programDetails.name.trim(),
-          tableData: tableData || [],
+          tableData: tableData,
           headers: headers,
           showTitle: false
         };
-          this.programsService.downloadReport(csvDownloadConfig);
+          this.programsService.generateCSV(csvDownloadConfig);
         } catch (err) {
           this.toasterService.error(this.resourceService.messages.emsg.projects.m0004);
         }

@@ -14,7 +14,6 @@ import { ContributorProfilePopupComponent } from './components/contributor-profi
 import { ProgramHeaderComponent } from './components/program-header/program-header.component';
 import { CreateProgramComponent } from './components/create-program/create-program.component';
 import { ProgramNominationsComponent } from './components/program-nominations/program-nominations.component';
-import { ListNominationsComponent } from './components/list-nominations/list-nominations.component';
 import { ListContributorTextbooksComponent } from './components/list-contributor-textbooks/list-contributor-textbooks.component';
 import { NgInviewModule } from 'angular-inport';
 import { TelemetryModule } from '@sunbird/telemetry';
@@ -28,7 +27,7 @@ import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
     // tslint:disable-next-line:max-line-length
     ProgramComponent, OnboardPopupComponent,
     ProgramHeaderComponent, CreateProgramComponent,
-    ProgramNominationsComponent, ListNominationsComponent,
+    ProgramNominationsComponent,
     ListContributorTextbooksComponent, ContributorProfilePopupComponent],
   imports: [
   SuiModule,
@@ -44,7 +43,7 @@ import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
     TelemetryModule,
     CbseProgramModule,
     SharedFeatureModule,
-    DynamicModule.withComponents([CollectionComponent, DashboardComponent, ChapterListComponent, ListNominationsComponent])
+    DynamicModule.withComponents([CollectionComponent, DashboardComponent, ChapterListComponent])
   ],
   exports: [
     ProgramComponent,

@@ -3,7 +3,7 @@ import { Component, OnInit, Output, EventEmitter, Input, ChangeDetectorRef, View
 import { FormGroup, FormArray, FormBuilder, Validators, NgForm, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigService, ToasterService, ResourceService, NavigationHelperService } from '@sunbird/shared';
-import { UserService, ActionService, ContentService } from '@sunbird/core';
+import { UserService, ActionService, ContentService, NotificationService } from '@sunbird/core';
 import { TelemetryService} from '@sunbird/telemetry';
 import { tap, map, catchError, mergeMap } from 'rxjs/operators';
 import * as _ from 'lodash-es';
@@ -39,6 +39,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public role: any;
   public templateDetails: any;
   public actions: any;
+  public notify;
   public questionList: Array<any> = [];
   public selectedQuestionId: any;
   public questionReadApiDetails: any = {};
@@ -76,7 +77,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     public actionService: ActionService,
     private cdr: ChangeDetectorRef, public toasterService: ToasterService,
     public telemetryService: TelemetryService, private fb: FormBuilder,
-    private cbseService: CbseProgramService, public contentService: ContentService,
+    private notificationService: NotificationService, private cbseService: CbseProgramService, public contentService: ContentService,
     private itemsetService: ItemsetService, private helperService: HelperService,
     private resourceService: ResourceService, private collectionHierarchyService: CollectionHierarchyService,
     public programStageService: ProgramStageService, public activeRoute: ActivatedRoute,
@@ -102,6 +103,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getLicences();
     this.preprareTelemetryEvents();
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
+
+    this.notify = this.helperService.getNotification().subscribe((action) => {
+      this.contentStatusNotify(action);
+    });
   }
 
   ngAfterViewInit() {
@@ -173,6 +178,29 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.handleActionButtons();
     });
   }
+
+  contentStatusNotify(status) {
+    const notificationForContributor = {
+      user_id: this.resourceDetails.createdBy,
+      content: { name: this.resourceDetails.name },
+      org: { name:  this.sessionContext.nominationDetails.orgData.name},
+      program: { name: this.programContext.name },
+      status: status
+    };
+    this.notificationService.onAfterContentStatusChange(notificationForContributor)
+    .subscribe((res) => {  });
+    if (!_.isUndefined(this.sessionContext.nominationDetails.user_id) && status !== 'Request') {
+      const notificationForPublisher = {
+        user_id: this.sessionContext.nominationDetails.user_id,
+        content: { name: this.resourceDetails.name },
+        org: { name:  this.sessionContext.nominationDetails.orgData.name},
+        program: { name: this.programContext.name },
+        status: status
+      };
+      this.notificationService.onAfterContentStatusChange(notificationForPublisher)
+      .subscribe((res) => {  });
+    }
+    }
 
   setResourceStatus() {
     if (this.resourceStatus === 'Review') {
@@ -523,6 +551,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.helperService.submitRequestChanges(this.sessionContext.resourceIdentifier, this.FormControl.value.contentRejectComment)
       .subscribe(res => {
         this.showRequestChangesPopup = false;
+        this.contentStatusNotify('Request');
         const contentId = res.result.node_id || res.result.identifier;
         if (this.sessionContext.collection && this.sessionContext.textBookUnitIdentifier) {
           this.collectionHierarchyService.addResourceToHierarchy(
@@ -823,6 +852,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.sessionContext.questionList = [];
+    this.notify.unsubscribe();
   }
 
   handleBack() {
