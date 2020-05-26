@@ -14,6 +14,7 @@ import { ChapterListComponent } from '../../../cbse-program/components/chapter-l
 import { DatePipe } from '@angular/common';
 import { forkJoin, of } from 'rxjs';
 import { isDefined } from '@angular/compiler/src/util';
+import { isUndefined, isNullOrUndefined } from 'util';
 
 @Component({
   selector: 'app-program-nominations',
@@ -633,14 +634,19 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     const roleMap = {};
 
     if (_.includes(this.roleNames, user.selectedRole)) {
-        const progRoleMapping = this.programDetails.rolemapping;
+        let progRoleMapping = this.programDetails.rolemapping;
+         if (isNullOrUndefined(progRoleMapping)) {
+          progRoleMapping = {};
+          progRoleMapping[user.selectedRole] = [];
+         }
+
         _.forEach(progRoleMapping, function(ua, role, arr){
             if (user.selectedRole === role) {
               ua.push(user.identifier);
               _.compact(ua);
               progRoleMapping[role] = ua;
             }
-       });
+          });
 
       const request = {
             'program_id': this.activatedRoute.snapshot.params.programId,

@@ -146,10 +146,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     // tslint:disable-next-line:max-line-length
     this.visibility['showChangeFile'] = (_.includes(this.actions.showChangeFile.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showRequestChanges'] = !this.userService.userProfile.userRoles.includes('ORG_ADMIN') && !this.contentMetaData.sampleContent === true &&
+    this.visibility['showRequestChanges'] = this.router.url.includes('/contribute')  && !this.contentMetaData.sampleContent === true &&
      (_.includes(this.actions.showRequestChanges.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
+
     // tslint:disable-next-line:max-line-length
-    this.visibility['showPublish'] = !this.userService.userProfile.userRoles.includes('ORG_ADMIN') && !this.contentMetaData.sampleContent === true &&
+    this.visibility['showPublish'] = this.router.url.includes('/contribute') && !this.contentMetaData.sampleContent === true &&
     (_.includes(this.actions.showPublish.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
     // tslint:disable-next-line:max-line-length
     this.visibility['showSubmit'] = (_.includes(this.actions.showSubmit.roles, this.sessionContext.currentRoleId)  && this.resourceStatus === 'Draft');
