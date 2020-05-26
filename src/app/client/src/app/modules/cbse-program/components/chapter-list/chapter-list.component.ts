@@ -275,9 +275,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   getFolderLevelCount(collections) {
     let status = this.sampleContent ? ['Review', 'Draft'] : [];
-    let createdBy;
+    let createdBy, visibility;
     if (this.sampleContent === false && this.isSourcingOrgReviewer()) {
       status = ['Live'];
+      visibility = true;
     }
     if (this.isContributingOrgContributor()) {
       createdBy = this.currentUserID;
@@ -287,12 +288,12 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
     if (this.isNominationByOrg()) {
       _.forEach(collections, collection => {
-        this.getContentCountPerFolder(collection , status , this.sampleContent, this.getNominationId('org'), createdBy);
+        this.getContentCountPerFolder(collection , status , this.sampleContent, this.getNominationId('org'), createdBy, visibility);
       });
     } else {
       _.forEach(collections, collection => {
         createdBy = this.getNominationId('individual');
-        this.getContentCountPerFolder(collection , status , this.sampleContent, undefined, createdBy);
+        this.getContentCountPerFolder(collection , status , this.sampleContent, undefined, createdBy, visibility);
       });
     }
   }
@@ -736,26 +737,27 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }, _.isUndefined);
   }
 
-
-  getContentCountPerFolder(collection, contentStatus?: string[], onlySample?: boolean, organisationId?: string, createdBy?: string) {
+  // tslint:disable-next-line:max-line-length
+  getContentCountPerFolder(collection, contentStatus?: string[], onlySample?: boolean, organisationId?: string, createdBy?: string, visibility?: boolean) {
     const self = this;
     collection.totalLeaf = 0;
     _.each(collection.children, child => {
-      collection.totalLeaf += self.getContentCountPerFolder(child, contentStatus, onlySample, organisationId, createdBy);
+      collection.totalLeaf += self.getContentCountPerFolder(child, contentStatus, onlySample, organisationId, createdBy, visibility);
     });
 
     // tslint:disable-next-line:max-line-length
-    collection.totalLeaf += collection.leaf ? this.filterContentsForCount(collection.leaf, contentStatus, onlySample, organisationId, createdBy) : 0;
+    collection.totalLeaf += collection.leaf ? this.filterContentsForCount(collection.leaf, contentStatus, onlySample, organisationId, createdBy, visibility) : 0;
     return collection.totalLeaf;
   }
 
 
-  filterContentsForCount (contents, status?, onlySample?, organisationId?, createdBy?) {
+  filterContentsForCount (contents, status?, onlySample?, organisationId?, createdBy?, visibility?) {
     const filter = {
       ...(onlySample && {sampleContent: true}),
       ...(!onlySample && {sampleContent: null}),
       ...(createdBy && {createdBy}),
       ...(organisationId && {organisationId}),
+      ...(visibility && {visibility}),
     };
     if (status && status.length > 0) {
       contents = _.filter(contents, leaf => _.includes(status, leaf.status));
