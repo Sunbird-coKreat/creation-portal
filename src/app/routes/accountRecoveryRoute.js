@@ -22,7 +22,7 @@ module.exports = (app) => {
       proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
       proxyReqPathResolver: (req) => {
         logger.info({msg: '/learner/user/v1/password/reset called'});
-        return envHelper.LEARNER_URL + 'private/user/v1/search'
+        return envHelper.LEARNER_URL + 'private/user/v1/password/reset'
         // return require('url').parse(envHelper.LEARNER_URL.replace('/api/', '')+ req.originalUrl).path
       }
   }))
