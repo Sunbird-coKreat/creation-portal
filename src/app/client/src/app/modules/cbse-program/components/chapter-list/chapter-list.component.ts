@@ -277,7 +277,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     let status = this.sampleContent ? ['Review', 'Draft'] : [];
     let createdBy, visibility;
     if (this.sampleContent === false && this.isSourcingOrgReviewer()) {
-      status = ['Live'];
+      if (this.sourcingOrgReviewer) {
+        status = ['Live'];
+      }
       visibility = true;
     }
     if (this.isContributingOrgContributor()) {
