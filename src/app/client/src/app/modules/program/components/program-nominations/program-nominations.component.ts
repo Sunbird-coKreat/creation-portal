@@ -51,6 +51,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public sourcingOrgUser = [];
   public sourcingOrgUserCnt = 0;
   public roles;
+  roleNames;
   public currentStage: string;
   public dynamicInputs;
   public state: InitialState = {
@@ -104,6 +105,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
     this.roles = [{name: 'REVIEWER'}];
+    this.roleNames = _.map(this.roles, 'name');
     this.sessionContext.currentRole = 'REVIEWER';
     this.programStageService.initialize();
     this.programStageService.addStage('programNominations');
@@ -251,11 +253,12 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           iteration++;
            this.getsourcingOrgReviewers(1000*iteration);
         } else {
+          this.readRolesOfOrgUsers();
+          this.paginatedSourcingUsers = this.programsService.sortCollection(this.paginatedSourcingUsers, 'selectedRole', 'desc');
           this.paginatedSourcingUsers = _.chunk( this.paginatedSourcingUsers, this.pageLimit);
           this.sourcingOrgUser = this.paginatedSourcingUsers[this.pageNumber-1];
           this.pagerUsers = this.paginationService.getPager(this.sourcingOrgUserCnt, this.pageNumberUsers, this.pageLimit);
           this.showUsersLoader = false;
-          this.readRolesOfOrgUsers();
         }
       },
     );
@@ -271,7 +274,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 	 * @example navigateToPage(1)
 	 */
   navigateToSourcingPage(page: number): undefined | void {
-    if (page < 1 || page > this.pager.totalPages) {
+    if (page < 1 || page > this.pagerUsers.totalPages) {
       return;
     }
     this.pageNumberUsers = page;
@@ -510,7 +513,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     if (this.programDetails.rolemapping) {
       _.forEach(this.roles, (role) => {
         if (this.programDetails.rolemapping[role.name]) {
-          _.forEach(this.sourcingOrgUser, (user) => {
+          _.forEach(this.paginatedSourcingUsers, (user) => {
             if (_.includes(this.programDetails.rolemapping[role.name], user.identifier)) {
               user['selectedRole'] = role.name;
             } else {
@@ -519,7 +522,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           });
         }
       });
-      this.sortOrgUsers('selectedRole');
     }
   }
 
@@ -627,24 +629,32 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     }
   }
 
-  onRoleChange() {
+  onRoleChange(user) {
     const roleMap = {};
-    _.forEach(this.roles, role => {
-      roleMap[role.name] = _.reduce(this.sourcingOrgUser, (result, user) => {
-        if (user.selectedRole === role.name) {  result.push(user.identifier); }
-        return result;
-      }, []);
-    });
-    const request = {
-          'program_id': this.activatedRoute.snapshot.params.programId,
-          'rolemapping': roleMap
-    };
-  this.programsService.updateProgram(request)
-    .subscribe(response => {
-      this.toasterService.success(this.resourceService.messages.smsg.roles.m0001);
-    }, error => {
-      this.toasterService.error(this.resourceService.messages.emsg.roles.m0001);
-    });
+
+    if (_.includes(this.roleNames, user.selectedRole)) {
+        const progRoleMapping = this.programDetails.rolemapping;
+        _.forEach(progRoleMapping, function(ua, role, arr){
+            if (user.selectedRole === role) {
+              ua.push(user.identifier);
+              _.compact(ua);
+              progRoleMapping[role] = ua;
+            }
+       });
+
+      const request = {
+            'program_id': this.activatedRoute.snapshot.params.programId,
+            'rolemapping': progRoleMapping
+      };
+      this.programsService.updateProgram(request)
+        .subscribe(response => {
+          this.toasterService.success(this.resourceService.messages.smsg.roles.m0001);
+        }, error => {
+          this.toasterService.error(this.resourceService.messages.emsg.roles.m0001);
+        });
+    } else {
+      this.toasterService.error("Role not found");
+    }
   }
 
   changeView() {
