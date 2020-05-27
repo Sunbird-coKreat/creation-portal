@@ -353,12 +353,9 @@
 		</sui-tabset>
 	</div>
 </div>
-
 <ng-container *ngIf="currentStage !== 'listNominatedTextbookComponent'">
-	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs">
-	</ndc-dynamic>
+	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>
 </ng-container>
-/*Apply filter popup */
 <sui-modal *ngIf="showTextbookFilterModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'" class="sb-modal" appBodyScroll (dismissed)="showTextbookFilterModal = false" #nominationConfirmationModal>
 	<div class="sb-modal-header">
 		{{resourceService.frmelmnts.lbl.addFilters}}
