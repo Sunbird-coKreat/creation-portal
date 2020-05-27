@@ -284,8 +284,6 @@
                 </div>
             </div>
             <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="3">
-                <app-loader *ngIf='showUsersLoader'></app-loader>
-
 				<div class="ui container">
 					<div class="pt-24">
 					  <div class="d-flex flex-ai-center flex-jc-space-between sb-pageSection">
@@ -294,7 +292,8 @@
 						  <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{sourcingOrgUserCnt || 0}}</span>
 						</div>
 					  </div>
-					</div>
+                    </div>
+                    <app-loader *ngIf='showUsersLoader'></app-loader>
 					<div class="sb-table-responsive desktop-o-x-unset" *ngIf="sourcingOrgUserCnt > 0">
 					  <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
 						<thead class="sb-table-header sb-table-thead-gray">
