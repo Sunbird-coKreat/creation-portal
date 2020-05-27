@@ -152,7 +152,7 @@
 			<div class="ui pointing secondary menu sb-bg-color-primary-100">
 				<div class="ui container p-0 m-0 d-flex flex-ai-center flex-jc-center">
 					<div class="item active cursor-pointer" suiTabHeader="2">{{ resourceService?.frmelmnts?.lbl?.textbooks }}<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{contributorTextbooks.length || 0}}</span></div>
-					<div class="item cursor-pointer" *ngIf="showUsersTab" suiTabHeader="3">{{resourceService.frmelmnts.lbl.assignUsersToProject}} <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{contributorOrgUser.length || 0}}</span></div>
+					<div class="item cursor-pointer" *ngIf="isUserOrgAdmin()" suiTabHeader="3">{{resourceService.frmelmnts.lbl.assignUsersToProject}} <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ OrgUsersCnt}}</span></div>
 				</div>
 			</div>
 
@@ -248,23 +248,23 @@
 				</div>
 			</div>
 			<div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="3">
-				<div class="ui container" *ngIf="contributorOrgUser">
+				<div class="ui container">
 					<div class="pt-24">
 					  <div class="d-flex flex-ai-center flex-jc-space-between sb-pageSection">
 						<div class="sb-pageSection-header">
 						  <h4 class="sb-pageSection-title"> {{orgDetails.name}}</h4>
-						  <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{contributorOrgUser.length || 0}}</span>
+						  <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{ OrgUsersCnt }}</span>
 						</div>
 					  </div>
 					</div>
-					<div class="sb-table-responsive desktop-o-x-unset" *ngIf="contributorOrgUser?.length != 0">
+					<div class="sb-table-responsive desktop-o-x-unset" *ngIf="OrgUsersCnt > 0">
 					  <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
 						<thead class="sb-table-header sb-table-thead-gray">
 						  <tr>
-							<th class="w-10 cursor-pointer sb-sorting" (click)="sortOrgUsers('fullName')">
+							<th class="w-10 cursor-pointer sb-sorting" (click)="sortOrgUsers('name')">
 								{{resourceService.frmelmnts.lbl.username}} &nbsp;&nbsp;
-								<i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || sortColumnOrgUsers != 'fullName' "></i>
-								<span  *ngIf="sortColumnOrgUsers == 'fullName'" class="d-inline-block">
+								<i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || sortColumnOrgUsers != 'name' "></i>
+								<span  *ngIf="sortColumnOrgUsers == 'name'" class="d-inline-block">
 									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'asc'}"></i>
 									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
 								</span>
@@ -319,7 +319,7 @@
 								</div>
 								<ng-template #elseBlock>
 									<sui-select class="selection pt-5" [(ngModel)]="orgUser.projectselectedRole" labelField="name" [options]="options" valueField="name"
-									(selectedOptionChange)="onRoleChange()">
+									(selectedOptionChange)="onRoleChange(orgUser)">
 										<sui-select-option *ngFor="let option of roles;" [value]="option">
 										</sui-select-option>
 									</sui-select>
@@ -329,10 +329,22 @@
 						</tbody>
 					  </table>
 					</div>
-					<div class="sb-table-responsive" *ngIf="contributorOrgUser?.length === 0">
-						<app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0146'}"></app-no-result>
+					<div *ngIf="OrgUsersCnt > 0 && pager.totalPages > 1 && !showUsersLoader" class="sb-pagination-container flex-jc-flex-end pt-16">
+						<div class="sb-pagination">
+							<a class="sb-item" [ngClass]="{disabled:pager.currentPage===1 }" (click)="NavigateToPage(1)">First</a>
+							<a [ngClass]="{disabled:pager.currentPage===1 }" class="sb-item" (click)="NavigateToPage(pager.currentPage - 1)" >Previous</a>
+							<a *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage===page}" (click)="NavigateToPage(page)" class="sb-item">{{page}}</a>
+							<a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="NavigateToPage(pager.currentPage + 1)"  class="sb-item">Next</a>
+							<a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="NavigateToPage(pager.totalPages)"  class="sb-item">Last</a>
+						</div>
+					  </div>
+					<div class="mt-12" *ngIf="!showUsersLoader && OrgUsersCnt == 0">
+						<app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0006'}"> </app-no-result>
 					</div>
-				  </div>
+					  <div class="ui tweleve wide column mb-20" *ngIf="showUsersLoader">
+						<app-loader></app-loader>
+					  </div>
+				</div>
 			</div>
 		</sui-tabset>
 	</div>

@@ -4,35 +4,37 @@
       <div class="sb-pageSection-header mb-0">
         <h4 class="sb-pageSection-title">{{ resourceService.frmelmnts.lbl.allUsers }}</h4>
         <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-5 px-5"
-        *ngIf="!showLoader && contributorOrgUsers && contributorOrgUsers.length">{{contributorOrgUsers.length}}</span>
+          *ngIf="!showLoader && orgUserscnt && orgUserscnt">{{orgUserscnt}}</span>
       </div>
       <div>
         <button class="sb-btn sb-btn-outline-primary sb-btn-normal ml-10 " (click)="copyOnLoad()"><i
             class="plus circle icon" appTelemetryInteract
             [telemetryInteractEdata]="getTelemetryInteractEdata('user-link', 'click', 'org-user-list')"
             [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
-            [telemetryInteractPdata]="telemetryInteractPdata"></i> {{ resourceService.frmelmnts.lbl.inviteUser }}</button>
+            [telemetryInteractPdata]="telemetryInteractPdata"></i>
+          {{ resourceService.frmelmnts.lbl.inviteUser }}</button>
       </div>
     </div>
   </div>
   <div class="sb-pageSection my-24">
-    <div class="sb-table-responsive desktop-o-x-unset" *ngIf="contributorOrgUsers && contributorOrgUsers.length > 0 && !showLoader">
+    <div class="sb-table-responsive desktop-o-x-unset"
+      *ngIf="orgUserscnt && orgUserscnt > 0 && !showLoader">
       <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
         <thead class="sb-table-header sb-table-thead-gray">
           <tr>
             <th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('name')">
               {{resourceService.frmelmnts.lbl.user}} &nbsp;&nbsp;
               <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>
-              <span  *ngIf="sortColumn == 'name'" class="d-inline-block">
+              <span *ngIf="sortColumn == 'name'" class="d-inline-block">
                 <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
                 <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
               </span>
             </th>
             <th class="w-10">{{resourceService.frmelmnts.lbl.emailOrMobile}}</th>
             <th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('selectedRole')">
-              {{resourceService.frmelmnts.lbl.roles}}  &nbsp;&nbsp;
+              {{resourceService.frmelmnts.lbl.roles}} &nbsp;&nbsp;
               <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'selectedRole' "></i>
-              <span  *ngIf="sortColumn == 'selectedRole'" class="d-inline-block">
+              <span *ngIf="sortColumn == 'selectedRole'" class="d-inline-block">
                 <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
                 <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
               </span>
@@ -42,29 +44,40 @@
         <tbody class="sb-table-body">
           <tr *ngFor="let orgUser of contributorOrgUsers; let i = index;">
             <td>
-                <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
+              <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
                 {{orgUser.name}}
-                </div>
+              </div>
             </td>
             <td>{{ orgUser?.email || orgUser?.phone || '-' }}</td>
             <td>
-            <div>
-              <sui-select class="selection pt-5" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="roles" valueField="value"
-              (selectedOptionChange)="onRoleChange(orgUser)" #orgRole>
-                <sui-select-option *ngFor="let option of orgRole.filteredOptions;" [value]="option" [class.active]="orgUser.selectedRole === option.value">
-                </sui-select-option>
-              </sui-select>
-            </div>
-          </td>
+              <div>
+                <sui-select class="selection pt-5" [(ngModel)]="orgUser.selectedRole" labelField="name"
+                  [options]="roles" valueField="value" (selectedOptionChange)="onRoleChange(orgUser)" #orgRole>
+                  <sui-select-option *ngFor="let option of orgRole.filteredOptions;" [value]="option"
+                    [class.active]="orgUser.selectedRole === option.value">
+                  </sui-select-option>
+                </sui-select>
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
+    <div *ngIf="orgUserscnt > 0 && pager.totalPages > 1 && !showLoader" class="sb-pagination-container flex-jc-flex-end pt-16">
+      <div class="sb-pagination">
+          <a class="sb-item" [ngClass]="{disabled:pager.currentPage===1 }" (click)="NavigateToPage(1)">First</a>
+          <a [ngClass]="{disabled:pager.currentPage===1 }" class="sb-item" (click)="NavigateToPage(pager.currentPage - 1)" >Previous</a>
+          <a *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage===page}" (click)="NavigateToPage(page)" class="sb-item">{{page}}</a>
+          <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="NavigateToPage(pager.currentPage + 1)"  class="sb-item">Next</a>
+          <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="NavigateToPage(pager.totalPages)"  class="sb-item">Last</a>
+      </div>
+    </div>
+  <div class="mt-12" *ngIf="!showLoader && orgUserscnt == 0">
+      <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0006'}"> </app-no-result>
+  </div>
     <div class="ui tweleve wide column mb-20" *ngIf="showLoader">
       <app-loader></app-loader>
     </div>
-    <app-no-result *ngIf="!showLoader && !contributorOrgUsers" [data]="{messageText: resourceService.messages.stmsg.m0006}"></app-no-result>
-  </div>
 </div>
 <!-- Modal popup for share link -->
 <sui-modal *ngIf="showNormalModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
@@ -75,7 +88,8 @@
   <div class="sb-modal-content">
     <p class="mb-8">{{ resourceService.frmelmnts.lbl.sharelink }}</p>
     <div class="ui action input fluid">
-      <input readonly="" value="{{orgLink}}" type="text" id="copyLinkData" suiPopup [popupPlacement]="position" popupText="{{resourceService?.frmelmnts?.lbl?.linkCopied}}" #popup="suiPopup" popupTrigger="focus">
+      <input readonly="" value="{{orgLink}}" type="text" id="copyLinkData" suiPopup [popupPlacement]="position"
+        popupText="{{resourceService?.frmelmnts?.lbl?.linkCopied}}" #popup="suiPopup" popupTrigger="focus">
       <button class="ui basic primary button" (click)="copyLinkToClipboard()" appTelemetryInteract
         [telemetryInteractEdata]="getTelemetryInteractEdata('copy-link', 'click', 'org-user-list')"
         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
