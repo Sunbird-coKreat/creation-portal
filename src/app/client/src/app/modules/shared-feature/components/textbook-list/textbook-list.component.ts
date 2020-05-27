@@ -41,6 +41,11 @@ export class TextbookListComponent implements OnInit {
     public actionService: ActionService, private collectionHierarchyService: CollectionHierarchyService,
     private userService: UserService
   ) { }
+  showTextbookFilterModal;
+  medium = ['English', 'Hindi', 'Maths', 'Tamil'];
+  buttonLabel = "Apply Filters";
+  filterApply = false;
+
 
   ngOnInit(): void {
     this.initialize();
@@ -64,6 +69,20 @@ export class TextbookListComponent implements OnInit {
       this.direction = 'asc';
     }
     this.sortColumn = column;
+  }
+  showApplyFilter() {
+    this.showTextbookFilterModal = !this.showTextbookFilterModal;
+    // CHANGE THE TEXT OF THE BUTTON.
+    this.buttonLabel=this.showTextbookFilterModal ? 'Modify Filters' : 'Apply Filters';
+  }
+  applyFilter(){
+    this.filterApply=true;
+    this.showTextbookFilterModal = false;
+  }
+  cancelTextbookFilter() {
+    this.buttonLabel='Apply Filters';
+    this.filterApply=false;
+    this.showTextbookFilterModal = false;
   }
 
   showTexbooklist (data, contentAggregationData) {

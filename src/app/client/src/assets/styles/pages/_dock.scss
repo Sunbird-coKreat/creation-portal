@@ -286,3 +286,12 @@
   }
 } 
 
+.sb-dock-circle{
+  width: 0.5rem;
+  height: 0.5rem;
+  background: var(--tertiary-400);
+  border-radius: 50%;
+  position: absolute;
+  right: -5px;
+  top: -4px;
+}
