@@ -1,8 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { SignupService } from './../../services';
-import { ResourceService, ServerResponse } from '@sunbird/shared';
+import { ResourceService, ServerResponse, UtilService, ConfigService } from '@sunbird/shared';
 import { Validators, FormGroup, FormControl } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash-es';
 import {
   IStartEventInput, IEndEventInput, IInteractEventInput,
@@ -19,6 +19,7 @@ import { TelemetryService } from '@sunbird/telemetry';
 export class OtpComponent implements OnInit {
 
   @Input() signUpdata: any;
+  @Input() isMinor: boolean;
   @Input() tncLatestVersion: any;
   @Output() redirectToParent = new EventEmitter();
   otpForm: FormGroup;
@@ -40,9 +41,13 @@ export class OtpComponent implements OnInit {
   instance: string;
   emailAddress: any;
   phoneNumber: any;
+  remainingAttempt: 'string';
+
   constructor(public resourceService: ResourceService, public signupService: SignupService,
-    public activatedRoute: ActivatedRoute, public telemetryService: TelemetryService,
-    public deviceDetectorService: DeviceDetectorService) { }
+              public activatedRoute: ActivatedRoute, public telemetryService: TelemetryService,
+              public deviceDetectorService: DeviceDetectorService, public router: Router,
+              public utilService: UtilService, public configService: ConfigService) {
+  }
 
   ngOnInit() {
     this.emailAddress = this.signUpdata.value.email;
@@ -56,7 +61,9 @@ export class OtpComponent implements OnInit {
       this.resourceService.frmelmnts.lbl.unableToVerifyEmail;
     this.setInteractEvent();
     this.instance = _.upperCase(this.resourceService.instance);
-
+    setTimeout(() => {
+      this.disableResendButton = true;
+    }, 10000);
   }
 
   verifyOTP() {
@@ -75,19 +82,26 @@ export class OtpComponent implements OnInit {
       (data: ServerResponse) => {
         this.infoMessage = '';
         this.errorMessage = '';
-        this.createUser();
+        this.createUser(data);
       },
       (err) => {
         this.logVerifyOtpError(err.error.params.errmsg);
         this.telemetryService.interact(this.generateVerifyOtpErrorInteractEdata);
-        this.infoMessage = '';
-        this.errorMessage = err.error.params.status === 'ERROR_INVALID_OTP' ?
-          wrongOTPMessage : wrongOTPMessage;
-        if (this.disableResendButton) {
-          this.showSignUpLink = true;
-          this.telemetryService.end(this.telemetryEnd);
+        if (_.get(err, 'error.result.remainingAttempt') === 0) {
+          this.utilService.redirectToLogin(this.resourceService.messages.emsg.m0050);
+        } else {
+          this.infoMessage = '';
+          this.otpForm.controls.otp.setValue('');
+          this.remainingAttempt = _.get(err, 'error.result.remainingAttempt');
+          this.errorMessage =
+            _.get(err, 'error.params.status') === this.configService.constants.HTTP_STATUS_CODES.OTP_VERIFICATION_FAILED ?
+              _.get(this.resourceService, 'messages.imsg.m0086') : wrongOTPMessage;
+          if (this.disableResendButton) {
+            this.showSignUpLink = true;
+            this.telemetryService.end(this.telemetryEnd);
+          }
+          this.disableSubmitBtn = false;
         }
-        this.disableSubmitBtn = false;
       }
     );
   }
@@ -99,7 +113,7 @@ export class OtpComponent implements OnInit {
         cdata: this.telemetryCdata,
       },
       edata: {
-        id: 'submit-otp',
+        id: 'invalid-otp-error',
         type: 'click',
         pageid: 'otp',
         extra: {
@@ -109,7 +123,7 @@ export class OtpComponent implements OnInit {
     };
   }
 
-  createUser() {
+  createUser(data?: any) {
     let identifier = '';
     const createRequest = {
       params: {
@@ -130,6 +144,7 @@ export class OtpComponent implements OnInit {
       createRequest.request['emailVerified'] = true;
       identifier = this.signUpdata.controls.email.value;
     }
+    createRequest.request['reqData'] = _.get(data, 'reqData');
     if (this.signUpdata.controls.tncAccepted.value && this.signUpdata.controls.tncAccepted.status === 'VALID') {
       this.signupService.createUserV3(createRequest).subscribe((resp: ServerResponse) => {
           this.telemetryLogEvents('sign-up', true);
@@ -183,7 +198,7 @@ export class OtpComponent implements OnInit {
         cdata: this.telemetryCdata,
       },
       edata: {
-        id: 'create-user',
+        id: 'create-user-error',
         type: 'click',
         pageid: 'otp',
         extra: {
@@ -201,6 +216,9 @@ export class OtpComponent implements OnInit {
         'type': this.mode
       }
     };
+    if (this.isMinor) {
+      request.request['templateId'] = this.configService.constants.TEMPLATES.VERIFY_OTP_MINOR;
+    }
     this.signupService.generateOTP(request).subscribe(
       (data: ServerResponse) => {
         this.errorMessage = '';
@@ -222,7 +240,7 @@ export class OtpComponent implements OnInit {
         cdata: this.telemetryCdata,
       },
       edata: {
-        id: 'resend-otp',
+        id: 'resend-otp-error',
         type: 'click',
         pageid: 'otp',
         extra: {
