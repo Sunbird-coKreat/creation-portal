@@ -631,15 +631,18 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   onRoleChange(user) {
-    const roleMap = {};
-
     if (_.includes(this.roleNames, user.selectedRole)) {
         let progRoleMapping = this.programDetails.rolemapping;
          if (isNullOrUndefined(progRoleMapping)) {
           progRoleMapping = {};
           progRoleMapping[user.selectedRole] = [];
          }
-
+         const programRoleNames = _.map(progRoleMapping, function(currentelement, index, arrayobj) {
+          return index;
+        });
+        if (!_.includes(programRoleNames, user.selectedRole)) {
+          progRoleMapping[user.selectedRole] = [];
+        }
         _.forEach(progRoleMapping, function(ua, role, arr){
             if (user.selectedRole === role) {
               ua.push(user.identifier);
