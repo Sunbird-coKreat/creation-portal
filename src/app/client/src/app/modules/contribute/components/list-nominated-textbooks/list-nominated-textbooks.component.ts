@@ -1,5 +1,5 @@
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
-import { ResourceService, ConfigService, NavigationHelperService, ToasterService } from '@sunbird/shared';
+import { ResourceService, ConfigService, NavigationHelperService, ToasterService, PaginationService} from '@sunbird/shared';
 import { ProgramsService, PublicDataService, UserService, FrameworkService, RegistryService, ActionService } from '@sunbird/core';
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { tap, first } from 'rxjs/operators';
@@ -10,8 +10,9 @@ import { HttpClient } from '@angular/common/http';
 import { ProgramStageService } from '../../../program/services/program-stage/program-stage.service';
 import { CollectionHierarchyService } from '../../../cbse-program/services/collection-hierarchy/collection-hierarchy.service';
 import { ChapterListComponent } from '../../../cbse-program/components/chapter-list/chapter-list.component';
-import { IChapterListComponentInput } from '../../../cbse-program/interfaces';
+import { IChapterListComponentInput, IPagination } from '../../../cbse-program/interfaces';
 import { InitialState, ISessionContext, IUserParticipantDetails } from '../../interfaces';
+import { isUndefined, isNullOrUndefined } from 'util';
 import * as moment from 'moment';
 
 @Component({
@@ -46,7 +47,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public grades: any;
   public userProfile: any;
   public activeDate = '';
-  public showUsersTab = false;
   public stageSubscription: any;
   public state: InitialState = {
     stages: []
@@ -55,7 +55,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public tempSortOrgUser: any = [];
   public orgDetails: any = {};
   public roles;
-  public selectedRole;
+  roleNames;
   public showNormalModal = false;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
@@ -71,13 +71,21 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   medium = ['English', 'Hindi', 'Maths', 'Tamil'];
   buttonLabel = "Apply Filters";
   filterApply = false;
+  public paginatedContributorOrgUsers: any = [];
+  public allContributorOrgUsers: any = [];
+  showUsersLoader = true;
+  OrgUsersCnt = 0;
+  pager: IPagination;
+  pageNumber = 1;
+  pageLimit = 200;
 
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private configService: ConfigService, private publicDataService: PublicDataService,
   private activatedRoute: ActivatedRoute, private router: Router, public programStageService: ProgramStageService,
   public toasterService: ToasterService, private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
   public frameworkService: FrameworkService, public userService: UserService, public registryService: RegistryService,
-  public activeRoute: ActivatedRoute, private collectionHierarchyService: CollectionHierarchyService, public actionService: ActionService) {
+  public activeRoute: ActivatedRoute, private collectionHierarchyService: CollectionHierarchyService, public actionService: ActionService,
+  private paginationService: PaginationService ) {
     this.programId = this.activatedRoute.snapshot.params.programId;
    }
 
@@ -92,9 +100,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     this.programStageService.addStage('listNominatedTextbookComponent');
 
     this.currentStage = 'listNominatedTextbookComponent';
-    if (this.isUserOrgAdmin()) {
-      this.showUsersTab = true;
-    }
 
     this.telemetryInteractCdata = [{
       id: this.activatedRoute.snapshot.params.programId,
@@ -133,6 +138,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     this.fetchProgramDetails().subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
       this.roles = _.get(this.programDetails, 'config.roles');
+      this.roleNames = _.map(this.roles, 'name');
       this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
       this.setActiveDate();
     }, error => {
@@ -309,7 +315,11 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   }
 
   sortOrgUsers(column) {
-    this.contributorOrgUser = this.programsService.sortCollection(this.tempSortOrgUser, column, this.directionOrgUsers);
+    this.allContributorOrgUsers = this.programsService.sortCollection(this.allContributorOrgUsers, column, this.directionOrgUsers);
+    this.paginatedContributorOrgUsers = _.chunk( this.allContributorOrgUsers, this.pageLimit);
+    this.contributorOrgUser = this.paginatedContributorOrgUsers[this.pageNumber-1];
+    this.pager = this.paginationService.getPager(this.OrgUsersCnt, this.pageNumber, this.pageLimit);
+
     if (this.directionOrgUsers === 'asc' || this.directionOrgUsers === '') {
       this.directionOrgUsers = 'desc';
     } else {
@@ -364,7 +374,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
         }
         if (this.isUserOrgAdmin()) {
-          this.showUsersTab = true;
           this.getContributionOrgUsers();
         }
       }
@@ -389,38 +398,70 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
                 }
               });
             }
-            this.contributorOrgUser.push(r);
+            this.allContributorOrgUsers.push(r);
           });
-          this.tempSortOrgUser = this.contributorOrgUser;
+          this.OrgUsersCnt = this.allContributorOrgUsers.length;
           this.sortOrgUsers('projectselectedRole');
-          this.showLoader = false;
+          this.showUsersLoader = false;
         }
         else {
-          this.showLoader = false;
+          this.showUsersLoader = false;
         }
       });
   }
 
-  onRoleChange() {
-    const roleMap = {};
-    _.forEach(this.roles, role => {
-      roleMap[role.name] = _.map(
-        _.filter(this.contributorOrgUser, user => { if (user.projectselectedRole === role.name) {  return user.identifier; }}), 'identifier');
-    });
-    const req = {
-      'request': {
-          'program_id': this.activatedRoute.snapshot.params.programId,
-          'user_id': this.nominationDetails.user_id,
-          'rolemapping': roleMap
-        }
-      };
+  NavigateToPage(page: number): undefined | void {
+    if (page < 1 || page > this.pager.totalPages) {
+      return;
+    }
+    this.pageNumber = page;
+    this.contributorOrgUser = this.paginatedContributorOrgUsers[this.pageNumber -1];
+    this.pager = this.paginationService.getPager(this.OrgUsersCnt, this.pageNumber, this.pageLimit);
+  }
 
-    const updateNomination = this.programsService.updateNomination(req);
-    updateNomination.subscribe(response => {
-      this.toasterService.success('Roles updated');
-    }, error => {
-      console.log(error);
-    });
+
+  onRoleChange(user) {
+    if (_.includes(this.roleNames, user.projectselectedRole)) {
+      let progRoleMapping = this.nominationDetails.rolemapping;
+      if (isNullOrUndefined(progRoleMapping)) {
+        progRoleMapping = {};
+        progRoleMapping[user.projectselectedRole] = [];
+      }
+      const programRoleNames = _.map(progRoleMapping, function(currentelement, index, arrayobj) {
+          return index;
+      });
+
+      if (!_.includes(programRoleNames, user.projectselectedRole)) {
+        progRoleMapping[user.projectselectedRole] = [];
+      }
+
+      _.forEach(progRoleMapping, function(ua, role, arr){
+        if (user.projectselectedRole === role) {
+          ua.push(user.identifier);
+          _.compact(ua);
+          progRoleMapping[role] = ua;
+        }
+      });
+
+      const req = {
+        'request': {
+            'program_id': this.activatedRoute.snapshot.params.programId,
+            'user_id': this.nominationDetails.user_id,
+            'rolemapping': progRoleMapping
+          }
+        };
+
+      const updateNomination = this.programsService.updateNomination(req);
+      updateNomination.subscribe(response => {
+        this.toasterService.success('Roles updated');
+      }, error => {
+        console.log(error);
+        this.toasterService.error("Something went wrong while updating the role");
+      });
+
+    }else {
+      this.toasterService.error("Role not found");
+    }
   }
 
   changeView() {

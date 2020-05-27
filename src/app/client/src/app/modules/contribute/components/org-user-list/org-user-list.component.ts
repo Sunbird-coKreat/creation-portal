@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { ToasterService, ResourceService, NavigationHelperService, ConfigService } from '@sunbird/shared';
+import { ToasterService, ResourceService, NavigationHelperService, ConfigService, PaginationService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
+import { IPagination} from '../../../cbse-program/interfaces';
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
 import { UserService, RegistryService, ProgramsService } from '@sunbird/core';
 import { CacheService } from 'ng2-cache-service';
@@ -20,7 +21,9 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
   public orgLink;
-  public contributorOrgUser: any = [];
+  public paginatedContributorOrgUsers: any = [];
+  public allContributorOrgUsers: any = [];
+  public orgUserscnt = 0;
   public orgDetails: any = {};
   public showLoader = true;
   public contributorOrgUsers: any = [];
@@ -28,11 +31,15 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public direction = 'asc';
   public sortColumn = '';
   public roles = [{ name: 'User', value: 'user'}, { name: 'Admin', value: 'admin'}];
+  pager: IPagination;
+  pageNumber = 1;
+  pageLimit = 200;
 
   constructor(private toasterService: ToasterService, private configService: ConfigService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
-    public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService ) {
+    public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService,
+    private paginationService: PaginationService ) {
       this.getContributionOrgUsers();
     }
 
@@ -75,17 +82,31 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
 
   getContributionOrgUsers() {
     this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
-      this.contributorOrgUsers = orgUsers;
-      this.tempSortOrgUser = orgUsers;
-      if (!_.isEmpty(this.contributorOrgUsers) && this.contributorOrgUsers.length > 0) {
+      this.allContributorOrgUsers = orgUsers;
+      //this.tempSortOrgUser = orgUsers;
+      if (!_.isEmpty(this.allContributorOrgUsers) && this.allContributorOrgUsers.length > 0) {
+        this.orgUserscnt =  this.allContributorOrgUsers.length;
         this.sortCollection('selectedRole');
       }
+
       this.showLoader = false;
     });
   }
 
+  NavigateToPage(page: number): undefined | void {
+    if (page < 1 || page > this.pager.totalPages) {
+      return;
+    }
+    this.pageNumber = page;
+    this.contributorOrgUsers = this.paginatedContributorOrgUsers[this.pageNumber -1];
+    this.pager = this.paginationService.getPager(this.orgUserscnt, this.pageNumber, this.pageLimit);
+  }
+
   sortCollection(column) {
-    this.contributorOrgUsers = this.programsService.sortCollection(this.tempSortOrgUser, column, this.direction);
+    this.allContributorOrgUsers = this.programsService.sortCollection(this.allContributorOrgUsers, column, this.direction);
+    this.paginatedContributorOrgUsers = _.chunk( this.allContributorOrgUsers, this.pageLimit);
+    this.contributorOrgUsers = this.paginatedContributorOrgUsers[this.pageNumber-1];
+    this.pager = this.paginationService.getPager(this.orgUserscnt, this.pageNumber, this.pageLimit);
     if (this.direction === 'asc' || this.direction === '') {
       this.direction = 'desc';
     } else {
