@@ -267,15 +267,6 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <!--div *ngIf="totalPages > 1" class="sb-pagination-container flex-jc-flex-end pt-16">
-                                <div class="sb-pagination">
-                                    <a class="sb-item" [ngClass]="{'disabled': disablePagination.first}" (click)="disablePagination.first ? $event.stopPropagation() :navigatePage('first')">&laquo;</a>
-                                    <a class="sb-item" [ngClass]="{'disabled': disablePagination.prev}" (click)="disablePagination.prev ? $event.stopPropagation() :navigatePage('prev')">&lt;</a>
-                                    <a class="sb-item" [ngClass]="{'active': currentPage === page}" *ngFor="let page of pageNumArray" (click)="(currentPage === page) ? $event.stopPropagation() : navigatePage(page)">{{page}}</a>
-                                    <a class="sb-item" [ngClass]="{'disabled': disablePagination.next}" (click)="disablePagination.next ? $event.stopPropagation() :navigatePage('next')">&gt;</a>
-                                    <a class="sb-item" [ngClass]="{'disabled': disablePagination.last}" (click)="disablePagination.last ? $event.stopPropagation() : navigatePage('last')">&raquo;</a>
-                                </div>
-                            </div-->
                             <div *ngIf="totalNominations > 0 && pager.totalPages > 1 && !showNominationLoader" class="sb-pagination-container flex-jc-flex-end pt-16">
                                 <div class="sb-pagination">
                                     <a class="sb-item" [ngClass]="{disabled:pager.currentPage===1 }" (click)="NavigateTonominationPage(1)">First</a>
