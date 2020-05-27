@@ -436,14 +436,15 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
 
       const updateNomination = this.programsService.updateNomination(req);
       updateNomination.subscribe(response => {
-        this.toasterService.success('Roles updated');
+        this.toasterService.success(this.resourceService.messages.smsg.roles.m0001);
+        this.directionOrgUsers = _.includes(['asc', ''], this.directionOrgUsers) ? 'desc' : 'asc';
+        this.sortOrgUsers('projectselectedRole');
       }, error => {
         console.log(error);
-        this.toasterService.error("Something went wrong while updating the role");
+        this.toasterService.error(this.resourceService.messages.emsg.roles.m0002 );
       });
-
-    }else {
-      this.toasterService.error("Role not found");
+    } else {
+      this.toasterService.error(this.resourceService.messages.emsg.roles.m0003);
     }
   }
 
