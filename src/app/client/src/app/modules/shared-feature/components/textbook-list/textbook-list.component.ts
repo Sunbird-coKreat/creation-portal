@@ -43,7 +43,7 @@ export class TextbookListComponent implements OnInit {
   ) { }
   showTextbookFilterModal;
   medium = ['English', 'Hindi', 'Maths', 'Tamil'];
-  buttonLabel = "Apply Filters";
+  buttonLabel = "Filter Textbooks";
   filterApply = false;
 
 
@@ -73,14 +73,14 @@ export class TextbookListComponent implements OnInit {
   showApplyFilter() {
     this.showTextbookFilterModal = !this.showTextbookFilterModal;
     // CHANGE THE TEXT OF THE BUTTON.
-    this.buttonLabel=this.showTextbookFilterModal ? 'Modify Filters' : 'Apply Filters';
+    this.buttonLabel=this.showTextbookFilterModal ? 'Modify Filters' : 'Filter Textbooks';
   }
   applyFilter(){
     this.filterApply=true;
     this.showTextbookFilterModal = false;
   }
   cancelTextbookFilter() {
-    this.buttonLabel='Apply Filters';
+    this.buttonLabel='Filter Textbooks';
     this.filterApply=false;
     this.showTextbookFilterModal = false;
   }
