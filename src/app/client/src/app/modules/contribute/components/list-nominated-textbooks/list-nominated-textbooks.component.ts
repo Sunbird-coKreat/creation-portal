@@ -67,10 +67,10 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public directionOrgUsers = 'asc';
   public sortColumnOrgUsers = '';
   public showLoader = true;
-  showTextbookFilterModal;
+  showTextbookFiltersModal;
   medium = ['English', 'Hindi', 'Maths', 'Tamil'];
   buttonLabel = "Filter Textbooks";
-  filterApply = false;
+  textbookFiltersApplied = false;
   public paginatedContributorOrgUsers: any = [];
   public allContributorOrgUsers: any = [];
   showUsersLoader = true;
@@ -110,19 +110,19 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       pid: this.configService.appConfig.TELEMETRY.PID
     };
   }
-  showApplyFilter() {
-      this.showTextbookFilterModal = !this.showTextbookFilterModal;
+  openTextbookFilters() {
+      this.showTextbookFiltersModal = !this.showTextbookFiltersModal;
       // CHANGE THE TEXT OF THE BUTTON.
-      this.buttonLabel=this.showTextbookFilterModal ? 'Modify Filters' : 'Filter Textbooks';
+      this.buttonLabel=this.showTextbookFiltersModal ? 'Modify Filters' : 'Filter Textbooks';
     }
-  applyFilter(){
-    this.filterApply=true;
-    this.showTextbookFilterModal = false;
+  applyTextbookFilters(){
+    this.textbookFiltersApplied=true;
+    this.showTextbookFiltersModal = false;
   }
-  cancelTextbookFilter() {
+  closeTextbookFiltersModal() {
     this.buttonLabel='Filter Textbooks';
-    this.filterApply=false;
-    this.showTextbookFilterModal = false;
+    this.textbookFiltersApplied=false;
+    this.showTextbookFiltersModal = false;
   }
   sortCollection(column) {
     this.contributorTextbooks = this.programsService.sortCollection(this.tempSortTextbooks, column, this.direction);
