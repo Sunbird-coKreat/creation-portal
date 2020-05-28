@@ -108,6 +108,10 @@
                                         [telemetryInteractPdata]="telemetryInteractPdata">
                         {{resourceService.frmelmnts.lbl.contributionDashboard}}
                     </a>
+                    <a class="item" [isActive]="activeTab === 'report'" suiTabHeader="5">
+                        {{resourceService.frmelmnts.lbl.reports}}
+                        <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">2</span>
+                    </a>
                 </div>
             </div>
             <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="2">
@@ -456,6 +460,33 @@
                 </div>
                 <div class="sb-table-responsive" *ngIf="!showDashboardLoader && contributionDashboardData.length == 0">
                     <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0146'}"></app-no-result>
+                </div>
+            </div>
+            <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="5">
+                <div class="ui container pt-24 m-0">
+                    <div class="sb-table-responsive">
+                        <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
+                            <thead class="sb-table-header sb-table-thead-gray">
+                                <tr>
+                                    <th class="w-10">{{resourceService.frmelmnts.lbl.reportName}}</th>
+                                    <th class="w-25">{{resourceService.frmelmnts.lbl.description}}</th>
+                                    <th class="w-5">&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="sb-color-primary font-weight-bold">Textbook Report_01</td>
+                                    <td>Content report for all textbook for this project</td>
+                                    <td><button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary">{{resourceService.frmelmnts.btn.download}}</button></td>
+                                </tr>
+                                <tr>
+                                    <td class="sb-color-primary font-weight-bold">Chapter Report_02</td>
+                                    <td>Content report for all chapters for this project</td>
+                                    <td><button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary">{{resourceService.frmelmnts.btn.download}}</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </sui-tabset>
