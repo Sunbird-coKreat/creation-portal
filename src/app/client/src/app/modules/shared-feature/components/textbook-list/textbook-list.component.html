@@ -99,7 +99,7 @@
 						<div class="field">
 							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.medium}}</label>
 							<sui-multi-select class="selection p-5 b-100">
-								<sui-select-option *ngFor="let option of medium" [value]=option></sui-select-option>
+								<sui-select-option *ngFor="let option of mediums" [value]=option></sui-select-option>
 							</sui-multi-select>
 						</div>
 					</div>
@@ -107,7 +107,7 @@
 						<div class="field">
 							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.subject}}</label>
 							<sui-multi-select class="selection p-5 b-100">
-								<sui-select-option *ngFor="let option of medium" [value]=option></sui-select-option>
+								<sui-select-option *ngFor="let option of subjects" [value]=option></sui-select-option>
 							</sui-multi-select>
 						</div>
 					</div>
@@ -116,7 +116,7 @@
 							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.class}}</label>
 							<sui-multi-select
 								class="selection p-5 b-100">
-								<sui-select-option *ngFor="let option of medium" [value]=option></sui-select-option>
+								<sui-select-option *ngFor="let option of classes" [value]=option></sui-select-option>
 							</sui-multi-select>
 						</div>
 					</div>

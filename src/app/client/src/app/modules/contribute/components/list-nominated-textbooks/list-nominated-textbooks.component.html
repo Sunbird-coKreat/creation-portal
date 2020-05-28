@@ -356,7 +356,7 @@
 <ng-container *ngIf="currentStage !== 'listNominatedTextbookComponent'">
 	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>
 </ng-container>
-<sui-modal *ngIf="showTextbookFiltersModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'" class="sb-modal" appBodyScroll (dismissed)="showTextbookFiltersModal = false" #nominationConfirmationModal>
+<sui-modal *ngIf="showTextbookFiltersModal && programDetails && programDetails.config" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'" class="sb-modal" appBodyScroll (dismissed)="showTextbookFiltersModal = false" #nominationConfirmationModal>
 	<div class="sb-modal-header">
 		{{resourceService.frmelmnts.lbl.addFilters}}
 	</div>
@@ -369,7 +369,7 @@
 						<div class="field">
 							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.medium}}</label>
 							<sui-multi-select class="selection p-5 b-100">
-								<sui-select-option *ngFor="let option of medium" [value]=option></sui-select-option>
+								<sui-select-option *ngFor="let option of programDetails.config['medium']" [value]=option></sui-select-option>
 							</sui-multi-select>
 						</div>
 					</div>
@@ -377,7 +377,7 @@
 						<div class="field">
 							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.subject}}</label>
 							<sui-multi-select class="selection p-5 b-100">
-								<sui-select-option *ngFor="let option of medium" [value]=option></sui-select-option>
+								<sui-select-option *ngFor="let option of programDetails.config['subject']" [value]=option></sui-select-option>
 							</sui-multi-select>
 						</div>
 					</div>
@@ -386,7 +386,7 @@
 							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.class}}</label>
 							<sui-multi-select
 								class="selection p-5 b-100">
-								<sui-select-option *ngFor="let option of medium" [value]=option></sui-select-option>
+								<sui-select-option *ngFor="let option of programDetails.config['gradeLevel']" [value]=option></sui-select-option>
 							</sui-multi-select>
 						</div>
 					</div>
