@@ -41,11 +41,12 @@ export class TextbookListComponent implements OnInit {
     public actionService: ActionService, private collectionHierarchyService: CollectionHierarchyService,
     private userService: UserService
   ) { }
-  showTextbookFiltersModal;
-  medium = ['English', 'Hindi', 'Maths', 'Tamil'];
-  buttonLabel = "Filter Textbooks";
+  showTextbookFiltersModal = false;
+  mediums:any[];
+  classes:any[];
+  subjects:any[];
+  buttonLabel = this.resourceService.frmelmnts.lbl.addFilters;
   textbookFiltersApplied = false;
-
 
   ngOnInit(): void {
     this.initialize();
@@ -59,6 +60,9 @@ export class TextbookListComponent implements OnInit {
       this.showTexbooklist(this.collectionsInput, this.contentAggregationInput);
       this.collectionsCnt = this.collectionsInput && this.collectionsInput.length;
     }
+    this.mediums =  _.compact(this.programDetails.config.medium);
+    this.classes= _.compact(this.programDetails.config.gradeLevel);
+    this.subjects= _.compact(this.programDetails.config.subject);
   }
 
   sortCollection(column) {
@@ -71,16 +75,16 @@ export class TextbookListComponent implements OnInit {
     this.sortColumn = column;
   }
   openTextbookFilters() {
-    this.showTextbookFiltersModal = !this.showTextbookFiltersModal;
+    this.showTextbookFiltersModal = true;
     // CHANGE THE TEXT OF THE BUTTON.
-    this.buttonLabel=this.showTextbookFiltersModal ? 'Modify Filters' : 'Filter Textbooks';
+    this.buttonLabel=this.showTextbookFiltersModal ? this.resourceService.frmelmnts.lbl.modifyFilters : this.resourceService.frmelmnts.lbl.addFilters;
   }
   applyTextbookFilters(){
     this.textbookFiltersApplied=true;
     this.showTextbookFiltersModal = false;
   }
   closeTextbookFiltersModal() {
-    this.buttonLabel='Filter Textbooks';
+    this.buttonLabel=this.resourceService.frmelmnts.lbl.addFilters;
     this.textbookFiltersApplied=false;
     this.showTextbookFiltersModal = false;
   }
