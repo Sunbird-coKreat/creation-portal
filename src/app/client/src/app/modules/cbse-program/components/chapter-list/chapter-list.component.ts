@@ -185,7 +185,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   public initiateInputs(action?, content?) {
-    const sourcingStatus = content ? content.sourcingStatus :null;
+    const sourcingStatus = !_.isUndefined(content) ? content.sourcingStatus : null;
     this.dynamicInputs = {
       contentUploadComponentInput: {
         config: _.find(this.programContext.config.components, {'id': 'ng.sunbird.uploadComponent'}),
