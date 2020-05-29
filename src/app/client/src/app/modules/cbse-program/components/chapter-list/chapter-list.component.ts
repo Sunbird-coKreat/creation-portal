@@ -185,6 +185,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   public initiateInputs(action?, content?) {
+    const sourcingStatus = content ? content.sourcingStatus :null;
     this.dynamicInputs = {
       contentUploadComponentInput: {
         config: _.find(this.programContext.config.components, {'id': 'ng.sunbird.uploadComponent'}),
@@ -194,7 +195,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         selectedSharedContext: this.selectedSharedContext,
         contentId: this.contentId,
         action: action,
-        programContext: _.get(this.chapterListComponentInput, 'programContext')
+        programContext: _.get(this.chapterListComponentInput, 'programContext'),
+        sourcingStatus: sourcingStatus
       },
       practiceQuestionSetComponentInput: {
         config: _.find(this.programContext.config.components, {'id': 'ng.sunbird.practiceSetComponent'}),
@@ -205,7 +207,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         selectedSharedContext: this.selectedSharedContext,
         contentIdentifier: this.contentId,
         action: action,
-        programContext: _.get(this.chapterListComponentInput, 'programContext')
+        programContext: _.get(this.chapterListComponentInput, 'programContext'),
+        sourcingStatus: sourcingStatus
       },
       contentEditorComponentInput: {
         contentId: this.contentId,
