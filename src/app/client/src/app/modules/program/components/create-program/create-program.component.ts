@@ -91,6 +91,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   uploadedDocument;
   showAddButton = false;
   loading = false;
+  openNominations = false;
   isClosable = true;
   uploader;
   acceptPdfType: any;
@@ -463,7 +464,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programScope['medium'] = mediumOption;
     }
   }
-
+  openForNominations(status) {
+    this.openNominations = status;
+  }
   onMediumChange() {
     // const thisClassOption = this.createProgramForm.value.gradeLevel;
 
