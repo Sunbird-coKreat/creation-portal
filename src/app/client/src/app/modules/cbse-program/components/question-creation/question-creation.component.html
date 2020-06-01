@@ -222,7 +222,6 @@
                           >
                           <div *ngIf="disableFormField"><span class="sb-color-gray-200 fs-0-785">{{questionMetaData.data[field.code]}}</span></div>
                         <label class="sb-color-error mb-0 font-weight-normal" *ngIf="((questionMetaForm.get(field.code).touched) && (questionMetaForm.get(field.code).errors?.required))">* This field is mandatory</label>
-                        
                       </div>
                     </div>
 
@@ -254,7 +253,7 @@
         [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
         >
-        {{  rejectComment === '' ? 'Request Changes' : 'Edit Comments' }}
+        {{  rejectComment === '' ? resourceService.frmelmnts.btn.reject : 'Edit Comments' }}
         </button>
     </div>
 </form>
