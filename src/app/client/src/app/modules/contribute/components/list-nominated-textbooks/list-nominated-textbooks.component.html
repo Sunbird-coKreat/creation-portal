@@ -267,6 +267,7 @@
 									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
 								</span>
 							</th>
+							<th class="w-10">{{resourceService.frmelmnts.lbl.emailOrMobile}}</th>
 							<th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('gradeLevel')">
 								{{resourceService.frmelmnts.lbl.class}} &nbsp;&nbsp;
 								<i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || sortColumnOrgUsers != 'gradeLevel' "></i>
@@ -304,6 +305,10 @@
 						<tbody class="sb-table-body">
 						  <tr *ngFor="let orgUser of contributorOrgUser; let i= index;">
 							<td>{{orgUser.name}}</td>
+							<td>
+								<div *ngIf="orgUser?.maskedEmail">{{orgUser?.maskedEmail}}</div>
+								<div *ngIf="orgUser?.maskedPhone"> {{orgUser?.maskedPhone}}</div>
+							</td>
 							<td>{{orgUser?.gradeLevel?.join(', ')}}</td>
 							<td>{{orgUser?.subject?.join(', ')}}</td>
 							<td>
