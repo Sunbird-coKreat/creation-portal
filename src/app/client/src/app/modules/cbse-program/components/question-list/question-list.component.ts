@@ -71,7 +71,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   telemetryImpression: any;
   public telemetryPageId = 'question-list';
   public sourcingOrgReviewer: boolean;
-  public sourcingReviewStatus: any;
+  public sourcingReviewStatus: string;
 
   constructor(
     private configService: ConfigService, private userService: UserService,
@@ -97,7 +97,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sessionContext.questionType = this.templateDetails.questionCategories[0];
     this.sessionContext.textBookUnitIdentifier = _.get(this.practiceQuestionSetComponentInput, 'unitIdentifier');
     this.practiceSetConfig = _.get(this.practiceQuestionSetComponentInput, 'config');
-    this.sourcingReviewStatus = _.get(this.practiceQuestionSetComponentInput, 'sourcingStatus') || null;
+    this.sourcingReviewStatus = _.get(this.practiceQuestionSetComponentInput, 'sourcingStatus') || '';
     this.resourceTitleLimit = this.practiceSetConfig.config.resourceTitleLength;
     this.sessionContext.practiceSetConfig = this.practiceSetConfig;
     this.sessionContext.topic = _.isEmpty(this.selectedSharedContext.topic) ? this.sessionContext.topic : this.selectedSharedContext.topic;
@@ -209,7 +209,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
     } else if (this.resourceStatus === 'Draft' && this.resourceDetails.rejectComment && this.resourceDetails.rejectComment !== '') {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
-    } else if (this.resourceStatus === 'Live' && !this.sourcingReviewStatus) {
+    } else if (this.resourceStatus === 'Live' && _.isEmpty(this.sourcingReviewStatus)) {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
     } else if (this.sourcingReviewStatus === 'Rejected') {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
