@@ -69,13 +69,17 @@
 							</div>
 							<div class="twelve wide column sb-field-group pt-0">
 								<div class="sb-field-group mb-8">
-								   <label class="fs-0-92">{{resource.frmelmnts.lbl.isThisProjectOpenForNominations}}</label>
-								   <div class="sb-field mt-4 d-inline-flex pl-20">
+								   <label class="fs-0-92 d-block">{{resource.frmelmnts.lbl.isThisProjectOpenForNominations}}
+									<i class="pull-right question circle link icon pull-right" suiPopup
+									popupDelay="500" [popupPlacement]="'left'"
+									popupText="{{resource.frmelmnts.lbl.isThisProjectOpenForNominationsHint}}"></i>
+								   </label>
+								   <div class="sb-field mt-4 d-flex">
 									  <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
 										 <input id="yes" type="radio" name="openNominations" (click)="openForNominations(true)">
 										 <label for="yes">{{resource.frmelmnts.lbl.yes}}</label>
 									  </div>
-									  <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+									  <div class="sb-radio-btn-checkbox sb-radio-btn-primary pl-10">
 										 <input id="no" type="radio"  name="openNominations" (click)="openForNominations(false)" checked>
 										 <label for="no">{{resource.frmelmnts.lbl.no}}</label>
 									  </div>
