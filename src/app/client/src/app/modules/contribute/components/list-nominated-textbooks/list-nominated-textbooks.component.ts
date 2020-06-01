@@ -408,7 +408,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       this.toasterService.error(this.resourceService.messages.emsg.roles.m0003);
       return;
     }
-    let progRoleMapping = _.cloneDeep(this.nominationDetails.rolemapping);
+    let progRoleMapping = this.nominationDetails.rolemapping;
     if (isNullOrUndefined(progRoleMapping)) {
       progRoleMapping = {};
       progRoleMapping[newRole] = [];
