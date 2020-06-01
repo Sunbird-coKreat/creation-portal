@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, Input, EventEmitter, OnChanges, AfterViewInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { McqForm } from './../../class/McqForm';
-import { ConfigService, IUserProfile, ToasterService, NavigationHelperService } from '@sunbird/shared';
+import { ConfigService, IUserProfile, ToasterService, NavigationHelperService, ResourceService } from '@sunbird/shared';
 import { UserService, ActionService } from '@sunbird/core';
 import { TelemetryService } from '@sunbird/telemetry';
 import * as _ from 'lodash-es';
@@ -87,7 +87,7 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
     public toasterService: ToasterService, private cdr: ChangeDetectorRef, private cbseService: CbseProgramService,
     private formBuilder: FormBuilder, public telemetryService: TelemetryService,
     public activeRoute: ActivatedRoute, public programTelemetryService: ProgramTelemetryService,
-    public router: Router, private navigationHelperService: NavigationHelperService) {
+    public router: Router, private navigationHelperService: NavigationHelperService, public resourceService: ResourceService) {
   }
 
   initForm() {
