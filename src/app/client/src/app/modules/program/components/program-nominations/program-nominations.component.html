@@ -97,7 +97,7 @@
                                         [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.nominations}}
                         <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ totalNominations || 0  }}</span>
                     </a>
-                    <a class="item" *ngIf="isSourcingOrgAdmin()" [isActive]="activeTab === 'user'"  suiTabHeader="3"  (click)="resetStatusFilter('user');" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('users', 'click', 'program-nominations')" [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata" [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.tab.users}}
+                    <a class="item" *ngIf="isSourcingOrgAdmin()" [isActive]="activeTab === 'user'"  suiTabHeader="3"  (click)="resetStatusFilter('user');" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('users', 'click', 'program-nominations')" [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata" [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.assignUsersToProject}}
                         <!--span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ sourcingOrgUser.length || 0 }}</span-->
                     </a>
                     <a class="item" [isActive]="activeTab === 'contributionDashboard'" suiTabHeader="4" (click)="resetStatusFilter('contributionDashboard')"
@@ -284,8 +284,6 @@
                 </div>
             </div>
             <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="3">
-                <app-loader *ngIf='showUsersLoader'></app-loader>
-
 				<div class="ui container">
 					<div class="pt-24">
 					  <div class="d-flex flex-ai-center flex-jc-space-between sb-pageSection">
@@ -294,7 +292,8 @@
 						  <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{sourcingOrgUserCnt || 0}}</span>
 						</div>
 					  </div>
-					</div>
+                    </div>
+                    <app-loader *ngIf='showUsersLoader'></app-loader>
 					<div class="sb-table-responsive desktop-o-x-unset" *ngIf="sourcingOrgUserCnt > 0">
 					  <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
 						<thead class="sb-table-header sb-table-thead-gray">
@@ -307,6 +306,7 @@
                                     <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
                                 </span>
                             </th>
+                            <th class="w-10">{{resourceService.frmelmnts.lbl.emailOrMobile}}</th>
 
                             <th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('mediums')">
                                 {{resourceService.frmelmnts.lbl.mediums}} &nbsp;&nbsp;
@@ -345,6 +345,10 @@
 						<tbody class="sb-table-body">
 						  <tr *ngFor="let orgUser of sourcingOrgUser; let i= index;">
                             <td>{{orgUser?.firstName}} {{orgUser?.lastName}}</td>
+                            <td>
+                                <div *ngIf="orgUser?.maskedEmail">{{orgUser?.maskedEmail}}</div>
+                                <div *ngIf="orgUser?.maskedPhone"> {{orgUser?.maskedPhone}}</div>
+                            </td>
                             <td>{{orgUser?.framework?.medium?.join(', ')}}</td>
 							<td>{{orgUser?.framework?.gradeLevel?.join(', ')}}</td>
 							<td>{{orgUser?.framework?.subject?.join(', ')}}</td>
