@@ -68,7 +68,7 @@
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >Replace
                 File</button>
-              <button id="requestChanges" suiPopup popupText="{{resourceService.frmelmnts.btn.reject}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showRequestChanges && resourceStatus === 'Review'" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true;"
+              <button id="requestChanges" suiPopup popupText="{{resourceService.frmelmnts.btn.requestChanges}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showRequestChanges && resourceStatus === 'Review'" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true;"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-resource', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
