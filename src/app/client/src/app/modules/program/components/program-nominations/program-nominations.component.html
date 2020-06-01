@@ -307,6 +307,7 @@
                                     <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
                                 </span>
                             </th>
+                            <th class="w-10">{{resourceService.frmelmnts.lbl.emailOrMobile}}</th>
 
                             <th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('mediums')">
                                 {{resourceService.frmelmnts.lbl.mediums}} &nbsp;&nbsp;
@@ -345,6 +346,10 @@
 						<tbody class="sb-table-body">
 						  <tr *ngFor="let orgUser of sourcingOrgUser; let i= index;">
                             <td>{{orgUser?.firstName}} {{orgUser?.lastName}}</td>
+                            <td>
+                                <div *ngIf="orgUser?.maskedEmail">{{orgUser?.maskedEmail}}</div>
+                                <div *ngIf="orgUser?.maskedPhone"> {{orgUser?.maskedPhone}}</div>
+                            </td>
                             <td>{{orgUser?.framework?.medium?.join(', ')}}</td>
 							<td>{{orgUser?.framework?.gradeLevel?.join(', ')}}</td>
 							<td>{{orgUser?.framework?.subject?.join(', ')}}</td>
