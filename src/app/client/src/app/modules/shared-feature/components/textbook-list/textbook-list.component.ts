@@ -77,15 +77,15 @@ export class TextbookListComponent implements OnInit {
   openTextbookFilters() {
     this.showTextbookFiltersModal = true;
     // CHANGE THE TEXT OF THE BUTTON.
-    this.buttonLabel=this.showTextbookFiltersModal ? this.resourceService.frmelmnts.lbl.modifyFilters : this.resourceService.frmelmnts.lbl.addFilters;
+    this.buttonLabel = this.resourceService.frmelmnts.lbl.modifyFilters;
   }
-  applyTextbookFilters(){
-    this.textbookFiltersApplied=true;
+  applyTextbookFilters() {
+    this.textbookFiltersApplied = true;
     this.showTextbookFiltersModal = false;
   }
   closeTextbookFiltersModal() {
-    this.buttonLabel=this.resourceService.frmelmnts.lbl.addFilters;
-    this.textbookFiltersApplied=false;
+    this.buttonLabel = this.resourceService.frmelmnts.lbl.addFilters;
+    this.textbookFiltersApplied = false;
     this.showTextbookFiltersModal = false;
   }
 
