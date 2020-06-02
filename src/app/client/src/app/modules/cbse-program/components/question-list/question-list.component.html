@@ -99,20 +99,20 @@
           [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
           >{{isIndividualAndNotSample() ? 'Publish' : 'Submit' }}</button>
-          <!-- <button id="acceptContent" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentAcceptMessage}}" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Failed'" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="attachContentToTextbook('accept')"
+          <button id="acceptContent" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentAcceptMessage}}" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live'" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="attachContentToTextbook('accept')"
           appTelemetryInteract
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('accept-content-for-textbook', 'click', 'question-list')"
             [telemetryInteractObject]="telemetryInteractObject"
             [telemetryInteractCdata]="telemetryInteractCdata"
             [telemetryInteractPdata]="telemetryInteractPdata"
           >{{resourceService.frmelmnts.btn.approve}}</button>
-          <button id="rejectContent" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentRejectMessage}}" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Failed'" class="sb-btn sb-btn-error sb-btn-normal" (click)="attachContentToTextbook('reject')"
+          <button id="rejectContent" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentRejectMessage}}" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live'" class="sb-btn sb-btn-error sb-btn-normal" (click)="attachContentToTextbook('reject')"
           appTelemetryInteract
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-content-for-textbook', 'click', 'question-list')"
             [telemetryInteractObject]="telemetryInteractObject"
             [telemetryInteractCdata]="telemetryInteractCdata"
             [telemetryInteractPdata]="telemetryInteractPdata"
-          >{{resourceService.frmelmnts.btn.reject}}</button>-->
+          >{{resourceService.frmelmnts.btn.reject}}</button>
         </div>
       </div>
     </div>
