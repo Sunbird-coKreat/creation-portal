@@ -45,8 +45,10 @@
             <span class="item-status">
               <span [ngClass]="{'sb-color-primary':content.status === 'Draft'}" *ngIf="content.status === 'Draft' && content.prevStatus === null">{{content.status}}</span>
               <span [ngClass]="{'sb-color-warning':content.status == 'Review'}"  *ngIf="content.status === 'Review'">{{resourceService.frmelmnts.lbl.reviewInProgress}}</span>
-              <span [ngClass]="{'sb-color-success':content.status == 'Live'}"  *ngIf="content.status === 'Live'">{{router.url.includes('/sourcing') ? resourceService.frmelmnts.lbl.reviewInProgress : resourceService.frmelmnts.lbl.published}}</span>
-              <span [ngClass]="{'sb-color-gray-100':content.status == 'Draft'}"  *ngIf="content.status === 'Draft' && content.prevStatus === 'Review'">{{resourceService.frmelmnts.lbl.rejected}}</span>
+              <span [ngClass]="{'sb-color-success':content.status == 'Live'}"  *ngIf="content.status === 'Live' && !content.sourcingStatus">{{resourceService.frmelmnts.lbl.approvalPending}}</span>
+              <span [ngClass]="{'sb-color-success':content.sourcingStatus == 'Approved'}"  *ngIf="content.sourcingStatus === 'Approved' && content.status === 'Live'">{{resourceService.frmelmnts.lbl.approved}}</span>
+              <span [ngClass]="{'sb-color-error':content.sourcingStatus == 'Rejected'}"  *ngIf="content.sourcingStatus === 'Rejected' && content.status === 'Live'">{{resourceService.frmelmnts.lbl.rejected}}</span>
+              <span [ngClass]="{'sb-color-gray-100':content.status == 'Draft'}"  *ngIf="content.status === 'Draft' && content.prevStatus === 'Review'">{{resourceService.frmelmnts.lbl.notAccepted}}</span>
               <span [ngClass]="{'sb-color-error':content.status == 'Failed'}"  *ngIf="content.status === 'Failed'">{{resourceService.frmelmnts.lbl.failed}}</span>
               <span *ngIf="content.status === 'Processing'">{{resourceService.frmelmnts.lbl.processing}}</span>
             </span>

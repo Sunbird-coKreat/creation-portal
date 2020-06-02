@@ -26,7 +26,7 @@
                 (click)="editContentTitle()">Edit</a></span></div>
               <div class="mt-8 practice-set__status">
                 <span class="sb-label sb-label-table sb-label-success-0" *ngIf="!sourcingOrgReviewer"
-                [ngClass]="{ 'sb-label-success-0': resourceStatus === 'Live', 'sb-label-warning-0': (resourceStatus === 'Draft'),  'sb-label-error-0': (resourceStatus === 'Draft' && contentMetaData.prevStatus === 'Review') ,  'sb-label-gray-0': resourceStatus === 'Review' }">{{ resourceStatusText }}</span>
+                [ngClass]="{ 'sb-label-success-0': (resourceStatus === 'Live' && sourcingReviewStatus === 'Approved'), 'sb-label-warning-0': (resourceStatus === 'Draft'),  'sb-label-error-0': ((resourceStatus === 'Draft' && contentMetaData.prevStatus === 'Review') || (resourceStatus === 'Live' && sourcingReviewStatus === 'Rejected')) ,  'sb-label-gray-0': (resourceStatus === 'Review' || (resourceStatus === 'Live' && !sourcingReviewStatus)) }">{{ resourceStatusText }}</span>
                 <span class="cursor-pointer fs-0-785 ml-8"
                   *ngIf="contentMetaData && contentMetaData.rejectComment && (sessionContext.currentRoleId === 1) && this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Review'">
                   <i class="comment alternate outline icon sb-color-primary"></i>
@@ -68,20 +68,20 @@
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >Replace
                 File</button>
-              <button id="requestChanges" suiPopup popupText="Request Changes" [popupPlacement]="'top'" *ngIf="visibility && visibility.showRequestChanges && resourceStatus === 'Review'" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true;"
+              <button id="requestChanges" suiPopup popupText="{{resourceService.frmelmnts.btn.requestChanges}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showRequestChanges && resourceStatus === 'Review'" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true;"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-resource', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
-              >Request Changes</button>
-              <button id="publishContent" suiPopup popupText="Publish" [popupPlacement]="'top'" *ngIf="visibility && visibility.showPublish && resourceStatus === 'Review'" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="publishContent();"
+              >{{resourceService.frmelmnts.btn.requestChanges}}</button>
+              <button id="publishContent" suiPopup popupText="{{resourceService.frmelmnts.btn.accept}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showPublish && resourceStatus === 'Review'" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="publishContent();"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('publish-resource', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
-              >Publish</button>
+              >{{resourceService.frmelmnts.btn.accept}}</button>
               <button id="submitContent" suiPopup popupText="{{sessionContext.currentOrgRole === 'individual' ? 'Publish' : 'Send For Review' }}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSubmit && resourceStatus === 'Draft'" class="sb-btn sb-btn-secondary sb-btn-normal" (click)="saveContent('review')"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('submit-resourceforreview', 'click', 'content-uploader')"
@@ -90,20 +90,20 @@
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{isIndividualAndNotSample() ? 'Publish' : 'Submit' }}</button>
               <!-- <button id="acceptContent" suiPopup
-              popupText="Accept Content For Textbook" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live'" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="attachContentToTextbook('accept')"
+              popupText="{{resourceService.frmelmnts.lbl.contentAcceptMessage}}" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live'" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="attachContentToTextbook('accept')"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('accept-content-for-textbook', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
-              >Accept</button>
-              <button id="rejectContent" suiPopup popupText="Reject Content For Textbook" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live'" class="sb-btn sb-btn-error sb-btn-normal" (click)="attachContentToTextbook('reject')"
+              >{{resourceService.frmelmnts.btn.approve}}</button>
+              <button id="rejectContent" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentRejectMessage}}" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live'" class="sb-btn sb-btn-error sb-btn-normal" (click)="attachContentToTextbook('reject')"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-content-for-textbook', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
-              >Reject</button>-->
+              >{{resourceService.frmelmnts.btn.reject}}</button>-->
             </div>
           </div>
         </div>

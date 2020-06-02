@@ -111,7 +111,7 @@ export class TextbookListComponent implements OnInit {
           this.resourceService.frmelmnts.lbl.samplesRecieved,
           this.resourceService.frmelmnts.lbl.nominationAccepted,
           this.resourceService.frmelmnts.lbl.contributionReceived,
-          this.resourceService.frmelmnts.lbl.contributionAccepted,
+          this.resourceService.frmelmnts.lbl.contributionApproved,
           this.resourceService.frmelmnts.lbl.contributionRejected,
           this.resourceService.frmelmnts.lbl.contributionPending
         ];
