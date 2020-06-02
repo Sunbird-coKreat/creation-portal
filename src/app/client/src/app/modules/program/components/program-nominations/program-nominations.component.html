@@ -28,7 +28,7 @@
 			</div>
             <ng-container *ngIf="programDetails">
                 <div class="program-timeline w-35">
-                    <div class="program-timeline-item">
+                    <div class="program-timeline-item" *ngIf="programDetails.status !== 'Unlisted'">
                         <div class="status" [class.active]="activeDate === 'nomination_enddate'">
                             <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.nominationSubmission }}</div>
                             <div class="status__date">
@@ -39,7 +39,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="program-timeline-item">
+                    <div class="program-timeline-item"  *ngIf="programDetails.status !== 'Unlisted'">
                         <div class="status" [class.active]="activeDate === 'shortlisting_enddate'">
                             <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.shortlistingNomination }}</div>
                             <div class="status__date">

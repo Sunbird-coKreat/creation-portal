@@ -72,18 +72,18 @@
 								   <label class="fs-0-92">{{resource.frmelmnts.lbl.isThisProjectOpenForNominations}}</label>
 								   <div class="sb-field mt-4 d-inline-flex pl-20">
 									  <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-										 <input id="yes" type="radio" name="openNominations" (click)="openForNominations(true)">
+										 <input id="yes" type="radio" name="openNominations" (click)="openForNominations(true)" checked>
 										 <label for="yes">{{resource.frmelmnts.lbl.yes}}</label>
 									  </div>
 									  <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-										 <input id="no" type="radio"  name="openNominations" (click)="openForNominations(false)" checked>
+										 <input id="no" type="radio"  name="openNominations" (click)="openForNominations(false)" >
 										 <label for="no">{{resource.frmelmnts.lbl.no}}</label>
 									  </div>
 								   </div>
 								</div>
 							 </div>
 				
-							 <div class="twelve wide tablet three wide computer column" *ngIf="openNominations === true">
+							 <div class="twelve wide tablet three wide computer column" *ngIf="isOpenNominations === true">
 								<div class="field">
 									<label class="d-block">{{resource.frmelmnts.lbl.nominationEndDate}}
 										<i class="pull-right question circle link icon pull-right" suiPopup
@@ -105,7 +105,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="twelve wide tablet three wide computer column" *ngIf="openNominations === true">
+							<div class="twelve wide tablet three wide computer column" *ngIf="isOpenNominations === true">
 								<div class="field">
 									<label class="d-block">{{resource.frmelmnts.lbl.nominationShortlistingDate}}
 										<i class="pull-right question circle link icon pull-right" suiPopup
