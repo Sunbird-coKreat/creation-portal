@@ -327,14 +327,16 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
        );
        this.showRequestChangesPopup = false;
        setTimeout(() => {
-         this.router.navigate(['/sourcing/nominations/' + this.programId]);
+        this.router.navigate(['/sourcing/nominations/' + this.programId],
+         {queryParams: { tab: 'nomination' }, queryParamsHandling: 'merge' });
        });
         this.toasterService.success(this.resourceService.messages.smsg.m0010);
      },
      (err) => {
        this.showRequestChangesPopup = false;
        setTimeout(() => {
-         this.router.navigate(['/sourcing/nominations/' + this.programId]);
+        this.router.navigate(['/sourcing/nominations/' + this.programId],
+         {queryParams: { tab: 'nomination' }, queryParamsHandling: 'merge' });
        });
        this.toasterService.success(this.resourceService.messages.fmsg.m0026);
      });
