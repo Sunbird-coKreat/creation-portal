@@ -75,12 +75,13 @@ export class OtpComponent implements OnInit {
       (data: ServerResponse) => {
         this.infoMessage = '';
         this.errorMessage = '';
-        this.createUser();
+        this.createUser(data);
       },
       (err) => {
         this.logVerifyOtpError(err.error.params.errmsg);
         this.telemetryService.interact(this.generateVerifyOtpErrorInteractEdata);
         this.infoMessage = '';
+        this.otpForm.controls.otp.setValue('');
         this.errorMessage = err.error.params.status === 'ERROR_INVALID_OTP' ?
           wrongOTPMessage : wrongOTPMessage;
         if (this.disableResendButton) {
@@ -99,7 +100,7 @@ export class OtpComponent implements OnInit {
         cdata: this.telemetryCdata,
       },
       edata: {
-        id: 'submit-otp',
+        id: 'invalid-otp-error',
         type: 'click',
         pageid: 'otp',
         extra: {
@@ -109,7 +110,7 @@ export class OtpComponent implements OnInit {
     };
   }
 
-  createUser() {
+  createUser(data?: any) {
     let identifier = '';
     const createRequest = {
       params: {
@@ -130,6 +131,7 @@ export class OtpComponent implements OnInit {
       createRequest.request['emailVerified'] = true;
       identifier = this.signUpdata.controls.email.value;
     }
+    createRequest.request['reqData'] = _.get(data, 'reqData');
     if (this.signUpdata.controls.tncAccepted.value && this.signUpdata.controls.tncAccepted.status === 'VALID') {
       this.signupService.createUserV3(createRequest).subscribe((resp: ServerResponse) => {
           this.telemetryLogEvents('sign-up', true);
@@ -183,7 +185,7 @@ export class OtpComponent implements OnInit {
         cdata: this.telemetryCdata,
       },
       edata: {
-        id: 'create-user',
+        id: 'create-user-error',
         type: 'click',
         pageid: 'otp',
         extra: {
@@ -222,7 +224,7 @@ export class OtpComponent implements OnInit {
         cdata: this.telemetryCdata,
       },
       edata: {
-        id: 'resend-otp',
+        id: 'resend-otp-error',
         type: 'click',
         pageid: 'otp',
         extra: {
