@@ -402,11 +402,10 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     this.pager = this.paginationService.getPager(this.OrgUsersCnt, this.pageNumber, this.pageLimit);
   }
 
-
   onRoleChange(user) {
     const newRole = user.projectselectedRole;
     if (!_.includes(this.roleNames, newRole)) {
-      this.toasterService.error("Role not found");
+      this.toasterService.error(this.resourceService.messages.emsg.roles.m0003);
       return;
     }
     let progRoleMapping = this.nominationDetails.rolemapping;
@@ -418,16 +417,16 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     if (!_.includes(programRoleNames, newRole)) {
       progRoleMapping[newRole] = [];
     }
-
     _.forEach(progRoleMapping, (users, role) => {
-      // Add to current role array
+      // Add to selected user to current selected role's array
       if (newRole === role && !_.includes(users, user.identifier)) {
         users.push(user.identifier);
       }
-      // Remove from other role array
+      // Remove selected user from other role's array
       if (newRole !== role && _.includes(users, user.identifier)) {
         _.remove(users, (id) => id === user.identifier);
       }
+      // Remove duplicate users ids and falsy values
       progRoleMapping[role] = _.uniq(_.compact(users));
     });
     const req = {
@@ -437,13 +436,13 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           'rolemapping': progRoleMapping
         }
       };
-
     const updateNomination = this.programsService.updateNomination(req);
     updateNomination.subscribe(response => {
-      this.toasterService.success('Roles updated');
+      this.nominationDetails.rolemapping = progRoleMapping;
+      this.toasterService.success(this.resourceService.messages.smsg.roles.m0001);
     }, error => {
       console.log(error);
-      this.toasterService.error("Something went wrong while updating the role");
+      this.toasterService.error(this.resourceService.messages.emsg.roles.m0002);
     });
   }
 
