@@ -139,7 +139,7 @@ module.exports = function (app) {
 function checkForValidUser (){
   return proxy(learnerURL, {
     limit: reqDataLimitOfContentUpload,
-    proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+    proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
     proxyReqBodyDecorator: function (bodyContent, srcReq) {
       var data = JSON.parse(bodyContent.toString('utf8'));
       var reqEmail = data.request['email'];
