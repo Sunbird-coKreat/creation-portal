@@ -146,7 +146,7 @@ function checkForValidUser (){
       var reqPhone = data.request['phone'];
       var reqValidator = data.request['reqData'];
       var decodedValidator = decodeNChkTime(reqValidator);
-      if((decodedValidator['key']) && (reqEmail === decodedValidator['key'] || reqPho11507ne === decodedValidator['key'])){
+      if((decodedValidator['key']) && (reqEmail === decodedValidator['key'] || reqPhone === decodedValidator['key'])){
         data = _.omit(data, 'request.reqData');
         return data;
       } else{
