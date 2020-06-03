@@ -65,7 +65,8 @@ export class NotificationService {
       subject: this.getEmailSubject(nomination),
       recipientUserIds: [nomination.user_id],
       emailTemplateType: this.getTemplate(nomination.status, mode),
-      orgName: nomination.programData.name,
+      projectName: nomination.programData.name,
+      baseUrl: window.location.origin,
       body: 'VidyaDaan'
     };
     return this.sendNotification(request).subscribe();
