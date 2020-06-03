@@ -9,7 +9,7 @@ const healthService = require('../helpers/healthCheckService.js')
 const logger = require('sb_logger_util_v2')
 var morgan = require('morgan')
 const {decrypt} = require('../helpers/crypto');
-const {parseJson, isDateExpired} = require('../helpers/utilityService');
+const {decodeNChkTime} = require('../helpers/utilityService');
 const _ = require('lodash');
 const logApiStatus = envHelper.dock_api_call_log_status
 
@@ -144,10 +144,10 @@ function checkForValidUser (){
       var data = JSON.parse(bodyContent.toString('utf8'));
       var reqEmail = data.request['email'];
       var reqPhone = data.request['phone'];
-      var reqValidator = data.request['validator'];
-      var decodedValidator = isValidRequest(reqValidator);
-      if(reqEmail === decodedValidator['key'] || reqPhone === decodedValidator['key']){
-        data = _.omit(data, 'request.validator');
+      var reqValidator = data.request['reqData'];
+      var decodedValidator = decodeNChkTime(reqValidator);
+      if((decodedValidator['key']) && (reqEmail === decodedValidator['key'] || reqPho11507ne === decodedValidator['key'])){
+        data = _.omit(data, 'request.reqData');
         return data;
       } else{
         throw new Error('USER_CANNOTBE_CREATED');
@@ -176,21 +176,6 @@ function checkForValidUser (){
     }
   });
 }
-
-/**
- * Verifies request and check exp time
- * @param encryptedData encrypted data to be decrypted
- * @returns {*}
- */
-const isValidRequest = (encryptedData) => {
-  const decryptedData = decrypt(parseJson(decodeURIComponent(encryptedData)));
-  const parsedData = parseJson(decryptedData);
-  if (isDateExpired(parsedData.exp)) {
-    throw new Error('DATE_EXPIRED');
-  } else {
-    return _.omit(parsedData, ['exp']);
-  }
-};
 
 function proxyObj (){
   return proxy(learnerURL, {
