@@ -6,7 +6,8 @@ const uuidv1 = require('uuid/v1')
 const proxy = require('express-http-proxy')
 const proxyUtils = require('../proxy/proxyUtils.js')
 const logger = require('sb_logger_util_v2');
-const {encrypt} = require('../helpers/crypto');
+const {encrypt, encriptWithTime} = require('../helpers/crypto');
+
 
 module.exports = (app) => {
 
@@ -41,14 +42,20 @@ module.exports = (app) => {
             const data = JSON.parse(proxyResData.toString('utf8'));
             if (data.responseCode === 'OK') {
               req.session.otpVerifiedFor = req.body;
-              var validator = getEncyptedQueryParams({'key':req.body.request.key});
-              data['validator'] = validator;
+              const encrypt = {
+                key: req.body.request.key
+              }
+              if (req.body.request.userId) {
+                encrypt['id'] = req.body.request.userId
+              }
+              var timeInMin = 5;
+              var validator = encriptWithTime(encrypt, timeInMin);
+              data['reqData'] = validator;
             }
-            return proxyResData;
+            return data;
         } catch(err) {
           logger.error({
             body: JSON.stringify(req.body),
-            resp: JSON.stringify(data),
             msg: 'otp verification failed',
             error: JSON.stringify(err)
           });
@@ -56,16 +63,5 @@ module.exports = (app) => {
         }
       }
   }));
-  /**
- * To generate session for state user logins
- * using server's time as iat and exp time as 5 min
- * Session will not be created if exp is expired
- * @param data object to encrypt data
- * @returns {string}
- */
-const getEncyptedQueryParams = (data) => {
-  data.exp = Date.now() + (5 * 60 * 1000);  // adding 5 minutes
-  return JSON.stringify(encrypt(JSON.stringify(data)));
-};
 
 }
