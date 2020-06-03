@@ -8,6 +8,9 @@ const proxy = require('express-http-proxy')
 const healthService = require('../helpers/healthCheckService.js')
 const logger = require('sb_logger_util_v2')
 var morgan = require('morgan')
+const {decrypt} = require('../helpers/crypto');
+const {decodeNChkTime} = require('../helpers/utilityService');
+const _ = require('lodash');
 const logApiStatus = envHelper.dock_api_call_log_status
 
 module.exports = function (app) {
@@ -87,7 +90,7 @@ module.exports = function (app) {
         }
       }
     }))
-  
+
   app.all('/learner/user/v1/get/phone/*',
     permissionsHelper.checkPermission(),
     proxyObj()
@@ -97,7 +100,13 @@ module.exports = function (app) {
     permissionsHelper.checkPermission(),
     proxyObj()
   )
-  
+
+  app.all('/learner/user/v1/signup',
+    healthService.checkDependantServiceHealth(['LEARNER', 'CASSANDRA']),
+    permissionsHelper.checkPermission(),
+    checkForValidUser()
+  )
+
   app.all('/learner/*',
     healthService.checkDependantServiceHealth(['LEARNER', 'CASSANDRA']),
     permissionsHelper.checkPermission(),
@@ -125,6 +134,47 @@ module.exports = function (app) {
         }
       }
     }))
+}
+
+function checkForValidUser (){
+  return proxy(learnerURL, {
+    limit: reqDataLimitOfContentUpload,
+    proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
+    proxyReqBodyDecorator: function (bodyContent, srcReq) {
+      var data = JSON.parse(bodyContent.toString('utf8'));
+      var reqEmail = data.request['email'];
+      var reqPhone = data.request['phone'];
+      var reqValidator = data.request['reqData'];
+      var decodedValidator = decodeNChkTime(reqValidator);
+      if((decodedValidator['key']) && (reqEmail === decodedValidator['key'] || reqPho11507ne === decodedValidator['key'])){
+        data = _.omit(data, 'request.reqData');
+        return data;
+      } else{
+        throw new Error('USER_CANNOTBE_CREATED');
+      }
+    },
+    proxyReqPathResolver: function (req) {
+      return require('url').parse(envHelper.LEARNER_URL + req.originalUrl.replace('/learner/', '')).path
+    },
+    userResDecorator: function (proxyRes, proxyResData,  req, res) {
+      try {
+        logger.info({msg: 'proxyObj'});
+        let data = JSON.parse(proxyResData.toString('utf8'));
+        let response = data.result.response;
+        data.result.response = {id: '', rootOrgId: '',isUserExists:''};
+        if (data.responseCode === 'OK') {
+          data.result.response.id = response.id;
+          data.result.response.rootOrgId = response.rootOrgId;
+          data.result.response.isUserExists = true;
+        }
+        if(req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
+        else return proxyUtils.handleSessionExpiry(proxyRes, data, req, res, data);
+      } catch (err) {
+        logger.error({msg:'content api user res decorator json parse error:', proxyResData})
+        return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res);
+      }
+    }
+  });
 }
 
 function proxyObj (){
