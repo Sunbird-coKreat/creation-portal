@@ -262,6 +262,9 @@
       "RETIRE": "content/v3/retire",
       "REJECT": "content/v3/reject",
       "FLAG": "content/v3/flag"
+    },
+    "RECAPTCHA": {
+      "VALIDATE": "/validate/recaptcha"
     }
   }
 }

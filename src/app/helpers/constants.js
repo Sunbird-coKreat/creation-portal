@@ -7,4 +7,5 @@ module.exports = {
       OPENID: 'openid'
     }
   },
+  GOOGLE_VERIFICATION_URL: 'https://www.google.com/recaptcha/api/siteverify'
 };
