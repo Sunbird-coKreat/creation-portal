@@ -19,6 +19,7 @@ export class HelpPageComponent implements OnInit, AfterViewInit {
   @ViewChild('video4') video4: ElementRef;
   @ViewChild('video5') video5: ElementRef;
   @ViewChild('video6') video6: ElementRef;
+  @ViewChild('video7') video7: ElementRef;
   constructor(public userService: UserService, private configService: ConfigService, private activatedRoute: ActivatedRoute,
               public router: Router, private navigationHelperService: NavigationHelperService) { }
 
@@ -56,5 +57,6 @@ export class HelpPageComponent implements OnInit, AfterViewInit {
     this.video4.nativeElement.pause();
     this.video5.nativeElement.pause();
     this.video6.nativeElement.pause();
+    this.video7.nativeElement.pause();
   }
 }
