@@ -865,6 +865,17 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   attachContentToTextbook(action) {
-    this.helperService.attachContentToTextbook(action, this.sessionContext.collection, this.resourceDetails.identifier);
+    const originData = {
+      textbookOriginId: _.get(_.get(_.get(this.sessionContext.hierarchyObj, 'hierarchy'), this.sessionContext.collection), 'origin'),
+      unitOriginId: _.get(_.get(_.get(this.sessionContext.hierarchyObj, 'hierarchy'), this.sessionContext.textBookUnitIdentifier), 'origin')
+    };
+    if (originData.textbookOriginId && originData.unitOriginId) {
+      // tslint:disable-next-line:max-line-length
+      this.helperService.attachContentToTextbook(action, this.sessionContext.collection, this.resourceDetails.identifier, originData);
+    } else {
+      action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
+      this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+      console.error('origin data missing');
+    }
   }
 }

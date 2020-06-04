@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ConfigService, ToasterService, ServerResponse, ResourceService } from '@sunbird/shared';
-import { ContentService, ActionService, PublicDataService } from '@sunbird/core';
+import { ContentService, ActionService, PublicDataService, ProgramsService} from '@sunbird/core';
 import { throwError, Observable, of, Subject } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import * as _ from 'lodash-es';
@@ -16,7 +16,7 @@ private sendNotification = new Subject<string>();
   constructor(private configService: ConfigService, private contentService: ContentService,
     private toasterService: ToasterService, private publicDataService: PublicDataService,
     private actionService: ActionService, private resourceService: ResourceService,
-    public programStageService: ProgramStageService) { }
+    public programStageService: ProgramStageService, private programsService: ProgramsService) { }
 
     getLicences(): Observable<any> {
       const req = {
@@ -100,8 +100,19 @@ private sendNotification = new Subject<string>();
     return this.actionService.post(option);
   }
 
-  attachContentToTextbook(action, collectionId, contentId) {
-    // read textbook data
+  attachContentToTextbook(action, collectionId, contentId, originData) {
+    const req = {
+      url: `program/v1/content/publish`,
+      data: {
+        'request': {
+          'content_id': contentId,
+          'textbook_id': _.get(originData, 'textbookOriginId'),
+          'units': [_.get(originData, 'unitOriginId')]
+        }
+      }
+    };
+    return this.programsService.post(req).subscribe((response) => {
+      // read textbook data
     const option = {
       url: 'content/v3/read/' + collectionId,
       param: { 'mode': 'edit' }
@@ -120,13 +131,19 @@ private sendNotification = new Subject<string>();
        this.programStageService.removeLastStage();
        this.sendNotification.next(_.capitalize(action));
       }, (err) => {
-        action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
-                              this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+        this.acceptContent_errMsg(action);
       });
     }, (err) => {
-      action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
-                              this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+      this.acceptContent_errMsg(action);
     });
+    }, err => {
+      this.acceptContent_errMsg(action);
+    });
+  }
+
+  acceptContent_errMsg(action) {
+    action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
+    this.toasterService.error(this.resourceService.messages.fmsg.m00100);
   }
 
   apiErrorHandling(err, errorInfo) {
