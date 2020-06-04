@@ -72,6 +72,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public telemetryInteractObject: any;
   public telemetryPageId = 'content-uploader';
   public sourcingOrgReviewer: boolean;
+  public sourcingReviewStatus: string;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -93,6 +94,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.actions = _.get(this.contentUploadComponentInput, 'programContext.config.actions');
     this.selectedSharedContext = _.get(this.contentUploadComponentInput, 'selectedSharedContext');
     this.sharedContext = _.get(this.contentUploadComponentInput, 'programContext.config.sharedContext');
+    this.sourcingReviewStatus = _.get(this.contentUploadComponentInput, 'sourcingStatus') || '';
     if (_.get(this.contentUploadComponentInput, 'action') === 'preview') {
       this.showUploadModal = false;
       this.showPreview = true;
@@ -357,11 +359,15 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.editTitle = (this.contentMetaData.name !== 'Untitled') ? this.contentMetaData.name : '' ;
       this.resourceStatus = this.contentMetaData.status;
       if (this.resourceStatus === 'Review') {
-        this.resourceStatusText = 'Review in Progress';
+        this.resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
       } else if (this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Review') {
-        this.resourceStatusText = 'Rejected';
-      } else if (this.resourceStatus === 'Live') {
-        this.resourceStatusText = 'Published';
+        this.resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
+      } else if (this.resourceStatus === 'Live' && _.isEmpty(this.sourcingReviewStatus)) {
+        this.resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
+      } else if (this.sourcingReviewStatus === 'Rejected') {
+        this.resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
+      } else if (this.sourcingReviewStatus === 'Approved') {
+        this.resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
       } else {
         this.resourceStatusText = this.resourceStatus;
       }

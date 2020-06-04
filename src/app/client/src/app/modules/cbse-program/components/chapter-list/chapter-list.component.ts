@@ -185,6 +185,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   public initiateInputs(action?, content?) {
+    const sourcingStatus = !_.isUndefined(content) ? content.sourcingStatus : null;
     this.dynamicInputs = {
       contentUploadComponentInput: {
         config: _.find(this.programContext.config.components, {'id': 'ng.sunbird.uploadComponent'}),
@@ -194,7 +195,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         selectedSharedContext: this.selectedSharedContext,
         contentId: this.contentId,
         action: action,
-        programContext: _.get(this.chapterListComponentInput, 'programContext')
+        programContext: _.get(this.chapterListComponentInput, 'programContext'),
+        sourcingStatus: sourcingStatus
       },
       practiceQuestionSetComponentInput: {
         config: _.find(this.programContext.config.components, {'id': 'ng.sunbird.practiceSetComponent'}),
@@ -205,7 +207,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         selectedSharedContext: this.selectedSharedContext,
         contentIdentifier: this.contentId,
         action: action,
-        programContext: _.get(this.chapterListComponentInput, 'programContext')
+        programContext: _.get(this.chapterListComponentInput, 'programContext'),
+        sourcingStatus: sourcingStatus
       },
       contentEditorComponentInput: {
         contentId: this.contentId,
@@ -323,12 +326,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         const treeLeaf = children && children.filter(item => item.contentType !== 'TextBookUnit');
         rootTree['children'] = treeChildren || null;
         rootTree['leaf'] = this.getContentVisibility(treeLeaf) || null;
+        rootTree['leaf'] = this.checkContentAcceptedOrRejected(treeLeaf) || null;
         return rootTree ? [rootTree] : [];
       } else {
         rootTree['leaf'] = _.map(data.children, (child) => {
           const meta = _.pick(child, this.sharedContext);
           const treeItem = this.generateNodeMeta(child, meta);
           treeItem['visibility'] = this.shouldContentBeVisible(child);
+          treeItem['sourcingStatus'] = this.checkSourcingStatus(child);
           return treeItem;
         });
         return rootTree ? [rootTree] : [];
@@ -365,6 +370,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         treeItem['children'] = (treeChildren && treeChildren.length > 0) ? treeChildren : null;
         if (treeLeaf && treeLeaf.length > 0) {
           treeItem['leaf'] = this.getContentVisibility(treeLeaf);
+          treeItem['leaf'] = this.checkContentAcceptedOrRejected(treeLeaf) || null;
         }
         return treeItem;
       });
@@ -477,6 +483,28 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       leafNodes.push(leaf);
     });
     return _.isEmpty(leafNodes) ? null : leafNodes;
+  }
+
+  checkContentAcceptedOrRejected(branch) {
+    const leafNodes = [];
+    _.forEach(branch, (leaf) => {
+      const sourcingStatus = this.checkSourcingStatus(leaf);
+      leaf['sourcingStatus'] = sourcingStatus;
+      leafNodes.push(leaf);
+    });
+    return _.isEmpty(leafNodes) ? null : leafNodes;
+  }
+
+  checkSourcingStatus(content) {
+    if (this.storedCollectionData.acceptedContents  &&
+         _.includes(this.storedCollectionData.acceptedContents || [], content.identifier)) {
+            return 'Approved';
+      } else if (this.storedCollectionData.rejectedContents  &&
+              _.includes(this.storedCollectionData.rejectedContents || [], content.identifier)) {
+                 return 'Rejected';
+      } else {
+        return null;
+      }
   }
 
   shouldContentBeVisible(content) {

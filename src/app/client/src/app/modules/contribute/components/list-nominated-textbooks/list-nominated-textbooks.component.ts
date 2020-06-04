@@ -402,49 +402,48 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     this.pager = this.paginationService.getPager(this.OrgUsersCnt, this.pageNumber, this.pageLimit);
   }
 
-
   onRoleChange(user) {
-    if (_.includes(this.roleNames, user.projectselectedRole)) {
-      let progRoleMapping = this.nominationDetails.rolemapping;
-      if (isNullOrUndefined(progRoleMapping)) {
-        progRoleMapping = {};
-        progRoleMapping[user.projectselectedRole] = [];
-      }
-      const programRoleNames = _.map(progRoleMapping, function(currentelement, index, arrayobj) {
-          return index;
-      });
-
-      if (!_.includes(programRoleNames, user.projectselectedRole)) {
-        progRoleMapping[user.projectselectedRole] = [];
-      }
-
-      _.forEach(progRoleMapping, function(ua, role, arr){
-        if (user.projectselectedRole === role) {
-          ua.push(user.identifier);
-          _.compact(ua);
-          progRoleMapping[role] = ua;
-        }
-      });
-
-      const req = {
-        'request': {
-            'program_id': this.activatedRoute.snapshot.params.programId,
-            'user_id': this.nominationDetails.user_id,
-            'rolemapping': progRoleMapping
-          }
-        };
-
-      const updateNomination = this.programsService.updateNomination(req);
-      updateNomination.subscribe(response => {
-        this.toasterService.success('Roles updated');
-      }, error => {
-        console.log(error);
-        this.toasterService.error("Something went wrong while updating the role");
-      });
-
-    }else {
-      this.toasterService.error("Role not found");
+    const newRole = user.projectselectedRole;
+    if (!_.includes(this.roleNames, newRole)) {
+      this.toasterService.error(this.resourceService.messages.emsg.roles.m0003);
+      return;
     }
+    let progRoleMapping = this.nominationDetails.rolemapping;
+    if (isNullOrUndefined(progRoleMapping)) {
+      progRoleMapping = {};
+      progRoleMapping[newRole] = [];
+    }
+    const programRoleNames = _.keys(progRoleMapping);
+    if (!_.includes(programRoleNames, newRole)) {
+      progRoleMapping[newRole] = [];
+    }
+    _.forEach(progRoleMapping, (users, role) => {
+      // Add to selected user to current selected role's array
+      if (newRole === role && !_.includes(users, user.identifier)) {
+        users.push(user.identifier);
+      }
+      // Remove selected user from other role's array
+      if (newRole !== role && _.includes(users, user.identifier)) {
+        _.remove(users, (id) => id === user.identifier);
+      }
+      // Remove duplicate users ids and falsy values
+      progRoleMapping[role] = _.uniq(_.compact(users));
+    });
+    const req = {
+      'request': {
+          'program_id': this.activatedRoute.snapshot.params.programId,
+          'user_id': this.nominationDetails.user_id,
+          'rolemapping': progRoleMapping
+        }
+      };
+    const updateNomination = this.programsService.updateNomination(req);
+    updateNomination.subscribe(response => {
+      this.nominationDetails.rolemapping = progRoleMapping;
+      this.toasterService.success(this.resourceService.messages.smsg.roles.m0001);
+    }, error => {
+      console.log(error);
+      this.toasterService.error(this.resourceService.messages.emsg.roles.m0002);
+    });
   }
 
   changeView() {
