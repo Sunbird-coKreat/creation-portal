@@ -823,4 +823,80 @@ getAggregatedNominationsCount() {
     })
   );
 }
+
+downloadReport(report) {
+  const req = {
+    url: `program/v1/report`,
+    data: {
+        'request': {
+            'filters': {
+                program_id: [this.programId],
+                report: report
+        }
+      }
+    }
+  };
+  return this.programsService.post(req).subscribe((res) => {
+    if (res.result && res.result.tableData && res.result.tableData.length) {
+      try {
+      const resObj = res.result.tableData[0];
+      let headers = [];
+      if (report === 'textbookLevelReport') {
+        headers = this.textbookLevelReportHeaders();
+      } else if (report === 'chapterLevelReport') {
+        headers = this.chapterLevelReportHeaders();
+      }
+      const tableData = [];
+      if (_.isArray(resObj) && resObj.length) {
+        _.forEach(resObj, (obj) => {
+          tableData.push(_.assign({'Project Name': this.programDetails.name.trim()}, obj));
+        });
+      }
+      const csvDownloadConfig = {
+        filename: this.programDetails.name.trim(),
+        tableData: tableData,
+        headers: headers,
+        showTitle: false
+      };
+        this.programsService.generateCSV(csvDownloadConfig);
+      } catch (err) {
+        this.toasterService.error(this.resourceService.messages.emsg.projects.m0005);
+      }
+    } else {
+      this.toasterService.error(this.resourceService.messages.emsg.projects.m0005);
+    }
+  }, (err) => {
+    this.toasterService.error(this.resourceService.messages.emsg.projects.m0005);
+  });
+}
+
+textbookLevelReportHeaders() {
+  const headers = [
+    this.resourceService.frmelmnts.lbl.projectName,
+    this.resourceService.frmelmnts.lbl.profile.Medium,
+    this.resourceService.frmelmnts.lbl.profile.Classes,
+    this.resourceService.frmelmnts.lbl.profile.Subjects,
+    this.resourceService.frmelmnts.lbl.textbookName,
+    this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn6,
+    this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn7,
+    this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn8,
+    this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn9,
+    ..._.map(this.programContentTypes.split(', '), type => `${this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn10} ${type}` )
+  ];
+  return headers;
+}
+
+chapterLevelReportHeaders() {
+  const headers = [
+    this.resourceService.frmelmnts.lbl.projectName,
+    this.resourceService.frmelmnts.lbl.profile.Medium,
+    this.resourceService.frmelmnts.lbl.profile.Classes,
+    this.resourceService.frmelmnts.lbl.profile.Subjects,
+    this.resourceService.frmelmnts.lbl.textbookName,
+    this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn6,
+    this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn7,
+    ..._.map(this.programContentTypes.split(', '), type => `${this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn8} ${type}` )
+  ];
+  return headers;
+}
 }
