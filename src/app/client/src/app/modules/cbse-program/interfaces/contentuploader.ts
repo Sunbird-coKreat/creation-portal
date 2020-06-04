@@ -10,4 +10,5 @@ export interface IContentUploadComponentInput {
   templateDetails?: any;
   programContext?: any;
   action?: string;
+  sourcingStatus?: string;
 }

@@ -48,7 +48,10 @@
                 {{orgUser.name}}
               </div>
             </td>
-            <td>{{ orgUser?.email || orgUser?.phone || '-' }}</td>
+            <td>
+              <div *ngIf="orgUser?.maskedEmail">{{orgUser?.maskedEmail}}</div>
+              <div *ngIf="orgUser?.maskedPhone"> {{orgUser?.maskedPhone}}</div>
+            </td>
             <td>
               <div>
                 <sui-select class="selection pt-5" [(ngModel)]="orgUser.selectedRole" labelField="name"

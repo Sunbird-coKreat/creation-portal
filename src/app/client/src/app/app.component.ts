@@ -97,6 +97,9 @@ export class AppComponent implements OnInit, OnDestroy {
   showUserVerificationPopup = false;
   feedCategory = 'OrgMigrationAction';
   labels: {};
+  deviceId: string;
+  userId: string;
+  appId: string;
   isDesktopDevice = true;
   devicePopupShown = false;
   constructor(private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService,
@@ -154,12 +157,14 @@ export class AppComponent implements OnInit, OnDestroy {
           this.navigationHelperService.initialize();
           this.userService.initialize(this.userService.loggedIn);
           if (this.userService.loggedIn) {
+            this.userId = this.userService.userid;
             this.permissionService.initialize();
             // this.courseService.initialize();
             this.programsService.initialize();
             this.userService.startSession();
             return this.setUserDetails();
           } else {
+            this.userId = this.deviceId;
             return this.setOrgDetails();
           }
         }))
@@ -179,6 +184,7 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.isOffline) {
       document.body.classList.add('sb-offline');
     }
+    this.appId = this.userService.appId;
   }
 
   isLocationStatusRequired() {
@@ -355,6 +361,7 @@ export class AppComponent implements OnInit, OnDestroy {
                         (<HTMLInputElement>document.getElementById('deviceId')).value : deviceId;
           }
           (<HTMLInputElement>document.getElementById('deviceId')).value = deviceId;
+          this.deviceId = deviceId;
         this.deviceRegisterService.setDeviceId();
           observer.next(deviceId);
           observer.complete();

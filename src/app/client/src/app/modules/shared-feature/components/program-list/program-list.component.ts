@@ -257,7 +257,7 @@ export class ProgramListComponent implements OnInit {
             if (data.result && data.result.length > 0) {
               this.nominationList = _.uniq(_.map(_.filter(data.result, obj => {
                 if (obj.rolemapping
-                  && ((obj.rolemapping.CONTRIBUTOR && obj.rolemapping.CONTRIBUTOR.includes(_.get(this.userService, 'userProfile.userId' )))
+                  && (( obj.rolemapping.CONTRIBUTOR && obj.rolemapping.CONTRIBUTOR.includes(_.get(this.userService, 'userProfile.userId' )))
                   || ( obj.rolemapping.REVIEWER && obj.rolemapping.REVIEWER.includes(_.get(this.userService, 'userProfile.userId' ))))
                   && obj.status === 'Approved') {
                     this.roleMapping.push(obj);

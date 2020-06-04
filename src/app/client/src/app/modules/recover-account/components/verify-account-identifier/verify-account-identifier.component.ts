@@ -58,14 +58,15 @@ export class VerifyAccountIdentifierComponent implements OnInit {
     };
     this.recoverAccountService.verifyOTP(request)
     .subscribe(response => {
-        this.resetPassword();
+        this.resetPassword(response);
       }, error => {
+        this.form.controls.otp.setValue('');
         this.disableFormSubmit = false;
         this.handleError(error);
       }
     );
   }
-  resetPassword() {
+  resetPassword(data?: any) {
     const request = {
       request: {
         type: this.recoverAccountService.selectedAccountIdentifier.type,
@@ -73,6 +74,7 @@ export class VerifyAccountIdentifierComponent implements OnInit {
         userId: this.recoverAccountService.selectedAccountIdentifier.id
       }
     };
+    request.request['reqData'] = _.get(data, 'reqData');
     this.recoverAccountService.resetPassword(request)
     .subscribe(response => {
       if (response.result.link) {
@@ -96,7 +98,7 @@ export class VerifyAccountIdentifierComponent implements OnInit {
       const redirect_uri = reqQuery.error_callback + '?' + resQuery;
       window.location.href = redirect_uri;
     } else {
-      this.toasterService.error('OTP validation failed.');
+      this.toasterService.error(this.resourceService.frmelmnts.lbl.otpValidationFailed);
     }
   }
   handleResendOtp() {
