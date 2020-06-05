@@ -124,8 +124,6 @@ export class CollectionHierarchyService {
   }
 
   getStats(totalContents, totalSampleContent, collections?) {
-    console.log(collections, 'collection')
-    console.log('Collections');
     let sourcingOrgStatus = {};
     const orgLevelDataWithoutReject = _.groupBy(totalContents, 'status');
     const orgLevelDataWithReject = _.cloneDeep(orgLevelDataWithoutReject);
