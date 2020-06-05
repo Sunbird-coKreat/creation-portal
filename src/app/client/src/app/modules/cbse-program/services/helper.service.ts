@@ -124,7 +124,7 @@ private sendNotification = new Subject<string>();
         }
       };
       // tslint:disable-next-line:max-line-length
-      action === 'accept' ? request.content['acceptedContents'] = [...data.acceptedContents || [], contentId] : request.content['rejectedContents'] = [...data.rejectedContents || [], contentId];
+      action === 'accept' ? request.content['acceptedContents'] = _.uniq([...data.acceptedContents || [], contentId]) : request.content['rejectedContents'] = _.uniq([...data.rejectedContents || [], contentId]);
       this.updateContent(request, collectionId).subscribe(() => {
         action === 'accept' ? this.toasterService.success(this.resourceService.messages.smsg.m0066) :
                               this.toasterService.success(this.resourceService.messages.smsg.m0067);
