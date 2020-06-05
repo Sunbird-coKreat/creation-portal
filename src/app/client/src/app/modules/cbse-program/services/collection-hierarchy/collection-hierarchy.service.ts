@@ -341,8 +341,8 @@ export class CollectionHierarchyService {
       const individualCollectionLiveContent = sourcingOrgMeta && textbookMeta && _.has(textbookMeta, 'Live') ? _.map(textbookMeta.Live, 'identifier') : [];
       // tslint:disable-next-line:max-line-length
       const intersection = textbookMeta && sourcingOrgMeta && sourcingOrgMeta.acceptedContents ? _.intersection(sourcingOrgMeta.acceptedContents, individualCollectionLiveContent) : [];
-      const rejectedContentsIntersection = textbookMeta && sourcingOrgMeta && sourcingOrgMeta.rejectedOrgContents ? _
-      .intersection(sourcingOrgMeta.rejectedOrgContents, individualCollectionLiveContent) : [];
+      // tslint:disable-next-line:max-line-length
+      const rejectedContentsIntersection = textbookMeta && sourcingOrgMeta && sourcingOrgMeta.rejectedOrgContents ? _.intersection(sourcingOrgMeta.rejectedOrgContents, individualCollectionLiveContent) : [];
       textbook.pendingBySourceOrg = _.difference(individualCollectionLiveContent, _.union(intersection, rejectedContentsIntersection));
       return textbook;
     });
