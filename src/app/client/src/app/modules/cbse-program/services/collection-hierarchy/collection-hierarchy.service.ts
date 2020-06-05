@@ -341,10 +341,13 @@ export class CollectionHierarchyService {
       const individualCollectionLiveContent = sourcingOrgMeta && textbookMeta && _.has(textbookMeta, 'Live') ? _.map(textbookMeta.Live, 'identifier') : [];
       // tslint:disable-next-line:max-line-length
       const intersection = textbookMeta && sourcingOrgMeta && sourcingOrgMeta.acceptedContents ? _.intersection(sourcingOrgMeta.acceptedContents, individualCollectionLiveContent) : [];
-      const rejectedOrgContentsIntersection = textbookMeta && sourcingOrgMeta && sourcingOrgMeta.rejectedOrgContents ? _
+      const rejectedContentsIntersection = textbookMeta && sourcingOrgMeta && sourcingOrgMeta.rejectedOrgContents ? _
       .intersection(sourcingOrgMeta.rejectedOrgContents, individualCollectionLiveContent) : [];
-      textbook.pendingBySourceOrg = _.difference(individualCollectionLiveContent, intersection);
-      textbook.pendingBySourceOrg = _.difference(textbook.pendingBySourceOrg, rejectedOrgContentsIntersection);
+     // textbook.pendingBySourceOrg = _.difference(individualCollectionLiveContent, intersection);
+      textbook.pendingBySourceOrg = _.difference(individualCollectionLiveContent, _.union(intersection, rejectedContentsIntersection));
+
+
+      //textbook.pendingBySourceOrg = _.difference(textbook.pendingBySourceOrg, rejectedOrgContentsIntersection);
       return textbook;
     });
   }
