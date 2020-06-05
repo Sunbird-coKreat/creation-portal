@@ -297,7 +297,6 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
        this.checkArrayCondition(val);
     });
     this.sessionContext = _.assign(this.sessionContext, this.sharedContext);
-    this.sessionContext = _.assign(this.sessionContext, this.sharedContext);
     this.dynamicInputs = {
       chapterListComponentInput: {
         sessionContext: this.sessionContext,
