@@ -59,14 +59,7 @@ module.exports = function (app) {
 
   // Proxy for content create , update & review Start
 
-  app.use([
-    '/action/content/v3/create', 
-    '/action/content/v3/hierarchy/add',
-    '/action/content/v3/hierarchy/remove',
-    '/action/content/v3/update/*',
-    '/action/content/v3/upload/*',
-    '/action/content/v3/hierarchy/*'
-  ], 
+  app.use(['/action/content/v3/create', '/action/content/v3/hierarchy/add', '/action/content/v3/hierarchy/remove', '/action/content/v3/update/*'], 
   proxy(kp_content_service_base_url, {
     proxyReqPathResolver: function (req) {
       var originalUrl = req.originalUrl
@@ -75,15 +68,8 @@ module.exports = function (app) {
     }
   }))
 
-  app.use([
-    '/action/content/v3/review/*',
-    '/action/assessment/v3/items/*',
-    '/action/content/v3/publish/*',
-    '/action/content/v3/reject/*',
-    '/action/content/v3/retire/*',
-    '/action/assessment/v3/items/retire/*'
-  ],  
-  proxy(kp_learning_service_base_url, {
+  app.use(['/action/content/v3/upload/*', '/action/content/v3/review/*', '/action/assessment/v3/items/*', '/action/content/v3/publish/*', '/action/content/v3/reject/*', '/action/content/v3/retire/*', '/action/assessment/v3/items/retire/*'],  
+    proxy(kp_learning_service_base_url, {
     proxyReqPathResolver: function (req) {
       var originalUrl = req.originalUrl
       originalUrl = originalUrl.replace('/action/', '')
@@ -91,12 +77,7 @@ module.exports = function (app) {
     }
   }))
 
-  app.use([
-    '/action/itemset/v3/create', 
-    '/action/itemset/v3/update/*', 
-    '/action/itemset/v3/read/*', 
-    '/action/itemset/v3/review/*', 
-    '/action/itemset/v3/retire/*'],
+  app.use(['/action/itemset/v3/create', '/action/itemset/v3/update/*', '/action/itemset/v3/read/*', '/action/itemset/v3/review/*', '/action/itemset/v3/retire/*'],
   proxy(kp_assessment_service_base_url, {
     proxyReqPathResolver: function (req) {
       var originalUrl = req.originalUrl
