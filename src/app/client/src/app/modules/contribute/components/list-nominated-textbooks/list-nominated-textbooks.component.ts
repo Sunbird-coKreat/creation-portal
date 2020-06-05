@@ -122,7 +122,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       this.programDetails = _.get(programDetails, 'result');
       this.roles = _.get(this.programDetails, 'config.roles');
       this.roleNames = _.map(this.roles, 'name');
-      console.log( this.programDetails, 'programDetails');
       this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
       this.setActiveDate();
     }, error => {
@@ -334,7 +333,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
         this.nominated = true;
         this.nominationDetails = _.first(data.result);
         this.sessionContext.nominationDetails = _.first(data.result);
-        console.log(this.nominationDetails, 'nominationDetails');
         this.currentNominationStatus =  _.get(_.first(data.result), 'status');
         if (this.checkIfUserBelongsToOrg()) {
           this.sessionContext.currentOrgRole = this.userService.userProfile.userRegData.User_Org.roles[0];
