@@ -83,6 +83,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   showNominationLoader = false;
   showUsersLoader = false;
   showDashboardLoader = false;
+  sharedContext;
+
 
   pager: IPagination;
   pageNumber = 1;
@@ -677,6 +679,18 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.sessionContext.programId = this.programDetails.program_id;
     this.sessionContext.collection = collection.identifier;
     this.sessionContext.collectionName = collection.name;
+
+    this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
+      return {...obj, [context]: this.getSharedContextObjectProperty(context)};
+    }, {});
+    this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
+      return {...obj, [context]: collection[context] || this.sharedContext[context]};
+    }, this.sharedContext);
+    _.forEach(['gradeLevel', 'medium', 'subject'], (val) => {
+       this.checkArrayCondition(val);
+    });
+    this.sessionContext = _.assign(this.sessionContext, this.sharedContext);
+
     this.dynamicInputs = {
       chapterListComponentInput: {
         sessionContext: this.sessionContext,
@@ -690,6 +704,27 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     };
     this.programStageService.addStage('chapterListComponent');
   }
+
+  getSharedContextObjectProperty(property) {
+    if (property === 'channel') {
+       return _.get(this.programDetails, 'config.scope.channel');
+    } else if ( property === 'topic' ) {
+      return null;
+    } else {
+      const collectionComComponent = _.find(this.programDetails.config.components, { 'id': 'ng.sunbird.collection' });
+      const filters =  collectionComComponent.config.filters;
+      const explicitProperty =  _.find(filters.explicit, {'code': property});
+      const implicitProperty =  _.find(filters.implicit, {'code': property});
+      return (implicitProperty) ? implicitProperty.range || implicitProperty.defaultValue :
+       explicitProperty.range || explicitProperty.defaultValue;
+    }
+  }
+
+  checkArrayCondition(param) {
+    // tslint:disable-next-line:max-line-length
+    this.sharedContext[param] = _.isArray(this.sharedContext[param]) ? this.sharedContext[param] : _.split(this.sharedContext[param], ',');
+  }
+
 
   public isEmptyObject(obj) {
     return !!(_.isEmpty(obj));
