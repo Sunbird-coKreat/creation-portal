@@ -343,11 +343,7 @@ export class CollectionHierarchyService {
       const intersection = textbookMeta && sourcingOrgMeta && sourcingOrgMeta.acceptedContents ? _.intersection(sourcingOrgMeta.acceptedContents, individualCollectionLiveContent) : [];
       const rejectedContentsIntersection = textbookMeta && sourcingOrgMeta && sourcingOrgMeta.rejectedOrgContents ? _
       .intersection(sourcingOrgMeta.rejectedOrgContents, individualCollectionLiveContent) : [];
-     // textbook.pendingBySourceOrg = _.difference(individualCollectionLiveContent, intersection);
       textbook.pendingBySourceOrg = _.difference(individualCollectionLiveContent, _.union(intersection, rejectedContentsIntersection));
-
-
-      //textbook.pendingBySourceOrg = _.difference(textbook.pendingBySourceOrg, rejectedOrgContentsIntersection);
       return textbook;
     });
   }
