@@ -32,8 +32,8 @@
         </div>
       </div>
       <div class="nine wide column pl-20">
-        <div class="d-flex flex-jc-space-between practical-header__content py-10">
-            <div class="sb-meta-data-container sb-meta-data-column px-10 w-20">
+        <div class="d-flex  practical-header__content py-10">
+            <div class="sb-meta-data-container sb-meta-data-column px-10 w-50">
               <label class="m-0">{{ resourceService.frmelmnts.lbl.contentType}}</label>
               <p class="sb__ellipsis sb__ellipsis--one cursor-pointer"
               suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}"
@@ -45,7 +45,7 @@
             </div>
 
             <ng-container *ngIf="programContext">
-              <div class="program-timeline px-16 pt-10">
+              <div class="program-timeline  pt-10">
                 <div class="program-timeline-item">
                   <div class="status" [class.active]="activeDate === 'nomination_enddate'" *ngIf="programContext?.status !== 'Unlisted'">
                     <div class="status__label">{{resourceService.frmelmnts.lbl.nominationEndDate}}</div>

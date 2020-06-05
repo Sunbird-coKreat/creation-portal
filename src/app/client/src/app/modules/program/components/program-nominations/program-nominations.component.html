@@ -1,7 +1,7 @@
 <div *ngIf="!showLoader && (currentStage === 'programNominations')" [appTelemetryImpression]="telemetryImpression">
     <div class="sb-bg-color-primary-0 practical-header py-16">
-        <div class="d-flex  flex-jc-space-between practical-header__content ui container pt-15">
-            <div class="practical-header__title w-20">
+        <div class="d-flex   practical-header__content ui container pt-15">
+            <div class="practical-header__title ">
                 <h5 class="m-0 p-0 font-weight-bold d-inline-block">{{ programDetails?.name }} </h5>
                 <i class="info circle link icon" suiPopup
                         [popupTemplate]="popupTemplate" popupDelay="1000"></i>
@@ -22,12 +22,12 @@
                     </ng-template>
                 <p class="fs-0-785 font-weight-normal pr-10 sb__ellipsis sb__ellipsis--three">{{ programDetails?.description }} </p>
             </div>
-            <div class="sb-meta-data-container sb-meta-data-column w-10 px-10 w-30">
+            <div class="sb-meta-data-container sb-meta-data-column sb-content-type-bx">
                     <label class="mb-0">{{resourceService?.frmelmnts?.lbl?.contentType}}</label>
                     <p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{ programContentTypes }}"><span>{{ programContentTypes }}</span></p>
 			</div>
             <ng-container *ngIf="programDetails">
-                <div class="program-timeline w-35">
+                <div class="program-timeline">
                     <div class="program-timeline-item" *ngIf="programDetails.status !== 'Unlisted'">
                         <div class="status" [class.active]="activeDate === 'nomination_enddate'">
                             <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.nominationSubmission }}</div>

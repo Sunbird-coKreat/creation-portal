@@ -15,8 +15,8 @@
 											</i>
 											{{resourceService.frmelmnts.lbl.back}}
 									</button>
-			 <div class="d-flex flex-jc-space-between practical-header__content py-10">
-            <div class="practical-header__title flex-basis-1 pr-10">
+			 <div class="d-flex  practical-header__content py-10">
+            <div class="practical-header__title">
 								<h5 class="mb-10 p-0 d-inline-block font-weight-bold">{{ programDetails?.name }} </h5>
 								<i class="info circle link icon" suiPopup
                         [popupTemplate]="popupTemplate" popupDelay="1000"></i>
@@ -37,7 +37,7 @@
                     </ng-template>
                 <p class="fs-0-785 font-weight-normal sb__ellipsis sb__ellipsis--three">{{ programDetails?.description }} </p>
             </div>
-            <div class="sb-meta-data-container sb-meta-data-column">
+            <div class="sb-meta-data-container sb-meta-data-column w-40">
                 <label class="width-100">{{ resourceService.frmelmnts.lbl.nominations }} </label>
                 <div class="d-flex">
                     <dl class="sb-meta-data">
@@ -65,7 +65,7 @@
             <ng-container *ngIf="programDetails">
                 <div class="program-timeline px-16">
                     <div class="program-timeline-item">
-                        <div class="status" [class.active]="activeDate === 'nomination_enddate'">
+                        <div class="status" [class.active]="activeDate === 'nomination_enddate'" *ngIf="programDetails?.status !== 'Unlisted'">
                             <div class="status__label">{{ resourceService.frmelmnts.lbl.nominationSubmission }}</div>
                             <div class="status__date">
                                 {{ programDetails?.nomination_enddate |  date:'LLLL d, yyyy'  }}
@@ -76,7 +76,7 @@
                         </div>
                     </div>
                     <div class="program-timeline-item">
-                        <div class="status" [class.active]="activeDate === 'shortlisting_enddate'">
+                        <div class="status" [class.active]="activeDate === 'shortlisting_enddate'" *ngIf="programDetails?.status !== 'Unlisted'">
                             <div class="status__label">{{ resourceService.frmelmnts.lbl.shortlistingNomination }}</div>
                             <div class="status__date">
                                 {{ programDetails?.shortlisting_enddate |  date:'LLLL d, yyyy'  }}
