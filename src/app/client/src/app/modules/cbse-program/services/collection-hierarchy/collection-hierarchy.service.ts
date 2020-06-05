@@ -124,6 +124,8 @@ export class CollectionHierarchyService {
   }
 
   getStats(totalContents, totalSampleContent, collections?) {
+    console.log(collections, 'collection')
+    console.log('Collections');
     let sourcingOrgStatus = {};
     const orgLevelDataWithoutReject = _.groupBy(totalContents, 'status');
     const orgLevelDataWithReject = _.cloneDeep(orgLevelDataWithoutReject);
@@ -341,7 +343,10 @@ export class CollectionHierarchyService {
       const individualCollectionLiveContent = sourcingOrgMeta && textbookMeta && _.has(textbookMeta, 'Live') ? _.map(textbookMeta.Live, 'identifier') : [];
       // tslint:disable-next-line:max-line-length
       const intersection = textbookMeta && sourcingOrgMeta && sourcingOrgMeta.acceptedContents ? _.intersection(sourcingOrgMeta.acceptedContents, individualCollectionLiveContent) : [];
+      const rejectedOrgContentsIntersection = textbookMeta && sourcingOrgMeta && sourcingOrgMeta.rejectedOrgContents ? _
+      .intersection(sourcingOrgMeta.rejectedOrgContents, individualCollectionLiveContent) : [];
       textbook.pendingBySourceOrg = _.difference(individualCollectionLiveContent, intersection);
+      textbook.pendingBySourceOrg = _.difference(textbook.pendingBySourceOrg, rejectedOrgContentsIntersection);
       return textbook;
     });
   }
