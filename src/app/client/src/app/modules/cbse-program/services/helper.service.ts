@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ConfigService, ToasterService, ServerResponse, ResourceService } from '@sunbird/shared';
-import { ContentService, ActionService, PublicDataService, ProgramsService} from '@sunbird/core';
-import { throwError, Observable, of, Subject } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { ContentService, ActionService, PublicDataService, ProgramsService, NotificationService} from '@sunbird/core';
+import { throwError, Observable, of, Subject, forkJoin } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 import { ProgramStageService } from '../../program/services';
 
@@ -16,7 +16,8 @@ private sendNotification = new Subject<string>();
   constructor(private configService: ConfigService, private contentService: ContentService,
     private toasterService: ToasterService, private publicDataService: PublicDataService,
     private actionService: ActionService, private resourceService: ResourceService,
-    public programStageService: ProgramStageService, private programsService: ProgramsService) { }
+    public programStageService: ProgramStageService, private programsService: ProgramsService,
+    private notificationService: NotificationService) { }
 
     getLicences(): Observable<any> {
       const req = {
@@ -145,6 +146,57 @@ private sendNotification = new Subject<string>();
     action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
     this.toasterService.error(this.resourceService.messages.fmsg.m00100);
   }
+
+  fetchOrgAdminDetails(orgId): Observable<any> {
+    const finalResult = {};
+    const orgSearch = {
+      entityType: ['Org'],
+      filters: {
+        osid: {eq : orgId}
+      }
+    };
+  return this.programsService.searchRegistry(orgSearch).pipe(switchMap((res: any) => {
+    if (res && res.result.Org.length) {
+      const userSearch = {
+        entityType: ['User'],
+        filters: {
+          osid: {eq : res.result.Org[0].createdBy}
+        }
+      };
+      finalResult['Org'] = res.result.Org[0];
+      return this.programsService.searchRegistry(userSearch);
+    }
+  }), map((res2: any) => {
+    finalResult['User'] = res2.result.User[0];
+    return finalResult;
+  }),
+  catchError(err => throwError(err)));
+  }
+
+  prepareNotificationData(status, contentMetaData, programDetails) {
+      this.fetchOrgAdminDetails(contentMetaData.organisationId).subscribe(result => {
+       if (result && result.Org && result.User && result.User.userId) {
+         const notificationForContributor = {
+           user_id: contentMetaData.createdBy,
+           content: { name: contentMetaData.name },
+           org: { name:  result.Org.name},
+           program: { name: programDetails.name },
+           status: status
+         };
+           const notificationForPublisher = {
+             user_id: result.User.userId,
+             content: { name: contentMetaData.name },
+             org: { name:  result.Org.name},
+             program: { name: programDetails.name },
+             status: status
+           };
+           const notify = [notificationForContributor, notificationForPublisher];
+           forkJoin(..._.map(notify, role => this.notificationService.onAfterContentStatusChange(role))).subscribe();
+       }
+      }, err => {
+        console.error('error in triggering notification');
+      });
+   }
 
   apiErrorHandling(err, errorInfo) {
     this.toasterService.error(_.get(err, 'error.params.errmsg') || errorInfo.errorMsg);

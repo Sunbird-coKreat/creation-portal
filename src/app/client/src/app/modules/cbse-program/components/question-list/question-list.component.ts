@@ -182,26 +182,31 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   contentStatusNotify(status) {
-    const notificationForContributor = {
-      user_id: this.resourceDetails.createdBy,
-      content: { name: this.resourceDetails.name },
-      org: { name:  this.sessionContext.nominationDetails.orgData.name},
-      program: { name: this.programContext.name },
-      status: status
-    };
-    this.notificationService.onAfterContentStatusChange(notificationForContributor)
-    .subscribe((res) => {  });
-    if (!_.isUndefined(this.sessionContext.nominationDetails.user_id) && status !== 'Request') {
-      const notificationForPublisher = {
-        user_id: this.sessionContext.nominationDetails.user_id,
-        content: { name: this.resourceDetails.name },
-        org: { name:  this.sessionContext.nominationDetails.orgData.name},
-        program: { name: this.programContext.name },
-        status: status
-      };
-      this.notificationService.onAfterContentStatusChange(notificationForPublisher)
-      .subscribe((res) => {  });
-    }
+      if (!this.sessionContext.nominationDetails && this.resourceDetails.organisationId && status !== 'Request') {
+        const programDetails = { name: this.programContext.name};
+        this.helperService.prepareNotificationData(status, this.resourceDetails, programDetails);
+      } else {
+        const notificationForContributor = {
+          user_id: this.resourceDetails.createdBy,
+          content: { name: this.resourceDetails.name },
+          org: { name:  _.get(this.sessionContext, 'nominationDetails.orgData.name') || '--'},
+          program: { name: this.programContext.name },
+          status: status
+        };
+        this.notificationService.onAfterContentStatusChange(notificationForContributor)
+        .subscribe((res) => {  });
+        if (!_.isUndefined(this.sessionContext.nominationDetails.user_id) && status !== 'Request') {
+          const notificationForPublisher = {
+            user_id: this.sessionContext.nominationDetails.user_id,
+            content: { name: this.resourceDetails.name },
+            org: { name:  this.sessionContext.nominationDetails.orgData.name},
+            program: { name: this.programContext.name },
+            status: status
+          };
+          this.notificationService.onAfterContentStatusChange(notificationForPublisher)
+          .subscribe((res) => {  });
+        }
+      }
     }
 
   setResourceStatus() {

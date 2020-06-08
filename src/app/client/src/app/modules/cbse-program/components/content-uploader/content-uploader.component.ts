@@ -678,26 +678,31 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   contentStatusNotify(status) {
-  const notificationForContributor = {
-    user_id: this.contentMetaData.createdBy,
-    content: { name: this.contentMetaData.name },
-    org: { name:  this.sessionContext.nominationDetails.orgData.name},
-    program: { name: this.programContext.name },
-    status: status
-  };
-  this.notificationService.onAfterContentStatusChange(notificationForContributor)
-  .subscribe((res) => {  });
-  if (!_.isUndefined(this.sessionContext.nominationDetails.user_id) && status !== 'Request') {
-    const notificationForPublisher = {
-      user_id: this.sessionContext.nominationDetails.user_id,
-      content: { name: this.contentMetaData.name },
-      org: { name:  this.sessionContext.nominationDetails.orgData.name},
-      program: { name: this.programContext.name },
-      status: status
-    };
-    this.notificationService.onAfterContentStatusChange(notificationForPublisher)
-    .subscribe((res) => {  });
-  }
+    if (!this.sessionContext.nominationDetails && this.contentMetaData.organisationId && status !== 'Request') {
+      const programDetails = { name: this.programContext.name};
+      this.helperService.prepareNotificationData(status, this.contentMetaData, programDetails);
+    } else {
+      const notificationForContributor = {
+        user_id: this.contentMetaData.createdBy,
+        content: { name: this.contentMetaData.name },
+        org: { name:  _.get(this.sessionContext, 'nominationDetails.orgData.name') || '--'},
+        program: { name: this.programContext.name },
+        status: status
+      };
+      this.notificationService.onAfterContentStatusChange(notificationForContributor)
+      .subscribe((res) => {  });
+      if (!_.isUndefined(this.sessionContext.nominationDetails.user_id) && status !== 'Request') {
+        const notificationForPublisher = {
+          user_id: this.sessionContext.nominationDetails.user_id,
+          content: { name: this.contentMetaData.name },
+          org: { name:  this.sessionContext.nominationDetails.orgData.name},
+          program: { name: this.programContext.name },
+          status: status
+        };
+        this.notificationService.onAfterContentStatusChange(notificationForPublisher)
+        .subscribe((res) => {  });
+      }
+    }
   }
 
   isIndividualAndNotSample() {
