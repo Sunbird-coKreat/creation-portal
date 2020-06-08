@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, isEmpty } from 'rxjs/operators';
 import { throwError, Observable } from 'rxjs';
 import { ActionService, UserService } from '@sunbird/core';
 import { HttpClient } from '@angular/common/http';
@@ -7,6 +7,7 @@ import { HttpOptions, ConfigService, ToasterService } from '@sunbird/shared';
 import { TelemetryService } from '@sunbird/telemetry';
 import { forkJoin } from 'rxjs';
 import * as _ from 'lodash-es';
+import { isUndefined } from 'util';
 
 @Injectable()
 
@@ -89,7 +90,7 @@ export class CollectionHierarchyService {
     return forkJoin(hierarchyRequest);
   }
 
-  getCollectionWithProgramId(programId) {
+  getCollectionWithProgramId(programId, preferencefilters?) {
     const httpOptions: HttpOptions = {
       headers: {
         'content-type': 'application/json',
@@ -108,6 +109,17 @@ export class CollectionHierarchyService {
         }
       }
     };
+    if (!isUndefined(preferencefilters)) {
+        if (_.get(preferencefilters, 'medium')) {
+          option.data.request.filters['medium'] = _.get(preferencefilters, 'medium');
+        }
+        if (_.get(preferencefilters, 'greadeLevel')) {
+          option.data.request.filters['greadeLevel'] = _.get(preferencefilters, 'greadeLevel');
+        }
+        if (_.get(preferencefilters, 'subject')) {
+          option.data.request.filters['subject'] = _.get(preferencefilters, 'subject');
+        }
+    }
     return this.httpClient.post<any>(option.url, option.data, httpOptions);
   }
 

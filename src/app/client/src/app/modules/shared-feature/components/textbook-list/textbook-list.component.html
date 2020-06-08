@@ -10,9 +10,10 @@
 			<i class="file sb-file-icon outline icon pr-10 sb-color-primary"></i>
 			{{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
 		</a>
-		<button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary my-10 mr-10" (click)="openTextbookFilters()"> <i class="filter icon"></i>
+		<button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary my-10 mr-10" (click)="showTextbookFiltersModal = true"> <i class="filter icon"></i>
 			<i [ngClass]="{'sb-dock-circle': textbookFiltersApplied}"></i>
-			<span>{{buttonLabel}}</span>
+			<span *ngIf="!textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.addFilters }}</span>
+			<span *ngIf="textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.modifyFilters }}</span>
 		</button>
 		<button *ngIf="sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary ml-10" (click)="downloadCSV()"> <i class="download icon"></i> {{resourceService.frmelmnts.lbl.downloadProjectDetails}}</button>
 	</div>	
@@ -101,30 +102,29 @@
 	<div class="sb-modal-content desktop-o-x-unset">
 		<p>{{resourceService.frmelmnts.lbl.pleaseSelectFiltersYouWishToAdd}}</p>
 		<div class="segment mt-5 pb-30 pt-10">
-			<form class="ui form">
+			<form class="ui form" [formGroup]="prefernceForm">
 				<div class="ui grid">
 					<div class="six wide column py-10">
 						<div class="field">
 							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.medium}}</label>
-							<sui-multi-select class="selection p-5 b-100">
-								<sui-select-option *ngFor="let option of mediums" [value]=option></sui-select-option>
+							<sui-multi-select class="selection p-5 b-100" formControlName="medium" #mediums [options]="programDetails.config.medium" >
+								<sui-select-option *ngFor="let medium of mediums.filteredOptions" [value]="medium"> </sui-select-option>
 							</sui-multi-select>
 						</div>
 					</div>
 					<div class="six wide column py-10">
 						<div class="field">
 							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.subject}}</label>
-							<sui-multi-select class="selection p-5 b-100">
-								<sui-select-option *ngFor="let option of subjects" [value]=option></sui-select-option>
+							<sui-multi-select class="selection p-5 b-100" formControlName="subject" #subjects [options]="programDetails.config.subject">
+								<sui-select-option *ngFor="let subject of subjects.filteredOptions" [value]="subject"></sui-select-option>
 							</sui-multi-select>
 						</div>
 					</div>
 					<div class="six wide column py-10">
 						<div class="field">
 							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.class}}</label>
-							<sui-multi-select
-								class="selection p-5 b-100">
-								<sui-select-option *ngFor="let option of classes" [value]=option></sui-select-option>
+							<sui-multi-select formControlName="gradeLevel" class="selection p-5 b-100" #graveLevels [options]="programDetails.config.gradeLevel">
+								<sui-select-option *ngFor="let gradeLevel of graveLevels.filteredOptions" [value]="gradeLevel"></sui-select-option>
 							</sui-multi-select>
 						</div>
 					</div>
@@ -135,6 +135,6 @@
 	<div class="sb-modal-actions py-20">
 		<button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="applyTextbookFilters();"> {{resourceService.frmelmnts.btn.apply}} </button>
 		<button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" 
-		(click)="closeTextbookFiltersModal();" appTelemetryInteract> {{resourceService.frmelmnts.btn.reset}}</button>
+		(click)="resetTextbookFilters();" appTelemetryInteract> {{resourceService.frmelmnts.btn.reset}}</button>
 	</div>
   </sui-modal>
