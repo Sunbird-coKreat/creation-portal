@@ -6,10 +6,11 @@ import { PublicDataService, UserService, ActionService, PlayerService, Framework
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import * as _ from 'lodash-es';
 import { catchError, map, first } from 'rxjs/operators';
-import { throwError, Observable } from 'rxjs';
+import { throwError, Observable, Subscription } from 'rxjs';
 import { IContentUploadComponentInput} from '../../interfaces';
 import { FormGroup, FormArray, FormBuilder, Validators, NgForm } from '@angular/forms';
 import { CbseProgramService } from '../../services/cbse-program/cbse-program.service';
+import { AzureFileUploaderService } from '../../services';
 import { HelperService } from '../../services/helper.service';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -73,6 +74,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public telemetryPageId = 'content-uploader';
   public sourcingOrgReviewer: boolean;
   public sourcingReviewStatus: string;
+  azurFileUploaderSubscrition: Subscription;
+  fileUplaoderProgress = {
+    progress: 0
+  };
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -82,7 +87,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     private collectionHierarchyService: CollectionHierarchyService, private cd: ChangeDetectorRef,
     private resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService,
     private notificationService: NotificationService,
-    public activeRoute: ActivatedRoute, public router: Router, private navigationHelperService: NavigationHelperService) { }
+    public activeRoute: ActivatedRoute, public router: Router, private navigationHelperService: NavigationHelperService,
+    private azureUploadFileService: AzureFileUploaderService) { }
 
   ngOnInit() {
     this.config = _.get(this.contentUploadComponentInput, 'config');
@@ -176,7 +182,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           this.templateDetails.filesConfig.accepted.split(' ') : this.templateDetails.filesConfig.accepted.split(', '),
         acceptFiles: this.templateDetails.mimeType ? this.templateDetails.mimeType.toString() : '',
         itemLimit: 1,
-        sizeLimit: _.toNumber(this.templateDetails.filesConfig.size) * 1024 * 1024  // 52428800  = 50 MB = 50 * 1024 * 1024 bytes
+        // sizeLimit: _.toNumber(this.templateDetails.filesConfig.size) * 1024 * 1024  // 52428800  = 50 MB = 50 * 1024 * 1024 bytes
+        sizeLimit: 2000 * 1024 * 1024  // 52428800  = 50 MB = 50 * 1024 * 1024 bytes
       },
       messages: {
         sizeError: `{file} is too large, maximum file size is ${this.templateDetails.filesConfig.size} MB.`,
@@ -208,6 +215,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.uploadButton = true;
       fileUpload = true;
     }
+    this.fileUplaoderProgress['size'] = this.formatBytes(this.uploader.getSize(0));
     const mimeType = fileUpload ? this.detectMimeType(this.uploader.getName(0)) : this.detectMimeType(this.contentURL);
     if (!mimeType) {
       this.toasterService.error(`Invalid content type (supported type: ${this.templateDetails.filesConfig.accepted})`);
@@ -217,6 +225,16 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.uploadByURL(fileUpload, mimeType);
     }
   }
+
+  formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) { return '0 Bytes'; }
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
 
   uploadByURL(fileUpload, mimeType) {
     this.loading = true;
@@ -295,14 +313,26 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
   })).subscribe(res => {
       const signedURL = res.result.pre_signed_url;
-      const config = {
-        processData: false,
-        contentType: contentType,
-        headers: {
-          'x-ms-blob-type': 'BlockBlob'
-        }
-      };
-      this.uploadToBlob(signedURL, config).subscribe(() => {
+      // const config = {
+      //   processData: false,
+      //   contentType: contentType,
+      //   headers: {
+      //     'x-ms-blob-type': 'BlockBlob'
+      //   }
+      // };
+      // this.uploadToBlob(signedURL, config).subscribe(() => {
+      //   const fileURL = signedURL.split('?')[0];
+      //   this.updateContentWithURL(fileURL, mimeType, contentId);
+      // });
+
+      // tslint:disable-next-line:max-line-length
+      this.azurFileUploaderSubscrition = this.azureUploadFileService.uploadToBlob(signedURL, this.uploader.getFile(0)).subscribe((event: any) => {
+        this.fileUplaoderProgress.progress = event.percentComplete;
+      }, (error) => {
+        console.log('Failed');
+        console.error(error);
+      }, () => {
+        console.log('Successfully Done');
         const fileURL = signedURL.split('?')[0];
         this.updateContentWithURL(fileURL, mimeType, contentId);
       });
@@ -733,5 +763,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
 ngOnDestroy() {
   this.notify.unsubscribe();
+  this.azurFileUploaderSubscrition.unsubscribe();
 }
 }
