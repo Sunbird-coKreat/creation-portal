@@ -142,7 +142,7 @@ private sendNotification = new Subject<string>();
   }
 
   acceptContent_errMsg(action) {
-    action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
+    action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.approvingFailed) :
     this.toasterService.error(this.resourceService.messages.fmsg.m00100);
   }
 

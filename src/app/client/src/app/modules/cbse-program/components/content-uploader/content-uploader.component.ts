@@ -736,7 +736,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       // tslint:disable-next-line:max-line-length
       this.helperService.attachContentToTextbook(action, this.sessionContext.collection, this.contentMetaData.identifier, originData);
     } else {
-      action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
+      action === 'accept' ? this.toasterService.error(this.resourceService.messages.emsg.approvingFailed) :
       this.toasterService.error(this.resourceService.messages.fmsg.m00100);
       console.error('origin data missing');
     }
