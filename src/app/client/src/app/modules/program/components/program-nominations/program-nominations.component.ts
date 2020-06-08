@@ -349,8 +349,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       });
   }
 
-  getProgramCollection () {
-    return this.collectionHierarchyService.getCollectionWithProgramId(this.programId).pipe(
+  getProgramCollection (preferencefilters?) {
+    return this.collectionHierarchyService.getCollectionWithProgramId(this.programId, preferencefilters).pipe(
       tap((response) => {
         if (response && response.result && response.result.content && response.result.content.length) {
           this.programCollections = response.result.content;
@@ -671,6 +671,18 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage = _.last(this.state.stages).stage;
     }
+  }
+
+  applyPreferences(preferences?) {
+    this.showTextbookLoader  =  true;
+    this.getProgramCollection(preferences).subscribe(
+      (res) => { this.showTextbookLoader  =  false; },
+      (err) => { // TODO: navigate to program list page
+        this.showTextbookLoader  =  false;
+        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+        this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+      }
+    );
   }
 
   viewContribution(collection) {
