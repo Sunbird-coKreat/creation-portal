@@ -665,7 +665,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           // tslint:disable-next-line:max-line-length
           this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier || res.result.content_id)
           .subscribe((data) => {
-            this.toasterService.success(this.resourceService.messages.smsg.m0063);
+            this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
             this.programStageService.removeLastStage();
             this.uploadedContentMeta.emit({
               contentId: res.result.identifier
@@ -673,7 +673,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           });
         }
       }, (err) => {
-        this.toasterService.error(this.resourceService.messages.fmsg.m00101);
+        this.toasterService.error(this.resourceService.messages.fmsg.m00102);
       });
   }
 
