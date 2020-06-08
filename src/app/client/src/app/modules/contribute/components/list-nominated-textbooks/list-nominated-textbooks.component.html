@@ -160,7 +160,7 @@
 				<div class="ui container p-0 m-0">
 				<div class="pt-24 text-capitalize fs-0-785 line-height-1-3 sb-pageSection-document">
 					<div *ngIf="isUserOrgAdmin()" class="sb-color-gray-100 d-inline-block br-2 pr-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.draft || 0}}</span> {{resourceService.frmelmnts.lbl.drafts}}</div>
-					<div *ngIf="isUserOrgAdmin()" class="sb-color-primary d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.review || 0}}</span> {{resourceService.frmelmnts.lbl.pendingReview}}</div>
+					<div *ngIf="isUserOrgAdmin()" class="sb-color-primary d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.review || 0}}</span> {{resourceService.frmelmnts.lbl.reviewInProgress}}</div>
 					<div *ngIf="isUserOrgAdmin()" class="sb-color-error d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.rejected || 0}}</span> {{resourceService.frmelmnts.lbl.notAccepted}}</div>
 					<div *ngIf="isUserOrgAdmin()" class="sb-color-success d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.live || 0}}</span> {{resourceService.frmelmnts.lbl.sentForApproval}}</div>
 					<a class="fs-0-785 text-decor-none font-weight-bold pull-right sb-color-primary pt-5" href="{{ programDetails?.guidelines_url }}" target="_blank" *ngIf="programDetails?.guidelines_url" [ngClass]="{'mb-10': !isUserOrgAdmin()}">
