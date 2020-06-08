@@ -168,7 +168,11 @@
 						{{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
 					</a>
 				</div>
-					<div class="sb-pageSection" [appTelemetryImpression]="telemetryImpression">
+				<button type="button" class="pull-right sb-btn sb-btn-normal sb-btn-outline-primary mb-10" (click)="openTextbookFilters()"> <i class="filter icon"></i>
+					<i [ngClass]="{'sb-dock-circle': textbookFiltersApplied}"></i>
+					<span>{{buttonLabel}}</span>
+				</button>
+					<div class="sb-pageSection pt-24" [appTelemetryImpression]="telemetryImpression">
 						<div class="sb-bg-color-white pt-15" *ngIf="!showLoader">
 							<div class="sb-table-responsive">
 								<table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
@@ -352,8 +356,50 @@
 		</sui-tabset>
 	</div>
 </div>
-
 <ng-container *ngIf="currentStage !== 'listNominatedTextbookComponent'">
-	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs">
-	</ndc-dynamic>
+	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>
 </ng-container>
+<sui-modal *ngIf="showTextbookFiltersModal && programDetails && programDetails.config" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'" class="sb-modal" appBodyScroll (dismissed)="showTextbookFiltersModal = false" #nominationConfirmationModal>
+	<div class="sb-modal-header">
+		{{resourceService.frmelmnts.lbl.addFilters}}
+	</div>
+	<div class="sb-modal-content desktop-o-x-unset">
+		<p>{{resourceService.frmelmnts.lbl.pleaseSelectFiltersYouWishToAdd}}</p>
+		<div class="segment mt-5 pb-30 pt-10">
+			<form class="ui form">
+				<div class="ui grid">
+					<div class="six wide column py-10">
+						<div class="field">
+							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.medium}}</label>
+							<sui-multi-select class="selection p-5 b-100">
+								<sui-select-option *ngFor="let option of programDetails.config['medium']" [value]=option></sui-select-option>
+							</sui-multi-select>
+						</div>
+					</div>
+					<div class="six wide column py-10">
+						<div class="field">
+							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.subject}}</label>
+							<sui-multi-select class="selection p-5 b-100">
+								<sui-select-option *ngFor="let option of programDetails.config['subject']" [value]=option></sui-select-option>
+							</sui-multi-select>
+						</div>
+					</div>
+					<div class="six wide column py-10">
+						<div class="field">
+							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.class}}</label>
+							<sui-multi-select
+								class="selection p-5 b-100">
+								<sui-select-option *ngFor="let option of programDetails.config['gradeLevel']" [value]=option></sui-select-option>
+							</sui-multi-select>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="sb-modal-actions py-20">
+		<button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="applyTextbookFilters();"> {{resourceService.frmelmnts.btn.apply}} </button>
+		<button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" 
+		(click)="closeTextbookFiltersModal();" appTelemetryInteract> {{resourceService.frmelmnts.btn.reset}}</button>
+	</div>
+  </sui-modal>

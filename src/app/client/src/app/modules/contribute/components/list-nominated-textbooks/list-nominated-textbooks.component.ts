@@ -67,6 +67,9 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public directionOrgUsers = 'asc';
   public sortColumnOrgUsers = '';
   public showLoader = true;
+  showTextbookFiltersModal = false;
+  buttonLabel = this.resourceService.frmelmnts.lbl.addFilters;
+  textbookFiltersApplied = false;
   public paginatedContributorOrgUsers: any = [];
   public allContributorOrgUsers: any = [];
   showUsersLoader = true;
@@ -107,7 +110,20 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       pid: this.configService.appConfig.TELEMETRY.PID
     };
   }
-
+  openTextbookFilters() {
+      this.showTextbookFiltersModal = true;
+      // CHANGE THE TEXT OF THE BUTTON.
+      this.buttonLabel = this.resourceService.frmelmnts.lbl.modifyFilters;
+    }
+  applyTextbookFilters() {
+    this.textbookFiltersApplied = true;
+    this.showTextbookFiltersModal = false;
+  }
+  closeTextbookFiltersModal() {
+    this.buttonLabel = this.resourceService.frmelmnts.lbl.addFilters;
+    this.textbookFiltersApplied = false;
+    this.showTextbookFiltersModal = false;
+  }
   sortCollection(column) {
     this.contributorTextbooks = this.programsService.sortCollection(this.tempSortTextbooks, column, this.direction);
     if (this.direction === 'asc' || this.direction === '') {
