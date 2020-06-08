@@ -72,6 +72,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public telemetryInteractObject: any;
   public telemetryPageId = 'content-uploader';
   public sourcingOrgReviewer: boolean;
+  public sourcingReviewStatus: string;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -93,6 +94,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.actions = _.get(this.contentUploadComponentInput, 'programContext.config.actions');
     this.selectedSharedContext = _.get(this.contentUploadComponentInput, 'selectedSharedContext');
     this.sharedContext = _.get(this.contentUploadComponentInput, 'programContext.config.sharedContext');
+    this.sourcingReviewStatus = _.get(this.contentUploadComponentInput, 'sourcingStatus') || '';
     if (_.get(this.contentUploadComponentInput, 'action') === 'preview') {
       this.showUploadModal = false;
       this.showPreview = true;
@@ -357,11 +359,15 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.editTitle = (this.contentMetaData.name !== 'Untitled') ? this.contentMetaData.name : '' ;
       this.resourceStatus = this.contentMetaData.status;
       if (this.resourceStatus === 'Review') {
-        this.resourceStatusText = 'Review in Progress';
+        this.resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
       } else if (this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Review') {
-        this.resourceStatusText = 'Rejected';
-      } else if (this.resourceStatus === 'Live') {
-        this.resourceStatusText = 'Published';
+        this.resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
+      } else if (this.resourceStatus === 'Live' && _.isEmpty(this.sourcingReviewStatus)) {
+        this.resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
+      } else if (this.sourcingReviewStatus === 'Rejected') {
+        this.resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
+      } else if (this.sourcingReviewStatus === 'Approved') {
+        this.resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
       } else {
         this.resourceStatusText = this.resourceStatus;
       }
@@ -672,26 +678,31 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   contentStatusNotify(status) {
-  const notificationForContributor = {
-    user_id: this.contentMetaData.createdBy,
-    content: { name: this.contentMetaData.name },
-    org: { name:  this.sessionContext.nominationDetails.orgData.name},
-    program: { name: this.programContext.name },
-    status: status
-  };
-  this.notificationService.onAfterContentStatusChange(notificationForContributor)
-  .subscribe((res) => {  });
-  if (!_.isUndefined(this.sessionContext.nominationDetails.user_id) && status !== 'Request') {
-    const notificationForPublisher = {
-      user_id: this.sessionContext.nominationDetails.user_id,
-      content: { name: this.contentMetaData.name },
-      org: { name:  this.sessionContext.nominationDetails.orgData.name},
-      program: { name: this.programContext.name },
-      status: status
-    };
-    this.notificationService.onAfterContentStatusChange(notificationForPublisher)
-    .subscribe((res) => {  });
-  }
+    if (!this.sessionContext.nominationDetails && this.contentMetaData.organisationId && status !== 'Request') {
+      const programDetails = { name: this.programContext.name};
+      this.helperService.prepareNotificationData(status, this.contentMetaData, programDetails);
+    } else {
+      const notificationForContributor = {
+        user_id: this.contentMetaData.createdBy,
+        content: { name: this.contentMetaData.name },
+        org: { name:  _.get(this.sessionContext, 'nominationDetails.orgData.name') || '--'},
+        program: { name: this.programContext.name },
+        status: status
+      };
+      this.notificationService.onAfterContentStatusChange(notificationForContributor)
+      .subscribe((res) => {  });
+      if (!_.isUndefined(this.sessionContext.nominationDetails.user_id) && status !== 'Request') {
+        const notificationForPublisher = {
+          user_id: this.sessionContext.nominationDetails.user_id,
+          content: { name: this.contentMetaData.name },
+          org: { name:  this.sessionContext.nominationDetails.orgData.name},
+          program: { name: this.programContext.name },
+          status: status
+        };
+        this.notificationService.onAfterContentStatusChange(notificationForPublisher)
+        .subscribe((res) => {  });
+      }
+    }
   }
 
   isIndividualAndNotSample() {
@@ -722,7 +733,18 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   attachContentToTextbook(action) {
-    this.helperService.attachContentToTextbook(action, this.sessionContext.collection, this.contentMetaData.identifier);
+    const originData = {
+      textbookOriginId: _.get(_.get(_.get(this.sessionContext.hierarchyObj, 'hierarchy'), this.sessionContext.collection), 'origin'),
+      unitOriginId: _.get(_.get(_.get(this.sessionContext.hierarchyObj, 'hierarchy'), this.unitIdentifier), 'origin')
+    };
+    if (originData.textbookOriginId && originData.unitOriginId) {
+      // tslint:disable-next-line:max-line-length
+      this.helperService.attachContentToTextbook(action, this.sessionContext.collection, this.contentMetaData.identifier, originData);
+    } else {
+      action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
+      this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+      console.error('origin data missing');
+    }
   }
 
 ngOnDestroy() {

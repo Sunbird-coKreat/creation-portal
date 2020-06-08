@@ -77,6 +77,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   pager: IPagination;
   pageNumber = 1;
   pageLimit = 200;
+  sharedContext;
 
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private configService: ConfigService, private publicDataService: PublicDataService,
@@ -273,6 +274,16 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     this.sessionContext.programId = this.programDetails.program_id;
     this.sessionContext.collection = collection.identifier;
     this.sessionContext.collectionName = collection.name;
+    this.sharedContext = this.programContext.config.sharedContext.reduce((obj, context) => {
+      return {...obj, [context]: this.getSharedContextObjectProperty(context)};
+    }, {});
+    this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
+      return {...obj, [context]: collection[context] || this.sharedContext[context]};
+    }, this.sharedContext);
+    _.forEach(['gradeLevel', 'medium', 'subject'], (val) => {
+       this.checkArrayCondition(val);
+    });
+    this.sessionContext = _.assign(this.sessionContext, this.sharedContext);
     this.dynamicInputs = {
       chapterListComponentInput: {
         sessionContext: this.sessionContext,
@@ -286,6 +297,26 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     };
     this.showChapterList = true;
     this.programStageService.addStage('chapterListComponent');
+  }
+
+  getSharedContextObjectProperty(property) {
+    if (property === 'channel') {
+       return _.get(this.programContext, 'config.scope.channel');
+    } else if ( property === 'topic' ) {
+      return null;
+    } else {
+      const collectionComComponent = _.find(this.programContext.config.components, { 'id': 'ng.sunbird.collection' });
+      const filters =  collectionComComponent.config.filters;
+      const explicitProperty =  _.find(filters.explicit, {'code': property});
+      const implicitProperty =  _.find(filters.implicit, {'code': property});
+      return (implicitProperty) ? implicitProperty.range || implicitProperty.defaultValue :
+       explicitProperty.range || explicitProperty.defaultValue;
+    }
+  }
+
+  checkArrayCondition(param) {
+    // tslint:disable-next-line:max-line-length
+    this.sharedContext[param] = _.isArray(this.sharedContext[param]) ? this.sharedContext[param] : _.split(this.sharedContext[param], ',');
   }
 
   canUploadContent() {
@@ -418,11 +449,10 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     this.pager = this.paginationService.getPager(this.OrgUsersCnt, this.pageNumber, this.pageLimit);
   }
 
-
   onRoleChange(user) {
     const newRole = user.projectselectedRole;
     if (!_.includes(this.roleNames, newRole)) {
-      this.toasterService.error("Role not found");
+      this.toasterService.error(this.resourceService.messages.emsg.roles.m0003);
       return;
     }
     let progRoleMapping = this.nominationDetails.rolemapping;
@@ -434,16 +464,16 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     if (!_.includes(programRoleNames, newRole)) {
       progRoleMapping[newRole] = [];
     }
-
     _.forEach(progRoleMapping, (users, role) => {
-      // Add to current role array
+      // Add to selected user to current selected role's array
       if (newRole === role && !_.includes(users, user.identifier)) {
         users.push(user.identifier);
       }
-      // Remove from other role array
+      // Remove selected user from other role's array
       if (newRole !== role && _.includes(users, user.identifier)) {
         _.remove(users, (id) => id === user.identifier);
       }
+      // Remove duplicate users ids and falsy values
       progRoleMapping[role] = _.uniq(_.compact(users));
     });
     const req = {
@@ -453,13 +483,13 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           'rolemapping': progRoleMapping
         }
       };
-
     const updateNomination = this.programsService.updateNomination(req);
     updateNomination.subscribe(response => {
-      this.toasterService.success('Roles updated');
+      this.nominationDetails.rolemapping = progRoleMapping;
+      this.toasterService.success(this.resourceService.messages.smsg.roles.m0001);
     }, error => {
       console.log(error);
-      this.toasterService.error("Something went wrong while updating the role");
+      this.toasterService.error(this.resourceService.messages.emsg.roles.m0002);
     });
   }
 

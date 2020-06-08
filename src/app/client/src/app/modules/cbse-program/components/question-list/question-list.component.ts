@@ -71,6 +71,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   telemetryImpression: any;
   public telemetryPageId = 'question-list';
   public sourcingOrgReviewer: boolean;
+  public sourcingReviewStatus: string;
 
   constructor(
     private configService: ConfigService, private userService: UserService,
@@ -96,6 +97,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sessionContext.questionType = this.templateDetails.questionCategories[0];
     this.sessionContext.textBookUnitIdentifier = _.get(this.practiceQuestionSetComponentInput, 'unitIdentifier');
     this.practiceSetConfig = _.get(this.practiceQuestionSetComponentInput, 'config');
+    this.sourcingReviewStatus = _.get(this.practiceQuestionSetComponentInput, 'sourcingStatus') || '';
     this.resourceTitleLimit = this.practiceSetConfig.config.resourceTitleLength;
     this.sessionContext.practiceSetConfig = this.practiceSetConfig;
     this.sessionContext.topic = _.isEmpty(this.selectedSharedContext.topic) ? this.sessionContext.topic : this.selectedSharedContext.topic;
@@ -180,35 +182,44 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   contentStatusNotify(status) {
-    const notificationForContributor = {
-      user_id: this.resourceDetails.createdBy,
-      content: { name: this.resourceDetails.name },
-      org: { name:  this.sessionContext.nominationDetails.orgData.name},
-      program: { name: this.programContext.name },
-      status: status
-    };
-    this.notificationService.onAfterContentStatusChange(notificationForContributor)
-    .subscribe((res) => {  });
-    if (!_.isUndefined(this.sessionContext.nominationDetails.user_id) && status !== 'Request') {
-      const notificationForPublisher = {
-        user_id: this.sessionContext.nominationDetails.user_id,
-        content: { name: this.resourceDetails.name },
-        org: { name:  this.sessionContext.nominationDetails.orgData.name},
-        program: { name: this.programContext.name },
-        status: status
-      };
-      this.notificationService.onAfterContentStatusChange(notificationForPublisher)
-      .subscribe((res) => {  });
-    }
+      if (!this.sessionContext.nominationDetails && this.resourceDetails.organisationId && status !== 'Request') {
+        const programDetails = { name: this.programContext.name};
+        this.helperService.prepareNotificationData(status, this.resourceDetails, programDetails);
+      } else {
+        const notificationForContributor = {
+          user_id: this.resourceDetails.createdBy,
+          content: { name: this.resourceDetails.name },
+          org: { name:  _.get(this.sessionContext, 'nominationDetails.orgData.name') || '--'},
+          program: { name: this.programContext.name },
+          status: status
+        };
+        this.notificationService.onAfterContentStatusChange(notificationForContributor)
+        .subscribe((res) => {  });
+        if (!_.isUndefined(this.sessionContext.nominationDetails.user_id) && status !== 'Request') {
+          const notificationForPublisher = {
+            user_id: this.sessionContext.nominationDetails.user_id,
+            content: { name: this.resourceDetails.name },
+            org: { name:  this.sessionContext.nominationDetails.orgData.name},
+            program: { name: this.programContext.name },
+            status: status
+          };
+          this.notificationService.onAfterContentStatusChange(notificationForPublisher)
+          .subscribe((res) => {  });
+        }
+      }
     }
 
   setResourceStatus() {
     if (this.resourceStatus === 'Review') {
-      this.resourceStatusText = 'Review in Progress';
+      this.resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
     } else if (this.resourceStatus === 'Draft' && this.resourceDetails.rejectComment && this.resourceDetails.rejectComment !== '') {
-      this.resourceStatusText = 'Rejected';
-    } else if (this.resourceStatus === 'Live') {
-      this.resourceStatusText = 'Published';
+      this.resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
+    } else if (this.resourceStatus === 'Live' && _.isEmpty(this.sourcingReviewStatus)) {
+      this.resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
+    } else if (this.sourcingReviewStatus === 'Rejected') {
+      this.resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
+    } else if (this.sourcingReviewStatus === 'Approved') {
+      this.resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
     } else {
       this.resourceStatusText = this.resourceStatus;
     }
@@ -859,6 +870,17 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   attachContentToTextbook(action) {
-    this.helperService.attachContentToTextbook(action, this.sessionContext.collection, this.resourceDetails.identifier);
+    const originData = {
+      textbookOriginId: _.get(_.get(_.get(this.sessionContext.hierarchyObj, 'hierarchy'), this.sessionContext.collection), 'origin'),
+      unitOriginId: _.get(_.get(_.get(this.sessionContext.hierarchyObj, 'hierarchy'), this.sessionContext.textBookUnitIdentifier), 'origin')
+    };
+    if (originData.textbookOriginId && originData.unitOriginId) {
+      // tslint:disable-next-line:max-line-length
+      this.helperService.attachContentToTextbook(action, this.sessionContext.collection, this.resourceDetails.identifier, originData);
+    } else {
+      action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
+      this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+      console.error('origin data missing');
+    }
   }
 }

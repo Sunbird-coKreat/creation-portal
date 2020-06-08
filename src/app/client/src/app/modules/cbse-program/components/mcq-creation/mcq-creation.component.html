@@ -6,7 +6,7 @@
 
 <div *ngIf='showForm' [appTelemetryImpression]="telemetryImpression">
   <form  class="ui form mcq-vertical mt-8 licence-form" [formGroup]="questionMetaForm">
-    
+
     <!-- Question Editor Section HTML -->
     <div class="ckeditor-tool width-100" *ngIf="!isReadOnlyMode && !showPreview">
       <label *ngIf="showFormError && [undefined, ''].includes(mcqForm.question)" class="sb-label sb-label-table sb-label-error-0">Fill Question</label>
@@ -28,11 +28,11 @@
               answer</label>
 
             <!-- add button to be integrated -->
-            <button 
-              *ngIf='mcqForm.options.length < 4' 
+            <button
+              *ngIf='mcqForm.options.length < 4'
               class="sb-btn sb-btn-outline-primary sb-btn-normal sb-left-icon-btn ml-auto"
               (click)="mcqForm.addOptions()"
-              appTelemetryInteract 
+              appTelemetryInteract
               [telemetryInteractEdata]="{id:'add-option',type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
               [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
               [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
@@ -54,8 +54,8 @@
                   <div class="mcq-checkbox-answer">
                     <!-- Checkbox needs to be integrated -->
                     <div class="sb-checkbox sb-checkbox-primary mr-auto" [class.selected]="mcqForm.answer === i.toString()">
-                      <input type="radio" name="example" value={{i}} 
-                      appTelemetryInteract 
+                      <input type="radio" name="example" value={{i}}
+                      appTelemetryInteract
                       [telemetryInteractEdata]="{id:'correct-answer',type:'click',pageid:'question-list',extra: {answer:i.toString(),type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
                       [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
                       [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
@@ -63,10 +63,10 @@
                       [(ngModel)]="mcqForm.answer" [ngModelOptions]="{standalone: true}" [checked]="mcqForm.answer === i.toString()">
                       <label for="check1">Mark as right answer</label>
                     </div>
-  
+
                     <button [disabled]="mcqForm.options.length < 3" (click)="mcqForm.deleteOption(i)"
                       class="sb-btn sb-btn-xs sb-btn-link sb-btn-link-error sb-left-icon-btn"
-                      appTelemetryInteract 
+                      appTelemetryInteract
                       [telemetryInteractEdata]="{id:'delete-option',type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
                       [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
                       [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
@@ -81,7 +81,7 @@
             </div>
           </div>
 
-          
+
 
         </div>
 
@@ -93,7 +93,7 @@
                         src="assets/images/Info.svg"></a></label>
                 <div class="ui dropdown sb-btn sb-btn-outline-primary sb-btn-normal sb-right-icon-btn sb-btn-radius ml-auto"
               suiDropdown autoClose="itemClick" *ngIf="showSolutionDropDown"
-              appTelemetryInteract 
+              appTelemetryInteract
               [telemetryInteractEdata]="{id:'choose-solution',type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
               [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
               [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
@@ -103,14 +103,14 @@
               <i class="dropdown icon mx-8"></i>
               <div class="menu" suiDropdownMenu>
                 <div class="item" (click)="selectSolutionType('Text+Image')"
-                appTelemetryInteract 
+                appTelemetryInteract
                 [telemetryInteractEdata]="{id:'solution-type',type:'click',pageid:'question-list',extra: {solutionType:'Text+Image',type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
                 [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
                 >Text+Image</div>
                 <div class="item" (click)="selectSolutionType('video')"
-                appTelemetryInteract 
+                appTelemetryInteract
                 [telemetryInteractEdata]="{id:'solution-type',type:'click',pageid:'question-list',extra: {solutionType:'video',type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
                 [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
@@ -125,7 +125,7 @@
               [editorConfig]="editorConfig" [editorDataInput]="solutionValue"></app-ckeditor-tool>
                     <div class="mcq-checkbox-answer">
                         <button class="sb-btn sb-btn-xs sb-btn-link sb-btn-link-error sb-left-icon-btn ml-auto"
-                        appTelemetryInteract 
+                        appTelemetryInteract
                         [telemetryInteractEdata]="{id:'delete-solution',type:'click',pageid:'question-list',extra: {solutionType:'Text+Image',type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
                         [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
                         [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
@@ -147,7 +147,7 @@
                     </div>
                     <div class="mcq-checkbox-answer">
                     <button class="sb-btn sb-btn-xs sb-btn-link sb-btn-link-error sb-left-icon-btn ml-auto"
-                    appTelemetryInteract 
+                    appTelemetryInteract
                     [telemetryInteractEdata]="{id:'delete-solution',type:'click',pageid:'question-list',extra: {solutionType:'video',type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
                     [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
                     [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
@@ -161,7 +161,7 @@
       </div>
     </div>
 
-    
+
     <!-- Question Preview Section HTML -->
     <div class="ui container" *ngIf="isReadOnlyMode && !showPreview">
       <div class="ui stackable grid m-0 sb-bg-color-white">
@@ -304,6 +304,7 @@
                 <div class="sb-checkbox sb-checkbox-primary">
                   <input type="{{field.inputType}}" id="{{field.code}}" name="{{field.code}}" [checked]='questionMetaData.data[field.code]' formControlName="{{field.code}}" (change)="changePolicyCheckValue($event)">
                   <label for="{{field.code}}" class="fs-0-785 sb-color-gray-400 font-italic">
+                    <span class="sb-color-red pr-3">*</span>
                     “I agree that by submitting / publishing this Content,
                     I confirm that this Content complies with prescribed guidelines,
                      including the Terms of Use and Content Policy and that I consent
@@ -321,7 +322,7 @@
     </div>
 
     <div class='practical-sb-buttons'>
-        <button id="requestChanges" *ngIf="role.currentRole === 'REVIEWER' && sessionContext.resourceStatus === 'Review'" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true"
+        <button id="requestChanges" *ngIf="role.currentRole === 'REVIEWER' && sessionContext.resourceStatus === 'Review' && router.url.includes('/contribute')" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true"
         appTelemetryInteract
         [telemetryInteractEdata]="{id:'reject-question',type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
         [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
