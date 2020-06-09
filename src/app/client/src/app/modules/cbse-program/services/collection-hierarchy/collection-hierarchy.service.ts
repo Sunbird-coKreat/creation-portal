@@ -113,8 +113,8 @@ export class CollectionHierarchyService {
         if (_.get(preferencefilters, 'medium')) {
           option.data.request.filters['medium'] = _.get(preferencefilters, 'medium');
         }
-        if (_.get(preferencefilters, 'greadeLevel')) {
-          option.data.request.filters['greadeLevel'] = _.get(preferencefilters, 'greadeLevel');
+        if (_.get(preferencefilters, 'gradeLevel')) {
+          option.data.request.filters['gradeLevel'] = _.get(preferencefilters, 'gradeLevel');
         }
         if (_.get(preferencefilters, 'subject')) {
           option.data.request.filters['subject'] = _.get(preferencefilters, 'subject');
