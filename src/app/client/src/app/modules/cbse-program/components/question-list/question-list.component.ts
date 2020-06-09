@@ -876,7 +876,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     };
     if (originData.textbookOriginId && originData.unitOriginId) {
       // tslint:disable-next-line:max-line-length
-      this.helperService.attachContentToTextbook(action, this.sessionContext.collection, this.resourceDetails.identifier, originData);
+      this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.resourceDetails.identifier, originData);
     } else {
       action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
       this.toasterService.error(this.resourceService.messages.fmsg.m00100);
