@@ -1,5 +1,5 @@
 import { ResourceService, ToasterService  } from '@sunbird/shared';
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { ProgramsService, ActionService, UserService } from '@sunbird/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CollectionHierarchyService } from '../../../cbse-program/services/collection-hierarchy/collection-hierarchy.service';
@@ -35,6 +35,7 @@ export class TextbookListComponent implements OnInit {
   public collectionData: any;
   @Output() selectedCollection = new EventEmitter<any>();
   @Output() applyTextbookPreference = new EventEmitter<any>();
+  @ViewChild('prefModal') prefModal;
   prefernceForm: FormGroup;
   sbFormBuilder: FormBuilder;
   showTextbookFiltersModal = false;
@@ -86,8 +87,7 @@ export class TextbookListComponent implements OnInit {
   }
 
   applyTextbookFilters() {
-    this.textbookFiltersApplied = true;
-    this.showTextbookFiltersModal = false;
+    this.prefModal.deny();
     const prefData = {
         ...this.prefernceForm.value
     };
@@ -95,9 +95,9 @@ export class TextbookListComponent implements OnInit {
   }
 
   resetTextbookFilters() {
-    this.textbookFiltersApplied = false;
-    this.showTextbookFiltersModal = false;
+    this.prefModal.deny();
     this.applyTextbookPreference.emit();
+    this.textbookFiltersApplied = false;
   }
 
   showTexbooklist (data, contentAggregationData) {
