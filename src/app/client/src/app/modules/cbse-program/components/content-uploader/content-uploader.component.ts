@@ -73,6 +73,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public telemetryPageId = 'content-uploader';
   public sourcingOrgReviewer: boolean;
   public sourcingReviewStatus: string;
+  public contentName: string;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -356,6 +357,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         contentData: res
       };
       this.contentMetaData = res;
+      this.contentName = this.contentMetaData['contentType'];
       this.editTitle = (this.contentMetaData.name !== 'Untitled') ? this.contentMetaData.name : '' ;
       this.resourceStatus = this.contentMetaData.status;
       if (this.resourceStatus === 'Review') {

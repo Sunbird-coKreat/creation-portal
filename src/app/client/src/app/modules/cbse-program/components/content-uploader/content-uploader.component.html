@@ -52,6 +52,9 @@
                 <div class="warning-message" *ngIf="editTitle.length > titleCharacterLimit">{{resourceService.frmelmnts.lbl.contentNameLength }} {{titleCharacterLimit}}</div>
               </div>
             </div>
+            <div class="font-weight-bold fs-1 mr-8" *ngIf="sourcingOrgReviewer || sessionContext.currentRole ==='REVIEWER'">
+              <span class="practical-header__title" suiPopup popupText="{{contentName}}">{{contentName}} </span>
+            </div>
             <div class='practical-sb-buttons'>
               <button id="saveContent" suiPopup popupText="Save" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSave" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="saveContent()"
               appTelemetryInteract
