@@ -23,6 +23,14 @@ export class CollectionHierarchyService {
      }
 
 
+  getCollectionContext(collection, context) {
+    const originData = JSON.parse(collection.originData);
+    if (context === 'channel') {
+      return originData ? originData.channel : collection[context];
+    }
+    return collection[context];
+  }
+
   removeResourceToHierarchy(collection, unitIdentifier, contentId): Observable<any> {
     const req = {
       url: this.configService.urlConFig.URLS.CONTENT.HIERARCHY_REMOVE,

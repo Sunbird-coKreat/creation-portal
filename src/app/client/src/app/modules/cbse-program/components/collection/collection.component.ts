@@ -429,7 +429,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
 
   uploadSample(event, collection) {
     this.sharedContext = this.collectionComponentInput.programContext.config.sharedContext.reduce((obj, context) => {
-      return {...obj, [context]: collection[context] || this.sharedContext[context]};
+      return {...obj, [context]: this.collectionHierarchyService.getCollectionContext(collection, context) || this.sharedContext[context]};
     }, this.sharedContext);
 
     _.forEach(['gradeLevel', 'medium', 'subject'], (val) => {
@@ -587,7 +587,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
 
   gotoChapterView(collection) {
     this.sharedContext = this.collectionComponentInput.programContext.config.sharedContext.reduce((obj, context) => {
-      return {...obj, [context]: collection[context] || this.sharedContext[context]};
+      return {...obj, [context]: this.collectionHierarchyService.getCollectionContext(collection, context) || this.sharedContext[context]};
     }, this.sharedContext);
     _.forEach(['gradeLevel', 'medium', 'subject'], (val) => {
        this.checkArrayCondition(val);
