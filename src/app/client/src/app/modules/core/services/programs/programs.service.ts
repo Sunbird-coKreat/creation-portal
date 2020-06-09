@@ -930,4 +930,32 @@ export class ProgramsService extends DataService implements CanActivate {
     const csvExporter = new ExportToCsv(options);
     csvExporter.generateCsv(tableData);
   }
+
+  getUserPreferencesforProgram(userId, programId) {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.PREFERENCE_READ}`,
+      data: {
+          request: {
+            user_id: userId,
+            program_id: programId
+          }
+      }
+    };
+    return this.API_URL(req);
+  }
+
+  setUserPreferencesforProgram(userId, programId, preference, type) {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.PREFERENCE_ADD}`,
+      data: {
+          request: {
+            user_id: userId,
+            program_id: programId,
+            preference: preference,
+            type: type
+          }
+      }
+    };
+    return this.API_URL(req);
+  }
 }
