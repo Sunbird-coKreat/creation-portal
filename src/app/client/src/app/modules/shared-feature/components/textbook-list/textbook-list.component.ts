@@ -6,6 +6,7 @@ import { CollectionHierarchyService } from '../../../cbse-program/services/colle
 import { HttpClient } from '@angular/common/http';
 import { FormControl, FormBuilder, Validators, FormGroup, FormArray } from '@angular/forms';
 import * as _ from 'lodash-es';
+import { isEmpty } from 'rxjs/operators';
 
 @Component({
   selector: 'app-textbook-list',
@@ -16,6 +17,7 @@ export class TextbookListComponent implements OnInit {
   @Input() collectionsInput: Array<any> = [];
   @Input() programDetails: any = {};
   @Input() contentAggregationInput: Array<any> = [];
+  @Input() userPreferences: any = {};
   public programId: string;
   public config: any;
   public collections: Array<any> = [];
@@ -39,6 +41,7 @@ export class TextbookListComponent implements OnInit {
   prefernceForm: FormGroup;
   sbFormBuilder: FormBuilder;
   showTextbookFiltersModal = false;
+  setPreferences = {};
   /*mediums:any[];
   classes:any[];
   subjects:any[];
@@ -65,6 +68,16 @@ export class TextbookListComponent implements OnInit {
     if (this.router.url.includes('sourcing/nominations/' + this.programId) && this.programDetails.program_id) {
       this.showTexbooklist(this.collectionsInput, this.contentAggregationInput);
       this.collectionsCnt = this.collectionsInput && this.collectionsInput.length;
+
+      if (!_.isEmpty(this.userPreferences.sourcing_preference)) {
+        this.textbookFiltersApplied = true;
+        // tslint:disable-next-line: max-line-length
+        this.setPreferences['medium'] = (this.userPreferences.sourcing_preference.medium) ? this.userPreferences.sourcing_preference.medium : [];
+        // tslint:disable-next-line: max-line-length
+        this.setPreferences['subject'] = (this.userPreferences.sourcing_preference.subject) ? this.userPreferences.sourcing_preference.subject : [];
+        // tslint:disable-next-line: max-line-length
+        this.setPreferences['gradeLevel'] = (this.userPreferences.sourcing_preference.gradeLevel) ? this.userPreferences.sourcing_preference.gradeLevel : [];
+      }
     }
     /*this.mediums =  _.compact(this.programDetails.config.medium);
     this.classes = _.compact(this.programDetails.config.gradeLevel);

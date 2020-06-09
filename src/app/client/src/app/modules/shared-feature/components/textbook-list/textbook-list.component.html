@@ -107,7 +107,10 @@
 					<div class="six wide column py-10">
 						<div class="field">
 							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.medium}}</label>
-							<sui-multi-select class="selection p-5 b-100" formControlName="medium" #mediums [options]="programDetails.config.medium" >
+							<sui-multi-select class="selection p-5 b-100"
+							formControlName="medium" #mediums
+							[options]="programDetails.config.medium"
+							[(ngModel)]="setPreferences['medium']">
 								<sui-select-option *ngFor="let medium of mediums.filteredOptions" [value]="medium"> </sui-select-option>
 							</sui-multi-select>
 						</div>
@@ -115,7 +118,10 @@
 					<div class="six wide column py-10">
 						<div class="field">
 							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.subject}}</label>
-							<sui-multi-select class="selection p-5 b-100" formControlName="subject" #subjects [options]="programDetails.config.subject">
+							<sui-multi-select class="selection p-5 b-100"
+							formControlName="subject" #subjects
+							[options]="programDetails.config.subject"
+							[(ngModel)]="setPreferences['subject']">
 								<sui-select-option *ngFor="let subject of subjects.filteredOptions" [value]="subject"></sui-select-option>
 							</sui-multi-select>
 						</div>
@@ -123,7 +129,10 @@
 					<div class="six wide column py-10">
 						<div class="field">
 							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.class}}</label>
-							<sui-multi-select formControlName="gradeLevel" class="selection p-5 b-100" #graveLevels [options]="programDetails.config.gradeLevel">
+							<sui-multi-select formControlName="gradeLevel"
+							class="selection p-5 b-100" #graveLevels
+							[options]="programDetails.config.gradeLevel"
+							[(ngModel)]="setPreferences['gradeLevel']">
 								<sui-select-option *ngFor="let gradeLevel of graveLevels.filteredOptions" [value]="gradeLevel"></sui-select-option>
 							</sui-multi-select>
 						</div>
