@@ -1,8 +1,9 @@
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService, PaginationService} from '@sunbird/shared';
 import { ProgramsService, PublicDataService, UserService, FrameworkService, RegistryService, ActionService } from '@sunbird/core';
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild} from '@angular/core';
 import { tap, first } from 'rxjs/operators';
+import { FormControl, FormBuilder, Validators, FormGroup, FormArray } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -68,8 +69,12 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public sortColumnOrgUsers = '';
   public showLoader = true;
   showTextbookFiltersModal = false;
-  buttonLabel = this.resourceService.frmelmnts.lbl.addFilters;
   textbookFiltersApplied = false;
+  setPreferences = {};
+  prefernceForm: FormGroup;
+  sbFormBuilder: FormBuilder;
+  userPreferences: any = {};
+  @ViewChild('prefModal') prefModal;
   public paginatedContributorOrgUsers: any = [];
   public allContributorOrgUsers: any = [];
   showUsersLoader = true;
@@ -85,11 +90,17 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public toasterService: ToasterService, private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
   public frameworkService: FrameworkService, public userService: UserService, public registryService: RegistryService,
   public activeRoute: ActivatedRoute, private collectionHierarchyService: CollectionHierarchyService, public actionService: ActionService,
-  private paginationService: PaginationService ) {
+  private paginationService: PaginationService, private formBuilder: FormBuilder) {
     this.programId = this.activatedRoute.snapshot.params.programId;
+    this.sbFormBuilder = formBuilder;
    }
 
   ngOnInit() {
+    this.prefernceForm = this.sbFormBuilder.group({
+      medium: [],
+      subject: [],
+      gradeLevel: [],
+    });
     this.getProgramDetails();
     this.getNominationStatus();
     this.programStageService.initialize();
@@ -110,19 +121,47 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       pid: this.configService.appConfig.TELEMETRY.PID
     };
   }
-  openTextbookFilters() {
-      this.showTextbookFiltersModal = true;
-      // CHANGE THE TEXT OF THE BUTTON.
-      this.buttonLabel = this.resourceService.frmelmnts.lbl.modifyFilters;
+
+  applyPreferences(preferences?) {
+    if (_.isUndefined(preferences)) {
+      preferences = {};
     }
-  applyTextbookFilters() {
-    this.textbookFiltersApplied = true;
-    this.showTextbookFiltersModal = false;
-  }
-  closeTextbookFiltersModal() {
-    this.buttonLabel = this.resourceService.frmelmnts.lbl.addFilters;
     this.textbookFiltersApplied = false;
-    this.showTextbookFiltersModal = false;
+    this.setPreferences['medium'] = [];
+    this.setPreferences['subject'] = [];
+    this.setPreferences['gradeLevel'] = [];
+
+    // tslint:disable-next-line: max-line-length
+    this.programsService.setUserPreferencesforProgram(this.userService.userProfile.identifier, this.programId, preferences, 'contributor').subscribe(
+      (response) => {
+        this.userPreferences =  response.result;
+        if (!_.isEmpty(this.userPreferences.contributor_preference)) {
+          this.textbookFiltersApplied = true;
+          // tslint:disable-next-line: max-line-length
+          this.setPreferences['medium'] = (this.userPreferences.contributor_preference.medium) ? this.userPreferences.contributor_preference.medium : [];
+          // tslint:disable-next-line: max-line-length
+          this.setPreferences['subject'] = (this.userPreferences.contributor_preference.subject) ? this.userPreferences.contributor_preference.subject : [];
+          // tslint:disable-next-line: max-line-length
+          this.setPreferences['gradeLevel'] = (this.userPreferences.contributor_preference.gradeLevel) ? this.userPreferences.contributor_preference.gradeLevel : [];
+        }
+      },
+      (error) => {
+        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+        this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+    });
+    this.getProgramTextbooks(preferences);
+  }
+
+  applyTextbookFilters() {
+    this.prefModal.deny();
+    const prefData = {
+        ...this.prefernceForm.value
+    };
+    this.applyPreferences(prefData);
+  }
+  resetTextbookFilters() {
+    this.prefModal.deny();
+    this.applyPreferences();
   }
   sortCollection(column) {
     this.contributorTextbooks = this.programsService.sortCollection(this.tempSortTextbooks, column, this.direction);
@@ -155,6 +194,9 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     return this.programsService.get(req).pipe(tap((programDetails: any) => {
       programDetails.result.config = JSON.parse(programDetails.result.config);
       this.programDetails = programDetails.result;
+      this.programDetails.config.medium = _.compact(this.programDetails.config.medium);
+      this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
+      this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
       this.programContext = this.programDetails;
       this.mediums = _.join(this.programDetails.config['medium'], ', ');
       this.grades = _.join(this.programDetails.config['gradeLevel'], ', ');
@@ -178,11 +220,11 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     });
   }
 
-  getProgramTextbooks() {
+  getProgramTextbooks(preferencefilters?) {
      const option = {
       url: 'content/composite/v1/search',
        data: {
-      request: {
+        request: {
          filters: {
           objectType: 'content',
           programId: this.activatedRoute.snapshot.params.programId,
@@ -192,7 +234,17 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       }
       }
     };
-
+    if (!isUndefined(preferencefilters)) {
+      if (_.get(preferencefilters, 'medium')) {
+        option.data.request.filters['medium'] = _.get(preferencefilters, 'medium');
+      }
+      if (_.get(preferencefilters, 'gradeLevel')) {
+        option.data.request.filters['gradeLevel'] = _.get(preferencefilters, 'gradeLevel');
+      }
+      if (_.get(preferencefilters, 'subject')) {
+        option.data.request.filters['subject'] = _.get(preferencefilters, 'subject');
+      }
+    }
     this.httpClient.post<any>(option.url, option.data).subscribe(
       (res) =>  {
         if (res && res.result && res.result.content) {
@@ -407,7 +459,29 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           this.getContributionOrgUsers();
         }
       }
-      this.getProgramTextbooks();
+
+      this.programsService.getUserPreferencesforProgram(this.userService.userProfile.identifier, this.programId).subscribe(
+        (prefres) => {
+          let preffilter = {};
+          if (!isNullOrUndefined(prefres.result)) {
+            this.userPreferences = prefres.result;
+            preffilter = _.get(this.userPreferences, 'contributor_preference');
+          }
+          if (!_.isEmpty(this.userPreferences.contributor_preference)) {
+            this.textbookFiltersApplied = true;
+            // tslint:disable-next-line: max-line-length
+            this.setPreferences['medium'] = (this.userPreferences.contributor_preference.medium) ? this.userPreferences.contributor_preference.medium : [];
+            // tslint:disable-next-line: max-line-length
+            this.setPreferences['subject'] = (this.userPreferences.contributor_preference.subject) ? this.userPreferences.contributor_preference.subject : [];
+            // tslint:disable-next-line: max-line-length
+            this.setPreferences['gradeLevel'] = (this.userPreferences.contributor_preference.gradeLevel) ? this.userPreferences.contributor_preference.gradeLevel : [];
+          }
+          this.getProgramTextbooks(preffilter);
+      },(err) => { // TODO: navigate to program list page
+        this.getProgramTextbooks();
+        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+        this.toasterService.warning(errorMes || 'Fetching Preferences  failed');
+      });
     }, error => {
       this.toasterService.error('Failed fetching current nomination status');
     });

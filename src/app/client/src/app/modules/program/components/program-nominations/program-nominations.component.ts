@@ -180,17 +180,29 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.router.navigate([], { relativeTo: this.activatedRoute, queryParams: { tab: tab }, queryParamsHandling: 'merge' });
 
     if (tab === 'textbook' && !_.includes(this.visitedTab, 'textbook')) {
-      this.showTextbookLoader =  true;
       this.visitedTab.push('textbook');
-      this.getProgramCollection().subscribe(
-        (res) => { this.showTextbookLoader =  false; },
-        (err) => { // TODO: navigate to program list page
-          this.showTextbookLoader =  false;
+      this.showTextbookLoader = true;
+      this.programsService.getUserPreferencesforProgram(this.userProfile.identifier, this.programId).subscribe(
+          (prefres) => {
+            let preffilter = {};
+            if (!isNullOrUndefined(prefres.result)) {
+              this.userPreferences = prefres.result;
+              preffilter = _.get(this.userPreferences, 'sourcing_preference');
+            }
+            this.getProgramCollection(preffilter).subscribe((res) => {
+              this.showTextbookLoader  =  false;
+            }, (err) => { // TODO: navigate to program list page
+              this.showTextbookLoader  =  false;
+              const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+              this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+            })
+        },(err) => { // TODO: navigate to program list page
+          this.showTextbookLoader  =  false;
           const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-          this.toasterService.warning(errorMes || 'Fetching textbooks failed');
-        }
-      );
+          this.toasterService.warning(errorMes || 'Fetching Preferences  failed');
+      });
     }
+
     if (tab === 'nomination' && !_.includes(this.visitedTab, 'nomination')) {
       this.showNominationLoader =  true;
       this.visitedTab.push('nomination');
@@ -486,6 +498,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.programsService.get(req).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
       this.programDetails.config = JSON.parse(this.programDetails.config);
+      this.programDetails.config.medium = _.compact(this.programDetails.config.medium);
+      this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
+      this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
+
       this.fetchFrameWorkDetails();
 
       forkJoin(this.getAggregatedNominationsCount(), this.getcontentAggregationData()).subscribe(

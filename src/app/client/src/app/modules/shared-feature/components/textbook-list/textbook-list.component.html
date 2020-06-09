@@ -130,10 +130,10 @@
 						<div class="field">
 							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.class}}</label>
 							<sui-multi-select formControlName="gradeLevel"
-							class="selection p-5 b-100" #graveLevels
+							class="selection p-5 b-100" #gradeLevels
 							[options]="programDetails.config.gradeLevel"
 							[(ngModel)]="setPreferences['gradeLevel']">
-								<sui-select-option *ngFor="let gradeLevel of graveLevels.filteredOptions" [value]="gradeLevel"></sui-select-option>
+								<sui-select-option *ngFor="let gradeLevel of gradeLevels.filteredOptions" [value]="gradeLevel"></sui-select-option>
 							</sui-multi-select>
 						</div>
 					</div>
