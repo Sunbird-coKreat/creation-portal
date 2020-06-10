@@ -7,7 +7,6 @@ import {
 } from '@sunbird/shared';
 import { SearchService, CoursesService, ISort, PlayerService, OrgDetailsService, UserService, FormService } from '@sunbird/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IPagination } from '@sunbird/announcement';
 import * as _ from 'lodash-es';
 import { takeUntil, first, mergeMap, map, tap, filter } from 'rxjs/operators';
 import { IInteractEventObject, IInteractEventEdata, IImpressionEventInput } from '@sunbird/telemetry';
@@ -105,7 +104,7 @@ export class ViewAllComponent implements OnInit, OnDestroy, AfterViewInit {
    * Contains returned object of the pagination service
    * which is needed to show the pagination on inbox view
    */
-  pager: IPagination;
+  pager;
   /**
    *url value
    */

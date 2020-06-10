@@ -15,9 +15,6 @@ const appRoutes: Routes = [
     path: 'contribute', loadChildren: 'app/modules/contribute/contribute.module#ContributeModule'
   },
   {
-    path: 'announcement', loadChildren: 'app/modules/announcement/announcement.module#AnnouncementModule'
-  },
-  {
     path: 'dashBoard', loadChildren: 'app/modules/dashboard/dashboard.module#DashboardModule'
   },
   {
