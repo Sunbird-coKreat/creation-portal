@@ -52,9 +52,6 @@
                 <div class="warning-message" *ngIf="editTitle.length > titleCharacterLimit">{{resourceService.frmelmnts.lbl.contentNameLength }} {{titleCharacterLimit}}</div>
               </div>
             </div>
-            <div class="font-weight-bold fs-1 mr-8" *ngIf="sourcingOrgReviewer || sessionContext.currentRole ==='REVIEWER'">
-              <span class="practical-header__title" suiPopup popupText="{{contentName}}">{{contentName}} </span>
-            </div>
             <div class='practical-sb-buttons'>
               <button id="saveContent" suiPopup popupText="Save" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSave" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="saveContent()"
               appTelemetryInteract
@@ -285,7 +282,12 @@
     <div class="middle-section-set">
       <div class="licence-form__content">
           <div class='licence-form__content__fields py-16 ui stackable grid'>
-
+          <div class="sb-field" *ngIf="sourcingOrgReviewer || sessionContext.currentRole ==='REVIEWER'">
+            <div class="width-100">
+              <label class="font-weight-bold fsmall">{{resourceService.frmelmnts.lbl.contentType}}:</label><i class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentType}}"></i>
+              <div><span class="sb-color-gray-200 fs-0-785">{{ contentMetaData.contentType }}</span></div>
+            </div>
+          </div>
               <div *ngFor = "let field of allFormFields; let i = index " class="sb-field " [ngClass]="{'width-100':field.code==='contentPolicyCheck' }">
                 <div *ngIf="field.inputType === 'select'" class="width-100">
                   <div>

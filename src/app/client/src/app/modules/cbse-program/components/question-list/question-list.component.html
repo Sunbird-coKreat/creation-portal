@@ -54,9 +54,6 @@
             <span class="sb-error-text" *ngIf="!resourceName.length">{{resourceService.frmelmnts.lbl.contentNameRequired}}</span>
           </div>
         </div>
-        <div class="font-weight-bold fs-1 mr-8" *ngIf="sourcingOrgReviewer || sessionContext.currentRole ==='REVIEWER'">
-          <span class="practical-header__title" suiPopup popupText="{{contentName}}">{{contentName}} </span>
-        </div>
         <div class='practical-sb-buttons'>
           <button id="saveContent" *ngIf="visibility && visibility.showSave" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="saveResourceName();questionCreationChild.buttonTypeHandler('save')"
           appTelemetryInteract
