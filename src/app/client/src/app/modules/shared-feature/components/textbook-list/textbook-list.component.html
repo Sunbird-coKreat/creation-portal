@@ -10,7 +10,7 @@
 			<i class="file sb-file-icon outline icon pr-10 sb-color-primary"></i>
 			{{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
 		</a>
-		<button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary my-10" (click)="showTextbookFiltersModal = true"> <i class="filter icon"></i>
+		<button *ngIf="sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary my-10" (click)="showTextbookFiltersModal = true"> <i class="filter icon"></i>
 			<i [ngClass]="{'sb-dock-circle': textbookFiltersApplied}"></i>
 			<span *ngIf="!textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.addFilters }}</span>
 			<span *ngIf="textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.modifyFilters }}</span>

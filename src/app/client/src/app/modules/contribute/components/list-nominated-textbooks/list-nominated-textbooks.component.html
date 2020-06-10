@@ -139,14 +139,14 @@
 							<i class="file sb-file-icon outline icon pr-10 sb-color-primary"></i>
 							{{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
 						</a>
-						<button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" (click)="showTextbookFiltersModal = true"> <i class="filter icon"></i>
+						<button *ngIf="isUserOrgAdmin() || sessionContext.currentRole === 'REVIEWER'" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" (click)="showTextbookFiltersModal = true"> <i class="filter icon"></i>
 							<i [ngClass]="{'sb-dock-circle': textbookFiltersApplied}"></i>
 							<span *ngIf="!textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.addFilters }}</span>
 							<span *ngIf="textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.modifyFilters }}</span>
 						</button>
 					</div>
 				</div>
-				<div class="sb-pageSection pt-24" [appTelemetryImpression]="telemetryImpression">
+					<div class="sb-pageSection pt-5" [appTelemetryImpression]="telemetryImpression">
 						<div class="sb-bg-color-white pt-15">
 							<div class="sb-table-responsive" *ngIf="!showLoader && contributorTextbooks.length">
 								<table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
