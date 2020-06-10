@@ -3,7 +3,7 @@ import { Component, OnInit, Output, EventEmitter, Input, ChangeDetectorRef, View
 import { FormGroup, FormArray, FormBuilder, Validators, NgForm, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigService, ToasterService, ResourceService, NavigationHelperService } from '@sunbird/shared';
-import { UserService, ActionService, ContentService, NotificationService } from '@sunbird/core';
+import { UserService, ActionService, ContentService, NotificationService, ProgramsService } from '@sunbird/core';
 import { TelemetryService} from '@sunbird/telemetry';
 import { tap, map, catchError, mergeMap } from 'rxjs/operators';
 import * as _ from 'lodash-es';
@@ -83,7 +83,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     private resourceService: ResourceService, private collectionHierarchyService: CollectionHierarchyService,
     public programStageService: ProgramStageService, public activeRoute: ActivatedRoute,
     public router: Router, private navigationHelperService: NavigationHelperService,
-    public programTelemetryService: ProgramTelemetryService) { }
+    public programTelemetryService: ProgramTelemetryService, private programsService: ProgramsService) { }
 
   ngOnInit() {
     this.sessionContext = _.get(this.practiceQuestionSetComponentInput, 'sessionContext');
@@ -154,6 +154,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     })).subscribe(res => {
       this.resourceDetails = res;
+      const contentTypeValue = [this.resourceDetails.contentType];
+      const contentType = this.programsService.getContentTypesName(contentTypeValue);
+      this.resourceDetails.contentTypeName = contentType;
       this.sessionContext.contentMetadata = this.resourceDetails;
       this.existingContentVersionKey = res.versionKey;
       this.resourceStatus =  _.get(this.resourceDetails, 'status');
