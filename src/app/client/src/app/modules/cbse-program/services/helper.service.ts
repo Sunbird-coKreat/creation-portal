@@ -101,18 +101,30 @@ private sendNotification = new Subject<string>();
     return this.actionService.post(option);
   }
 
-  attachContentToTextbook(action, collectionId, contentId, originData) {
-    const req = {
-      url: `program/v1/content/publish`,
-      data: {
-        'request': {
-          'content_id': contentId,
-          'textbook_id': _.get(originData, 'textbookOriginId'),
-          'units': [_.get(originData, 'unitOriginId')]
+  publishContentToDiksha(action, collectionId, contentId, originData) {
+    if (action === 'accept') {
+      const req = {
+        url: `program/v1/content/publish`,
+        data: {
+          'request': {
+            'content_id': contentId,
+            'textbook_id': _.get(originData, 'textbookOriginId'),
+            'units': [_.get(originData, 'unitOriginId')]
+          }
         }
-      }
-    };
-    return this.programsService.post(req).subscribe((response) => {
+      };
+      return this.programsService.post(req).subscribe((response) => {
+        this.attachContentToTextbook(action, collectionId, contentId);
+      }, err => {
+        this.acceptContent_errMsg(action);
+      });
+    } else {
+      this.attachContentToTextbook(action, collectionId, contentId);
+    }
+
+  }
+
+  attachContentToTextbook(action, collectionId, contentId) {
       // read textbook data
     const option = {
       url: 'content/v3/read/' + collectionId,
@@ -135,9 +147,6 @@ private sendNotification = new Subject<string>();
         this.acceptContent_errMsg(action);
       });
     }, (err) => {
-      this.acceptContent_errMsg(action);
-    });
-    }, err => {
       this.acceptContent_errMsg(action);
     });
   }

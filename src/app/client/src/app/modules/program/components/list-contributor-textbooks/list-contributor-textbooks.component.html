@@ -208,7 +208,7 @@
 						<h4 class="sb-pageSection-title">{{resourceService.frmelmnts.lbl.listOfTextbooks}} </h4>
 						<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{ contributorTextbooks?.length || 0 }}</span>
 					</div>
-					<div class="" *ngIf="canAcceptorReject()">
+					<div class="">
 						<button class="sb-btn sb-btn-normal sb-btn-secondary mr-8"
 							*ngIf="contributor?.nominationData?.status === 'Pending'"
 							(click)="updateNomination('accept')"
