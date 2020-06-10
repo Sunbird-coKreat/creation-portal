@@ -1,16 +1,16 @@
 <div class="text-capitalize fs-0-785 line-height-1-3 sb-pageSection-document py-5 ui grid mt-10" *ngIf="collectionsCnt > 0">
-	<div class="twelve wide tablet seven wide computer column">
+	<div class="twelve wide tablet five wide computer column pt-30">
 		<div class="sb-color-gray-100 d-inline-block br-2 pr-10 pt-5"><span class="fs-1-286 font-weight-bold">{{ contentStatusCounts?.sourcingOrgStatus?.total || 0 }}</span> {{resourceService.frmelmnts.lbl.total}}</div>
 		<div class="sb-color-warning d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{ contentStatusCounts?.sourcingOrgStatus?.pending || 0 }}</span> {{resourceService.frmelmnts.lbl.approvalPending}}</div>
 		<div class="sb-color-success d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{ contentStatusCounts?.sourcingOrgStatus?.accepted || 0 }}</span> {{resourceService.frmelmnts.lbl.approved}}</div>
 		<div class="sb-color-error d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{ contentStatusCounts?.sourcingOrgStatus?.rejected || 0 }}</span> {{resourceService.frmelmnts.lbl.rejected}}</div>
 	</div>
-	<div class="twelve wide tablet five wide computer column text-right">
-		<a class="fs-0-785 text-decor-none font-weight-bold sb-color-primary d-inline-block pt-10"  *ngIf="programDetails?.guidelines_url" href="{{ programDetails?.guidelines_url }}" target="_blank">
+	<div class="twelve wide tablet seven wide computer column text-right">
+		<a class="fs-0-785 text-decor-none font-weight-bold sb-color-primary d-inline-block pt-10 mx-10"  *ngIf="programDetails?.guidelines_url" href="{{ programDetails?.guidelines_url }}" target="_blank">
 			<i class="file sb-file-icon outline icon pr-10 sb-color-primary"></i>
 			{{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
 		</a>
-		<button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary my-10 mr-10" (click)="showTextbookFiltersModal = true"> <i class="filter icon"></i>
+		<button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary my-10" (click)="showTextbookFiltersModal = true"> <i class="filter icon"></i>
 			<i [ngClass]="{'sb-dock-circle': textbookFiltersApplied}"></i>
 			<span *ngIf="!textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.addFilters }}</span>
 			<span *ngIf="textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.modifyFilters }}</span>
@@ -102,7 +102,7 @@
 	<div class="sb-modal-content desktop-o-x-unset">
 		<p>{{resourceService.frmelmnts.lbl.pleaseSelectFiltersYouWishToAdd}}</p>
 		<div class="segment mt-5 pb-30 pt-10">
-			<form class="ui form" [formGroup]="prefernceForm">
+			<form class="ui form sb-dock-dropdown" [formGroup]="prefernceForm">
 				<div class="ui grid">
 					<div class="six wide column py-10">
 						<div class="field">
