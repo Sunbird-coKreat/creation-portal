@@ -73,7 +73,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public telemetryPageId = 'content-uploader';
   public sourcingOrgReviewer: boolean;
   public sourcingReviewStatus: string;
-  public contentName: string;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,

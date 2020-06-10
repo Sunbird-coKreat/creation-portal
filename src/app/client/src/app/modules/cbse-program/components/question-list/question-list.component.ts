@@ -72,7 +72,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public telemetryPageId = 'question-list';
   public sourcingOrgReviewer: boolean;
   public sourcingReviewStatus: string;
-  public contentName: string;
 
   constructor(
     private configService: ConfigService, private userService: UserService,
