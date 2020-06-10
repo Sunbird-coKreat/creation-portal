@@ -1,4 +1,4 @@
-<div class="text-capitalize fs-0-785 line-height-1-3 sb-pageSection-document py-5 ui grid mt-10" *ngIf="collectionsCnt > 0">
+<div class="text-capitalize fs-0-785 line-height-1-3 sb-pageSection-document py-5 ui grid mt-10">
 	<div class="twelve wide tablet seven wide computer column">
 		<div class="sb-color-gray-100 d-inline-block br-2 pr-10 pt-5"><span class="fs-1-286 font-weight-bold">{{ contentStatusCounts?.sourcingOrgStatus?.total || 0 }}</span> {{resourceService.frmelmnts.lbl.total}}</div>
 		<div class="sb-color-warning d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{ contentStatusCounts?.sourcingOrgStatus?.pending || 0 }}</span> {{resourceService.frmelmnts.lbl.approvalPending}}</div>
@@ -16,7 +16,7 @@
 			<span *ngIf="textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.modifyFilters }}</span>
 		</button>
 		<button *ngIf="sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary ml-10" (click)="downloadCSV()"> <i class="download icon"></i> {{resourceService.frmelmnts.lbl.downloadProjectDetails}}</button>
-	</div>	
+	</div>
 </div>
 <div class="sb-pageSection">
 	<div class="sb-bg-color-white pt-5">
