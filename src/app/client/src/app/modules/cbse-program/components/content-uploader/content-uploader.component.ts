@@ -2,7 +2,8 @@ import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef,
   AfterViewInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FineUploader } from 'fine-uploader';
 import { ToasterService, ConfigService, ResourceService, NavigationHelperService } from '@sunbird/shared';
-import { PublicDataService, UserService, ActionService, PlayerService, FrameworkService, NotificationService } from '@sunbird/core';
+import { PublicDataService, UserService, ActionService, PlayerService, FrameworkService, NotificationService,
+  ProgramsService} from '@sunbird/core';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import * as _ from 'lodash-es';
 import { catchError, map, first } from 'rxjs/operators';
@@ -73,6 +74,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public telemetryPageId = 'content-uploader';
   public sourcingOrgReviewer: boolean;
   public sourcingReviewStatus: string;
+  public contentType: string;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -82,7 +84,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     private collectionHierarchyService: CollectionHierarchyService, private cd: ChangeDetectorRef,
     private resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService,
     private notificationService: NotificationService,
-    public activeRoute: ActivatedRoute, public router: Router, private navigationHelperService: NavigationHelperService) { }
+    public activeRoute: ActivatedRoute, public router: Router, private navigationHelperService: NavigationHelperService, 
+    private programsService: ProgramsService) { }
 
   ngOnInit() {
     this.config = _.get(this.contentUploadComponentInput, 'config');
@@ -356,6 +359,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         contentData: res
       };
       this.contentMetaData = res;
+      const contentTypeValue = [this.contentMetaData.contentType];
+      this.contentType = this.programsService.getContentTypesName(contentTypeValue);
       this.editTitle = (this.contentMetaData.name !== 'Untitled') ? this.contentMetaData.name : '' ;
       this.resourceStatus = this.contentMetaData.status;
       if (this.resourceStatus === 'Review') {

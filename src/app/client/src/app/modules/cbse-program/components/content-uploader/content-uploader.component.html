@@ -285,7 +285,7 @@
           <div class="sb-field" *ngIf="sourcingOrgReviewer || sessionContext.currentRole ==='REVIEWER'">
             <div class="width-100">
               <label class="font-weight-bold fsmall">{{resourceService.frmelmnts.lbl.contentType}}:</label><i class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentType}}"></i>
-              <div><span class="sb-color-gray-200 fs-0-785">{{ contentMetaData.contentType }}</span></div>
+              <div><span class="sb-color-gray-200 fs-0-785">{{ contentType }}</span></div>
             </div>
           </div>
               <div *ngFor = "let field of allFormFields; let i = index " class="sb-field " [ngClass]="{'width-100':field.code==='contentPolicyCheck' }">
