@@ -225,13 +225,13 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       }
     };
     if (!isUndefined(preferencefilters)) {
-      if (_.get(preferencefilters, 'medium') && !_.isEmpty(_.get(preferencefilters, 'medium'))) {
+      if (!_.isEmpty(_.get(preferencefilters, 'medium'))) {
         option.data.request.filters['medium'] = _.get(preferencefilters, 'medium');
       }
-      if (_.get(preferencefilters, 'gradeLevel') && !_.isEmpty(_.get(preferencefilters, 'gradeLevel'))) {
+      if (!_.isEmpty(_.get(preferencefilters, 'gradeLevel'))) {
         option.data.request.filters['gradeLevel'] = _.get(preferencefilters, 'gradeLevel');
       }
-      if (_.get(preferencefilters, 'subject') && !_.isEmpty(_.get(preferencefilters, 'gradeLevel'))) {
+      if (!_.isEmpty(_.get(preferencefilters, 'subject'))) {
         option.data.request.filters['subject'] = _.get(preferencefilters, 'subject');
       }
     }
