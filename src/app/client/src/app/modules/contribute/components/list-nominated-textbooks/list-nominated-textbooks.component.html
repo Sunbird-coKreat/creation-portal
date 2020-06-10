@@ -101,17 +101,15 @@
 				  </div>
 				</div>
 			  </ng-container>
-			<div class="sb-meta-data-container sb-meta-data-column px-10">
-				<div class='practical-sb-buttons' *ngIf="nominationDetails && nominationDetails.status">
+			<div class="sb-meta-data-container sb-meta-data-column px-10" *ngIf="nominationDetails && nominationDetails.status">
+				<div class='practical-sb-buttons'>
 					<label class="m-0">{{ resourceService.frmelmnts.lbl.status }}</label>
 					<p [ngClass]="{'sb-color-success':nominationDetails.status == 'Approved','sb-color-error':nominationDetails.status == 'Rejected','sb-color-warning':nominationDetails.status == 'Pending'}">{{ nominationDetails?.status }}</p>
 				</div>
 			</div>
-			<div class="sb-meta-data-container sb-meta-data-column  px-10">
-				<div *ngIf="nominated && nominationDetails.status=='Rejected'">
+			<div class="sb-meta-data-container sb-meta-data-column px-10" *ngIf="nominated && nominationDetails.status=='Rejected'">
 					<label class="m-0">{{ resourceService.frmelmnts.lbl.reasonsForRejection }}</label>
 					<p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.reasonsForRejection}}" popupText="{{nominationDetails?.feedback}}">{{ nominationDetails?.feedback }}</p>
-				</div>
 			</div>
 		</div>
 	</div>
@@ -127,7 +125,7 @@
 
 			<div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" isActive='true' suiTabContent="2">
 				<div class="ui container p-0 m-0">
-				<div class="pt-10 text-capitalize fs-0-785 line-height-1-3 sb-pageSection-document ui grid mt-10">
+				<div class="pt-10 text-capitalize fs-0-785 line-height-1-3 sb-pageSection-document ui grid mt-5">
 					<div class="twelve wide tablet five wide computer column">
 						<div *ngIf="isUserOrgAdmin()" class="sb-color-gray-100 d-inline-block br-2 pr-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.draft || 0}}</span> {{resourceService.frmelmnts.lbl.drafts}}</div>
 						<div *ngIf="isUserOrgAdmin()" class="sb-color-primary d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.review || 0}}</span> {{resourceService.frmelmnts.lbl.reviewInProgress}}</div>

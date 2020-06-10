@@ -17,9 +17,9 @@
             </button>
   <div class="d-flex">
       <div class="d-flex flex-ai-center practical-header__content w-100">
-        <div class="mr-auto" *ngIf="!showTextArea">
-          <div class="d-flex flex-ai-center mb-10">
-            <span class="font-weight-bold fs-1 practical-header__title">{{resourceName}}</span>
+        <div class="w-50" *ngIf="!showTextArea">
+          <div class="d-flex flex-ai-center">
+            <span class="font-weight-bold fs-1 sb__ellipsis pl-5">{{resourceName}}</span>
             <a class="cursor-pointer fsmall sb-color-primary ml-16"
               appTelemetryInteract
               [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('edit-resourcetitle', 'click', 'question-list')"
@@ -28,14 +28,17 @@
               [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
               (click)="showResourceTitleEditor()"
               *ngIf="visibility && visibility.showSave"
-            >Edit</a>
+            >{{resourceService.frmelmnts.btn.edit}}</a>
           </div>
-          <div class="mt-8 practice-set__status">
-
-            <span class="sb-label sb-label-table sb-label-success-0" *ngIf="!sourcingOrgReviewer"
-            [ngClass]="{ 'sb-label-success-0':  (resourceStatus === 'Live' && sourcingReviewStatus === 'Approved'), 'sb-label-warning-0': (resourceStatus === 'Draft'),  'sb-label-error-0': ((resourceStatus === 'Draft' && resourceDetails.rejectComment && resourceDetails.rejectComment !== '') || (resourceStatus === 'Live' && sourcingReviewStatus === 'Rejected')) ,  'sb-label-gray-0': ( resourceStatus === 'Review' || (resourceStatus === 'Live' && !sourcingReviewStatus))}">{{ resourceStatusText }}</span>
-
-            <span class="cursor-pointer fs-0-785 ml-8"
+          <div class="practice-set__status">
+            <span class="sb-label-table sb-color-success font-weight-normal pl-5" *ngIf="!sourcingOrgReviewer"
+            [ngClass]="{ 
+                'sb-color-success':  (resourceStatus === 'Live' && sourcingReviewStatus === 'Approved'), 
+                'sb-color-gray-0': (resourceStatus === 'Draft'),  
+                'sb-color-error': ((resourceStatus === 'Draft' && resourceDetails.rejectComment && resourceDetails.rejectComment !== '') || (resourceStatus === 'Live' && sourcingReviewStatus === 'Rejected')) ,  
+                'sb-color-warning': ( resourceStatus === 'Review' || (resourceStatus === 'Live' && !sourcingReviewStatus))
+            }">{{ resourceStatusText }}</span>            
+          <span class="cursor-pointer fs-0-785 ml-8"
             appTelemetryInteract
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('view-reviewercomments', 'click', 'question-list')"
             [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
