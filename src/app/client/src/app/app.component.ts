@@ -17,7 +17,7 @@ import { first, filter, mergeMap, tap, map, skipWhile, startWith, takeUntil } fr
 import { CacheService } from 'ng2-cache-service';
 import { DOCUMENT } from '@angular/platform-browser';
 import { ShepherdService } from 'angular-shepherd';
-import { Location} from '@angular/common';
+import { Location } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
 
 /**
@@ -188,11 +188,11 @@ export class AppComponent implements OnInit, OnDestroy {
     this.appId = this.userService.appId;
 
     const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
-      ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
-  
+      ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : 'https://dock.sunbirded.org';
+
       this.chatbotInputObj = {
       chatbotUrl: `${baseUrl}/chatapi/bot`,
-      title: 'Ask bot',
+      title: this.resourceService.frmelmnts.lbl.chatbot.title,
       //imageUrl : image.imageUrl,
       appId: this.appId,
       channel: this.channel,
