@@ -352,7 +352,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         return child.identifier;
       }),
       'root': data.contentType === 'TextBook' ? true : false,
-      'origin': data.origin
+      'origin': data.origin,
+      'originData': data.originData
     };
     const childData = data.children;
     if (childData) {

@@ -32,7 +32,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public telemetryImpression: IImpressionEventInput;
   public component: any;
   public sessionContext: ISessionContext = {};
-  public programContext: any = {};
   public chapterListComponentInput: IChapterListComponentInput = {};
   public dynamicInputs;
   public currentStage: any;
@@ -102,16 +101,13 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       gradeLevel: [],
     });
     this.getProgramDetails();
-    this.getNominationStatus();
     this.programStageService.initialize();
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
       this.changeView();
     });
     this.programStageService.addStage('listNominatedTextbookComponent');
-
     this.currentStage = 'listNominatedTextbookComponent';
-
     this.telemetryInteractCdata = [{
       id: this.activatedRoute.snapshot.params.programId,
       type: 'Program_ID'
@@ -120,6 +116,32 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       id: this.userService.appId,
       pid: this.configService.appConfig.TELEMETRY.PID
     };
+  }
+
+  getProgramDetails() {
+    const req = {
+      url: `program/v1/read/${this.programId}`
+    };
+    this.programsService.get(req).subscribe((programDetails) => {
+      this.programDetails = _.get(programDetails, 'result');
+      this.programDetails.config = JSON.parse(this.programDetails.config);
+      this.programDetails.config.medium = _.compact(this.programDetails.config.medium);
+      this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
+      this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
+      this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
+
+      this.roles = _.get(this.programDetails, 'config.roles');
+      this.roleNames = _.map(this.roles, 'name');
+
+      this.fetchFrameWorkDetails();
+      this.getNominationStatus();
+
+      this.setActiveDate();
+    }, error => {
+      // TODO: navigate to program list page
+      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+      this.toasterService.error(errorMes || 'Fetching program details failed');
+    });
   }
 
   applyPreferences(preferences?) {
@@ -173,51 +195,19 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     this.sortColumn = column;
   }
 
-  getProgramDetails() {
-    this.fetchProgramDetails().subscribe((programDetails) => {
-      this.programDetails = _.get(programDetails, 'result');
-      this.roles = _.get(this.programDetails, 'config.roles');
-      this.roleNames = _.map(this.roles, 'name');
-      this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
-      this.setActiveDate();
-    }, error => {
-      // TODO: navigate to program list page
-      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-      this.toasterService.error(errorMes || 'Fetching program details failed');
-    });
-  }
-
-  fetchProgramDetails() {
-    const req = {
-      url: `program/v1/read/${this.programId}`
-    };
-    return this.programsService.get(req).pipe(tap((programDetails: any) => {
-      programDetails.result.config = JSON.parse(programDetails.result.config);
-      this.programDetails = programDetails.result;
-      this.programDetails.config.medium = _.compact(this.programDetails.config.medium);
-      this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
-      this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
-      this.programContext = this.programDetails;
-      this.mediums = _.join(this.programDetails.config['medium'], ', ');
-      this.grades = _.join(this.programDetails.config['gradeLevel'], ', ');
-
-      this.sessionContext.framework = _.get(this.programDetails, 'config.framework');
-      if (this.sessionContext.framework) {
-        this.fetchFrameWorkDetails();
-      }
-    }));
-  }
-
   public fetchFrameWorkDetails() {
-    this.frameworkService.initialize(this.sessionContext.framework);
-    this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
-      if (frameworkDetails && !frameworkDetails.err) {
-        this.sessionContext.frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
-      }
-    }, error => {
-      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-      this.toasterService.error(errorMes || 'Fetching framework details failed');
-    });
+    this.sessionContext.framework = _.get(this.programDetails, 'config.framework');
+    if (this.sessionContext.framework) {
+      this.frameworkService.initialize(this.sessionContext.framework);
+      this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
+        if (frameworkDetails && !frameworkDetails.err) {
+          this.sessionContext.frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
+        }
+      }, error => {
+        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+        this.toasterService.error(errorMes || 'Fetching framework details failed');
+      });
+    }
   }
 
   getProgramTextbooks(preferencefilters?) {
@@ -235,19 +225,19 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       }
     };
     if (!isUndefined(preferencefilters)) {
-      if (_.get(preferencefilters, 'medium')) {
+      if (!_.isEmpty(_.get(preferencefilters, 'medium'))) {
         option.data.request.filters['medium'] = _.get(preferencefilters, 'medium');
       }
-      if (_.get(preferencefilters, 'gradeLevel')) {
+      if (!_.isEmpty(_.get(preferencefilters, 'gradeLevel'))) {
         option.data.request.filters['gradeLevel'] = _.get(preferencefilters, 'gradeLevel');
       }
-      if (_.get(preferencefilters, 'subject')) {
+      if (!_.isEmpty(_.get(preferencefilters, 'subject'))) {
         option.data.request.filters['subject'] = _.get(preferencefilters, 'subject');
       }
     }
     this.httpClient.post<any>(option.url, option.data).subscribe(
       (res) =>  {
-        if (res && res.result && res.result.content) {
+        if (res && res.result) {
           this.showTexbooklist(res);
         }
       },
@@ -257,7 +247,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
 
   showTexbooklist(res) {
     // tslint:disable-next-line:max-line-length
-    const contributorTextbooks = (res.result.content.length && this.nominationDetails.collection_ids) ? _.filter(res.result.content, (collection) => {
+    const contributorTextbooks = (res.result.content && res.result.content.length && this.nominationDetails.collection_ids) ? _.filter(res.result.content, (collection) => {
       return _.includes(this.nominationDetails.collection_ids, collection.identifier);
     }) : [];
     if (!_.isEmpty(contributorTextbooks) && this.isNominationOrg()) {
@@ -326,7 +316,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     this.sessionContext.programId = this.programDetails.program_id;
     this.sessionContext.collection = collection.identifier;
     this.sessionContext.collectionName = collection.name;
-    this.sharedContext = this.programContext.config.sharedContext.reduce((obj, context) => {
+    this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
@@ -340,8 +330,8 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       chapterListComponentInput: {
         sessionContext: this.sessionContext,
         collection: collection,
-        config: _.find(this.programContext.config.components, { 'id': 'ng.sunbird.chapterList' }),
-        programContext: this.programContext,
+        config: _.find(this.programDetails.config.components, { 'id': 'ng.sunbird.chapterList' }),
+        programContext: this.programDetails,
         role: {
           currentRole: this.sessionContext.currentRole
         }
@@ -353,11 +343,11 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
 
   getSharedContextObjectProperty(property) {
     if (property === 'channel') {
-       return _.get(this.programContext, 'config.scope.channel');
+       return _.get(this.programDetails, 'config.scope.channel');
     } else if ( property === 'topic' ) {
       return null;
     } else {
-      const collectionComComponent = _.find(this.programContext.config.components, { 'id': 'ng.sunbird.collection' });
+      const collectionComComponent = _.find(this.programDetails.config.components, { 'id': 'ng.sunbird.collection' });
       const filters =  collectionComComponent.config.filters;
       const explicitProperty =  _.find(filters.explicit, {'code': property});
       const implicitProperty =  _.find(filters.implicit, {'code': property});
@@ -451,8 +441,8 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           this.sessionContext.currentRole = 'CONTRIBUTOR';
           this.sessionContext.currentOrgRole = 'individual';
         }
-        if (this.programContext.config) {
-          const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
+        if (this.programDetails.config) {
+          const getCurrentRoleId = _.find(this.programDetails.config.roles, {'name': this.sessionContext.currentRole});
           this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
         }
         if (this.isUserOrgAdmin()) {

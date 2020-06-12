@@ -364,9 +364,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   getProgramCollection (preferencefilters?) {
     return this.collectionHierarchyService.getCollectionWithProgramId(this.programId, preferencefilters).pipe(
-      tap((response: any) => {
-        if (response && response.result && response.result.content && response.result.content.length) {
-          this.programCollections = response.result.content;
+      tap((response) => {
+        if (response && response.result) {
+          this.programCollections = response.result.content || [];
         }
       }),
       catchError(err => {
@@ -730,7 +730,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
-      return {...obj, [context]: this.collectionHierarchyService.getCollectionContext(collection, context) || this.sharedContext[context]};
+      return {...obj, [context]: collection[context] || this.sharedContext[context]};
     }, this.sharedContext);
     _.forEach(['gradeLevel', 'medium', 'subject'], (val) => {
        this.checkArrayCondition(val);

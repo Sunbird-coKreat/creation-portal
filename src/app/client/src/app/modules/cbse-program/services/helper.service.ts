@@ -108,8 +108,11 @@ private sendNotification = new Subject<string>();
         data: {
           'request': {
             'content_id': contentId,
-            'textbook_id': _.get(originData, 'textbookOriginId'),
-            'units': [_.get(originData, 'unitOriginId')]
+            'origin': {
+              'channel': _.get(originData, 'channel'),
+              'textbook_id': _.get(originData, 'textbookOriginId'),
+              'units': [_.get(originData, 'unitOriginId')]
+            }
           }
         }
       };

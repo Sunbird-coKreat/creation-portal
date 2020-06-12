@@ -388,7 +388,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     });
   }
 
-  canAcceptorReject() {
+  /*canAcceptorReject() {
     if (!this.programDetails) {
       return false;
     }
@@ -397,7 +397,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     const isContributionDateFuture = moment(this.programDetails.content_submission_enddate).isSameOrAfter(today, 'day');
     const isEndDateFuture = moment(this.programDetails.enddate).isSameOrAfter(today, 'day');
     return isContributionDateFuture && isEndDateFuture;
-  }
+  }*/
 
   changeView() {
     if (!_.isEmpty(this.state.stages)) {
