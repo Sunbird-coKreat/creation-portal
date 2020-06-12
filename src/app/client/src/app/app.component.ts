@@ -186,8 +186,12 @@ export class AppComponent implements OnInit, OnDestroy {
       document.body.classList.add('sb-offline');
     }
     this.appId = this.userService.appId;
-    this.chatbotInputObj = {
-      chatbotUrl: 'https://dock.sunbirded.org/chatapi/bot',
+
+    const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
+      ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
+  
+      this.chatbotInputObj = {
+      chatbotUrl: `${baseUrl}/chatapi/bot`,
       title: 'Ask bot',
       //imageUrl : image.imageUrl,
       appId: this.appId,
