@@ -203,7 +203,7 @@ export class AppComponent implements OnInit, OnDestroy {
       // header : 'Ask Tara'
     }
     if (this.location.path().includes('/sourcing')) {
-        this.chatbotInputObj.context = 'sourcing';
+        this.chatbotInputObj.context = 'source';
     }
   }
 
