@@ -102,6 +102,7 @@ export class AppComponent implements OnInit, OnDestroy {
   appId: string;
   isDesktopDevice = true;
   devicePopupShown = false;
+  chatbotInputObj: any = {};
   constructor(private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService,
     public userService: UserService, private navigationHelperService: NavigationHelperService,
     private permissionService: PermissionService, public resourceService: ResourceService,
@@ -185,6 +186,25 @@ export class AppComponent implements OnInit, OnDestroy {
       document.body.classList.add('sb-offline');
     }
     this.appId = this.userService.appId;
+
+    const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
+      ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : 'https://dock.sunbirded.org';
+
+      this.chatbotInputObj = {
+      chatbotUrl: `${baseUrl}/chatapi/bot`,
+      title: this.resourceService.frmelmnts.lbl.chatbot.title,
+      //imageUrl : image.imageUrl,
+      appId: this.appId,
+      channel: this.channel,
+      did: this.deviceId,
+      userId: this.userId,
+      collapsed : true,
+      context : 'contributor'
+      // header : 'Ask Tara'
+    }
+    if (this.location.path().includes('/sourcing')) {
+        this.chatbotInputObj.context = 'sourcing';
+    }
   }
 
   isLocationStatusRequired() {
