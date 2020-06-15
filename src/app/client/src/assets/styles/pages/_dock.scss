@@ -305,3 +305,22 @@
     }
   }
 }
+.sbdock-chatbot{
+  .defaultImg,.lib-chat-head{
+    height: inherit  !important;
+    width: inherit !important;
+  }
+  .chatboxDefault{
+    .lib-chat-header{
+      img{
+        height: 1.8rem !important;
+      }
+    }
+  }
+  .heading{
+    margin-left: 0.5rem !important;
+  }
+  .lib-chat-head{
+    right: 2.3rem !important;
+  }
+}
