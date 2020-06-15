@@ -42,7 +42,7 @@
             [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
             [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
             (click)="showReviewModal=!showReviewModal"
-            *ngIf="resourceDetails && resourceDetails.rejectComment && (sessionContext.currentRoleId === 1)"><i class="comment alternate outline icon sb-color-primary"></i><a>View Comments</a></span>
+            *ngIf="showSourcingOrgRejectComments() || showContributorOrgReviewComments()"><i class="comment alternate outline icon sb-color-primary"></i><a>View Comments</a></span>
           </div>
         </div>
         <div class="sb-field-group textbook-edit mr-auto ui form" *ngIf="showTextArea">
@@ -106,7 +106,7 @@
             [telemetryInteractCdata]="telemetryInteractCdata"
             [telemetryInteractPdata]="telemetryInteractPdata"
           >{{resourceService.frmelmnts.btn.approve}}</button>
-          <button id="rejectContent" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentRejectMessage}}" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live'" class="sb-btn sb-btn-error sb-btn-normal" (click)="attachContentToTextbook('reject')"
+          <button id="rejectContent" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentRejectMessage}}" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live'" class="sb-btn sb-btn-error sb-btn-normal" (click)="rejectBySourcingOrg = true; showRequestChangesPopup = true;"
           appTelemetryInteract
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-content-for-textbook', 'click', 'question-list')"
             [telemetryInteractObject]="telemetryInteractObject"
@@ -251,7 +251,7 @@
   <div class="sb-modal-content">
       <div class="sb-publish-content">
         <div class="review-modal-list">
-          {{resourceDetails?.rejectComment}}
+          {{showSourcingOrgRejectComments() ? sourcingOrgReviewComments : resourceDetails.rejectComment}}
       </div>
       </div>
   </div>
@@ -280,7 +280,7 @@
       </div>
   </div>
   <div class="sb-modal-actions">
-    <button id="submitReview" type="submit" class="sb-btn sb-btn-normal" [disabled]="contentRejectComment.length > commentCharLimit"  [ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid || contentRejectComment.length > commentCharLimit}"   (click)="requestChanges()"> Submit Review </button>
+    <button id="submitReview" type="submit" class="sb-btn sb-btn-normal" [disabled]="contentRejectComment.length > commentCharLimit"  [ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid || contentRejectComment.length > commentCharLimit}"   (click)="rejectBySourcingOrg ? attachContentToTextbook('reject') : requestChanges(); showRequestChangesPopup = false"> Submit Review </button>
   </div>
 </form>
 </sui-modal>
