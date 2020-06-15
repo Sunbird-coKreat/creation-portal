@@ -291,7 +291,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
-      return {...obj, [context]: this.collectionHierarchyService.getCollectionContext(collection, context) || this.sharedContext[context]};
+      return {...obj, [context]: collection[context] || this.sharedContext[context]};
     }, this.sharedContext);
     _.forEach(['gradeLevel', 'medium', 'subject'], (val) => {
        this.checkArrayCondition(val);
