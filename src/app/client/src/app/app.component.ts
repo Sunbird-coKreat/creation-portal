@@ -207,7 +207,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     if (this.location.path().includes('/sourcing')) {
-        this.chatbotInputObj.context = 'source';
+        this.chatbotInputObj.context = 'sourcing';
     }
   }
 
