@@ -177,6 +177,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.setFingerPrintTelemetry();
         this.checkTncAndFrameWorkSelected();
         this.initApp = true;
+        this.initializeChatbot();
       }, error => {
          this.initApp = true;
       });
@@ -186,7 +187,9 @@ export class AppComponent implements OnInit, OnDestroy {
       document.body.classList.add('sb-offline');
     }
     this.appId = this.userService.appId;
+  }
 
+  initializeChatbot() {
     const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
       ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : 'https://dock.sunbirded.org';
 
@@ -202,8 +205,9 @@ export class AppComponent implements OnInit, OnDestroy {
       context : 'contributor'
       // header : 'Ask Tara'
     }
+
     if (this.location.path().includes('/sourcing')) {
-        this.chatbotInputObj.context = 'source';
+        this.chatbotInputObj.context = 'sourcing';
     }
   }
 

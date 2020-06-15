@@ -164,7 +164,7 @@ export class CollectionHierarchyService {
       review: _.has(orgLevelDataWithReject, 'Review') ? orgLevelDataWithReject.Review.length : 0,
       draft: _.has(orgLevelDataWithReject, 'Draft') ? orgLevelDataWithReject.Draft.length : 0,
       rejected: _.has(orgLevelDataWithReject, 'Reject') ? orgLevelDataWithReject.Reject.length : 0,
-      live: _.has(orgLevelDataWithReject, 'Live') ? orgLevelDataWithReject.Live.length : 0,
+      live: this.getAllPendingForApprovalCount(orgLevelDataWithReject, collections).length,
       individualStatus: collectionsByStatus,
       individualStatusForSample: collectionsByStatusForSample,
       ...(!_.isUndefined(collections) && {sourcingOrgStatus : sourcingOrgStatus})
@@ -342,23 +342,35 @@ export class CollectionHierarchyService {
     this.telemetryService.error(telemetryErrorData);
   }
 
+  getAllPendingForApprovalCount(textbookMeta, collections?) {
+    let liveContents = _.has(textbookMeta, 'Live') ? _.map(textbookMeta.Live, 'identifier') : [];
+    if (_.isUndefined(collections)) {
+      return liveContents.length;
+    }
+    // Merge the accepted and rejected contents
+    const reviewedContents = _.union(_.flatten(_.map(collections, 'acceptedContents')), _.flatten(_.map(collections, 'rejectedContents')));
+    // Get contents that are neither accepted nor rejected
+    return _.difference(liveContents, reviewedContents);
+  }
+
   getIndividualCollectionStatus(contentStatusCounts, collections) {
     return _.map(collections, textbook => {
       const textbookMeta = _.get(contentStatusCounts.individualStatus, textbook.identifier);
       const textbookMetaForSample = _.get(contentStatusCounts.individualStatusForSample, textbook.identifier);
+      const liveContents = _.has(textbookMeta, 'Live') ? _.map(textbookMeta.Live, 'identifier') : [];
       const sourcingOrgMeta = _.get(contentStatusCounts, 'sourcingOrgStatus');
       textbook.draftCount = textbookMeta && _.has(textbookMeta, 'Draft') ? textbookMeta.Draft.length : 0;
       textbook.reviewCount = textbookMeta && _.has(textbookMeta, 'Review') ? textbookMeta.Review.length : 0;
       textbook.rejectedCount = textbookMeta && _.has(textbookMeta, 'Reject') ? textbookMeta.Reject.length : 0;
-      textbook.liveCount = textbookMeta && _.has(textbookMeta, 'Live') ? textbookMeta.Live.length : 0;
+      const reviewedContents = _.union(_.get(textbook, 'acceptedContents', []), _.get(textbook, 'rejectedContents', []));
+      textbook.liveCount = textbookMeta && _.difference(liveContents, reviewedContents).length;
       // tslint:disable-next-line:max-line-length
       textbook.sampleContentInReview = textbookMetaForSample && _.has(textbookMetaForSample, 'Review') ? textbookMetaForSample.Review.length : 0;
       // tslint:disable-next-line:max-line-length
       textbook.sampleContentInDraft = textbookMetaForSample && _.has(textbookMetaForSample, 'Draft') ? textbookMetaForSample.Draft.length : 0;
       // tslint:disable-next-line:max-line-length
       textbook.totalSampleContent = textbookMetaForSample ? textbook.sampleContentInDraft + textbook.sampleContentInReview : 0;
-      // tslint:disable-next-line:max-line-length
-      const individualCollectionLiveContent = sourcingOrgMeta && textbookMeta && _.has(textbookMeta, 'Live') ? _.map(textbookMeta.Live, 'identifier') : [];
+      const individualCollectionLiveContent = sourcingOrgMeta && textbookMeta && liveContents
       // tslint:disable-next-line:max-line-length
       const intersection = textbookMeta && sourcingOrgMeta && sourcingOrgMeta.acceptedContents ? _.intersection(sourcingOrgMeta.acceptedContents, individualCollectionLiveContent) : [];
       // tslint:disable-next-line:max-line-length

@@ -256,12 +256,12 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           if (response && response.result && response.result.content) {
             const contents = _.get(response.result, 'content');
             // tslint:disable-next-line:max-line-length
-            this.contentStatusCounts = this.collectionHierarchyService.getContentCounts(contents, this.sessionContext.nominationDetails.organisation_id);
+            this.contentStatusCounts = this.collectionHierarchyService.getContentCounts(contents, this.sessionContext.nominationDetails.organisation_id, contributorTextbooks);
             // tslint:disable-next-line:max-line-length
             this.contributorTextbooks = this.collectionHierarchyService.getIndividualCollectionStatus(this.contentStatusCounts, contributorTextbooks);
           } else {
             // tslint:disable-next-line:max-line-length
-            this.contentStatusCounts = this.collectionHierarchyService.getContentCounts([], this.sessionContext.nominationDetails.organisation_id);
+            this.contentStatusCounts = this.collectionHierarchyService.getContentCounts([], this.sessionContext.nominationDetails.organisation_id, contributorTextbooks);
             // tslint:disable-next-line:max-line-length
             this.contributorTextbooks = this.collectionHierarchyService.getIndividualCollectionStatus(this.contentStatusCounts, contributorTextbooks);
           }

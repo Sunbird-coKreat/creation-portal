@@ -268,6 +268,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         this.getFolderLevelCount(this.collectionHierarchy);
         hierarchy = instance.hierarchyObj;
         this.sessionContext.hierarchyObj = { hierarchy };
+        if (_.get(this.collectionData, 'sourcingRejectedComments')) {
+        this.sessionContext.hierarchyObj['sourcingRejectedComments'] = JSON.parse(_.get(this.collectionData, 'sourcingRejectedComments'));
+        }
         this.showLoader = false;
         this.showError = false;
         this.levelOneChapterList = _.uniqBy(this.levelOneChapterList, 'identifier');
