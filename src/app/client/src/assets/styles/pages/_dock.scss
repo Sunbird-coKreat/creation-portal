@@ -140,6 +140,20 @@
   }
 }
 
+.sb-dock-icon-tooltip{
+  [data-tooltip]:before{
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: inherit !important;
+    box-shadow: none;
+    top: 0.1rem;
+    font-size: 1.2rem;
+  }
+  [data-tooltip]:after{
+    width: 3.5rem !important;
+  }
+}
+
 .sb-sorting{
   .fa-sort{
       font-size: 16px;

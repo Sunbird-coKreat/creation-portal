@@ -41,6 +41,7 @@ export class ProgramListComponent implements OnInit {
   public showLoader = true;
   public roleMapping = [];
   public iscontributeOrgAdmin = true;
+  showDeleteModal = false;
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService ) { }
