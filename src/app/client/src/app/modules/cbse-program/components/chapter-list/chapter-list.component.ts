@@ -326,7 +326,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         const treeLeaf = children && children.filter(item => item.contentType !== 'TextBookUnit');
         rootTree['children'] = treeChildren || null;
         rootTree['leaf'] = this.getContentVisibility(treeLeaf) || null;
-        rootTree['leaf'] = this.checkContentAcceptedOrRejected(treeLeaf) || null;
         return rootTree ? [rootTree] : [];
       } else {
         rootTree['leaf'] = _.map(data.children, (child) => {
@@ -372,7 +371,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         treeItem['children'] = (treeChildren && treeChildren.length > 0) ? treeChildren : null;
         if (treeLeaf && treeLeaf.length > 0) {
           treeItem['leaf'] = this.getContentVisibility(treeLeaf);
-          treeItem['leaf'] = this.checkContentAcceptedOrRejected(treeLeaf) || null;
         }
         return treeItem;
       });
@@ -481,21 +479,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     const leafNodes = [];
     _.forEach(branch, (leaf) => {
       const contentVisibility = this.shouldContentBeVisible(leaf);
+      const sourcingStatus = this.checkSourcingStatus(leaf);
       leaf['visibility'] = contentVisibility;
+      leaf['sourcingStatus'] = sourcingStatus || null;
       leafNodes.push(leaf);
     });
     return _.isEmpty(leafNodes) ? null : leafNodes;
   }
 
-  checkContentAcceptedOrRejected(branch) {
-    const leafNodes = [];
-    _.forEach(branch, (leaf) => {
-      const sourcingStatus = this.checkSourcingStatus(leaf);
-      leaf['sourcingStatus'] = sourcingStatus;
-      leafNodes.push(leaf);
-    });
-    return _.isEmpty(leafNodes) ? null : leafNodes;
-  }
 
   checkSourcingStatus(content) {
     if (this.storedCollectionData.acceptedContents  &&
@@ -518,19 +509,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         && this.getNominatedUserId() === content.createdBy) {
           return true;
         } else if (reviewerViewRole && content.status === 'Live') {
-          if (content.contentType !== 'TextBook' && content.contentType !== 'TextBookUnit' &&
-               (this.storedCollectionData.acceptedContents || this.storedCollectionData.rejectedContents) &&
-                 // tslint:disable-next-line:max-line-length
-                 _.includes([...this.storedCollectionData.acceptedContents || [], ...this.storedCollectionData.rejectedContents || []], content.identifier)) {
-            return false;
-          }
           return true;
         }
     } else {
       if ((this.sessionContext.nominationDetails.status === 'Approved' || this.sessionContext.nominationDetails.status === 'Rejected')
        && content.sampleContent === true) {
         return false;
-      } else if (reviewerViewRole && content.status === 'Review'
+      // tslint:disable-next-line:max-line-length
+      } else if (reviewerViewRole && (content.status === 'Review' || content.status === 'Live' || (content.prevStatus === 'Review' && content.status === 'Draft' ))
       && this.currentUserID !== content.createdBy
       && content.organisationId === this.myOrgId) {
         return true;
