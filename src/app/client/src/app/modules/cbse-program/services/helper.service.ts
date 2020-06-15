@@ -101,7 +101,7 @@ private sendNotification = new Subject<string>();
     return this.actionService.post(option);
   }
 
-  publishContentToDiksha(action, collectionId, contentId, originData) {
+  publishContentToDiksha(action, collectionId, contentId, originData, rejectedComments?) {
     if (action === 'accept') {
       const req = {
         url: `program/v1/content/publish`,
@@ -122,12 +122,12 @@ private sendNotification = new Subject<string>();
         this.acceptContent_errMsg(action);
       });
     } else {
-      this.attachContentToTextbook(action, collectionId, contentId);
+      this.attachContentToTextbook(action, collectionId, contentId, rejectedComments);
     }
 
   }
 
-  attachContentToTextbook(action, collectionId, contentId) {
+  attachContentToTextbook(action, collectionId, contentId, rejectedComments?) {
       // read textbook data
     const option = {
       url: 'content/v3/read/' + collectionId,
@@ -141,6 +141,10 @@ private sendNotification = new Subject<string>();
       };
       // tslint:disable-next-line:max-line-length
       action === 'accept' ? request.content['acceptedContents'] = _.uniq([...data.acceptedContents || [], contentId]) : request.content['rejectedContents'] = _.uniq([...data.rejectedContents || [], contentId]);
+      if (action === 'reject' && rejectedComments) {
+        request.content['sourcingRejectedComments'] = JSON.parse(data.sourcingRejectedComments) || {};
+        request.content['sourcingRejectedComments'][contentId] = rejectedComments;
+      }
       this.updateContent(request, collectionId).subscribe(() => {
         action === 'accept' ? this.toasterService.success(this.resourceService.messages.smsg.m0066) :
                               this.toasterService.success(this.resourceService.messages.smsg.m0067);
