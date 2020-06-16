@@ -185,7 +185,7 @@
 												</span>
 											</th>
 											<th *ngIf="isUserOrgAdmin()" class="w-20">{{resourceService.frmelmnts.lbl.contentStatus}}</th>
-											<th class="w-5"></th>
+											<th class="w-5" *ngIf="currentNominationStatus === 'Approved'"></th>
 										</tr>
 									</thead>
 									<tbody class="sb-table-body">
@@ -203,8 +203,8 @@
 													<span class="sb-color-success d-inline-block px-5">{{contributorTextbook.liveCount || 0}} {{resourceService.frmelmnts.lbl.sentForApproval}}</span>
 												</div>
 											</td>
-											<td>
-												<button *ngIf="currentNominationStatus === 'Approved'"
+											<td *ngIf="currentNominationStatus === 'Approved'">
+												<button
 												type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary"
 												[disabled]="!canUploadContent()" (click)="viewContribution(contributorTextbook)" appTelemetryInteract
 												[telemetryInteractEdata]="getTelemetryInteractEdata('upload-content', 'click', 'list-nominated-textbooks')"
