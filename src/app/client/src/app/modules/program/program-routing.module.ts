@@ -49,10 +49,6 @@ const routes: Routes = [{
 },
 {
   path: 'edit-program/:programId', component: EditProgramComponent, pathMatch: 'full',
-  // data: {
-  //   telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'create-program', mode: 'create',
-  //                object: { type: 'program', ver: '1.0'} }
-  // }
 },
 ];
 
