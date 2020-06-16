@@ -108,7 +108,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.notify = this.helperService.getNotification().subscribe((action) => {
       this.contentStatusNotify(action);
     });
-
+    if (_.get(this.programContext, 'config.two_level_review') === false && _.get(this.sessionContext,'currentRole') === 'CONTRIBUTOR' && _.get(this.sessionContext,'sampleContent') === false) {
+      this.sessionContext.currentOrgRole = 'individual';
+    }
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.contentUploadComponentInput.programContext.program_id, 'Program');
