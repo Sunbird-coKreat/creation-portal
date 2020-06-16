@@ -1,0 +1,275 @@
+<div class="ui container" [appTelemetryImpression]="telemetryImpression">
+    <div class="sb-pageSection mt-24 pb-48">
+        <div class="sb-pageSection-header">
+            <h4 class="sb-pageSection-title sb-color-black"><i class="icon angle left fs-1-5 text-left m-0"></i>Modify Projects</h4>
+        </div>
+        <div class="ui segment mt-5" *ngIf="isFormValueSet && !this.showLoader" >
+            <form class="ui form" [formGroup]="editProgramForm">
+                <div class="ui grid">
+                    <div class="twelve wide column">
+                        <div class="pb-20">Details</div>
+                        <div class="required field">
+                            <label class="d-block">{{resource.frmelmnts.lbl.name}}
+                                <i class="pull-right question circle link icon pull-right" suiPopup
+                                    popupDelay="500" [popupPlacement]="'left'"
+                                    popupText="{{resource.frmelmnts.lbl.programNameHint}}"></i>
+                            </label>
+                            <div class="sb-field">
+                                <input autofocus="" formControlName="name"
+                                    class="sb-form-control ng-pristine ng-valid ng-touched" type="text"
+                                    placeholder="{{resource.frmelmnts.lbl.programNameHint}}">
+                                <div class="ui pointing red basic label below "
+                                    *ngIf="editProgramForm.controls['name'].errors && editProgramForm.controls['name'].errors.required && (!editProgramForm.controls['name'].pristine || formIsInvalid)">
+                                    {{ resource.frmelmnts.lbl.programNameRequired }}
+                                </div>
+                                <div class="ui pointing red basic label below"
+                                    *ngIf="editProgramForm.controls['name'].errors && editProgramForm.controls['name'].errors.maxlength && (!editProgramForm.controls['name'].pristine || formIsInvalid)">
+                                    {{resource.frmelmnts.lbl.characterLengthGreaterHundred}}
+                                </div>
+                                <span class="fs-0-785 text-right sb-color-gray-200 d-block py-5 pull-right">{{ resource.frmelmnts.lbl.nCharactersLeft | interpolate:'{noOfChars}': 100 - (editProgramForm.controls['name'].value.length > 100 ? 100 : editProgramForm.controls['name'].value.length) }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="twelve wide column">
+                        <div class="required field ">
+                            <label class="d-block">{{resource.frmelmnts.lbl.description}}
+                                <i class="pull-right question circle link icon pull-right" suiPopup
+                                    popupDelay="500" [popupPlacement]="'left'"
+                                    popupText="{{resource.frmelmnts.lbl.programDescriptionHint}}"></i>
+                            </label>
+                            <div class="sb-field relative">
+                                <textarea formControlName="description" type="text"
+                                    class="wmd-input width-100 sb-form-control"
+                                    placeholder="{{resource.frmelmnts.lbl.programDescriptionHint}}"
+                                    name="description" required></textarea>
+                                <div class="ui pointing red basic label below "
+                                    *ngIf="editProgramForm.controls['description'].errors && editProgramForm.controls['description'].errors.required && (!editProgramForm.controls['description'].pristine || formIsInvalid)">
+                                    {{ resource.frmelmnts.lbl.programDescriptionRequired }}
+                                </div>
+                                <span class="fs-0-785 text-right sb-color-gray-200 d-block py-5 pull-right">{{ resource.frmelmnts.lbl.nCharactersLeft | interpolate:'{noOfChars}': 1000 - (editProgramForm.controls['description'].value.length > 1000 ? 1000 : editProgramForm.controls['description'].value.length) }}
+                                </span>
+                                <div class="ui pointing red basic label below"
+                                    *ngIf="editProgramForm.controls['description'].errors && editProgramForm.controls['description'].errors.maxlength && (!editProgramForm.controls['description'].pristine || formIsInvalid)">
+                                    {{resource.frmelmnts.lbl.characterLengthGreaterThousand}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="twelve wide tablet three wide computer column">
+                        <div class="required field">
+                            <label class="d-block">{{resource.frmelmnts.lbl.nominationEndDate}}
+                                <i class="pull-right question circle link icon pull-right" suiPopup
+                                    popupDelay="500" [popupPlacement]="'left'"
+                                    popupText="{{resource.frmelmnts.lbl.programNominationEnddateHint}}"></i>
+                            </label>
+                            <div class="ui read-only calendar mb-10 sb-field">
+                                <div class="ui input right icon">
+                                    <i class="calendar icon date-calendar"></i>
+                                    <input [pickerMinDate]='getMinDate("nomination_enddate")'
+                                        formControlName="nomination_enddate"
+                                        [pickerMaxDate]='getMaxDate("nomination_enddate")' suiDatepicker
+                                        [pickerMode]="'date'">
+                                </div>
+                                <div class="ui pointing red basic label below "
+                                    *ngIf="editProgramForm.controls['nomination_enddate'].errors && editProgramForm.controls['nomination_enddate'].errors.required && (!editProgramForm.controls['nomination_enddate'].pristine || formIsInvalid)">
+                                    {{ resource.frmelmnts.lbl.programNominationEnddateRequired }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="twelve wide tablet three wide computer column">
+                        <div class="field">
+                            <label class="d-block">{{resource.frmelmnts.lbl.nominationShortlistingDate}}
+                                <i class="pull-right question circle link icon pull-right" suiPopup
+                                    popupDelay="500" [popupPlacement]="'left'"
+                                    popupText="{{resource.frmelmnts.lbl.programShortlistingEnddateHint}}"></i>
+                            </label>
+                            <div class="ui read-only calendar mb-10">
+                                <div class="ui input right icon">
+                                    <i class="calendar icon date-calendar"></i>
+                                    <input formControlName="shortlisting_enddate" suiDatepicker
+                                        [pickerMode]="'date'"  [pickerMinDate]='getMinDate("shortlisting_enddate")'
+                                        [pickerMaxDate]='getMaxDate("shortlisting_enddate")'>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="twelve wide tablet three wide computer column">
+                        <div class="required field">
+                            <label class="d-block">{{resource.frmelmnts.lbl.contributionEndDate}}
+                                <i class="pull-right question circle link icon pull-right" suiPopup
+                                    popupDelay="500" [popupPlacement]="'left'"
+                                    popupText="{{resource.frmelmnts.lbl.programContributionEnddateHint}}"></i>
+                            </label>
+                            <div class="ui read-only calendar mb-10">
+                                <div class="ui input right icon">
+                                    <i class="calendar icon date-calendar"></i>
+                                    <input
+                                        formControlName="content_submission_enddate" suiDatepicker
+                                        [pickerMode]="'date'" [pickerMinDate]='getMinDate("content_submission_enddate")'
+                                        [pickerMaxDate]='getMaxDate("content_submission_enddate")'>
+                                </div>
+                                <div class="ui pointing red basic label below "
+                                    *ngIf="editProgramForm.controls['content_submission_enddate'].errors && editProgramForm.controls['content_submission_enddate'].errors.required && (!editProgramForm.controls['content_submission_enddate'].pristine || formIsInvalid)">
+                                    {{ resource.frmelmnts.lbl.programContributionEndDateRequired }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="twelve wide tablet three wide computer column">
+                        <div class="required field">
+                            <label class="d-block">{{resource.frmelmnts.lbl.programEndDate}}
+                                <i class="pull-right question circle link icon pull-right" suiPopup
+                                    popupDelay="500" [popupPlacement]="'left'"
+                                    popupText="{{resource.frmelmnts.lbl.programEnddateHint}}"></i>
+                            </label>
+                            <div class="ui read-only calendasr mb-10">
+                                <div class="ui input right icon">
+                                    <i class="calendar icon date-calendar"></i>
+                                    <input
+                                        formControlName="program_end_date" suiDatepicker [pickerMode]="'date'" [pickerMinDate]='getMinDate("program_end_date")'>
+                                </div>
+                                <div class="ui pointing red basic label below "
+                                    *ngIf="editProgramForm.controls['program_end_date'].errors && editProgramForm.controls['program_end_date'].errors.required && (!editProgramForm.controls['program_end_date'].pristine || formIsInvalid)">
+                                    {{ resource.frmelmnts.lbl.programEndDateRequired }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="six wide column">
+                        <div class="required field disabled">
+                            <label class="d-block">{{resource.frmelmnts.lbl.contentType}}
+                                <i class="pull-right question circle link icon pull-right" suiPopup
+                                    popupDelay="500" [popupPlacement]="'left'"
+                                    popupText="{{resource.frmelmnts.lbl.contentTypesHint}}"></i>
+                            </label>
+                            <!-- <sui-multi-select class="selection" labelField="name" [hasLabels]="true"
+                                formControlName="content_types" [options]="programScope.purpose"
+                                valueField="value" #multiSelect>
+                                <sui-select-option *ngFor="let option of programScope.purpose" [value]="option">
+                                </sui-select-option>
+                            </sui-multi-select> -->
+                            <span class="sb-color-gray-200 fs-0-785">{{programDetails.content_types}}</span>
+                        </div>
+                    </div>
+                    <div class="six wide column">
+                        <div class="field">
+                            <label class="d-block">{{resource.frmelmnts.lbl.uploadGuideline}}
+                            </label>
+                            <button
+                                class="sb-btn sb-btn-primary sb-btn-normal"
+                                (click)="initiateDocumentUploadModal()">
+                                <i class="upload icon"></i>{{ resource.frmelmnts.btn.upload}}
+                            </button>
+                            <span *ngIf="uploadedDocument" class="sb-url">
+                                <a href="{{uploadedDocument.artifactUrl}}" class="max-w-90 pull-left text-decor-none sb__ellipsis sb__ellipsis--breakAll" target="_blank">
+                                    {{uploadedDocument.name}}
+                                    <span class="blue-text-color-sunbird" *ngIf="uploadedDocument.name && uploadedDocument.name.length > 70">...</span>
+                                </a>
+                                <i class="icon remove sb-color-error va-top cursor-pointer" (click)="removeUploadedDocument();" ></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="twelve wide column">
+                        <div class="field">
+                            <label class="d-block">{{resource.frmelmnts.lbl.recongnitionToContributors}}
+                                <i class="pull-right question circle link icon pull-right" suiPopup
+                                    popupDelay="500" [popupPlacement]="'left'"
+                                    popupText="{{resource.frmelmnts.lbl.recongnitionToContributors}}"></i>
+                            </label>
+                            <div class="sb-field relative">
+                                <textarea type="text" formControlName="rewards"
+                                    class="wmd-input width-100 sb-form-control"
+                                    placeholder="{{resource.frmelmnts.lbl.programRecognitionHint}}"
+                                    name=""></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="text-align-right">
+                <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="updateProgram()">{{resource.frmelmnts.btn.update}}</button>
+            </div>
+        </div>
+        <div class="ui tweleve wide column mb-20">
+            <app-loader *ngIf="showLoader"></app-loader>
+          </div>
+    </div>
+</div>
+<sui-modal [isClosable]="isClosable" class="sb-modal" [isInverted]="true" (dismissed)="showDocumentUploader = false"
+	*ngIf="showDocumentUploader" [size]="'normal'" [isFullScreen]="false" [mustScroll]="true" #modal>
+	<div class="sb-modal-header">{{ resource.frmelmnts.lbl.uploadGuideline }}</div>
+	<div class="sb-modal-content p-0">
+		<div class="content">
+			<div type="text/template" id="qq-template-validation" #fineUploaderUI>
+				<div class="qq-uploader-selector qq-uploader custom-qq-uploader">
+					<div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
+						<span class="qq-upload-drop-area-text-selector"></span>
+					</div>
+					<span class="qq-drop-processing-selector qq-drop-processing">
+						<span>{{ resource.messages.imsg.uploadGuideline.m001 }}</span>
+						<span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
+					</span>
+					<ul class="qq-upload-list-selector qq-upload-list custom-qq-upload-list" aria-live="polite"
+						aria-relevant="additions removals">
+						<li>
+							<div class="qq-progress-bar-container-selector">
+								<div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+									class="qq-progress-bar-selector qq-progress-bar"></div>
+							</div>
+							<span class="qq-upload-spinner-selector qq-upload-spinner"></span>
+							<img class="qq-thumbnail-selector" qq-max-size="100" qq-server-scale>
+							<span class="qq-upload-file-selector qq-upload-file custom-qq-upload-file"></span>
+							<span class="qq-upload-size-selector qq-upload-size"></span>
+							<button type="button" class="qq-btn qq-upload-retry-selector qq-upload-retry">{{ resource.frmelmnts.btn.retry }}</button>
+							<button type="button"
+								class="qq-btn qq-upload-delete-selector qq-upload-delete">{{ resource.frmelmnts.btn.retry }}</button>
+							<span role="status" class="qq-upload-status-text-selector qq-upload-status-text"></span>
+						</li>
+					</ul>
+					<div id="qq-upload-actions" class="upload-file-description d-flex flex-ai-center flex-dc">
+						<h5 class="mb-8">{{ resource.frmelmnts.lbl.dragDrop }}</h5>
+						<span class="fs-0-92 mb-8">Or</span>
+						<div class="qq-upload-button-selector qq-upload-button sb-btn sb-btn-normal sb-btn-success">
+							<div>{{ resource.frmelmnts.btn.selectContentFiles }}</div>
+						</div>
+						<p class="mt-8">Upload {{assetConfig.pdf.accepted}} files ( Max size
+							{{assetConfig.pdf.size}} MB )</p>
+					</div>
+					<dialog class="qq-confirm-dialog-selector">
+						<div class="qq-dialog-message-selector"></div>
+						<div class="qq-dialog-buttons">
+							<button type="button" class="qq-cancel-button-selector">{{ resource.frmelmnts.btn.no }}</button>
+							<button type="button" class="qq-ok-button-selector">{{ resource.frmelmnts.btn.yes }}</button>
+						</div>
+					</dialog>
+					<dialog class="qq-prompt-dialog-selector">
+						<div class="qq-dialog-message-selector"></div>
+						<input type="text">
+						<div class="qq-dialog-buttons">
+							<button type="button" class="qq-cancel-button-selector">{{ resource.frmelmnts.btn.cancel }}</button>
+							<button type="button" class="qq-ok-button-selector">{{ resource.frmelmnts.btn.ok }}</button>
+						</div>
+					</dialog>
+				</div>
+			</div>
+			<div *ngIf="!loading">
+				<div id="upload-document-div" class="upload-file-section"></div>
+			</div>
+			<div *ngIf='loading' class="uploading-files">
+				<div class='d-flex flex-dc flex-jc-center flex-ai-center icon'>
+					<img src="assets/images/Spin.gif" class='process-icon'>
+				</div>
+			</div>
+			<!-- New upload image design section ends here -->
+		</div>
+	</div>
+	<div class="sb-modal-actions">
+		<button (click)="addImageInEditor();" class="sb-btn sb-btn-primary sb-btn-normal"
+			[ngClass]="{'sb-btn-primary': showAddButton, 'sb-btn-disabled': !showAddButton}">{{ resource.frmelmnts.btn.add }}</button>
+	</div>
+</sui-modal>
