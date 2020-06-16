@@ -101,58 +101,72 @@ private sendNotification = new Subject<string>();
     return this.actionService.post(option);
   }
 
-  publishContentToDiksha(action, collectionId, contentId, originData, rejectedComments?) {
-    if (action === 'accept') {
-      const req = {
-        url: `program/v1/content/publish`,
-        data: {
-          'request': {
-            'content_id': contentId,
-            'origin': {
-              'channel': _.get(originData, 'channel'),
-              'textbook_id': _.get(originData, 'textbookOriginId'),
-              'units': [_.get(originData, 'unitOriginId')]
-            }
-          }
-        }
-      };
-      return this.programsService.post(req).subscribe((response) => {
-        this.attachContentToTextbook(action, collectionId, contentId);
-      }, err => {
-        this.acceptContent_errMsg(action);
-      });
+  checkIfContentPublishedOrRejected(data, action, contentId) {
+    if ((action === 'accept' && _.includes(data.acceptedContents, contentId))
+    || (action === 'reject' && _.includes(data.rejectedContents, contentId))) {
+      action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00104) :
+                            this.toasterService.error(this.resourceService.messages.fmsg.m00105);
+      this.programStageService.removeLastStage();
+      return true;
     } else {
-      this.attachContentToTextbook(action, collectionId, contentId, rejectedComments);
+      return false;
     }
+  }
+
+
+  publishContentToDiksha(action, collectionId, contentId, originData, rejectedComments?) {
+    const option = {
+      url: 'content/v3/read/' + collectionId,
+      param: { 'mode': 'edit', 'fields' : 'acceptedContents,rejectedContents,versionKey,sourcingRejectedComments' }
+    };
+    this.actionService.get(option).pipe(map((res: any) => res.result.content)).subscribe((data) => {
+        if (this.checkIfContentPublishedOrRejected(data, action, contentId)) { return; }
+        if (action === 'accept') {
+          const req = {
+            url: `program/v1/content/publish`,
+            data: {
+              'request': {
+                'content_id': contentId,
+                'origin': {
+                  'channel': _.get(originData, 'channel'),
+                  'textbook_id': _.get(originData, 'textbookOriginId'),
+                  'units': [_.get(originData, 'unitOriginId')]
+                }
+              }
+            }
+          };
+          this.programsService.post(req).subscribe((response) => {
+            this.attachContentToTextbook(action, collectionId, contentId, data);
+          }, err => {
+            this.acceptContent_errMsg(action);
+          });
+        } else {
+          this.attachContentToTextbook(action, collectionId, contentId, data, rejectedComments);
+        }
+
+    }, (err) => {
+      this.acceptContent_errMsg(action);
+    });
 
   }
 
-  attachContentToTextbook(action, collectionId, contentId, rejectedComments?) {
-      // read textbook data
-    const option = {
-      url: 'content/v3/read/' + collectionId,
-      param: { 'mode': 'edit' }
-    };
-    this.actionService.get(option).pipe(map((res: any) => res.result.content)).subscribe((data) => {
-      const request = {
-        content: {
-        'versionKey': data.versionKey
-        }
-      };
-      // tslint:disable-next-line:max-line-length
-      action === 'accept' ? request.content['acceptedContents'] = _.uniq([...data.acceptedContents || [], contentId]) : request.content['rejectedContents'] = _.uniq([...data.rejectedContents || [], contentId]);
-      if (action === 'reject' && rejectedComments) {
-        request.content['sourcingRejectedComments'] = data.sourcingRejectedComments && JSON.parse(data.sourcingRejectedComments) || {};
-        request.content['sourcingRejectedComments'][contentId] = rejectedComments;
+  attachContentToTextbook(action, collectionId, contentId, data, rejectedComments?) {
+    const request = {
+      content: {
+      'versionKey': data.versionKey
       }
-      this.updateContent(request, collectionId).subscribe(() => {
-        action === 'accept' ? this.toasterService.success(this.resourceService.messages.smsg.m0066) :
-                              this.toasterService.success(this.resourceService.messages.smsg.m0067);
-       this.programStageService.removeLastStage();
-       this.sendNotification.next(_.capitalize(action));
-      }, (err) => {
-        this.acceptContent_errMsg(action);
-      });
+    };
+    // tslint:disable-next-line:max-line-length
+    action === 'accept' ? request.content['acceptedContents'] = _.uniq([...data.acceptedContents || [], contentId]) : request.content['rejectedContents'] = _.uniq([...data.rejectedContents || [], contentId]);
+    if (action === 'reject' && rejectedComments) {
+      request.content['sourcingRejectedComments'] = data.sourcingRejectedComments && JSON.parse(data.sourcingRejectedComments) || {};
+      request.content['sourcingRejectedComments'][contentId] = rejectedComments;
+    }
+    this.updateContent(request, collectionId).subscribe(() => {
+      action === 'accept' ? this.toasterService.success(this.resourceService.messages.smsg.m0066) :
+                            this.toasterService.success(this.resourceService.messages.smsg.m0067);
+     this.programStageService.removeLastStage();
+     this.sendNotification.next(_.capitalize(action));
     }, (err) => {
       this.acceptContent_errMsg(action);
     });
