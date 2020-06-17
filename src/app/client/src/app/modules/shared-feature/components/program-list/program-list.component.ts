@@ -106,6 +106,13 @@ export class ProgramListComponent implements OnInit {
       this.userService.userProfile.userRegData.User_Org);
   }
 
+  deleteProject(){
+    this.toasterService.success(this.resourceService.frmelmnts.lbl.errorMessageTheProjectHasBeenDeleted);
+    setTimeout(() => {
+      this.showDeleteModal=false;
+    }, 2000);
+  }
+
   /**
    * fetch the list of programs.
    */

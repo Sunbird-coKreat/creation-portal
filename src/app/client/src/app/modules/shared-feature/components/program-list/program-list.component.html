@@ -173,7 +173,7 @@
                   </td>
                   <td class="fs-1-5 sb-dock-icon-tooltip">
                     <i class="icon edit sb-color-primary mx-10 cursor-pointer ui" data-tooltip="Edit"></i>
-                    <i class="icon trash sb-color-error cursor-pointer ui" data-tooltip="Delete" (click)="showDeleteModal = true"></i>
+                    <i class="icon trash sb-color-primary cursor-pointer ui" data-tooltip="Delete" (click)="showDeleteModal = true"></i>
                   </td>
               </tr>
               </tbody>
@@ -240,12 +240,12 @@
 <sui-modal *ngIf="showDeleteModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'"
   class="sb-modal" appBodyScroll (dismissed)="showDeleteModal = false" #modal>
   <div class="sb-modal-header">
-    {{resourceService.frmelmnts.lbl.delete}}
+    {{resourceService.frmelmnts.lbl.deleteProject}}
   </div>
   <div class="sb-modal-content">
-   <i class="icon question circle outline pr-15"></i> {{resourceService.frmelmnts.lbl.areYouSureDeleteProject}}
+   {{resourceService.frmelmnts.lbl.areYouSureDeleteProject}}
   </div>
-  <div class="sb-modal-actions">
+  <div class="sb-modal-actions" (click)="deleteProject()">
     <button class="sb-btn sb-btn-normal sb-btn-primary">
       {{resourceService.frmelmnts.btn.yes}}
     </button>
