@@ -1727,3 +1727,37 @@ h3, label, ul li, a, p, button {
         flex-direction: row-reverse;
     }
 }
+/* for project contribution */
+.a-link{
+    color: #5cbcf5;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+.a-link:hover{
+    color: #5cbcf5;
+    text-decoration: none;
+}
+.fs-2 {
+    font-size: 2rem !important;
+}
+.pb-15{
+    padding-bottom: 15px;
+}
+.pt-0{
+    padding-top: 0;
+}
+.flex-jc-center {
+    justify-content: center !important;
+}
+.logo-img{
+    max-width: 100%;
+    height: 48px;
+    margin: auto;
+    display: block;
+}
+.my-20{
+    margin: 20px 0 10px 0;
+}
+.mb-35{
+    margin-bottom: 35px !important;
+}
