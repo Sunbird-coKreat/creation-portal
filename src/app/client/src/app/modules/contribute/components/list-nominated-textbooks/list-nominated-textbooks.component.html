@@ -58,7 +58,7 @@
 						</div> -->
 					<ng-container *ngIf="programDetails">
 						<div class="program-timeline px-10">
-						  <div class="program-timeline-item">
+						  <div class="program-timeline-item" *ngIf="programDetails?.status !== 'Unlisted'">
 							<div class="status" [class.active]="activeDate === 'nomination_enddate'">
 							  <div class="status__label">{{resourceService.frmelmnts.lbl.nominationEndDate}}</div>
 							  <div class="status__date">
@@ -68,7 +68,7 @@
 							  </div>
 							</div>
 						  </div>
-						  <div class="program-timeline-item">
+						  <div class="program-timeline-item" *ngIf="programDetails?.status !== 'Unlisted'">
 							<div class="status"  [class.active]="activeDate === 'shortlisting_enddate'">
 							  <div class="status__label">{{resourceService.frmelmnts.lbl.shortlistingNomination}}</div>
 							  <div class="status__date">
@@ -100,7 +100,7 @@
 						  </div>
 						</div>
 					  </ng-container>
-					<div class="sb-meta-data-container sb-meta-data-column px-10">
+					<div class="sb-meta-data-container sb-meta-data-column px-10" *ngIf="programDetails?.status !== 'Unlisted'">
 						<div class='practical-sb-buttons' *ngIf="nominationDetails && nominationDetails.status">
 							<label class="m-0">{{ resourceService.frmelmnts.lbl.status }}</label>
 							<p [ngClass]="{'sb-color-success':nominationDetails.status == 'Approved','sb-color-error':nominationDetails.status == 'Rejected','sb-color-warning':nominationDetails.status == 'Pending'}">{{ nominationDetails?.status }}</p>
