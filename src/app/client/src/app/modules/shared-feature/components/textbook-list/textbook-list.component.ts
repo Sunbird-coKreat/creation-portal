@@ -1,12 +1,12 @@
 import { ResourceService, ToasterService  } from '@sunbird/shared';
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { ProgramsService, ActionService, UserService } from '@sunbird/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CollectionHierarchyService } from '../../../cbse-program/services/collection-hierarchy/collection-hierarchy.service';
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs/operators';
+import { FormControl, FormBuilder, Validators, FormGroup, FormArray } from '@angular/forms';
 import * as _ from 'lodash-es';
-import { forkJoin } from 'rxjs';
+import { isEmpty } from 'rxjs/operators';
 
 @Component({
   selector: 'app-textbook-list',
@@ -17,6 +17,7 @@ export class TextbookListComponent implements OnInit {
   @Input() collectionsInput: Array<any> = [];
   @Input() programDetails: any = {};
   @Input() contentAggregationInput: Array<any> = [];
+  @Input() userPreferences: any = {};
   public programId: string;
   public config: any;
   public collections: Array<any> = [];
@@ -35,12 +36,26 @@ export class TextbookListComponent implements OnInit {
   public sourcingOrgReviewer: boolean;
   public collectionData: any;
   @Output() selectedCollection = new EventEmitter<any>();
+  @Output() applyTextbookPreference = new EventEmitter<any>();
+  @ViewChild('prefModal') prefModal;
+  prefernceForm: FormGroup;
+  sbFormBuilder: FormBuilder;
+  showTextbookFiltersModal = false;
+  setPreferences = {};
+  /*mediums:any[];
+  classes:any[];
+  subjects:any[];
+  buttonLabel = this.resourceService.frmelmnts.lbl.addFilters;*/
+  textbookFiltersApplied = false;
+
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
     public toasterService: ToasterService, public resourceService: ResourceService,
     public actionService: ActionService, private collectionHierarchyService: CollectionHierarchyService,
-    private userService: UserService
-  ) { }
+    private userService: UserService, private formBuilder: FormBuilder
+  )  {
+    this.sbFormBuilder = formBuilder;
+  }
 
   ngOnInit(): void {
     this.initialize();
@@ -53,7 +68,25 @@ export class TextbookListComponent implements OnInit {
     if (this.router.url.includes('sourcing/nominations/' + this.programId) && this.programDetails.program_id) {
       this.showTexbooklist(this.collectionsInput, this.contentAggregationInput);
       this.collectionsCnt = this.collectionsInput && this.collectionsInput.length;
+
+      if (!_.isEmpty(this.userPreferences.sourcing_preference)) {
+        this.textbookFiltersApplied = true;
+        // tslint:disable-next-line: max-line-length
+        this.setPreferences['medium'] = (this.userPreferences.sourcing_preference.medium) ? this.userPreferences.sourcing_preference.medium : [];
+        // tslint:disable-next-line: max-line-length
+        this.setPreferences['subject'] = (this.userPreferences.sourcing_preference.subject) ? this.userPreferences.sourcing_preference.subject : [];
+        // tslint:disable-next-line: max-line-length
+        this.setPreferences['gradeLevel'] = (this.userPreferences.sourcing_preference.gradeLevel) ? this.userPreferences.sourcing_preference.gradeLevel : [];
+      }
     }
+    /*this.mediums =  _.compact(this.programDetails.config.medium);
+    this.classes = _.compact(this.programDetails.config.gradeLevel);
+    this.subjects = _.compact(this.programDetails.config.subject);*/
+    this.prefernceForm = this.sbFormBuilder.group({
+      medium: [],
+      subject: [],
+      gradeLevel: [],
+    });
   }
 
   sortCollection(column) {
@@ -64,6 +97,20 @@ export class TextbookListComponent implements OnInit {
       this.direction = 'asc';
     }
     this.sortColumn = column;
+  }
+
+  applyTextbookFilters() {
+    this.prefModal.deny();
+    const prefData = {
+        ...this.prefernceForm.value
+    };
+    this.applyTextbookPreference.emit(prefData);
+  }
+
+  resetTextbookFilters() {
+    this.prefModal.deny();
+    this.applyTextbookPreference.emit();
+    this.textbookFiltersApplied = false;
   }
 
   showTexbooklist (data, contentAggregationData) {
@@ -111,7 +158,7 @@ export class TextbookListComponent implements OnInit {
           this.resourceService.frmelmnts.lbl.samplesRecieved,
           this.resourceService.frmelmnts.lbl.nominationAccepted,
           this.resourceService.frmelmnts.lbl.contributionReceived,
-          this.resourceService.frmelmnts.lbl.contributionAccepted,
+          this.resourceService.frmelmnts.lbl.contributionApproved,
           this.resourceService.frmelmnts.lbl.contributionRejected,
           this.resourceService.frmelmnts.lbl.contributionPending
         ];

@@ -1,4 +1,4 @@
-<div *ngIf="currentStage === 'listNominatedTextbookComponent'">
+<div *ngIf="currentStage === 'listNominatedTextbookComponent' && programDetails">
 
 	<div class="sb-bg-color-primary-0 practical-header py-16">
 		<div class="d-flex  flex-jc-space-between practical-header__content ui container pt-10">
@@ -11,48 +11,17 @@
 							<div class="textbook-details ml-8">
 								<div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.mediums }}</strong></div>
 								<div class="content">
-									<label class="d-block fsmall font-weight-normal mb-0">{{ mediums }}</label>
+									<label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.medium.join(', ') }}</label>
 								</div>
 								<hr />
 								<div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.class }}</strong></div>
 								<div class="content">
-									<label class="d-block fsmall font-weight-normal mb-0">{{ grades }}</label>
+									<label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.gradeLevel.join(', ') }}</label>
 								</div>
 								<hr />
-								<div class="header">
-									<strong>{{ resourceService?.frmelmnts?.lbl?.expressionOfInterestDate }}</strong>
-								</div>
+								<div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.subjects }}</strong></div>
 								<div class="content">
-									<label class="d-block fsmall font-weight-normal mb-0">
-										{{ programDetails?.nomination_enddate |  date:'LLLL d, yyyy'  }}
-									</label>
-								</div>
-								<hr />
-								<div class="header">
-									<strong>{{ resourceService?.frmelmnts?.lbl?.shortlistingOfContributorDate }}</strong>
-								</div>
-								<div class="content">
-									<label class="d-block fsmall font-weight-normal mb-0">
-										{{ programDetails?.shortlisting_enddate |  date:'LLLL d, yyyy'  }}
-									</label>
-								</div>
-								<hr />
-								<div class="header">
-									<strong>{{ resourceService?.frmelmnts?.lbl?.contentSubmissionDate }}</strong>
-								</div>
-								<div class="content">
-									<label class="d-block fsmall font-weight-normal mb-0">
-										{{ programDetails?.content_submission_enddate |  date:'LLLL d, yyyy'  }}
-									</label>
-								</div>
-								<hr />
-								<div class="header">
-									<strong>{{ resourceService?.frmelmnts?.lbl?.programEndDate }}</strong>
-								</div>
-								<div class="content">
-									<label class="d-block fsmall font-weight-normal mb-0">
-										{{ programDetails?.enddate |  date:'LLLL d, yyyy'  }}
-									</label>
+									<label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.subject.join(', ') }}</label>
 								</div>
 							</div>
 						</div>
@@ -158,19 +127,28 @@
 
 			<div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" isActive='true' suiTabContent="2">
 				<div class="ui container p-0 m-0">
-				<div class="pt-24 text-capitalize fs-0-785 line-height-1-3 sb-pageSection-document">
-					<div *ngIf="isUserOrgAdmin()" class="sb-color-gray-100 d-inline-block br-2 pr-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.draft || 0}}</span> {{resourceService.frmelmnts.lbl.drafts}}</div>
-					<div *ngIf="isUserOrgAdmin()" class="sb-color-primary d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.review || 0}}</span> {{resourceService.frmelmnts.lbl.pendingReview}}</div>
-					<div *ngIf="isUserOrgAdmin()" class="sb-color-error d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.rejected || 0}}</span> {{resourceService.frmelmnts.lbl.rejected}}</div>
-					<div *ngIf="isUserOrgAdmin()" class="sb-color-success d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.live || 0}}</span> {{resourceService.frmelmnts.lbl.approvedPublished}}</div>
-					<a class="fs-0-785 text-decor-none font-weight-bold pull-right sb-color-primary" href="{{ programDetails?.guidelines_url }}" target="_blank" *ngIf="programDetails?.guidelines_url" [ngClass]="{'mb-10': !isUserOrgAdmin()}">
-						<i class="file sb-file-icon outline icon pr-10 sb-color-primary"></i>
-						{{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
-					</a>
+				<div class="pt-10 text-capitalize fs-0-785 line-height-1-3 sb-pageSection-document ui grid mt-10">
+					<div class="twelve wide tablet five wide computer column">
+						<div *ngIf="isUserOrgAdmin()" class="sb-color-gray-100 d-inline-block br-2 pr-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.draft || 0}}</span> {{resourceService.frmelmnts.lbl.drafts}}</div>
+						<div *ngIf="isUserOrgAdmin()" class="sb-color-primary d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.review || 0}}</span> {{resourceService.frmelmnts.lbl.reviewInProgress}}</div>
+						<div *ngIf="isUserOrgAdmin()" class="sb-color-error d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.rejected || 0}}</span> {{resourceService.frmelmnts.lbl.notAccepted}}</div>
+						<div *ngIf="isUserOrgAdmin()" class="sb-color-success d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.live || 0}}</span> {{resourceService.frmelmnts.lbl.sentForApproval}}</div>
+					</div>
+					<div class="twelve wide tablet seven wide computer column text-right">
+						<a class="fs-0-785 text-decor-none font-weight-bold sb-color-primary pt-10" href="{{ programDetails?.guidelines_url }}" target="_blank" *ngIf="programDetails?.guidelines_url" [ngClass]="{'mb-10': !isUserOrgAdmin()}">
+							<i class="file sb-file-icon outline icon pr-10 sb-color-primary"></i>
+							{{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
+						</a>
+						<button *ngIf="isUserOrgAdmin() || sessionContext.currentRole === 'REVIEWER'" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" (click)="showTextbookFiltersModal = true"> <i class="filter icon"></i>
+							<i [ngClass]="{'sb-dock-circle': textbookFiltersApplied}"></i>
+							<span *ngIf="!textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.addFilters }}</span>
+							<span *ngIf="textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.modifyFilters }}</span>
+						</button>
+					</div>
 				</div>
-					<div class="sb-pageSection" [appTelemetryImpression]="telemetryImpression">
-						<div class="sb-bg-color-white pt-15" *ngIf="!showLoader">
-							<div class="sb-table-responsive">
+					<div class="sb-pageSection pt-5" [appTelemetryImpression]="telemetryImpression">
+						<div class="sb-bg-color-white pt-15">
+							<div class="sb-table-responsive" *ngIf="!showLoader && contributorTextbooks.length">
 								<table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
 									<thead class="sb-table-header sb-table-thead-gray">
 										<tr>
@@ -210,7 +188,7 @@
 											<th class="w-5"></th>
 										</tr>
 									</thead>
-									<tbody class="sb-table-body" *ngIf="contributorTextbooks.length">
+									<tbody class="sb-table-body">
 										<tr *ngFor="let contributorTextbook of contributorTextbooks; let i = index;">
 											<td class="hand">
 												{{contributorTextbook.name}}
@@ -221,8 +199,8 @@
 											<td *ngIf="isUserOrgAdmin()">
 												<div class="text-capitalize fs-0-785">
 													<span class="sb-color-primary d-inline-block br-2 pr-5">{{contributorTextbook.reviewCount || 0}}  {{resourceService.frmelmnts.lbl.pending}}</span>
-													<span class="sb-color-error d-inline-block br-2 px-5">{{contributorTextbook.rejectedCount || 0}} {{resourceService.frmelmnts.lbl.rejected}}</span>
-													<span class="sb-color-success d-inline-block px-5">{{contributorTextbook.liveCount || 0}} {{resourceService.frmelmnts.lbl.published}}</span>
+													<span class="sb-color-error d-inline-block br-2 px-5">{{contributorTextbook.rejectedCount || 0}} {{resourceService.frmelmnts.lbl.notAccepted}}</span>
+													<span class="sb-color-success d-inline-block px-5">{{contributorTextbook.liveCount || 0}} {{resourceService.frmelmnts.lbl.sentForApproval}}</span>
 												</div>
 											</td>
 											<td>
@@ -237,6 +215,10 @@
 										</tr>
 									</tbody>
 								</table>
+							</div>
+							<div class="mt-12" *ngIf="!showLoader && !contributorTextbooks.length">
+								<app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0146'}">
+								</app-no-result>
 							</div>
 						</div>
 						<div class="ui" *ngIf="showLoader">
@@ -267,6 +249,7 @@
 									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
 								</span>
 							</th>
+							<th class="w-10">{{resourceService.frmelmnts.lbl.emailOrMobile}}</th>
 							<th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('gradeLevel')">
 								{{resourceService.frmelmnts.lbl.class}} &nbsp;&nbsp;
 								<i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || sortColumnOrgUsers != 'gradeLevel' "></i>
@@ -304,6 +287,10 @@
 						<tbody class="sb-table-body">
 						  <tr *ngFor="let orgUser of contributorOrgUser; let i= index;">
 							<td>{{orgUser.name}}</td>
+							<td>
+								<div *ngIf="orgUser?.maskedEmail">{{orgUser?.maskedEmail}}</div>
+								<div *ngIf="orgUser?.maskedPhone"> {{orgUser?.maskedPhone}}</div>
+							</td>
 							<td>{{orgUser?.gradeLevel?.join(', ')}}</td>
 							<td>{{orgUser?.subject?.join(', ')}}</td>
 							<td>
@@ -347,8 +334,58 @@
 		</sui-tabset>
 	</div>
 </div>
-
 <ng-container *ngIf="currentStage !== 'listNominatedTextbookComponent'">
-	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs">
-	</ndc-dynamic>
+	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>
 </ng-container>
+<sui-modal *ngIf="showTextbookFiltersModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'" class="sb-modal" appBodyScroll (dismissed)="showTextbookFiltersModal = false" #prefModal>
+	<div class="sb-modal-header">
+		{{resourceService.frmelmnts.lbl.addFilters}}
+	</div>
+	<div class="sb-modal-content desktop-o-x-unset">
+		<p>{{resourceService.frmelmnts.lbl.pleaseSelectFiltersYouWishToAdd}}</p>
+		<div class="segment mt-5 pb-30 pt-10">
+			<form class="ui form sb-dock-dropdown" [formGroup]="prefernceForm">
+				<div class="ui grid">
+					<div class="six wide column py-10">
+						<div class="field">
+							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.medium}}</label>
+							<sui-multi-select class="selection p-5 b-100"
+							formControlName="medium" #mediums
+							[options]="programDetails.config.medium"
+							[(ngModel)]="setPreferences['medium']">
+								<sui-select-option *ngFor="let medium of mediums.filteredOptions" [value]="medium"> </sui-select-option>
+							</sui-multi-select>
+						</div>
+					</div>
+					<div class="six wide column py-10">
+						<div class="field">
+							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.subject}}</label>
+							<sui-multi-select class="selection p-5 b-100"
+							formControlName="subject" #subjects
+							[options]="programDetails.config.subject"
+							[(ngModel)]="setPreferences['subject']">
+								<sui-select-option *ngFor="let subject of subjects.filteredOptions" [value]="subject"></sui-select-option>
+							</sui-multi-select>
+						</div>
+					</div>
+					<div class="six wide column py-10">
+						<div class="field">
+							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.class}}</label>
+							<sui-multi-select formControlName="gradeLevel"
+							class="selection p-5 b-100" #gradeLevels
+							[options]="programDetails.config.gradeLevel"
+							[(ngModel)]="setPreferences['gradeLevel']">
+								<sui-select-option *ngFor="let gradeLevel of gradeLevels.filteredOptions" [value]="gradeLevel"></sui-select-option>
+							</sui-multi-select>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="sb-modal-actions py-20">
+		<button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="applyTextbookFilters();"> {{resourceService.frmelmnts.btn.apply}} </button>
+		<button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary"
+		(click)="resetTextbookFilters();" appTelemetryInteract> {{resourceService.frmelmnts.btn.reset}}</button>
+	</div>
+  </sui-modal>

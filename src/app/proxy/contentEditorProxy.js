@@ -57,8 +57,7 @@ module.exports = function (app) {
   app.all('/action/*', telemetryHelper.generateTelemetryForProxy)
 
 
-  // Proxy for content create , update & review Start
-
+  // Proxy for content create ,update & review Start
   app.use(['/action/content/v3/create', '/action/content/v3/hierarchy/add', '/action/content/v3/hierarchy/remove', '/action/content/v3/update/*'], 
   proxy(kp_content_service_base_url, {
     proxyReqPathResolver: function (req) {

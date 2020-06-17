@@ -556,16 +556,18 @@ export class ProgramsService extends DataService implements CanActivate {
             request: request
           }
         };
-        req.data.request['user_id'] = this.userService.userProfile.identifier;
+
         if (!_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
           req.data.request['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
+        } else {
+          req.data.request['user_id'] = this.userService.userProfile.identifier;
         }
+
         if (data.result && data.result.length) {
           req['url'] = `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_UPDATE}`;
-          const prevNomination = data.result[0];
-          req.data.request['user_id'] = prevNomination.user_id;
           req.data.request['updatedby'] = this.userService.userProfile.userRegData.User.osid;
         } else {
+          req.data.request['user_id'] = this.userService.userProfile.identifier;
           req.data.request['createdby'] = this.userService.userProfile.userRegData.User.osid;
         }
         return this.post(req);
@@ -927,5 +929,33 @@ export class ProgramsService extends DataService implements CanActivate {
     options = _.merge(options, config);
     const csvExporter = new ExportToCsv(options);
     csvExporter.generateCsv(tableData);
+  }
+
+  getUserPreferencesforProgram(userId, programId) {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.PREFERENCE_READ}`,
+      data: {
+          request: {
+            user_id: userId,
+            program_id: programId
+          }
+      }
+    };
+    return this.API_URL(req);
+  }
+
+  setUserPreferencesforProgram(userId, programId, preference, type) {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.PREFERENCE_ADD}`,
+      data: {
+          request: {
+            user_id: userId,
+            program_id: programId,
+            preference: preference,
+            type: type
+          }
+      }
+    };
+    return this.API_URL(req);
   }
 }

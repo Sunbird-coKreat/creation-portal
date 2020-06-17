@@ -97,7 +97,7 @@
                                         [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.nominations}}
                         <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ totalNominations || 0  }}</span>
                     </a>
-                    <a class="item" *ngIf="isSourcingOrgAdmin()" [isActive]="activeTab === 'user'"  suiTabHeader="3"  (click)="resetStatusFilter('user');" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('users', 'click', 'program-nominations')" [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata" [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.tab.users}}
+                    <a class="item" *ngIf="isSourcingOrgAdmin()" [isActive]="activeTab === 'user'"  suiTabHeader="3"  (click)="resetStatusFilter('user');" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('users', 'click', 'program-nominations')" [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata" [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.assignUsersToProject}}
                         <!--span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ sourcingOrgUser.length || 0 }}</span-->
                     </a>
                     <a class="item" [isActive]="activeTab === 'contributionDashboard'" suiTabHeader="4" (click)="resetStatusFilter('contributionDashboard')"
@@ -108,15 +108,21 @@
                                         [telemetryInteractPdata]="telemetryInteractPdata">
                         {{resourceService.frmelmnts.lbl.contributionDashboard}}
                     </a>
+                    <a class="item" [isActive]="activeTab === 'report'" suiTabHeader="5" (click)="resetStatusFilter('report')"
+                    appTelemetryInteract
+                                        [telemetryInteractEdata]="getTelemetryInteractEdata('report-tab', 'click', 'program-nominations')"
+                                        [telemetryInteractObject]="telemetryInteractObject"
+                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                        [telemetryInteractPdata]="telemetryInteractPdata">
+                        {{resourceService.frmelmnts.lbl.reports}}
+                        <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">2</span>
+                    </a>
                 </div>
             </div>
             <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="2">
                 <app-loader *ngIf='showTextbookLoader'></app-loader>
-                <div *ngIf="!showTextbookLoader && programCollections && programCollections.length && contentAggregationData && !isEmptyObject(programDetails)" class="ui container p-0 m-0">
-                    <app-textbook-list [programDetails]="programDetails" [collectionsInput]="programCollections" [contentAggregationInput]="contentAggregationData" (selectedCollection)="viewContribution($event)"></app-textbook-list>
-                </div>
-                <div class="mt-12" *ngIf="!showTextbookLoader && programCollections && programCollections.length === 0">
-                    <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0146'}"> </app-no-result>
+                <div *ngIf="!showTextbookLoader && contentAggregationData && !isEmptyObject(programDetails)" class="ui container p-0 m-0">
+                    <app-textbook-list [programDetails]="programDetails" [collectionsInput]="programCollections" [contentAggregationInput]="contentAggregationData" [userPreferences]=userPreferences (selectedCollection)="viewContribution($event)" (applyTextbookPreference)="applyPreferences($event)"></app-textbook-list>
                 </div>
             </div>
             <div class="ui segment  p-0 m-0 mt-4 sb-bg-color-white dynamicHeight"  suiTabContent="1">
@@ -284,8 +290,6 @@
                 </div>
             </div>
             <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="3">
-                <app-loader *ngIf='showUsersLoader'></app-loader>
-
 				<div class="ui container">
 					<div class="pt-24">
 					  <div class="d-flex flex-ai-center flex-jc-space-between sb-pageSection">
@@ -294,7 +298,8 @@
 						  <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{sourcingOrgUserCnt || 0}}</span>
 						</div>
 					  </div>
-					</div>
+                    </div>
+                    <app-loader *ngIf='showUsersLoader'></app-loader>
 					<div class="sb-table-responsive desktop-o-x-unset" *ngIf="sourcingOrgUserCnt > 0">
 					  <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
 						<thead class="sb-table-header sb-table-thead-gray">
@@ -307,6 +312,7 @@
                                     <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
                                 </span>
                             </th>
+                            <th class="w-10">{{resourceService.frmelmnts.lbl.emailOrMobile}}</th>
 
                             <th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('mediums')">
                                 {{resourceService.frmelmnts.lbl.mediums}} &nbsp;&nbsp;
@@ -345,6 +351,10 @@
 						<tbody class="sb-table-body">
 						  <tr *ngFor="let orgUser of sourcingOrgUser; let i= index;">
                             <td>{{orgUser?.firstName}} {{orgUser?.lastName}}</td>
+                            <td>
+                                <div *ngIf="orgUser?.maskedEmail">{{orgUser?.maskedEmail}}</div>
+                                <div *ngIf="orgUser?.maskedPhone"> {{orgUser?.maskedPhone}}</div>
+                            </td>
                             <td>{{orgUser?.framework?.medium?.join(', ')}}</td>
 							<td>{{orgUser?.framework?.gradeLevel?.join(', ')}}</td>
 							<td>{{orgUser?.framework?.subject?.join(', ')}}</td>
@@ -434,8 +444,20 @@
                                             <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                         </span>
                                     </th>
-                                    <th class="">{{resourceService.frmelmnts.lbl.accepted}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
-                                    <th class="">{{resourceService.frmelmnts.lbl.rejected}}<i class="fa fa-sort ml-4" aria-hidden="true"></i></th>
+                                    <th (click)="sortCollection('sourcingAccepted', contributionDashboardData)" class="va-top sb-sorting cursor-pointer">{{resourceService.frmelmnts.lbl.accepted}}
+                                        <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'sourcingAccepted' "></i>
+                                        <span  *ngIf="sortColumn == 'sourcingAccepted'" class="d-inline-block">
+                                            <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+                                            <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th (click)="sortCollection('sourcingRejected', contributionDashboardData)" class="va-top sb-sorting cursor-pointer">{{resourceService.frmelmnts.lbl.rejected}}
+                                        <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'sourcingRejected' "></i>
+                                        <span  *ngIf="sortColumn == 'sourcingRejected'" class="d-inline-block">
+                                            <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+                                            <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+                                        </span>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -456,6 +478,43 @@
                 </div>
                 <div class="sb-table-responsive" *ngIf="!showDashboardLoader && contributionDashboardData.length == 0">
                     <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0146'}"></app-no-result>
+                </div>
+            </div>
+            <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="5">
+                <div class="ui container pt-24 m-0">
+                    <div class="sb-table-responsive">
+                        <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
+                            <thead class="sb-table-header sb-table-thead-gray">
+                                <tr>
+                                    <th class="w-10">{{resourceService.frmelmnts.lbl.reportName}}</th>
+                                    <th class="w-25">{{resourceService.frmelmnts.lbl.description}}</th>
+                                    <th class="w-5">&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.TextbookLevelReportName}}</td>
+                                    <td>{{resourceService.frmelmnts.lbl.TextbookLevelReportDescription}}</td>
+                                    <td class="text-center"><button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('textbookLevelReport')"
+                                        appTelemetryInteract
+                                                        [telemetryInteractEdata]="getTelemetryInteractEdata('download-textbookLevelReport', 'click', 'program-nominations')"
+                                                        [telemetryInteractObject]="telemetryInteractObject"
+                                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                                        [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.download}}</button></td>
+                                </tr>
+                                <tr>
+                                    <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.ChapterLevelReportName}}</td>
+                                    <td>{{resourceService.frmelmnts.lbl.ChapterLevelReportDescription}}</td>
+                                    <td class="text-center"><button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('chapterLevelReport')"
+                                        appTelemetryInteract
+                                                        [telemetryInteractEdata]="getTelemetryInteractEdata('download-chapterLevelReport', 'click', 'program-nominations')"
+                                                        [telemetryInteractObject]="telemetryInteractObject"
+                                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                                        [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.download}}</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </sui-tabset>

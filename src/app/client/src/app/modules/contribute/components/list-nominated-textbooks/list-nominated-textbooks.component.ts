@@ -1,8 +1,9 @@
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService, PaginationService} from '@sunbird/shared';
 import { ProgramsService, PublicDataService, UserService, FrameworkService, RegistryService, ActionService } from '@sunbird/core';
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild} from '@angular/core';
 import { tap, first } from 'rxjs/operators';
+import { FormControl, FormBuilder, Validators, FormGroup, FormArray } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -31,7 +32,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public telemetryImpression: IImpressionEventInput;
   public component: any;
   public sessionContext: ISessionContext = {};
-  public programContext: any = {};
   public chapterListComponentInput: IChapterListComponentInput = {};
   public dynamicInputs;
   public currentStage: any;
@@ -67,6 +67,13 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public directionOrgUsers = 'asc';
   public sortColumnOrgUsers = '';
   public showLoader = true;
+  showTextbookFiltersModal = false;
+  textbookFiltersApplied = false;
+  setPreferences = {};
+  prefernceForm: FormGroup;
+  sbFormBuilder: FormBuilder;
+  userPreferences: any = {};
+  @ViewChild('prefModal') prefModal;
   public paginatedContributorOrgUsers: any = [];
   public allContributorOrgUsers: any = [];
   showUsersLoader = true;
@@ -74,6 +81,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   pager: IPagination;
   pageNumber = 1;
   pageLimit = 200;
+  sharedContext;
 
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private configService: ConfigService, private publicDataService: PublicDataService,
@@ -81,22 +89,25 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public toasterService: ToasterService, private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
   public frameworkService: FrameworkService, public userService: UserService, public registryService: RegistryService,
   public activeRoute: ActivatedRoute, private collectionHierarchyService: CollectionHierarchyService, public actionService: ActionService,
-  private paginationService: PaginationService ) {
+  private paginationService: PaginationService, private formBuilder: FormBuilder) {
     this.programId = this.activatedRoute.snapshot.params.programId;
+    this.sbFormBuilder = formBuilder;
    }
 
   ngOnInit() {
+    this.prefernceForm = this.sbFormBuilder.group({
+      medium: [],
+      subject: [],
+      gradeLevel: [],
+    });
     this.getProgramDetails();
-    this.getNominationStatus();
     this.programStageService.initialize();
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
       this.changeView();
     });
     this.programStageService.addStage('listNominatedTextbookComponent');
-
     this.currentStage = 'listNominatedTextbookComponent';
-
     this.telemetryInteractCdata = [{
       id: this.activatedRoute.snapshot.params.programId,
       type: 'Program_ID'
@@ -107,6 +118,73 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     };
   }
 
+  getProgramDetails() {
+    const req = {
+      url: `program/v1/read/${this.programId}`
+    };
+    this.programsService.get(req).subscribe((programDetails) => {
+      this.programDetails = _.get(programDetails, 'result');
+      this.programDetails.config = JSON.parse(this.programDetails.config);
+      this.programDetails.config.medium = _.compact(this.programDetails.config.medium);
+      this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
+      this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
+      this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
+
+      this.roles = _.get(this.programDetails, 'config.roles');
+      this.roleNames = _.map(this.roles, 'name');
+
+      this.fetchFrameWorkDetails();
+      this.getNominationStatus();
+
+      this.setActiveDate();
+    }, error => {
+      // TODO: navigate to program list page
+      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+      this.toasterService.error(errorMes || 'Fetching program details failed');
+    });
+  }
+
+  applyPreferences(preferences?) {
+    if (_.isUndefined(preferences)) {
+      preferences = {};
+    }
+    this.textbookFiltersApplied = false;
+    this.setPreferences['medium'] = [];
+    this.setPreferences['subject'] = [];
+    this.setPreferences['gradeLevel'] = [];
+
+    // tslint:disable-next-line: max-line-length
+    this.programsService.setUserPreferencesforProgram(this.userService.userProfile.identifier, this.programId, preferences, 'contributor').subscribe(
+      (response) => {
+        this.userPreferences =  response.result;
+        if (!_.isEmpty(this.userPreferences.contributor_preference)) {
+          this.textbookFiltersApplied = true;
+          // tslint:disable-next-line: max-line-length
+          this.setPreferences['medium'] = (this.userPreferences.contributor_preference.medium) ? this.userPreferences.contributor_preference.medium : [];
+          // tslint:disable-next-line: max-line-length
+          this.setPreferences['subject'] = (this.userPreferences.contributor_preference.subject) ? this.userPreferences.contributor_preference.subject : [];
+          // tslint:disable-next-line: max-line-length
+          this.setPreferences['gradeLevel'] = (this.userPreferences.contributor_preference.gradeLevel) ? this.userPreferences.contributor_preference.gradeLevel : [];
+        }
+      },
+      (error) => {
+        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+        this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+    });
+    this.getProgramTextbooks(preferences);
+  }
+
+  applyTextbookFilters() {
+    this.prefModal.deny();
+    const prefData = {
+        ...this.prefernceForm.value
+    };
+    this.applyPreferences(prefData);
+  }
+  resetTextbookFilters() {
+    this.prefModal.deny();
+    this.applyPreferences();
+  }
   sortCollection(column) {
     this.contributorTextbooks = this.programsService.sortCollection(this.tempSortTextbooks, column, this.direction);
     if (this.direction === 'asc' || this.direction === '') {
@@ -117,55 +195,26 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     this.sortColumn = column;
   }
 
-  getProgramDetails() {
-    this.fetchProgramDetails().subscribe((programDetails) => {
-      this.programDetails = _.get(programDetails, 'result');
-      this.roles = _.get(this.programDetails, 'config.roles');
-      this.roleNames = _.map(this.roles, 'name');
-      this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
-      this.setActiveDate();
-    }, error => {
-      // TODO: navigate to program list page
-      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-      this.toasterService.error(errorMes || 'Fetching program details failed');
-    });
-  }
-
-  fetchProgramDetails() {
-    const req = {
-      url: `program/v1/read/${this.programId}`
-    };
-    return this.programsService.get(req).pipe(tap((programDetails: any) => {
-      programDetails.result.config = JSON.parse(programDetails.result.config);
-      this.programDetails = programDetails.result;
-      this.programContext = this.programDetails;
-      this.mediums = _.join(this.programDetails.config['medium'], ', ');
-      this.grades = _.join(this.programDetails.config['gradeLevel'], ', ');
-
-      this.sessionContext.framework = _.get(this.programDetails, 'config.framework');
-      if (this.sessionContext.framework) {
-        this.fetchFrameWorkDetails();
-      }
-    }));
-  }
-
   public fetchFrameWorkDetails() {
-    this.frameworkService.initialize(this.sessionContext.framework);
-    this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
-      if (frameworkDetails && !frameworkDetails.err) {
-        this.sessionContext.frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
-      }
-    }, error => {
-      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-      this.toasterService.error(errorMes || 'Fetching framework details failed');
-    });
+    this.sessionContext.framework = _.get(this.programDetails, 'config.framework');
+    if (this.sessionContext.framework) {
+      this.frameworkService.initialize(this.sessionContext.framework);
+      this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
+        if (frameworkDetails && !frameworkDetails.err) {
+          this.sessionContext.frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
+        }
+      }, error => {
+        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+        this.toasterService.error(errorMes || 'Fetching framework details failed');
+      });
+    }
   }
 
-  getProgramTextbooks() {
+  getProgramTextbooks(preferencefilters?) {
      const option = {
       url: 'content/composite/v1/search',
        data: {
-      request: {
+        request: {
          filters: {
           objectType: 'content',
           programId: this.activatedRoute.snapshot.params.programId,
@@ -175,10 +224,20 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       }
       }
     };
-
+    if (!isUndefined(preferencefilters)) {
+      if (!_.isEmpty(_.get(preferencefilters, 'medium'))) {
+        option.data.request.filters['medium'] = _.get(preferencefilters, 'medium');
+      }
+      if (!_.isEmpty(_.get(preferencefilters, 'gradeLevel'))) {
+        option.data.request.filters['gradeLevel'] = _.get(preferencefilters, 'gradeLevel');
+      }
+      if (!_.isEmpty(_.get(preferencefilters, 'subject'))) {
+        option.data.request.filters['subject'] = _.get(preferencefilters, 'subject');
+      }
+    }
     this.httpClient.post<any>(option.url, option.data).subscribe(
       (res) =>  {
-        if (res && res.result && res.result.content) {
+        if (res && res.result) {
           this.showTexbooklist(res);
         }
       },
@@ -188,7 +247,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
 
   showTexbooklist(res) {
     // tslint:disable-next-line:max-line-length
-    const contributorTextbooks = (res.result.content.length && this.nominationDetails.collection_ids) ? _.filter(res.result.content, (collection) => {
+    const contributorTextbooks = (res.result.content && res.result.content.length && this.nominationDetails.collection_ids) ? _.filter(res.result.content, (collection) => {
       return _.includes(this.nominationDetails.collection_ids, collection.identifier);
     }) : [];
     if (!_.isEmpty(contributorTextbooks) && this.isNominationOrg()) {
@@ -257,12 +316,22 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     this.sessionContext.programId = this.programDetails.program_id;
     this.sessionContext.collection = collection.identifier;
     this.sessionContext.collectionName = collection.name;
+    this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
+      return {...obj, [context]: this.getSharedContextObjectProperty(context)};
+    }, {});
+    this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
+      return {...obj, [context]: collection[context] || this.sharedContext[context]};
+    }, this.sharedContext);
+    _.forEach(['gradeLevel', 'medium', 'subject'], (val) => {
+       this.checkArrayCondition(val);
+    });
+    this.sessionContext = _.assign(this.sessionContext, this.sharedContext);
     this.dynamicInputs = {
       chapterListComponentInput: {
         sessionContext: this.sessionContext,
         collection: collection,
-        config: _.find(this.programContext.config.components, { 'id': 'ng.sunbird.chapterList' }),
-        programContext: this.programContext,
+        config: _.find(this.programDetails.config.components, { 'id': 'ng.sunbird.chapterList' }),
+        programContext: this.programDetails,
         role: {
           currentRole: this.sessionContext.currentRole
         }
@@ -270,6 +339,26 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     };
     this.showChapterList = true;
     this.programStageService.addStage('chapterListComponent');
+  }
+
+  getSharedContextObjectProperty(property) {
+    if (property === 'channel') {
+       return _.get(this.programDetails, 'config.scope.channel');
+    } else if ( property === 'topic' ) {
+      return null;
+    } else {
+      const collectionComComponent = _.find(this.programDetails.config.components, { 'id': 'ng.sunbird.collection' });
+      const filters =  collectionComComponent.config.filters;
+      const explicitProperty =  _.find(filters.explicit, {'code': property});
+      const implicitProperty =  _.find(filters.implicit, {'code': property});
+      return (implicitProperty) ? implicitProperty.range || implicitProperty.defaultValue :
+       explicitProperty.range || explicitProperty.defaultValue;
+    }
+  }
+
+  checkArrayCondition(param) {
+    // tslint:disable-next-line:max-line-length
+    this.sharedContext[param] = _.isArray(this.sharedContext[param]) ? this.sharedContext[param] : _.split(this.sharedContext[param], ',');
   }
 
   canUploadContent() {
@@ -352,15 +441,37 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           this.sessionContext.currentRole = 'CONTRIBUTOR';
           this.sessionContext.currentOrgRole = 'individual';
         }
-        if (this.programContext.config) {
-          const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
+        if (this.programDetails.config) {
+          const getCurrentRoleId = _.find(this.programDetails.config.roles, {'name': this.sessionContext.currentRole});
           this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
         }
         if (this.isUserOrgAdmin()) {
           this.getContributionOrgUsers();
         }
       }
-      this.getProgramTextbooks();
+
+      this.programsService.getUserPreferencesforProgram(this.userService.userProfile.identifier, this.programId).subscribe(
+        (prefres) => {
+          let preffilter = {};
+          if (!isNullOrUndefined(prefres.result)) {
+            this.userPreferences = prefres.result;
+            preffilter = _.get(this.userPreferences, 'contributor_preference');
+          }
+          if (!_.isEmpty(this.userPreferences.contributor_preference)) {
+            this.textbookFiltersApplied = true;
+            // tslint:disable-next-line: max-line-length
+            this.setPreferences['medium'] = (this.userPreferences.contributor_preference.medium) ? this.userPreferences.contributor_preference.medium : [];
+            // tslint:disable-next-line: max-line-length
+            this.setPreferences['subject'] = (this.userPreferences.contributor_preference.subject) ? this.userPreferences.contributor_preference.subject : [];
+            // tslint:disable-next-line: max-line-length
+            this.setPreferences['gradeLevel'] = (this.userPreferences.contributor_preference.gradeLevel) ? this.userPreferences.contributor_preference.gradeLevel : [];
+          }
+          this.getProgramTextbooks(preffilter);
+      },(err) => { // TODO: navigate to program list page
+        this.getProgramTextbooks();
+        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+        this.toasterService.warning(errorMes || 'Fetching Preferences  failed');
+      });
     }, error => {
       this.toasterService.error('Failed fetching current nomination status');
     });
@@ -402,11 +513,10 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     this.pager = this.paginationService.getPager(this.OrgUsersCnt, this.pageNumber, this.pageLimit);
   }
 
-
   onRoleChange(user) {
     const newRole = user.projectselectedRole;
     if (!_.includes(this.roleNames, newRole)) {
-      this.toasterService.error("Role not found");
+      this.toasterService.error(this.resourceService.messages.emsg.roles.m0003);
       return;
     }
     let progRoleMapping = this.nominationDetails.rolemapping;
@@ -418,16 +528,16 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     if (!_.includes(programRoleNames, newRole)) {
       progRoleMapping[newRole] = [];
     }
-
     _.forEach(progRoleMapping, (users, role) => {
-      // Add to current role array
+      // Add to selected user to current selected role's array
       if (newRole === role && !_.includes(users, user.identifier)) {
         users.push(user.identifier);
       }
-      // Remove from other role array
+      // Remove selected user from other role's array
       if (newRole !== role && _.includes(users, user.identifier)) {
         _.remove(users, (id) => id === user.identifier);
       }
+      // Remove duplicate users ids and falsy values
       progRoleMapping[role] = _.uniq(_.compact(users));
     });
     const req = {
@@ -437,13 +547,13 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           'rolemapping': progRoleMapping
         }
       };
-
     const updateNomination = this.programsService.updateNomination(req);
     updateNomination.subscribe(response => {
-      this.toasterService.success('Roles updated');
+      this.nominationDetails.rolemapping = progRoleMapping;
+      this.toasterService.success(this.resourceService.messages.smsg.roles.m0001);
     }, error => {
       console.log(error);
-      this.toasterService.error("Something went wrong while updating the role");
+      this.toasterService.error(this.resourceService.messages.emsg.roles.m0002);
     });
   }
 

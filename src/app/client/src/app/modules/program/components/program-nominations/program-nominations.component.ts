@@ -83,6 +83,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   showNominationLoader = false;
   showUsersLoader = false;
   showDashboardLoader = false;
+  userPreferences = '';
+  sharedContext;
 
   pager: IPagination;
   pageNumber = 1;
@@ -178,17 +180,29 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.router.navigate([], { relativeTo: this.activatedRoute, queryParams: { tab: tab }, queryParamsHandling: 'merge' });
 
     if (tab === 'textbook' && !_.includes(this.visitedTab, 'textbook')) {
-      this.showTextbookLoader =  true;
       this.visitedTab.push('textbook');
-      this.getProgramCollection().subscribe(
-        (res) => { this.showTextbookLoader =  false; },
-        (err) => { // TODO: navigate to program list page
-          this.showTextbookLoader =  false;
+      this.showTextbookLoader = true;
+      this.programsService.getUserPreferencesforProgram(this.userProfile.identifier, this.programId).subscribe(
+          (prefres) => {
+            let preffilter = {};
+            if (!isNullOrUndefined(prefres.result)) {
+              this.userPreferences = prefres.result;
+              preffilter = _.get(this.userPreferences, 'sourcing_preference');
+            }
+            this.getProgramCollection(preffilter).subscribe((res) => {
+              this.showTextbookLoader  =  false;
+            }, (err) => { // TODO: navigate to program list page
+              this.showTextbookLoader  =  false;
+              const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+              this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+            })
+        },(err) => { // TODO: navigate to program list page
+          this.showTextbookLoader  =  false;
           const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-          this.toasterService.warning(errorMes || 'Fetching textbooks failed');
-        }
-      );
+          this.toasterService.warning(errorMes || 'Fetching Preferences  failed');
+      });
     }
+
     if (tab === 'nomination' && !_.includes(this.visitedTab, 'nomination')) {
       this.showNominationLoader =  true;
       this.visitedTab.push('nomination');
@@ -348,11 +362,11 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       });
   }
 
-  getProgramCollection () {
-    return this.collectionHierarchyService.getCollectionWithProgramId(this.programId).pipe(
+  getProgramCollection (preferencefilters?) {
+    return this.collectionHierarchyService.getCollectionWithProgramId(this.programId, preferencefilters).pipe(
       tap((response) => {
-        if (response && response.result && response.result.content && response.result.content.length) {
-          this.programCollections = response.result.content;
+        if (response && response.result) {
+          this.programCollections = response.result.content || [];
         }
       }),
       catchError(err => {
@@ -484,6 +498,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.programsService.get(req).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
       this.programDetails.config = JSON.parse(this.programDetails.config);
+      this.programDetails.config.medium = _.compact(this.programDetails.config.medium);
+      this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
+      this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
+
       this.fetchFrameWorkDetails();
 
       forkJoin(this.getAggregatedNominationsCount(), this.getcontentAggregationData()).subscribe(
@@ -599,15 +617,27 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
     if (this.activeTab === 'textbook') {
       this.showTextbookLoader = true;
-      this.getProgramCollection().subscribe(
-        (res) => { this.showTextbookLoader  =  false; },
-        (err) => { // TODO: navigate to program list page
+        this.programsService.getUserPreferencesforProgram(this.userProfile.identifier, this.programId).subscribe(
+          (prefres) => {
+            let preffilter = {};
+            if (!isNullOrUndefined(prefres.result)) {
+              this.userPreferences = prefres.result;
+              preffilter = _.get(this.userPreferences, 'sourcing_preference');
+            }
+            this.getProgramCollection(preffilter).subscribe((res) => {
+              this.showTextbookLoader  =  false;
+            }, (err) => { // TODO: navigate to program list page
+              this.showTextbookLoader  =  false;
+              const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+              this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+            })
+        },(err) => { // TODO: navigate to program list page
           this.showTextbookLoader  =  false;
           const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-          this.toasterService.warning(errorMes || 'Fetching textbooks failed');
-        }
-      );
+          this.toasterService.warning(errorMes || 'Fetching Preferences  failed');
+      });
     }
+
     if (this.activeTab === 'nomination') {
       this.showNominationLoader =  true;
       this.getPaginatedNominations(0);
@@ -672,11 +702,40 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     }
   }
 
+  applyPreferences(preferences?) {
+    this.showTextbookLoader  =  true;
+    if (_.isUndefined(preferences)) {
+      preferences = {};
+    }
+    // tslint:disable-next-line: max-line-length
+    forkJoin(this.programsService.setUserPreferencesforProgram(this.userProfile.identifier, this.programId, preferences, 'sourcing'), this.getProgramCollection(preferences)).subscribe(
+      (response) => {
+        this.userPreferences =  _.get(_.first(response), 'result');
+        this.showTextbookLoader  =  false;
+      },
+      (error) => {
+        this.showTextbookLoader  =  false;
+        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+        this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+    });
+  }
+
   viewContribution(collection) {
     this.component = ChapterListComponent;
     this.sessionContext.programId = this.programDetails.program_id;
     this.sessionContext.collection = collection.identifier;
     this.sessionContext.collectionName = collection.name;
+
+    this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
+      return {...obj, [context]: this.getSharedContextObjectProperty(context)};
+    }, {});
+    this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
+      return {...obj, [context]: collection[context] || this.sharedContext[context]};
+    }, this.sharedContext);
+    _.forEach(['gradeLevel', 'medium', 'subject'], (val) => {
+       this.checkArrayCondition(val);
+    });
+    this.sessionContext = _.assign(this.sessionContext, this.sharedContext);
     this.dynamicInputs = {
       chapterListComponentInput: {
         sessionContext: this.sessionContext,
@@ -689,6 +748,26 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       }
     };
     this.programStageService.addStage('chapterListComponent');
+  }
+
+  getSharedContextObjectProperty(property) {
+    if (property === 'channel') {
+       return _.get(this.programDetails, 'config.scope.channel');
+    } else if ( property === 'topic' ) {
+      return null;
+    } else {
+      const collectionComComponent = _.find(this.programDetails.config.components, { 'id': 'ng.sunbird.collection' });
+      const filters =  collectionComComponent.config.filters;
+      const explicitProperty =  _.find(filters.explicit, {'code': property});
+      const implicitProperty =  _.find(filters.implicit, {'code': property});
+      return (implicitProperty) ? implicitProperty.range || implicitProperty.defaultValue :
+       explicitProperty.range || explicitProperty.defaultValue;
+    }
+  }
+
+  checkArrayCondition(param) {
+    // tslint:disable-next-line:max-line-length
+    this.sharedContext[param] = _.isArray(this.sharedContext[param]) ? this.sharedContext[param] : _.split(this.sharedContext[param], ',');
   }
 
   public isEmptyObject(obj) {
@@ -822,5 +901,81 @@ getAggregatedNominationsCount() {
       return of(false);
     })
   );
+}
+
+downloadReport(report) {
+  const req = {
+    url: `program/v1/report`,
+    data: {
+        'request': {
+            'filters': {
+                program_id: [this.programId],
+                report: report
+        }
+      }
+    }
+  };
+  return this.programsService.post(req).subscribe((res) => {
+    if (res.result && res.result.tableData && res.result.tableData.length) {
+      try {
+      const resObj = res.result.tableData[0];
+      let headers = [];
+      if (report === 'textbookLevelReport') {
+        headers = this.textbookLevelReportHeaders();
+      } else if (report === 'chapterLevelReport') {
+        headers = this.chapterLevelReportHeaders();
+      }
+      const tableData = [];
+      if (_.isArray(resObj) && resObj.length) {
+        _.forEach(resObj, (obj) => {
+          tableData.push(_.assign({'Project Name': this.programDetails.name.trim()}, obj));
+        });
+      }
+      const csvDownloadConfig = {
+        filename: this.programDetails.name.trim(),
+        tableData: tableData,
+        headers: headers,
+        showTitle: false
+      };
+        this.programsService.generateCSV(csvDownloadConfig);
+      } catch (err) {
+        this.toasterService.error(this.resourceService.messages.emsg.projects.m0005);
+      }
+    } else {
+      this.toasterService.error(this.resourceService.messages.emsg.projects.m0005);
+    }
+  }, (err) => {
+    this.toasterService.error(this.resourceService.messages.emsg.projects.m0005);
+  });
+}
+
+textbookLevelReportHeaders() {
+  const headers = [
+    this.resourceService.frmelmnts.lbl.projectName,
+    this.resourceService.frmelmnts.lbl.profile.Medium,
+    this.resourceService.frmelmnts.lbl.profile.Classes,
+    this.resourceService.frmelmnts.lbl.profile.Subjects,
+    this.resourceService.frmelmnts.lbl.textbookName,
+    this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn6,
+    this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn7,
+    this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn8,
+    this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn9,
+    ..._.map(this.programContentTypes.split(', '), type => `${this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn10} ${type}` )
+  ];
+  return headers;
+}
+
+chapterLevelReportHeaders() {
+  const headers = [
+    this.resourceService.frmelmnts.lbl.projectName,
+    this.resourceService.frmelmnts.lbl.profile.Medium,
+    this.resourceService.frmelmnts.lbl.profile.Classes,
+    this.resourceService.frmelmnts.lbl.profile.Subjects,
+    this.resourceService.frmelmnts.lbl.textbookName,
+    this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn6,
+    this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn7,
+    ..._.map(this.programContentTypes.split(', '), type => `${this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn8} ${type}` )
+  ];
+  return headers;
 }
 }

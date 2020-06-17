@@ -253,7 +253,9 @@
       "NOMINATION_LIST_DOWNLOAD": "program/v1/nomination/list/download",
       "COLLECTION_LINK": "program/v1/collection/link",
       "CONTENTTYPE_LIST": "program/v1/contenttypes/list",
-      "CONFIGURATION_SEARCH": "program/v1/configuration/search"
+      "CONFIGURATION_SEARCH": "program/v1/configuration/search",
+      "PREFERENCE_READ": "program/v1/preference/read",
+      "PREFERENCE_ADD": "program/v1/preference/create"
     },
     "DOCKCONTENT": {
       "CREATE": "content/v3/create",
@@ -262,6 +264,9 @@
       "RETIRE": "content/v3/retire",
       "REJECT": "content/v3/reject",
       "FLAG": "content/v3/flag"
+    },
+    "RECAPTCHA": {
+      "VALIDATE": "/validate/recaptcha"
     }
   }
 }

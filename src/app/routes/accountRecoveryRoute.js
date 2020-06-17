@@ -6,6 +6,8 @@ const uuidv1 = require('uuid/v1')
 const proxy = require('express-http-proxy')
 const proxyUtils = require('../proxy/proxyUtils.js')
 const logger = require('sb_logger_util_v2');
+const {encrypt, encriptWithTime} = require('../helpers/crypto');
+
 
 module.exports = (app) => {
 
@@ -40,10 +42,20 @@ module.exports = (app) => {
             const data = JSON.parse(proxyResData.toString('utf8'));
             if (data.responseCode === 'OK') {
               req.session.otpVerifiedFor = req.body;
+              const encrypt = {
+                key: req.body.request.key
+              }
+              if (req.body.request.userId) {
+                encrypt['id'] = req.body.request.userId
+              }
+              var timeInMin = 5;
+              var validator = encriptWithTime(encrypt, timeInMin);
+              data['reqData'] = validator;
             }
-            return proxyResData;
+            return data;
         } catch(err) {
           logger.error({
+            body: JSON.stringify(req.body),
             msg: 'otp verification failed',
             error: JSON.stringify(err)
           });

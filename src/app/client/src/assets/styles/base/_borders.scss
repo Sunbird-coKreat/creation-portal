@@ -37,3 +37,6 @@
 .bt-1{
     border-top:solid 0.5px $gray-100;
 }
+.b-100 {
+    @include border(border,1px,$gray-100);
+}
