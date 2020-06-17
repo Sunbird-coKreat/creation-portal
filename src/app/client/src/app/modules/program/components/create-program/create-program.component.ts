@@ -519,6 +519,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       content_submission_enddate: ['', Validators.required],
       content_types: ['', Validators.required],
       rewards: [],
+      skip_two_level_review: [false]
     });
 
     this.collectionListForm = this.sbFormBuilder.group({
@@ -620,6 +621,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         // tslint:disable-next-line:max-line-length
         _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'framework' }).defaultValue = this.userFramework;
       }
+      this.programConfig.skip_two_level_review = this.createProgramForm.value.skip_two_level_review;
       this.programData['sourcing_org_name'] = this.userprofile.rootOrgName;
       this.programData['rootorg_id'] = this.userprofile.rootOrgId;
       this.programData['createdby'] = this.userprofile.id;

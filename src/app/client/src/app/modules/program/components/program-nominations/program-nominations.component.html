@@ -22,12 +22,12 @@
                     </ng-template>
                 <p class="fs-0-785 font-weight-normal pr-10 sb__ellipsis sb__ellipsis--three">{{ programDetails?.description }} </p>
             </div>
-            <div class="sb-meta-data-container sb-meta-data-column w-10 px-10 w-30">
+            <div class="sb-meta-data-container sb-meta-data-column px-10 w-20">
                     <label class="mb-0">{{resourceService?.frmelmnts?.lbl?.contentType}}</label>
                     <p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{ programContentTypes }}"><span>{{ programContentTypes }}</span></p>
 			</div>
             <ng-container *ngIf="programDetails">
-                <div class="program-timeline w-35">
+                <div class="program-timeline w-30">
                     <div class="program-timeline-item">
                         <div class="status" [class.active]="activeDate === 'nomination_enddate'">
                             <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.nominationSubmission }}</div>
@@ -74,6 +74,13 @@
                     </div>
                 </div>
             </ng-container>
+            <div class="sb-meta-data-container sb-meta-data-column w-20" *ngIf="programDetails?.config?.skip_two_level_review">
+                <i class="icon check circle sb-color-secondary-200 fs-1-286 va-text-top"></i>
+                <label class="font-weight-normal fs-0-92">{{resourceService.frmelmnts.lbl.skipTwoLevelReviewEnabled}}</label>
+                <div class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block va-top pl-20">
+                    {{resourceService.frmelmnts.lbl.CreateProgramSkipLevelNote}}
+                </div>
+            </div>
         </div>
     </div>
 

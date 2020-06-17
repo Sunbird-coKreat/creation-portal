@@ -1,5 +1,6 @@
 // tslint:disable:max-line-length
 var programConfig = {
+    'skip_two_level_review' : false,
     '_comments': '',
     'loginReqired': true,
     'framework': 'NCF',

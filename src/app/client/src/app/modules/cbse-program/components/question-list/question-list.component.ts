@@ -104,9 +104,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getContentMetadata(this.sessionContext.resourceIdentifier);
     this.getLicences();
     this.preprareTelemetryEvents();
-    if (_.get(this.programContext, 'config.two_level_review') === false && _.get(this.sessionContext,'currentRole') === 'CONTRIBUTOR' && _.get(this.sessionContext,'sampleContent') === false) {
-      this.sessionContext.currentOrgRole = 'individual';
-    }
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
 
     this.notify = this.helperService.getNotification().subscribe((action) => {
