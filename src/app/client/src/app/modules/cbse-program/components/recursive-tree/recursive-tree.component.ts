@@ -115,4 +115,8 @@ export class RecursiveTreeComponent implements OnInit {
     this.userService.userProfile.userRoles.includes('CONTENT_REVIEWER'));
   }
 
+  goToAddLibrary(identifier) {
+    this.router.navigateByUrl('/contribute/nominatedtextbooks/mvcexplore/' + identifier);
+  }
+
 }
