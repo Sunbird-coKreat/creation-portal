@@ -91,6 +91,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   uploadedDocument;
   showAddButton = false;
   loading = false;
+  isOpenNominations = true;
   isClosable = true;
   uploader;
   acceptPdfType: any;
@@ -463,7 +464,19 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programScope['medium'] = mediumOption;
     }
   }
-
+  openForNominations(status) {
+    this.isOpenNominations = status;
+    if (status) {
+      this.createProgramForm.controls['nomination_enddate'].setValidators(Validators.required);
+    } else {
+    this.createProgramForm.controls['nomination_enddate'].clearValidators();
+    this.createProgramForm.controls['shortlisting_enddate'].clearValidators();
+    this.createProgramForm.controls['nomination_enddate'].setValue(null);
+    this.createProgramForm.controls['shortlisting_enddate'].setValue(null);
+    }
+    this.createProgramForm.controls['nomination_enddate'].updateValueAndValidity();
+    this.createProgramForm.controls['shortlisting_enddate'].updateValueAndValidity();
+  }
   onMediumChange() {
     // const thisClassOption = this.createProgramForm.value.gradeLevel;
 
@@ -552,6 +565,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     const programEndDate = moment(formData.program_end_date);
     const today = moment(moment().format('YYYY-MM-DD'));
 
+    if (this.isOpenNominations) {
     // nomination date should be >= today
     if (!nominationEndDate.isSameOrAfter(today)) {
       this.toasterService.error(this.resource.messages.emsg.createProgram.m0001);
@@ -576,6 +590,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         this.toasterService.error(this.resource.messages.emsg.createProgram.m0005);
         hasError = true;
       }
+    }
     }
 
     // end date should be >= submission date
@@ -804,7 +819,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programConfig.medium = this.mediumOption;
     this.programConfig.subject = this.subjectsOption;
     data['config'] = this.programConfig;
-    data['status'] = 'Live';
+    if (this.isOpenNominations) {
+      data['status'] = 'Live';
+    } else {
+      data['status'] = 'Unlisted';
+    }
 
     this.programsService.updateProgram(data).subscribe(
       (res) => {

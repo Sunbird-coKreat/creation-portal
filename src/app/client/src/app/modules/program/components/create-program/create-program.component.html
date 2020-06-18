@@ -67,9 +67,24 @@
 									</div>
 								</div>
 							</div>
-
-							<div class="twelve wide tablet three wide computer column">
-								<div class="required field">
+							<div class="twelve wide column sb-field-group pt-0">
+								<div class="sb-field-group mb-8">
+								   <label class="fs-0-92">{{resource.frmelmnts.lbl.isThisProjectOpenForNominations}}</label>
+								   <div class="sb-field mt-4 d-inline-flex pl-20">
+									  <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+										 <input id="yes" type="radio" name="openNominations" (click)="openForNominations(true)" checked>
+										 <label for="yes">{{resource.frmelmnts.lbl.yes}}</label>
+									  </div>
+									  <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+										 <input id="no" type="radio"  name="openNominations" (click)="openForNominations(false)" >
+										 <label for="no">{{resource.frmelmnts.lbl.no}}</label>
+									  </div>
+								   </div>
+								</div>
+							 </div>
+				
+							 <div class="twelve wide tablet three wide computer column" *ngIf="isOpenNominations === true">
+								<div class="field">
 									<label class="d-block">{{resource.frmelmnts.lbl.nominationEndDate}}
 										<i class="pull-right question circle link icon pull-right" suiPopup
 											popupDelay="500" [popupPlacement]="'left'"
@@ -90,7 +105,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="twelve wide tablet three wide computer column">
+							<div class="twelve wide tablet three wide computer column" *ngIf="isOpenNominations === true">
 								<div class="field">
 									<label class="d-block">{{resource.frmelmnts.lbl.nominationShortlistingDate}}
 										<i class="pull-right question circle link icon pull-right" suiPopup
@@ -107,7 +122,7 @@
 										</div>
 									</div>
 								</div>
-							</div>
+							</div> 
 
 							<div class="twelve wide tablet three wide computer column">
 								<div class="required field">
@@ -120,7 +135,7 @@
 										<div class="ui input right icon">
 											<i class="calendar icon date-calendar"></i>
 											<input [pickerMinDate]='getMinDate("content_submission_enddate")'
-												[pickerMaxDate]='getMaxDate("content_submission_enddate")'
+												[pickerMaxDate]='getMaxDate("content_submission_enddate")' 
 												formControlName="content_submission_enddate" suiDatepicker
 												[pickerMode]="'date'">
 										</div>
@@ -143,7 +158,7 @@
 										<div class="ui input right icon">
 											<i class="calendar icon date-calendar"></i>
 											<input [pickerMinDate]='getMinDate("program_end_date")'
-												formControlName="program_end_date" suiDatepicker [pickerMode]="'date'">
+											formControlName="program_end_date" suiDatepicker [pickerMode]="'date'">
 										</div>
 										<div class="ui pointing red basic label below "
 											*ngIf="createProgramForm.controls['program_end_date'].errors && createProgramForm.controls['program_end_date'].errors.required && (!createProgramForm.controls['program_end_date'].pristine || formIsInvalid)">
@@ -152,41 +167,43 @@
 									</div>
 								</div>
 							</div>
-							<div class="six wide column">
-								<div class="required field">
-									<label class="d-block">{{resource.frmelmnts.lbl.contentType}}
-										<i class="pull-right question circle link icon pull-right" suiPopup
-											popupDelay="500" [popupPlacement]="'left'"
-											popupText="{{resource.frmelmnts.lbl.contentTypesHint}}"></i>
-									</label>
-									<sui-multi-select class="selection" labelField="name" [hasLabels]="true"
-										formControlName="content_types" [options]="programScope.purpose"
-										valueField="value" #multiSelect>
-										<sui-select-option *ngFor="let option of programScope.purpose" [value]="option">
-										</sui-select-option>
-									</sui-multi-select>
-									<div class="ui pointing red basic label below "
-										*ngIf="createProgramForm.controls['content_types'].errors && createProgramForm.controls['content_types'].errors.required && (!createProgramForm.controls['content_types'].pristine || formIsInvalid)">
-										{{ resource.frmelmnts.lbl.contentTypesRequired }}
+							<div class="ui grid twelve wide column">
+								<div class="six wide column">
+									<div class="required field">
+										<label class="d-block">{{resource.frmelmnts.lbl.contentType}}
+											<i class="pull-right question circle link icon pull-right" suiPopup
+												popupDelay="500" [popupPlacement]="'left'"
+												popupText="{{resource.frmelmnts.lbl.contentTypesHint}}"></i>
+										</label>
+										<sui-multi-select class="selection" labelField="name" [hasLabels]="true"
+											formControlName="content_types" [options]="programScope.purpose"
+											valueField="value" #multiSelect>
+											<sui-select-option *ngFor="let option of programScope.purpose" [value]="option">
+											</sui-select-option>
+										</sui-multi-select>
+										<div class="ui pointing red basic label below "
+											*ngIf="createProgramForm.controls['content_types'].errors && createProgramForm.controls['content_types'].errors.required && (!createProgramForm.controls['content_types'].pristine || formIsInvalid)">
+											{{ resource.frmelmnts.lbl.contentTypesRequired }}
+										</div>
 									</div>
 								</div>
-							</div>
-							<div class="six wide column">
-								<div class="field">
-									<label class="d-block">{{resource.frmelmnts.lbl.uploadGuideline}}
-									</label>
-									<button
-										class="sb-btn sb-btn-primary sb-btn-normal"
-										(click)="initiateDocumentUploadModal()">
-										<i class="upload icon"></i>{{ resource.frmelmnts.btn.upload}}
-									</button>
-									<span *ngIf="uploadedDocument" class="sb-url">
-										<a href="{{uploadedDocument.artifactUrl}}" class="max-w-90 pull-left text-decor-none sb__ellipsis sb__ellipsis--breakAll" target="_blank">
-											{{uploadedDocument.name}}
-											<span class="blue-text-color-sunbird" *ngIf="uploadedDocument.name && uploadedDocument.name.length > 70">...</span>
-										</a>
-										<i class="icon remove sb-color-error va-top cursor-pointer" (click)="removeUploadedDocument();" ></i>
-									</span>
+								<div class="six wide column">
+									<div class="field">
+										<label class="d-block">{{resource.frmelmnts.lbl.uploadGuideline}}
+										</label>
+										<button
+											class="sb-btn sb-btn-primary sb-btn-normal"
+											(click)="initiateDocumentUploadModal()">
+											<i class="upload icon"></i>{{ resource.frmelmnts.btn.upload}}
+										</button>
+										<span *ngIf="uploadedDocument" class="sb-url">
+											<a href="{{uploadedDocument.artifactUrl}}" class="max-w-90 pull-left text-decor-none sb__ellipsis sb__ellipsis--breakAll" target="_blank">
+												{{uploadedDocument.name}}
+												<span class="blue-text-color-sunbird" *ngIf="uploadedDocument.name && uploadedDocument.name.length > 70">...</span>
+											</a>
+											<i class="icon remove sb-color-error va-top cursor-pointer" (click)="removeUploadedDocument();" ></i>
+										</span>
+									</div>
 								</div>
 							</div>
 							<div class="twelve wide column">
