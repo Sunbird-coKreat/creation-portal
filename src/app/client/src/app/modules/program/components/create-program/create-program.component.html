@@ -69,7 +69,7 @@
 							</div>
 							<div class="twelve wide column">
 								<div class="sb-checkbox sb-checkbox-primary">
-									<input type="checkbox" id="two_level_review" name="two_level_review" formControlName="two_level_review" [checked]="createProgramForm.value.two_level_review === 'No'" (change)="twoLevelReviewChanged($event)">
+									<input type="checkbox" id="two_level_review" name="two_level_review" formControlName="two_level_review" [checked]="createProgramForm.value.two_level_review === false" (change)="twoLevelReviewChanged($event)">
 									<label for="two_level_review">{{resource.frmelmnts.lbl.twoLevelReview}}</label>
 									</div>
 								<div class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-40 va-top pl-20">

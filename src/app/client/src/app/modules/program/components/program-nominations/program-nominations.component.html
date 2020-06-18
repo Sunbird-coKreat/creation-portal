@@ -74,11 +74,11 @@
                     </div>
                 </div>
             </ng-container>
-            <div class="sb-meta-data-container sb-meta-data-column w-20" *ngIf="programDetails?.config?.two_level_review === 'No'">
+            <div class="sb-meta-data-container sb-meta-data-column w-20" *ngIf="programDetails?.config?.two_level_review === false">
                 <i class="icon check circle sb-color-secondary-200 fs-1-286 va-text-top"></i>
-                <label class="font-weight-normal fs-0-92">{{resourceService.frmelmnts.lbl.twoLevelReviewEnabled}}</label>
+                <label class="font-weight-normal fs-0-92">{{resourceService.frmelmnts.lbl.twoLevelReviewSkipped}}</label>
                 <div class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block va-top pl-20">
-                    {{resourceService.frmelmnts.lbl.twoLevelReviewEnabledNote}}
+                    {{resourceService.frmelmnts.lbl.twoLevelReviewSkippedNote}}
                 </div>
             </div>
         </div>

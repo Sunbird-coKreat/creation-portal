@@ -519,7 +519,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       content_submission_enddate: ['', Validators.required],
       content_types: ['', Validators.required],
       rewards: [],
-      two_level_review: ['Yes']
+      two_level_review: [true]
     });
 
     this.collectionListForm = this.sbFormBuilder.group({
@@ -598,7 +598,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   twoLevelReviewChanged($event) {
-    this.createProgramForm.value.two_level_review = $event.target.checked ? 'No' : 'Yes';
+    this.createProgramForm.value.two_level_review = $event.target.checked ? false : true;
   }
 
   handleContentTypes() {
