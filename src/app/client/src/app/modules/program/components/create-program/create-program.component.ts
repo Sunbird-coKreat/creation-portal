@@ -519,7 +519,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       content_submission_enddate: ['', Validators.required],
       content_types: ['', Validators.required],
       rewards: [],
-      skip_two_level_review: [false]
+      two_level_review: ['Yes']
     });
 
     this.collectionListForm = this.sbFormBuilder.group({
@@ -597,6 +597,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.showTexbooklist();
   }
 
+  twoLevelReviewChanged($event) {
+    this.createProgramForm.value.two_level_review = $event.target.checked ? 'No' : 'Yes';
+  }
+
   handleContentTypes() {
     const contentTypes = this.createProgramForm.value.content_types;
     let configContentTypes = _.get(_.find(this.programConfig.components, { id: 'ng.sunbird.chapterList' }), 'config.contentTypes.value');
@@ -621,7 +625,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         // tslint:disable-next-line:max-line-length
         _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'framework' }).defaultValue = this.userFramework;
       }
-      this.programConfig.skip_two_level_review = this.createProgramForm.value.skip_two_level_review;
+      this.programConfig.two_level_review = this.programData.two_level_review;
       this.programData['sourcing_org_name'] = this.userprofile.rootOrgName;
       this.programData['rootorg_id'] = this.userprofile.rootOrgId;
       this.programData['createdby'] = this.userprofile.id;
@@ -634,6 +638,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programData['enddate'] = this.programData.program_end_date;
       this.programData['config'] = this.programConfig;
       this.programData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : '';
+      
+      delete this.programData.two_level_review;
       delete this.programData.gradeLevel;
       delete this.programData.medium;
       delete this.programData.subject;
