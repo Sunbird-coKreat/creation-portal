@@ -1,0 +1,32 @@
+
+<div class="add-to-library">
+  <!-- Blue Header -->
+  <div class="sb-bg-color-primary add-to-library__header">
+    <div class="ui container relative position">
+      <div class="d-flex flex-ai-center">
+          <button class="sb-btn sb-btn-primary sb-btn-xs back-btn"><i class="arrow left icon"></i></button>
+        <div class="ml-8 sb-color-white">
+          <h5 class="font-weight-bold">A Pact with the Sun</h5>
+          <div class="d-flex flex-ai-center fsmall">
+            <span>English</span><span class="add-to-library-dot"></span><span>Class 7</span><span class="add-to-library-dot"></span><span>A Pact with the Sun</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <app-mvc-filter></app-mvc-filter>
+  <div class="ui container">
+    <!-- Player Section -->
+    <div class="sb-g add-to-library__toc-player">
+      <!-- Left Sidebar for cards -->
+      <section class="sb-g-col-xs-12 sb-g-col-md-4 sb-g-col-lg-4 sb-bg-color-white">
+        <app-mvc-list> </app-mvc-list>
+      </section>
+
+      <!-- Right Player Sections -->
+      <section class="sb-g-col-xs-12 sb-g-col-md-8 sb-g-col-lg-8 relative position ml-24">
+        <app-mvc-player [contentId]="this.selectedContent" ></app-mvc-player>
+      </section>
+    </div>
+  </div>
+</div>
