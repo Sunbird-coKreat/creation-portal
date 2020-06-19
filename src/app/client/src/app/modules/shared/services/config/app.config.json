@@ -719,7 +719,7 @@
   "PLAYER_CONFIG": {
     "playerConfig": {
       "context": {
-        "mode": "play",
+        "mode": "edit",
         "partner": [],
         "pdata": {
           "id": "sunbird.portal",

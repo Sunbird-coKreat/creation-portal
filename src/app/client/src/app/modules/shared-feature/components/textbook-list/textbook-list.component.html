@@ -10,12 +10,22 @@
 			<i class="file sb-file-icon outline icon pr-10 sb-color-primary"></i>
 			{{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
 		</a>
-		<button *ngIf="sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary my-10" (click)="showTextbookFiltersModal = true"> <i class="filter icon"></i>
+		<button *ngIf="sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary my-10" (click)="showTextbookFiltersModal = true"
+		appTelemetryInteract
+                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filter-textbook', 'click', 'textbook-list')"
+                                                        [telemetryInteractObject]="telemetryInteractObject"
+                                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                                        [telemetryInteractPdata]="telemetryInteractPdata"> <i class="filter icon"></i>
 			<i [ngClass]="{'sb-dock-circle': textbookFiltersApplied}"></i>
 			<span *ngIf="!textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.addFilters }}</span>
 			<span *ngIf="textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.modifyFilters }}</span>
 		</button>
-		<button *ngIf="sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary ml-10" (click)="downloadCSV()"> <i class="download icon"></i> {{resourceService.frmelmnts.lbl.downloadProjectDetails}}</button>
+		<button *ngIf="sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary ml-10" (click)="downloadCSV()"
+		appTelemetryInteract
+                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download-downloadProjectDetails', 'click', 'textbook-list')"
+                                                        [telemetryInteractObject]="telemetryInteractObject"
+                                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                                        [telemetryInteractPdata]="telemetryInteractPdata"> <i class="download icon"></i> {{resourceService.frmelmnts.lbl.downloadProjectDetails}}</button>
 	</div>
 </div>
 <div class="sb-pageSection">
@@ -81,7 +91,12 @@
 						</td>
 						<td>{{ data.chapterCount || 0 }}</td>
 						<td class="fsmall"><span class="d-inline-block mr-5">{{ (data?.pendingBySourceOrg?.length || 0) }}<span class="sb-color-warning"> {{ resourceService?.frmelmnts?.lbl?.approvalPending }}</span></span></td>
-						<td class="text-center"><button type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(data)">{{resourceService.frmelmnts.lbl.open}}</button></td>
+						<td class="text-center"><button type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(data)"
+							appTelemetryInteract
+                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('open-textbook', 'click', 'textbook-list')"
+                                                        [telemetryInteractObject]="telemetryInteractObject"
+                                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                                        [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.open}}</button></td>
 					</tr>
 				</tbody>
 			</table>
@@ -111,7 +126,12 @@
 							formControlName="medium" #mediums
 							[options]="programDetails.config.medium"
 							[(ngModel)]="setPreferences['medium']">
-								<sui-select-option *ngFor="let medium of mediums.filteredOptions" [value]="medium"> </sui-select-option>
+								<sui-select-option *ngFor="let medium of mediums.filteredOptions" [value]="medium"
+								appTelemetryInteract
+                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filters-medium', 'click', 'textbook-list', {values: [medium]})"
+                                                        [telemetryInteractObject]="telemetryInteractObject"
+                                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                                        [telemetryInteractPdata]="telemetryInteractPdata"> </sui-select-option>
 							</sui-multi-select>
 						</div>
 					</div>
@@ -122,7 +142,12 @@
 							formControlName="subject" #subjects
 							[options]="programDetails.config.subject"
 							[(ngModel)]="setPreferences['subject']">
-								<sui-select-option *ngFor="let subject of subjects.filteredOptions" [value]="subject"></sui-select-option>
+								<sui-select-option *ngFor="let subject of subjects.filteredOptions" [value]="subject"
+								appTelemetryInteract
+                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filters-subject', 'click', 'textbook-list', {values: [subject]})"
+                                                        [telemetryInteractObject]="telemetryInteractObject"
+                                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                                        [telemetryInteractPdata]="telemetryInteractPdata"></sui-select-option>
 							</sui-multi-select>
 						</div>
 					</div>
@@ -133,7 +158,12 @@
 							class="selection p-5 b-100" #gradeLevels
 							[options]="programDetails.config.gradeLevel"
 							[(ngModel)]="setPreferences['gradeLevel']">
-								<sui-select-option *ngFor="let gradeLevel of gradeLevels.filteredOptions" [value]="gradeLevel"></sui-select-option>
+								<sui-select-option *ngFor="let gradeLevel of gradeLevels.filteredOptions" [value]="gradeLevel"
+								appTelemetryInteract
+                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filters-gradeLevel', 'click', 'textbook-list', {values: [gradeLevel]})"
+                                                        [telemetryInteractObject]="telemetryInteractObject"
+                                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                                        [telemetryInteractPdata]="telemetryInteractPdata"></sui-select-option>
 							</sui-multi-select>
 						</div>
 					</div>
@@ -142,8 +172,17 @@
 		</div>
 	</div>
 	<div class="sb-modal-actions py-20">
-		<button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="applyTextbookFilters();"> {{resourceService.frmelmnts.btn.apply}} </button>
-		<button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" 
-		(click)="resetTextbookFilters();" appTelemetryInteract> {{resourceService.frmelmnts.btn.reset}}</button>
+		<button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="applyTextbookFilters();"
+		appTelemetryInteract
+                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('apply-filters', 'click', 'textbook-list')"
+                                                        [telemetryInteractObject]="telemetryInteractObject"
+                                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                                        [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.apply}} </button>
+		<button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="resetTextbookFilters();" 
+		appTelemetryInteract
+                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reset-filters', 'click', 'textbook-list')"
+                                                        [telemetryInteractObject]="telemetryInteractObject"
+                                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                                        [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.reset}}</button>
 	</div>
   </sui-modal>

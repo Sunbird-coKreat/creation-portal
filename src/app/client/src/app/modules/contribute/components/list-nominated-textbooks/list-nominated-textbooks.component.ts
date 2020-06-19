@@ -563,7 +563,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     }
   }
 
-  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: any): IInteractEventEdata {
     return _.omitBy({
       id,
       type,

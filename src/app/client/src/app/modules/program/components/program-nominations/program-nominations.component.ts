@@ -15,6 +15,7 @@ import { DatePipe } from '@angular/common';
 import { forkJoin, of } from 'rxjs';
 import { isDefined } from '@angular/compiler/src/util';
 import { isUndefined, isNullOrUndefined } from 'util';
+import {ProgramTelemetryService} from '../../services';
 
 @Component({
   selector: 'app-program-nominations',
@@ -96,7 +97,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
      private activatedRoute: ActivatedRoute, private router: Router,
     private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService,
-    public programStageService: ProgramStageService, private datePipe: DatePipe, private paginationService: PaginationService) {
+    public programStageService: ProgramStageService, private datePipe: DatePipe, private paginationService: PaginationService,
+    public programTelemetryService: ProgramTelemetryService) {
     this.userProfile = this.userService.userProfile;
     this.programId = this.activatedRoute.snapshot.params.programId;
   }
