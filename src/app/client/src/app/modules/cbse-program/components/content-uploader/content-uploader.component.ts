@@ -75,6 +75,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public sourcingOrgReviewer: boolean;
   public sourcingReviewStatus: string;
   public contentType: string;
+  public rejectBySourcingOrg: boolean;
+  public sourcingOrgReviewComments: string;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -746,8 +748,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         channel: _.get(_.get(hierarchyObj, this.unitIdentifier), 'originData').channel
       };
       if (originData.textbookOriginId && originData.unitOriginId) {
-        // tslint:disable-next-line:max-line-length
-        this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentMetaData.identifier, originData);
+        if (action === 'accept') {
+          // tslint:disable-next-line:max-line-length
+          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentMetaData.identifier, originData);
+        } else if (action === 'reject' && this.FormControl.value.rejectComment.length) {
+          // tslint:disable-next-line:max-line-length
+          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentMetaData.identifier, originData, this.FormControl.value.rejectComment);
+        }
       } else {
         action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
         this.toasterService.error(this.resourceService.messages.fmsg.m00100);
@@ -763,4 +770,22 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 ngOnDestroy() {
   this.notify.unsubscribe();
 }
+  showSourcingOrgRejectComments() {
+    if (this.resourceStatus === 'Live' && _.get(this.sessionContext.hierarchyObj, 'sourcingRejectedComments') &&
+    _.get(this.sessionContext.hierarchyObj.sourcingRejectedComments, this.contentMetaData.identifier)) {
+      this.sourcingOrgReviewComments = _.get(this.sessionContext.hierarchyObj.sourcingRejectedComments, this.contentMetaData.identifier);
+     return true;
+    } else {
+      return false;
+    }
+  }
+
+  showContributorOrgReviewComments() {
+    if (this.contentMetaData && this.contentMetaData.rejectComment && this.sessionContext.currentRoleId === 1 &&
+        this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Review') {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
