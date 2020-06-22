@@ -288,7 +288,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     const deviceId = <HTMLInputElement>document.getElementById('deviceId');
-    const telemetryCdata = [{ 'type': 'program', 'id': this.activatedRoute.snapshot.params.programId }];
+    const telemetryCdata = [{ 'type': 'Program', 'id': this.activatedRoute.snapshot.params.programId }];
     setTimeout(() => {
       this.telemetryImpression = {
         context: {

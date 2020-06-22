@@ -115,7 +115,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-    const telemetryCdata = [{ 'type': 'program', 'id': this.programContext.program_id }];
+    const telemetryCdata = [{ 'type': 'Program', 'id': this.programContext.program_id }];
      setTimeout(() => {
       this.telemetryImpression = {
         context: {
