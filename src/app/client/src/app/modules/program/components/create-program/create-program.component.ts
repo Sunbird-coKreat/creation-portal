@@ -643,7 +643,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programData['createdon'] = new Date();
       this.programData['startdate'] = new Date();
       this.programData['slug'] = 'sunbird';
-      this.programData['type'] = 'public',
+      if (!this.isOpenNominations) {
+        this.programData['type'] = 'private';
+      } else {
+        this.programData['type'] = 'public';
+      }
 
       this.programData['default_roles'] = ['CONTRIBUTOR'];
       this.programData['enddate'] = this.programData.program_end_date;
