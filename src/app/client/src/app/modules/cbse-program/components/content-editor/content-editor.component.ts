@@ -89,7 +89,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     this.sessionContext = this.contentEditorComponentInput.sessionContext;
     this.actions = _.get(this.contentEditorComponentInput, 'programContext.config.actions');
     // tslint:disable-next-line:max-line-length
-    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.contentEditorComponentInput.programContext.program_id, 'program');
+    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.contentEditorComponentInput.programContext.program_id, 'Program');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
     // tslint:disable-next-line:max-line-length
@@ -126,7 +126,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     }, 0);
   }
   ngAfterViewInit() {
-    const telemetryCdata = [{ 'type': 'program', 'id': this.contentEditorComponentInput.programContext.program_id }];
+    const telemetryCdata = [{ 'type': 'Program', 'id': this.contentEditorComponentInput.programContext.program_id }];
     setTimeout(() => {
     this.telemetryImpression = {
       context: {

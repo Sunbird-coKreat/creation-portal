@@ -110,7 +110,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     this.currentStage = 'listNominatedTextbookComponent';
     this.telemetryInteractCdata = [{
       id: this.activatedRoute.snapshot.params.programId,
-      type: 'program'
+      type: 'Program'
     }];
     this.telemetryInteractPdata = {
       id: this.userService.appId,
