@@ -1754,7 +1754,8 @@ h3, label, ul li, a, p, button {
     display: block;
 }
 .my-20{
-    margin: 20px 0 10px 0;
+    height: 2rem;
+	margin: 20px 0 10px 0;
 }
 .mb-35{
     margin-bottom: 35px !important;
