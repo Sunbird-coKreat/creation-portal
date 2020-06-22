@@ -105,7 +105,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     });
     this.contributor = this.selectedNominationDetails;
     this.nominatedContentTypes = this.programsService.getContentTypesName(this.contributor.nominationData.content_types);
-    this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program_ID'}];
+    this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
   }
@@ -257,7 +257,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     const deviceId = <HTMLInputElement>document.getElementById('deviceId');
-    const telemetryCdata = [{type: 'Program_ID', id: this.activatedRoute.snapshot.params.programId}];
+    const telemetryCdata = [{type: 'Program', id: this.activatedRoute.snapshot.params.programId}];
      setTimeout(() => {
       this.telemetryImpression = {
         context: {

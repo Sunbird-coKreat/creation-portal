@@ -40,15 +40,19 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
     public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService,
     private paginationService: PaginationService ) {
+    if (this.isSourcingOrgAdmin) {
+      this.getSourcingOrgUsers();
+    } else {
       this.getContributionOrgUsers();
     }
-
+  }
+  
   ngOnInit() {
     this.position = 'top center';
     const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
       ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
     this.orgLink = `${baseUrl}/contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
-    this.telemetryInteractCdata = [{id: this.userService.userProfile.rootOrgId || '', type: 'Organisation_id'}];
+    this.telemetryInteractCdata = [{id: this.userService.userProfile.rootOrgId || '', type: 'Organisation'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
   }
@@ -57,7 +61,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     const deviceId = <HTMLInputElement>document.getElementById('deviceId');
-    const telemetryCdata = [{ 'type': 'Organisation_id', 'id': this.userService.userProfile.rootOrgId || '' }];
+    const telemetryCdata = [{ 'type': 'Organisation', 'id': this.userService.userProfile.rootOrgId || '' }];
      setTimeout(() => {
       this.telemetryImpression = {
         context: {
@@ -78,6 +82,104 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
         }
       };
      });
+  }
+  
+  isSourcingOrgAdmin() {
+    return this.userService.userProfile.userRoles.includes('ORG_ADMIN');
+  }
+
+  getSourcingOrgUsers() {
+    const userRegData = _.get(this.userService, 'userProfile.userRegData');
+    const sourcingOrgId = _.get(this.userService, 'userProfile.organisations[0].organisationId');
+    const filters = {
+      'organisations.organisationId': sourcingOrgId,
+      'organisations.roles': ['CONTENT_REVIEWER', 'CONTENT_CREATOR']
+      };
+    this.programsService.getSourcingOrgUsers(filters).subscribe((res) => {
+      const sourcingOrgUsers =  _.get(res, 'result.response.content');
+      
+      if (!_.isEmpty(sourcingOrgUsers)) {
+        const storedOrglist = this.cacheService.get('orgUsersDetails');
+        const orgId = _.get(this.userService, 'userProfile.userRegData.Org.osid');
+        
+        this.registryService.getAllContributionOrgUsers(orgId)
+        .then((allOrgUsers) => {
+
+          console.log("sourcingOrgUsers:", sourcingOrgUsers);
+          console.log("===================");
+          console.log('allOrgUsers:', allOrgUsers);
+          console.log("===================");
+          
+          if (!_.isEmpty(allOrgUsers)) {
+            let userList = [];
+            let userOsIds = [];
+            // Remove currently logged in user
+            const users = _.filter(allOrgUsers, obj => { 
+              if (obj.userId !== userRegData.User.userId) { 
+                userList.push(obj.userId);
+                userOsIds.push(obj.osid);
+                return obj;
+              }
+            });
+
+            userList = _.uniq(userList);
+            userOsIds = _.uniq(userOsIds);
+            console.log('userList:', userList);
+            console.log("===================");
+            console.log('userOsIds:', userOsIds);
+            console.log("===================");
+
+            if (userList.length == 0) {
+              this.allContributorOrgUsers = [];
+              return false;
+            }
+
+            if (userList && storedOrglist && userList.length === storedOrglist.length) {
+              this.allContributorOrgUsers = this.cacheService.get('orgUsersDetails');
+              return false;
+            }
+            
+            console.log('users:', users.map(a => a.userId));
+            console.log('sourcingOrgUsers:', sourcingOrgUsers.map(a => a.identifier));
+
+            let orgUsersDetails = _.map(users, (obj) => {
+              const newObj = {};
+              const tempUserObj = _.find(sourcingOrgUsers, { 'identifier': obj.userId });
+
+              console.log('obj:', obj);
+              console.log('tempUserObj:', tempUserObj);
+
+              if (tempUserObj) {
+                newObj["name"] = `${tempUserObj.firstName} ${tempUserObj.lastName || ''}`;
+                newObj["User"] = tempUserObj;
+                newObj["User_Org"] = obj;
+                newObj["selectedRole"] = _.first(obj.roles);
+
+                console.log('newObj:', newObj);
+                return newObj;
+              }
+            });
+return;
+            this.cacheService.set('orgUsersDetails', _.compact(orgUsersDetails));
+            this.allContributorOrgUsers = this.cacheService.get('orgUsersDetails');
+
+            this.orgUserscnt =  this.allContributorOrgUsers.length;
+            return true;
+          }
+          
+          this.allContributorOrgUsers = [];
+          return false;
+        });
+      }
+
+      // this.allContributorOrgUsers = sourcingOrgUsers;
+      // this.orgUserscnt =  sourcingOrgUsers.length;
+      // _.forEach(sourcingOrgUsers, (user) => {
+      //   console.log("user:", user);
+      // });
+    }, (err) => {
+      console.log('error:', err);
+    });
   }
 
   getContributionOrgUsers() {
@@ -152,7 +254,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     }
   }
 
-  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: any): IInteractEventEdata {
     return _.omitBy({
       id,
       type,
