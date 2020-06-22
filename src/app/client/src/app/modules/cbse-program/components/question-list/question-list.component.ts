@@ -141,7 +141,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     // tslint:disable-next-line:max-line-length
     this.telemetryEventsInput.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.sessionContext.collection, 'Content', '1.0');
     // tslint:disable-next-line:max-line-length
-    this.telemetryEventsInput.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata('Program', this.sessionContext.programId);
+    this.telemetryEventsInput.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.sessionContext.programId, 'Program');
     // tslint:disable-next-line:max-line-length
     this.telemetryEventsInput.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
   }

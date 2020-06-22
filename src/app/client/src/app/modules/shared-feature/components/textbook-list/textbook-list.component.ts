@@ -1,4 +1,4 @@
-import { ResourceService, ToasterService  } from '@sunbird/shared';
+import { ResourceService, ToasterService, ConfigService  } from '@sunbird/shared';
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { ProgramsService, ActionService, UserService } from '@sunbird/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -7,6 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { FormControl, FormBuilder, Validators, FormGroup, FormArray } from '@angular/forms';
 import * as _ from 'lodash-es';
 import { isEmpty } from 'rxjs/operators';
+import {ProgramTelemetryService} from '../../../program/services';
 
 @Component({
   selector: 'app-textbook-list',
@@ -47,18 +48,25 @@ export class TextbookListComponent implements OnInit {
   subjects:any[];
   buttonLabel = this.resourceService.frmelmnts.lbl.addFilters;*/
   textbookFiltersApplied = false;
+  public telemetryInteractCdata: any;
+  public telemetryInteractPdata: any;
+  public telemetryInteractObject: any;
 
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
     public toasterService: ToasterService, public resourceService: ResourceService,
     public actionService: ActionService, private collectionHierarchyService: CollectionHierarchyService,
-    private userService: UserService, private formBuilder: FormBuilder
+    private userService: UserService, private formBuilder: FormBuilder, private configService: ConfigService,
+    public programTelemetryService: ProgramTelemetryService
   )  {
     this.sbFormBuilder = formBuilder;
   }
 
   ngOnInit(): void {
     this.initialize();
+    this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program'}];
+    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
+    this.telemetryInteractObject = {};
   }
 
   initialize() {
