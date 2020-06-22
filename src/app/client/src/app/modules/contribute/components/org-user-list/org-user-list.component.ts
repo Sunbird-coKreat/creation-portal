@@ -48,7 +48,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
       ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
     this.orgLink = `${baseUrl}/contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
-    this.telemetryInteractCdata = [{id: this.userService.userProfile.rootOrgId || '', type: 'Organisation_id'}];
+    this.telemetryInteractCdata = [{id: this.userService.userProfile.rootOrgId || '', type: 'organisation'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
   }
@@ -57,7 +57,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     const deviceId = <HTMLInputElement>document.getElementById('deviceId');
-    const telemetryCdata = [{ 'type': 'Organisation_id', 'id': this.userService.userProfile.rootOrgId || '' }];
+    const telemetryCdata = [{ 'type': 'organisation', 'id': this.userService.userProfile.rootOrgId || '' }];
      setTimeout(() => {
       this.telemetryImpression = {
         context: {

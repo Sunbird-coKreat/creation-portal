@@ -42,7 +42,7 @@ export class ProgramHeaderComponent implements OnInit, OnChanges, OnDestroy {
     });
     this.generateTabs();
     // tslint:disable-next-line:max-line-length
-    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.headerComponentInput.userDetails.programId, 'Program');
+    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.headerComponentInput.userDetails.programId, 'program');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID + '.programs');
   }

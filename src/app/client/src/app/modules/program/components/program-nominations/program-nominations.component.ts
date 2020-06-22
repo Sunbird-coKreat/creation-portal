@@ -106,7 +106,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   ngOnInit() {
     this.filterApplied = null;
     this.getProgramDetails();
-    this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program_ID'}];
+    this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'program'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
     this.roles = [{name: 'REVIEWER'}];
@@ -125,7 +125,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     const deviceId = <HTMLInputElement>document.getElementById('deviceId');
-    const telemetryCdata = [{type: 'Program_ID', id: this.activatedRoute.snapshot.params.programId}];
+    const telemetryCdata = [{type: 'program', id: this.activatedRoute.snapshot.params.programId}];
      setTimeout(() => {
       this.telemetryImpression = {
         context: {

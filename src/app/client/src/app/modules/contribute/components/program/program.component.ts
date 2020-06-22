@@ -68,7 +68,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-    const telemetryCdata = [{ 'type': 'Program', 'id': this.programId }];
+    const telemetryCdata = [{ 'type': 'program', 'id': this.programId }];
     setTimeout(() => {
       this.telemetryImpression = {
         context: {

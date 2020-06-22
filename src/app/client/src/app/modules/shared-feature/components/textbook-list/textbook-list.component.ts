@@ -64,7 +64,7 @@ export class TextbookListComponent implements OnInit {
 
   ngOnInit(): void {
     this.initialize();
-    this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program_ID'}];
+    this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'program'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
   }
