@@ -89,7 +89,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public tempSortCollections = [];
   public filterApplied = false;
   public showDocumentUploader = false;
-  public isTwoLevelReviewChecked = false;
+  public defaultContributeOrgReviewChecked = false;
   uploadedDocument;
   showAddButton = false;
   loading = false;
@@ -522,7 +522,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       content_submission_enddate: ['', Validators.required],
       content_types: ['', Validators.required],
       rewards: [],
-      two_level_review: [true]
+      defaultContributeOrgReview: [true]
     });
 
     this.collectionListForm = this.sbFormBuilder.group({
@@ -609,9 +609,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     _.find(this.programConfig.components, { id: 'ng.sunbird.chapterList' }).config.contentTypes.value = configContentTypes;
   }
 
-  twoLevelReviewChanged($event) {
-    this.createProgramForm.value.two_level_review = !$event.target.checked;
-    this.isTwoLevelReviewChecked = $event.target.checked;
+  defaultContributeOrgReviewChanged($event) {
+    this.createProgramForm.value.defaultContributeOrgReview = !$event.target.checked;
+    this.defaultContributeOrgReviewChecked = $event.target.checked;
   }
 
   saveProgram() {
@@ -629,7 +629,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         // tslint:disable-next-line:max-line-length
         _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'framework' }).defaultValue = this.userFramework;
       }
-      this.programConfig.two_level_review = !this.isTwoLevelReviewChecked;
+      this.programConfig.defaultContributeOrgReview = !this.defaultContributeOrgReviewChecked;
       this.programData['sourcing_org_name'] = this.userprofile.rootOrgName;
       this.programData['rootorg_id'] = this.userprofile.rootOrgId;
       this.programData['createdby'] = this.userprofile.id;
@@ -642,7 +642,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programData['config'] = this.programConfig;
       this.programData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : '';
 
-      delete this.programData.two_level_review;
+      delete this.programData.defaultContributeOrgReview;
       delete this.programData.gradeLevel;
       delete this.programData.medium;
       delete this.programData.subject;
