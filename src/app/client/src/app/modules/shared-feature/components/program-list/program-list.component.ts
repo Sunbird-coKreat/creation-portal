@@ -10,6 +10,7 @@ import * as moment from 'moment';
 import { DatePipe } from '@angular/common';
 import { programContext } from '../../../contribute/components/list-nominated-textbooks/data';
 import { IInteractEventEdata } from '@sunbird/telemetry';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 @Component({
   selector: 'app-program-list',
   templateUrl: './program-list.component.html',
@@ -19,6 +20,7 @@ import { IInteractEventEdata } from '@sunbird/telemetry';
 export class ProgramListComponent implements OnInit {
 
   public programs: IProgram[];
+  public program: any;
   public count = 0;
   public activeDates = <any>[];
   public isContributor: boolean;
@@ -41,6 +43,7 @@ export class ProgramListComponent implements OnInit {
   public showLoader = true;
   public roleMapping = [];
   public iscontributeOrgAdmin = true;
+  showDeleteModal = false;
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService ) { }
@@ -105,7 +108,42 @@ export class ProgramListComponent implements OnInit {
       this.userService.userProfile.userRegData.User_Org);
   }
 
-  /**
+  setDelete(program) {
+    this.program = program;
+  }
+
+  deleteProject($event: MouseEvent){
+    const programData = {
+      "program_id": this.program.program_id,
+      "status":"Retired"
+    };
+
+    this.programsService.updateProgram(programData).subscribe(
+      (res) => {
+        this.toasterService.success(this.resourceService.frmelmnts.lbl.successTheProjectHasBeenDeleted);
+        ($event.target as HTMLButtonElement).disabled = false;
+
+        for(let i = 0; i < this.programs.length; i++) {
+          if(this.programs[i].program_id == this.program.program_id) {
+            this.programs.splice(i, 1);
+              break;
+          }
+        }
+
+        setTimeout(() => {
+          this.showDeleteModal=false;
+        }, 2000);
+
+       },
+      (err) => {
+        console.log(err, err)
+        this.toasterService.error(this.resourceService.frmelmnts.lbl.errorMessageTheProjectHasBeenDeleted);
+        ($event.target as HTMLButtonElement).disabled = false;
+      }
+    );
+  }
+
+  /**programContext
    * fetch the list of programs.
    */
   private getAllProgramsForContrib(type, status) {
@@ -475,6 +513,16 @@ export class ProgramListComponent implements OnInit {
       if (this.activeAllProgramsMenu) {
         return this.router.navigateByUrl('/contribute/program/' + program.program_id);
       }
+    } else {
+      return this.router.navigateByUrl('/sourcing/nominations/' + program.program_id);
+    }
+  }
+
+  editDetailsBtnClicked(program) {
+    if (this.iscontributeOrgAdmin) {
+      // if (this.activeMyProgramsMenu) {
+          return this.router.navigateByUrl('/sourcing/edit-program/' + program.program_id);
+      // }
     } else {
       return this.router.navigateByUrl('/sourcing/nominations/' + program.program_id);
     }

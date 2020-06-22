@@ -43,8 +43,10 @@ export class EditProgramComponent implements OnInit {
   public showAddButton = false;
   public uploadedDocument;
   public showLoader = true;
+  public enableBtn = false;
+  public guidLinefileName: String;
 
-  constructor(private activatedRoute: ActivatedRoute, private router: Router, private programsService: ProgramsService, 
+  constructor(private activatedRoute: ActivatedRoute, private router: Router, private programsService: ProgramsService,
     public toasterService: ToasterService, public formBuilder: FormBuilder, public resource: ResourceService,
     private cbseService: CbseProgramService, private userService: UserService,) { }
 
@@ -63,6 +65,13 @@ export class EditProgramComponent implements OnInit {
       this.programDetails = _.get(programDetails, 'result');
       this.programDetails['content_types'] = this.programsService.getContentTypesName(this.programDetails.content_types);
       this.initializeFormFields();
+
+      if (!_.isEmpty(this.programDetails.guidelines_url))
+      {
+        //this.guidLinefileName = this.programDetails.guidelines_url.getName(0);
+        this.guidLinefileName = this.programDetails.guidelines_url.split("/").pop();
+      }
+
     }, error => {
       this.showLoader = false;
       // TODO: navigate to program list page
@@ -86,24 +95,34 @@ export class EditProgramComponent implements OnInit {
     this.isFormValueSet = true;
   }
 
-  updateProgram() {
+  updateProgram($event: MouseEvent) {
     this.formIsInvalid = false;
-    if (this.editProgramForm.dirty && this.editProgramForm.valid) {
+
+    if ((this.editProgramForm.dirty || this.uploadedDocument) && this.editProgramForm.valid) {
+      ($event.target as HTMLButtonElement).disabled = true;
+
       const programData = {
         ...this.editProgramForm.value
       };
-      console.log(programData, 'programData')
+
       programData['enddate'] = programData.program_end_date;
       programData['program_id'] = this.programId;
-      //programData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : this.programDetails.guidelines_url;
+      programData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : this.programDetails.guidelines_url;
+
       delete programData.program_end_date;
+      delete programData.program_end_date;
+      delete programData.content_types;
+
         this.programsService.updateProgram(programData).subscribe(
           (res) => {
             this.toasterService.success('Project Successfully Updated...');
+            ($event.target as HTMLButtonElement).disabled = false;
+            this.router.navigate(['/sourcing']);
            },
           (err) => {
             console.log(err, err)
             this.toasterService.error('Unable to Update...');
+            ($event.target as HTMLButtonElement).disabled = false;
           }
         );
     } else {
@@ -280,6 +299,8 @@ export class EditProgramComponent implements OnInit {
     this.isClosable = false;
     this.loading = true;
     this.showErrorMsg = false;
+    this.enableBtn = true;
+
     if (!this.showErrorMsg) {
       const req = this.generateAssetCreateRequest(this.uploader.getName(0), this.uploader.getFile(0).type, 'pdf');
       this.cbseService.createMediaAsset(req).pipe(catchError(err => {
@@ -373,14 +394,18 @@ export class EditProgramComponent implements OnInit {
       this.isClosable = true;
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     })).subscribe(res => {
+      this.enableBtn = true;
       this.toasterService.success('Document Successfully Uploaded...');
       this.showAddButton = true;
       this.uploadedDocument = res;
+      this.guidLinefileName = null;
       this.showDocumentUploader = false;
     });
   }
 
   removeUploadedDocument() {
     this.uploadedDocument = null;
+    this.guidLinefileName = null;
+    this.programDetails.guidelines_url = null;
   }
 }

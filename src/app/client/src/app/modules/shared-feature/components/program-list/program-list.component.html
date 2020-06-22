@@ -58,6 +58,7 @@
                 </th>
                 <th *ngIf="activeMyProgramsMenu && !iscontributeOrgAdmin" class="w-5 text-center">{{ resourceService?.frmelmnts?.lbl?.myRole }}</th>
                 <th class="w-10 text-center"> &nbsp;</th>
+                <th class="w-10 text-center"> &nbsp;</th>
               </tr>
             </thead>
             <tbody class="sb-table-body">
@@ -170,6 +171,10 @@
                         </div>
                     </div>    -->
                   </td>
+                  <td class="fs-1-5 sb-dock-icon-tooltip">
+                    <i class="icon edit sb-color-primary mx-10 cursor-pointer ui" data-tooltip="Edit" (click)="editDetailsBtnClicked(program)"></i>
+                    <i class="icon trash sb-color-primary cursor-pointer ui" data-tooltip="Delete" (click)="showDeleteModal = true; setDelete(program)"></i>
+                  </td>
               </tr>
               </tbody>
             </table>
@@ -229,6 +234,23 @@
       (click)="assignRolesToOrgUsers();"
     >
       Submit
+    </button>
+  </div>
+</sui-modal>
+<sui-modal *ngIf="showDeleteModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'"
+  class="sb-modal" appBodyScroll (dismissed)="showDeleteModal = false" #modal>
+  <div class="sb-modal-header">
+    {{resourceService.frmelmnts.lbl.deleteProject}}
+  </div>
+  <div class="sb-modal-content">
+   {{resourceService.frmelmnts.lbl.areYouSureDeleteProject}}
+  </div>
+  <div class="sb-modal-actions" (click)="deleteProject($event)">
+    <button class="sb-btn sb-btn-normal sb-btn-primary">
+      {{resourceService.frmelmnts.btn.yes}}
+    </button>
+    <button class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showDeleteModal = false">
+      {{resourceService.frmelmnts.btn.no}}
     </button>
   </div>
 </sui-modal>

@@ -4,7 +4,7 @@
             <h4 class="sb-pageSection-title sb-color-black"><i class="icon angle left fs-1-5 text-left m-0"></i>Modify Projects</h4>
         </div>
         <div class="ui segment mt-5" *ngIf="isFormValueSet && !this.showLoader" >
-            <form class="ui form" [formGroup]="editProgramForm">
+            <form name='updateProgramForm' class="ui form" [formGroup]="editProgramForm">
                 <div class="ui grid">
                     <div class="twelve wide column">
                         <div class="pb-20">Details</div>
@@ -165,13 +165,22 @@
                                 (click)="initiateDocumentUploadModal()">
                                 <i class="upload icon"></i>{{ resource.frmelmnts.btn.upload}}
                             </button>
-                            <span *ngIf="uploadedDocument" class="sb-url">
+                            <span *ngIf="uploadedDocument; else elseGuideBlock" class="sb-url">
                                 <a href="{{uploadedDocument.artifactUrl}}" class="max-w-90 pull-left text-decor-none sb__ellipsis sb__ellipsis--breakAll" target="_blank">
                                     {{uploadedDocument.name}}
                                     <span class="blue-text-color-sunbird" *ngIf="uploadedDocument.name && uploadedDocument.name.length > 70">...</span>
                                 </a>
                                 <i class="icon remove sb-color-error va-top cursor-pointer" (click)="removeUploadedDocument();" ></i>
                             </span>
+                            <!-- Add Else condition-->
+                            <ng-template #elseGuideBlock>
+                                <span *ngIf="guidLinefileName" class="sb-url">
+                                    <a href="{{programDetails.guidelines_url}}" class="max-w-90 pull-left text-decor-none sb__ellipsis sb__ellipsis--breakAll" target="_blank">
+                                        {{guidLinefileName}}
+                                    </a>
+                                    <i class="icon remove sb-color-error va-top cursor-pointer" (click)="removeUploadedDocument();" ></i>
+                                </span>
+                            </ng-template>
                         </div>
                     </div>
                     <div class="twelve wide column">
@@ -190,10 +199,10 @@
                         </div>
                     </div>
                 </div>
+                <div class="text-align-right">
+                    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="updateProgram($event);">{{resource.frmelmnts.btn.update}}</button>
+                </div>
             </form>
-            <div class="text-align-right">
-                <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="updateProgram()">{{resource.frmelmnts.btn.update}}</button>
-            </div>
         </div>
         <div class="ui tweleve wide column mb-20">
             <app-loader *ngIf="showLoader"></app-loader>
