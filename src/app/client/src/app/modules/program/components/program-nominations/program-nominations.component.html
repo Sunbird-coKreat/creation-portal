@@ -89,7 +89,7 @@
                                         [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.textbooks || 0  }}
                         <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ collectionsCount }}</span>
                     </a>
-                    <a class="item" *ngIf="programDetails?.status !== 'Unlisted'" [isActive]="activeTab === 'nomination'"  suiTabHeader="1"  (click)="resetStatusFilter('nomination')"
+                    <a class="item" *ngIf="programDetails?.type !== 'Private'" [isActive]="activeTab === 'nomination'"  suiTabHeader="1"  (click)="resetStatusFilter('nomination')"
                     appTelemetryInteract
                                         [telemetryInteractEdata]="getTelemetryInteractEdata('nominations', 'click', 'program-nominations')"
                                         [telemetryInteractObject]="telemetryInteractObject"
