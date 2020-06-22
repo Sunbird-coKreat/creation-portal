@@ -72,6 +72,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public telemetryPageId = 'question-list';
   public sourcingOrgReviewer: boolean;
   public sourcingReviewStatus: string;
+  public sourcingOrgReviewComments: string;
 
   constructor(
     private configService: ConfigService, private userService: UserService,
@@ -140,7 +141,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     // tslint:disable-next-line:max-line-length
     this.telemetryEventsInput.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.sessionContext.collection, 'Content', '1.0');
     // tslint:disable-next-line:max-line-length
-    this.telemetryEventsInput.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata('Program', this.sessionContext.programId);
+    this.telemetryEventsInput.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.sessionContext.programId, 'Program');
     // tslint:disable-next-line:max-line-length
     this.telemetryEventsInput.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
   }
@@ -881,7 +882,12 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         channel: _.get(_.get(hierarchyObj, this.sessionContext.textBookUnitIdentifier), 'originData').channel
       };
       if (originData.textbookOriginId && originData.unitOriginId) {
-        this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.resourceDetails.identifier, originData);
+        if (action === 'accept') {
+          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.resourceDetails.identifier, originData);
+        } else if (action === 'reject' && this.FormControl.value.contentRejectComment.length) {
+          // tslint:disable-next-line:max-line-length
+          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.resourceDetails.identifier, originData, this.FormControl.value.contentRejectComment);
+        }
       } else {
         action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
         this.toasterService.error(this.resourceService.messages.fmsg.m00100);
@@ -891,6 +897,25 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
         this.toasterService.error(this.resourceService.messages.fmsg.m00100);
       console.error('origin data missing');
+    }
+  }
+
+  showSourcingOrgRejectComments() {
+    if (this.resourceStatus === 'Live' && _.get(this.sessionContext.hierarchyObj, 'sourcingRejectedComments') &&
+    _.get(this.sessionContext.hierarchyObj.sourcingRejectedComments, this.resourceDetails.identifier)) {
+      this.sourcingOrgReviewComments = _.get(this.sessionContext.hierarchyObj.sourcingRejectedComments, this.resourceDetails.identifier);
+     return true;
+    } else {
+      return false;
+    }
+  }
+
+  showContributorOrgReviewComments() {
+    if (this.resourceDetails && this.resourceDetails.rejectComment && this.sessionContext.currentRoleId === 1 &&
+        this.resourceStatus === 'Draft' && this.resourceDetails.prevStatus === 'Review') {
+      return true;
+    } else {
+      return false;
     }
   }
 }

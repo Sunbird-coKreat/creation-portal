@@ -217,12 +217,17 @@
               <td *ngIf="currentNominationStatus === 'Initiated' || currentNominationStatus=== 'Pending'">{{data.totalSampleContent || 0 }}</td>
               <td>
                 <div *ngIf="selectedContentTypes.length">
-                <div *ngIf="(data.totalSampleContent === undefined || data.totalSampleContent === 0) && canNominate()" class="sb-checkbox sb-checkbox-primary d-inline-block">
+                <div *ngIf="(data.totalSampleContent === undefined || data.totalSampleContent === 0) && canNominate()" class="sb-checkbox sb-checkbox-primary d-inline-block"
+                appTelemetryInteract
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('textbook-selection', 'click', 'collection-list', {values: [data.identifier]})"
+                [telemetryInteractObject]="telemetryInteractObject"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata">
                   <input  type="checkbox" [checked]="data.isSelected || data.totalSampleContent" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
                   <label></label>
                 </div>
                 <button type="button" *ngIf="(data.isSelected || data.totalSampleContent) && canNominate()" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary px-10" appTelemetryInteract
-                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('upload-sample', 'click', 'collection-list', {values: selectedCollectionIds})"
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('upload-sample', 'click', 'collection-list', {values: [data.identifier]})"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.uploadSample}}</button>
@@ -257,7 +262,12 @@
   <div class="sb-modal-content">
     <p class="fs-0-785">{{resourceService.frmelmnts.lbl.contentTypesDescription}}</p>
     <div class="mb-10" *ngFor="let contenttype of contentType; index as i">
-      <div class="sb-checkbox sb-checkbox-primary">
+      <div class="sb-checkbox sb-checkbox-primary" 
+      appTelemetryInteract
+          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('contentType-selection', 'click', 'collection-list', {values: [contenttype.name]})"
+          [telemetryInteractObject]="telemetryInteractObject"
+          [telemetryInteractCdata]="telemetryInteractCdata"
+          [telemetryInteractPdata]="telemetryInteractPdata">
           <input class="checking" [(ngModel)]="contenttype.isSelected" (change)="toggle(contenttype);" (click)="$event.stopPropagation()" type="checkbox" id="{{i+1}}">
           <label for="{{i+1}}" class="mb-0"> {{contenttype.name}}</label>
       </div>
@@ -266,7 +276,7 @@
   </div>
   <div class="sb-modal-actions">
     <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showContentTypeModal = false; toasterService.success(resourceService.messages.smsg.nomination.m001)" [disabled]="!selectedContentTypes.length" appTelemetryInteract
-    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('contentType-submit-button', 'click', 'collection-list', {values: selectedContentTypes})"
+    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('contentType-submit-button', 'click', 'collection-list')"
     [telemetryInteractObject]="telemetryInteractObject"
     [telemetryInteractCdata]="telemetryInteractCdata"
     [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.submit}} </button>
@@ -286,8 +296,16 @@
       <p class="mt-10">{{resourceService.frmelmnts.lbl.nominationDescription}}</p>
   </div>
   <div class="sb-modal-actions">
-      <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="disableNominate" (click)="disableNominate=true; addNomination();"> {{resourceService.frmelmnts.btn.submit}} </button>
-      <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="cancelNomination();" appTelemetryInteract> {{resourceService.frmelmnts.btn.cancel}}
+      <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="disableNominate" (click)="disableNominate=true; addNomination();" appTelemetryInteract
+      [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('submit-nomination-confirm', 'click', 'collection-list')"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.submit}} </button>
+      <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="cancelNomination();" appTelemetryInteract
+      [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('submit-nomination-cancel', 'click', 'collection-list')"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.cancel}}
 </button>
   </div>
 </sui-modal>

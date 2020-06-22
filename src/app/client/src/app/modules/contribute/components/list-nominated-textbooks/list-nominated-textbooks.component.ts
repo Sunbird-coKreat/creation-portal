@@ -110,7 +110,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     this.currentStage = 'listNominatedTextbookComponent';
     this.telemetryInteractCdata = [{
       id: this.activatedRoute.snapshot.params.programId,
-      type: 'Program_ID'
+      type: 'Program'
     }];
     this.telemetryInteractPdata = {
       id: this.userService.appId,
@@ -256,12 +256,12 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           if (response && response.result && response.result.content) {
             const contents = _.get(response.result, 'content');
             // tslint:disable-next-line:max-line-length
-            this.contentStatusCounts = this.collectionHierarchyService.getContentCounts(contents, this.sessionContext.nominationDetails.organisation_id);
+            this.contentStatusCounts = this.collectionHierarchyService.getContentCounts(contents, this.sessionContext.nominationDetails.organisation_id, contributorTextbooks);
             // tslint:disable-next-line:max-line-length
             this.contributorTextbooks = this.collectionHierarchyService.getIndividualCollectionStatus(this.contentStatusCounts, contributorTextbooks);
           } else {
             // tslint:disable-next-line:max-line-length
-            this.contentStatusCounts = this.collectionHierarchyService.getContentCounts([], this.sessionContext.nominationDetails.organisation_id);
+            this.contentStatusCounts = this.collectionHierarchyService.getContentCounts([], this.sessionContext.nominationDetails.organisation_id, contributorTextbooks);
             // tslint:disable-next-line:max-line-length
             this.contributorTextbooks = this.collectionHierarchyService.getIndividualCollectionStatus(this.contentStatusCounts, contributorTextbooks);
           }
@@ -288,7 +288,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     const deviceId = <HTMLInputElement>document.getElementById('deviceId');
-    const telemetryCdata = [{ 'type': 'Program_ID', 'id': this.activatedRoute.snapshot.params.programId }];
+    const telemetryCdata = [{ 'type': 'Program', 'id': this.activatedRoute.snapshot.params.programId }];
     setTimeout(() => {
       this.telemetryImpression = {
         context: {
@@ -563,7 +563,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     }
   }
 
-  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: any): IInteractEventEdata {
     return _.omitBy({
       id,
       type,

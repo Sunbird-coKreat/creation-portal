@@ -57,7 +57,11 @@
                 <sui-select class="selection pt-5" [(ngModel)]="orgUser.selectedRole" labelField="name"
                   [options]="roles" valueField="value" (selectedOptionChange)="onRoleChange(orgUser)" #orgRole>
                   <sui-select-option *ngFor="let option of orgRole.filteredOptions;" [value]="option"
-                    [class.active]="orgUser.selectedRole === option.value">
+                    [class.active]="orgUser.selectedRole === option.value"
+                    appTelemetryInteract
+                        [telemetryInteractEdata]="getTelemetryInteractEdata('assign-role-by-contributingOrg', 'click', 'org-user-list', {values: [orgUser.identifier, option.name]})"
+                        [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+                        [telemetryInteractPdata]="telemetryInteractPdata">
                   </sui-select-option>
                 </sui-select>
               </div>
@@ -68,11 +72,31 @@
     </div>
     <div *ngIf="orgUserscnt > 0 && pager.totalPages > 1 && !showLoader" class="sb-pagination-container flex-jc-flex-end pt-16">
       <div class="sb-pagination">
-          <a class="sb-item" [ngClass]="{disabled:pager.currentPage===1 }" (click)="NavigateToPage(1)">First</a>
-          <a [ngClass]="{disabled:pager.currentPage===1 }" class="sb-item" (click)="NavigateToPage(pager.currentPage - 1)" >Previous</a>
-          <a *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage===page}" (click)="NavigateToPage(page)" class="sb-item">{{page}}</a>
-          <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="NavigateToPage(pager.currentPage + 1)"  class="sb-item">Next</a>
-          <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="NavigateToPage(pager.totalPages)"  class="sb-item">Last</a>
+          <a class="sb-item" [ngClass]="{disabled:pager.currentPage===1 }" (click)="NavigateToPage(1)"
+          appTelemetryInteract
+                        [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser-list-fist-page', 'click', 'org-user-list')"
+                        [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+                        [telemetryInteractPdata]="telemetryInteractPdata">First</a>
+          <a [ngClass]="{disabled:pager.currentPage===1 }" class="sb-item" (click)="NavigateToPage(pager.currentPage - 1)" 
+          appTelemetryInteract
+                        [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser-list-previous-page', 'click', 'org-user-list', {values: [pager.currentPage - 1]})"
+                        [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+                        [telemetryInteractPdata]="telemetryInteractPdata">Previous</a>
+          <a *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage===page}" (click)="NavigateToPage(page)" class="sb-item"
+          appTelemetryInteract
+                        [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser-list-pagination', 'click', 'org-user-list', {values: [page]})"
+                        [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+                        [telemetryInteractPdata]="telemetryInteractPdata">{{page}}</a>
+          <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="NavigateToPage(pager.currentPage + 1)"  class="sb-item"
+          appTelemetryInteract
+                        [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser-list-next-page', 'click', 'org-user-list', {values: [pager.currentPage + 1]})"
+                        [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+                        [telemetryInteractPdata]="telemetryInteractPdata">Next</a>
+          <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="NavigateToPage(pager.totalPages)"  class="sb-item"
+          appTelemetryInteract
+                        [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser-list-last-page', 'click', 'org-user-list', {values: [pager.totalPages]})"
+                        [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+                        [telemetryInteractPdata]="telemetryInteractPdata">Last</a>
       </div>
     </div>
   <div class="mt-12" *ngIf="!showLoader && orgUserscnt == 0">

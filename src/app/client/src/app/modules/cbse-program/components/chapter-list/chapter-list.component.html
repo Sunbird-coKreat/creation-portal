@@ -160,7 +160,17 @@
       </div>
   </div>
   <div class="sb-modal-actions">
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="deleteContent()"> Yes </button>
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showConfirmationModal = false"> No </button>
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="deleteContent()"
+    appTelemetryInteract
+				[telemetryInteractEdata]="getTelemetryInteractEdata('confirm-content-remove', 'click', 'chapter-list')"
+				[telemetryInteractObject]="telemetryInteractObject"
+				[telemetryInteractCdata]="telemetryInteractCdata"
+				[telemetryInteractPdata]="telemetryInteractPdata"> Yes </button>
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showConfirmationModal = false"
+    appTelemetryInteract
+				[telemetryInteractEdata]="getTelemetryInteractEdata('cancel-content-remove', 'click', 'chapter-list')"
+				[telemetryInteractObject]="telemetryInteractObject"
+				[telemetryInteractCdata]="telemetryInteractCdata"
+				[telemetryInteractPdata]="telemetryInteractPdata"> No </button>
   </div>
 </sui-modal>
