@@ -19,6 +19,7 @@ import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEvent
 import { DeviceDetectorService } from 'ngx-device-detector';
 import * as moment from 'moment';
 import * as alphaNumSort from 'alphanum-sort';
+import {ProgramTelemetryService} from '../../services';
 
 @Component({
   selector: 'app-create-program',
@@ -120,7 +121,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     private httpClient: HttpClient,
     private navigationHelperService: NavigationHelperService,
     private configService: ConfigService,
-    private deviceDetectorService: DeviceDetectorService) {
+    private deviceDetectorService: DeviceDetectorService,
+    public programTelemetryService: ProgramTelemetryService) {
     this.sbFormBuilder = formBuilder;
   }
 

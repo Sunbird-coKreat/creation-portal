@@ -170,7 +170,12 @@
 									<sui-multi-select class="selection" labelField="name" [hasLabels]="true"
 										formControlName="content_types" [options]="programScope.purpose"
 										valueField="value" #multiSelect>
-										<sui-select-option *ngFor="let option of programScope.purpose" [value]="option">
+										<sui-select-option *ngFor="let option of programScope.purpose" [value]="option"
+										appTelemetryInteract
+										[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('contentType-selection', 'click', 'create-program', {values: [option.name]})"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">
 										</sui-select-option>
 									</sui-multi-select>
 									<div class="ui pointing red basic label below "
@@ -185,7 +190,12 @@
 									</label>
 									<button
 										class="sb-btn sb-btn-primary sb-btn-normal"
-										(click)="initiateDocumentUploadModal()">
+										(click)="initiateDocumentUploadModal()"
+										appTelemetryInteract
+										[telemetryInteractEdata]="getTelemetryInteractEdata('upload-guidelines-document', 'click', 'create-program')"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">
 										<i class="upload icon"></i>{{ resource.frmelmnts.btn.upload}}
 									</button>
 									<span *ngIf="uploadedDocument" class="sb-url">
@@ -230,7 +240,12 @@
 										[options]="programScope['medium']" [isDisabled]="!programScope['medium']"
 										(ngModelChange)="onMediumChange()" labelField="name" #mediums>
 										<sui-select-option *ngFor="let medium of mediums.filteredOptions"
-											[value]="medium"> </sui-select-option>
+											[value]="medium"
+											appTelemetryInteract
+										[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filters-medium', 'click', 'create-program', {values: [medium.name]})"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata"> </sui-select-option>
 									</sui-multi-select>
 
 									<!--div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['medium'].errors && createProgramForm.controls['medium'].errors.required && (!createProgramForm.controls['medium'].pristine || formIsInvalid)">
@@ -250,7 +265,12 @@
 										(ngModelChange)="onClassChange()" [options]="programScope['gradeLevel']"
 										#graveLevels>
 										<sui-select-option *ngFor="let gradeLevel of graveLevels.filteredOptions"
-											[value]="gradeLevel">
+											[value]="gradeLevel"
+											appTelemetryInteract
+										[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filters-gradeLevel', 'click', 'create-program', {values: [gradeLevel.name]})"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">
 										</sui-select-option>
 									</sui-multi-select>
 									<!--div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['gradeLevel'].errors && createProgramForm.controls['gradeLevel'].errors.required && (!createProgramForm.controls['gradeLevel'].pristine || formIsInvalid)">
@@ -270,7 +290,12 @@
 										[hasLabels]="true" [options]="programScope['subject']" valueField="name"
 										#subjects>
 										<sui-select-option *ngFor="let subject of subjects.filteredOptions"
-											[value]="subject">
+											[value]="subject"
+											appTelemetryInteract
+										[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filters-subject', 'click', 'create-program', {values: [subject.name]})"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">
 										</sui-select-option>
 									</sui-multi-select>
 									<!--div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['subject'].errors && createProgramForm.controls['subject'].errors.required && (!createProgramForm.controls['subject'].pristine || formIsInvalid)">
@@ -282,12 +307,17 @@
 								<div class="field">
 									<label>&nbsp;</label>
 									<button class="sb-btn sb-btn-normal sb-btn-outline-primary"
-										(click)="resetFilters()">
+										(click)="resetFilters()"
+										appTelemetryInteract
+										[telemetryInteractEdata]="getTelemetryInteractEdata('reset-filters', 'click', 'create-program')"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">
 										{{resource.frmelmnts.btn.reset}}
 									</button>
 									<button class="sb-btn sb-btn-normal sb-btn-primary ml-8" (click)="showTexbooklist()"
 										appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('show-textbook-list', 'click', 'create-program')"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('apply-filters', 'click', 'create-program')"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">
@@ -367,7 +397,12 @@
 													<input type="checkbox" id="checkitem_{{data.identifier}}"
 														(change)="onCollectionCheck(data, $event.target.checked)"
 														[checked]="collectionListForm.value.pcollections.indexOf(data.identifier) != -1"
-														name="checkitem">
+														name="checkitem"
+														appTelemetryInteract
+														[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('textbook-selection-checkbox', 'click', 'create-program', {values: [data.identifier]})"
+														[telemetryInteractObject]="telemetryInteractObject"
+														[telemetryInteractCdata]="telemetryInteractCdata"
+														[telemetryInteractPdata]="telemetryInteractPdata">
 													<label for="checkitem_{{data.identifier}}"></label>
 												</div>
 											</td>

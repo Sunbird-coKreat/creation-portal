@@ -15,6 +15,7 @@ import { DatePipe } from '@angular/common';
 import { forkJoin, of } from 'rxjs';
 import { isDefined } from '@angular/compiler/src/util';
 import { isUndefined, isNullOrUndefined } from 'util';
+import {ProgramTelemetryService} from '../../services';
 
 @Component({
   selector: 'app-program-nominations',
@@ -96,7 +97,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
      private activatedRoute: ActivatedRoute, private router: Router,
     private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService,
-    public programStageService: ProgramStageService, private datePipe: DatePipe, private paginationService: PaginationService) {
+    public programStageService: ProgramStageService, private datePipe: DatePipe, private paginationService: PaginationService,
+    public programTelemetryService: ProgramTelemetryService) {
     this.userProfile = this.userService.userProfile;
     this.programId = this.activatedRoute.snapshot.params.programId;
   }
@@ -104,7 +106,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   ngOnInit() {
     this.filterApplied = null;
     this.getProgramDetails();
-    this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program_ID'}];
+    this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
     this.roles = [{name: 'REVIEWER'}];
@@ -123,7 +125,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     const deviceId = <HTMLInputElement>document.getElementById('deviceId');
-    const telemetryCdata = [{type: 'Program_ID', id: this.activatedRoute.snapshot.params.programId}];
+    const telemetryCdata = [{type: 'Program', id: this.activatedRoute.snapshot.params.programId}];
      setTimeout(() => {
       this.telemetryImpression = {
         context: {
