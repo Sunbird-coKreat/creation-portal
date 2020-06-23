@@ -38,9 +38,9 @@ function getEnvironment(a){
 }
 
 var url = window.location.origin + '/content/program/v1/tenant/list';
-makeCallToGetProjects(url,getProjectsTemplates);
+getTenants(url,getProjectsTemplates);
 
-function makeCallToGetProjects(url, callback){
+function getTenants(url, callback){
   var data = {
     request: {
       filters: {
@@ -52,10 +52,13 @@ function makeCallToGetProjects(url, callback){
     type: "POST",
     url: url,
     data: JSON.stringify(data),
-  headers: {'content-type':'application/json'},
+    headers: {'content-type':'application/json'},
     success: function(response){
         callback(response.result.content);
-    }
+    },
+    error: function(XMLHttpRequest, textStatus, error) {
+      console.log("Unable of fecth tenants", error);
+   }
   });
 }
 
