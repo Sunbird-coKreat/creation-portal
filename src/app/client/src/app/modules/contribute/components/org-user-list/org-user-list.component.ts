@@ -41,7 +41,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
     public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService,
     private paginationService: PaginationService ) {
-    if (this.isSourcingOrgAdmin) {
+    if (this.isSourcingOrgAdmin()) {
       this.getSourcingOrgUsers();
     } else {
       this.getContributionOrgUsers();
@@ -90,16 +90,16 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   }
 
   getSourcingOrgUsers() {
-    const finalUsers = [];
     // Get the diskha users for org
-    const userRegData = _.get(this.userService, 'userProfile.userRegData');
-    const sourcingOrgId = _.get(this.userService, 'userProfile.organisations[0].organisationId');
     const filters = {
-      'organisations.organisationId': sourcingOrgId,
-      'organisations.roles': ['CONTENT_REVIEWER', 'CONTENT_CREATOR']
+      'organisations.organisationId': _.get(this.userService, 'userProfile.organisations[0].organisationId'),
+      'organisations.roles': ['CONTENT_REVIEWER', 'CONTENT_CREATOR', 'ORG_ADMIN']
     };
     this.programsService.getSourcingOrgUsers(filters).subscribe((res) => {
-      const sourcingOrgUsers =  _.get(res, 'result.response.content');
+      let sourcingOrgUsers =  _.get(res, 'result.response.content');
+      sourcingOrgUsers = _.filter(sourcingOrgUsers, u => {
+        return _.get(u, 'identifier') !== _.get(this.userService, 'userProfile.identifier');
+      });
       
       if (!_.isEmpty(sourcingOrgUsers)) {
         // Get the open saber users for org
@@ -114,61 +114,53 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
             return this.registryService.getUserdetailsByOsIds(chunk);
           });
 
+          if (userList && storedOrglist && userList.length === storedOrglist.length) {
+            this.setOrgUsers(this.cacheService.get('orgUsersDetails'));
+          }
+
           return forkJoin(osUsersReq).subscribe(res => {
             const users = _.get(_.first(res), 'result.User');
-
-            console.log('users', users);
-            console.log('sourcingOrgUsers', sourcingOrgUsers);
-
-            const user = _.map(sourcingOrgUsers, u => {
+            let orgUsersDetails = _.map(sourcingOrgUsers, u => {
               const osUser = _.first(_.filter(users, u1 => { 
                 return u1.userId === u.identifier;
               }));
+              const osuserOrg = _.first(_.filter(allOrgUsers, u1 => {
+                return u1.userId === osUser.osid;
+              }));
 
               return {
-                dikshaUser : u,
-                osUser : osUser,
-                osUserOrg : _.first(_.filter(allOrgUsers, u1 => { 
-                  console.log(u1);
-                  console.log(osUser.userId);
-                  return u1.osid === _.get(osUser, 'userId', '');
-                })),
-              }
+                ...u,
+                name: `${u.firstName} ${u.lastName || ''}`,
+                User: osUser,
+                User_Org: osuserOrg,
+                selectedRole:  _.first(osuserOrg.roles)
+              };
             });
 
-            console.log(user);
+            orgUsersDetails = _.compact(orgUsersDetails);
+            this.cacheService.set('orgUsersDetails', orgUsersDetails);
+            this.setOrgUsers(orgUsersDetails);
           });
-          return; 
-          console.log("sourcingOrgUsers:", sourcingOrgUsers);
-          console.log("===================");
-          console.log('allOrgUsers:', allOrgUsers);
-          console.log("===================");
-
-          
-
         });
       }
-
-      // this.allContributorOrgUsers = sourcingOrgUsers;
-      // this.orgUserscnt =  sourcingOrgUsers.length;
-      // _.forEach(sourcingOrgUsers, (user) => {
-      //   console.log("user:", user);
-      // });
     }, (err) => {
       console.log('error:', err);
     });
   }
 
+  setOrgUsers(orgUsersDetails) {
+    this.allContributorOrgUsers = orgUsersDetails;
+
+    if (!_.isEmpty(this.allContributorOrgUsers)) {
+      this.orgUserscnt =  this.allContributorOrgUsers.length;
+      this.sortCollection('selectedRole');
+    }
+    this.showLoader = false;
+  }
+
   getContributionOrgUsers() {
     this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
-      this.allContributorOrgUsers = orgUsers;
-      //this.tempSortOrgUser = orgUsers;
-      if (!_.isEmpty(this.allContributorOrgUsers) && this.allContributorOrgUsers.length > 0) {
-        this.orgUserscnt =  this.allContributorOrgUsers.length;
-        this.sortCollection('selectedRole');
-      }
-
-      this.showLoader = false;
+      this.setOrgUsers(orgUsers);
     });
   }
 
