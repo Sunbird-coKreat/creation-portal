@@ -145,7 +145,7 @@ export class RegistryService extends DataService {
     });
   }
 
-  private getUserdetailsByOsIds(userList: []): Observable<ServerResponse> {
+  public getUserdetailsByOsIds(userList: []): Observable<ServerResponse> {
     const option = {
       url: 'reg/search',
       data: {

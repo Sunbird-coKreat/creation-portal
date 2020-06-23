@@ -6,6 +6,7 @@ import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from
 import { UserService, RegistryService, ProgramsService } from '@sunbird/core';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'lodash-es';
+import { Observable, of, throwError, BehaviorSubject, forkJoin, empty} from 'rxjs';
 
 
 @Component({
@@ -89,86 +90,62 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   }
 
   getSourcingOrgUsers() {
+    const finalUsers = [];
+    // Get the diskha users for org
     const userRegData = _.get(this.userService, 'userProfile.userRegData');
     const sourcingOrgId = _.get(this.userService, 'userProfile.organisations[0].organisationId');
     const filters = {
       'organisations.organisationId': sourcingOrgId,
       'organisations.roles': ['CONTENT_REVIEWER', 'CONTENT_CREATOR']
-      };
+    };
     this.programsService.getSourcingOrgUsers(filters).subscribe((res) => {
       const sourcingOrgUsers =  _.get(res, 'result.response.content');
       
       if (!_.isEmpty(sourcingOrgUsers)) {
+        // Get the open saber users for org
         const storedOrglist = this.cacheService.get('orgUsersDetails');
         const orgId = _.get(this.userService, 'userProfile.userRegData.Org.osid');
         
         this.registryService.getAllContributionOrgUsers(orgId)
         .then((allOrgUsers) => {
+          // Get the open saber user details
+          const userList = _.map(allOrgUsers, u => u.userId);
+          const osUsersReq = _.map(_.chunk( userList, this.pageLimit), chunk => {
+            return this.registryService.getUserdetailsByOsIds(chunk);
+          });
 
+          return forkJoin(osUsersReq).subscribe(res => {
+            const users = _.get(_.first(res), 'result.User');
+
+            console.log('users', users);
+            console.log('sourcingOrgUsers', sourcingOrgUsers);
+
+            const user = _.map(sourcingOrgUsers, u => {
+              const osUser = _.first(_.filter(users, u1 => { 
+                return u1.userId === u.identifier;
+              }));
+
+              return {
+                dikshaUser : u,
+                osUser : osUser,
+                osUserOrg : _.first(_.filter(allOrgUsers, u1 => { 
+                  console.log(u1);
+                  console.log(osUser.userId);
+                  return u1.osid === _.get(osUser, 'userId', '');
+                })),
+              }
+            });
+
+            console.log(user);
+          });
+          return; 
           console.log("sourcingOrgUsers:", sourcingOrgUsers);
           console.log("===================");
           console.log('allOrgUsers:', allOrgUsers);
           console.log("===================");
+
           
-          if (!_.isEmpty(allOrgUsers)) {
-            let userList = [];
-            let userOsIds = [];
-            // Remove currently logged in user
-            const users = _.filter(allOrgUsers, obj => { 
-              if (obj.userId !== userRegData.User.userId) { 
-                userList.push(obj.userId);
-                userOsIds.push(obj.osid);
-                return obj;
-              }
-            });
 
-            userList = _.uniq(userList);
-            userOsIds = _.uniq(userOsIds);
-            console.log('userList:', userList);
-            console.log("===================");
-            console.log('userOsIds:', userOsIds);
-            console.log("===================");
-
-            if (userList.length == 0) {
-              this.allContributorOrgUsers = [];
-              return false;
-            }
-
-            if (userList && storedOrglist && userList.length === storedOrglist.length) {
-              this.allContributorOrgUsers = this.cacheService.get('orgUsersDetails');
-              return false;
-            }
-            
-            console.log('users:', users.map(a => a.userId));
-            console.log('sourcingOrgUsers:', sourcingOrgUsers.map(a => a.identifier));
-
-            let orgUsersDetails = _.map(users, (obj) => {
-              const newObj = {};
-              const tempUserObj = _.find(sourcingOrgUsers, { 'identifier': obj.userId });
-
-              console.log('obj:', obj);
-              console.log('tempUserObj:', tempUserObj);
-
-              if (tempUserObj) {
-                newObj["name"] = `${tempUserObj.firstName} ${tempUserObj.lastName || ''}`;
-                newObj["User"] = tempUserObj;
-                newObj["User_Org"] = obj;
-                newObj["selectedRole"] = _.first(obj.roles);
-
-                console.log('newObj:', newObj);
-                return newObj;
-              }
-            });
-return;
-            this.cacheService.set('orgUsersDetails', _.compact(orgUsersDetails));
-            this.allContributorOrgUsers = this.cacheService.get('orgUsersDetails');
-
-            this.orgUserscnt =  this.allContributorOrgUsers.length;
-            return true;
-          }
-          
-          this.allContributorOrgUsers = [];
-          return false;
         });
       }
 
