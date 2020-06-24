@@ -4,8 +4,8 @@ import { ResourceService, ToasterService, ConfigService } from '@sunbird/shared'
 import { ActivatedRoute, Router } from '@angular/router';
 import { IProgram } from '../../../core/interfaces';
 import * as _ from 'lodash-es';
-import { tap, filter } from 'rxjs/operators';
-import { forkJoin } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
 import * as moment from 'moment';
 import { DatePipe } from '@angular/common';
 import { programContext } from '../../../contribute/components/list-nominated-textbooks/data';
@@ -110,6 +110,47 @@ export class ProgramListComponent implements OnInit {
 
   setDelete(program) {
     this.program = program;
+
+    const req = {
+      url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
+      data: {
+        request: {
+          filters: {
+            program_id: this.program.program_id,
+            status: ['Pending', 'Approved']
+          },
+          fields: ['organisation_id', 'status'],
+          limit: 0
+        }
+      }
+    };
+
+    this.programsService.getNominationList(req.data.request.filters)
+      .subscribe((nominationsResponse) => {
+        const nominations = _.get(nominationsResponse, 'result');
+
+        if (nominations.length > 1) {
+          this.toasterService.error(this.resourceService.frmelmnts.lbl.projectCannotBeDeleted);
+          this.showDeleteModal = false;
+
+          return false;
+        }
+
+        let user_id = _.get(this.userService, 'userProfile.userId');
+
+        if (nominations[0].user_id != user_id) {
+          this.toasterService.error(this.resourceService.frmelmnts.lbl.projectCannotBeDeleted);
+
+          this.showDeleteModal = false;
+          return false;
+        }
+
+        this.showDeleteModal = true;
+      },
+      error =>{
+        console.log(error);
+    });
+
   }
 
   deleteProject($event: MouseEvent){
@@ -130,11 +171,8 @@ export class ProgramListComponent implements OnInit {
           }
         }
 
-        setTimeout(() => {
-          this.showDeleteModal=false;
-        }, 2000);
-
-       },
+        this.showDeleteModal=false;
+        },
       (err) => {
         console.log(err, err)
         this.toasterService.error(this.resourceService.frmelmnts.lbl.errorMessageTheProjectHasBeenDeleted);
