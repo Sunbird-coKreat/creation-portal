@@ -1013,14 +1013,17 @@
     "sampleContentCount": {
       "type": "string"
     },
-    "chapterCount": {
-      "type": "number"
-    },
     "acceptedContents": {
       "type": "array"
     },
     "rejectedContents": {
       "type": "array"
+    },
+    "chapterCount": {
+      "type": "number"
+    },
+    "sourcingRejectedComments": {
+      "type": "object"
     }
   }
 }

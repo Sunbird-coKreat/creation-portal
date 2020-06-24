@@ -74,6 +74,13 @@
                             </div>
                         </div>
                     </ng-container>
+                    <div class="sb-meta-data-container sb-meta-data-column w-20" *ngIf="programDetails?.config?.defaultContributeOrgReview === false">
+                        <i class="icon check circle sb-color-secondary-200 fs-1-286 va-text-top"></i>
+                        <label class="font-weight-normal fs-0-92">{{resourceService.frmelmnts.lbl.twoLevelReviewSkipped}}</label>
+                        <div class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block va-top pl-20">
+                            {{resourceService.frmelmnts.lbl.twoLevelReviewSkippedNote}}
+                        </div>
+                    </div>
                 </div>
     </div>
 
@@ -291,7 +298,7 @@
                                                         [telemetryInteractObject]="telemetryInteractObject"
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata">First</a>
-                                    <a [ngClass]="{disabled:pager.currentPage===1 }" class="sb-item" (click)="NavigateTonominationPage(pager.currentPage - 1)" 
+                                    <a [ngClass]="{disabled:pager.currentPage===1 }" class="sb-item" (click)="NavigateTonominationPage(pager.currentPage - 1)"
                                     appTelemetryInteract
                                                         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('nomination-list-previous-page', 'click', 'program-nominations', {values: [pager.currentPage - 1]})"
                                                         [telemetryInteractObject]="telemetryInteractObject"
@@ -417,7 +424,7 @@
                                                         [telemetryInteractObject]="telemetryInteractObject"
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata">First</a>
-                            <a [ngClass]="{disabled:pagerUsers.currentPage===1 }" class="sb-item" (click)="navigateToSourcingPage(pagerUsers.currentPage - 1)" 
+                            <a [ngClass]="{disabled:pagerUsers.currentPage===1 }" class="sb-item" (click)="navigateToSourcingPage(pagerUsers.currentPage - 1)"
                             appTelemetryInteract
                                                         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('sourcingOrgUsers-list-previous-page', 'click', 'program-nominations', {values: [pagerUsers.currentPage - 1]})"
                                                         [telemetryInteractObject]="telemetryInteractObject"

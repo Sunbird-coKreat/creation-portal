@@ -1,5 +1,6 @@
 // tslint:disable:max-line-length
 var programConfig = {
+    'defaultContributeOrgReview' : true,
     '_comments': '',
     'loginReqired': true,
     'framework': 'NCF',

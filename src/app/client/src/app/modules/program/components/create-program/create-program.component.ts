@@ -89,6 +89,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public tempSortCollections = [];
   public filterApplied = false;
   public showDocumentUploader = false;
+  public defaultContributeOrgReviewChecked = false;
   uploadedDocument;
   showAddButton = false;
   loading = false;
@@ -534,6 +535,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       content_submission_enddate: ['', Validators.required],
       content_types: ['', Validators.required],
       rewards: [],
+      defaultContributeOrgReview: [true]
     });
 
     this.collectionListForm = this.sbFormBuilder.group({
@@ -622,6 +624,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     _.find(this.programConfig.components, { id: 'ng.sunbird.chapterList' }).config.contentTypes.value = configContentTypes;
   }
 
+  defaultContributeOrgReviewChanged($event) {
+    this.createProgramForm.value.defaultContributeOrgReview = !$event.target.checked;
+    this.defaultContributeOrgReviewChecked = $event.target.checked;
+  }
+
   saveProgram() {
     this.formIsInvalid = false;
     this.handleContentTypes();
@@ -637,6 +644,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         // tslint:disable-next-line:max-line-length
         _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'framework' }).defaultValue = this.userFramework;
       }
+      this.programConfig.defaultContributeOrgReview = !this.defaultContributeOrgReviewChecked;
       this.programData['sourcing_org_name'] = this.userprofile.rootOrgName;
       this.programData['rootorg_id'] = this.userprofile.rootOrgId;
       this.programData['createdby'] = this.userprofile.id;
@@ -649,6 +657,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programData['enddate'] = this.programData.program_end_date;
       this.programData['config'] = this.programConfig;
       this.programData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : '';
+
+      delete this.programData.defaultContributeOrgReview;
       delete this.programData.gradeLevel;
       delete this.programData.medium;
       delete this.programData.subject;

@@ -82,6 +82,15 @@
 									   </div>
 									</div>
 								 </div>
+								 <div class="twelve wide column">
+									<div class="sb-checkbox sb-checkbox-primary">
+										<input type="checkbox" id="defaultContributeOrgReview" name="defaultContributeOrgReview" formControlName="defaultContributeOrgReview" [checked]="defaultContributeOrgReviewChecked" (change)="defaultContributeOrgReviewChanged($event)">
+										<label for="defaultContributeOrgReview">{{resource.frmelmnts.lbl.twoLevelReview}}</label>
+										</div>
+									<div class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-40 va-top pl-20">
+										{{resource.frmelmnts.lbl.twoLevelReviewNote}}
+									</div>
+								</div>
 
 							 <div class="twelve wide tablet three wide computer column" *ngIf="isOpenNominations === true">
 								<div class="field">
