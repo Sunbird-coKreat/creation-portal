@@ -12,9 +12,7 @@
     "code",
     "contentEncoding",
     "contentDisposition",
-    "mediaType",
-    "origin",
-    "originData"
+    "mediaType"
   ],
   "properties": {
     "name": {
