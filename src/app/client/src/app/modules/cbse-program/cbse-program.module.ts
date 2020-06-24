@@ -24,6 +24,11 @@ import { CollectionHierarchyService } from './services/collection-hierarchy/coll
 import { SlickModule } from 'ngx-slick';
 import { SharedFeatureModule } from '../shared-feature';
 import { RouterModule } from '@angular/router';
+import {CbseRoutingModule} from './cbse-routing.module';
+import { MvcLibraryComponent } from './components/mvc-library/mvc-library.component';
+import { MvcListComponent } from './components/mvc-list/mvc-list.component';
+import { MvcFilterComponent } from './components/mvc-filter/mvc-filter.component';
+import { MvcPlayerComponent } from './components/mvc-player/mvc-player.component';
 
 @NgModule({
   declarations: [QuestionListComponent, QuestionCreationComponent,
@@ -31,7 +36,8 @@ import { RouterModule } from '@angular/router';
     McqTemplateSelectionComponent,
     QuestionPreviewComponent, SanitizeHtmlPipe, QuestionCreationHeaderComponent,
     DashboardComponent, RecursiveTreeComponent,
-    ContentUploaderComponent,  ResourceTemplateComponent, CollectionComponent, ResourceReorderComponent, ContentEditorComponent],
+    ContentUploaderComponent,  ResourceTemplateComponent, CollectionComponent, ResourceReorderComponent, ContentEditorComponent,
+     MvcLibraryComponent, MvcListComponent, MvcFilterComponent, MvcPlayerComponent],
   imports: [
     RouterModule,
     CommonModule,
@@ -44,6 +50,7 @@ import { RouterModule } from '@angular/router';
     PlayerHelperModule,
     TelemetryModule,
     SlickModule.forRoot(),
+    CbseRoutingModule,
     DynamicModule.withComponents([QuestionListComponent,
        QuestionCreationComponent, ChapterListComponent, McqCreationComponent, CkeditorToolComponent ,
       McqTemplateSelectionComponent,
