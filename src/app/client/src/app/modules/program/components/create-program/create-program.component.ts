@@ -391,7 +391,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         edata: {
           type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
           pageid: _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid'),
-          uri: this.router.url,
+          uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
