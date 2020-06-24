@@ -1,87 +1,87 @@
 <div *ngIf="!showLoader && (currentStage === 'programNominations')" [appTelemetryImpression]="telemetryImpression">
     <div class="sb-bg-color-primary-0 practical-header py-16">
-        <div class="d-flex  flex-jc-space-between practical-header__content ui container pt-15">
-            <div class="practical-header__title w-20">
-                <h5 class="m-0 p-0 font-weight-bold d-inline-block">{{ programDetails?.name }} </h5>
-                <i class="info circle link icon" suiPopup
-                        [popupTemplate]="popupTemplate" popupDelay="1000"></i>
-                    <ng-template #popupTemplate>
-                        <div class="content">
-                            <div class="textbook-details ml-8">
-                                <div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.mediums }}</strong></div>
+            <div class="d-flex  flex-jc-space-between practical-header__content ui container pt-15">
+                    <div class="practical-header__title w-20">
+                        <h5 class="m-0 p-0 font-weight-bold d-inline-block">{{ programDetails?.name }} </h5>
+                        <i class="info circle link icon" suiPopup
+                                [popupTemplate]="popupTemplate" popupDelay="1000"></i>
+                            <ng-template #popupTemplate>
                                 <div class="content">
-                                    <label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.medium.join(', ') }}</label>
+                                    <div class="textbook-details ml-8">
+                                        <div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.mediums }}</strong></div>
+                                        <div class="content">
+                                            <label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.medium.join(', ') }}</label>
+                                        </div>
+                                        <hr />
+                                        <div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.class }}</strong></div>
+                                        <div class="content">
+                                            <label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.gradeLevel.join(', ') }}</label>
+                                        </div>
+                                    </div>
                                 </div>
-                                <hr />
-                                <div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.class }}</strong></div>
-                                <div class="content">
-                                    <label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.gradeLevel.join(', ') }}</label>
+                            </ng-template>
+                        <p class="fs-0-785 font-weight-normal pr-10 sb__ellipsis sb__ellipsis--three">{{ programDetails?.description }} </p>
+                    </div>
+                    <div class="sb-meta-data-container sb-meta-data-column w-10 px-10 w-30">
+                            <label class="mb-0">{{resourceService?.frmelmnts?.lbl?.contentType}}</label>
+                            <p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{ programContentTypes }}"><span>{{ programContentTypes }}</span></p>
+                    </div>
+                    <ng-container *ngIf="programDetails">
+                        <div class="program-timeline w-35">
+                            <div class="program-timeline-item" *ngIf="programDetails?.status !== 'Unlisted'">
+                                <div class="status" [class.active]="activeDate === 'nomination_enddate'">
+                                    <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.nominationSubmission }}</div>
+                                    <div class="status__date">
+                                        {{ programDetails?.nomination_enddate |  date:'LLLL d, yyyy'  }}
+                                        <br />
+                                        <em [class.sb-color-warning]="activeDate === 'nomination_enddate'"
+                                            *ngIf="activeDate === 'nomination_enddate'">{{ programDetails?.nomination_enddate | daysToGo  }}</em>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="program-timeline-item" *ngIf="programDetails?.status !== 'Unlisted'">
+                                <div class="status" [class.active]="activeDate === 'shortlisting_enddate'">
+                                    <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.shortlistingNomination }}</div>
+                                    <div class="status__date">
+                                        {{ programDetails?.shortlisting_enddate |  date:'LLLL d, yyyy'  }}
+                                        <br />
+                                        <em [class.sb-color-warning]="activeDate === 'shortlisting_enddate'"
+                                            *ngIf="activeDate === 'shortlisting_enddate'">{{ programDetails?.shortlisting_enddate | daysToGo  }}</em>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="program-timeline-item">
+                                <div class="status" [class.active]="activeDate === 'content_submission_enddate'">
+                                    <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.contributions }}</div>
+                                    <div class="status__date">
+                                        {{ programDetails?.content_submission_enddate |  date:'LLLL d, yyyy'  }}
+                                        <br />
+                                        <em [class.sb-color-warning]="activeDate === 'content_submission_enddate'"
+                                            *ngIf="activeDate === 'content_submission_enddate'">{{ programDetails?.content_submission_enddate | daysToGo  }}</em>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="program-timeline-item">
+                                <div class="status" [class.active]="activeDate === 'enddate'">
+                                    <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.programEndDate }}</div>
+                                    <div class="status__date">
+                                        {{ programDetails?.enddate |  date:'LLLL d, yyyy'  }}
+                                        <br />
+                                        <em [class.sb-color-warning]="activeDate === 'enddate'"
+                                            *ngIf="activeDate === 'enddate'">{{ programDetails?.enddate | daysToGo  }}</em>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </ng-template>
-                <p class="fs-0-785 font-weight-normal pr-10 sb__ellipsis sb__ellipsis--three">{{ programDetails?.description }} </p>
-            </div>
-            <div class="sb-meta-data-container sb-meta-data-column px-10 w-20">
-                    <label class="mb-0">{{resourceService?.frmelmnts?.lbl?.contentType}}</label>
-                    <p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{ programContentTypes }}"><span>{{ programContentTypes }}</span></p>
-			</div>
-            <ng-container *ngIf="programDetails">
-                <div class="program-timeline w-30">
-                    <div class="program-timeline-item">
-                        <div class="status" [class.active]="activeDate === 'nomination_enddate'">
-                            <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.nominationSubmission }}</div>
-                            <div class="status__date">
-                                {{ programDetails?.nomination_enddate |  date:'LLLL d, yyyy'  }}
-                                <br />
-                                <em [class.sb-color-warning]="activeDate === 'nomination_enddate'"
-                                    *ngIf="activeDate === 'nomination_enddate'">{{ programDetails?.nomination_enddate | daysToGo  }}</em>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="program-timeline-item">
-                        <div class="status" [class.active]="activeDate === 'shortlisting_enddate'">
-                            <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.shortlistingNomination }}</div>
-                            <div class="status__date">
-                                {{ programDetails?.shortlisting_enddate |  date:'LLLL d, yyyy'  }}
-                                <br />
-                                <em [class.sb-color-warning]="activeDate === 'shortlisting_enddate'"
-                                    *ngIf="activeDate === 'shortlisting_enddate'">{{ programDetails?.shortlisting_enddate | daysToGo  }}</em>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="program-timeline-item">
-                        <div class="status" [class.active]="activeDate === 'content_submission_enddate'">
-                            <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.contributions }}</div>
-                            <div class="status__date">
-                                {{ programDetails?.content_submission_enddate |  date:'LLLL d, yyyy'  }}
-                                <br />
-                                <em [class.sb-color-warning]="activeDate === 'content_submission_enddate'"
-                                    *ngIf="activeDate === 'content_submission_enddate'">{{ programDetails?.content_submission_enddate | daysToGo  }}</em>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="program-timeline-item">
-                        <div class="status" [class.active]="activeDate === 'enddate'">
-                            <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.programEndDate }}</div>
-                            <div class="status__date">
-                                {{ programDetails?.enddate |  date:'LLLL d, yyyy'  }}
-                                <br />
-                                <em [class.sb-color-warning]="activeDate === 'enddate'"
-                                    *ngIf="activeDate === 'enddate'">{{ programDetails?.enddate | daysToGo  }}</em>
-                            </div>
+                    </ng-container>
+                    <div class="sb-meta-data-container sb-meta-data-column w-20" *ngIf="programDetails?.config?.defaultContributeOrgReview === false">
+                        <i class="icon check circle sb-color-secondary-200 fs-1-286 va-text-top"></i>
+                        <label class="font-weight-normal fs-0-92">{{resourceService.frmelmnts.lbl.twoLevelReviewSkipped}}</label>
+                        <div class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block va-top pl-20">
+                            {{resourceService.frmelmnts.lbl.twoLevelReviewSkippedNote}}
                         </div>
                     </div>
                 </div>
-            </ng-container>
-            <div class="sb-meta-data-container sb-meta-data-column w-20" *ngIf="programDetails?.config?.defaultContributeOrgReview === false">
-                <i class="icon check circle sb-color-secondary-200 fs-1-286 va-text-top"></i>
-                <label class="font-weight-normal fs-0-92">{{resourceService.frmelmnts.lbl.twoLevelReviewSkipped}}</label>
-                <div class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block va-top pl-20">
-                    {{resourceService.frmelmnts.lbl.twoLevelReviewSkippedNote}}
-                </div>
-            </div>
-        </div>
     </div>
 
     <div class="sb-bg-color-primary-100">
@@ -96,7 +96,7 @@
                                         [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.textbooks || 0  }}
                         <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ collectionsCount }}</span>
                     </a>
-                    <a class="item" [isActive]="activeTab === 'nomination'"  suiTabHeader="1"  (click)="resetStatusFilter('nomination')"
+                    <a class="item" *ngIf="programDetails?.status !== 'Unlisted'" [isActive]="activeTab === 'nomination'"  suiTabHeader="1"  (click)="resetStatusFilter('nomination')"
                     appTelemetryInteract
                                         [telemetryInteractEdata]="getTelemetryInteractEdata('nominations', 'click', 'program-nominations')"
                                         [telemetryInteractObject]="telemetryInteractObject"
@@ -298,7 +298,7 @@
                                                         [telemetryInteractObject]="telemetryInteractObject"
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata">First</a>
-                                    <a [ngClass]="{disabled:pager.currentPage===1 }" class="sb-item" (click)="NavigateTonominationPage(pager.currentPage - 1)" 
+                                    <a [ngClass]="{disabled:pager.currentPage===1 }" class="sb-item" (click)="NavigateTonominationPage(pager.currentPage - 1)"
                                     appTelemetryInteract
                                                         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('nomination-list-previous-page', 'click', 'program-nominations', {values: [pager.currentPage - 1]})"
                                                         [telemetryInteractObject]="telemetryInteractObject"
@@ -424,7 +424,7 @@
                                                         [telemetryInteractObject]="telemetryInteractObject"
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata">First</a>
-                            <a [ngClass]="{disabled:pagerUsers.currentPage===1 }" class="sb-item" (click)="navigateToSourcingPage(pagerUsers.currentPage - 1)" 
+                            <a [ngClass]="{disabled:pagerUsers.currentPage===1 }" class="sb-item" (click)="navigateToSourcingPage(pagerUsers.currentPage - 1)"
                             appTelemetryInteract
                                                         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('sourcingOrgUsers-list-previous-page', 'click', 'program-nominations', {values: [pagerUsers.currentPage - 1]})"
                                                         [telemetryInteractObject]="telemetryInteractObject"

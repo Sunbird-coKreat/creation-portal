@@ -77,14 +77,14 @@ export class ProgramListComponent implements OnInit {
 
       if (this.isContributor) {
         if (this.activeMyProgramsMenu) {
-          this.getMyProgramsForContrib('Live');
+          this.getMyProgramsForContrib(['Live', 'Unlisted']);
         } else if (this.activeAllProgramsMenu) {
-          this.getAllProgramsForContrib('public', 'Live');
+          this.getAllProgramsForContrib('public', ['Live', 'Unlisted']);
         } else {
           this.showLoader = false;
         }
       } else {
-        this.getMyProgramsForOrg('Live');
+        this.getMyProgramsForOrg(['Live', 'Unlisted']);
       }
   }
 

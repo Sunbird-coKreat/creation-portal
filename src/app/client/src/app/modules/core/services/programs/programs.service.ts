@@ -504,7 +504,7 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.API_URL(req).pipe(tap((res) => {
       if (res.result.program_id) {
         const programId = res.result.program_id;
-        if (request.status == 'Live') {
+        if (request.status === 'Live' || request.status === 'Unlisted') {
           const nomRequest = {
             program_id: programId,
             status: 'Approved',

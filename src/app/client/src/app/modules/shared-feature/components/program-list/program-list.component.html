@@ -88,7 +88,7 @@
                 <td *ngIf="!isContributor || activeAllProgramsMenu" class="nowrap">
                   <div class="program-timeline">
                     <div class="program-timeline-item">
-                      <div class="status" [class.active]="isActive(program, 'nomination_enddate', i)">
+                      <div class="status" [class.active]="isActive(program, 'nomination_enddate', i)" *ngIf="program.status !== 'Unlisted'">
                         <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.nominationSubmission }}</div>
                         <div class="status__date">
                           {{ program?.nomination_enddate | date:'LLLL d, yyyy'  }}
@@ -97,7 +97,7 @@
                       </div>
                     </div>
                          <div class="program-timeline-item">
-                      <div class="status" [class.active]="isActive(program, 'shortlisting_enddate', i)">
+                      <div class="status" [class.active]="isActive(program, 'shortlisting_enddate', i)" *ngIf="program.status !== 'Unlisted'">
                         <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.shortlistingNomination }}</div>
                         <div class="status__date">
                           {{ program?.shortlisting_enddate | date:'LLLL d, yyyy'  }}
@@ -129,7 +129,8 @@
                   <div>
                     {{ program?.contributionDate | date:'LLLL d, yyyy' }}
                     <em class="d-block">{{ program?.contributionDate | daysToGo }}</em>
-                    <span class="sb-label sb-label-table sb-label-primary-100" *ngIf="activeMyProgramsMenu && !iscontributeOrgAdmin">{{ getProgramNominationStatus(program) }}</span>
+
+                    <span class="sb-label sb-label-table sb-label-primary-100" *ngIf="activeMyProgramsMenu && !iscontributeOrgAdmin && program?.status !== 'Unlisted'">{{ getProgramNominationStatus(program) }}</span>
                   </div>
                 </td>
                 <td *ngIf="activeMyProgramsMenu && iscontributeOrgAdmin" class="text-center">
