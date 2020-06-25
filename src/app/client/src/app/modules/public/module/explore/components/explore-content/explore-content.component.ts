@@ -3,7 +3,6 @@ import {
   ICard, ILoaderMessage, UtilService, NavigationHelperService
 } from '@sunbird/shared';
 import { SearchService, PlayerService, OrgDetailsService, UserService, FrameworkService } from '@sunbird/core';
-import { IPagination } from '@sunbird/announcement';
 import { PublicPlayerService } from '../../../../services';
 import { combineLatest, Subject } from 'rxjs';
 import { Component, OnInit, OnDestroy, EventEmitter, AfterViewInit } from '@angular/core';
@@ -35,7 +34,7 @@ export class ExploreContentComponent implements OnInit, OnDestroy, AfterViewInit
   public initFilters = false;
   public facets: Array<string>;
   public facetsList: any;
-  public paginationDetails: IPagination;
+  public paginationDetails;
   public contentList: Array<ICard> = [];
   public cardIntractEdata: IInteractEventEdata;
   public loaderMessage: ILoaderMessage;
