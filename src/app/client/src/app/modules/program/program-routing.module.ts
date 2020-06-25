@@ -2,7 +2,7 @@ import { ProgramsService } from '@sunbird/core';
 import { ListAllProgramsComponent } from './components';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { ProgramComponent, CreateProgramComponent, ProgramNominationsComponent, ListContributorTextbooksComponent, 
+import { ProgramComponent, CreateProgramComponent, ProgramNominationsComponent, ListContributorTextbooksComponent,
   EditProgramComponent } from './components';
 import { AuthGuard } from '../core/guard/auth-gard.service';
 import { HelpPageComponent } from '../shared-feature/components/help-page/help-page.component';
@@ -14,6 +14,13 @@ const routes: Routes = [{
     telemetry: {
       env: 'sourcing-portal', pageid: 'programs-list', type: 'view', subtype: 'paginate'
     }
+  }
+},
+{
+  path: 'create-program/:programId', component: CreateProgramComponent, pathMatch: 'full',
+  data: {
+    telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'create-program', mode: 'edit',
+                 object: { type: 'program', ver: '1.0'} }
   }
 },
 {
@@ -46,9 +53,6 @@ const routes: Routes = [{
   data: {
     telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'help-page' }
   },
-},
-{
-  path: 'edit-program/:programId', component: EditProgramComponent, pathMatch: 'full',
 },
 ];
 

@@ -559,7 +559,7 @@ export class ProgramListComponent implements OnInit {
   editDetailsBtnClicked(program) {
     if (this.iscontributeOrgAdmin) {
       // if (this.activeMyProgramsMenu) {
-          return this.router.navigateByUrl('/sourcing/edit-program/' + program.program_id);
+          return this.router.navigateByUrl('/sourcing/create-program/' + program.program_id);
       // }
     } else {
       return this.router.navigateByUrl('/sourcing/nominations/' + program.program_id);
