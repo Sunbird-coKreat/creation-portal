@@ -1,97 +1,33 @@
-<!-- Search Bar -->
-<div class="add-to-library__toc-player-searchbar p-8 sb-bg-color-gray-0">
-  <div class="sb-search-box large no-btn">
-    <div class="input-div relative">
-      <i class="search icon"></i>
-      <input class="sb-search-input" type="text" placeholder="Search for chapter" />
-    </div>
+<div class="sbtoc-container px-8 mt-20">
+  <div class="title sb-color-primary font-weight-bold fs-1-16">
+    Content Matches for Library
   </div>
-</div>
-
-<div class="sbtoc-container px-8">
+  <small class="font-italic sb-color-gray-200 d-block pb-10">Explore {{contentList.length}} content relavant to tale of two bird</small>
   <!-- Class separator -->
-
-  <div class="py-16" id="suggestions-tab" >
-    <div class="sbchapter__item mb-8">
-      <h4 class="sbchapter__item__title text-left sb__ellipsis sb__ellipsis--two mr-8">Social Science
-        Term 1 Social Science Term Social Science Term culture in north India vedic</h4>
-      <div class="sbchapter__img"><img src="./assets/images/book.png" /></div>
-      <div class="btn-addtoLibrary">
-        <button class="sb-btn sb-btn-normal sb-btn-secondary sb-left-icon-btn shine-effect"><i
-            class="plus square icon mr-4"></i>Add to library</button>
+  <div class="sb-library-scroll" id="suggestions-tab">
+    <div class="sbchapter__item mb-0" *ngFor="let content of contentList; let i = index"
+      [ngClass]="{'active':content.identifier === selectedContentId}"
+      (click)="onContentChange($event, content);">
+      <!-- <div class="sbchapter__img"><img src="./assets/images/book.png" /></div> -->
+      <h4 class="ml-8">
+        <div class="sbcard__title sb__ellipsis sb__ellipsis--one mb-0 font-weight-bold" suiPopup
+          [popupPlacement]="'left'" popupText="{{content.name}}">{{content.name}}</div>
+        <div class="sbchapter__item__title text-left sb__ellipsis sb__ellipsis--two mr-8 sb-color-black">
+          By {{content.board}}
+        </div>
+      </h4>
+      <div class="btn-addtoLibrary pt-0 pl-0" *ngIf="addToLibraryBtnVisibility && content.identifier === selectedContentId && !content.isAdded">
+        <button class="sb-btn sb-btn-xs sb-btn-secondary sb-left-icon-btn" (click)="addToLibrary();" ><i class="plus square icon mr-4"></i>Add to
+          Textbook
+        </button>
       </div>
-    </div>
-    <div class="sbchapter__item sbchapter__item--active mb-8">
-      <h4 class="sbchapter__item__title text-left sb__ellipsis sb__ellipsis--two mr-8">Social Science
-        Term 1 Social Science Term Social Science Term culture in north India vedic</h4>
-      <div class="sbchapter__img"><img src="./assets/images/book.png" /></div>
-      <div class="btn-addtoLibrary">
-        <button class="sb-btn sb-btn-normal sb-btn-secondary sb-left-icon-btn shine-effect"><i
-            class="plus square icon mr-4"></i>Add to library</button>
-      </div>
-    </div>
-    <div class="sbchapter__item mb-8">
-      <h4 class="sbchapter__item__title text-left sb__ellipsis sb__ellipsis--two mr-8">Social Science
-        Term 1 Social Science Term Social Science Term culture in north India vedic</h4>
-      <div class="sbchapter__img"><img src="./assets/images/book.png" /></div>
-      <div class="btn-addtoLibrary">
-        <button class="sb-btn sb-btn-normal sb-btn-secondary sb-left-icon-btn shine-effect"><i
-            class="plus square icon mr-4"></i>Add to library</button>
-      </div>
-    </div>
-    <div class="sbchapter__item mb-8">
-      <h4 class="sbchapter__item__title text-left sb__ellipsis sb__ellipsis--two mr-8">Social Science
-        Term 1 Social Science Term Social Science Term culture in north India vedic</h4>
-      <div class="sbchapter__img"><img src="./assets/images/book.png" /></div>
-      <div class="btn-addtoLibrary">
-        <button class="sb-btn sb-btn-normal sb-btn-secondary sb-left-icon-btn shine-effect"><i
-            class="plus square icon mr-4"></i>Add to library</button>
-      </div>
-    </div>
-    <div class="sbchapter__item mb-8">
-      <h4 class="sbchapter__item__title text-left sb__ellipsis sb__ellipsis--two mr-8">Social Science
-        Term 1 Social Science Term Social Science Term culture in north India vedic</h4>
-      <div class="sbchapter__img"><img src="./assets/images/book.png" /></div>
-      <div class="btn-addtoLibrary">
-        <button class="sb-btn sb-btn-normal sb-btn-secondary sb-left-icon-btn shine-effect"><i
-            class="plus square icon mr-4"></i>Add to library</button>
-      </div>
-    </div>
-    <div class="sbchapter__item mb-8">
-      <h4 class="sbchapter__item__title text-left sb__ellipsis sb__ellipsis--two mr-8">Social Science
-        Term 1 Social Science Term Social Science Term culture in north India vedic</h4>
-      <div class="sbchapter__img"><img src="./assets/images/book.png" /></div>
-      <div class="btn-addtoLibrary">
-        <button class="sb-btn sb-btn-normal sb-btn-secondary sb-left-icon-btn shine-effect"><i
-            class="plus square icon mr-4"></i>Add to library</button>
-      </div>
-    </div>
-    <div class="sbchapter__item mb-8">
-      <h4 class="sbchapter__item__title text-left sb__ellipsis sb__ellipsis--two mr-8">Social Science
-        Term 1 Social Science Term Social Science Term culture in north India vedic</h4>
-      <div class="sbchapter__img"><img src="./assets/images/book.png" /></div>
-      <div class="btn-addtoLibrary">
-        <button class="sb-btn sb-btn-normal sb-btn-secondary sb-left-icon-btn shine-effect"><i
-            class="plus square icon mr-4"></i>Add to library</button>
-      </div>
-    </div>
-    <div class="sbchapter__item mb-8">
-      <h4 class="sbchapter__item__title text-left sb__ellipsis sb__ellipsis--two mr-8">Social Science
-        Term 1 Social Science Term Social Science Term culture in north India vedic</h4>
-      <div class="sbchapter__img"><img src="./assets/images/book.png" /></div>
-      <div class="btn-addtoLibrary">
-        <button class="sb-btn sb-btn-normal sb-btn-secondary sb-left-icon-btn shine-effect"><i
-            class="plus square icon mr-4"></i>Add to library</button>
-      </div>
-    </div>
-    <div class="sbchapter__item mb-8">
-      <h4 class="sbchapter__item__title text-left sb__ellipsis sb__ellipsis--two mr-8">Social Science
-        Term 1 Social Science Term Social Science Term culture in north India vedic</h4>
-      <div class="sbchapter__img"><img src="./assets/images/book.png" /></div>
-      <div class="btn-addtoLibrary">
-        <button class="sb-btn sb-btn-normal sb-btn-secondary sb-left-icon-btn shine-effect"><i
-            class="plus square icon mr-4"></i>Add to library</button>
+      <div class="textbookBtnLink" [hidden]="!content.isAdded">
+        <button type="button" class="sb-btn sb-btn-normal sb-btn-link
+         sb-btn-link-secondary sb-left-icon-btn fs-0-785"><i class="circle check icon"></i>
+         Added to Textbook</button>
       </div>
     </div>
   </div>
-</div> 
+  <h6 class="sb-color-gray-300 font-weight-normal mt-20">Explore more content</h6>
+  <a class="sb-color-primary cursor-pointer font-weight-bold fs-0-785" (click)="changeFilter()" >Change Filters</a>
+</div>

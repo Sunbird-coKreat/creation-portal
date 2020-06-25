@@ -1,9 +1,16 @@
+/* You can add global styles to this file, and also import other style files */
 @import './variables';
 @import 'mixins/mixins';
-// @import './pages/addtolibrary';
+/* // @import './pages/addtolibrary'; */
 .add-to-library {
   height: 100%;
   background: var(--primary-100) !important;
+
+  .back-btn{
+    &:hover{
+      background: none !important;
+    }
+  }
 
   &__header {
     height: 72px;
@@ -16,8 +23,8 @@
   }
 
   .add-to-library-dot {
-    width: calculateRem(4px);
-    height: calculateRem(4px);
+    width: calculateRem(5px);
+    height: calculateRem(5px);
     border-radius: 50%;
     background-color: var(--white);
     display: inline-block;
@@ -704,13 +711,17 @@
     margin-bottom: calculateRem(8px);
   }
 
+  .textbookBtnLink{
+    visibility: hidden;
+  }
+
   &__item {
     background: var(--white);
     border: calculateRem(1px) solid #ddd;
     box-shadow: 0 calculateRem(3px) calculateRem(4px) 0 rgba(2, 79, 157, 0.1);
-    border: calculateRem(0.5px) solid rgba(35, 97, 255, 0.5);
+    // border: calculateRem(0.5px) solid rgba(35, 97, 255, 0.5);
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     margin-bottom: calculateRem(8px);
     padding: calculateRem(8px);
@@ -718,11 +729,18 @@
     min-height: calculateRem(56px);
     position: relative;
 
+    &.active{
+     background: var(--primary-100);
+     .textbookBtnLink{
+       visibility: visible;
+     }
+    }
+
     .btn-addtoLibrary {
       position: absolute;
       right: 1px;
-      visibility: hidden;
-      background: #f2f2f2;
+      // visibility: hidden;
+      // background: #f2f2f2;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -756,7 +774,7 @@
       background: var(--gray-0);
     }
 
-    &:hover .btn-addtoLibrary {
+    &:hover {
       visibility: visible;
     }
 
@@ -945,7 +963,37 @@
     transform: translateX(100%);
   }
 }
-//   Prominent Filter 
+
+//   Prominent Filter
+.sb-select-searchfilter{
+  &.ui.selection.dropdown{
+    background: #fff !important;
+    border: solid 1px #b7b5b5 !important;
+    height: 38px !important;
+  }
+  .ui.label.visible{
+    margin: 0.4rem 0.125rem 0.25rem 0.125rem !important;
+  }
+}  
+  .sb-select-searchfilter{
+    .text{
+      padding: 5px 8px !important;
+    }
+  }
+.sb-prominent-filter-field{
+  width: 33% !important;
+  &:nth-child(3n){
+    padding: 0;
+  }
+  &:last-child{
+    width: 65% !important;
+  }
+  .dropdown.icon{
+    font-size: 1rem !important;
+    padding: 0.45rem 0.3rem !important;
+    color: #aba9a9 !important;
+  }
+}
 .sb-prominent-filter {
     position: relative;
     top: unset;
@@ -953,13 +1001,12 @@
 
     .sb-prominent-filter-field {
       cursor: pointer;
-      width: 25%;
 
       &:last-child {
         text-align: inherit !important;
         margin: inherit !important;
       }
-
+          
       .ui.selection.dropdown {
         border-color: #999;
       }
@@ -1057,3 +1104,22 @@
           font-weight: bold;
         }
       }
+  .sb-library-scroll{
+    height: calc(100vh - 72px);
+    overflow: auto;
+  }
+  .sb-border-vertical{
+    border-right: solid 1px #ccc;
+    height: 2.8rem;
+  }
+  .d-none{
+    display: none !important;
+  }
+  .sb-bg-header-blue{
+    background: #d8e1e8;
+  }
+  .sb-btn{
+    &:focus{
+      outline: 0 !important;
+    }
+  }

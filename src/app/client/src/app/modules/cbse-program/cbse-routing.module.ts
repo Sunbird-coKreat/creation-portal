@@ -7,7 +7,7 @@ const routes: Routes = [
 {
   path: 'nominatedtextbooks/mvcexplore/:textBookId', component: MvcLibraryComponent, pathMatch: 'full',
   data: {
-    hideHeaderNFooter: 'false',
+    hideHeaderNFooter: 'true',
     telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'mvc-explore' }
   },
 }
