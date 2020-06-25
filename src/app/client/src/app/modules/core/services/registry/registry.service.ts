@@ -134,6 +134,9 @@ export class RegistryService extends DataService {
         (res) => {
           if (res.result && res.result.User_Org && res.result.User_Org.length > 0) {
             this.mycontributionOrgUsers = _.compact(_.concat(this.mycontributionOrgUsers, res.result.User_Org));
+            if (res.result.User_Org.length < this.osReqLimit) {
+              return resolve(this.mycontributionOrgUsers);
+            }
             offset = offset + this.osReqLimit;
             return resolve(this.getAllContributionOrgUsers(orgId, offset));
           } else {
