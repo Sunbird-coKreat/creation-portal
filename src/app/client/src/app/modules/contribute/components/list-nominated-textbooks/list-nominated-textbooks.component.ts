@@ -15,6 +15,7 @@ import { IChapterListComponentInput, IPagination } from '../../../cbse-program/i
 import { InitialState, ISessionContext, IUserParticipantDetails } from '../../interfaces';
 import { isUndefined, isNullOrUndefined } from 'util';
 import * as moment from 'moment';
+import { CacheService } from 'ng2-cache-service';
 
 @Component({
   selector: 'app-nominated-contributor-textbooks',
@@ -76,11 +77,12 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   @ViewChild('prefModal') prefModal;
   public paginatedContributorOrgUsers: any = [];
   public allContributorOrgUsers: any = [];
+  public myOrgUsers = [];
   showUsersLoader = true;
   OrgUsersCnt = 0;
   pager: IPagination;
   pageNumber = 1;
-  pageLimit = 200;
+  pageLimit = 50;
   sharedContext;
 
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
@@ -89,7 +91,8 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public toasterService: ToasterService, private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
   public frameworkService: FrameworkService, public userService: UserService, public registryService: RegistryService,
   public activeRoute: ActivatedRoute, private collectionHierarchyService: CollectionHierarchyService, public actionService: ActionService,
-  private paginationService: PaginationService, private formBuilder: FormBuilder) {
+  private paginationService: PaginationService, private formBuilder: FormBuilder,
+  public cacheService: CacheService) {
     this.programId = this.activatedRoute.snapshot.params.programId;
     this.sbFormBuilder = formBuilder;
    }
@@ -283,7 +286,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     }
   }
 
-
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
@@ -445,7 +447,9 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           const getCurrentRoleId = _.find(this.programDetails.config.roles, {'name': this.sessionContext.currentRole});
           this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
         }
-        if (this.isUserOrgAdmin()) {
+        if (this.isSourcingOrgAdmin()) {
+          this.getSourcingOrgUsers();
+        } else if (this.isUserOrgAdmin()) {
           this.getContributionOrgUsers();
         }
       }
@@ -476,32 +480,52 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       this.toasterService.error('Failed fetching current nomination status');
     });
   }
+  
+  isSourcingOrgAdmin() {
+    return this.userService.userProfile.userRoles.includes('ORG_ADMIN') || this.userService.userProfile.userRegData.User_Org.roles.includes('admin');
+  }
+
+  getSourcingOrgUsers() {
+    const dikshaOrgId = _.get(this.userService, 'userProfile.organisations[0].organisationId');
+    const roles= ['CONTENT_REVIEWER', 'CONTENT_CREATOR'];
+
+    // Get all diskha users
+    this.programsService.getSourcingOrgUserList(dikshaOrgId, roles, this.pageLimit).then(orgUsersDetails => {
+      this.setOrgUsers(orgUsersDetails);
+    });
+  }
 
   getContributionOrgUsers() {
-      this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
-      this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
-      this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
-        if (!_.isEmpty(orgUsers)) {
-          orgUsers = _.filter(orgUsers, {"selectedRole": "user"});
-          _.forEach(orgUsers, r => {
-              r.projectselectedRole = 'Select';
-            if (this.nominationDetails.rolemapping) {
-              _.find(this.nominationDetails.rolemapping, (users, role) => {
-                if (_.includes(users, r.identifier)) {
-                  r.projectselectedRole = role;
-                }
-              });
-            }
-            this.allContributorOrgUsers.push(r);
-          });
-          this.OrgUsersCnt = this.allContributorOrgUsers.length;
-          this.sortOrgUsers('projectselectedRole');
-          this.showUsersLoader = false;
-        }
-        else {
-          this.showUsersLoader = false;
-        }
-      });
+    this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
+    this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
+    this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
+      this.setOrgUsers(orgUsers);
+    });
+  }
+
+  setOrgUsers(orgUsers) {
+    if (!_.isEmpty(orgUsers)) {
+      this.showUsersLoader = false;
+      return false;
+    }
+    this.allContributorOrgUsers = [];
+    orgUsers = _.filter(orgUsers, {"selectedRole": "user"});
+    _.forEach(orgUsers, r => {
+        r.projectselectedRole = 'Select';
+      if (this.nominationDetails.rolemapping) {
+        _.find(this.nominationDetails.rolemapping, (users, role) => {
+          if (_.includes(users, r.identifier)) {
+            r.projectselectedRole = role;
+          }
+        });
+      }
+      this.allContributorOrgUsers.push(r);
+    });
+
+    this.OrgUsersCnt = this.allContributorOrgUsers.length;
+    this.sortOrgUsers('projectselectedRole');
+    this.showUsersLoader = false;
+    return true;
   }
 
   NavigateToPage(page: number): undefined | void {

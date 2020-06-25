@@ -36,7 +36,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public roles = [{ name: 'User', value: 'user'}, { name: 'Admin', value: 'admin'}];
   pager: IPagination;
   pageNumber = 1;
-  pageLimit = 200;
+  pageLimit = 50;
 
   constructor(private toasterService: ToasterService, private configService: ConfigService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
@@ -92,81 +92,15 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   }
 
   getSourcingOrgUsers() {
+    const dikshaOrgId = _.get(this.userService, 'userProfile.organisations[0].organisationId');
+    const roles= ['CONTENT_REVIEWER', 'CONTENT_CREATOR', 'ORG_ADMIN'];
+
     // Get all diskha users
-    this.getAllSourcingOrgUsers().then((sourcingOrgUsers) => {
-      // Remove currently logged in user
-      sourcingOrgUsers = _.filter(sourcingOrgUsers, user => {
-        return user.identifier !== this.userService.userProfile.identifier;
-      });
-
-      if (!_.isEmpty(sourcingOrgUsers)) {
-        // Get the open saber users for org
-        const storedOrglist = this.cacheService.get('orgUsersDetails');
-        const orgId = _.get(this.userService, 'userProfile.userRegData.Org.osid');
-
-        this.registryService.getAllContributionOrgUsers(orgId)
-        .then((allOrgUsers) => {
-          // Get the open saber user details
-          const userList = _.map(allOrgUsers, u => u.userId);
-          const osUsersReq = this.registryService.getUserdetailsByOsIds(userList);
-
-          if (userList && storedOrglist && userList.length === storedOrglist.length) {
-            this.setOrgUsers(this.cacheService.get('orgUsersDetails'));
-          }
-
-          return forkJoin(osUsersReq).subscribe(res => {
-            const users = _.get(_.first(res), 'result.User');
-            let orgUsersDetails = _.map(sourcingOrgUsers, u => {
-              const osUser = _.first(_.filter(users, u1 => { 
-                return u1.userId === u.identifier;
-              }));
-
-              const osUserOrg = _.first(_.filter(allOrgUsers, u1 => {
-                return u1.userId === _.get(osUser, 'osid');
-              }));
-
-              return {
-                ...u,
-                name: `${u.firstName} ${u.lastName || ''}`,
-                User: osUser,
-                User_Org: osUserOrg,
-                selectedRole: !_.isUndefined(osUserOrg) ? _.first(osUserOrg.roles) : 'user'
-              };
-            });
-            orgUsersDetails = _.compact(orgUsersDetails);
-            this.setOrgUsers(orgUsersDetails);
-          });
-        });
-      }
+    this.programsService.getSourcingOrgUserList(dikshaOrgId, roles, this.pageLimit).then((orgUsersDetails) => {
+      this.setOrgUsers(orgUsersDetails); 
     }, (err) => {
       console.log('error:', err);
-    });
-  }
-
-  getAllSourcingOrgUsers(offset?) {
-    // Get the diskha users for org
-    const filters = {
-      'organisations.organisationId': _.get(this.userService, 'userProfile.organisations[0].organisationId'),
-      'organisations.roles': ['CONTENT_REVIEWER', 'CONTENT_CREATOR', 'ORG_ADMIN']
-    };
-
-    offset = (!_.isUndefined(offset)) ? offset : 0;
-
-    return new Promise((resolve, reject) => {
-      this.programsService.getSourcingOrgUsers(filters, offset, this.pageLimit).subscribe(
-        (res) => {
-          const sourcingOrgUsers =  _.get(res, 'result.response.content', []);
-
-          if (sourcingOrgUsers.length > 0) {
-            this.myOrgUsers = _.compact(_.concat(this.myOrgUsers, sourcingOrgUsers));
-            offset = offset + this.pageLimit;
-            return resolve(this.getAllSourcingOrgUsers(offset));
-          } else {
-            return resolve(this.myOrgUsers);
-          }
-        },
-        (error) => { return reject([]);
-      });
+      this.showLoader = false;
     });
   }
 
@@ -263,10 +197,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
         roles: [selectedRole]
       }
     };
-    this.addToRegistry(userOrgAdd, user);
-  }
 
-  addToRegistry(userOrgAdd, user) {
     this.programsService.addToRegistry(userOrgAdd).subscribe(
       (userAddRes) => {
         console.log("User added to org"+ user.identifier, userAddRes);
