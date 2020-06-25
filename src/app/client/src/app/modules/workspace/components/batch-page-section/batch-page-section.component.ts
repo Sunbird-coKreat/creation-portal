@@ -7,7 +7,6 @@ import {
   ResourceService, ILoaderMessage, INoResultMessage, ICaraouselData, NavigationHelperService
 } from '@sunbird/shared';
 import { WorkSpaceService, BatchService } from '../../services';
-import { IPagination } from '@sunbird/announcement';
 import * as _ from 'lodash-es';
 import { SuiModalService } from 'ng2-semantic-ui';
 import { IImpressionEventInput } from '@sunbird/telemetry';
@@ -93,7 +92,7 @@ export class BatchPageSectionComponent extends WorkSpace implements OnInit, OnDe
   * Contains returned object of the pagination service
   * which is needed to show the pagination on inbox view
   */
-  pager: IPagination;
+  pager;
 
   filters: object;
 

@@ -12,7 +12,6 @@ import {
 import { CourseProgressService, UsageService } from './../../services';
 import { ICourseProgressData, IBatchListData } from './../../interfaces';
 import { IInteractEventInput, IImpressionEventInput } from '@sunbird/telemetry';
-import { IPagination } from '@sunbird/announcement';
 /**
  * This component shows the course progress dashboard
  */
@@ -123,7 +122,7 @@ export class CourseProgressComponent implements OnInit, OnDestroy, AfterViewInit
     * Contains returned object of the pagination service
   * which is needed to show the pagination on inbox view
     */
-  pager: IPagination;
+  pager;
   /**
    * To send activatedRoute.snapshot to router navigation
    * service for redirection to parent component

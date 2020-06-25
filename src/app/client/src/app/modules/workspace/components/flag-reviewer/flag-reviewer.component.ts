@@ -10,7 +10,6 @@ import {
   NavigationHelperService
 } from '@sunbird/shared';
 import { WorkSpaceService } from '../../services';
-import { IPagination } from '@sunbird/announcement';
 import * as _ from 'lodash-es';
 import { SuiModalService, TemplateModalConfig, ModalTemplate } from 'ng2-semantic-ui';
 import { IInteractEventInput, IImpressionEventInput } from '@sunbird/telemetry';
@@ -107,7 +106,7 @@ export class FlagReviewerComponent extends WorkSpace implements OnInit, AfterVie
   * Contains returned object of the pagination service
   * which is needed to show the pagination on inbox view
   */
-  pager: IPagination;
+  pager;
 
   /**
   * To show toaster(error, success etc) after any API calls
