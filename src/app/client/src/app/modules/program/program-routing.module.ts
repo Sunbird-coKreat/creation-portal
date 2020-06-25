@@ -1,5 +1,5 @@
 import { ProgramsService } from '@sunbird/core';
-import { ListAllProgramsComponent } from './components';
+import { ProgramListComponent } from '../shared-feature/components/program-list/program-list.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ProgramComponent, CreateProgramComponent, ProgramNominationsComponent, ListContributorTextbooksComponent } from './components';
@@ -7,7 +7,7 @@ import { AuthGuard } from '../core/guard/auth-gard.service';
 import { HelpPageComponent } from '../shared-feature/components/help-page/help-page.component';
 
 const routes: Routes = [{
-  path: '', component: ListAllProgramsComponent, canActivate: [ProgramsService, AuthGuard],
+  path: '', component: ProgramListComponent, canActivate: [ProgramsService, AuthGuard],
   data: {
     roles: 'programSourcingRole',
     telemetry: {

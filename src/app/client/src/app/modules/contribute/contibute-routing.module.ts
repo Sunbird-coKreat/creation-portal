@@ -1,9 +1,8 @@
 import { ProgramsService, EnrollContributorService } from '@sunbird/core';
-import { ListAllProgramsComponent } from './components';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ProgramComponent } from './components';
-import { ListAllMyProgramsComponent } from './components/list-all-my-programs/list-all-my-programs.component';
+import { ProgramListComponent } from '../shared-feature/components/program-list/program-list.component';
 import { ListNominatedTextbooksComponent} from './components/list-nominated-textbooks/list-nominated-textbooks.component';
 import { OrgUserListComponent } from './components/org-user-list/org-user-list.component';
 import { OrgContriAdminComponent } from './components/org-contri-admin/org-contri-admin.component';
@@ -12,13 +11,13 @@ import { HelpPageComponent } from '../shared-feature/components/help-page/help-p
 
 const routes: Routes = [
 {
-  path: 'join/:orgId', component: ListAllMyProgramsComponent, pathMatch: 'full',
+  path: 'join/:orgId', component: ProgramListComponent, pathMatch: 'full',
   data: {
     telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
   },
 },
 {
-  path: '', component: ListAllProgramsComponent, canActivate: [ProgramsService],
+  path: '', component: ProgramListComponent, canActivate: [ProgramsService],
   data: {
     telemetry: {
       env: 'creation-portal', pageid: 'list-all-programs', type: 'view', subtype: 'paginate'
@@ -26,7 +25,7 @@ const routes: Routes = [
   }
 },
 {
-  path: 'myenrollprograms', component: ListAllMyProgramsComponent, pathMatch: 'full',
+  path: 'myenrollprograms', component: ProgramListComponent, pathMatch: 'full',
   data: {
     telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'list-my-programs' }
   },
