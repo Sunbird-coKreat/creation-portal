@@ -141,7 +141,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         edata: {
           type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
           pageid: this.telemetryPageId,
-          uri: this.router.url,
+          uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };

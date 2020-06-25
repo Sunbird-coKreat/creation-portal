@@ -27,13 +27,13 @@ $(document).ready(function () {
     }
   })
 
-function getEnvironment(a){
-  switch(a){
-    case "dock.preprod.ntp.net.in": return "https://dock.preprod.ntp.net.in/contribute"; break;
-    case "vdn.diksha.gov.in": return "https://vdn.diksha.gov.in/contribute"; break;
-    case "preprod.ntp.net.in": return "https://dock.preprod.ntp.net.in/contribute"; break;
-    case "diksha.gov.in": return "https://vdn.diksha.gov.in/contribute"; break;
-    default: return "/contribute"; break;
+function getEnvironment(env, slug){
+  switch(env){
+    case "dock.preprod.ntp.net.in": return "https://dock.preprod.ntp.net.in/" + slug + "/contribute"; break;
+    case "vdn.diksha.gov.in": return "https://vdn.diksha.gov.in/" + slug + "/contribute"; break;
+    case "preprod.ntp.net.in": return "https://dock.preprod.ntp.net.in/" + slug + "/contribute"; break;
+    case "diksha.gov.in": return "https://vdn.diksha.gov.in/" + slug + "/contribute"; break;
+    default: return  slug + "/contribute"; break;
   }
 }
 
@@ -65,34 +65,32 @@ function getTenants(url, callback){
 function getProjectsTemplates(data){
   var otherBoardCards = '';
   var stateBoardCards = '';
+  var env = window.location.hostname;
   for(let i=0; i<data.length; i++){
     //Other state boards
     if(data[i].orgName == 'NCERT' || data[i].orgName == 'CBSE'){
       otherBoardCards = otherBoardCards + '<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-xs-6"> <div class="program-cards"> <div class="topSection"> <label class="text-center hidden-lg-down">' + data[i].orgName + '</label> <div class="my-20">';
-    checkImageExists(data[i].imgUrl, function(imgPath){
+    checkImageExists(data[i].slug, function(imgPath){
       if(imgPath){
         otherBoardCards = otherBoardCards + '<img src="' + imgPath + '" class="logo-img" alt="' + data[i].orgName + ' logo" />'
       }
     });
-    otherBoardCards = otherBoardCards + '</div> </div> <div class="bottomSection"> <label><span class="fs-2">'+ data[i].program_count + '</span> Projects</label> <a href="#" class="hidden-lg-down a-link cb">Contribute</a> </div> </div> </div>';
+    otherBoardCards = otherBoardCards + '</div> </div> <div class="bottomSection"> <label><span class="fs-2">'+ data[i].program_count + '</span> Projects</label> <a href="'+ getEnvironment(env,data[i].slug) +'" class="hidden-lg-down a-link cb">Contribute</a> </div> </div> </div>';
     }else{
       // state boards
-      checkImageExists(data[i].imgUrl, function(imgPath){
+      checkImageExists(data[i].slug, function(imgPath){
         stateBoardCards = stateBoardCards + '<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-xs-6"> <div class="program-cards"> <div class="topSection"> <label class="text-center hidden-lg-down">' + data[i].orgName + '</label> <div class="my-20">';
         if(imgPath){
-          // console.log('hey');
           stateBoardCards = stateBoardCards + '<img src="' + imgPath + '" class="logo-img" alt="' + data[i].orgName + ' logo"/>';
         }
-        stateBoardCards = stateBoardCards + '</div> </div> <div class="bottomSection"> <label><span class="fs-2">' + data[i].program_count + '</span> Projects</label> <a href="#" class="hidden-lg-down a-link cb">Contribute</a> </div> </div> </div>';
+        stateBoardCards = stateBoardCards + '</div> </div> <div class="bottomSection"> <label><span class="fs-2">' + data[i].program_count + '</span> Projects</label> <a href="'+ getEnvironment(env,data[i].slug) +'" class="hidden-lg-down a-link cb">Contribute</a> </div> </div> </div>';
       });
     }
   }
   setTimeout(function(){ 
     $('.flex-jc-center').append(otherBoardCards);
     $('.state-board-projects').append(stateBoardCards); 
-    var a = window.location.hostname;
-    $(".cb").attr("href",getEnvironment(a));
-  }, 500);
+  }, 200);
 }
 //Get image path
 function checkImageExists(slug, callBack) {
