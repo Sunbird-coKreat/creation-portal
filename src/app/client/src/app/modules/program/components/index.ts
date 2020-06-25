@@ -4,4 +4,3 @@ export * from './program-header/program-header.component';
 export * from './create-program/create-program.component';
 export * from './program-nominations/program-nominations.component';
 export * from './list-contributor-textbooks/list-contributor-textbooks.component';
-export * from './edit-program/edit-program.component';

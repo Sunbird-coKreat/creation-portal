@@ -2,8 +2,7 @@ import { ProgramsService } from '@sunbird/core';
 import { ProgramListComponent } from '../shared-feature/components/program-list/program-list.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { ProgramComponent, CreateProgramComponent, ProgramNominationsComponent, ListContributorTextbooksComponent,
-  EditProgramComponent } from './components';
+import { ProgramComponent, CreateProgramComponent, ProgramNominationsComponent, ListContributorTextbooksComponent } from './components';
 import { AuthGuard } from '../core/guard/auth-gard.service';
 import { HelpPageComponent } from '../shared-feature/components/help-page/help-page.component';
 
