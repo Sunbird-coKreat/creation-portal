@@ -9,7 +9,6 @@ import {
 } from '@sunbird/shared';
 import { Ibatch, IStatusOption } from './../../interfaces/';
 import { WorkSpaceService } from '../../services';
-import { IPagination } from '@sunbird/announcement';
 import * as _ from 'lodash-es';
 import { IImpressionEventInput } from '@sunbird/telemetry';
 import { SuiModalService } from 'ng2-semantic-ui';
@@ -116,7 +115,7 @@ export class CollaboratingOnComponent extends WorkSpace implements OnInit, After
   * Contains returned object of the pagination service
   * which is needed to show the pagination on all content view
   */
-  pager: IPagination;
+  pager;
   /**
   * To show toaster(error, success etc) after any API calls
   */

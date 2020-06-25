@@ -304,7 +304,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
         edata: {
           type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
           pageid: _.get(this.activeRoute, 'snapshot.data.telemetry.pageid'),
-          uri: this.router.url,
+          uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };

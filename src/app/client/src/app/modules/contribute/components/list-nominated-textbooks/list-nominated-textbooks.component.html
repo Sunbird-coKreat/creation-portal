@@ -223,13 +223,21 @@
 												</div>
 											</td>
 											<td>
-												<button *ngIf="currentNominationStatus === 'Approved'"
+												<button *ngIf="currentNominationStatus === 'Approved' && sessionContext.currentRole === 'CONTRIBUTOR'"
 												type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary"
 												[disabled]="!canUploadContent()" (click)="viewContribution(contributorTextbook)" appTelemetryInteract
-												[telemetryInteractEdata]="getTelemetryInteractEdata('upload-content', 'click', 'list-nominated-textbooks')"
+												[telemetryInteractEdata]="getTelemetryInteractEdata('upload-content', 'click', 'list-nominated-textbooks', {values: [contributorTextbook.identifier]})"
 												[telemetryInteractObject]="telemetryInteractObject"
 												[telemetryInteractCdata]="telemetryInteractCdata"
-												[telemetryInteractPdata]="telemetryInteractPdata">{{sessionContext.currentRole === 'CONTRIBUTOR' ?  resourceService.frmelmnts.lbl.uploadContent : resourceService.frmelmnts.lbl.reviewContent}}</button>
+												[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.uploadContent}}</button>
+
+												<button *ngIf="currentNominationStatus === 'Approved' && sessionContext.currentRole !== 'CONTRIBUTOR'"
+												type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary"
+												[disabled]="!canUploadContent()" (click)="viewContribution(contributorTextbook)" appTelemetryInteract
+												[telemetryInteractEdata]="getTelemetryInteractEdata('review-content', 'click', 'list-nominated-textbooks', {values: [contributorTextbook.identifier]})"
+												[telemetryInteractObject]="telemetryInteractObject"
+												[telemetryInteractCdata]="telemetryInteractCdata"
+												[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.reviewContent}}</button>
 										</td>
 										</tr>
 									</tbody>
@@ -325,7 +333,7 @@
 									<sui-select class="selection pt-5" [(ngModel)]="orgUser.projectselectedRole" labelField="name" [options]="options" valueField="name"
 									(selectedOptionChange)="onRoleChange(orgUser)">
 										<sui-select-option *ngFor="let option of roles;" [value]="option" appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('assign-role-to-program', 'click', 'list-nominated-textbooks', {values: [orgUser.identifier, option.name]})"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('assign-users-to-program', 'click', 'list-nominated-textbooks', {values: [orgUser.identifier, option.name]})"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">
