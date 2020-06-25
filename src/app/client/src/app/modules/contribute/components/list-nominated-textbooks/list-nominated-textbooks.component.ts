@@ -491,7 +491,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   }
   
   isSourcingOrgAdmin() {
-    return this.userService.userProfile.userRoles.includes('ORG_ADMIN') || this.userService.userProfile.userRegData.User_Org.roles.includes('admin');
+    return this.userService.userProfile.userRoles.includes('ORG_ADMIN') && this.userService.userProfile.userRegData.User_Org.roles.includes('admin');
   }
 
   setOrgUsers(orgUsers) {
