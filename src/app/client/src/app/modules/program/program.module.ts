@@ -7,7 +7,6 @@ import { SlickModule } from 'ngx-slick';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedFeatureModule } from '@sunbird/shared-feature';
 import { ProgramRoutingModule } from './program-routing.module';
-import { ListAllProgramsComponent } from './components';
 import { ProgramComponent } from './components/program/program.component';
 import { OnboardPopupComponent } from './components/onboard-popup/onboard-popup.component';
 import { ContributorProfilePopupComponent } from './components/contributor-profile-popup/contributor-profile-popup.component';
@@ -24,7 +23,7 @@ import { CollectionComponent, DashboardComponent, ChapterListComponent } from '.
 import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
 
 @NgModule({
-  declarations: [ListAllProgramsComponent,
+  declarations: [
     // tslint:disable-next-line:max-line-length
     ProgramComponent, OnboardPopupComponent,
     ProgramHeaderComponent, CreateProgramComponent,
