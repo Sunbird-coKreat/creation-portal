@@ -6,8 +6,6 @@ import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from
 import { UserService, RegistryService, ProgramsService } from '@sunbird/core';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'lodash-es';
-import { forkJoin } from 'rxjs';
-
 
 @Component({
   selector: 'app-org-user-list',
@@ -31,8 +29,6 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public tempSortOrgUser: any = [];
   public direction = 'asc';
   public sortColumn = '';
-  public myOrgUsers = [];
-  public sourcingOrgUserCnt = 0;
   public roles = [{ name: 'User', value: 'user'}, { name: 'Admin', value: 'admin'}];
   pager: IPagination;
   pageNumber = 1;
@@ -98,9 +94,6 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     // Get all diskha users
     this.programsService.getSourcingOrgUserList(dikshaOrgId, roles, this.pageLimit).then((orgUsersDetails) => {
       this.setOrgUsers(orgUsersDetails); 
-    }, (err) => {
-      console.log('error:', err);
-      this.showLoader = false;
     });
   }
 

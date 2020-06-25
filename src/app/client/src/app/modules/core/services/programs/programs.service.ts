@@ -1012,10 +1012,12 @@ export class ProgramsService extends DataService implements CanActivate {
 
             return resolve(orgUsersDetails);
           }, (err) => {
+            console.log('Error:', err);
             return resolve([]);
           });
         });
       }, (err) => {
+        console.log('Error:', err);
         return resolve([]);
       });
     });
@@ -1031,21 +1033,30 @@ export class ProgramsService extends DataService implements CanActivate {
     offset = (!_.isUndefined(offset)) ? offset : 0;
     limit = (!_.isUndefined(limit)) ? limit : 100;
 
+    if (offset === 0) {
+      this.orgUsers = [];
+    }
+
     return new Promise((resolve, reject) => {
       this.getSourcingOrgUsers(filters, offset, limit).subscribe(
         (res) => {
           const sourcingOrgUsers =  _.get(res, 'result.response.content', []);
+          const totalCount =  _.get(res, 'result.response.count');
 
           if (sourcingOrgUsers.length > 0) {
             this.orgUsers = _.compact(_.concat(this.orgUsers, sourcingOrgUsers));
             offset = offset + limit;
-            return resolve(this.getAllSourcingOrgUsers(orgId, roles, limit, offset));
-          } else {
-            return resolve(this.orgUsers);
           }
+
+          if (totalCount > this.orgUsers.length){
+            return resolve(this.getAllSourcingOrgUsers(orgId, roles, limit, offset));
+          }
+          return resolve(this.orgUsers);
         },
-        (error) => { return reject([]);
-      });
+        (error) => {
+          return reject([]);
+        }
+      );
     });
   }
 }

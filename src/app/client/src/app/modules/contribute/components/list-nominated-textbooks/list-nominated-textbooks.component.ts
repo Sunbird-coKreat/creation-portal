@@ -15,7 +15,6 @@ import { IChapterListComponentInput, IPagination } from '../../../cbse-program/i
 import { InitialState, ISessionContext, IUserParticipantDetails } from '../../interfaces';
 import { isUndefined, isNullOrUndefined } from 'util';
 import * as moment from 'moment';
-import { CacheService } from 'ng2-cache-service';
 
 @Component({
   selector: 'app-nominated-contributor-textbooks',
@@ -77,7 +76,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   @ViewChild('prefModal') prefModal;
   public paginatedContributorOrgUsers: any = [];
   public allContributorOrgUsers: any = [];
-  public myOrgUsers = [];
   showUsersLoader = true;
   OrgUsersCnt = 0;
   pager: IPagination;
@@ -91,8 +89,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   public toasterService: ToasterService, private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
   public frameworkService: FrameworkService, public userService: UserService, public registryService: RegistryService,
   public activeRoute: ActivatedRoute, private collectionHierarchyService: CollectionHierarchyService, public actionService: ActionService,
-  private paginationService: PaginationService, private formBuilder: FormBuilder,
-  public cacheService: CacheService) {
+  private paginationService: PaginationService, private formBuilder: FormBuilder) {
     this.programId = this.activatedRoute.snapshot.params.programId;
     this.sbFormBuilder = formBuilder;
    }
@@ -370,7 +367,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     return (contributionendDate.isSameOrAfter(today, 'day') && endDate.isSameOrAfter(today, 'day')) ? true : false;
   }
 
-   setActiveDate() {
+  setActiveDate() {
     const dates = [ 'nomination_enddate', 'shortlisting_enddate', 'content_submission_enddate', 'enddate'];
 
     dates.forEach(key => {
@@ -447,10 +444,22 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           const getCurrentRoleId = _.find(this.programDetails.config.roles, {'name': this.sessionContext.currentRole});
           this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
         }
+
+        this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
+        this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
+
         if (this.isSourcingOrgAdmin()) {
-          this.getSourcingOrgUsers();
+          const dikshaOrgId = _.get(this.userService, 'userProfile.organisations[0].organisationId');
+          const roles= ['CONTENT_REVIEWER', 'CONTENT_CREATOR'];
+
+          // Get all diskha users
+          this.programsService.getSourcingOrgUserList(dikshaOrgId, roles, this.pageLimit).then((orgUsersDetails) => {
+            this.setOrgUsers(orgUsersDetails);
+          });
         } else if (this.isUserOrgAdmin()) {
-          this.getContributionOrgUsers();
+          this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
+            this.setOrgUsers(orgUsers);
+          });
         }
       }
 
@@ -485,26 +494,8 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     return this.userService.userProfile.userRoles.includes('ORG_ADMIN') || this.userService.userProfile.userRegData.User_Org.roles.includes('admin');
   }
 
-  getSourcingOrgUsers() {
-    const dikshaOrgId = _.get(this.userService, 'userProfile.organisations[0].organisationId');
-    const roles= ['CONTENT_REVIEWER', 'CONTENT_CREATOR'];
-
-    // Get all diskha users
-    this.programsService.getSourcingOrgUserList(dikshaOrgId, roles, this.pageLimit).then(orgUsersDetails => {
-      this.setOrgUsers(orgUsersDetails);
-    });
-  }
-
-  getContributionOrgUsers() {
-    this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
-    this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
-    this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
-      this.setOrgUsers(orgUsers);
-    });
-  }
-
   setOrgUsers(orgUsers) {
-    if (!_.isEmpty(orgUsers)) {
+    if (_.isEmpty(orgUsers)) {
       this.showUsersLoader = false;
       return false;
     }
