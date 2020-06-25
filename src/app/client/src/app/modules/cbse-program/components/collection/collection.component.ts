@@ -153,7 +153,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
         edata: {
           type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
           pageid: this.telemetryPageId,
-          uri: this.router.url,
+          uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };

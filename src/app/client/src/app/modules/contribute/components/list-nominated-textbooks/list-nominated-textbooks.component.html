@@ -1,119 +1,118 @@
 <div *ngIf="currentStage === 'listNominatedTextbookComponent' && programDetails">
 
 	<div class="sb-bg-color-primary-0 practical-header py-16">
-		<div class="d-flex  flex-jc-space-between practical-header__content ui container pt-10">
-
-			<div class="practical-header__title flex-basis-1 w-20">
-				<h5 class="m-0 p-0 font-weight-bold d-inline-block">{{ programDetails?.name }} </h5>
-				<i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
-					<ng-template #popupTemplate>
-						<div class="content">
-							<div class="textbook-details ml-8">
-								<div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.mediums }}</strong></div>
+			<div class="d-flex  flex-jc-space-between practical-header__content ui container pt-10">
+					<div class="practical-header__title flex-basis-1 w-20">
+						<h5 class="m-0 p-0 font-weight-bold d-inline-block">{{ programDetails?.name }} </h5>
+						<i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
+							<ng-template #popupTemplate>
 								<div class="content">
-									<label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.medium.join(', ') }}</label>
+									<div class="textbook-details ml-8">
+										<div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.mediums }}</strong></div>
+										<div class="content">
+											<label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.medium.join(', ') }}</label>
+										</div>
+										<hr />
+										<div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.class }}</strong></div>
+										<div class="content">
+											<label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.gradeLevel.join(', ') }}</label>
+										</div>
+										<hr />
+										<div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.subjects }}</strong></div>
+										<div class="content">
+											<label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.subject.join(', ') }}</label>
+										</div>
+									</div>
 								</div>
-								<hr />
-								<div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.class }}</strong></div>
-								<div class="content">
-									<label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.gradeLevel.join(', ') }}</label>
-								</div>
-								<hr />
-								<div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.subjects }}</strong></div>
-								<div class="content">
-									<label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.subject.join(', ') }}</label>
-								</div>
+							</ng-template>
+						<p class="fs-0-785 font-weight-normal pr-10 sb__ellipsis sb__ellipsis--three">{{ programDetails?.description }}</p>
+					</div>
+					<div class="sb-meta-data-container sb-meta-data-column px-10 w-20">
+						<label class="m-0">{{ resourceService.frmelmnts.lbl.contentType}}</label>
+						<p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{ programContentTypes }}"><span>{{ programContentTypes }}</span></p>
+					</div>
+						<!-- <div class="sb-meta-data-container sb-meta-data-column px-10">
+							<label class="width-100">Content Status </label>
+							<div class="d-flex">
+								<dl class="sb-meta-data">
+									<dt>0</dt>
+									<dd>Initiated</dd>
+								</dl>
+								<dl class="sb-meta-data">
+									<dt>3</dt>
+									<dd>Pending</dd>
+								</dl>
+								<dl class="sb-meta-data">
+									<dt>0</dt>
+									<dd>Approved</dd>
+								</dl>
+								<dl class="sb-meta-data">
+									<dt>0</dt>
+									<dd>Rejected</dd>
+								</dl>
+								<dl class="sb-meta-data">
+									<dt>3</dt>
+									<dd>Total</dd>
+								</dl>
 							</div>
+						</div> -->
+					<ng-container *ngIf="programDetails">
+						<div class="program-timeline px-10">
+						  <div class="program-timeline-item" *ngIf="programDetails?.status !== 'Unlisted'">
+							<div class="status" [class.active]="activeDate === 'nomination_enddate'">
+							  <div class="status__label">{{resourceService.frmelmnts.lbl.nominationEndDate}}</div>
+							  <div class="status__date">
+								{{ programDetails?.nomination_enddate |  date:'LLLL d, yyyy'  }}
+								<br/>
+								<em [class.sb-color-warning]="activeDate === 'nomination_enddate'" *ngIf="activeDate === 'nomination_enddate'">{{ programDetails?.nomination_enddate | daysToGo  }}</em>
+							  </div>
+							</div>
+						  </div>
+						  <div class="program-timeline-item" *ngIf="programDetails?.status !== 'Unlisted'">
+							<div class="status"  [class.active]="activeDate === 'shortlisting_enddate'">
+							  <div class="status__label">{{resourceService.frmelmnts.lbl.shortlistingNomination}}</div>
+							  <div class="status__date">
+								{{ programDetails?.shortlisting_enddate |  date:'LLLL d, yyyy'  }}
+								<br/>
+								<em [class.sb-color-warning]="activeDate === 'shortlisting_enddate'" *ngIf="activeDate === 'shortlisting_enddate'">{{ programDetails?.shortlisting_enddate | daysToGo  }}</em>
+							  </div>
+							</div>
+						  </div>
+						  <div class="program-timeline-item">
+							<div class="status"  [class.active]="activeDate === 'content_submission_enddate'">
+							  <div class="status__label">{{resourceService.frmelmnts.lbl.contributionReview}}</div>
+							  <div class="status__date">
+								{{ programDetails?.content_submission_enddate |  date:'LLLL d, yyyy'  }}
+								<br/>
+								<em [class.sb-color-warning]="activeDate === 'content_submission_enddate'" *ngIf="activeDate === 'content_submission_enddate'">{{ programDetails?.content_submission_enddate | daysToGo  }}</em>
+							  </div>
+							</div>
+						  </div>
+						  <div class="program-timeline-item">
+							<div class="status" [class.active]="activeDate === 'enddate'">
+							  <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.programEndDate }}</div>
+							  <div class="status__date">
+								{{ programDetails?.enddate |  date:'LLLL d, yyyy'  }}
+								<br/>
+								<em [class.sb-color-warning]="activeDate === 'enddate'" *ngIf="activeDate === 'enddate'">{{ programDetails?.enddate | daysToGo  }}</em>
+							  </div>
+							</div>
+						  </div>
 						</div>
-					</ng-template>
-				<p class="fs-0-785 font-weight-normal pr-10 sb__ellipsis sb__ellipsis--three">{{ programDetails?.description }}</p>
-			</div>
-			<div class="sb-meta-data-container sb-meta-data-column px-10 w-20">
-				<label class="m-0">{{ resourceService.frmelmnts.lbl.contentType}}</label>
-				<p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{ programContentTypes }}"><span>{{ programContentTypes }}</span></p>
-			</div>
-				<!-- <div class="sb-meta-data-container sb-meta-data-column px-10">
-					<label class="width-100">Content Status </label>
-					<div class="d-flex">
-						<dl class="sb-meta-data">
-							<dt>0</dt>
-							<dd>Initiated</dd>
-						</dl>
-						<dl class="sb-meta-data">
-							<dt>3</dt>
-							<dd>Pending</dd>
-						</dl>
-						<dl class="sb-meta-data">
-							<dt>0</dt>
-							<dd>Approved</dd>
-						</dl>
-						<dl class="sb-meta-data">
-							<dt>0</dt>
-							<dd>Rejected</dd>
-						</dl>
-						<dl class="sb-meta-data">
-							<dt>3</dt>
-							<dd>Total</dd>
-						</dl>
+					  </ng-container>
+					<div class="sb-meta-data-container sb-meta-data-column px-10" *ngIf="programDetails?.status !== 'Unlisted'">
+						<div class='practical-sb-buttons' *ngIf="nominationDetails && nominationDetails.status">
+							<label class="m-0">{{ resourceService.frmelmnts.lbl.status }}</label>
+							<p [ngClass]="{'sb-color-success':nominationDetails.status == 'Approved','sb-color-error':nominationDetails.status == 'Rejected','sb-color-warning':nominationDetails.status == 'Pending'}">{{ nominationDetails?.status }}</p>
+						</div>
 					</div>
-				</div> -->
-			<ng-container *ngIf="programDetails">
-				<div class="program-timeline px-10">
-				  <div class="program-timeline-item">
-					<div class="status" [class.active]="activeDate === 'nomination_enddate'">
-					  <div class="status__label">{{resourceService.frmelmnts.lbl.nominationEndDate}}</div>
-					  <div class="status__date">
-						{{ programDetails?.nomination_enddate |  date:'LLLL d, yyyy'  }}
-						<br/>
-						<em [class.sb-color-warning]="activeDate === 'nomination_enddate'" *ngIf="activeDate === 'nomination_enddate'">{{ programDetails?.nomination_enddate | daysToGo  }}</em>
-					  </div>
+					<div class="sb-meta-data-container sb-meta-data-column  px-10">
+						<div *ngIf="nominated && nominationDetails.status=='Rejected'">
+							<label class="m-0">{{ resourceService.frmelmnts.lbl.reasonsForRejection }}</label>
+							<p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.reasonsForRejection}}" popupText="{{nominationDetails?.feedback}}">{{ nominationDetails?.feedback }}</p>
+						</div>
 					</div>
-				  </div>
-				  <div class="program-timeline-item">
-					<div class="status"  [class.active]="activeDate === 'shortlisting_enddate'">
-					  <div class="status__label">{{resourceService.frmelmnts.lbl.shortlistingNomination}}</div>
-					  <div class="status__date">
-						{{ programDetails?.shortlisting_enddate |  date:'LLLL d, yyyy'  }}
-						<br/>
-						<em [class.sb-color-warning]="activeDate === 'shortlisting_enddate'" *ngIf="activeDate === 'shortlisting_enddate'">{{ programDetails?.shortlisting_enddate | daysToGo  }}</em>
-					  </div>
-					</div>
-				  </div>
-				  <div class="program-timeline-item">
-					<div class="status"  [class.active]="activeDate === 'content_submission_enddate'">
-					  <div class="status__label">{{resourceService.frmelmnts.lbl.contributionReview}}</div>
-					  <div class="status__date">
-						{{ programDetails?.content_submission_enddate |  date:'LLLL d, yyyy'  }}
-						<br/>
-						<em [class.sb-color-warning]="activeDate === 'content_submission_enddate'" *ngIf="activeDate === 'content_submission_enddate'">{{ programDetails?.content_submission_enddate | daysToGo  }}</em>
-					  </div>
-					</div>
-				  </div>
-				  <div class="program-timeline-item">
-					<div class="status" [class.active]="activeDate === 'enddate'">
-					  <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.programEndDate }}</div>
-					  <div class="status__date">
-						{{ programDetails?.enddate |  date:'LLLL d, yyyy'  }}
-						<br/>
-						<em [class.sb-color-warning]="activeDate === 'enddate'" *ngIf="activeDate === 'enddate'">{{ programDetails?.enddate | daysToGo  }}</em>
-					  </div>
-					</div>
-				  </div>
 				</div>
-			  </ng-container>
-			<div class="sb-meta-data-container sb-meta-data-column px-10">
-				<div class='practical-sb-buttons' *ngIf="nominationDetails && nominationDetails.status">
-					<label class="m-0">{{ resourceService.frmelmnts.lbl.status }}</label>
-					<p [ngClass]="{'sb-color-success':nominationDetails.status == 'Approved','sb-color-error':nominationDetails.status == 'Rejected','sb-color-warning':nominationDetails.status == 'Pending'}">{{ nominationDetails?.status }}</p>
-				</div>
-			</div>
-			<div class="sb-meta-data-container sb-meta-data-column  px-10">
-				<div *ngIf="nominated && nominationDetails.status=='Rejected'">
-					<label class="m-0">{{ resourceService.frmelmnts.lbl.reasonsForRejection }}</label>
-					<p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.reasonsForRejection}}" popupText="{{nominationDetails?.feedback}}">{{ nominationDetails?.feedback }}</p>
-				</div>
-			</div>
-		</div>
 	</div>
 
 	<div class="sb-bg-color-primary-100">
@@ -224,13 +223,21 @@
 												</div>
 											</td>
 											<td>
-												<button *ngIf="currentNominationStatus === 'Approved'"
+												<button *ngIf="currentNominationStatus === 'Approved' && sessionContext.currentRole === 'CONTRIBUTOR'"
 												type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary"
 												[disabled]="!canUploadContent()" (click)="viewContribution(contributorTextbook)" appTelemetryInteract
-												[telemetryInteractEdata]="getTelemetryInteractEdata('upload-content', 'click', 'list-nominated-textbooks')"
+												[telemetryInteractEdata]="getTelemetryInteractEdata('upload-content', 'click', 'list-nominated-textbooks', {values: [contributorTextbook.identifier]})"
 												[telemetryInteractObject]="telemetryInteractObject"
 												[telemetryInteractCdata]="telemetryInteractCdata"
-												[telemetryInteractPdata]="telemetryInteractPdata">{{sessionContext.currentRole === 'CONTRIBUTOR' ?  resourceService.frmelmnts.lbl.uploadContent : resourceService.frmelmnts.lbl.reviewContent}}</button>
+												[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.uploadContent}}</button>
+
+												<button *ngIf="currentNominationStatus === 'Approved' && sessionContext.currentRole !== 'CONTRIBUTOR'"
+												type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary"
+												[disabled]="!canUploadContent()" (click)="viewContribution(contributorTextbook)" appTelemetryInteract
+												[telemetryInteractEdata]="getTelemetryInteractEdata('review-content', 'click', 'list-nominated-textbooks', {values: [contributorTextbook.identifier]})"
+												[telemetryInteractObject]="telemetryInteractObject"
+												[telemetryInteractCdata]="telemetryInteractCdata"
+												[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.reviewContent}}</button>
 										</td>
 										</tr>
 									</tbody>
@@ -326,7 +333,7 @@
 									<sui-select class="selection pt-5" [(ngModel)]="orgUser.projectselectedRole" labelField="name" [options]="options" valueField="name"
 									(selectedOptionChange)="onRoleChange(orgUser)">
 										<sui-select-option *ngFor="let option of roles;" [value]="option" appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('assign-role-to-program', 'click', 'list-nominated-textbooks', {values: [orgUser.identifier, option.name]})"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('assign-users-to-program', 'click', 'list-nominated-textbooks', {values: [orgUser.identifier, option.name]})"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">

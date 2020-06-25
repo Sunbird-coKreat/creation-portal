@@ -2,12 +2,10 @@
 import { takeUntil } from 'rxjs/operators';
 import { HomeAnnouncementService } from './../../service/index';
 import { Component, OnInit, EventEmitter, Output, OnDestroy } from '@angular/core';
-import { AnnouncementService } from '@sunbird/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigService, ResourceService, ServerResponse } from '@sunbird/shared';
 import * as _ from 'lodash-es';
 
-import { IAnnouncementListData } from '@sunbird/announcement';
 import { IImpressionEventInput, IInteractEventObject, IInteractEventEdata } from '@sunbird/telemetry';
 
 import { Subject } from 'rxjs';
@@ -37,7 +35,6 @@ export class HomeAnnouncementComponent implements OnInit, OnDestroy {
   /**
    * To make inbox API calls.
    */
-  private announcementService: AnnouncementService;
   /**
    * To get url, app configs.
    */
@@ -45,7 +42,7 @@ export class HomeAnnouncementComponent implements OnInit, OnDestroy {
   /**
    * Contains result object returned from get Inbox API.
    */
-  announcementlist: IAnnouncementListData;
+  announcementlist;
   /**
   * Contains page limit of home inbox list.
   */
@@ -70,10 +67,10 @@ export class HomeAnnouncementComponent implements OnInit, OnDestroy {
    * @param {ConfigService} config Reference of config service.
    */
   constructor(resourceService: ResourceService, homeAnnouncementService: HomeAnnouncementService,
-    config: ConfigService, announcementService: AnnouncementService) {
+    config: ConfigService) {
     this.resourceService = resourceService;
     this.homeAnnouncementService = homeAnnouncementService;
-    this.announcementService = announcementService;
+
     this.config = config;
   }
   /**
@@ -96,9 +93,7 @@ export class HomeAnnouncementComponent implements OnInit, OnDestroy {
             // Calling received API
             _.each(this.announcementlist.announcements, (key) => {
               if (key.received === false) {
-                this.announcementService.receivedAnnouncement({ announcementId: key.id }).subscribe(
-                  (response: ServerResponse) => { }
-                );
+
               }
             });
           }
@@ -118,17 +113,7 @@ export class HomeAnnouncementComponent implements OnInit, OnDestroy {
 	 */
   readAnnouncement(announcementId: string, read: boolean): void {
     if (read === false) {
-      this.announcementService.readAnnouncement({ announcementId: announcementId }).pipe(
-        takeUntil(this.unsubscribe))
-        .subscribe(
-          (response: ServerResponse) => {
-            _.each(this.announcementlist.announcements, (key, index) => {
-              if (announcementId === key.id) {
-                this.announcementlist.announcements[index].read = true;
-              }
-            });
-          }
-        );
+
     }
   }
 
