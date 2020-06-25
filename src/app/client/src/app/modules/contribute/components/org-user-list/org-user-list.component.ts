@@ -7,7 +7,6 @@ import { UserService, RegistryService, ProgramsService } from '@sunbird/core';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'lodash-es';
 
-
 @Component({
   selector: 'app-org-user-list',
   templateUrl: './org-user-list.component.html',
@@ -33,16 +32,20 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public roles = [{ name: 'User', value: 'user'}, { name: 'Admin', value: 'admin'}];
   pager: IPagination;
   pageNumber = 1;
-  pageLimit = 200;
+  pageLimit = 50;
 
   constructor(private toasterService: ToasterService, private configService: ConfigService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
     public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService,
     private paginationService: PaginationService ) {
+    if (this.isSourcingOrgAdmin()) {
+      this.getSourcingOrgUsers();
+    } else {
       this.getContributionOrgUsers();
     }
-
+  }
+  
   ngOnInit() {
     this.position = 'top center';
     const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
@@ -79,17 +82,34 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
       };
      });
   }
+  
+  isSourcingOrgAdmin() {
+    return this.userService.userProfile.userRoles.includes('ORG_ADMIN') || this.userService.userProfile.userRegData.User_Org.roles.includes('admin');
+  }
+
+  getSourcingOrgUsers() {
+    const dikshaOrgId = _.get(this.userService, 'userProfile.organisations[0].organisationId');
+    const roles= ['CONTENT_REVIEWER', 'CONTENT_CREATOR', 'ORG_ADMIN'];
+
+    // Get all diskha users
+    this.programsService.getSourcingOrgUserList(dikshaOrgId, roles, this.pageLimit).then((orgUsersDetails) => {
+      this.setOrgUsers(orgUsersDetails); 
+    });
+  }
+
+  setOrgUsers(orgUsersDetails) {
+    this.allContributorOrgUsers = orgUsersDetails;
+
+    if (!_.isEmpty(this.allContributorOrgUsers)) {
+      this.orgUserscnt =  this.allContributorOrgUsers.length;
+      this.sortCollection('selectedRole');
+    }
+    this.showLoader = false;
+  }
 
   getContributionOrgUsers() {
     this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
-      this.allContributorOrgUsers = orgUsers;
-      //this.tempSortOrgUser = orgUsers;
-      if (!_.isEmpty(this.allContributorOrgUsers) && this.allContributorOrgUsers.length > 0) {
-        this.orgUserscnt =  this.allContributorOrgUsers.length;
-        this.sortCollection('selectedRole');
-      }
-
-      this.showLoader = false;
+      this.setOrgUsers(orgUsers);
     });
   }
 
@@ -118,8 +138,76 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   onRoleChange(user) {
     const selectedRole = _.get(user, 'selectedRole');
     const osid = _.get(user, 'User_Org.osid');
+    const org = this.userService.userProfile.userRegData.Org;
 
-    this.programsService.updateUserRole(osid, [selectedRole]).subscribe(
+    // Already user in Open Saber so update the role directly
+    if (!_.isUndefined(osid)) {
+      this.updateUserRole(osid, selectedRole);
+      return true;
+    }
+
+    // Get user's Open Saber profile
+    this.registryService.openSaberRegistrySearch(user.identifier).then((userProfile) => {
+      console.log('userProfile', userProfile);
+
+      if (!_.isEmpty(_.get(userProfile, 'user'))) {
+        this.saveUserOrgMapping(userProfile, selectedRole, user);
+        return true;
+      }
+      // If user is not in open saber then create one
+      const userAdd = {
+        User: {
+          firstName: this.userService.userProfile.firstName,
+          lastName: this.userService.userProfile.lastName || '',
+          userId: this.userService.userProfile.identifier,
+          enrolledDate: new Date().toISOString(),
+          board : org.board,
+          medium: org.medium,
+          gradeLevel: org.gradeLevel,
+          subject: org.subject
+        }
+      };
+
+      this.programsService.addToRegistry(userAdd).subscribe((res) => {
+        this.saveUserOrgMapping(userProfile, selectedRole, user);
+      }, (error) => {console.log('error: ', error)});
+    });
+  }
+
+  saveUserOrgMapping(userProfile, selectedRole, user) {
+    // User have org then update te role
+    if (!_.isEmpty(_.get(userProfile, 'user_org'))) {
+      const osid = _.get(userProfile, 'user_org.osid');
+      this.updateUserRole(osid, selectedRole);
+      return true;
+    }
+
+    // If user is not associated with org then add him with selected role
+    let userOrgAdd = {
+      User_Org: {
+        userId: _.get(userProfile, 'user.osid'),
+        orgId: _.get(this.userService, 'userProfile.userRegData.Org.osid'),
+        roles: [selectedRole]
+      }
+    };
+
+    this.programsService.addToRegistry(userOrgAdd).subscribe(
+      (userAddRes) => {
+        console.log("User added to org"+ user.identifier, userAddRes);
+        this.toasterService.success(this.resourceService.messages.smsg.m0065);
+        this.cacheService.remove('orgUsersDetails');
+        return true;
+      },
+      (userAddErr) => {
+        console.log("Errro while adding User added to org"+ user.identifier,userAddErr);
+        this.toasterService.error(this.resourceService.messages.emsg.m0077);
+        return false;
+      }
+    );
+  }
+
+  updateUserRole(osid, role) {
+    this.programsService.updateUserRole(osid, [role]).subscribe(
       (res) => {
         this.toasterService.success(this.resourceService.messages.smsg.m0065);
         this.cacheService.remove('orgUsersDetails');

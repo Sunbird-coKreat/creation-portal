@@ -40,6 +40,7 @@ export class ProgramsService extends DataService implements CanActivate {
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
   private _contentTypes: any[];
   private _sourcingOrgReviewers: Array<any>;
+  private orgUsers: Array<any>;
 
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService,
@@ -957,5 +958,105 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
     return this.API_URL(req);
+  }
+
+  getSourcingOrgUserList(dikshaOrgId, roles, limit?) {
+    return new Promise((resolve, reject) => {
+      // Get all diskha users
+      return this.getAllSourcingOrgUsers(dikshaOrgId, roles, limit)
+      .then((sourcingOrgUsers) => {
+        // Remove currently logged in user
+        sourcingOrgUsers = _.filter(sourcingOrgUsers, user => {
+          return user.identifier !== this.userService.userProfile.identifier;
+        });
+
+        if (_.isEmpty(sourcingOrgUsers)) {
+          return resolve([]);
+        }
+
+        // Get the open saber users for org
+        const storedOrglist = this.cacheService.get('orgUsersDetails');
+        const orgId = _.get(this.userService, 'userProfile.userRegData.Org.osid');
+
+        return this.registryService.getAllContributionOrgUsers(orgId)
+        .then((allOrgUsers) => {
+          // Get the open saber user details
+          const userList = _.map(allOrgUsers, u => u.userId);
+          const osUsersReq = this.registryService.getUserdetailsByOsIds(userList);
+
+          if (userList && storedOrglist && userList.length === storedOrglist.length) {
+            return resolve(this.cacheService.get('orgUsersDetails'));
+          }
+
+          return forkJoin(osUsersReq).subscribe(res => {
+            const users = _.get(_.first(res), 'result.User');
+            let orgUsersDetails = _.map(sourcingOrgUsers, u => {
+              const osUser = _.first(_.filter(users, u1 => { 
+                return u1.userId === u.identifier;
+              }));
+
+              const osUserOrg = _.first(_.filter(allOrgUsers, u1 => {
+                return u1.userId === _.get(osUser, 'osid');
+              }));
+
+              return {
+                ...u,
+                name: `${u.firstName} ${u.lastName || ''}`,
+                User: osUser,
+                User_Org: osUserOrg,
+                selectedRole: !_.isUndefined(osUserOrg) ? _.first(osUserOrg.roles) : 'user'
+              };
+            });
+            orgUsersDetails = _.compact(orgUsersDetails);
+            this.cacheService.set('orgUsersDetails', orgUsersDetails);
+
+            return resolve(orgUsersDetails);
+          }, (err) => {
+            console.log('Error:', err);
+            return resolve([]);
+          });
+        });
+      }, (err) => {
+        console.log('Error:', err);
+        return resolve([]);
+      });
+    });
+  }
+
+  getAllSourcingOrgUsers(orgId, roles, limit?, offset?) {
+    // Get the diskha users for org
+    const filters = {
+      'organisations.organisationId': orgId,
+      'organisations.roles': roles
+    };
+
+    offset = (!_.isUndefined(offset)) ? offset : 0;
+    limit = (!_.isUndefined(limit)) ? limit : 100;
+
+    if (offset === 0) {
+      this.orgUsers = [];
+    }
+
+    return new Promise((resolve, reject) => {
+      this.getSourcingOrgUsers(filters, offset, limit).subscribe(
+        (res) => {
+          const sourcingOrgUsers =  _.get(res, 'result.response.content', []);
+          const totalCount =  _.get(res, 'result.response.count');
+
+          if (sourcingOrgUsers.length > 0) {
+            this.orgUsers = _.compact(_.concat(this.orgUsers, sourcingOrgUsers));
+            offset = offset + limit;
+          }
+
+          if (totalCount > this.orgUsers.length){
+            return resolve(this.getAllSourcingOrgUsers(orgId, roles, limit, offset));
+          }
+          return resolve(this.orgUsers);
+        },
+        (error) => {
+          return reject([]);
+        }
+      );
+    });
   }
 }
