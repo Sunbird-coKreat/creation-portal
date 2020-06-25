@@ -90,7 +90,7 @@ function getProjectsTemplates(data){
   setTimeout(function(){ 
     $('.flex-jc-center').append(otherBoardCards);
     $('.state-board-projects').append(stateBoardCards); 
-  }, 200);
+  }, 500);
 }
 //Get image path
 function checkImageExists(slug, callBack) {
