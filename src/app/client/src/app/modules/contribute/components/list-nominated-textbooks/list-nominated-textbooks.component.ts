@@ -445,8 +445,8 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
         }
 
-        this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
-        this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
+        this.orgDetails.name = _.get(this.userService, 'userProfile.userRegData.Org.name');
+        this.orgDetails.id =  _.get(this.userService, 'userProfile.userRegData.Org.osid');
 
         if (this.isSourcingOrgAdmin()) {
           const dikshaOrgId = _.get(this.userService, 'userProfile.organisations[0].organisationId');
