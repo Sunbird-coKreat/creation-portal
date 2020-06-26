@@ -998,7 +998,7 @@ export class ProgramsService extends DataService implements CanActivate {
                 name: `${u.firstName} ${u.lastName || ''}`,
                 User: osUser,
                 User_Org: osUserOrg,
-                selectedRole: !_.isUndefined(osUserOrg) ? _.first(osUserOrg.roles) : 'user'
+                selectedRole: !_.isUndefined(osUserOrg) ? _.first(osUserOrg.roles) : '-'
               };
             });
             orgUsersDetails = _.compact(orgUsersDetails);
