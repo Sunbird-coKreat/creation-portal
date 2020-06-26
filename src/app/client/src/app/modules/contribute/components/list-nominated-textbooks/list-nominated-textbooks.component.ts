@@ -80,7 +80,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   OrgUsersCnt = 0;
   pager: IPagination;
   pageNumber = 1;
-  pageLimit = 50;
+  pageLimit = 250;
   sharedContext;
 
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
