@@ -32,7 +32,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public roles = [{ name: 'User', value: 'user'}, { name: 'Admin', value: 'admin'}];
   pager: IPagination;
   pageNumber = 1;
-  pageLimit = 50;
+  pageLimit = 250;
 
   constructor(private toasterService: ToasterService, private configService: ConfigService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,

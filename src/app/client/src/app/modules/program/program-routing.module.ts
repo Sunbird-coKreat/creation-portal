@@ -16,34 +16,39 @@ const routes: Routes = [{
   }
 },
 {
-  path: 'edit/:programId', component: CreateProgramComponent, pathMatch: 'full',
+  path: 'edit/:programId', component: CreateProgramComponent, canActivate: [ProgramsService, AuthGuard], pathMatch: 'full',
   data: {
+    roles: 'programSourcingRole',
     telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'create-program', mode: 'edit',
                  object: { type: 'program', ver: '1.0'} }
   }
 },
 {
-  path: 'create-program', component: CreateProgramComponent, pathMatch: 'full',
+  path: 'create-program', component: CreateProgramComponent, canActivate: [ProgramsService, AuthGuard], pathMatch: 'full',
   data: {
+    roles: 'programSourcingRole',
     telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'create-program', mode: 'create',
                  object: { type: 'program', ver: '1.0'} }
   }
 },
 {
-  path: 'program/:programId', component: ProgramComponent,
+  path: 'program/:programId', component: ProgramComponent, canActivate: [ProgramsService, AuthGuard],
   data: {
+    roles: 'programSourcingRole',
     telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'program-details' }
   }
 },
 {
-  path: 'nominations/:programId', component: ProgramNominationsComponent,
+  path: 'nominations/:programId', component: ProgramNominationsComponent, canActivate: [ProgramsService, AuthGuard],
   data: {
+    roles: 'programSourcingRole',
     telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'nomination-details' }
   }
 },
 {
-  path: 'contributor/:programId', component: ListContributorTextbooksComponent,
+  path: 'contributor/:programId', component: ListContributorTextbooksComponent, canActivate: [ProgramsService, AuthGuard],
   data: {
+    roles: 'programSourcingRole',
     telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'contributor-details' }
   }
 },
