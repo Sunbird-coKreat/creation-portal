@@ -21,6 +21,7 @@ export class ProgramListComponent implements OnInit {
 
   public programs: IProgram[];
   public program: any;
+  public programIndex: number;
   public count = 0;
   public activeDates = <any>[];
   public isContributor: boolean;
@@ -108,8 +109,9 @@ export class ProgramListComponent implements OnInit {
       this.userService.userProfile.userRegData.User_Org);
   }
 
-  setDelete(program) {
+  setDelete(program, index) {
     this.program = program;
+    this.programIndex = index;
 
     const req = {
       url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
@@ -117,7 +119,7 @@ export class ProgramListComponent implements OnInit {
         request: {
           filters: {
             program_id: this.program.program_id,
-            status: ['Pending', 'Approved']
+            status: ['Pending', 'Approved', 'Initiated']
           },
           fields: ['organisation_id', 'status'],
           limit: 0
@@ -128,6 +130,7 @@ export class ProgramListComponent implements OnInit {
     this.programsService.getNominationList(req.data.request.filters)
       .subscribe((nominationsResponse) => {
         const nominations = _.get(nominationsResponse, 'result');
+        let user_id = _.get(this.userService, 'userProfile.userId');
 
         if (nominations.length > 1) {
           this.toasterService.error(this.resourceService.frmelmnts.lbl.projectCannotBeDeleted);
@@ -135,13 +138,10 @@ export class ProgramListComponent implements OnInit {
 
           return false;
         }
-
-        let user_id = _.get(this.userService, 'userProfile.userId');
-
-        if (nominations[0].user_id != user_id) {
+        else if (nominations[0].user_id != user_id) {
           this.toasterService.error(this.resourceService.frmelmnts.lbl.projectCannotBeDeleted);
-
           this.showDeleteModal = false;
+
           return false;
         }
 
@@ -163,14 +163,7 @@ export class ProgramListComponent implements OnInit {
       (res) => {
         this.toasterService.success(this.resourceService.frmelmnts.lbl.successTheProjectHasBeenDeleted);
         ($event.target as HTMLButtonElement).disabled = false;
-
-        for(let i = 0; i < this.programs.length; i++) {
-          if(this.programs[i].program_id == this.program.program_id) {
-            this.programs.splice(i, 1);
-              break;
-          }
-        }
-
+        this.programs.splice(this.programIndex, 1);
         this.showDeleteModal=false;
         },
       (err) => {
@@ -556,10 +549,10 @@ export class ProgramListComponent implements OnInit {
     }
   }
 
-  editDetailsBtnClicked(program) {
+  editOnClick(program) {
     if (this.iscontributeOrgAdmin) {
       // if (this.activeMyProgramsMenu) {
-          return this.router.navigateByUrl('/sourcing/create-program/' + program.program_id);
+          return this.router.navigateByUrl('/sourcing/edit/' + program.program_id);
       // }
     } else {
       return this.router.navigateByUrl('/sourcing/nominations/' + program.program_id);

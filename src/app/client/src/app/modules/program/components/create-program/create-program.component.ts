@@ -558,23 +558,21 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    */
   initializeFormFields(): void {
 
-   if (!_.isEmpty(this.programDetails) && !_.isEmpty(this.programId))
+  if (!_.isEmpty(this.programDetails) && !_.isEmpty(this.programId))
     {
-      this.isOpenNominations = (this.programDetails.type == "public") ? true : false;
-      this.createProgramForm = this.sbFormBuilder.group({
-        name: [this.programDetails.name, [Validators.required, Validators.maxLength(100)]],
-        description: [this.programDetails.description, Validators.maxLength(1000)],
-        nomination_enddate: [new Date(this.programDetails.nomination_enddate), Validators.required],
-        shortlisting_enddate: [new Date(this.programDetails.shortlisting_enddate)],
-        program_end_date: [new Date(this.programDetails.enddate), Validators.required],
-        content_submission_enddate: [new Date(this.programDetails.content_submission_enddate), Validators.required],
-        content_types: [this.programDetails.content_types, Validators.required],
-        rewards: [this.programDetails.rewards],
-        defaultContributeOrgReview: new FormControl({value: true, disabled: true}, Validators.required)
-      });
+      this.isOpenNominations = (_.get(this.programDetails, 'type') == "public") ? true : false;
 
-      this.showLoader = false;
-      this.isFormValueSet = true;
+      this.createProgramForm = this.sbFormBuilder.group({
+        name: [_.get(this.programDetails, 'name'), [Validators.required, Validators.maxLength(100)]],
+        description: [_.get(this.programDetails, 'description'), Validators.maxLength(1000)],
+        nomination_enddate: [_.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : '', Validators.required],
+        shortlisting_enddate: [_.get(this.programDetails, 'shortlisting_enddate') ? new Date(_.get(this.programDetails, 'shortlisting_enddate')) : ''],
+        program_end_date: [_.get(this.programDetails, 'enddate') ? new Date(_.get(this.programDetails, 'enddate')) : '', Validators.required],
+        content_submission_enddate: [_.get(this.programDetails, 'content_submission_enddate') ? new Date(_.get(this.programDetails, 'content_submission_enddate')) : '', Validators.required],
+        content_types: [_.get(this.programDetails, 'content_types'), Validators.required],
+        rewards: [_.get(this.programDetails, 'rewards')],
+        defaultContributeOrgReview: new FormControl({value: true, disabled: this.editMode})
+      });
     }
     else
     {
@@ -589,10 +587,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         rewards: [],
         defaultContributeOrgReview: [true]
       });
-
-      this.showLoader = false;
-      this.isFormValueSet = true;
     }
+
+    this.showLoader = false;
+    this.isFormValueSet = true;
 
     this.collectionListForm = this.sbFormBuilder.group({
       pcollections: this.sbFormBuilder.array([]),

@@ -16,7 +16,7 @@ const routes: Routes = [{
   }
 },
 {
-  path: 'create-program/:programId', component: CreateProgramComponent, pathMatch: 'full',
+  path: 'edit/:programId', component: CreateProgramComponent, pathMatch: 'full',
   data: {
     telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'create-program', mode: 'edit',
                  object: { type: 'program', ver: '1.0'} }
