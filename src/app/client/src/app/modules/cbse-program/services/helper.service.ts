@@ -159,7 +159,8 @@ private sendNotification = new Subject<string>();
     // tslint:disable-next-line:max-line-length
     action === 'accept' ? request.content['acceptedContents'] = _.uniq([...data.acceptedContents || [], contentId]) : request.content['rejectedContents'] = _.uniq([...data.rejectedContents || [], contentId]);
     if (action === 'reject' && rejectedComments) {
-      request.content['sourcingRejectedComments'] = data.sourcingRejectedComments && JSON.parse(data.sourcingRejectedComments) || {};
+      // tslint:disable-next-line:max-line-length
+      request.content['sourcingRejectedComments'] = data.sourcingRejectedComments && _.isString(data.sourcingRejectedComments) ? JSON.parse(data.sourcingRejectedComments) : data.sourcingRejectedComments || {};
       request.content['sourcingRejectedComments'][contentId] = rejectedComments;
     }
     this.updateContent(request, collectionId).subscribe(() => {
