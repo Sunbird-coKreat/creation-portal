@@ -109,7 +109,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public programConfig: any;
   public disableCreateProgramBtn = false;
   public showLoader = true;
-  public issourcingOrgAdmin = false;
 
   constructor(
     public frameworkService: FrameworkService,
@@ -139,7 +138,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
     this.acceptPdfType = this.getAcceptType(this.assetConfig.pdf.accepted, 'pdf');
-    this.issourcingOrgAdmin = this.isSourcingOrgAdmin();
 
     if (!_.isEmpty(this.programId)) {
       this.editMode = true;
@@ -750,11 +748,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   updateProgram($event: MouseEvent) {
-    if (!this.issourcingOrgAdmin) {
-      this.toasterService.warning(this.resource.messages.imsg.m0035);
-      return this.router.navigate(['home']);
-    }
-
     this.formIsInvalid = false;
 
     if ((this.createProgramForm.dirty || this.uploadedDocument) && this.createProgramForm.valid) {
@@ -786,10 +779,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.validateAllFormFields(this.createProgramForm);
     }
     this.validateDates();
-  }
-
-  isSourcingOrgAdmin() {
-    return _.get(this.userService, 'userProfile.userRoles', []).includes('ORG_ADMIN');
   }
 
   showTexbooklist() {

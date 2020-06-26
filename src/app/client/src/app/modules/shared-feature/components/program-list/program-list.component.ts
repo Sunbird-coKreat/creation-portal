@@ -567,11 +567,7 @@ export class ProgramListComponent implements OnInit {
   }
 
   editOnClick(program) {
-    if (this.issourcingOrgAdmin) {
-        return this.router.navigateByUrl('/sourcing/edit/' + program.program_id);
-    } else {
-      return this.router.navigate(['home']);
-    }
+    return this.router.navigateByUrl('/sourcing/edit/' + program.program_id);
   }
 
   isActive(program, name, index) {
