@@ -183,7 +183,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   }
   getProgramTextbooks() {
      const option = {
-      url: 'content/composite/v1/search',
+      url: 'composite/v3/search',
        data: {
       request: {
          filters: {
@@ -195,7 +195,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       }
       }
     };
-    this.httpClient.post<any>(option.url, option.data).subscribe(
+    this.actionService.post(option).subscribe(
       (res) => this.showTexbooklist(res),
       (err) => console.log(err)
     );

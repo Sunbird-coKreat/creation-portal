@@ -212,7 +212,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
 
   getProgramTextbooks(preferencefilters?) {
      const option = {
-      url: 'content/composite/v1/search',
+      url: 'composite/v3/search',
        data: {
         request: {
          filters: {
@@ -235,7 +235,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
         option.data.request.filters['subject'] = _.get(preferencefilters, 'subject');
       }
     }
-    this.httpClient.post<any>(option.url, option.data).subscribe(
+    this.actionService.post(option).subscribe(
       (res) =>  {
         if (res && res.result) {
           this.showTexbooklist(res);

@@ -97,7 +97,7 @@ export class CollectionHierarchyService {
       }
     };
     const option = {
-      url: 'content/composite/v1/search',
+      url: 'composite/v3/search',
       data: {
         request: {
           filters: {
@@ -120,7 +120,11 @@ export class CollectionHierarchyService {
           option.data.request.filters['subject'] = _.get(preferencefilters, 'subject');
         }
     }
-    return this.httpClient.post<any>(option.url, option.data, httpOptions);
+    const req = {
+      url: option.url,
+      data: option.data,
+    };
+    return this.actionService.post(req);
   }
 
   getContentCounts(contents, orgId, collections?) {
@@ -237,7 +241,7 @@ export class CollectionHierarchyService {
 
   getContentAggregation(programId, sampleContentCheck?, organisationId?, userId?, onlyCount?) {
     const option = {
-      url: 'content/composite/v1/search',
+      url: 'composite/v3/search',
       data: {
         request: {
           filters: {
@@ -282,7 +286,7 @@ export class CollectionHierarchyService {
     if (!_.isUndefined(onlyCount)) {
       option.data.request['limit'] = 0;
     }
-    return this.httpClient.post<any>(option.url, option.data);
+    return this.actionService.post(option);
   }
 
   getContentsByType (contents, id, userType, contentType) {
