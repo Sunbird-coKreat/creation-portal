@@ -3,7 +3,6 @@ export interface IProgramsList {
 }
 
 export interface IProgram {
-    program_id?: string;
     programId?: string;
     config?: IConfig;
     defaultRoles?: string[];
