@@ -275,7 +275,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         hierarchy = instance.hierarchyObj;
         this.sessionContext.hierarchyObj = { hierarchy };
         if (_.get(this.collectionData, 'sourcingRejectedComments')) {
-        this.sessionContext.hierarchyObj['sourcingRejectedComments'] = JSON.parse(_.get(this.collectionData, 'sourcingRejectedComments'));
+        // tslint:disable-next-line:max-line-length
+        this.sessionContext.hierarchyObj['sourcingRejectedComments'] = _.isString(_.get(this.collectionData, 'sourcingRejectedComments')) ? JSON.parse(_.get(this.collectionData, 'sourcingRejectedComments')) : _.get(this.collectionData, 'sourcingRejectedComments');
         }
         this.showLoader = false;
         this.showError = false;
