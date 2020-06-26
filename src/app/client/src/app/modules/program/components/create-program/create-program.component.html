@@ -68,7 +68,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="twelve wide column sb-field-group pt-0">
+							<div class="twelve wide column sb-field-group pt-0" [ngClass]="(editMode) ? 'disabled field':''" >
 								<div class="sb-field-group mb-8">
 									<label class="fs-0-92">{{resource.frmelmnts.lbl.isThisProjectOpenForNominations}}
 										<i class="pull-right question circle link icon pull-right ml-10" suiPopup
@@ -87,7 +87,7 @@
 									</div>
 								</div>
 							</div>
-							<div *ngIf="!editMode" class="twelve wide column">
+							<div class="twelve wide column" [ngClass]="(editMode) ? 'disabled field':''">
 								<div class="sb-checkbox sb-checkbox-primary">
 									<input type="checkbox" [disabled]="editMode" id="defaultContributeOrgReview" name="defaultContributeOrgReview" formControlName="defaultContributeOrgReview" [checked]="defaultContributeOrgReviewChecked" (change)="defaultContributeOrgReviewChanged($event)">
 									<label for="defaultContributeOrgReview">{{resource.frmelmnts.lbl.twoLevelReview}}</label>
