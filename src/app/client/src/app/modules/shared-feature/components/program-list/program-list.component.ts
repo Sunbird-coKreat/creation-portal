@@ -44,6 +44,8 @@ export class ProgramListComponent implements OnInit {
   public showLoader = true;
   public roleMapping = [];
   public iscontributeOrgAdmin = true;
+  public issourcingOrgAdmin = false;
+
   showDeleteModal = false;
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
@@ -51,6 +53,7 @@ export class ProgramListComponent implements OnInit {
 
   ngOnInit() {
     this.checkIfUserIsContributor();
+    this.issourcingOrgAdmin = this.isSourcingOrgAdmin();
     this.roles = _.get(programContext, 'config.roles');
     this.telemetryInteractCdata = [];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
@@ -110,6 +113,12 @@ export class ProgramListComponent implements OnInit {
   }
 
   setDelete(program, index) {
+    if (!this.issourcingOrgAdmin) {
+      this.toasterService.error(this.resourceService.messages.imsg.m0035);
+
+      return false;
+    }
+
     this.program = program;
     this.programIndex = index;
 
@@ -154,6 +163,12 @@ export class ProgramListComponent implements OnInit {
   }
 
   deleteProject($event: MouseEvent){
+    if (!this.issourcingOrgAdmin) {
+      this.toasterService.error(this.resourceService.messages.imsg.m0035);
+
+      return false;
+    }
+
     const programData = {
       "program_id": this.program.program_id,
       "status":"Retired"
@@ -232,6 +247,10 @@ export class ProgramListComponent implements OnInit {
         this.toasterService.error(_.get(error, 'error.params.errmsg') || this.resourceService.messages.emsg.projects.m0001);
       }
     );
+  }
+
+  isSourcingOrgAdmin() {
+    return _.get(this.userService, 'userProfile.userRoles', []).includes('ORG_ADMIN');
   }
 
   filterOutEnrolledPrograms(allPrograms, enrolledPrograms) {
@@ -550,7 +569,7 @@ export class ProgramListComponent implements OnInit {
   }
 
   editOnClick(program) {
-    if (this.iscontributeOrgAdmin) {
+    if (this.issourcingOrgAdmin) {
       // if (this.activeMyProgramsMenu) {
           return this.router.navigateByUrl('/sourcing/edit/' + program.program_id);
       // }
