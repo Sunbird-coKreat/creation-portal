@@ -115,8 +115,7 @@ export class ProgramListComponent implements OnInit {
   setDelete(program, index) {
     if (!this.issourcingOrgAdmin) {
       this.toasterService.error(this.resourceService.messages.imsg.m0035);
-
-      return false;
+      return this.router.navigate(['home']);
     }
 
     this.program = program;
@@ -165,8 +164,7 @@ export class ProgramListComponent implements OnInit {
   deleteProject($event: MouseEvent){
     if (!this.issourcingOrgAdmin) {
       this.toasterService.error(this.resourceService.messages.imsg.m0035);
-
-      return false;
+      return this.router.navigate(['home']);
     }
 
     const programData = {
@@ -570,11 +568,9 @@ export class ProgramListComponent implements OnInit {
 
   editOnClick(program) {
     if (this.issourcingOrgAdmin) {
-      // if (this.activeMyProgramsMenu) {
-          return this.router.navigateByUrl('/sourcing/edit/' + program.program_id);
-      // }
+        return this.router.navigateByUrl('/sourcing/edit/' + program.program_id);
     } else {
-      return this.router.navigateByUrl('/sourcing/nominations/' + program.program_id);
+      return this.router.navigate(['home']);
     }
   }
 

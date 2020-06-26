@@ -750,9 +750,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   updateProgram($event: MouseEvent) {
     if (!this.issourcingOrgAdmin) {
       this.toasterService.warning(this.resourceService.messages.imsg.m0035);
-      this.router.navigate(['learn']);
-
-      return false;
+      return this.router.navigate(['home']);
     }
 
     this.formIsInvalid = false;
