@@ -31,31 +31,6 @@
 						<label class="m-0">{{ resourceService.frmelmnts.lbl.contentType}}</label>
 						<p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{ programContentTypes }}"><span>{{ programContentTypes }}</span></p>
 					</div>
-						<!-- <div class="sb-meta-data-container sb-meta-data-column px-10">
-							<label class="width-100">Content Status </label>
-							<div class="d-flex">
-								<dl class="sb-meta-data">
-									<dt>0</dt>
-									<dd>Initiated</dd>
-								</dl>
-								<dl class="sb-meta-data">
-									<dt>3</dt>
-									<dd>Pending</dd>
-								</dl>
-								<dl class="sb-meta-data">
-									<dt>0</dt>
-									<dd>Approved</dd>
-								</dl>
-								<dl class="sb-meta-data">
-									<dt>0</dt>
-									<dd>Rejected</dd>
-								</dl>
-								<dl class="sb-meta-data">
-									<dt>3</dt>
-									<dd>Total</dd>
-								</dl>
-							</div>
-						</div> -->
 					<ng-container *ngIf="programDetails">
 						<div class="program-timeline px-10">
 						  <div class="program-timeline-item" *ngIf="programDetails?.status !== 'Unlisted'">
@@ -100,19 +75,22 @@
 						  </div>
 						</div>
 					  </ng-container>
-					<div class="sb-meta-data-container sb-meta-data-column px-10" *ngIf="programDetails?.status !== 'Unlisted'">
+					<div class="sb-meta-data-container sb-meta-data-column px-10">
 						<div class='practical-sb-buttons' *ngIf="nominationDetails && nominationDetails.status">
 							<label class="m-0">{{ resourceService.frmelmnts.lbl.status }}</label>
 							<p [ngClass]="{'sb-color-success':nominationDetails.status == 'Approved','sb-color-error':nominationDetails.status == 'Rejected','sb-color-warning':nominationDetails.status == 'Pending'}">{{ nominationDetails?.status }}</p>
 						</div>
 					</div>
-					<div class="sb-meta-data-container sb-meta-data-column  px-10">
-						<div *ngIf="nominated && nominationDetails.status=='Rejected'">
-							<label class="m-0">{{ resourceService.frmelmnts.lbl.reasonsForRejection }}</label>
-							<p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.reasonsForRejection}}" popupText="{{nominationDetails?.feedback}}">{{ nominationDetails?.feedback }}</p>
-						</div>
+					<div class="sb-meta-data-container sb-meta-data-column px-10" *ngIf="nominated && nominationDetails.status=='Rejected'">
+						<label class="m-0">{{ resourceService.frmelmnts.lbl.reasonsForRejection }}</label>
+						<p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.reasonsForRejection}}" popupText="{{nominationDetails?.feedback}}">{{ nominationDetails?.feedback }}</p>
 					</div>
-				</div>
+			</div>
+
+			<div class="pr-40 text-right" *ngIf="programDetails?.config?.defaultContributeOrgReview === false">
+				<i class="icon check circle sb-color-secondary-200 fs-1-286 va-text-top" popupText="{{resourceService.frmelmnts.lbl.twoLevelReviewSkippedNote}}" suiPopup [popupPlacement]="'top'"></i>
+				<label class="font-weight-normal fs-0-92">{{resourceService.frmelmnts.lbl.twoLevelReviewSkipped}}</label>
+			</div>
 	</div>
 
 	<div class="sb-bg-color-primary-100">
