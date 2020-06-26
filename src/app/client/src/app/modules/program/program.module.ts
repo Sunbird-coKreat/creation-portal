@@ -27,7 +27,7 @@ import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
     ProgramComponent, OnboardPopupComponent,
     ProgramHeaderComponent, CreateProgramComponent,
     ProgramNominationsComponent,
-    ListContributorTextbooksComponent, ContributorProfilePopupComponent],
+    ListContributorTextbooksComponent, ContributorProfilePopupComponent ],
   imports: [
   SuiModule,
     CommonModule,

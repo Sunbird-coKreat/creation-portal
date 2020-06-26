@@ -1,22 +1,23 @@
 <div class="ui container" [appTelemetryImpression]="telemetryImpression">
 	<div class="sb-pageSection mt-24 pb-48">
 		<div class="sb-pageSection-header">
-			<h4 class="sb-pageSection-title">{{resource.frmelmnts.lbl.createNewProgram}}</h4>
+			<h4 *ngIf="!editMode; else modifyProject" class="sb-pageSection-title">{{resource.frmelmnts.lbl.createNewProgram}}</h4>
+			<ng-template #modifyProject><h4 class="sb-pageSection-title">{{resource.frmelmnts.lbl.modifyProgram}}</h4></ng-template>
 		</div>
 
-		<div class="pb-8">
+		<div class="pb-8" >
 			<sui-tabset>
 				<div class="ui pointing secondary menu sb-bg-color-primary-0">
 					<div class="item" suiTabHeader="1" [ngClass]="{'active' : !showTextBookSelector}">
 						{{resource.frmelmnts.lbl.details}}
 					</div>
-					<div class="item" suiTabHeader="2" [isDisabled]="!showTextBookSelector"
+					<div class="item" suiTabHeader="2" *ngIf="!editMode" [isDisabled]="!showTextBookSelector"
 						[ngClass]="{'active' : showTextBookSelector}">
 						{{resource.frmelmnts.lbl.selectTextbooks}}
 					</div>
 				</div>
 				<div class="ui segment mt-5" suiTabContent="1" [ngClass]="{'active' : !showTextBookSelector}">
-					<form class="ui form" [formGroup]="createProgramForm">
+					<form class="ui form" [formGroup]="createProgramForm" *ngIf="isFormValueSet">
 						<div class="ui grid">
 							<div class="twelve wide column">
 								<div class="required field">
@@ -67,35 +68,34 @@
 									</div>
 								</div>
 							</div>
-							<div class="twelve wide column sb-field-group py-0">
-									<div class="sb-field-group mb-8">
-									   <label class="fs-0-92">{{resource.frmelmnts.lbl.isThisProjectOpenForNominations}}
+							<div class="twelve wide column sb-field-group pt-0">
+								<div class="sb-field-group mb-8">
+									<label class="fs-0-92">{{resource.frmelmnts.lbl.isThisProjectOpenForNominations}}
 										<i class="pull-right question circle link icon pull-right ml-10" suiPopup
 										popupDelay="500" [popupPlacement]="'right'"
 										popupText="{{resource.frmelmnts.lbl.isThisProjectOpenForNominationsHint}}"></i>
-									   </label>
-									   <div class="sb-field mt-4 d-flex">
-										  <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-											 <input id="yes" type="radio" name="openNominations" [checked]="isOpenNominations" (click)="openForNominations(true)" >
-											 <label for="yes">{{resource.frmelmnts.btn.yes}}</label>
-										  </div>
-										  <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-											 <input id="no" type="radio"  name="openNominations" [checked]="!isOpenNominations" (click)="openForNominations(false)" >
-											 <label for="no">{{resource.frmelmnts.btn.no}}</label>
-										  </div>
-									   </div>
-									</div>
-								 </div>
-								 <div class="twelve wide column">
-									<div class="sb-checkbox sb-checkbox-primary">
-										<input type="checkbox" id="defaultContributeOrgReview" name="defaultContributeOrgReview" formControlName="defaultContributeOrgReview" [checked]="defaultContributeOrgReviewChecked" (change)="defaultContributeOrgReviewChanged($event)">
-										<label for="defaultContributeOrgReview">{{resource.frmelmnts.lbl.twoLevelReview}}</label>
+									</label>
+									<div class="sb-field mt-4 d-flex">
+										<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+											<input id="yes" [disabled]="editMode" type="radio" name="openNominations" [checked]="isOpenNominations" (click)="openForNominations(true)" >
+											<label for="yes">{{resource.frmelmnts.btn.yes}}</label>
 										</div>
-									<div class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-40 va-top pl-20">
-										{{resource.frmelmnts.lbl.twoLevelReviewNote}}
+										<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+											<input id="no" [disabled]="editMode" type="radio"  name="openNominations" [checked]="!isOpenNominations" (click)="openForNominations(false)" >
+											<label for="no">{{resource.frmelmnts.btn.no}}</label>
+										</div>
 									</div>
 								</div>
-
+							</div>
+							<div *ngIf="!editMode" class="twelve wide column">
+								<div class="sb-checkbox sb-checkbox-primary">
+									<input type="checkbox" [disabled]="editMode" id="defaultContributeOrgReview" name="defaultContributeOrgReview" formControlName="defaultContributeOrgReview" [checked]="defaultContributeOrgReviewChecked" (change)="defaultContributeOrgReviewChanged($event)">
+									<label for="defaultContributeOrgReview">{{resource.frmelmnts.lbl.twoLevelReview}}</label>
+								</div>
+								<div class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-40 va-top pl-20">
+									{{resource.frmelmnts.lbl.twoLevelReviewNote}}
+								</div>
+							</div>
 							 <div class="twelve wide tablet three wide computer column" *ngIf="isOpenNominations === true">
 								<div class="field">
 									<label class="d-block">{{resource.frmelmnts.lbl.nominationEndDate}}
@@ -187,7 +187,7 @@
 											popupDelay="500" [popupPlacement]="'left'"
 											popupText="{{resource.frmelmnts.lbl.contentTypesHint}}"></i>
 									</label>
-									<sui-multi-select class="selection" labelField="name" [hasLabels]="true"
+									<sui-multi-select *ngIf="!editMode; else elseBlock" class="selection" labelField="name" [hasLabels]="true"
 										formControlName="content_types" [options]="programScope.purpose"
 										valueField="value" #multiSelect>
 										<sui-select-option *ngFor="let option of programScope.purpose" [value]="option"
@@ -198,6 +198,10 @@
 										[telemetryInteractPdata]="telemetryInteractPdata">
 										</sui-select-option>
 									</sui-multi-select>
+									<ng-template #elseBlock>
+										<span *ngIf="programDetails.content_types !== undefined" class="sb-color-gray-200 fs-0-785">{{programDetails.content_types}}</span>
+									</ng-template>
+
 									<div class="ui pointing red basic label below "
 										*ngIf="createProgramForm.controls['content_types'].errors && createProgramForm.controls['content_types'].errors.required && (!createProgramForm.controls['content_types'].pristine || formIsInvalid)">
 										{{ resource.frmelmnts.lbl.contentTypesRequired }}
@@ -218,13 +222,22 @@
 										[telemetryInteractPdata]="telemetryInteractPdata">
 										<i class="upload icon"></i>{{ resource.frmelmnts.btn.upload}}
 									</button>
-									<span *ngIf="uploadedDocument" class="sb-url">
+									<span *ngIf="uploadedDocument; else elseGuideBlock" class="sb-url">
 										<a href="{{uploadedDocument.artifactUrl}}" class="max-w-90 pull-left text-decor-none sb__ellipsis sb__ellipsis--breakAll" target="_blank">
 											{{uploadedDocument.name}}
 											<span class="blue-text-color-sunbird" *ngIf="uploadedDocument.name && uploadedDocument.name.length > 70">...</span>
 										</a>
 										<i class="icon remove sb-color-error va-top cursor-pointer" (click)="removeUploadedDocument();" ></i>
 									</span>
+									<!-- Add Else condition-->
+									<ng-template #elseGuideBlock>
+										<span *ngIf="guidLinefileName" class="sb-url">
+											<a href="{{programDetails.guidelines_url}}" class="max-w-90 pull-left text-decor-none sb__ellipsis sb__ellipsis--breakAll" target="_blank">
+												{{guidLinefileName}}
+											</a>
+											<i class="icon remove sb-color-error va-top cursor-pointer" (click)="removeUploadedDocument();" ></i>
+										</span>
+									</ng-template>
 								</div>
 							</div>
 							<div class="twelve wide column">
@@ -245,7 +258,7 @@
 						</div>
 					</form>
 				</div>
-				<div class="ui segment mt-5" suiTabContent="2" [ngClass]="{'active' : showTextBookSelector}">
+				<div class="ui segment mt-5" *ngIf="!editMode" suiTabContent="2" [ngClass]="{'active' : showTextBookSelector}">
 					<form class="ui form" [formGroup]="collectionListForm">
 						<div class="ui grid">
 							<div class="three wide column">
@@ -498,17 +511,22 @@
 			</sui-tabset>
 		</div>
 		<div class="text-align-right" [appTelemetryStart]="telemetryStart" [appTelemetryEnd]="telemetryEnd">
-			<button *ngIf="!showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary" (click)="saveProgram()"
+			<button *ngIf="editMode" type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="updateProgram($event);"
+				appTelemetryInteract
+				[telemetryInteractEdata]="getTelemetryInteractEdata('update', 'click', 'edit-program')"
+				[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+				[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.update}}</button>
+			<button *ngIf="!showTextBookSelector && !editMode" class="sb-btn sb-btn-normal sb-btn-primary" (click)="saveProgram()"
 				appTelemetryInteract
 				[telemetryInteractEdata]="getTelemetryInteractEdata('next', 'click', 'create-program')"
 				[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
 				[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.next}}</button>
-			<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-default mr-10"
+			<button *ngIf="showTextBookSelector && !editMode" class="sb-btn sb-btn-normal sb-btn-default mr-10"
 				(click)="navigateTo(1)" appTelemetryInteract
 				[telemetryInteractEdata]="getTelemetryInteractEdata('previous', 'click', 'create-program')"
 				[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
 				[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.previous}}</button>
-			<button *ngIf="showTextBookSelector" class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="disableCreateProgramBtn"
+			<button *ngIf="showTextBookSelector && !editMode" class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="disableCreateProgramBtn"
 				(click)="updateProgramCollection()" appTelemetryInteract
 				[telemetryInteractEdata]="getTelemetryInteractEdata('create-program', 'click', 'create-program')"
 				[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"

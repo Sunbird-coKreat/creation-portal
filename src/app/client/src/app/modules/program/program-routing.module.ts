@@ -16,6 +16,13 @@ const routes: Routes = [{
   }
 },
 {
+  path: 'edit/:programId', component: CreateProgramComponent, pathMatch: 'full',
+  data: {
+    telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'create-program', mode: 'edit',
+                 object: { type: 'program', ver: '1.0'} }
+  }
+},
+{
   path: 'create-program', component: CreateProgramComponent, pathMatch: 'full',
   data: {
     telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'create-program', mode: 'create',
@@ -45,7 +52,7 @@ const routes: Routes = [{
   data: {
     telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'help-page' }
   },
-}
+},
 ];
 
 @NgModule({

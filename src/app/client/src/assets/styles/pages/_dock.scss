@@ -17,7 +17,6 @@
 
 
 .sb-dock-header {
-  
 }
 .sb-dock-new-program {
   position: absolute !important;
@@ -100,14 +99,14 @@ text-align: center;
     &.completed .status__label:before {
     // background-color:var(--secondary-200);
     // border: 0.25rem solid var(--gray-0);
-    } 
+    }
 .status__label {
   font-size:0.75rem;
   white-space: normal;
 }
 .status__date {
   font-size:0.75rem;
-} 
+}
   div em {
   display:block;
   font-size:12px;
@@ -140,13 +139,27 @@ text-align: center;
 }
 }
 
+.sb-dock-icon-tooltip{
+  [data-tooltip]:before{
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: inherit !important;
+    box-shadow: none;
+    top: 0.1rem;
+    font-size: 1.2rem;
+  }
+  [data-tooltip]:after{
+    width: 3.5rem !important;
+  }
+}
+
 .sb-sorting{
 .fa-sort{
     font-size: 16px;
 }
 .fa-sort-asc{
     display: block;
-    font-size: 16px; 
+    font-size: 16px;
 }
 .fa-sort-desc{
     @extend .fa-sort-asc;
@@ -221,7 +234,7 @@ i.icon.file.outline:before{
     margin-left: 1.1rem;
     padding-left: 1.6rem !important;
   }
-}    
+}
 }
 .sb-toc-accor-2{
 .chapter-lists--item{
@@ -229,7 +242,7 @@ i.icon.file.outline:before{
     @extend .item-name;
     margin-left: 2.3rem;
   }
-}  
+}
 }
 .sb-toc-accor-3{
 .chapter-lists--item{
@@ -237,7 +250,7 @@ i.icon.file.outline:before{
     @extend .item-name;
     margin-left: 4rem;
   }
-}  
+}
 }
 .sb-chapterlist-accordion{
 .chapter-lists--item{
@@ -254,7 +267,7 @@ i.icon.file.outline:before{
   .sb-accordion-title{
     border-left: .0625rem dashed var(--gray-300);
     padding: 1rem;
-  } 
+  }
 }
 .sb-toc-accor-3{
   .title{
@@ -284,7 +297,7 @@ i.icon.file.outline:before{
     background: var(--primary-250) !important;
   }
 }
-} 
+}
 
 .sb-dock-circle{
 width: 0.5rem;
