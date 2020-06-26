@@ -210,11 +210,13 @@
 							</div>
 							<div class="six wide column">
 								<div class="field">
-									<label class="d-block">{{resource.frmelmnts.lbl.uploadGuideline}}
+									<label [ngClass]="(disableUpload) ? 'disabled field':''" class="d-block">{{resource.frmelmnts.lbl.uploadGuideline}}
 									</label>
 									<button
+										[ngClass]="(disableUpload) ? 'disabled field':''"
 										class="sb-btn sb-btn-primary sb-btn-normal"
 										(click)="initiateDocumentUploadModal()"
+										[disabled]="disableUpload"
 										appTelemetryInteract
 										[telemetryInteractEdata]="getTelemetryInteractEdata('upload-guidelines-document', 'click', 'create-program')"
 										[telemetryInteractObject]="telemetryInteractObject"
@@ -235,7 +237,6 @@
 											<a href="{{programDetails.guidelines_url}}" class="max-w-90 pull-left text-decor-none sb__ellipsis sb__ellipsis--breakAll" target="_blank">
 												{{guidLinefileName}}
 											</a>
-											<i class="icon remove sb-color-error va-top cursor-pointer" (click)="removeUploadedDocument();" ></i>
 										</span>
 									</ng-template>
 								</div>
