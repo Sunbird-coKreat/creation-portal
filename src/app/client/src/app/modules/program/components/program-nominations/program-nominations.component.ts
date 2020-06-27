@@ -262,16 +262,18 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.programsService.getSourcingOrgUsers(filters, offset, 1000).subscribe(
       (res) => {
         this.sourcingOrgUserCnt = res.result.response.count || 0;
+        const responseContent = _.get(res, 'result.response.content');
+        const responseContentLength =  responseContent ? responseContent.length : offset;
         this.paginatedSourcingUsers = _.compact(_.concat(this.paginatedSourcingUsers, res.result.response.content));
 
         if (this.sourcingOrgUserCnt > this.paginatedSourcingUsers.length) {
           iteration++;
-           this.getsourcingOrgReviewers(1000*iteration);
+           this.getsourcingOrgReviewers(responseContentLength * iteration, iteration);
         } else {
           this.readRolesOfOrgUsers();
           this.paginatedSourcingUsers = this.programsService.sortCollection(this.paginatedSourcingUsers, 'selectedRole', 'desc');
           this.paginatedSourcingUsers = _.chunk( this.paginatedSourcingUsers, this.pageLimit);
-          this.sourcingOrgUser = this.paginatedSourcingUsers[this.pageNumber-1];
+          this.sourcingOrgUser = this.paginatedSourcingUsers[this.pageNumber - 1];
           this.pagerUsers = this.paginationService.getPager(this.sourcingOrgUserCnt, this.pageNumberUsers, this.pageLimit);
           this.showUsersLoader = false;
         }

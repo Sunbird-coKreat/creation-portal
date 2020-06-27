@@ -369,7 +369,7 @@
 						</tbody>
 					  </table>
                     </div>
-                    <div *ngIf="sourcingOrgUserCnt > 0 && pagerUsers.totalPages > 1 && !showUsersLoader" class="sb-pagination-container flex-jc-flex-end pt-16">
+                    <div *ngIf="sourcingOrgUserCnt > 0 && pagerUsers?.totalPages > 1 && !showUsersLoader" class="sb-pagination-container flex-jc-flex-end pt-16">
                         <div class="sb-pagination">
                             <a class="sb-item" [ngClass]="{disabled:pagerUsers.currentPage===1 }" (click)="navigateToSourcingPage(1)">First</a>
                             <a [ngClass]="{disabled:pagerUsers.currentPage===1 }" class="sb-item" (click)="navigateToSourcingPage(pagerUsers.currentPage - 1)" >Previous</a>
