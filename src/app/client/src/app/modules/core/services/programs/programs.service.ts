@@ -319,7 +319,7 @@ export class ProgramsService extends DataService implements CanActivate {
  /**
    * Logic to get the all the users of sourcing organisation and add it to the same cont org as sourcing admin
    */
-  addSourcingUserstoContribOrg(userRegData) {
+  /*addSourcingUserstoContribOrg(userRegData) {
     let userOrgAdd;
     let userAdd;
 
@@ -384,7 +384,7 @@ export class ProgramsService extends DataService implements CanActivate {
           });
         });
       }));
-  }
+  }*/
 
   /**
    * Logic add contrib user and org for the sourcing admin and make him its admin
@@ -394,22 +394,16 @@ export class ProgramsService extends DataService implements CanActivate {
       (res) => {
         this.userService.openSaberRegistrySearch().then((userRegData) => {
           this.userService.userProfile.userRegData = userRegData;
-          this.toasterService.success(this.resourceService.messages.smsg.contributorjoin.m0001);
-          this.addSourcingUserstoContribOrg(userRegData).subscribe(
-            (res) => {
-              this.addorUpdateNomination(request).subscribe(
-                (res) => { console.log("Nomination added")},
-                (err) => { console.log("error added")}
-              )
-            },
-            (error) => {},
-          );
+            this.addorUpdateNomination(request).subscribe(
+              (res) => { console.log("Nomination added")},
+              (err) => { console.log("error added")}
+            )
         }).catch((err) => {
-          this.toasterService.error('Adding contributor profile failed...');
+          this.toasterService.error('Fetching contributor profile created for sourcing failed...');
         });
       },
       (error) => {
-        this.toasterService.error('Adding contributor profile failed...');
+        this.toasterService.error('Adding contributor profile failed.');
       }
     );
   }
@@ -960,10 +954,10 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.API_URL(req);
   }
 
-  getSourcingOrgUserList(dikshaOrgId, roles, limit?) {
+  getSourcingOrgUserList(sourcingOrgId, roles, limit?) {
     return new Promise((resolve, reject) => {
       // Get all diskha users
-      return this.getAllSourcingOrgUsers(dikshaOrgId, roles, limit)
+      return this.getAllSourcingOrgUsers(sourcingOrgId, roles, limit)
       .then((sourcingOrgUsers) => {
         // Remove currently logged in user
         sourcingOrgUsers = _.filter(sourcingOrgUsers, user => {
@@ -991,7 +985,7 @@ export class ProgramsService extends DataService implements CanActivate {
           return forkJoin(osUsersReq).subscribe(res => {
             const users = _.get(_.first(res), 'result.User');
             let orgUsersDetails = _.map(sourcingOrgUsers, u => {
-              const osUser = _.first(_.filter(users, u1 => { 
+              const osUser = _.first(_.filter(users, u1 => {
                 return u1.userId === u.identifier;
               }));
 
