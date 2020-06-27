@@ -58,7 +58,7 @@
                 </th>
                 <th *ngIf="activeMyProgramsMenu && !iscontributeOrgAdmin" class="w-5 text-center">{{ resourceService?.frmelmnts?.lbl?.myRole }}</th>
                 <th class="w-10 text-center"> &nbsp;</th>
-                <th class="w-10 text-center"> &nbsp;</th>
+                <th *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')" class="w-10 text-center"> &nbsp;</th>
               </tr>
             </thead>
             <tbody class="sb-table-body">
@@ -172,7 +172,7 @@
                         </div>
                     </div>    -->
                   </td>
-                  <td *ngIf="issourcingOrgAdmin" class="fs-1-5 sb-dock-icon-tooltip" >
+                  <td *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')" class="fs-1-5 sb-dock-icon-tooltip" >
                     <i class="icon edit sb-color-primary mx-10 cursor-pointer ui" data-tooltip="Edit" (click)="editOnClick(program)"></i>
                     <i class="icon trash sb-color-primary cursor-pointer ui" data-tooltip="Delete" (click)="setDelete(program, i)"></i>
                   </td>
