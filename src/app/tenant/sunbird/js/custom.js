@@ -64,12 +64,13 @@ function getTenants(url, callback){
 
 function getProjectsTemplates(data){
   var env = window.location.hostname;
+  var logoEnv = getLogoEnvironment(env);
   for(let i=0; i<data.length; i++){
     //Other state boards
     if(data[i].orgName == 'NCERT' || data[i].orgName == 'CBSE'){
       let otherBoardCards = '';
       otherBoardCards = otherBoardCards + '<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-xs-6"> <div class="program-cards"> <div class="topSection"> <label class="text-center hidden-lg-down">' + data[i].orgName + '</label> <div class="my-20">';
-      checkImageExists(data[i].slug, function(imgPath){
+      checkImageExists(logoEnv, data[i].slug, function(imgPath){
         if(imgPath){
           otherBoardCards = otherBoardCards + '<img src="' + imgPath + '" class="logo-img" alt="' + data[i].orgName + ' logo" />'
         }
@@ -80,7 +81,7 @@ function getProjectsTemplates(data){
       // state boards
       let stateBoardCards = '';
       stateBoardCards = stateBoardCards + '<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-xs-6"> <div class="program-cards"> <div class="topSection"> <label class="text-center hidden-lg-down">' + data[i].orgName + '</label> <div class="my-20">';
-      checkImageExists(data[i].slug, function(imgPath){
+      checkImageExists(logoEnv, data[i].slug, function(imgPath){
         if(imgPath){
           stateBoardCards = stateBoardCards + '<img src="' + imgPath + '" class="logo-img" alt="' + data[i].orgName + ' logo"/>';
         }
@@ -91,8 +92,8 @@ function getProjectsTemplates(data){
   }
 }
 //Get image path
-function checkImageExists(slug, callBack) {
-  var imageUrl = window.location.origin + '/' + slug + '/logo.png';
+function checkImageExists(env, slug, callBack) {
+  var imageUrl = env + '/' + slug + '/logo.png';
   var imageData = new Image();
   imageData.onload = function() {
     callBack(imageUrl);
@@ -101,7 +102,17 @@ function checkImageExists(slug, callBack) {
     callBack(false);
   };
   imageData.src = imageUrl;
+}
+
+function getLogoEnvironment(env){
+  switch(env){
+    case 'dock.sunbirded.org': return 'https://dev.sunbirded.org'; break;
+    case 'dock.preprod.ntp.net.in': return 'https://preprod.ntp.net.in'; break;
+    case 'vdn.diksha.gov.in': return 'https://diksha.gov.in'; break;
+    default: return 'https://dev.sunbirded.org';
   }
+}
+  
   var $videoSrc;  
   $('.video-btn').click(function() {
       $videoSrc = $(this).data( "src" );
