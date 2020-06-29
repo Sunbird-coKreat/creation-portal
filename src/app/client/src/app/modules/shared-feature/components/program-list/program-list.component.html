@@ -130,8 +130,6 @@
                   <div>
                     {{ program?.contributionDate | date:'LLLL d, yyyy' }}
                     <em class="d-block">{{ program?.contributionDate | daysToGo }}</em>
-
-                    <span class="sb-label sb-label-table sb-label-primary-100" *ngIf="activeMyProgramsMenu && !iscontributeOrgAdmin && program?.status !== 'Unlisted'">{{ getProgramNominationStatus(program) }}</span>
                   </div>
                 </td>
                 <td *ngIf="activeMyProgramsMenu && iscontributeOrgAdmin" class="text-center">
