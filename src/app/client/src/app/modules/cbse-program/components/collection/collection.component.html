@@ -262,13 +262,13 @@
   <div class="sb-modal-content">
     <p class="fs-0-785">{{resourceService.frmelmnts.lbl.contentTypesDescription}}</p>
     <div class="mb-10" *ngFor="let contenttype of contentType; index as i">
-      <div class="sb-checkbox sb-checkbox-primary" 
-      appTelemetryInteract
+      <div class="sb-checkbox sb-checkbox-primary">
+          <input class="checking" [(ngModel)]="contenttype.isSelected" (change)="toggle(contenttype);" (click)="$event.stopPropagation()" type="checkbox" id="{{i+1}}"
+          appTelemetryInteract
           [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('contentType-selection', 'click', 'collection-list', {values: [contenttype.name]})"
           [telemetryInteractObject]="telemetryInteractObject"
           [telemetryInteractCdata]="telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryInteractPdata">
-          <input class="checking" [(ngModel)]="contenttype.isSelected" (change)="toggle(contenttype);" (click)="$event.stopPropagation()" type="checkbox" id="{{i+1}}">
           <label for="{{i+1}}" class="mb-0"> {{contenttype.name}}</label>
       </div>
       <!-- <sui-checkbox name="{{contenttype.name}}" (click)="toggle($event, contenttype, contenttype.value);">{{contenttype.name}}</sui-checkbox> -->
@@ -276,7 +276,7 @@
   </div>
   <div class="sb-modal-actions">
     <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showContentTypeModal = false; toasterService.success(resourceService.messages.smsg.nomination.m001)" [disabled]="!selectedContentTypes.length" appTelemetryInteract
-    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('contentType-submit-button', 'click', 'collection-list')"
+    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('contentType-submit-button', 'click', 'collection-list', {values: [selectedContentTypes]})"
     [telemetryInteractObject]="telemetryInteractObject"
     [telemetryInteractCdata]="telemetryInteractCdata"
     [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.submit}} </button>

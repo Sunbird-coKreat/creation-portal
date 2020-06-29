@@ -4,12 +4,13 @@ import { ResourceService, ToasterService, ConfigService } from '@sunbird/shared'
 import { ActivatedRoute, Router } from '@angular/router';
 import { IProgram } from '../../../core/interfaces';
 import * as _ from 'lodash-es';
-import { tap, filter } from 'rxjs/operators';
-import { forkJoin } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
 import * as moment from 'moment';
 import { DatePipe } from '@angular/common';
 import { programContext } from '../../../contribute/components/list-nominated-textbooks/data';
 import { IInteractEventEdata } from '@sunbird/telemetry';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 @Component({
   selector: 'app-program-list',
   templateUrl: './program-list.component.html',
@@ -19,6 +20,8 @@ import { IInteractEventEdata } from '@sunbird/telemetry';
 export class ProgramListComponent implements OnInit {
 
   public programs: IProgram[];
+  public program: any;
+  public programIndex: number;
   public count = 0;
   public activeDates = <any>[];
   public isContributor: boolean;
@@ -41,12 +44,16 @@ export class ProgramListComponent implements OnInit {
   public showLoader = true;
   public roleMapping = [];
   public iscontributeOrgAdmin = true;
+  public issourcingOrgAdmin = false;
+
+  showDeleteModal = false;
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService ) { }
 
   ngOnInit() {
     this.checkIfUserIsContributor();
+    this.issourcingOrgAdmin = this.isSourcingOrgAdmin();
     this.roles = _.get(programContext, 'config.roles');
     this.telemetryInteractCdata = [];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
@@ -105,7 +112,82 @@ export class ProgramListComponent implements OnInit {
       this.userService.userProfile.userRegData.User_Org);
   }
 
-  /**
+  setDelete(program, index) {
+    if (!this.issourcingOrgAdmin) {
+      this.toasterService.error(this.resourceService.messages.imsg.m0035);
+      return this.router.navigate(['home']);
+    }
+
+    this.program = program;
+    this.programIndex = index;
+
+    const req = {
+      url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
+      data: {
+        request: {
+          filters: {
+            program_id: this.program.program_id,
+            status: ['Pending', 'Approved', 'Initiated']
+          },
+          fields: ['organisation_id', 'status'],
+          limit: 0
+        }
+      }
+    };
+
+    this.programsService.getNominationList(req.data.request.filters)
+      .subscribe((nominationsResponse) => {
+        const nominations = _.get(nominationsResponse, 'result');
+        let user_id = _.get(this.userService, 'userProfile.userId');
+
+        if (nominations.length > 1) {
+          this.toasterService.error(this.resourceService.frmelmnts.lbl.projectCannotBeDeleted);
+          this.showDeleteModal = false;
+
+          return false;
+        }
+        else if (nominations[0].user_id != user_id) {
+          this.toasterService.error(this.resourceService.frmelmnts.lbl.projectCannotBeDeleted);
+          this.showDeleteModal = false;
+
+          return false;
+        }
+
+        this.showDeleteModal = true;
+      },
+      error =>{
+        console.log(error);
+    });
+
+  }
+
+  deleteProject($event: MouseEvent){
+    if (!this.issourcingOrgAdmin) {
+      this.toasterService.error(this.resourceService.messages.imsg.m0035);
+      return this.router.navigate(['home']);
+    }
+
+    const programData = {
+      "program_id": this.program.program_id,
+      "status":"Retired"
+    };
+
+    this.programsService.updateProgram(programData).subscribe(
+      (res) => {
+        this.toasterService.success(this.resourceService.frmelmnts.lbl.successTheProjectHasBeenDeleted);
+        ($event.target as HTMLButtonElement).disabled = false;
+        this.programs.splice(this.programIndex, 1);
+        this.showDeleteModal=false;
+        },
+      (err) => {
+        console.log(err, err)
+        this.toasterService.error(this.resourceService.frmelmnts.lbl.errorMessageTheProjectHasBeenDeleted);
+        ($event.target as HTMLButtonElement).disabled = false;
+      }
+    );
+  }
+
+  /**programContext
    * fetch the list of programs.
    */
   private getAllProgramsForContrib(type, status) {
@@ -163,6 +245,10 @@ export class ProgramListComponent implements OnInit {
         this.toasterService.error(_.get(error, 'error.params.errmsg') || this.resourceService.messages.emsg.projects.m0001);
       }
     );
+  }
+
+  isSourcingOrgAdmin() {
+    return _.get(this.userService, 'userProfile.userRoles', []).includes('ORG_ADMIN');
   }
 
   filterOutEnrolledPrograms(allPrograms, enrolledPrograms) {
@@ -478,6 +564,10 @@ export class ProgramListComponent implements OnInit {
     } else {
       return this.router.navigateByUrl('/sourcing/nominations/' + program.program_id);
     }
+  }
+
+  editOnClick(program) {
+    return this.router.navigateByUrl('/sourcing/edit/' + program.program_id);
   }
 
   isActive(program, name, index) {

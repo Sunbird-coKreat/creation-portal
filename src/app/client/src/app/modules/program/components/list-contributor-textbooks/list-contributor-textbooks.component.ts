@@ -183,7 +183,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   }
   getProgramTextbooks() {
      const option = {
-      url: 'content/composite/v1/search',
+      url: 'composite/v3/search',
        data: {
       request: {
          filters: {
@@ -195,7 +195,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       }
       }
     };
-    this.httpClient.post<any>(option.url, option.data).subscribe(
+    this.actionService.post(option).subscribe(
       (res) => this.showTexbooklist(res),
       (err) => console.log(err)
     );
@@ -273,7 +273,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
         edata: {
           type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
           pageid: _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid'),
-          uri: this.router.url,
+          uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };

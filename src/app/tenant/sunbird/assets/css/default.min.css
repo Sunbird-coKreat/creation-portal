@@ -1072,14 +1072,20 @@ h3, label, ul li, a, p, button {
 
 .latestPrograms .program-cards .topSection {
     padding: 24px;
+     height: 12rem;
 }
 
 .latestPrograms .program-cards .topSection label {
     color: #333333;
-    font-size: 16px;
-    font-weight: bold;
-    letter-spacing: 0;
-    line-height: 24px;
+      font-size: 16px;
+      font-weight: bold;
+      letter-spacing: 0;
+      line-height: 24px;
+      height:2.8rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
 }
 
 .latestPrograms .program-cards .topSection p {
@@ -1600,6 +1606,10 @@ h3, label, ul li, a, p, button {
     .latestPrograms .program-cards .bottomSection {
         padding: 13px 8px;
     }
+    .latestPrograms .program-cards .topSection {
+        padding: 24px;
+        height: 12rem;
+    }
 
     .latestPrograms h3,
     .guideLines h3 {
@@ -1754,8 +1764,7 @@ h3, label, ul li, a, p, button {
     display: block;
 }
 .my-20{
-    height: 2rem;
-	margin: 20px 0 10px 0;
+    margin-top: 1rem;
 }
 .mb-35{
     margin-bottom: 35px !important;

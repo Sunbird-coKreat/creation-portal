@@ -40,6 +40,7 @@ export class ProgramsService extends DataService implements CanActivate {
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
   private _contentTypes: any[];
   private _sourcingOrgReviewers: Array<any>;
+  private orgUsers: Array<any>;
 
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService,
@@ -318,7 +319,7 @@ export class ProgramsService extends DataService implements CanActivate {
  /**
    * Logic to get the all the users of sourcing organisation and add it to the same cont org as sourcing admin
    */
-  addSourcingUserstoContribOrg(userRegData) {
+  /*addSourcingUserstoContribOrg(userRegData) {
     let userOrgAdd;
     let userAdd;
 
@@ -383,7 +384,7 @@ export class ProgramsService extends DataService implements CanActivate {
           });
         });
       }));
-  }
+  }*/
 
   /**
    * Logic add contrib user and org for the sourcing admin and make him its admin
@@ -393,22 +394,16 @@ export class ProgramsService extends DataService implements CanActivate {
       (res) => {
         this.userService.openSaberRegistrySearch().then((userRegData) => {
           this.userService.userProfile.userRegData = userRegData;
-          this.toasterService.success(this.resourceService.messages.smsg.contributorjoin.m0001);
-          this.addSourcingUserstoContribOrg(userRegData).subscribe(
-            (res) => {
-              this.addorUpdateNomination(request).subscribe(
-                (res) => { console.log("Nomination added")},
-                (err) => { console.log("error added")}
-              )
-            },
-            (error) => {},
-          );
+            this.addorUpdateNomination(request).subscribe(
+              (res) => { console.log("Nomination added")},
+              (err) => { console.log("error added")}
+            )
         }).catch((err) => {
-          this.toasterService.error('Adding contributor profile failed...');
+          this.toasterService.error('Fetching contributor profile created for sourcing failed...');
         });
       },
       (error) => {
-        this.toasterService.error('Adding contributor profile failed...');
+        this.toasterService.error('Adding contributor profile failed.');
       }
     );
   }
@@ -957,5 +952,105 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
     return this.API_URL(req);
+  }
+
+  getSourcingOrgUserList(sourcingOrgId, roles, limit?) {
+    return new Promise((resolve, reject) => {
+      // Get all diskha users
+      return this.getAllSourcingOrgUsers(sourcingOrgId, roles, limit)
+      .then((sourcingOrgUsers) => {
+        // Remove currently logged in user
+        sourcingOrgUsers = _.filter(sourcingOrgUsers, user => {
+          return user.identifier !== this.userService.userProfile.identifier;
+        });
+
+        if (_.isEmpty(sourcingOrgUsers)) {
+          return resolve([]);
+        }
+
+        // Get the open saber users for org
+        const storedOrglist = this.cacheService.get('orgUsersDetails');
+        const orgId = _.get(this.userService, 'userProfile.userRegData.Org.osid');
+
+        return this.registryService.getAllContributionOrgUsers(orgId)
+        .then((allOrgUsers) => {
+          // Get the open saber user details
+          const userList = _.map(allOrgUsers, u => u.userId);
+          const osUsersReq = this.registryService.getUserdetailsByOsIds(userList);
+
+          if (userList && storedOrglist && userList.length === storedOrglist.length) {
+            return resolve(this.cacheService.get('orgUsersDetails'));
+          }
+
+          return forkJoin(osUsersReq).subscribe(res => {
+            const users = _.get(_.first(res), 'result.User');
+            let orgUsersDetails = _.map(sourcingOrgUsers, u => {
+              const osUser = _.first(_.filter(users, u1 => {
+                return u1.userId === u.identifier;
+              }));
+
+              const osUserOrg = _.first(_.filter(allOrgUsers, u1 => {
+                return u1.userId === _.get(osUser, 'osid');
+              }));
+
+              return {
+                ...u,
+                name: `${u.firstName} ${u.lastName || ''}`,
+                User: osUser,
+                User_Org: osUserOrg,
+                selectedRole: !_.isUndefined(osUserOrg) ? _.first(osUserOrg.roles) : '-'
+              };
+            });
+            orgUsersDetails = _.compact(orgUsersDetails);
+            this.cacheService.set('orgUsersDetails', orgUsersDetails);
+
+            return resolve(orgUsersDetails);
+          }, (err) => {
+            console.log('Error:', err);
+            return resolve([]);
+          });
+        });
+      }, (err) => {
+        console.log('Error:', err);
+        return resolve([]);
+      });
+    });
+  }
+
+  getAllSourcingOrgUsers(orgId, roles, limit?, offset?) {
+    // Get the diskha users for org
+    const filters = {
+      'organisations.organisationId': orgId,
+      'organisations.roles': roles
+    };
+
+    offset = (!_.isUndefined(offset)) ? offset : 0;
+    limit = (!_.isUndefined(limit)) ? limit : 100;
+
+    if (offset === 0) {
+      this.orgUsers = [];
+    }
+
+    return new Promise((resolve, reject) => {
+      this.getSourcingOrgUsers(filters, offset, limit).subscribe(
+        (res) => {
+          const sourcingOrgUsers =  _.get(res, 'result.response.content', []);
+          const totalCount =  _.get(res, 'result.response.count');
+
+          if (sourcingOrgUsers.length > 0) {
+            this.orgUsers = _.compact(_.concat(this.orgUsers, sourcingOrgUsers));
+            offset = offset + limit;
+          }
+
+          if (totalCount > this.orgUsers.length){
+            return resolve(this.getAllSourcingOrgUsers(orgId, roles, limit, offset));
+          }
+          return resolve(this.orgUsers);
+        },
+        (error) => {
+          return reject([]);
+        }
+      );
+    });
   }
 }

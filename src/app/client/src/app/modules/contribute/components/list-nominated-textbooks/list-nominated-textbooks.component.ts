@@ -80,7 +80,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
   OrgUsersCnt = 0;
   pager: IPagination;
   pageNumber = 1;
-  pageLimit = 200;
+  pageLimit = 250;
   sharedContext;
 
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
@@ -212,7 +212,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
 
   getProgramTextbooks(preferencefilters?) {
      const option = {
-      url: 'content/composite/v1/search',
+      url: 'composite/v3/search',
        data: {
         request: {
          filters: {
@@ -235,7 +235,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
         option.data.request.filters['subject'] = _.get(preferencefilters, 'subject');
       }
     }
-    this.httpClient.post<any>(option.url, option.data).subscribe(
+    this.actionService.post(option).subscribe(
       (res) =>  {
         if (res && res.result) {
           this.showTexbooklist(res);
@@ -283,7 +283,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     }
   }
 
-
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
@@ -304,7 +303,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
         edata: {
           type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
           pageid: _.get(this.activeRoute, 'snapshot.data.telemetry.pageid'),
-          uri: this.router.url,
+          uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
@@ -368,7 +367,7 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     return (contributionendDate.isSameOrAfter(today, 'day') && endDate.isSameOrAfter(today, 'day')) ? true : false;
   }
 
-   setActiveDate() {
+  setActiveDate() {
     const dates = [ 'nomination_enddate', 'shortlisting_enddate', 'content_submission_enddate', 'enddate'];
 
     dates.forEach(key => {
@@ -445,8 +444,22 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           const getCurrentRoleId = _.find(this.programDetails.config.roles, {'name': this.sessionContext.currentRole});
           this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
         }
-        if (this.isUserOrgAdmin()) {
-          this.getContributionOrgUsers();
+
+        this.orgDetails.name = _.get(this.userService, 'userProfile.userRegData.Org.name');
+        this.orgDetails.id =  _.get(this.userService, 'userProfile.userRegData.Org.osid');
+
+        if (this.isSourcingOrgAdmin()) {
+          const dikshaOrgId = _.get(this.userService, 'userProfile.organisations[0].organisationId');
+          const roles= ['CONTENT_REVIEWER', 'CONTENT_CREATOR'];
+
+          // Get all diskha users
+          this.programsService.getSourcingOrgUserList(dikshaOrgId, roles, this.pageLimit).then((orgUsersDetails) => {
+            this.setOrgUsers(orgUsersDetails);
+          });
+        } else if (this.isUserOrgAdmin()) {
+          this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
+            this.setOrgUsers(orgUsers);
+          });
         }
       }
 
@@ -476,32 +489,34 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
       this.toasterService.error('Failed fetching current nomination status');
     });
   }
+  
+  isSourcingOrgAdmin() {
+    return this.userService.userProfile.userRoles.includes('ORG_ADMIN') && this.userService.userProfile.userRegData.User_Org.roles.includes('admin');
+  }
 
-  getContributionOrgUsers() {
-      this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
-      this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
-      this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
-        if (!_.isEmpty(orgUsers)) {
-          orgUsers = _.filter(orgUsers, {"selectedRole": "user"});
-          _.forEach(orgUsers, r => {
-              r.projectselectedRole = 'Select';
-            if (this.nominationDetails.rolemapping) {
-              _.find(this.nominationDetails.rolemapping, (users, role) => {
-                if (_.includes(users, r.identifier)) {
-                  r.projectselectedRole = role;
-                }
-              });
-            }
-            this.allContributorOrgUsers.push(r);
-          });
-          this.OrgUsersCnt = this.allContributorOrgUsers.length;
-          this.sortOrgUsers('projectselectedRole');
-          this.showUsersLoader = false;
-        }
-        else {
-          this.showUsersLoader = false;
-        }
-      });
+  setOrgUsers(orgUsers) {
+    if (_.isEmpty(orgUsers)) {
+      this.showUsersLoader = false;
+      return false;
+    }
+    this.allContributorOrgUsers = [];
+    orgUsers = _.filter(orgUsers, {"selectedRole": "user"});
+    _.forEach(orgUsers, r => {
+        r.projectselectedRole = 'Select';
+      if (this.nominationDetails.rolemapping) {
+        _.find(this.nominationDetails.rolemapping, (users, role) => {
+          if (_.includes(users, r.identifier)) {
+            r.projectselectedRole = role;
+          }
+        });
+      }
+      this.allContributorOrgUsers.push(r);
+    });
+
+    this.OrgUsersCnt = this.allContributorOrgUsers.length;
+    this.sortOrgUsers('projectselectedRole');
+    this.showUsersLoader = false;
+    return true;
   }
 
   NavigateToPage(page: number): undefined | void {

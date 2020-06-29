@@ -9,7 +9,7 @@ import { tap, first, map, takeUntil, catchError } from 'rxjs/operators';
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges } from '@angular/core';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormControl, FormBuilder, Validators, FormGroup, FormArray } from '@angular/forms';
+import { FormControl, FormBuilder, Validators, FormGroup, FormArray, FormGroupName } from '@angular/forms';
 import { IProgram } from './../../../core/interfaces';
 import { CbseProgramService } from './../../../cbse-program/services';
 import { UserService } from '@sunbird/core';
@@ -30,19 +30,20 @@ import {ProgramTelemetryService} from '../../services';
 export class CreateProgramComponent implements OnInit, AfterViewInit {
   @ViewChild('fineUploaderUI') fineUploaderUI: ElementRef;
   public unsubscribe = new Subject<void>();
-
+  public programId: string;
+  public guidLinefileName: String;
+  public isFormValueSet = false;
+  public editMode = false;
   /**
    * Program creation form name
    */
   createProgramForm: FormGroup;
   collectionListForm: FormGroup;
 
-  sbFormBuilder: FormBuilder;
-
   /**
    * Contains Program form data
    */
-  programDetails: IProgram;
+  programDetails: any;
 
 
   /**
@@ -69,7 +70,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   programScope: any = {};
   originalProgramScope: any = {};
   userprofile;
-  programId: string;
   public programData: any = {};
   showTextBookSelector = false;
   formIsInvalid = false;
@@ -90,6 +90,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public filterApplied = false;
   public showDocumentUploader = false;
   public defaultContributeOrgReviewChecked = false;
+  public disableUpload = false;
   uploadedDocument;
   showAddButton = false;
   loading = false;
@@ -107,6 +108,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   };
   public programConfig: any;
   public disableCreateProgramBtn = false;
+  public showLoader = true;
 
   constructor(
     public frameworkService: FrameworkService,
@@ -118,25 +120,32 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private cbseService: CbseProgramService,
-    private formBuilder: FormBuilder,
+    private sbFormBuilder: FormBuilder,
     private httpClient: HttpClient,
     private navigationHelperService: NavigationHelperService,
     private configService: ConfigService,
     private deviceDetectorService: DeviceDetectorService,
     public programTelemetryService: ProgramTelemetryService) {
-    this.sbFormBuilder = formBuilder;
   }
 
   ngOnInit() {
+    this.programId = this.activatedRoute.snapshot.params.programId;
     this.userprofile = this.userService.userProfile;
     this.programScope['purpose'] = this.programsService.contentTypes;
     this.programConfig = _.cloneDeep(programConfigObj);
-    this.initializeFormFields();
     this.fetchFrameWorkDetails();
     this.telemetryInteractCdata = [];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
     this.acceptPdfType = this.getAcceptType(this.assetConfig.pdf.accepted, 'pdf');
+
+    if (!_.isEmpty(this.programId)) {
+      this.editMode = true;
+      this.getProgramDetails();
+    }
+    else {
+      this.initializeFormFields();
+    }
   }
 
   initiateDocumentUploadModal() {
@@ -269,6 +278,27 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     });
   }
 
+  getProgramDetails() {
+    const req = {
+      url: `program/v1/read/${this.programId}`
+    };
+    this.programsService.get(req).subscribe((programDetails) => {
+      this.programDetails = _.get(programDetails, 'result');
+      this.programDetails['content_types'] = this.programsService.getContentTypesName(this.programDetails.content_types);
+      this.initializeFormFields();
+
+      if (!_.isEmpty(this.programDetails.guidelines_url)) {
+        this.guidLinefileName = this.programDetails.guidelines_url.split("/").pop();
+      }
+
+    }, error => {
+      this.showLoader = false;
+      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+      this.toasterService.error(errorMes || 'Fetching program details failed');
+    });
+  }
+
+
   getUploadVideo(videoId) {
     this.loading = false;
     this.isClosable = true;
@@ -287,6 +317,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
   removeUploadedDocument() {
     this.uploadedDocument = null;
+    this.guidLinefileName = null;
+    this.programDetails.guidelines_url = null;
   }
 
   generateAssetCreateRequest(fileName, fileType, mediaType) {
@@ -392,7 +424,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         edata: {
           type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
           pageid: _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid'),
-          uri: this.router.url,
+          uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
@@ -526,17 +558,41 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    * It helps to initialize form fields and apply field level validation
    */
   initializeFormFields(): void {
-    this.createProgramForm = this.sbFormBuilder.group({
-      name: ['', [Validators.required, Validators.maxLength(100)]],
-      description: ['', Validators.maxLength(1000)],
-      nomination_enddate: ['', Validators.required],
-      shortlisting_enddate: [],
-      program_end_date: ['', Validators.required],
-      content_submission_enddate: ['', Validators.required],
-      content_types: ['', Validators.required],
-      rewards: [],
-      defaultContributeOrgReview: [true]
-    });
+
+  if (!_.isEmpty(this.programDetails) && !_.isEmpty(this.programId))
+    {
+      this.isOpenNominations = (_.get(this.programDetails, 'type') == "public") ? true : false;
+      this.disableUpload = (_.get(this.programDetails, 'guidelines_url')) ? true : false;
+
+      this.createProgramForm = this.sbFormBuilder.group({
+        name: [_.get(this.programDetails, 'name'), [Validators.required, Validators.maxLength(100)]],
+        description: [_.get(this.programDetails, 'description'), Validators.maxLength(1000)],
+        nomination_enddate: [_.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : '', Validators.required],
+        shortlisting_enddate: [_.get(this.programDetails, 'shortlisting_enddate') ? new Date(_.get(this.programDetails, 'shortlisting_enddate')) : ''],
+        program_end_date: [_.get(this.programDetails, 'enddate') ? new Date(_.get(this.programDetails, 'enddate')) : '', Validators.required],
+        content_submission_enddate: [_.get(this.programDetails, 'content_submission_enddate') ? new Date(_.get(this.programDetails, 'content_submission_enddate')) : '', Validators.required],
+        content_types: [_.get(this.programDetails, 'content_types'), Validators.required],
+        rewards: [_.get(this.programDetails, 'rewards')],
+        defaultContributeOrgReview: new FormControl({value: true, disabled: this.editMode})
+      });
+    }
+    else
+    {
+      this.createProgramForm = this.sbFormBuilder.group({
+        name: ['', [Validators.required, Validators.maxLength(100)]],
+        description: ['', Validators.maxLength(1000)],
+        nomination_enddate: ['', Validators.required],
+        shortlisting_enddate: [],
+        program_end_date: ['', Validators.required],
+        content_submission_enddate: ['', Validators.required],
+        content_types: ['', Validators.required],
+        rewards: [],
+        defaultContributeOrgReview: [true]
+      });
+    }
+
+    this.showLoader = false;
+    this.isFormValueSet = true;
 
     this.collectionListForm = this.sbFormBuilder.group({
       pcollections: this.sbFormBuilder.array([]),
@@ -633,7 +689,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.formIsInvalid = false;
     this.handleContentTypes();
 
-    if (this.createProgramForm.dirty && this.createProgramForm.valid) {
+    if ((this.createProgramForm.dirty || this.uploadedDocument) && this.createProgramForm.valid) {
       const contentTypes = this.createProgramForm.value.content_types;
       this.createProgramForm.value.content_types = _.isEmpty(contentTypes) ? [] : contentTypes;
       this.programData = {
@@ -677,17 +733,51 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           (err) => this.saveProgramError(err)
         );
       } else {
-        this.programData['program_id'] = this.programId;
-        this.programsService.updateProgram(this.programData).subscribe(
-          (res) => { this.showTexbooklist(); },
-          (err) => this.saveProgramError(err)
-        );
+          this.programData['program_id'] = this.programId;
+          this.programsService.updateProgram(this.programData).subscribe(
+            (res) => { this.showTexbooklist(); },
+            (err) => this.saveProgramError(err)
+          );
       }
     } else {
       this.formIsInvalid = true;
       this.validateAllFormFields(this.createProgramForm);
     }
 
+    this.validateDates();
+  }
+
+  updateProgram($event: MouseEvent) {
+    this.formIsInvalid = false;
+
+    if ((this.createProgramForm.dirty || this.uploadedDocument) && this.createProgramForm.valid) {
+      ($event.target as HTMLButtonElement).disabled = true;
+      const prgData = {
+        ...this.createProgramForm.value
+      };
+
+      prgData['enddate'] = prgData.program_end_date;
+      prgData['program_id'] = this.programId;
+      prgData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : this.programDetails.guidelines_url;
+
+      delete prgData.program_end_date;
+      delete prgData.content_types;
+
+      this.programsService.updateProgram(prgData).subscribe(
+        (res) => {
+          this.toasterService.success(this.resource.messages.smsg.modify.m0001);
+          this.router.navigate(['/sourcing']);
+          },
+        (err) => {
+          console.log(err, err);
+          this.toasterService.error(this.resource.messages.emsg.m0005);
+          ($event.target as HTMLButtonElement).disabled = false;
+        }
+      );
+    } else {
+      this.formIsInvalid = true;
+      this.validateAllFormFields(this.createProgramForm);
+    }
     this.validateDates();
   }
 
