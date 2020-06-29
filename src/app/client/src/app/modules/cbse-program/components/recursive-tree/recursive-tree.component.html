@@ -11,8 +11,8 @@
         <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.totalContent}}:</span> <span class="font-weight-bold"> {{collection.totalLeaf}}</span>
       </div>
      <div class="d-flex">
-        <button (click)="goToAddLibrary(collection.identifier)" class="sb-btn sb-btn-xs sb-btn-outline-primary sb-left-icon-btn library-btn mr-8"
-        *ngIf="visibility && visibility['showAddresource'] && programContext?.status === 'Unlisted'">
+        <button (click)="goToAddLibrary(collection.identifier)" class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius"
+        popupText="Explore content from Library"  suiPopup [popupPlacement]="'top'" *ngIf="visibility && visibility['showAddresource'] && programContext?.status === 'Unlisted'">
           <i class="add icon mr-4"></i>{{resourceService.frmelmnts.lbl.addToLibrary}}</button>
       <button class="sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius"
         *ngIf="visibility && visibility['showAddresource']"

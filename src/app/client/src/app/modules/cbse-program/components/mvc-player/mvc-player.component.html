@@ -1,111 +1,86 @@
-<!-- <div class="aspectratio" data-ratio="16:9" id="help-video-aspect-ratio">
-  <div>
-    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/x8MPTb1iu_0" frameborder="0"
-      allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-  </div>
-</div> -->
-<app-player class="content-player" [playerConfig]="playerConfig"></app-player>
-<div class="d-flex flex-ai-center flex-w-wrap content-video__player__details sb-bg-color-white">
+<div class="d-flex flex-w-wrap content-video__player__details mt-15 mb-5">
   <div class="d-flex flex-dc flex-basis-1">
-    <div class="content-video__player__title ml-8 mr-auto sb__ellipsis sb__ellipsis--one">
-      {{contentMetaData.name}}
-    </div>
-    <div class="content-video__player__title__subtitle fxsmall ml-8 mt-8">
-      <span class="mr-8">by TNSCERT</span>
-      <span class="mr-8">*</span>
-      <span class="mr-8">4.7</span>
-      <span><i class="icon star outline"></i></span>
-    </div>
+    <div class="content-video__player__title mr-auto sb__ellipsis sb__ellipsis--one"> {{contentData.name}} </div>
+    <div class="content-video__player__title__subtitle fs-0-785"><span class="mr-8">By {{contentData.board}}</span> <span
+        class="mr-8" *ngIf="contentData?.me_averageRating" >{{contentData?.me_averageRating || '0'}}</span><i *ngIf="contentData?.me_averageRating" class="icon star"></i></div>
   </div>
-
-  <div class="d-flex content-video__player__screenpart d-flex flex-ai-center">
-    <button class="sb-btn sb-btn-normal sb-btn-secondary sb-left-icon-btn mr-16 shine-effect"><i
-        class="plus square icon mr-4"></i>Add to library</button>
-    <div class="separator"></div>
-    <button class="sb-btn sb-btn-link sb-btn-link-primary sb-btn-sm sb-btn-square">
-      <i class="icon-svg icon-svg--sm icon-back"><svg class="icon icon-svg--primary">
-          <use xlink:href="./assets/images/libdemo/sprite.svg#fullscreen"></use>
-        </svg></i><span class="fxsmall">Full Screen</span></button>
+  <div class="d-flex content-video__player__screenpart d-flex">
+    <button type="button" class="sb-btn sb-btn-secondary sb-btn-normal ripple sb-left-icon-btn my-10 fs-0-785"
+      (click)="addToLibrary();"><i class="plus square outline icon"></i>Add to textbook</button>
   </div>
 </div>
-<div class="content-metadeta sb-bg-color-white mt-8">
-  <div class="mx-16 py-16 content-metadeta__content">
-    <div class="content-metadeta__title fsmall font-weight-bold">DESCRIPTION</div>
-    <p class="content-metadeta__text fsmall pt-8">
-      Curabitur lobortis id lorem id bibendum. Ut id consectetur magna. Quisque volut lobortis is id lorem id
-      bibendum. Ut
-      id consectetur magna.
-    </p>
-  </div>
-
-  <sui-accordion class="styled fluid sb-accordion">
-    <sui-accordion-panel>
-      <div title class="sb-accordion-title fsmall">
-        Content Information
-        <i class="chevron down icon ml-8"></i>
-      </div>
-      <div content class="sb-accordion-content sb-bg-color-white pt-0 pb-8">
-        <div class="py-8">
-          <div class="content-metadeta__title  fxsmall mb-8">BOARD</div>
-          <div class="content-metadeta__text  fsmall">{{contentMetaData.board}}</div>
+<app-player class="content-player" [playerConfig]="playerConfig"></app-player>
+<div class="toc-content-player content-video">
+  <div class="sb-bg-color-white">
+    <div class="mx-16 py-16 content-metadeta__content" *ngIf="contentData?.description">
+      <div class="content-metadeta__title fsmall font-weight-bold">Description</div>
+      <p class="content-metadeta__text fsmall pt-8">
+        {{contentData?.description}}
+      </p>
+    </div>
+    <sui-accordion class="styled fluid sb-accordion">
+      <sui-accordion-panel>
+        <div title class="sb-accordion-title fsmall py-10 px-15">
+          Content Information
+          <i class="chevron down icon ml-8"></i>
         </div>
-
-        <div class="py-8">
-          <div class="content-metadeta__title  fxsmall mb-8">MEDIUM</div>
-          <div class="content-metadeta__text  fsmall">{{contentMetaData.medium}}</div>
-        </div>
-
-        <div class="py-8">
-          <div class="content-metadeta__title  fxsmall mb-8">CLASS</div>
-          <div class="content-metadeta__text  fsmall">{{contentMetaData.gradeLevel}}</div>
-        </div>
-
-        <div class="py-8">
-          <div class="content-metadeta__title  fxsmall mb-8">SUBJECT</div>
-          <div class="content-metadeta__text  fsmall">{{contentMetaData.subject}}</div>
-        </div>
-
-        <div class="py-8">
-          <div class="content-metadeta__title fxsmall mb-8">License terms</div>
-          <div class="content-metadeta__text fsmall">
-            CC BY-NC-SA 4.0: This license is Creative Commons
-            Attribution-NonCommercial-ShareAlike -
-            <a href="#" class="content-metadeta__text__link cursor-pointer mt-8">
-              https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode</a>
+        <div content class="sb-accordion-content sb-bg-color-white pt-0 pb-8 ui grid mx-0">
+          <div class="six wide column">
+            <div class="content-metadeta__title  fxsmall mb-8">BOARD</div>
+            <div class="content-metadeta__text  fsmall">{{contentData.board}}</div>
+          </div>
+          <div class="six wide column">
+            <div class="content-metadeta__title  fxsmall mb-8">MEDIUM</div>
+            <div class="content-metadeta__text  fsmall">{{contentData.medium}}</div>
+          </div>
+          <div class="six wide column">
+            <div class="content-metadeta__title  fxsmall mb-8">CLASS</div>
+            <div class="content-metadeta__text  fsmall">{{contentData.gradeLevel}}</div>
+          </div>
+          <div class="six wide column">
+            <div class="content-metadeta__title  fxsmall mb-8">SUBJECT</div>
+            <div class="content-metadeta__text  fsmall">{{contentData.subject}}</div>
+          </div>
+          <div class="six wide column" *ngIf="contentData?.license">
+            <div class="content-metadeta__title fxsmall mb-8">License terms</div>
+            <div class="content-metadeta__text fsmall">
+              {{contentData.license}} <span *ngIf="contentData?.licenseDetails?.name">: {{contentData.licenseDetails['name']}} {{contentData.licenseDetails['description']}}&#x200E; 
+              <a href="{{contentData.licenseDetails['url']}}" *ngIf="contentData.licenseDetails['url']" class="content-metadeta__text__link cursor-pointer mt-8">
+                {{contentData.licenseDetails['url']}}</a>
+                </span>
+            </div>
+          </div>
+          <div class="six wide column" *ngIf="contentData?.copyright">
+            <div class="content-metadeta__title  fxsmall mb-8" >COPYRIGHT</div>
+            <div class="content-metadeta__text  fsmall">{{contentData?.copyright}} <span
+              *ngIf="contentData?.copyrightYear">,&nbsp;{{contentData?.copyrightYear}}</span></div>
+          </div>
+          <div class="six wide column" *ngIf="contentData?.creator">
+            <div class="content-metadeta__title  fxsmall mb-8">CREATED ON SUNBIRD BY</div>
+            <div class="content-metadeta__text  fxsmall">{{contentData?.creator}}</div>
+          </div>
+          <div class="six wide column" *ngIf="contentData?.author">
+            <div class="content-metadeta__title  fxsmall mb-8">AUTHOR</div>
+            <div class="content-metadeta__text  fsmall">{{contentData?.author}}</div>
+          </div>
+          <div class="six wide column" *ngIf="contentData?.attributions">
+            <div class="content-metadeta__title  fxsmall mb-8">AUTHOR</div>
+            <div class="content-metadeta__text  fsmall">{{contentData?.attributions}}</div>
+          </div>
+          <div class="six wide column">
+            <div class="content-metadeta__title  fxsmall mb-8">CREATED ON</div>
+            <div class="content-metadeta__text  fsmall">{{contentData.createdOn | dateFormat: ' Do MMMM YYYY'}}</div>
+          </div>
+          <div class="six wide column" *ngIf="contentData?.keywords">
+            <div class="content-metadeta__title  fxsmall mb-8">KEYWORDS</div>
+            <div class="content-metadeta__text  fsmall">{{contentData?.keywords}}</div>
+          </div>
+          <div class="six wide column" *ngIf="contentData?.resourceType">
+            <div class="content-metadeta__title  fxsmall mb-8">RESOURCE TYPE</div>
+            <div class="content-metadeta__text  fsmall">{{contentData.resourceType}}</div>
           </div>
         </div>
-
-        <div class="py-8">
-          <div class="content-metadeta__title  fxsmall mb-8">COPYRIGHT</div>
-          <div class="content-metadeta__text  fsmall">Content Credits</div>
-        </div>
-
-        <div class="py-8">
-          <div class="content-metadeta__title  fxsmall mb-8">CREATED ON SUNBIRD BY</div>
-          <div class="content-metadeta__text  fxsmall">Creator Name</div>
-        </div>
-
-        <div class="py-8">
-          <div class="content-metadeta__title  fxsmall mb-8">AUTHOR</div>
-          <div class="content-metadeta__text  fsmall">Author Name</div>
-        </div>
-
-        <div class="py-8">
-          <div class="content-metadeta__title  fxsmall mb-8">CREATED ON</div>
-          <div class="content-metadeta__text  fsmall">2nd April 2018</div>
-        </div>
-
-        <div class="py-8">
-          <div class="content-metadeta__title  fxsmall mb-8">KEYWORDS</div>
-          <div class="content-metadeta__text  fsmall">Story</div>
-        </div>
-
-        <div class="py-8">
-          <div class="content-metadeta__title  fxsmall mb-8">RESOURCE TYPE</div>
-          <div class="content-metadeta__text  fsmall">{{contentMetaData.resourceType}}</div>
-        </div>
-
-      </div>
-    </sui-accordion-panel>
-  </sui-accordion>
+      </sui-accordion-panel>
+    </sui-accordion>
+  </div>
 </div>
