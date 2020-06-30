@@ -1072,6 +1072,7 @@ h3, label, ul li, a, p, button {
 
 .latestPrograms .program-cards .topSection {
     padding: 24px;
+     height: 12rem;
 }
 
 .latestPrograms .program-cards .topSection label {
