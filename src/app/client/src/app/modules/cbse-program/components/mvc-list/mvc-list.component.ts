@@ -11,6 +11,8 @@ export class MvcListComponent implements OnInit {
   @Output() contentChangeEvent = new EventEmitter<any>();
   @Output() moveEvent = new EventEmitter<any>();
   public addToLibraryBtnVisibility: Boolean = false;
+  public width: any;
+  public height: any;
 
   constructor() { }
 

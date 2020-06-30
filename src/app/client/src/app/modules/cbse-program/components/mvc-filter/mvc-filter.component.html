@@ -1,40 +1,57 @@
-<!-- Prominent Filter Section -->
-<div class="sb-prominent-filter" >
-  <div class="ui container">
-    <div class="sb-prominent-filter-container pt-16">
-      <div class="sb-prominent-filter-field">
-        <label class="fsmall">Select Medium</label>
-        <sui-select class="selection sb-select-searchfilter" labelField="name" placeholder="Select Board" 
-          [isSearchable]="false" #multiSelect>
-          <sui-select-option *ngFor="let option of mediums" [value]="option">
-          </sui-select-option>
-        </sui-select>
+<div class="sb-prominent-filter sb-bg-header-blue" [formGroup]="searchFilterForm">
+  <div class="ui container py-20">
+    <div class="d-flex flex-w-wrap">
+      <div class="fs-0-785 cursor-pointer pr-20 font-weight-bold" (click)="showfilter()">Filters 
+        <i class="icon caret" [ngClass]="isFilterShow === true ? 'up' : 'down'"></i>
       </div>
-      <div class="sb-prominent-filter-field">
-        <label class="fsmall">Select Subject</label>
-        <sui-select class="selection sb-select-searchfilter" labelField="name" placeholder="Select Medium"
-          [isSearchable]="false" #multiSelect>
-          <sui-select-option *ngFor="let option of subjects" [value]="option">
-          </sui-select-option>
-        </sui-select>
+      <div class="sb-checkbox sb-checkbox-primary" *ngIf="isFilterShow">
+        <input type="checkbox" id="showAddedContent" formControlName="showAddedContent" name="showAddedContent">
+        <label for="showAddedContent" class="fs-0-785">Show already added content</label>
       </div>
+    </div>
+    <div class="sb-prominent-filter-container pt-16" *ngIf="isFilterShow">
       <div class="sb-prominent-filter-field">
-        <label class="fsmall">Select Content Type(s)</label>
-        <sui-multi-select class="selection sb-select-searchfilter" labelField="name" [hasLabels]="true" placeholder="Select Content Type(s)" [(ngModel)]="selectedContentType"
-          [isSearchable]="false" #multiSelect>
-          <sui-select-option *ngFor="let option of contentTypes" [value]="option">
-          </sui-select-option>
+        <label class="fsmall d-block">Select Content Type(s)
+          <i class="pull-right question circle link icon sb-color-gray-200  fs-0-92" suiPopup popupDelay="500" popupText="Show Content Types"></i>
+        </label>
+        <sui-multi-select class="selection sb-select-searchfilter d-block"
+          formControlName="contentTypes" #contentTypes
+          [options]="filters.contentTypes">
+            <sui-select-option *ngFor="let contentType of contentTypes.filteredOptions" [value]="contentType"> </sui-select-option>
         </sui-multi-select>
       </div>
       <div class="sb-prominent-filter-field">
-        <label class="fsmall">Select Class(es)</label>
-        <sui-multi-select class="selection sb-select-searchfilter" labelField="name" [hasLabels]="true" placeholder="Select Class(es)" [(ngModel)]="selectedClass"
-          [isSearchable]="false" #multiSelect>
-          <sui-select-option *ngFor="let option of classes" [value]="option">
-          </sui-select-option>
+        <label class="fsmall d-block">Select Class(es)
+          <i class="pull-right question circle link icon sb-color-gray-200  fs-0-92" suiPopup popupDelay="500"   popupText="Sho Classes"></i>
+        </label>
+        <sui-multi-select class="selection sb-select-searchfilter d-block"
+          formControlName="gradeLevels" #gradeLevels
+          [options]="filters.gradeLevels">
+            <sui-select-option *ngFor="let gradeLevel of gradeLevels.filteredOptions" [value]="gradeLevel"> </sui-select-option>
         </sui-multi-select>
       </div>
-
+      <div class="sb-prominent-filter-field">
+        <label class="fsmall d-block">Select Subject(s)
+          <i class="pull-right question circle link icon sb-color-gray-200  fs-0-92" suiPopup popupDelay="500"   popupText="Show Subject"></i>
+        </label>
+        <sui-multi-select class="selection sb-select-searchfilter d-block"
+          formControlName="subjects" #subjects
+          [options]="filters.subjects">
+            <sui-select-option *ngFor="let subject of subjects.filteredOptions" [value]="subject"> </sui-select-option>
+        </sui-multi-select>
+      </div>
+      <div class="sb-prominent-filter-field ml-0 text-left">
+        <label class="fsmall d-block">Select Chapter(s)
+          <i class="pull-right question circle link icon sb-color-gray-200  fs-0-92" suiPopup popupDelay="500"   popupText="Show Chapters"></i>
+        </label>
+        <sui-multi-select class="selection sb-select-searchfilter d-block"
+          formControlName="chapters" #chapters
+          [options]="filters.chapters">
+            <sui-select-option *ngFor="let chapter of chapters.filteredOptions" [value]="chapter"> </sui-select-option>
+        </sui-multi-select>
+      </div>
     </div>
   </div>
 </div>
+  
+

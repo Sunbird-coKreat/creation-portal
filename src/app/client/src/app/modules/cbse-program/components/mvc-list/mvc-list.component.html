@@ -1,28 +1,43 @@
-<div class="sbtoc-container px-8 mt-20">
-  <div class="title sb-color-primary font-weight-bold fs-1-16">
+<div class="sbtoc-container pr-8 mt-20">
+  <div class="title sb-color-primary font-weight-bold fs-1">
     Content Matches for Library
   </div>
-  <small class="font-italic sb-color-gray-200 d-block pb-10">Explore {{contentList.length}} content relavant to tale of two bird</small>
+  <small class="font-italic sb-color-gray-400 d-block pb-10">Explore {{contentList.length}} content relavant to tale of two bird</small>
   <!-- Class separator -->
   <div class="sb-library-scroll" id="suggestions-tab">
+    <div class="sbaccordion__panel-content p-16 mb-8" style="border-top: .0625rem solid #e0e0e0;
+    background: var(--gray-0);
+    min-height: 2rem;
+    overflow: hidden;
+    overflow-y: auto;
+    box-shadow:rgba(0, 0, 0, 0.1);">
+      <div class="sbchapter__item">
+        <app-skeleton-loader [width]="'50%'" [height]="'12px'" style="flex: 1 1 auto;"></app-skeleton-loader>
+        <app-skeleton-loader [width]="'40px'" [height]="'40px'" style="width: auto;"></app-skeleton-loader>
+      </div>
+      <div class="sbchapter__item">
+        <app-skeleton-loader [width]="'50%'" [height]="'12px'" style="flex: 1 1 auto;"></app-skeleton-loader>
+        <app-skeleton-loader [width]="'40px'" [height]="'40px'" style="width: auto;"></app-skeleton-loader>
+      </div>
+    </div>
     <div class="sbchapter__item mb-0" *ngFor="let content of contentList; let i = index"
       [ngClass]="{'active':content.identifier === selectedContentId}"
       (click)="onContentChange($event, content);">
       <!-- <div class="sbchapter__img"><img src="./assets/images/book.png" /></div> -->
       <h4 class="ml-8">
         <div class="sbcard__title sb__ellipsis sb__ellipsis--one mb-0 font-weight-bold" suiPopup
-          [popupPlacement]="'left'" popupText="{{content.name}}">{{content.name}}</div>
+        popupText="{{content.name}}">{{content.name}}</div>
         <div class="sbchapter__item__title text-left sb__ellipsis sb__ellipsis--two mr-8 sb-color-black">
           By {{content.board}}
         </div>
       </h4>
-      <div class="btn-addtoLibrary pt-0 pl-0" *ngIf="addToLibraryBtnVisibility && content.identifier === selectedContentId && !content.isAdded">
+      <div class="btn-addtoLibrary pt-0 pr-10" *ngIf="addToLibraryBtnVisibility && content.identifier === selectedContentId && !content.isAdded">
         <button class="sb-btn sb-btn-xs sb-btn-secondary sb-left-icon-btn" (click)="addToLibrary();" ><i class="plus square icon mr-4"></i>Add to
           Textbook
         </button>
       </div>
       <div class="textbookBtnLink" [hidden]="!content.isAdded">
-        <button type="button" class="sb-btn sb-btn-normal sb-btn-link
+        <button type="button" class="sb-btn sb-btn-normal sb-btn-link sb-btn-hover-none
          sb-btn-link-secondary sb-left-icon-btn fs-0-785"><i class="circle check icon"></i>
          Added to Textbook</button>
       </div>
