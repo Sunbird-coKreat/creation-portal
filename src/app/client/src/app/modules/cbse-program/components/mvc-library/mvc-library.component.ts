@@ -1,4 +1,5 @@
 import { Component, OnInit} from '@angular/core';
+import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import * as _ from 'lodash-es';
 import { catchError, map, finalize } from 'rxjs/operators';
 import { throwError, forkJoin } from 'rxjs';
@@ -31,16 +32,18 @@ export class MvcLibraryComponent implements OnInit {
   constructor(
     private programStageService: ProgramStageService, public programTelemetryService: ProgramTelemetryService,
     private contentService: ContentService, private configService: ConfigService, private actionService: ActionService,
-    private cbseService: CbseProgramService, private programsService: ProgramsService, 
-    private toasterService: ToasterService
+    private cbseService: CbseProgramService, private programsService: ProgramsService,
+    private toasterService: ToasterService, private route: ActivatedRoute, private router: Router
   ) { }
 
   ngOnInit() {
-    this.collectionId = 'do_1130307931241103361441';
-    this.collectionUnitId = 'do_11303079312687923216125';
-    this.programId = '60ad12d0-b07c-11ea-92c9-6f8fff7dce02';
-    this.showLoader = true;
-    this.initialize();
+    this.route.paramMap.subscribe((params: ParamMap) => {
+      this.collectionId = params.get('collectionId');
+      this.collectionUnitId = params.get('collectionUnitId');
+      this.programId = params.get('programId');
+      this.showLoader = true;
+      this.initialize();
+    });
   }
 
   initialize() {
@@ -50,7 +53,6 @@ export class MvcLibraryComponent implements OnInit {
         this.filterData['subjects'] = this.collectionHierarchy.subject;
         this.filterData['gradeLevels'] = this.plusMinusGradeLevel(this.collectionHierarchy.gradeLevel);
         this.programDetails = _.get(programDetails, 'result');
-        this.programDetails.config = JSON.parse(this.programDetails.config);
         this.filterData['contentTypes'] = this.programDetails.content_types;
         if (_.isEmpty(this.activeFilterData)) { this.activeFilterData = this.filterData; }
         this.fetchContentList();
@@ -62,11 +64,8 @@ export class MvcLibraryComponent implements OnInit {
     });
   }
 
-  public getCollectionHierarchy(identifier: string, unitIdentifier?: string) {
-    let hierarchyUrl = 'content/v3/hierarchy/' + identifier;
-    if (unitIdentifier) {
-      hierarchyUrl = hierarchyUrl + '/' + unitIdentifier;
-    }
+  public getCollectionHierarchy(identifier: string) {
+    const hierarchyUrl = 'content/v3/hierarchy/' + identifier;
     const req = {
       url: hierarchyUrl,
       param: { 'mode': 'edit' }
@@ -109,7 +108,7 @@ export class MvcLibraryComponent implements OnInit {
     map((data: any) => data.result.content))
     .subscribe((result: any) => {
       this.contentList = result;
-      if (!_.isEmpty(this.contentList)) { this.selectedContentId = this.contentList[1].identifier; }
+      if (!_.isEmpty(this.contentList)) { this.selectedContentId = this.contentList[0].identifier; }
     });
   }
 
@@ -127,7 +126,7 @@ export class MvcLibraryComponent implements OnInit {
           gradeLevelTemp.push(`Class ${value - 1}`);
       }
     });
-    return _.sortedUniq(gradeLevelTemp);
+    return _.uniq(gradeLevelTemp);
   }
 
   openFilter(): void {
@@ -169,8 +168,8 @@ export class MvcLibraryComponent implements OnInit {
     }
   }
 
-  handleBack() {
-    this.programStageService.removeLastStage();
-  }
+  // handleBack() {
+  //   this.programStageService.removeLastStage();
+  // }
 
 }

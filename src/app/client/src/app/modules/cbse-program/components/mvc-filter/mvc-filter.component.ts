@@ -1,8 +1,9 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime} from 'rxjs/operators';
 import * as _ from 'lodash-es';
+
 @Component({
   selector: 'app-mvc-filter',
   templateUrl: './mvc-filter.component.html',
@@ -14,13 +15,17 @@ export class MvcFilterComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() filterOpenStatus: Boolean;
   @Output() filterChangeEvent: EventEmitter<any> = new EventEmitter();
   @ViewChild('contentTypes') contentTypes: ElementRef;
+
   searchFilterForm: FormGroup;
   public isFilterShow: Boolean = false;
   private searchFilterLookup$: Subject<void> = new Subject();
+
   constructor(private sbFormBuilder: FormBuilder) { }
+
   ngOnInit() {
     this.initializeForm();
   }
+
   ngOnChanges() {
     this.isFilterShow = this.filterOpenStatus;
   }
