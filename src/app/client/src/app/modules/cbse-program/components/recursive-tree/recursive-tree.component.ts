@@ -4,6 +4,7 @@ import { UserService } from '@sunbird/core';
 import { ConfigService, ResourceService } from '@sunbird/shared';
 import { ProgramTelemetryService } from '../../../program/services';
 import { Router } from '@angular/router';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-recursive-tree',
@@ -52,6 +53,13 @@ export class RecursiveTreeComponent implements OnInit {
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.sessionContext.programId, 'Program');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
+  }
+
+  canUploadContent() {
+    const contributionendDate  = moment(this.programContext.content_submission_enddate);
+    const endDate  = moment(this.programContext.enddate);
+    const today = moment();
+    return (contributionendDate.isSameOrAfter(today, 'day') && endDate.isSameOrAfter(today, 'day')) ? true : false;
   }
 
   shouldActionMenuBeVisible() {

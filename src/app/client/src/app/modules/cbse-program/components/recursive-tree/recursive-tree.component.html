@@ -15,7 +15,7 @@
         *ngIf="visibility && visibility['showAddresource'] && programContext?.status === 'Unlisted'">
           <i class="add icon mr-4"></i>{{resourceService.frmelmnts.lbl.addToLibrary}}</button> -->
       <button class="sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius"
-        *ngIf="visibility && visibility['showAddresource']"
+        *ngIf="visibility && visibility['showAddresource'] && canUploadContent()"
         appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add-resource', 'click', 'chapter-list')"
         [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(collection.identifier, 'Content', '1.0', {l1: sessionContext.collection})"
