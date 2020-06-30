@@ -310,11 +310,21 @@ top: -4px;
 }
 
 .sb-dock-dropdown{
-  .ui {
-    .multiple{
-      &.dropdown {
-        border: 1px solid rgba(34,36,38,.15) !important;
+    .ui {
+      .multiple{
+        &.dropdown {
+          border: 1px solid rgba(34,36,38,.15) !important;
+      }
     }
   }
 }
+.sb-dock-radio-disable{
+  .field{
+    &.disabled{
+      :disabled{
+        opacity: 0.45 !important;
+        min-height: 1rem !important;
+      }
+    }
+  }
 }
