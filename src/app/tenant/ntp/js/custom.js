@@ -74,9 +74,9 @@ function getProjectsTemplates(data){
         if(imgPath){
           otherBoardCards = otherBoardCards + '<img src="' + imgPath + '" class="logo-img" alt="' + data[i].orgName + ' logo" />'
         }
+        otherBoardCards = otherBoardCards + '</div> </div> <div class="bottomSection"> <label><span class="fs-2">'+ data[i].program_count + '</span> Projects</label> <a href="'+ getEnvironment(env,data[i].slug) +'" class="hidden-lg-down a-link cb">Contribute</a> </div> </div> </div>';
+        $('.flex-jc-center').append(otherBoardCards);
       });
-      otherBoardCards = otherBoardCards + '</div> </div> <div class="bottomSection"> <label><span class="fs-2">'+ data[i].program_count + '</span> Projects</label> <a href="'+ getEnvironment(env,data[i].slug) +'" class="hidden-lg-down a-link cb">Contribute</a> </div> </div> </div>';
-      $('.flex-jc-center').append(otherBoardCards);
     }else{
       // state boards
       let stateBoardCards = '';
