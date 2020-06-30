@@ -2,12 +2,12 @@
   <div class="title sb-color-primary font-weight-bold fs-1-16">
     Content Matches for Library
   </div>
-  <small class="font-italic sb-color-gray-200 d-block pb-10">Explore {{contentList.length}} content relavant to tale of two bird</small>
+  <small class="font-italic sb-color-gray-200 d-block pb-10">Explore {{contentList?.length}} content relavant to tale of two bird</small>
   <!-- Class separator -->
   <div class="sb-library-scroll" id="suggestions-tab">
     <div class="sbchapter__item mb-0" *ngFor="let content of contentList; let i = index"
       [ngClass]="{'active':content.identifier === selectedContentId}"
-      (click)="onContentChange($event, content);">
+      (click)="onContentChange(content.identifier);">
       <!-- <div class="sbchapter__img"><img src="./assets/images/book.png" /></div> -->
       <h4 class="ml-8">
         <div class="sbcard__title sb__ellipsis sb__ellipsis--one mb-0 font-weight-bold" suiPopup

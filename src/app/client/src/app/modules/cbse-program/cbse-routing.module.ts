@@ -5,7 +5,7 @@ import { MvcLibraryComponent } from './components/mvc-library/mvc-library.compon
 
 const routes: Routes = [
 {
-  path: 'nominatedtextbooks/mvcexplore/:textBookId', component: MvcLibraryComponent, pathMatch: 'full',
+  path: 'program/:programId/textbook/:collectionId/:collectionUnitId', component: MvcLibraryComponent, pathMatch: 'full',
   data: {
     hideHeaderNFooter: 'true',
     telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'mvc-explore' }
