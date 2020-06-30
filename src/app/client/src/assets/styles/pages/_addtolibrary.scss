@@ -700,6 +700,11 @@
 }
 
 //sbchapter css
+.sb-btn-hover-none{
+  &:hover{
+    background: none !important;
+  }
+}
 .sbchapter {
   border-bottom: calculateRem(1px) solid #ddd;
   padding: calculateRem(16px) calculateRem(16px) calculateRem(8px) calculateRem(16px);
@@ -730,10 +735,14 @@
     position: relative;
 
     &.active{
-     background: var(--primary-100);
+      background: var(--secondary-300) !important;
      .textbookBtnLink{
        visibility: visible;
      }
+    }
+    &.selected{
+      background: var(--primary-100) !important;
+      border: solid 2px var(--primary-600);
     }
 
     .btn-addtoLibrary {
@@ -966,10 +975,17 @@
 
 //   Prominent Filter
 .sb-select-searchfilter{
+  i{
+    &.dropdown.icon{
+      margin: -7px;
+      padding: 0;
+      font-size: 1rem;
+    }
+  }
   &.ui.selection.dropdown{
     background: #fff !important;
     border: solid 1px #b7b5b5 !important;
-    height: 38px !important;
+    height: inherit !important;
   }
   .ui.label.visible{
     margin: 0.4rem 0.125rem 0.25rem 0.125rem !important;
@@ -1048,7 +1064,9 @@
               }
 
               >.text {
-                line-height: inherit;
+                line-height: 1.4rem;
+                vertical-align: bottom;
+                padding: 0 0 0 0.7rem;
               }
             }
           }
@@ -1105,7 +1123,7 @@
         }
       }
   .sb-library-scroll{
-    height: calc(100vh - 72px);
+    max-height: calc(100vh - 72px);
     overflow: auto;
   }
   .sb-border-vertical{

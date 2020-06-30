@@ -12,7 +12,7 @@
       </div>
      <div class="d-flex">
         <button (click)="goToAddLibrary(collection.identifier)" class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius"
-        popupText="Explore content from Library"  suiPopup [popupPlacement]="'top'" *ngIf="visibility && visibility['showAddresource'] && programContext?.status === 'Unlisted'">
+        popupText="Explore content from Library"  suiPopup  *ngIf="visibility && visibility['showAddresource'] && programContext?.status === 'Unlisted'">
           <i class="add icon mr-4"></i>{{resourceService.frmelmnts.lbl.addToLibrary}}</button>
       <button class="sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius"
         *ngIf="visibility && visibility['showAddresource']"
