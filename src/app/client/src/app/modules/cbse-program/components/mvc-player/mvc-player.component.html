@@ -9,8 +9,14 @@
       (click)="addToLibrary();"><i class="plus square outline icon"></i>Add to textbook</button>
   </div>
 </div>
-<app-player class="content-player" [playerConfig]="playerConfig"></app-player>
+<!-- <app-player class="content-player" [playerConfig]="playerConfig"></app-player> -->
 <div class="toc-content-player content-video">
+  <!-- <div class="aspectratio" data-ratio="16:9" id="help-video-aspect-ratio">
+    <div>
+      <iframe width="100%" height="100%" src="https://www.youtube.com/embed/x8MPTb1iu_0" frameborder="0"
+        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div> -->
   <div class="sb-bg-color-white">
     <div class="mx-16 py-16 content-metadeta__content" *ngIf="contentData?.description">
       <div class="content-metadeta__title fsmall font-weight-bold">Description</div>
@@ -64,7 +70,7 @@
             <div class="content-metadeta__text  fsmall">{{contentData?.author}}</div>
           </div>
           <div class="six wide column" *ngIf="contentData?.attributions">
-            <div class="content-metadeta__title  fxsmall mb-8">AUTHOR</div>
+            <div class="content-metadeta__title  fxsmall mb-8">attributions</div>
             <div class="content-metadeta__text  fsmall">{{contentData?.attributions}}</div>
           </div>
           <div class="six wide column">

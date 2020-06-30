@@ -16,16 +16,15 @@ export class MvcListComponent implements OnInit {
 
   ngOnInit() {
     this.addToLibraryBtnVisibility = true;
-    console.log(this.selectedContentId);
   }
 
-  showAddToLibraryButton() {
-    this.addToLibraryBtnVisibility = !this.addToLibraryBtnVisibility;
-  }
+  // showAddToLibraryButton() {
+  //   this.addToLibraryBtnVisibility = !this.addToLibraryBtnVisibility;
+  // }
 
-  onContentChange(event, content: any) {
+  onContentChange(identifier: any) {
     this.addToLibraryBtnVisibility = true;
-    this.contentChangeEvent.emit({contentId: content.identifier});
+    this.contentChangeEvent.emit({contentId: identifier});
   }
 
   addToLibrary() {
