@@ -565,17 +565,26 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.isOpenNominations = (_.get(this.programDetails, 'type') == "public") ? true : false;
       this.disableUpload = (_.get(this.programDetails, 'guidelines_url')) ? true : false;
 
-      this.createProgramForm = this.sbFormBuilder.group({
+      let obj = {
         name: [_.get(this.programDetails, 'name'), [Validators.required, Validators.maxLength(100)]],
         description: [_.get(this.programDetails, 'description'), Validators.maxLength(1000)],
-        nomination_enddate: [_.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : '', Validators.required],
+        nomination_enddate : [],
         shortlisting_enddate: [_.get(this.programDetails, 'shortlisting_enddate') ? new Date(_.get(this.programDetails, 'shortlisting_enddate')) : ''],
         program_end_date: [_.get(this.programDetails, 'enddate') ? new Date(_.get(this.programDetails, 'enddate')) : '', Validators.required],
         content_submission_enddate: [_.get(this.programDetails, 'content_submission_enddate') ? new Date(_.get(this.programDetails, 'content_submission_enddate')) : '', Validators.required],
         content_types: [_.get(this.programDetails, 'content_types'), Validators.required],
         rewards: [_.get(this.programDetails, 'rewards')],
         defaultContributeOrgReview: new FormControl({value: true, disabled: this.editMode})
-      });
+      };
+
+      if (this.isOpenNominations == true) {
+        obj.nomination_enddate = [_.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : '', Validators.required];
+      }
+      else {
+        obj.nomination_enddate = [_.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : ''];
+      }
+
+      this.createProgramForm = this.sbFormBuilder.group(obj);
     }
     else
     {
@@ -763,6 +772,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       delete prgData.program_end_date;
       delete prgData.content_types;
+
+      if (this.isOpenNominations == false) {
+        delete prgData.nomination_enddate;
+        delete prgData.shortlisting_enddate;
+      }
 
       this.programsService.updateProgram(prgData).subscribe(
         (res) => {
