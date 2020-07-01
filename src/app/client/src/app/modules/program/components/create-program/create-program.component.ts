@@ -864,7 +864,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       return false;
     }
 
-    this.addCollectionsToProgram(this.programData.content_types, []);
     const requestData = {
       'program_id': this.programId,
       'collections': this.collectionListForm.value.pcollections,
