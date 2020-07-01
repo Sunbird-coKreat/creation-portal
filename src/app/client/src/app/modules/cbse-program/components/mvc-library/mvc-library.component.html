@@ -8,7 +8,7 @@
             class="arrow left icon fs-1"></i></button>
         <div class="ml-8 sb-color-white">
           <div class="d-flex flex-ai-center fsmall">
-            <div class="font-weight-bold fs-1-16">Add from Library</div>
+            <div class="font-weight-bold fs-1-16">{{resourceService.frmelmnts.lbl.addFromLibrary}}</div>
             <div class="sb-border-vertical mx-15"></div>
             <div class="flex flex-wrap">
               <h5>A Pact with the Sun</h5>
@@ -41,10 +41,10 @@
   <!-- <div class="ui container"> -->
 
   <div class="add-to-library__no-result">
-    <h5 class="font-weight-bold">No content found</h5>
+    <h5 class="font-weight-bold">{{resourceService.frmelmnts.lbl.noContentFound}}</h5>
     <img alt="No Content available" class="mt-16" src="assets/images/offline-desktop.svg">
-    <h6 class="sb-color-gray-300 font-weight-normal mt-8">Change Filters to explore content</h6>
-    <button class="sb-btn sb-btn-secondary sb-btn-normal mt-16" (click)="openFilter();" >Change Filters</button>
+    <h6 class="sb-color-gray-300 font-weight-normal mt-8">{{resourceService.frmelmnts.lbl.changeFiltersToExploreContent}}</h6>
+    <button class="sb-btn sb-btn-secondary sb-btn-normal mt-16" (click)="openFilter();" >{{resourceService.frmelmnts.lbl.changeFilters}}</button>
   </div>
 </div>
 

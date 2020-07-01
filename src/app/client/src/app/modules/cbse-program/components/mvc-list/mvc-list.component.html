@@ -1,23 +1,18 @@
 <div class="sbtoc-container pr-8 mt-20">
   <div class="title sb-color-primary font-weight-bold fs-1">
-    Content Matches for Library
+    {{resourceService.frmelmnts.lbl.contentMatchesForLibrary}}
   </div>
   <small class="font-italic sb-color-gray-200 d-block pb-10">Explore {{contentList?.length}} content relavant to tale of two bird</small>
   <!-- Class separator -->
   <div class="sb-library-scroll" id="suggestions-tab">
-    <div class="sbaccordion__panel-content p-16 mb-8" style="border-top: .0625rem solid #e0e0e0;
-    background: var(--gray-0);
-    min-height: 2rem;
-    overflow: hidden;
-    overflow-y: auto;
-    box-shadow:rgba(0, 0, 0, 0.1);">
+    <div class="sbaccordion__panel-content p-16 mb-8 sb-dock-skeleton-bx">
       <div class="sbchapter__item">
-        <app-skeleton-loader [width]="'50%'" [height]="'12px'" style="flex: 1 1 auto;"></app-skeleton-loader>
-        <app-skeleton-loader [width]="'40px'" [height]="'40px'" style="width: auto;"></app-skeleton-loader>
+        <app-skeleton-loader [width]="'50%'" [height]="'12px'"  class="sb-dock-flex-auto"></app-skeleton-loader>
+        <app-skeleton-loader [width]="'40px'" [height]="'40px'" class="sb-dock-width-auto"></app-skeleton-loader>
       </div>
       <div class="sbchapter__item">
-        <app-skeleton-loader [width]="'50%'" [height]="'12px'" style="flex: 1 1 auto;"></app-skeleton-loader>
-        <app-skeleton-loader [width]="'40px'" [height]="'40px'" style="width: auto;"></app-skeleton-loader>
+        <app-skeleton-loader [width]="'50%'" [height]="'12px'" class="sb-dock-flex-auto"></app-skeleton-loader>
+        <app-skeleton-loader [width]="'40px'" [height]="'40px'" class="sb-dock-width-auto"></app-skeleton-loader>
       </div>
     </div>
     <div class="sbchapter__item mb-0" *ngFor="let content of contentList; let i = index"
@@ -32,17 +27,17 @@
         </div>
       </h4>
       <div class="btn-addtoLibrary pt-0 pr-10" *ngIf="addToLibraryBtnVisibility && content.identifier === selectedContentId && !content.isAdded">
-        <button class="sb-btn sb-btn-xs sb-btn-secondary sb-left-icon-btn" (click)="addToLibrary();" ><i class="plus square icon mr-4"></i>Add to
-          Textbook
+        <button class="sb-btn sb-btn-xs sb-btn-secondary sb-left-icon-btn" (click)="addToLibrary();" >
+          <i class="plus square icon mr-4"></i>{{resourceService.frmelmnts.lbl.addToTextbook}}
         </button>
       </div>
       <div class="textbookBtnLink" [hidden]="!content.isAdded">
         <button type="button" class="sb-btn sb-btn-normal sb-btn-link sb-btn-hover-none
          sb-btn-link-secondary sb-left-icon-btn fs-0-785"><i class="circle check icon"></i>
-         Added to Textbook</button>
+         {{resourceService.frmelmnts.lbl.addToTextbook}}</button>
       </div>
     </div>
   </div>
-  <h6 class="sb-color-gray-300 font-weight-normal mt-20">Explore more content</h6>
-  <a class="sb-color-primary cursor-pointer font-weight-bold fs-0-785" (click)="changeFilter()" >Change Filters</a>
+  <h6 class="sb-color-gray-300 font-weight-normal mt-20">{{resourceService.frmelmnts.lbl.desktop.explore}}</h6>
+  <a class="sb-color-primary cursor-pointer font-weight-bold fs-0-785" (click)="changeFilter()">{{resourceService.frmelmnts.lbl.changeFilters}}</a>
 </div>

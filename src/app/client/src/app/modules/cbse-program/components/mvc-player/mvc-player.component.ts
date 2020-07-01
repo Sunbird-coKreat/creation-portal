@@ -2,7 +2,7 @@ import { Component, ChangeDetectorRef, Input, OnChanges, Output, EventEmitter } 
 import { catchError, map } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { PlayerService, ActionService } from '@sunbird/core';
-import { ConfigService } from '@sunbird/shared';
+import { ConfigService,ResourceService } from '@sunbird/shared';
 import { CbseProgramService } from '../../services/cbse-program/cbse-program.service';
 
 @Component({
@@ -18,7 +18,7 @@ export class MvcPlayerComponent implements OnChanges {
   public contentData: any = {};
   constructor(
     private playerService: PlayerService, private configService: ConfigService, private actionService: ActionService,
-    private cbseService: CbseProgramService, private cd: ChangeDetectorRef
+    private cbseService: CbseProgramService, private cd: ChangeDetectorRef, public resourceService: ResourceService
   ) { }
 
   ngOnChanges() {

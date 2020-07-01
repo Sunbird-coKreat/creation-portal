@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { ResourceService } from '@sunbird/shared';
 
 @Component({
   selector: 'app-mvc-list',
@@ -14,7 +15,7 @@ export class MvcListComponent implements OnInit {
   public width: any;
   public height: any;
 
-  constructor() { }
+  constructor(public resourceService: ResourceService) { }
 
   ngOnInit() {
     this.addToLibraryBtnVisibility = true;

@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { debounceTime} from 'rxjs/operators';
 import * as _ from 'lodash-es';
+import { ResourceService } from '@sunbird/shared';
 
 @Component({
   selector: 'app-mvc-filter',
@@ -20,7 +21,7 @@ export class MvcFilterComponent implements OnInit, OnChanges, AfterViewInit {
   public isFilterShow: Boolean = false;
   private searchFilterLookup$: Subject<void> = new Subject();
 
-  constructor(private sbFormBuilder: FormBuilder) { }
+  constructor(private sbFormBuilder: FormBuilder,public resourceService: ResourceService) { }
 
   ngOnInit() {
     this.initializeForm();
