@@ -864,6 +864,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       return false;
     }
 
+    this.addCollectionsToProgram(this.programData.content_types, []);
     const requestData = {
       'program_id': this.programId,
       'collections': this.collectionListForm.value.pcollections,
@@ -894,18 +895,41 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   addCollectionsToProgram(contentTypes, copiedCollections) {
     _.forEach(this.tempCollections, (collection) => {
 
-      if (this.mediumOption.indexOf(collection.medium) === -1) {
-        this.mediumOption.push(collection.medium);
-      }
-      if (this.subjectsOption.indexOf(collection.subject) === -1) {
-        this.subjectsOption.push(collection.subject);
+      if (Array.isArray(collection.medium)) {
+        _.forEach(collection.medium, (single) => {
+          if (this.mediumOption.indexOf(single) === -1) {
+            this.mediumOption.push(single);
+          }
+        });
+      } else {
+        if (this.mediumOption.indexOf(collection.medium) === -1) {
+          this.mediumOption.push(collection.medium);
+        }
       }
 
-      _.forEach(collection.gradeLevel, (single) => {
-        if (this.gradeLevelOption.indexOf(single) === -1) {
-          this.gradeLevelOption.push(single);
+      if (Array.isArray(collection.subject)) {
+        _.forEach(collection.subject, (single) => {
+          if (this.subjectsOption.indexOf(single) === -1) {
+            this.subjectsOption.push(single);
+          }
+        });
+      } else {
+        if (this.subjectsOption.indexOf(collection.subject) === -1) {
+          this.subjectsOption.push(collection.subject);
         }
-      });
+      }
+
+      if (Array.isArray(collection.gradeLevel)) {
+        _.forEach(collection.gradeLevel, (single) => {
+          if (this.gradeLevelOption.indexOf(single) === -1) {
+            this.gradeLevelOption.push(single);
+          }
+        });
+      } else {
+        if (this.gradeLevelOption.indexOf(collection.gradeLevel) === -1) {
+          this.gradeLevelOption.push(collection.gradeLevel);
+        }
+      }
     });
 
     const data = {};
