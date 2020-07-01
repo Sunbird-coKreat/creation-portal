@@ -15,6 +15,7 @@ import { HelperService } from '../../services/helper.service';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-content-uploader',
@@ -787,5 +788,12 @@ ngOnDestroy() {
     } else {
       return false;
     }
+  }
+
+  canUploadContent() {
+    const contributionendDate  = moment(this.programContext.content_submission_enddate);
+    const endDate  = moment(this.programContext.enddate);
+    const today = moment();
+    return (contributionendDate.isSameOrAfter(today, 'day') && endDate.isSameOrAfter(today, 'day')) ? true : false;
   }
 }

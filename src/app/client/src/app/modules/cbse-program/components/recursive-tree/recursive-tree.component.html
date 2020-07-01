@@ -55,7 +55,7 @@
               <span [ngClass]="{'sb-color-error':content.status == 'Failed'}"  *ngIf="content.status === 'Failed'">{{resourceService.frmelmnts.lbl.failed}}</span>
               <span *ngIf="content.status === 'Processing'">{{resourceService.frmelmnts.lbl.processing}}</span>
             </span>
-            <div class="item-dropdown absolute position" (click)="menuClick($event)" *ngIf="content.status === 'Draft'">
+            <div class="item-dropdown absolute position" (click)="menuClick($event)" *ngIf="content.status === 'Draft' && canUploadContent()">
               <div *ngIf="visibility && visibility['showActionMenu']" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
                 suiDropdown
                 appTelemetryInteract

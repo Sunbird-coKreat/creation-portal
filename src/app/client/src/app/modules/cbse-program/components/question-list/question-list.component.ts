@@ -15,6 +15,7 @@ import { HelperService } from '../../services/helper.service';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { ProgramStageService } from '../../../program/services';
 import { ProgramTelemetryService } from '../../../program/services';
+import * as moment from 'moment';
 
 
 @Component({
@@ -101,6 +102,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sourcingReviewStatus = _.get(this.practiceQuestionSetComponentInput, 'sourcingStatus') || '';
     this.resourceTitleLimit = this.practiceSetConfig.config.resourceTitleLength;
     this.sessionContext.practiceSetConfig = this.practiceSetConfig;
+    this.sessionContext.programContext = this.programContext;
     this.sessionContext.topic = _.isEmpty(this.selectedSharedContext.topic) ? this.sessionContext.topic : this.selectedSharedContext.topic;
     this.getContentMetadata(this.sessionContext.resourceIdentifier);
     this.getLicences();
@@ -917,5 +919,12 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       return false;
     }
+  }
+
+  canUploadContent() {
+    const contributionendDate  = moment(this.programContext.content_submission_enddate);
+    const endDate  = moment(this.programContext.enddate);
+    const today = moment();
+    return (contributionendDate.isSameOrAfter(today, 'day') && endDate.isSameOrAfter(today, 'day')) ? true : false;
   }
 }

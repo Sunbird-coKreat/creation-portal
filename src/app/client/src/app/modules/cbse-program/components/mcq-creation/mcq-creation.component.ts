@@ -13,6 +13,7 @@ import { CbseProgramService } from '../../services';
 import { Validators, FormGroup, FormArray, FormBuilder, NgForm } from '@angular/forms';
 import { mcqTemplateConfig } from '../mcq-template-selection/mcq-template-data';
 import { ProgramTelemetryService } from '../../../program/services';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-mcq-creation',
@@ -40,6 +41,7 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
   public textFields: Array<any>;
   public selectionFields: Array<any>;
   public multiSelectionFields: Array<any>;
+  public programContext: any;
   editorConfig: any;
   showTemplatePopup = false;
   showForm = false;
@@ -128,6 +130,7 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
 
   ngOnInit() {
     const config: any = _.get(this.sessionContext.practiceSetConfig, 'config');
+    this.programContext = _.get(this.sessionContext, 'programContext');
     this.editorConfig = {
       config,
       channel: this.sessionContext.channel
@@ -590,4 +593,10 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
     });
   }
 
+  canUploadContent() {
+    const contributionendDate  = moment(this.programContext.content_submission_enddate);
+    const endDate  = moment(this.programContext.enddate);
+    const today = moment();
+    return (contributionendDate.isSameOrAfter(today, 'day') && endDate.isSameOrAfter(today, 'day')) ? true : false;
+  }
 }
