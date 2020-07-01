@@ -445,8 +445,8 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
         }
 
-        this.orgDetails.name = _.get(this.userService, 'userProfile.userRegData.Org.name');
-        this.orgDetails.id =  _.get(this.userService, 'userProfile.userRegData.Org.osid');
+        this.orgDetails.name = this.userService.userProfile.userRegData.Org.name;
+        this.orgDetails.id = this.userService.userProfile.userRegData.Org.osid;
 
         /*if (this.isSourcingOrgAdmin()) {
           const dikshaOrgId = _.get(this.userService, 'userProfile.organisations[0].organisationId');
@@ -492,10 +492,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     });
   }
   
-  /*isSourcingOrgAdmin() {
-    return this.userService.userProfile.userRoles.includes('ORG_ADMIN') && this.userService.userProfile.userRegData.User_Org.roles.includes('admin');
-  }*/
-
   setOrgUsers(orgUsers) {
     if (_.isEmpty(orgUsers)) {
       this.showUsersLoader = false;
