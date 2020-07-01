@@ -148,6 +148,8 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
 
     // Get user's Open Saber profile
     this.registryService.openSaberRegistrySearch(user.identifier).then((userProfile) => {
+      console.log('userProfile', userProfile);
+
       if (!_.isEmpty(_.get(userProfile, 'user'))) {
         this.saveUserOrgMapping(userProfile, selectedRole, user);
         return true;
@@ -155,9 +157,9 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
       // If user is not in open saber then create one
       const userAdd = {
         User: {
-          firstName: user.firstName,
-          lastName: user.lastName || '',
-          userId: user.identifier,
+          firstName: this.userService.userProfile.firstName,
+          lastName: this.userService.userProfile.lastName || '',
+          userId: this.userService.userProfile.identifier,
           enrolledDate: new Date().toISOString(),
           board : org.board,
           medium: org.medium,
@@ -167,8 +169,6 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
       };
 
       this.programsService.addToRegistry(userAdd).subscribe((res) => {
-        userProfile['user'] = userAdd.User;
-        userProfile['user']['osid'] = _.get(res, 'result.User.osid');
         this.saveUserOrgMapping(userProfile, selectedRole, user);
       }, (error) => {console.log('error: ', error)});
     });
@@ -193,15 +193,13 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
 
     this.programsService.addToRegistry(userOrgAdd).subscribe(
       (userAddRes) => {
-        userProfile['user_org'] = userOrgAdd.User_Org;
-        userProfile['user_org']['osid'] = _.get(userAddRes, 'result.User_Org.osid');
-        console.log("User added to org "+ user.identifier, userAddRes);
+        console.log("User added to org"+ user.identifier, userAddRes);
         this.toasterService.success(this.resourceService.messages.smsg.m0065);
         this.cacheService.remove('orgUsersDetails');
         return true;
       },
       (userAddErr) => {
-        console.log("Errro while adding User added to org "+ user.identifier,userAddErr);
+        console.log("Errro while adding User added to org"+ user.identifier,userAddErr);
         this.toasterService.error(this.resourceService.messages.emsg.m0077);
         return false;
       }
