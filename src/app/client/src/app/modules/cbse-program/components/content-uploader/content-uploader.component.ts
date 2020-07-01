@@ -179,7 +179,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       validation: {
         allowedExtensions: (!_.includes(this.templateDetails.filesConfig.accepted, ',')) ?
           this.templateDetails.filesConfig.accepted.split(' ') : this.templateDetails.filesConfig.accepted.split(', '),
-        acceptFiles: this.templateDetails.mimeType ? this.templateDetails.mimeType.toString() : '',
+        acceptFiles: this.getAcceptedFiles(),
         itemLimit: 1,
         sizeLimit: _.toNumber(this.templateDetails.filesConfig.size) * 1024 * 1024  // 52428800  = 50 MB = 50 * 1024 * 1024 bytes
       },
@@ -412,6 +412,19 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.modal.deny();
       this.programStageService.removeLastStage();
     }
+  }
+
+  getAcceptedFiles() {
+    const acceptedFiles = this.templateDetails.mimeType ? _.map(this.templateDetails.mimeType, (mimeType) => {
+      if (mimeType === 'application/epub') {
+        return '.epub';
+      } else if (mimeType === 'application/vnd.ekstep.h5p-archive') {
+        return '.h5p';
+      } else {
+        return mimeType;
+      }
+    }) : '';
+    return acceptedFiles.toString();
   }
 
   detectMimeType(fileName) {

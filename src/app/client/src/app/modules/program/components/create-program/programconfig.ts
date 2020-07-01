@@ -147,7 +147,8 @@ var programConfig = {
                 'onClick': 'uploadComponent',
                 'mimeType': [
                   'application/pdf',
-                  'video/mp4'
+                  'video/mp4',
+                  'application/epub'
                 ],
                 'metadata': {
                   'name': 'Explanation Resource',
@@ -161,7 +162,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf, mp4',
+                  'accepted': 'pdf, mp4, epub',
                   'size': '50'
                 }
               },
@@ -171,7 +172,9 @@ var programConfig = {
                 'onClick': 'uploadComponent',
                 'mimeType': [
                   'application/pdf',
-                  'video/mp4'
+                  'video/mp4',
+                  'application/vnd.ekstep.h5p-archive',
+                  'application/epub'
                 ],
                 'metadata': {
                   'name': 'Activity for Learning',
@@ -185,7 +188,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf, mp4',
+                  'accepted': 'pdf, mp4, h5p, epub',
                   'size': '50'
                 }
               },
@@ -263,7 +266,8 @@ var programConfig = {
                 'label': 'Explanation Reading Material',
                 'onClick': 'uploadComponent',
                 'mimeType': [
-                  'application/pdf'
+                  'application/pdf',
+                  'application/epub'
                 ],
                 'metadata': {
                   'name': 'Explanation Reading Material',
@@ -277,7 +281,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf',
+                  'accepted': 'pdf, epub',
                   'size': '50'
                 }
               },
@@ -286,7 +290,8 @@ var programConfig = {
                 'label': 'Previous Board Exam Papers',
                 'onClick': 'uploadComponent',
                 'mimeType': [
-                  'application/pdf'
+                  'application/pdf',
+                  'application/epub'
                 ],
                 'metadata': {
                   'name': 'Previous Board Exam Papers',
@@ -300,7 +305,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf',
+                  'accepted': 'pdf, epub',
                   'size': '50'
                 }
               },
@@ -309,7 +314,8 @@ var programConfig = {
                 'label': 'Lesson Plan',
                 'onClick': 'uploadComponent',
                 'mimeType': [
-                  'application/pdf'
+                  'application/pdf',
+                  'application/epub'
                 ],
                 'metadata': {
                   'name': 'Lesson Plan',
@@ -323,7 +329,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf',
+                  'accepted': 'pdf, epub',
                   'size': '50'
                 }
               },
@@ -332,7 +338,8 @@ var programConfig = {
                 'label': 'FocusSpot',
                 'onClick': 'uploadComponent',
                 'mimeType': [
-                  'application/pdf'
+                  'application/pdf',
+                  'application/epub'
                 ],
                 'metadata': {
                   'name': 'FocusSpot Resource',
@@ -346,7 +353,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf',
+                  'accepted': 'pdf, epub',
                   'size': '50'
                 }
               },
@@ -355,7 +362,8 @@ var programConfig = {
                 'label': 'Teaching Method',
                 'onClick': 'uploadComponent',
                 'mimeType': [
-                  'application/pdf'
+                  'application/pdf',
+                  'application/epub'
                 ],
                 'metadata': {
                   'name': 'Teaching Method',
@@ -369,7 +377,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf',
+                  'accepted': 'pdf, epub',
                   'size': '50'
                 }
               },
@@ -378,7 +386,8 @@ var programConfig = {
                 'label': 'Pedagogy Flow',
                 'onClick': 'uploadComponent',
                 'mimeType': [
-                  'application/pdf'
+                  'application/pdf',
+                  'application/epub'
                 ],
                 'metadata': {
                   'name': 'Pedagogy Flow',
@@ -392,7 +401,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf',
+                  'accepted': 'pdf, epub',
                   'size': '50'
                 }
               },
@@ -401,7 +410,8 @@ var programConfig = {
                 'label': 'Learning Outcome Definition',
                 'onClick': 'uploadComponent',
                 'mimeType': [
-                  'application/pdf'
+                  'application/pdf',
+                  'application/epub'
                 ],
                 'metadata': {
                   'name': 'Learning Outcome Definition',
@@ -415,7 +425,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf',
+                  'accepted': 'pdf, epub',
                   'size': '50'
                 }
               },
@@ -424,7 +434,8 @@ var programConfig = {
                 'label': 'Marking Scheme Rubric',
                 'onClick': 'uploadComponent',
                 'mimeType': [
-                  'application/pdf'
+                  'application/pdf',
+                  'application/epub'
                 ],
                 'metadata': {
                   'name': 'Marking Scheme Rubric',
@@ -438,7 +449,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf',
+                  'accepted': 'pdf, epub',
                   'size': '50'
                 }
               },
@@ -447,7 +458,8 @@ var programConfig = {
                 'label': 'Concept Map',
                 'onClick': 'uploadComponent',
                 'mimeType': [
-                  'application/pdf'
+                  'application/pdf',
+                  'application/epub'
                 ],
                 'metadata': {
                   'name': 'Concept Map',
@@ -461,7 +473,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf',
+                  'accepted': 'pdf, epub',
                   'size': '50'
                 }
               },
@@ -470,7 +482,8 @@ var programConfig = {
                 'label': 'Self Assess',
                 'onClick': 'uploadComponent',
                 'mimeType': [
-                  'application/pdf'
+                  'application/pdf',
+                  'application/epub'
                 ],
                 'metadata': {
                   'name': 'Self Assess',
@@ -484,7 +497,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf',
+                  'accepted': 'pdf, epub',
                   'size': '50'
                 }
               },
