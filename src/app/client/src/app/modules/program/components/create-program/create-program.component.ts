@@ -142,8 +142,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     if (!_.isEmpty(this.programId)) {
       this.editMode = true;
       this.getProgramDetails();
-    }
-    else {
+    } else {
       this.initializeFormFields();
     }
   }
@@ -449,8 +448,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.frameworkService.initialize();
       this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
         if (frameworkInfo && !frameworkInfo.err) {
-          this.userFramework = frameworkInfo.frameworkdata.defaultFramework.identifier;
-          this.frameworkCategories = frameworkInfo.frameworkdata.defaultFramework.categories;
+          this.userFramework = _.get(frameworkInfo, 'frameworkdata.defaultFramework.identifier');
+          this.frameworkCategories = _.get(frameworkInfo, 'frameworkdata.defaultFramework.categories');
         }
         this.setFrameworkDataToProgram();
       });
@@ -462,9 +461,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programScope['gradeLevel'] = [];
     this.programScope['subject'] = [];
 
-    this.collectionListForm.controls['medium'].setValue('');
-    this.collectionListForm.controls['gradeLevel'].setValue('');
-    this.collectionListForm.controls['subject'].setValue('');
+    if (this.collectionListForm) {
+      this.collectionListForm.controls['medium'].setValue('');
+      this.collectionListForm.controls['gradeLevel'].setValue('');
+      this.collectionListForm.controls['subject'].setValue('');
+    }
 
     const board = _.find(this.frameworkCategories, (element) => {
       return element.code === 'board';
@@ -563,6 +564,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     {
       this.isOpenNominations = (_.get(this.programDetails, 'type') == "public") ? true : false;
       this.disableUpload = (_.get(this.programDetails, 'guidelines_url')) ? true : false;
+      this.defaultContributeOrgReviewChecked = !_.get(JSON.parse(_.get(this.programDetails, 'config')), 'defaultContributeOrgReview', true);
 
       let obj = {
         name: [_.get(this.programDetails, 'name'), [Validators.required, Validators.maxLength(100)]],
@@ -573,13 +575,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         content_submission_enddate: [_.get(this.programDetails, 'content_submission_enddate') ? new Date(_.get(this.programDetails, 'content_submission_enddate')) : '', Validators.required],
         content_types: [_.get(this.programDetails, 'content_types'), Validators.required],
         rewards: [_.get(this.programDetails, 'rewards')],
-        defaultContributeOrgReview: new FormControl({value: true, disabled: this.editMode})
+        defaultContributeOrgReview: new FormControl({value: this.defaultContributeOrgReviewChecked, disabled: this.editMode})
       };
 
       if (this.isOpenNominations == true) {
         obj.nomination_enddate = [_.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : '', Validators.required];
-      }
-      else {
+      } else {
         obj.nomination_enddate = [_.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : ''];
       }
 
