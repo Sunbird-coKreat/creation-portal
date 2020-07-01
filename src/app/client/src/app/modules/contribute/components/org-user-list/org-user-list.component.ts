@@ -39,11 +39,13 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
     public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService,
     private paginationService: PaginationService ) {
-    if (this.isSourcingOrgAdmin()) {
+    
+    /*if (this.isSourcingOrgAdmin()) {
       this.getSourcingOrgUsers();
     } else {
       this.getContributionOrgUsers();
-    }
+    }*/
+    this.getContributionOrgUsers();
   }
   
   ngOnInit() {
@@ -83,20 +85,6 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
      });
   }
   
-  isSourcingOrgAdmin() {
-    return this.userService.userProfile.userRoles.includes('ORG_ADMIN') || this.userService.userProfile.userRegData.User_Org.roles.includes('admin');
-  }
-
-  getSourcingOrgUsers() {
-    const dikshaOrgId = _.get(this.userService, 'userProfile.organisations[0].organisationId');
-    const roles= ['CONTENT_REVIEWER', 'CONTENT_CREATOR', 'ORG_ADMIN'];
-
-    // Get all diskha users
-    this.programsService.getSourcingOrgUserList(dikshaOrgId, roles, this.pageLimit).then((orgUsersDetails) => {
-      this.setOrgUsers(orgUsersDetails); 
-    });
-  }
-
   setOrgUsers(orgUsersDetails) {
     this.allContributorOrgUsers = orgUsersDetails;
 
@@ -138,8 +126,11 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   onRoleChange(user) {
     const selectedRole = _.get(user, 'selectedRole');
     const osid = _.get(user, 'User_Org.osid');
-    const org = this.userService.userProfile.userRegData.Org;
+    // const org = this.userService.userProfile.userRegData.Org;
 
+    this.updateUserRole(osid, selectedRole);
+
+    /*
     // Already user in Open Saber so update the role directly
     if (!_.isUndefined(osid)) {
       this.updateUserRole(osid, selectedRole);
@@ -171,10 +162,10 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
       this.programsService.addToRegistry(userAdd).subscribe((res) => {
         this.saveUserOrgMapping(userProfile, selectedRole, user);
       }, (error) => {console.log('error: ', error)});
-    });
+    }); */
   }
 
-  saveUserOrgMapping(userProfile, selectedRole, user) {
+  /*saveUserOrgMapping(userProfile, selectedRole, user) {
     // User have org then update te role
     if (!_.isEmpty(_.get(userProfile, 'user_org'))) {
       const osid = _.get(userProfile, 'user_org.osid');
@@ -204,7 +195,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
         return false;
       }
     );
-  }
+  }*/
 
   updateUserRole(osid, role) {
     this.programsService.updateUserRole(osid, [role]).subscribe(

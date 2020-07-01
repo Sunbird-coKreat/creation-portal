@@ -40,7 +40,7 @@ export class ProgramsService extends DataService implements CanActivate {
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
   private _contentTypes: any[];
   private _sourcingOrgReviewers: Array<any>;
-  private orgUsers: Array<any>;
+  // private orgUsers: Array<any>;
 
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService,
@@ -319,7 +319,7 @@ export class ProgramsService extends DataService implements CanActivate {
  /**
    * Logic to get the all the users of sourcing organisation and add it to the same cont org as sourcing admin
    */
-  /*addSourcingUserstoContribOrg(userRegData) {
+  addSourcingUserstoContribOrg(userRegData) {
     let userOrgAdd;
     let userAdd;
 
@@ -384,7 +384,7 @@ export class ProgramsService extends DataService implements CanActivate {
           });
         });
       }));
-  }*/
+  }
 
   /**
    * Logic add contrib user and org for the sourcing admin and make him its admin
@@ -394,10 +394,18 @@ export class ProgramsService extends DataService implements CanActivate {
       (res) => {
         this.userService.openSaberRegistrySearch().then((userRegData) => {
           this.userService.userProfile.userRegData = userRegData;
-            this.addorUpdateNomination(request).subscribe(
-              (res) => { console.log("Nomination added")},
-              (err) => { console.log("error added")}
-            )
+
+          this.addSourcingUserstoContribOrg(userRegData).subscribe(
+            (res) => {
+              this.addorUpdateNomination(request).subscribe(
+                (res) => { console.log("Nomination added")},
+                (err) => { console.log("error added")}
+              );
+            },
+            (error) => {
+              console.log("Error while adding users to contribution org");
+            }
+          );
         }).catch((err) => {
           this.toasterService.error('Fetching contributor profile created for sourcing failed...');
         });
@@ -954,7 +962,7 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.API_URL(req);
   }
 
-  getSourcingOrgUserList(sourcingOrgId, roles, limit?) {
+  /*getSourcingOrgUserList(sourcingOrgId, roles, limit?) {
     return new Promise((resolve, reject) => {
       // Get all diskha users
       return this.getAllSourcingOrgUsers(sourcingOrgId, roles, limit)
@@ -1052,5 +1060,5 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       );
     });
-  }
+  } */
 }
