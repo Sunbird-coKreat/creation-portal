@@ -133,7 +133,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.userprofile = this.userService.userProfile;
     this.programScope['purpose'] = this.programsService.contentTypes;
     this.programConfig = _.cloneDeep(programConfigObj);
-    this.fetchFrameWorkDetails();
     this.telemetryInteractCdata = [];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
@@ -321,7 +320,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   generateAssetCreateRequest(fileName, fileType, mediaType) {
-    console.log(this.userprofile);
     return {
       content: {
         name: fileName,
@@ -461,11 +459,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programScope['gradeLevel'] = [];
     this.programScope['subject'] = [];
 
-    if (this.collectionListForm) {
-      this.collectionListForm.controls['medium'].setValue('');
-      this.collectionListForm.controls['gradeLevel'].setValue('');
-      this.collectionListForm.controls['subject'].setValue('');
-    }
+    this.collectionListForm.controls['medium'].setValue('');
+    this.collectionListForm.controls['gradeLevel'].setValue('');
+    this.collectionListForm.controls['subject'].setValue('');
 
     const board = _.find(this.frameworkCategories, (element) => {
       return element.code === 'board';
@@ -500,6 +496,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programScope['medium'] = mediumOption;
     }
   }
+
   openForNominations(status) {
     this.isOpenNominations = status;
     if (status) {
@@ -513,6 +510,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.createProgramForm.controls['nomination_enddate'].updateValueAndValidity();
     this.createProgramForm.controls['shortlisting_enddate'].updateValueAndValidity();
   }
+
   onMediumChange() {
     // const thisClassOption = this.createProgramForm.value.gradeLevel;
 
@@ -560,8 +558,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    */
   initializeFormFields(): void {
 
-  if (!_.isEmpty(this.programDetails) && !_.isEmpty(this.programId))
-    {
+    if (!_.isEmpty(this.programDetails) && !_.isEmpty(this.programId)) {
       this.isOpenNominations = (_.get(this.programDetails, 'type') == "public") ? true : false;
       this.disableUpload = (_.get(this.programDetails, 'guidelines_url')) ? true : false;
       this.defaultContributeOrgReviewChecked = !_.get(JSON.parse(_.get(this.programDetails, 'config')), 'defaultContributeOrgReview', true);
@@ -585,9 +582,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       }
 
       this.createProgramForm = this.sbFormBuilder.group(obj);
-    }
-    else
-    {
+    } else {
       this.createProgramForm = this.sbFormBuilder.group({
         name: ['', [Validators.required, Validators.maxLength(100)]],
         description: ['', Validators.maxLength(1000)],
@@ -603,13 +598,13 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     this.showLoader = false;
     this.isFormValueSet = true;
-
     this.collectionListForm = this.sbFormBuilder.group({
       pcollections: this.sbFormBuilder.array([]),
       medium: [],
       gradeLevel: [],
       subject: [],
     });
+    this.fetchFrameWorkDetails();
   }
 
   saveProgramError(err) {
