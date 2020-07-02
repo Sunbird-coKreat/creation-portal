@@ -21,7 +21,6 @@ export class ResourceReorderComponent implements OnInit {
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   showMoveButton = false;
-  iziToast;
 
   constructor(private collectionHierarchyService: CollectionHierarchyService, public toasterService: ToasterService,
               public programTelemetryService: ProgramTelemetryService, public userService: UserService,
@@ -32,7 +31,6 @@ export class ResourceReorderComponent implements OnInit {
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.sessionContext.programId, 'Program');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
-    
   }
 
   addContent(){
@@ -40,8 +38,6 @@ export class ResourceReorderComponent implements OnInit {
     this.modal.deny();
   }
   
-  
-
   moveResource() {
     this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitSelected, this.contentId)
      .subscribe((data) => {
