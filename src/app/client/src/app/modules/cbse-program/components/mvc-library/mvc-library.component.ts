@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 import { catchError, map, finalize } from 'rxjs/operators';
 import { throwError, forkJoin } from 'rxjs';
 import { ContentService, ActionService, ProgramsService } from '@sunbird/core';
-import { ConfigService, ToasterService } from '@sunbird/shared';
+import { ConfigService, ToasterService,ResourceService} from '@sunbird/shared';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import { CbseProgramService } from '../../services';
 
@@ -33,7 +33,7 @@ export class MvcLibraryComponent implements OnInit {
     private programStageService: ProgramStageService, public programTelemetryService: ProgramTelemetryService,
     private contentService: ContentService, private configService: ConfigService, private actionService: ActionService,
     private cbseService: CbseProgramService, private programsService: ProgramsService,
-    private toasterService: ToasterService, private route: ActivatedRoute, private router: Router
+    private toasterService: ToasterService, private route: ActivatedRoute, private router: Router,public resourceService: ResourceService
   ) { }
 
   ngOnInit() {

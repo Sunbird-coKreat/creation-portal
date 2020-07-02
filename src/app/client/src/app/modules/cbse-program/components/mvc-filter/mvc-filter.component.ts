@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { debounceTime} from 'rxjs/operators';
 import * as _ from 'lodash-es';
+import { ResourceService } from '@sunbird/shared';
 
 @Component({
   selector: 'app-mvc-filter',
@@ -10,7 +11,6 @@ import * as _ from 'lodash-es';
   styleUrls: ['./mvc-filter.component.scss']
 })
 export class MvcFilterComponent implements OnInit, OnChanges, AfterViewInit {
-
   @Input() filters: any;
   @Input() activeFilterData: any;
   @Input() filterOpenStatus: Boolean;
@@ -21,7 +21,7 @@ export class MvcFilterComponent implements OnInit, OnChanges, AfterViewInit {
   public isFilterShow: Boolean = false;
   private searchFilterLookup$: Subject<void> = new Subject();
 
-  constructor(private sbFormBuilder: FormBuilder) { }
+  constructor(private sbFormBuilder: FormBuilder,public resourceService: ResourceService) { }
 
   ngOnInit() {
     this.initializeForm();
@@ -30,13 +30,11 @@ export class MvcFilterComponent implements OnInit, OnChanges, AfterViewInit {
   ngOnChanges() {
     this.isFilterShow = this.filterOpenStatus;
   }
-
   ngAfterViewInit() {
     // if (this.filterOpenStatus) {
     //   // this.contentTypes.nativeElement.click(); // TODO
     // }
   }
-
   initializeForm() {
     this.searchFilterForm = this.sbFormBuilder.group({
       contentTypes: [this.activeFilterData.contentTypes],
@@ -45,11 +43,9 @@ export class MvcFilterComponent implements OnInit, OnChanges, AfterViewInit {
       chapters: [this.activeFilterData.chapters ? this.activeFilterData.chapters : []],
       showAddedContent: this.activeFilterData.showAddedContent ? true : false
     });
-
     this.searchFilterForm.valueChanges.subscribe(() => {
       this.searchFilterLookup$.next();
     });
-
     this.searchFilterLookup$.pipe(
       debounceTime(1000),
       // distinctUntilChanged(_.isEqual)
@@ -60,7 +56,6 @@ export class MvcFilterComponent implements OnInit, OnChanges, AfterViewInit {
       });
     });
   }
-
   showfilter() {
     this.isFilterShow = !this.isFilterShow;
     this.filterChangeEvent.emit({
@@ -68,5 +63,4 @@ export class MvcFilterComponent implements OnInit, OnChanges, AfterViewInit {
       filterStatus: this.isFilterShow
     });
   }
-
 }
