@@ -23,6 +23,18 @@ export class ToasterService {
     });
   }
 
+  InfoToasterCritical(title: string, message: string) {
+    iziToast.show({
+      title: title,
+      message: message,
+      class: 'sb-toaster sb-toast-success sb-toast-normal',
+      position: 'topCenter',
+      timeout: 100000000,
+      transitionIn: 'flipInX',
+      transitionOut: 'flipOutX'
+    });
+  }
+
   /**
    * Format success message
    * @memberOf Services.toasterService
@@ -44,6 +56,8 @@ export class ToasterService {
       title: message
     });
   }
+
+
 
   /**
    * Format error message

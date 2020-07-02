@@ -33,6 +33,11 @@ export class ResourceReorderComponent implements OnInit {
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
   }
 
+  addContent(){
+    this.toasterService.InfoToasterCritical('<b>Content Added!</b>','Content "blue shark" added to textbook- A Pact with The Sun');
+    this.modal.deny();
+  }
+  
   moveResource() {
     this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitSelected, this.contentId)
      .subscribe((data) => {
