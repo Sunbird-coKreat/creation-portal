@@ -21,6 +21,7 @@ export class ResourceReorderComponent implements OnInit {
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   showMoveButton = false;
+  iziToast;
 
   constructor(private collectionHierarchyService: CollectionHierarchyService, public toasterService: ToasterService,
               public programTelemetryService: ProgramTelemetryService, public userService: UserService,
@@ -31,7 +32,15 @@ export class ResourceReorderComponent implements OnInit {
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.sessionContext.programId, 'Program');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
+    
   }
+
+  addContent(){
+    this.toasterService.InfoToasterCritical('<b>Content Added!</b>','Content "blue shark" added to textbook- A Pact with The Sun');
+    this.modal.deny();
+  }
+  
+  
 
   moveResource() {
     this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitSelected, this.contentId)

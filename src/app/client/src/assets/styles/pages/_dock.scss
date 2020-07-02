@@ -328,3 +328,41 @@ top: -4px;
     }
   }
 }
+.sb-dock-accordion{
+  .title{
+    border: 1px solid var(--gray-100) !important;
+    margin: 0 !important;
+    border-bottom: none !important;
+    border-radius: 0 !important;
+  }
+  .content{
+    border: 1px solid var(--gray-100);
+  }
+  .chapter-lists--item{
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .content{
+    &:last-child{
+      border-bottom: 1px solid var(--gray-100) !important;
+    }
+  }
+.sb-radio-btn-checkbox{
+  label{
+    &:before{
+      width: 1.4rem;
+      height: 1.4rem;
+    }
+    &:after{
+      right: 5px !important;
+      height: 0.8rem;
+      width: 0.8rem;
+      top: 4px;
+    }
+  }
+}
+&.scrolling{
+  &.content{
+    max-height: calc(70vh) !important;
+  }
+}
+}
