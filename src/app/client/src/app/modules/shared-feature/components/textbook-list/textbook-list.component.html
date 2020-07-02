@@ -174,7 +174,7 @@
 	<div class="sb-modal-actions py-20">
 		<button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="applyTextbookFilters();"
 		appTelemetryInteract
-                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('apply-filters', 'click', 'textbook-list')"
+                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('apply-filters', 'click', 'textbook-list', {values: [setPreferences]})"
                                                         [telemetryInteractObject]="telemetryInteractObject"
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.apply}} </button>
