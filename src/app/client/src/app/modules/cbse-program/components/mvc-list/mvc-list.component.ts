@@ -8,6 +8,7 @@ import { ResourceService } from '@sunbird/shared';
 })
 export class MvcListComponent implements OnInit {
   @Input() contentList: any;
+  @Input() selectedUnitName: any;
   @Input() selectedContentId: any;
   @Output() contentChangeEvent = new EventEmitter<any>();
   @Output() moveEvent = new EventEmitter<any>();
@@ -25,9 +26,9 @@ export class MvcListComponent implements OnInit {
   //   this.addToLibraryBtnVisibility = !this.addToLibraryBtnVisibility;
   // }
 
-  onContentChange(identifier: any) {
+  onContentChange(selectedContent: any) {
     this.addToLibraryBtnVisibility = true;
-    this.contentChangeEvent.emit({contentId: identifier});
+    this.contentChangeEvent.emit({content: selectedContent});
   }
 
   addToLibrary() {

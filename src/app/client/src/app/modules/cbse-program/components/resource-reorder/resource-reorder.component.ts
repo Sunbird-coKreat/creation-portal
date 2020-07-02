@@ -45,7 +45,7 @@ export class ResourceReorderComponent implements OnInit {
           this.toasterService.success('The Selected Resource is Successfully Moved');
         } else {
           // tslint:disable-next-line:max-line-length
-          this.toasterService.InfoToasterCritical(`<b>Content Added!</b>', 'Content "${this.sessionContext.selectedMvcContentDetails.name}" added to textbook- ${this.collectionUnitsBreadcrumb[0]}`);
+          this.toasterService.InfoToasterCritical('<b>Content Added!</b>', `Content "${this.sessionContext.selectedMvcContentDetails.name}" added to textbook- ${this.collectionUnitsBreadcrumb[0]}`);
         }
         this.moveEvent.emit({
           action: 'afterMove',

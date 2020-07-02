@@ -11,9 +11,9 @@
             <div class="font-weight-bold fs-1-16">{{resourceService.frmelmnts.lbl.addFromLibrary}}</div>
             <div class="sb-border-vertical mx-15"></div>
             <div class="flex flex-wrap">
-              <h5>A Pact with the Sun</h5>
-              <span>{{collectionHierarchy.subject}}</span><span class="add-to-library-dot"></span><span>{{collectionHierarchy.gradeLevel}}</span><span
-                class="add-to-library-dot"></span><span>{{collectionHierarchy.name}}</span>
+              <h5>{{selectedUnitName}}</h5>
+              <span>{{collectionData.subject}}</span><span class="add-to-library-dot"></span><span>{{collectionData.gradeLevel}}</span><span
+                class="add-to-library-dot"></span><span>{{collectionData.name}}</span>
             </div>
           </div>
         </div>
@@ -26,13 +26,13 @@
     <div class="sb-g add-to-library__toc-player">
       <!-- Left Sidebar for cards -->
       <section class="sb-g-col-xs-12 sb-g-col-md-4 sb-g-col-lg-4">
-        <app-mvc-list [contentList]="contentList" [selectedContentId]="selectedContentId"
+        <app-mvc-list [contentList]="contentList" [selectedContentId]="selectedContentDetails?.identifier" [selectedUnitName]="selectedUnitName"
           (contentChangeEvent)="onContentChange($event);" (moveEvent)="showResourceTemplate($event)"> </app-mvc-list>
       </section>
 
       <!-- Right Player Sections -->
       <section class="sb-g-col-xs-12 sb-g-col-md-8 sb-g-col-lg-8 relative position ml-24">
-        <app-mvc-player [contentId]="selectedContentId" (moveEvent)="showResourceTemplate($event)" ></app-mvc-player>
+        <app-mvc-player [contentId]="selectedContentDetails?.identifier" (moveEvent)="showResourceTemplate($event)" ></app-mvc-player>
       </section>
     </div>
   </div>
@@ -54,7 +54,7 @@
 </div>
 
 <div *ngIf="showLargeModal">
-  <app-resource-reorder [collectionUnits]="collectionHierarchy.children" [contentId]="selectedContentId"
+  <app-resource-reorder [collectionUnits]="collectionHierarchy" [contentId]="selectedContentDetails?.identifier"
     [sessionContext]="sessionContext" [prevUnitSelect]="collectionUnitId"
     (moveEvent)="showResourceTemplate($event)"> </app-resource-reorder>
 </div>
