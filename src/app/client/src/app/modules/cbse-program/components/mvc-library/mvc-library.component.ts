@@ -19,13 +19,16 @@ export class MvcLibraryComponent implements OnInit {
   public showLargeModal: Boolean = false;
   public isFilterOpen: Boolean = false;
   public showLoader: boolean;
-  public selectedContentId: string;
+  public selectedContentDetails: string;
   public contentList: any;
   public collectionId: string;
   public collectionUnitId: string;
-  public collectionHierarchy: any;
+  public selectedUnitName: string;
+  public collectionData: any;
+  public collectionHierarchy = [];
   public programId: string;
   public programDetails: any;
+  public resourceReorderBreadcrumb: any = [];
   public filterData: any = {};
   public activeFilterData: any = {};
 
@@ -49,9 +52,12 @@ export class MvcLibraryComponent implements OnInit {
   initialize() {
     forkJoin(this.getCollectionHierarchy(this.collectionId), this.getProgramDetails()).subscribe(
       ([collection, programDetails]) => {
-        this.collectionHierarchy = collection;
-        this.filterData['subjects'] = this.collectionHierarchy.subject;
-        this.filterData['gradeLevels'] = this.plusMinusGradeLevel(this.collectionHierarchy.gradeLevel);
+        this.collectionData = collection;
+        this.resourceReorderBreadcrumb.push(this.collectionData.name);
+        this.collectionHierarchy = this.getUnitWithChildren(this.collectionData, this.collectionId);
+        this.filterData['mediums'] = this.collectionData.medium;
+        this.filterData['subjects'] = this.collectionData.subject;
+        this.filterData['gradeLevels'] = this.plusMinusGradeLevel(this.collectionData.gradeLevel);
         this.programDetails = _.get(programDetails, 'result');
         this.filterData['contentTypes'] = this.programDetails.content_types;
         if (_.isEmpty(this.activeFilterData)) { this.activeFilterData = this.filterData; }
@@ -79,6 +85,40 @@ export class MvcLibraryComponent implements OnInit {
     };
     return this.programsService.get(req);
   }
+
+  getUnitWithChildren(data, collectionId) {
+    const self = this;
+    const childData = data.children;
+    if (_.isEmpty(childData)) { return []; }
+    const tree = childData.map(child => {
+      if (child.identifier === this.collectionUnitId) {
+        this.selectedUnitName = child.name;
+      }
+      const treeItem = this.generateNodeMeta(child);
+      const treeUnit = self.getUnitWithChildren(child, collectionId);
+      const treeChildren = treeUnit && treeUnit.filter(item => item.contentType === 'TextBookUnit');
+      treeItem['children'] = (treeChildren && treeChildren.length > 0) ? treeChildren : null;
+      return treeItem;
+    });
+    return tree;
+  }
+
+  generateNodeMeta(node) {
+    const nodeMeta =  {
+       identifier: node.identifier,
+       name: node.name,
+       contentType: node.contentType,
+       topic: node.topic,
+       status: node.status,
+       creator: node.creator,
+       createdBy: node.createdBy || null,
+       parentId: node.parent || null,
+       organisationId: _.has(node, 'organisationId') ? node.organisationId : null,
+       prevStatus: node.prevStatus || null,
+     };
+     return nodeMeta;
+   }
+
 
   fetchContentList(filters?: any) {
     const option = {
@@ -108,7 +148,7 @@ export class MvcLibraryComponent implements OnInit {
     map((data: any) => data.result.content))
     .subscribe((result: any) => {
       this.contentList = result;
-      if (!_.isEmpty(this.contentList)) { this.selectedContentId = this.contentList[0].identifier; }
+      if (!_.isEmpty(this.contentList)) { this.selectedContentDetails = _.pick(this.contentList[0], ['name', 'identifier']); }
     });
   }
 
@@ -134,7 +174,7 @@ export class MvcLibraryComponent implements OnInit {
   }
 
   onContentChange(event: any) {
-    this.selectedContentId = event.contentId;
+    this.selectedContentDetails = _.pick(event.content, ['name', 'identifier']);
   }
 
   onFilterChange(event: any) {
@@ -150,7 +190,11 @@ export class MvcLibraryComponent implements OnInit {
   showResourceTemplate(event) {
     switch (event.action) {
       case 'beforeMove':
-        this.sessionContext = { 'collection': this.collectionId, 'programId': this.programId };
+        this.sessionContext = {
+          'collection': this.collectionId, 'programId': this.programId,
+          'selectedMvcContentDetails': this.selectedContentDetails,
+          'resourceReorderBreadcrumb': this.resourceReorderBreadcrumb
+        };
         this.showLargeModal = true;
         break;
       case 'afterMove':
