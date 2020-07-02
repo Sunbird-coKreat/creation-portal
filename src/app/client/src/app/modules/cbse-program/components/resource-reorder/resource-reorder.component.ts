@@ -18,8 +18,10 @@ export class ResourceReorderComponent implements OnInit {
   @Input() prevUnitSelect;
   @Output() moveEvent = new EventEmitter<any>();
   @ViewChild('modal') modal;
+  public collectionUnitsBreadcrumb: any = [];
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
+
   showMoveButton = false;
 
   constructor(private collectionHierarchyService: CollectionHierarchyService, public toasterService: ToasterService,
@@ -31,19 +33,20 @@ export class ResourceReorderComponent implements OnInit {
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.sessionContext.programId, 'Program');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
+    this.setCollectionUnitBreadcrumb(this.prevUnitSelect);
   }
 
-  addContent(){
-    this.toasterService.InfoToasterCritical('<b>Content Added!</b>','Content "blue shark" added to textbook- A Pact with The Sun');
-    this.modal.deny();
-  }
-  
   moveResource() {
     this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitSelected, this.contentId)
      .subscribe((data) => {
      this.collectionHierarchyService.removeResourceToHierarchy(this.sessionContext.collection, this.prevUnitSelect, this.contentId)
       .subscribe((res) => {
-        this.toasterService.success('The Selected Resource is Successfully Moved');
+        if (this.sessionContext && !this.sessionContext.selectedMvcContentDetails) {
+          this.toasterService.success('The Selected Resource is Successfully Moved');
+        } else {
+          // tslint:disable-next-line:max-line-length
+          this.toasterService.InfoToasterCritical(`<b>Content Added!</b>', 'Content "${this.sessionContext.selectedMvcContentDetails.name}" added to textbook- ${this.collectionUnitsBreadcrumb[0]}`);
+        }
         this.moveEvent.emit({
           action: 'afterMove',
           contentId: this.contentId,
@@ -69,5 +72,47 @@ export class ResourceReorderComponent implements OnInit {
         identifier: ''
       }
     });
+  }
+
+  getParentsHelper(tree: any, id: string, parents: Array<any>) {
+    const self = this;
+    if (tree.identifier === id) {
+        return {
+            found: true,
+            parents: [...parents, tree.name]
+        };
+    }
+    let result = {
+        found: false,
+    };
+    if (tree.children) {
+        $.each(tree.children, (index, subtree) => {
+            const maybeParents = $.merge([], parents);
+            if (tree.identifier !== undefined) {
+                maybeParents.push(tree.name);
+            }
+            const maybeResult: any = self.getParentsHelper(subtree, id, maybeParents);
+            if (maybeResult.found) {
+                result = maybeResult;
+                return false;
+            }
+        });
+    }
+    return result;
+  }
+
+  getParents(data: Array<any>, id: string) {
+    const tree = {
+        children: data
+    };
+    return this.getParentsHelper(tree, id, []);
+  }
+
+  setCollectionUnitBreadcrumb(selectedUnit?): void {
+    if (this.sessionContext && !this.sessionContext.selectedMvcContentDetails) { return; }
+    const selctedUnitParents: any = this.getParents(this.collectionUnits, selectedUnit ? selectedUnit : this.unitSelected);
+    if (selctedUnitParents.found) {
+      this.collectionUnitsBreadcrumb = [...this.sessionContext.resourceReorderBreadcrumb, ...selctedUnitParents.parents];
+    }
   }
 }
