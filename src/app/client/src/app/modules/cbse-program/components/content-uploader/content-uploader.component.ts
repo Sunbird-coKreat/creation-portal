@@ -15,7 +15,6 @@ import { HelperService } from '../../services/helper.service';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
-import { constants } from 'os';
 
 @Component({
   selector: 'app-content-uploader',
