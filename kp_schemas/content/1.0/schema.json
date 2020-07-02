@@ -1057,9 +1057,6 @@
         },
         "label" : {
             "type": "string"
-        },
-        "source" : {
-            "type": "string"
         }
     }
 }
