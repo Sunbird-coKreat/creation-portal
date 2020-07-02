@@ -745,9 +745,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       const originData = {
         textbookOriginId: _.get(_.get(hierarchyObj, this.sessionContext.collection), 'origin'),
         unitOriginId: _.get(_.get(hierarchyObj, this.unitIdentifier), 'origin'),
-        channel: _.get(_.get(hierarchyObj, this.unitIdentifier), 'originData').channel
+        channel: _.get(_.get(_.get(hierarchyObj, this.unitIdentifier), 'originData'), 'channel') ||
+                    _.get(_.get(_.get(hierarchyObj, this.sessionContext.collection), 'originData'), 'channel')
       };
-      if (originData.textbookOriginId && originData.unitOriginId) {
+      if (originData.textbookOriginId && originData.unitOriginId && originData.channel) {
         if (action === 'accept') {
           // tslint:disable-next-line:max-line-length
           this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentMetaData.identifier, originData);
