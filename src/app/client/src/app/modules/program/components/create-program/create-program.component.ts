@@ -34,6 +34,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public guidLinefileName: String;
   public isFormValueSet = false;
   public editMode = false;
+  selectChapter = false;
   /**
    * Program creation form name
    */
