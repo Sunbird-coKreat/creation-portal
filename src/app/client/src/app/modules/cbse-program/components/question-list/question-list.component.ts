@@ -876,12 +876,18 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   attachContentToTextbook(action) {
     const hierarchyObj  = _.get(this.sessionContext.hierarchyObj, 'hierarchy');
     if (hierarchyObj) {
+      const originInfo = _.get(_.get(hierarchyObj, this.sessionContext.textBookUnitIdentifier), 'originData');
+      let channel = originInfo && originInfo.channel;
+      if (_.isUndefined(channel)) {
+        const rootOriginInfo = _.get(_.get(hierarchyObj, this.sessionContext.collection), 'originData');
+        channel =  rootOriginInfo && rootOriginInfo.channel;
+      }
       const originData = {
         textbookOriginId: _.get(_.get(hierarchyObj, this.sessionContext.collection), 'origin'),
         unitOriginId: _.get(_.get(hierarchyObj, this.sessionContext.textBookUnitIdentifier), 'origin'),
-        channel: _.get(_.get(hierarchyObj, this.sessionContext.textBookUnitIdentifier), 'originData').channel
+        channel: channel
       };
-      if (originData.textbookOriginId && originData.unitOriginId) {
+      if (originData.textbookOriginId && originData.unitOriginId && originData.channel) {
         if (action === 'accept') {
           this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.resourceDetails.identifier, originData);
         } else if (action === 'reject' && this.FormControl.value.contentRejectComment.length) {

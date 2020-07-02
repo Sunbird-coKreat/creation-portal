@@ -15,6 +15,7 @@ import { HelperService } from '../../services/helper.service';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
+import { constants } from 'os';
 
 @Component({
   selector: 'app-content-uploader',
@@ -742,12 +743,18 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   attachContentToTextbook(action) {
     const hierarchyObj  = _.get(this.sessionContext.hierarchyObj, 'hierarchy');
     if (hierarchyObj) {
+      const originInfo = _.get(_.get(hierarchyObj, this.unitIdentifier), 'originData');
+      let channel = originInfo && originInfo.channel;
+      if (_.isUndefined(channel)) {
+        const rootOriginInfo = _.get(_.get(hierarchyObj, this.sessionContext.collection), 'originData');
+        channel =  rootOriginInfo && rootOriginInfo.channel;
+      }
       const originData = {
         textbookOriginId: _.get(_.get(hierarchyObj, this.sessionContext.collection), 'origin'),
         unitOriginId: _.get(_.get(hierarchyObj, this.unitIdentifier), 'origin'),
-        channel: _.get(_.get(hierarchyObj, this.unitIdentifier), 'originData').channel
+        channel: channel
       };
-      if (originData.textbookOriginId && originData.unitOriginId) {
+      if (originData.textbookOriginId && originData.unitOriginId && originData.channel) {
         if (action === 'accept') {
           // tslint:disable-next-line:max-line-length
           this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentMetaData.identifier, originData);
