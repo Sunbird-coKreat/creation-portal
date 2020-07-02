@@ -642,37 +642,80 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     const today = moment(moment().format('YYYY-MM-DD'));
 
     if (this.isOpenNominations) {
-      // nomination date should be >= today
-      if (!nominationEndDate.isSameOrAfter(today) && !this.editMode) {
-        this.toasterService.error(this.resource.messages.emsg.createProgram.m0001);
-        hasError = true;
-      }
+      if (this.editMode) {
+        const nominationOldEndDate = moment(new Date(_.get(this.programDetails, 'nomination_enddate')));
 
-      if (!_.isEmpty(formData.shortlisting_enddate)) {
-        const shortlistingEndDate = moment(formData.shortlisting_enddate);
-
-        // shortlisting date should be >= nomination date
-        if (!shortlistingEndDate.isSameOrAfter(nominationEndDate)) {
-          this.toasterService.error(this.resource.messages.emsg.createProgram.m0002);
-          hasError = true;
+        if (!nominationOldEndDate.isSame(nominationEndDate) && !nominationEndDate.isSameOrAfter(today)) {
+            this.toasterService.error(this.resource.messages.emsg.createProgram.m0001);
+            hasError = true;
         }
-        // submission date should be >= shortlisting date
-        if (!contentSubmissionEndDate.isSameOrAfter(shortlistingEndDate)) {
-          this.toasterService.error(this.resource.messages.emsg.createProgram.m0003);
-          hasError = true;
+
+        if (formData.shortlisting_enddate) {
+          const shortlistingOldEndDate = moment(new Date(_.get(this.programDetails, 'shortlisting_enddate')));
+          const shortlistingEndDate = moment(formData.shortlisting_enddate);
+
+          // shortlisting date should be >= nomination date
+          if (!shortlistingOldEndDate.isSame(shortlistingEndDate) && (!shortlistingEndDate.isSameOrAfter(nominationEndDate) || !shortlistingEndDate.isSameOrAfter(today))) {
+            this.toasterService.error(this.resource.messages.emsg.createProgram.m0002);
+            hasError = true;
+          }
+
+          const contentOldSubmissionEndDate = moment(new Date(_.get(this.programDetails, 'content_submission_enddate')));
+
+          // submission date should be >= shortlisting date
+          if (!contentOldSubmissionEndDate.isSame(contentSubmissionEndDate) && (!contentSubmissionEndDate.isSameOrAfter(shortlistingEndDate) || !contentSubmissionEndDate.isSameOrAfter(today))) {
+            this.toasterService.error(this.resource.messages.emsg.createProgram.m0003);
+            hasError = true;
+          }
+
+        } else {
+          const contentOldSubmissionEndDate = moment(new Date(_.get(this.programDetails, 'content_submission_enddate')));
+
+          if (!contentOldSubmissionEndDate.isSame(contentSubmissionEndDate) && (!contentSubmissionEndDate.isSameOrAfter(nominationEndDate) || !contentSubmissionEndDate.isSameOrAfter(today))) {
+            this.toasterService.error(this.resource.messages.emsg.createProgram.m0005);
+            hasError = true;
+          }
         }
       } else {
-        if (!contentSubmissionEndDate.isSameOrAfter(nominationEndDate)) {
-          this.toasterService.error(this.resource.messages.emsg.createProgram.m0005);
+        // nomination date should be >= today
+        if (!nominationEndDate.isSameOrAfter(today)) {
+          this.toasterService.error(this.resource.messages.emsg.createProgram.m0001);
           hasError = true;
         }
-      }
-    }
 
-    // end date should be >= submission date
-    if (!programEndDate.isSameOrAfter(contentSubmissionEndDate)) {
-      this.toasterService.error(this.resource.messages.emsg.createProgram.m0004);
-      hasError = true;
+        if (!_.isEmpty(formData.shortlisting_enddate)) {
+          const shortlistingEndDate = moment(formData.shortlisting_enddate);
+
+          // shortlisting date should be >= nomination date
+          if (!shortlistingEndDate.isSameOrAfter(nominationEndDate)) {
+            this.toasterService.error(this.resource.messages.emsg.createProgram.m0002);
+            hasError = true;
+          }
+          // submission date should be >= shortlisting date
+          if (!contentSubmissionEndDate.isSameOrAfter(shortlistingEndDate)) {
+            this.toasterService.error(this.resource.messages.emsg.createProgram.m0003);
+            hasError = true;
+          }
+        } else {
+          if (!contentSubmissionEndDate.isSameOrAfter(nominationEndDate)) {
+            this.toasterService.error(this.resource.messages.emsg.createProgram.m0005);
+            hasError = true;
+          }
+        }
+      }
+
+      // end date should be >= submission date
+      if (this.editMode) {
+        const programOldEndDate = moment(new Date(_.get(this.programDetails, 'enddate')));
+
+        if (!programOldEndDate.isSame(programEndDate) && (!programEndDate.isSameOrAfter(contentSubmissionEndDate) || !programEndDate.isSameOrAfter(today))) {
+          this.toasterService.error(this.resource.messages.emsg.createProgram.m0004);
+          hasError = true;
+        }
+      } else if (!programEndDate.isSameOrAfter(contentSubmissionEndDate)) {
+          this.toasterService.error(this.resource.messages.emsg.createProgram.m0004);
+          hasError = true;
+      }
     }
 
     return hasError;
@@ -705,7 +748,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.formIsInvalid = false;
     this.handleContentTypes();
 
-    if ((this.createProgramForm.dirty || !_.isUndefined(this.uploadedDocument)) && this.createProgramForm.valid) {
+    if ((this.createProgramForm.dirty || !_.isUndefined(this.uploadedDocument)) && this.createProgramForm.valid &&  !this.validateDates()) {
       const contentTypes = this.createProgramForm.value.content_types;
       this.createProgramForm.value.content_types = _.isEmpty(contentTypes) ? [] : contentTypes;
       this.programData = {
@@ -759,14 +802,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.formIsInvalid = true;
       this.validateAllFormFields(this.createProgramForm);
     }
-
-    this.validateDates();
   }
 
   updateProgram($event: MouseEvent) {
     this.formIsInvalid = false;
 
-    if (this.createProgramForm.valid) {
+    if (this.createProgramForm.valid  && !this.validateDates()) {
       ($event.target as HTMLButtonElement).disabled = true;
       const prgData = {
         ...this.createProgramForm.value
@@ -799,8 +840,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.formIsInvalid = true;
       this.validateAllFormFields(this.createProgramForm);
     }
-    this.validateDates();
-  }
+}
 
   showTexbooklist() {
     const requestData = {
