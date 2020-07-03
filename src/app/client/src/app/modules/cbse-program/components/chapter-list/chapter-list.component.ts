@@ -523,11 +523,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           return false;
       } else if (this.sessionContext.nominationDetails
         && (this.sessionContext.nominationDetails.status === 'Approved' || this.sessionContext.nominationDetails.status === 'Rejected')) {
-          if ( reviewerViewRole && content.sampleContent !== true
-            && this.getNominatedUserId() === content.createdBy) {
+          if ( reviewerViewRole && content.status === 'Live' && content.sampleContent !== true ) {
               return true;
-            }
-            return false;
+          }
+          return false;
       } else if (reviewerViewRole && content.status === 'Live') {
           return true;
       }
