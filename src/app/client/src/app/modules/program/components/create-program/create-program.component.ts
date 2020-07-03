@@ -19,7 +19,7 @@ import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEvent
 import { DeviceDetectorService } from 'ngx-device-detector';
 import * as moment from 'moment';
 import * as alphaNumSort from 'alphanum-sort';
-import {ProgramTelemetryService} from '../../services';
+import { ProgramTelemetryService } from '../../services';
 
 @Component({
   selector: 'app-create-program',
@@ -356,19 +356,22 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   getMaxDate(date) {
-    if (date === 'nomination_enddate') {
-      if (this.createProgramForm.value.shortlisting_enddate) {
-        return this.createProgramForm.value.shortlisting_enddate;
+    if (!this.editMode) {
+      if (date === 'nomination_enddate') {
+        if (this.createProgramForm.value.shortlisting_enddate) {
+          return this.createProgramForm.value.shortlisting_enddate;
+        }
       }
-    }
 
-    if (date === 'shortlisting_enddate') {
-      if (this.createProgramForm.value.content_submission_enddate) {
-        return this.createProgramForm.value.content_submission_enddate;
+      if (date === 'shortlisting_enddate') {
+        if (this.createProgramForm.value.content_submission_enddate) {
+          return this.createProgramForm.value.content_submission_enddate;
+        }
       }
-    }
 
-    return this.createProgramForm.value.program_end_date;
+      return this.createProgramForm.value.program_end_date;
+    }
+    return '';
   }
 
   getMinDate(date) {
@@ -402,7 +405,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       }
     }
 
-    return this.pickerMinDate;
+    if (!this.editMode) {
+      return this.pickerMinDate;
+    }
+    else {
+      return this.createProgramForm.value.nomination_enddate;
+    }
   }
 
   ngAfterViewInit() {
@@ -504,10 +512,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     if (status) {
       this.createProgramForm.controls['nomination_enddate'].setValidators(Validators.required);
     } else {
-    this.createProgramForm.controls['nomination_enddate'].clearValidators();
-    this.createProgramForm.controls['shortlisting_enddate'].clearValidators();
-    this.createProgramForm.controls['nomination_enddate'].setValue(null);
-    this.createProgramForm.controls['shortlisting_enddate'].setValue(null);
+      this.createProgramForm.controls['nomination_enddate'].clearValidators();
+      this.createProgramForm.controls['shortlisting_enddate'].clearValidators();
+      this.createProgramForm.controls['nomination_enddate'].setValue(null);
+      this.createProgramForm.controls['shortlisting_enddate'].setValue(null);
     }
     this.createProgramForm.controls['nomination_enddate'].updateValueAndValidity();
     this.createProgramForm.controls['shortlisting_enddate'].updateValueAndValidity();
@@ -559,8 +567,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    */
   initializeFormFields(): void {
 
-  if (!_.isEmpty(this.programDetails) && !_.isEmpty(this.programId))
-    {
+    if (!_.isEmpty(this.programDetails) && !_.isEmpty(this.programId)) {
       this.isOpenNominations = (_.get(this.programDetails, 'type') == "public") ? true : false;
       this.disableUpload = (_.get(this.programDetails, 'guidelines_url')) ? true : false;
 
@@ -573,7 +580,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         content_submission_enddate: [_.get(this.programDetails, 'content_submission_enddate') ? new Date(_.get(this.programDetails, 'content_submission_enddate')) : '', Validators.required],
         content_types: [_.get(this.programDetails, 'content_types'), Validators.required],
         rewards: [_.get(this.programDetails, 'rewards')],
-        defaultContributeOrgReview: new FormControl({value: true, disabled: this.editMode})
+        defaultContributeOrgReview: new FormControl({ value: this.defaultContributeOrgReviewChecked, disabled: this.editMode })
       };
 
       if (this.isOpenNominations == true) {
@@ -635,31 +642,31 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     const today = moment(moment().format('YYYY-MM-DD'));
 
     if (this.isOpenNominations) {
-    // nomination date should be >= today
-    if (!nominationEndDate.isSameOrAfter(today)) {
-      this.toasterService.error(this.resource.messages.emsg.createProgram.m0001);
-      hasError = true;
-    }
+      // nomination date should be >= today
+      if (!nominationEndDate.isSameOrAfter(today) && !this.editMode) {
+        this.toasterService.error(this.resource.messages.emsg.createProgram.m0001);
+        hasError = true;
+      }
 
-    if (!_.isEmpty(formData.shortlisting_enddate)) {
-      const shortlistingEndDate = moment(formData.shortlisting_enddate);
+      if (!_.isEmpty(formData.shortlisting_enddate)) {
+        const shortlistingEndDate = moment(formData.shortlisting_enddate);
 
-      // shortlisting date should be >= nomination date
-      if (!shortlistingEndDate.isSameOrAfter(nominationEndDate)) {
-        this.toasterService.error(this.resource.messages.emsg.createProgram.m0002);
-        hasError = true;
+        // shortlisting date should be >= nomination date
+        if (!shortlistingEndDate.isSameOrAfter(nominationEndDate)) {
+          this.toasterService.error(this.resource.messages.emsg.createProgram.m0002);
+          hasError = true;
+        }
+        // submission date should be >= shortlisting date
+        if (!contentSubmissionEndDate.isSameOrAfter(shortlistingEndDate)) {
+          this.toasterService.error(this.resource.messages.emsg.createProgram.m0003);
+          hasError = true;
+        }
+      } else {
+        if (!contentSubmissionEndDate.isSameOrAfter(nominationEndDate)) {
+          this.toasterService.error(this.resource.messages.emsg.createProgram.m0005);
+          hasError = true;
+        }
       }
-      // submission date should be >= shortlisting date
-      if (!contentSubmissionEndDate.isSameOrAfter(shortlistingEndDate)) {
-        this.toasterService.error(this.resource.messages.emsg.createProgram.m0003);
-        hasError = true;
-      }
-    } else {
-      if (!contentSubmissionEndDate.isSameOrAfter(nominationEndDate)) {
-        this.toasterService.error(this.resource.messages.emsg.createProgram.m0005);
-        hasError = true;
-      }
-    }
     }
 
     // end date should be >= submission date
@@ -698,7 +705,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.formIsInvalid = false;
     this.handleContentTypes();
 
-    if ((this.createProgramForm.dirty || this.uploadedDocument) && this.createProgramForm.valid) {
+    if ((this.createProgramForm.dirty || !_.isUndefined(this.uploadedDocument)) && this.createProgramForm.valid) {
       const contentTypes = this.createProgramForm.value.content_types;
       this.createProgramForm.value.content_types = _.isEmpty(contentTypes) ? [] : contentTypes;
       this.programData = {
@@ -742,11 +749,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           (err) => this.saveProgramError(err)
         );
       } else {
-          this.programData['program_id'] = this.programId;
-          this.programsService.updateProgram(this.programData).subscribe(
-            (res) => { this.showTexbooklist(); },
-            (err) => this.saveProgramError(err)
-          );
+        this.programData['program_id'] = this.programId;
+        this.programsService.updateProgram(this.programData).subscribe(
+          (res) => { this.showTexbooklist(); },
+          (err) => this.saveProgramError(err)
+        );
       }
     } else {
       this.formIsInvalid = true;
@@ -759,7 +766,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   updateProgram($event: MouseEvent) {
     this.formIsInvalid = false;
 
-    if ((this.createProgramForm.dirty || this.uploadedDocument) && this.createProgramForm.valid) {
+    if (this.createProgramForm.valid) {
       ($event.target as HTMLButtonElement).disabled = true;
       const prgData = {
         ...this.createProgramForm.value
@@ -781,7 +788,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         (res) => {
           this.toasterService.success(this.resource.messages.smsg.modify.m0001);
           this.router.navigate(['/sourcing']);
-          },
+        },
         (err) => {
           console.log(err, err);
           this.toasterService.error(this.resource.messages.emsg.m0005);
@@ -908,11 +915,27 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   addCollectionsToProgram(contentTypes, copiedCollections) {
     _.forEach(this.tempCollections, (collection) => {
 
-      if (this.mediumOption.indexOf(collection.medium) === -1) {
-        this.mediumOption.push(collection.medium);
+      if (_.isArray(collection.medium)) {
+        _.forEach(collection.medium, (single) => {
+          if (this.mediumOption.indexOf(single) === -1) {
+            this.mediumOption.push(single);
+          }
+        });
+      } else {
+        if (this.mediumOption.indexOf(collection.medium) === -1) {
+          this.mediumOption.push(collection.medium);
+        }
       }
-      if (this.subjectsOption.indexOf(collection.subject) === -1) {
-        this.subjectsOption.push(collection.subject);
+      if (_.isArray(collection.subject)) {
+        _.forEach(collection.subject, (single) => {
+          if (this.subjectsOption.indexOf(single) === -1) {
+            this.subjectsOption.push(single);
+          }
+        });
+      } else {
+        if (this.subjectsOption.indexOf(collection.subject) === -1) {
+          this.subjectsOption.push(collection.subject);
+        }
       }
 
       _.forEach(collection.gradeLevel, (single) => {

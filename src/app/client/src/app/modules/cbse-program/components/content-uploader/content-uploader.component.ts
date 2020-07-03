@@ -743,12 +743,18 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   attachContentToTextbook(action) {
     const hierarchyObj  = _.get(this.sessionContext.hierarchyObj, 'hierarchy');
     if (hierarchyObj) {
+      const rootOriginInfo = _.get(_.get(hierarchyObj, this.sessionContext.collection), 'originData');
+      let channel =  rootOriginInfo && rootOriginInfo.channel;
+      if (_.isUndefined(channel)) {
+        const originInfo = _.get(_.get(hierarchyObj, this.unitIdentifier), 'originData');
+        channel = originInfo && originInfo.channel;
+      }
       const originData = {
         textbookOriginId: _.get(_.get(hierarchyObj, this.sessionContext.collection), 'origin'),
         unitOriginId: _.get(_.get(hierarchyObj, this.unitIdentifier), 'origin'),
-        channel: _.get(_.get(hierarchyObj, this.unitIdentifier), 'originData').channel
+        channel: channel
       };
-      if (originData.textbookOriginId && originData.unitOriginId) {
+      if (originData.textbookOriginId && originData.unitOriginId && originData.channel) {
         if (action === 'accept') {
           // tslint:disable-next-line:max-line-length
           this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentMetaData.identifier, originData);
