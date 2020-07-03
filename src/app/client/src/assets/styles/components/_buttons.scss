@@ -529,3 +529,8 @@ $btnSquaresizes: "xs" 1.5rem 1.5rem 1rem null, "normal" 4rem 4rem 0.75rem null,
       border-color: var(--tertiary-400) !important; 
     }
 }
+.sb-btn-dark-green{
+  background: var(--green);
+  border:solid 1px green !important;
+  color: var(--white);
+}
