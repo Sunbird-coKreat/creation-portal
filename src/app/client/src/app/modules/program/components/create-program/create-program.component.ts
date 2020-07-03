@@ -133,7 +133,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.userprofile = this.userService.userProfile;
     this.programScope['purpose'] = this.programsService.contentTypes;
     this.programConfig = _.cloneDeep(programConfigObj);
-    this.fetchFrameWorkDetails();
     this.telemetryInteractCdata = [];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
@@ -146,6 +145,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     else {
       this.initializeFormFields();
     }
+    this.fetchFrameWorkDetails();
   }
 
   initiateDocumentUploadModal() {
@@ -647,10 +647,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         this.toasterService.error(this.resource.messages.emsg.createProgram.m0001);
         hasError = true;
       }
-
-      if (!_.isEmpty(formData.shortlisting_enddate)) {
+      const invalidValues = ['', null, undefined];
+      if (!_.includes(invalidValues, formData.shortlisting_enddate)) {
         const shortlistingEndDate = moment(formData.shortlisting_enddate);
-
         // shortlisting date should be >= nomination date
         if (!shortlistingEndDate.isSameOrAfter(nominationEndDate)) {
           this.toasterService.error(this.resource.messages.emsg.createProgram.m0002);
@@ -771,6 +770,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       const prgData = {
         ...this.createProgramForm.value
       };
+      const invalidValues = ['', null, undefined];
+
+      if (_.includes(invalidValues, prgData.shortlisting_enddate)) {
+        prgData['shortlisting_enddate'] = null;
+      }
 
       prgData['enddate'] = prgData.program_end_date;
       prgData['program_id'] = this.programId;
