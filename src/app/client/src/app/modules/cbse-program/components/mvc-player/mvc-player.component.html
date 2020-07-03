@@ -13,7 +13,7 @@
   </div> -->
   
   <div class="d-flex content-video__player__screenpart d-flex">
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-secondary sb-left-icon-btn shine-effect my-10 fs-0-785"
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-dark-green sb-left-icon-btn shine-effect my-10 fs-0-92 font-weight-bold"
       (click)="addToLibrary();"><i class="plus square icon"></i>{{resourceService.frmelmnts.lbl.addToTextbook}}</button>
   </div>
 </div>
@@ -46,11 +46,11 @@
             <div class="content-metadeta__text  fsmall">{{contentData.subject}}</div>
           </div>
           <div class="six wide column" *ngIf="contentData?.resourceType">
-            <div class="content-metadeta__title  fxsmall mb-8">{{resourceService.frmelmnts.lbl.resourcetype}}</div>
+            <div class="content-metadeta__title  fxsmall mb-8 text-uppercase">{{resourceService.frmelmnts.lbl.resourcetype}}</div>
             <div class="content-metadeta__text  fsmall">{{contentData.resourceType}}</div>
           </div>
           <div class="six wide column" *ngIf="contentData?.creator">
-            <div class="content-metadeta__title  fxsmall mb-8">{{resourceService.frmelmnts.lbl.content.CreatedOnBy}}</div>
+            <div class="content-metadeta__title  fxsmall mb-8 text-uppercase">{{resourceService.frmelmnts.lbl.content.CreatedOnBy}}</div>
             <div class="content-metadeta__text  fxsmall">{{contentData?.creator}}</div>
           </div>
           <div class="six wide column" *ngIf="contentData?.author">
@@ -58,19 +58,19 @@
             <div class="content-metadeta__text  fsmall">{{contentData?.author}}</div>
           </div>
           <div class="six wide column">
-            <div class="content-metadeta__title  fxsmall mb-8">{{resourceService.frmelmnts.lbl.coursecreatedon}}</div>
+            <div class="content-metadeta__title  fxsmall mb-8 text-uppercase">{{resourceService.frmelmnts.lbl.coursecreatedon}}</div>
             <div class="content-metadeta__text  fsmall">{{contentData.createdOn | dateFormat: ' Do MMMM YYYY'}}</div>
           </div>
           <div class="six wide column" *ngIf="contentData?.attributions">
-            <div class="content-metadeta__title  fxsmall mb-8">{{resourceService.frmelmnts.lbl.attributions }}</div>
+            <div class="content-metadeta__title  fxsmall mb-8 text-uppercase">{{resourceService.frmelmnts.lbl.attributions }}</div>
             <div class="content-metadeta__text  fsmall">{{contentData?.attributions}}</div>
           </div>
           <div class="six wide column" *ngIf="contentData?.keywords">
-            <div class="content-metadeta__title  fxsmall mb-8">{{resourceService.frmelmnts.lbl.keywords}}</div>
+            <div class="content-metadeta__title  fxsmall mb-8 text-uppercase">{{resourceService.frmelmnts.lbl.keywords}}</div>
             <div class="content-metadeta__text  fsmall">{{contentData?.keywords}}</div>
           </div>
           <div class="six wide column" *ngIf="contentData?.license">
-            <div class="content-metadeta__title fxsmall mb-8">{{resourceService.frmelmnts.lbl.content.LicenseTerms}}
+            <div class="content-metadeta__title fxsmall mb-8 text-uppercase">{{resourceService.frmelmnts.lbl.content.LicenseTerms}}
             </div>
             <div class="content-metadeta__text fsmall">
               {{contentData.license}} <span *ngIf="contentData?.licenseDetails?.name">:
@@ -82,8 +82,8 @@
             </div>
           </div>
           <div class="six wide column" *ngIf="contentData?.copyright">
-            <div class="content-metadeta__title  fxsmall mb-8">{{resourceService.frmelmnts.lbl.copyRight}}</div>
-            <div class="content-metadeta__text  fsmall">{{contentData?.copyright}} <span
+            <div class="content-metadeta__title fxsmall mb-8 text-uppercase">{{resourceService.frmelmnts.lbl.copyRight}}</div>
+            <div class="content-metadeta__text fsmall">{{contentData?.copyright}} <span
                 *ngIf="contentData?.copyrightYear">,&nbsp;{{contentData?.copyrightYear}}</span></div>
           </div>
         </div>

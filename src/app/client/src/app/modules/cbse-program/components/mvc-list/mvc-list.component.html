@@ -2,7 +2,7 @@
   <div class="title sb-color-primary font-weight-bold fs-1">
     {{resourceService.frmelmnts.lbl.contentMatchesForLibrary}}
   </div>
-  <small class="font-italic sb-color-gray-200 d-block pb-10">Explore {{contentList?.length}} content relavant to tale of two bird</small>
+  <small class="font-italic sb-color-gray-400 d-block pb-10">Explore {{contentList?.length}} content relavant to tale of two bird</small>
   <!--skeleton loader-->
   <div class="sbaccordion__panel-content p-16 mb-8 sb-dock-skeleton-bx d-none">
     <div class="sbchapter__item">
@@ -29,7 +29,7 @@
         </div>
       </h4>
       <div class="btn-addtoLibrary pt-5 pr-10" *ngIf="addToLibraryBtnVisibility && content.identifier === selectedContentId && !content.isAdded">
-        <button class="sb-btn sb-btn-xs sb-btn-secondary sb-left-icon-btn" (click)="addToLibrary();" >
+        <button class="sb-btn sb-btn-xs sb-btn-dark-green sb-left-icon-btn font-weight-bold" (click)="addToLibrary();" >
           <i class="plus square icon mr-4"></i>{{resourceService.frmelmnts.lbl.addToTextbook}}
         </button>
       </div>
@@ -40,6 +40,6 @@
       </div>
     </div>
   </div>
-  <h6 class="sb-color-gray-300 font-weight-normal mt-20">{{resourceService.frmelmnts.lbl.desktop.explore}}</h6>
+  <h6 class="sb-color-gray-400 font-weight-normal mt-20">{{resourceService.frmelmnts.lbl.desktop.explore}}</h6>
   <a class="sb-color-primary cursor-pointer font-weight-bold fs-0-785" (click)="changeFilter()">{{resourceService.frmelmnts.lbl.changeFilters}}</a>
 </div>
