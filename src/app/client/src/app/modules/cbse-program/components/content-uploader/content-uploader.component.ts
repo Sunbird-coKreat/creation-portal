@@ -379,6 +379,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       } else {
         this.resourceStatusText = this.resourceStatus;
       }
+      if (this.sourcingReviewStatus === 'Approved' && !this.canUploadContent()) {
+        this.resourceStatusText = this.resourceService.frmelmnts.lbl.contentIsApproved;
+      }  else if (this.sourcingReviewStatus === 'Rejected' && !this.canUploadContent()) {
+        this.resourceStatusText = this.resourceService.frmelmnts.lbl.contentIsRejected;
+      }
       this.playerConfig = this.playerService.getConfig(contentDetails);
       this.playerConfig.context.pdata.pid = `${this.configService.appConfig.TELEMETRY.PID}`;
       this.showPreview = this.contentMetaData.artifactUrl ? true : false;
