@@ -1,19 +1,13 @@
-<div class="d-flex flex-w-wrap content-video__player__details mt-15 pb-0">
+<div class="d-flex flex-w-wrap content-video__player__details mt-15 pb-0 pl-0">
   <div class="d-flex flex-dc flex-basis-1">
-    <!-- <div class="content-video__player__title mr-auto sb__ellipsis sb__ellipsis--one"> {{contentData.name}} </div> -->
-    <div class="content-video__player__title mr-auto sb__ellipsis sb__ellipsis--one"> EKat Yadava lkjlkj lihl  </div>
-    <div class="content-video__player__title__subtitle fs-0-785"><span class="mr-8">By NCERT</span> <span
-      class="mr-8" >4.5</span>
-    <i *ng class="icon star"></i>
-  </div>
-  </div>
-  <!-- <div class="content-video__player__title__subtitle fs-0-785"><span class="mr-8">By {{contentData.board}}</span> <span
+    <div class="content-video__player__title mr-auto sb__ellipsis sb__ellipsis--one"> {{contentData.name}} </div>
+    <div class="content-video__player__title__subtitle fs-0-785"><span class="mr-8">By {{contentData.board}}</span> <span
       class="mr-8" *ngIf="contentData?.me_averageRating">{{contentData?.me_averageRating || '0'}}</span>
-    <i *ngIf="contentData?.me_averageRating" class="icon star"></i>
-  </div> -->
-  
+      <i *ngIf="contentData?.me_averageRating" class="icon star"></i>
+    </div>
+  </div>
   <div class="d-flex content-video__player__screenpart d-flex">
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-dark-green sb-left-icon-btn shine-effect my-10 fs-0-92 font-weight-bold"
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-dark-green shine-effect my-10 pt-4rem fs-0-92 font-weight-bold"
       (click)="addToLibrary();"><i class="plus square icon"></i>{{resourceService.frmelmnts.lbl.addToTextbook}}</button>
   </div>
 </div>

@@ -21,7 +21,7 @@
     </div>
   </div>
   <app-mvc-filter [filters]='filterData' [activeFilterData]="activeFilterData" [filterOpenStatus]="isFilterOpen" (filterChangeEvent)="onFilterChange($event);" ></app-mvc-filter>
-  <div class="ui container" *ngIf="contentList && contentList.length">
+  <div class="ui container min-h-500" *ngIf="contentList && contentList.length">
     <!-- Player Section -->
     <div class="sb-g add-to-library__toc-player">
       <!-- Left Sidebar for cards -->
