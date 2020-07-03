@@ -116,7 +116,8 @@ export class RecursiveTreeComponent implements OnInit {
   }
 
   goToAddLibrary(identifier) {
-    this.router.navigateByUrl('/contribute/nominatedtextbooks/mvcexplore/' + identifier);
+    // tslint:disable-next-line:max-line-length
+    this.router.navigateByUrl(`/contribute/program/${this.sessionContext.programId}/textbook/${this.sessionContext.collection}/${identifier}`);
   }
 
 }

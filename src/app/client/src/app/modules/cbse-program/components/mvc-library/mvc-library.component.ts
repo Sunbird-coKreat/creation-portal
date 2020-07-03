@@ -18,9 +18,10 @@ export class MvcLibraryComponent implements OnInit {
   public sessionContext: object;
   public showLargeModal: Boolean = false;
   public isFilterOpen: Boolean = false;
-  public showLoader: boolean;
+  public showLoader: Boolean = false;
+  public skeletonLoader: Boolean = false;
   public selectedContentDetails: string;
-  public contentList: any;
+  public contentList: any = [];
   public collectionId: string;
   public collectionUnitId: string;
   public selectedUnitName: string;
@@ -61,6 +62,7 @@ export class MvcLibraryComponent implements OnInit {
         this.programDetails = _.get(programDetails, 'result');
         this.filterData['contentTypes'] = this.programDetails.content_types;
         if (_.isEmpty(this.activeFilterData)) { this.activeFilterData = this.filterData; }
+        this.showLoader = false;
         this.fetchContentList();
       },
       (error) => {
@@ -121,6 +123,7 @@ export class MvcLibraryComponent implements OnInit {
 
 
   fetchContentList(filters?: any) {
+    this.skeletonLoader = true;
     const option = {
       url: this.configService.urlConFig.URLS.DOCKCONTENT_MVC.SEARCH,
       data: {
@@ -142,7 +145,7 @@ export class MvcLibraryComponent implements OnInit {
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     }),
     finalize(() => {
-      this.showLoader = false;
+      this.skeletonLoader = false;
       if (_.isEmpty(this.contentList)) { this.openFilter(); }
     }),
     map((data: any) => data.result.content))
@@ -179,7 +182,6 @@ export class MvcLibraryComponent implements OnInit {
 
   onFilterChange(event: any) {
     if (event.action === 'filterDataChange') {
-      this.showLoader = true;
       this.activeFilterData =  event.filters;
       this.fetchContentList(event.filters);
     } else if (event.action === 'filterStatusChange') {

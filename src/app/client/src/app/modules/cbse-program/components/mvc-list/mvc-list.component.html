@@ -2,23 +2,11 @@
   <div class="title sb-color-primary font-weight-bold fs-1">
     {{resourceService.frmelmnts.lbl.contentMatchesForLibrary}}
   </div>
-  <small class="font-italic sb-color-gray-400 d-block pb-10">Explore {{contentList?.length}} content relavant to tale of two bird</small>
-  <!--skeleton loader-->
-  <div class="sbaccordion__panel-content p-16 mb-8 sb-dock-skeleton-bx d-none">
-    <div class="sbchapter__item">
-      <app-skeleton-loader [width]="'50%'" [height]="'12px'"  class="sb-dock-flex-auto"></app-skeleton-loader>
-      <app-skeleton-loader [width]="'40px'" [height]="'40px'" class="sb-dock-width-auto"></app-skeleton-loader>
-    </div>
-    <div class="sbchapter__item">
-      <app-skeleton-loader [width]="'50%'" [height]="'12px'" class="sb-dock-flex-auto"></app-skeleton-loader>
-      <app-skeleton-loader [width]="'40px'" [height]="'40px'" class="sb-dock-width-auto"></app-skeleton-loader>
-    </div>
-  </div>
-  <!--skeleton loader-->
+  <small class="font-italic sb-color-gray-200 d-block pb-10">Explore {{contentList?.length}} content relavant to {{selectedUnitName}}</small>
   <!-- Class separator -->
   <div class="sb-library-scroll" id="suggestions-tab">
     <div class="sbchapter__item mb-0" *ngFor="let content of contentList; let i = index"
-      [ngClass]="{'active':content.identifier === selectedContentId}"
+      [ngClass]="{'selected':content.identifier === selectedContentId,'active':content.isAdded}"
       (click)="onContentChange(content);">
       <!-- <div class="sbchapter__img"><img src="./assets/images/book.png" /></div> -->
       <h4 class="ml-8">
@@ -28,7 +16,7 @@
           By {{content.board}}
         </div>
       </h4>
-      <div class="btn-addtoLibrary pt-5 pr-10" *ngIf="addToLibraryBtnVisibility && content.identifier === selectedContentId && !content.isAdded">
+      <div class="btn-addtoLibrary pt-5 pr-10" *ngIf="content.identifier === selectedContentId && !content.isAdded">
         <button class="sb-btn sb-btn-xs sb-btn-dark-green sb-left-icon-btn font-weight-bold" (click)="addToLibrary();" >
           <i class="plus square icon mr-4"></i>{{resourceService.frmelmnts.lbl.addToTextbook}}
         </button>
