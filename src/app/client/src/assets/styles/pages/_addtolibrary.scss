@@ -736,9 +736,14 @@
 
     &.active{
       background: var(--secondary-300) !important;
-     .textbookBtnLink{
-       visibility: visible;
-     }
+      .textbookBtnLink {
+        visibility: visible;
+        right:12px;
+        .sb-btn-link{
+          border-color: var(--secondary-0) !important;
+          background-color: var(--secondary-0) !important;
+        }
+      }
     }
     &.selected{
       background: var(--primary-100) !important;

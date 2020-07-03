@@ -1,8 +1,9 @@
-import { Component, ChangeDetectorRef, Input, OnChanges, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectorRef, Input, OnChanges, Output, EventEmitter, OnInit } from '@angular/core';
 import { catchError, map } from 'rxjs/operators';
 import { throwError } from 'rxjs';
+import * as _ from 'lodash-es';
 import { PlayerService, ActionService } from '@sunbird/core';
-import { ConfigService,ResourceService } from '@sunbird/shared';
+import { ConfigService, ResourceService } from '@sunbird/shared';
 import { CbseProgramService } from '../../services/cbse-program/cbse-program.service';
 
 @Component({
@@ -10,16 +11,21 @@ import { CbseProgramService } from '../../services/cbse-program/cbse-program.ser
   templateUrl: './mvc-player.component.html',
   styleUrls: ['./mvc-player.component.scss']
 })
-export class MvcPlayerComponent implements OnChanges {
+export class MvcPlayerComponent implements OnInit, OnChanges {
 
   @Input() contentId: string;
   @Output() moveEvent = new EventEmitter<any>();
+  instance: string;
   public playerConfig: any;
   public contentData: any = {};
   constructor(
     private playerService: PlayerService, private configService: ConfigService, private actionService: ActionService,
     private cbseService: CbseProgramService, private cd: ChangeDetectorRef, public resourceService: ResourceService
   ) { }
+
+  ngOnInit() {
+    this.instance = _.upperCase(this.resourceService.instance);
+  }
 
   ngOnChanges() {
     if (this.contentId) { this.getUploadedContentMeta(this.contentId); }

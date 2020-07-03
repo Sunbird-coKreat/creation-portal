@@ -14,7 +14,7 @@
         <label class="fsmall d-block">Select Content Type(s)
           <i class="pull-right question circle link icon sb-color-gray-200 fs-0-92" suiPopup popupDelay="500" popupText="Show Content Types"></i>
         </label>
-        <sui-multi-select class="selection sb-select-searchfilter"
+        <sui-multi-select class="selection sb-select-searchfilter d-block"
           formControlName="contentTypes" #contentTypes
           [options]="filters.contentTypes">
             <sui-select-option *ngFor="let contentType of contentTypes.filteredOptions" [value]="contentType"> </sui-select-option>
@@ -24,7 +24,7 @@
         <label class="fsmall d-block">Select Class(es)
           <i class="pull-right question circle link icon sb-color-gray-200 fs-0-92" suiPopup popupDelay="500" popupText="Sho Classes"></i>
         </label>
-        <sui-multi-select class="selection sb-select-searchfilter"
+        <sui-multi-select class="selection sb-select-searchfilter d-block"
           formControlName="gradeLevels" #gradeLevels
           [options]="filters.gradeLevels">
             <sui-select-option *ngFor="let gradeLevel of gradeLevels.filteredOptions" [value]="gradeLevel"> </sui-select-option>
@@ -34,7 +34,7 @@
         <label class="fsmall d-block">Select Subject(s)
           <i class="pull-right question circle link icon sb-color-gray-200 fs-0-92" suiPopup popupDelay="500" popupText="Show Subject"></i>
         </label>
-        <sui-multi-select class="selection sb-select-searchfilter"
+        <sui-multi-select class="selection sb-select-searchfilter d-block"
           formControlName="subjects" #subjects
           [options]="filters.subjects">
             <sui-select-option *ngFor="let subject of subjects.filteredOptions" [value]="subject"> </sui-select-option>
@@ -44,7 +44,7 @@
         <label class="fsmall d-block">{{resourceService.frmelmnts.lbl.selectChapter}}(s)
           <i class="pull-right question circle link icon sb-color-gray-200 fs-0-92" suiPopup popupDelay="500" popupText="Show Chapters"></i>
         </label>
-        <sui-multi-select class="selection sb-select-searchfilter"
+        <sui-multi-select class="selection sb-select-searchfilter d-block"
           formControlName="chapters" #chapters
           [options]="filters.chapters">
             <sui-select-option *ngFor="let chapter of chapters.filteredOptions" [value]="chapter"> </sui-select-option>

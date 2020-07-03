@@ -12,22 +12,14 @@ export class MvcListComponent implements OnInit {
   @Input() selectedContentId: any;
   @Output() contentChangeEvent = new EventEmitter<any>();
   @Output() moveEvent = new EventEmitter<any>();
-  public addToLibraryBtnVisibility: Boolean = false;
   public width: any;
   public height: any;
 
   constructor(public resourceService: ResourceService) { }
 
-  ngOnInit() {
-    this.addToLibraryBtnVisibility = true;
-  }
-
-  // showAddToLibraryButton() {
-  //   this.addToLibraryBtnVisibility = !this.addToLibraryBtnVisibility;
-  // }
+  ngOnInit() {}
 
   onContentChange(selectedContent: any) {
-    this.addToLibraryBtnVisibility = true;
     this.contentChangeEvent.emit({content: selectedContent});
   }
 

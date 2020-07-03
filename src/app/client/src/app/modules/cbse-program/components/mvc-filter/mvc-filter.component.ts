@@ -47,7 +47,7 @@ export class MvcFilterComponent implements OnInit, OnChanges, AfterViewInit {
       this.searchFilterLookup$.next();
     });
     this.searchFilterLookup$.pipe(
-      debounceTime(1000),
+      // debounceTime(500),
       // distinctUntilChanged(_.isEqual)
     ).subscribe(() => {
       this.filterChangeEvent.emit({

@@ -39,12 +39,12 @@
             <div class="content-metadeta__title  fxsmall mb-8">{{resourceService.frmelmnts.lbl.content.SUBJECT}}</div>
             <div class="content-metadeta__text  fsmall">{{contentData.subject}}</div>
           </div>
-          <div class="six wide column" *ngIf="contentData?.resourceType">
-            <div class="content-metadeta__title  fxsmall mb-8 text-uppercase">{{resourceService.frmelmnts.lbl.resourcetype}}</div>
-            <div class="content-metadeta__text  fsmall">{{contentData.resourceType}}</div>
+          <div class="six wide column" *ngIf="contentData?.contentType">
+            <div class="content-metadeta__title  fxsmall mb-8 text-uppercase">{{resourceService.frmelmnts.lbl.contentType}}</div>
+            <div class="content-metadeta__text  fsmall">{{contentData.contentType}}</div>
           </div>
           <div class="six wide column" *ngIf="contentData?.creator">
-            <div class="content-metadeta__title  fxsmall mb-8 text-uppercase">{{resourceService.frmelmnts.lbl.content.CreatedOnBy}}</div>
+            <div class="content-metadeta__title  fxsmall mb-8 text-uppercase" [innerHTML]="resourceService.frmelmnts.lbl.content.CreatedOnBy | interpolate:'{instance}': instance"></div>
             <div class="content-metadeta__text  fxsmall">{{contentData?.creator}}</div>
           </div>
           <div class="six wide column" *ngIf="contentData?.author">
