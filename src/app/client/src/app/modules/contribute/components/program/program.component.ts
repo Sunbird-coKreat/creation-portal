@@ -108,7 +108,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       url: `program/v1/read/${this.programId}`
     };
     return this.programsService.get(req).pipe(tap((programDetails: any) => {
-      programDetails.result.config = JSON.parse(programDetails.result.config);
       this.programDetails = programDetails.result;
       this.sessionContext.framework = _.get(this.programDetails, 'config.framework');
       if (this.sessionContext.framework) {
