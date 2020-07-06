@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { ConfigService, ToasterService } from '@sunbird/shared';
+import { ConfigService, ToasterService,ResourceService } from '@sunbird/shared';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
-import { ProgramTelemetryService } from '../../../program/services';
+import { ProgramTelemetryService} from '../../../program/services';
 import { UserService } from '@sunbird/core';
 
 @Component({
@@ -26,7 +26,7 @@ export class ResourceReorderComponent implements OnInit {
 
   constructor(private collectionHierarchyService: CollectionHierarchyService, public toasterService: ToasterService,
               public programTelemetryService: ProgramTelemetryService, public userService: UserService,
-              public configService: ConfigService) { }
+              public configService: ConfigService,public resourceService: ResourceService) { }
 
   ngOnInit() {
     // tslint:disable-next-line:max-line-length
@@ -45,7 +45,7 @@ export class ResourceReorderComponent implements OnInit {
           this.toasterService.success('The Selected Resource is Successfully Moved');
         } else {
           // tslint:disable-next-line:max-line-length
-          this.toasterService.InfoToasterCritical('<b>Content Added!</b>', `Content "${this.sessionContext.selectedMvcContentDetails.name}" added to textbook- ${this.collectionUnitsBreadcrumb[0]}`);
+          this.toasterService.InfoToasterCritical('<b>Resource added successfully!</b>', `Content "${this.sessionContext.selectedMvcContentDetails.name}" added to textbook- ${this.collectionUnitsBreadcrumb[0]}`);
         }
         this.moveEvent.emit({
           action: 'afterMove',
