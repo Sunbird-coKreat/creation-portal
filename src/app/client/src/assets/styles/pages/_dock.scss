@@ -229,7 +229,7 @@ i.icon.file.outline:before{
 
 .sb-toc-accor-1{
 .chapter-lists--item{
-  .item-name{
+  .item-name,label{
     border-left: 0.0625rem dashed var(--gray-300);
     margin-left: 1.1rem;
     padding-left: 1.6rem !important;

@@ -1,12 +1,10 @@
 <div class="sb-prominent-filter sb-bg-header-blue" [formGroup]="searchFilterForm">
   <div class="ui container py-20">
     <div class="d-flex flex-w-wrap">
-      <div class="fs-0-785 cursor-pointer pr-20 font-weight-bold" (click)="showfilter()">{{resourceService.frmelmnts.lbl.filters}} 
+      <div class="fs-0-785 cursor-pointer pr-20 font-weight-bold" (click)="showfilter()">
+        <i class="question circle link icon sb-color-gray-200 fs-0-92" suiPopup popupDelay="500" popupText="Show filters"></i>
+        {{resourceService.frmelmnts.lbl.filters}} 
         <i class="icon caret" [ngClass]="isFilterShow === true ? 'up' : 'down'"></i>
-      </div>
-      <div class="sb-checkbox sb-checkbox-primary" *ngIf="isFilterShow">
-        <input type="checkbox" id="showAddedContent" formControlName="showAddedContent" name="showAddedContent">
-        <label for="showAddedContent" class="fs-0-785">{{resourceService.frmelmnts.lbl.showAlreadyAddedContent}}</label>
       </div>
     </div>
     <div class="sb-prominent-filter-container pt-16" *ngIf="isFilterShow">
@@ -49,6 +47,10 @@
           [options]="filters.chapters">
             <sui-select-option *ngFor="let chapter of chapters.filteredOptions" [value]="chapter"> </sui-select-option>
         </sui-multi-select>
+      </div>
+      <div class="sb-checkbox sb-checkbox-primary flex-as-center" *ngIf="isFilterShow">
+        <input type="checkbox" id="showAddedContent" formControlName="showAddedContent" name="showAddedContent">
+        <label for="showAddedContent" class="fs-0-785">{{resourceService.frmelmnts.lbl.showAlreadyAddedContent}}</label>
       </div>
     </div>
   </div>

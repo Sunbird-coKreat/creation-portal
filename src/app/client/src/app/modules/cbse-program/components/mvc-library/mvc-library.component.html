@@ -23,7 +23,7 @@
   
   <app-mvc-filter [filters]='filterData' [activeFilterData]="activeFilterData" [filterOpenStatus]="isFilterOpen" (filterChangeEvent)="onFilterChange($event);" ></app-mvc-filter>
   
-  <div class="ui container" *ngIf="!skeletonLoader && contentList.length">
+  <div class="ui container min-h-500" *ngIf="!skeletonLoader && contentList.length">
     <!-- Player Section -->
     <div class="sb-g add-to-library__toc-player">
       <!-- Left Sidebar for cards -->
@@ -48,7 +48,9 @@
           <div class="sbaccordion__panel-content p-16 mb-8 sb-dock-skeleton-bx">
             <div class="sbchapter__item" *ngFor="let number of [].constructor(4)">
               <app-skeleton-loader [width]="'50%'" [height]="'12px'"  class="sb-dock-flex-auto"></app-skeleton-loader>
-              <app-skeleton-loader [width]="'40px'" [height]="'40px'" class="sb-dock-width-auto"></app-skeleton-loader>
+              <div>
+                <app-skeleton-loader [width]="'30%'" [height]="'12px'"  class="sb-dock-flex-auto"></app-skeleton-loader>
+              </div>
             </div>
           </div>
         </div>
