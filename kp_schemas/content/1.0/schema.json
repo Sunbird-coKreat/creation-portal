@@ -1031,7 +1031,7 @@
         "contentPolicyCheck" : {
             "type": "boolean"
         },
-        "textbookName" : {
+        "textbook_name" : {
             "type": "array"
         },
         "level1Name" : {
@@ -1052,7 +1052,7 @@
         "level3Concept" : {
             "type": "array"
         },
-        "sourceurl" : {
+        "sourceURL" : {
             "type": "array"
         },
         "label" : {
