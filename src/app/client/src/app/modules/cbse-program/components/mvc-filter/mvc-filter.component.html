@@ -2,15 +2,14 @@
   <div class="ui container py-20">
     <div class="d-flex flex-w-wrap">
       <div class="fs-0-785 cursor-pointer pr-20 font-weight-bold" (click)="showfilter()">
-        <i class="question circle link icon sb-color-gray-200 fs-0-92" suiPopup popupDelay="500" popupText="Show filters"></i>
+        <i class="question circle link icon sb-color-gray-200 fs-0-92" suiPopup popupDelay="500" popupText="Changing filter helps you find more resources"></i>
         {{resourceService.frmelmnts.lbl.filters}} 
         <i class="icon caret" [ngClass]="isFilterShow === true ? 'up' : 'down'"></i>
       </div>
     </div>
     <div class="sb-prominent-filter-container pt-16" *ngIf="isFilterShow">
       <div class="sb-prominent-filter-field">
-        <label class="fsmall d-block">Select Content Type(s)
-          <i class="pull-right question circle link icon sb-color-gray-200 fs-0-92" suiPopup popupDelay="500" popupText="Show Content Types"></i>
+        <label class="fsmall d-block">{{resourceService.frmelmnts.lbl.contentType}}
         </label>
         <sui-multi-select class="selection sb-select-searchfilter d-block"
           formControlName="contentTypes" #contentTypes
@@ -19,8 +18,7 @@
         </sui-multi-select>
       </div>
       <div class="sb-prominent-filter-field">
-        <label class="fsmall d-block">Select Class(es)
-          <i class="pull-right question circle link icon sb-color-gray-200 fs-0-92" suiPopup popupDelay="500" popupText="Sho Classes"></i>
+        <label class="fsmall d-block">{{resourceService.frmelmnts.lbl.class}}(es)
         </label>
         <sui-multi-select class="selection sb-select-searchfilter d-block"
           formControlName="gradeLevels" #gradeLevels
@@ -29,8 +27,7 @@
         </sui-multi-select>
       </div>
       <div class="sb-prominent-filter-field">
-        <label class="fsmall d-block">Select Subject(s)
-          <i class="pull-right question circle link icon sb-color-gray-200 fs-0-92" suiPopup popupDelay="500" popupText="Show Subject"></i>
+        <label class="fsmall d-block">{{resourceService.frmelmnts.lbl.subject}}(s)
         </label>
         <sui-multi-select class="selection sb-select-searchfilter d-block"
           formControlName="subjects" #subjects
@@ -39,18 +36,17 @@
         </sui-multi-select>
       </div>
       <div class="sb-prominent-filter-field ml-0 text-left">
-        <label class="fsmall d-block">{{resourceService.frmelmnts.lbl.selectChapter}}(s)
-          <i class="pull-right question circle link icon sb-color-gray-200 fs-0-92" suiPopup popupDelay="500" popupText="Show Chapters"></i>
+        <label class="fsmall d-block">Chapter(s)
         </label>
-        <sui-multi-select class="selection sb-select-searchfilter d-block"
+        <sui-multi-select class="selection sb-select-searchfilter d-block search-select"
           formControlName="chapters" #chapters
-          [options]="filters.chapters">
+          [options]="filters.chapters" [isSearchable]='true'>
             <sui-select-option *ngFor="let chapter of chapters.filteredOptions" [value]="chapter"> </sui-select-option>
         </sui-multi-select>
       </div>
-      <div class="sb-checkbox sb-checkbox-primary flex-as-center" *ngIf="isFilterShow">
+      <div class="sb-checkbox sb-checkbox-primary flex-as-center pl-10 pt-10" *ngIf="isFilterShow">
         <input type="checkbox" id="showAddedContent" formControlName="showAddedContent" name="showAddedContent">
-        <label for="showAddedContent" class="fs-0-92">{{resourceService.frmelmnts.lbl.showContentAddedToThisTextbook}}</label>
+        <label for="showAddedContent" class="fs-0-92">{{resourceService.frmelmnts.lbl.showResourcesAddedToTextbook}}</label>
       </div>
     </div>
   </div>

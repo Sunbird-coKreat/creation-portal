@@ -371,3 +371,26 @@ top: -4px;
     }
   }
 }
+.sb-content-breadcrumb{
+    .section{
+      &:last-child{
+      width: 25%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: inline-block !important;
+      white-space: nowrap;
+    }
+  }
+}
+.search-select{
+  input[type='text']{
+    margin: 0.5rem !important;
+  }
+}
+.sb-select-searchfilter{
+  &.ui.dropdown>.dropdown.icon{
+    font-size: 1rem !important;
+    margin: -21px !important;
+    color:  var(--gray);
+  }
+}
