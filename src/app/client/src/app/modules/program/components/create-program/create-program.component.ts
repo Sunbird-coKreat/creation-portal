@@ -433,7 +433,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
   fetchFrameWorkDetails() {
     if (_.get(this.userprofile.framework, 'id')) {
-      this.userFramework = _.get(this.userprofile.framework, 'id')[0];
+      this.userFramework = _.get(this.userprofile.framework, 'id')[0]; // Org defatult framewrok for channel
       this.frameworkService.getFrameworkCategories(_.get(this.userprofile.framework, 'id')[0])
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((data) => {
@@ -469,8 +469,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     const board = _.find(this.frameworkCategories, (element) => {
       return element.code === 'board';
     });
-
-    this.userBoard = board.terms[0].name;
+    if (!_.isEmpty(board.terms[0].name)) {
+      this.userBoard = board.terms[0].name;
+    }
 
     if (_.get(this.userprofile.framework, 'board')) {
       this.userBoard = this.userprofile.framework.board[0];
@@ -713,6 +714,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programData['enddate'] = this.programData.program_end_date;
       this.programData['config'] = this.programConfig;
       this.programData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : '';
+
+      if (_.isEmpty(this.programData.config.board)) {
+        delete this.programData.config.board;
+      }
 
       delete this.programData.defaultContributeOrgReview;
       delete this.programData.gradeLevel;
