@@ -1,8 +1,9 @@
 <div class="sbtoc-container pr-8 mt-20">
   <div class="title sb-color-primary font-weight-bold fs-1">
-    {{resourceService.frmelmnts.lbl.contentMatchesForLibrary}}
+    {{resourceService.frmelmnts.lbl.showingResourcesFromLibrary}}
   </div>
-  <small class="font-italic sb-color-gray-200 d-block pb-10">Explore {{contentList?.length}} content relavant to {{selectedUnitName}}</small>
+  <small class="font-italic sb-color-gray-200 d-block pb-10">{{resourceService.frmelmnts.lbl.selectAresourceToAddToTheTextbook}}</small>
+  <!-- <small class="font-italic sb-color-gray-200 d-block pb-10">Explore {{contentList?.length}} content relavant to {{selectedUnitName}}</small> -->
   <!-- Class separator -->
   <div class="sb-library-scroll" id="suggestions-tab">
     <div class="sbchapter__item mb-0" *ngFor="let content of contentList; let i = index"
@@ -28,6 +29,6 @@
       </div>
     </div>
   </div>
-  <h6 class="sb-color-gray-400 font-weight-normal mt-20">{{resourceService.frmelmnts.lbl.desktop.explore}}</h6>
+  <h6 class="sb-color-gray-400 font-weight-normal mt-20">{{resourceService.frmelmnts.lbl.changingFiltersMakeYouFindMoreContent}}</h6>
   <a class="sb-color-primary cursor-pointer font-weight-bold fs-0-785" (click)="changeFilter()">{{resourceService.frmelmnts.lbl.changeFilters}}</a>
 </div>

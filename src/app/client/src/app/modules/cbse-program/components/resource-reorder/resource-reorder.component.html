@@ -1,10 +1,10 @@
 <sui-modal [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
 [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="cancelMove()" #modal>
 <div class="sb-modal-header" [hidden]="sessionContext?.selectedMvcContentDetails">
-  Move to
+ {{resourceService.frmelmnts.lbl.moveTo}}
 </div>
 <div class="sb-modal-header" [hidden]="!sessionContext?.selectedMvcContentDetails">
-  Add Content to Chapter
+  {{resourceService.frmelmnts.lbl.whereDoYouWantToAddThisResource}}
 </div>
 <!-- Selection of Layout in modal -->
 <div class="sb-modal-content sb-chapterlist-modal scrolling content sb-dock-accordion py-20">
@@ -63,7 +63,7 @@
   </div>
   <div class="w-20 text-right">
     <button id="moveResource" class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary text-right': showMoveButton, 'sb-btn-disabled': !showMoveButton}" (click)="moveResource()">
-      Add Content
+     {{resourceService.frmelmnts.btn.addResource}}
     </button>
   </div>
 </div>
@@ -76,7 +76,7 @@
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
   >
-    Move
+    {{resourceService.frmelmnts.btn.move}}
   </button>
 </div>
 
