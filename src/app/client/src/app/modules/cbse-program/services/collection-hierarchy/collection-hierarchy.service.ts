@@ -8,6 +8,7 @@ import { TelemetryService } from '@sunbird/telemetry';
 import { forkJoin } from 'rxjs';
 import * as _ from 'lodash-es';
 import { isUndefined } from 'util';
+//import { envHelper } from '../../../../../../../helpers/environmentVariablesHelper.js';
 
 @Injectable()
 
@@ -377,25 +378,28 @@ export class CollectionHierarchyService {
   }
 
   getContentIdsForApprovedContents(contentIds) {
-    const option = {
-      url: 'https://dev.sunbirded.org/action/composite/v3/search',
-      data: {
-        request: {
-          filters: {
-            objectType: 'content',
-            origin: contentIds
-          },
-          exists: ["originData"],
-          fields: ["status", "origin"],
-          limit: 100
-        }
+    const url =  this.getBaseUrlForPreview() + '/action/composite/v3/search';
+    const data = {
+      request: {
+        filters: {
+          objectType: 'content',
+          origin: contentIds
+        },
+        exists: ["originData"],
+        fields: ["status", "origin"],
+        limit: 100
       }
     };
-    return this.actionService.newPost(option);
+    return this.httpClient.post(url, data);
   }
 
   getLivePreviewUrl(contentId) {
-    return `https://dev.sunbirded.org/resources/play/content/${contentId}`;
+    return this.getBaseUrlForPreview() + '/resources/play/content/'+ contentId;
+  }
+
+  getBaseUrlForPreview() {
+    // return envHelper.LEARNER_URL.replace('/api/', '');
+    return 'https://dev.sunbirded.org';
   }
 }
 

@@ -387,22 +387,22 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         }  else if (this.sourcingReviewStatus === 'Rejected') {
           this.resourceStatusText = this.resourceService.frmelmnts.lbl.contentIsRejected;
         }
-        if (_.get(this.sessionContext, 'acceptedContents', []).includes(this.contentMetaData.identifier)) {
-          this.collectionHierarchyService.getContentIdsForApprovedContents([this.contentMetaData.identifier]).subscribe(
-            (res) =>  {
-              const content = _.get(res, 'result.content[0]');
-              if (content) {
-                this.livePreviewUrl = this.collectionHierarchyService.getLivePreviewUrl(content.identifier);
-              } else {
-                this.livePreviewError = true;
-              }
-            },
-            (err) => {
-              console.log(err);
+      }
+      if (_.get(this.sessionContext, 'acceptedContents', []).includes(this.contentMetaData.identifier) && this.sourcingReviewStatus === 'Approved') {
+        this.collectionHierarchyService.getContentIdsForApprovedContents([this.contentMetaData.identifier]).subscribe(
+          (res) =>  {
+            const content = _.get(res, 'result.content[0]');
+            if (content) {
+              this.livePreviewUrl = this.collectionHierarchyService.getLivePreviewUrl(content.identifier);
+            } else {
               this.livePreviewError = true;
             }
-          );
-        }
+          },
+          (err) => {
+            console.log(err);
+            this.livePreviewError = true;
+          }
+        );
       }
 
       this.playerConfig = this.playerService.getConfig(contentDetails);

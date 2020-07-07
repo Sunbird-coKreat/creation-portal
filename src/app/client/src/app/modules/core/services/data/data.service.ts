@@ -131,24 +131,6 @@ export class DataService {
   }
 
   /**
-   * for making post api calls
-   * @param {RequestParam} requestParam interface
-  */
-  newPost(requestParam: RequestParam): Observable<ServerResponse> {
-    const httpOptions: HttpOptions = {
-      headers: requestParam.header ? this.getHeader(requestParam.header) : this.getHeader(),
-      params: requestParam.param
-    };
-    return this.http.post(requestParam.url, requestParam.data, httpOptions).pipe(
-      mergeMap((data: ServerResponse) => {
-        if (data.responseCode !== 'OK') {
-          return observableThrowError(data);
-        }
-        return observableOf(data);
-      }));
-  }
-
-  /**
    * for making patch api calls
    *
    * @param {RequestParam} requestParam interface

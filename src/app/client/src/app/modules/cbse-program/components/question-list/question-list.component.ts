@@ -236,23 +236,22 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       } else if (this.sourcingReviewStatus === 'Rejected') {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.contentIsRejected;
       }
-      if (_.get(this.sessionContext, 'acceptedContents', []).includes(this.resourceDetails.identifier)) {
-        this.collectionHierarchyService.getContentIdsForApprovedContents([this.resourceDetails.identifier]).subscribe(
-          (res) =>  {
-            const content = _.get(res, 'result.content[0]');
-            if (content) {
-              this.livePreviewUrl = this.collectionHierarchyService.getLivePreviewUrl(content.identifier);
-            } else {
-              this.livePreviewError = true;
-            }
-          },
-          (err) => {
-            console.log(err);
+    }
+    if (_.get(this.sessionContext, 'acceptedContents', []).includes(this.resourceDetails.identifier) && this.sourcingReviewStatus === 'Approved') {
+      this.collectionHierarchyService.getContentIdsForApprovedContents([this.resourceDetails.identifier]).subscribe(
+        (res) =>  {
+          const content = _.get(res, 'result.content[0]');
+          if (content) {
+            this.livePreviewUrl = this.collectionHierarchyService.getLivePreviewUrl(content.identifier);
+          } else {
             this.livePreviewError = true;
           }
-        );
-      }
-
+        },
+        (err) => {
+          console.log(err);
+          this.livePreviewError = true;
+        }
+      );
     }
   }
 
