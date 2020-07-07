@@ -27,6 +27,10 @@
               <div class="mt-8 practice-set__status">
                 <span class="sb-label sb-label-table sb-label-success-0" *ngIf="!sourcingOrgReviewer"
                 [ngClass]="{ 'sb-label-success-0': (resourceStatus === 'Live' && sourcingReviewStatus === 'Approved'), 'sb-label-warning-0': (resourceStatus === 'Draft'),  'sb-label-error-0': ((resourceStatus === 'Draft' && contentMetaData.prevStatus === 'Review') || (resourceStatus === 'Live' && sourcingReviewStatus === 'Rejected')) ,  'sb-label-gray-0': (resourceStatus === 'Review' || (resourceStatus === 'Live' && !sourcingReviewStatus)), 'text-inherit': (resourceStatus === 'Live' && ['Approved', 'Rejected'].includes(sourcingReviewStatus) && !canUploadContent()) }">{{ resourceStatusText }}</span>
+
+                <a id="viewContentOnDiksha" *ngIf="livePreviewUrl" class="sb-color-primary mr-8 pl-10 fs-0-92 font-weight-normal" href="{{livePreviewUrl}}" target="_blank">{{resourceService.frmelmnts.btn.viewContentOnDiksha}}</a>
+              <label *ngIf="livePreviewError" class="sb-color-error mr-8 pl-10 font-weight-normal">{{resourceService.frmelmnts.btn.viewContentOnDikshaError}}</label>
+
                 <span class="cursor-pointer fs-0-785 ml-8"
                   *ngIf="showSourcingOrgRejectComments() || showContributorOrgReviewComments()">
                   <i class="comment alternate outline icon sb-color-primary"></i>
@@ -52,7 +56,7 @@
                 <div class="warning-message" *ngIf="editTitle.length > titleCharacterLimit">{{resourceService.frmelmnts.lbl.contentNameLength }} {{titleCharacterLimit}}</div>
               </div>
             </div>
-            <div class='practical-sb-buttons d-flex flex-dc flex-ai-end'>
+            <div class='practical-sb-buttons'>
               <button id="saveContent" suiPopup popupText="Save" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSave && canUploadContent()" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="saveContent()"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('save-resourcemetadata', 'click', 'content-uploader')"
@@ -104,8 +108,7 @@
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{resourceService.frmelmnts.btn.reject}}</button>
-              <a id="viewContentOnDiksha" *ngIf="livePreviewUrl" class="sb-color-primary mr-8 pt-10 fs-0-92" href="{{livePreviewUrl}}" target="_blank">{{resourceService.frmelmnts.btn.viewContentOnDiksha}}</a>
-              <label *ngIf="livePreviewError" class="sb-color-error mr-8 pt-10">{{resourceService.frmelmnts.btn.viewContentOnDikshaError}}</label>
+              
             </div>
           </div>
         </div>
