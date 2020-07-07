@@ -13,11 +13,12 @@ import { CbseProgramService } from '../../services/cbse-program/cbse-program.ser
 })
 export class MvcPlayerComponent implements OnInit, OnChanges {
 
-  @Input() contentId: string;
+  @Input() contentDetails: any;
   @Output() moveEvent = new EventEmitter<any>();
   instance: string;
   public playerConfig: any;
   public contentData: any = {};
+  public contentId;
   constructor(
     private playerService: PlayerService, private configService: ConfigService, private actionService: ActionService,
     private cbseService: CbseProgramService, private cd: ChangeDetectorRef, public resourceService: ResourceService
@@ -28,7 +29,10 @@ export class MvcPlayerComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    if (this.contentId) { this.getUploadedContentMeta(this.contentId); }
+    if (this.contentDetails.identifier && this.contentId !== this.contentDetails.identifier) {
+       this.getUploadedContentMeta(this.contentDetails.identifier);
+       this.contentId = this.contentDetails.identifier;
+    }
   }
 
   getUploadedContentMeta(contentId: string) {
