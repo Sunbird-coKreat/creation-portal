@@ -6,7 +6,7 @@
       <i *ngIf="contentData?.me_averageRating" class="icon star"></i>
     </div>
   </div>
-  <div class="d-flex content-video__player__screenpart d-flex">
+  <div class="d-flex content-video__player__screenpart d-flex" *ngIf="!contentDetails.isAdded">
     <button type="button" class="sb-btn sb-btn-normal sb-btn-dark-green shine-effect my-10 pt-4rem fs-0-92 font-weight-bold"
       (click)="addToLibrary();"><i class="plus square icon"></i>{{resourceService.frmelmnts.lbl.addToTextbook}}</button>
   </div>
