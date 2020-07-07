@@ -13,7 +13,7 @@
         </label>
         <sui-multi-select class="selection sb-select-searchfilter d-block"
           formControlName="contentTypes" #contentTypes
-          [options]="filters.contentTypes">
+          [options]="filters.contentTypes" [isSearchable]='true'>
             <sui-select-option *ngFor="let contentType of contentTypes.filteredOptions" [value]="contentType"> </sui-select-option>
         </sui-multi-select>
       </div>
@@ -22,7 +22,7 @@
         </label>
         <sui-multi-select class="selection sb-select-searchfilter d-block"
           formControlName="gradeLevels" #gradeLevels
-          [options]="filters.gradeLevels">
+          [options]="filters.gradeLevels" [isSearchable]='true'>
             <sui-select-option *ngFor="let gradeLevel of gradeLevels.filteredOptions" [value]="gradeLevel"> </sui-select-option>
         </sui-multi-select>
       </div>
@@ -31,14 +31,14 @@
         </label>
         <sui-multi-select class="selection sb-select-searchfilter d-block"
           formControlName="subjects" #subjects
-          [options]="filters.subjects">
+          [options]="filters.subjects" [isSearchable]='true'>
             <sui-select-option *ngFor="let subject of subjects.filteredOptions" [value]="subject"> </sui-select-option>
         </sui-multi-select>
       </div>
       <div class="sb-prominent-filter-field ml-0 text-left">
         <label class="fsmall d-block">Chapter(s)
         </label>
-        <sui-multi-select class="selection sb-select-searchfilter d-block search-select"
+        <sui-multi-select class="selection sb-select-searchfilter d-block"
           formControlName="chapters" #chapters
           [options]="filters.chapters" [isSearchable]='true'>
             <sui-select-option *ngFor="let chapter of chapters.filteredOptions" [value]="chapter"> </sui-select-option>
