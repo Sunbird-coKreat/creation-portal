@@ -700,7 +700,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programData['config'] = this.programConfig;
       this.programData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : '';
 
-      if (_.isEmpty(this.programData.config.board)) {
+      if (_.isEmpty(this.programData.config.board) &&
+      _.findIndex(this.frameworkCategories, function(item) { return item.code === 'board'; }) < 0) {
         delete this.programData.config.board;
       }
 
