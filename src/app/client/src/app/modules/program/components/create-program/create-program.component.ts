@@ -432,29 +432,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   fetchFrameWorkDetails() {
-    if (_.get(this.userprofile.framework, 'id')) {
-      this.userFramework = _.get(this.userprofile.framework, 'id')[0]; // Org defatult framewrok for channel
-      this.frameworkService.getFrameworkCategories(_.get(this.userprofile.framework, 'id')[0])
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((data) => {
-          if (data && _.get(data, 'result.framework.categories')) {
-            this.frameworkCategories = _.get(data, 'result.framework.categories');
-          }
-          this.setFrameworkDataToProgram();
-        }, error => {
-          const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-          this.toasterService.warning(errorMes || 'Fetching framework details failed');
-        });
-    } else {
-      this.frameworkService.initialize();
-      this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
-        if (frameworkInfo && !frameworkInfo.err) {
-          this.userFramework = frameworkInfo.frameworkdata.defaultFramework.identifier;
-          this.frameworkCategories = frameworkInfo.frameworkdata.defaultFramework.categories;
-        }
-        this.setFrameworkDataToProgram();
-      });
-    }
+    this.frameworkService.initialize();
+    this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
+      if (frameworkInfo && !frameworkInfo.err) {
+        this.userFramework = frameworkInfo.frameworkdata.defaultFramework.identifier;
+        this.frameworkCategories = frameworkInfo.frameworkdata.defaultFramework.categories;
+      }
+      this.setFrameworkDataToProgram();
+    });
   }
 
   setFrameworkDataToProgram() {
