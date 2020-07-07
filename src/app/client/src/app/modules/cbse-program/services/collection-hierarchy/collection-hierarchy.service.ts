@@ -375,6 +375,28 @@ export class CollectionHierarchyService {
       return textbook;
     });
   }
+
+  getContentIdsForApprovedContents(contentIds) {
+    const option = {
+      url: 'https://dev.sunbirded.org/action/composite/v3/search',
+      data: {
+        request: {
+          filters: {
+            objectType: 'content',
+            origin: contentIds
+          },
+          exists: ["originData"],
+          fields: ["status", "origin"],
+          limit: 100
+        }
+      }
+    };
+    return this.actionService.newPost(option);
+  }
+
+  getLivePreviewUrl(contentId) {
+    return `https://dev.sunbirded.org/resources/play/content/${contentId}`;
+  }
 }
 
 

@@ -259,6 +259,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       .subscribe((response) => {
         this.collectionData = response.result.content;
         this.storedCollectionData = unitIdentifier ?  this.storedCollectionData : _.cloneDeep(this.collectionData);
+        this.sessionContext['acceptedContents'] = _.get(this.storedCollectionData, 'acceptedContents', []);
         const textBookMetaData = [];
         instance.countData['total'] = 0;
         instance.countData['review'] = 0;
@@ -281,7 +282,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         this.showLoader = false;
         this.showError = false;
         this.levelOneChapterList = _.uniqBy(this.levelOneChapterList, 'identifier');
-         resolve('Done');
+        resolve('Done');
       });
     });
   }

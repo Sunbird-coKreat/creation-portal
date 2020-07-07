@@ -104,6 +104,8 @@
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{resourceService.frmelmnts.btn.reject}}</button>
+              <a id="viewContentOnDiksha" suiPopup popupText="{{resourceService.frmelmnts.btn.viewContentOnDiksha}}" [popupPlacement]="'top'" *ngIf="livePreviewUrl" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" href="{{livePreviewUrl}}" target="_blank">{{resourceService.frmelmnts.btn.viewContentOnDiksha}}</a>
+              <button *ngIf="livePreviewError" class="sb-btn sb-btn-error sb-btn-normal mr-8">{{resourceService.frmelmnts.btn.viewContentOnDikshaError}}</button>
             </div>
           </div>
         </div>

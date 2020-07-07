@@ -17,7 +17,6 @@ import { ProgramStageService } from '../../../program/services';
 import { ProgramTelemetryService } from '../../../program/services';
 import * as moment from 'moment';
 
-
 @Component({
   selector: 'app-question-list',
   templateUrl: './question-list.component.html',
@@ -74,6 +73,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public sourcingOrgReviewer: boolean;
   public sourcingReviewStatus: string;
   public sourcingOrgReviewComments: string;
+  public livePreviewUrl = '';
+  public livePreviewError = false;
 
   constructor(
     private configService: ConfigService, private userService: UserService,
@@ -229,10 +230,29 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.resourceStatusText = this.resourceStatus;
     }
-    if (this.sourcingReviewStatus === 'Approved' && !this.canUploadContent()) {
-      this.resourceStatusText = this.resourceService.frmelmnts.lbl.contentIsApproved;
-    } else if (this.sourcingReviewStatus === 'Rejected' && !this.canUploadContent()) {
-      this.resourceStatusText = this.resourceService.frmelmnts.lbl.contentIsRejected;
+    if (!this.canUploadContent()) {
+      if (this.sourcingReviewStatus === 'Approved') {
+        this.resourceStatusText = this.resourceService.frmelmnts.lbl.contentIsApproved;
+      } else if (this.sourcingReviewStatus === 'Rejected') {
+        this.resourceStatusText = this.resourceService.frmelmnts.lbl.contentIsRejected;
+      }
+      if (_.get(this.sessionContext, 'acceptedContents', []).includes(this.resourceDetails.identifier)) {
+        this.collectionHierarchyService.getContentIdsForApprovedContents([this.resourceDetails.identifier]).subscribe(
+          (res) =>  {
+            const content = _.get(res, 'result.content[0]');
+            if (content) {
+              this.livePreviewUrl = this.collectionHierarchyService.getLivePreviewUrl(content.identifier);
+            } else {
+              this.livePreviewError = true;
+            }
+          },
+          (err) => {
+            console.log(err);
+            this.livePreviewError = true;
+          }
+        );
+      }
+
     }
   }
 

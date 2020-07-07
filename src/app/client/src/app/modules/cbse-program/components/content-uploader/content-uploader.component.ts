@@ -78,6 +78,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public contentType: string;
   public rejectBySourcingOrg: boolean;
   public sourcingOrgReviewComments: string;
+  public livePreviewUrl = '';
+  public livePreviewError = false;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -379,11 +381,30 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       } else {
         this.resourceStatusText = this.resourceStatus;
       }
-      if (this.sourcingReviewStatus === 'Approved' && !this.canUploadContent()) {
-        this.resourceStatusText = this.resourceService.frmelmnts.lbl.contentIsApproved;
-      }  else if (this.sourcingReviewStatus === 'Rejected' && !this.canUploadContent()) {
-        this.resourceStatusText = this.resourceService.frmelmnts.lbl.contentIsRejected;
+      if (!this.canUploadContent()) {
+        if (this.sourcingReviewStatus === 'Approved') {
+          this.resourceStatusText = this.resourceService.frmelmnts.lbl.contentIsApproved;
+        }  else if (this.sourcingReviewStatus === 'Rejected') {
+          this.resourceStatusText = this.resourceService.frmelmnts.lbl.contentIsRejected;
+        }
+        if (_.get(this.sessionContext, 'acceptedContents', []).includes(this.contentMetaData.identifier)) {
+          this.collectionHierarchyService.getContentIdsForApprovedContents([this.contentMetaData.identifier]).subscribe(
+            (res) =>  {
+              const content = _.get(res, 'result.content[0]');
+              if (content) {
+                this.livePreviewUrl = this.collectionHierarchyService.getLivePreviewUrl(content.identifier);
+              } else {
+                this.livePreviewError = true;
+              }
+            },
+            (err) => {
+              console.log(err);
+              this.livePreviewError = true;
+            }
+          );
+        }
       }
+
       this.playerConfig = this.playerService.getConfig(contentDetails);
       this.playerConfig.context.pdata.pid = `${this.configService.appConfig.TELEMETRY.PID}`;
       this.showPreview = this.contentMetaData.artifactUrl ? true : false;
