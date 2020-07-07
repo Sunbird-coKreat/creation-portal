@@ -130,8 +130,6 @@
                   <div>
                     {{ program?.contributionDate | date:'LLLL d, yyyy' }}
                     <em class="d-block">{{ program?.contributionDate | daysToGo }}</em>
-
-                    <span class="sb-label sb-label-table sb-label-primary-100" *ngIf="activeMyProgramsMenu && !iscontributeOrgAdmin && program?.status !== 'Unlisted'">{{ getProgramNominationStatus(program) }}</span>
                   </div>
                 </td>
                 <td *ngIf="activeMyProgramsMenu && iscontributeOrgAdmin" class="text-center">
@@ -173,7 +171,7 @@
                     </div>    -->
                   </td>
                   <td *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')" class="fs-1-5 sb-dock-icon-tooltip" >
-                    <i class="icon edit sb-color-primary mx-10 cursor-pointer ui" data-tooltip="Edit" (click)="editOnClick(program)"></i>
+                    <i class="icon edit sb-color-primary mx-10 cursor-pointer ui" data-tooltip="Modify" (click)="editOnClick(program)"></i>
                     <i class="icon trash sb-color-primary cursor-pointer ui" data-tooltip="Delete" (click)="setDelete(program, i)"></i>
                   </td>
               </tr>
