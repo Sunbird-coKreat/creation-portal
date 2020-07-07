@@ -34,7 +34,7 @@
 
       <!-- Right Player Sections -->
       <section class="sb-g-col-xs-12 sb-g-col-md-8 sb-g-col-lg-8 relative position ml-24">
-        <app-mvc-player [contentId]="selectedContentDetails?.identifier" (moveEvent)="showResourceTemplate($event)" ></app-mvc-player>
+        <app-mvc-player [contentDetails]="selectedContentDetails" (moveEvent)="showResourceTemplate($event)" ></app-mvc-player>
       </section>
     </div>
   </div>

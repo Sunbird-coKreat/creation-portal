@@ -27,6 +27,7 @@ export class MvcLibraryComponent implements OnInit {
   public selectedUnitName: string;
   public collectionData: any;
   public collectionHierarchy = [];
+  public childNodes: any;
   public programId: string;
   public programDetails: any;
   public resourceReorderBreadcrumb: any = [];
@@ -54,6 +55,7 @@ export class MvcLibraryComponent implements OnInit {
     forkJoin(this.getCollectionHierarchy(this.collectionId), this.getProgramDetails()).subscribe(
       ([collection, programDetails]) => {
         this.collectionData = collection;
+        this.childNodes = _.get(this.collectionData, 'childNodes');
         this.resourceReorderBreadcrumb.push(this.collectionData.name);
         this.collectionHierarchy = this.getUnitWithChildren(this.collectionData, this.collectionId);
         this.filterData['mediums'] = this.collectionData.medium;
@@ -151,8 +153,21 @@ export class MvcLibraryComponent implements OnInit {
     map((data: any) => data.result.content))
     .subscribe((result: any) => {
       this.contentList = result;
-      if (!_.isEmpty(this.contentList)) { this.selectedContentDetails = _.pick(this.contentList[0], ['name', 'identifier']); }
+      this.filterContentList();
     });
+  }
+
+  filterContentList(selectedContentId?) {
+    if (_.isEmpty(this.contentList)) { return; }
+    _.forEach(this.contentList, (value, key) => {
+        value.isAdded = _.includes(this.childNodes, value.identifier);
+    });
+    if (selectedContentId) {
+      this.selectedContentDetails = _.pick(_.find(this.contentList, {'identifier': selectedContentId}), ['name', 'identifier', 'isAdded']);
+      console.log(this.selectedContentDetails);
+    } else {
+      this.selectedContentDetails = _.pick(this.contentList[0], ['name', 'identifier', 'isAdded']);
+    }
   }
 
   plusMinusGradeLevel(gradeLevel: Array<any>) {
@@ -177,7 +192,7 @@ export class MvcLibraryComponent implements OnInit {
   }
 
   onContentChange(event: any) {
-    this.selectedContentDetails = _.pick(event.content, ['name', 'identifier']);
+    this.selectedContentDetails = _.pick(event.content, ['name', 'identifier', 'isAdded']);
   }
 
   onFilterChange(event: any) {
@@ -187,6 +202,10 @@ export class MvcLibraryComponent implements OnInit {
     } else if (event.action === 'filterStatusChange') {
       this.isFilterOpen = event.filterStatus;
     } else {}
+  }
+
+  isResourceAdded(identifier): Boolean {
+    return _.includes(this.childNodes, identifier);
   }
 
   showResourceTemplate(event) {
@@ -201,6 +220,8 @@ export class MvcLibraryComponent implements OnInit {
         break;
       case 'afterMove':
         this.showLargeModal = false;
+        this.childNodes.push(event.contentId);
+        this.filterContentList(event.contentId);
         break;
       case 'cancelMove':
         this.showLargeModal = false;

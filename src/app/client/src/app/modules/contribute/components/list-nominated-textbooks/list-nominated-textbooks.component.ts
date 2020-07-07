@@ -446,9 +446,9 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
         }
 
         this.orgDetails.name = _.get(this.userService, 'userProfile.userRegData.Org.name');
-        this.orgDetails.id =  _.get(this.userService, 'userProfile.userRegData.Org.osid');
+        this.orgDetails.id = _.get(this.userService, 'userProfile.userRegData.Org.osid');
 
-        if (this.isSourcingOrgAdmin()) {
+        /*if (this.isSourcingOrgAdmin()) {
           const dikshaOrgId = _.get(this.userService, 'userProfile.organisations[0].organisationId');
           const roles= ['CONTENT_REVIEWER', 'CONTENT_CREATOR'];
 
@@ -456,7 +456,9 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
           this.programsService.getSourcingOrgUserList(dikshaOrgId, roles, this.pageLimit).then((orgUsersDetails) => {
             this.setOrgUsers(orgUsersDetails);
           });
-        } else if (this.isUserOrgAdmin()) {
+        } else */
+        
+        if (this.isUserOrgAdmin()) {
           this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
             this.setOrgUsers(orgUsers);
           });
@@ -490,10 +492,6 @@ export class ListNominatedTextbooksComponent implements OnInit, AfterViewInit, O
     });
   }
   
-  isSourcingOrgAdmin() {
-    return this.userService.userProfile.userRoles.includes('ORG_ADMIN') && this.userService.userProfile.userRegData.User_Org.roles.includes('admin');
-  }
-
   setOrgUsers(orgUsers) {
     if (_.isEmpty(orgUsers)) {
       this.showUsersLoader = false;
