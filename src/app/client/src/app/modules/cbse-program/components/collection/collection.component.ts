@@ -506,7 +506,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     };
-    if (this.userService.userRegistryData && this.userService.userRegistryData && this.userProfile.userRegData && this.userProfile.userRegData.User_Org) {
+    if (this.userService.userRegistryData && this.userProfile.userRegData && this.userProfile.userRegData.User_Org) {
       req.data.request.filters['organisation_id'] = this.userProfile.userRegData.User_Org.orgId;
     } else {
       req.data.request.filters['user_id'] = this.userService.userProfile.userId;

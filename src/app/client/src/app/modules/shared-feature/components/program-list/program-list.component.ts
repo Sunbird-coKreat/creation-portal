@@ -551,16 +551,7 @@ export class ProgramListComponent implements OnInit {
 
   viewDetailsBtnClicked(program) {
     if (this.isContributor) {
-      if (this.activeMyProgramsMenu) {
-        if (program.nomination_status === 'Initiated') {
-          return this.router.navigateByUrl('/contribute/program/' + program.program_id);
-        }
-        return this.router.navigateByUrl('/contribute/nominatedtextbooks/' + program.program_id);
-      }
-
-      if (this.activeAllProgramsMenu) {
-        return this.router.navigateByUrl('/contribute/program/' + program.program_id);
-      }
+      return this.router.navigateByUrl('/contribute/program/' + program.program_id);
     } else {
       return this.router.navigateByUrl('/sourcing/nominations/' + program.program_id);
     }
