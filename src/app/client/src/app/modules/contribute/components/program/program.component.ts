@@ -9,7 +9,7 @@ import { CollectionHierarchyService } from '../../../cbse-program/services/colle
 import { ChapterListComponent } from '../../../cbse-program/components/chapter-list/chapter-list.component';
 import { ICollectionComponentInput, IDashboardComponentInput, IPagination, IChapterListComponentInput} from '../../../cbse-program/interfaces';
 import { InitialState, ISessionContext, IUserParticipantDetails } from '../../interfaces';
-import { ProgramStageService } from '../../services/';
+import { ProgramStageService } from '../../../program/services/program-stage/program-stage.service';
 import { ProgramComponentsService } from '../../services/program-components/program-components.service';
 import { IImpressionEventInput, IInteractEventEdata } from '@sunbird/telemetry';
 import { isUndefined, isNullOrUndefined } from 'util';
@@ -108,8 +108,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.state.stages = state.stages;
       this.changeView();
     });
-    this.programStageService.addStage('program');
-    this.currentStage = 'program';
+    this.programStageService.addStage('programComponent');
+    this.currentStage = 'programComponent';
     this.telemetryInteractCdata = [{
       id: this.activatedRoute.snapshot.params.programId,
       type: 'Program'

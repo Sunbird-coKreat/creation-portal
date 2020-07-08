@@ -1,6 +1,6 @@
 <!-- <app-program-header *ngIf="!showLoader" [headerComponentInput]="headerComponentInput" (emitTabChange)="tabChangeHandler($event)" [appTelemetryImpression]="telemetryImpression"></app-program-header> -->
 
-<div *ngIf="currentStage === 'program' && programDetails">
+<div *ngIf="currentStage === 'programComponent' && programDetails">
   <ng-container *ngIf="!showLoader && (!nominated || nominationDetails?.status === 'Initiated'); else nominatedBlock">
     <ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>
   </ng-container>
@@ -374,7 +374,7 @@
 	</div>
   </ng-template>
 </div>
-<ng-container *ngIf="currentStage !== 'program'">
+<ng-container *ngIf="currentStage !== 'programComponent'">
 	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>
 </ng-container>
 

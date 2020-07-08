@@ -8,6 +8,7 @@ import * as moment from 'moment';
 import { DatePipe } from '@angular/common';
 import { IInteractEventEdata } from '@sunbird/telemetry';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+
 @Component({
   selector: 'app-program-list',
   templateUrl: './program-list.component.html',
