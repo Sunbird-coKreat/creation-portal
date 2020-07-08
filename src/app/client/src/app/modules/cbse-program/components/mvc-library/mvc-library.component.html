@@ -61,9 +61,9 @@
   <!-- not found -->
   <div class="ui container" *ngIf="!skeletonLoader && !contentList.length">
     <div class="add-to-library__no-result">
-      <h5 class="font-weight-bold">{{resourceService.frmelmnts.lbl.noContentFound}}</h5>
+      <h5 class="font-weight-bold">{{resourceService.frmelmnts.lbl.sorryThereIsNoMatchingResources}}</h5>
       <img alt="No Content available" class="mt-16" src="assets/images/offline-desktop.svg">
-      <h6 class="sb-color-gray-300 font-weight-normal mt-8">{{resourceService.frmelmnts.lbl.changeFiltersToExploreContent}}</h6>
+      <h6 class="sb-color-gray-300 font-weight-normal mt-8">{{resourceService.frmelmnts.lbl.changingFilterHelpsYouFindMoreResources}}</h6>
       <button class="sb-btn sb-btn-secondary sb-btn-normal mt-16" (click)="openFilter();" >{{resourceService.frmelmnts.lbl.changeFilters}}</button>
     </div>
   </div>

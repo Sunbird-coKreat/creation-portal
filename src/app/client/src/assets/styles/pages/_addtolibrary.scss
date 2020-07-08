@@ -1006,13 +1006,8 @@
   &:nth-child(3n){
     padding: 0;
   }
-  &:last-child{
+  &:nth-child(4n){
     width: 65% !important;
-  }
-  .dropdown.icon{
-    font-size: 1rem !important;
-    padding: 0.45rem 0.3rem !important;
-    color: #aba9a9 !important;
   }
 }
 .sb-prominent-filter {

@@ -6,19 +6,19 @@
   <!-- <small class="font-italic sb-color-gray-200 d-block pb-10">Explore {{contentList?.length}} content relavant to {{selectedUnitName}}</small> -->
   <!-- Class separator -->
   <div class="sb-library-scroll" id="suggestions-tab">
-    <div class="sbchapter__item mb-0" *ngFor="let content of contentList; let i = index"
+    <div class="sbchapter__item mb-0 d-flex flex-dc" *ngFor="let content of contentList; let i = index"
       [ngClass]="{'selected':content.identifier === selectedContentId,'active':content.isAdded}"
       (click)="onContentChange(content);">
       <!-- <div class="sbchapter__img"><img src="./assets/images/book.png" /></div> -->
-      <h4 class="ml-8">
-        <div class="sbcard__title mb-0 font-weight-bold" popupDelay="1000" suiPopup
+      <h4 class="ml-8 w-80">
+        <div class="sbcard__title mb-0 font-weight-bold ellipsis w-90" popupDelay="1000" suiPopup
         popupText="{{content.name}}">{{content.name}}</div>
         <div class="sbchapter__item__title text-left sb__ellipsis sb__ellipsis--two mr-8 sb-color-black">
           By {{content.board}}
         </div>
       </h4>
       <div class="btn-addtoLibrary pt-5 pr-10" *ngIf="content.identifier === selectedContentId && !content.isAdded">
-        <button class="sb-btn sb-btn-xs sb-btn-dark-green sb-left-icon-btn font-weight-bold" (click)="addToLibrary();" >
+        <button class="sb-btn sb-btn-xs sb-btn-dark-green sb-left-icon-btn font-weight-bold text-inherit" (click)="addToLibrary();" >
           <i class="plus square icon mr-4"></i>{{resourceService.frmelmnts.lbl.addToTextbook}}
         </button>
       </div>
@@ -30,5 +30,5 @@
     </div>
   </div>
   <h6 class="sb-color-gray-400 font-weight-normal mt-20">{{resourceService.frmelmnts.lbl.changingFiltersMakeYouFindMoreContent}}</h6>
-  <a class="sb-color-primary cursor-pointer font-weight-bold fs-0-785" (click)="changeFilter()">{{resourceService.frmelmnts.lbl.changeFilters}}</a>
+  <a class="sb-color-primary cursor-pointer font-weight-bold fs-0-785 text-inherit" (click)="changeFilter()">{{resourceService.frmelmnts.lbl.changeFilters}}</a>
 </div>
