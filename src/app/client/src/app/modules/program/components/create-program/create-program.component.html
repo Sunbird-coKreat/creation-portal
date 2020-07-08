@@ -492,8 +492,8 @@
 												</small>
 											</div>
 											<div class="four wide column px-0 mt-5">
-												<div class="sb-color-gray-400 fxsmall text-lowercase">5 out of 10 chapters selected</div>
-												<div class="sb-color-primary fxsmall cursor-pointer"  (click)="selectChapter=true;">
+												<div class="sb-color-gray-400 fxsmall text-lowercase">{{tempCollection.selected}} out of {{tempCollection.total}} chapters selected</div>
+												<div class="sb-color-primary fxsmall cursor-pointer" (click)="chooseChapters(tempCollection);">
 													<i class="edit outline icon"></i>{{resource.frmelmnts.lbl.selectChapter}}s
 												</div>
 											</div>
@@ -510,7 +510,6 @@
 										</div>
 									</div>
 								</div>
-
 							</div>
 						</div>
 					</div>
@@ -617,76 +616,45 @@
 </sui-modal>
 <sui-modal *ngIf="selectChapter" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
 class="sb-modal" appBodyScroll (dismissed)="selectChapter = false" #modal>
-	<div class="sb-modal-header">
-	{{resource.frmelmnts.lbl.selectChapter}}s
-	</div>
-	<div class="sb-modal-content">
-	<div class="pb-20 pt-5">A Pact with the Sun</div>
-		<div class="sb-table-responsive">
-			<table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
-				<thead class="sb-table-header sb-table-thead-gray">
-				<tr>
-					<th class="w-70 cursor-pointer sb-sorting">{{resource.frmelmnts.lbl.title}}
-						<i class="fa fa-sort" aria-hidden="true"></i>
-					</th>
-					<th class="w-30 cursor-pointer sb-sorting">{{resource.frmelmnts.lbl.existingContent}}
-						<i class="fa fa-sort" aria-hidden="true"></i>
-					</th>
-				</tr>
-				</thead>
-				<tbody class="sb-table-body">
-				<tr>
-					<td>
-						<div class="sb-checkbox sb-checkbox-primary">
-						<input type="checkbox" id="" name="">
-						<label for="" class="sb__ellipsis sb__ellipsis--three">Flemingos</label>
-						</div>
-					</td>
-					<td suiPopup popupText="1 Lesson Plan 2 Explanation content">2</td>
-				</tr>
-				<tr>
-					<td>
-						<div class="sb-checkbox sb-checkbox-primary">
-						<input type="checkbox" id="" name="">
-						<label for="" class="sb__ellipsis sb__ellipsis--three">Carnivorous Animal</label>
-						</div>
-					</td>
-					<td suiPopup popupText="1 Lesson Plan 2 Explanation content">2</td>
-				</tr>
-				<tr>
-					<td>
-						<div class="sb-checkbox sb-checkbox-primary">
-						<input type="checkbox" id="" name="">
-						<label for="" class="sb__ellipsis sb__ellipsis--three">The story of a farmer</label>
-						</div>
-					</td>
-					<td suiPopup popupText="1 Lesson Plan 2 Explanation content">1</td>
-				</tr>
-				<tr>
-					<td>
-						<div class="sb-checkbox sb-checkbox-primary">
-						<input type="checkbox" id="" name="">
-						<label for=""class="sb__ellipsis sb__ellipsis--three">Once upon a time in India</label>
-						</div>
-					</td>
-					<td suiPopup popupText="1 Lesson Plan 2 Explanation content">2</td>
-				</tr>
-				<tr>
-					<td>
-						<div class="sb-checkbox sb-checkbox-primary">
-						<input type="checkbox" id="" name="">
-						<label for="" class="sb__ellipsis sb__ellipsis--three">Story of a Farmer</label>
-						</div>
-					</td>
-					<td suiPopup popupText="1 Lesson Plan 2 Explanation content">5</td>
-				</tr>
-				</tbody>
-			</table>
+	<form [formGroup]="chaptersSelectionForm" (ngSubmit)="chaptersSelectionDone(choosedTextBook.identifier)">
+		<div class="sb-modal-header">
+		{{resource.frmelmnts.lbl.selectChapter}}
 		</div>
-	</div>
-	<div class="sb-modal-actions">
-	<button class="sb-btn sb-btn-normal sb-btn-primary">
-		{{resource.frmelmnts.lbl.done}}
-	</button>
-	</div>
+		<div class="sb-modal-content">
+		<div class="pb-20 pt-5">{{choosedTextBook.name}}</div>
+			<div class="sb-table-responsive">
+				<table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
+					<thead class="sb-table-header sb-table-thead-gray">
+					<tr>
+						<th class="w-70 cursor-pointer sb-sorting">{{resource.frmelmnts.lbl.title}}
+							<i class="fa fa-sort" aria-hidden="true"></i>
+						</th>
+						<th class="w-30 cursor-pointer sb-sorting">{{resource.frmelmnts.lbl.existingContent}}
+							<i class="fa fa-sort" aria-hidden="true"></i>
+						</th>
+					</tr>
+					</thead>
+					<tbody class="sb-table-body">
+					<tr formArrayName="chapters" *ngFor="let chapter of chaptersControls; let i = index">
+						<td>
+							<div class="sb-checkbox sb-checkbox-primary">
+							<input [name]="chapters" type="checkbox" id="{{choosedTextBook.children[i].identifier}}"
+								value="{{choosedTextBook.children[i].identifier}}" [formControlName]="i"
+								(change)="onChapterCheck(choosedTextBook.identifier, choosedTextBook.children[i].identifier , $event.target.checked)"
+								[(ngModel)] ="choosedTextBook.children[i].checked">
+							<label for="" class="sb__ellipsis sb__ellipsis--three">{{choosedTextBook.children[i].name}}</label>
+							</div>
+						</td>
+						<td suiPopup popupText="1 Lesson Plan 2 Explanation content">2</td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="sb-modal-actions">
+		<button class="sb-btn sb-btn-normal sb-btn-primary">
+			{{resource.frmelmnts.lbl.done}}
+		</button>
+		</div>
+	</form>
 </sui-modal>

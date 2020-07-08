@@ -3,9 +3,9 @@ import {
   ServerResponse, NavigationHelperService
 } from '@sunbird/shared';
 import { FineUploader } from 'fine-uploader';
-import { ProgramsService, DataService, FrameworkService } from '@sunbird/core';
+import { ProgramsService, DataService, FrameworkService, ActionService } from '@sunbird/core';
 import { Subscription, Subject, throwError, Observable } from 'rxjs';
-import { tap, first, map, takeUntil, catchError } from 'rxjs/operators';
+import { tap, first, map, takeUntil, catchError, count } from 'rxjs/operators';
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges } from '@angular/core';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -20,6 +20,8 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 import * as moment from 'moment';
 import * as alphaNumSort from 'alphanum-sort';
 import {ProgramTelemetryService} from '../../services';
+import { copyStyles } from '@angular/animations/browser/src/util';
+import { forEach } from '@angular/router/src/utils/collection';
 
 @Component({
   selector: 'app-create-program',
@@ -34,6 +36,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public guidLinefileName: String;
   public isFormValueSet = false;
   public editMode = false;
+  public choosedTextBook: any;
   selectChapter = false;
   /**
    * Program creation form name
@@ -62,6 +65,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   */
   collections;
   tempCollections = [];
+  textbooks: any = {};
+  textbooksChapters = [];
+
+  /**
+   * Units selection form
+   */
+  chaptersSelectionForm : FormGroup;
+
   /**
   * List of textbooks for the program by BMGC
   */
@@ -126,7 +137,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     private navigationHelperService: NavigationHelperService,
     private configService: ConfigService,
     private deviceDetectorService: DeviceDetectorService,
-    public programTelemetryService: ProgramTelemetryService) {
+    public programTelemetryService: ProgramTelemetryService,
+    public actionService: ActionService) {
   }
 
   ngOnInit() {
@@ -323,7 +335,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   generateAssetCreateRequest(fileName, fileType, mediaType) {
-    console.log(this.userprofile);
+    // console.log(this.userprofile);
     return {
       content: {
         name: fileName,
@@ -841,6 +853,24 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     );
   }
 
+  onChapterCheck(identifier, childIdentifier, isChecked: boolean) {
+    let tindex = this.textbooksChapters.findIndex(textbook => textbook.id === identifier);
+    const textbook = this.textbooksChapters[tindex];
+    let cindex = textbook.children.findIndex(chapter => chapter.id === childIdentifier);
+
+    if (isChecked) {
+      if (cindex === -1) {
+        this.textbooksChapters[tindex].children.push({
+          "id": childIdentifier,
+          "allowed_content_types": []
+        });
+      }
+    }
+    else if (cindex != -1) {
+      this.textbooksChapters[tindex].children.splice(cindex, 1);
+    }
+  }
+
   onCollectionCheck(collection, isChecked: boolean) {
     const pcollectionsFormArray = <FormArray>this.collectionListForm.controls.pcollections;
     const collectionId = collection.identifier;
@@ -848,12 +878,20 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     if (isChecked) {
       pcollectionsFormArray.push(new FormControl(collectionId));
       this.tempCollections.push(collection);
+
+      if (!this.textbooks[collectionId]) {
+          this.getCollectionHierarchy(collectionId, null);
+      }
     } else {
       const index = pcollectionsFormArray.controls.findIndex(x => x.value === collectionId);
       pcollectionsFormArray.removeAt(index);
 
       const cindex = this.tempCollections.findIndex(x => x.identifier === collectionId);
       this.tempCollections.splice(cindex, 1);
+
+      const tindex = this.textbooksChapters.findIndex(textbook => textbook.id === collectionId);
+      delete this.textbooksChapters[tindex];
+      delete this.textbooks[collectionId];
     }
   }
 
@@ -867,7 +905,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     const requestData = {
       'program_id': this.programId,
-      'collections': this.collectionListForm.value.pcollections,
+      // 'collections': this.collectionListForm.value.pcollections,
+      'collections' : this.textbooksChapters,
       'allowed_content_types': this.programData.content_types,
       'channel': 'sunbird'
     };
@@ -997,5 +1036,123 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       default:
         break;
     }
+  }
+
+  public chooseChapters(collection) {
+    if (!this.textbooks[collection.identifier]) {
+      this.getCollectionHierarchy(collection.identifier, null);
+    }
+    else {
+      this.choosedTextBook = this.textbooks[collection.identifier];
+      this.initChaptersSelectionForm(this.choosedTextBook);
+    }
+
+    this.selectChapter=true;
+  }
+
+  initChaptersSelectionForm(chapters) {
+    this.chaptersSelectionForm = this.sbFormBuilder.group({
+      chapters: new FormArray([])
+    });
+
+    chapters.children.forEach((o, i) => {
+      console.log(o);
+      const control = new FormControl(o.identifier);
+      this.chaptersControls.push(control);
+    });
+  }
+
+  public getCollectionHierarchy(identifier: string, unitIdentifier: string) {
+    let hierarchyUrl = 'content/v3/hierarchy/' + identifier;
+
+    if (unitIdentifier) {
+      hierarchyUrl = hierarchyUrl + '/' + unitIdentifier;
+    }
+    const req = {
+      url: hierarchyUrl,
+      param: { 'mode': 'edit' }
+    };
+     return new Promise((resolve) => {
+    this.actionService.get(req).pipe(catchError(err => {
+      const errInfo = { errorMsg: 'Fetching TextBook details failed' }; this.showLoader = false;
+      return throwError(this.cbseService.apiErrorHandling(err, errInfo));
+    }))
+      .subscribe((response) => {
+        let content = response.result.content;
+
+        // @Todo Removed this after actula DATA
+        // ###################################
+        content.identifier = identifier;
+
+        this.textbooks[identifier] = {};
+
+        const chapter = {
+          "id" : identifier,
+          "children": [],
+          "allowed_content_types" : []
+        };
+
+        _.forEach(content.children, (item) => {
+          item['checked'] = true;
+
+          chapter.children.push({
+            "id" : item.identifier,
+            "allowed_content_types" : []
+          });
+        });
+
+        this.textbooksChapters.push(chapter);
+
+        this.textbooks[identifier] = content;
+        this.choosedTextBook = content;
+        this.initChaptersSelectionForm(this.choosedTextBook);
+
+        const cindex = this.tempCollections.findIndex(x => x.identifier === identifier);
+        this.tempCollections[cindex]["selected"] = content.children.length;
+        this.tempCollections[cindex]["total"]    = content.children.length;
+
+        console.log("textbooksChapters", this.textbooksChapters);
+        // this.storedchoosedTextBook = unitIdentifier ?  this.storedchoosedTextBook : _.cloneDeep(this.choosedTextBook);
+        // const textBookMetaData = [];
+        // instance.countData['total'] = 0;
+        // instance.countData['review'] = 0;
+        // instance.countData['reject'] = 0;
+        // instance.countData['mycontribution'] = 0;
+        // instance.countData['totalreview'] = 0;
+        // instance.countData['awaitingreview'] = 0;
+        // instance.countData['sampleContenttotal'] = 0;
+        // instance.countData['sampleMycontribution'] = 0;
+        // instance.countData['pendingReview'] = 0;
+        // instance.countData['nominatedUserSample'] = 0;
+        // this.collectionHierarchy = this.setCollectionTree(this.choosedTextBook, identifier);
+        // this.getFolderLevelCount(this.collectionHierarchy);
+        // hierarchy = instance.hierarchyObj;
+        // this.sessionContext.hierarchyObj = { hierarchy };
+        // if (_.get(this.choosedTextBook, 'sourcingRejectedComments')) {
+        // // tslint:disable-next-line:max-line-length
+        // this.sessionContext.hierarchyObj['sourcingRejectedComments'] = _.isString(_.get(this.choosedTextBook, 'sourcingRejectedComments')) ? JSON.parse(_.get(this.choosedTextBook, 'sourcingRejectedComments')) : _.get(this.choosedTextBook, 'sourcingRejectedComments');
+        // }
+        // this.showLoader = false;
+        // this.showError = false;
+        // this.levelOneChapterList = _.uniqBy(this.levelOneChapterList, 'identifier');
+         resolve('Done');
+      });
+    });
+  }
+
+  get chaptersControls() {
+    return (this.chaptersSelectionForm.controls.chapters as FormArray).controls;
+  }
+
+  chaptersSelectionDone(identifier) {
+    this.selectChapter = false;
+    // const selectedChaptersIds = this.chaptersSelectionForm.value.chapters;
+    // console.log(selectedChaptersIds);
+
+    const cindex = this.tempCollections.findIndex(x => x.identifier === identifier);
+    const tindex = this.textbooksChapters.findIndex(textbook => textbook.id = identifier);
+    this.tempCollections[cindex]["selected"] = this.textbooksChapters[tindex].children.length;;
+
+    console.log("textbooksChapters", this.textbooksChapters);
   }
 }
