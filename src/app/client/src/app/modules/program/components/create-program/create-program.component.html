@@ -615,8 +615,8 @@
 	</div>
 </sui-modal>
 <sui-modal *ngIf="selectChapter" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
-class="sb-modal" appBodyScroll (dismissed)="selectChapter = false" #modal>
-	<form [formGroup]="chaptersSelectionForm" (ngSubmit)="chaptersSelectionDone(choosedTextBook.identifier)">
+class="sb-modal" appBodyScroll (dismissed)="selectedCount(choosedTextBook.identifier)" #modal>
+	<form [formGroup]="chaptersSelectionForm" (ngSubmit)="selectedCount(choosedTextBook.identifier)">
 		<div class="sb-modal-header">
 		{{resource.frmelmnts.lbl.selectChapter}}
 		</div>
@@ -640,7 +640,6 @@ class="sb-modal" appBodyScroll (dismissed)="selectChapter = false" #modal>
 							<div class="sb-checkbox sb-checkbox-primary">
 							<input [name]="chapters" type="checkbox" id="{{choosedTextBook.children[i].identifier}}"
 								value="{{choosedTextBook.children[i].identifier}}" [formControlName]="i"
-								(change)="onChapterCheck(choosedTextBook.identifier, choosedTextBook.children[i].identifier , $event.target.checked)"
 								[(ngModel)] ="choosedTextBook.children[i].checked">
 							<label for="" class="sb__ellipsis sb__ellipsis--three">{{choosedTextBook.children[i].name}}</label>
 							</div>

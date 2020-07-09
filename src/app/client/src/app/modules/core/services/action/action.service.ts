@@ -32,6 +32,7 @@ export class ActionService extends DataService {
   constructor(config: ConfigService, http: HttpClient) {
     super(http);
     this.config = config;
-    this.baseUrl = this.config.urlConFig.URLS.ACTION_PREFIX;
+    this.baseUrl = 'https://dev.sunbirded.org/action/';
+    //this.baseUrl = this.config.urlConFig.URLS.ACTION_PREFIX;
   }
 }

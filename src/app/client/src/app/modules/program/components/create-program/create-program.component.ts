@@ -66,7 +66,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   collections;
   tempCollections = [];
   textbooks: any = {};
-  textbooksChapters = [];
 
   /**
    * Units selection form
@@ -335,7 +334,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   generateAssetCreateRequest(fileName, fileType, mediaType) {
-    // console.log(this.userprofile);
     return {
       content: {
         name: fileName,
@@ -853,24 +851,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     );
   }
 
-  onChapterCheck(identifier, childIdentifier, isChecked: boolean) {
-    let tindex = this.textbooksChapters.findIndex(textbook => textbook.id === identifier);
-    const textbook = this.textbooksChapters[tindex];
-    let cindex = textbook.children.findIndex(chapter => chapter.id === childIdentifier);
-
-    if (isChecked) {
-      if (cindex === -1) {
-        this.textbooksChapters[tindex].children.push({
-          "id": childIdentifier,
-          "allowed_content_types": []
-        });
-      }
-    }
-    else if (cindex != -1) {
-      this.textbooksChapters[tindex].children.splice(cindex, 1);
-    }
-  }
-
   onCollectionCheck(collection, isChecked: boolean) {
     const pcollectionsFormArray = <FormArray>this.collectionListForm.controls.pcollections;
     const collectionId = collection.identifier;
@@ -888,9 +868,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       const cindex = this.tempCollections.findIndex(x => x.identifier === collectionId);
       this.tempCollections.splice(cindex, 1);
-
-      const tindex = this.textbooksChapters.findIndex(textbook => textbook.id === collectionId);
-      delete this.textbooksChapters[tindex];
       delete this.textbooks[collectionId];
     }
   }
@@ -903,10 +880,31 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       return false;
     }
 
+    let collections = [];
+
+    _.forEach(this.collectionListForm.value.pcollections, (identifier) => {
+      let obj = {
+        "id" : identifier,
+        "allowed_content_types": [],
+        "children": []
+      };
+
+      _.forEach(this.textbooks[identifier].children, (item) => {
+        if (item.checked === true) {
+          obj.children.push({
+            "id": item.identifier,
+            "allowed_content_types": []
+          })
+        }
+      });
+
+      collections.push(obj);
+    });
+
     const requestData = {
       'program_id': this.programId,
       // 'collections': this.collectionListForm.value.pcollections,
-      'collections' : this.textbooksChapters,
+      'collections' : collections,
       'allowed_content_types': this.programData.content_types,
       'channel': 'sunbird'
     };
@@ -1056,7 +1054,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     });
 
     chapters.children.forEach((o, i) => {
-      console.log(o);
       const control = new FormControl(o.identifier);
       this.chaptersControls.push(control);
     });
@@ -1079,11 +1076,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }))
       .subscribe((response) => {
         let content = response.result.content;
-
-        // @Todo Removed this after actula DATA
-        // ###################################
-        content.identifier = identifier;
-
         this.textbooks[identifier] = {};
 
         const chapter = {
@@ -1101,40 +1093,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           });
         });
 
-        this.textbooksChapters.push(chapter);
-
         this.textbooks[identifier] = content;
         this.choosedTextBook = content;
         this.initChaptersSelectionForm(this.choosedTextBook);
-
         const cindex = this.tempCollections.findIndex(x => x.identifier === identifier);
         this.tempCollections[cindex]["selected"] = content.children.length;
         this.tempCollections[cindex]["total"]    = content.children.length;
-
-        console.log("textbooksChapters", this.textbooksChapters);
-        // this.storedchoosedTextBook = unitIdentifier ?  this.storedchoosedTextBook : _.cloneDeep(this.choosedTextBook);
-        // const textBookMetaData = [];
-        // instance.countData['total'] = 0;
-        // instance.countData['review'] = 0;
-        // instance.countData['reject'] = 0;
-        // instance.countData['mycontribution'] = 0;
-        // instance.countData['totalreview'] = 0;
-        // instance.countData['awaitingreview'] = 0;
-        // instance.countData['sampleContenttotal'] = 0;
-        // instance.countData['sampleMycontribution'] = 0;
-        // instance.countData['pendingReview'] = 0;
-        // instance.countData['nominatedUserSample'] = 0;
-        // this.collectionHierarchy = this.setCollectionTree(this.choosedTextBook, identifier);
-        // this.getFolderLevelCount(this.collectionHierarchy);
-        // hierarchy = instance.hierarchyObj;
-        // this.sessionContext.hierarchyObj = { hierarchy };
-        // if (_.get(this.choosedTextBook, 'sourcingRejectedComments')) {
-        // // tslint:disable-next-line:max-line-length
-        // this.sessionContext.hierarchyObj['sourcingRejectedComments'] = _.isString(_.get(this.choosedTextBook, 'sourcingRejectedComments')) ? JSON.parse(_.get(this.choosedTextBook, 'sourcingRejectedComments')) : _.get(this.choosedTextBook, 'sourcingRejectedComments');
-        // }
-        // this.showLoader = false;
-        // this.showError = false;
-        // this.levelOneChapterList = _.uniqBy(this.levelOneChapterList, 'identifier');
          resolve('Done');
       });
     });
@@ -1144,15 +1108,17 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     return (this.chaptersSelectionForm.controls.chapters as FormArray).controls;
   }
 
-  chaptersSelectionDone(identifier) {
+  selectedCount(identifier) {
     this.selectChapter = false;
-    // const selectedChaptersIds = this.chaptersSelectionForm.value.chapters;
-    // console.log(selectedChaptersIds);
+    let selectedCount = 0;
+
+     _.forEach(this.textbooks[identifier].children, (item) =>{
+      if (item.checked) {
+        selectedCount ++;
+      }
+    });
 
     const cindex = this.tempCollections.findIndex(x => x.identifier === identifier);
-    const tindex = this.textbooksChapters.findIndex(textbook => textbook.id = identifier);
-    this.tempCollections[cindex]["selected"] = this.textbooksChapters[tindex].children.length;;
-
-    console.log("textbooksChapters", this.textbooksChapters);
+    this.tempCollections[cindex].selected = selectedCount;
   }
 }

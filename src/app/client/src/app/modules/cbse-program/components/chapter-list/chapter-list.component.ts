@@ -257,6 +257,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     }))
       .subscribe((response) => {
+        let children = [];
+        _.forEach(response.result.content.children, (child) => {
+          if (child.openForContribution === true) {
+            children.push(child);
+          }
+        });
+
+        response.result.content.children = children;
         this.collectionData = response.result.content;
         this.storedCollectionData = unitIdentifier ?  this.storedCollectionData : _.cloneDeep(this.collectionData);
         const textBookMetaData = [];
@@ -271,6 +279,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         instance.countData['pendingReview'] = 0;
         instance.countData['nominatedUserSample'] = 0;
         this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
+
         this.getFolderLevelCount(this.collectionHierarchy);
         hierarchy = instance.hierarchyObj;
         this.sessionContext.hierarchyObj = { hierarchy };
@@ -368,7 +377,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     if (childData) {
       const tree = childData.map(child => {
         const meta = _.pick(child, this.sharedContext);
-        if (child.parent && child.parent === collectionId) {
+        if (child.parent && child.parent === collectionId && child.openForContribution === true) {
           self.levelOneChapterList.push({
             identifier: child.identifier,
             name: child.name
