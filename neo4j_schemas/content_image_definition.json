@@ -1111,7 +1111,14 @@
                         "ExperientialResource",
                         "ConceptMap",
                         "SelfAssess",
-                        "PracticeResource"
+                        "PracticeResource",
+                        "eTextBook",
+                        "ClassroomTeachingVideo",
+                        "ExplanationVideo",
+                        "ExplanationReadingMaterial",
+                        "LearningActivity",
+                        "PreviousBoardExamPapers",
+                        "LessonPlanResource" 
                     ],
                     "defaultValue": "",
                     "renderingHints": "{ 'inputType': 'text',  'order': 14 }",
