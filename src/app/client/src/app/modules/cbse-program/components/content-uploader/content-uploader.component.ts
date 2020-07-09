@@ -77,6 +77,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public contentType: string;
   public rejectBySourcingOrg: boolean;
   public sourcingOrgReviewComments: string;
+  originPreviewUrl: string = '';
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -150,21 +151,23 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   handleActionButtons() {
     this.visibility = {};
+    const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
+
     // tslint:disable-next-line:max-line-length
-    this.visibility['showChangeFile'] = (_.includes(this.actions.showChangeFile.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
+    this.visibility['showChangeFile'] = submissionDateFlag && (_.includes(this.actions.showChangeFile.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showRequestChanges'] = this.router.url.includes('/contribute')  && !this.contentMetaData.sampleContent === true &&
+    this.visibility['showRequestChanges'] = this.router.url.includes('/contribute') && submissionDateFlag && !this.contentMetaData.sampleContent === true &&
      (_.includes(this.actions.showRequestChanges.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
 
     // tslint:disable-next-line:max-line-length
-    this.visibility['showPublish'] = this.router.url.includes('/contribute') && !this.contentMetaData.sampleContent === true &&
+    this.visibility['showPublish'] = submissionDateFlag && this.router.url.includes('/contribute') && !this.contentMetaData.sampleContent === true &&
     (_.includes(this.actions.showPublish.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSubmit'] = (_.includes(this.actions.showSubmit.roles, this.sessionContext.currentRoleId)  && this.resourceStatus === 'Draft');
+    this.visibility['showSubmit'] = submissionDateFlag && (_.includes(this.actions.showSubmit.roles, this.sessionContext.currentRoleId)  && this.resourceStatus === 'Draft');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSave'] = !this.contentMetaData.sampleContent === true && (_.includes(this.actions.showSave.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
+    this.visibility['showSave'] = submissionDateFlag && !this.contentMetaData.sampleContent === true && (_.includes(this.actions.showSave.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showEdit'] = (_.includes(this.actions.showEdit.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
+    this.visibility['showEdit'] = submissionDateFlag && (_.includes(this.actions.showEdit.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
   }
 
   initiateUploadModal() {
@@ -375,9 +378,14 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
       } else if (this.sourcingReviewStatus === 'Approved') {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
+        // get the origin preview url
+        if (!_.isEmpty(this.sessionContext.contentOrigins[contentId])) {
+          this.originPreviewUrl =  this.helperService.getContentOriginUrl(this.sessionContext.contentOrigins[contentId].identifier);
+        }
       } else {
         this.resourceStatusText = this.resourceStatus;
       }
+
       this.playerConfig = this.playerService.getConfig(contentDetails);
       this.playerConfig.context.pdata.pid = `${this.configService.appConfig.TELEMETRY.PID}`;
       this.showPreview = this.contentMetaData.artifactUrl ? true : false;
