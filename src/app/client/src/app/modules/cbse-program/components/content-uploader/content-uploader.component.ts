@@ -236,8 +236,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       };
       this.helperService.checkFileSizeLimit(request).subscribe(res => {
         if (res.result && res.result.configuration) {
-          // const val = res.result.configuration.value;
-          const val = '1000';
+          const val = res.result.configuration.value;
           if (this.uploader.getSize(0) < (_.toNumber(val) * 1024 * 1024)) {
             this.uploadByURL(fileUpload, mimeType);
           } else {
@@ -247,7 +246,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       }, err => {
         this.handleSizeLimitError('');
       });
-    } else if (this.uploader.getSize(0) < (_.toNumber('4') * 1024 * 1024)) {
+    } else if (this.uploader.getSize(0) < (_.toNumber(this.templateDetails.filesConfig.size) * 1024 * 1024)) {
       this.uploadByURL(fileUpload, mimeType);
     } else {
       this.handleSizeLimitError(`${this.templateDetails.filesConfig.size} MB`);
