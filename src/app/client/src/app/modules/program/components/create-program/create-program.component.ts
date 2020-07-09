@@ -3,9 +3,9 @@ import {
   ServerResponse, NavigationHelperService
 } from '@sunbird/shared';
 import { FineUploader } from 'fine-uploader';
-import { ProgramsService, DataService, FrameworkService } from '@sunbird/core';
+import { ProgramsService, DataService, FrameworkService, ActionService } from '@sunbird/core';
 import { Subscription, Subject, throwError, Observable } from 'rxjs';
-import { tap, first, map, takeUntil, catchError } from 'rxjs/operators';
+import { tap, first, map, takeUntil, catchError, count } from 'rxjs/operators';
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges } from '@angular/core';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -34,6 +34,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public guidLinefileName: String;
   public isFormValueSet = false;
   public editMode = false;
+  public choosedTextBook: any;
+  selectChapter = false;
   /**
    * Program creation form name
    */
@@ -61,6 +63,13 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   */
   collections;
   tempCollections = [];
+  textbooks: any = {};
+
+  /**
+   * Units selection form
+   */
+  chaptersSelectionForm : FormGroup;
+
   /**
   * List of textbooks for the program by BMGC
   */
@@ -125,7 +134,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     private navigationHelperService: NavigationHelperService,
     private configService: ConfigService,
     private deviceDetectorService: DeviceDetectorService,
-    public programTelemetryService: ProgramTelemetryService) {
+    public programTelemetryService: ProgramTelemetryService,
+    public actionService: ActionService) {
   }
 
   ngOnInit() {
@@ -322,7 +332,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   generateAssetCreateRequest(fileName, fileType, mediaType) {
-    console.log(this.userprofile);
     return {
       content: {
         name: fileName,
@@ -863,12 +872,17 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     if (isChecked) {
       pcollectionsFormArray.push(new FormControl(collectionId));
       this.tempCollections.push(collection);
+
+      if (!this.textbooks[collectionId]) {
+          this.getCollectionHierarchy(collectionId);
+      }
     } else {
       const index = pcollectionsFormArray.controls.findIndex(x => x.value === collectionId);
       pcollectionsFormArray.removeAt(index);
 
       const cindex = this.tempCollections.findIndex(x => x.identifier === collectionId);
       this.tempCollections.splice(cindex, 1);
+      delete this.textbooks[collectionId];
     }
   }
 
@@ -880,9 +894,31 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       return false;
     }
 
+    let collections = [];
+
+    _.forEach(this.collectionListForm.value.pcollections, (identifier) => {
+      let obj = {
+        "id" : identifier,
+        "allowed_content_types": [],
+        "children": []
+      };
+
+      _.forEach(this.textbooks[identifier].children, (item) => {
+        if (item.checked === true) {
+          obj.children.push({
+            "id": item.identifier,
+            "allowed_content_types": []
+          })
+        }
+      });
+
+      collections.push(obj);
+    });
+
     const requestData = {
       'program_id': this.programId,
-      'collections': this.collectionListForm.value.pcollections,
+      // 'collections': this.collectionListForm.value.pcollections,
+      'collections' : collections,
       'allowed_content_types': this.programData.content_types,
       'channel': 'sunbird'
     };
@@ -1028,5 +1064,79 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       default:
         break;
     }
+  }
+
+  public chooseChapters(collection) {
+    if (!this.textbooks[collection.identifier]) {
+      this.getCollectionHierarchy(collection.identifier);
+    }
+    else {
+      this.choosedTextBook = this.textbooks[collection.identifier];
+      this.initChaptersSelectionForm(this.choosedTextBook);
+    }
+
+    this.selectChapter=true;
+  }
+
+  initChaptersSelectionForm(chapters) {
+    this.chaptersSelectionForm = this.sbFormBuilder.group({
+      chapters: new FormArray([])
+    });
+
+    chapters.children.forEach((o, i) => {
+      const control = new FormControl(o.identifier);
+      this.chaptersControls.push(control);
+    });
+  }
+
+  public getCollectionHierarchy(identifier: string) {
+    let hierarchyUrl = '/action/content/v3/hierarchy/' + identifier + '?mode=edit';
+    const originUrl = this.programsService.getContentOriginEnvironment();
+    const url =  originUrl + hierarchyUrl ;
+
+    return this.httpClient.get(url).subscribe(res => {
+      let content = _.get(res, "result.content");
+      this.textbooks[identifier] = {};
+      const chapter = {
+        "id" : identifier,
+        "children": [],
+        "allowed_content_types" : []
+      };
+
+      _.forEach(content.children, (item) => {
+        item['checked'] = true;
+
+        chapter.children.push({
+          "id" : item.identifier,
+          "allowed_content_types" : []
+        });
+      });
+
+      this.textbooks[identifier] = content;
+      this.choosedTextBook = content;
+      this.initChaptersSelectionForm(this.choosedTextBook);
+      const cindex = this.tempCollections.findIndex(x => x.identifier === identifier);
+      this.tempCollections[cindex]["selected"] = content.children.length;
+      this.tempCollections[cindex]["total"]    = content.children.length;
+    }, error => console.log(console.error()
+    ));
+  }
+
+  get chaptersControls() {
+    return (this.chaptersSelectionForm.controls.chapters as FormArray).controls;
+  }
+
+  selectedCount(identifier) {
+    this.selectChapter = false;
+    let selectedCount = 0;
+
+     _.forEach(this.textbooks[identifier].children, (item) =>{
+      if (item.checked) {
+        selectedCount ++;
+      }
+    });
+
+    const cindex = this.tempCollections.findIndex(x => x.identifier === identifier);
+    this.tempCollections[cindex].selected = selectedCount;
   }
 }
