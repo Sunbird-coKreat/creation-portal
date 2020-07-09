@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ConfigService, ToasterService, ServerResponse, ResourceService } from '@sunbird/shared';
 import { ContentService, ActionService, PublicDataService, ProgramsService, NotificationService } from '@sunbird/core';
 import { throwError, Observable, of, Subject, forkJoin } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap, mergeMap } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 import { ProgramStageService } from '../../program/services';
 
@@ -227,6 +227,26 @@ export class HelperService {
     }, err => {
       console.error('error in triggering notification');
     });
+  }
+
+   checkFileSizeLimit(reqData) {
+    const option = {
+      url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.CONFIGURATION_SEARCH}`,
+      data: {
+        request: {
+          key: 'contentVideoSize',
+          status: 'active'
+        }
+      }
+    };
+    return this.contentService.post(option).pipe(
+      mergeMap((data: ServerResponse) => {
+        const response = _.get(data, 'params.status');
+        if (response !== 'successful') {
+          return throwError(data);
+        }
+        return of(data);
+      }));
   }
 
   apiErrorHandling(err, errorInfo) {
