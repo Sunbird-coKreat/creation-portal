@@ -440,29 +440,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   fetchFrameWorkDetails() {
-    if (_.get(this.userprofile.framework, 'id')) {
-      this.userFramework = _.get(this.userprofile.framework, 'id')[0];
-      this.frameworkService.getFrameworkCategories(_.get(this.userprofile.framework, 'id')[0])
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((data) => {
-          if (data && _.get(data, 'result.framework.categories')) {
-            this.frameworkCategories = _.get(data, 'result.framework.categories');
-          }
-          this.setFrameworkDataToProgram();
-        }, error => {
-          const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-          this.toasterService.warning(errorMes || 'Fetching framework details failed');
-        });
-    } else {
-      this.frameworkService.initialize();
-      this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
-        if (frameworkInfo && !frameworkInfo.err) {
-          this.userFramework = frameworkInfo.frameworkdata.defaultFramework.identifier;
-          this.frameworkCategories = frameworkInfo.frameworkdata.defaultFramework.categories;
-        }
-        this.setFrameworkDataToProgram();
-      });
-    }
+    this.frameworkService.initialize();
+    this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
+      if (frameworkInfo && !frameworkInfo.err) {
+        this.userFramework = frameworkInfo.frameworkdata.defaultFramework.identifier;
+        this.frameworkCategories = frameworkInfo.frameworkdata.defaultFramework.categories;
+      }
+      this.setFrameworkDataToProgram();
+    });
   }
 
   setFrameworkDataToProgram() {
@@ -477,8 +462,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     const board = _.find(this.frameworkCategories, (element) => {
       return element.code === 'board';
     });
-
-    this.userBoard = board.terms[0].name;
+    if (!_.isEmpty(board.terms[0].name)) {
+      this.userBoard = board.terms[0].name;
+    }
 
     if (_.get(this.userprofile.framework, 'board')) {
       this.userBoard = this.userprofile.framework.board[0];
@@ -728,6 +714,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programData['enddate'] = this.programData.program_end_date;
       this.programData['config'] = this.programConfig;
       this.programData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : '';
+
+      if (_.isEmpty(this.programData.config.board) &&
+      _.findIndex(this.frameworkCategories, function(item) { return item.code === 'board'; }) < 0) {
+        delete this.programData.config.board;
+      }
 
       delete this.programData.defaultContributeOrgReview;
       delete this.programData.gradeLevel;
