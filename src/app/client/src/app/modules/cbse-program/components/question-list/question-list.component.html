@@ -55,6 +55,11 @@
           </div>
         </div>
         <div class='practical-sb-buttons'>
+          <a id="viewContentOnDiksha" *ngIf="sourcingReviewStatus === 'Approved' && originPreviewUrl" class="sb-color-primary mr-8 pl-10 fs-0-92 font-weight-normal"
+              href="{{originPreviewUrl}}" target="_blank">{{resourceService.frmelmnts.btn.viewContentOnDiksha}}</a>
+          <label *ngIf="sourcingReviewStatus === 'Approved' && !originPreviewUrl" class="sb-color-error mr-8 pl-10 font-weight-normal">
+              {{resourceService.frmelmnts.btn.viewContentOnDikshaError}}</label>
+
           <button id="saveContent" *ngIf="visibility && visibility.showSave" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="saveResourceName();questionCreationChild.buttonTypeHandler('save')"
           appTelemetryInteract
           [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('save-resourcemetadata', 'click', 'question-list')"

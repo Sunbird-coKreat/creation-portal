@@ -165,6 +165,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   async updateAccordianView(unitId?, onSelectChapterChange?) {
       await this.getCollectionHierarchy(this.sessionContext.collection,
                 this.selectedChapterOption === 'all' ? undefined : this.selectedChapterOption);
+      const acceptedContents = _.get(this.storedCollectionData, 'acceptedContents', []);
+
+      if (!_.isEmpty(acceptedContents)) {
+        await this.getOriginForApprovedContents(acceptedContents);
+      }
     if (unitId) {
       this.lastOpenedUnit(unitId);
     } else if (onSelectChapterChange === true && this.selectedChapterOption !== 'all') {
@@ -180,6 +185,22 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
   }
 
+  getOriginForApprovedContents (acceptedContents) {
+    this.collectionHierarchyService.getOriginForApprovedContents(acceptedContents).subscribe(
+      (response) => {
+        if (_.get(response, 'result.count') && _.get(response, 'result.count') > 0) {
+          this.sessionContext['contentOrigins'] = {};
+          _.forEach( _.get(response, 'result.content'), (obj) => {
+            if (obj.status == "Live") {
+              this.sessionContext['contentOrigins'][obj.origin] = obj;
+            }
+          });
+        }
+      },
+      (error) => {
+        console.log("Getting origin data failed");
+    });
+  }
   public fetchFrameWorkDetails() {
     this.frameworkService.initialize(this.sessionContext.framework);
     this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
@@ -283,6 +304,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         this.getFolderLevelCount(this.collectionHierarchy);
         hierarchy = instance.hierarchyObj;
         this.sessionContext.hierarchyObj = { hierarchy };
+
         if (_.get(this.collectionData, 'sourcingRejectedComments')) {
         // tslint:disable-next-line:max-line-length
         this.sessionContext.hierarchyObj['sourcingRejectedComments'] = _.isString(_.get(this.collectionData, 'sourcingRejectedComments')) ? JSON.parse(_.get(this.collectionData, 'sourcingRejectedComments')) : _.get(this.collectionData, 'sourcingRejectedComments');

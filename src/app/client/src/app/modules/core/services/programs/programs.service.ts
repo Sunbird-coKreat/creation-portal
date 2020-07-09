@@ -18,6 +18,7 @@ import { LearnerService } from '../learner/learner.service';
 import { RegistryService } from '../registry/registry.service';
 import { ExportToCsv } from 'export-to-csv';
 import { CacheService } from 'ng2-cache-service';
+import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root'
@@ -960,6 +961,14 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
     return this.API_URL(req);
+  }
+
+  /* To check if the content can be uploaded or updated*/
+  checkForContentSubmissionDate(programDetails) {
+    const contributionendDate  = moment(programDetails.content_submission_enddate);
+    const endDate  = moment(programDetails.enddate);
+    const today = moment();
+    return (contributionendDate.isSameOrAfter(today, 'day') && endDate.isSameOrAfter(today, 'day')) ? true : false;
   }
 
   getContentOriginEnvironment() {
