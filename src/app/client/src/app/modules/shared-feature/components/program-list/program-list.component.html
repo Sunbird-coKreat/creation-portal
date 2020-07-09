@@ -130,8 +130,6 @@
                   <div>
                     {{ program?.contributionDate | date:'LLLL d, yyyy' }}
                     <em class="d-block">{{ program?.contributionDate | daysToGo }}</em>
-
-                    <span class="sb-label sb-label-table sb-label-primary-100" *ngIf="activeMyProgramsMenu && !iscontributeOrgAdmin && program?.status !== 'Unlisted'">{{ getProgramNominationStatus(program) }}</span>
                   </div>
                 </td>
                 <td *ngIf="activeMyProgramsMenu && iscontributeOrgAdmin" class="text-center">
@@ -153,27 +151,9 @@
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
-                    <!-- <div class="ui dropdown sb-btn sb-btn-normal sb-btn-outline-primary sb-btn-dropdown" suiDropdown autoClose="itemClick" *ngIf="isContributor">
-                        <div class="text">{{ resourceService.frmelmnts.lbl.actions }}</div>
-                        <i class="dropdown icon"></i>
-                        <div class="menu" suiDropdownMenu>
-                          <div class="item" (click)="viewDetailsBtnClicked(program)"
-                          appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('view-detail', 'click', 'program-list')"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService.frmelmnts.lbl.open }}</div>
-                          <div class="item" (click)="getContributionOrgUsers(program)" *ngIf="activeMyProgramsMenu && userService?.userProfile?.userRegData?.User_Org?.orgId"
-                          appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('get-org-users', 'click', 'program-list')"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService.frmelmnts.lbl.assignRole }}</div>
-                        </div>
-                    </div>    -->
                   </td>
                   <td *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')" class="fs-1-5 sb-dock-icon-tooltip" >
-                    <i class="icon edit sb-color-primary mx-10 cursor-pointer ui" data-tooltip="Edit" (click)="editOnClick(program)"></i>
+                    <i class="icon edit sb-color-primary mx-10 cursor-pointer ui" data-tooltip="Modify" (click)="editOnClick(program)"></i>
                     <i class="icon trash sb-color-primary cursor-pointer ui" data-tooltip="Delete" (click)="setDelete(program, i)"></i>
                   </td>
               </tr>
@@ -191,53 +171,6 @@
     </div>
   </div>
 </div>
-<sui-modal *ngIf="showAssignRoleModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
-  [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showAssignRoleModal = !showAssignRoleModal" #modal>
-  <div class="sb-modal-header">
-    Set Role
-  </div>
-  <div class="sb-modal-content">
-    <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
-      <thead class="sb-table-header sb-table-thead-gray">
-        <tr>
-          <th>Username</th>
-          <th>Assign Role</th>
-        </tr>
-      </thead>
-      <tbody class="sb-table-body">
-        <tr *ngFor="let user of contributorOrgUser; let i = index">
-          <td>{{user.firstName +' '+ user.lastName}}</td>
-          <td>
-            <ng-template let-option #optionTemplate>
-              <div class="field m-0">
-                <div class="template-checkbox">
-                  <div class="p-5 option-text" title="{{option.name}}">
-                    {{option.name}}
-                  </div>
-                  <div class="ml-auto">
-                    <i class="square outline medium icon"></i>
-                  </div>
-                </div>
-              </div>
-            </ng-template>
-            <sui-select class="selection" [(ngModel)]="user.selectedRole" labelField="name" [options]="options" valueField="name">
-              <sui-select-option *ngFor="let option of roles;" [value]="option">
-              </sui-select-option>
-            </sui-select>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="sb-modal-actions">
-    <button
-      class="sb-btn sb-btn-normal sb-btn-success"
-      (click)="assignRolesToOrgUsers();"
-    >
-      Submit
-    </button>
-  </div>
-</sui-modal>
 <sui-modal *ngIf="showDeleteModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'"
   class="sb-modal" appBodyScroll (dismissed)="showDeleteModal = false" #modal>
   <div class="sb-modal-header">
