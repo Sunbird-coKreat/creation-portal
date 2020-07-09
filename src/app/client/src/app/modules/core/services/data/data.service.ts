@@ -82,17 +82,6 @@ export class DataService {
       params: requestParam.param
     };
 
-
-    if (requestParam.url.indexOf('/content/v3/hierarchy/') !== -1) {
-      return this.http.get('https://dev.sunbirded.org' + requestParam.url, httpOptions).pipe(
-        mergeMap((data: ServerResponse) => {
-          if (data.responseCode !== 'OK') {
-            return observableThrowError(data);
-          }
-          return observableOf(data);
-        }));
-    }
-
     return this.http.get(this.baseUrl + requestParam.url, httpOptions).pipe(
       mergeMap((data: ServerResponse) => {
         if (data.responseCode !== 'OK') {
@@ -136,10 +125,6 @@ export class DataService {
       headers: requestParam.header ? this.getHeader(requestParam.header) : this.getHeader(),
       params: requestParam.param
     };
-
-    // if (requestParam.url == "program/v1/collection/copy") {
-    //   httpOptions.headers["Authorization"]= 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJiZDExNjYzN2Y5YjU0MWJiYjU3NDY3MTA2Yjk1YzllYSJ9.Bb8ThNzcBvhouPdtRa_UXnZgi3m2zZN5Skhke1_YlM0';
-    // }
 
     return this.http.post(this.baseUrl + requestParam.url, requestParam.data, httpOptions).pipe(
       mergeMap((data: ServerResponse) => {

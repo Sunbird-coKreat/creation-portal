@@ -874,7 +874,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.tempCollections.push(collection);
 
       if (!this.textbooks[collectionId]) {
-          this.getCollectionHierarchy(collectionId, null);
+          this.getCollectionHierarchy(collectionId);
       }
     } else {
       const index = pcollectionsFormArray.controls.findIndex(x => x.value === collectionId);
@@ -1068,7 +1068,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
   public chooseChapters(collection) {
     if (!this.textbooks[collection.identifier]) {
-      this.getCollectionHierarchy(collection.identifier, null);
+      this.getCollectionHierarchy(collection.identifier);
     }
     else {
       this.choosedTextBook = this.textbooks[collection.identifier];
@@ -1089,49 +1089,37 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     });
   }
 
-  public getCollectionHierarchy(identifier: string, unitIdentifier: string) {
-    let hierarchyUrl = 'content/v3/hierarchy/' + identifier;
+  public getCollectionHierarchy(identifier: string) {
+    let hierarchyUrl = '/action/content/v3/hierarchy/' + identifier + '?mode=edit';
+    const originUrl = this.programsService.getContentOriginEnvironment();
+    const url =  originUrl + hierarchyUrl ;
 
-    if (unitIdentifier) {
-      hierarchyUrl = hierarchyUrl + '/' + unitIdentifier;
-    }
-    const req = {
-      url: hierarchyUrl,
-      param: { 'mode': 'edit' }
-    };
-     return new Promise((resolve) => {
-    this.actionService.get(req).pipe(catchError(err => {
-      const errInfo = { errorMsg: 'Fetching TextBook details failed' }; this.showLoader = false;
-      return throwError(this.cbseService.apiErrorHandling(err, errInfo));
-    }))
-      .subscribe((response) => {
-        let content = response.result.content;
-        this.textbooks[identifier] = {};
+    return this.httpClient.get(url).subscribe(res => {
+      let content = _.get(res, "result.content");
+      this.textbooks[identifier] = {};
+      const chapter = {
+        "id" : identifier,
+        "children": [],
+        "allowed_content_types" : []
+      };
 
-        const chapter = {
-          "id" : identifier,
-          "children": [],
+      _.forEach(content.children, (item) => {
+        item['checked'] = true;
+
+        chapter.children.push({
+          "id" : item.identifier,
           "allowed_content_types" : []
-        };
-
-        _.forEach(content.children, (item) => {
-          item['checked'] = true;
-
-          chapter.children.push({
-            "id" : item.identifier,
-            "allowed_content_types" : []
-          });
         });
-
-        this.textbooks[identifier] = content;
-        this.choosedTextBook = content;
-        this.initChaptersSelectionForm(this.choosedTextBook);
-        const cindex = this.tempCollections.findIndex(x => x.identifier === identifier);
-        this.tempCollections[cindex]["selected"] = content.children.length;
-        this.tempCollections[cindex]["total"]    = content.children.length;
-         resolve('Done');
       });
-    });
+
+      this.textbooks[identifier] = content;
+      this.choosedTextBook = content;
+      this.initChaptersSelectionForm(this.choosedTextBook);
+      const cindex = this.tempCollections.findIndex(x => x.identifier === identifier);
+      this.tempCollections[cindex]["selected"] = content.children.length;
+      this.tempCollections[cindex]["total"]    = content.children.length;
+    }, error => console.log(console.error()
+    ));
   }
 
   get chaptersControls() {

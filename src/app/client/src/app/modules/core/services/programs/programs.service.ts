@@ -962,6 +962,15 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.API_URL(req);
   }
 
+  getContentOriginEnvironment() {
+    switch(window.location.hostname) {
+      case 'dock.sunbirded.org': return 'https://dev.sunbirded.org'; break;
+      case 'vdn.diksha.gov.in': return "https://diksha.gov.in"; break;
+      case 'dock.preprod.ntp.net.in': return 'https://preprod.ntp.net.in'; break;
+      default: return  'https://dev.sunbirded.org'; break;
+    }
+  }
+
   /*getSourcingOrgUserList(sourcingOrgId, roles, limit?) {
     return new Promise((resolve, reject) => {
       // Get all diskha users
