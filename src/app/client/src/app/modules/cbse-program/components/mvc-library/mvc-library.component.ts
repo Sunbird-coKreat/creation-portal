@@ -233,7 +233,7 @@ export class MvcLibraryComponent implements OnInit {
     } else if (event.action === 'showAddedContent') {
       this.showAddedContent = !event.status;
       this.filterContentList();
-    } else { }
+    }
   }
 
   showResourceTemplate(event) {
@@ -275,8 +275,8 @@ export class MvcLibraryComponent implements OnInit {
       found: false,
     };
     if (tree.children) {
-      $.each(tree.children, (index, subtree) => {
-        const maybeParents = $.merge([], parents);
+      _.forEach(tree.children, (subtree, key) => {
+        const maybeParents = _.concat([], parents);
         if (tree.identifier !== undefined) {
           maybeParents.push(this.generateParentLevel(tree, maybeParents));
         }

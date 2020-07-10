@@ -3,6 +3,7 @@ import { ConfigService, ToasterService,ResourceService } from '@sunbird/shared';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { ProgramTelemetryService} from '../../../program/services';
 import { UserService } from '@sunbird/core';
+import * as _ from 'lodash-es';
 
 @Component({
   selector: 'app-resource-reorder',
@@ -96,8 +97,8 @@ export class ResourceReorderComponent implements OnInit {
         found: false,
     };
     if (tree.children) {
-        $.each(tree.children, (index, subtree) => {
-            const maybeParents = $.merge([], parents);
+        _.forEach(tree.children, (subtree, key) => {
+            const maybeParents = _.concat([], parents);
             if (tree.identifier !== undefined) {
                 maybeParents.push(tree.name);
             }
