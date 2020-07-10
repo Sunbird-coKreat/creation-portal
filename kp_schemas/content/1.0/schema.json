@@ -1054,7 +1054,7 @@
             "type": "array"
         },
         "sourceURL" : {
-            "type": "array"
+            "type": "string"
         },
         "label" : {
             "type": "string"
