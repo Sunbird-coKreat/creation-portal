@@ -74,6 +74,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public sourcingReviewStatus: string;
   public sourcingOrgReviewComments: string;
   originPreviewUrl: string = '';
+  originPreviewReady = false;
 
   constructor(
     private configService: ConfigService, private userService: UserService,
@@ -225,9 +226,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
     } else if (this.sourcingReviewStatus === 'Approved') {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
-      if (!_.isEmpty(this.sessionContext.contentOrigins[this.sessionContext.resourceIdentifier])) {
+      if (!_.isEmpty(this.sessionContext.contentOrigins) && !_.isEmpty(this.sessionContext.contentOrigins[this.sessionContext.resourceIdentifier])) {
         this.originPreviewUrl =  this.helperService.getContentOriginUrl(this.sessionContext.contentOrigins[this.sessionContext.resourceIdentifier].identifier);
       }
+      this.originPreviewReady = true;
     } else {
       this.resourceStatusText = this.resourceStatus;
     }
