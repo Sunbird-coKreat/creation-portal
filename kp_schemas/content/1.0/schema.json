@@ -108,7 +108,8 @@
             "enum": [
                 "inline",
                 "online",
-                "attachment"
+                "attachment",
+                "online-only"
             ],
             "default": "inline"
         },
