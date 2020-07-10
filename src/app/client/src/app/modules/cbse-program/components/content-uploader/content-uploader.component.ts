@@ -471,9 +471,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       } else if (this.resourceStatus === 'Live' && _.isEmpty(this.sourcingReviewStatus)) {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
       } else if (this.sourcingReviewStatus === 'Rejected') {
-        this.resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
+        this.resourceStatusText = this.resourceService.frmelmnts.lbl.contentIsRejected;
       } else if (this.sourcingReviewStatus === 'Approved') {
-        this.resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
+        this.resourceStatusText = this.resourceService.frmelmnts.lbl.contentIsApproved;
         // get the origin preview url
         if (!_.isEmpty(this.sessionContext.contentOrigins) && !_.isEmpty(this.sessionContext.contentOrigins[contentId])) {
           this.originPreviewUrl =  this.helperService.getContentOriginUrl(this.sessionContext.contentOrigins[contentId].identifier);
