@@ -373,8 +373,10 @@ top: -4px;
 }
 .sb-content-breadcrumb{
     .section{
-      &:last-child{
-      width: 25%;
+      &:nth-child(2n),
+      &:nth-child(3n),
+      &:nth-child(4n){
+      width: 10%;
       overflow: hidden;
       text-overflow: ellipsis;
       display: inline-block !important;
