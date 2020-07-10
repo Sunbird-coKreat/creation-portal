@@ -363,7 +363,7 @@
 					</form>
 					<div class="ui grid">
 						<div class="seven wide column">
-							<div class="sb-table-responsive">
+							<div class="sb-table-responsive sb-dock-textbook-table">
 								<table class="sb-table sb-table-striped sb-table-sortable" *ngIf="showTextBookSelector">
 									<thead class="sb-table-header sb-table-thead-gray d-block">
 										<tr>
@@ -477,9 +477,9 @@
 									<div class="sb-program-collection ui container"
 										*ngFor="let tempCollection of tempCollections">
 										<div class="ui grid">
-											<div class="ten wide column">
+											<div class="six wide column">
 												<h5
-													class="mx-10 sb-color-gray-400 sb__ellipsis sb__ellipsis--three font-weight-bold">
+													class="mx-10 sb-color-gray-400 pb-5 sb__ellipsis sb__ellipsis--three font-weight-bold">
 													{{tempCollection.name}}</h5>
 												<small class="d-flex mx-10">
 													<span>{{tempCollection.medium}}</span>
@@ -490,6 +490,12 @@
 														style="border-left: 1px solid var(--gray-200);"></span>
 													<span>{{tempCollection.subject}}</span>
 												</small>
+											</div>
+											<div class="four wide column px-0 mt-5">
+												<div class="sb-color-gray-400 fxsmall text-lowercase">{{tempCollection.selected}} out of {{tempCollection.total}} chapters selected</div>
+												<div class="sb-color-primary fxsmall cursor-pointer" (click)="chooseChapters(tempCollection);">
+													<i class="edit outline icon"></i>{{resource.frmelmnts.lbl.selectChapter}}s
+												</div>
 											</div>
 											<div class="two wide column text-right cursor-pointer"
 												(click)="onCollectionCheck(tempCollection, false)" appTelemetryInteract
@@ -504,7 +510,6 @@
 										</div>
 									</div>
 								</div>
-
 							</div>
 						</div>
 					</div>
@@ -608,4 +613,47 @@
 		<button (click)="addImageInEditor();" class="sb-btn sb-btn-primary sb-btn-normal"
 			[ngClass]="{'sb-btn-primary': showAddButton, 'sb-btn-disabled': !showAddButton}">{{ resource.frmelmnts.btn.add }}</button>
 	</div>
+</sui-modal>
+<sui-modal *ngIf="selectChapter" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+class="sb-modal" appBodyScroll (dismissed)="selectedCount(choosedTextBook.identifier)" #modal>
+	<form [formGroup]="chaptersSelectionForm" (ngSubmit)="selectedCount(choosedTextBook.identifier)">
+		<div class="sb-modal-header">
+		{{resource.frmelmnts.lbl.selectChapter}}
+		</div>
+		<div class="sb-modal-content">
+		<div class="pb-20 pt-5">{{choosedTextBook.name}}</div>
+			<div class="sb-table-responsive">
+				<table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
+					<thead class="sb-table-header sb-table-thead-gray">
+					<tr>
+						<th class="w-70 cursor-pointer sb-sorting">{{resource.frmelmnts.lbl.title}}
+							<i class="fa fa-sort" aria-hidden="true"></i>
+						</th>
+						<th class="w-30 cursor-pointer sb-sorting">{{resource.frmelmnts.lbl.existingContent}}
+							<i class="fa fa-sort" aria-hidden="true"></i>
+						</th>
+					</tr>
+					</thead>
+					<tbody class="sb-table-body">
+					<tr formArrayName="chapters" *ngFor="let chapter of chaptersControls; let i = index">
+						<td>
+							<div class="sb-checkbox sb-checkbox-primary">
+							<input [name]="chapters" type="checkbox" id="{{choosedTextBook.children[i].identifier}}"
+								value="{{choosedTextBook.children[i].identifier}}" [formControlName]="i"
+								[(ngModel)] ="choosedTextBook.children[i].checked">
+							<label for="" class="sb__ellipsis sb__ellipsis--three">{{choosedTextBook.children[i].name}}</label>
+							</div>
+						</td>
+						<td suiPopup popupText="1 Lesson Plan 2 Explanation content">2</td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="sb-modal-actions">
+		<button class="sb-btn sb-btn-normal sb-btn-primary">
+			{{resource.frmelmnts.lbl.done}}
+		</button>
+		</div>
+	</form>
 </sui-modal>

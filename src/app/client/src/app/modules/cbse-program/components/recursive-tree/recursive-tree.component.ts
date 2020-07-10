@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import * as _ from 'lodash-es';
-import { UserService } from '@sunbird/core';
+import { UserService, ProgramsService} from '@sunbird/core';
 import { ConfigService, ResourceService } from '@sunbird/shared';
 import { ProgramTelemetryService } from '../../../program/services';
 import { Router } from '@angular/router';
@@ -27,7 +27,7 @@ export class RecursiveTreeComponent implements OnInit {
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public sourcingOrgReviewer: boolean;
-  constructor(public userService: UserService, public configService: ConfigService,
+  constructor(public userService: UserService, public configService: ConfigService, private programsService: ProgramsService,
     public programTelemetryService: ProgramTelemetryService, public resourceService: ResourceService, public router: Router) { }
 
   ngOnInit() {
@@ -35,10 +35,11 @@ export class RecursiveTreeComponent implements OnInit {
     const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
     this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
+    const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
 
     this.visibility = {};
     // tslint:disable-next-line:max-line-length
-    this.visibility['showAddresource'] = _.includes(this.programContext.config.actions.showAddResource.roles, this.sessionContext.currentRoleId);
+    this.visibility['showAddresource'] = submissionDateFlag && _.includes(this.programContext.config.actions.showAddResource.roles, this.sessionContext.currentRoleId);
     // tslint:disable-next-line:max-line-length
     this.visibility['showEditResource'] = _.includes(this.programContext.config.actions.showEditResource.roles, this.sessionContext.currentRoleId);
     // tslint:disable-next-line:max-line-length

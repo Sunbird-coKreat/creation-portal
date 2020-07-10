@@ -15,7 +15,6 @@ import { DynamicModule } from 'ng-dynamic-component';
 import { CbseProgramModule } from '../../modules/cbse-program/cbse-program.module';
 import { CollectionComponent, DashboardComponent } from '../cbse-program';
 import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
-import { ListNominatedTextbooksComponent} from './components/list-nominated-textbooks/list-nominated-textbooks.component';
 import { OrgUserListComponent } from './components/org-user-list/org-user-list.component';
 import { OrgContriAdminComponent } from './components/org-contri-admin/org-contri-admin.component';
 import { ContriDashboardComponent } from './components/dashboard/dashboard.component';
@@ -26,7 +25,6 @@ import { SharedFeatureModule } from '../shared-feature/shared-feature.module';
     ProgramComponent,
     OnboardPopupComponent,
     ProgramHeaderComponent,
-    ListNominatedTextbooksComponent,
     OrgUserListComponent,
     OrgContriAdminComponent,
     ContriDashboardComponent],

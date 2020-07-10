@@ -27,6 +27,7 @@
               <div class="mt-8 practice-set__status">
                 <span class="sb-label sb-label-table sb-label-success-0" *ngIf="!sourcingOrgReviewer"
                 [ngClass]="{ 'sb-label-success-0': (resourceStatus === 'Live' && sourcingReviewStatus === 'Approved'), 'sb-label-warning-0': (resourceStatus === 'Draft'),  'sb-label-error-0': ((resourceStatus === 'Draft' && contentMetaData.prevStatus === 'Review') || (resourceStatus === 'Live' && sourcingReviewStatus === 'Rejected')) ,  'sb-label-gray-0': (resourceStatus === 'Review' || (resourceStatus === 'Live' && !sourcingReviewStatus)) }">{{ resourceStatusText }}</span>
+
                 <span class="cursor-pointer fs-0-785 ml-8"
                   *ngIf="showSourcingOrgRejectComments() || showContributorOrgReviewComments()">
                   <i class="comment alternate outline icon sb-color-primary"></i>
@@ -53,6 +54,12 @@
               </div>
             </div>
             <div class='practical-sb-buttons'>
+
+              <a id="viewContentOnDiksha" *ngIf="sourcingReviewStatus === 'Approved' && originPreviewUrl" class="sb-color-primary mr-8 pl-10 fs-0-92 font-weight-normal"
+              href="{{originPreviewUrl}}" target="_blank">{{resourceService.frmelmnts.btn.viewContentOnDiksha}}</a>
+              <label *ngIf="sourcingReviewStatus === 'Approved' && !originPreviewUrl" class="sb-color-error mr-8 pl-10 font-weight-normal">
+              {{resourceService.frmelmnts.btn.viewContentOnDikshaError}}</label>
+
               <button id="saveContent" suiPopup popupText="Save" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSave" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="saveContent()"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('save-resourcemetadata', 'click', 'content-uploader')"
@@ -60,7 +67,7 @@
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >Save</button>
-              <button id="changeContent" suiPopup popupText="Replace File" [popupPlacement]="'top'" *ngIf="visibility && visibility.showChangeFile && resourceStatus === 'Draft'" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="changeFile()"
+              <button id="changeContent" suiPopup popupText="Replace File" [popupPlacement]="'top'" *ngIf="visibility && visibility.showChangeFile" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="changeFile()"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('replace-resourcefile', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
@@ -68,21 +75,21 @@
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >Replace
                 File</button>
-              <button id="requestChanges" suiPopup popupText="{{resourceService.frmelmnts.btn.requestChanges}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showRequestChanges && resourceStatus === 'Review'" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true;"
+              <button id="requestChanges" suiPopup popupText="{{resourceService.frmelmnts.btn.requestChanges}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showRequestChanges" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true;"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-resource', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{resourceService.frmelmnts.btn.requestChanges}}</button>
-              <button id="publishContent" suiPopup popupText="{{resourceService.frmelmnts.btn.accept}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showPublish && resourceStatus === 'Review'" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="publishContent();"
+              <button id="publishContent" suiPopup popupText="{{resourceService.frmelmnts.btn.accept}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showPublish" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="publishContent();"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('publish-resource', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{resourceService.frmelmnts.btn.accept}}</button>
-              <button id="submitContent" suiPopup popupText="{{sessionContext.currentOrgRole === 'individual' ? 'Publish' : 'Send For Review' }}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSubmit && resourceStatus === 'Draft'" class="sb-btn sb-btn-secondary sb-btn-normal" (click)="saveContent('review')"
+              <button id="submitContent" suiPopup popupText="{{sessionContext.currentOrgRole === 'individual' ? 'Publish' : 'Send For Review' }}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSubmit" class="sb-btn sb-btn-secondary sb-btn-normal" (click)="saveContent('review')"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('submit-resourceforreview', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
@@ -138,9 +145,9 @@
               <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
                 class="qq-progress-bar-selector qq-progress-bar"></div>
             </div>
-            <span class="qq-upload-spinner-selector qq-upload-spinner"></span>
+            <!-- <span class="qq-upload-spinner-selector qq-upload-spinner"></span> -->
             <img class="qq-thumbnail-selector" qq-max-size="100" qq-server-scale>
-            <span class="qq-upload-file-selector qq-upload-file custom-qq-upload-file"></span>
+            <!-- <span class="qq-upload-file-selector qq-upload-file custom-qq-upload-file"></span> -->
             <span class="qq-upload-size-selector qq-upload-size"></span>
             <button type="button" class="qq-btn qq-upload-retry-selector qq-upload-retry">Retry</button>
             <button type="button" class="qq-btn qq-upload-delete-selector qq-upload-delete">Delete</button>
@@ -153,7 +160,7 @@
           <div class="qq-upload-button-selector qq-upload-button sb-btn sb-btn-normal sb-btn-success">
             <div>Select Files</div>
           </div>
-          <p class="mt-8">Upload {{templateDetails.filesConfig.accepted}} files ( Max size {{templateDetails.filesConfig.size}} MB )</p>
+          <p class="mt-8">Upload {{templateDetails.filesConfig.accepted}} files ( Max size {{templateDetails.filesConfig.size}} MB or More )</p>
         </div>
         <dialog class="qq-confirm-dialog-selector">
           <div class="qq-dialog-message-selector"></div>
@@ -188,19 +195,25 @@
           <li *ngIf="templateDetails.filesConfig.accepted.toLowerCase().includes('pdf')"><a target="_blank" title="How to convert MS word to PDF" href="https://diksha.gov.in/help/contributor/word-to-pdf.html">How to convert MS word to PDF</a></li>
         </ul>
       </div>
-      <div *ngIf='loading' class="uploading-files">
-          <div class='d-flex flex-dc flex-jc-center flex-ai-center icon'>
-            <img src="assets/images/loader.gif" width="64" class='process-icon'>
-            <!-- <div class="fs-0-785 pt-16">120 MB Uploading Files (65%)
-            </div> -->
-            <!-- <sui-progress [value]="60" [maximum]="100" class="mb-0 mr-0"></sui-progress> -->
+      <div *ngIf='loading' class="uploading-files text-center">
+        <div class='d-flex flex-dc flex-ai-center icon'>
+          <img src="assets/images/loader.gif" width="64" class='process-icon'>
+          <label class="fs-0-785 pt-16">{{uploader.getName(0)}} </label>
+          <div *ngIf="videoFileFormat">
+            <div class="fs-0-785 pt-16">{{fileUplaoderProgress?.size}} Uploading Files ({{fileUplaoderProgress.progress}}%)
+            </div>
+            <sui-progress [value]="fileUplaoderProgress.progress" [maximum]="100" class="mb-0 mr-0"></sui-progress>
+            <div class="fs-0-785 pt-16">{{fileUplaoderProgress.remainingTime ? 'Remaining time '+ fileUplaoderProgress.remainingTime : ''}}
+            </div>
           </div>
-          <div class="text-center fs-0-785">
-            <!-- <span class="sb-color-gray-800">Disclaimer:</span>
-            By submitting this Content, you confirm that you have followed prescribed guidelines, including the Content Policy and that you consent to publish it in accordance with the <a href="#" target="_blank">Content Policy.</a>
-            Please choose the applicable <a href="https://creativecommons.org/licenses" target="_blank">Creative Commons license</a> you wish to apply to your content. -->
-          </div>
+          <div class="sb-color-error fs-0-785 pt-10">Please do not close this window until the upload is complete</div>
         </div>
+        <div class="text-center fs-0-785">
+          <!-- <span class="sb-color-gray-800">Disclaimer:</span>
+          By submitting this Content, you confirm that you have followed prescribed guidelines, including the Content Policy and that you consent to publish it in accordance with the <a href="#" target="_blank">Content Policy.</a>
+          Please choose the applicable <a href="https://creativecommons.org/licenses" target="_blank">Creative Commons license</a> you wish to apply to your content. -->
+        </div>
+      </div>
     </div>
     <div class="sb-modal-actions">
       <button id="uploadContent" class="sb-btn sb-btn-normal ml-8" [ngClass]="{'sb-btn-primary': uploadButton, 'sb-btn-disabled': !uploadButton}" (click)="uploadContent()"

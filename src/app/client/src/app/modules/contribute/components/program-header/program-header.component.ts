@@ -2,7 +2,8 @@ import { Component, OnInit, Input, Output, OnChanges, OnDestroy,  EventEmitter }
 import * as _ from 'lodash-es';
 import { UserService } from '@sunbird/core';
 import { ToasterService, ConfigService} from '@sunbird/shared';
-import { ProgramStageService, ProgramTelemetryService } from '../../services/';
+import { ProgramTelemetryService } from '../../services/';
+import { ProgramStageService } from '../../../program/services/program-stage/program-stage.service';
 import { IHeaderActions, InitialState } from '../../interfaces/';
 import { tap, delay, startWith } from 'rxjs/operators';
 
