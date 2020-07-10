@@ -494,7 +494,7 @@
 											<div class="four wide column px-0 mt-5">
 												<div class="sb-color-gray-400 fxsmall text-lowercase">{{tempCollection.selected}} out of {{tempCollection.total}} chapters selected</div>
 												<div class="sb-color-primary fxsmall cursor-pointer" (click)="chooseChapters(tempCollection);">
-													<i class="edit outline icon"></i>{{resource.frmelmnts.lbl.selectChapter}}s
+													<i class="edit outline icon"></i>{{resource.frmelmnts.lbl.editChapters}}
 												</div>
 											</div>
 											<div class="two wide column text-right cursor-pointer"
@@ -618,7 +618,7 @@
 class="sb-modal" appBodyScroll (dismissed)="selectedCount(choosedTextBook.identifier)" #modal>
 	<form [formGroup]="chaptersSelectionForm" (ngSubmit)="selectedCount(choosedTextBook.identifier)">
 		<div class="sb-modal-header">
-		{{resource.frmelmnts.lbl.selectChapter}}
+		{{resource.frmelmnts.lbl.selectChapters}}
 		</div>
 		<div class="sb-modal-content">
 		<div class="pb-20 pt-5">{{choosedTextBook.name}}</div>
