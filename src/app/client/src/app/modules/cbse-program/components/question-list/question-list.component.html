@@ -31,10 +31,10 @@
             >Edit</a>
           </div>
           <div class="mt-8 practice-set__status">
-
             <span class="sb-label sb-label-table sb-label-success-0" *ngIf="!sourcingOrgReviewer"
-            [ngClass]="{ 'sb-label-success-0':  (resourceStatus === 'Live' && sourcingReviewStatus === 'Approved'), 'sb-label-warning-0': (resourceStatus === 'Draft'),  'sb-label-error-0': ((resourceStatus === 'Draft' && resourceDetails.rejectComment && resourceDetails.rejectComment !== '') || (resourceStatus === 'Live' && sourcingReviewStatus === 'Rejected')) ,  'sb-label-gray-0': ( resourceStatus === 'Review' || (resourceStatus === 'Live' && !sourcingReviewStatus))}">{{ resourceStatusText }}</span>
-
+            [ngClass]="{ 'sb-label-success-0':  (resourceStatus === 'Live' && sourcingReviewStatus === 'Approved'), 'sb-label-warning-0': (resourceStatus === 'Draft'),  'sb-label-error-0': ((resourceStatus === 'Draft' && resourceDetails.rejectComment && resourceDetails.rejectComment !== '') || (resourceStatus === 'Live' && sourcingReviewStatus === 'Rejected')) ,  'sb-label-gray-0': ( resourceStatus === 'Review' || (resourceStatus === 'Live' && !sourcingReviewStatus))}">
+              {{ resourceStatusText }}
+            </span>
             <span class="cursor-pointer fs-0-785 ml-8"
             appTelemetryInteract
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('view-reviewercomments', 'click', 'question-list')"
@@ -43,6 +43,12 @@
             [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
             (click)="showReviewModal=!showReviewModal"
             *ngIf="showSourcingOrgRejectComments() || showContributorOrgReviewComments()"><i class="comment alternate outline icon sb-color-primary"></i><a>View Comments</a></span>
+            <a id="viewContentOnDiksha" *ngIf="sourcingReviewStatus === 'Approved' && originPreviewUrl" class="sb-color-primary mr-8 pl-10 fs-0-785 font-weight-bold"
+              href="{{originPreviewUrl}}" target="_blank">{{resourceService.frmelmnts.btn.viewContentOnDiksha}}
+            </a>
+            <label *ngIf="sourcingReviewStatus === 'Approved' && !originPreviewUrl" class="sb-color-error mr-8 pl-10 fs-0-785 font-weight-bold">
+              {{resourceService.frmelmnts.btn.viewContentOnDikshaError}}
+            </label>
           </div>
         </div>
         <div class="sb-field-group textbook-edit mr-auto ui form" *ngIf="showTextArea">
