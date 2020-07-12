@@ -94,7 +94,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public telemetryStart: IStartEventInput;
   public telemetryEnd: IEndEventInput;
   public sortColumn = 'name';
+  public chaptersSortColumn = 'name';
   public direction = 'asc';
+  public chaptersSortDir = 'asc';
   public tempSortCollections = [];
   public filterApplied = false;
   public showDocumentUploader = false;
@@ -118,6 +120,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public programConfig: any;
   public disableCreateProgramBtn = false;
   public showLoader = true;
+  public btnDoneDisabled = false;
 
   constructor(
     public frameworkService: FrameworkService,
@@ -357,6 +360,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.collections = this.programsService.sortCollection(this.tempSortCollections, column, this.direction);
     this.direction = (this.direction === 'asc' || this.direction === '') ? 'desc' : 'asc';
     this.sortColumn = column;
+  }
+
+  sortChapters(identifier,column) {
+    this.textbooks[identifier].children = this.programsService.sortCollection(this.textbooks[identifier].children, column, this.chaptersSortDir);
+    this.chaptersSortDir = (this.chaptersSortDir === 'asc' || this.chaptersSortDir === '') ? 'desc' : 'asc';
+    this.chaptersSortColumn = column;
   }
 
   resetSorting() {
@@ -1079,14 +1088,19 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   initChaptersSelectionForm(chapters) {
-    this.chaptersSelectionForm = this.sbFormBuilder.group({
-      chapters: new FormArray([])
-    });
+    let values = [];
+
 
     chapters.children.forEach((o, i) => {
-      const control = new FormControl(o.identifier);
-      this.chaptersControls.push(control);
+      values.push(o.checked);
     });
+
+    this.chaptersSelectionForm = this.sbFormBuilder.group({
+      chaptersCtrl: this.sbFormBuilder.array(values)
+    });
+
+    this.getChapterLevelCount(chapters.children);
+    this.btnDoneDisabled = false;
   }
 
   public getCollectionHierarchy(identifier: string) {
@@ -1117,26 +1131,75 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.initChaptersSelectionForm(this.choosedTextBook);
       const cindex = this.tempCollections.findIndex(x => x.identifier === identifier);
       this.tempCollections[cindex]["selected"] = content.children.length;
-      this.tempCollections[cindex]["total"]    = content.children.length;
+      this.tempCollections[cindex]["total"]    = content.children.length
     }, error => console.log(console.error()
     ));
   }
 
-  get chaptersControls() {
-    return (this.chaptersSelectionForm.controls.chapters as FormArray).controls;
-  }
-
-  selectedCount(identifier) {
-    this.selectChapter = false;
+  updateSelection(identifier) {
     let selectedCount = 0;
+    let selectedChapters = _.get(this.chaptersSelectionForm.controls.chaptersCtrl, "controls");
+    this.selectChapter = false;
 
-     _.forEach(this.textbooks[identifier].children, (item) =>{
-      if (item.checked) {
+    _.forEach(selectedChapters, (item, i) => {
+      this.textbooks[identifier].children[i].checked = item.value;
+      if (item.value === true) {
         selectedCount ++;
       }
     });
 
     const cindex = this.tempCollections.findIndex(x => x.identifier === identifier);
     this.tempCollections[cindex].selected = selectedCount;
+  }
+
+  getChapterLevelCount(collections) {
+    let status = ['Live', 'Draft'];
+    let createdBy, visibility;
+    visibility = true;
+
+    _.forEach(collections, collection => {
+      collection.totalLeaf = 0;
+      this.getContentCountPerFolder(collection , status , false, undefined, createdBy, visibility);
+    });
+  }
+
+  getContentCountPerFolder(collection, contentStatus?: string[], onlySample?: boolean, organisationId?: string, createdBy?: string, visibility?: boolean) {
+    const self = this;
+    _.each(collection.children, child => {
+      collection.totalLeaf += self.getContentCountPerFolder(child, contentStatus, onlySample, organisationId, createdBy, visibility);
+    });
+
+    console.log(collection.totalLeaf);
+
+    // tslint:disable-next-line:max-line-length
+    collection.totalLeaf += collection.leaf ? this.filterContentsForCount(collection.leaf, contentStatus, onlySample, organisationId, createdBy, visibility) : 0;
+    return collection.totalLeaf;
+  }
+
+  filterContentsForCount (contents, status?, onlySample?, organisationId?, createdBy?, visibility?) {
+    const filter = {
+      ...(onlySample && {sampleContent: true}),
+      ...(!onlySample && {sampleContent: null}),
+      ...(createdBy && {createdBy}),
+      ...(organisationId && {organisationId}),
+      ...(visibility && {visibility}),
+    };
+    if (status && status.length > 0) {
+      contents = _.filter(contents, leaf => _.includes(status, leaf.status));
+    }
+    const leaves = _.filter(contents, filter);
+    return leaves.length;
+  }
+
+  onChangeSelection() {
+    let selectedChapters = _.get(this.chaptersSelectionForm.controls.chaptersCtrl, "controls");
+
+    if (selectedChapters.findIndex(o => o.value) == -1) {
+      this.btnDoneDisabled = true;
+
+      return false;
+    }
+
+    this.btnDoneDisabled = false;
   }
 }
