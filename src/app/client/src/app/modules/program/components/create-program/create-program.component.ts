@@ -80,7 +80,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   originalProgramScope: any = {};
   userprofile;
   public programData: any = {};
-  showTextBookSelector = false;
+  showTextBookSelector = true;
   formIsInvalid = false;
   subjectsOption = [];
   mediumOption = [];
@@ -1153,42 +1153,40 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   getChapterLevelCount(collections) {
-    let status = ['Live', 'Draft'];
+    let status = ['Live'];
     let createdBy, visibility;
     visibility = true;
 
     _.forEach(collections, collection => {
-      collection.totalLeaf = 0;
-      this.getContentCountPerFolder(collection , status , false, undefined, createdBy, visibility);
+       let totalLeaf = 0;
+       let contentTypes = [];
+       let result = this.getContentCountPerFolder(collection , status , false, undefined, createdBy, visibility, totalLeaf, contentTypes);
+
+       let contentTypeDisplayTxt = '';
+       for (const property in result.contentTypes) {
+        contentTypeDisplayTxt += `${result.contentTypes[property]}  ${property} `;
+      }
+
+      collection['totalLeaf'] = result.totalLeaf;
+      collection['contentTypesText'] = contentTypeDisplayTxt;
     });
   }
 
-  getContentCountPerFolder(collection, contentStatus?: string[], onlySample?: boolean, organisationId?: string, createdBy?: string, visibility?: boolean) {
+  getContentCountPerFolder(collection, contentStatus?: string[], onlySample?: boolean, organisationId?: string, createdBy?: string, visibility?: boolean, totalLeaf?, contentTypes?) {
     const self = this;
     _.each(collection.children, child => {
-      collection.totalLeaf += self.getContentCountPerFolder(child, contentStatus, onlySample, organisationId, createdBy, visibility);
+      if (contentStatus.indexOf(child.status) !== -1) {
+        ++totalLeaf;
+        contentTypes.push(child.contentType);
+      }
+
+      self.getContentCountPerFolder(child, contentStatus, onlySample, organisationId, createdBy, visibility, totalLeaf, contentTypes);
     });
 
-    console.log(collection.totalLeaf);
+    var counts = {};
+    contentTypes.forEach(function(x) { counts[x] = (counts[x] || 0)+1; });
 
-    // tslint:disable-next-line:max-line-length
-    collection.totalLeaf += collection.leaf ? this.filterContentsForCount(collection.leaf, contentStatus, onlySample, organisationId, createdBy, visibility) : 0;
-    return collection.totalLeaf;
-  }
-
-  filterContentsForCount (contents, status?, onlySample?, organisationId?, createdBy?, visibility?) {
-    const filter = {
-      ...(onlySample && {sampleContent: true}),
-      ...(!onlySample && {sampleContent: null}),
-      ...(createdBy && {createdBy}),
-      ...(organisationId && {organisationId}),
-      ...(visibility && {visibility}),
-    };
-    if (status && status.length > 0) {
-      contents = _.filter(contents, leaf => _.includes(status, leaf.status));
-    }
-    const leaves = _.filter(contents, filter);
-    return leaves.length;
+    return {"totalLeaf": totalLeaf, "contentTypes": counts};
   }
 
   onChangeSelection() {

@@ -652,7 +652,7 @@ class="sb-modal" appBodyScroll (dismissed)="this.selectChapter = false" #modal>
 									<label for="" class="sb__ellipsis sb__ellipsis--three">{{choosedTextBook.children[i].name}}</label>
 								</div>
 							</td>
-							<td suiPopup popupText="1 Lesson Plan 2 Explanation content">
+							<td suiPopup popupText="{{choosedTextBook.children[i].contentTypesText}}">
 								{{choosedTextBook.children[i].totalLeaf}}
 							</td>
 						</tr>
