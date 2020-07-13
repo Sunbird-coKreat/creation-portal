@@ -80,7 +80,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   originalProgramScope: any = {};
   userprofile;
   public programData: any = {};
-  showTextBookSelector = true;
+  showTextBookSelector = false;
   formIsInvalid = false;
   subjectsOption = [];
   mediumOption = [];
