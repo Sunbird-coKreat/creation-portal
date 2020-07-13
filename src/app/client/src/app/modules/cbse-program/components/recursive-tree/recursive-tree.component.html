@@ -16,13 +16,13 @@
           <i class="add icon mr-4"></i>{{resourceService.frmelmnts.btn.addFromLibrary}}</button>
       <button class="sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius"
         *ngIf="visibility && visibility['showAddresource']"
-        appTelemetryInteract
+        popupText="{{resourceService.frmelmnts.lbl.uploadFileOrCreateNew}}"  suiPopup appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add-resource', 'click', 'chapter-list')"
         [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(collection.identifier, 'Content', '1.0', {l1: sessionContext.collection})"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
         (click)="showModal = false; createResource($event, collection)">
-          <i class="add icon mr-4"></i>ADD
+          <i class="add icon mr-4"></i>Create new
       </button>
       <!-- Gray color button -->
       <!-- <button class="sb-btn sb-btn-gray sb-btn-xs sb-left-icon-btn" *ngIf="visibility && visibility['showAddresource']"
