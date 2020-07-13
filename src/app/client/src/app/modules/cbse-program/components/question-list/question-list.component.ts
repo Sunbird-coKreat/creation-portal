@@ -223,9 +223,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     } else if (this.resourceStatus === 'Live' && _.isEmpty(this.sourcingReviewStatus)) {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
     } else if (this.sourcingReviewStatus === 'Rejected') {
-      this.resourceStatusText = this.resourceService.frmelmnts.lbl.contentIsRejected;
+      this.resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
     } else if (this.sourcingReviewStatus === 'Approved') {
-      this.resourceStatusText = this.resourceService.frmelmnts.lbl.contentIsApproved;
+      this.resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
       if (!_.isEmpty(this.sessionContext.contentOrigins) && !_.isEmpty(this.sessionContext.contentOrigins[this.sessionContext.resourceIdentifier])) {
         this.originPreviewUrl =  this.helperService.getContentOriginUrl(this.sessionContext.contentOrigins[this.sessionContext.resourceIdentifier].identifier);
       }
