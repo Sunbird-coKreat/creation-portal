@@ -81,6 +81,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   pageNumber = 1;
   pageLimit = 250;
   sharedContext;
+  showSkipReview = false;
 
   public telemetryPageId = 'collection';
   public telemetryInteractCdata: any;
@@ -162,6 +163,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.fetchFrameWorkDetails();
       this.getNominationStatus();
       this.setActiveDate();
+      this.showSkipReview = !!(_.get(this.userService,'userProfile.rootOrgId') === _.get(this.programDetails,'rootorg_id') && this.programDetails.config.defaultContributeOrgReview === false) ;
     }, error => {
       // TODO: navigate to program list page
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
