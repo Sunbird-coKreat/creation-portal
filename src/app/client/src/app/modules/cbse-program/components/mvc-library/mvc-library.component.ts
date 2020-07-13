@@ -1,10 +1,10 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import * as _ from 'lodash-es';
 import { catchError, map, finalize } from 'rxjs/operators';
 import { throwError, forkJoin } from 'rxjs';
 import { ContentService, ActionService, ProgramsService } from '@sunbird/core';
-import { ConfigService, ToasterService,ResourceService} from '@sunbird/shared';
+import { ConfigService, ToasterService, ResourceService } from '@sunbird/shared';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import { CbseProgramService } from '../../services';
 
@@ -28,17 +28,19 @@ export class MvcLibraryComponent implements OnInit {
   public collectionData: any;
   public collectionHierarchy = [];
   public childNodes: any;
+  public contentFacets: any;
   public programId: string;
   public programDetails: any;
   public resourceReorderBreadcrumb: any = [];
   public filterData: any = {};
   public activeFilterData: any = {};
+  public showAddedContent: Boolean = true;
 
   constructor(
     private programStageService: ProgramStageService, public programTelemetryService: ProgramTelemetryService,
     private contentService: ContentService, private configService: ConfigService, private actionService: ActionService,
     private cbseService: CbseProgramService, private programsService: ProgramsService,
-    private toasterService: ToasterService, private route: ActivatedRoute, private router: Router,public resourceService: ResourceService
+    private toasterService: ToasterService, private route: ActivatedRoute, private router: Router, public resourceService: ResourceService
   ) { }
 
   ngOnInit() {
@@ -58,23 +60,17 @@ export class MvcLibraryComponent implements OnInit {
         this.childNodes = _.get(this.collectionData, 'childNodes');
         this.resourceReorderBreadcrumb.push(this.collectionData.name);
         this.collectionHierarchy = this.getUnitWithChildren(this.collectionData, this.collectionId);
-        this.filterData['mediums'] = this.collectionData.medium;
-        this.filterData['subjects'] = this.collectionData.subject;
-        this.filterData['gradeLevels'] = this.plusMinusGradeLevel(this.collectionData.gradeLevel);
         this.programDetails = _.get(programDetails, 'result');
-        this.filterData['contentTypes'] = this.programDetails.content_types;
-        if (_.isEmpty(this.activeFilterData)) { this.activeFilterData = this.filterData; }
-        this.showLoader = false;
-        this.fetchContentList();
-      },
-      (error) => {
+        this.prepareFilterData();
+        this.fetchContentFacets();
+      }, (error) => {
         this.showLoader = false;
         const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
         this.toasterService.error(errorMes || 'Fetching textbook details failed. Please try again...');
-    });
+      });
   }
 
-  public getCollectionHierarchy(identifier: string) {
+  getCollectionHierarchy(identifier: string) {
     const hierarchyUrl = 'content/v3/hierarchy/' + identifier;
     const req = {
       url: hierarchyUrl,
@@ -108,37 +104,67 @@ export class MvcLibraryComponent implements OnInit {
   }
 
   generateNodeMeta(node) {
-    const nodeMeta =  {
-       identifier: node.identifier,
-       name: node.name,
-       contentType: node.contentType,
-       topic: node.topic,
-       status: node.status,
-       creator: node.creator,
-       createdBy: node.createdBy || null,
-       parentId: node.parent || null,
-       organisationId: _.has(node, 'organisationId') ? node.organisationId : null,
-       prevStatus: node.prevStatus || null,
-     };
-     return nodeMeta;
-   }
+    const nodeMeta = {
+      identifier: node.identifier,
+      name: node.name,
+      contentType: node.contentType,
+      topic: node.topic,
+      status: node.status,
+      creator: node.creator,
+      createdBy: node.createdBy || null,
+      parentId: node.parent || null,
+      organisationId: _.has(node, 'organisationId') ? node.organisationId : null,
+      prevStatus: node.prevStatus || null,
+    };
+    return nodeMeta;
+  }
 
+  prepareFilterData(): void {
+    this.filterData['medium'] = this.collectionData.medium;
+    this.filterData['subject'] = this.collectionData.subject;
+    this.filterData['gradeLevel'] = this.plusMinusGradeLevel(this.collectionData.gradeLevel);
+    this.filterData['contentType'] = this.programDetails.content_types;
+    if (_.isEmpty(this.activeFilterData)) { this.activeFilterData = _.cloneDeep(this.filterData); }
+    const textbookLevel = this.getNameAndConceptOfSelectedUnit(this.collectionHierarchy, this.collectionUnitId);
+    this.activeFilterData = _.assign(this.activeFilterData, ...textbookLevel);
+  }
 
-  fetchContentList(filters?: any) {
+  fetchContentFacets() {
+    const option = {
+      url: this.configService.urlConFig.URLS.DOCKCONTENT_MVC.SEARCH,
+      data: {
+        request: {
+          'filters': _.omit(this.activeFilterData, ['contentType']),
+          'limit': 0,
+          'facets': ['level1Name']
+        }
+      }
+    };
+    this.contentService.post(option).pipe(
+      finalize(() => {
+        this.showLoader = false;
+      }),
+      map((data: any) => data.result.facets))
+      .subscribe((result: any) => {
+        const level1Name = _.find(result, { name: 'level1Name' });
+        this.filterData['chapter'] = _.map(level1Name['values'], 'name');
+        this.fetchContentList();
+      });
+  }
+
+  fetchContentList() {
     this.skeletonLoader = true;
     const option = {
       url: this.configService.urlConFig.URLS.DOCKCONTENT_MVC.SEARCH,
       data: {
         request: {
           'filters': {
-                'contentType': 'TextBook',
-                'medium': [
-                    'Telegu'
-                ],
-                'status': [
-                    'live'
-                ]
-            }
+            'textbookName': this.collectionData.name,
+            'status': [
+              'live'
+            ],
+            ...this.activeFilterData
+          }
         }
       }
     };
@@ -146,42 +172,44 @@ export class MvcLibraryComponent implements OnInit {
       const errInfo = { errorMsg: 'Fetching content list failed' };
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     }),
-    finalize(() => {
-      this.skeletonLoader = false;
-      if (_.isEmpty(this.contentList)) { this.openFilter(); }
-    }),
-    map((data: any) => data.result.content))
-    .subscribe((result: any) => {
-      this.contentList = result;
-      this.filterContentList();
-    });
+      finalize(() => {
+        this.skeletonLoader = false;
+        if (_.isEmpty(this.contentList)) { this.openFilter(); }
+      }),
+      map((data: any) => data.result.content ? data.result.content : []))
+      .subscribe((result: any) => {
+        this.contentList = result;
+        this.filterContentList();
+      });
   }
 
   filterContentList(selectedContentId?) {
     if (_.isEmpty(this.contentList)) { return; }
     _.forEach(this.contentList, (value, key) => {
-        value.isAdded = _.includes(this.childNodes, value.identifier);
+      value.isAdded = _.includes(this.childNodes, value.identifier);
     });
     if (selectedContentId) {
-      this.selectedContentDetails = _.pick(_.find(this.contentList, {'identifier': selectedContentId}), ['name', 'identifier', 'isAdded']);
-      console.log(this.selectedContentDetails);
+      this.selectedContentDetails = _.pick(
+        _.find(this.contentList, { 'identifier': selectedContentId }), ['name', 'identifier', 'isAdded']
+      );
     } else {
-      this.selectedContentDetails = _.pick(this.contentList[0], ['name', 'identifier', 'isAdded']);
+      const selectedContentIndex = this.showAddedContent ? _.findIndex(this.contentList, { 'isAdded': false }) : 0;
+      this.selectedContentDetails = _.pick(this.contentList[selectedContentIndex], ['name', 'identifier', 'isAdded']);
     }
   }
 
   plusMinusGradeLevel(gradeLevel: Array<any>) {
-    if (_.isEmpty(gradeLevel))  { return []; }
+    if (_.isEmpty(gradeLevel)) { return []; }
     const gradeLevelTemp: any = [...gradeLevel];
     _.forEach(gradeLevel, (value, key) => {
       value = _.head(_.map(value.match(/\d+/g), _.parseInt));  // Extract a number from a string
       if (value === 1) {
-          gradeLevelTemp.push(`Class ${value + 1}`);
-      }  else if (value === 12) {
-          gradeLevelTemp.push(`Class ${value - 1}`);
+        gradeLevelTemp.push(`Class ${value + 1}`);
+      } else if (value === 12) {
+        gradeLevelTemp.push(`Class ${value - 1}`);
       } else if (value > 1 && value < 12) {
-          gradeLevelTemp.push(`Class ${value + 1}`);
-          gradeLevelTemp.push(`Class ${value - 1}`);
+        gradeLevelTemp.push(`Class ${value + 1}`);
+        gradeLevelTemp.push(`Class ${value - 1}`);
       }
     });
     return _.uniq(gradeLevelTemp);
@@ -197,15 +225,15 @@ export class MvcLibraryComponent implements OnInit {
 
   onFilterChange(event: any) {
     if (event.action === 'filterDataChange') {
-      this.activeFilterData =  event.filters;
-      this.fetchContentList(event.filters);
+      this.activeFilterData = _.assign(this.activeFilterData, event.filters);
+      // this.activeFilterData = _.omitBy(filtered, v => _.isEmpty(v));
+      this.fetchContentList();
     } else if (event.action === 'filterStatusChange') {
       this.isFilterOpen = event.filterStatus;
-    } else {}
-  }
-
-  isResourceAdded(identifier): Boolean {
-    return _.includes(this.childNodes, identifier);
+    } else if (event.action === 'showAddedContent') {
+      this.showAddedContent = !event.status;
+      this.filterContentList();
+    }
   }
 
   showResourceTemplate(event) {
@@ -235,8 +263,52 @@ export class MvcLibraryComponent implements OnInit {
     }
   }
 
-  // handleBack() {
-  //   this.programStageService.removeLastStage();
-  // }
+  getParentsHelper(tree: any, id: string, parents: Array<any>) {
+    const self = this;
+    if (tree.identifier === id) {
+      return {
+        found: true,
+        parents: [...parents, this.generateParentLevel(tree, parents)]
+      };
+    }
+    let result = {
+      found: false,
+    };
+    if (tree.children) {
+      _.forEach(tree.children, (subtree, key) => {
+        const maybeParents = _.concat([], parents);
+        if (tree.identifier !== undefined) {
+          maybeParents.push(this.generateParentLevel(tree, maybeParents));
+        }
+        const maybeResult: any = self.getParentsHelper(subtree, id, maybeParents);
+        if (maybeResult.found) {
+          result = maybeResult;
+          return false;
+        }
+      });
+    }
+    return result;
+  }
+
+  generateParentLevel(tree, parents) {
+    const obj = {};
+    const index = parents.length + 1;
+    obj[`level${index}Name`] = {
+      value: tree.name
+    };
+    return obj;
+  }
+
+  getNameAndConceptOfSelectedUnit(data: Array<any>, id: string) {
+    const tree = {
+      children: data
+    };
+    const result: any = this.getParentsHelper(tree, id, []);
+    if (result.found) {
+      return result.parents;
+    } else {
+      return [];
+    }
+  }
 
 }

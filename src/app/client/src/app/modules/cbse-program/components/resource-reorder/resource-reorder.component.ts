@@ -3,6 +3,7 @@ import { ConfigService, ToasterService,ResourceService } from '@sunbird/shared';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { ProgramTelemetryService} from '../../../program/services';
 import { UserService } from '@sunbird/core';
+import * as _ from 'lodash-es';
 
 @Component({
   selector: 'app-resource-reorder',
@@ -26,7 +27,7 @@ export class ResourceReorderComponent implements OnInit {
 
   constructor(private collectionHierarchyService: CollectionHierarchyService, public toasterService: ToasterService,
               public programTelemetryService: ProgramTelemetryService, public userService: UserService,
-              public configService: ConfigService,public resourceService: ResourceService) { }
+              public configService: ConfigService, public resourceService: ResourceService) { }
 
   ngOnInit() {
     // tslint:disable-next-line:max-line-length
@@ -41,21 +42,31 @@ export class ResourceReorderComponent implements OnInit {
      .subscribe((data) => {
      this.collectionHierarchyService.removeResourceToHierarchy(this.sessionContext.collection, this.prevUnitSelect, this.contentId)
       .subscribe((res) => {
-        if (this.sessionContext && !this.sessionContext.selectedMvcContentDetails) {
-          this.toasterService.success('The Selected Resource is Successfully Moved');
-        } else {
-          // tslint:disable-next-line:max-line-length
-          this.toasterService.InfoToasterCritical('<b>Resource added successfully!</b>', `Content "${this.sessionContext.selectedMvcContentDetails.name}" added to textbook- ${this.collectionUnitsBreadcrumb[0]}`);
-        }
-        this.moveEvent.emit({
-          action: 'afterMove',
-          contentId: this.contentId,
-          collection: {
-            identifier: this.unitSelected
-          }
-        });
+        this.toasterService.success('The Selected Resource is Successfully Moved');
+        this.emitAfterMoveEvent();
         this.modal.deny();
       });
+    }, err => {
+    });
+  }
+
+  emitAfterMoveEvent() {
+    this.moveEvent.emit({
+      action: 'afterMove',
+      contentId: this.contentId,
+      collection: {
+        identifier: this.unitSelected
+      }
+    });
+  }
+
+  addResource() {
+    this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitSelected, this.contentId)
+     .subscribe((data) => {
+        // tslint:disable-next-line:max-line-length
+        this.toasterService.InfoToasterCritical('<b>Content added successfully!</b>', `Content "${this.sessionContext.selectedMvcContentDetails.name}" added to textbook- ${this.collectionUnitsBreadcrumb[0]}`);
+        this.emitAfterMoveEvent();
+        this.modal.deny();
     }, err => {
     });
   }
@@ -86,8 +97,8 @@ export class ResourceReorderComponent implements OnInit {
         found: false,
     };
     if (tree.children) {
-        $.each(tree.children, (index, subtree) => {
-            const maybeParents = $.merge([], parents);
+        _.forEach(tree.children, (subtree, key) => {
+            const maybeParents = _.concat([], parents);
             if (tree.identifier !== undefined) {
                 maybeParents.push(tree.name);
             }

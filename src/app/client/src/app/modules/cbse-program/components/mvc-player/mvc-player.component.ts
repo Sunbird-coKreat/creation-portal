@@ -30,8 +30,8 @@ export class MvcPlayerComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     if (this.contentDetails.identifier && this.contentId !== this.contentDetails.identifier) {
-       this.getUploadedContentMeta(this.contentDetails.identifier);
-       this.contentId = this.contentDetails.identifier;
+      this.contentId = this.contentDetails.identifier;
+      this.getUploadedContentMeta(this.contentId);
     }
   }
 

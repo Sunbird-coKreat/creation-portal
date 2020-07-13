@@ -4,7 +4,7 @@
  {{resourceService.frmelmnts.lbl.moveTo}}
 </div>
 <div class="sb-modal-header" [hidden]="!sessionContext?.selectedMvcContentDetails">
-  {{resourceService.frmelmnts.lbl.whereDoYouWantToAddThisResource}}
+  {{resourceService.frmelmnts.lbl.whereDoYouWantToAddThisContent}}
 </div>
 <!-- Selection of Layout in modal -->
 <div class="sb-modal-content sb-chapterlist-modal scrolling content sb-dock-accordion py-20">
@@ -56,12 +56,12 @@
       Adding <span class="font-weight-bold px-10">{{sessionContext?.selectedMvcContentDetails?.name}} to </span>
     <span class="section" *ngFor="let unit of collectionUnitsBreadcrumb;first as first;last as last;">
       <i class="right chevron icon divider b-0" [hidden]="first"></i>
-      <span class="font-weight-bold" [class.font-weight-normal]="last" > {{ unit }}</span>
+      <span [class.font-weight-bold]="first" > {{ unit }}</span>
     </span>
   </div>
   <div class="w-20 text-right">
-    <button id="moveResource" class="sb-btn sb-btn-normal text-inherit" [ngClass]="{'sb-btn-primary text-right': showMoveButton, 'sb-btn-disabled': !showMoveButton}" (click)="moveResource()">
-     {{resourceService.frmelmnts.btn.addResource}}
+    <button id="moveResource" class="sb-btn sb-btn-normal text-inherit" [ngClass]="{'sb-btn-primary text-right': showMoveButton, 'sb-btn-disabled': !showMoveButton}" (click)="addResource()">
+     {{resourceService.frmelmnts.btn.addContent}}
     </button>
   </div>
 </div>

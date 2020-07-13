@@ -8,10 +8,10 @@ import { ResourceService } from '@sunbird/shared';
 })
 export class MvcListComponent implements OnInit {
   @Input() contentList: any;
-  @Input() selectedUnitName: any;
   @Input() selectedContentId: any;
   @Output() contentChangeEvent = new EventEmitter<any>();
   @Output() moveEvent = new EventEmitter<any>();
+  @Input() showAddedContent: Boolean;
   public width: any;
   public height: any;
 
