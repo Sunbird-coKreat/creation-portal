@@ -1023,6 +1023,9 @@
     },
     "sourcingRejectedComments": {
       "type": "object"
+    },
+    "chapterCountForContribution": {
+      "type": "number"
     }
   }
 }
