@@ -117,7 +117,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
      */
     this.levelOneChapterList.push({
       identifier: 'all',
-      name: 'All Chapters'
+      name: 'All Chapter(s)'
     });
     this.selectedChapterOption = 'all';
     this.updateAccordianView();

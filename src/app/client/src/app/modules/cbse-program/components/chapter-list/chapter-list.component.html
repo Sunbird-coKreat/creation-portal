@@ -83,7 +83,7 @@
 
         <div class="sb-textbook-allchapters sb-field">
           <label class="fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.selectChapters}}</label>
-          <sui-select class="selection w-100" placeholder="All Chapters" [isSearchable]=true labelField="name"
+          <sui-select class="selection w-100" placeholder="All Chapter(s)" [isSearchable]=true labelField="name"
             valueField="identifier" [(ngModel)]="selectedChapterOption"
             (selectedOptionChange)="onSelectChapterChange()" [options]="levelOneChapterList" #selectdChapter>
             <sui-select-option *ngFor="let option of selectdChapter.filteredOptions" [value]="option">
