@@ -92,7 +92,7 @@
 					</div>
 			</div>
 
-			<div class="pr-40 text-right" *ngIf="programDetails?.config?.defaultContributeOrgReview === false">
+			<div class="pr-40 text-right" *ngIf="showSkipReview">
 				<i class="icon check circle sb-color-secondary-200 fs-1-286 va-text-top" popupText="{{resourceService.frmelmnts.lbl.twoLevelReviewSkippedNote}}" suiPopup [popupPlacement]="'top'"></i>
 				<label class="font-weight-normal fs-0-92">{{resourceService.frmelmnts.lbl.twoLevelReviewSkipped}}</label>
 			</div>

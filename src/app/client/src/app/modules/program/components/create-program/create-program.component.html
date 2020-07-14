@@ -494,7 +494,7 @@
 											<div class="four wide column px-0 mt-5">
 												<div class="sb-color-gray-400 fxsmall text-lowercase">{{tempCollection.selected}} out of {{tempCollection.total}} chapters selected</div>
 												<div class="sb-color-primary fxsmall cursor-pointer" (click)="chooseChapters(tempCollection);">
-													<i class="edit outline icon"></i>{{resource.frmelmnts.lbl.selectChapter}}s
+													<i class="edit outline icon"></i>{{resource.frmelmnts.lbl.editChapters}}
 												</div>
 											</div>
 											<div class="two wide column text-right cursor-pointer"
@@ -615,10 +615,10 @@
 	</div>
 </sui-modal>
 <sui-modal *ngIf="selectChapter" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
-class="sb-modal" appBodyScroll (dismissed)="selectedCount(choosedTextBook.identifier)" #modal>
-	<form [formGroup]="chaptersSelectionForm" (ngSubmit)="selectedCount(choosedTextBook.identifier)">
+class="sb-modal" appBodyScroll (dismissed)="this.selectChapter = false" #modal>
+	<form [formGroup]="chaptersSelectionForm" (ngSubmit)="updateSelection(choosedTextBook.identifier)">
 		<div class="sb-modal-header">
-		{{resource.frmelmnts.lbl.selectChapter}}
+		{{resource.frmelmnts.lbl.selectChapters}}
 		</div>
 		<div class="sb-modal-content">
 		<div class="pb-20 pt-5">{{choosedTextBook.name}}</div>
@@ -626,32 +626,42 @@ class="sb-modal" appBodyScroll (dismissed)="selectedCount(choosedTextBook.identi
 				<table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
 					<thead class="sb-table-header sb-table-thead-gray">
 					<tr>
-						<th class="w-70 cursor-pointer sb-sorting">{{resource.frmelmnts.lbl.title}}
-							<i class="fa fa-sort" aria-hidden="true"></i>
+						<th class="w-70 cursor-pointer sb-sorting" (click)="sortChapters(choosedTextBook.identifier,'name')">{{resource.frmelmnts.lbl.title}}
+							<i class="fa fa-sort" aria-hidden="true"
+							*ngIf="chaptersSortDir === '' || chaptersSortColumn !== 'name' "></i>
+							<span *ngIf="chaptersSortColumn === 'name'" class="d-inline-block">
+								<i class="fa fa-sort-asc" aria-hidden="true"
+									[ngClass]="{'sb-color-gray-100': chaptersSortDir === 'asc'}"></i>
+								<i class="fa fa-sort-desc" aria-hidden="true"
+									[ngClass]="{'sb-color-gray-100': chaptersSortDir === 'desc'}"></i>
+							</span>
 						</th>
 						<th class="w-30 cursor-pointer sb-sorting">{{resource.frmelmnts.lbl.existingContent}}
-							<i class="fa fa-sort" aria-hidden="true"></i>
+							<!-- <i class="fa fa-sort" aria-hidden="true"></i> -->
 						</th>
 					</tr>
 					</thead>
 					<tbody class="sb-table-body">
-					<tr formArrayName="chapters" *ngFor="let chapter of chaptersControls; let i = index">
-						<td>
-							<div class="sb-checkbox sb-checkbox-primary">
-							<input [name]="chapters" type="checkbox" id="{{choosedTextBook.children[i].identifier}}"
-								value="{{choosedTextBook.children[i].identifier}}" [formControlName]="i"
-								[(ngModel)] ="choosedTextBook.children[i].checked">
-							<label for="" class="sb__ellipsis sb__ellipsis--three">{{choosedTextBook.children[i].name}}</label>
-							</div>
-						</td>
-						<td suiPopup popupText="1 Lesson Plan 2 Explanation content">2</td>
-					</tr>
+						<tr *ngFor="let item of chaptersSelectionForm.controls['chaptersCtrl'].controls; let i = index">
+							<td>
+								<div class="sb-checkbox sb-checkbox-primary">
+									<input type="checkbox"
+										id="{{choosedTextBook.children[i].identifier}}"
+										[formControl]="item"
+										(change)="onChangeSelection()" >
+									<label for="" class="sb__ellipsis sb__ellipsis--three">{{choosedTextBook.children[i].name}}</label>
+								</div>
+							</td>
+							<td suiPopup popupText="{{choosedTextBook.children[i].contentTypesText}}">
+								{{choosedTextBook.children[i].totalLeaf}}
+							</td>
+						</tr>
 					</tbody>
 				</table>
 			</div>
 		</div>
 		<div class="sb-modal-actions">
-		<button class="sb-btn sb-btn-normal sb-btn-primary">
+		<button class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="btnDoneDisabled">
 			{{resource.frmelmnts.lbl.done}}
 		</button>
 		</div>
