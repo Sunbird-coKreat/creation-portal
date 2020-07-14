@@ -165,7 +165,11 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resourceStatus =  _.get(this.resourceDetails, 'status');
       this.setResourceStatus();
       if (this.resourceDetails.questionCategories) {
-        this.sessionContext.questionType = _.lowerCase(_.nth(this.resourceDetails.questionCategories, 0));
+        let questionCategories = _.nth(this.resourceDetails.questionCategories, 0);
+        if (questionCategories === 'CuriosityQuestion') {
+          questionCategories = 'curiosity';
+        }
+        this.sessionContext.questionType = _.lowerCase(questionCategories);
       }
       this.sessionContext.resourceStatus = this.resourceStatus;
       this.resourceName = this.resourceDetails.name || this.templateDetails.metadata.name;
