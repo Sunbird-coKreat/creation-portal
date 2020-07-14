@@ -319,6 +319,10 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
    */
 
   updateQuestion(optionalParams?: Array<{}>) {
+    const questionCategories = _.get(this.sessionContext, 'contentMetadata.questionCategories', []);
+    if (!_.isEmpty(questionCategories)) {
+      this.sessionContext.questionType = _.nth(questionCategories, 0);
+    }
     forkJoin([this.getConvertedLatex(this.editorState.question), this.getConvertedLatex(this.editorState.answer)])
       .subscribe((res) => {
         const rendererBody = res[0];
@@ -331,7 +335,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
                 'objectType': 'AssessmentItem',
                 'metadata': {
                   // tslint:disable-next-line:max-line-length
-                  'category': this.sessionContext.questionType === 'curiosity' ? 'CuriosityQuestion' : this.sessionContext.questionType.toUpperCase(),
+                  'category': this.sessionContext.questionType.toUpperCase(),
                   'editorState': {
                     'question': this.editorState.question,
                     'answer': this.editorState.answer
