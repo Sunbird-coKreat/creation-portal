@@ -492,7 +492,6 @@
 												</small>
 											</div>
 											<div class="four wide column px-0 mt-5">
-												<!-- <div class="sb-color-gray-400 fxsmall text-lowercase">{{tempCollection.selected}} {{resource.frmelmnts.lbl.outOf}} {{tempCollection.total}} {{resource.frmelmnts.lbl.chaptersSelected}}</div> -->
 												<div class="sb-color-gray-400 fxsmall text-lowercase">
 												{{ resource.frmelmnts.lbl.selectedOutOfTotal | interpolate:'{selected}': tempCollection.selected | interpolate:'{total}': tempCollection.total }}
 											</div>
