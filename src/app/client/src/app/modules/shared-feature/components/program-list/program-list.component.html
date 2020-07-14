@@ -68,7 +68,7 @@
                     {{program?.name}}
                   </div>
                   <div class="sb__ellipsis sb__ellipsis--three">{{ getProgramTextbooksCount(program) }}</div>
-                  <div *ngIf="activeMyProgramsMenu" class="sb-label-value mt-4">{{ getProgramInfo(program, 'board') }}</div>
+                  <div *ngIf="activeMyProgramsMenu && getProgramInfo(program, 'board')" class="sb-label-value mt-4">{{ getProgramInfo(program, 'board') }}</div>
                 </td>
                 <td *ngIf="isContributor" >
                   <div>{{ getSourcingOrgName(program) }}
@@ -152,8 +152,8 @@
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
                   </td>
-                  <td *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')" class="fs-1-5 sb-dock-icon-tooltip" >
-                    <i class="icon edit sb-color-primary mx-10 cursor-pointer ui" data-tooltip="Modify" (click)="editOnClick(program)"></i>
+                  <td *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')" class="fs-1-5 sb-dock-icon-tooltip px-5">
+                    <i class="icon edit sb-color-primary cursor-pointer ui" data-tooltip="Modify" (click)="editOnClick(program)"></i>
                     <i class="icon trash sb-color-primary cursor-pointer ui" data-tooltip="Delete" (click)="setDelete(program, i)"></i>
                   </td>
               </tr>
