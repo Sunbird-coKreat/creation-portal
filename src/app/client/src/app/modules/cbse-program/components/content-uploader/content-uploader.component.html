@@ -39,6 +39,10 @@
                 [telemetryInteractPdata]="telemetryInteractPdata"
                   >View Comments</a>
                 </span>
+                <a id="viewContentOnDiksha" *ngIf="sourcingReviewStatus === 'Approved' && originPreviewUrl" class="sb-color-primary mr-8 pl-10 fs-0-785 font-weight-bold"
+                href="{{originPreviewUrl}}" target="_blank">{{resourceService.frmelmnts.btn.viewContentOnDiksha}}</a>
+                <label *ngIf="sourcingReviewStatus === 'Approved' && !originPreviewUrl" class="sb-color-error mr-8 pl-10 fs-0-785 font-weight-bold">
+                {{resourceService.frmelmnts.btn.viewContentOnDikshaError}}</label>
               </div>
             </div>
             <div class="sb-field-group textbook-edit ui form" *ngIf="showTextArea">
@@ -54,12 +58,6 @@
               </div>
             </div>
             <div class='practical-sb-buttons'>
-
-              <a id="viewContentOnDiksha" *ngIf="sourcingReviewStatus === 'Approved' && originPreviewUrl" class="sb-color-primary mr-8 pl-10 fs-0-92 font-weight-normal"
-              href="{{originPreviewUrl}}" target="_blank">{{resourceService.frmelmnts.btn.viewContentOnDiksha}}</a>
-              <label *ngIf="sourcingReviewStatus === 'Approved' && !originPreviewUrl" class="sb-color-error mr-8 pl-10 font-weight-normal">
-              {{resourceService.frmelmnts.btn.viewContentOnDikshaError}}</label>
-
               <button id="saveContent" suiPopup popupText="Save" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSave" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="saveContent()"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('save-resourcemetadata', 'click', 'content-uploader')"
