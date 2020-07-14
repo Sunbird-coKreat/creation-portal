@@ -652,9 +652,15 @@ class="sb-modal" appBodyScroll (dismissed)="this.selectChapter = false" #modal>
 									<label for="" class="sb__ellipsis sb__ellipsis--three">{{choosedTextBook.children[i].name}}</label>
 								</div>
 							</td>
-							<td suiPopup popupText="{{choosedTextBook.children[i].contentTypesText}}">
+							<td *ngIf="choosedTextBook.children[i].totalLeaf; else noPopup" 
+								suiPopup popupText="{{choosedTextBook.children[i].contentTypesText}}">
 								{{choosedTextBook.children[i].totalLeaf}}
 							</td>
+							<ng-template #noPopup>
+								<td>
+									{{choosedTextBook.children[i].totalLeaf}}
+								</td>
+							</ng-template>
 						</tr>
 					</tbody>
 				</table>
