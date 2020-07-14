@@ -492,8 +492,10 @@
 												</small>
 											</div>
 											<div class="four wide column px-0 mt-5">
-												<div class="sb-color-gray-400 fxsmall text-lowercase">{{tempCollection.selected || 0}} out of {{tempCollection.total || 0}} chapters selected</div>
-												<div *ngIf="tempCollection.selected" class="sb-color-primary fxsmall cursor-pointer" (click)="chooseChapters(tempCollection);">
+												<div class="sb-color-gray-400 fxsmall text-lowercase">
+													{{ resource.frmelmnts.lbl.selectedOutOfTotal | interpolate:'{selected}': tempCollection.selected | interpolate:'{total}': tempCollection.total }}
+												</div>
+												<div *ngIf="tempCollection.selected" class="sb-color-primary fxsmall cursor-pointer text-none" (click)="chooseChapters(tempCollection);">
 													<i class="edit outline icon"></i>{{resource.frmelmnts.lbl.editChapters}}
 												</div>
 											</div>
