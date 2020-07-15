@@ -1,11 +1,16 @@
-<div class="add-to-library mb-30" *ngIf='!showLoader'>
+<div class="add-to-library mb-30"  *ngIf='!showLoader'>
 
   <!-- Blue Header -->
-  <div class="sb-bg-color-primary add-to-library__header">
+  <div class="sb-bg-color-primary add-to-library__header" [appTelemetryImpression]="telemetryImpression">
     <div class="ui container relative position">
       <div class="d-flex flex-ai-center">
-        <button class="sb-btn sb-btn-primary sb-btn-xs back-btn px-0" (click)="handleBack();"><i
-            class="arrow left icon fs-1"></i></button>
+        <button class="sb-btn sb-btn-primary sb-btn-xs back-btn px-0" (click)="handleBack();"
+        appTelemetryInteract
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('go-back', 'click', 'mvc-explore')"
+        [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(collectionUnitId, 'Content', '1.0', {l1: collectionId})"
+        [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
+        [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"
+        ><i class="arrow left icon fs-1"></i></button>
         <div class="ml-8 sb-color-white">
           <div class="d-flex flex-ai-center fsmall">
             <div class="font-weight-bold fs-1-16">{{resourceService.frmelmnts.lbl.addFromLibrary}}</div>
@@ -21,20 +26,20 @@
     </div>
   </div>
   
-  <app-mvc-filter [filters]='filterData' [activeFilterData]="activeFilterData" [filterOpenStatus]="isFilterOpen" (filterChangeEvent)="onFilterChange($event);" ></app-mvc-filter>
+  <app-mvc-filter [sessionContext]="sessionContext" [filters]='filterData' [activeFilterData]="activeFilterData" [filterOpenStatus]="isFilterOpen" (filterChangeEvent)="onFilterChange($event);" ></app-mvc-filter>
   
   <div class="ui container min-h-500" *ngIf="!skeletonLoader && contentList.length">
     <!-- Player Section -->
     <div class="sb-g add-to-library__toc-player">
       <!-- Left Sidebar for cards -->
       <section class="sb-g-col-xs-12 sb-g-col-md-4 sb-g-col-lg-4">
-        <app-mvc-list [contentList]="contentList" [selectedContentId]="selectedContentDetails?.identifier" [showAddedContent]="showAddedContent"
+        <app-mvc-list [sessionContext]="sessionContext" [contentList]="contentList" [selectedContentId]="selectedContentDetails?.identifier" [showAddedContent]="showAddedContent"
           (contentChangeEvent)="onContentChange($event);" (moveEvent)="showResourceTemplate($event)"> </app-mvc-list>
       </section>
 
       <!-- Right Player Sections -->
       <section class="sb-g-col-xs-12 sb-g-col-md-8 sb-g-col-lg-8 relative position ml-24">
-        <app-mvc-player [contentDetails]="selectedContentDetails" (moveEvent)="showResourceTemplate($event)" ></app-mvc-player>
+        <app-mvc-player [sessionContext]="sessionContext" [contentDetails]="selectedContentDetails" (moveEvent)="showResourceTemplate($event)" ></app-mvc-player>
       </section>
     </div>
   </div>
@@ -61,10 +66,16 @@
   <!-- not found -->
   <div class="ui container" *ngIf="!skeletonLoader && !contentList.length">
     <div class="add-to-library__no-result">
-      <h5 class="font-weight-bold">{{resourceService.frmelmnts.lbl.sorryThereIsNoMatchingContents}}</h5>
+      <h5 class="font-weight-bold">{{resourceService.frmelmnts.lbl.sorryThereIsNoMatchingContent}}</h5>
       <img alt="No Content available" class="mt-16" src="assets/images/offline-desktop.svg">
-      <h6 class="sb-color-gray-300 font-weight-normal mt-8">{{resourceService.frmelmnts.lbl.changingFilterHelpsYouFindMoreContents}}</h6>
-      <button class="sb-btn sb-btn-secondary sb-btn-normal mt-16" (click)="openFilter();" >{{resourceService.frmelmnts.lbl.changeFilters}}</button>
+      <h6 class="sb-color-gray-300 font-weight-normal mt-8">{{resourceService.frmelmnts.lbl.changingFilterHelpsYouFindMoreContent}}</h6>
+      <button class="sb-btn sb-btn-secondary sb-btn-normal mt-16" (click)="openFilter();" 
+        appTelemetryInteract
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('change-filter', 'click', 'mvc-explore')"
+        [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(collectionUnitId, 'Content', '1.0', {l1: collectionId})"
+        [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
+        [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"
+      >{{resourceService.frmelmnts.lbl.changeFilters}}</button>
     </div>
   </div>
   

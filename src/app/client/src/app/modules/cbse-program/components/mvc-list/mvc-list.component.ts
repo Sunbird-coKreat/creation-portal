@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ResourceService } from '@sunbird/shared';
+import { ProgramTelemetryService } from '../../../program/services';
 
 @Component({
   selector: 'app-mvc-list',
@@ -7,15 +8,16 @@ import { ResourceService } from '@sunbird/shared';
   styleUrls: ['./mvc-list.component.scss']
 })
 export class MvcListComponent implements OnInit {
+  @Input() sessionContext: any;
+  @Input() showAddedContent: Boolean;
   @Input() contentList: any;
   @Input() selectedContentId: any;
   @Output() contentChangeEvent = new EventEmitter<any>();
   @Output() moveEvent = new EventEmitter<any>();
-  @Input() showAddedContent: Boolean;
   public width: any;
   public height: any;
 
-  constructor(public resourceService: ResourceService) { }
+  constructor(public resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService) { }
 
   ngOnInit() {}
 

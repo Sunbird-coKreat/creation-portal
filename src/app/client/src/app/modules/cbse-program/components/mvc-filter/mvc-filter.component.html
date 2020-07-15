@@ -1,8 +1,14 @@
 <div class="sb-prominent-filter sb-bg-header-blue" [formGroup]="searchFilterForm">
   <div class="ui container py-20">
     <div class="d-flex flex-w-wrap">
-      <div class="fs-0-785 cursor-pointer pr-20 font-weight-bold" (click)="showfilter()">
-        <i class="question circle link icon sb-color-gray-200 fs-0-92" suiPopup popupDelay="500" popupText="{{resourceService.frmelmnts.lbl.changingFilterHelpsYouFindMoreContents}}"></i>
+      <div class="fs-0-785 cursor-pointer pr-20 font-weight-bold" (click)="showfilter()"
+        appTelemetryInteract
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filter-accordion', 'click', 'mvc-explore')"
+        [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(sessionContext.collectionUnitId, 'Content', '1.0', {l1: sessionContext.collection})"
+        [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
+        [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"
+      >
+        <i class="question circle link icon sb-color-gray-200 fs-0-92" suiPopup popupDelay="500" popupText="{{resourceService.frmelmnts.lbl.changingFilterHelpsYouFindMoreContent}}"></i>
         {{resourceService.frmelmnts.lbl.filters}} 
         <i class="icon caret" [ngClass]="isFilterShow === true ? 'up' : 'down'"></i>
       </div>
@@ -47,7 +53,13 @@
       <div class="sb-checkbox sb-checkbox-primary flex-as-center pl-10 pt-10" *ngIf="isFilterShow">
         <input type="checkbox" id="showAddedContent"  [(ngModel)]="showAddedContent"
         [ngModelOptions]="{standalone: true}" name="showAddedContent" (change)="onShowAddedContentChange();">
-        <label for="showAddedContent" class="fs-0-92">{{resourceService.frmelmnts.lbl.showContentsAddedToTextbook}}</label>
+        <label for="showAddedContent" class="fs-0-92"
+        appTelemetryInteract
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('show-added-content', 'click', 'mvc-explore')"
+        [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(sessionContext.collectionUnitId, 'Content', '1.0', {l1: sessionContext.collection})"
+        [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
+        [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"
+        >{{resourceService.frmelmnts.lbl.showContentAddedToTextbook}}</label>
       </div>
     </div>
   </div>

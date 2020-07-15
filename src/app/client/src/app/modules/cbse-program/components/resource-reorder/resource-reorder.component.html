@@ -60,7 +60,13 @@
     </span>
   </div>
   <div class="w-20 text-right">
-    <button id="moveResource" class="sb-btn sb-btn-normal text-inherit" [ngClass]="{'sb-btn-primary text-right': showMoveButton, 'sb-btn-disabled': !showMoveButton}" (click)="addResource()">
+    <button id="moveResource" class="sb-btn sb-btn-normal text-inherit" [ngClass]="{'sb-btn-primary text-right': showMoveButton, 'sb-btn-disabled': !showMoveButton}" (click)="addResource()"
+    appTelemetryInteract 
+    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add-content', 'click', 'mvc-explore')"
+    [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(sessionContext.collection, 'Content', '1.0')"
+    [telemetryInteractCdata]="telemetryInteractCdata"
+    [telemetryInteractPdata]="telemetryInteractPdata"
+    >
      {{resourceService.frmelmnts.btn.addContent}}
     </button>
   </div>

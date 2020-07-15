@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { debounceTime} from 'rxjs/operators';
 import * as _ from 'lodash-es';
 import { ResourceService } from '@sunbird/shared';
+import { ProgramTelemetryService } from '../../../program/services';
 
 @Component({
   selector: 'app-mvc-filter',
@@ -11,6 +12,7 @@ import { ResourceService } from '@sunbird/shared';
   styleUrls: ['./mvc-filter.component.scss']
 })
 export class MvcFilterComponent implements OnInit, OnChanges {
+  @Input() sessionContext: any;
   @Input() filters: any;
   @Input() activeFilterData: any;
   @Input() filterOpenStatus: Boolean;
@@ -20,7 +22,8 @@ export class MvcFilterComponent implements OnInit, OnChanges {
   public isFilterShow: Boolean = false;
   private searchFilterLookup$: Subject<void> = new Subject();
 
-  constructor(private sbFormBuilder: FormBuilder, public resourceService: ResourceService) { }
+  constructor( private sbFormBuilder: FormBuilder, public resourceService: ResourceService,
+    public programTelemetryService: ProgramTelemetryService) { }
 
   ngOnInit() {
     this.initializeForm();
