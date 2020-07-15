@@ -239,11 +239,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       };
       this.helperService.checkFileSizeLimit(request).subscribe(res => {
         if (res.result && res.result.configuration) {
-          const val = res.result.configuration.value;
-          if (this.uploader.getSize(0) < (_.toNumber(val) * 1024 * 1024)) {
+          const val = _.toNumber(res.result.configuration.value) * 1024 * 1024;
+          if (this.uploader.getSize(0) < val) {
             this.uploadByURL(fileUpload, mimeType);
           } else {
-            this.handleSizeLimitError(`${_.toNumber(val) / 1000} GB`);
+            this.handleSizeLimitError(this.formatBytes(val));
           }
         }
       }, err => {
