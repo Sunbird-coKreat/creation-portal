@@ -5,6 +5,7 @@ import * as _ from 'lodash-es';
 import { PlayerService, ActionService } from '@sunbird/core';
 import { ConfigService, ResourceService } from '@sunbird/shared';
 import { CbseProgramService } from '../../services/cbse-program/cbse-program.service';
+import { ProgramTelemetryService } from '../../../program/services';
 
 @Component({
   selector: 'app-mvc-player',
@@ -13,6 +14,7 @@ import { CbseProgramService } from '../../services/cbse-program/cbse-program.ser
 })
 export class MvcPlayerComponent implements OnInit, OnChanges {
 
+  @Input() sessionContext: any;
   @Input() contentDetails: any;
   @Output() moveEvent = new EventEmitter<any>();
   instance: string;
@@ -21,7 +23,8 @@ export class MvcPlayerComponent implements OnInit, OnChanges {
   public contentId;
   constructor(
     private playerService: PlayerService, private configService: ConfigService, private actionService: ActionService,
-    private cbseService: CbseProgramService, private cd: ChangeDetectorRef, public resourceService: ResourceService
+    private cbseService: CbseProgramService, private cd: ChangeDetectorRef, public resourceService: ResourceService,
+    public programTelemetryService: ProgramTelemetryService
   ) { }
 
   ngOnInit() {

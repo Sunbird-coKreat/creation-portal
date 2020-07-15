@@ -1,11 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import * as _ from 'lodash-es';
 import { catchError, map, finalize } from 'rxjs/operators';
 import { throwError, forkJoin } from 'rxjs';
-import { ContentService, ActionService, ProgramsService } from '@sunbird/core';
-import { ConfigService, ToasterService, ResourceService } from '@sunbird/shared';
-import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
+import { IImpressionEventInput} from '@sunbird/telemetry';
+import { ContentService, ActionService, ProgramsService, UserService } from '@sunbird/core';
+import { ConfigService, ToasterService, ResourceService, NavigationHelperService } from '@sunbird/shared';
+import { ProgramTelemetryService } from '../../../program/services';
 import { CbseProgramService } from '../../services';
 
 @Component({
@@ -13,9 +14,10 @@ import { CbseProgramService } from '../../services';
   templateUrl: './mvc-library.component.html',
   styleUrls: ['./mvc-library.component.scss']
 })
-export class MvcLibraryComponent implements OnInit {
+export class MvcLibraryComponent implements OnInit, AfterViewInit {
 
-  public sessionContext: object;
+  public telemetryImpression: IImpressionEventInput;
+  public sessionContext: any;
   public showLargeModal: Boolean = false;
   public isFilterOpen: Boolean = false;
   public showLoader: Boolean = false;
@@ -37,10 +39,11 @@ export class MvcLibraryComponent implements OnInit {
   public showAddedContent: Boolean = true;
 
   constructor(
-    private programStageService: ProgramStageService, public programTelemetryService: ProgramTelemetryService,
+    public programTelemetryService: ProgramTelemetryService,
     private contentService: ContentService, private configService: ConfigService, private actionService: ActionService,
     private cbseService: CbseProgramService, private programsService: ProgramsService,
-    private toasterService: ToasterService, private route: ActivatedRoute, private router: Router, public resourceService: ResourceService
+    private toasterService: ToasterService, private route: ActivatedRoute, private router: Router, public resourceService: ResourceService,
+    private userService: UserService, private navigationHelperService: NavigationHelperService,
   ) { }
 
   ngOnInit() {
@@ -49,7 +52,45 @@ export class MvcLibraryComponent implements OnInit {
       this.collectionUnitId = params.get('collectionUnitId');
       this.programId = params.get('programId');
       this.showLoader = true;
+      this.prepareTelemetryEvents();
       this.initialize();
+    });
+  }
+
+  prepareTelemetryEvents() {
+    this.sessionContext = {
+      'collection': this.collectionId,
+      'programId': this.programId,
+      'collectionUnitId': this.collectionUnitId
+    };
+     // tslint:disable-next-line:max-line-length
+     this.sessionContext.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.programId, 'Program');
+     // tslint:disable-next-line:max-line-length
+     this.sessionContext.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
+  }
+
+  ngAfterViewInit() {
+    const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
+    const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+    const telemetryCdata = [{ 'type': 'Program', 'id': this.programId }];
+    setTimeout(() => {
+      this.telemetryImpression = {
+        context: {
+          env: this.route.snapshot.data.telemetry.env,
+          cdata: telemetryCdata || [],
+          pdata: {
+            id: this.userService.appId,
+            ver: version,
+            pid: `${this.configService.appConfig.TELEMETRY.PID}`
+          }
+        },
+        edata: {
+          type: _.get(this.route, 'snapshot.data.telemetry.type'),
+          pageid: _.get(this.route, 'snapshot.data.telemetry.pageid'),
+          uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
+          duration: this.navigationHelperService.getPageLoadTime()
+        }
+      };
     });
   }
 
@@ -67,6 +108,7 @@ export class MvcLibraryComponent implements OnInit {
         this.showLoader = false;
         const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
         this.toasterService.error(errorMes || 'Fetching textbook details failed. Please try again...');
+        this.handleBack();
       });
   }
 
@@ -179,6 +221,85 @@ export class MvcLibraryComponent implements OnInit {
       map((data: any) => data.result.content ? data.result.content : []))
       .subscribe((result: any) => {
         this.contentList = result;
+        this.contentList = [
+          {
+              'identifier': 'do_1130454074902364161152',
+              'board' : 'CBSE',
+              'subject': 'Computer Science',
+              // tslint:disable-next-line:max-line-length
+              'downloadUrl': 'https://ekstep-public-qa.s3-ap-south-1.amazonaws.com/ecar_files/do_2123125146963066881113/my-textbook-1_1539087291666_do_2123125146963066881113_4.0_spine.ecar',
+              // tslint:disable-next-line:max-line-length
+              'description': 'lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
+              'mimeType': 'application/vnd.ekstep.content-collection',
+              'medium': [
+                  'English',
+                  'Tamil',
+                  'Telegu'
+              ],
+              'objectType': 'Content',
+              'gradeLevel': [
+                  'Class 11',
+                  'Class 12'
+              ],
+              'framework': 'NCF',
+              'name': 'The Blue sharks when they are deep in the sea they are deep in the sea',
+              'lastUpdatedOn': '2020-05-09T12:14:48.558+0000',
+              'contentType': 'TextBook',
+              'resourceType': 'Book',
+              'status': 'Live'
+          },
+          {
+            'identifier': 'do_1130454643544227841156',
+            'board' : 'State (Gujarat)',
+            'subject': 'Computer Science',
+            // tslint:disable-next-line:max-line-length
+            'downloadUrl': 'https://ekstep-public-qa.s3-ap-south-1.amazonaws.com/ecar_files/do_2123125146963066881113/my-textbook-1_1539087291666_do_2123125146963066881113_4.0_spine.ecar',
+            'description': 'Computer Science textbook',
+            'mimeType': 'application/vnd.ekstep.content-collection',
+            'medium': [
+                'English',
+                'Tamil',
+                'Telegu'
+            ],
+            'objectType': 'Content',
+            'gradeLevel': [
+                'Class 11',
+                'Class 12'
+            ],
+            'framework': 'NCF',
+            'name': 'Once upon a time in a Forest',
+            'lastUpdatedOn': '2020-05-09T12:14:48.558+0000',
+            'contentType': 'TextBook',
+            'resourceType': 'Book',
+            'status': 'Live'
+        },
+        {
+          'identifier': 'do_1130483562925178881200',
+          'subject': 'Computer Science',
+          'board' : 'State (Assam)',
+          // tslint:disable-next-line:max-line-length
+          'downloadUrl': 'https://ekstep-public-qa.s3-ap-south-1.amazonaws.com/ecar_files/do_2123125146963066881113/my-textbook-1_1539087291666_do_2123125146963066881113_4.0_spine.ecar',
+          'description': 'Computer Science textbook - Footprints without Feet - English Supplementary Reader',
+          'mimeType': 'application/vnd.ekstep.content-collection',
+          'medium': [
+              'English',
+              'Tamil',
+              'Telegu'
+          ],
+          'objectType': 'Content',
+          'gradeLevel': [
+              'Class 11',
+              'Class 12'
+          ],
+          'isAdded': true,
+          'framework': 'NCF',
+          'name': 'Footprints without Feet - English Supplementary Reader',
+          'lastUpdatedOn': '2020-05-09T12:14:48.558+0000',
+          'contentType': 'TextBook',
+          'resourceType': 'Book',
+          'status': 'Live'
+      }
+        ];
         this.filterContentList();
       });
   }
@@ -239,11 +360,8 @@ export class MvcLibraryComponent implements OnInit {
   showResourceTemplate(event) {
     switch (event.action) {
       case 'beforeMove':
-        this.sessionContext = {
-          'collection': this.collectionId, 'programId': this.programId,
-          'selectedMvcContentDetails': this.selectedContentDetails,
-          'resourceReorderBreadcrumb': this.resourceReorderBreadcrumb
-        };
+        this.sessionContext['selectedMvcContentDetails'] = this.selectedContentDetails;
+        this.sessionContext['resourceReorderBreadcrumb'] = this.resourceReorderBreadcrumb;
         this.showLargeModal = true;
         break;
       case 'afterMove':
@@ -253,7 +371,6 @@ export class MvcLibraryComponent implements OnInit {
         break;
       case 'cancelMove':
         this.showLargeModal = false;
-        this.sessionContext = null;
         break;
       case 'showFilter':
         this.openFilter();
@@ -309,6 +426,10 @@ export class MvcLibraryComponent implements OnInit {
     } else {
       return [];
     }
+  }
+
+  handleBack() {
+    this.router.navigateByUrl(`/contribute/program/${this.programId}`);
   }
 
 }
