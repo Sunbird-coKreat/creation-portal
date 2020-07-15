@@ -6,7 +6,6 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { SharedModule, ResourceService, ConfigService } from '@sunbird/shared';
 import { HomeAnnouncementComponent } from './home-announcement.component';
-import { AnnouncementService } from '@sunbird/core';
 import { NgInviewModule } from 'angular-inport';
 import { HomeAnnouncementService } from './../../service/index';
 import * as mockData from './home-announcement.component.spec.data';
@@ -25,7 +24,7 @@ xdescribe('HomeAnnouncementComponent', () => {
       imports: [SharedModule.forRoot(), HttpClientTestingModule, RouterTestingModule,
       NgInviewModule, TelemetryModule],
       declarations: [HomeAnnouncementComponent],
-      providers: [ResourceService, AnnouncementService, ConfigService, CacheService, HomeAnnouncementService, CacheService,
+      providers: [ResourceService, ConfigService, CacheService, HomeAnnouncementService, CacheService,
         { provide: Router, useClass: RouterStub },
         { provide: ActivatedRoute, useValue: fakeActivatedRoute },
         { provide: RouterOutlet, useValue: fakeActivatedRoute }]
