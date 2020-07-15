@@ -168,7 +168,6 @@ describe('CollectionComponent', () => {
      component.isCollectionSelected.subscribe((eventData) => {
        testData = eventData;
      });
-     component.collectionClickHandler(sampleEvent);
      expect(component.chapterListComponentInput).toEqual(jasmine.objectContaining({collection: sampleEvent.data}));
      expect(testData).toEqual(true);
    });

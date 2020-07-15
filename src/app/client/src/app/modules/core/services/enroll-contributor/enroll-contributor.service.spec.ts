@@ -7,7 +7,7 @@ describe('EnrollContributorService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(EnrollContributorService);
+    service = TestBed.get(EnrollContributorService);
   });
 
   it('should be created', () => {
