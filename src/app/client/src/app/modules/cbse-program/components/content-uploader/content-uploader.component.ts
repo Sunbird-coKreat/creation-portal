@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef,
   AfterViewInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FineUploader } from 'fine-uploader';
-import { ToasterService, ConfigService, ResourceService, NavigationHelperService } from '@sunbird/shared';
+import { ToasterService, ConfigService, ResourceService, NavigationHelperService, BrowserCacheTtlService } from '@sunbird/shared';
 import { PublicDataService, UserService, ActionService, PlayerService, FrameworkService, NotificationService,
   ProgramsService, ContentService} from '@sunbird/core';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
@@ -16,6 +16,7 @@ import { HelperService } from '../../services/helper.service';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
+import { CacheService } from 'ng2-cache-service';
 
 @Component({
   selector: 'app-content-uploader',
@@ -63,7 +64,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   showRequestChangesPopup = false;
   disableFormField: boolean;
   showReviewModal = false;
-  showUploadModal = true;
+  showUploadModal: boolean;
   submitButton: boolean;
   uploadButton: boolean;
   titleCharacterLimit: number;
@@ -78,13 +79,19 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public contentType: string;
   public rejectBySourcingOrg: boolean;
   public sourcingOrgReviewComments: string;
-  originPreviewUrl: string = '';
+  originPreviewUrl = '';
   public azurFileUploaderSubscrition: Subscription;
   public fileUplaoderProgress = {
            progress: 0
          };
   public videoFileFormat: boolean;
   public uploadInprogress: boolean;
+  public docExtns: string;
+  public vidEtns: string;
+  public vidSizeLimit: string;
+  public allAvailableVidExtns = ['mp4', 'webm'];
+  public allAvailableDocExtns = ['pdf', 'epub', 'h5p'];
+  public videoSizeLimit: string;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -96,7 +103,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     private notificationService: NotificationService,
     public activeRoute: ActivatedRoute, public router: Router, private navigationHelperService: NavigationHelperService,
     private programsService: ProgramsService, private azureUploadFileService: AzureFileUploaderService,
-    private contentService: ContentService) { }
+    private contentService: ContentService, private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService) { }
 
   ngOnInit() {
     this.config = _.get(this.contentUploadComponentInput, 'config');
@@ -114,8 +121,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.showPreview = true;
       this.cd.detectChanges();
       this.getUploadedContentMeta(_.get(this.contentUploadComponentInput, 'contentId'));
+    } else {
+      this.fetchFileSizeLimit();
     }
-
+    this.segregateFileTypes();
     this.notify = this.helperService.getNotification().subscribe((action) => {
       this.contentStatusNotify(action);
     });
@@ -231,24 +240,51 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     return acceptedFiles.toString();
   }
 
-  checkFileSizeLimit(fileUpload, mimeType) {
-    if (this.videoFileFormat) {
+  fetchFileSizeLimit() {
+    if (!this.cacheService.get('contentVideoSize')) {
       const request = {
         key: 'contentVideoSize',
         status: 'active'
       };
       this.helperService.checkFileSizeLimit(request).subscribe(res => {
-        if (res.result && res.result.configuration) {
-          const val = _.toNumber(res.result.configuration.value) * 1024 * 1024;
-          if (this.uploader.getSize(0) < val) {
-            this.uploadByURL(fileUpload, mimeType);
-          } else {
-            this.handleSizeLimitError(this.formatBytes(val));
-          }
+        this.showUploadModal = true;
+        if (_.get(res, 'result.configuration.value')) {
+          // this.vidSizeLimit = _.get(res, 'result.configuration.value');
+          this.videoSizeLimit = this.formatBytes(_.toNumber(_.get(res, 'result.configuration.value')) * 1024 * 1024);
+          this.cacheService.set(request.key  , res.result.configuration.value,
+            { maxAge: this.browserCacheTtlService.browserCacheTtl });
         }
       }, err => {
-        this.handleSizeLimitError('');
+        this.showUploadModal = true;
+        this.toasterService.error('Unable to fetch size Limit...Please try later!');
       });
+    } else {
+      this.showUploadModal = true;
+      // this.vidSizeLimit = this.cacheService.get('contentVideoSize');
+      this.videoSizeLimit = this.formatBytes(_.toNumber(this.cacheService.get('contentVideoSize')) * 1024 * 1024);
+    }
+  }
+
+  segregateFileTypes() {
+    const extns = (!_.includes(this.templateDetails.filesConfig.accepted, ',')) ?
+    this.templateDetails.filesConfig.accepted.split(' ') : this.templateDetails.filesConfig.accepted.split(', ');
+    this.vidEtns =  _.join(_.intersection(extns, this.allAvailableVidExtns), ', ');
+    this.docExtns = _.join(_.intersection(extns, this.allAvailableDocExtns), ', ');
+  }
+
+  checkFileSizeLimit(fileUpload, mimeType) {
+    if (this.videoFileFormat) {
+      if (this.cacheService.get('contentVideoSize')) {
+        // const val = _.toNumber(this.vidSizeLimit) * 1024 * 1024;
+        const val = _.toNumber('50') * 1024 * 1024;
+        if (this.uploader.getSize(0) < val) {
+          this.uploadByURL(fileUpload, mimeType);
+        } else {
+          this.handleSizeLimitError(this.formatBytes(val));
+        }
+      } else {
+        this.handleSizeLimitError('');
+      }
     } else if (this.uploader.getSize(0) < (_.toNumber(this.templateDetails.filesConfig.size) * 1024 * 1024)) {
       this.uploadByURL(fileUpload, mimeType);
     } else {
@@ -484,8 +520,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.playerConfig = this.playerService.getConfig(contentDetails);
       this.playerConfig.context.pdata.pid = `${this.configService.appConfig.TELEMETRY.PID}`;
       this.showPreview = this.contentMetaData.artifactUrl ? true : false;
-      this.showUploadModal = this.contentMetaData.artifactUrl ? false : true;
-      if (this.showUploadModal) {
+      // this.showUploadModal = this.contentMetaData.artifactUrl ? false : true;
+      if (!this.contentMetaData.artifactUrl) {
+        this.fetchFileSizeLimit();
         return setTimeout(() => {
           this.initiateUploadModal();
         }, 0);
@@ -839,7 +876,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   changeFile() {
     this.changeFile_instance = true;
     this.uploadButton = false;
-    this.showUploadModal = true;
+    // this.showUploadModal = true;
+    this.fetchFileSizeLimit();
     setTimeout(() => {
       this.initiateUploadModal();
     }, 0);
