@@ -3,9 +3,9 @@ import {
   ServerResponse, NavigationHelperService
 } from '@sunbird/shared';
 import { FineUploader } from 'fine-uploader';
-import { ProgramsService, DataService, FrameworkService } from '@sunbird/core';
+import { ProgramsService, DataService, FrameworkService, ActionService } from '@sunbird/core';
 import { Subscription, Subject, throwError, Observable } from 'rxjs';
-import { tap, first, map, takeUntil, catchError } from 'rxjs/operators';
+import { tap, first, map, takeUntil, catchError, count } from 'rxjs/operators';
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges } from '@angular/core';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -34,6 +34,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public guidLinefileName: String;
   public isFormValueSet = false;
   public editMode = false;
+  public choosedTextBook: any;
+  selectChapter = false;
   /**
    * Program creation form name
    */
@@ -61,6 +63,13 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   */
   collections;
   tempCollections = [];
+  textbooks: any = {};
+
+  /**
+   * Units selection form
+   */
+  chaptersSelectionForm : FormGroup;
+
   /**
   * List of textbooks for the program by BMGC
   */
@@ -85,7 +94,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public telemetryStart: IStartEventInput;
   public telemetryEnd: IEndEventInput;
   public sortColumn = 'name';
+  public chaptersSortColumn = 'name';
   public direction = 'asc';
+  public chaptersSortDir = 'asc';
   public tempSortCollections = [];
   public filterApplied = false;
   public showDocumentUploader = false;
@@ -109,6 +120,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public programConfig: any;
   public disableCreateProgramBtn = false;
   public showLoader = true;
+  public btnDoneDisabled = false;
 
   constructor(
     public frameworkService: FrameworkService,
@@ -125,7 +137,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     private navigationHelperService: NavigationHelperService,
     private configService: ConfigService,
     private deviceDetectorService: DeviceDetectorService,
-    public programTelemetryService: ProgramTelemetryService) {
+    public programTelemetryService: ProgramTelemetryService,
+    public actionService: ActionService) {
   }
 
   ngOnInit() {
@@ -322,7 +335,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   generateAssetCreateRequest(fileName, fileType, mediaType) {
-    console.log(this.userprofile);
     return {
       content: {
         name: fileName,
@@ -348,6 +360,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.collections = this.programsService.sortCollection(this.tempSortCollections, column, this.direction);
     this.direction = (this.direction === 'asc' || this.direction === '') ? 'desc' : 'asc';
     this.sortColumn = column;
+  }
+
+  sortChapters(identifier,column) {
+    this.textbooks[identifier].children = this.programsService.sortCollection(this.textbooks[identifier].children, column, this.chaptersSortDir);
+    this.chaptersSortDir = (this.chaptersSortDir === 'asc' || this.chaptersSortDir === '') ? 'desc' : 'asc';
+    this.chaptersSortColumn = column;
   }
 
   resetSorting() {
@@ -440,29 +458,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   fetchFrameWorkDetails() {
-    if (_.get(this.userprofile.framework, 'id')) {
-      this.userFramework = _.get(this.userprofile.framework, 'id')[0];
-      this.frameworkService.getFrameworkCategories(_.get(this.userprofile.framework, 'id')[0])
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((data) => {
-          if (data && _.get(data, 'result.framework.categories')) {
-            this.frameworkCategories = _.get(data, 'result.framework.categories');
-          }
-          this.setFrameworkDataToProgram();
-        }, error => {
-          const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-          this.toasterService.warning(errorMes || 'Fetching framework details failed');
-        });
-    } else {
-      this.frameworkService.initialize();
-      this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
-        if (frameworkInfo && !frameworkInfo.err) {
-          this.userFramework = frameworkInfo.frameworkdata.defaultFramework.identifier;
-          this.frameworkCategories = frameworkInfo.frameworkdata.defaultFramework.categories;
-        }
-        this.setFrameworkDataToProgram();
-      });
-    }
+    this.frameworkService.initialize();
+    this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
+      if (frameworkInfo && !frameworkInfo.err) {
+        this.userFramework = frameworkInfo.frameworkdata.defaultFramework.identifier;
+        this.frameworkCategories = frameworkInfo.frameworkdata.defaultFramework.categories;
+      }
+      this.setFrameworkDataToProgram();
+    });
   }
 
   setFrameworkDataToProgram() {
@@ -477,8 +480,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     const board = _.find(this.frameworkCategories, (element) => {
       return element.code === 'board';
     });
-
-    this.userBoard = board.terms[0].name;
+    if (!_.isEmpty(board.terms[0].name)) {
+      this.userBoard = board.terms[0].name;
+    }
 
     if (_.get(this.userprofile.framework, 'board')) {
       this.userBoard = this.userprofile.framework.board[0];
@@ -729,6 +733,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programData['config'] = this.programConfig;
       this.programData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : '';
 
+      if (_.isEmpty(this.programData.config.board) &&
+      _.findIndex(this.frameworkCategories, function(item) { return item.code === 'board'; }) < 0) {
+        delete this.programData.config.board;
+      }
+
       delete this.programData.defaultContributeOrgReview;
       delete this.programData.gradeLevel;
       delete this.programData.medium;
@@ -872,12 +881,17 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     if (isChecked) {
       pcollectionsFormArray.push(new FormControl(collectionId));
       this.tempCollections.push(collection);
+
+      if (!this.textbooks[collectionId]) {
+          this.getCollectionHierarchy(collectionId);
+      }
     } else {
       const index = pcollectionsFormArray.controls.findIndex(x => x.value === collectionId);
       pcollectionsFormArray.removeAt(index);
 
       const cindex = this.tempCollections.findIndex(x => x.identifier === collectionId);
       this.tempCollections.splice(cindex, 1);
+      delete this.textbooks[collectionId];
     }
   }
 
@@ -889,9 +903,31 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       return false;
     }
 
+    let collections = [];
+
+    _.forEach(this.collectionListForm.value.pcollections, (identifier) => {
+      let obj = {
+        "id" : identifier,
+        "allowed_content_types": [],
+        "children": []
+      };
+
+      _.forEach(this.textbooks[identifier].children, (item) => {
+        if (item.checked === true) {
+          obj.children.push({
+            "id": item.identifier,
+            "allowed_content_types": []
+          })
+        }
+      });
+
+      collections.push(obj);
+    });
+
     const requestData = {
       'program_id': this.programId,
-      'collections': this.collectionListForm.value.pcollections,
+      // 'collections': this.collectionListForm.value.pcollections,
+      'collections' : collections,
       'allowed_content_types': this.programData.content_types,
       'channel': 'sunbird'
     };
@@ -1037,5 +1073,131 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       default:
         break;
     }
+  }
+
+  public chooseChapters(collection) {
+    if (!this.textbooks[collection.identifier]) {
+      this.getCollectionHierarchy(collection.identifier);
+    }
+    else {
+      this.choosedTextBook = this.textbooks[collection.identifier];
+      this.initChaptersSelectionForm(this.choosedTextBook);
+    }
+
+    this.selectChapter=true;
+  }
+
+  initChaptersSelectionForm(chapters) {
+    let values = [];
+
+
+    chapters.children.forEach((o, i) => {
+      values.push(o.checked);
+    });
+
+    this.chaptersSelectionForm = this.sbFormBuilder.group({
+      chaptersCtrl: this.sbFormBuilder.array(values)
+    });
+
+    this.getChapterLevelCount(chapters.children);
+    this.btnDoneDisabled = false;
+  }
+
+  public getCollectionHierarchy(identifier: string) {
+    let hierarchyUrl = '/action/content/v3/hierarchy/' + identifier + '?mode=edit';
+    const originUrl = this.programsService.getContentOriginEnvironment();
+    const url =  originUrl + hierarchyUrl ;
+
+    return this.httpClient.get(url).subscribe(res => {
+      let content = _.get(res, "result.content");
+      this.textbooks[identifier] = {};
+      const chapter = {
+        "id" : identifier,
+        "children": [],
+        "allowed_content_types" : []
+      };
+
+      _.forEach(content.children, (item) => {
+        item['checked'] = true;
+
+        chapter.children.push({
+          "id" : item.identifier,
+          "allowed_content_types" : []
+        });
+      });
+
+      this.textbooks[identifier] = content;
+      this.choosedTextBook = content;
+      this.initChaptersSelectionForm(this.choosedTextBook);
+      const cindex = this.tempCollections.findIndex(x => x.identifier === identifier);
+      this.tempCollections[cindex]["selected"] = content.children.length;
+      this.tempCollections[cindex]["total"]    = content.children.length
+    }, error => console.log(console.error()
+    ));
+  }
+
+  updateSelection(identifier) {
+    let selectedCount = 0;
+    let selectedChapters = _.get(this.chaptersSelectionForm.controls.chaptersCtrl, "controls");
+    this.selectChapter = false;
+
+    _.forEach(selectedChapters, (item, i) => {
+      this.textbooks[identifier].children[i].checked = item.value;
+      if (item.value === true) {
+        selectedCount ++;
+      }
+    });
+
+    const cindex = this.tempCollections.findIndex(x => x.identifier === identifier);
+    this.tempCollections[cindex].selected = selectedCount;
+  }
+
+  getChapterLevelCount(collections) {
+    let status = ['Live'];
+    let createdBy, visibility;
+    visibility = true;
+
+    _.forEach(collections, collection => {
+       let totalLeaf = 0;
+       let contentTypes = [];
+       let result = this.getContentCountPerFolder(collection , status , false, undefined, createdBy, visibility, totalLeaf, contentTypes);
+
+       let contentTypeDisplayTxt = '';
+       for (const property in result.contentTypes) {
+        contentTypeDisplayTxt += `${result.contentTypes[property]}  ${property} `;
+      }
+
+      collection['totalLeaf'] = result.totalLeaf;
+      collection['contentTypesText'] = contentTypeDisplayTxt;
+    });
+  }
+
+  getContentCountPerFolder(collection, contentStatus?: string[], onlySample?: boolean, organisationId?: string, createdBy?: string, visibility?: boolean, totalLeaf?, contentTypes?) {
+    const self = this;
+    _.each(collection.children, child => {
+      if (contentStatus.indexOf(child.status) !== -1) {
+        ++totalLeaf;
+        contentTypes.push(child.contentType);
+      }
+
+      self.getContentCountPerFolder(child, contentStatus, onlySample, organisationId, createdBy, visibility, totalLeaf, contentTypes);
+    });
+
+    var counts = {};
+    contentTypes.forEach(function(x) { counts[x] = (counts[x] || 0)+1; });
+
+    return {"totalLeaf": totalLeaf, "contentTypes": counts};
+  }
+
+  onChangeSelection() {
+    let selectedChapters = _.get(this.chaptersSelectionForm.controls.chaptersCtrl, "controls");
+
+    if (selectedChapters.findIndex(o => o.value) == -1) {
+      this.btnDoneDisabled = true;
+
+      return false;
+    }
+
+    this.btnDoneDisabled = false;
   }
 }

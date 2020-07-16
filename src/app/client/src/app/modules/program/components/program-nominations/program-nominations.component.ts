@@ -913,6 +913,7 @@ downloadReport(report) {
         'request': {
             'filters': {
                 program_id: [this.programId],
+                openForContribution: true,
                 report: report
         }
       }

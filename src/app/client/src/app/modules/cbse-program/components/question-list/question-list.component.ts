@@ -73,6 +73,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public sourcingOrgReviewer: boolean;
   public sourcingReviewStatus: string;
   public sourcingOrgReviewComments: string;
+  originPreviewUrl: string = '';
+  originPreviewReady = false;
 
   constructor(
     private configService: ConfigService, private userService: UserService,
@@ -92,6 +94,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.role = _.get(this.practiceQuestionSetComponentInput, 'role');
     this.templateDetails = _.get(this.practiceQuestionSetComponentInput, 'templateDetails');
     this.programContext = _.get(this.practiceQuestionSetComponentInput, 'programContext');
+    this.sessionContext.programContext = this.programContext;
     this.actions = _.get(this.programContext, 'config.actions');
     this.sharedContext = _.get(this.programContext, 'config.sharedContext');
     this.sessionContext.resourceIdentifier = _.get(this.practiceQuestionSetComponentInput, 'contentIdentifier');
@@ -163,7 +166,11 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resourceStatus =  _.get(this.resourceDetails, 'status');
       this.setResourceStatus();
       if (this.resourceDetails.questionCategories) {
-        this.sessionContext.questionType = _.lowerCase(_.nth(this.resourceDetails.questionCategories, 0));
+        let questionCategories = _.nth(this.resourceDetails.questionCategories, 0);
+        if (questionCategories === 'CuriosityQuestion') {
+          questionCategories = 'curiosity';
+        }
+        this.sessionContext.questionType = _.lowerCase(questionCategories);
       }
       this.sessionContext.resourceStatus = this.resourceStatus;
       this.resourceName = this.resourceDetails.name || this.templateDetails.metadata.name;
@@ -224,6 +231,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
     } else if (this.sourcingReviewStatus === 'Approved') {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
+      if (!_.isEmpty(this.sessionContext.contentOrigins) && !_.isEmpty(this.sessionContext.contentOrigins[this.sessionContext.resourceIdentifier])) {
+        this.originPreviewUrl =  this.helperService.getContentOriginUrl(this.sessionContext.contentOrigins[this.sessionContext.resourceIdentifier].identifier);
+      }
+      this.originPreviewReady = true;
     } else {
       this.resourceStatusText = this.resourceStatus;
     }
@@ -240,22 +251,24 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   handleActionButtons() {
     this.visibility = {};
+    const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
+
     // tslint:disable-next-line:max-line-length
-    this.visibility['showCreateQuestion'] = (_.includes(this.actions.showCreateQuestion.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
+    this.visibility['showCreateQuestion'] = submissionDateFlag && (_.includes(this.actions.showCreateQuestion.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
     // tslint:disable-next-line:max-line-length
     this.visibility['showDeleteQuestion'] = (_.includes(this.actions.showDeleteQuestion.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft' && this.questionList.length > 1);
     // tslint:disable-next-line:max-line-length
-    this.visibility['showRequestChanges'] = this.router.url.includes('/contribute') && !this.resourceDetails.sampleContent === true &&
+    this.visibility['showRequestChanges'] = this.router.url.includes('/contribute') && submissionDateFlag && !this.resourceDetails.sampleContent === true &&
     (_.includes(this.actions.showRequestChanges.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showPublish'] = this.router.url.includes('/contribute') && !this.resourceDetails.sampleContent === true &&
+    this.visibility['showPublish'] = this.router.url.includes('/contribute') && submissionDateFlag && !this.resourceDetails.sampleContent === true &&
     (_.includes(this.actions.showPublish.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSubmit'] = (_.includes(this.actions.showSubmit.roles, this.sessionContext.currentRoleId)  && this.resourceStatus === 'Draft');
+    this.visibility['showSubmit'] = submissionDateFlag && (_.includes(this.actions.showSubmit.roles, this.sessionContext.currentRoleId)  && this.resourceStatus === 'Draft');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSave'] = (_.includes(this.actions.showSave.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
+    this.visibility['showSave'] = submissionDateFlag && (_.includes(this.actions.showSave.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
      // tslint:disable-next-line:max-line-length
-    this.visibility['showEdit'] = (_.includes(this.actions.showEdit.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
+    this.visibility['showEdit'] = submissionDateFlag && (_.includes(this.actions.showEdit.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
   }
 
   get isPublishBtnDisable(): boolean {

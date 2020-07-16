@@ -18,6 +18,7 @@ import { LearnerService } from '../learner/learner.service';
 import { RegistryService } from '../registry/registry.service';
 import { ExportToCsv } from 'export-to-csv';
 import { CacheService } from 'ng2-cache-service';
+import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root'
@@ -960,6 +961,23 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
     return this.API_URL(req);
+  }
+
+  /* To check if the content can be uploaded or updated*/
+  checkForContentSubmissionDate(programDetails) {
+    const contributionendDate  = moment(programDetails.content_submission_enddate);
+    const endDate  = moment(programDetails.enddate);
+    const today = moment();
+    return (contributionendDate.isSameOrAfter(today, 'day') && endDate.isSameOrAfter(today, 'day')) ? true : false;
+  }
+
+  getContentOriginEnvironment() {
+    switch(window.location.hostname) {
+      case 'dock.sunbirded.org': return 'https://dev.sunbirded.org'; break;
+      case 'vdn.diksha.gov.in': return "https://diksha.gov.in"; break;
+      case 'dock.preprod.ntp.net.in': return 'https://preprod.ntp.net.in'; break;
+      default: return  'https://dev.sunbirded.org'; break;
+    }
   }
 
   /*getSourcingOrgUserList(sourcingOrgId, roles, limit?) {
