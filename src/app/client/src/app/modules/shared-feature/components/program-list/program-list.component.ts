@@ -122,7 +122,7 @@ export class ProgramListComponent implements OnInit {
         request: {
           filters: {
             program_id: this.program.program_id,
-            status: ['Pending', 'Approved', 'Initiated']
+            status: ['Pending', 'Approved']
           },
           fields: ['organisation_id', 'status'],
           limit: 0
