@@ -493,6 +493,7 @@ export class ProgramListComponent implements OnInit {
   }
 
   getProgramInfo(program, type) {
+    //return type  === 'board' ? program.config[type] : _.join(_.compact(program.config[type]), ', ');
     return type  === 'board' ? program[type] : _.join(_.compact(_.uniq(JSON.parse(program[type]))), ', ');
   }
 
