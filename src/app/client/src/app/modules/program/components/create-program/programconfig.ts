@@ -239,7 +239,7 @@ var programConfig = {
                 },
                 'filesConfig': {
                   'accepted': 'mp4, webm',
-                  'size': '15000'
+                  'size': '50'
                 }
               },
               {

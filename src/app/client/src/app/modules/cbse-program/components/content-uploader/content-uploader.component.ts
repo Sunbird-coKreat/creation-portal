@@ -122,8 +122,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.showPreview = true;
       this.cd.detectChanges();
       this.getUploadedContentMeta(_.get(this.contentUploadComponentInput, 'contentId'));
-    } else {
-      this.fetchFileSizeLimit();
     }
     this.segregateFileTypes();
     this.notify = this.helperService.getNotification().subscribe((action) => {
@@ -141,7 +139,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   ngAfterViewInit() {
     if (_.get(this.contentUploadComponentInput, 'action') !== 'preview') {
-      this.initiateUploadModal();
+      this.fetchFileSizeLimit();
     }
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
@@ -189,38 +187,39 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   initiateUploadModal() {
-    this.uploader = new FineUploader({
-      element: document.getElementById('upload-content-div'),
-      template: 'qq-template-validation',
-      multiple: false,
-      autoUpload: false,
-      request: {
-        endpoint: '/assets/uploads'
-      },
-      validation: {
-        allowedExtensions: (!_.includes(this.templateDetails.filesConfig.accepted, ',')) ?
-          this.templateDetails.filesConfig.accepted.split(' ') : this.templateDetails.filesConfig.accepted.split(', '),
-        acceptFiles: this.getAcceptedFiles(),
-        itemLimit: 1
-        // sizeLimit: 20 * 1024 * 1024  // 52428800  = 50 MB = 50 * 1024 * 1024 bytes
-      },
-      messages: {
-        // sizeError: `{file} is too large, maximum file size is ${this.templateDetails.filesConfig.size} MB.`,
-        typeError: `Invalid content type (supported type: ${this.templateDetails.filesConfig.accepted})`
-      },
-      callbacks: {
-        onStatusChange: () => {
-
+    setTimeout(() => {
+      this.uploader = new FineUploader({
+        element: document.getElementById('upload-content-div'),
+        template: 'qq-template-validation',
+        multiple: false,
+        autoUpload: false,
+        request: {
+          endpoint: '/assets/uploads'
         },
-        onSubmit: () => {
-          this.uploadContent();
+        validation: {
+          allowedExtensions: (!_.includes(this.templateDetails.filesConfig.accepted, ',')) ?
+            this.templateDetails.filesConfig.accepted.split(' ') : this.templateDetails.filesConfig.accepted.split(', '),
+          acceptFiles: this.getAcceptedFiles(),
+          itemLimit: 1
+          // sizeLimit: 20 * 1024 * 1024  // 52428800  = 50 MB = 50 * 1024 * 1024 bytes
         },
-        onError: () => {
-          this.uploader.reset();
+        messages: {
+          // sizeError: `{file} is too large, maximum file size is ${this.templateDetails.filesConfig.size} MB.`,
+          typeError: `Invalid content type (supported type: ${this.templateDetails.filesConfig.accepted})`
+        },
+        callbacks: {
+          onStatusChange: () => {
+          },
+          onSubmit: () => {
+            this.uploadContent();
+          },
+          onError: () => {
+            this.uploader.reset();
+          }
         }
-      }
-    });
-    this.fineUploaderUI.nativeElement.remove();
+      });
+      this.fineUploaderUI.nativeElement.remove();
+    }, 0);
   }
 
   getAcceptedFiles() {
@@ -249,19 +248,20 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       };
       this.helperService.checkFileSizeLimit(request).subscribe(res => {
         this.showUploadModal = true;
+        this.initiateUploadModal();
         if (_.get(res, 'result.configuration.value')) {
-          // this.vidSizeLimit = _.get(res, 'result.configuration.value');
           this.videoSizeLimit = this.formatBytes(_.toNumber(_.get(res, 'result.configuration.value')) * 1024 * 1024);
           this.cacheService.set(request.key  , res.result.configuration.value,
             { maxAge: this.browserCacheTtlService.browserCacheTtl });
         }
       }, err => {
         this.showUploadModal = true;
+        this.initiateUploadModal();
         this.toasterService.error('Unable to fetch size Limit...Please try later!');
       });
     } else {
       this.showUploadModal = true;
-      // this.vidSizeLimit = this.cacheService.get('contentVideoSize');
+      this.initiateUploadModal();
       this.videoSizeLimit = this.formatBytes(_.toNumber(this.cacheService.get('contentVideoSize')) * 1024 * 1024);
     }
   }
@@ -276,8 +276,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   checkFileSizeLimit(fileUpload, mimeType) {
     if (this.videoFileFormat) {
       if (this.cacheService.get('contentVideoSize')) {
-        // const val = _.toNumber(this.vidSizeLimit) * 1024 * 1024;
-        const val = _.toNumber('50') * 1024 * 1024;
+        const val = _.toNumber(this.vidSizeLimit) * 1024 * 1024;
         if (this.uploader.getSize(0) < val) {
           this.uploadByURL(fileUpload, mimeType);
         } else {
@@ -522,12 +521,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.playerConfig = this.playerService.getConfig(contentDetails);
       this.playerConfig.context.pdata.pid = `${this.configService.appConfig.TELEMETRY.PID}`;
       this.showPreview = this.contentMetaData.artifactUrl ? true : false;
-      // this.showUploadModal = this.contentMetaData.artifactUrl ? false : true;
+      this.showUploadModal = false;
       if (!this.contentMetaData.artifactUrl) {
         this.fetchFileSizeLimit();
-        return setTimeout(() => {
-          this.initiateUploadModal();
-        }, 0);
       }
       this.loading = false;
       this.handleActionButtons();
@@ -878,11 +874,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   changeFile() {
     this.changeFile_instance = true;
     this.uploadButton = false;
-    // this.showUploadModal = true;
     this.fetchFileSizeLimit();
-    setTimeout(() => {
-      this.initiateUploadModal();
-    }, 0);
   }
 
   attachContentToTextbook(action) {
