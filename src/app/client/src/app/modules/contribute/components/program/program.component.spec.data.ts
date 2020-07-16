@@ -11,6 +11,7 @@ export const addParticipentResponseSample = {
   ts: '2019-12-17T10:10:16.555Z',
   ver: '1.0'
 };
+
 export const frameWorkData = {
   'err': null,
   'frameworkdata': {
@@ -317,8 +318,6 @@ export const programDetailsWithUserDetails = {
   'userDetails': {...userDetails}
 };
 
-
-
 export const extFrameWorkPostData = {
   'id': 'api.add.participants',
   'responseCode': 'OK',
@@ -330,63 +329,27 @@ export const extFrameWorkPostData = {
   'ver': '1.0'
 };
 
-
 export const userProfile = {
-  'tcStatus': null,
-  'maskedPhone': '******4412',
-  'rootOrgName': 'Sunbird',
-  'subject': [
-    'Mathematics'
-  ],
-  'channel': null,
-  'language': [
-    'English'
-  ],
-  'identifier': '874ed8a5-782e-4f6c-8f36-e0288455901e',
-  'externalIds': [],
-  'registryId': null,
-  'rootOrgId': 'ORG_001',
-  'prevUsedEmail': '',
-  'firstName': 'Creation',
-  'dob': '2018-02-13',
-  'grade': [
-    'Grade 2'
-  ],
-  'currentLoginTime': null,
-  'roles': [
-    'public'
-  ],
-  'userName': 'ntptest102',
   'userId': '874ed8a5-782e-4f6c-8f36-e0288455901e',
-  'framework': {
-    'gradeLevel': [
-      'KG'
-    ],
-    'subject': [
-      'English'
-    ],
-    'id': [
-      'NCF'
-    ],
-    'medium': [
-      'English'
-    ],
-    'board': [
-      'State (Uttar Pradesh)'
-    ]
-  },
-  'rootOrgAdmin': false,
-  'userRoles': [
-    'PUBLIC',
-    'BOOK_CREATOR',
-    'CONTENT_CREATOR',
-    'COURSE_MENTOR',
-    'ANNOUNCEMENT_SENDER'
-  ],
-  'organisationIds': [
-    'ORG_001'
-  ],
-  'hashTagIds': [
-    'b00bc992ef25f1a9a8d63291e20efc8d'
-  ]
+  "userRegData": {},
+};
+
+export const individualUserRegData = {
+  "userId": "6f2c7e13-3e0f-435e-8065-a84d481e8d92"
+};
+
+export const orgUserRegData = {
+  "roles": ["user"]
+};
+
+export const orgAdminUserRegData = {
+  "roles": ["admin"]
+};
+
+export const nominationByOrg = {
+  organisation_id: '86b2a620-40b2-4c95-9798-c12e3921337a',
+};
+
+export const nominationByIndividual = {
+  user_id: '86b2a620-40b2-4c95-9798-c12e3921337a',
 };
