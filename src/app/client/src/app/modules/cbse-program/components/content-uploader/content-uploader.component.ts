@@ -89,7 +89,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public uploadInprogress: boolean;
   public docExtns: string;
   public vidEtns: string;
-  public vidSizeLimit: string;
   public allAvailableVidExtns = ['mp4', 'webm'];
   public allAvailableDocExtns = ['pdf', 'epub', 'h5p'];
   public videoSizeLimit: string;
@@ -276,7 +275,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   checkFileSizeLimit(fileUpload, mimeType) {
     if (this.videoFileFormat) {
       if (this.cacheService.get('contentVideoSize')) {
-        const val = _.toNumber(this.vidSizeLimit) * 1024 * 1024;
+        const val = _.toNumber(this.cacheService.get('contentVideoSize')) * 1024 * 1024;
         if (this.uploader.getSize(0) < val) {
           this.uploadByURL(fileUpload, mimeType);
         } else {
