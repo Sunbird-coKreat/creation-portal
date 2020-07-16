@@ -74,6 +74,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public sourcingReviewStatus: string;
   public sourcingOrgReviewComments: string;
   originPreviewUrl: string = '';
+  originPreviewReady = false;
 
   constructor(
     private configService: ConfigService, private userService: UserService,
@@ -93,6 +94,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.role = _.get(this.practiceQuestionSetComponentInput, 'role');
     this.templateDetails = _.get(this.practiceQuestionSetComponentInput, 'templateDetails');
     this.programContext = _.get(this.practiceQuestionSetComponentInput, 'programContext');
+    this.sessionContext.programContext = this.programContext;
     this.actions = _.get(this.programContext, 'config.actions');
     this.sharedContext = _.get(this.programContext, 'config.sharedContext');
     this.sessionContext.resourceIdentifier = _.get(this.practiceQuestionSetComponentInput, 'contentIdentifier');
@@ -164,7 +166,11 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resourceStatus =  _.get(this.resourceDetails, 'status');
       this.setResourceStatus();
       if (this.resourceDetails.questionCategories) {
-        this.sessionContext.questionType = _.lowerCase(_.nth(this.resourceDetails.questionCategories, 0));
+        let questionCategories = _.nth(this.resourceDetails.questionCategories, 0);
+        if (questionCategories === 'CuriosityQuestion') {
+          questionCategories = 'curiosity';
+        }
+        this.sessionContext.questionType = _.lowerCase(questionCategories);
       }
       this.sessionContext.resourceStatus = this.resourceStatus;
       this.resourceName = this.resourceDetails.name || this.templateDetails.metadata.name;
@@ -225,9 +231,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
     } else if (this.sourcingReviewStatus === 'Approved') {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
-      if (!_.isEmpty(this.sessionContext.contentOrigins[this.sessionContext.resourceIdentifier])) {
+      if (!_.isEmpty(this.sessionContext.contentOrigins) && !_.isEmpty(this.sessionContext.contentOrigins[this.sessionContext.resourceIdentifier])) {
         this.originPreviewUrl =  this.helperService.getContentOriginUrl(this.sessionContext.contentOrigins[this.sessionContext.resourceIdentifier].identifier);
       }
+      this.originPreviewReady = true;
     } else {
       this.resourceStatusText = this.resourceStatus;
     }

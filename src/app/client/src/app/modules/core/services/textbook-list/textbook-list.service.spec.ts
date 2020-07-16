@@ -7,7 +7,7 @@ describe('TextbookListService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(TextbookListService);
+    service = TestBed.get(TextbookListService);
   });
 
   it('should be created', () => {

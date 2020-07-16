@@ -53,17 +53,6 @@ describe('CoursePlayerComponent', () => {
       this.queryParamsMock = params;
     }
   }
-  const mockNote: INoteData = {
-    note: 'Mock',
-    userId: 'd5efd1ab-3cad-4034-8143-32c480f5cc9e',
-    title: 'Mock',
-    courseId: 'do_212282810437918720179',
-    contentId: 'do_2123475531394826241107',
-    createdBy: 'd5efd1ab-3cad-4034-8143-32c480f5cc9e',
-    updatedBy: 'd5efd1ab-3cad-4034-8143-32c480f5cc9e',
-    createdDate: '2018-03-12 08:19:53:937+0000',
-    updatedDate: '2018-03-12 08:25:53:937+0000'
-  };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({

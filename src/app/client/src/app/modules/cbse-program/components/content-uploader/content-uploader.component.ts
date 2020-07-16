@@ -79,7 +79,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public contentType: string;
   public rejectBySourcingOrg: boolean;
   public sourcingOrgReviewComments: string;
-  originPreviewUrl = '';
+  originPreviewUrl: string = '';
+  originPreviewReady = false;
   public azurFileUploaderSubscrition: Subscription;
   public fileUplaoderProgress = {
            progress: 0
@@ -510,9 +511,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       } else if (this.sourcingReviewStatus === 'Approved') {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
         // get the origin preview url
-        if (!_.isEmpty(this.sessionContext.contentOrigins[contentId])) {
+        if (!_.isEmpty(this.sessionContext.contentOrigins) && !_.isEmpty(this.sessionContext.contentOrigins[contentId])) {
           this.originPreviewUrl =  this.helperService.getContentOriginUrl(this.sessionContext.contentOrigins[contentId].identifier);
         }
+        this.originPreviewReady = true;
       } else {
         this.resourceStatusText = this.resourceStatus;
       }

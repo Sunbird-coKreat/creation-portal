@@ -492,8 +492,10 @@
 												</small>
 											</div>
 											<div class="four wide column px-0 mt-5">
-												<div class="sb-color-gray-400 fxsmall text-lowercase">{{tempCollection.selected}} out of {{tempCollection.total}} chapters selected</div>
-												<div class="sb-color-primary fxsmall cursor-pointer" (click)="chooseChapters(tempCollection);">
+												<div class="sb-color-gray-400 fxsmall text-lowercase">
+													{{ resource.frmelmnts.lbl.selectedOutOfTotal | interpolate:'{selected}': tempCollection.selected | interpolate:'{total}': tempCollection.total }}
+												</div>
+												<div *ngIf="tempCollection.selected" class="sb-color-primary fxsmall cursor-pointer text-none" (click)="chooseChapters(tempCollection);">
 													<i class="edit outline icon"></i>{{resource.frmelmnts.lbl.editChapters}}
 												</div>
 											</div>
@@ -652,9 +654,15 @@ class="sb-modal" appBodyScroll (dismissed)="this.selectChapter = false" #modal>
 									<label for="" class="sb__ellipsis sb__ellipsis--three">{{choosedTextBook.children[i].name}}</label>
 								</div>
 							</td>
-							<td suiPopup popupText="{{choosedTextBook.children[i].contentTypesText}}">
+							<td *ngIf="choosedTextBook.children[i].totalLeaf; else noPopup" 
+								suiPopup popupText="{{choosedTextBook.children[i].contentTypesText}}">
 								{{choosedTextBook.children[i].totalLeaf}}
 							</td>
+							<ng-template #noPopup>
+								<td>
+									{{choosedTextBook.children[i].totalLeaf}}
+								</td>
+							</ng-template>
 						</tr>
 					</tbody>
 				</table>

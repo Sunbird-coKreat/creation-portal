@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { AzureFileUploaderService } from './azur-file-uploader.service';
+import { AzureFileUploaderService } from './azure-file-uploader.service';
 
 describe('AzureFileUploaderService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
