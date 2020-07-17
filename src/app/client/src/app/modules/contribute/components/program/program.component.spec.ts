@@ -1,6 +1,6 @@
 import { async, TestBed, ComponentFixture } from '@angular/core/testing';
-import { SharedModule } from '@sunbird/shared';
-import { FrameworkService, UserService, ExtPluginService } from '@sunbird/core';
+import { SharedModule, ToasterService } from '@sunbird/shared';
+import { FrameworkService, UserService, ExtPluginService, ProgramsService } from '@sunbird/core';
 
 import { DynamicModule } from 'ng-dynamic-component';
 import { ProgramComponent } from './program.component';
@@ -14,7 +14,7 @@ let errorInitiate;
 import { SuiModule } from 'ng2-semantic-ui';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TelemetryModule } from '@sunbird/telemetry';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DaysToGoPipe } from '../../../shared-feature';
 import { DatePipe } from '@angular/common';
@@ -34,7 +34,6 @@ const userServiceStub = {
   },
   userid: SpecData.userProfile.userId,
   userProfile : SpecData.userProfile
-
 };
 
 const extPluginServiceStub = {
@@ -73,11 +72,14 @@ const frameworkServiceStub = {
 describe('Program Component Tests', () => {
   let component: ProgramComponent;
   let userService: UserService;
+  let programsService: ProgramsService;
+  let toasterService: ToasterService;
   let fixture: ComponentFixture<ProgramComponent>;
 
   class RouterStub {
     navigate = jasmine.createSpy('navigate');
   }
+
   const fakeActivatedRoute = {
     snapshot: {
       params: {
@@ -138,6 +140,8 @@ describe('Program Component Tests', () => {
     fixture = TestBed.createComponent(ProgramComponent);
     component = fixture.componentInstance;
     userService = TestBed.get(UserService);
+    programsService = TestBed.get(ProgramsService);
+    toasterService = TestBed.get(ToasterService);
 
     fixture.detectChanges();
   });
@@ -173,4 +177,36 @@ describe('Program Component Tests', () => {
     expect(isUserOrgAdmin).toBeFalsy();
   });
 
+  it('Should call getProgramDetails', () => {
+    spyOn(programsService, 'get').and.callFake(() => {
+      return of(SpecData.readProgramApiSuccessRes);
+    });
+    spyOn(component, 'getProgramDetails');
+    component.getProgramDetails();
+    expect(component.getProgramDetails).toHaveBeenCalled();
+  });
+
+  it('should set programDetails correctly', () => {
+    spyOn(programsService, 'get').and.callFake(() => {
+      return of(SpecData.readProgramApiSuccessRes);
+    });
+    component.getProgramDetails();
+    expect(component.programDetails).toEqual(SpecData.readProgramApiSuccessRes.result);
+  });
+
+  it('should show error toast message if programId has falsy value', () => {
+    spyOn(toasterService, 'error');
+    component.programId = null;
+    component.ngOnInit();
+    expect(toasterService.error).toHaveBeenCalled();
+  });
+
+  it('Should call fetchFrameWorkDetails', () => {
+    spyOn(programsService, 'get').and.callFake(() => {
+      return of(SpecData.readProgramApiSuccessRes);
+    });
+    spyOn(component, 'fetchFrameWorkDetails');
+    component.getProgramDetails();
+    expect(component.fetchFrameWorkDetails).toHaveBeenCalled();
+  });
 });

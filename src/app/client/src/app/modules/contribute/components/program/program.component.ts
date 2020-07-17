@@ -100,10 +100,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     localStorage.setItem('programId', this.programId);
   }
   ngOnInit() {
-
     if (['null', null, undefined, 'undefined'].includes(this.programId)) {
-      this.toasterService.error(this.resourceService.messages.emsg.project.m0001);
+      this.toasterService.error(_.get(this.resourceService, 'messages.emsg.project.m0001', ''));
+      return;
     }
+
     this.getProgramDetails();
     this.programStageService.initialize();
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
@@ -166,9 +167,12 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.showSkipReview = !!(_.get(this.userService, 'userProfile.rootOrgId') === _.get(this.programDetails, 'rootorg_id') &&
       this.programDetails.config.defaultContributeOrgReview === false) ;
     }, error => {
-      // TODO: navigate to program list page
-      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-      this.toasterService.error(errorMes || this.resourceService.messages.emsg.project.m0001);
+      // TODO: navigate to program list
+      let errorMsg = _.get(error, 'params.errmsg');
+      if (errorMsg !== 'string' ) {
+        errorMsg = _.get(this.resourceService, 'messages.emsg.project.m0001', '');
+      }
+      this.toasterService.error(errorMsg);
     });
   }
 
@@ -181,8 +185,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           this.sessionContext.frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
         }
       }, error => {
-        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-        this.toasterService.error(errorMes || 'Fetching framework details failed');
+        let errorMsg = _.get(error, 'params.errmsg');
+        if (errorMsg !== 'string' ) {
+          errorMsg = _.get(this.resourceService, 'messages.emsg.project.m0002', '');
+        }
+        this.toasterService.error(errorMsg);
       });
     }
   }
