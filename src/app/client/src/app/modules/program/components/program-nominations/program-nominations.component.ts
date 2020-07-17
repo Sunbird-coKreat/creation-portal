@@ -563,7 +563,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   getProgramInfo(type) {
-    const config = this.programDetails.config;
+    const config = JSON.parse(this.programDetails.config);
     return type === 'board' ? config[type] : _.join(config[type], ', ');
   }
 
