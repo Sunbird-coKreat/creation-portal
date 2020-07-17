@@ -258,6 +258,7 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
   }
 
   openFilter(): void {
+    window.scrollTo(0, 0);
     this.isFilterOpen = true;
   }
 

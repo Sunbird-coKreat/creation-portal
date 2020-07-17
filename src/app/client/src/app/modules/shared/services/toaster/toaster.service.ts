@@ -29,7 +29,7 @@ export class ToasterService {
       message: message,
       class: 'sb-toaster sb-toast-success sb-toast-normal',
       position: 'topCenter',
-      timeout: 100000000,
+      timeout: 6000,
       transitionIn: 'flipInX',
       transitionOut: 'flipOutX'
     });

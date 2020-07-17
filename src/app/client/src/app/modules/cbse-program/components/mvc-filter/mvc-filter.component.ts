@@ -21,6 +21,8 @@ export class MvcFilterComponent implements OnInit, OnChanges {
   public showAddedContent: Boolean = false;
   public isFilterShow: Boolean = false;
   private searchFilterLookup$: Subject<void> = new Subject();
+  chapter: ['ekta','yadav'];
+
 
   constructor( private sbFormBuilder: FormBuilder, public resourceService: ResourceService,
     public programTelemetryService: ProgramTelemetryService) { }
@@ -34,11 +36,15 @@ export class MvcFilterComponent implements OnInit, OnChanges {
   }
 
   initializeForm() {
+    
     this.searchFilterForm = this.sbFormBuilder.group({
+      chapter: ['ekta','yadav'],
+
       contentType: [this.activeFilterData.contentType],
       subject: [this.activeFilterData.subject],
       gradeLevel: [this.activeFilterData.gradeLevel],
-      chapter: [this.activeFilterData.chapter ? this.activeFilterData.chapter : []],
+      // chapter: [this.activeFilterData.chapter ? this.activeFilterData.chapter : []],
+
     });
     this.searchFilterForm.valueChanges.subscribe(() => {
       this.searchFilterLookup$.next();

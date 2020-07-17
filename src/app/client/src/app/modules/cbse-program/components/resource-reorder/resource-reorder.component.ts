@@ -64,7 +64,7 @@ export class ResourceReorderComponent implements OnInit {
     this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitSelected, this.contentId)
      .subscribe((data) => {
         // tslint:disable-next-line:max-line-length
-        this.toasterService.InfoToasterCritical('<b>Content added successfully!</b>', `Content "${this.sessionContext.selectedMvcContentDetails.name}" added to textbook- ${this.collectionUnitsBreadcrumb[0]}`);
+        this.toasterService.InfoToasterCritical('<b>Content added successfully!</b>', `Content "${this.sessionContext.selectedMvcContentDetails.name}" added to  ${this.collectionUnitsBreadcrumb[0]} textbook`);
         this.emitAfterMoveEvent();
         this.modal.deny();
     }, err => {

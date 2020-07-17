@@ -16,7 +16,7 @@
       ><i class="plus square icon"></i>{{resourceService.frmelmnts.lbl.addToTextbook}}</button>
   </div>
 </div>
-<!-- <app-player class="content-player" [playerConfig]="playerConfig"></app-player> -->
+<app-player class="content-player" [playerConfig]="playerConfig"></app-player>
 <div class="toc-content-player content-video">
   <div class="sb-bg-color-white">
     <div class="mx-16 py-16 content-metadeta__content" *ngIf="contentData?.description">
@@ -33,43 +33,43 @@
         </div>
         <div content class="sb-accordion-content sb-bg-color-white pt-0 pb-8 ui grid mx-0">
           <!-- <div class="six wide column">
-            <div class="content-metadeta__title  fxsmall mb-8">{{resourceService.frmelmnts.lbl.content.BOARD}}</div>
+            <div class="content-metadeta__title  fs-0-785 mb-8">{{resourceService.frmelmnts.lbl.content.BOARD}}</div>
             <div class="content-metadeta__text  fsmall">{{contentData.board}}</div>
           </div> -->
           <div class="six wide column">
-            <div class="content-metadeta__title  fxsmall mb-8">{{resourceService.frmelmnts.lbl.class}}</div>
+            <div class="content-metadeta__title  fs-0-785 mb-8">{{resourceService.frmelmnts.lbl.class}}</div>
             <div class="content-metadeta__text  fsmall">{{contentData.gradeLevel}}</div>
           </div>
           <div class="six wide column">
-            <div class="content-metadeta__title  fxsmall mb-8">{{resourceService.frmelmnts.lbl.subject}}</div>
+            <div class="content-metadeta__title  fs-0-785 mb-8">{{resourceService.frmelmnts.lbl.subject}}</div>
             <div class="content-metadeta__text  fsmall">{{contentData.subject}}</div>
           </div>
           <div class="six wide column" *ngIf="contentData?.contentType">
-            <div class="content-metadeta__title  fxsmall mb-8">{{resourceService.frmelmnts.lbl.contentType}}</div>
+            <div class="content-metadeta__title  fs-0-785 mb-8">{{resourceService.frmelmnts.lbl.contentType}}</div>
             <div class="content-metadeta__text  fsmall">{{contentData.contentType}}</div>
           </div>
           <div class="six wide column" *ngIf="contentData?.creator">
-            <div class="content-metadeta__title  fxsmall mb-8" [innerHTML]="resourceService.frmelmnts.lbl.content.CreatedOnBy | interpolate:'{instance}': instance"></div>
-            <div class="content-metadeta__text  fxsmall">{{contentData?.creator}}</div>
+            <div class="content-metadeta__title  fs-0-785 mb-8 text-inherit" [innerHTML]="resourceService.frmelmnts.lbl.content.CreatedOnBy | interpolate:'{instance}': instance"></div>
+            <div class="content-metadeta__text  fs-0-785">{{contentData?.creator}}</div>
           </div>
           <div class="six wide column" *ngIf="contentData?.author">
-            <div class="content-metadeta__title  fxsmall mb-8">{{resourceService.frmelmnts.lbl.author}}</div>
+            <div class="content-metadeta__title  fs-0-785 mb-8">{{resourceService.frmelmnts.lbl.author}}</div>
             <div class="content-metadeta__text  fsmall">{{contentData?.author}}</div>
           </div>
           <div class="six wide column">
-            <div class="content-metadeta__title  fxsmall mb-8">{{resourceService.frmelmnts.lbl.coursecreatedon}}</div>
+            <div class="content-metadeta__title  fs-0-785 mb-8 text-inherit">{{resourceService.frmelmnts.lbl.coursecreatedon}}</div>
             <div class="content-metadeta__text  fsmall">{{contentData.createdOn | dateFormat: ' Do MMMM YYYY'}}</div>
           </div>
           <div class="six wide column" *ngIf="contentData?.attributions">
-            <div class="content-metadeta__title  fxsmall mb-8">{{resourceService.frmelmnts.lbl.attributions }}</div>
+            <div class="content-metadeta__title  fs-0-785 mb-8">{{resourceService.frmelmnts.lbl.attributions }}</div>
             <div class="content-metadeta__text  fsmall">{{contentData?.attributions}}</div>
           </div>
           <div class="six wide column" *ngIf="contentData?.keywords">
-            <div class="content-metadeta__title  fxsmall mb-8">{{resourceService.frmelmnts.lbl.keywords}}</div>
+            <div class="content-metadeta__title  fs-0-785 mb-8">{{resourceService.frmelmnts.lbl.keywords}}</div>
             <div class="content-metadeta__text  fsmall">{{contentData?.keywords}}</div>
           </div>
           <div class="six wide column" *ngIf="contentData?.license">
-            <div class="content-metadeta__title fxsmall mb-8">{{resourceService.frmelmnts.lbl.licenseTerms}}
+            <div class="content-metadeta__title fs-0-785 mb-8">{{resourceService.frmelmnts.lbl.licenseTerms}}
             </div>
             <div class="content-metadeta__text fsmall">
               {{contentData.license}} <span *ngIf="contentData?.licenseDetails?.name">:
@@ -81,7 +81,7 @@
             </div>
           </div>
           <div class="six wide column" *ngIf="contentData?.copyright">
-            <div class="content-metadeta__title fxsmall mb-8">{{resourceService.frmelmnts.lbl.copyRight}}</div>
+            <div class="content-metadeta__title fs-0-785 mb-8">{{resourceService.frmelmnts.lbl.copyRight}}</div>
             <div class="content-metadeta__text fsmall">{{contentData?.copyright}} <span
                 *ngIf="contentData?.copyrightYear">,&nbsp;{{contentData?.copyrightYear}}</span></div>
           </div>

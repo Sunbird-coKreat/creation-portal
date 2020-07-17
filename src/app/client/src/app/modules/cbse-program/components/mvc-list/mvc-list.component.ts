@@ -32,8 +32,9 @@ export class MvcListComponent implements OnInit {
   }
 
   changeFilter() {
+    window.scrollTo(0, 0);
     this.moveEvent.emit({
-      action: 'showFilter'
+      action: 'showFilter',
     });
   }
 
