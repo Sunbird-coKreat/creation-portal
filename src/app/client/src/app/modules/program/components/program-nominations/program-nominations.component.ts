@@ -906,6 +906,55 @@ getAggregatedNominationsCount() {
   );
 }
 
+downloadContribDashboardDetails() {
+  try {
+    const headers = this.getContribDashboardHeaders();
+    const tableData = [];
+    if (this.contributionDashboardData.length) {
+      _.forEach(this.contributionDashboardData, (contributor) => {
+        const row = [
+          this.programDetails.name.trim(),
+          contributor.contributorName,
+          contributor.type === 'org' ? 'Organisation' : 'Individual',
+          contributor.draft || 0,
+          contributor.type !== 'individual' ? contributor.review: '-',
+          contributor.live || 0,
+          contributor.type !== 'individual' ? contributor.rejected: '-',
+          contributor.sourcingPending || 0,
+          contributor.sourcingAccepted || 0,
+          contributor.sourcingRejected || 0,
+        ];
+        tableData.push(row);
+      });
+    }
+    const csvDownloadConfig = {
+      filename: this.programDetails.name.trim(),
+      tableData: tableData,
+      headers: headers,
+      showTitle: false
+    };
+      this.programsService.generateCSV(csvDownloadConfig);
+    } catch (err) {
+      this.toasterService.error(this.resourceService.messages.emsg.projects.m0005);
+    }
+}
+
+getContribDashboardHeaders() {
+  const headers = [
+    this.resourceService.frmelmnts.lbl.projectName,
+    this.resourceService.frmelmnts.lbl.contributorName,
+    this.resourceService.frmelmnts.lbl.typeOfContributor,
+    this.resourceService.frmelmnts.lbl.draftContributingOrg,
+    this.resourceService.frmelmnts.lbl.pendingContributingOrg,
+    this.resourceService.frmelmnts.lbl.acceptedContributingOrg,
+    this.resourceService.frmelmnts.lbl.rejectedContributingOrg,
+    this.resourceService.frmelmnts.lbl.pendingtSourcingOrg,
+    this.resourceService.frmelmnts.lbl.acceptedSourcingOrg,
+    this.resourceService.frmelmnts.lbl.rejectedSourcingOrg,
+  ];
+  return headers;
+}
+
 downloadReport(report) {
   const req = {
     url: `program/v1/report`,

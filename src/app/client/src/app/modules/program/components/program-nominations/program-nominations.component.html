@@ -454,7 +454,18 @@
             </div>
             <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="4">
                 <app-loader *ngIf='showDashboardLoader'></app-loader>
-                <div *ngIf="contributionDashboardData.length && !showDashboardLoader" class="ui container pt-32">
+                <div *ngIf="contributionDashboardData.length && !showDashboardLoader" class="ui container p-0 m-0 pt-32">
+                    <div class="text-capitalize fs-0-785 line-height-1-3">
+                        <button type="button" class="pull-right sb-btn sb-btn-normal sb-btn-outline-primary mb-5" (click)="downloadContribDashboardDetails()"
+                            appTelemetryInteract
+                            [telemetryInteractEdata]="getTelemetryInteractEdata('download-contribution-dashboard-details', 'click', 'program-nominations')"
+                            [telemetryInteractObject]="telemetryInteractObject"
+                            [telemetryInteractCdata]="telemetryInteractCdata"[telemetryInteractPdata]="telemetryInteractPdata">
+                            <i class="download icon"></i>
+                            {{ resourceService?.frmelmnts?.btn?.downloadContributionDetails }}
+                        </button>
+                    </div>
+
                     <div class="sb-table-responsive">
                         <table
                             class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
