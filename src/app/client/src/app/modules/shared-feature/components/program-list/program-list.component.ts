@@ -133,15 +133,8 @@ export class ProgramListComponent implements OnInit {
     this.programsService.getNominationList(req.data.request.filters)
       .subscribe((nominationsResponse) => {
         const nominations = _.get(nominationsResponse, 'result');
-        let user_id = _.get(this.userService, 'userProfile.userId');
-
+ 
         if (nominations.length > 1) {
-          this.toasterService.error(this.resourceService.frmelmnts.lbl.projectCannotBeDeleted);
-          this.showDeleteModal = false;
-
-          return false;
-        }
-        else if (nominations[0].user_id != user_id) {
           this.toasterService.error(this.resourceService.frmelmnts.lbl.projectCannotBeDeleted);
           this.showDeleteModal = false;
 
