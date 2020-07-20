@@ -524,6 +524,9 @@
 				[telemetryInteractEdata]="getTelemetryInteractEdata('update', 'click', 'edit-program')"
 				[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
 				[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.update}}</button>
+				<button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8">
+					{{resource.frmelmnts.btn.saveAsDraft}}
+				</button>
 			<button *ngIf="!showTextBookSelector && !editMode" class="sb-btn sb-btn-normal sb-btn-primary" (click)="saveProgram()"
 				appTelemetryInteract
 				[telemetryInteractEdata]="getTelemetryInteractEdata('next', 'click', 'create-program')"
