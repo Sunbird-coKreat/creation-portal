@@ -72,5 +72,8 @@
   "include": [
     "**/create-program.component.spec.ts",
     //"**/*.d.ts"
-    ]
+    ],
+  "exclude": [
+ 
+  ]
 }
