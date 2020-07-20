@@ -1,11 +1,8 @@
 import { InterpolatePipe } from '@sunbird/shared';
 import { async, TestBed, inject, ComponentFixture } from '@angular/core/testing';
 import { FrameworkService, UserService, ExtPluginService } from '@sunbird/core';
-
-// import { DynamicModule } from 'ng-dynamic-component';
 import * as _ from 'lodash-es';
 import {  throwError , of } from 'rxjs';
-let errorInitiate;
 import { SuiModule } from 'ng2-semantic-ui';
 import { FormsModule } from '@angular/forms';
 import { TelemetryModule } from '@sunbird/telemetry';
@@ -14,30 +11,15 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CreateProgramComponent } from './create-program.component';
 import { OnboardPopupComponent } from '../onboard-popup/onboard-popup.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { FormControl, FormBuilder, Validators, FormGroup, FormArray, FormGroupName } from '@angular/forms';
-// import { DateFormatPipe, DateFilterXtimeAgoPipe, FilterPipe, InterpolatePipe } from './pipes';
 import { ConfigService, BrowserCacheTtlService, ToasterService, ResourceService } from '@sunbird/shared';
 import { CacheService } from 'ng2-cache-service';
 import { DatePipe } from '@angular/common';
 import { RouterTestingModule } from '@angular/router/testing';
-
-// RouterNavigationService, ServerResponse,
+import * as SpecData from './create-program.component.spec.data';
+import { TelemetryService, TELEMETRY_PROVIDER } from '../../../telemetry/services/telemetry/telemetry.service';
 import {  NavigationHelperService } from '@sunbird/shared';
-// import { FineUploader } from 'fine-uploader';
-// import { ProgramsService, DataService, ActionService } from '@sunbird/core';
-// import { Subscription, Subject, Observable } from 'rxjs';
-// import { tap, first, map, takeUntil, catchError, count } from 'rxjs/operators';
-// import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges } from '@angular/core';
-// import * as _ from 'lodash-es';
-// import { IProgram } from './../../../core/interfaces';
-// import { CbseProgramService } from './../../../cbse-program/services';
-// import { programConfigObj } from './programconfig';
-// import { HttpClient } from '@angular/common/http';
-// import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEventInput } from '@sunbird/telemetry';
-// import { DeviceDetectorService } from 'ngx-device-detector';
-// import * as moment from 'moment';
-// import * as alphaNumSort from 'alphanum-sort';
-// import { ProgramTelemetryService } from '../../services';
+
+let errorInitiate;
 
 describe("Create program component on boarding test", () => {
 
@@ -61,6 +43,45 @@ describe("Create program component on boarding test", () => {
         }
     };
 
+    const config = {
+      urlConFig : {
+        URLS: {
+          PUBLIC_PREFIX: "http://localhost:3000"
+        }
+      },
+      appConfig : {
+        TELEMETRY :{
+          PID: ""
+        }
+      }
+    };
+
+    const userServiceStub = {
+      get() {
+        if (errorInitiate) {
+          return throwError ({
+            result: {
+              responseCode: 404
+            }
+          });
+        } else {
+          return of(SpecData.addParticipentResponseSample);
+        }
+      },
+      userid: '874ed8a5-782e-4f6c-8f36-e0288455901e',
+      userProfile :  {
+        'userId': '874ed8a5-782e-4f6c-8f36-e0288455901e',
+        "userRegData": {},
+      }
+    };
+
+    const frameworkServiceStub = {
+      initialize() {
+        return null;
+      },
+      frameworkData$:  of(SpecData.frameWorkData)
+    };
+
     beforeEach(async(() => {
         TestBed.configureTestingModule({
           imports: [
@@ -77,20 +98,27 @@ describe("Create program component on boarding test", () => {
             OnboardPopupComponent
           ],
           providers: [
+            TelemetryService,
+            {
+              provide: TELEMETRY_PROVIDER, useValue: EkTelemetry
+            },
             {
               provide: Router,
               useClass: RouterStub
             }, {
               provide: FrameworkService,
+              useValue: frameworkServiceStub
             },
             {
               provide : NavigationHelperService,
             },
             {
               provide: UserService,
+              useValue: userServiceStub
             },
             {
               provide: ConfigService,
+              useValue: config
             },
             {
               provide: CacheService,
@@ -122,9 +150,5 @@ describe("Create program component on boarding test", () => {
         fixture = TestBed.createComponent(CreateProgramComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
-    });
-
-    it('should have a defined component', () => {
-        expect(component.addition()).toBe(10);
     });
 });
