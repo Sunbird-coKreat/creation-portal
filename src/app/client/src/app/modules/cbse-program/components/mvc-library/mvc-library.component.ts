@@ -220,7 +220,7 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
       }),
       map((data: any) => data.result.content ? data.result.content : []))
       .subscribe((result: any) => {
-       this.contentList = result;
+        this.contentList = result;
         this.filterContentList();
       });
   }
