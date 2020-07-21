@@ -18,9 +18,7 @@ export class MvcFilterComponent implements OnInit, OnChanges {
   @Input() filterOpenStatus: Boolean;
   @Output() filterChangeEvent: EventEmitter<any> = new EventEmitter();
   searchFilterForm: FormGroup;
-  public showAddedContent: Boolean = false;
   public isFilterShow: Boolean = false;
-  private searchFilterLookup$: Subject<void> = new Subject();
 
   constructor( private sbFormBuilder: FormBuilder, public resourceService: ResourceService,
     public programTelemetryService: ProgramTelemetryService) { }
@@ -40,18 +38,6 @@ export class MvcFilterComponent implements OnInit, OnChanges {
       gradeLevel: [this.activeFilterData.gradeLevel],
       chapter: [this.activeFilterData.chapter ? this.activeFilterData.chapter : []],
     });
-    this.searchFilterForm.valueChanges.subscribe(() => {
-      this.searchFilterLookup$.next();
-    });
-    this.searchFilterLookup$.pipe(
-      // debounceTime(500),
-      // distinctUntilChanged(_.isEqual)
-    ).subscribe(() => {
-      this.filterChangeEvent.emit({
-        action: 'filterDataChange',
-        filters: this.searchFilterForm.value
-      });
-    });
   }
 
   showfilter() {
@@ -62,11 +48,14 @@ export class MvcFilterComponent implements OnInit, OnChanges {
     });
   }
 
-  onShowAddedContentChange() {
-    this.filterChangeEvent.emit({
-      action: 'showAddedContent',
-      status: this.showAddedContent
-    });
+  resetFilter() {
+    this.searchFilterForm.reset();
   }
 
+  applyFilter() {
+    this.filterChangeEvent.emit({
+      action: 'filterDataChange',
+      filters: this.searchFilterForm.value
+    });
+  }
 }

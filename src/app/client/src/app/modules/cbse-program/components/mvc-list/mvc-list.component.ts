@@ -42,4 +42,11 @@ export class MvcListComponent implements OnInit {
     });
   }
 
+  onShowAddedContentChange() {
+    this.moveEvent.emit({
+      action: 'showAddedContent',
+      status: this.showAddedContent
+    });
+  }
+
 }
