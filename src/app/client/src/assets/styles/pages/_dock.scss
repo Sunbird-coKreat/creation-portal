@@ -372,9 +372,10 @@ top: -4px;
   }
 }
 .sb-content-breadcrumb{
+  vertical-align: bottom;
   .section{
     &:first-child{
-      width: 80%;
+      width: 30%;
       overflow: hidden;
       text-overflow: ellipsis;
       display: inline-block !important;
@@ -401,5 +402,17 @@ top: -4px;
     font-size: 1rem !important;
     margin: -21px !important;
     color:  var(--gray);
+  }
+}
+.sb-option-ellipsis{
+  sui-multi-select-label{
+    span{
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 12rem;
+      display: inline-block;
+      vertical-align: bottom;
+    }
   }
 }

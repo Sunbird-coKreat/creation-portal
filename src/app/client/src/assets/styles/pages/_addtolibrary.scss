@@ -736,6 +736,7 @@
 
     &.active{
       background: var(--secondary-300) !important;
+      border: none !important;
       .textbookBtnLink {
         visibility: visible;
         right:12px;
@@ -746,7 +747,7 @@
       }
     }
     &.selected{
-      background: var(--primary-100) !important;
+      background: var(--secondary-300) !important;
       border: solid 1px var(--primary-600);
     }
 
@@ -1002,12 +1003,12 @@
     }
   }
 .sb-prominent-filter-field{
-  width: 33% !important;
+  width: 33.2% !important;
   &:nth-child(3n){
     padding: 0;
   }
   &:nth-child(4n){
-    width: 65% !important;
+    width: 66% !important;
   }
 }
 .sb-prominent-filter {
@@ -1053,7 +1054,7 @@
               }
 
               .text {
-                top: -1px;
+                top: 2px;
               }
             }
 
