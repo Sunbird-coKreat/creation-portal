@@ -220,7 +220,7 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
       }),
       map((data: any) => data.result.content ? data.result.content : []))
       .subscribe((result: any) => {
-        this.contentList = result;
+       this.contentList = result;
         this.filterContentList();
       });
   }
@@ -258,7 +258,11 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
   }
 
   openFilter(): void {
-    window.scrollTo(0, 0);
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
     this.isFilterOpen = true;
   }
 

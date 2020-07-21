@@ -34,7 +34,6 @@ export class MvcFilterComponent implements OnInit, OnChanges {
   }
 
   initializeForm() {
-    
     this.searchFilterForm = this.sbFormBuilder.group({
       contentType: [this.activeFilterData.contentType],
       subject: [this.activeFilterData.subject],
