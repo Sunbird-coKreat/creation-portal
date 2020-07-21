@@ -8,7 +8,7 @@ const routes: Routes = [
   path: 'program/:programId/textbook/:collectionId/:collectionUnitId', component: MvcLibraryComponent, pathMatch: 'full',
   data: {
     hideHeaderNFooter: 'true',
-    telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'mvc-explore' }
+    telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'library' }
   },
 }
 ];

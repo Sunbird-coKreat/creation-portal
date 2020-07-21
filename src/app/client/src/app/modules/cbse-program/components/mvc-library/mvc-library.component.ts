@@ -18,7 +18,7 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
 
   public telemetryImpression: IImpressionEventInput;
   public sessionContext: any;
-  public showLargeModal: Boolean = false;
+  public showSelectResourceModal: Boolean = false;
   public isFilterOpen: Boolean = false;
   public showLoader: Boolean = false;
   public skeletonLoader: Boolean = false;
@@ -30,7 +30,6 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
   public collectionData: any;
   public collectionHierarchy = [];
   public childNodes: any;
-  public contentFacets: any;
   public programId: string;
   public programDetails: any;
   public resourceReorderBreadcrumb: any = [];
@@ -235,7 +234,7 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
         _.find(this.contentList, { 'identifier': selectedContentId }), ['name', 'identifier', 'isAdded']
       );
     } else {
-      const selectedContentIndex = this.showAddedContent ? _.findIndex(this.contentList, { 'isAdded': false }) : 0;
+      const selectedContentIndex = this.showAddedContent ? 0 : _.findIndex(this.contentList, { 'isAdded': false });
       this.selectedContentDetails = _.pick(this.contentList[selectedContentIndex], ['name', 'identifier', 'isAdded']);
     }
   }
@@ -277,9 +276,6 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
       this.fetchContentList();
     } else if (event.action === 'filterStatusChange') {
       this.isFilterOpen = event.filterStatus;
-    } else if (event.action === 'showAddedContent') {
-      this.showAddedContent = !event.status;
-      this.filterContentList();
     }
   }
 
@@ -288,18 +284,23 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
       case 'beforeMove':
         this.sessionContext['selectedMvcContentDetails'] = this.selectedContentDetails;
         this.sessionContext['resourceReorderBreadcrumb'] = this.resourceReorderBreadcrumb;
-        this.showLargeModal = true;
+        this.showSelectResourceModal = true;
         break;
       case 'afterMove':
-        this.showLargeModal = false;
+        this.showSelectResourceModal = false;
         this.childNodes.push(event.contentId);
-        this.filterContentList(event.contentId);
+        // this.filterContentList(event.contentId);
+        this.filterContentList();
         break;
       case 'cancelMove':
-        this.showLargeModal = false;
+        this.showSelectResourceModal = false;
         break;
       case 'showFilter':
         this.openFilter();
+        break;
+      case 'showAddedContent':
+        this.showAddedContent = event.status;
+        this.filterContentList();
         break;
       default:
         break;
@@ -355,6 +356,10 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
   }
 
   handleBack() {
+    this.programsService.setMvcStageData({
+      collection: this.collectionData,
+      lastOpenedUnitId: this.collectionUnitId
+    });
     this.router.navigateByUrl(`/contribute/program/${this.programId}`);
   }
 
