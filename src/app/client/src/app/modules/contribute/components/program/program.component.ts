@@ -7,7 +7,8 @@ import * as _ from 'lodash-es';
 import { tap, first } from 'rxjs/operators';
 import { CollectionHierarchyService } from '../../../cbse-program/services/collection-hierarchy/collection-hierarchy.service';
 import { ChapterListComponent } from '../../../cbse-program/components/chapter-list/chapter-list.component';
-import { ICollectionComponentInput, IDashboardComponentInput, IPagination, IChapterListComponentInput} from '../../../cbse-program/interfaces';
+import { ICollectionComponentInput, IDashboardComponentInput,
+  IPagination, IChapterListComponentInput} from '../../../cbse-program/interfaces';
 import { InitialState, ISessionContext, IUserParticipantDetails } from '../../interfaces';
 import { ProgramStageService } from '../../../program/services/program-stage/program-stage.service';
 import { ProgramComponentsService } from '../../services/program-components/program-components.service';
@@ -153,7 +154,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     };
     this.programsService.get(req).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
-      this.programDetails.config = JSON.parse(this.programDetails.config);
       this.programDetails.config.medium = _.compact(this.programDetails.config.medium);
       this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
       this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
@@ -163,7 +163,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.fetchFrameWorkDetails();
       this.getNominationStatus();
       this.setActiveDate();
-      this.showSkipReview = !!(_.get(this.userService,'userProfile.rootOrgId') === _.get(this.programDetails,'rootorg_id') && this.programDetails.config.defaultContributeOrgReview === false) ;
+      this.showSkipReview = !!(_.get(this.userService, 'userProfile.rootOrgId') === _.get(this.programDetails, 'rootorg_id') &&
+      this.programDetails.config.defaultContributeOrgReview === false) ;
     }, error => {
       // TODO: navigate to program list page
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');

@@ -117,7 +117,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
      */
     this.levelOneChapterList.push({
       identifier: 'all',
-      name: 'All Chapters'
+      name: this.resourceService.frmelmnts.lbl.allChapters
     });
     this.selectedChapterOption = 'all';
     this.updateAccordianView();
@@ -280,7 +280,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       .subscribe((response) => {
         let children = [];
         _.forEach(response.result.content.children, (child) => {
-          if (child.openForContribution === true) {
+          if (child.mimeType !== "application/vnd.ekstep.content-collection" ||
+          (child.mimeType === "application/vnd.ekstep.content-collection" && child.openForContribution === true)) {
             children.push(child);
           }
         });
