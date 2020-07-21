@@ -368,7 +368,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   getProgramCollection (preferencefilters?) {
     return this.collectionHierarchyService.getCollectionWithProgramId(this.programId, preferencefilters).pipe(
-      tap((response) => {
+      tap((response: any) => {
         if (response && response.result) {
           this.programCollections = response.result.content || [];
         }
@@ -381,7 +381,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   getcontentAggregationData() {
     return this.collectionHierarchyService.getContentAggregation(this.programId).pipe(
-      tap((response) => {
+      tap((response: any) => {
         if (response && response.result && response.result.content) {
           this.contentAggregationData = _.get(response.result, 'content');
         }
@@ -887,7 +887,7 @@ getAggregatedNominationsCount() {
     }
   };
   return this.programsService.post(req).pipe(
-    tap((data) => {
+    tap((data: any) => {
       const aggregatedCount = data.result.nomination;
       this.totalNominations = aggregatedCount.count;
       if (aggregatedCount.fields && aggregatedCount.fields.length) {
@@ -910,10 +910,11 @@ downloadContribDashboardDetails() {
   try {
     const headers = this.getContribDashboardHeaders();
     const tableData = [];
+
     if (this.contributionDashboardData.length) {
       _.forEach(this.contributionDashboardData, (contributor) => {
         const row = [
-          this.programDetails.name.trim(),
+          _.get(this.programDetails, 'name', '').trim(),
           contributor.contributorName,
           contributor.type === 'org' ? 'Organisation' : 'Individual',
           contributor.draft || 0,
@@ -928,29 +929,29 @@ downloadContribDashboardDetails() {
       });
     }
     const csvDownloadConfig = {
-      filename: this.programDetails.name.trim(),
+      filename: _.get(this.programDetails, 'name', '').trim(),
       tableData: tableData,
       headers: headers,
       showTitle: false
     };
       this.programsService.generateCSV(csvDownloadConfig);
     } catch (err) {
-      this.toasterService.error(this.resourceService.messages.emsg.projects.m0005);
+      this.toasterService.error(_.get(this.resourceService, 'messages.emsg.projects.m0005', ''));
     }
 }
 
 getContribDashboardHeaders() {
   const headers = [
-    this.resourceService.frmelmnts.lbl.projectName,
-    this.resourceService.frmelmnts.lbl.contributorName,
-    this.resourceService.frmelmnts.lbl.typeOfContributor,
-    this.resourceService.frmelmnts.lbl.draftContributingOrg,
-    this.resourceService.frmelmnts.lbl.pendingContributingOrg,
-    this.resourceService.frmelmnts.lbl.acceptedContributingOrg,
-    this.resourceService.frmelmnts.lbl.rejectedContributingOrg,
-    this.resourceService.frmelmnts.lbl.pendingtSourcingOrg,
-    this.resourceService.frmelmnts.lbl.acceptedSourcingOrg,
-    this.resourceService.frmelmnts.lbl.rejectedSourcingOrg,
+    _.get(this.resourceService, 'frmelmnts.lbl.projectName'),
+    _.get(this.resourceService, 'frmelmnts.lbl.contributorName'),
+    _.get(this.resourceService, 'frmelmnts.lbl.typeOfContributor'),
+    _.get(this.resourceService, 'frmelmnts.lbl.draftContributingOrg'),
+    _.get(this.resourceService, 'frmelmnts.lbl.pendingContributingOrg'),
+    _.get(this.resourceService, 'frmelmnts.lbl.acceptedContributingOrg'),
+    _.get(this.resourceService, 'frmelmnts.lbl.rejectedContributingOrg'),
+    _.get(this.resourceService, 'frmelmnts.lbl.pendingtSourcingOrg'),
+    _.get(this.resourceService, 'frmelmnts.lbl.acceptedSourcingOrg'),
+    _.get(this.resourceService, 'frmelmnts.lbl.rejectedSourcingOrg'),
   ];
   return headers;
 }
