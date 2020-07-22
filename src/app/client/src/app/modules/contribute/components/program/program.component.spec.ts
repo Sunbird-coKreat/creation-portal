@@ -61,12 +61,15 @@ const extPluginServiceStub = {
   }
 };
 
-
 const frameworkServiceStub = {
   initialize() {
     return null;
   },
   frameworkData$:  of(SpecData.frameWorkData)
+};
+
+const PrefModel = {
+  deny() { return null; }
 };
 
 describe('Program Component Tests', () => {
@@ -75,6 +78,7 @@ describe('Program Component Tests', () => {
   let programsService: ProgramsService;
   let toasterService: ToasterService;
   let fixture: ComponentFixture<ProgramComponent>;
+  let prefModal: any;
 
   class RouterStub {
     navigate = jasmine.createSpy('navigate');
@@ -142,6 +146,7 @@ describe('Program Component Tests', () => {
     userService = TestBed.get(UserService);
     programsService = TestBed.get(ProgramsService);
     toasterService = TestBed.get(ToasterService);
+    prefModal = PrefModel;
 
     fixture.detectChanges();
   });
@@ -209,4 +214,38 @@ describe('Program Component Tests', () => {
     component.getProgramDetails();
     expect(component.fetchFrameWorkDetails).toHaveBeenCalled();
   });
+
+  it('should return true for if nomination from organisation', () => {
+    component.sessionContext.nominationDetails = SpecData.nominationByOrg;
+    component.ngOnInit();
+    const isNominationFromOrg = component.isNominationOrg();
+    expect(isNominationFromOrg).toBe(true);
+  });
+
+  /*it('should call applyPreferences if called applyTextbookFilters', () => {
+    spyOn(programsService, 'setUserPreferencesforProgram').and.callFake(() => {
+      return of(SpecData.preferenceApiSuccessRes);
+    });
+    spyOn(component, 'applyPreferences');
+    component.ngOnInit();
+    component.applyPreferences();
+    expect(component.applyPreferences).toHaveBeenCalled();
+  });
+
+  it('should show warning toaster message if failed to create user preferences', () => {
+    spyOn(programsService, 'setUserPreferencesforProgram').and.callFake(() => {
+      return of(SpecData.preferenceApiErrorRes);
+    });
+    spyOn(toasterService, 'warning');
+    component.ngOnInit();
+    component.contributorTextbooks = [];
+    component.tempSortTextbooks = [];
+    component.paginatedContributorOrgUsers = [];
+    component.allContributorOrgUsers = [];
+    component.contributorOrgUser = [];
+    component.applyPreferences();
+    expect(toasterService.warning).toHaveBeenCalled();
+  });
+  */
+
 });

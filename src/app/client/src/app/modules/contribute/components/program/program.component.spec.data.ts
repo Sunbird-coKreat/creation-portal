@@ -347,11 +347,67 @@ export const orgAdminUserRegData = {
 };
 
 export const nominationByOrg = {
-  organisation_id: '86b2a620-40b2-4c95-9798-c12e3921337a',
+	"id": 12549,
+	"program_id": "2ce766a0-ca92-11ea-b8ce-5d743730442e",
+	"user_id": "48dc0e70-2775-474b-9b78-def27d047836",
+	"organisation_id": "7ad82d5f-7926-4d56-80da-f07bd8bbb59f",
+	"status": "Approved",
+	"content_types": ["TeachingMethod", "PedagogyFlow", "FocusSpot", "LearningOutcomeDefinition", "PracticeQuestionSet", "MarkingSchemeRubric", "ExplanationResource", "ExperientialResource", "ClassroomTeachingVideo"],
+	"collection_ids": ["do_113068320954605568110288"],
+	"feedback": null,
+	"rolemapping": null,
+	"createdby": "d27d83cd-4e20-4d1d-902a-0d148ad87afe",
+	"updatedby": null,
+	"createdon": "2020-07-20T14:07:04.813Z",
+	"updatedon": null,
+	"userData": {
+		"lastName": "",
+		"osUpdatedAt": "2020-07-17T00:54:17.566Z",
+		"firstName": "kayal",
+		"osCreatedAt": "2020-07-17T00:54:17.566Z",
+		"enrolledDate": "2020-07-17T00:54:16.773Z",
+		"@type": "User",
+		"channel": "012983850117177344161",
+		"osid": "d27d83cd-4e20-4d1d-902a-0d148ad87afe",
+		"userId": "48dc0e70-2775-474b-9b78-def27d047836"
+	},
+	"orgData": {
+		"osUpdatedAt": "2020-07-17T00:54:17.694Z",
+		"code": "VIDYA2",
+		"osCreatedAt": "2020-07-17T00:54:17.694Z",
+		"createdBy": "d27d83cd-4e20-4d1d-902a-0d148ad87afe",
+		"@type": "Org",
+		"name": "Vidya2",
+		"description": "Vidya2",
+		"osid": "7ad82d5f-7926-4d56-80da-f07bd8bbb59f"
+	}
 };
 
 export const nominationByIndividual = {
-  user_id: '86b2a620-40b2-4c95-9798-c12e3921337a',
+	"id": 1620,
+	"program_id": "eda2f330-ca5d-11ea-9ab7-437812f2d87e",
+	"user_id": "6b054b57-f034-4add-93e2-71ade8bfc848",
+	"organisation_id": null,
+	"status": "Approved",
+	"content_types": ["TeachingMethod", "PedagogyFlow", "FocusSpot", "LearningOutcomeDefinition", "PracticeQuestionSet", "CuriosityQuestionSet", "MarkingSchemeRubric", "ExplanationResource", "ExperientialResource", "ConceptMap", "SelfAssess", "ExplanationVideo", "ClassroomTeachingVideo", "ExplanationReadingMaterial", "PreviousBoardExamPapers", "LessonPlanResource", "LearningActivity"],
+	"collection_ids": ["do_21306813691554201614005"],
+	"feedback": null,
+	"rolemapping": null,
+	"createdby": "7377c918-ee85-425a-8548-fe746881294f",
+	"updatedby": "d5b80a8b-8592-46fe-a880-3a17b194f151",
+	"createdon": "2020-07-20T07:56:06.322Z",
+	"updatedon": "2020-07-20T08:10:35.172Z",
+	"userData": {
+		"lastName": "",
+		"osUpdatedAt": "2020-07-20T07:55:45.582Z",
+		"firstName": "AnushaRegister",
+		"osCreatedAt": "2020-07-20T07:55:45.582Z",
+		"enrolledDate": "2020-07-20T07:55:45.488Z",
+		"@type": "User",
+		"channel": "0126796199493140480",
+		"osid": "7377c918-ee85-425a-8548-fe746881294f",
+		"userId": "6b054b57-f034-4add-93e2-71ade8bfc848"
+	}
 };
 
 export const readProgramApiSuccessRes = {
@@ -836,3 +892,42 @@ export const readProgramApiErrorRes = {
 	"result": null
 };
 
+export const preferenceApiSuccessRes = {
+	"id": "api.preference.create",
+	"ver": "1.0",
+	"ts": "2020-07-22T11:48:37.951Z",
+	"params": {
+		"resmsgid": "47cf74f0-cc11-11ea-b8ce-5d743730442e",
+		"msgid": "49dadf80-d9fa-bbf7-a68c-023b056dd4de",
+		"status": "successful",
+		"err": null,
+		"errmsg": null
+	},
+	"responseCode": "OK",
+	"result": {
+		"user_id": "48dc0e70-2775-474b-9b78-def27d047836",
+		"program_id": "509f4fc0-cbf7-11ea-b8ce-5d743730442e",
+		"type": "contributor",
+		"sourcing_preference": {},
+		"contributor_preference": {
+			"medium": ["English"],
+			"subject": ["Hindi"],
+			"gradeLevel": ["Class 10"]
+		}
+	}
+};
+
+export const preferenceApiErrorRes = {
+	"id": "api.preference.create",
+	"ver": "1.0",
+	"ts": "2020-07-22T11:48:37.951Z",
+	"params": {
+		"resmsgid": "47cf74f0-cc11-11ea-b8ce-5d743730442e",
+		"msgid": "49dadf80-d9fa-bbf7-a68c-023b056dd4de",
+		"status": "successful",
+		"err": null,
+		"errmsg": "Failed to create the user preferences"
+	},
+	"responseCode": "OK",
+	"result": null
+};

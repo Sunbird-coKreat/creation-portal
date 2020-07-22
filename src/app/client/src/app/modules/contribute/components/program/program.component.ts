@@ -284,20 +284,26 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.userPreferences = prefres.result;
                 preffilter = _.get(this.userPreferences, 'contributor_preference');
               }
-              if (!_.isEmpty(this.userPreferences.contributor_preference)) {
+
+              const contributor_preference = _.get(this.userPreferences, 'contributor_preference');
+              if (!_.isEmpty(contributor_preference)) {
                 this.textbookFiltersApplied = true;
                 // tslint:disable-next-line: max-line-length
-                this.setPreferences['medium'] = (this.userPreferences.contributor_preference.medium) ? this.userPreferences.contributor_preference.medium : [];
-                // tslint:disable-next-line: max-line-length
-                this.setPreferences['subject'] = (this.userPreferences.contributor_preference.subject) ? this.userPreferences.contributor_preference.subject : [];
-                // tslint:disable-next-line: max-line-length
-                this.setPreferences['gradeLevel'] = (this.userPreferences.contributor_preference.gradeLevel) ? this.userPreferences.contributor_preference.gradeLevel : [];
+                this.setPreferences['medium'] = _.get(this.userPreferences, 'contributor_preference.medium', []);
+
+                this.setPreferences['subject'] = _.get(this.userPreferences, 'contributor_preference.subject', []);
+
+                this.setPreferences['gradeLevel'] = _.get(this.userPreferences, 'contributor_preference.gradeLevel', []);
               }
               this.getProgramTextbooks(preffilter);
-          }, (err) => { // TODO: navigate to program list page
+          }, (err) => {
+            // TODO: navigate to program list page
             this.getProgramTextbooks();
-            const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-            this.toasterService.warning(errorMes || 'Fetching Preferences  failed');
+            let errorMsg = _.get(err, 'params.errmsg');
+            if (errorMsg !== 'string' ) {
+              errorMsg = _.get(this.resourceService, 'messages.emsg.userPreferences.m0001', '');
+            }
+            this.toasterService.warning(errorMsg);
           });
         } else {
           this.getProgramTextbooks();
@@ -571,19 +577,20 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.programsService.setUserPreferencesforProgram(this.userService.userProfile.identifier, this.programId, preferences, 'contributor').subscribe(
       (response) => {
         this.userPreferences =  response.result;
-        if (!_.isEmpty(this.userPreferences.contributor_preference)) {
+        const contributor_preference = _.get(this.userPreferences, 'contributor_preference');
+        if (!_.isEmpty(contributor_preference)) {
           this.textbookFiltersApplied = true;
-          // tslint:disable-next-line: max-line-length
-          this.setPreferences['medium'] = (this.userPreferences.contributor_preference.medium) ? this.userPreferences.contributor_preference.medium : [];
-          // tslint:disable-next-line: max-line-length
-          this.setPreferences['subject'] = (this.userPreferences.contributor_preference.subject) ? this.userPreferences.contributor_preference.subject : [];
-          // tslint:disable-next-line: max-line-length
-          this.setPreferences['gradeLevel'] = (this.userPreferences.contributor_preference.gradeLevel) ? this.userPreferences.contributor_preference.gradeLevel : [];
+          this.setPreferences['medium'] = _.get(contributor_preference, 'medium', []);
+          this.setPreferences['subject'] = _.get(contributor_preference, 'subject', []);
+          this.setPreferences['gradeLevel'] = _.get(contributor_preference, 'gradeLevel', []);
         }
       },
       (error) => {
-        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-        this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+        let errorMsg = _.get(error, 'params.errmsg');
+        if (errorMsg !== 'string' ) {
+          errorMsg = _.get(this.resourceService, 'messages.emsg.userPreferences.m0001', '');
+        }
+        this.toasterService.warning(errorMsg);
     });
     this.getProgramTextbooks(preferences);
   }
@@ -601,7 +608,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   isNominationOrg() {
-    return !!(this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.organisation_id);
+    return !!(_.get(this.sessionContext, 'nominationDetails.organisation_id'));
   }
 
   isUserOrgAdmin() {
