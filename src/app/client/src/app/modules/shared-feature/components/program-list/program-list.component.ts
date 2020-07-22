@@ -122,7 +122,7 @@ export class ProgramListComponent implements OnInit {
         request: {
           filters: {
             program_id: this.program.program_id,
-            status: ['Pending', 'Approved', 'Initiated']
+            status: ['Pending', 'Approved']
           },
           fields: ['organisation_id', 'status'],
           limit: 0
@@ -133,15 +133,8 @@ export class ProgramListComponent implements OnInit {
     this.programsService.getNominationList(req.data.request.filters)
       .subscribe((nominationsResponse) => {
         const nominations = _.get(nominationsResponse, 'result');
-        let user_id = _.get(this.userService, 'userProfile.userId');
-
+ 
         if (nominations.length > 1) {
-          this.toasterService.error(this.resourceService.frmelmnts.lbl.projectCannotBeDeleted);
-          this.showDeleteModal = false;
-
-          return false;
-        }
-        else if (nominations[0].user_id != user_id) {
           this.toasterService.error(this.resourceService.frmelmnts.lbl.projectCannotBeDeleted);
           this.showDeleteModal = false;
 
@@ -493,8 +486,13 @@ export class ProgramListComponent implements OnInit {
   }
 
   getProgramInfo(program, type) {
-    const config = JSON.parse(program.config);
-    return type  === 'board' ? config[type] : _.join(_.compact(config[type]), ', ');
+    //return type  === 'board' ? program.config[type] : _.join(_.compact(program.config[type]), ', ');
+
+    if (program && program.config) {
+      return type  === 'board' ? program.config[type] : _.join(_.compact(_.uniq(program.config[type])), ', ');
+    } else {
+      return type  === 'board' ? program[type] : _.join(_.compact(_.uniq(JSON.parse(program[type]))), ', ');
+    }
   }
 
   getProgramNominationStatus(program) {
