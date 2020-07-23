@@ -196,6 +196,7 @@ export class AllContentComponent extends WorkSpace implements OnInit, AfterViewI
   ngOnInit() {
     this.filterType = this.config.appConfig.allmycontent.filterType;
     this.redirectUrl = this.config.appConfig.allmycontent.inPageredirectUrl;
+    // tslint:disable-next-line: deprecation
     observableCombineLatest(
       this.activatedRoute.params,
       this.activatedRoute.queryParams,

@@ -54,10 +54,10 @@ export class PublicCourseComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
-    combineLatest(
+    combineLatest([
       this.orgDetailsService.getOrgDetails(this.activatedRoute.snapshot.params.slug),
-      this.getFrameWork()
-    ).pipe(
+      this.getFrameWork()])
+    .pipe(
       mergeMap((data: any) => {
         this.hashTagId = data[0].hashTagId;
         if (data[1]) {
@@ -109,7 +109,7 @@ export class PublicCourseComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
   private fetchContentOnParamChange() {
-    combineLatest(this.activatedRoute.params, this.activatedRoute.queryParams)
+    combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams])
     .pipe(map((result) => ({params: result[0], queryParams: result[1]})),
         filter(({queryParams}) => !_.isEqual(this.queryParams, queryParams)), // fetch data if queryParams changed
         takeUntil(this.unsubscribe$))

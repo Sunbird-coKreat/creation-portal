@@ -45,10 +45,6 @@
         height: $sb-mobileDevice-height-tablet;
         width: $sb-mobileDevice-width-tablet;
       }
-      @media only screen and (min-width: 769px) {
-        height: $sb-mobileDevice-height-desktop;
-        max-width: $sb-mobileDevice-width-desktop;
-      }
     }
   }
 

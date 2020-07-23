@@ -62,7 +62,7 @@ export class LearnPageComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
   ngOnInit() {
-    combineLatest(this.fetchEnrolledCoursesSection(), this.getFrameWork()).pipe(first(),
+    combineLatest([this.fetchEnrolledCoursesSection(), this.getFrameWork()]).pipe(first(),
       mergeMap((data: Array<any>) => {
         this.enrolledSection = data[0];
         if (data[1]) {
@@ -83,7 +83,7 @@ export class LearnPageComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
   private fetchContentOnParamChange() {
-    combineLatest(this.activatedRoute.params, this.activatedRoute.queryParams)
+    combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams])
     .pipe(
       tap(data => this.prepareVisits([])), // trigger pageexit if last filter resulted 0 contents
       delay(1), // to trigger telemetry

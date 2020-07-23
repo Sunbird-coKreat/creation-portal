@@ -197,8 +197,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
               this.showTextbookLoader  =  false;
               const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
               this.toasterService.warning(errorMes || 'Fetching textbooks failed');
-            })
-        },(err) => { // TODO: navigate to program list page
+            });
+        }, (err) => { // TODO: navigate to program list page
           this.showTextbookLoader  =  false;
           const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
           this.toasterService.warning(errorMes || 'Fetching Preferences  failed');
@@ -219,7 +219,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.getsourcingOrgReviewers();
     }
 
-    if (tab ==='contributionDashboard' && !_.includes(this.visitedTab, 'contributionDashboard')) {
+    if (tab === 'contributionDashboard' && !_.includes(this.visitedTab, 'contributionDashboard')) {
       this.showDashboardLoader =  true;
       if (_.isEmpty(this.programCollections)) {
         this.getProgramCollection().subscribe(
@@ -249,7 +249,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   getsourcingOrgReviewers (offset?, iteration?) {
-    if (!isDefined(iteration) || iteration == 0) {
+    if (!isDefined(iteration) || iteration === 0) {
       iteration = 0;
       this.paginatedSourcingUsers = [];
       this.sourcingOrgUser = [];
@@ -297,7 +297,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       return;
     }
     this.pageNumberUsers = page;
-    this.sourcingOrgUser = this.paginatedSourcingUsers[this.pageNumberUsers -1];
+    this.sourcingOrgUser = this.paginatedSourcingUsers[this.pageNumberUsers - 1];
     this.pagerUsers = this.paginationService.getPager(this.sourcingOrgUserCnt, this.pageNumberUsers, this.pageLimit);
   }
 
@@ -307,7 +307,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     }
     this.pageNumber = page;
     this.pager = this.paginationService.getPager(this.totalNominations, this.pageNumber, this.pageLimit);
-    const offset = (page-1) * this.pageLimit;
+    const offset = (page - 1) * this.pageLimit;
     this.getPaginatedNominations(offset);
   }
 
@@ -361,7 +361,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         }
 
         this.showNominationLoader = false;
-      },(error) => {
+      }, (error) => {
         this.showNominationLoader = false;
       });
   }
@@ -507,6 +507,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
       this.fetchFrameWorkDetails();
 
+      // tslint:disable-next-line: deprecation
       forkJoin(this.getAggregatedNominationsCount(), this.getcontentAggregationData()).subscribe(
         (response) => {
             this.checkActiveTab();
@@ -633,8 +634,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
               this.showTextbookLoader  =  false;
               const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
               this.toasterService.warning(errorMes || 'Fetching textbooks failed');
-            })
-        },(err) => { // TODO: navigate to program list page
+            });
+        }, (err) => { // TODO: navigate to program list page
           this.showTextbookLoader  =  false;
           const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
           this.toasterService.warning(errorMes || 'Fetching Preferences  failed');
@@ -670,13 +671,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           progRoleMapping = {};
           progRoleMapping[user.selectedRole] = [];
          }
-         const programRoleNames = _.map(progRoleMapping, function(currentelement, index, arrayobj) {
+         const programRoleNames = _.map(progRoleMapping, (currentelement, index, arrayobj) => {
           return index;
         });
         if (!_.includes(programRoleNames, user.selectedRole)) {
           progRoleMapping[user.selectedRole] = [];
         }
-        _.forEach(progRoleMapping, function(ua, role, arr){
+        _.forEach(progRoleMapping, (ua, role, arr) => {
             if (user.selectedRole === role) {
               ua.push(user.identifier);
               _.compact(ua);
@@ -695,7 +696,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           this.toasterService.error(this.resourceService.messages.emsg.roles.m0001);
         });
     } else {
-      this.toasterService.error("Role not found");
+      this.toasterService.error('Role not found');
     }
   }
 
@@ -711,7 +712,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       preferences = {};
     }
     // tslint:disable-next-line: max-line-length
-    forkJoin(this.programsService.setUserPreferencesforProgram(this.userProfile.identifier, this.programId, preferences, 'sourcing'), this.getProgramCollection(preferences)).subscribe(
+    // tslint:disable-next-line: deprecation
+    forkJoin(this.programsService.setUserPreferencesforProgram(this.userProfile.identifier,
+      this.programId, preferences, 'sourcing'), this.getProgramCollection(preferences))
+      .subscribe(
       (response) => {
         this.userPreferences =  _.get(_.first(response), 'result');
         this.showTextbookLoader  =  false;
@@ -867,7 +871,7 @@ this.programsService.post(req).subscribe((data) => {
       }
       this.tempNominations = _.cloneDeep(this.nominations);
   }, error => {
-    this.showNominationLoader = false;;
+    this.showNominationLoader = false;
     this.toasterService.error(this.resourceService.messages.emsg.projects.m0003);
   });
 }

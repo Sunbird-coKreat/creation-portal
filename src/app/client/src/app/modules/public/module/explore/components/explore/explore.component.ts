@@ -91,7 +91,8 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dataDrivenFilterEvent.emit(defaultFilters);
   }
   private fetchContentOnParamChange() {
-    combineLatest(this.activatedRoute.params, this.activatedRoute.queryParams).pipe(
+    combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams])
+    .pipe(
       takeUntil(this.unsubscribe$))
       .subscribe((result) => {
         this.showLoader = true;

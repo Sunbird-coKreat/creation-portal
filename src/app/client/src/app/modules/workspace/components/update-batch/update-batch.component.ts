@@ -122,11 +122,11 @@ export class UpdateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
    * Initialize form fields and getuserlist
   */
   ngOnInit() {
-    combineLatest(this.activatedRoute.params, this.activatedRoute.parent.params,
-      (params, parentParams) => ({ ...params, ...parentParams }))
+    combineLatest([this.activatedRoute.params, this.activatedRoute.parent.params,
+      (params, parentParams) => ({ ...params, ...parentParams })])
       .pipe(
         mergeMap((params) => {
-          this.batchId = params.batchId;
+          // this.batchId = params.batchId;
           this.setTelemetryImpressionData();
           this.setTelemetryInteractData();
           return this.fetchBatchDetails();
@@ -163,12 +163,12 @@ export class UpdateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
       });
   }
   private fetchBatchDetails() {
-    return combineLatest(
+    return combineLatest([
       this.batchService.getUserList(),
       this.batchService.getUpdateBatchDetails(this.batchId),
       this.batchService.getParticipantList({'request': {'batch': {'batchId': this.batchId}}}),
       (userDetails, batchDetails, participants) => ({userDetails, batchDetails, participants})
-    );
+    ]);
   }
   /**
   * initializes form fields and apply field level validation

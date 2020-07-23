@@ -222,6 +222,7 @@ export class HelperService {
           status: status
         };
         const notify = [notificationForContributor, notificationForPublisher];
+        // tslint:disable-next-line: deprecation
         forkJoin(..._.map(notify, role => this.notificationService.onAfterContentStatusChange(role))).subscribe();
       }
     }, err => {

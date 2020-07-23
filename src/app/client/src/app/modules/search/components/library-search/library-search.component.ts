@@ -75,7 +75,7 @@ export class LibrarySearchComponent implements OnInit, OnDestroy, AfterViewInit 
         this.dataDrivenFilterEvent.emit(defaultFilters);
     }
     private fetchContentOnParamChange() {
-        combineLatest(this.activatedRoute.params, this.activatedRoute.queryParams)
+        combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams])
             .pipe(debounceTime(5), // wait for both params and queryParams event to change
                 tap(data => this.inView({ inview: [] })), // trigger pageexit if last filter resulted 0 contents
                 delay(10), // to trigger pageexit telemetry event

@@ -566,7 +566,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
             // tslint:disable-next-line:max-line-length
             preSavedValues[code] = (this.questionMetaData.data[code]) ? this.questionMetaData.data[code] : false;
             // tslint:disable-next-line:max-line-length
-            obj.required ? controller[obj.code] = [{value:preSavedValues[code], disabled: this.questionMetaData.data[code]}, [Validators.requiredTrue]] : controller[obj.code] = preSavedValues[code];
+            obj.required ? controller[obj.code] = [{value: preSavedValues[code], disabled: this.questionMetaData.data[code]}, [Validators.requiredTrue]] : controller[obj.code] = preSavedValues[code];
           }
         }
       });
@@ -578,8 +578,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   changePolicyCheckValue (event) {
     if ( event.target.checked ) {
       this.questionMetaForm.controls.contentPolicyCheck.setValue(true);
-    }
-    else {
+    } else {
       this.questionMetaForm.controls.contentPolicyCheck.setValue(false);
     }
   }
