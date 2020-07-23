@@ -18,9 +18,12 @@ jobs:
           path: ~/portal
       - run:
           name: Installing angular cli
-          command: 'npm install -g @angular/cli@6.0.8'
+          command: 'npm install -g @angular/cli@7.3.6'
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Removing package-lock.json file and node_modules folder
+          command: 'rm -rf package-lock.json ./node_modules'
       - run:
           name: Installing npm deps
           command: 'npm install'
@@ -28,8 +31,8 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
           paths: ./node_modules
       - run:
-          name: ng lint and building
-          command: 'mkdir -p /tmp/logs && ng lint && ng build --prod | tee /tmp/logs/build.log'
+          name: building
+          command: 'mkdir -p /tmp/logs && ng build --prod | tee /tmp/logs/build.log'
       - run:
           name: Executing test cases
           command: 'npm run test-coverage | tee /tmp/logs/test_cases.log'
