@@ -343,7 +343,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       const content = _.get(res, 'result.content');
       this.originalCollectionData = content;
       // Check the status of textbook and set message
-      if (this.originalCollectionData.status === 'Draft') {
+      if (this.originalCollectionData.status !== 'Draft') {
         this.textbookStatusMessage = 'There is no draft version of this textbook found on DIKSHA. Please check.';
       }
       localStorage.clear();
