@@ -197,8 +197,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
               this.showTextbookLoader  =  false;
               const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
               this.toasterService.warning(errorMes || 'Fetching textbooks failed');
-            })
-        },(err) => { // TODO: navigate to program list page
+            });
+        }, (err) => { // TODO: navigate to program list page
           this.showTextbookLoader  =  false;
           const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
           this.toasterService.warning(errorMes || 'Fetching Preferences  failed');
@@ -219,7 +219,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.getsourcingOrgReviewers();
     }
 
-    if (tab ==='contributionDashboard' && !_.includes(this.visitedTab, 'contributionDashboard')) {
+    if (tab === 'contributionDashboard' && !_.includes(this.visitedTab, 'contributionDashboard')) {
       this.showDashboardLoader =  true;
       if (_.isEmpty(this.programCollections)) {
         this.getProgramCollection().subscribe(
@@ -249,7 +249,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   getsourcingOrgReviewers (offset?, iteration?) {
-    if (!isDefined(iteration) || iteration == 0) {
+    if (!isDefined(iteration) || iteration === 0) {
       iteration = 0;
       this.paginatedSourcingUsers = [];
       this.sourcingOrgUser = [];
@@ -297,7 +297,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       return;
     }
     this.pageNumberUsers = page;
-    this.sourcingOrgUser = this.paginatedSourcingUsers[this.pageNumberUsers -1];
+    this.sourcingOrgUser = this.paginatedSourcingUsers[this.pageNumberUsers - 1];
     this.pagerUsers = this.paginationService.getPager(this.sourcingOrgUserCnt, this.pageNumberUsers, this.pageLimit);
   }
 
@@ -307,7 +307,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     }
     this.pageNumber = page;
     this.pager = this.paginationService.getPager(this.totalNominations, this.pageNumber, this.pageLimit);
-    const offset = (page-1) * this.pageLimit;
+    const offset = (page - 1) * this.pageLimit;
     this.getPaginatedNominations(offset);
   }
 
@@ -361,7 +361,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         }
 
         this.showNominationLoader = false;
-      },(error) => {
+      }, (error) => {
         this.showNominationLoader = false;
       });
   }
@@ -633,8 +633,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
               this.showTextbookLoader  =  false;
               const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
               this.toasterService.warning(errorMes || 'Fetching textbooks failed');
-            })
-        },(err) => { // TODO: navigate to program list page
+            });
+        }, (err) => { // TODO: navigate to program list page
           this.showTextbookLoader  =  false;
           const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
           this.toasterService.warning(errorMes || 'Fetching Preferences  failed');
@@ -676,7 +676,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         if (!_.includes(programRoleNames, user.selectedRole)) {
           progRoleMapping[user.selectedRole] = [];
         }
-        _.forEach(progRoleMapping, function(ua, role, arr){
+        _.forEach(progRoleMapping, function(ua, role, arr) {
             if (user.selectedRole === role) {
               ua.push(user.identifier);
               _.compact(ua);
@@ -695,7 +695,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           this.toasterService.error(this.resourceService.messages.emsg.roles.m0001);
         });
     } else {
-      this.toasterService.error("Role not found");
+      this.toasterService.error('Role not found');
     }
   }
 
@@ -867,7 +867,7 @@ this.programsService.post(req).subscribe((data) => {
       }
       this.tempNominations = _.cloneDeep(this.nominations);
   }, error => {
-    this.showNominationLoader = false;;
+    this.showNominationLoader = false;
     this.toasterService.error(this.resourceService.messages.emsg.projects.m0003);
   });
 }
@@ -918,9 +918,9 @@ downloadContribDashboardDetails() {
           contributor.contributorName,
           contributor.type === 'org' ? 'Organisation' : 'Individual',
           contributor.draft || 0,
-          contributor.type !== 'individual' ? contributor.review: '-',
+          contributor.type !== 'individual' ? contributor.review : '-',
           contributor.live || 0,
-          contributor.type !== 'individual' ? contributor.rejected: '-',
+          contributor.type !== 'individual' ? contributor.rejected : '-',
           contributor.sourcingPending || 0,
           contributor.sourcingAccepted || 0,
           contributor.sourcingRejected || 0,
@@ -941,19 +941,11 @@ downloadContribDashboardDetails() {
 }
 
 getContribDashboardHeaders() {
-  const headers = [
-    _.get(this.resourceService, 'frmelmnts.lbl.projectName'),
-    _.get(this.resourceService, 'frmelmnts.lbl.contributorName'),
-    _.get(this.resourceService, 'frmelmnts.lbl.typeOfContributor'),
-    _.get(this.resourceService, 'frmelmnts.lbl.draftContributingOrg'),
-    _.get(this.resourceService, 'frmelmnts.lbl.pendingContributingOrg'),
-    _.get(this.resourceService, 'frmelmnts.lbl.acceptedContributingOrg'),
-    _.get(this.resourceService, 'frmelmnts.lbl.rejectedContributingOrg'),
-    _.get(this.resourceService, 'frmelmnts.lbl.pendingtSourcingOrg'),
-    _.get(this.resourceService, 'frmelmnts.lbl.acceptedSourcingOrg'),
-    _.get(this.resourceService, 'frmelmnts.lbl.rejectedSourcingOrg'),
-  ];
-  return headers;
+  const columnNames = [
+    'projectName', 'contributorName', 'typeOfContributor', 'draftContributingOrg',
+    'pendingContributingOrg', 'acceptedContributingOrg', 'rejectedContributingOrg', 'pendingtSourcingOrg',
+    'acceptedSourcingOrg', 'rejectedSourcingOrg'];
+  return _.map(columnNames, name => _.get(this.resourceService, `frmelmnts.lbl.${name}`));
 }
 
 downloadReport(report) {
