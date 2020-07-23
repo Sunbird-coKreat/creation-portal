@@ -10,17 +10,20 @@ export class ToasterService {
   /**
    * To show toaster messages
    */
-  public iziToast: any;
-
+  private iziToast: any;
+  private options ={
+    position: 'topCenter',
+    titleSize: '18',
+    timeout: 6000,
+    transitionIn: 'flipInX',
+    transitionOut: 'flipOutX'
+  };
+  
   /**
 	 * Constructor to create injected service(s) object
 	 */
   constructor() {
     this.iziToast = iziToast; // global object
-    this.iziToast.settings({
-      position: 'topCenter',
-      titleSize: '18'
-    });
   }
 
   /**
@@ -29,8 +32,10 @@ export class ToasterService {
    * @param {string}  message - Success message
    */
   success(message: string) {
-    this.iziToast.success({
-      title: message
+    this.iziToast.show({
+      title: message,
+      class: 'sb-toaster sb-toast-normal sb-toast-success',
+      ...this.options
     });
   }
 
@@ -40,8 +45,10 @@ export class ToasterService {
    * @param {string}  message - Info message
    */
   info(message: string) {
-    this.iziToast.info({
-      title: message
+    this.iziToast.show({
+      title: message,
+      class: 'sb-toaster sb-toast-normal sb-toast-info',
+      ...this.options
     });
   }
 
@@ -52,7 +59,9 @@ export class ToasterService {
    */
   error(message: string) {
     this.iziToast.error({
-      title: message
+      title: message,
+      class: 'sb-toaster sb-toast-normal sb-toast-danger',
+      ...this.options
     });
   }
 
@@ -63,7 +72,9 @@ export class ToasterService {
    */
   warning(message: string) {
     this.iziToast.warning({
-      title: message
+      title: message,
+      class: 'sb-toaster sb-toast-normal sb-toast-warning',
+      ...this.options
     });
   }
 }
