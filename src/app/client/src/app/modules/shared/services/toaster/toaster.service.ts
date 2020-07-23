@@ -30,8 +30,7 @@ export class ToasterService {
    * @param {string}  message - Success message
    */
   success(title:string,message?: string) {
-    this.iziToast.success
-      ({ 
+    this.iziToast.success({ 
         title: title,
         message: message?message:'', 
         class: 'sb-toaster sb-toast-normal sb-toast-success',
