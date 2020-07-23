@@ -16,6 +16,7 @@ export class RecursiveTreeComponent implements OnInit {
   @Input() selectedChapter;
   @Input() programContext;
   @Input() sessionContext;
+  @Input() originalCollectionData;
   @Input() level;
   @Output() emitSelectedNode = new EventEmitter<any>();
   @Output() nodeMeta = new EventEmitter<any>();
@@ -27,6 +28,7 @@ export class RecursiveTreeComponent implements OnInit {
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public sourcingOrgReviewer: boolean;
+  public nodeStatusMessage: string;
   constructor(public userService: UserService, public configService: ConfigService, private programsService: ProgramsService,
     public programTelemetryService: ProgramTelemetryService, public resourceService: ResourceService, public router: Router) { }
 
@@ -53,6 +55,7 @@ export class RecursiveTreeComponent implements OnInit {
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.sessionContext.programId, 'Program');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
+    this.nodeStatusMessage = 'This section does not exist in the textbook on DIKSHA. Please check.';
   }
 
   shouldActionMenuBeVisible() {
@@ -99,11 +102,12 @@ export class RecursiveTreeComponent implements OnInit {
     });
   }
 
-  previewResource(e, content, collection) {
+  previewResource(e, content, collection, origin) {
     this.nodeMeta.emit({
       action: 'preview',
       content: content,
-      collection: collection
+      collection: collection,
+      originData: origin
     });
   }
 

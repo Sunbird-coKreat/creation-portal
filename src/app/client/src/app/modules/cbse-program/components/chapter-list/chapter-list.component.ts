@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, EventEmitter, Output, OnChanges, OnDestroy, ChangeDetectorRef, AfterViewInit } from '@angular/core';
-import { PublicDataService, UserService, ActionService, FrameworkService } from '@sunbird/core';
+import { PublicDataService, UserService, ActionService, FrameworkService, ProgramsService } from '@sunbird/core';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService } from '@sunbird/shared';
 import { TelemetryService, IInteractEventEdata , IImpressionEventInput} from '@sunbird/telemetry';
 import * as _ from 'lodash-es';
@@ -17,6 +17,7 @@ import { ProgramComponentsService } from '../../../program/services/program-comp
 import { InitialState } from '../../interfaces';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { HelperService } from '../../services/helper.service';
+import { HttpClient } from '@angular/common/http';
 
 interface IDynamicInput {
   contentUploadComponentInput?: IContentUploadComponentInput;
@@ -81,12 +82,17 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public telemetryPageId = 'chapter-list';
   public storedCollectionData: any;
   public sourcingOrgReviewer: boolean;
+  public originalCollectionData: any;
+  public textbookStatusMessage: string;
+  public textbookFirstChildStatusMessage: string;
   constructor(public publicDataService: PublicDataService, private configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private cbseService: CbseProgramService,
     public toasterService: ToasterService, public router: Router, public frameworkService: FrameworkService,
     public programStageService: ProgramStageService, public programComponentsService: ProgramComponentsService,
     public activeRoute: ActivatedRoute, private ref: ChangeDetectorRef,
+    private programsService: ProgramsService,
+    private httpClient: HttpClient,
     private collectionHierarchyService: CollectionHierarchyService, private resourceService: ResourceService,
     private navigationHelperService: NavigationHelperService, private helperService: HelperService) {
   }
@@ -166,7 +172,15 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       await this.getCollectionHierarchy(this.sessionContext.collection,
                 this.selectedChapterOption === 'all' ? undefined : this.selectedChapterOption);
       const acceptedContents = _.get(this.storedCollectionData, 'acceptedContents', []);
-
+      if (_.isEmpty(localStorage.getItem(this.collectionData.identifier))) {
+        await this.getOriginCollectionHierarchy(this.collectionData.origin, this.collectionData.identifier);
+      } else {
+        this.originalCollectionData = JSON.parse(localStorage.getItem(this.collectionData.identifier));
+        // Check the status of textbook and set message
+        if (this.originalCollectionData.status !== 'Draft') {
+          this.textbookStatusMessage = 'There is no draft version of this textbook found on DIKSHA. Please check.';
+        }
+      }
       if (!_.isEmpty(acceptedContents)) {
         await this.getOriginForApprovedContents(acceptedContents);
       }
@@ -221,6 +235,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         templateDetails: this.templateDetails,
         selectedSharedContext: this.selectedSharedContext,
         contentId: this.contentId,
+        originData: this.originalCollectionData,
         action: action,
         programContext: _.get(this.chapterListComponentInput, 'programContext'),
         sourcingStatus: sourcingStatus
@@ -233,6 +248,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         role: this.role,
         selectedSharedContext: this.selectedSharedContext,
         contentIdentifier: this.contentId,
+        originData: this.originalCollectionData,
         action: action,
         programContext: _.get(this.chapterListComponentInput, 'programContext'),
         sourcingStatus: sourcingStatus
@@ -316,6 +332,24 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
          resolve('Done');
       });
     });
+  }
+
+  public getOriginCollectionHierarchy(orgin_identifier: string, identifier: string) {
+    const hierarchyUrl = '/action/content/v3/hierarchy/' + orgin_identifier + '?mode=edit';
+    const originUrl = this.programsService.getContentOriginEnvironment();
+    const url =  originUrl + hierarchyUrl ;
+
+    return this.httpClient.get(url).subscribe(res => {
+      const content = _.get(res, 'result.content');
+      this.originalCollectionData = content;
+      // Check the status of textbook and set message
+      if (this.originalCollectionData.status === 'Draft') {
+        this.textbookStatusMessage = 'There is no draft version of this textbook found on DIKSHA. Please check.';
+      }
+      localStorage.clear();
+      localStorage.setItem(identifier, JSON.stringify(content));
+    }, error => console.log(console.error()
+    ));
   }
 
   getFolderLevelCount(collections) {
