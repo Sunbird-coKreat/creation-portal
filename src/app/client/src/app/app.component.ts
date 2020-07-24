@@ -147,7 +147,8 @@ export class AppComponent implements OnInit, OnDestroy {
       tap(queryParams => {
         this.telemetryContextData = JSON.parse(decodeURIComponent(queryParams.context));
       }),
-      startWith()
+      // tslint:disable-next-line: deprecation
+      startWith(null)
     );
     this.handleHeaderNFooter();
     this.resourceService.initialize();
