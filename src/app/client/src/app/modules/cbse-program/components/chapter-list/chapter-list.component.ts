@@ -272,19 +272,20 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       url: hierarchyUrl,
       param: { 'mode': 'edit' }
     };
-     return new Promise((resolve) => {
-    this.actionService.get(req).pipe(catchError(err => {
-      const errInfo = { errorMsg: 'Fetching TextBook details failed' }; this.showLoader = false;
-      return throwError(this.cbseService.apiErrorHandling(err, errInfo));
-    }))
-      .subscribe((response) => {
-        const children = [];
-        _.forEach(response.result.content.children, (child) => {
-          if (child.mimeType !== 'application/vnd.ekstep.content-collection' ||
-          (child.mimeType === 'application/vnd.ekstep.content-collection' && child.openForContribution === true)) {
-            children.push(child);
-          }
-        });
+    return new Promise((resolve) => {
+      this.actionService.get(req)
+      .pipe(catchError(err => {
+        const errInfo = { errorMsg: 'Fetching TextBook details failed' }; this.showLoader = false;
+        return throwError(this.cbseService.apiErrorHandling(err, errInfo));
+      }))
+    .subscribe((response) => {
+      const children = [];
+      _.forEach(response.result.content.children, (child) => {
+        if (child.mimeType !== 'application/vnd.ekstep.content-collection' ||
+        (child.mimeType === 'application/vnd.ekstep.content-collection' && child.openForContribution === true)) {
+          children.push(child);
+        }
+      });
 
         response.result.content.children = children;
         this.collectionData = response.result.content;
@@ -503,7 +504,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       name: node.name,
       contentType: node.contentType,
       topic: node.topic,
-      status: node.status,
+      status: node && node.status ? node.status : '',
       creator: node.creator,
       createdBy: node.createdBy || null,
       parentId: node.parent || null,
@@ -549,27 +550,29 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.actions.showReviewerView.role && this.actions.showReviewerView.roles.includes(this.sessionContext.currentRoleId);
     const contributingOrgAdmin = this.isContributingOrgAdmin();
     if (this.isSourcingOrgReviewer() && this.sourcingOrgReviewer) {
-      if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.status === 'Pending') {
+      if (this.sessionContext && this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.status 
+        && this.sessionContext.nominationDetails.status === 'Pending') {
         if ( reviewerViewRole && content.sampleContent === true
           && this.getNominatedUserId() === content.createdBy) {
             return true;
           }
           return false;
-      } else if (this.sessionContext.nominationDetails
+      } else if (this.sessionContext && this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.status
         && (this.sessionContext.nominationDetails.status === 'Approved' || this.sessionContext.nominationDetails.status === 'Rejected')) {
-          if ( reviewerViewRole && content.status === 'Live' && content.sampleContent !== true ) {
+          if (content && content.status && (reviewerViewRole && content.status === 'Live' && content.sampleContent !== true )) {
               return true;
           }
           return false;
-      } else if (reviewerViewRole && content.status === 'Live') {
+      } else if (content && content.status && (reviewerViewRole && content.status === 'Live')) {
           return true;
       }
     } else {
-      if ((this.sessionContext.nominationDetails.status === 'Approved' || this.sessionContext.nominationDetails.status === 'Rejected')
+      if (this.sessionContext && this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.status
+        && (this.sessionContext.nominationDetails.status === 'Approved' || this.sessionContext.nominationDetails.status === 'Rejected')
        && content.sampleContent === true) {
         return false;
       // tslint:disable-next-line:max-line-length
-      } else if (reviewerViewRole && content && (content.status === 'Review' || content.status === 'Live' || (content.prevStatus === 'Review' && content.status === 'Draft' ))
+      } else if (reviewerViewRole && content && content.status && (content.status === 'Review' || content.status === 'Live' || (content.prevStatus === 'Review' && content.status === 'Draft' ))
       && this.currentUserID !== content.createdBy
       && content.organisationId === this.myOrgId) {
         return true;
