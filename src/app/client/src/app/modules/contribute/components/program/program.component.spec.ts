@@ -1,11 +1,11 @@
 import { async, TestBed, ComponentFixture } from '@angular/core/testing';
 import { SharedModule, ToasterService } from '@sunbird/shared';
-import { FrameworkService, UserService, ExtPluginService, ProgramsService } from '@sunbird/core';
+import { FrameworkService, UserService, ExtPluginService, ProgramsService, ActionService } from '@sunbird/core';
 
 import { DynamicModule } from 'ng-dynamic-component';
 import { ProgramComponent } from './program.component';
 import * as _ from 'lodash-es';
-import {  throwError , of } from 'rxjs';
+import {  throwError , of, Subscription } from 'rxjs';
 import * as SpecData from './program.component.spec.data';
 import { ProgramHeaderComponent } from '../program-header/program-header.component';
 import { OnboardPopupComponent } from '../onboard-popup/onboard-popup.component';
@@ -19,6 +19,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DaysToGoPipe } from '../../../shared-feature';
 import { DatePipe } from '@angular/common';
 import { CollectionHierarchyService } from '../../../cbse-program';
+import { ProgramTelemetryService } from '../../services';
 
 const userServiceStub = {
   get() {
@@ -33,7 +34,8 @@ const userServiceStub = {
     }
   },
   userid: SpecData.userProfile.userId,
-  userProfile : SpecData.userProfile
+  userProfile : SpecData.userProfile,
+  slug: 'sunbird'
 };
 
 const extPluginServiceStub = {
@@ -77,6 +79,7 @@ describe('Program Component Tests', () => {
   let userService: UserService;
   let programsService: ProgramsService;
   let toasterService: ToasterService;
+  let actionService: ActionService;
   let fixture: ComponentFixture<ProgramComponent>;
   let prefModal: any;
 
@@ -134,6 +137,8 @@ describe('Program Component Tests', () => {
           provide: ExtPluginService,
           useValue: extPluginServiceStub
         },
+        ActionService,
+        ProgramTelemetryService,
         DatePipe,
         CollectionHierarchyService
       ]
@@ -146,13 +151,15 @@ describe('Program Component Tests', () => {
     userService = TestBed.get(UserService);
     programsService = TestBed.get(ProgramsService);
     toasterService = TestBed.get(ToasterService);
+    actionService = TestBed.get(ActionService);
     prefModal = PrefModel;
 
     fixture.detectChanges();
   });
 
   it('should have create and defined component', () => {
-    expect(component).toBeDefined() && expect(component).toBeTruthy();
+    expect(component).toBeDefined();
+    expect(component).toBeTruthy();
   });
 
   it('User should not belong to org', () => {
@@ -222,7 +229,7 @@ describe('Program Component Tests', () => {
     expect(isNominationFromOrg).toBe(true);
   });
 
-  /*it('should call applyPreferences if called applyTextbookFilters', () => {
+  it('should call applyPreferences if called applyTextbookFilters', () => {
     spyOn(programsService, 'setUserPreferencesforProgram').and.callFake(() => {
       return of(SpecData.preferenceApiSuccessRes);
     });
@@ -234,18 +241,86 @@ describe('Program Component Tests', () => {
 
   it('should show warning toaster message if failed to create user preferences', () => {
     spyOn(programsService, 'setUserPreferencesforProgram').and.callFake(() => {
-      return of(SpecData.preferenceApiErrorRes);
+      return throwError(SpecData.preferenceApiErrorRes);
     });
     spyOn(toasterService, 'warning');
     component.ngOnInit();
-    component.contributorTextbooks = [];
-    component.tempSortTextbooks = [];
-    component.paginatedContributorOrgUsers = [];
-    component.allContributorOrgUsers = [];
-    component.contributorOrgUser = [];
     component.applyPreferences();
     expect(toasterService.warning).toHaveBeenCalled();
   });
-  */
 
+  it('should unsubscribe from stage subscription on destroy', () => {
+    component.stageSubscription = new Subscription();
+    spyOn(component.stageSubscription, 'unsubscribe');
+    fixture.detectChanges();
+    component.ngOnDestroy();
+    expect(component.stageSubscription.unsubscribe).toHaveBeenCalled();
+  });
+
+  it('should get the interact edata for telemetry', () => {
+    const result = component.getTelemetryInteractEdata('textbook-tab', 'click', 'list-nominated-textbooks');
+    expect(result).toEqual({'id': 'textbook-tab', 'type': 'click', 'pageid': 'list-nominated-textbooks'});
+  });
+
+  it('should not able to upload the content if dates are passed', () => {
+    component.programDetails = {
+      content_submission_enddate: '2020-07-02T18:30:00.000Z',
+      enddate: '2020-07-05T18:30:00.000Z'
+    };
+    const result = component.canUploadContent();
+    expect(result).toEqual(false);
+  });
+
+  it('should able to upload the content if future dates', () => {
+    component.programDetails = {
+      content_submission_enddate: '2099-07-02T18:30:00.000Z',
+      enddate: '2099-07-05T18:30:00.000Z'
+    };
+    const result = component.canUploadContent();
+    expect(result).toEqual(true);
+  });
+
+  it('should set correct active date', () => {
+    component.programDetails = {
+      nomination_enddate: '2020-07-03T18:30:00.000Z',
+      shortlisting_enddate: '2020-07-05T18:30:00.000Z',
+      content_submission_enddate: '2020-07-07T18:30:00.000Z',
+      enddate: '2022-07-20T18:30:00.000Z',
+    };
+    component.setActiveDate();
+    expect(component.activeDate).toEqual('enddate');
+  });
+
+  it('checkArrayCondition should keep the array as is if value is array', () => {
+    component.sharedContext = {'gradeLevel' : ['Class 10'] };
+    component.checkArrayCondition('gradeLevel');
+    expect(_.isArray(component.sharedContext['gradeLevel'])).toEqual(true);
+  });
+
+  it('checkArrayCondition should convert into array if value is string', () => {
+    component.sharedContext = {'gradeLevel' : 'Class 10, Class 11' };
+    component.checkArrayCondition('gradeLevel');
+    expect(_.isArray(component.sharedContext['gradeLevel'])).toEqual(true);
+  });
+
+  it('Should call applyTextbookFilters', () => {
+    spyOn(component, 'applyTextbookFilters');
+    component.applyTextbookFilters();
+    expect(component.applyTextbookFilters).toHaveBeenCalled();
+  });
+
+  it('Should call resetTextbookFilters', () => {
+    spyOn(component, 'resetTextbookFilters');
+    component.resetTextbookFilters();
+    expect(component.resetTextbookFilters).toHaveBeenCalled();
+  });
+
+  it('Should call getProgramTextbooks', () => {
+    // spyOn(actionService, 'setUserPreferencesforProgram').and.callFake(() => {
+    //   return throwError(SpecData.preferenceApiErrorRes);
+    // });
+    spyOn(component, 'getProgramTextbooks');
+    component.getProgramTextbooks();
+    expect(component.getProgramTextbooks).toHaveBeenCalled();
+  });
 });

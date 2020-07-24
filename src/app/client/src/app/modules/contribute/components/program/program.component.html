@@ -1,5 +1,3 @@
-<!-- <app-program-header *ngIf="!showLoader" [headerComponentInput]="headerComponentInput" (emitTabChange)="tabChangeHandler($event)" [appTelemetryImpression]="telemetryImpression"></app-program-header> -->
-
 <div *ngIf="currentStage === 'programComponent' && programDetails">
   <ng-container *ngIf="!showLoader && (!nominated || nominationDetails?.status === 'Initiated'); else nominatedBlock">
     <ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>

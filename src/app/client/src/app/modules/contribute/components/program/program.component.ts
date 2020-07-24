@@ -99,6 +99,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.programId = this.activatedRoute.snapshot.params.programId;
     localStorage.setItem('programId', this.programId);
   }
+
   ngOnInit() {
     if (['null', null, undefined, 'undefined'].includes(this.programId)) {
       this.toasterService.error(_.get(this.resourceService, 'messages.emsg.project.m0001', ''));
@@ -169,7 +170,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     }, error => {
       // TODO: navigate to program list
       let errorMsg = _.get(error, 'params.errmsg');
-      if (errorMsg !== 'string' ) {
+      if (typeof(errorMsg) !== 'string' ) {
         errorMsg = _.get(this.resourceService, 'messages.emsg.project.m0001', '');
       }
       this.toasterService.error(errorMsg);
@@ -186,7 +187,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }, error => {
         let errorMsg = _.get(error, 'params.errmsg');
-        if (errorMsg !== 'string' ) {
+        if (typeof(errorMsg) !== 'string' ) {
           errorMsg = _.get(this.resourceService, 'messages.emsg.project.m0002', '');
         }
         this.toasterService.error(errorMsg);
@@ -300,7 +301,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
             // TODO: navigate to program list page
             this.getProgramTextbooks();
             let errorMsg = _.get(err, 'params.errmsg');
-            if (errorMsg !== 'string' ) {
+            if (typeof(errorMsg) !== 'string' ) {
               errorMsg = _.get(this.resourceService, 'messages.emsg.userPreferences.m0001', '');
             }
             this.toasterService.warning(errorMsg);
@@ -338,7 +339,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       return false;
     }
     this.allContributorOrgUsers = [];
-    orgUsers = _.filter(orgUsers, { "selectedRole": "user" });
+    orgUsers = _.filter(orgUsers, { 'selectedRole': 'user' });
     _.forEach(orgUsers, r => {
       r.projectselectedRole = 'Select';
       if (this.nominationDetails.rolemapping) {
@@ -587,7 +588,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       },
       (error) => {
         let errorMsg = _.get(error, 'params.errmsg');
-        if (errorMsg !== 'string' ) {
+        if (typeof(errorMsg) !== 'string' ) {
           errorMsg = _.get(this.resourceService, 'messages.emsg.userPreferences.m0001', '');
         }
         this.toasterService.warning(errorMsg);
@@ -602,6 +603,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     };
     this.applyPreferences(prefData);
   }
+
   resetTextbookFilters() {
     this.prefModal.deny();
     this.applyPreferences();
@@ -626,10 +628,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage = _.last(this.state.stages).stage;
     }
-  }
-
-  tabChangeHandler(e) {
-    this.component = this.programComponentsService.getComponentInstance(e);
   }
 
   getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: any): IInteractEventEdata {
