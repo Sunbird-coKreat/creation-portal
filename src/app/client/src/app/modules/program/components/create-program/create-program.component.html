@@ -518,27 +518,34 @@
 				</div>
 			</sui-tabset>
 		</div>
-		<div class="text-align-right" [appTelemetryStart]="telemetryStart" [appTelemetryEnd]="telemetryEnd">
-			<button *ngIf="editMode" type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="updateProgram($event);"
-				appTelemetryInteract
-				[telemetryInteractEdata]="getTelemetryInteractEdata('update', 'click', 'edit-program')"
-				[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
-				[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.update}}</button>
-			<button *ngIf="!showTextBookSelector && !editMode" class="sb-btn sb-btn-normal sb-btn-primary" (click)="saveProgram()"
-				appTelemetryInteract
-				[telemetryInteractEdata]="getTelemetryInteractEdata('next', 'click', 'create-program')"
-				[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
-				[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.next}}</button>
-			<button *ngIf="showTextBookSelector && !editMode" class="sb-btn sb-btn-normal sb-btn-default mr-10"
-				(click)="navigateTo(1)" appTelemetryInteract
-				[telemetryInteractEdata]="getTelemetryInteractEdata('previous', 'click', 'create-program')"
-				[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
-				[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.previous}}</button>
-			<button *ngIf="showTextBookSelector && !editMode" class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="disableCreateProgramBtn"
-				(click)="updateProgramCollection()" appTelemetryInteract
-				[telemetryInteractEdata]="getTelemetryInteractEdata('create-program', 'click', 'create-program')"
-				[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
-				[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.createProgram}}</button>
+		<div class="d-flex flex-jc-space-between" [appTelemetryStart]="telemetryStart" [appTelemetryEnd]="telemetryEnd">
+			<div>
+				<button *ngIf="showTextBookSelector && !editMode" class="sb-btn sb-btn-normal sb-btn-outline-primary mr-10"
+					(click)="navigateTo(1)" appTelemetryInteract
+					[telemetryInteractEdata]="getTelemetryInteractEdata('previous', 'click', 'create-program')"
+					[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+					[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.previous}}</button>
+			</div>
+			<div>
+				<button *ngIf="editMode" type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="updateProgram($event);"
+					appTelemetryInteract
+					[telemetryInteractEdata]="getTelemetryInteractEdata('update', 'click', 'edit-program')"
+					[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+					[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.update}}</button>
+					<button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8">
+						{{resource.frmelmnts.btn.saveAsDraft}}
+					</button>
+				<button *ngIf="!showTextBookSelector && !editMode" class="sb-btn sb-btn-normal sb-btn-primary" (click)="saveProgram()"
+					appTelemetryInteract
+					[telemetryInteractEdata]="getTelemetryInteractEdata('next', 'click', 'create-program')"
+					[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+					[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.next}}</button>
+				<button *ngIf="showTextBookSelector && !editMode" class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="disableCreateProgramBtn"
+					(click)="updateProgramCollection()" appTelemetryInteract
+					[telemetryInteractEdata]="getTelemetryInteractEdata('create-program', 'click', 'create-program')"
+					[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+					[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.createProgram}}</button>
+			</div>
 		</div>
 	</div>
 </div>
