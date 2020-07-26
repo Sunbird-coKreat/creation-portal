@@ -1,3 +1,4 @@
+import { collection } from './../list-contributor-textbooks/data';
 import {
   ConfigService, ResourceService, ToasterService, RouterNavigationService,
   ServerResponse, NavigationHelperService
@@ -33,9 +34,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public programId: string;
   public guidLinefileName: String;
   public isFormValueSet = false;
-  public editMode = false;
+  public editDraft = false;
+  public editLive = false;
   public choosedTextBook: any;
   selectChapter = false;
+  public selectedContentTypes: String[];
   /**
    * Program creation form name
    */
@@ -145,6 +148,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programId = this.activatedRoute.snapshot.params.programId;
     this.userprofile = this.userService.userProfile;
     this.programScope['purpose'] = this.programsService.contentTypes;
+    console.log("this.programScope['purpose']", this.programScope['purpose']);
+
     this.programConfig = _.cloneDeep(programConfigObj);
     this.telemetryInteractCdata = [];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
@@ -152,10 +157,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.acceptPdfType = this.getAcceptType(this.assetConfig.pdf.accepted, 'pdf');
 
     if (!_.isEmpty(this.programId)) {
-      this.editMode = true;
       this.getProgramDetails();
-    }
-    else {
+    } else {
       this.initializeFormFields();
     }
     this.fetchFrameWorkDetails();
@@ -297,6 +300,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     };
     this.programsService.get(req).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
+      this.selectedContentTypes = this.programDetails.content_types;
       this.programDetails['content_types'] = this.programsService.getContentTypesName(this.programDetails.content_types);
       this.initializeFormFields();
 
@@ -374,7 +378,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   getMaxDate(date) {
-    if (!this.editMode) {
+    if (!this.editLive) {
       if (date === 'nomination_enddate') {
         if (this.createProgramForm.value.shortlisting_enddate) {
           return this.createProgramForm.value.shortlisting_enddate;
@@ -423,7 +427,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       }
     }
 
-    if (!this.editMode) {
+    if (!this.editLive) {
       return this.pickerMinDate;
     }
     else {
@@ -511,6 +515,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programScope['medium'] = mediumOption;
     }
   }
+
   openForNominations(status) {
     this.isOpenNominations = status;
     if (status) {
@@ -524,6 +529,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.createProgramForm.controls['nomination_enddate'].updateValueAndValidity();
     this.createProgramForm.controls['shortlisting_enddate'].updateValueAndValidity();
   }
+
   onMediumChange() {
     // const thisClassOption = this.createProgramForm.value.gradeLevel;
 
@@ -570,28 +576,38 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    * It helps to initialize form fields and apply field level validation
    */
   initializeFormFields(): void {
-
     if (!_.isEmpty(this.programDetails) && !_.isEmpty(this.programId)) {
-      this.isOpenNominations = (_.get(this.programDetails, 'type') == "public") ? true : false;
+      this.isOpenNominations = (_.get(this.programDetails, 'type') === 'public') ? true : false;
       this.disableUpload = (_.get(this.programDetails, 'guidelines_url')) ? true : false;
 
-      let obj = {
+      if (_.get(this.programDetails, 'status') === 'Live') {
+        this.editLive = true;
+      } else if (_.get(this.programDetails, 'status') === 'Draft') {
+        this.editDraft = true;
+      }
+
+      const obj = {
         name: [_.get(this.programDetails, 'name'), [Validators.required, Validators.maxLength(100)]],
         description: [_.get(this.programDetails, 'description'), Validators.maxLength(1000)],
-        nomination_enddate : [],
-        shortlisting_enddate: [_.get(this.programDetails, 'shortlisting_enddate') ? new Date(_.get(this.programDetails, 'shortlisting_enddate')) : ''],
-        program_end_date: [_.get(this.programDetails, 'enddate') ? new Date(_.get(this.programDetails, 'enddate')) : '', Validators.required],
-        content_submission_enddate: [_.get(this.programDetails, 'content_submission_enddate') ? new Date(_.get(this.programDetails, 'content_submission_enddate')) : '', Validators.required],
-        content_types: [_.get(this.programDetails, 'content_types'), Validators.required],
+        nomination_enddate : [null],
+        // tslint:disable-next-line: max-line-length
+        shortlisting_enddate: [_.get(this.programDetails, 'shortlisting_enddate') ? new Date(_.get(this.programDetails, 'shortlisting_enddate')) : null],
+        // tslint:disable-next-line: max-line-length
+        program_end_date: [_.get(this.programDetails, 'enddate') ? new Date(_.get(this.programDetails, 'enddate')) : null, Validators.required],
+        // tslint:disable-next-line: max-line-length
+        content_submission_enddate: [_.get(this.programDetails, 'content_submission_enddate') ? new Date(_.get(this.programDetails, 'content_submission_enddate')) : null, Validators.required],
+        // tslint:disable-next-line: max-line-length
+        content_types: [_.get(this.programDetails, 'content_types') ? _.get(this.programDetails, 'content_types') : null, Validators.required],
         rewards: [_.get(this.programDetails, 'rewards')],
-        defaultContributeOrgReview: new FormControl({ value: this.defaultContributeOrgReviewChecked, disabled: this.editMode })
+        defaultContributeOrgReview: new FormControl({ value: this.defaultContributeOrgReviewChecked, disabled: this.editLive })
       };
 
       if (this.isOpenNominations == true) {
-        obj.nomination_enddate = [_.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : '', Validators.required];
-      }
-      else {
-        obj.nomination_enddate = [_.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : ''];
+        // tslint:disable-next-line: max-line-length
+        obj.nomination_enddate = [_.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : null, Validators.required];
+      } else {
+        // tslint:disable-next-line: max-line-length
+        obj.nomination_enddate = [_.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : null];
       }
 
       this.createProgramForm = this.sbFormBuilder.group(obj);
@@ -601,11 +617,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.createProgramForm = this.sbFormBuilder.group({
         name: ['', [Validators.required, Validators.maxLength(100)]],
         description: ['', Validators.maxLength(1000)],
-        nomination_enddate: ['', Validators.required],
-        shortlisting_enddate: [],
-        program_end_date: ['', Validators.required],
-        content_submission_enddate: ['', Validators.required],
-        content_types: ['', Validators.required],
+        nomination_enddate: [null, Validators.required],
+        shortlisting_enddate: [null],
+        program_end_date: [null, Validators.required],
+        content_submission_enddate: [null, Validators.required],
+        content_types: [null, Validators.required],
         rewards: [],
         defaultContributeOrgReview: [true]
       });
@@ -647,7 +663,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     if (this.isOpenNominations) {
       // nomination date should be >= today
-      if (!nominationEndDate.isSameOrAfter(today) && !this.editMode) {
+      if (!nominationEndDate.isSameOrAfter(today) && !this.editLive) {
         this.toasterService.error(this.resource.messages.emsg.createProgram.m0001);
         hasError = true;
       }
@@ -704,8 +720,28 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.defaultContributeOrgReviewChecked = $event.target.checked;
   }
 
-  saveProgram() {
+  clearValidations() {
+    this.createProgramForm.controls['nomination_enddate'].clearValidators();
+    this.createProgramForm.controls['nomination_enddate'].updateValueAndValidity();
+    this.createProgramForm.controls['description'].clearValidators();
+    this.createProgramForm.controls['description'].updateValueAndValidity();
+    this.createProgramForm.controls['program_end_date'].clearValidators();
+    this.createProgramForm.controls['program_end_date'].updateValueAndValidity();
+    this.createProgramForm.controls['content_submission_enddate'].clearValidators();
+    this.createProgramForm.controls['content_submission_enddate'].updateValueAndValidity();
+    this.createProgramForm.controls['content_types'].clearValidators();
+    this.createProgramForm.controls['content_types'].updateValueAndValidity();
+  }
+
+  saveProgram(saveAsDraft = false, navigate = false) {
     this.formIsInvalid = false;
+
+    if (saveAsDraft) {
+      this.clearValidations();
+    } else {
+      this.validateDates();
+    }
+
     this.handleContentTypes();
 
     if ((this.createProgramForm.dirty || !_.isUndefined(this.uploadedDocument)) && this.createProgramForm.valid) {
@@ -719,6 +755,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         // tslint:disable-next-line:max-line-length
         _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'framework' }).defaultValue = this.userFramework;
       }
+
       this.programConfig.defaultContributeOrgReview = !this.defaultContributeOrgReviewChecked;
       this.programData['sourcing_org_name'] = this.userprofile.rootOrgName;
       this.programData['rootorg_id'] = this.userprofile.rootOrgId;
@@ -726,12 +763,32 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programData['createdon'] = new Date();
       this.programData['startdate'] = new Date();
       this.programData['slug'] = 'sunbird';
-
       this.programData['type'] = (!this.isOpenNominations) ? 'private' : 'public';
       this.programData['default_roles'] = ['CONTRIBUTOR'];
       this.programData['enddate'] = this.programData.program_end_date;
       this.programData['config'] = this.programConfig;
       this.programData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : '';
+
+      if (saveAsDraft) {
+        this.programData['status'] = 'Draft';
+      }
+
+      // Delete Empty dates
+      if (_.isEmpty(this.programData['nomination_enddate'])) {
+        delete this.programData['nomination_enddate'];
+      }
+
+      if (_.isEmpty(this.programData['shortlisting_enddate'])) {
+        delete this.programData['shortlisting_enddate'];
+      }
+
+      if (_.isEmpty(this.programData['program_end_date'])) {
+        delete this.programData['program_end_date'];
+      }
+
+      if (_.isEmpty(this.programData['content_submission_enddate'])) {
+        delete this.programData['content_submission_enddate'];
+      }
 
       if (_.isEmpty(this.programData.config.board) &&
       _.findIndex(this.frameworkCategories, function(item) { return item.code === 'board'; }) < 0) {
@@ -746,20 +803,44 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programData['program_id'] = '';
 
       if (!this.programId) {
-        this.programData['status'] = 'Draft';
         this.programsService.createProgram(this.programData).subscribe(
           (res) => {
             this.programId = res.result.program_id;
             this.programData['program_id'] = this.programId;
             this.showTexbooklist();
             this.generateTelemetryEvent('START');
+
+            if (saveAsDraft && navigate) {
+              this.router.navigate(['/sourcing']);
+            }
           },
           (err) => this.saveProgramError(err)
         );
       } else {
+
+        if (this.showTextBookSelector === true) {
+          this.disableCreateProgramBtn = true;
+
+          if (!saveAsDraft) {
+            if (_.isEmpty(this.collectionListForm.value.pcollections)) {
+              this.disableCreateProgramBtn = false;
+              this.toasterService.warning('Please select at least a one textbook');
+              return false;
+            }
+          }
+
+          this.programData['config']['collections'] = this.getCollections();
+        }
+
         this.programData['program_id'] = this.programId;
         this.programsService.updateProgram(this.programData).subscribe(
-          (res) => { this.showTexbooklist(); },
+          (res) => {
+            this.showTexbooklist();
+
+            if (saveAsDraft && navigate) {
+              this.router.navigate(['/sourcing']);
+            }
+          },
           (err) => this.saveProgramError(err)
         );
       }
@@ -767,8 +848,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.formIsInvalid = true;
       this.validateAllFormFields(this.createProgramForm);
     }
-
-    this.validateDates();
   }
 
   updateProgram($event: MouseEvent) {
@@ -860,6 +939,19 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           if (!this.filterApplied) {
             this.sortCollection(this.sortColumn);
           }
+
+          if (this.editDraft) {
+            _.forEach(this.collections, item => {
+              const draftCollections = _.get(this.programDetails, 'config.collections');
+              if (!_.isEmpty(draftCollections)) {
+                const index = draftCollections.findIndex(x => x.id === item.identifier);
+                if (index !== -1) {
+                  this.onCollectionCheck(item, true);
+                }
+              }
+            });
+          }
+
         } else {
           this.collections = [];
           this.tempSortCollections = [];
@@ -895,6 +987,31 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
   }
 
+  getCollections() {
+    const collections = [];
+
+    _.forEach(this.collectionListForm.value.pcollections, (identifier) => {
+      const obj = {
+        'id' : identifier,
+        'allowed_content_types': [],
+        'children': []
+      };
+
+      _.forEach(this.textbooks[identifier].children, (item) => {
+        if (item.checked === true) {
+          obj.children.push({
+            'id': item.identifier,
+            'allowed_content_types': []
+          });
+        }
+      });
+
+      collections.push(obj);
+    });
+
+    return collections;
+  }
+
   updateProgramCollection() {
     this.disableCreateProgramBtn = true;
     if (_.isEmpty(this.collectionListForm.value.pcollections)) {
@@ -903,21 +1020,21 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       return false;
     }
 
-    let collections = [];
+    const collections = [];
 
     _.forEach(this.collectionListForm.value.pcollections, (identifier) => {
-      let obj = {
-        "id" : identifier,
-        "allowed_content_types": [],
-        "children": []
+      const obj = {
+        'id' : identifier,
+        'allowed_content_types': [],
+        'children': []
       };
 
       _.forEach(this.textbooks[identifier].children, (item) => {
         if (item.checked === true) {
           obj.children.push({
-            "id": item.identifier,
-            "allowed_content_types": []
-          })
+            'id': item.identifier,
+            'allowed_content_types': []
+          });
         }
       });
 
@@ -926,7 +1043,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     const requestData = {
       'program_id': this.programId,
-      // 'collections': this.collectionListForm.value.pcollections,
       'collections' : collections,
       'allowed_content_types': this.programData.content_types,
       'channel': 'sunbird'
@@ -1104,34 +1220,55 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   public getCollectionHierarchy(identifier: string) {
-    let hierarchyUrl = '/action/content/v3/hierarchy/' + identifier + '?mode=edit';
+    const hierarchyUrl = '/action/content/v3/hierarchy/' + identifier + '?mode=edit';
     const originUrl = this.programsService.getContentOriginEnvironment();
     const url =  originUrl + hierarchyUrl ;
 
     return this.httpClient.get(url).subscribe(res => {
-      let content = _.get(res, "result.content");
+      const content = _.get(res, 'result.content');
       this.textbooks[identifier] = {};
       const chapter = {
-        "id" : identifier,
-        "children": [],
-        "allowed_content_types" : []
+        'id' : identifier,
+        'children': [],
+        'allowed_content_types' : []
       };
 
+      let dcollection = {};
+
+      if (this.editDraft) {
+        const draftCollections = _.get(this.programDetails, 'config.collections');
+        if (!_.isEmpty(draftCollections)) {
+          const dcindex = draftCollections.findIndex(x => x.id ===  identifier);
+          if (dcindex !== -1) {
+            dcollection = draftCollections[dcindex];
+          }
+        }
+      }
+
+      const cindex = this.tempCollections.findIndex(x => x.identifier === identifier);
+      this.tempCollections[cindex]['selected'] = 0;
+      this.tempCollections[cindex]['total']    = content.children.length;
+
       _.forEach(content.children, (item) => {
-        item['checked'] = true;
+        if (!_.isEmpty(_.get(dcollection,'children'))) {
+          if (_.get(dcollection,'children').findIndex(x => x.id === item.identifier) !== -1) {
+            item['checked'] = true;
+            this.tempCollections[cindex]['selected']++;
+          }
+        } else {
+          item['checked'] = true;
+          this.tempCollections[cindex]['selected']++;
+        }
 
         chapter.children.push({
-          "id" : item.identifier,
-          "allowed_content_types" : []
+          'id' : item.identifier,
+          'allowed_content_types' : []
         });
       });
 
       this.textbooks[identifier] = content;
       this.choosedTextBook = content;
       this.initChaptersSelectionForm(this.choosedTextBook);
-      const cindex = this.tempCollections.findIndex(x => x.identifier === identifier);
-      this.tempCollections[cindex]["selected"] = content.children.length;
-      this.tempCollections[cindex]["total"]    = content.children.length
     }, error => console.log(console.error()
     ));
   }
@@ -1153,7 +1290,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   getChapterLevelCount(collections) {
-    let status = ['Live'];
+    const status = ['Live'];
     let createdBy, visibility;
     visibility = true;
 
