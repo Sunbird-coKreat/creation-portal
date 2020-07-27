@@ -75,6 +75,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public sourcingOrgReviewComments: string;
   originPreviewUrl: string = '';
   originPreviewReady = false;
+  public originContentData: any;
 
   constructor(
     private configService: ConfigService, private userService: UserService,
@@ -90,6 +91,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.sessionContext = _.get(this.practiceQuestionSetComponentInput, 'sessionContext');
+    this.originContentData = _.get(this.practiceQuestionSetComponentInput, 'originData');
     this.selectedSharedContext = _.get(this.practiceQuestionSetComponentInput, 'selectedSharedContext');
     this.role = _.get(this.practiceQuestionSetComponentInput, 'role');
     this.templateDetails = _.get(this.practiceQuestionSetComponentInput, 'templateDetails');
