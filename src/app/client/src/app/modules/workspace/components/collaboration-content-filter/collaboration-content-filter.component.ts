@@ -4,7 +4,7 @@ import { ResourceService, ConfigService } from '@sunbird/shared';
 import { ISelectFilter } from '../../interfaces/selectfilter';
 import * as _ from 'lodash-es';
 import { Subject , Observable, of} from 'rxjs';
-import { debounceTime, distinctUntilChanged, delay, flatMap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, delay, flatMap, mergeMap } from 'rxjs/operators';
 import { IInteractEventEdata } from '@sunbird/telemetry';
 @Component({
   selector: 'app-collaboration-content-filter',
@@ -114,7 +114,7 @@ export class CollaborationContentFilterComponent implements OnInit {
       });
       this.modelChanged.pipe(debounceTime(1000),
       distinctUntilChanged(),
-      flatMap(search => of(search).pipe(delay(500)))
+      mergeMap(search => of(search).pipe(delay(500)))
       ).
       subscribe(query => {
         this.query = query;

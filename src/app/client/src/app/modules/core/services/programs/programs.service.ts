@@ -351,20 +351,20 @@ export class ProgramsService extends DataService implements CanActivate {
                 };
 
                 this.addToRegistry(userAdd).subscribe(
-                    (res) => {
+                    (result) => {
                       userOrgAdd = {
                         User_Org: {
-                          userId: res.result.User.osid,
+                          userId: result.result.User.osid,
                           orgId: userRegData.User_Org.orgId,
                           roles: ['user']
                         }
                       };
                       this.addToRegistry(userOrgAdd).subscribe(
-                        (userAddRes) => {console.log("User added to org"+ user.identifier, userAddRes);},
-                        (userAddErr) => {console.log("Errro while adding User added to org"+ user.identifier,userAddErr);}
+                        (userAddRes) => {console.log('User added to org' + user.identifier, userAddRes); },
+                        (userAddErr) => {console.log('Errro while adding User added to org' + user.identifier, userAddErr); }
                       );
                     },
-                    (error) => {console.log("Errro while adding User added to reg"+ user.identifier, error);}
+                    (error) => {console.log('Errro while adding User added to reg' + user.identifier, error); }
                 );
               } else if (!_.isEmpty(_.get(userProfile, 'user')) && _.isEmpty(_.get(userProfile, 'user_org'))) {
                 userOrgAdd = {
@@ -375,13 +375,13 @@ export class ProgramsService extends DataService implements CanActivate {
                   }
                 };
                 this.addToRegistry(userOrgAdd).subscribe(
-                  (userAddRes) => {console.log("User added to org"+ user.identifier, userAddRes);},
-                  (userAddErr) => {console.log("Errro while adding User added to org"+ user.identifier,userAddErr);}
+                  (userAddRes) => {console.log('User added to org' + user.identifier, userAddRes); },
+                  (userAddErr) => {console.log('Errro while adding User added to org' + user.identifier, userAddErr); }
                 );
               }
             }
           }).catch((err) => {
-            console.log("errr", err);
+            console.log('errr', err);
           });
         });
       }));
@@ -397,14 +397,14 @@ export class ProgramsService extends DataService implements CanActivate {
           this.userService.userProfile.userRegData = userRegData;
 
           this.addSourcingUserstoContribOrg(userRegData).subscribe(
-            (res) => {
+            () => {
               this.addorUpdateNomination(request).subscribe(
-                (res) => { console.log("Nomination added")},
-                (err) => { console.log("error added")}
+                () => { console.log('Nomination added'); },
+                (err) => { console.log('error added'); }
               );
             },
             (error) => {
-              console.log("Error while adding users to contribution org");
+              console.log('Error while adding users to contribution org');
             }
           );
         }).catch((err) => {
@@ -522,8 +522,8 @@ export class ProgramsService extends DataService implements CanActivate {
             this.enableContributorProfileForSourcing(nomRequest);
           } else {
             this.addorUpdateNomination(nomRequest).subscribe(
-              (res) => { console.log("Nomination added") },
-              (err) => { console.log("error added") }
+              () => { console.log('Nomination added'); },
+              (err) => { console.log('error added'); }
             );
           }
         });
@@ -972,9 +972,9 @@ export class ProgramsService extends DataService implements CanActivate {
   }
 
   getContentOriginEnvironment() {
-    switch(window.location.hostname) {
+    switch (window.location.hostname) {
       case 'dock.sunbirded.org': return 'https://dev.sunbirded.org'; break;
-      case 'vdn.diksha.gov.in': return "https://diksha.gov.in"; break;
+      case 'vdn.diksha.gov.in': return 'https://diksha.gov.in'; break;
       case 'dock.preprod.ntp.net.in': return 'https://preprod.ntp.net.in'; break;
       default: return  'https://dev.sunbirded.org'; break;
     }

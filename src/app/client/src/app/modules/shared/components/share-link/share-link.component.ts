@@ -57,6 +57,7 @@ export class ShareLinkComponent implements OnInit {
   *@param {ResourceService} SearchService Reference of SearchService
   *@param {WorkSpaceService} WorkSpaceService Reference of SearchService
   */
+  // tslint:disable-next-line: deprecation
   constructor(resourceService: ResourceService, private _renderer: Renderer) {
     this.resourceService = resourceService;
     this.position = 'top center';
@@ -91,6 +92,7 @@ export class ShareLinkComponent implements OnInit {
   */
   public copyLink(popup: IPopup) {
     popup.open();
+    // tslint:disable-next-line: deprecation
     $('#copyLinkData').select();
     document.execCommand('copy');
   }

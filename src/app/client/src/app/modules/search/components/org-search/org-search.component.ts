@@ -210,6 +210,7 @@ export class OrgSearchComponent implements OnInit, AfterViewInit {
   }
 
   getQueryParams () {
+    // tslint:disable-next-line: deprecation
     observableCombineLatest(
     this.activatedRoute.params,
     this.activatedRoute.queryParams,

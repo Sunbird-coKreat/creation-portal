@@ -54,7 +54,7 @@ export class BadgesService {
   }
 
   public getDetailedBadgeAssertions(req, assertions) {
-    return Observable.create(observer => {
+    return new Observable(observer => {
       const option = {
         url: this.config.urlConFig.URLS.BADGE.BADGE_CLASS_SEARCH,
         data: req

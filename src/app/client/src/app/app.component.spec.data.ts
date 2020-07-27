@@ -1168,8 +1168,7 @@ export const mockData = {
                 't0089': 'How to use {instance} app',
                 't0090': 'Copy {instance} files (eg. Maths_01.ecar) from your pendrive to your library to play them offline',
                 't0091': 'Click on My Library to access all your offline content',
-                't0092': 'Download content whenever you are online from {instance} to your library',
-                't0093': 'Watch detailed videos to understand how to use the {instance} desktop app'
+                't0092': 'Download content whenever you are online from {instance} to your library'
             },
             'lbl': {
                 'medium': 'Medium',

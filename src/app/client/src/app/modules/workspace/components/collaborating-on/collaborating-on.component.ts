@@ -176,6 +176,7 @@ export class CollaboratingOnComponent extends WorkSpace implements OnInit, After
   }
 
   ngOnInit() {
+    // tslint:disable-next-line: deprecation
     observableCombineLatest(
       this.activatedRoute.params,
       this.activatedRoute.queryParams,

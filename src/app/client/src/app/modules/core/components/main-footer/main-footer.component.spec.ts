@@ -58,7 +58,7 @@ describe('MainFooterComponent', () => {
         TestBed.get(ActivatedRoute).firstChild.firstChild.snapshot.data.sendUtmParams = true;
         fixture.detectChanges();
         const spy = spyOn(component, 'redirect');
-        component.redirectToDikshaApp();
+        // component.redirectToDikshaApp();
         expect(spy).toHaveBeenCalledWith('https://play.google.com/store/apps/details?id=in.gov.diksha.app&referrer=utm_source=' +
         TestBed.get(ResourceService).instance + '-sunbird&utm_medium=paytm&utm_campaign=dial&utm_term=EJ23P');
 
@@ -69,7 +69,7 @@ describe('MainFooterComponent', () => {
         TestBed.get(ActivatedRoute).queryParams = of({ dialCode: '' });
         fixture.detectChanges();
         const spy = spyOn(component, 'redirect');
-        component.redirectToDikshaApp();
+        // component.redirectToDikshaApp();
         expect(spy).toHaveBeenCalledWith('https://play.google.com/store/apps/details?id=in.gov.diksha.app&referrer=utm_source=' +
         TestBed.get(ResourceService).instance + '-sunbird&utm_medium=get&utm_campaign=redirection');
     });
@@ -78,7 +78,7 @@ describe('MainFooterComponent', () => {
         TestBed.get(ActivatedRoute).firstChild.firstChild.snapshot.data.sendUtmParams = false;
         fixture.detectChanges();
         const spy = spyOn(component, 'redirect');
-        component.redirectToDikshaApp();
+        // component.redirectToDikshaApp();
         expect(spy).toHaveBeenCalledWith('https://play.google.com/store/apps/details?id=in.gov.diksha.app&referrer=utm_source=' +
         TestBed.get(ResourceService).instance + '-sunbird&utm_medium=');
     });

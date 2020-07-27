@@ -285,6 +285,7 @@ export class UserSearchComponent implements OnInit, AfterViewInit {
       if (userdata && !userdata.err) {
         this.userProfile = userdata.userProfile;
         this.rootOrgId = this.userProfile.rootOrgId;
+        // tslint:disable-next-line: deprecation
         observableCombineLatest(this.activatedRoute.params, this.activatedRoute.queryParams,
           (params: any, queryParams: any) => {
             return {

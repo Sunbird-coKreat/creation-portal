@@ -51,7 +51,7 @@ describe('PublicCollectionPlayerComponent', () => {
       declarations: [PublicCollectionPlayerComponent],
       imports: [CoreModule, HttpClientTestingModule, RouterTestingModule,
         TelemetryModule.forRoot(), SharedModule.forRoot()],
-      providers: [ContentService, PublicPlayerService, ResourceService, 
+      providers: [ContentService, PublicPlayerService, ResourceService,
         ToasterService, NavigationHelperService,
         { provide: Router, useClass: RouterStub },
         { provide: ActivatedRoute, useValue: fakeActivatedRoute },

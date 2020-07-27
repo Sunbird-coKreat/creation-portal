@@ -8,8 +8,7 @@ export class TextbookListService {
 
   constructor( private httpClient: HttpClient) { }
 
-  getTextbookList(url, data)
-  {
+  getTextbookList(url, data) {
     return this.httpClient.post<any>(url, data);
   }
 

@@ -29,8 +29,11 @@ export class MainFooterComponent implements OnInit, AfterViewInit {
   isOffline: boolean = environment.isOffline;
   instance: string;
   bodyPaddingBottom: string;
-  constructor(resourceService: ResourceService, public userService: UserService, public router: Router, public activatedRoute: ActivatedRoute,
-    public configService: ConfigService, private renderer: Renderer2, private cdr: ChangeDetectorRef
+  constructor(resourceService: ResourceService,
+    public userService: UserService, public router: Router,
+    public activatedRoute: ActivatedRoute,
+    public configService: ConfigService, private renderer: Renderer2,
+    private cdr: ChangeDetectorRef
 ) {
     this.resourceService = resourceService;
   }
@@ -48,7 +51,6 @@ export class MainFooterComponent implements OnInit, AfterViewInit {
   }
   @HostListener('window:resize', ['$event'])
   onResize(event) {
-    //console.log('event', event);
     this.footerAlign();
   }
 // footer dynamic height
@@ -71,30 +73,30 @@ footerAlign() {
 
 
 
-  redirectToDikshaApp() {
-    let applink = this.configService.appConfig.UrlLinks.downloadDikshaApp;
-    const sendUtmParams = _.get(this.activatedRoute, 'firstChild.firstChild.snapshot.data.sendUtmParams');
-    const slug = _.get(this.activatedRoute, 'snapshot.firstChild.firstChild.params.slug');
-    const utm_source = slug ? `${this.instance}-${slug}` : this.instance;
-    if (sendUtmParams) {
-      observableCombineLatest(this.activatedRoute.firstChild.firstChild.params, this.activatedRoute.queryParams,
-        (params, queryParams) => {
-          return { ...params, ...queryParams };
-        }).subscribe((params) => {
-          if (params.dialCode) {
-            const source = params.source || 'search';
-            applink = `${applink}&referrer=utm_source=${utm_source}&utm_medium=${source}&utm_campaign=dial&utm_term=${params.dialCode}`;
-          } else {
-            applink = `${applink}&referrer=utm_source=${utm_source}&utm_medium=get&utm_campaign=redirection`;
-          }
-          this.redirect(applink.replace(/\s+/g, ''));
-        });
-    } else {
-      const path = this.router.url.split('/')[1];
-      applink = `${applink}&referrer=utm_source=${utm_source}&utm_medium=${path}`;
-      this.redirect(applink);
-    }
-  }
+  // redirectToDikshaApp() {
+  //   let applink = this.configService.appConfig.UrlLinks.downloadDikshaApp;
+  //   const sendUtmParams = _.get(this.activatedRoute, 'firstChild.firstChild.snapshot.data.sendUtmParams');
+  //   const slug = _.get(this.activatedRoute, 'snapshot.firstChild.firstChild.params.slug');
+  //   const utm_source = slug ? `${this.instance}-${slug}` : this.instance;
+  //   if (sendUtmParams) {
+  //     observableCombineLatest(this.activatedRoute.firstChild.firstChild.params, this.activatedRoute.queryParams,
+  //       (params, queryParams) => {
+  //         return { ...params, ...queryParams };
+  //       }).subscribe((params) => {
+  //         if (params.dialCode) {
+  //           const source = params.source || 'search';
+  //           applink = `${applink}&referrer=utm_source=${utm_source}&utm_medium=${source}&utm_campaign=dial&utm_term=${params.dialCode}`;
+  //         } else {
+  //           applink = `${applink}&referrer=utm_source=${utm_source}&utm_medium=get&utm_campaign=redirection`;
+  //         }
+  //         this.redirect(applink.replace(/\s+/g, ''));
+  //       });
+  //   } else {
+  //     const path = this.router.url.split('/')[1];
+  //     applink = `${applink}&referrer=utm_source=${utm_source}&utm_medium=${path}`;
+  //     this.redirect(applink);
+  //   }
+  // }
 
   redirect(url) {
     window.location.href = url;

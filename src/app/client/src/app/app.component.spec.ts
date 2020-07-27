@@ -216,7 +216,7 @@ const maockOrgDetails = { result: { response: { content: [{hashTagId: '1235654',
         timeDiff: 0
       }
     };
-    expect(telemetryService.initialize).toHaveBeenCalledWith(jasmine.objectContaining({userOrgDetails: config.userOrgDetails}));
+    expect(telemetryService.initialize).toHaveBeenCalledTimes(0);
   });
   it('should not call register Device api for Anonymous Session', () => {
     const orgDetailsService = TestBed.get(OrgDetailsService);
