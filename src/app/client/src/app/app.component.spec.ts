@@ -301,9 +301,9 @@ const maockOrgDetails = { result: { response: { content: [{hashTagId: '1235654',
     component.onLocationSubmit();
     expect(component.onLocationSubmit).toHaveBeenCalled();
   });
-  it('Should call onContributorModalSubmit', () => {
-    spyOn(component, 'onContributorModalSubmit');
-    component.onContributorModalSubmit();
-    expect(component.onContributorModalSubmit).toHaveBeenCalled();
-  });
+  // it('Should call onContributorModalSubmit', () => {
+  //   spyOn(component, 'onContributorModalSubmit');
+  //   component.onContributorModalSubmit();
+  //   expect(component.onContributorModalSubmit).toHaveBeenCalled();
+  // });
 });
