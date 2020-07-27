@@ -692,7 +692,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
   handleContentTypes() {
     const contentTypes = this.createProgramForm.value.content_types;
-    let configContentTypes = _.get(_.find(this.programConfig.components, { id: 'ng.sunbird.chapterList' }), 'config.contentTypes.value');
+    let configContentTypes = _.get(_.find(programConfigObj.components, { id: 'ng.sunbird.chapterList' }), 'config.contentTypes.value');
     configContentTypes = _.filter(configContentTypes, (type) => {
       return _.includes(contentTypes, type.metadata.contentType);
     });
