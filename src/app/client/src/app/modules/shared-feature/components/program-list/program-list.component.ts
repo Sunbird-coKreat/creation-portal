@@ -86,7 +86,7 @@ export class ProgramListComponent implements OnInit {
           this.showLoader = false;
         }
       } else {
-        this.getMyProgramsForOrg(['Live', 'Unlisted']);
+        this.getMyProgramsForOrg(['Live', 'Unlisted', 'Draft']);
       }
   }
 

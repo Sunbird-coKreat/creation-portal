@@ -579,7 +579,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     if (!_.isEmpty(this.programDetails) && !_.isEmpty(this.programId)) {
       this.isOpenNominations = (_.get(this.programDetails, 'type') === 'public') ? true : false;
 
-      if (_.get(this.programDetails, 'status') === 'Live') {
+      if (_.get(this.programDetails, 'status') === 'Live' || _.get(this.programDetails, 'status') === 'Unlisted') {
         this.disableUpload = (_.get(this.programDetails, 'guidelines_url')) ? true : false;
         this.editLive = true;
       } else if (_.get(this.programDetails, 'status') === 'Draft') {
@@ -1371,7 +1371,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       }
   }
 
-  publishProject ($event) {
+  publishProject($event) {
     this.setValidations();
 
     if (!this.createProgramForm.valid) {
