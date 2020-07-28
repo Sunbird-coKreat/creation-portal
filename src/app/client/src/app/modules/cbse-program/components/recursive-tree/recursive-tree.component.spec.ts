@@ -1,13 +1,22 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { RecursiveTreeComponent } from './recursive-tree.component';
-import { By } from '@angular/platform-browser';
-import { SuiModalModule, SuiProgressModule, SuiAccordionModule } from 'ng2-semantic-ui';
-import { recursiveTreeComponentInput } from './recursive-tree.component.spec.data';
-import { TelemetryModule, TelemetryInteractDirective } from '@sunbird/telemetry';
-import { ConfigService } from '@sunbird/shared';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-
+import { InterpolatePipe } from '@sunbird/shared';
+import { async, TestBed, inject, ComponentFixture } from '@angular/core/testing';
+import { FrameworkService, UserService, ExtPluginService } from '@sunbird/core';
 import * as _ from 'lodash-es';
+import {  throwError , of } from 'rxjs';
+import { SuiModule } from 'ng2-semantic-ui';
+import { FormsModule } from '@angular/forms';
+import { TelemetryModule } from '@sunbird/telemetry';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { ActivatedRoute, Router } from '@angular/router';
+import { RecursiveTreeComponent } from './recursive-tree.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { ConfigService, BrowserCacheTtlService, ToasterService, ResourceService } from '@sunbird/shared';
+import { CacheService } from 'ng2-cache-service';
+import { DatePipe } from '@angular/common';
+import { RouterTestingModule } from '@angular/router/testing';
+import { recursiveTreeComponentInput } from './recursive-tree.component.spec.data';
+import { TelemetryService, TELEMETRY_PROVIDER } from '../../../telemetry/services/telemetry/telemetry.service';
+import {  NavigationHelperService } from '@sunbird/shared';
 
 describe('RecursiveTreeComponent', () => {
 
@@ -17,13 +26,46 @@ describe('RecursiveTreeComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ SuiModalModule, SuiProgressModule,
-        SuiAccordionModule, TelemetryModule.forRoot(),
-        HttpClientTestingModule],
-      declarations: [ RecursiveTreeComponent ],
-      providers: [ ConfigService ]
-    })
-    .compileComponents();
+      imports: [
+        SuiModule,
+        ReactiveFormsModule,
+        FormsModule,
+        TelemetryModule.forRoot(),
+        HttpClientTestingModule,
+        RouterTestingModule
+      ],
+      declarations: [
+        InterpolatePipe,
+        RecursiveTreeComponent
+      ],
+      providers: [
+        TelemetryService, ConfigService,
+        {
+          provide: TELEMETRY_PROVIDER, useValue: EkTelemetry
+        },
+        {
+          provide : NavigationHelperService,
+        },
+        {
+          provide: CacheService,
+        },
+        {
+          provide: BrowserCacheTtlService,
+        },
+        {
+          provide: ToasterService,
+        },
+        {
+          provide: ResourceService,
+        },
+        {
+          provide: ExtPluginService,
+        },
+        {
+          provide: DatePipe,
+        }
+      ]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -38,6 +80,7 @@ describe('RecursiveTreeComponent', () => {
   });
 
   it('should create', () => {
+    component.resourceService.frmelmnts.lbl = 'All Chapter(s)';
     expect(component).toBeTruthy();
   });
 
@@ -105,7 +148,7 @@ describe('RecursiveTreeComponent', () => {
   it('should execute previewResource on event, collection, content', () => {
     fixture.detectChanges();
     const spy = spyOn(component, 'previewResource').and.callThrough();
-    component.previewResource({}, 'sampleContent_do_id', 'do_id=232323343434rff');
+    component.previewResource({}, 'sampleContent_do_id', 'do_id=232323343434rff', 'do_123456');
     fixture.whenStable().then(() => {
       fixture.detectChanges();
       expect(spy).toHaveBeenCalled();

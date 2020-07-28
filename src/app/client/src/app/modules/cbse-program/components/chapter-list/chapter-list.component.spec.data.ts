@@ -313,58 +313,6 @@ export const responseSample = {
           topic: ['Topic 1'],
           versionKey: '1558093990045',
           visibility: 'Parent'
-        },
-        {
-          children: [],
-          contentType: 'TextBookUnit',
-          identifier: 'do_1127639059664568321137',
-          name: 'जंगल और जनकपुर',
-          parent: 'do_1127639035982479361130',
-          status: 'Draft',
-          topic: ['Topic 2'],
-          versionKey: '1558093990046',
-          visibility: 'Parent'
-        },
-        {
-          children: [
-            {
-              children: [{
-                parent: 'do_1129365666867363841260',
-                subject: ['English'],
-                medium: ['English'],
-                gradeLevel: ['Kindergarten'],
-                contentType: 'PracticeQuestionSet',
-                identifier: 'do_1129365739663605761192',
-                creator: 'Creation',
-                version: 2,
-                versionKey: '1579171626757',
-                license: 'CC BY 4.0',
-                name: 'Practice QuestionSet',
-                topic: ['Topic 3'],
-                board: 'NCERT',
-                resourceType: 'Learn',
-                status: 'Draft',
-                prevStatus: 'Review',
-                createdBy: '874ed8a5-782e-4f6c-8f36-e0288455901e'
-              }],
-              contentType: 'TextBookUnit',
-              identifier: 'do_112931801879011328152',
-              name: 'Unit 1.1',
-              parent: 'do_112931687703855104137',
-              status: 'Draft',
-              topic: ['Topic 2'],
-              versionKey: '1578589096559',
-              visibility: 'Parent'
-            }
-          ],
-          contentType: 'TextBookUnit',
-          identifier: 'do_1127639059664568321138',
-          name: 'दो वरदान',
-          parent: 'do_1127639035982479361130',
-          status: 'Draft',
-          topic: ['Topic 1 child'],
-          versionKey: '1558093990046',
-          visibility: 'Parent'
         }
       ],
       contentType: 'TextBook',
