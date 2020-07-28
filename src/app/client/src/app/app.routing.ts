@@ -3,25 +3,10 @@ import { ErrorPageComponent, AuthGuard } from '@sunbird/core';
 import { RouterModule, Routes } from '@angular/router';
 const appRoutes: Routes = [
   {
-    path: 'resources', loadChildren: 'app/modules/resource/resource.module#ResourceModule'
-  },
-  {
-    path: 'search', loadChildren: 'app/modules/search/search.module#SearchModule'
-  },
-  {
     path: 'sourcing', loadChildren: 'app/modules/program/program.module#ProgramModule'
   },
   {
     path: 'contribute', loadChildren: 'app/modules/contribute/contribute.module#ContributeModule'
-  },
-  {
-    path: 'dashBoard', loadChildren: 'app/modules/dashboard/dashboard.module#DashboardModule'
-  },
-  {
-    path: 'profile', loadChildren: 'app/plugins/profile/profile.module#ProfileModule'
-  },
-  {
-    path: 'certs', loadChildren: 'app/modules/certificate/certificate.module#CertificateModule'
   },
   {
     path: 'recover', loadChildren: 'app/modules/recover-account/recover-account.module#RecoverAccountModule'
