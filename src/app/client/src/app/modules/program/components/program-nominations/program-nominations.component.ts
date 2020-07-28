@@ -368,7 +368,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   getProgramCollection (preferencefilters?) {
     return this.collectionHierarchyService.getCollectionWithProgramId(this.programId, preferencefilters).pipe(
-      tap((response) => {
+      tap((response: any) => {
         if (response && response.result) {
           this.programCollections = response.result.content || [];
         }
@@ -381,7 +381,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   getcontentAggregationData() {
     return this.collectionHierarchyService.getContentAggregation(this.programId).pipe(
-      tap((response) => {
+      tap((response: any) => {
         if (response && response.result && response.result.content) {
           this.contentAggregationData = _.get(response.result, 'content');
         }
@@ -891,7 +891,7 @@ getAggregatedNominationsCount() {
     }
   };
   return this.programsService.post(req).pipe(
-    tap((data) => {
+    tap((data: any) => {
       const aggregatedCount = data.result.nomination;
       this.totalNominations = aggregatedCount.count;
       if (aggregatedCount.fields && aggregatedCount.fields.length) {
@@ -908,6 +908,48 @@ getAggregatedNominationsCount() {
       return of(false);
     })
   );
+}
+
+downloadContribDashboardDetails() {
+  try {
+    const headers = this.getContribDashboardHeaders();
+    const tableData = [];
+
+    if (this.contributionDashboardData.length) {
+      _.forEach(this.contributionDashboardData, (contributor) => {
+        const row = [
+          _.get(this.programDetails, 'name', '').trim(),
+          contributor.contributorName,
+          contributor.type === 'org' ? 'Organisation' : 'Individual',
+          contributor.draft || 0,
+          contributor.type !== 'individual' ? contributor.review : '-',
+          contributor.live || 0,
+          contributor.type !== 'individual' ? contributor.rejected : '-',
+          contributor.sourcingPending || 0,
+          contributor.sourcingAccepted || 0,
+          contributor.sourcingRejected || 0,
+        ];
+        tableData.push(row);
+      });
+    }
+    const csvDownloadConfig = {
+      filename: _.get(this.programDetails, 'name', '').trim(),
+      tableData: tableData,
+      headers: headers,
+      showTitle: false
+    };
+      this.programsService.generateCSV(csvDownloadConfig);
+    } catch (err) {
+      this.toasterService.error(_.get(this.resourceService, 'messages.emsg.projects.m0005', ''));
+    }
+}
+
+getContribDashboardHeaders() {
+  const columnNames = [
+    'projectName', 'contributorName', 'typeOfContributor', 'draftContributingOrg',
+    'pendingContributingOrg', 'acceptedContributingOrg', 'rejectedContributingOrg', 'pendingtSourcingOrg',
+    'acceptedSourcingOrg', 'rejectedSourcingOrg'];
+  return _.map(columnNames, name => _.get(this.resourceService, `frmelmnts.lbl.${name}`));
 }
 
 downloadReport(report) {
