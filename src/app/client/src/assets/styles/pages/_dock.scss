@@ -328,3 +328,22 @@ top: -4px;
     }
   }
 }
+.sb-dock-ordered-list{
+  li{
+    margin-bottom: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--gray-200) !important;
+    &::before{
+      width: 1rem;
+      height: 1rem;
+      line-height: 1rem;
+      border-radius: 100%;
+      text-align: center !important;
+      background-color: var(--primary-200);
+      font-size: 0.6rem;
+      color: var(--white) !important;
+      margin-right: 0.8rem;
+    }
+  }
+
+}

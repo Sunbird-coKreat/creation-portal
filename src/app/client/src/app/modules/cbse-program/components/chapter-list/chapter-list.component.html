@@ -66,20 +66,20 @@
             </dl>
           </div>
         </div>
-        <div *ngIf="sampleContent" class="sb-meta-data-container sb-meta-data-column d-flex flex-w-wrap ml-16">
+        <!-- <div *ngIf="sampleContent" class="sb-meta-data-container sb-meta-data-column d-flex flex-w-wrap ml-16">
           <label class="d-block width-100" >Number of Samples</label>
           <div class="d-flex">
-            <dl class="sb-meta-data">
+            <dl class="sb-meta-data"> -->
               <!-- <dt *ngIf="!isSourcingOrgReviewer()">{{countData['sampleContenttotal'] || 0}}</dt> -->
-              <dt *ngIf="isNominationPendingOrInitiated()">{{countData['nominatedUserSample'] || 0}}</dt>
+              <!-- <dt *ngIf="isNominationPendingOrInitiated()">{{countData['nominatedUserSample'] || 0}}</dt>
               <dd>Total Content</dd>
-            </dl>
+            </dl> -->
             <!-- <dl *ngIf="!isSourcingOrgReviewer() && !isNominationPendingOrInitiated()" class="sb-meta-data">
               <dt>{{countData['sampleMycontribution'] || 0 }}</dt>
               <dd>My Content</dd>
             </dl> -->
-          </div>
-        </div>
+          <!-- </div>
+        </div> -->
 
         <div class="sb-textbook-allchapters sb-field">
           <label class="fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.selectChapters}}</label>
@@ -96,8 +96,16 @@
       <!-- Accordion Section -->
       <div class="sb-pageSection-content sb-bg-white py-24 px-0 dynamicHeight">
         <div class="ui container sb-textbook-details-container mb-24">
-          <div class="d-flex flex-jc-flex-end fs-0-785 font-italic sb-color-gray-300 mb-15">
-            <span class="w-30 text-right">{{resourceService.frmelmnts.lbl.partialTextbookSelectionNote}}</span>
+          <div class="d-flex fs-0-785 mb-15 flex-jc-space-between">
+            <span class="w-30 font-italic sb-color-gray-300">{{resourceService.frmelmnts.lbl.partialTextbookSelectionNote}}</span>
+            <div class="d-flex">
+              <button type="button" class="sb-btn sb-btn-normal sb-btn-primary"(click)="showBulkUploadModal= true;" suiPopup popupText="{{resourceService.frmelmnts.note.bulkUploadMultipleContentUsingCsv}}">{{resourceService.frmelmnts.btn.bulkUploadContent}}</button>
+              <div class="divider mx-10"></div>
+              <div class="d-flex flex-dc">
+                <div>{{resourceService.frmelmnts.lbl.lastUploaded}}: 28 July 2020</div>
+                <a href="#">{{resourceService.frmelmnts.lbl.viewDetails}}</a>
+              </div>
+            </div>
           </div>
           <div class="sb-chapterlist">
             <sui-accordion class="styled fluid sb-accordion sb-chapterlist-accordion" [closeOthers]="true">
@@ -142,7 +150,7 @@
 															<use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
 													</svg>
 											</i>
-											Back
+										{{resourceService.frmelmnts.btn.back}}
 									</button>
   <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0006'}"></app-no-result>
 </div>
@@ -153,12 +161,12 @@
 <sui-modal *ngIf="showConfirmationModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
   [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showConfirmationModal = false" #modal>
   <div class="sb-modal-header">
-      Confirm
+     {{resourceService.frmelmnts.lbl.confirm}}
   </div>
   <div class="sb-modal-content">
       <div class="sb-publish-content">
         <div class="review-modal-list">
-          Are you sure want to remove the Resource from selected unit?
+          {{resourceService.frmelmnts.lbl.areYouSureWantToRemoveResource}}
       </div>
       </div>
   </div>
@@ -168,12 +176,38 @@
 				[telemetryInteractEdata]="getTelemetryInteractEdata('confirm-content-remove', 'click', 'chapter-list')"
 				[telemetryInteractObject]="telemetryInteractObject"
 				[telemetryInteractCdata]="telemetryInteractCdata"
-				[telemetryInteractPdata]="telemetryInteractPdata"> Yes </button>
+				[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.yes}} </button>
     <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showConfirmationModal = false"
     appTelemetryInteract
 				[telemetryInteractEdata]="getTelemetryInteractEdata('cancel-content-remove', 'click', 'chapter-list')"
 				[telemetryInteractObject]="telemetryInteractObject"
 				[telemetryInteractCdata]="telemetryInteractCdata"
-				[telemetryInteractPdata]="telemetryInteractPdata"> No </button>
+				[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.no}} </button>
+  </div>
+</sui-modal>
+<sui-modal *ngIf="showBulkUploadModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
+  [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showBulkUploadModal = false" #modal>
+  <div class="sb-modal-header">
+     {{resourceService.frmelmnts.lbl.bulkUploadContent}}
+  </div>
+  <div class="sb-modal-content">
+      <div class="d-flex p-20 sb-bg-color-primary-0">
+          <div class="pt-20 pr-10">
+            <img src="../../../../../assets/images/bulkuploadfile.jpg">
+          </div>
+          <div class="pl-20 pt-20">
+            <h6 class="sb-color-gray-400">{{resourceService.frmelmnts.lbl.downloadSampleMetadataCsvFileAndCreate}}</h6>
+            <div class="sb-color-gray-200 pt-20 fs-0-92">{{resourceService.frmelmnts.lbl.makeSureYourFileIs}}:</div>
+            <ul class="ui ordered list sb-dock-ordered-list mt-15">
+              <li class="item">{{resourceService.frmelmnts.lbl.allColumnsAreAvailableShownFormat}}</li>
+              <li class="item">{{resourceService.frmelmnts.lbl.hasAllMandatoryColumnsFilledAsMarkedInFormat}}</li>
+              <li class="item">{{resourceService.frmelmnts.lbl.hasNoDuplicateUrlsFilepathColumn}}</li>
+            </ul>
+            <button type="button" class="sb-btn sb-btn-normal sb-btn-success my-20"><i class="fa fa-download pr-10"></i>{{resourceService.frmelmnts.btn.DownloadSampleMetadataCsv}}</button>
+          </div>
+      </div>
+  </div>
+  <div class="sb-modal-actions">
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary">{{resourceService.frmelmnts.btn.next}}</button>
   </div>
 </sui-modal>
