@@ -22,6 +22,7 @@
     min-width: auto;
   }
 
+
   .add-to-library-dot {
     width: calculateRem(5px);
     height: calculateRem(5px);
@@ -568,8 +569,6 @@
       }
     }
   }
-
-
 }
 
 .sbtoc-container {
@@ -736,7 +735,8 @@
 
     &.active{
       background: var(--secondary-300) !important;
-      border: none !important;
+      border: 0.0625rem solid var(--gray-100) !important;
+      border-bottom: 0 !important;
       .textbookBtnLink {
         visibility: visible;
         right:12px;
