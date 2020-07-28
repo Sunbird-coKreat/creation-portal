@@ -4,8 +4,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { ProgramComponent } from './components';
 import { ProgramListComponent } from '../shared-feature/components/program-list/program-list.component';
 import { OrgUserListComponent } from './components/org-user-list/org-user-list.component';
-import { OrgContriAdminComponent } from './components/org-contri-admin/org-contri-admin.component';
-import { ContriDashboardComponent } from './components/dashboard/dashboard.component';
 import { HelpPageComponent } from '../shared-feature/components/help-page/help-page.component';
 
 const routes: Routes = [
@@ -39,18 +37,6 @@ const routes: Routes = [
   path: 'orglist', component: OrgUserListComponent, pathMatch: 'full',
   data: {
     telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'list-org-users' }
-  },
-},
-{
-  path: 'contriadmin', component: OrgContriAdminComponent, pathMatch: 'full',
-  data: {
-    telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'org-admin' }
-  },
-},
-{
-  path: 'dashboard', component: ContriDashboardComponent, pathMatch: 'full',
-  data: {
-    telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'dashboard' }
   },
 },
 {
