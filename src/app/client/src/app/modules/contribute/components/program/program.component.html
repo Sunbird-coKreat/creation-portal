@@ -1,9 +1,458 @@
 <!-- <app-program-header *ngIf="!showLoader" [headerComponentInput]="headerComponentInput" (emitTabChange)="tabChangeHandler($event)" [appTelemetryImpression]="telemetryImpression"></app-program-header> -->
 
+<div *ngIf="currentStage === 'programComponent' && programDetails">
+  <ng-container *ngIf="!showLoader && (!nominated || nominationDetails?.status === 'Initiated'); else nominatedBlock">
+    <ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>
+  </ng-container>
+  <ng-template #nominatedBlock>
+    <div class="sb-bg-color-primary-0 practical-header py-16">
+			<div class="d-flex  flex-jc-space-between practical-header__content ui container pt-10">
+					<div class="practical-header__title flex-basis-1 w-20">
+						<h5 class="m-0 p-0 font-weight-bold d-inline-block">{{ programDetails?.name }} </h5>
+						<i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
+							<ng-template #popupTemplate>
+								<div class="content">
+									<div class="textbook-details ml-8">
+										<div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.mediums }}</strong></div>
+										<div class="content">
+											<label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.medium.join(', ') }}</label>
+										</div>
+										<hr />
+										<div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.class }}</strong></div>
+										<div class="content">
+											<label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.gradeLevel.join(', ') }}</label>
+										</div>
+										<hr />
+										<div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.subjects }}</strong></div>
+										<div class="content">
+											<label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.subject.join(', ') }}</label>
+										</div>
+									</div>
+								</div>
+							</ng-template>
+						<p class="fs-0-785 font-weight-normal pr-10 sb__ellipsis sb__ellipsis--three">{{ programDetails?.description }}</p>
+					</div>
+					<div class="sb-meta-data-container sb-meta-data-column px-10 w-20">
+						<label class="m-0">{{ resourceService.frmelmnts.lbl.contentType}}</label>
+						<p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{ programContentTypes }}"><span>{{ programContentTypes }}</span></p>
+					</div>
+					<ng-container *ngIf="programDetails">
+						<div class="program-timeline px-10">
+						  <div class="program-timeline-item" *ngIf="programDetails?.status !== 'Unlisted'">
+							<div class="status" [class.active]="activeDate === 'nomination_enddate'">
+							  <div class="status__label">{{resourceService.frmelmnts.lbl.nominationEndDate}}</div>
+							  <div class="status__date">
+								{{ programDetails?.nomination_enddate |  date:'LLLL d, yyyy'  }}
+								<br/>
+								<em [class.sb-color-warning]="activeDate === 'nomination_enddate'" *ngIf="activeDate === 'nomination_enddate'">{{ programDetails?.nomination_enddate | daysToGo  }}</em>
+							  </div>
+							</div>
+						  </div>
+						  <div class="program-timeline-item" *ngIf="programDetails?.status !== 'Unlisted'">
+							<div class="status"  [class.active]="activeDate === 'shortlisting_enddate'">
+							  <div class="status__label">{{resourceService.frmelmnts.lbl.shortlistingNomination}}</div>
+							  <div class="status__date">
+								{{ programDetails?.shortlisting_enddate |  date:'LLLL d, yyyy'  }}
+								<br/>
+								<em [class.sb-color-warning]="activeDate === 'shortlisting_enddate'" *ngIf="activeDate === 'shortlisting_enddate'">{{ programDetails?.shortlisting_enddate | daysToGo  }}</em>
+							  </div>
+							</div>
+						  </div>
+						  <div class="program-timeline-item">
+							<div class="status"  [class.active]="activeDate === 'content_submission_enddate'">
+							  <div class="status__label">{{resourceService.frmelmnts.lbl.contributionReview}}</div>
+							  <div class="status__date">
+								{{ programDetails?.content_submission_enddate |  date:'LLLL d, yyyy'  }}
+								<br/>
+								<em [class.sb-color-warning]="activeDate === 'content_submission_enddate'" *ngIf="activeDate === 'content_submission_enddate'">{{ programDetails?.content_submission_enddate | daysToGo  }}</em>
+							  </div>
+							</div>
+						  </div>
+						  <div class="program-timeline-item">
+							<div class="status" [class.active]="activeDate === 'enddate'">
+							  <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.programEndDate }}</div>
+							  <div class="status__date">
+								{{ programDetails?.enddate |  date:'LLLL d, yyyy'  }}
+								<br/>
+								<em [class.sb-color-warning]="activeDate === 'enddate'" *ngIf="activeDate === 'enddate'">{{ programDetails?.enddate | daysToGo  }}</em>
+							  </div>
+							</div>
+						  </div>
+						</div>
+					  </ng-container>
+					<div class="sb-meta-data-container sb-meta-data-column px-10">
+						<div class='practical-sb-buttons' *ngIf="nominationDetails && nominationDetails.status">
+							<label class="m-0">{{ resourceService.frmelmnts.lbl.status }}</label>
+							<p [ngClass]="{'sb-color-success':nominationDetails.status == 'Approved','sb-color-error':nominationDetails.status == 'Rejected','sb-color-warning':nominationDetails.status == 'Pending'}">{{ nominationDetails?.status }}</p>
+						</div>
+					</div>
+					<div class="sb-meta-data-container sb-meta-data-column px-10" *ngIf="nominated && nominationDetails.status=='Rejected'">
+						<label class="m-0">{{ resourceService.frmelmnts.lbl.reasonsForRejection }}</label>
+						<p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.reasonsForRejection}}" popupText="{{nominationDetails?.feedback}}">{{ nominationDetails?.feedback }}</p>
+					</div>
+			</div>
 
-<ng-container *ngIf="!showLoader">
-  <ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>
+			<div class="pr-40 text-right" *ngIf="showSkipReview">
+				<i class="icon check circle sb-color-secondary-200 fs-1-286 va-text-top" popupText="{{resourceService.frmelmnts.lbl.twoLevelReviewSkippedNote}}" suiPopup [popupPlacement]="'top'"></i>
+				<label class="font-weight-normal fs-0-92">{{resourceService.frmelmnts.lbl.twoLevelReviewSkipped}}</label>
+			</div>
+	</div>
+
+	<div class="sb-bg-color-primary-100">
+		<sui-tabset>
+			<div class="ui pointing secondary menu sb-bg-color-primary-100">
+				<div class="ui container p-0 m-0 d-flex flex-ai-center flex-jc-center">
+					<div class="item active cursor-pointer" suiTabHeader="2"
+					appTelemetryInteract
+										[telemetryInteractEdata]="getTelemetryInteractEdata('textbook-tab', 'click', 'list-nominated-textbooks')"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.textbooks }}<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{contributorTextbooks.length || 0}}</span></div>
+					<div class="item cursor-pointer" *ngIf="isUserOrgAdmin()" suiTabHeader="3"
+					appTelemetryInteract
+										[telemetryInteractEdata]="getTelemetryInteractEdata('assign-role-tab', 'click', 'list-nominated-textbooks')"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.assignUsersToProject}} <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ OrgUsersCnt}}</span></div>
+				</div>
+			</div>
+
+			<div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" isActive='true' suiTabContent="2">
+				<div class="ui container p-0 m-0">
+				<div class="pt-10 text-capitalize fs-0-785 line-height-1-3 sb-pageSection-document ui grid mt-10">
+					<div class="twelve wide tablet five wide computer column">
+						<div *ngIf="isUserOrgAdmin()" class="sb-color-gray-100 d-inline-block br-2 pr-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.draft || 0}}</span> {{resourceService.frmelmnts.lbl.drafts}}</div>
+						<div *ngIf="isUserOrgAdmin()" class="sb-color-primary d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.review || 0}}</span> {{resourceService.frmelmnts.lbl.reviewInProgress}}</div>
+						<div *ngIf="isUserOrgAdmin()" class="sb-color-error d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.rejected || 0}}</span> {{resourceService.frmelmnts.lbl.notAccepted}}</div>
+						<div *ngIf="isUserOrgAdmin()" class="sb-color-success d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.live || 0}}</span> {{resourceService.frmelmnts.lbl.sentForApproval}}</div>
+					</div>
+					<div class="twelve wide tablet seven wide computer column text-right">
+						<a class="fs-0-785 text-decor-none font-weight-bold sb-color-primary pt-10" href="{{ programDetails?.guidelines_url }}" target="_blank" *ngIf="programDetails?.guidelines_url" [ngClass]="{'mb-10': !isUserOrgAdmin()}"
+						appTelemetryInteract
+										[telemetryInteractEdata]="getTelemetryInteractEdata('view-guideline-document', 'click', 'list-nominated-textbooks')"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">
+							<i class="file sb-file-icon outline icon pr-10 sb-color-primary"></i>
+							{{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
+						</a>
+						<button *ngIf="isUserOrgAdmin() || sessionContext.currentRole === 'REVIEWER'" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" (click)="showTextbookFiltersModal = true"
+						appTelemetryInteract
+										[telemetryInteractEdata]="getTelemetryInteractEdata('add-filters', 'click', 'list-nominated-textbooks')"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata"> <i class="filter icon"></i>
+							<i [ngClass]="{'sb-dock-circle': textbookFiltersApplied}"></i>
+							<span *ngIf="!textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.addFilters }}</span>
+							<span *ngIf="textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.modifyFilters }}</span>
+						</button>
+					</div>
+				</div>
+					<div class="sb-pageSection pt-5" [appTelemetryImpression]="telemetryImpression">
+						<div class="sb-bg-color-white pt-15">
+							<div class="sb-table-responsive" *ngIf="!showLoader && contributorTextbooks.length">
+								<table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
+									<thead class="sb-table-header sb-table-thead-gray">
+										<tr>
+											<th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('name')">
+												{{resourceService.frmelmnts.lbl.textbook}} &nbsp;&nbsp;
+												<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>
+												<span  *ngIf="sortColumn == 'name'" class="d-inline-block">
+													<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+													<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+												</span>
+											</th>
+											<th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('medium')">
+												{{resourceService.frmelmnts.lbl.medium}} &nbsp;&nbsp;
+												<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'medium' "></i>
+												<span  *ngIf="sortColumn == 'medium'" class="d-inline-block">
+													<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+													<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+												</span>
+											</th>
+											<th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('gradeLevel')">
+												{{resourceService.frmelmnts.lbl.Class}} &nbsp;&nbsp;
+												<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'gradeLevel' "></i>
+												<span  *ngIf="sortColumn == 'gradeLevel'" class="d-inline-block">
+													<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+													<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+												</span>
+											</th>
+											<th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('subject')">
+												{{resourceService.frmelmnts.lbl.subject}} &nbsp;&nbsp;
+												<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'subject' "></i>
+												<span  *ngIf="sortColumn == 'subject'" class="d-inline-block">
+													<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+													<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+												</span>
+											</th>
+											<th *ngIf="isUserOrgAdmin()" class="w-20">{{resourceService.frmelmnts.lbl.contentStatus}}</th>
+											<th class="w-5"></th>
+										</tr>
+									</thead>
+									<tbody class="sb-table-body">
+										<tr *ngFor="let contributorTextbook of contributorTextbooks; let i = index;">
+											<td class="hand">
+												{{contributorTextbook.name}}
+											</td>
+											<td>{{contributorTextbook.medium}}</td>
+											<td>{{contributorTextbook.gradeLevel}}</td>
+											<td>{{contributorTextbook.subject}}</td>
+											<td *ngIf="isUserOrgAdmin()">
+												<div class="text-capitalize fs-0-785">
+													<span class="sb-color-primary d-inline-block br-2 pr-5">{{contributorTextbook.reviewCount || 0}}  {{resourceService.frmelmnts.lbl.pending}}</span>
+													<span class="sb-color-error d-inline-block br-2 px-5">{{contributorTextbook.rejectedCount || 0}} {{resourceService.frmelmnts.lbl.notAccepted}}</span>
+													<span class="sb-color-success d-inline-block px-5">{{contributorTextbook.liveCount || 0}} {{resourceService.frmelmnts.lbl.sentForApproval}}</span>
+												</div>
+											</td>
+											<td>
+												<button *ngIf="currentNominationStatus === 'Approved' && sessionContext.currentRole === 'CONTRIBUTOR' && canUploadContent()"
+												type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary"
+												(click)="viewContribution(contributorTextbook)" appTelemetryInteract
+												[telemetryInteractEdata]="getTelemetryInteractEdata('upload-content', 'click', 'list-nominated-textbooks', {values: [contributorTextbook.identifier]})"
+												[telemetryInteractObject]="telemetryInteractObject"
+												[telemetryInteractCdata]="telemetryInteractCdata"
+												[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.uploadContent}}</button>
+
+												<button *ngIf="currentNominationStatus === 'Approved' && !canUploadContent()"
+												type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(contributorTextbook)" appTelemetryInteract
+												[telemetryInteractEdata]="getTelemetryInteractEdata('view-content', 'click', 'list-nominated-textbooks', {values: [contributorTextbook.identifier]})"
+												[telemetryInteractObject]="telemetryInteractObject"
+												[telemetryInteractCdata]="telemetryInteractCdata"
+												[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.viewContent}}</button>
+
+												<button *ngIf="currentNominationStatus === 'Approved' && sessionContext.currentRole !== 'CONTRIBUTOR' && canUploadContent()"
+												type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(contributorTextbook)" appTelemetryInteract
+												[telemetryInteractEdata]="getTelemetryInteractEdata('review-content', 'click', 'list-nominated-textbooks', {values: [contributorTextbook.identifier]})"
+												[telemetryInteractObject]="telemetryInteractObject"
+												[telemetryInteractCdata]="telemetryInteractCdata"
+												[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.reviewContent}}</button>
+										</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div class="mt-12" *ngIf="!showLoader && !contributorTextbooks.length">
+								<app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0146'}">
+								</app-no-result>
+							</div>
+						</div>
+						<div class="ui" *ngIf="showLoader">
+							<app-loader></app-loader>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="3">
+				<div class="ui container">
+					<div class="pt-24">
+					  <div class="d-flex flex-ai-center flex-jc-space-between sb-pageSection">
+						<div class="sb-pageSection-header">
+						  <h4 class="sb-pageSection-title"> {{ userService?.userProfile?.userRegData?.Org?.name }}</h4>
+						  <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{ OrgUsersCnt }}</span>
+						</div>
+					  </div>
+					</div>
+					<div class="sb-table-responsive desktop-o-x-unset" *ngIf="OrgUsersCnt > 0">
+					  <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
+						<thead class="sb-table-header sb-table-thead-gray">
+						  <tr>
+							<th class="w-10 cursor-pointer sb-sorting" (click)="sortOrgUsers('name')">
+								{{resourceService.frmelmnts.lbl.username}} &nbsp;&nbsp;
+								<i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || sortColumnOrgUsers != 'name' "></i>
+								<span  *ngIf="sortColumnOrgUsers == 'name'" class="d-inline-block">
+									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'asc'}"></i>
+									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
+								</span>
+							</th>
+							<th class="w-10">{{resourceService.frmelmnts.lbl.emailOrMobile}}</th>
+							<th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('gradeLevel')">
+								{{resourceService.frmelmnts.lbl.class}} &nbsp;&nbsp;
+								<i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || sortColumnOrgUsers != 'gradeLevel' "></i>
+								<span  *ngIf="sortColumnOrgUsers == 'gradeLevel'" class="d-inline-block">
+									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'asc'}"></i>
+									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
+								</span>
+							</th>
+							<th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('subject')">
+								{{resourceService.frmelmnts.lbl.subject}} &nbsp;&nbsp;
+								<i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || sortColumnOrgUsers != 'subject' "></i>
+								<span  *ngIf="sortColumnOrgUsers == 'subject'" class="d-inline-block">
+									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'asc'}"></i>
+									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
+								</span>
+							</th>
+							<th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('contentTypes')">
+								{{resourceService.frmelmnts.lbl.contentType}} &nbsp;&nbsp;
+								<i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || sortColumnOrgUsers != 'contentTypes' "></i>
+								<span  *ngIf="sortColumnOrgUsers == 'contentTypes'" class="d-inline-block">
+									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'asc'}"></i>
+									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
+								</span>
+							</th>
+							<th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('projectselectedRole')">
+								{{resourceService.frmelmnts.lbl.roles}} &nbsp;&nbsp;
+								<i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || sortColumnOrgUsers != 'projectselectedRole' "></i>
+								<span  *ngIf="sortColumnOrgUsers == 'projectselectedRole'" class="d-inline-block">
+									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'asc'}"></i>
+									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
+								</span>
+							</th>
+						  </tr>
+						</thead>
+						<tbody class="sb-table-body">
+						  <tr *ngFor="let orgUser of contributorOrgUser; let i= index;">
+							<td>{{orgUser.name}}</td>
+							<td>
+								<div *ngIf="orgUser?.maskedEmail">{{orgUser?.maskedEmail}}</div>
+								<div *ngIf="orgUser?.maskedPhone"> {{orgUser?.maskedPhone}}</div>
+							</td>
+							<td>{{orgUser?.gradeLevel?.join(', ')}}</td>
+							<td>{{orgUser?.subject?.join(', ')}}</td>
+							<td>
+								<div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold" style="width: 250px;">
+									{{orgUser?.contentTypes?.join(', ')}}
+								</div>
+							</td>
+							<td class="text-center">
+								<div *ngIf="nominationDetails?.status === 'Rejected'; else elseBlock">
+									{{ (orgUser?.projectselectedRole) ? orgUser.projectselectedRole : '-' }}
+								</div>
+								<ng-template #elseBlock>
+									<sui-select class="selection pt-5" [(ngModel)]="orgUser.projectselectedRole" labelField="name" [options]="options" valueField="name"
+									(selectedOptionChange)="onRoleChange(orgUser)">
+										<sui-select-option *ngFor="let option of roles;" [value]="option" appTelemetryInteract
+										[telemetryInteractEdata]="getTelemetryInteractEdata('assign-users-to-program', 'click', 'list-nominated-textbooks', {values: [orgUser.identifier, option.name]})"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">
+										</sui-select-option>
+									</sui-select>
+								</ng-template>
+							</td>
+						  </tr>
+						</tbody>
+					  </table>
+					</div>
+					<div *ngIf="OrgUsersCnt > 0 && pager.totalPages > 1 && !showUsersLoader" class="sb-pagination-container flex-jc-flex-end pt-16">
+						<div class="sb-pagination">
+							<a class="sb-item" [ngClass]="{disabled:pager.currentPage===1 }" (click)="NavigateToPage(1)"
+							appTelemetryInteract
+										[telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrg-list-first-page', 'click', 'list-nominated-textbooks')"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">First</a>
+							<a [ngClass]="{disabled:pager.currentPage===1 }" class="sb-item" (click)="NavigateToPage(pager.currentPage - 1)" 
+							appTelemetryInteract
+										[telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrg-list-previous-page', 'click', 'list-nominated-textbooks', {values: [pager.currentPage - 1]})"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">Previous</a>
+							<a *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage===page}" (click)="NavigateToPage(page)" class="sb-item"
+							appTelemetryInteract
+										[telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrg-list-pagination', 'click', 'list-nominated-textbooks', {values: [page]})"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">{{page}}</a>
+							<a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="NavigateToPage(pager.currentPage + 1)"  class="sb-item"
+							appTelemetryInteract
+										[telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrg-list-next-page', 'click', 'list-nominated-textbooks', {values: [pager.currentPage + 1]})"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">Next</a>
+							<a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="NavigateToPage(pager.totalPages)"  class="sb-item"
+							appTelemetryInteract
+										[telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrg-list-last-page', 'click', 'list-nominated-textbooks', {values: [pager.totalPages]})"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">Last</a>
+						</div>
+					  </div>
+					<div class="mt-12" *ngIf="!showUsersLoader && OrgUsersCnt == 0">
+						<app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0006'}"> </app-no-result>
+					</div>
+					  <div class="ui tweleve wide column mb-20" *ngIf="showUsersLoader">
+						<app-loader></app-loader>
+					  </div>
+				</div>
+			</div>
+		</sui-tabset>
+	</div>
+  </ng-template>
+</div>
+<ng-container *ngIf="currentStage !== 'programComponent'">
+	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>
 </ng-container>
 
-<!-- <app-cbse *ngIf="!showLoader && !showOnboardPopup" [programDetails]="programDetails" [userProfile]="userProfile"></app-cbse> -->
-<app-onboard-popup *ngIf="showOnboardPopup" [programDetails]='programDetails' (updateEvent)="setUserParticipantDetails($event)"></app-onboard-popup>
+<sui-modal *ngIf="showTextbookFiltersModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'" class="sb-modal" appBodyScroll (dismissed)="showTextbookFiltersModal = false" #prefModal>
+	<div class="sb-modal-header">
+		{{resourceService.frmelmnts.lbl.addFilters}}
+	</div>
+	<div class="sb-modal-content desktop-o-x-unset">
+		<p>{{resourceService.frmelmnts.lbl.pleaseSelectFiltersYouWishToAdd}}</p>
+		<div class="segment mt-5 pb-30 pt-10">
+			<form class="ui form sb-dock-dropdown" [formGroup]="prefernceForm">
+				<div class="ui grid">
+					<div class="six wide column py-10">
+						<div class="field">
+							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.medium}}</label>
+							<sui-multi-select class="selection p-5 b-100"
+							formControlName="medium" #mediums
+							[options]="programDetails.config.medium"
+							[(ngModel)]="setPreferences['medium']">
+								<sui-select-option *ngFor="let medium of mediums.filteredOptions" [value]="medium" appTelemetryInteract
+								[telemetryInteractEdata]="getTelemetryInteractEdata('filters-medium', 'click', 'list-nominated-textbooks', {values: [medium]})"
+								[telemetryInteractObject]="telemetryInteractObject"
+								[telemetryInteractCdata]="telemetryInteractCdata"
+								[telemetryInteractPdata]="telemetryInteractPdata"> </sui-select-option>
+							</sui-multi-select>
+						</div>
+					</div>
+					<div class="six wide column py-10">
+						<div class="field">
+							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.subject}}</label>
+							<sui-multi-select class="selection p-5 b-100"
+							formControlName="subject" #subjects
+							[options]="programDetails.config.subject"
+							[(ngModel)]="setPreferences['subject']">
+								<sui-select-option *ngFor="let subject of subjects.filteredOptions" [value]="subject" appTelemetryInteract
+								[telemetryInteractEdata]="getTelemetryInteractEdata('filters-subject', 'click', 'list-nominated-textbooks', {values: [subject]})"
+								[telemetryInteractObject]="telemetryInteractObject"
+								[telemetryInteractCdata]="telemetryInteractCdata"
+								[telemetryInteractPdata]="telemetryInteractPdata"></sui-select-option>
+							</sui-multi-select>
+						</div>
+					</div>
+					<div class="six wide column py-10">
+						<div class="field">
+							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.class}}</label>
+							<sui-multi-select formControlName="gradeLevel"
+							class="selection p-5 b-100" #gradeLevels
+							[options]="programDetails.config.gradeLevel"
+							[(ngModel)]="setPreferences['gradeLevel']">
+								<sui-select-option *ngFor="let gradeLevel of gradeLevels.filteredOptions" [value]="gradeLevel" appTelemetryInteract
+								[telemetryInteractEdata]="getTelemetryInteractEdata('filters-gradeLevel', 'click', 'list-nominated-textbooks', {values: [gradeLevel]})"
+								[telemetryInteractObject]="telemetryInteractObject"
+								[telemetryInteractCdata]="telemetryInteractCdata"
+								[telemetryInteractPdata]="telemetryInteractPdata"></sui-select-option>
+							</sui-multi-select>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="sb-modal-actions py-20">
+		<button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="applyTextbookFilters();" appTelemetryInteract
+		[telemetryInteractEdata]="getTelemetryInteractEdata('apply-filters', 'click', 'list-nominated-textbooks', {values: [setPreferences]})"
+		[telemetryInteractObject]="telemetryInteractObject"
+		[telemetryInteractCdata]="telemetryInteractCdata"
+		[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.apply}} </button>
+		<button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary"
+		(click)="resetTextbookFilters();" appTelemetryInteract
+		[telemetryInteractEdata]="getTelemetryInteractEdata('reset-filters', 'click', 'list-nominated-textbooks')"
+		[telemetryInteractObject]="telemetryInteractObject"
+		[telemetryInteractCdata]="telemetryInteractCdata"
+		[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.reset}}</button>
+	</div>
+  </sui-modal>

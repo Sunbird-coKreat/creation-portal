@@ -12,7 +12,6 @@ import {
 import { HomeAnnouncementService } from './service/index';
 import { NgInviewModule } from 'angular-inport';
 import { TelemetryModule } from '@sunbird/telemetry';
-import { AnnouncementModule } from '@sunbird/announcement';
 
 @NgModule({
   imports: [
@@ -26,7 +25,7 @@ import { AnnouncementModule } from '@sunbird/announcement';
     CoreModule,
     NgInviewModule,
     TelemetryModule,
-    AnnouncementModule
+
   ],
   declarations: [
     MainHomeComponent,

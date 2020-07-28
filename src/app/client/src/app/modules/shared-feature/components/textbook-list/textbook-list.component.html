@@ -1,16 +1,31 @@
-<div class="text-capitalize fs-0-785 line-height-1-3 sb-pageSection-document py-5 ui grid mt-10" *ngIf="collectionsCnt > 0">
-	<div class="twelve wide tablet seven wide computer column">
+<div class="text-capitalize fs-0-785 line-height-1-3 sb-pageSection-document py-5 ui grid mt-10">
+	<div class="twelve wide tablet five wide computer column pt-30">
 		<div class="sb-color-gray-100 d-inline-block br-2 pr-10 pt-5"><span class="fs-1-286 font-weight-bold">{{ contentStatusCounts?.sourcingOrgStatus?.total || 0 }}</span> {{resourceService.frmelmnts.lbl.total}}</div>
 		<div class="sb-color-warning d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{ contentStatusCounts?.sourcingOrgStatus?.pending || 0 }}</span> {{resourceService.frmelmnts.lbl.approvalPending}}</div>
 		<div class="sb-color-success d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{ contentStatusCounts?.sourcingOrgStatus?.accepted || 0 }}</span> {{resourceService.frmelmnts.lbl.approved}}</div>
 		<div class="sb-color-error d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{ contentStatusCounts?.sourcingOrgStatus?.rejected || 0 }}</span> {{resourceService.frmelmnts.lbl.rejected}}</div>
 	</div>
-	<div class="twelve wide tablet five wide computer column text-right">
-		<a class="fs-0-785 text-decor-none font-weight-bold sb-color-primary d-inline-block pt-10"  *ngIf="programDetails?.guidelines_url" href="{{ programDetails?.guidelines_url }}" target="_blank">
+	<div class="twelve wide tablet seven wide computer column text-right">
+		<a class="fs-0-785 text-decor-none font-weight-bold sb-color-primary d-inline-block pt-10 mx-10"  *ngIf="programDetails?.guidelines_url" href="{{ programDetails?.guidelines_url }}" target="_blank">
 			<i class="file sb-file-icon outline icon pr-10 sb-color-primary"></i>
 			{{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
 		</a>
-		<button *ngIf="sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary ml-20" (click)="downloadCSV()"> <i class="download icon"></i> {{resourceService.frmelmnts.lbl.downloadProjectDetails}}</button>
+		<button *ngIf="sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary my-10" (click)="showTextbookFiltersModal = true"
+		appTelemetryInteract
+                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filter-textbook', 'click', 'textbook-list')"
+                                                        [telemetryInteractObject]="telemetryInteractObject"
+                                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                                        [telemetryInteractPdata]="telemetryInteractPdata"> <i class="filter icon"></i>
+			<i [ngClass]="{'sb-dock-circle': textbookFiltersApplied}"></i>
+			<span *ngIf="!textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.addFilters }}</span>
+			<span *ngIf="textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.modifyFilters }}</span>
+		</button>
+		<button *ngIf="sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary ml-10" (click)="downloadCSV()"
+		appTelemetryInteract
+                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download-downloadProjectDetails', 'click', 'textbook-list')"
+                                                        [telemetryInteractObject]="telemetryInteractObject"
+                                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                                        [telemetryInteractPdata]="telemetryInteractPdata"> <i class="download icon"></i> {{resourceService.frmelmnts.lbl.downloadProjectDetails}}</button>
 	</div>
 </div>
 <div class="sb-pageSection">
@@ -74,9 +89,14 @@
 								{{data.subject}}
 							</div>
 						</td>
-						<td>{{ data.chapterCount || 0 }}</td>
+						<td>{{ data.chapterCountForContribution || data.chapterCount || 0 }}</td>
 						<td class="fsmall"><span class="d-inline-block mr-5">{{ (data?.pendingBySourceOrg?.length || 0) }}<span class="sb-color-warning"> {{ resourceService?.frmelmnts?.lbl?.approvalPending }}</span></span></td>
-						<td class="text-center"><button type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(data)">{{resourceService.frmelmnts.lbl.open}}</button></td>
+						<td class="text-center"><button type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(data)"
+							appTelemetryInteract
+                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('open-textbook', 'click', 'textbook-list')"
+                                                        [telemetryInteractObject]="telemetryInteractObject"
+                                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                                        [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.open}}</button></td>
 					</tr>
 				</tbody>
 			</table>
@@ -90,3 +110,79 @@
 		</div>
 	</div>
 </div>
+<sui-modal *ngIf="showTextbookFiltersModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'" class="sb-modal" appBodyScroll (dismissed)="showTextbookFiltersModal = false" #prefModal>
+	<div class="sb-modal-header">
+		{{resourceService.frmelmnts.lbl.addFilters}}
+	</div>
+	<div class="sb-modal-content desktop-o-x-unset">
+		<p>{{resourceService.frmelmnts.lbl.pleaseSelectFiltersYouWishToAdd}}</p>
+		<div class="segment mt-5 pb-30 pt-10">
+			<form class="ui form sb-dock-dropdown" [formGroup]="prefernceForm">
+				<div class="ui grid">
+					<div class="six wide column py-10">
+						<div class="field">
+							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.medium}}</label>
+							<sui-multi-select class="selection p-5 b-100"
+							formControlName="medium" #mediums
+							[options]="programDetails.config.medium"
+							[(ngModel)]="setPreferences['medium']">
+								<sui-select-option *ngFor="let medium of mediums.filteredOptions" [value]="medium"
+								appTelemetryInteract
+                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filters-medium', 'click', 'textbook-list', {values: [medium]})"
+                                                        [telemetryInteractObject]="telemetryInteractObject"
+                                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                                        [telemetryInteractPdata]="telemetryInteractPdata"> </sui-select-option>
+							</sui-multi-select>
+						</div>
+					</div>
+					<div class="six wide column py-10">
+						<div class="field">
+							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.subject}}</label>
+							<sui-multi-select class="selection p-5 b-100"
+							formControlName="subject" #subjects
+							[options]="programDetails.config.subject"
+							[(ngModel)]="setPreferences['subject']">
+								<sui-select-option *ngFor="let subject of subjects.filteredOptions" [value]="subject"
+								appTelemetryInteract
+                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filters-subject', 'click', 'textbook-list', {values: [subject]})"
+                                                        [telemetryInteractObject]="telemetryInteractObject"
+                                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                                        [telemetryInteractPdata]="telemetryInteractPdata"></sui-select-option>
+							</sui-multi-select>
+						</div>
+					</div>
+					<div class="six wide column py-10">
+						<div class="field">
+							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.class}}</label>
+							<sui-multi-select formControlName="gradeLevel"
+							class="selection p-5 b-100" #gradeLevels
+							[options]="programDetails.config.gradeLevel"
+							[(ngModel)]="setPreferences['gradeLevel']">
+								<sui-select-option *ngFor="let gradeLevel of gradeLevels.filteredOptions" [value]="gradeLevel"
+								appTelemetryInteract
+                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filters-gradeLevel', 'click', 'textbook-list', {values: [gradeLevel]})"
+                                                        [telemetryInteractObject]="telemetryInteractObject"
+                                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                                        [telemetryInteractPdata]="telemetryInteractPdata"></sui-select-option>
+							</sui-multi-select>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="sb-modal-actions py-20">
+		<button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="applyTextbookFilters();"
+		appTelemetryInteract
+                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('apply-filters', 'click', 'textbook-list', {values: [setPreferences]})"
+                                                        [telemetryInteractObject]="telemetryInteractObject"
+                                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                                        [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.apply}} </button>
+		<button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="resetTextbookFilters();"
+		appTelemetryInteract
+                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reset-filters', 'click', 'textbook-list')"
+                                                        [telemetryInteractObject]="telemetryInteractObject"
+                                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                                        [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.reset}}</button>
+	</div>
+  </sui-modal>

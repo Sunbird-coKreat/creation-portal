@@ -58,6 +58,7 @@
                 </th>
                 <th *ngIf="activeMyProgramsMenu && !iscontributeOrgAdmin" class="w-5 text-center">{{ resourceService?.frmelmnts?.lbl?.myRole }}</th>
                 <th class="w-10 text-center"> &nbsp;</th>
+                <th *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')" class="w-10 text-center"> &nbsp;</th>
               </tr>
             </thead>
             <tbody class="sb-table-body">
@@ -67,7 +68,7 @@
                     {{program?.name}}
                   </div>
                   <div class="sb__ellipsis sb__ellipsis--three">{{ getProgramTextbooksCount(program) }}</div>
-                  <div *ngIf="activeMyProgramsMenu" class="sb-label-value mt-4">{{ getProgramInfo(program, 'board') }}</div>
+                  <div *ngIf="activeMyProgramsMenu && getProgramInfo(program, 'board')" class="sb-label-value mt-4">{{ getProgramInfo(program, 'board') }}</div>
                 </td>
                 <td *ngIf="isContributor" >
                   <div>{{ getSourcingOrgName(program) }}
@@ -88,7 +89,7 @@
                 <td *ngIf="!isContributor || activeAllProgramsMenu" class="nowrap">
                   <div class="program-timeline">
                     <div class="program-timeline-item">
-                      <div class="status" [class.active]="isActive(program, 'nomination_enddate', i)">
+                      <div class="status" [class.active]="isActive(program, 'nomination_enddate', i)" *ngIf="program.status !== 'Unlisted'">
                         <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.nominationSubmission }}</div>
                         <div class="status__date">
                           {{ program?.nomination_enddate | date:'LLLL d, yyyy'  }}
@@ -97,7 +98,7 @@
                       </div>
                     </div>
                          <div class="program-timeline-item">
-                      <div class="status" [class.active]="isActive(program, 'shortlisting_enddate', i)">
+                      <div class="status" [class.active]="isActive(program, 'shortlisting_enddate', i)" *ngIf="program.status !== 'Unlisted'">
                         <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.shortlistingNomination }}</div>
                         <div class="status__date">
                           {{ program?.shortlisting_enddate | date:'LLLL d, yyyy'  }}
@@ -129,7 +130,6 @@
                   <div>
                     {{ program?.contributionDate | date:'LLLL d, yyyy' }}
                     <em class="d-block">{{ program?.contributionDate | daysToGo }}</em>
-                    <span class="sb-label sb-label-table sb-label-primary-100" *ngIf="activeMyProgramsMenu && !iscontributeOrgAdmin">{{ getProgramNominationStatus(program) }}</span>
                   </div>
                 </td>
                 <td *ngIf="activeMyProgramsMenu && iscontributeOrgAdmin" class="text-center">
@@ -151,24 +151,10 @@
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
-                    <!-- <div class="ui dropdown sb-btn sb-btn-normal sb-btn-outline-primary sb-btn-dropdown" suiDropdown autoClose="itemClick" *ngIf="isContributor">
-                        <div class="text">{{ resourceService.frmelmnts.lbl.actions }}</div>
-                        <i class="dropdown icon"></i>
-                        <div class="menu" suiDropdownMenu>
-                          <div class="item" (click)="viewDetailsBtnClicked(program)"
-                          appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('view-detail', 'click', 'program-list')"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService.frmelmnts.lbl.open }}</div>
-                          <div class="item" (click)="getContributionOrgUsers(program)" *ngIf="activeMyProgramsMenu && userService?.userProfile?.userRegData?.User_Org?.orgId"
-                          appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('get-org-users', 'click', 'program-list')"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService.frmelmnts.lbl.assignRole }}</div>
-                        </div>
-                    </div>    -->
+                  </td>
+                  <td *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')" class="fs-1-5 sb-dock-icon-tooltip px-5">
+                    <i class="icon edit sb-color-primary cursor-pointer ui" data-tooltip="Modify" (click)="editOnClick(program)"></i>
+                    <i class="icon trash sb-color-primary cursor-pointer ui" data-tooltip="Delete" (click)="setDelete(program, i)"></i>
                   </td>
               </tr>
               </tbody>
@@ -185,50 +171,20 @@
     </div>
   </div>
 </div>
-<sui-modal *ngIf="showAssignRoleModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
-  [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showAssignRoleModal = !showAssignRoleModal" #modal>
+<sui-modal *ngIf="showDeleteModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'"
+  class="sb-modal" appBodyScroll (dismissed)="showDeleteModal = false" #modal>
   <div class="sb-modal-header">
-    Set Role
+    {{resourceService.frmelmnts.lbl.deleteProject}}
   </div>
   <div class="sb-modal-content">
-    <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-fixed">
-      <thead class="sb-table-header sb-table-thead-gray">
-        <tr>
-          <th>Username</th>
-          <th>Assign Role</th>
-        </tr>
-      </thead>
-      <tbody class="sb-table-body">
-        <tr *ngFor="let user of contributorOrgUser; let i = index">
-          <td>{{user.firstName +' '+ user.lastName}}</td>
-          <td>
-            <ng-template let-option #optionTemplate>
-              <div class="field m-0">
-                <div class="template-checkbox">
-                  <div class="p-5 option-text" title="{{option.name}}">
-                    {{option.name}}
-                  </div>
-                  <div class="ml-auto">
-                    <i class="square outline medium icon"></i>
-                  </div>
-                </div>
-              </div>
-            </ng-template>
-            <sui-select class="selection" [(ngModel)]="user.selectedRole" labelField="name" [options]="options" valueField="name">
-              <sui-select-option *ngFor="let option of roles;" [value]="option">
-              </sui-select-option>
-            </sui-select>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+   {{resourceService.frmelmnts.lbl.areYouSureDeleteProject}}
   </div>
-  <div class="sb-modal-actions">
-    <button
-      class="sb-btn sb-btn-normal sb-btn-success"
-      (click)="assignRolesToOrgUsers();"
-    >
-      Submit
+  <div class="sb-modal-actions" (click)="deleteProject($event)">
+    <button class="sb-btn sb-btn-normal sb-btn-primary">
+      {{resourceService.frmelmnts.btn.yes}}
+    </button>
+    <button class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showDeleteModal = false">
+      {{resourceService.frmelmnts.btn.no}}
     </button>
   </div>
 </sui-modal>

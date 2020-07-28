@@ -3,7 +3,7 @@ import { Component, OnInit, Output, EventEmitter, Input, ChangeDetectorRef, View
 import { FormGroup, FormArray, FormBuilder, Validators, NgForm, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigService, ToasterService, ResourceService, NavigationHelperService } from '@sunbird/shared';
-import { UserService, ActionService, ContentService, NotificationService } from '@sunbird/core';
+import { UserService, ActionService, ContentService, NotificationService, ProgramsService } from '@sunbird/core';
 import { TelemetryService} from '@sunbird/telemetry';
 import { tap, map, catchError, mergeMap } from 'rxjs/operators';
 import * as _ from 'lodash-es';
@@ -72,6 +72,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public telemetryPageId = 'question-list';
   public sourcingOrgReviewer: boolean;
   public sourcingReviewStatus: string;
+  public sourcingOrgReviewComments: string;
+  originPreviewUrl = '';
+  originPreviewReady = false;
 
   constructor(
     private configService: ConfigService, private userService: UserService,
@@ -83,7 +86,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     private resourceService: ResourceService, private collectionHierarchyService: CollectionHierarchyService,
     public programStageService: ProgramStageService, public activeRoute: ActivatedRoute,
     public router: Router, private navigationHelperService: NavigationHelperService,
-    public programTelemetryService: ProgramTelemetryService) { }
+    public programTelemetryService: ProgramTelemetryService, private programsService: ProgramsService) { }
 
   ngOnInit() {
     this.sessionContext = _.get(this.practiceQuestionSetComponentInput, 'sessionContext');
@@ -91,6 +94,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.role = _.get(this.practiceQuestionSetComponentInput, 'role');
     this.templateDetails = _.get(this.practiceQuestionSetComponentInput, 'templateDetails');
     this.programContext = _.get(this.practiceQuestionSetComponentInput, 'programContext');
+    this.sessionContext.programContext = this.programContext;
     this.actions = _.get(this.programContext, 'config.actions');
     this.sharedContext = _.get(this.programContext, 'config.sharedContext');
     this.sessionContext.resourceIdentifier = _.get(this.practiceQuestionSetComponentInput, 'contentIdentifier');
@@ -129,7 +133,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         edata: {
           type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
           pageid: this.telemetryPageId,
-          uri: this.router.url,
+          uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
@@ -140,7 +144,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     // tslint:disable-next-line:max-line-length
     this.telemetryEventsInput.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.sessionContext.collection, 'Content', '1.0');
     // tslint:disable-next-line:max-line-length
-    this.telemetryEventsInput.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata('Program', this.sessionContext.programId);
+    this.telemetryEventsInput.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.sessionContext.programId, 'Program');
     // tslint:disable-next-line:max-line-length
     this.telemetryEventsInput.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
   }
@@ -154,12 +158,19 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     })).subscribe(res => {
       this.resourceDetails = res;
+      const contentTypeValue = [this.resourceDetails.contentType];
+      const contentType = this.programsService.getContentTypesName(contentTypeValue);
+      this.resourceDetails.contentTypeName = contentType;
       this.sessionContext.contentMetadata = this.resourceDetails;
       this.existingContentVersionKey = res.versionKey;
       this.resourceStatus =  _.get(this.resourceDetails, 'status');
       this.setResourceStatus();
       if (this.resourceDetails.questionCategories) {
-        this.sessionContext.questionType = _.lowerCase(_.nth(this.resourceDetails.questionCategories, 0));
+        let questionCategories = _.nth(this.resourceDetails.questionCategories, 0);
+        if (questionCategories === 'CuriosityQuestion') {
+          questionCategories = 'curiosity';
+        }
+        this.sessionContext.questionType = _.lowerCase(questionCategories);
       }
       this.sessionContext.resourceStatus = this.resourceStatus;
       this.resourceName = this.resourceDetails.name || this.templateDetails.metadata.name;
@@ -182,26 +193,31 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   contentStatusNotify(status) {
-    const notificationForContributor = {
-      user_id: this.resourceDetails.createdBy,
-      content: { name: this.resourceDetails.name },
-      org: { name:  this.sessionContext.nominationDetails.orgData.name},
-      program: { name: this.programContext.name },
-      status: status
-    };
-    this.notificationService.onAfterContentStatusChange(notificationForContributor)
-    .subscribe((res) => {  });
-    if (!_.isUndefined(this.sessionContext.nominationDetails.user_id) && status !== 'Request') {
-      const notificationForPublisher = {
-        user_id: this.sessionContext.nominationDetails.user_id,
-        content: { name: this.resourceDetails.name },
-        org: { name:  this.sessionContext.nominationDetails.orgData.name},
-        program: { name: this.programContext.name },
-        status: status
-      };
-      this.notificationService.onAfterContentStatusChange(notificationForPublisher)
-      .subscribe((res) => {  });
-    }
+      if (!this.sessionContext.nominationDetails && this.resourceDetails.organisationId && status !== 'Request') {
+        const programDetails = { name: this.programContext.name};
+        this.helperService.prepareNotificationData(status, this.resourceDetails, programDetails);
+      } else {
+        const notificationForContributor = {
+          user_id: this.resourceDetails.createdBy,
+          content: { name: this.resourceDetails.name },
+          org: { name:  _.get(this.sessionContext, 'nominationDetails.orgData.name') || '--'},
+          program: { name: this.programContext.name },
+          status: status
+        };
+        this.notificationService.onAfterContentStatusChange(notificationForContributor)
+        .subscribe((res) => {  });
+        if (!_.isUndefined(this.sessionContext.nominationDetails.user_id) && status !== 'Request') {
+          const notificationForPublisher = {
+            user_id: this.sessionContext.nominationDetails.user_id,
+            content: { name: this.resourceDetails.name },
+            org: { name:  this.sessionContext.nominationDetails.orgData.name},
+            program: { name: this.programContext.name },
+            status: status
+          };
+          this.notificationService.onAfterContentStatusChange(notificationForPublisher)
+          .subscribe((res) => {  });
+        }
+      }
     }
 
   setResourceStatus() {
@@ -215,6 +231,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
     } else if (this.sourcingReviewStatus === 'Approved') {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
+      if (!_.isEmpty(this.sessionContext.contentOrigins) && !_.isEmpty(this.sessionContext.contentOrigins[this.sessionContext.resourceIdentifier])) {
+        this.originPreviewUrl =  this.helperService.getContentOriginUrl(this.sessionContext.contentOrigins[this.sessionContext.resourceIdentifier].identifier);
+      }
+      this.originPreviewReady = true;
     } else {
       this.resourceStatusText = this.resourceStatus;
     }
@@ -231,22 +251,24 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   handleActionButtons() {
     this.visibility = {};
+    const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
+
     // tslint:disable-next-line:max-line-length
-    this.visibility['showCreateQuestion'] = (_.includes(this.actions.showCreateQuestion.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
+    this.visibility['showCreateQuestion'] = submissionDateFlag && (_.includes(this.actions.showCreateQuestion.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
     // tslint:disable-next-line:max-line-length
     this.visibility['showDeleteQuestion'] = (_.includes(this.actions.showDeleteQuestion.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft' && this.questionList.length > 1);
     // tslint:disable-next-line:max-line-length
-    this.visibility['showRequestChanges'] = this.router.url.includes('/contribute') && !this.resourceDetails.sampleContent === true &&
+    this.visibility['showRequestChanges'] = this.router.url.includes('/contribute') && submissionDateFlag && !this.resourceDetails.sampleContent === true &&
     (_.includes(this.actions.showRequestChanges.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showPublish'] = this.router.url.includes('/contribute') && !this.resourceDetails.sampleContent === true &&
+    this.visibility['showPublish'] = this.router.url.includes('/contribute') && submissionDateFlag && !this.resourceDetails.sampleContent === true &&
     (_.includes(this.actions.showPublish.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSubmit'] = (_.includes(this.actions.showSubmit.roles, this.sessionContext.currentRoleId)  && this.resourceStatus === 'Draft');
+    this.visibility['showSubmit'] = submissionDateFlag && (_.includes(this.actions.showSubmit.roles, this.sessionContext.currentRoleId)  && this.resourceStatus === 'Draft');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSave'] = (_.includes(this.actions.showSave.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
+    this.visibility['showSave'] = submissionDateFlag && (_.includes(this.actions.showSave.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
      // tslint:disable-next-line:max-line-length
-    this.visibility['showEdit'] = (_.includes(this.actions.showEdit.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
+    this.visibility['showEdit'] = submissionDateFlag && (_.includes(this.actions.showEdit.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
   }
 
   get isPublishBtnDisable(): boolean {
@@ -865,17 +887,54 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   attachContentToTextbook(action) {
-    const originData = {
-      textbookOriginId: _.get(_.get(_.get(this.sessionContext.hierarchyObj, 'hierarchy'), this.sessionContext.collection), 'origin'),
-      unitOriginId: _.get(_.get(_.get(this.sessionContext.hierarchyObj, 'hierarchy'), this.sessionContext.textBookUnitIdentifier), 'origin')
-    };
-    if (originData.textbookOriginId && originData.unitOriginId) {
-      // tslint:disable-next-line:max-line-length
-      this.helperService.attachContentToTextbook(action, this.sessionContext.collection, this.resourceDetails.identifier, originData);
+    const hierarchyObj  = _.get(this.sessionContext.hierarchyObj, 'hierarchy');
+    if (hierarchyObj) {
+      const rootOriginInfo = _.get(_.get(hierarchyObj, this.sessionContext.collection), 'originData');
+      let channel =  rootOriginInfo && rootOriginInfo.channel;
+      if (_.isUndefined(channel)) {
+        const originInfo = _.get(_.get(hierarchyObj, this.sessionContext.textBookUnitIdentifier), 'originData');
+        channel = originInfo && originInfo.channel;
+      }
+      const originData = {
+        textbookOriginId: _.get(_.get(hierarchyObj, this.sessionContext.collection), 'origin'),
+        unitOriginId: _.get(_.get(hierarchyObj, this.sessionContext.textBookUnitIdentifier), 'origin'),
+        channel: channel
+      };
+      if (originData.textbookOriginId && originData.unitOriginId && originData.channel) {
+        if (action === 'accept') {
+          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.resourceDetails.identifier, originData);
+        } else if (action === 'reject' && this.FormControl.value.contentRejectComment.length) {
+          // tslint:disable-next-line:max-line-length
+          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.resourceDetails.identifier, originData, this.FormControl.value.contentRejectComment);
+        }
+      } else {
+        action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
+        this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+        console.error('origin data missing');
+      }
     } else {
       action === 'accept' ? this.toasterService.error(this.resourceService.messages.emsg.approvingFailed) :
       this.toasterService.error(this.resourceService.messages.fmsg.m00100);
       console.error('origin data missing');
+    }
+  }
+
+  showSourcingOrgRejectComments() {
+    if (this.resourceStatus === 'Live' && _.get(this.sessionContext.hierarchyObj, 'sourcingRejectedComments') &&
+    _.get(this.sessionContext.hierarchyObj.sourcingRejectedComments, this.resourceDetails.identifier)) {
+      this.sourcingOrgReviewComments = _.get(this.sessionContext.hierarchyObj.sourcingRejectedComments, this.resourceDetails.identifier);
+     return true;
+    } else {
+      return false;
+    }
+  }
+
+  showContributorOrgReviewComments() {
+    if (this.resourceDetails && this.resourceDetails.rejectComment && this.sessionContext.currentRoleId === 1 &&
+        this.resourceStatus === 'Draft' && this.resourceDetails.prevStatus === 'Review') {
+      return true;
+    } else {
+      return false;
     }
   }
 }

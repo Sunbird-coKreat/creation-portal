@@ -153,7 +153,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
         edata: {
           type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
           pageid: this.telemetryPageId,
-          uri: this.router.url,
+          uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
@@ -346,7 +346,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
             status: this.sessionContext.collectionStatus || ['Draft', 'Live'],
             contentType: this.sessionContext.collectionType || 'Textbook'
           },
-          fields: ["name", "gradeLevel", "mimeType", "medium", "subject", "status", "chapterCount"],
+          fields: ["name", "gradeLevel", "mimeType", "medium", "subject", "status", "chapterCount", "chapterCountForContribution"],
           limit: 1000
         }
       }
@@ -506,7 +506,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     };
-    if (this.userService.userRegistryData && this.userService.userRegistryData && this.userProfile.userRegData && this.userProfile.userRegData.User_Org) {
+    if (this.userService.userRegistryData && this.userProfile.userRegData && this.userProfile.userRegData.User_Org) {
       req.data.request.filters['organisation_id'] = this.userProfile.userRegData.User_Org.orgId;
     } else {
       req.data.request.filters['user_id'] = this.userService.userProfile.userId;

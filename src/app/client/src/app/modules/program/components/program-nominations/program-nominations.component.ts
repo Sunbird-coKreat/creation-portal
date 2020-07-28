@@ -15,6 +15,7 @@ import { DatePipe } from '@angular/common';
 import { forkJoin, of } from 'rxjs';
 import { isDefined } from '@angular/compiler/src/util';
 import { isUndefined, isNullOrUndefined } from 'util';
+import {ProgramTelemetryService} from '../../services';
 
 @Component({
   selector: 'app-program-nominations',
@@ -83,6 +84,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   showNominationLoader = false;
   showUsersLoader = false;
   showDashboardLoader = false;
+  userPreferences = '';
   sharedContext;
 
   pager: IPagination;
@@ -95,7 +97,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
      private activatedRoute: ActivatedRoute, private router: Router,
     private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService,
-    public programStageService: ProgramStageService, private datePipe: DatePipe, private paginationService: PaginationService) {
+    public programStageService: ProgramStageService, private datePipe: DatePipe, private paginationService: PaginationService,
+    public programTelemetryService: ProgramTelemetryService) {
     this.userProfile = this.userService.userProfile;
     this.programId = this.activatedRoute.snapshot.params.programId;
   }
@@ -103,7 +106,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   ngOnInit() {
     this.filterApplied = null;
     this.getProgramDetails();
-    this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program_ID'}];
+    this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
     this.roles = [{name: 'REVIEWER'}];
@@ -122,7 +125,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     const deviceId = <HTMLInputElement>document.getElementById('deviceId');
-    const telemetryCdata = [{type: 'Program_ID', id: this.activatedRoute.snapshot.params.programId}];
+    const telemetryCdata = [{type: 'Program', id: this.activatedRoute.snapshot.params.programId}];
      setTimeout(() => {
       this.telemetryImpression = {
         context: {
@@ -138,7 +141,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         edata: {
           type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
           pageid: _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid'),
-          uri: this.router.url,
+          uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
@@ -179,17 +182,29 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.router.navigate([], { relativeTo: this.activatedRoute, queryParams: { tab: tab }, queryParamsHandling: 'merge' });
 
     if (tab === 'textbook' && !_.includes(this.visitedTab, 'textbook')) {
-      this.showTextbookLoader =  true;
       this.visitedTab.push('textbook');
-      this.getProgramCollection().subscribe(
-        (res) => { this.showTextbookLoader =  false; },
-        (err) => { // TODO: navigate to program list page
-          this.showTextbookLoader =  false;
+      this.showTextbookLoader = true;
+      this.programsService.getUserPreferencesforProgram(this.userProfile.identifier, this.programId).subscribe(
+          (prefres) => {
+            let preffilter = {};
+            if (!isNullOrUndefined(prefres.result)) {
+              this.userPreferences = prefres.result;
+              preffilter = _.get(this.userPreferences, 'sourcing_preference');
+            }
+            this.getProgramCollection(preffilter).subscribe((res) => {
+              this.showTextbookLoader  =  false;
+            }, (err) => { // TODO: navigate to program list page
+              this.showTextbookLoader  =  false;
+              const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+              this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+            });
+        }, (err) => { // TODO: navigate to program list page
+          this.showTextbookLoader  =  false;
           const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-          this.toasterService.warning(errorMes || 'Fetching textbooks failed');
-        }
-      );
+          this.toasterService.warning(errorMes || 'Fetching Preferences  failed');
+      });
     }
+
     if (tab === 'nomination' && !_.includes(this.visitedTab, 'nomination')) {
       this.showNominationLoader =  true;
       this.visitedTab.push('nomination');
@@ -204,7 +219,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.getsourcingOrgReviewers();
     }
 
-    if (tab ==='contributionDashboard' && !_.includes(this.visitedTab, 'contributionDashboard')) {
+    if (tab === 'contributionDashboard' && !_.includes(this.visitedTab, 'contributionDashboard')) {
       this.showDashboardLoader =  true;
       if (_.isEmpty(this.programCollections)) {
         this.getProgramCollection().subscribe(
@@ -234,7 +249,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   getsourcingOrgReviewers (offset?, iteration?) {
-    if (!isDefined(iteration) || iteration == 0) {
+    if (!isDefined(iteration) || iteration === 0) {
       iteration = 0;
       this.paginatedSourcingUsers = [];
       this.sourcingOrgUser = [];
@@ -249,16 +264,18 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.programsService.getSourcingOrgUsers(filters, offset, 1000).subscribe(
       (res) => {
         this.sourcingOrgUserCnt = res.result.response.count || 0;
+        const responseContent = _.get(res, 'result.response.content');
+        const responseContentLength =  responseContent ? responseContent.length : offset;
         this.paginatedSourcingUsers = _.compact(_.concat(this.paginatedSourcingUsers, res.result.response.content));
 
         if (this.sourcingOrgUserCnt > this.paginatedSourcingUsers.length) {
           iteration++;
-           this.getsourcingOrgReviewers(1000*iteration);
+          this.getsourcingOrgReviewers(responseContentLength * iteration, iteration);
         } else {
           this.readRolesOfOrgUsers();
           this.paginatedSourcingUsers = this.programsService.sortCollection(this.paginatedSourcingUsers, 'selectedRole', 'desc');
           this.paginatedSourcingUsers = _.chunk( this.paginatedSourcingUsers, this.pageLimit);
-          this.sourcingOrgUser = this.paginatedSourcingUsers[this.pageNumber-1];
+          this.sourcingOrgUser = this.paginatedSourcingUsers[this.pageNumber - 1];
           this.pagerUsers = this.paginationService.getPager(this.sourcingOrgUserCnt, this.pageNumberUsers, this.pageLimit);
           this.showUsersLoader = false;
         }
@@ -280,7 +297,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       return;
     }
     this.pageNumberUsers = page;
-    this.sourcingOrgUser = this.paginatedSourcingUsers[this.pageNumberUsers -1];
+    this.sourcingOrgUser = this.paginatedSourcingUsers[this.pageNumberUsers - 1];
     this.pagerUsers = this.paginationService.getPager(this.sourcingOrgUserCnt, this.pageNumberUsers, this.pageLimit);
   }
 
@@ -290,7 +307,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     }
     this.pageNumber = page;
     this.pager = this.paginationService.getPager(this.totalNominations, this.pageNumber, this.pageLimit);
-    const offset = (page-1) * this.pageLimit;
+    const offset = (page - 1) * this.pageLimit;
     this.getPaginatedNominations(offset);
   }
 
@@ -344,16 +361,16 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         }
 
         this.showNominationLoader = false;
-      },(error) => {
+      }, (error) => {
         this.showNominationLoader = false;
       });
   }
 
-  getProgramCollection () {
-    return this.collectionHierarchyService.getCollectionWithProgramId(this.programId).pipe(
-      tap((response) => {
-        if (response && response.result && response.result.content && response.result.content.length) {
-          this.programCollections = response.result.content;
+  getProgramCollection (preferencefilters?) {
+    return this.collectionHierarchyService.getCollectionWithProgramId(this.programId, preferencefilters).pipe(
+      tap((response: any) => {
+        if (response && response.result) {
+          this.programCollections = response.result.content || [];
         }
       }),
       catchError(err => {
@@ -364,7 +381,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   getcontentAggregationData() {
     return this.collectionHierarchyService.getContentAggregation(this.programId).pipe(
-      tap((response) => {
+      tap((response: any) => {
         if (response && response.result && response.result.content) {
           this.contentAggregationData = _.get(response.result, 'content');
         }
@@ -484,7 +501,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     };
     this.programsService.get(req).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
-      this.programDetails.config = JSON.parse(this.programDetails.config);
+      this.programDetails.config.medium = _.compact(this.programDetails.config.medium);
+      this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
+      this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
+
       this.fetchFrameWorkDetails();
 
       forkJoin(this.getAggregatedNominationsCount(), this.getcontentAggregationData()).subscribe(
@@ -600,15 +620,27 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
     if (this.activeTab === 'textbook') {
       this.showTextbookLoader = true;
-      this.getProgramCollection().subscribe(
-        (res) => { this.showTextbookLoader  =  false; },
-        (err) => { // TODO: navigate to program list page
+        this.programsService.getUserPreferencesforProgram(this.userProfile.identifier, this.programId).subscribe(
+          (prefres) => {
+            let preffilter = {};
+            if (!isNullOrUndefined(prefres.result)) {
+              this.userPreferences = prefres.result;
+              preffilter = _.get(this.userPreferences, 'sourcing_preference');
+            }
+            this.getProgramCollection(preffilter).subscribe((res) => {
+              this.showTextbookLoader  =  false;
+            }, (err) => { // TODO: navigate to program list page
+              this.showTextbookLoader  =  false;
+              const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+              this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+            });
+        }, (err) => { // TODO: navigate to program list page
           this.showTextbookLoader  =  false;
           const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-          this.toasterService.warning(errorMes || 'Fetching textbooks failed');
-        }
-      );
+          this.toasterService.warning(errorMes || 'Fetching Preferences  failed');
+      });
     }
+
     if (this.activeTab === 'nomination') {
       this.showNominationLoader =  true;
       this.getPaginatedNominations(0);
@@ -644,7 +676,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         if (!_.includes(programRoleNames, user.selectedRole)) {
           progRoleMapping[user.selectedRole] = [];
         }
-        _.forEach(progRoleMapping, function(ua, role, arr){
+        _.forEach(progRoleMapping, function(ua, role, arr) {
             if (user.selectedRole === role) {
               ua.push(user.identifier);
               _.compact(ua);
@@ -663,7 +695,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           this.toasterService.error(this.resourceService.messages.emsg.roles.m0001);
         });
     } else {
-      this.toasterService.error("Role not found");
+      this.toasterService.error('Role not found');
     }
   }
 
@@ -671,6 +703,24 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage = _.last(this.state.stages).stage;
     }
+  }
+
+  applyPreferences(preferences?) {
+    this.showTextbookLoader  =  true;
+    if (_.isUndefined(preferences)) {
+      preferences = {};
+    }
+    // tslint:disable-next-line: max-line-length
+    forkJoin(this.programsService.setUserPreferencesforProgram(this.userProfile.identifier, this.programId, preferences, 'sourcing'), this.getProgramCollection(preferences)).subscribe(
+      (response) => {
+        this.userPreferences =  _.get(_.first(response), 'result');
+        this.showTextbookLoader  =  false;
+      },
+      (error) => {
+        this.showTextbookLoader  =  false;
+        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+        this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+    });
   }
 
   viewContribution(collection) {
@@ -817,7 +867,7 @@ this.programsService.post(req).subscribe((data) => {
       }
       this.tempNominations = _.cloneDeep(this.nominations);
   }, error => {
-    this.showNominationLoader = false;;
+    this.showNominationLoader = false;
     this.toasterService.error(this.resourceService.messages.emsg.projects.m0003);
   });
 }
@@ -837,7 +887,7 @@ getAggregatedNominationsCount() {
     }
   };
   return this.programsService.post(req).pipe(
-    tap((data) => {
+    tap((data: any) => {
       const aggregatedCount = data.result.nomination;
       this.totalNominations = aggregatedCount.count;
       if (aggregatedCount.fields && aggregatedCount.fields.length) {
@@ -856,6 +906,48 @@ getAggregatedNominationsCount() {
   );
 }
 
+downloadContribDashboardDetails() {
+  try {
+    const headers = this.getContribDashboardHeaders();
+    const tableData = [];
+
+    if (this.contributionDashboardData.length) {
+      _.forEach(this.contributionDashboardData, (contributor) => {
+        const row = [
+          _.get(this.programDetails, 'name', '').trim(),
+          contributor.contributorName,
+          contributor.type === 'org' ? 'Organisation' : 'Individual',
+          contributor.draft || 0,
+          contributor.type !== 'individual' ? contributor.review : '-',
+          contributor.live || 0,
+          contributor.type !== 'individual' ? contributor.rejected : '-',
+          contributor.sourcingPending || 0,
+          contributor.sourcingAccepted || 0,
+          contributor.sourcingRejected || 0,
+        ];
+        tableData.push(row);
+      });
+    }
+    const csvDownloadConfig = {
+      filename: _.get(this.programDetails, 'name', '').trim(),
+      tableData: tableData,
+      headers: headers,
+      showTitle: false
+    };
+      this.programsService.generateCSV(csvDownloadConfig);
+    } catch (err) {
+      this.toasterService.error(_.get(this.resourceService, 'messages.emsg.projects.m0005', ''));
+    }
+}
+
+getContribDashboardHeaders() {
+  const columnNames = [
+    'projectName', 'contributorName', 'typeOfContributor', 'draftContributingOrg',
+    'pendingContributingOrg', 'acceptedContributingOrg', 'rejectedContributingOrg', 'pendingtSourcingOrg',
+    'acceptedSourcingOrg', 'rejectedSourcingOrg'];
+  return _.map(columnNames, name => _.get(this.resourceService, `frmelmnts.lbl.${name}`));
+}
+
 downloadReport(report) {
   const req = {
     url: `program/v1/report`,
@@ -863,6 +955,7 @@ downloadReport(report) {
         'request': {
             'filters': {
                 program_id: [this.programId],
+                openForContribution: true,
                 report: report
         }
       }

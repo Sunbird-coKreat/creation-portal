@@ -18,6 +18,7 @@ import { LearnerService } from '../learner/learner.service';
 import { RegistryService } from '../registry/registry.service';
 import { ExportToCsv } from 'export-to-csv';
 import { CacheService } from 'ng2-cache-service';
+import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root'
@@ -40,6 +41,7 @@ export class ProgramsService extends DataService implements CanActivate {
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
   private _contentTypes: any[];
   private _sourcingOrgReviewers: Array<any>;
+  // private orgUsers: Array<any>;
 
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService,
@@ -393,22 +395,24 @@ export class ProgramsService extends DataService implements CanActivate {
       (res) => {
         this.userService.openSaberRegistrySearch().then((userRegData) => {
           this.userService.userProfile.userRegData = userRegData;
-          this.toasterService.success(this.resourceService.messages.smsg.contributorjoin.m0001);
+
           this.addSourcingUserstoContribOrg(userRegData).subscribe(
             (res) => {
               this.addorUpdateNomination(request).subscribe(
                 (res) => { console.log("Nomination added")},
                 (err) => { console.log("error added")}
-              )
+              );
             },
-            (error) => {},
+            (error) => {
+              console.log("Error while adding users to contribution org");
+            }
           );
         }).catch((err) => {
-          this.toasterService.error('Adding contributor profile failed...');
+          this.toasterService.error('Fetching contributor profile created for sourcing failed...');
         });
       },
       (error) => {
-        this.toasterService.error('Adding contributor profile failed...');
+        this.toasterService.error('Adding contributor profile failed.');
       }
     );
   }
@@ -504,7 +508,7 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.API_URL(req).pipe(tap((res) => {
       if (res.result.program_id) {
         const programId = res.result.program_id;
-        if (request.status == 'Live') {
+        if (request.status === 'Live' || request.status === 'Unlisted') {
           const nomRequest = {
             program_id: programId,
             status: 'Approved',
@@ -930,4 +934,149 @@ export class ProgramsService extends DataService implements CanActivate {
     const csvExporter = new ExportToCsv(options);
     csvExporter.generateCsv(tableData);
   }
+
+  getUserPreferencesforProgram(userId, programId) {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.PREFERENCE_READ}`,
+      data: {
+          request: {
+            user_id: userId,
+            program_id: programId
+          }
+      }
+    };
+    return this.API_URL(req);
+  }
+
+  setUserPreferencesforProgram(userId, programId, preference, type) {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.PREFERENCE_ADD}`,
+      data: {
+          request: {
+            user_id: userId,
+            program_id: programId,
+            preference: preference,
+            type: type
+          }
+      }
+    };
+    return this.API_URL(req);
+  }
+
+  /* To check if the content can be uploaded or updated*/
+  checkForContentSubmissionDate(programDetails) {
+    const contributionendDate  = moment(programDetails.content_submission_enddate);
+    const endDate  = moment(programDetails.enddate);
+    const today = moment();
+    return (contributionendDate.isSameOrAfter(today, 'day') && endDate.isSameOrAfter(today, 'day')) ? true : false;
+  }
+
+  getContentOriginEnvironment() {
+    switch(window.location.hostname) {
+      case 'dock.sunbirded.org': return 'https://dev.sunbirded.org'; break;
+      case 'vdn.diksha.gov.in': return "https://diksha.gov.in"; break;
+      case 'dock.preprod.ntp.net.in': return 'https://preprod.ntp.net.in'; break;
+      default: return  'https://dev.sunbirded.org'; break;
+    }
+  }
+
+  /*getSourcingOrgUserList(sourcingOrgId, roles, limit?) {
+    return new Promise((resolve, reject) => {
+      // Get all diskha users
+      return this.getAllSourcingOrgUsers(sourcingOrgId, roles, limit)
+      .then((sourcingOrgUsers) => {
+        // Remove currently logged in user
+        sourcingOrgUsers = _.filter(sourcingOrgUsers, user => {
+          return user.identifier !== this.userService.userProfile.identifier;
+        });
+
+        if (_.isEmpty(sourcingOrgUsers)) {
+          return resolve([]);
+        }
+
+        // Get the open saber users for org
+        const storedOrglist = this.cacheService.get('orgUsersDetails');
+        const orgId = _.get(this.userService, 'userProfile.userRegData.Org.osid');
+
+        return this.registryService.getAllContributionOrgUsers(orgId)
+        .then((allOrgUsers) => {
+          // Get the open saber user details
+          const userList = _.map(allOrgUsers, u => u.userId);
+          const osUsersReq = this.registryService.getUserdetailsByOsIds(userList);
+
+          if (userList && storedOrglist && userList.length === storedOrglist.length) {
+            return resolve(this.cacheService.get('orgUsersDetails'));
+          }
+
+          return forkJoin(osUsersReq).subscribe(res => {
+            const users = _.get(_.first(res), 'result.User');
+            let orgUsersDetails = _.map(sourcingOrgUsers, u => {
+              const osUser = _.first(_.filter(users, u1 => {
+                return u1.userId === u.identifier;
+              }));
+
+              const osUserOrg = _.first(_.filter(allOrgUsers, u1 => {
+                return u1.userId === _.get(osUser, 'osid');
+              }));
+
+              return {
+                ...u,
+                name: `${u.firstName} ${u.lastName || ''}`,
+                User: osUser,
+                User_Org: osUserOrg,
+                selectedRole: !_.isUndefined(osUserOrg) ? _.first(osUserOrg.roles) : 'user'
+              };
+            });
+            orgUsersDetails = _.compact(orgUsersDetails);
+            this.cacheService.set('orgUsersDetails', orgUsersDetails);
+
+            return resolve(orgUsersDetails);
+          }, (err) => {
+            console.log('Error:', err);
+            return resolve([]);
+          });
+        });
+      }, (err) => {
+        console.log('Error:', err);
+        return resolve([]);
+      });
+    });
+  }
+
+  getAllSourcingOrgUsers(orgId, roles, limit?, offset?) {
+    // Get the diskha users for org
+    const filters = {
+      'organisations.organisationId': orgId,
+      'organisations.roles': roles
+    };
+
+    offset = (!_.isUndefined(offset)) ? offset : 0;
+    limit = (!_.isUndefined(limit)) ? limit : 100;
+
+    if (offset === 0) {
+      this.orgUsers = [];
+    }
+
+    return new Promise((resolve, reject) => {
+      this.getSourcingOrgUsers(filters, offset, limit).subscribe(
+        (res) => {
+          const sourcingOrgUsers =  _.get(res, 'result.response.content', []);
+          const totalCount =  _.get(res, 'result.response.count');
+
+          if (sourcingOrgUsers.length > 0) {
+            this.orgUsers = _.compact(_.concat(this.orgUsers, sourcingOrgUsers));
+            offset = offset + limit;
+          }
+
+          if (totalCount > this.orgUsers.length){
+            return resolve(this.getAllSourcingOrgUsers(orgId, roles, limit, offset));
+          }
+          return resolve(this.orgUsers);
+        },
+        (error) => {
+          return reject([]);
+        }
+      );
+    });
+  } */
 }

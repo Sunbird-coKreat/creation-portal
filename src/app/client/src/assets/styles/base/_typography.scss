@@ -140,6 +140,9 @@ a {
 .text-inherit {
   text-transform: inherit !important;
 }
+.text-none {
+  text-transform: none !important;
+}
 
 .break-word {
   word-break: break-word;
@@ -229,4 +232,7 @@ a {
 }
 .va-top {
   vertical-align: top !important;
+}
+.va-text-top {
+  vertical-align: text-top !important;
 }

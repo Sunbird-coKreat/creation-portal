@@ -1,5 +1,6 @@
 // tslint:disable:max-line-length
 var programConfig = {
+    'defaultContributeOrgReview' : true,
     '_comments': '',
     'loginReqired': true,
     'framework': 'NCF',
@@ -146,7 +147,9 @@ var programConfig = {
                 'onClick': 'uploadComponent',
                 'mimeType': [
                   'application/pdf',
-                  'video/mp4'
+                  'video/mp4',
+                  'video/webm',
+                  'application/epub'
                 ],
                 'metadata': {
                   'name': 'Explanation Resource',
@@ -160,7 +163,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf, mp4',
+                  'accepted': 'pdf, mp4, webm, epub',
                   'size': '50'
                 }
               },
@@ -170,7 +173,10 @@ var programConfig = {
                 'onClick': 'uploadComponent',
                 'mimeType': [
                   'application/pdf',
-                  'video/mp4'
+                  'video/mp4',
+                  'video/webm',
+                  'application/epub',
+                  'application/vnd.ekstep.h5p-archive',
                 ],
                 'metadata': {
                   'name': 'Activity for Learning',
@@ -184,7 +190,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf, mp4',
+                  'accepted': 'pdf, mp4, webm, epub, h5p',
                   'size': '50'
                 }
               },
@@ -193,7 +199,8 @@ var programConfig = {
                 'label': 'Experiential',
                 'onClick': 'uploadComponent',
                 'mimeType': [
-                  'video/mp4'
+                  'video/mp4',
+                  'video/webm'
                 ],
                 'metadata': {
                   'name': 'Experiential Resource',
@@ -207,7 +214,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'mp4',
+                  'accepted': 'mp4, webm',
                   'size': '50'
                 }
               },
@@ -216,7 +223,8 @@ var programConfig = {
                 'label': 'Classroom Teaching Video',
                 'onClick': 'uploadComponent',
                 'mimeType': [
-                  'video/mp4'
+                  'video/mp4',
+                  'video/webm'
                 ],
                 'metadata': {
                   'name': 'Classroom Teaching Video',
@@ -230,7 +238,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'mp4',
+                  'accepted': 'mp4, webm',
                   'size': '50'
                 }
               },
@@ -239,7 +247,8 @@ var programConfig = {
                 'label': 'Explanation Video',
                 'onClick': 'uploadComponent',
                 'mimeType': [
-                  'video/mp4'
+                  'video/mp4',
+                  'video/webm'
                 ],
                 'metadata': {
                   'name': 'Explanation Video',
@@ -253,7 +262,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'mp4',
+                  'accepted': 'mp4, webm',
                   'size': '50'
                 }
               },
@@ -262,7 +271,8 @@ var programConfig = {
                 'label': 'Explanation Reading Material',
                 'onClick': 'uploadComponent',
                 'mimeType': [
-                  'application/pdf'
+                  'application/pdf',
+                  'application/epub'
                 ],
                 'metadata': {
                   'name': 'Explanation Reading Material',
@@ -276,7 +286,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf',
+                  'accepted': 'pdf, epub',
                   'size': '50'
                 }
               },
@@ -285,7 +295,8 @@ var programConfig = {
                 'label': 'Previous Board Exam Papers',
                 'onClick': 'uploadComponent',
                 'mimeType': [
-                  'application/pdf'
+                  'application/pdf',
+                  'application/epub'
                 ],
                 'metadata': {
                   'name': 'Previous Board Exam Papers',
@@ -299,7 +310,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf',
+                  'accepted': 'pdf, epub',
                   'size': '50'
                 }
               },
@@ -308,7 +319,8 @@ var programConfig = {
                 'label': 'Lesson Plan',
                 'onClick': 'uploadComponent',
                 'mimeType': [
-                  'application/pdf'
+                  'application/pdf',
+                  'application/epub'
                 ],
                 'metadata': {
                   'name': 'Lesson Plan',
@@ -322,7 +334,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf',
+                  'accepted': 'pdf, epub',
                   'size': '50'
                 }
               },
@@ -331,7 +343,8 @@ var programConfig = {
                 'label': 'FocusSpot',
                 'onClick': 'uploadComponent',
                 'mimeType': [
-                  'application/pdf'
+                  'application/pdf',
+                  'application/epub'
                 ],
                 'metadata': {
                   'name': 'FocusSpot Resource',
@@ -345,7 +358,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf',
+                  'accepted': 'pdf, epub',
                   'size': '50'
                 }
               },
@@ -354,7 +367,8 @@ var programConfig = {
                 'label': 'Teaching Method',
                 'onClick': 'uploadComponent',
                 'mimeType': [
-                  'application/pdf'
+                  'application/pdf',
+                  'application/epub'
                 ],
                 'metadata': {
                   'name': 'Teaching Method',
@@ -368,7 +382,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf',
+                  'accepted': 'pdf, epub',
                   'size': '50'
                 }
               },
@@ -377,7 +391,8 @@ var programConfig = {
                 'label': 'Pedagogy Flow',
                 'onClick': 'uploadComponent',
                 'mimeType': [
-                  'application/pdf'
+                  'application/pdf',
+                  'application/epub'
                 ],
                 'metadata': {
                   'name': 'Pedagogy Flow',
@@ -391,7 +406,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf',
+                  'accepted': 'pdf, epub',
                   'size': '50'
                 }
               },
@@ -400,7 +415,8 @@ var programConfig = {
                 'label': 'Learning Outcome Definition',
                 'onClick': 'uploadComponent',
                 'mimeType': [
-                  'application/pdf'
+                  'application/pdf',
+                  'application/epub'
                 ],
                 'metadata': {
                   'name': 'Learning Outcome Definition',
@@ -414,7 +430,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf',
+                  'accepted': 'pdf, epub',
                   'size': '50'
                 }
               },
@@ -423,7 +439,8 @@ var programConfig = {
                 'label': 'Marking Scheme Rubric',
                 'onClick': 'uploadComponent',
                 'mimeType': [
-                  'application/pdf'
+                  'application/pdf',
+                  'application/epub'
                 ],
                 'metadata': {
                   'name': 'Marking Scheme Rubric',
@@ -437,7 +454,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf',
+                  'accepted': 'pdf, epub',
                   'size': '50'
                 }
               },
@@ -446,7 +463,8 @@ var programConfig = {
                 'label': 'Concept Map',
                 'onClick': 'uploadComponent',
                 'mimeType': [
-                  'application/pdf'
+                  'application/pdf',
+                  'application/epub'
                 ],
                 'metadata': {
                   'name': 'Concept Map',
@@ -460,7 +478,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf',
+                  'accepted': 'pdf, epub',
                   'size': '50'
                 }
               },
@@ -469,7 +487,8 @@ var programConfig = {
                 'label': 'Self Assess',
                 'onClick': 'uploadComponent',
                 'mimeType': [
-                  'application/pdf'
+                  'application/pdf',
+                  'application/epub'
                 ],
                 'metadata': {
                   'name': 'Self Assess',
@@ -483,7 +502,7 @@ var programConfig = {
                   'marks': 5
                 },
                 'filesConfig': {
-                  'accepted': 'pdf',
+                  'accepted': 'pdf, epub',
                   'size': '50'
                 }
               },
@@ -635,7 +654,7 @@ var programConfig = {
         'data': {},
         'config': {
           'filesConfig': {
-            'accepted': 'pdf, mp4, webm, youtube',
+            'accepted': 'pdf, mp4, webm, h5p, epub',
             'size': '50'
           },
           'formConfiguration': [

@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, isEmpty } from 'rxjs/operators';
 import { throwError, Observable } from 'rxjs';
-import { ActionService, UserService } from '@sunbird/core';
+import { ActionService, UserService, ProgramsService} from '@sunbird/core';
 import { HttpClient } from '@angular/common/http';
 import { HttpOptions, ConfigService, ToasterService } from '@sunbird/shared';
 import { TelemetryService } from '@sunbird/telemetry';
 import { forkJoin } from 'rxjs';
 import * as _ from 'lodash-es';
+import { isUndefined } from 'util';
 
 @Injectable()
 
@@ -17,7 +18,8 @@ export class CollectionHierarchyService {
 
   constructor(private actionService: ActionService, private configService: ConfigService,
     public toasterService: ToasterService, public userService: UserService,
-    public telemetryService: TelemetryService, private httpClient: HttpClient) {
+    public telemetryService: TelemetryService, private httpClient: HttpClient,
+    private programsService: ProgramsService) {
       this.currentUserID = this.userService.userProfile.userId;
      }
 
@@ -89,14 +91,14 @@ export class CollectionHierarchyService {
     return forkJoin(hierarchyRequest);
   }
 
-  getCollectionWithProgramId(programId) {
+  getCollectionWithProgramId(programId, preferencefilters?) {
     const httpOptions: HttpOptions = {
       headers: {
         'content-type': 'application/json',
       }
     };
     const option = {
-      url: 'content/composite/v1/search',
+      url: 'composite/v3/search',
       data: {
         request: {
           filters: {
@@ -108,7 +110,22 @@ export class CollectionHierarchyService {
         }
       }
     };
-    return this.httpClient.post<any>(option.url, option.data, httpOptions);
+    if (!isUndefined(preferencefilters)) {
+        if (!_.isEmpty(_.get(preferencefilters, 'medium'))) {
+          option.data.request.filters['medium'] = _.get(preferencefilters, 'medium');
+        }
+        if (!_.isEmpty(_.get(preferencefilters, 'gradeLevel'))) {
+          option.data.request.filters['gradeLevel'] = _.get(preferencefilters, 'gradeLevel');
+        }
+        if (!_.isEmpty(_.get(preferencefilters, 'subject'))) {
+          option.data.request.filters['subject'] = _.get(preferencefilters, 'subject');
+        }
+    }
+    const req = {
+      url: option.url,
+      data: option.data,
+    };
+    return this.actionService.post(req);
   }
 
   getContentCounts(contents, orgId, collections?) {
@@ -144,7 +161,7 @@ export class CollectionHierarchyService {
       review: _.has(orgLevelDataWithReject, 'Review') ? orgLevelDataWithReject.Review.length : 0,
       draft: _.has(orgLevelDataWithReject, 'Draft') ? orgLevelDataWithReject.Draft.length : 0,
       rejected: _.has(orgLevelDataWithReject, 'Reject') ? orgLevelDataWithReject.Reject.length : 0,
-      live: _.has(orgLevelDataWithReject, 'Live') ? orgLevelDataWithReject.Live.length : 0,
+      live: this.getAllPendingForApprovalCount(orgLevelDataWithReject, collections).length,
       individualStatus: collectionsByStatus,
       individualStatusForSample: collectionsByStatusForSample,
       ...(!_.isUndefined(collections) && {sourcingOrgStatus : sourcingOrgStatus})
@@ -225,7 +242,7 @@ export class CollectionHierarchyService {
 
   getContentAggregation(programId, sampleContentCheck?, organisationId?, userId?, onlyCount?) {
     const option = {
-      url: 'content/composite/v1/search',
+      url: 'composite/v3/search',
       data: {
         request: {
           filters: {
@@ -270,7 +287,7 @@ export class CollectionHierarchyService {
     if (!_.isUndefined(onlyCount)) {
       option.data.request['limit'] = 0;
     }
-    return this.httpClient.post<any>(option.url, option.data);
+    return this.actionService.post(option);
   }
 
   getContentsByType (contents, id, userType, contentType) {
@@ -322,23 +339,35 @@ export class CollectionHierarchyService {
     this.telemetryService.error(telemetryErrorData);
   }
 
+  getAllPendingForApprovalCount(textbookMeta, collections?) {
+    let liveContents = _.has(textbookMeta, 'Live') ? _.map(textbookMeta.Live, 'identifier') : [];
+    if (_.isUndefined(collections)) {
+      return liveContents.length;
+    }
+    // Merge the accepted and rejected contents
+    const reviewedContents = _.union(_.flatten(_.map(collections, 'acceptedContents')), _.flatten(_.map(collections, 'rejectedContents')));
+    // Get contents that are neither accepted nor rejected
+    return _.difference(liveContents, reviewedContents);
+  }
+
   getIndividualCollectionStatus(contentStatusCounts, collections) {
     return _.map(collections, textbook => {
       const textbookMeta = _.get(contentStatusCounts.individualStatus, textbook.identifier);
       const textbookMetaForSample = _.get(contentStatusCounts.individualStatusForSample, textbook.identifier);
+      const liveContents = _.has(textbookMeta, 'Live') ? _.map(textbookMeta.Live, 'identifier') : [];
       const sourcingOrgMeta = _.get(contentStatusCounts, 'sourcingOrgStatus');
       textbook.draftCount = textbookMeta && _.has(textbookMeta, 'Draft') ? textbookMeta.Draft.length : 0;
       textbook.reviewCount = textbookMeta && _.has(textbookMeta, 'Review') ? textbookMeta.Review.length : 0;
       textbook.rejectedCount = textbookMeta && _.has(textbookMeta, 'Reject') ? textbookMeta.Reject.length : 0;
-      textbook.liveCount = textbookMeta && _.has(textbookMeta, 'Live') ? textbookMeta.Live.length : 0;
+      const reviewedContents = _.union(_.get(textbook, 'acceptedContents', []), _.get(textbook, 'rejectedContents', []));
+      textbook.liveCount = textbookMeta && _.difference(liveContents, reviewedContents).length;
       // tslint:disable-next-line:max-line-length
       textbook.sampleContentInReview = textbookMetaForSample && _.has(textbookMetaForSample, 'Review') ? textbookMetaForSample.Review.length : 0;
       // tslint:disable-next-line:max-line-length
       textbook.sampleContentInDraft = textbookMetaForSample && _.has(textbookMetaForSample, 'Draft') ? textbookMetaForSample.Draft.length : 0;
       // tslint:disable-next-line:max-line-length
       textbook.totalSampleContent = textbookMetaForSample ? textbook.sampleContentInDraft + textbook.sampleContentInReview : 0;
-      // tslint:disable-next-line:max-line-length
-      const individualCollectionLiveContent = sourcingOrgMeta && textbookMeta && _.has(textbookMeta, 'Live') ? _.map(textbookMeta.Live, 'identifier') : [];
+      const individualCollectionLiveContent = sourcingOrgMeta && textbookMeta && liveContents
       // tslint:disable-next-line:max-line-length
       const intersection = textbookMeta && sourcingOrgMeta && sourcingOrgMeta.acceptedContents ? _.intersection(sourcingOrgMeta.acceptedContents, individualCollectionLiveContent) : [];
       // tslint:disable-next-line:max-line-length
@@ -346,6 +375,23 @@ export class CollectionHierarchyService {
       textbook.pendingBySourceOrg = _.difference(individualCollectionLiveContent, _.union(intersection, rejectedContentsIntersection));
       return textbook;
     });
+  }
+
+  getOriginForApprovedContents(contentIds) {
+    const originUrl = this.programsService.getContentOriginEnvironment();
+    const url =  originUrl + '/action/composite/v3/search';
+    const data = {
+      request: {
+        filters: {
+          objectType: 'content',
+          origin: contentIds
+        },
+        exists: ["originData"],
+        fields: ["status", "origin"],
+        limit: 1000
+      }
+    };
+    return this.httpClient.post(url, data);
   }
 }
 

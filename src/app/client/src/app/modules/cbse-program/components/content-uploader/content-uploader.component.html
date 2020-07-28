@@ -28,7 +28,7 @@
                 <span class="sb-label sb-label-table sb-label-success-0" *ngIf="!sourcingOrgReviewer"
                 [ngClass]="{ 'sb-label-success-0': (resourceStatus === 'Live' && sourcingReviewStatus === 'Approved'), 'sb-label-warning-0': (resourceStatus === 'Draft'),  'sb-label-error-0': ((resourceStatus === 'Draft' && contentMetaData.prevStatus === 'Review') || (resourceStatus === 'Live' && sourcingReviewStatus === 'Rejected')) ,  'sb-label-gray-0': (resourceStatus === 'Review' || (resourceStatus === 'Live' && !sourcingReviewStatus)) }">{{ resourceStatusText }}</span>
                 <span class="cursor-pointer fs-0-785 ml-8"
-                  *ngIf="contentMetaData && contentMetaData.rejectComment && (sessionContext.currentRoleId === 1) && this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Review'">
+                  *ngIf="showSourcingOrgRejectComments() || showContributorOrgReviewComments()">
                   <i class="comment alternate outline icon sb-color-primary"></i>
                   <a (click)="showReviewModal=!showReviewModal"
                   appTelemetryInteract
@@ -38,6 +38,10 @@
                 [telemetryInteractPdata]="telemetryInteractPdata"
                   >View Comments</a>
                 </span>
+                <a id="viewContentOnDiksha" *ngIf="sourcingReviewStatus === 'Approved' && originPreviewUrl && originPreviewReady" class="sb-color-primary mr-8 pl-10 fs-0-785 font-weight-bold"
+                href="{{originPreviewUrl}}" target="_blank">{{resourceService.frmelmnts.btn.viewContentOnDiksha}}</a>
+                <label *ngIf="sourcingReviewStatus === 'Approved' && !originPreviewUrl && originPreviewReady" class="sb-color-error mr-8 pl-10 fs-0-785 font-weight-bold">
+                {{resourceService.frmelmnts.btn.viewContentOnDikshaError}}</label>
               </div>
             </div>
             <div class="sb-field-group textbook-edit ui form" *ngIf="showTextArea">
@@ -60,7 +64,7 @@
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >Save</button>
-              <button id="changeContent" suiPopup popupText="Replace File" [popupPlacement]="'top'" *ngIf="visibility && visibility.showChangeFile && resourceStatus === 'Draft'" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="changeFile()"
+              <button id="changeContent" suiPopup popupText="Replace File" [popupPlacement]="'top'" *ngIf="visibility && visibility.showChangeFile" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="changeFile()"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('replace-resourcefile', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
@@ -68,21 +72,21 @@
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >Replace
                 File</button>
-              <button id="requestChanges" suiPopup popupText="{{resourceService.frmelmnts.btn.requestChanges}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showRequestChanges && resourceStatus === 'Review'" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true;"
+              <button id="requestChanges" suiPopup popupText="{{resourceService.frmelmnts.btn.requestChanges}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showRequestChanges" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true;"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-resource', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{resourceService.frmelmnts.btn.requestChanges}}</button>
-              <button id="publishContent" suiPopup popupText="{{resourceService.frmelmnts.btn.accept}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showPublish && resourceStatus === 'Review'" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="publishContent();"
+              <button id="publishContent" suiPopup popupText="{{resourceService.frmelmnts.btn.accept}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showPublish" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="publishContent();"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('publish-resource', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{resourceService.frmelmnts.btn.accept}}</button>
-              <button id="submitContent" suiPopup popupText="{{sessionContext.currentOrgRole === 'individual' ? 'Publish' : 'Send For Review' }}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSubmit && resourceStatus === 'Draft'" class="sb-btn sb-btn-secondary sb-btn-normal" (click)="saveContent('review')"
+              <button id="submitContent" suiPopup popupText="{{sessionContext.currentOrgRole === 'individual' ? 'Publish' : 'Send For Review' }}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSubmit" class="sb-btn sb-btn-secondary sb-btn-normal" (click)="saveContent('review')"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('submit-resourceforreview', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
@@ -90,14 +94,14 @@
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{isIndividualAndNotSample() ? 'Publish' : 'Submit' }}</button>
               <button id="acceptContent" suiPopup
-              popupText="{{resourceService.frmelmnts.lbl.contentAcceptMessage}}" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live'" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="attachContentToTextbook('accept')"
+              popupText="{{resourceService.frmelmnts.lbl.contentAcceptMessage}}" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live' && !sourcingReviewStatus" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="attachContentToTextbook('accept')"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('accept-content-for-textbook', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{resourceService.frmelmnts.btn.approve}}</button>
-              <button id="rejectContent" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentRejectMessage}}" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live'" class="sb-btn sb-btn-error sb-btn-normal" (click)="attachContentToTextbook('reject')"
+              <button id="rejectContent" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentRejectMessage}}" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live' && !sourcingReviewStatus" class="sb-btn sb-btn-error sb-btn-normal" (click)="rejectBySourcingOrg = true; showRequestChangesPopup = true"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-content-for-textbook', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
@@ -138,9 +142,9 @@
               <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
                 class="qq-progress-bar-selector qq-progress-bar"></div>
             </div>
-            <span class="qq-upload-spinner-selector qq-upload-spinner"></span>
+            <!-- <span class="qq-upload-spinner-selector qq-upload-spinner"></span> -->
             <img class="qq-thumbnail-selector" qq-max-size="100" qq-server-scale>
-            <span class="qq-upload-file-selector qq-upload-file custom-qq-upload-file"></span>
+            <!-- <span class="qq-upload-file-selector qq-upload-file custom-qq-upload-file"></span> -->
             <span class="qq-upload-size-selector qq-upload-size"></span>
             <button type="button" class="qq-btn qq-upload-retry-selector qq-upload-retry">Retry</button>
             <button type="button" class="qq-btn qq-upload-delete-selector qq-upload-delete">Delete</button>
@@ -153,7 +157,7 @@
           <div class="qq-upload-button-selector qq-upload-button sb-btn sb-btn-normal sb-btn-success">
             <div>Select Files</div>
           </div>
-          <p class="mt-8">Upload {{templateDetails.filesConfig.accepted}} files ( Max size {{templateDetails.filesConfig.size}} MB )</p>
+          <p class="mt-8">Upload {{docExtns}} {{docExtns ? '( Max size ' + templateDetails.filesConfig.size + ' MB )' : ''}} {{vidEtns}} {{vidEtns ? '( Max size ' + videoSizeLimit + ' )' : ''}}</p>
         </div>
         <dialog class="qq-confirm-dialog-selector">
           <div class="qq-dialog-message-selector"></div>
@@ -188,19 +192,25 @@
           <li *ngIf="templateDetails.filesConfig.accepted.toLowerCase().includes('pdf')"><a target="_blank" title="How to convert MS word to PDF" href="https://diksha.gov.in/help/contributor/word-to-pdf.html">How to convert MS word to PDF</a></li>
         </ul>
       </div>
-      <div *ngIf='loading' class="uploading-files">
-          <div class='d-flex flex-dc flex-jc-center flex-ai-center icon'>
-            <img src="assets/images/loader.gif" width="64" class='process-icon'>
-            <!-- <div class="fs-0-785 pt-16">120 MB Uploading Files (65%)
-            </div> -->
-            <!-- <sui-progress [value]="60" [maximum]="100" class="mb-0 mr-0"></sui-progress> -->
+      <div *ngIf='loading' class="uploading-files text-center">
+        <div class='d-flex flex-dc flex-ai-center icon'>
+          <img src="assets/images/loader.gif" width="64" class='process-icon'>
+          <label class="fs-0-785 pt-16">{{uploader.getName(0)}} </label>
+          <div *ngIf="videoFileFormat">
+            <div class="fs-0-785 pt-16">{{fileUplaoderProgress?.size}} Uploading Files ({{fileUplaoderProgress.progress}}%)
+            </div>
+            <sui-progress [value]="fileUplaoderProgress.progress" [maximum]="100" class="mb-0 mr-0"></sui-progress>
+            <div class="fs-0-785 pt-16">{{fileUplaoderProgress.remainingTime ? 'Remaining time '+ fileUplaoderProgress.remainingTime : ''}}
+            </div>
           </div>
-          <div class="text-center fs-0-785">
-            <!-- <span class="sb-color-gray-800">Disclaimer:</span>
-            By submitting this Content, you confirm that you have followed prescribed guidelines, including the Content Policy and that you consent to publish it in accordance with the <a href="#" target="_blank">Content Policy.</a>
-            Please choose the applicable <a href="https://creativecommons.org/licenses" target="_blank">Creative Commons license</a> you wish to apply to your content. -->
-          </div>
+          <div class="sb-color-error fs-0-785 pt-10">Please do not close this window until the upload is complete</div>
         </div>
+        <div class="text-center fs-0-785">
+          <!-- <span class="sb-color-gray-800">Disclaimer:</span>
+          By submitting this Content, you confirm that you have followed prescribed guidelines, including the Content Policy and that you consent to publish it in accordance with the <a href="#" target="_blank">Content Policy.</a>
+          Please choose the applicable <a href="https://creativecommons.org/licenses" target="_blank">Creative Commons license</a> you wish to apply to your content. -->
+        </div>
+      </div>
     </div>
     <div class="sb-modal-actions">
       <button id="uploadContent" class="sb-btn sb-btn-normal ml-8" [ngClass]="{'sb-btn-primary': uploadButton, 'sb-btn-disabled': !uploadButton}" (click)="uploadContent()"
@@ -242,7 +252,7 @@
       </div>
   </div>
   <div class="sb-modal-actions">
-    <button id="submitReview" type="submit" class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid}" (click)="requestChanges()"
+    <button id="submitReview" type="submit" class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid}" (click)="rejectBySourcingOrg ? attachContentToTextbook('reject') : requestChanges(); showRequestChangesPopup = false;"
     appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-resourcewithcomments', 'click', 'content-uploader')"
         [telemetryInteractObject]="telemetryInteractObject"
@@ -268,7 +278,7 @@
             <li class="pb-8">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled </li>
             <li class="pb-8">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled </li>
           </ol> -->
-          {{contentMetaData?.rejectComment}}
+          {{showSourcingOrgRejectComments() ? sourcingOrgReviewComments : contentMetaData.rejectComment}}
       </div>
       </div>
   </div>
@@ -282,7 +292,12 @@
     <div class="middle-section-set">
       <div class="licence-form__content">
           <div class='licence-form__content__fields py-16 ui stackable grid'>
-
+          <div class="sb-field" *ngIf="sourcingOrgReviewer || sessionContext.currentRole ==='REVIEWER'">
+            <div class="width-100">
+              <label class="font-weight-bold fsmall">{{resourceService.frmelmnts.lbl.contentType}}:</label><i class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentType}}"></i>
+              <div><span class="sb-color-gray-200 fs-0-785">{{ contentType }}</span></div>
+            </div>
+          </div>
               <div *ngFor = "let field of allFormFields; let i = index " class="sb-field " [ngClass]="{'width-100':field.code==='contentPolicyCheck' }">
                 <div *ngIf="field.inputType === 'select'" class="width-100">
                   <div>

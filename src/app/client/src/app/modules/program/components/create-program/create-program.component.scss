@@ -69,22 +69,32 @@ h4 {
     font-size: 0.85rem;
     text-transform: uppercase;
 }
-.sb-table-striped{
-    td{
-        width: 21%;
-        max-width: 21%;
-        padding: 1rem 1rem 1rem 0;
-        &:first-child{
-            width: 2% !important;
-            max-width: 2% !important;
-            padding: 1rem;
+suiPopup:after {
+    content: attr(data-foo);
+    background-color: black;
+    color: white;
+    white-space: pre;
+    display: inline-block;
+}
+.sb-dock-textbook-table{
+    .sb-table-striped{
+        td{
+            width: 21%;
+            max-width: 21%;
+            padding: 1rem 1rem 1rem 0;
+            &:first-child{
+                width: 2% !important;
+                max-width: 2% !important;
+                padding: 1rem;
+            }
+        }
+        th{
+            &:first-child{
+                @extend td;
+            }
         }
     }
-    th{
-        &:first-child{
-            @extend td;
-        }
-    }
+
 }
 
 .ui.secondary{

@@ -105,7 +105,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     });
     this.contributor = this.selectedNominationDetails;
     this.nominatedContentTypes = this.programsService.getContentTypesName(this.contributor.nominationData.content_types);
-    this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program_ID'}];
+    this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
   }
@@ -175,7 +175,6 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       url: `program/v1/read/${this.programId}`
     };
     return this.programsService.get(req).pipe(tap((programDetails: any) => {
-      programDetails.result.config = JSON.parse(programDetails.result.config);
       this.programDetails = programDetails.result;
       this.mediums = _.join(this.programDetails.config['medium'], ', ');
       this.grades = _.join(this.programDetails.config['gradeLevel'], ', ');
@@ -183,7 +182,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   }
   getProgramTextbooks() {
      const option = {
-      url: 'content/composite/v1/search',
+      url: 'composite/v3/search',
        data: {
       request: {
          filters: {
@@ -195,7 +194,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       }
       }
     };
-    this.httpClient.post<any>(option.url, option.data).subscribe(
+    this.actionService.post(option).subscribe(
       (res) => this.showTexbooklist(res),
       (err) => console.log(err)
     );
@@ -257,7 +256,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     const deviceId = <HTMLInputElement>document.getElementById('deviceId');
-    const telemetryCdata = [{type: 'Program_ID', id: this.activatedRoute.snapshot.params.programId}];
+    const telemetryCdata = [{type: 'Program', id: this.activatedRoute.snapshot.params.programId}];
      setTimeout(() => {
       this.telemetryImpression = {
         context: {
@@ -273,7 +272,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
         edata: {
           type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
           pageid: _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid'),
-          uri: this.router.url,
+          uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
@@ -388,7 +387,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     });
   }
 
-  canAcceptorReject() {
+  /*canAcceptorReject() {
     if (!this.programDetails) {
       return false;
     }
@@ -397,7 +396,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     const isContributionDateFuture = moment(this.programDetails.content_submission_enddate).isSameOrAfter(today, 'day');
     const isEndDateFuture = moment(this.programDetails.enddate).isSameOrAfter(today, 'day');
     return isContributionDateFuture && isEndDateFuture;
-  }
+  }*/
 
   changeView() {
     if (!_.isEmpty(this.state.stages)) {

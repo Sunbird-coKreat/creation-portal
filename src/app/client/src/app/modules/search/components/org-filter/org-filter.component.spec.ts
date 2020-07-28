@@ -7,10 +7,9 @@ import {
   ConfigService, ToasterService, INoResultMessage
 } from '@sunbird/shared';
 import { SearchService, UserService, LearnerService, ContentService } from '@sunbird/core';
-import { OrgTypeService } from '@sunbird/org-management';
+// import { OrgTypeService } from '@sunbird/org-management';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { IPagination } from '@sunbird/announcement';
 import * as _ from 'lodash-es';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 
@@ -34,7 +33,7 @@ describe('OrgFilterComponent', () => {
       imports: [HttpClientTestingModule, SharedModule.forRoot()],
       declarations: [OrgFilterComponent, OrgSearchComponent],
       providers: [ResourceService, SearchService, PaginationService, UserService,
-        LearnerService, ContentService, ConfigService, ToasterService, OrgTypeService,
+        LearnerService, ContentService, ConfigService, ToasterService,
         { provide: Router, useClass: RouterStub },
         { provide: ActivatedRoute, useValue: fakeActivatedRoute }],
       schemas: [NO_ERRORS_SCHEMA]
@@ -56,17 +55,17 @@ describe('OrgFilterComponent', () => {
       fixture.detectChanges();
     }));
 
-  it('should take input of query param ', inject([ConfigService, OrgTypeService, Router],
-    (configService, orgTypeService, route) => {
-      component.queryParams = { OrgType: '0123462652405350403' };
-      spyOn(orgTypeService, 'getOrgTypes').and.callFake(() => observableOf(Response.successData));
-      fixture.detectChanges();
-  }));
+  // it('should take input of query param ', inject([ConfigService, OrgTypeService, Router],
+  //   (configService, orgTypeService, route) => {
+  //     component.queryParams = { OrgType: '0123462652405350403' };
+  //     spyOn(orgTypeService, 'getOrgTypes').and.callFake(() => observableOf(Response.successData));
+  //     fixture.detectChanges();
+  // }));
 
-  it('should call removeFilterSelection ', inject([ConfigService, OrgTypeService, Router],
-    (configService, orgTypeService, route) => {
-      component.queryParams = { OrgType: '0123462652405350403' };
-      component.removeFilterSelection('OrgType', '01243890163646464054');
-      fixture.detectChanges();
-  }));
+  // it('should call removeFilterSelection ', inject([ConfigService, OrgTypeService, Router],
+  //   (configService, orgTypeService, route) => {
+  //     component.queryParams = { OrgType: '0123462652405350403' };
+  //     component.removeFilterSelection('OrgType', '01243890163646464054');
+  //     fixture.detectChanges();
+  // }));
 });

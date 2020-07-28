@@ -4,12 +4,11 @@ import { ResourceService, ToasterService, ConfigService } from '@sunbird/shared'
 import { ActivatedRoute, Router } from '@angular/router';
 import { IProgram } from '../../../core/interfaces';
 import * as _ from 'lodash-es';
-import { tap, filter } from 'rxjs/operators';
-import { forkJoin } from 'rxjs';
 import * as moment from 'moment';
 import { DatePipe } from '@angular/common';
-import { programContext } from '../../../contribute/components/list-nominated-textbooks/data';
 import { IInteractEventEdata } from '@sunbird/telemetry';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+
 @Component({
   selector: 'app-program-list',
   templateUrl: './program-list.component.html',
@@ -19,14 +18,14 @@ import { IInteractEventEdata } from '@sunbird/telemetry';
 export class ProgramListComponent implements OnInit {
 
   public programs: IProgram[];
+  public program: any;
+  public programIndex: number;
   public count = 0;
   public activeDates = <any>[];
   public isContributor: boolean;
   public activeAllProgramsMenu: boolean;
   public activeMyProgramsMenu: boolean;
-  public showAssignRoleModal = false;
   public contributorOrgUser = [];
-  public programContext;
   public roles;
   public selectedRole;
   public selectedProgramToAssignRoles;
@@ -41,13 +40,16 @@ export class ProgramListComponent implements OnInit {
   public showLoader = true;
   public roleMapping = [];
   public iscontributeOrgAdmin = true;
+  public issourcingOrgAdmin = false;
+
+  showDeleteModal = false;
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService ) { }
 
   ngOnInit() {
     this.checkIfUserIsContributor();
-    this.roles = _.get(programContext, 'config.roles');
+    this.issourcingOrgAdmin = this.isSourcingOrgAdmin();
     this.telemetryInteractCdata = [];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
@@ -77,14 +79,14 @@ export class ProgramListComponent implements OnInit {
 
       if (this.isContributor) {
         if (this.activeMyProgramsMenu) {
-          this.getMyProgramsForContrib('Live');
+          this.getMyProgramsForContrib(['Live', 'Unlisted']);
         } else if (this.activeAllProgramsMenu) {
-          this.getAllProgramsForContrib('public', 'Live');
+          this.getAllProgramsForContrib('public', ['Live', 'Unlisted']);
         } else {
           this.showLoader = false;
         }
       } else {
-        this.getMyProgramsForOrg('Live');
+        this.getMyProgramsForOrg(['Live', 'Unlisted']);
       }
   }
 
@@ -105,7 +107,75 @@ export class ProgramListComponent implements OnInit {
       this.userService.userProfile.userRegData.User_Org);
   }
 
-  /**
+  setDelete(program, index) {
+    if (!this.issourcingOrgAdmin) {
+      this.toasterService.error(this.resourceService.messages.imsg.m0035);
+      return this.router.navigate(['home']);
+    }
+
+    this.program = program;
+    this.programIndex = index;
+
+    const req = {
+      url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
+      data: {
+        request: {
+          filters: {
+            program_id: this.program.program_id,
+            status: ['Pending', 'Approved']
+          },
+          fields: ['organisation_id', 'status'],
+          limit: 0
+        }
+      }
+    };
+
+    this.programsService.getNominationList(req.data.request.filters)
+      .subscribe((nominationsResponse) => {
+        const nominations = _.get(nominationsResponse, 'result');
+ 
+        if (nominations.length > 1) {
+          this.toasterService.error(this.resourceService.frmelmnts.lbl.projectCannotBeDeleted);
+          this.showDeleteModal = false;
+
+          return false;
+        }
+
+        this.showDeleteModal = true;
+      },
+      error =>{
+        console.log(error);
+    });
+
+  }
+
+  deleteProject($event: MouseEvent){
+    if (!this.issourcingOrgAdmin) {
+      this.toasterService.error(this.resourceService.messages.imsg.m0035);
+      return this.router.navigate(['home']);
+    }
+
+    const programData = {
+      "program_id": this.program.program_id,
+      "status":"Retired"
+    };
+
+    this.programsService.updateProgram(programData).subscribe(
+      (res) => {
+        this.toasterService.success(this.resourceService.frmelmnts.lbl.successTheProjectHasBeenDeleted);
+        ($event.target as HTMLButtonElement).disabled = false;
+        this.programs.splice(this.programIndex, 1);
+        this.showDeleteModal=false;
+        },
+      (err) => {
+        console.log(err, err)
+        this.toasterService.error(this.resourceService.frmelmnts.lbl.errorMessageTheProjectHasBeenDeleted);
+        ($event.target as HTMLButtonElement).disabled = false;
+      }
+    );
+  }
+
+  /**programContext
    * fetch the list of programs.
    */
   private getAllProgramsForContrib(type, status) {
@@ -163,6 +233,10 @@ export class ProgramListComponent implements OnInit {
         this.toasterService.error(_.get(error, 'error.params.errmsg') || this.resourceService.messages.emsg.projects.m0001);
       }
     );
+  }
+
+  isSourcingOrgAdmin() {
+    return _.get(this.userService, 'userProfile.userRoles', []).includes('ORG_ADMIN');
   }
 
   filterOutEnrolledPrograms(allPrograms, enrolledPrograms) {
@@ -370,37 +444,6 @@ export class ProgramListComponent implements OnInit {
     return roles;
   }
 
-  getContributionOrgUsers(selectedProgram) {
-    this.selectedProgramToAssignRoles = selectedProgram.program_id;
-    this.showAssignRoleModal = true;
-    const orgUsers = this.registryService.getContributionOrgUsers(this.userService.userProfile.userRegData.User_Org.orgId);
-      orgUsers.subscribe(response => {
-        const result = _.get(response, 'result');
-        if (!result || _.isEmpty(result)) {
-          console.log('NO USER FOUND');
-        } else {
-          // get Ids of all users whose role is 'user'
-          const userIds = _.map(_.filter(result[_.first(_.keys(result))], ['roles', ['user']]), 'userId');
-          const getUserDetails = _.map(userIds, id => this.registryService.getUserDetails(id));
-          forkJoin(...getUserDetails)
-            .subscribe((res: any) => {
-              if (res) {
-                _.forEach(res, r => {
-                  if (r.result && r.result.User) {
-                   this.contributorOrgUser.push(r.result.User);
-                  }
-                });
-              }
-
-            }, error => {
-              console.log(error);
-            });
-        }
-      }, error => {
-        console.log(error);
-      });
-  }
-
   /**
    * fetch the list of programs.
    */
@@ -443,8 +486,13 @@ export class ProgramListComponent implements OnInit {
   }
 
   getProgramInfo(program, type) {
-    const config = JSON.parse(program.config);
-    return type  === 'board' ? config[type] : _.join(_.compact(config[type]), ', ');
+    //return type  === 'board' ? program.config[type] : _.join(_.compact(program.config[type]), ', ');
+
+    if (program && program.config) {
+      return type  === 'board' ? program.config[type] : _.join(_.compact(_.uniq(program.config[type])), ', ');
+    } else {
+      return type  === 'board' ? program[type] : _.join(_.compact(_.uniq(JSON.parse(program[type]))), ', ');
+    }
   }
 
   getProgramNominationStatus(program) {
@@ -465,19 +513,14 @@ export class ProgramListComponent implements OnInit {
 
   viewDetailsBtnClicked(program) {
     if (this.isContributor) {
-      if (this.activeMyProgramsMenu) {
-        if (program.nomination_status === 'Initiated') {
-          return this.router.navigateByUrl('/contribute/program/' + program.program_id);
-        }
-        return this.router.navigateByUrl('/contribute/nominatedtextbooks/' + program.program_id);
-      }
-
-      if (this.activeAllProgramsMenu) {
-        return this.router.navigateByUrl('/contribute/program/' + program.program_id);
-      }
+      return this.router.navigateByUrl('/contribute/program/' + program.program_id);
     } else {
       return this.router.navigateByUrl('/sourcing/nominations/' + program.program_id);
     }
+  }
+
+  editOnClick(program) {
+    return this.router.navigateByUrl('/sourcing/edit/' + program.program_id);
   }
 
   isActive(program, name, index) {
@@ -510,30 +553,6 @@ export class ProgramListComponent implements OnInit {
       this.activeDates[index]['enddate'] = true;
       return true;
     }
-  }
-
-  assignRolesToOrgUsers() {
-    const roleMap = {};
-    _.forEach(this.roles, role => {
-      roleMap[role.name] = _.filter(this.contributorOrgUser, user => {
-        if (user.selectedRole === role.name) {  return user.userId; }
-      }).map(({userId}) => userId);
-    });
-
-    const req = {
-      'request': {
-          'program_id': this.selectedProgramToAssignRoles,
-          'user_id': this.userService.userid,
-          'rolemapping': roleMap
-      }
-    };
-    const updateNomination = this.programsService.updateNomination(req);
-    updateNomination.subscribe(response => {
-      this.showAssignRoleModal = false;
-      this.toasterService.success('Roles updated');
-    }, error => {
-      console.log(error);
-    });
   }
 
   getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {

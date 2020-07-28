@@ -1,8 +1,0 @@
-@import "variables";
-@import "mixins/mixins";
-  
-@media screen and (max-width: 1024px) {
-  .sb__DesktopOnly {
-    display: none;
-  }
-}

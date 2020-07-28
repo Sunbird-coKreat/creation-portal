@@ -1,5 +1,4 @@
 
-
 *,
 ::after,
 ::before {
@@ -1059,7 +1058,7 @@ h3, label, ul li, a, p, button {
     font-weight: bold;
     letter-spacing: 0;
     line-height: 32px;
-    margin-bottom: 32px;
+    margin-bottom: 20px;
     text-align: center;
 }
 
@@ -1068,19 +1067,25 @@ h3, label, ul li, a, p, button {
     background-color: #FFFFFF;
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.1);
     min-height: auto;
-    margin-bottom: 24px;
+    margin-bottom: 30px;
 }
 
 .latestPrograms .program-cards .topSection {
     padding: 24px;
+     height: 12rem;
 }
 
 .latestPrograms .program-cards .topSection label {
     color: #333333;
-    font-size: 20px;
-    font-weight: bold;
-    letter-spacing: 0;
-    line-height: 24px;
+      font-size: 16px;
+      font-weight: bold;
+      letter-spacing: 0;
+      line-height: 24px;
+      height:2.8rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
 }
 
 .latestPrograms .program-cards .topSection p {
@@ -1093,14 +1098,14 @@ h3, label, ul li, a, p, button {
 }
 
 .latestPrograms .program-cards .bottomSection {
-    padding: 24px;
+    padding: 35px 24px;
     border-radius: 0 0 8px 8px;
     background-color: #333333;
 }
 
 .latestPrograms .program-cards .bottomSection label {
     color: #FFFFFF;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: normal;
     letter-spacing: 0;
     line-height: 24px;
@@ -1125,7 +1130,7 @@ h3, label, ul li, a, p, button {
     letter-spacing: 0;
     line-height: 24px;
     text-align: center;
-    margin: 0 0 16px;
+    margin: 0;
     display: block;
     width: 100%;
 }
@@ -1163,7 +1168,6 @@ h3, label, ul li, a, p, button {
 
 .cb {
     display: block;
-    text-align: center;
     cursor: pointer;
 }
 
@@ -1247,7 +1251,7 @@ h3, label, ul li, a, p, button {
     text-align: center;
     font-size: 16px;
     font-weight: bold;
-    margin-bottom: 0;
+    margin-bottom: 30px;
     margin-top: 20px;
     width: 100%;
 }
@@ -1602,6 +1606,10 @@ h3, label, ul li, a, p, button {
     .latestPrograms .program-cards .bottomSection {
         padding: 13px 8px;
     }
+    .latestPrograms .program-cards .topSection {
+        padding: 24px;
+        height: 12rem;
+    }
 
     .latestPrograms h3,
     .guideLines h3 {
@@ -1726,4 +1734,38 @@ h3, label, ul li, a, p, button {
         justify-content: center;
         flex-direction: row-reverse;
     }
+}
+/* for project contribution */
+.a-link{
+    color: #5cbcf5;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+.a-link:hover{
+    color: #5cbcf5;
+    text-decoration: none;
+}
+.fs-2 {
+    font-size: 2rem !important;
+}
+.pb-15{
+    padding-bottom: 15px;
+}
+.pt-0{
+    padding-top: 0;
+}
+.flex-jc-center {
+    justify-content: center !important;
+}
+.logo-img{
+    max-width: 100%;
+    height: 48px;
+    margin: auto;
+    display: block;
+}
+.my-20{
+    margin-top: 1rem;
+}
+.mb-35{
+    margin-bottom: 35px !important;
 }

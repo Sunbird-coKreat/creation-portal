@@ -1,8 +1,8 @@
 import { Component, OnInit, Output, Input, EventEmitter, OnChanges, AfterViewInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { McqForm } from './../../class/McqForm';
-import { ConfigService, IUserProfile, ToasterService, NavigationHelperService } from '@sunbird/shared';
-import { UserService, ActionService } from '@sunbird/core';
+import { ConfigService, IUserProfile, ToasterService, NavigationHelperService, ResourceService } from '@sunbird/shared';
+import { UserService, ActionService, ProgramsService } from '@sunbird/core';
 import { TelemetryService } from '@sunbird/telemetry';
 import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
@@ -87,7 +87,8 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
     public toasterService: ToasterService, private cdr: ChangeDetectorRef, private cbseService: CbseProgramService,
     private formBuilder: FormBuilder, public telemetryService: TelemetryService,
     public activeRoute: ActivatedRoute, public programTelemetryService: ProgramTelemetryService,
-    public router: Router, private navigationHelperService: NavigationHelperService) {
+    public router: Router, private navigationHelperService: NavigationHelperService, private resourceService: ResourceService,
+    private programsService: ProgramsService) {
   }
 
   initForm() {
@@ -155,7 +156,7 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
         edata: {
           type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
           pageid: this.telemetryPageId,
-          uri: this.router.url,
+          uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };

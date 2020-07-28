@@ -1,19 +1,22 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef,
   AfterViewInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FineUploader } from 'fine-uploader';
-import { ToasterService, ConfigService, ResourceService, NavigationHelperService } from '@sunbird/shared';
-import { PublicDataService, UserService, ActionService, PlayerService, FrameworkService, NotificationService } from '@sunbird/core';
+import { ToasterService, ConfigService, ResourceService, NavigationHelperService, BrowserCacheTtlService } from '@sunbird/shared';
+import { PublicDataService, UserService, ActionService, PlayerService, FrameworkService, NotificationService,
+  ProgramsService, ContentService} from '@sunbird/core';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import * as _ from 'lodash-es';
 import { catchError, map, first } from 'rxjs/operators';
-import { throwError, Observable } from 'rxjs';
+import { throwError, Observable, Subscription } from 'rxjs';
 import { IContentUploadComponentInput} from '../../interfaces';
 import { FormGroup, FormArray, FormBuilder, Validators, NgForm } from '@angular/forms';
 import { CbseProgramService } from '../../services/cbse-program/cbse-program.service';
+import { AzureFileUploaderService } from '../../services';
 import { HelperService } from '../../services/helper.service';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
+import { CacheService } from 'ng2-cache-service';
 
 @Component({
   selector: 'app-content-uploader',
@@ -61,7 +64,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   showRequestChangesPopup = false;
   disableFormField: boolean;
   showReviewModal = false;
-  showUploadModal = true;
+  showUploadModal: boolean;
   submitButton: boolean;
   uploadButton: boolean;
   titleCharacterLimit: number;
@@ -73,6 +76,22 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public telemetryPageId = 'content-uploader';
   public sourcingOrgReviewer: boolean;
   public sourcingReviewStatus: string;
+  public contentType: string;
+  public rejectBySourcingOrg: boolean;
+  public sourcingOrgReviewComments: string;
+  originPreviewUrl = '';
+  originPreviewReady = false;
+  public azurFileUploaderSubscrition: Subscription;
+  public fileUplaoderProgress = {
+           progress: 0
+         };
+  public videoFileFormat: boolean;
+  public uploadInprogress: boolean;
+  public docExtns: string;
+  public vidEtns: string;
+  public allAvailableVidExtns = ['mp4', 'webm'];
+  public allAvailableDocExtns = ['pdf', 'epub', 'h5p'];
+  public videoSizeLimit: string;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -82,7 +101,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     private collectionHierarchyService: CollectionHierarchyService, private cd: ChangeDetectorRef,
     private resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService,
     private notificationService: NotificationService,
-    public activeRoute: ActivatedRoute, public router: Router, private navigationHelperService: NavigationHelperService) { }
+    public activeRoute: ActivatedRoute, public router: Router, private navigationHelperService: NavigationHelperService,
+    private programsService: ProgramsService, private azureUploadFileService: AzureFileUploaderService,
+    private contentService: ContentService, private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService) { }
 
   ngOnInit() {
     this.config = _.get(this.contentUploadComponentInput, 'config');
@@ -101,7 +122,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.cd.detectChanges();
       this.getUploadedContentMeta(_.get(this.contentUploadComponentInput, 'contentId'));
     }
-
+    this.segregateFileTypes();
     this.notify = this.helperService.getNotification().subscribe((action) => {
       this.contentStatusNotify(action);
     });
@@ -117,7 +138,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   ngAfterViewInit() {
     if (_.get(this.contentUploadComponentInput, 'action') !== 'preview') {
-      this.initiateUploadModal();
+      this.fetchFileSizeLimit();
     }
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
@@ -136,7 +157,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         edata: {
           type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
           pageid: this.telemetryPageId,
-          uri: this.router.url,
+          uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
@@ -145,56 +166,136 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   handleActionButtons() {
     this.visibility = {};
+    const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
+
     // tslint:disable-next-line:max-line-length
-    this.visibility['showChangeFile'] = (_.includes(this.actions.showChangeFile.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
+    this.visibility['showChangeFile'] = submissionDateFlag && (_.includes(this.actions.showChangeFile.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showRequestChanges'] = this.router.url.includes('/contribute')  && !this.contentMetaData.sampleContent === true &&
+    this.visibility['showRequestChanges'] = this.router.url.includes('/contribute') && submissionDateFlag && !this.contentMetaData.sampleContent === true &&
      (_.includes(this.actions.showRequestChanges.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
 
     // tslint:disable-next-line:max-line-length
-    this.visibility['showPublish'] = this.router.url.includes('/contribute') && !this.contentMetaData.sampleContent === true &&
+    this.visibility['showPublish'] = submissionDateFlag && this.router.url.includes('/contribute') && !this.contentMetaData.sampleContent === true &&
     (_.includes(this.actions.showPublish.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSubmit'] = (_.includes(this.actions.showSubmit.roles, this.sessionContext.currentRoleId)  && this.resourceStatus === 'Draft');
+    this.visibility['showSubmit'] = submissionDateFlag && (_.includes(this.actions.showSubmit.roles, this.sessionContext.currentRoleId)  && this.resourceStatus === 'Draft');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSave'] = !this.contentMetaData.sampleContent === true && (_.includes(this.actions.showSave.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
+    this.visibility['showSave'] = submissionDateFlag && !this.contentMetaData.sampleContent === true && (_.includes(this.actions.showSave.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showEdit'] = (_.includes(this.actions.showEdit.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
+    this.visibility['showEdit'] = submissionDateFlag && (_.includes(this.actions.showEdit.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
   }
 
   initiateUploadModal() {
-    this.uploader = new FineUploader({
-      element: document.getElementById('upload-content-div'),
-      template: 'qq-template-validation',
-      multiple: false,
-      autoUpload: false,
-      request: {
-        endpoint: '/assets/uploads'
-      },
-      validation: {
-        allowedExtensions: (!_.includes(this.templateDetails.filesConfig.accepted, ',')) ?
-          this.templateDetails.filesConfig.accepted.split(' ') : this.templateDetails.filesConfig.accepted.split(', '),
-        acceptFiles: this.templateDetails.mimeType ? this.templateDetails.mimeType.toString() : '',
-        itemLimit: 1,
-        sizeLimit: _.toNumber(this.templateDetails.filesConfig.size) * 1024 * 1024  // 52428800  = 50 MB = 50 * 1024 * 1024 bytes
-      },
-      messages: {
-        sizeError: `{file} is too large, maximum file size is ${this.templateDetails.filesConfig.size} MB.`,
-        typeError: `Invalid content type (supported type: ${this.templateDetails.filesConfig.accepted})`
-      },
-      callbacks: {
-        onStatusChange: () => {
-
+    setTimeout(() => {
+      this.uploader = new FineUploader({
+        element: document.getElementById('upload-content-div'),
+        template: 'qq-template-validation',
+        multiple: false,
+        autoUpload: false,
+        request: {
+          endpoint: '/assets/uploads'
         },
-        onSubmit: () => {
-          this.uploadContent();
+        validation: {
+          allowedExtensions: (!_.includes(this.templateDetails.filesConfig.accepted, ',')) ?
+            this.templateDetails.filesConfig.accepted.split(' ') : this.templateDetails.filesConfig.accepted.split(', '),
+          acceptFiles: this.getAcceptedFiles(),
+          itemLimit: 1
+          // sizeLimit: 20 * 1024 * 1024  // 52428800  = 50 MB = 50 * 1024 * 1024 bytes
         },
-        onError: () => {
-          this.uploader.reset();
+        messages: {
+          // sizeError: `{file} is too large, maximum file size is ${this.templateDetails.filesConfig.size} MB.`,
+          typeError: `Invalid content type (supported type: ${this.templateDetails.filesConfig.accepted})`
+        },
+        callbacks: {
+          onStatusChange: () => {
+          },
+          onSubmit: () => {
+            this.uploadContent();
+          },
+          onError: () => {
+            this.uploader.reset();
+          }
         }
+      });
+      this.fineUploaderUI.nativeElement.remove();
+    }, 0);
+  }
+
+  getAcceptedFiles() {
+    let acceptedFiles = '';
+    if (this.contentMetaData && this.contentMetaData.mimeType) {
+      acceptedFiles = this.contentMetaData.mimeType;
+    } else {
+      acceptedFiles = this.templateDetails.mimeType ? _.map(this.templateDetails.mimeType, (mimeType) => {
+        if (mimeType === 'application/epub') {
+          return '.epub';
+        } else if (mimeType === 'application/vnd.ekstep.h5p-archive') {
+          return '.h5p';
+        } else {
+          return mimeType;
+        }
+      }) : '';
+    }
+    return acceptedFiles.toString();
+  }
+
+  fetchFileSizeLimit() {
+    if (!this.cacheService.get('contentVideoSize')) {
+      const request = {
+        key: 'contentVideoSize',
+        status: 'active'
+      };
+      this.helperService.checkFileSizeLimit(request).subscribe(res => {
+        this.showUploadModal = true;
+        this.initiateUploadModal();
+        if (_.get(res, 'result.configuration.value')) {
+          this.videoSizeLimit = this.formatBytes(_.toNumber(_.get(res, 'result.configuration.value')) * 1024 * 1024);
+          this.cacheService.set(request.key  , res.result.configuration.value,
+            { maxAge: this.browserCacheTtlService.browserCacheTtl });
+        }
+      }, err => {
+        this.showUploadModal = true;
+        this.initiateUploadModal();
+        this.toasterService.error('Unable to fetch size Limit...Please try later!');
+      });
+    } else {
+      this.showUploadModal = true;
+      this.initiateUploadModal();
+      this.videoSizeLimit = this.formatBytes(_.toNumber(this.cacheService.get('contentVideoSize')) * 1024 * 1024);
+    }
+  }
+
+  segregateFileTypes() {
+    const extns = (!_.includes(this.templateDetails.filesConfig.accepted, ',')) ?
+    this.templateDetails.filesConfig.accepted.split(' ') : this.templateDetails.filesConfig.accepted.split(', ');
+    this.vidEtns =  _.join(_.intersection(extns, this.allAvailableVidExtns), ', ');
+    this.docExtns = _.join(_.intersection(extns, this.allAvailableDocExtns), ', ');
+  }
+
+  checkFileSizeLimit(fileUpload, mimeType) {
+    if (this.videoFileFormat) {
+      if (this.cacheService.get('contentVideoSize')) {
+        const val = _.toNumber(this.cacheService.get('contentVideoSize')) * 1024 * 1024;
+        if (this.uploader.getSize(0) < val) {
+          this.uploadByURL(fileUpload, mimeType);
+        } else {
+          this.handleSizeLimitError(this.formatBytes(val));
+        }
+      } else {
+        this.handleSizeLimitError('');
       }
-    });
-    this.fineUploaderUI.nativeElement.remove();
+    } else if (this.uploader.getSize(0) < (_.toNumber(this.templateDetails.filesConfig.size) * 1024 * 1024)) {
+      this.uploadByURL(fileUpload, mimeType);
+    } else {
+      this.handleSizeLimitError(`${this.templateDetails.filesConfig.size} MB`);
+    }
+  }
+
+  handleSizeLimitError(val) {
+    val ? alert(`File is too large. Maximum File Size is ${val}`) :
+          alert('something went wrong, Please try later!');
+    this.uploader.reset();
+    this.uploadButton = false;
   }
 
   uploadContent() {
@@ -208,19 +309,33 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.uploadButton = true;
       fileUpload = true;
     }
+    this.fileUplaoderProgress['size'] = this.formatBytes(this.uploader.getSize(0));
     const mimeType = fileUpload ? this.detectMimeType(this.uploader.getName(0)) : this.detectMimeType(this.contentURL);
     if (!mimeType) {
       this.toasterService.error(`Invalid content type (supported type: ${this.templateDetails.filesConfig.accepted})`);
       this.uploader.reset();
       return;
     } else {
-      this.uploadByURL(fileUpload, mimeType);
+      if (_.includes(mimeType.toString(), 'video')) {
+        this.videoFileFormat = true;
+      }
+      this.checkFileSizeLimit(fileUpload, mimeType);
     }
   }
 
+  formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) { return '0 Bytes'; }
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
+
   uploadByURL(fileUpload, mimeType) {
     this.loading = true;
-    if (fileUpload && !this.contentMetaData && !this.contentUploadComponentInput.contentId) {
+    if (fileUpload && !this.uploadInprogress && !this.contentMetaData && !this.contentUploadComponentInput.contentId) {
       let creator = this.userService.userProfile.firstName;
       if (!_.isEmpty(this.userService.userProfile.lastName)) {
         creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
@@ -272,7 +387,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
               this.programStageService.removeLastStage();
             });
         });
-    } else {
+    } else if (!this.uploadInprogress) {
       this.uploadFile(mimeType, this.contentMetaData ? this.contentMetaData.identifier : this.contentUploadComponentInput.contentId);
     }
   }
@@ -293,25 +408,45 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.actionService.post(option).pipe(catchError(err => {
       const errInfo = { errorMsg: 'Unable to get pre_signed_url and Content Creation Failed, Please Try Again' };
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
-  })).subscribe(res => {
+    })).subscribe(res => {
       const signedURL = res.result.pre_signed_url;
-      const config = {
-        processData: false,
-        contentType: contentType,
-        headers: {
-          'x-ms-blob-type': 'BlockBlob'
-        }
-      };
-      this.uploadToBlob(signedURL, config).subscribe(() => {
-        const fileURL = signedURL.split('?')[0];
-        this.updateContentWithURL(fileURL, mimeType, contentId);
-      });
+      this.uploadInprogress = true;
+      if (this.videoFileFormat) {
+        // tslint:disable-next-line:max-line-length
+        this.azurFileUploaderSubscrition = this.azureUploadFileService.uploadToBlob(signedURL, this.uploader.getFile(0)).subscribe((event: any) => {
+          this.fileUplaoderProgress.progress = event.percentComplete;
+          this.fileUplaoderProgress['remainingTime'] = event.remainingTime;
+        }, (error) => {
+          const errInfo = { errorMsg: 'Unable to upload to Blob, Please Try Again' };
+          this.cbseService.apiErrorHandling(error, errInfo);
+          console.error(error);
+          this.uploadInprogress = false;
+        }, () => {
+          const fileURL = signedURL.split('?')[0];
+          this.updateContentWithURL(fileURL, mimeType, contentId);
+        });
+      } else {
+        const config = {
+          processData: false,
+          contentType: contentType,
+          headers: {
+            'x-ms-blob-type': 'BlockBlob'
+          }
+        };
+        this.uploadToBlob(signedURL, config).subscribe(() => {
+          const fileURL = signedURL.split('?')[0];
+          this.updateContentWithURL(fileURL, mimeType, contentId);
+        }, err => {
+          console.error(err);
+          this.uploadInprogress = false;
+        });
+      }
     });
   }
 
   uploadToBlob(signedURL, config): Observable<any> {
     return this.actionService.http.put(signedURL, this.uploader.getFile(0), config).pipe(catchError(err => {
-      const errInfo = { errorMsg: 'Unable to upload to Blob and Content Creation Failed, Please Try Again' };
+      const errInfo = { errorMsg: 'Unable to upload to Blob, Please Try Again' };
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
   }), map(data => data));
   }
@@ -335,11 +470,14 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       const errInfo = { errorMsg: 'Unable to update pre_signed_url with Content Id and Content Creation Failed, Please Try Again' };
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
   })).subscribe(res => {
+     this.uploadInprogress = false;
       this.toasterService.success('Content Successfully Uploaded...');
       this.getUploadedContentMeta(contentId);
       this.uploadedContentMeta.emit({
         contentId: contentId
       });
+    }, err => {
+      this.uploadInprogress = false;
     });
   }
 
@@ -356,6 +494,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         contentData: res
       };
       this.contentMetaData = res;
+      const contentTypeValue = [this.contentMetaData.contentType];
+      this.contentType = this.programsService.getContentTypesName(contentTypeValue);
       this.editTitle = (this.contentMetaData.name !== 'Untitled') ? this.contentMetaData.name : '' ;
       this.resourceStatus = this.contentMetaData.status;
       if (this.resourceStatus === 'Review') {
@@ -368,17 +508,21 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
       } else if (this.sourcingReviewStatus === 'Approved') {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
+        // get the origin preview url
+        if (!_.isEmpty(this.sessionContext.contentOrigins) && !_.isEmpty(this.sessionContext.contentOrigins[contentId])) {
+          this.originPreviewUrl =  this.helperService.getContentOriginUrl(this.sessionContext.contentOrigins[contentId].identifier);
+        }
+        this.originPreviewReady = true;
       } else {
         this.resourceStatusText = this.resourceStatus;
       }
+
       this.playerConfig = this.playerService.getConfig(contentDetails);
       this.playerConfig.context.pdata.pid = `${this.configService.appConfig.TELEMETRY.PID}`;
       this.showPreview = this.contentMetaData.artifactUrl ? true : false;
-      this.showUploadModal = this.contentMetaData.artifactUrl ? false : true;
-      if (this.showUploadModal) {
-        return setTimeout(() => {
-          this.initiateUploadModal();
-        }, 0);
+      this.showUploadModal = false;
+      if (!this.contentMetaData.artifactUrl) {
+        this.fetchFileSizeLimit();
       }
       this.loading = false;
       this.handleActionButtons();
@@ -404,6 +548,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     } else if (this.modal && this.modal.deny && this.showUploadModal) {
       this.modal.deny();
       this.programStageService.removeLastStage();
+    }
+    if (this.videoFileFormat) {
+      this.azureUploadFileService.abortUpload();
     }
   }
 
@@ -484,7 +631,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           // tslint:disable-next-line:max-line-length
           preSavedValues[code] = (this.contentMetaData[code]) ? this.contentMetaData[code] : false;
           // tslint:disable-next-line:max-line-length
-          obj.required ? controller[obj.code] = [{value:preSavedValues[code], disabled: this.contentMetaData[code]}, [Validators.requiredTrue]] : controller[obj.code] = preSavedValues[code];
+          obj.required ? controller[obj.code] = [{value: preSavedValues[code], disabled: this.contentMetaData[code]}, [Validators.requiredTrue]] : controller[obj.code] = preSavedValues[code];
         }
       }
     });
@@ -552,8 +699,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   changePolicyCheckValue (event) {
     if ( event.target.checked ) {
       this.contentDetailsForm.controls.contentPolicyCheck.setValue(true);
-    }
-    else {
+    } else {
       this.contentDetailsForm.controls.contentPolicyCheck.setValue(false);
     }
   }
@@ -678,26 +824,31 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   contentStatusNotify(status) {
-  const notificationForContributor = {
-    user_id: this.contentMetaData.createdBy,
-    content: { name: this.contentMetaData.name },
-    org: { name:  this.sessionContext.nominationDetails.orgData.name},
-    program: { name: this.programContext.name },
-    status: status
-  };
-  this.notificationService.onAfterContentStatusChange(notificationForContributor)
-  .subscribe((res) => {  });
-  if (!_.isUndefined(this.sessionContext.nominationDetails.user_id) && status !== 'Request') {
-    const notificationForPublisher = {
-      user_id: this.sessionContext.nominationDetails.user_id,
-      content: { name: this.contentMetaData.name },
-      org: { name:  this.sessionContext.nominationDetails.orgData.name},
-      program: { name: this.programContext.name },
-      status: status
-    };
-    this.notificationService.onAfterContentStatusChange(notificationForPublisher)
-    .subscribe((res) => {  });
-  }
+    if (!this.sessionContext.nominationDetails && this.contentMetaData.organisationId && status !== 'Request') {
+      const programDetails = { name: this.programContext.name};
+      this.helperService.prepareNotificationData(status, this.contentMetaData, programDetails);
+    } else {
+      const notificationForContributor = {
+        user_id: this.contentMetaData.createdBy,
+        content: { name: this.contentMetaData.name },
+        org: { name:  _.get(this.sessionContext, 'nominationDetails.orgData.name') || '--'},
+        program: { name: this.programContext.name },
+        status: status
+      };
+      this.notificationService.onAfterContentStatusChange(notificationForContributor)
+      .subscribe((res) => {  });
+      if (!_.isUndefined(this.sessionContext.nominationDetails.user_id) && status !== 'Request') {
+        const notificationForPublisher = {
+          user_id: this.sessionContext.nominationDetails.user_id,
+          content: { name: this.contentMetaData.name },
+          org: { name:  this.sessionContext.nominationDetails.orgData.name},
+          program: { name: this.programContext.name },
+          status: status
+        };
+        this.notificationService.onAfterContentStatusChange(notificationForPublisher)
+        .subscribe((res) => {  });
+      }
+    }
   }
 
   isIndividualAndNotSample() {
@@ -721,20 +872,36 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   changeFile() {
     this.changeFile_instance = true;
     this.uploadButton = false;
-    this.showUploadModal = true;
-    setTimeout(() => {
-      this.initiateUploadModal();
-    }, 0);
+    this.fetchFileSizeLimit();
   }
 
   attachContentToTextbook(action) {
-    const originData = {
-      textbookOriginId: _.get(_.get(_.get(this.sessionContext.hierarchyObj, 'hierarchy'), this.sessionContext.collection), 'origin'),
-      unitOriginId: _.get(_.get(_.get(this.sessionContext.hierarchyObj, 'hierarchy'), this.unitIdentifier), 'origin')
-    };
-    if (originData.textbookOriginId && originData.unitOriginId) {
-      // tslint:disable-next-line:max-line-length
-      this.helperService.attachContentToTextbook(action, this.sessionContext.collection, this.contentMetaData.identifier, originData);
+    const hierarchyObj  = _.get(this.sessionContext.hierarchyObj, 'hierarchy');
+    if (hierarchyObj) {
+      const rootOriginInfo = _.get(_.get(hierarchyObj, this.sessionContext.collection), 'originData');
+      let channel =  rootOriginInfo && rootOriginInfo.channel;
+      if (_.isUndefined(channel)) {
+        const originInfo = _.get(_.get(hierarchyObj, this.unitIdentifier), 'originData');
+        channel = originInfo && originInfo.channel;
+      }
+      const originData = {
+        textbookOriginId: _.get(_.get(hierarchyObj, this.sessionContext.collection), 'origin'),
+        unitOriginId: _.get(_.get(hierarchyObj, this.unitIdentifier), 'origin'),
+        channel: channel
+      };
+      if (originData.textbookOriginId && originData.unitOriginId && originData.channel) {
+        if (action === 'accept') {
+          // tslint:disable-next-line:max-line-length
+          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentMetaData.identifier, originData);
+        } else if (action === 'reject' && this.FormControl.value.rejectComment.length) {
+          // tslint:disable-next-line:max-line-length
+          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentMetaData.identifier, originData, this.FormControl.value.rejectComment);
+        }
+      } else {
+        action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
+        this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+        console.error('origin data missing');
+      }
     } else {
       action === 'accept' ? this.toasterService.error(this.resourceService.messages.emsg.approvingFailed) :
       this.toasterService.error(this.resourceService.messages.fmsg.m00100);
@@ -742,7 +909,29 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
 
-ngOnDestroy() {
-  this.notify.unsubscribe();
-}
+  ngOnDestroy() {
+    this.notify.unsubscribe();
+    if (this.azurFileUploaderSubscrition) {
+      this.azurFileUploaderSubscrition.unsubscribe();
+    }
+  }
+
+  showSourcingOrgRejectComments() {
+    if (this.resourceStatus === 'Live' && _.get(this.sessionContext.hierarchyObj, 'sourcingRejectedComments') &&
+    _.get(this.sessionContext.hierarchyObj.sourcingRejectedComments, this.contentMetaData.identifier)) {
+      this.sourcingOrgReviewComments = _.get(this.sessionContext.hierarchyObj.sourcingRejectedComments, this.contentMetaData.identifier);
+     return true;
+    } else {
+      return false;
+    }
+  }
+
+  showContributorOrgReviewComments() {
+    if (this.contentMetaData && this.contentMetaData.rejectComment && this.sessionContext.currentRoleId === 1 &&
+        this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Review') {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
