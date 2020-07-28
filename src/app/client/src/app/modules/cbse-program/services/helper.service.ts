@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ConfigService, ToasterService, ServerResponse, ResourceService } from '@sunbird/shared';
-import { ContentService, ActionService, PublicDataService, ProgramsService, NotificationService } from '@sunbird/core';
+import { ContentService, ActionService, PublicDataService, ProgramsService, NotificationService, UserService } from '@sunbird/core';
 import { throwError, Observable, of, Subject, forkJoin } from 'rxjs';
 import { catchError, map, switchMap, tap, mergeMap } from 'rxjs/operators';
 import * as _ from 'lodash-es';
@@ -17,7 +17,7 @@ export class HelperService {
     private toasterService: ToasterService, private publicDataService: PublicDataService,
     private actionService: ActionService, private resourceService: ResourceService,
     public programStageService: ProgramStageService, private programsService: ProgramsService,
-    private notificationService: NotificationService) { }
+    private notificationService: NotificationService, private userService: UserService) { }
 
   getLicences(): Observable<any> {
     const req = {
@@ -130,7 +130,8 @@ export class HelperService {
               'origin': {
                 'channel': _.get(originData, 'channel'),
                 'textbook_id': _.get(originData, 'textbookOriginId'),
-                'units': [_.get(originData, 'unitOriginId')]
+                'units': [_.get(originData, 'unitOriginId')],
+                'lastPublishedBy': this.userService.userProfile.userId
               }
             }
           }
@@ -222,6 +223,7 @@ export class HelperService {
           status: status
         };
         const notify = [notificationForContributor, notificationForPublisher];
+        // tslint:disable-next-line: deprecation
         forkJoin(..._.map(notify, role => this.notificationService.onAfterContentStatusChange(role))).subscribe();
       }
     }, err => {

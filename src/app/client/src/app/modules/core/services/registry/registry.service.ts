@@ -41,12 +41,12 @@ export class RegistryService extends DataService {
           const tempMapping = [];
           if (!_.isEmpty(allOrgUsers)) {
             const userList = _.uniq(_.map(
-              _.filter(allOrgUsers, obj => { if (obj.userId !== userRegData.User.osid) { return obj } }),
+              _.filter(allOrgUsers, obj => { if (obj.userId !== userRegData.User.osid) { return obj; } }),
               (mapObj) => {
                 tempMapping.push(mapObj);
                 return mapObj.userId;
               }));
-            if (userList.length == 0) {
+            if (userList.length === 0) {
               return resolve([]);
             }
             if (userList && storedOrglist && userList.length === storedOrglist.length) {
@@ -64,7 +64,7 @@ export class RegistryService extends DataService {
                   if (!_.isEmpty(res2) && res2.length > 0) {
                   _.forEach(res2, (usersReqResult) => {
                       if (usersReqResult && usersReqResult.result.User.length) {
-                        const userList = _.map(usersReqResult.result.User, (obj) => {
+                        const userList1 = _.map(usersReqResult.result.User, (obj) => {
                           tempUser.push(obj);
                           return obj.userId;
                         });
@@ -74,7 +74,7 @@ export class RegistryService extends DataService {
                           data: {
                             'request': {
                               'filters': {
-                                'identifier': _.compact(userList)
+                                'identifier': _.compact(userList1)
                               }
                             }
                           }
@@ -122,7 +122,7 @@ export class RegistryService extends DataService {
     } else {
       return new Promise((resolve, reject) => {
         return resolve([]);
-      })
+      });
     }
    }
 

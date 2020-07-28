@@ -6,6 +6,7 @@ import { CollectionComponent} from '../index';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ContentService } from '@sunbird/core';
+import { DatePipe } from '@angular/common';
 import { CacheService } from 'ng2-cache-service';
 import { ProgramStageService } from '../../../program/services';
 import { collectionComponentInput, collectionWithCard, searchCollectionResponse} from './collection.component.spec.data';
@@ -52,6 +53,7 @@ describe('CollectionComponent', () => {
         ConfigService,
         ToasterService,
         ResourceService,
+        DatePipe,
         CacheService,
         BrowserCacheTtlService,
         UtilService,

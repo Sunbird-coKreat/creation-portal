@@ -159,7 +159,7 @@ export class UpForReviewComponent extends WorkSpace implements OnInit, AfterView
   }
 
   ngOnInit() {
-    combineLatest(
+    combineLatest([
       this.activatedRoute.params,
       this.activatedRoute.queryParams,
       (params: any, queryParams: any) => {
@@ -167,12 +167,12 @@ export class UpForReviewComponent extends WorkSpace implements OnInit, AfterView
           params: params,
           queryParams: queryParams
         };
-      })
+      }])
       .subscribe(bothParams => {
-        if (bothParams.params.pageNumber) {
-          this.pageNumber = Number(bothParams.params.pageNumber);
-        }
-        this.queryParams = bothParams.queryParams;
+        // if (bothParams.params.pageNumber) {
+        //   this.pageNumber = Number(bothParams.params.pageNumber);
+        // }
+        // this.queryParams = bothParams.queryParams;
         this.fecthUpForReviewContent(this.config.appConfig.WORKSPACE.PAGE_LIMIT, this.pageNumber, bothParams);
       });
   }

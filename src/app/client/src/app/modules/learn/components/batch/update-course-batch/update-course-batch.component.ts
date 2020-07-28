@@ -139,11 +139,11 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
    * Initialize form fields and getuserlist
   */
   ngOnInit() {
-    combineLatest(this.activatedRoute.params, this.activatedRoute.parent.params,
-      (params, parentParams) => ({ ...params, ...parentParams })).pipe(
+    combineLatest([this.activatedRoute.params, this.activatedRoute.parent.params,
+      (params, parentParams) => ({ ...params, ...parentParams })]).pipe(
         mergeMap((params) => {
-          this.batchId = params.batchId;
-          this.courseId = params.courseId;
+          // this.batchId = params.batchId;
+          // this.courseId = params.courseId;
           this.setTelemetryInteractData();
           return this.fetchBatchDetails();
         }),
@@ -151,16 +151,16 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
       )
       .subscribe((data) => {
         this.showUpdateModal = true;
-        if (data.courseDetails.createdBy === this.userService.userid) {
-          this.courseCreator = true;
-        }
-        this.batchDetails = data.batchDetails;
-        if (this.batchDetails.enrollmentType !== 'open' && data.participantList && data.participantList.length > 0) {
-          this.batchDetails.participants = data.participantList;
-        }
-        const userList = this.sortUsers(data.userDetails);
-        this.participantList = userList.participantList;
-        this.mentorList = userList.mentorList;
+        // if (data.courseDetails.createdBy === this.userService.userid) {
+        //   this.courseCreator = true;
+        // }
+        // this.batchDetails = data.batchDetails;
+        // if (this.batchDetails.enrollmentType !== 'open' && data.participantList && data.participantList.length > 0) {
+        //   this.batchDetails.participants = data.participantList;
+        // }
+        // const userList = this.sortUsers(data.userDetails);
+        // this.participantList = userList.participantList;
+        // this.mentorList = userList.mentorList;
         if (this.batchDetails.mentors) {
           this.batchDetails.mentors.forEach(id => {
             _.remove(this.mentorList, mentor => mentor.id === id);
@@ -187,7 +187,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     const requestBody = {
       filters: {'status': '1'},
     };
-    return combineLatest(
+    return combineLatest([
       this.courseBatchService.getUserList(requestBody),
       this.courseConsumptionService.getCourseHierarchy(this.courseId),
       this.courseBatchService.getUpdateBatchDetails(this.batchId),
@@ -195,7 +195,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
         {'request': {'batch': {'batchId': this.batchId}}}),
       (userDetails, courseDetails, batchDetails, participantList) => (
         {userDetails, courseDetails, batchDetails, participantList}
-      ));
+      )]);
   }
 
   private isSubmitBtnDisable(batchForm): boolean {

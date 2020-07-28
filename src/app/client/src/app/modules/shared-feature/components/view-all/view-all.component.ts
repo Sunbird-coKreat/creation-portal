@@ -172,7 +172,8 @@ export class ViewAllComponent implements OnInit, OnDestroy, AfterViewInit {
     this.formAction = _.get(this.activatedRoute.snapshot, 'data.formAction');
     this.filterType = _.get(this.activatedRoute.snapshot, 'data.filterType');
     this.pageLimit = this.configService.appConfig.ViewAll.PAGE_LIMIT;
-    combineLatest(this.activatedRoute.params, this.activatedRoute.queryParams).pipe(
+    combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams])
+    .pipe(
       map(results => ({ params: results[0], queryParams: results[1] })),
       filter(res => this.pageNumber !== Number(res.params.pageNumber) || !_.isEqual(this.queryParams, res.queryParams)),
       tap(res => {
@@ -286,9 +287,10 @@ export class ViewAllComponent implements OnInit, OnDestroy, AfterViewInit {
       requestParams['softConstraints'] = _.get(manipulatedData, 'softConstraints');
     }
     if (_.get(this.activatedRoute.snapshot, 'data.baseUrl') === 'learn') {
-      return combineLatest(
+      return combineLatest([
         this.searchService.contentSearch(requestParams),
-        this.coursesService.enrolledCourseData$).pipe(map(data => ({ contentData: data[0], enrolledCourseData: data[1] })));
+        this.coursesService.enrolledCourseData$])
+        .pipe(map(data => ({ contentData: data[0], enrolledCourseData: data[1] })));
     } else {
       return this.searchService.contentSearch(requestParams).pipe(map(data => ({ contentData: data })));
     }

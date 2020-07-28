@@ -170,6 +170,7 @@ export class FlagReviewerComponent extends WorkSpace implements OnInit, AfterVie
 
     this.filterType = this.config.appConfig.upForReview.filterType;
     this.redirectUrl = this.config.appConfig.flagReviewer.inPageredirectUrl;
+    // tslint:disable-next-line: deprecation
     observableCombineLatest(
       this.activatedRoute.params,
       this.activatedRoute.queryParams,

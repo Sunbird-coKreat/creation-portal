@@ -18,9 +18,12 @@ jobs:
           path: ~/portal
       - run:
           name: Installing angular cli
-          command: 'npm install -g @angular/cli@6.0.8'
+          command: 'npm install -g @angular/cli@7.3.6'
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Removing package-lock.json file and node_modules
+          command: 'rm -rf package-lock.json ./node_modules'
       - run:
           name: Installing npm deps
           command: 'npm install'

@@ -150,7 +150,7 @@ export class UpdateContactComponent implements OnInit, AfterViewInit {
   }
   private checkUserExist() {
     const uri = this.contactForm.type + '/' + this.contactForm.value;
-    combineLatest(this.userService.getUserByKey(uri), this.getCustodianOrgDetails())
+    combineLatest([this.userService.getUserByKey(uri), this.getCustodianOrgDetails()])
     .pipe(map(data => ({
       userDetails: data[0], custOrgDetails: data[1]
     })))

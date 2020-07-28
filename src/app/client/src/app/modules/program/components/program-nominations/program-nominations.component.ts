@@ -507,6 +507,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
       this.fetchFrameWorkDetails();
 
+      // tslint:disable-next-line: deprecation
       forkJoin(this.getAggregatedNominationsCount(), this.getcontentAggregationData()).subscribe(
         (response) => {
             this.checkActiveTab();
@@ -670,13 +671,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           progRoleMapping = {};
           progRoleMapping[user.selectedRole] = [];
          }
-         const programRoleNames = _.map(progRoleMapping, function(currentelement, index, arrayobj) {
+         const programRoleNames = _.map(progRoleMapping, (currentelement, index, arrayobj) => {
           return index;
         });
         if (!_.includes(programRoleNames, user.selectedRole)) {
           progRoleMapping[user.selectedRole] = [];
         }
-        _.forEach(progRoleMapping, function(ua, role, arr) {
+        _.forEach(progRoleMapping, (ua, role, arr) => {
             if (user.selectedRole === role) {
               ua.push(user.identifier);
               _.compact(ua);
@@ -711,7 +712,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       preferences = {};
     }
     // tslint:disable-next-line: max-line-length
-    forkJoin(this.programsService.setUserPreferencesforProgram(this.userProfile.identifier, this.programId, preferences, 'sourcing'), this.getProgramCollection(preferences)).subscribe(
+    // tslint:disable-next-line: deprecation
+    forkJoin(this.programsService.setUserPreferencesforProgram(this.userProfile.identifier,
+      this.programId, preferences, 'sourcing'), this.getProgramCollection(preferences))
+      .subscribe(
       (response) => {
         this.userPreferences =  _.get(_.first(response), 'result');
         this.showTextbookLoader  =  false;

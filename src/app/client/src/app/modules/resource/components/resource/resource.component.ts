@@ -83,7 +83,7 @@ export class ResourceComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dataDrivenFilterEvent.emit(defaultFilters);
   }
   private fetchContentOnParamChange() {
-    combineLatest(this.activatedRoute.params, this.activatedRoute.queryParams)
+    combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams])
     .pipe(
       tap(data => this.prepareVisits([])), // trigger pageexit if last filter resulted 0 contents
       delay(1), // to trigger telemetry pageexit event

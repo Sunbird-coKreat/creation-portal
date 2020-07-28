@@ -77,10 +77,10 @@ export class CourseConsumptionPageComponent implements OnInit, OnDestroy {
   }
   private getDetails(queryParams) {
     if (this.batchId) {
-      return combineLatest(
+      return combineLatest([
         this.courseConsumptionService.getCourseHierarchy(this.courseId, queryParams),
         this.courseBatchService.getEnrolledBatchDetails(this.batchId)
-      ).pipe(map(result => ({ courseHierarchy: result[0], enrolledBatchDetails: result[1] })));
+      ]).pipe(map(result => ({ courseHierarchy: result[0], enrolledBatchDetails: result[1] })));
     } else {
       return this.courseConsumptionService.getCourseHierarchy(this.courseId, queryParams)
         .pipe(map(courseHierarchy => ({ courseHierarchy })));
