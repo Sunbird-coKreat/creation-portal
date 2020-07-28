@@ -22,7 +22,6 @@
     min-width: auto;
   }
 
-
   .add-to-library-dot {
     width: calculateRem(5px);
     height: calculateRem(5px);
@@ -111,7 +110,6 @@
     margin: 0 auto;
   }
 
-
   &__toc-player {
     &.sb-g {
       grid-column-gap: 0;
@@ -138,8 +136,6 @@
       flex: 1;
     }
   }
-
-
 
   &__button {
     position: relative;
@@ -565,7 +561,6 @@
           overflow: auto;
           flex: 1;
         }
-
       }
     }
   }
