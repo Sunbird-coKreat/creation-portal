@@ -753,7 +753,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programData = {
       ...this.createProgramForm.value
     };
-
     if (this.userFramework) {
       this.programConfig.framework = this.userFramework;
       // tslint:disable-next-line:max-line-length
@@ -816,14 +815,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         }
       );
     } else {
-      if (this.showTextBookSelector === true) {
-        this.disableCreateProgramBtn = true;
-        if (_.isEmpty(this.collectionListForm.value.pcollections)) {
-          this.disableCreateProgramBtn = false;
-          this.toasterService.warning('Please select at least a one textbook');
-          return false;
+
+      if (!this.editLive) {
+        if (!_.isEmpty(this.collectionListForm.value.pcollections)) {
+          debugger;
+          this.programData['config']['collections'] = this.getCollections();
         }
-        this.programData['config']['collections'] = this.getCollections();
       }
 
       this.programData['program_id'] = this.programId;
@@ -860,7 +857,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       delete prgData.program_end_date;
       delete prgData.content_types;
 
-      if (this.isOpenNominations == false) {
+      if (this.isOpenNominations === false) {
         delete prgData.nomination_enddate;
         delete prgData.shortlisting_enddate;
       }
@@ -1374,7 +1371,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       }
   }
 
-  createProject ($event) {
+  publishProject ($event) {
     this.setValidations();
 
     if (!this.createProgramForm.valid) {
@@ -1384,24 +1381,39 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       return false;
     }
 
+    if (_.isEmpty(this.collectionListForm.value.pcollections)) {
+      this.disableCreateProgramBtn = false;
+      this.toasterService.warning('Please select at least a one textbook');
+      return false;
+    }
+
+    this.disableCreateProgramBtn = true;
+
     ($event.target as HTMLButtonElement).disabled = true;
     const cb = (error, resp) => {
       if (!error && resp) {
         const data = {
-          'program_id': this.programId
+          'request': {
+            'program_id': this.programId,
+            'channel': 'sunbird'
+          }
         };
 
         this.programsService.publishProgram(data).subscribe(res => {
-          console.log(res);
+          this.toasterService.success(this.resource.messages.smsg.program.published);
           this.router.navigate(['/sourcing']);
         },
         err => {
+          this.disableCreateProgramBtn = false;
+          this.toasterService.error(this.resource.messages.emsg.m0005);
           console.log(err);
         });
 
         // @todo show success message
       } else {
+        this.disableCreateProgramBtn = false;
         ($event.target as HTMLButtonElement).disabled = false;
+        this.toasterService.error(this.resource.messages.emsg.m0005);
       }
     };
 

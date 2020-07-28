@@ -533,7 +533,7 @@
 					[telemetryInteractEdata]="getTelemetryInteractEdata('update', 'click', 'edit-program')"
 					[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
 					[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.update}}</button>
-				<button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8" 
+				<button *ngIf="!editLive" class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8" 
 					appTelemetryInteract
 					[telemetryInteractEdata]="getTelemetryInteractEdata('draft', 'click', 'edit-program')"
 					[telemetryInteractObject]="telemetryInteractObject" 
@@ -546,10 +546,10 @@
 					[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
 					[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.next}}</button>
 				<button *ngIf="showTextBookSelector && !editLive" class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="disableCreateProgramBtn"
-					(click)="createProject($event)" appTelemetryInteract
+					(click)="publishProject($event)" appTelemetryInteract
 					[telemetryInteractEdata]="getTelemetryInteractEdata('create-program', 'click', 'create-program')"
 					[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
-					[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.createProgram}}</button>
+					[telemetryInteractPdata]="telemetryInteractPdata">{{ resource.frmelmnts.btn.publishProject }}</button>
 			</div>
 		</div>
 	</div>
