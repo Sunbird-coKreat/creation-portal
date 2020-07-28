@@ -16,8 +16,6 @@ import { CbseProgramModule } from '../../modules/cbse-program/cbse-program.modul
 import { CollectionComponent, DashboardComponent } from '../cbse-program';
 import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
 import { OrgUserListComponent } from './components/org-user-list/org-user-list.component';
-import { OrgContriAdminComponent } from './components/org-contri-admin/org-contri-admin.component';
-import { ContriDashboardComponent } from './components/dashboard/dashboard.component';
 import { SharedFeatureModule } from '../shared-feature/shared-feature.module';
 
 @NgModule({
@@ -25,9 +23,7 @@ import { SharedFeatureModule } from '../shared-feature/shared-feature.module';
     ProgramComponent,
     OnboardPopupComponent,
     ProgramHeaderComponent,
-    OrgUserListComponent,
-    OrgContriAdminComponent,
-    ContriDashboardComponent],
+    OrgUserListComponent],
   imports: [
     SuiModule,
     CommonModule,
