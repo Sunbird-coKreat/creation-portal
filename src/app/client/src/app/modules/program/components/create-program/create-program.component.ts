@@ -602,7 +602,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         defaultContributeOrgReview: new FormControl({ value: this.defaultContributeOrgReviewChecked, disabled: this.editLive })
       };
 
-      if (this.isOpenNominations == true) {
+      if (this.isOpenNominations === true) {
         // tslint:disable-next-line: max-line-length
         obj.nomination_enddate = [_.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : null, Validators.required];
       } else {
@@ -721,8 +721,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   setValidations() {
-    this.createProgramForm.controls['nomination_enddate'].setValidators(Validators.required);
-    this.createProgramForm.controls['nomination_enddate'].updateValueAndValidity();
+    this.openForNominations(this.isOpenNominations);
     this.createProgramForm.controls['description'].setValidators(Validators.required);
     this.createProgramForm.controls['description'].updateValueAndValidity();
     this.createProgramForm.controls['program_end_date'].setValidators(Validators.required);
@@ -1089,8 +1088,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     const data = {};
     data['program_id'] = this.programId;
-    data['collection_ids'] = this.collectionListForm.value.pcollections;
-    data['copiedCollections'] = copiedCollections;
+    // data['collection_ids'] = this.collectionListForm.value.pcollections;
+    // data['copiedCollections'] = copiedCollections;
     data['programContentTypes'] = contentTypes;
 
     this.programConfig.board = this.userBoard;
@@ -1399,17 +1398,28 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           }
         };
 
-        this.programsService.publishProgram(data).subscribe(res => {
-          this.toasterService.success(this.resource.messages.smsg.program.published);
-          this.router.navigate(['/sourcing']);
-        },
-        err => {
-          this.disableCreateProgramBtn = false;
-          this.toasterService.error(this.resource.messages.emsg.m0005);
-          console.log(err);
-        });
+        if (this.isOpenNominations) {
+          this.programsService.publishProgram(data).subscribe(res => {
+            this.toasterService.success(this.resource.messages.smsg.program.published);
+            this.router.navigate(['/sourcing']);
+          },
+          err => {
+            this.disableCreateProgramBtn = false;
+            this.toasterService.error(this.resource.messages.emsg.m0005);
+            console.log(err);
+          });
+        } else {
+          this.programsService.unlistPublishProgram(data).subscribe(res => {
+            this.toasterService.success(this.resource.messages.smsg.program.published);
+            this.router.navigate(['/sourcing']);
+          },
+          err => {
+            this.disableCreateProgramBtn = false;
+            this.toasterService.error(this.resource.messages.emsg.m0005);
+            console.log(err);
+          });
+        }
 
-        // @todo show success message
       } else {
         this.disableCreateProgramBtn = false;
         ($event.target as HTMLButtonElement).disabled = false;
@@ -1418,13 +1428,5 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     };
 
     this.saveProgram(cb);
-  }
-
-  publishProgram () {
-    // call publish program API
-  }
-
-  unlistPublishProgram() {
-    // call unlist program API
   }
 }
