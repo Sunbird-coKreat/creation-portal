@@ -89,14 +89,14 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     const allowedEditState = ['draft', 'allcontent', 'collaborating-on', 'uploaded'].includes(this.routeParams.state);
     const allowedEditStatus = this.routeParams.contentStatus ? ['draft'].includes(this.routeParams.contentStatus.toLowerCase()) : false;
     if (_.isEmpty(lockInfo) && allowedEditState && allowedEditStatus) {
-      return combineLatest(this.tenantService.tenantData$, this.getContentDetails(),
-      this.editorService.getOwnershipType(), this.lockContent()).
-      pipe(map(data => ({ tenantDetails: data[0].tenantData,
+      return combineLatest([this.tenantService.tenantData$, this.getContentDetails(),
+      this.editorService.getOwnershipType(), this.lockContent()])
+      .pipe(map(data => ({ tenantDetails: data[0].tenantData,
         collectionDetails: data[1], ownershipType: data[2] })));
     } else {
-      return combineLatest(this.tenantService.tenantData$, this.getContentDetails(),
-      this.editorService.getOwnershipType()).
-      pipe(map(data => ({ tenantDetails: data[0].tenantData,
+      return combineLatest([this.tenantService.tenantData$, this.getContentDetails(),
+      this.editorService.getOwnershipType()])
+      .pipe(map(data => ({ tenantDetails: data[0].tenantData,
         collectionDetails: data[1], ownershipType: data[2] })));
     }
   }

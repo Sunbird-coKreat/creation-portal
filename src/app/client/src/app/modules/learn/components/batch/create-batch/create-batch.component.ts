@@ -128,12 +128,12 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
     }),
       takeUntil(this.unsubscribe))
       .subscribe((data) => {
-        if (data.courseDetails.createdBy === this.userService.userid) {
-          this.courseCreator = true;
-        }
-        const userList = this.sortUsers(data.userDetails);
-        this.participantList = userList.participantList;
-        this.mentorList = userList.mentorList;
+        // if (data.courseDetails.createdBy === this.userService.userid) {
+        //   this.courseCreator = true;
+        // }
+        // const userList = this.sortUsers(data.userDetails);
+        // this.participantList = userList.participantList;
+        // this.mentorList = userList.mentorList;
         this.initDropDown();
       }, (err) => {
         if (err.error && err.error.params.errmsg) {
@@ -149,10 +149,10 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
     const requestBody = {
       filters: {'status': '1'},
     };
-    return combineLatest(
+    return combineLatest([
       this.courseBatchService.getUserList(requestBody),
       this.courseConsumptionService.getCourseHierarchy(this.courseId),
-      (userDetails, courseDetails) => ({ userDetails, courseDetails })
+      (userDetails, courseDetails) => ({ userDetails, courseDetails })]
     );
   }
   /**

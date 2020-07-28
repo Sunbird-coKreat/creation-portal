@@ -1,13 +1,13 @@
 // tslint:disable:max-line-length
-var programConfig = {
+const programConfig = {
     'defaultContributeOrgReview' : true,
     '_comments': '',
     'loginReqired': true,
     'framework': 'NCF',
-    'board':'',
-    'gradeLevel':[],
-    'medium':[],
-    'subject':[],
+    'board': '',
+    'gradeLevel': [],
+    'medium': [],
+    'subject': [],
     'roles': [
       {
         'id': 1,

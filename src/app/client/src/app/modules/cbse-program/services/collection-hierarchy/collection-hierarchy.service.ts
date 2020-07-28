@@ -340,7 +340,7 @@ export class CollectionHierarchyService {
   }
 
   getAllPendingForApprovalCount(textbookMeta, collections?) {
-    let liveContents = _.has(textbookMeta, 'Live') ? _.map(textbookMeta.Live, 'identifier') : [];
+    const liveContents = _.has(textbookMeta, 'Live') ? _.map(textbookMeta.Live, 'identifier') : [];
     if (_.isUndefined(collections)) {
       return liveContents.length;
     }
@@ -367,7 +367,7 @@ export class CollectionHierarchyService {
       textbook.sampleContentInDraft = textbookMetaForSample && _.has(textbookMetaForSample, 'Draft') ? textbookMetaForSample.Draft.length : 0;
       // tslint:disable-next-line:max-line-length
       textbook.totalSampleContent = textbookMetaForSample ? textbook.sampleContentInDraft + textbook.sampleContentInReview : 0;
-      const individualCollectionLiveContent = sourcingOrgMeta && textbookMeta && liveContents
+      const individualCollectionLiveContent = sourcingOrgMeta && textbookMeta && liveContents;
       // tslint:disable-next-line:max-line-length
       const intersection = textbookMeta && sourcingOrgMeta && sourcingOrgMeta.acceptedContents ? _.intersection(sourcingOrgMeta.acceptedContents, individualCollectionLiveContent) : [];
       // tslint:disable-next-line:max-line-length
@@ -386,8 +386,8 @@ export class CollectionHierarchyService {
           objectType: 'content',
           origin: contentIds
         },
-        exists: ["originData"],
-        fields: ["status", "origin"],
+        exists: ['originData'],
+        fields: ['status', 'origin'],
         limit: 1000
       }
     };

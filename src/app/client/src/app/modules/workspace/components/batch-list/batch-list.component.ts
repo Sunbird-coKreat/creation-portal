@@ -178,7 +178,8 @@ export class BatchListComponent extends WorkSpace implements OnInit, OnDestroy, 
   }
 
   ngOnInit() {
-    combineLatest(this.activatedRoute.params, this.activatedRoute.queryParams).pipe(
+    combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams])
+    .pipe(
       map(results => ({ params: results[0], queryParams: results[1] })),
       filter(res => this.pageNumber !== Number(res.params.pageNumber) || !_.isEqual(this.queryParams, res.queryParams)),
       takeUntil(this.unsubscribe)

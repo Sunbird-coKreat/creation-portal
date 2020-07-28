@@ -80,7 +80,7 @@ export class UserFilterComponent implements OnInit {
     const frameworkDetails = this.getFormatedFilterDetails();
     const district = this.getDistrict();
     const roles = this.getRoles();
-    combineLatest(userType, district, roles, frameworkDetails)
+    combineLatest([userType, district, roles, frameworkDetails])
       .subscribe(val => {
         this.showFilters = true;
       });

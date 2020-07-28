@@ -1,9 +1,9 @@
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService, PaginationService } from '@sunbird/shared';
-import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
+import { IImpressionEventInput, IInteractEventEdata } from '@sunbird/telemetry';
 import { ProgramsService, UserService, FrameworkService } from '@sunbird/core';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
-import { ISessionContext, InitialState, IPagination} from '../../../cbse-program/interfaces';
+import { ISessionContext, InitialState, IPagination } from '../../../cbse-program/interfaces';
 import { CollectionHierarchyService } from '../../../cbse-program/services/collection-hierarchy/collection-hierarchy.service';
 import * as _ from 'lodash-es';
 import { tap, first, catchError, takeUntil } from 'rxjs/operators';
@@ -14,8 +14,8 @@ import { ChapterListComponent } from '../../../cbse-program/components/chapter-l
 import { DatePipe } from '@angular/common';
 import { forkJoin, of } from 'rxjs';
 import { isDefined } from '@angular/compiler/src/util';
-import { isUndefined, isNullOrUndefined } from 'util';
-import {ProgramTelemetryService} from '../../services';
+import { isNullOrUndefined } from 'util';
+import { ProgramTelemetryService } from '../../services';
 
 @Component({
   selector: 'app-program-nominations',
@@ -95,7 +95,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
-     private activatedRoute: ActivatedRoute, private router: Router,
+    private activatedRoute: ActivatedRoute, private router: Router,
     private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService,
     public programStageService: ProgramStageService, private datePipe: DatePipe, private paginationService: PaginationService,
     public programTelemetryService: ProgramTelemetryService) {
@@ -106,10 +106,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   ngOnInit() {
     this.filterApplied = null;
     this.getProgramDetails();
-    this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program'}];
-    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
+    this.telemetryInteractCdata = [{ id: this.activatedRoute.snapshot.params.programId, type: 'Program' }];
+    this.telemetryInteractPdata = { id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
-    this.roles = [{name: 'REVIEWER'}];
+    this.roles = [{ name: 'REVIEWER' }];
     this.roleNames = _.map(this.roles, 'name');
     this.sessionContext.currentRole = 'REVIEWER';
     this.programStageService.initialize();
@@ -125,8 +125,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     const deviceId = <HTMLInputElement>document.getElementById('deviceId');
-    const telemetryCdata = [{type: 'Program', id: this.activatedRoute.snapshot.params.programId}];
-     setTimeout(() => {
+    const telemetryCdata = [{ type: 'Program', id: this.activatedRoute.snapshot.params.programId }];
+    setTimeout(() => {
       this.telemetryImpression = {
         context: {
           env: this.activatedRoute.snapshot.data.telemetry.env,
@@ -145,7 +145,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
-     });
+    });
   }
 
   canAssignUsersToProgram() {
@@ -154,7 +154,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
   isSourcingOrgAdmin() {
     return _.includes(this.userProfile.userRoles, 'ORG_ADMIN') &&
-    this.router.url.includes('/sourcing');
+      this.router.url.includes('/sourcing');
   }
 
   ngOnDestroy() {
@@ -185,28 +185,28 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.visitedTab.push('textbook');
       this.showTextbookLoader = true;
       this.programsService.getUserPreferencesforProgram(this.userProfile.identifier, this.programId).subscribe(
-          (prefres) => {
-            let preffilter = {};
-            if (!isNullOrUndefined(prefres.result)) {
-              this.userPreferences = prefres.result;
-              preffilter = _.get(this.userPreferences, 'sourcing_preference');
-            }
-            this.getProgramCollection(preffilter).subscribe((res) => {
-              this.showTextbookLoader  =  false;
-            }, (err) => { // TODO: navigate to program list page
-              this.showTextbookLoader  =  false;
-              const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-              this.toasterService.warning(errorMes || 'Fetching textbooks failed');
-            });
+        (prefres) => {
+          let preffilter = {};
+          if (!isNullOrUndefined(prefres.result)) {
+            this.userPreferences = prefres.result;
+            preffilter = _.get(this.userPreferences, 'sourcing_preference');
+          }
+          this.getProgramCollection(preffilter).subscribe((res) => {
+            this.showTextbookLoader = false;
+          }, (err) => { // TODO: navigate to program list page
+            this.showTextbookLoader = false;
+            const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+            this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+          });
         }, (err) => { // TODO: navigate to program list page
-          this.showTextbookLoader  =  false;
+          this.showTextbookLoader = false;
           const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
           this.toasterService.warning(errorMes || 'Fetching Preferences  failed');
-      });
+        });
     }
 
     if (tab === 'nomination' && !_.includes(this.visitedTab, 'nomination')) {
-      this.showNominationLoader =  true;
+      this.showNominationLoader = true;
       this.visitedTab.push('nomination');
       this.direction = 'desc';
       this.sortColumn = 'createdon';
@@ -220,12 +220,12 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     }
 
     if (tab === 'contributionDashboard' && !_.includes(this.visitedTab, 'contributionDashboard')) {
-      this.showDashboardLoader =  true;
+      this.showDashboardLoader = true;
       if (_.isEmpty(this.programCollections)) {
         this.getProgramCollection().subscribe(
           (res) => { this.getNominationList(); },
           (err) => { // TODO: navigate to program list page
-            this.showDashboardLoader =  false;
+            this.showDashboardLoader = false;
             const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
             this.toasterService.warning(errorMes || 'Fetching textbooks failed');
           }
@@ -248,7 +248,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.sortColumn = column;
   }
 
-  getsourcingOrgReviewers (offset?, iteration?) {
+  getsourcingOrgReviewers(offset?, iteration?) {
     if (!isDefined(iteration) || iteration === 0) {
       iteration = 0;
       this.paginatedSourcingUsers = [];
@@ -259,13 +259,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     const filters = {
       'organisations.organisationId': OrgDetails.organisationId,
       'organisations.roles': ['CONTENT_REVIEWER']
-      };
+    };
 
     this.programsService.getSourcingOrgUsers(filters, offset, 1000).subscribe(
       (res) => {
         this.sourcingOrgUserCnt = res.result.response.count || 0;
         const responseContent = _.get(res, 'result.response.content');
-        const responseContentLength =  responseContent ? responseContent.length : offset;
+        const responseContentLength = responseContent ? responseContent.length : offset;
         this.paginatedSourcingUsers = _.compact(_.concat(this.paginatedSourcingUsers, res.result.response.content));
 
         if (this.sourcingOrgUserCnt > this.paginatedSourcingUsers.length) {
@@ -274,7 +274,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         } else {
           this.readRolesOfOrgUsers();
           this.paginatedSourcingUsers = this.programsService.sortCollection(this.paginatedSourcingUsers, 'selectedRole', 'desc');
-          this.paginatedSourcingUsers = _.chunk( this.paginatedSourcingUsers, this.pageLimit);
+          this.paginatedSourcingUsers = _.chunk(this.paginatedSourcingUsers, this.pageLimit);
           this.sourcingOrgUser = this.paginatedSourcingUsers[this.pageNumber - 1];
           this.pagerUsers = this.paginationService.getPager(this.sourcingOrgUserCnt, this.pageNumberUsers, this.pageLimit);
           this.showUsersLoader = false;
@@ -338,35 +338,35 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       if (data.result && data.result.length > 0) {
         const filteredArr = _.filter(data.result, (obj) => obj.userData);
         this.getDashboardData(filteredArr);
-        this.showDashboardLoader =  false;
-       /* _.forEach(data.result, (res) => {
-            this.nominatedContentTypes = _.concat(this.nominatedContentTypes, res.content_types);
-        });*/
+        this.showDashboardLoader = false;
+        /* _.forEach(data.result, (res) => {
+             this.nominatedContentTypes = _.concat(this.nominatedContentTypes, res.content_types);
+         });*/
       }
       /*this.nominatedContentTypes =  _.uniq(this.nominatedContentTypes);
       this.nominatedContentTypes = this.programsService.getContentTypesName(this.nominatedContentTypes);*/
     }, error => {
-      this.showDashboardLoader =  false;
+      this.showDashboardLoader = false;
       this.toasterService.error(this.resourceService.messages.emsg.projects.m0003);
     });
   }
 
   public getSampleContent() {
     this.collectionHierarchyService.getContentAggregation(this.programId, true)
-    .subscribe(
-      (response) => {
-        if (response && response.result && response.result.count) {
-          const contents = _.get(response.result, 'content');
-          this.setNominationSampleCounts(contents);
-        }
+      .subscribe(
+        (response) => {
+          if (response && response.result && response.result.count) {
+            const contents = _.get(response.result, 'content');
+            this.setNominationSampleCounts(contents);
+          }
 
-        this.showNominationLoader = false;
-      }, (error) => {
-        this.showNominationLoader = false;
-      });
+          this.showNominationLoader = false;
+        }, (error) => {
+          this.showNominationLoader = false;
+        });
   }
 
-  getProgramCollection (preferencefilters?) {
+  getProgramCollection(preferencefilters?) {
     return this.collectionHierarchyService.getCollectionWithProgramId(this.programId, preferencefilters).pipe(
       tap((response: any) => {
         if (response && response.result) {
@@ -394,62 +394,62 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   getDashboardData(approvedNominations) {
     // tslint:disable-next-line:max-line-length
-        if (!_.isEmpty(this.contentAggregationData) && approvedNominations.length && !_.isEmpty(this.programCollections)) {
-          const contents = _.cloneDeep(this.contentAggregationData);
-          this.contributionDashboardData = _.map(approvedNominations, nomination => {
-            if (nomination.organisation_id) {
-              // tslint:disable-next-line:max-line-length
-              const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCounts(contents, nomination.organisation_id, this.programCollections));
-              // This is enable sorting table. So duping the data at the root of the dashboardData object
-              dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
-              dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
-              dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
-              dashboardData['contributorName'] = this.setContributorName(nomination, nomination.organisation_id ? true : false);
-              return {
-                ...dashboardData,
-                contributorDetails: nomination,
-                type: 'org'
-              };
-            } else {
-              // tslint:disable-next-line:max-line-length
-              const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCountsForIndividual(contents, nomination.user_id, this.programCollections));
-              dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
-              dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
-              dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
-              dashboardData['contributorName'] = this.setContributorName(nomination, nomination.organisation_id ? true : false);
-              return {
-                ...dashboardData,
-                contributorDetails: nomination,
-                type: 'individual'
-              };
-            }
-          });
-          this.getOverAllCounts(this.contributionDashboardData);
-        } else if (approvedNominations.length) {
-          this.contributionDashboardData = _.map(approvedNominations, nomination => {
-            return this.dashboardObject(nomination);
-          });
-          this.getOverAllCounts(this.contributionDashboardData);
+    if (!_.isEmpty(this.contentAggregationData) && approvedNominations.length && !_.isEmpty(this.programCollections)) {
+      const contents = _.cloneDeep(this.contentAggregationData);
+      this.contributionDashboardData = _.map(approvedNominations, nomination => {
+        if (nomination.organisation_id) {
+          // tslint:disable-next-line:max-line-length
+          const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCounts(contents, nomination.organisation_id, this.programCollections));
+          // This is enable sorting table. So duping the data at the root of the dashboardData object
+          dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
+          dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
+          dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
+          dashboardData['contributorName'] = this.setContributorName(nomination, nomination.organisation_id ? true : false);
+          return {
+            ...dashboardData,
+            contributorDetails: nomination,
+            type: 'org'
+          };
+        } else {
+          // tslint:disable-next-line:max-line-length
+          const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCountsForIndividual(contents, nomination.user_id, this.programCollections));
+          dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
+          dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
+          dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
+          dashboardData['contributorName'] = this.setContributorName(nomination, nomination.organisation_id ? true : false);
+          return {
+            ...dashboardData,
+            contributorDetails: nomination,
+            type: 'individual'
+          };
         }
+      });
+      this.getOverAllCounts(this.contributionDashboardData);
+    } else if (approvedNominations.length) {
+      this.contributionDashboardData = _.map(approvedNominations, nomination => {
+        return this.dashboardObject(nomination);
+      });
+      this.getOverAllCounts(this.contributionDashboardData);
     }
+  }
 
   dashboardObject(nomination) {
-      return {
-        total: 0,
-        review: 0,
-        draft: 0,
-        rejected: 0,
-        live: 0,
-        sourcingPending: 0,
-        sourcingAccepted: 0,
-        sourcingRejected: 0,
-        // tslint:disable-next-line:max-line-length
-        contributorName: this.setContributorName(nomination, nomination.organisation_id ? true : false),
-        individualStatus: {},
-        sourcingOrgStatus : {accepted: 0, rejected: 0, pending: 0},
-        contributorDetails: nomination,
-        type: nomination.organisation_id ? 'org' : 'individual'
-      };
+    return {
+      total: 0,
+      review: 0,
+      draft: 0,
+      rejected: 0,
+      live: 0,
+      sourcingPending: 0,
+      sourcingAccepted: 0,
+      sourcingRejected: 0,
+      // tslint:disable-next-line:max-line-length
+      contributorName: this.setContributorName(nomination, nomination.organisation_id ? true : false),
+      individualStatus: {},
+      sourcingOrgStatus: { accepted: 0, rejected: 0, pending: 0 },
+      contributorDetails: nomination,
+      type: nomination.organisation_id ? 'org' : 'individual'
+    };
   }
 
   setNominationSampleCounts(contentResult) {
@@ -470,17 +470,17 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   getNominationSampleCounts(nomination) {
     return (nomination.organisation_id) ?
-    _.get(this.nominationSampleCounts, nomination.organisation_id) || 0 :
-    _.get(this.nominationSampleCounts, nomination.user_id) || 0;
+      _.get(this.nominationSampleCounts, nomination.organisation_id) || 0 :
+      _.get(this.nominationSampleCounts, nomination.user_id) || 0;
   }
 
   getOverAllCounts(dashboardData) {
-    this.overAllContentCount = dashboardData.reduce((obj, v)  => {
+    this.overAllContentCount = dashboardData.reduce((obj, v) => {
       obj['sourcingPending'] += _.toNumber(v.sourcingPending);
       obj['sourcingAccepted'] += _.toNumber(v.sourcingAccepted);
       obj['sourcingRejected'] += _.toNumber(v.sourcingRejected);
       return obj;
-    }, {sourcingPending: 0, sourcingAccepted: 0, sourcingRejected: 0});
+    }, { sourcingPending: 0, sourcingAccepted: 0, sourcingRejected: 0 });
     // tslint:disable-next-line:max-line-length
     this.overAllContentCount['sourcingTotal'] = this.overAllContentCount.sourcingPending + this.overAllContentCount.sourcingAccepted + this.overAllContentCount.sourcingRejected;
   }
@@ -488,8 +488,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   setContributorName(nomination, isOrg) {
     if (isOrg && !_.isEmpty(nomination.orgData)) {
       return _.trim(nomination.orgData.name);
-    } else  if (!_.isEmpty(nomination.userData)) {
-     return _.trim(`${nomination.userData.firstName} ${nomination.userData.lastName || ''}`);
+    } else if (!_.isEmpty(nomination.userData)) {
+      return _.trim(`${nomination.userData.firstName} ${nomination.userData.lastName || ''}`);
     } else {
       return null;
     }
@@ -507,21 +507,22 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
       this.fetchFrameWorkDetails();
 
+      // tslint:disable-next-line: deprecation
       forkJoin(this.getAggregatedNominationsCount(), this.getcontentAggregationData()).subscribe(
         (response) => {
-            this.checkActiveTab();
+          this.checkActiveTab();
         },
         (error) => {
           this.showLoader = false;
           const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
           this.toasterService.error(errorMes || 'Fetching textbooks failed. Please try again...');
-      });
+        });
 
       this.setActiveDate();
       this.collectionsCount = _.get(this.programDetails, 'collection_ids').length;
       this.totalContentTypeCount = _.get(this.programDetails, 'content_types').length;
       this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
-      const getCurrentRoleId = _.find(this.programDetails.config.roles, {'name': this.sessionContext.currentRole});
+      const getCurrentRoleId = _.find(this.programDetails.config.roles, { 'name': this.sessionContext.currentRole });
       this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
 
     }, error => {
@@ -584,10 +585,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   setActiveDate() {
-    const dates = [ 'nomination_enddate', 'shortlisting_enddate', 'content_submission_enddate', 'enddate'];
+    const dates = ['nomination_enddate', 'shortlisting_enddate', 'content_submission_enddate', 'enddate'];
 
     dates.forEach(key => {
-      const date  = moment(moment(this.programDetails[key]).format('YYYY-MM-DD'));
+      const date = moment(moment(this.programDetails[key]).format('YYYY-MM-DD'));
       const today = moment(moment().format('YYYY-MM-DD'));
       const isFutureDate = !date.isSame(today) && date.isAfter(today);
 
@@ -614,35 +615,35 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.activatedRoute.queryParamMap
       .subscribe(params => {
         this.activeTab = !_.isEmpty(params.get('tab')) ? params.get('tab') : 'textbook';
-    });
+      });
     this.visitedTab.push(this.activeTab);
     this.showLoader = false;
 
     if (this.activeTab === 'textbook') {
       this.showTextbookLoader = true;
-        this.programsService.getUserPreferencesforProgram(this.userProfile.identifier, this.programId).subscribe(
-          (prefres) => {
-            let preffilter = {};
-            if (!isNullOrUndefined(prefres.result)) {
-              this.userPreferences = prefres.result;
-              preffilter = _.get(this.userPreferences, 'sourcing_preference');
-            }
-            this.getProgramCollection(preffilter).subscribe((res) => {
-              this.showTextbookLoader  =  false;
-            }, (err) => { // TODO: navigate to program list page
-              this.showTextbookLoader  =  false;
-              const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-              this.toasterService.warning(errorMes || 'Fetching textbooks failed');
-            });
+      this.programsService.getUserPreferencesforProgram(this.userProfile.identifier, this.programId).subscribe(
+        (prefres) => {
+          let preffilter = {};
+          if (!isNullOrUndefined(prefres.result)) {
+            this.userPreferences = prefres.result;
+            preffilter = _.get(this.userPreferences, 'sourcing_preference');
+          }
+          this.getProgramCollection(preffilter).subscribe((res) => {
+            this.showTextbookLoader = false;
+          }, (err) => { // TODO: navigate to program list page
+            this.showTextbookLoader = false;
+            const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+            this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+          });
         }, (err) => { // TODO: navigate to program list page
-          this.showTextbookLoader  =  false;
+          this.showTextbookLoader = false;
           const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
           this.toasterService.warning(errorMes || 'Fetching Preferences  failed');
-      });
+        });
     }
 
     if (this.activeTab === 'nomination') {
-      this.showNominationLoader =  true;
+      this.showNominationLoader = true;
       this.getPaginatedNominations(0);
     }
 
@@ -652,7 +653,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     }
 
     if (this.activeTab === 'contributionDashboard') {
-      this.showDashboardLoader =  true;
+      this.showDashboardLoader = true;
       this.getProgramCollection().subscribe(
         (res) => { this.getNominationList(); },
         (err) => { // TODO: navigate to program list page
@@ -665,28 +666,28 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   onRoleChange(user) {
     if (_.includes(this.roleNames, user.selectedRole)) {
-        let progRoleMapping = this.programDetails.rolemapping;
-         if (isNullOrUndefined(progRoleMapping)) {
-          progRoleMapping = {};
-          progRoleMapping[user.selectedRole] = [];
-         }
-         const programRoleNames = _.map(progRoleMapping, function(currentelement, index, arrayobj) {
-          return index;
-        });
-        if (!_.includes(programRoleNames, user.selectedRole)) {
-          progRoleMapping[user.selectedRole] = [];
+      let progRoleMapping = this.programDetails.rolemapping;
+      if (isNullOrUndefined(progRoleMapping)) {
+        progRoleMapping = {};
+        progRoleMapping[user.selectedRole] = [];
+      }
+      const programRoleNames = _.map(progRoleMapping, (currentelement, index, arrayobj) => {
+        return index;
+      });
+      if (!_.includes(programRoleNames, user.selectedRole)) {
+        progRoleMapping[user.selectedRole] = [];
+      }
+      _.forEach(progRoleMapping, (ua, role, arr) => {
+        if (user.selectedRole === role) {
+          ua.push(user.identifier);
+          _.compact(ua);
+          progRoleMapping[role] = ua;
         }
-        _.forEach(progRoleMapping, function(ua, role, arr) {
-            if (user.selectedRole === role) {
-              ua.push(user.identifier);
-              _.compact(ua);
-              progRoleMapping[role] = ua;
-            }
-          });
+      });
 
       const request = {
-            'program_id': this.activatedRoute.snapshot.params.programId,
-            'rolemapping': progRoleMapping
+        'program_id': this.activatedRoute.snapshot.params.programId,
+        'rolemapping': progRoleMapping
       };
       this.programsService.updateProgram(request)
         .subscribe(response => {
@@ -706,21 +707,24 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   applyPreferences(preferences?) {
-    this.showTextbookLoader  =  true;
+    this.showTextbookLoader = true;
     if (_.isUndefined(preferences)) {
       preferences = {};
     }
     // tslint:disable-next-line: max-line-length
-    forkJoin(this.programsService.setUserPreferencesforProgram(this.userProfile.identifier, this.programId, preferences, 'sourcing'), this.getProgramCollection(preferences)).subscribe(
-      (response) => {
-        this.userPreferences =  _.get(_.first(response), 'result');
-        this.showTextbookLoader  =  false;
-      },
-      (error) => {
-        this.showTextbookLoader  =  false;
-        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-        this.toasterService.warning(errorMes || 'Fetching textbooks failed');
-    });
+    // tslint:disable-next-line: deprecation
+    forkJoin(this.programsService.setUserPreferencesforProgram(this.userProfile.identifier,
+      this.programId, preferences, 'sourcing'), this.getProgramCollection(preferences))
+      .subscribe(
+        (response) => {
+          this.userPreferences = _.get(_.first(response), 'result');
+          this.showTextbookLoader = false;
+        },
+        (error) => {
+          this.showTextbookLoader = false;
+          const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+          this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+        });
   }
 
   viewContribution(collection) {
@@ -730,13 +734,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.sessionContext.collectionName = collection.name;
 
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
-      return {...obj, [context]: this.getSharedContextObjectProperty(context)};
+      return { ...obj, [context]: this.getSharedContextObjectProperty(context) };
     }, {});
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
-      return {...obj, [context]: collection[context] || this.sharedContext[context]};
+      return { ...obj, [context]: collection[context] || this.sharedContext[context] };
     }, this.sharedContext);
     _.forEach(['gradeLevel', 'medium', 'subject'], (val) => {
-       this.checkArrayCondition(val);
+      this.checkArrayCondition(val);
     });
     this.sessionContext = _.assign(this.sessionContext, this.sharedContext);
     this.dynamicInputs = {
@@ -755,16 +759,16 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   getSharedContextObjectProperty(property) {
     if (property === 'channel') {
-       return _.get(this.programDetails, 'config.scope.channel');
-    } else if ( property === 'topic' ) {
+      return _.get(this.programDetails, 'config.scope.channel');
+    } else if (property === 'topic') {
       return null;
     } else {
       const collectionComComponent = _.find(this.programDetails.config.components, { 'id': 'ng.sunbird.collection' });
-      const filters =  collectionComComponent.config.filters;
-      const explicitProperty =  _.find(filters.explicit, {'code': property});
-      const implicitProperty =  _.find(filters.implicit, {'code': property});
+      const filters = collectionComComponent.config.filters;
+      const explicitProperty = _.find(filters.explicit, { 'code': property });
+      const implicitProperty = _.find(filters.implicit, { 'code': property });
       return (implicitProperty) ? implicitProperty.range || implicitProperty.defaultValue :
-       explicitProperty.range || explicitProperty.defaultValue;
+        explicitProperty.range || explicitProperty.defaultValue;
     }
   }
 
@@ -805,44 +809,44 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     };
     const nominationList$ = this.programsService.downloadReport(this.programId, this.programDetails.name.trim());
     nominationList$
-    .pipe(takeUntil(this.unsubscribe))
-    .subscribe(
-      (response) => {
-        const csvData = _.get(response, 'result.stats');
-        if (csvData && !_.isEmpty(csvData)) {
-          csvDownloadConfig['tableData'] = csvData;
-          this.programsService.generateCSV(csvDownloadConfig);
-        } else {
-          this.toasterService.error('Unable to download list. Please try again.');
-        }
-      },
-      (error) => {
-        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-        this.toasterService.error(errorMes || 'Unable to download nomination list. Please try later.');
-        this.downloadInProgress = false;
-      },
-      () => {
-        this.downloadInProgress = false;
-      }
-    );
-}
-
-
-getPaginatedNominations(offset) {
-  const req = {
-    url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
-    data: {
-      request: {
-        filters: {
-          program_id: this.activatedRoute.snapshot.params.programId,
-          status: ['Pending', 'Approved', 'Rejected']
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(
+        (response) => {
+          const csvData = _.get(response, 'result.stats');
+          if (csvData && !_.isEmpty(csvData)) {
+            csvDownloadConfig['tableData'] = csvData;
+            this.programsService.generateCSV(csvDownloadConfig);
+          } else {
+            this.toasterService.error('Unable to download list. Please try again.');
+          }
         },
-        offset: offset,
-        limit: this.pageLimit
+        (error) => {
+          const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+          this.toasterService.error(errorMes || 'Unable to download nomination list. Please try later.');
+          this.downloadInProgress = false;
+        },
+        () => {
+          this.downloadInProgress = false;
+        }
+      );
+  }
+
+
+  getPaginatedNominations(offset) {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
+      data: {
+        request: {
+          filters: {
+            program_id: this.activatedRoute.snapshot.params.programId,
+            status: ['Pending', 'Approved', 'Rejected']
+          },
+          offset: offset,
+          limit: this.pageLimit
+        }
       }
-    }
-  };
-this.programsService.post(req).subscribe((data) => {
+    };
+    this.programsService.post(req).subscribe((data) => {
       if (data.result && data.result.length > 0) {
         this.nominations = [];
         _.forEach(data.result, (res) => {
@@ -866,162 +870,162 @@ this.programsService.post(req).subscribe((data) => {
         this.getSampleContent();
       }
       this.tempNominations = _.cloneDeep(this.nominations);
-  }, error => {
-    this.showNominationLoader = false;
-    this.toasterService.error(this.resourceService.messages.emsg.projects.m0003);
-  });
-}
+    }, error => {
+      this.showNominationLoader = false;
+      this.toasterService.error(this.resourceService.messages.emsg.projects.m0003);
+    });
+  }
 
-getAggregatedNominationsCount() {
-  const req = {
-    url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
-    data: {
-      request: {
-        filters: {
-          program_id: this.activatedRoute.snapshot.params.programId,
-          status: ['Pending', 'Approved', 'Rejected']
-        },
-        fields: ['organisation_id', 'collection_ids', 'content_types', 'status'],
-        limit: 0
-      }
-    }
-  };
-  return this.programsService.post(req).pipe(
-    tap((data: any) => {
-      const aggregatedCount = data.result.nomination;
-      this.totalNominations = aggregatedCount.count;
-      if (aggregatedCount.fields && aggregatedCount.fields.length) {
-        this.pager = this.paginationService.getPager(aggregatedCount.count, this.pageNumber, this.pageLimit);
-        this.statusCount = _.get(_.find(aggregatedCount.fields, {name: 'status'}), 'fields');
-        this.contributedByOrganisation = _.get(_.find(aggregatedCount.fields, {name: 'organisation_id'}), 'count');
-        this.contributedByIndividual = this.totalNominations - this.contributedByOrganisation;
-        this.nominatedTextbook = _.get(_.find(aggregatedCount.fields, {name: 'collection_ids'}), 'count');
-        this.nominatedContentTypeCount = _.get(_.find(aggregatedCount.fields, {name: 'content_types'}), 'count');
-      }
-    }),
-    catchError(err => {
-      console.error(err);
-      return of(false);
-    })
-  );
-}
-
-downloadContribDashboardDetails() {
-  try {
-    const headers = this.getContribDashboardHeaders();
-    const tableData = [];
-
-    if (this.contributionDashboardData.length) {
-      _.forEach(this.contributionDashboardData, (contributor) => {
-        const row = [
-          _.get(this.programDetails, 'name', '').trim(),
-          contributor.contributorName,
-          contributor.type === 'org' ? 'Organisation' : 'Individual',
-          contributor.draft || 0,
-          contributor.type !== 'individual' ? contributor.review : '-',
-          contributor.live || 0,
-          contributor.type !== 'individual' ? contributor.rejected : '-',
-          contributor.sourcingPending || 0,
-          contributor.sourcingAccepted || 0,
-          contributor.sourcingRejected || 0,
-        ];
-        tableData.push(row);
-      });
-    }
-    const csvDownloadConfig = {
-      filename: _.get(this.programDetails, 'name', '').trim(),
-      tableData: tableData,
-      headers: headers,
-      showTitle: false
-    };
-      this.programsService.generateCSV(csvDownloadConfig);
-    } catch (err) {
-      this.toasterService.error(_.get(this.resourceService, 'messages.emsg.projects.m0005', ''));
-    }
-}
-
-getContribDashboardHeaders() {
-  const columnNames = [
-    'projectName', 'contributorName', 'typeOfContributor', 'draftContributingOrg',
-    'pendingContributingOrg', 'acceptedContributingOrg', 'rejectedContributingOrg', 'pendingtSourcingOrg',
-    'acceptedSourcingOrg', 'rejectedSourcingOrg'];
-  return _.map(columnNames, name => _.get(this.resourceService, `frmelmnts.lbl.${name}`));
-}
-
-downloadReport(report) {
-  const req = {
-    url: `program/v1/report`,
-    data: {
-        'request': {
-            'filters': {
-                program_id: [this.programId],
-                openForContribution: true,
-                report: report
+  getAggregatedNominationsCount() {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
+      data: {
+        request: {
+          filters: {
+            program_id: this.activatedRoute.snapshot.params.programId,
+            status: ['Pending', 'Approved', 'Rejected']
+          },
+          fields: ['organisation_id', 'collection_ids', 'content_types', 'status'],
+          limit: 0
         }
       }
-    }
-  };
-  return this.programsService.post(req).subscribe((res) => {
-    if (res.result && res.result.tableData && res.result.tableData.length) {
-      try {
-      const resObj = res.result.tableData[0];
-      let headers = [];
-      if (report === 'textbookLevelReport') {
-        headers = this.textbookLevelReportHeaders();
-      } else if (report === 'chapterLevelReport') {
-        headers = this.chapterLevelReportHeaders();
-      }
+    };
+    return this.programsService.post(req).pipe(
+      tap((data: any) => {
+        const aggregatedCount = data.result.nomination;
+        this.totalNominations = aggregatedCount.count;
+        if (aggregatedCount.fields && aggregatedCount.fields.length) {
+          this.pager = this.paginationService.getPager(aggregatedCount.count, this.pageNumber, this.pageLimit);
+          this.statusCount = _.get(_.find(aggregatedCount.fields, { name: 'status' }), 'fields');
+          this.contributedByOrganisation = _.get(_.find(aggregatedCount.fields, { name: 'organisation_id' }), 'count');
+          this.contributedByIndividual = this.totalNominations - this.contributedByOrganisation;
+          this.nominatedTextbook = _.get(_.find(aggregatedCount.fields, { name: 'collection_ids' }), 'count');
+          this.nominatedContentTypeCount = _.get(_.find(aggregatedCount.fields, { name: 'content_types' }), 'count');
+        }
+      }),
+      catchError(err => {
+        console.error(err);
+        return of(false);
+      })
+    );
+  }
+
+  downloadContribDashboardDetails() {
+    try {
+      const headers = this.getContribDashboardHeaders();
       const tableData = [];
-      if (_.isArray(resObj) && resObj.length) {
-        _.forEach(resObj, (obj) => {
-          tableData.push(_.assign({'Project Name': this.programDetails.name.trim()}, obj));
+
+      if (this.contributionDashboardData.length) {
+        _.forEach(this.contributionDashboardData, (contributor) => {
+          const row = [
+            _.get(this.programDetails, 'name', '').trim(),
+            contributor.contributorName,
+            contributor.type === 'org' ? 'Organisation' : 'Individual',
+            contributor.draft || 0,
+            contributor.type !== 'individual' ? contributor.review : '-',
+            contributor.live || 0,
+            contributor.type !== 'individual' ? contributor.rejected : '-',
+            contributor.sourcingPending || 0,
+            contributor.sourcingAccepted || 0,
+            contributor.sourcingRejected || 0,
+          ];
+          tableData.push(row);
         });
       }
       const csvDownloadConfig = {
-        filename: this.programDetails.name.trim(),
+        filename: _.get(this.programDetails, 'name', '').trim(),
         tableData: tableData,
         headers: headers,
         showTitle: false
       };
-        this.programsService.generateCSV(csvDownloadConfig);
-      } catch (err) {
+      this.programsService.generateCSV(csvDownloadConfig);
+    } catch (err) {
+      this.toasterService.error(_.get(this.resourceService, 'messages.emsg.projects.m0005', ''));
+    }
+  }
+
+  getContribDashboardHeaders() {
+    const columnNames = [
+      'projectName', 'contributorName', 'typeOfContributor', 'draftContributingOrg',
+      'pendingContributingOrg', 'acceptedContributingOrg', 'rejectedContributingOrg', 'pendingtSourcingOrg',
+      'acceptedSourcingOrg', 'rejectedSourcingOrg'];
+    return _.map(columnNames, name => _.get(this.resourceService, `frmelmnts.lbl.${name}`));
+  }
+
+  downloadReport(report) {
+    const req = {
+      url: `program/v1/report`,
+      data: {
+        'request': {
+          'filters': {
+            program_id: [this.programId],
+            openForContribution: true,
+            report: report
+          }
+        }
+      }
+    };
+    return this.programsService.post(req).subscribe((res) => {
+      if (res.result && res.result.tableData && res.result.tableData.length) {
+        try {
+          const resObj = res.result.tableData[0];
+          let headers = [];
+          if (report === 'textbookLevelReport') {
+            headers = this.textbookLevelReportHeaders();
+          } else if (report === 'chapterLevelReport') {
+            headers = this.chapterLevelReportHeaders();
+          }
+          const tableData = [];
+          if (_.isArray(resObj) && resObj.length) {
+            _.forEach(resObj, (obj) => {
+              tableData.push(_.assign({ 'Project Name': this.programDetails.name.trim() }, obj));
+            });
+          }
+          const csvDownloadConfig = {
+            filename: this.programDetails.name.trim(),
+            tableData: tableData,
+            headers: headers,
+            showTitle: false
+          };
+          this.programsService.generateCSV(csvDownloadConfig);
+        } catch (err) {
+          this.toasterService.error(this.resourceService.messages.emsg.projects.m0005);
+        }
+      } else {
         this.toasterService.error(this.resourceService.messages.emsg.projects.m0005);
       }
-    } else {
+    }, (err) => {
       this.toasterService.error(this.resourceService.messages.emsg.projects.m0005);
-    }
-  }, (err) => {
-    this.toasterService.error(this.resourceService.messages.emsg.projects.m0005);
-  });
-}
+    });
+  }
 
-textbookLevelReportHeaders() {
-  const headers = [
-    this.resourceService.frmelmnts.lbl.projectName,
-    this.resourceService.frmelmnts.lbl.profile.Medium,
-    this.resourceService.frmelmnts.lbl.profile.Classes,
-    this.resourceService.frmelmnts.lbl.profile.Subjects,
-    this.resourceService.frmelmnts.lbl.textbookName,
-    this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn6,
-    this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn7,
-    this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn8,
-    this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn9,
-    ..._.map(this.programContentTypes.split(', '), type => `${this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn10} ${type}` )
-  ];
-  return headers;
-}
+  textbookLevelReportHeaders() {
+    const headers = [
+      this.resourceService.frmelmnts.lbl.projectName,
+      this.resourceService.frmelmnts.lbl.profile.Medium,
+      this.resourceService.frmelmnts.lbl.profile.Classes,
+      this.resourceService.frmelmnts.lbl.profile.Subjects,
+      this.resourceService.frmelmnts.lbl.textbookName,
+      this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn6,
+      this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn7,
+      this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn8,
+      this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn9,
+      ..._.map(this.programContentTypes.split(', '), type => `${this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn10} ${type}`)
+    ];
+    return headers;
+  }
 
-chapterLevelReportHeaders() {
-  const headers = [
-    this.resourceService.frmelmnts.lbl.projectName,
-    this.resourceService.frmelmnts.lbl.profile.Medium,
-    this.resourceService.frmelmnts.lbl.profile.Classes,
-    this.resourceService.frmelmnts.lbl.profile.Subjects,
-    this.resourceService.frmelmnts.lbl.textbookName,
-    this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn6,
-    this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn7,
-    ..._.map(this.programContentTypes.split(', '), type => `${this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn8} ${type}` )
-  ];
-  return headers;
-}
+  chapterLevelReportHeaders() {
+    const headers = [
+      this.resourceService.frmelmnts.lbl.projectName,
+      this.resourceService.frmelmnts.lbl.profile.Medium,
+      this.resourceService.frmelmnts.lbl.profile.Classes,
+      this.resourceService.frmelmnts.lbl.profile.Subjects,
+      this.resourceService.frmelmnts.lbl.textbookName,
+      this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn6,
+      this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn7,
+      ..._.map(this.programContentTypes.split(', '), type => `${this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn8} ${type}`)
+    ];
+    return headers;
+  }
 }

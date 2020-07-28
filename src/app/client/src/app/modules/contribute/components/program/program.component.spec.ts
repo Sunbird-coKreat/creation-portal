@@ -303,6 +303,41 @@ describe('Program Component Tests', () => {
     expect(_.isArray(component.sharedContext['gradeLevel'])).toEqual(true);
   });
 
+  it('Should call showTexbooklist if called getProgramTextbooks', () => {
+    spyOn(actionService, 'post').and.callFake(() => {
+      return of(SpecData.textbookSearchApiSuccessRes);
+    });
+    spyOn(component, 'showTexbooklist');
+    component.getProgramTextbooks();
+    expect(component.showTexbooklist).toHaveBeenCalled();
+  });
+
+  it('Should handle error if failed to get textbook list', () => {
+    spyOn(actionService, 'post').and.callFake(() => {
+      return throwError(SpecData.textbookSearchApiErrorRes);
+    });
+    spyOn(console, 'log');
+    component.getProgramTextbooks();
+    expect(console.log).toHaveBeenCalled();
+  });
+
+  it('Should add preference values in request body if passed preferences to getProgramTextbooks', () => {
+    let option = {};
+    spyOn(actionService, 'post').and.callFake((opt) => {
+      option = opt;
+      return of(SpecData.textbookSearchApiSuccessRes);
+    });
+    const preferences = {
+      medium: ['Hindi', 'English'],
+      gradeLevel: ['Class 10', 'Class 1'],
+      subject: ['Hindi', 'Science'],
+    };
+    component.getProgramTextbooks(preferences);
+    expect(_.get(option, 'data.request.filters.medium')).toBeTruthy();
+    expect(_.get(option, 'data.request.filters.gradeLevel')).toBeTruthy();
+    expect(_.get(option, 'data.request.filters.subject')).toBeTruthy();
+  });
+
   it('Should call applyTextbookFilters', () => {
     spyOn(component, 'applyTextbookFilters');
     component.applyTextbookFilters();
@@ -313,14 +348,5 @@ describe('Program Component Tests', () => {
     spyOn(component, 'resetTextbookFilters');
     component.resetTextbookFilters();
     expect(component.resetTextbookFilters).toHaveBeenCalled();
-  });
-
-  it('Should call getProgramTextbooks', () => {
-    // spyOn(actionService, 'setUserPreferencesforProgram').and.callFake(() => {
-    //   return throwError(SpecData.preferenceApiErrorRes);
-    // });
-    spyOn(component, 'getProgramTextbooks');
-    component.getProgramTextbooks();
-    expect(component.getProgramTextbooks).toHaveBeenCalled();
   });
 });

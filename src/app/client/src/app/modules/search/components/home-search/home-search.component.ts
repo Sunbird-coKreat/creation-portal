@@ -57,7 +57,8 @@ export class HomeSearchComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   ngOnInit() {
     this.initFilters = true;
-    combineLatest(this.fetchEnrolledCoursesSection(), this.dataDrivenFilterEvent).pipe(first()).
+    combineLatest([this.fetchEnrolledCoursesSection(), this.dataDrivenFilterEvent])
+    .pipe(first()).
     subscribe((data: Array<any>) => {
       this.enrolledSection = data[0];
         this.dataDrivenFilters = data[1];
@@ -69,7 +70,7 @@ export class HomeSearchComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
   private fetchContentOnParamChange() {
-    combineLatest(this.activatedRoute.params, this.activatedRoute.queryParams)
+    combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams])
     .pipe(debounceTime(5),
         tap(data => this.inView({inview: []})), // trigger pageexit if last filter resulted 0 contents
         delay(10), // to trigger pageexit telemetry event

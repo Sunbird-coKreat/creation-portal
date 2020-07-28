@@ -4,12 +4,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService, PaginationService } from '@sunbird/shared';
 import * as _ from 'lodash-es';
-import { tap, first } from 'rxjs/operators';
+import { first } from 'rxjs/operators';
 import { CollectionHierarchyService } from '../../../cbse-program/services/collection-hierarchy/collection-hierarchy.service';
 import { ChapterListComponent } from '../../../cbse-program/components/chapter-list/chapter-list.component';
 import { ICollectionComponentInput, IDashboardComponentInput,
   IPagination, IChapterListComponentInput} from '../../../cbse-program/interfaces';
-import { InitialState, ISessionContext, IUserParticipantDetails } from '../../interfaces';
+import { InitialState, ISessionContext } from '../../interfaces';
 import { ProgramStageService } from '../../../program/services/program-stage/program-stage.service';
 import { ProgramComponentsService } from '../../services/program-components/program-components.service';
 import { IImpressionEventInput, IInteractEventEdata } from '@sunbird/telemetry';
