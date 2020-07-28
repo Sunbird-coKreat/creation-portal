@@ -79,7 +79,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public contentType: string;
   public rejectBySourcingOrg: boolean;
   public sourcingOrgReviewComments: string;
-  originPreviewUrl: string = '';
+  originPreviewUrl = '';
   originPreviewReady = false;
   public azurFileUploaderSubscrition: Subscription;
   public fileUplaoderProgress = {
@@ -631,7 +631,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           // tslint:disable-next-line:max-line-length
           preSavedValues[code] = (this.contentMetaData[code]) ? this.contentMetaData[code] : false;
           // tslint:disable-next-line:max-line-length
-          obj.required ? controller[obj.code] = [{value:preSavedValues[code], disabled: this.contentMetaData[code]}, [Validators.requiredTrue]] : controller[obj.code] = preSavedValues[code];
+          obj.required ? controller[obj.code] = [{value: preSavedValues[code], disabled: this.contentMetaData[code]}, [Validators.requiredTrue]] : controller[obj.code] = preSavedValues[code];
         }
       }
     });
@@ -699,8 +699,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   changePolicyCheckValue (event) {
     if ( event.target.checked ) {
       this.contentDetailsForm.controls.contentPolicyCheck.setValue(true);
-    }
-    else {
+    } else {
       this.contentDetailsForm.controls.contentPolicyCheck.setValue(false);
     }
   }
@@ -812,7 +811,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           // tslint:disable-next-line:max-line-length
           this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier || res.result.content_id)
           .subscribe((data) => {
-            this.toasterService.success(this.resourceService.messages.smsg.m0063);
+            this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
             this.programStageService.removeLastStage();
             this.uploadedContentMeta.emit({
               contentId: res.result.identifier
@@ -820,7 +819,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           });
         }
       }, (err) => {
-        this.toasterService.error(this.resourceService.messages.fmsg.m00101);
+        this.toasterService.error(this.resourceService.messages.fmsg.m00102);
       });
   }
 
@@ -904,9 +903,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         console.error('origin data missing');
       }
     } else {
-      action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
-        this.toasterService.error(this.resourceService.messages.fmsg.m00100);
-        console.error('origin data missing');
+      action === 'accept' ? this.toasterService.error(this.resourceService.messages.emsg.approvingFailed) :
+      this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+      console.error('origin data missing');
     }
   }
 
