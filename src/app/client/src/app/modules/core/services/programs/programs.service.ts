@@ -42,6 +42,7 @@ export class ProgramsService extends DataService implements CanActivate {
   private _contentTypes: any[];
   private _sourcingOrgReviewers: Array<any>;
   // private orgUsers: Array<any>;
+  public mvcStageData: any;
 
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService,
@@ -978,6 +979,18 @@ export class ProgramsService extends DataService implements CanActivate {
       case 'dock.preprod.ntp.net.in': return 'https://preprod.ntp.net.in'; break;
       default: return  'https://dev.sunbirded.org'; break;
     }
+  }
+
+  setMvcStageData(data) {
+    this.mvcStageData = data;
+  }
+
+  getMvcStageData() {
+    return this.mvcStageData;
+  }
+
+  clearMvcStageData() {
+    this.mvcStageData = undefined;
   }
 
   /*getSourcingOrgUserList(sourcingOrgId, roles, limit?) {

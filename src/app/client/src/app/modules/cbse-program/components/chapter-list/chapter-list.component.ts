@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, EventEmitter, Output, OnChanges, OnDestroy, ChangeDetectorRef, AfterViewInit } from '@angular/core';
-import { PublicDataService, UserService, ActionService, FrameworkService } from '@sunbird/core';
+import { PublicDataService, UserService, ActionService, FrameworkService, ProgramsService } from '@sunbird/core';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService } from '@sunbird/shared';
 import { TelemetryService, IInteractEventEdata , IImpressionEventInput} from '@sunbird/telemetry';
 import * as _ from 'lodash-es';
@@ -88,7 +88,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     public programStageService: ProgramStageService, public programComponentsService: ProgramComponentsService,
     public activeRoute: ActivatedRoute, private ref: ChangeDetectorRef,
     private collectionHierarchyService: CollectionHierarchyService, private resourceService: ResourceService,
-    private navigationHelperService: NavigationHelperService, private helperService: HelperService) {
+    private navigationHelperService: NavigationHelperService, private helperService: HelperService,
+    private programsService: ProgramsService) {
   }
 
   ngOnInit() {
@@ -120,7 +121,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       name: this.resourceService.frmelmnts.lbl.allChapters
     });
     this.selectedChapterOption = 'all';
-    this.updateAccordianView();
+    const mvcStageData = this.programsService.getMvcStageData();
+    if (!_.isEmpty(mvcStageData)) {
+      this.updateAccordianView(mvcStageData.lastOpenedUnitId);
+    } else {
+      this.updateAccordianView();
+    }
+
     // clearing the selected questionId when user comes back from question list
     delete this.sessionContext['questionList'];
 

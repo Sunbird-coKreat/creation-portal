@@ -479,6 +479,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
 
           this.tempSortTextbooks = this.contributorTextbooks;
           this.showLoader = false;
+          const mvcStageData = this.programsService.getMvcStageData();
+          if (!_.isEmpty(mvcStageData)) {
+            this.viewContribution(mvcStageData.collection);
+          }
         },
         (error) => {
           console.log(error);
@@ -521,6 +525,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     };
     this.showChapterList = true;
+    this.programsService.clearMvcStageData();
     this.programStageService.addStage('chapterListComponent');
   }
 

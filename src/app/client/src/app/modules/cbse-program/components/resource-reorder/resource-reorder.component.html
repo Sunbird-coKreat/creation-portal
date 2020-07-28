@@ -13,11 +13,21 @@
     <sui-accordion-panel [isOpen]="true">
       <div title class="sb-accordion-title d-flex flex-ai-center mt-0">
         <div class="item d-flex flex-ai-center cursor-pointer width-100">
-          <div [ngClass]="{'sb-radio-btn-checkbox sb-radio-btn-primary width-100': !(this.prevUnitSelect === mainUnit.identifier)}">
-            <input *ngIf = "!(this.prevUnitSelect === mainUnit.identifier)" (click)="onSelectBehaviour($event)" type="radio" id="{{mainUnit.identifier}}" value="{{mainUnit.identifier}}" name="mainUnit" [(ngModel)]="unitSelected" (change)="setCollectionUnitBreadcrumb();" (click)="showMoveButton = true;"
+          <div *ngIf="!sessionContext?.selectedMvcContentDetails"  [ngClass]="{'sb-radio-btn-checkbox sb-radio-btn-primary width-100': !(this.prevUnitSelect === mainUnit.identifier)}">
+            <input *ngIf = "!(this.prevUnitSelect === mainUnit.identifier)" (click)="onSelectBehaviour($event)" type="radio" id="{{mainUnit.identifier}}" value="{{mainUnit.identifier}}" name="mainUnit" [(ngModel)]="unitSelected" (click)="showMoveButton = true;"
             appTelemetryInteract 
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('radiobutton-'+ mainUnit.name, 'click', 'chapter-list')"
         [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(mainUnit.identifier, 'Content', '1.0', {l1: sessionContext.collection})"
+        [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata"
+            >
+            <label for="{{mainUnit.identifier}}" class="sb-color-primary font-weight-bold">{{mainUnit.name}}</label>
+          </div>
+          <div *ngIf="sessionContext?.selectedMvcContentDetails"  class="sb-radio-btn-checkbox sb-radio-btn-primary width-100">
+            <input (click)="onSelectBehaviour($event)" type="radio" id="{{mainUnit.identifier}}" value="{{mainUnit.identifier}}" name="mainUnit" [(ngModel)]="prevUnitSelect" (change)="setCollectionUnitBreadcrumb();"
+            appTelemetryInteract 
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('radiobutton-'+ mainUnit.name, 'click', 'library')"
+        [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(contentId, 'Content', '1.0', {l1:prevUnitSelect,l2: sessionContext.collection})"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
             >
@@ -32,11 +42,21 @@
         <div class="chapter-lists level1">
           <div class="chapter-lists--item">
             <div class="item d-flex flex-ai-center cursor-pointer width-100">
-              <div class="width-100" [ngClass]="{'sb-radio-btn-checkbox sb-radio-btn-primary': !(this.prevUnitSelect === childUnit.identifier), 'p-16 pl-40': (this.prevUnitSelect === childUnit.identifier)}">
-                <input *ngIf= "!(this.prevUnitSelect === childUnit.identifier)" type="radio" id="{{childUnit.identifier}}" value="{{childUnit.identifier}}" name="childUnit" [(ngModel)]="unitSelected" (change)="setCollectionUnitBreadcrumb();" (click)="showMoveButton = true;"
+              <div *ngIf="!sessionContext?.selectedMvcContentDetails" class="width-100" [ngClass]="{'sb-radio-btn-checkbox sb-radio-btn-primary': !(this.prevUnitSelect === childUnit.identifier), 'p-16 pl-40': (this.prevUnitSelect === childUnit.identifier)}">
+                <input *ngIf= "!(this.prevUnitSelect === childUnit.identifier)" type="radio" id="{{childUnit.identifier}}" value="{{childUnit.identifier}}" name="childUnit" [(ngModel)]="unitSelected" (click)="showMoveButton = true;"
                 appTelemetryInteract 
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('radiobutton-' + childUnit.name, 'click', 'chapter-list')"
         [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(childUnit.identifier, 'Content', '1.0', {l1: sessionContext.collection})"
+        [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata"
+                >
+                <label for="{{childUnit.identifier}}">{{childUnit.name}}</label>
+              </div>
+              <div *ngIf="sessionContext?.selectedMvcContentDetails" class="width-100 sb-radio-btn-checkbox sb-radio-btn-primary" >
+                <input type="radio" id="{{childUnit.identifier}}" value="{{childUnit.identifier}}" name="childUnit" [(ngModel)]="prevUnitSelect" (change)="setCollectionUnitBreadcrumb();"
+                appTelemetryInteract 
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('radiobutton-' + childUnit.name, 'click', 'library')"
+        [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(contentId, 'Content', '1.0', {l1:prevUnitSelect,l2: sessionContext.collection})"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
                 >
@@ -60,10 +80,10 @@
     </span>
   </div>
   <div class="w-20 text-right">
-    <button id="moveResource" class="sb-btn sb-btn-normal text-inherit" [ngClass]="{'sb-btn-primary text-right': showMoveButton, 'sb-btn-disabled': !showMoveButton}" (click)="addResource()"
+    <button id="moveResource" class="sb-btn sb-btn-normal text-inherit sb-btn-primary text-right" (click)="addResource()"
     appTelemetryInteract 
-    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add-content', 'click', 'mvc-explore')"
-    [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(sessionContext.collection, 'Content', '1.0')"
+    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add-content', 'click', 'library')"
+    [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(contentId, 'Content', '1.0', {l1:prevUnitSelect,l2: sessionContext.collection})"
     [telemetryInteractCdata]="telemetryInteractCdata"
     [telemetryInteractPdata]="telemetryInteractPdata"
     >

@@ -43,29 +43,29 @@ export class ResourceReorderComponent implements OnInit {
      this.collectionHierarchyService.removeResourceToHierarchy(this.sessionContext.collection, this.prevUnitSelect, this.contentId)
       .subscribe((res) => {
         this.toasterService.success('The Selected Resource is Successfully Moved');
-        this.emitAfterMoveEvent();
+        this.emitAfterMoveEvent(this.unitSelected);
         this.modal.deny();
       });
     }, err => {
     });
   }
 
-  emitAfterMoveEvent() {
+  emitAfterMoveEvent(unitSelected) {
     this.moveEvent.emit({
       action: 'afterMove',
       contentId: this.contentId,
       collection: {
-        identifier: this.unitSelected
+        identifier: unitSelected
       }
     });
   }
 
   addResource() {
-    this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitSelected, this.contentId)
+    this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.prevUnitSelect, this.contentId)
      .subscribe((data) => {
         // tslint:disable-next-line:max-line-length
         this.toasterService.InfoToasterCritical('<b>Content added successfully!</b>', `Content "${this.sessionContext.selectedMvcContentDetails.name}" added to  ${this.collectionUnitsBreadcrumb[0]} textbook`);
-        this.emitAfterMoveEvent();
+        this.emitAfterMoveEvent(this.prevUnitSelect);
         this.modal.deny();
     }, err => {
     });
