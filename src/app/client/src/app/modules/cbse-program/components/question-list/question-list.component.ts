@@ -73,7 +73,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public sourcingOrgReviewer: boolean;
   public sourcingReviewStatus: string;
   public sourcingOrgReviewComments: string;
-  originPreviewUrl: string = '';
+  originPreviewUrl = '';
   originPreviewReady = false;
 
   constructor(
@@ -561,7 +561,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         // tslint:disable-next-line:max-line-length
         this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, contentId )
         .subscribe((data) => {
-          this.toasterService.success(this.resourceService.messages.smsg.m0063);
+          this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
           this.programStageService.removeLastStage();
           this.uploadedContentMeta.emit({
             contentId: contentId
@@ -569,7 +569,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         });
       }
     }, (err) => {
-      this.toasterService.error(this.resourceService.messages.fmsg.m00101);
+      this.toasterService.error(this.resourceService.messages.fmsg.m00102);
     });
   }
 
@@ -913,8 +913,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         console.error('origin data missing');
       }
     } else {
-      action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
-        this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+      action === 'accept' ? this.toasterService.error(this.resourceService.messages.emsg.approvingFailed) :
+      this.toasterService.error(this.resourceService.messages.fmsg.m00100);
       console.error('origin data missing');
     }
   }
