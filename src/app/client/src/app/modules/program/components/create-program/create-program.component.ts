@@ -578,9 +578,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   initializeFormFields(): void {
     if (!_.isEmpty(this.programDetails) && !_.isEmpty(this.programId)) {
       this.isOpenNominations = (_.get(this.programDetails, 'type') === 'public') ? true : false;
-      this.disableUpload = (_.get(this.programDetails, 'guidelines_url')) ? true : false;
 
       if (_.get(this.programDetails, 'status') === 'Live') {
+        this.disableUpload = (_.get(this.programDetails, 'guidelines_url')) ? true : false;
         this.editLive = true;
       } else if (_.get(this.programDetails, 'status') === 'Draft') {
         this.editDraft = true;
@@ -720,6 +720,19 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.defaultContributeOrgReviewChecked = $event.target.checked;
   }
 
+  setValidations() {
+    this.createProgramForm.controls['nomination_enddate'].setValidators(Validators.required);
+    this.createProgramForm.controls['nomination_enddate'].updateValueAndValidity();
+    this.createProgramForm.controls['description'].setValidators(Validators.required);
+    this.createProgramForm.controls['description'].updateValueAndValidity();
+    this.createProgramForm.controls['program_end_date'].setValidators(Validators.required);
+    this.createProgramForm.controls['program_end_date'].updateValueAndValidity();
+    this.createProgramForm.controls['content_submission_enddate'].setValidators(Validators.required);
+    this.createProgramForm.controls['content_submission_enddate'].updateValueAndValidity();
+    this.createProgramForm.controls['content_types'].setValidators(Validators.required);
+    this.createProgramForm.controls['content_types'].updateValueAndValidity();
+  }
+
   clearValidations() {
     this.createProgramForm.controls['nomination_enddate'].clearValidators();
     this.createProgramForm.controls['nomination_enddate'].updateValueAndValidity();
@@ -733,120 +746,96 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.createProgramForm.controls['content_types'].updateValueAndValidity();
   }
 
-  saveProgram(saveAsDraft = false, navigate = false) {
-    this.formIsInvalid = false;
+  saveProgram(cb) {
+    this.handleContentTypes();
+    const contentTypes = this.createProgramForm.value.content_types;
+    this.createProgramForm.value.content_types = _.isEmpty(contentTypes) ? [] : contentTypes;
+    this.programData = {
+      ...this.createProgramForm.value
+    };
 
-    if (saveAsDraft) {
-      this.clearValidations();
-    } else {
-      this.validateDates();
+    if (this.userFramework) {
+      this.programConfig.framework = this.userFramework;
+      // tslint:disable-next-line:max-line-length
+      _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'framework' }).defaultValue = this.userFramework;
     }
 
-    this.handleContentTypes();
+    this.programConfig.defaultContributeOrgReview = !this.defaultContributeOrgReviewChecked;
+    this.programData['sourcing_org_name'] = this.userprofile.rootOrgName;
+    this.programData['rootorg_id'] = this.userprofile.rootOrgId;
+    this.programData['createdby'] = this.userprofile.id;
+    this.programData['createdon'] = new Date();
+    this.programData['startdate'] = new Date();
+    this.programData['slug'] = 'sunbird';
+    this.programData['type'] = (!this.isOpenNominations) ? 'private' : 'public';
+    this.programData['default_roles'] = ['CONTRIBUTOR'];
+    this.programData['enddate'] = this.programData.program_end_date;
+    this.programData['config'] = this.programConfig;
+    this.programData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : '';
+    this.programData['status'] = this.editLive ? 'Live' : 'Draft';
 
-    if ((this.createProgramForm.dirty || !_.isUndefined(this.uploadedDocument)) && this.createProgramForm.valid) {
-      const contentTypes = this.createProgramForm.value.content_types;
-      this.createProgramForm.value.content_types = _.isEmpty(contentTypes) ? [] : contentTypes;
-      this.programData = {
-        ...this.createProgramForm.value
-      };
-      if (this.userFramework) {
-        this.programConfig.framework = this.userFramework;
-        // tslint:disable-next-line:max-line-length
-        _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'framework' }).defaultValue = this.userFramework;
-      }
+    if (!this.programData['nomination_enddate']) {
+      this.programData['nomination_enddate']= null;
+    }
 
-      this.programConfig.defaultContributeOrgReview = !this.defaultContributeOrgReviewChecked;
-      this.programData['sourcing_org_name'] = this.userprofile.rootOrgName;
-      this.programData['rootorg_id'] = this.userprofile.rootOrgId;
-      this.programData['createdby'] = this.userprofile.id;
-      this.programData['createdon'] = new Date();
-      this.programData['startdate'] = new Date();
-      this.programData['slug'] = 'sunbird';
-      this.programData['type'] = (!this.isOpenNominations) ? 'private' : 'public';
-      this.programData['default_roles'] = ['CONTRIBUTOR'];
-      this.programData['enddate'] = this.programData.program_end_date;
-      this.programData['config'] = this.programConfig;
-      this.programData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : '';
+    if (!this.programData['shortlisting_enddate']) {
+      this.programData['shortlisting_enddate'] = null;
+    }
 
-      if (saveAsDraft) {
-        this.programData['status'] = 'Draft';
-      }
+    if (!this.programData['program_end_date']) {
+      this.programData['program_end_date'] = null;
+    }
 
-      // Delete Empty dates
-      if (_.isEmpty(this.programData['nomination_enddate'])) {
-        delete this.programData['nomination_enddate'];
-      }
+    if (!this.programData['content_submission_enddate']) {
+      this.programData['content_submission_enddate'] = null;
+    }
 
-      if (_.isEmpty(this.programData['shortlisting_enddate'])) {
-        delete this.programData['shortlisting_enddate'];
-      }
+    if (_.isEmpty(this.programData.config.board) &&
+    _.findIndex(this.frameworkCategories, function(item) { return item.code === 'board'; }) < 0) {
+      delete this.programData.config.board;
+    }
 
-      if (_.isEmpty(this.programData['program_end_date'])) {
-        delete this.programData['program_end_date'];
-      }
+    delete this.programData.defaultContributeOrgReview;
+    delete this.programData.gradeLevel;
+    delete this.programData.medium;
+    delete this.programData.subject;
+    delete this.programData.program_end_date;
+    this.programData['program_id'] = '';
 
-      if (_.isEmpty(this.programData['content_submission_enddate'])) {
-        delete this.programData['content_submission_enddate'];
-      }
-
-      if (_.isEmpty(this.programData.config.board) &&
-      _.findIndex(this.frameworkCategories, function(item) { return item.code === 'board'; }) < 0) {
-        delete this.programData.config.board;
-      }
-
-      delete this.programData.defaultContributeOrgReview;
-      delete this.programData.gradeLevel;
-      delete this.programData.medium;
-      delete this.programData.subject;
-      delete this.programData.program_end_date;
-      this.programData['program_id'] = '';
-
-      if (!this.programId) {
-        this.programsService.createProgram(this.programData).subscribe(
-          (res) => {
-            this.programId = res.result.program_id;
-            this.programData['program_id'] = this.programId;
-            this.showTexbooklist();
-            this.generateTelemetryEvent('START');
-
-            if (saveAsDraft && navigate) {
-              this.router.navigate(['/sourcing']);
-            }
-          },
-          (err) => this.saveProgramError(err)
-        );
-      } else {
-
-        if (this.showTextBookSelector === true) {
-          this.disableCreateProgramBtn = true;
-
-          if (!saveAsDraft) {
-            if (_.isEmpty(this.collectionListForm.value.pcollections)) {
-              this.disableCreateProgramBtn = false;
-              this.toasterService.warning('Please select at least a one textbook');
-              return false;
-            }
-          }
-
-          this.programData['config']['collections'] = this.getCollections();
+    if (!this.programId) {
+      this.programsService.createProgram(this.programData).subscribe(
+        (res) => {
+          this.programId = res.result.program_id;
+          this.programData['program_id'] = this.programId;
+          this.generateTelemetryEvent('START');
+          cb(null, res);
+        },
+        (err) => {
+          cb(err, null);
+          this.saveProgramError(err);
         }
-
-        this.programData['program_id'] = this.programId;
-        this.programsService.updateProgram(this.programData).subscribe(
-          (res) => {
-            this.showTexbooklist();
-
-            if (saveAsDraft && navigate) {
-              this.router.navigate(['/sourcing']);
-            }
-          },
-          (err) => this.saveProgramError(err)
-        );
-      }
+      );
     } else {
-      this.formIsInvalid = true;
-      this.validateAllFormFields(this.createProgramForm);
+      if (this.showTextBookSelector === true) {
+        this.disableCreateProgramBtn = true;
+        if (_.isEmpty(this.collectionListForm.value.pcollections)) {
+          this.disableCreateProgramBtn = false;
+          this.toasterService.warning('Please select at least a one textbook');
+          return false;
+        }
+        this.programData['config']['collections'] = this.getCollections();
+      }
+
+      this.programData['program_id'] = this.programId;
+      this.programsService.updateProgram(this.programData).subscribe(
+        (res) => {
+          cb(null, res);
+        },
+        (err) => {
+          cb(err, null);
+          this.saveProgramError(err);
+        }
+      );
     }
   }
 
@@ -1336,5 +1325,94 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
 
     this.btnDoneDisabled = false;
+  }
+
+  saveAsDraft($event: MouseEvent) {
+    this.clearValidations();
+
+    if (this.createProgramForm.valid) {
+        ($event.target as HTMLButtonElement).disabled = true;
+        const cb = (error, resp) => {
+          if (!error && resp) {
+            this.router.navigate(['/sourcing']);
+          } else {
+            ($event.target as HTMLButtonElement).disabled = false;
+          }
+        };
+        this.saveProgram(cb);
+      } else if (!this.createProgramForm.valid) {
+        this.formIsInvalid = true;
+        this.validateAllFormFields(this.createProgramForm);
+        return false;
+      }
+  }
+
+  saveAsDraftAndNext ($event) {
+    this.clearValidations();
+
+    if ((this.createProgramForm.dirty
+      || !_.isUndefined(this.uploadedDocument))
+      && this.createProgramForm.valid) {
+        ($event.target as HTMLButtonElement).disabled = true;
+
+        const cb = (error, resp) => {
+          if (!error && resp) {
+            this.showTexbooklist();
+            ($event.target as HTMLButtonElement).disabled = false;
+          } else {
+            ($event.target as HTMLButtonElement).disabled = false;
+          }
+        };
+
+        this.saveProgram(cb);
+      } else if (this.createProgramForm.valid) {
+        this.showTexbooklist();
+      } else {
+        this.formIsInvalid = true;
+        this.validateAllFormFields(this.createProgramForm);
+        return false;
+      }
+  }
+
+  createProject ($event) {
+    this.setValidations();
+
+    if (!this.createProgramForm.valid) {
+      this.navigateTo(1);
+      this.formIsInvalid = true;
+      this.validateAllFormFields(this.createProgramForm);
+      return false;
+    }
+
+    ($event.target as HTMLButtonElement).disabled = true;
+    const cb = (error, resp) => {
+      if (!error && resp) {
+        const data = {
+          'program_id': this.programId
+        };
+
+        this.programsService.publishProgram(data).subscribe(res => {
+          console.log(res);
+          this.router.navigate(['/sourcing']);
+        },
+        err => {
+          console.log(err);
+        });
+
+        // @todo show success message
+      } else {
+        ($event.target as HTMLButtonElement).disabled = false;
+      }
+    };
+
+    this.saveProgram(cb);
+  }
+
+  publishProgram () {
+    // call publish program API
+  }
+
+  unlistPublishProgram() {
+    // call unlist program API
   }
 }

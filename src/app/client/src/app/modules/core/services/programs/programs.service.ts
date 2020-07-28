@@ -532,6 +532,22 @@ export class ProgramsService extends DataService implements CanActivate {
     }));
   }
 
+  publishProgram(request) {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.PUBLISH}`,
+      data: request
+    };
+    return this.API_URL(req);
+  }
+
+  unlistPublishProgram(request) {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.UNLIST_PUBLISH}`,
+      data: request
+    };
+    return this.API_URL(req);
+  }
+
   updateNomination(request) {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_UPDATE}`,
