@@ -31,7 +31,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   @ViewChild('fineUploaderUI') fineUploaderUI: ElementRef;
   public unsubscribe = new Subject<void>();
   public programId: string;
-  public guidLinefileName: String;
+  public guidLinefileName: string;
   public isFormValueSet = false;
   public editMode = false;
   public choosedTextBook: any;
@@ -68,7 +68,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   /**
    * Units selection form
    */
-  chaptersSelectionForm : FormGroup;
+  chaptersSelectionForm: FormGroup;
 
   /**
   * List of textbooks for the program by BMGC
@@ -154,8 +154,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     if (!_.isEmpty(this.programId)) {
       this.editMode = true;
       this.getProgramDetails();
-    }
-    else {
+    } else {
       this.initializeFormFields();
     }
     this.fetchFrameWorkDetails();
@@ -301,7 +300,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.initializeFormFields();
 
       if (!_.isEmpty(this.programDetails.guidelines_url)) {
-        this.guidLinefileName = this.programDetails.guidelines_url.split("/").pop();
+        this.guidLinefileName = this.programDetails.guidelines_url.split('/').pop();
       }
 
     }, error => {
@@ -362,8 +361,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.sortColumn = column;
   }
 
-  sortChapters(identifier,column) {
-    this.textbooks[identifier].children = this.programsService.sortCollection(this.textbooks[identifier].children, column, this.chaptersSortDir);
+  sortChapters(identifier, column) {
+    this.textbooks[identifier].children = this.programsService.sortCollection(this.textbooks[identifier].children,
+      column, this.chaptersSortDir);
     this.chaptersSortDir = (this.chaptersSortDir === 'asc' || this.chaptersSortDir === '') ? 'desc' : 'asc';
     this.chaptersSortColumn = column;
   }
@@ -425,8 +425,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     if (!this.editMode) {
       return this.pickerMinDate;
-    }
-    else {
+    } else {
       return this.createProgramForm.value.nomination_enddate;
     }
   }
@@ -572,32 +571,34 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   initializeFormFields(): void {
 
     if (!_.isEmpty(this.programDetails) && !_.isEmpty(this.programId)) {
-      this.isOpenNominations = (_.get(this.programDetails, 'type') == "public") ? true : false;
+      this.isOpenNominations = (_.get(this.programDetails, 'type') === 'public') ? true : false;
       this.disableUpload = (_.get(this.programDetails, 'guidelines_url')) ? true : false;
 
-      let obj = {
+      const obj = {
         name: [_.get(this.programDetails, 'name'), [Validators.required, Validators.maxLength(100)]],
         description: [_.get(this.programDetails, 'description'), Validators.maxLength(1000)],
         nomination_enddate : [],
-        shortlisting_enddate: [_.get(this.programDetails, 'shortlisting_enddate') ? new Date(_.get(this.programDetails, 'shortlisting_enddate')) : ''],
-        program_end_date: [_.get(this.programDetails, 'enddate') ? new Date(_.get(this.programDetails, 'enddate')) : '', Validators.required],
-        content_submission_enddate: [_.get(this.programDetails, 'content_submission_enddate') ? new Date(_.get(this.programDetails, 'content_submission_enddate')) : '', Validators.required],
+        shortlisting_enddate: [_.get(this.programDetails, 'shortlisting_enddate') ?
+        new Date(_.get(this.programDetails, 'shortlisting_enddate')) : ''],
+        program_end_date: [_.get(this.programDetails, 'enddate') ?
+        new Date(_.get(this.programDetails, 'enddate')) : '', Validators.required],
+        content_submission_enddate: [_.get(this.programDetails, 'content_submission_enddate') ?
+        new Date(_.get(this.programDetails, 'content_submission_enddate')) : '', Validators.required],
         content_types: [_.get(this.programDetails, 'content_types'), Validators.required],
         rewards: [_.get(this.programDetails, 'rewards')],
         defaultContributeOrgReview: new FormControl({ value: this.defaultContributeOrgReviewChecked, disabled: this.editMode })
       };
 
-      if (this.isOpenNominations == true) {
-        obj.nomination_enddate = [_.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : '', Validators.required];
-      }
-      else {
-        obj.nomination_enddate = [_.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : ''];
+      if (this.isOpenNominations === true) {
+        obj.nomination_enddate = [_.get(this.programDetails, 'nomination_enddate') ?
+        new Date(_.get(this.programDetails, 'nomination_enddate')) : '', Validators.required];
+      } else {
+        obj.nomination_enddate = [_.get(this.programDetails, 'nomination_enddate') ?
+        new Date(_.get(this.programDetails, 'nomination_enddate')) : ''];
       }
 
       this.createProgramForm = this.sbFormBuilder.group(obj);
-    }
-    else
-    {
+    } else {
       this.createProgramForm = this.sbFormBuilder.group({
         name: ['', [Validators.required, Validators.maxLength(100)]],
         description: ['', Validators.maxLength(1000)],
@@ -692,7 +693,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
   handleContentTypes() {
     const contentTypes = this.createProgramForm.value.content_types;
-    let configContentTypes = _.get(_.find(this.programConfig.components, { id: 'ng.sunbird.chapterList' }), 'config.contentTypes.value');
+    let configContentTypes = _.get(_.find(programConfigObj.components, { id: 'ng.sunbird.chapterList' }), 'config.contentTypes.value');
     configContentTypes = _.filter(configContentTypes, (type) => {
       return _.includes(contentTypes, type.metadata.contentType);
     });
@@ -734,7 +735,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : '';
 
       if (_.isEmpty(this.programData.config.board) &&
-      _.findIndex(this.frameworkCategories, function(item) { return item.code === 'board'; }) < 0) {
+      _.findIndex(this.frameworkCategories, (item) => item.code === 'board') < 0) {
         delete this.programData.config.board;
       }
 
@@ -792,7 +793,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       delete prgData.program_end_date;
       delete prgData.content_types;
 
-      if (this.isOpenNominations == false) {
+      if (this.isOpenNominations === false) {
         delete prgData.nomination_enddate;
         delete prgData.shortlisting_enddate;
       }
@@ -903,21 +904,21 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       return false;
     }
 
-    let collections = [];
+    const collections = [];
 
     _.forEach(this.collectionListForm.value.pcollections, (identifier) => {
-      let obj = {
-        "id" : identifier,
-        "allowed_content_types": [],
-        "children": []
+      const obj = {
+        'id' : identifier,
+        'allowed_content_types': [],
+        'children': []
       };
 
       _.forEach(this.textbooks[identifier].children, (item) => {
         if (item.checked === true) {
           obj.children.push({
-            "id": item.identifier,
-            "allowed_content_types": []
-          })
+            'id': item.identifier,
+            'allowed_content_types': []
+          });
         }
       });
 
@@ -1078,17 +1079,16 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public chooseChapters(collection) {
     if (!this.textbooks[collection.identifier]) {
       this.getCollectionHierarchy(collection.identifier);
-    }
-    else {
+    } else {
       this.choosedTextBook = this.textbooks[collection.identifier];
       this.initChaptersSelectionForm(this.choosedTextBook);
     }
 
-    this.selectChapter=true;
+    this.selectChapter = true;
   }
 
   initChaptersSelectionForm(chapters) {
-    let values = [];
+    const values = [];
 
 
     chapters.children.forEach((o, i) => {
@@ -1104,25 +1104,25 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   public getCollectionHierarchy(identifier: string) {
-    let hierarchyUrl = '/action/content/v3/hierarchy/' + identifier + '?mode=edit';
+    const hierarchyUrl = '/action/content/v3/hierarchy/' + identifier + '?mode=edit';
     const originUrl = this.programsService.getContentOriginEnvironment();
     const url =  originUrl + hierarchyUrl ;
 
     return this.httpClient.get(url).subscribe(res => {
-      let content = _.get(res, "result.content");
+      const content = _.get(res, 'result.content');
       this.textbooks[identifier] = {};
       const chapter = {
-        "id" : identifier,
-        "children": [],
-        "allowed_content_types" : []
+        'id' : identifier,
+        'children': [],
+        'allowed_content_types' : []
       };
 
       _.forEach(content.children, (item) => {
         item['checked'] = true;
 
         chapter.children.push({
-          "id" : item.identifier,
-          "allowed_content_types" : []
+          'id' : item.identifier,
+          'allowed_content_types' : []
         });
       });
 
@@ -1130,15 +1130,15 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.choosedTextBook = content;
       this.initChaptersSelectionForm(this.choosedTextBook);
       const cindex = this.tempCollections.findIndex(x => x.identifier === identifier);
-      this.tempCollections[cindex]["selected"] = content.children.length;
-      this.tempCollections[cindex]["total"]    = content.children.length
+      this.tempCollections[cindex]['selected'] = content.children.length;
+      this.tempCollections[cindex]['total']    = content.children.length;
     }, error => console.log(console.error()
     ));
   }
 
   updateSelection(identifier) {
     let selectedCount = 0;
-    let selectedChapters = _.get(this.chaptersSelectionForm.controls.chaptersCtrl, "controls");
+    const selectedChapters = _.get(this.chaptersSelectionForm.controls.chaptersCtrl, 'controls');
     this.selectChapter = false;
 
     _.forEach(selectedChapters, (item, i) => {
@@ -1153,16 +1153,18 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   getChapterLevelCount(collections) {
-    let status = ['Live'];
+    const status = ['Live'];
+    // tslint:disable-next-line: prefer-const
     let createdBy, visibility;
     visibility = true;
 
     _.forEach(collections, collection => {
-       let totalLeaf = 0;
-       let contentTypes = [];
-       let result = this.getContentCountPerFolder(collection , status , false, undefined, createdBy, visibility, totalLeaf, contentTypes);
+       const totalLeaf = 0;
+       const contentTypes = [];
+       const result = this.getContentCountPerFolder(collection , status , false, undefined, createdBy, visibility, totalLeaf, contentTypes);
 
        let contentTypeDisplayTxt = '';
+       // tslint:disable-next-line: forin
        for (const property in result.contentTypes) {
         contentTypeDisplayTxt += `${result.contentTypes[property]}  ${property} `;
       }
@@ -1172,7 +1174,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     });
   }
 
-  getContentCountPerFolder(collection, contentStatus?: string[], onlySample?: boolean, organisationId?: string, createdBy?: string, visibility?: boolean, totalLeaf?, contentTypes?) {
+  getContentCountPerFolder(collection, contentStatus?: string[], onlySample?: boolean,
+     organisationId?: string, createdBy?: string, visibility?: boolean, totalLeaf?, contentTypes?) {
     const self = this;
     _.each(collection.children, child => {
       if (contentStatus.indexOf(child.status) !== -1) {
@@ -1183,16 +1186,16 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       self.getContentCountPerFolder(child, contentStatus, onlySample, organisationId, createdBy, visibility, totalLeaf, contentTypes);
     });
 
-    var counts = {};
-    contentTypes.forEach(function(x) { counts[x] = (counts[x] || 0)+1; });
+    const counts = {};
+    contentTypes.forEach((x) => { counts[x] = (counts[x] || 0) + 1; });
 
-    return {"totalLeaf": totalLeaf, "contentTypes": counts};
+    return {'totalLeaf': totalLeaf, 'contentTypes': counts};
   }
 
   onChangeSelection() {
-    let selectedChapters = _.get(this.chaptersSelectionForm.controls.chaptersCtrl, "controls");
+    const selectedChapters = _.get(this.chaptersSelectionForm.controls.chaptersCtrl, 'controls');
 
-    if (selectedChapters.findIndex(o => o.value) == -1) {
+    if (selectedChapters.findIndex(o => o.value) === -1) {
       this.btnDoneDisabled = true;
 
       return false;

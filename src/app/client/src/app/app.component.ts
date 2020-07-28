@@ -15,9 +15,8 @@ import { ProfileService } from '@sunbird/profile';
 import { Observable, of, throwError, combineLatest, BehaviorSubject, forkJoin } from 'rxjs';
 import { first, filter, mergeMap, tap, map, skipWhile, startWith, takeUntil } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
-import { DOCUMENT } from '@angular/platform-browser';
 import { ShepherdService } from 'angular-shepherd';
-import { Location } from '@angular/common';
+import { Location, DOCUMENT } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
 
 /**
@@ -148,11 +147,12 @@ export class AppComponent implements OnInit, OnDestroy {
       tap(queryParams => {
         this.telemetryContextData = JSON.parse(decodeURIComponent(queryParams.context));
       }),
+      // tslint:disable-next-line: deprecation
       startWith(null)
     );
     this.handleHeaderNFooter();
     this.resourceService.initialize();
-    combineLatest(queryParams$, this.setSlug(), this.setDeviceId())
+    combineLatest([queryParams$, this.setSlug(), this.setDeviceId()])
       .pipe(
         mergeMap(data => {
           this.navigationHelperService.initialize();
@@ -196,7 +196,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.chatbotInputObj = {
       chatbotUrl: `${baseUrl}/chatapi/bot`,
       title: this.resourceService.frmelmnts.lbl.chatbot.title,
-      //imageUrl : image.imageUrl,
+      // imageUrl : image.imageUrl,
       appId: this.appId,
       channel: this.channel,
       did: this.deviceId,
