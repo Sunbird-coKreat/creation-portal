@@ -61,7 +61,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   public activeDate = '';
   public showStage;
   public currentStage: any;
-  public contentType:any;
+  public contentType: any;
   public sampleDataCount = 0;
   public chapterCount = 0;
   public currentNominationStatus: any;
@@ -346,7 +346,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
             status: this.sessionContext.collectionStatus || ['Draft', 'Live'],
             contentType: this.sessionContext.collectionType || 'Textbook'
           },
-          fields: ["name", "gradeLevel", "mimeType", "medium", "subject", "status", "chapterCount", "chapterCountForContribution"],
+          fields: ['name', 'gradeLevel', 'mimeType', 'medium', 'subject', 'status', 'chapterCount', 'chapterCountForContribution'],
           limit: 1000
         }
       }
@@ -466,7 +466,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
         if (data.result && !_.isEmpty(data.result)) {
             this.showNominateModal = false;
             const router = this.router;
-            setTimeout(function() {
+            setTimeout(() => {
               router.navigateByUrl('/contribute/myenrollprograms');
             }, 10);
             this.toasterService.success('Nomination sent');

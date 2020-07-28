@@ -56,7 +56,8 @@ export class CourseSearchComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sortingOptions = this.configService.dropDownConfig.FILTER.RESOURCES.sortingOptions;
   }
   ngOnInit() {
-    combineLatest(this.fetchEnrolledCoursesSection(), this.getFrameWork()).pipe(first(),
+    combineLatest([this.fetchEnrolledCoursesSection(), this.getFrameWork()])
+    .pipe(first(),
       mergeMap((data: Array<any>) => {
         this.enrolledSection = data[0];
         if (data[1]) {
@@ -77,7 +78,7 @@ export class CourseSearchComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
   private fetchContentOnParamChange() {
-    combineLatest(this.activatedRoute.params, this.activatedRoute.queryParams)
+    combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams])
     .pipe(debounceTime(5), // to sync params and queryParams events
       tap(data => this.inView({inview: []})), // trigger pageexit if last filter resulted 0 contents
       delay(10), // to trigger pageexit telemetry event

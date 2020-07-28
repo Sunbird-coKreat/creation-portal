@@ -201,8 +201,8 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   getDetails() {
-      return combineLatest(this.tenantService.tenantData$, this.getOwnershipType()).
-      pipe(map((data: any) => ({ tenantDetails: data[0].tenantData, ownershipType: data[1] })));
+      return combineLatest([this.tenantService.tenantData$, this.getOwnershipType()])
+      .pipe(map((data: any) => ({ tenantDetails: data[0].tenantData, ownershipType: data[1] })));
   }
 
   private initEditor() {

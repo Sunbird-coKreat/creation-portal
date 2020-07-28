@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ResourceService, ConfigService } from '@sunbird/shared';
 import { ISelectFilter } from '../../interfaces/selectfilter';
 import * as _ from 'lodash-es';
-import { debounceTime, distinctUntilChanged, delay, flatMap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, delay, flatMap, mergeMap } from 'rxjs/operators';
 import { IInteractEventEdata } from '@sunbird/telemetry';
 @Component({
   selector: 'app-up-for-review-filter',
@@ -112,7 +112,7 @@ export class UpforReviewFilterComponent implements OnInit {
       });
     this.modelChanged.pipe(debounceTime(1000),
       distinctUntilChanged(),
-      flatMap(search => of(search).pipe(delay(500)))
+      mergeMap(search => of(search).pipe(delay(500)))
       ).
       subscribe(query => {
         this.query = query;

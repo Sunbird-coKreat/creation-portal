@@ -206,9 +206,9 @@ export class CourseProgressComponent implements OnInit, OnDestroy, AfterViewInit
       status: ['0', '1', '2'],
       mentors: [this.userId]
     };
-    combineLatest(
+    combineLatest([
       this.courseProgressService.getBatches(searchParamsCreator),
-      this.courseProgressService.getBatches(searchParamsMentor),
+      this.courseProgressService.getBatches(searchParamsMentor)]
     ).pipe(takeUntil(this.unsubscribe))
       .subscribe((results) => {
         this.batchlist = _.union(results[0].result.response.content, results[1].result.response.content);
@@ -427,19 +427,19 @@ export class CourseProgressComponent implements OnInit, OnDestroy, AfterViewInit
     this.userDataSubscription = this.user.userData$.pipe(first()).subscribe(userdata => {
       if (userdata && !userdata.err) {
         this.userId = userdata.userProfile.userId;
-        this.paramSubcription = combineLatest(this.activatedRoute.params, this.activatedRoute.queryParams,
+        this.paramSubcription = combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams,
           (params: any, queryParams: any) => {
             return {
               params: params,
               queryParams: queryParams
             };
-          })
+          }])
           .subscribe(bothParams => {
-            this.courseId = bothParams.params.courseId;
-            this.batchId = bothParams.params.batchId;
-            this.queryParams = { ...bothParams.queryParams };
-            this.interactObject = { id: this.courseId, type: 'Course', ver: '1.0' };
-            this.populateBatchData();
+            // this.courseId = bothParams.params.courseId;
+            // this.batchId = bothParams.params.batchId;
+            // this.queryParams = { ...bothParams.queryParams };
+            // this.interactObject = { id: this.courseId, type: 'Course', ver: '1.0' };
+            // this.populateBatchData();
           });
       }
     });

@@ -22,7 +22,7 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Removing package-lock.json file and node_modules folder
+          name: Removing package-lock.json file and node_modules
           command: 'rm -rf package-lock.json ./node_modules'
       - run:
           name: Installing npm deps

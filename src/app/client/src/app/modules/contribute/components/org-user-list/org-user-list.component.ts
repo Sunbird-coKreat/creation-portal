@@ -39,7 +39,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
     public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService,
     private paginationService: PaginationService ) {
-    
+
     /*if (this.isSourcingOrgAdmin()) {
       this.getSourcingOrgUsers();
     } else {
@@ -47,7 +47,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     }*/
     this.getContributionOrgUsers();
   }
-  
+
   ngOnInit() {
     this.position = 'top center';
     const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
@@ -84,7 +84,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
       };
      });
   }
-  
+
   setOrgUsers(orgUsersDetails) {
     this.allContributorOrgUsers = orgUsersDetails;
 
@@ -106,14 +106,14 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
       return;
     }
     this.pageNumber = page;
-    this.contributorOrgUsers = this.paginatedContributorOrgUsers[this.pageNumber -1];
+    this.contributorOrgUsers = this.paginatedContributorOrgUsers[this.pageNumber - 1];
     this.pager = this.paginationService.getPager(this.orgUserscnt, this.pageNumber, this.pageLimit);
   }
 
   sortCollection(column) {
     this.allContributorOrgUsers = this.programsService.sortCollection(this.allContributorOrgUsers, column, this.direction);
     this.paginatedContributorOrgUsers = _.chunk( this.allContributorOrgUsers, this.pageLimit);
-    this.contributorOrgUsers = this.paginatedContributorOrgUsers[this.pageNumber-1];
+    this.contributorOrgUsers = this.paginatedContributorOrgUsers[this.pageNumber - 1];
     this.pager = this.paginationService.getPager(this.orgUserscnt, this.pageNumber, this.pageLimit);
     if (this.direction === 'asc' || this.direction === '') {
       this.direction = 'desc';

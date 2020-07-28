@@ -50,10 +50,10 @@ export class ExploreCourseComponent implements OnInit, OnDestroy, AfterViewInit 
         this.filterType = this.configService.appConfig.exploreCourse.filterType;
     }
     ngOnInit() {
-        combineLatest(
+        combineLatest([
             this.orgDetailsService.getOrgDetails(this.activatedRoute.snapshot.params.slug),
-            this.getFrameWork()
-        ).pipe(
+            this.getFrameWork()])
+            .pipe(
             mergeMap((data: any) => {
                 this.hashTagId = data[0].hashTagId;
                 if (data[1]) {
@@ -106,7 +106,7 @@ export class ExploreCourseComponent implements OnInit, OnDestroy, AfterViewInit 
         }
     }
     private fetchContentOnParamChange() {
-        combineLatest(this.activatedRoute.params, this.activatedRoute.queryParams)
+        combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams])
         .pipe( debounceTime(5), // wait for both params and queryParams event to change
              tap(data => this.inView({inview: []})),
              delay(10),
