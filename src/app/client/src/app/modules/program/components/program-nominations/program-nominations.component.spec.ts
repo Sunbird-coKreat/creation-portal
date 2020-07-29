@@ -89,8 +89,8 @@ describe('Program Component', () => {
         }
       }
     },
-    queryParamMap: of(convertToParamMap({ 
-        tab: 'contributionDashboard'        
+    queryParamMap: of(convertToParamMap({
+        tab: 'contributionDashboard'
     }))
   };
 
@@ -149,7 +149,8 @@ describe('Program Component', () => {
   });
 
   it('should have create and defined component', () => {
-    expect(component).toBeDefined() && expect(component).toBeTruthy();
+    expect(component).toBeDefined();
+    expect(component).toBeTruthy();
   });
 
   it('should contribution dashboard data should not be empty', () => {
@@ -171,7 +172,7 @@ describe('Program Component', () => {
         return of(SpecData.programCollectionListApiSuccessRes);
     });
     component.getProgramDetails();
-    expect(component.contributionDashboardData.length).toBe(2)
+    expect(component.contributionDashboardData.length).toBe(2);
   });
 
   it('should call getContribDashboardHeaders method', () => {

@@ -550,7 +550,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.actions.showReviewerView.role && this.actions.showReviewerView.roles.includes(this.sessionContext.currentRoleId);
     const contributingOrgAdmin = this.isContributingOrgAdmin();
     if (this.isSourcingOrgReviewer() && this.sourcingOrgReviewer) {
-      if (this.sessionContext && this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.status 
+      if (this.sessionContext && this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.status
         && this.sessionContext.nominationDetails.status === 'Pending') {
         if ( reviewerViewRole && content.sampleContent === true
           && this.getNominatedUserId() === content.createdBy) {

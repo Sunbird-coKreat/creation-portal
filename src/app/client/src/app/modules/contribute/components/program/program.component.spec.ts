@@ -1,24 +1,25 @@
-import { async, TestBed, inject, ComponentFixture } from '@angular/core/testing';
-import { SharedModule } from '@sunbird/shared';
-import { FrameworkService, UserService, ExtPluginService } from '@sunbird/core';
+import { async, TestBed, ComponentFixture } from '@angular/core/testing';
+import { SharedModule, ToasterService } from '@sunbird/shared';
+import { FrameworkService, UserService, ExtPluginService, ProgramsService, ActionService } from '@sunbird/core';
 
 import { DynamicModule } from 'ng-dynamic-component';
 import { ProgramComponent } from './program.component';
 import * as _ from 'lodash-es';
-import {  throwError , of } from 'rxjs';
-// tslint:disable-next-line:max-line-length
-import { addParticipentResponseSample, userProfile,  frameWorkData, programDetailsWithOutUserDetails,
-  programDetailsWithOutUserAndForm, extFrameWorkPostData, programDetailsWithUserDetails } from './program.component.spec.data';
-import { CollectionComponent } from '../../../cbse-program/components/collection/collection.component';
+import {  throwError , of, Subscription } from 'rxjs';
+import * as SpecData from './program.component.spec.data';
 import { ProgramHeaderComponent } from '../program-header/program-header.component';
 import { OnboardPopupComponent } from '../onboard-popup/onboard-popup.component';
 // tslint:disable-next-line:prefer-const
 let errorInitiate;
 import { SuiModule } from 'ng2-semantic-ui';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TelemetryModule } from '@sunbird/telemetry';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DaysToGoPipe } from '../../../shared-feature';
+import { DatePipe } from '@angular/common';
+import { CollectionHierarchyService } from '../../../cbse-program';
+import { ProgramTelemetryService } from '../../services';
 
 const userServiceStub = {
   get() {
@@ -29,12 +30,12 @@ const userServiceStub = {
         }
       });
     } else {
-      return of(addParticipentResponseSample);
+      return of(SpecData.addParticipentResponseSample);
     }
   },
-  userid: userProfile.userId,
-  userProfile : userProfile
-
+  userid: SpecData.userProfile.userId,
+  userProfile : SpecData.userProfile,
+  slug: 'sunbird'
 };
 
 const extPluginServiceStub = {
@@ -46,7 +47,7 @@ const extPluginServiceStub = {
         }
       });
     } else {
-      return of({err: null, result: programDetailsWithUserDetails});
+      return of({err: null, result: SpecData.programDetailsWithUserDetails});
     }
   },
   post() {
@@ -57,26 +58,35 @@ const extPluginServiceStub = {
         }
       });
     } else {
-      return of(extFrameWorkPostData);
+      return of(SpecData.extFrameWorkPostData);
     }
   }
 };
-
 
 const frameworkServiceStub = {
   initialize() {
     return null;
   },
-  frameworkData$:  of(frameWorkData)
+  frameworkData$:  of(SpecData.frameWorkData)
 };
 
-describe('ProgramComponent On Bording test', () => {
+const PrefModel = {
+  deny() { return null; }
+};
+
+describe('Program Component Tests', () => {
   let component: ProgramComponent;
+  let userService: UserService;
+  let programsService: ProgramsService;
+  let toasterService: ToasterService;
+  let actionService: ActionService;
   let fixture: ComponentFixture<ProgramComponent>;
+  let prefModal: any;
 
   class RouterStub {
     navigate = jasmine.createSpy('navigate');
   }
+
   const fakeActivatedRoute = {
     snapshot: {
       params: {
@@ -96,6 +106,7 @@ describe('ProgramComponent On Bording test', () => {
         DynamicModule,
         SuiModule,
         SharedModule.forRoot(),
+        ReactiveFormsModule,
         FormsModule,
         TelemetryModule.forRoot(),
         HttpClientTestingModule
@@ -103,7 +114,8 @@ describe('ProgramComponent On Bording test', () => {
       declarations: [
         ProgramComponent,
         OnboardPopupComponent,
-        ProgramHeaderComponent
+        ProgramHeaderComponent,
+        DaysToGoPipe
       ],
       providers: [
         {
@@ -124,7 +136,11 @@ describe('ProgramComponent On Bording test', () => {
         {
           provide: ExtPluginService,
           useValue: extPluginServiceStub
-        }
+        },
+        ActionService,
+        ProgramTelemetryService,
+        DatePipe,
+        CollectionHierarchyService
       ]
     }).compileComponents();
   }));
@@ -132,129 +148,205 @@ describe('ProgramComponent On Bording test', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ProgramComponent);
     component = fixture.componentInstance;
+    userService = TestBed.get(UserService);
+    programsService = TestBed.get(ProgramsService);
+    toasterService = TestBed.get(ToasterService);
+    actionService = TestBed.get(ActionService);
+    prefModal = PrefModel;
 
     fixture.detectChanges();
   });
 
-  it('should have a defined component', () => {
+  it('should have create and defined component', () => {
     expect(component).toBeDefined();
-  });
-
-  it('should create the component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should execute OnboardEvent on initialization of component', () => {
+  it('User should not belong to org', () => {
+    userService.userRegistryData = true;
+    const isUserBelongToOrg = component.checkIfUserBelongsToOrg();
+    expect(isUserBelongToOrg).toBeFalsy();
+  });
+
+  it('User should belong to org', () => {
+    userService.userRegistryData = true;
+    userService.userProfile.userRegData['User_Org'] = SpecData.orgUserRegData;
+    const isUserBelongToOrg = component.checkIfUserBelongsToOrg();
+    expect(isUserBelongToOrg).toBeTruthy();
+  });
+
+  it('User should be org admin', () => {
+    userService.userRegistryData = true;
+    userService.userProfile.userRegData['User_Org'] = SpecData.orgAdminUserRegData;
+    const isUserOrgAdmin = component.isUserOrgAdmin();
+    expect(isUserOrgAdmin).toBeTruthy();
+  });
+
+  it('User should not be org admin', () => {
+    userService.userRegistryData = true;
+    userService.userProfile.userRegData['User_Org'] = SpecData.orgUserRegData;
+    const isUserOrgAdmin = component.isUserOrgAdmin();
+    expect(isUserOrgAdmin).toBeFalsy();
+  });
+
+  it('Should call getProgramDetails', () => {
+    spyOn(programsService, 'get').and.callFake(() => {
+      return of(SpecData.readProgramApiSuccessRes);
+    });
+    spyOn(component, 'getProgramDetails');
+    component.getProgramDetails();
+    expect(component.getProgramDetails).toHaveBeenCalled();
+  });
+
+  it('should set programDetails correctly', () => {
+    spyOn(programsService, 'get').and.callFake(() => {
+      return of(SpecData.readProgramApiSuccessRes);
+    });
+    component.getProgramDetails();
+    expect(component.programDetails).toEqual(SpecData.readProgramApiSuccessRes.result);
+  });
+
+  it('should show error toast message if programId has falsy value', () => {
+    spyOn(toasterService, 'error');
     component.programId = null;
     component.ngOnInit();
+    expect(toasterService.error).toHaveBeenCalled();
   });
 
-
-  it('should call fetchProgramDetails', inject([HttpTestingController],
-    (httpMock: HttpTestingController) => {
-      component.getProgramDetails();
-    })
-  );
-  it('should fetchFrameWorkDetails be called', () => {
-    component.sessionContext.framework = 'NCFCOPY';
-
-    component.fetchFrameWorkDetails();
-    expect(component.sessionContext.frameworkData.length).toBeGreaterThan(0);
+  it('Should call fetchFrameWorkDetails', () => {
+    spyOn(programsService, 'get').and.callFake(() => {
+      return of(SpecData.readProgramApiSuccessRes);
+    });
+    spyOn(component, 'fetchFrameWorkDetails');
+    component.getProgramDetails();
+    expect(component.fetchFrameWorkDetails).toHaveBeenCalled();
   });
 
-
-  // it('should open onboarding pop up', () => {
-  //   spyOn(component, 'userOnboarding');
-  //   component.ngOnInit();
-  //   expect(component.userOnboarding).not.toHaveBeenCalled();
-  // });
-
-  // it('onboarding popup property should be initiated as false', () => {
-  //   spyOn(component, 'userOnboarding');
-  //   component.ngOnInit();
-  //   expect(component.showOnboardPopup).toBe(false);
-  // });
-
-
-  // it('should not trigger the onboard popup as participant details are available in DB', () => {
-  //   spyOn(component, 'userOnboarding');
-  //   component.programDetails = programDetailsWithUserDetails;
-  //   component.handleOnboarding();
-  //   expect(component.showOnboardPopup).toBe(false);
-  //   expect(component.userOnboarding).not.toHaveBeenCalled();
-  // });
-
-  // it('should trigger the onboard popup as participant details are not available in DB', () => {
-  //   component.programDetails = programDetailsWithOutUserDetails;
-  //   component.handleOnboarding();
-  //   spyOn(component, 'userOnboarding');
-  //   expect(component.showOnboardPopup).toBe(true);
-  //   expect(component.userOnboarding).not.toHaveBeenCalled();
-  // });
-
-  // it('should not trigger the onboard popup as no onboarding form even though no user details are available in DB', () => {
-  //   spyOn(component, 'userOnboarding');
-  //   component.programDetails = programDetailsWithOutUserAndForm;
-  //   component.handleOnboarding();
-  //   expect(component.userOnboarding).toHaveBeenCalled();
-  // });
-
-
-  // it('should userOnboarding be triggered', () => {
-  //   spyOn(component, 'setUserParticipantDetails');
-  //   component.userOnboarding();
-  //   expect(component.setUserParticipantDetails).toHaveBeenCalledWith({data: extFrameWorkPostData, onBoardingData: {}});
-  //   // expect(component.programDetails.userDetails) =
-  // });
-
-
-  // it('should set userDetails when calling setUserParticipantDetails', () => {
-  //   const userDetailsMock = {
-  //     enrolledOn: extFrameWorkPostData.ts,
-  //     onBoarded: true,
-  //     onBoardingData: {},
-  //     programId: extFrameWorkPostData.result.programId,
-  //     roles: ['CONTRIBUTOR'], // TODO: get default role from config
-  //     userId: component.userService.userid
-  //   };
-  //   component.setUserParticipantDetails({data: extFrameWorkPostData, onBoardingData: {}});
-  //   expect(component.programDetails.userDetails).toEqual(jasmine.objectContaining(userDetailsMock));
-  // });
-
-
-  it('should tabChangeHandler be triggered', () => {
-    component.tabChangeHandler('collectionComponent');
-    expect(component.component).toBe(CollectionComponent);
+  it('should return true for if nomination from organisation', () => {
+    component.sessionContext.nominationDetails = SpecData.nominationByOrg;
+    component.ngOnInit();
+    const isNominationFromOrg = component.isNominationOrg();
+    expect(isNominationFromOrg).toBe(true);
   });
 
-  it('should changeView be called when stages is empty', () => {
-    component.changeView();
-    expect(component.currentStage).toBeUndefined();
+  it('should call applyPreferences if called applyTextbookFilters', () => {
+    spyOn(programsService, 'setUserPreferencesforProgram').and.callFake(() => {
+      return of(SpecData.preferenceApiSuccessRes);
+    });
+    spyOn(component, 'applyPreferences');
+    component.ngOnInit();
+    component.applyPreferences();
+    expect(component.applyPreferences).toHaveBeenCalled();
   });
 
-  it('should changeView be called when stages is not empty', () => {
-    component.state.stages = [
-      {
-        'stageId': 1,
-        'stage': 'collectionComponent'
-      }
-    ];
-    component.changeView();
-    expect(component.currentStage).toBe('collectionComponent');
+  it('should show warning toaster message if failed to create user preferences', () => {
+    spyOn(programsService, 'setUserPreferencesforProgram').and.callFake(() => {
+      return throwError(SpecData.preferenceApiErrorRes);
+    });
+    spyOn(toasterService, 'warning');
+    component.ngOnInit();
+    component.applyPreferences();
+    expect(toasterService.warning).toHaveBeenCalled();
   });
 
-
-  // it('should getDefaultActiveTab be called', () => {
-  //   component.programDetails = programDetailsWithUserDetails;
-  //   expect(component.getDefaultActiveTab()).toEqual(1);
-  // });
-
-  // it('should initiateHeader be called', () => {
-  //   component.initiateHeader('failure');
-  // });
-
-
-  it('should unsubscribe subject', () => {
+  it('should unsubscribe from stage subscription on destroy', () => {
+    component.stageSubscription = new Subscription();
+    spyOn(component.stageSubscription, 'unsubscribe');
+    fixture.detectChanges();
     component.ngOnDestroy();
+    expect(component.stageSubscription.unsubscribe).toHaveBeenCalled();
+  });
+
+  it('should get the interact edata for telemetry', () => {
+    const result = component.getTelemetryInteractEdata('textbook-tab', 'click', 'list-nominated-textbooks');
+    expect(result).toEqual({'id': 'textbook-tab', 'type': 'click', 'pageid': 'list-nominated-textbooks'});
+  });
+
+  it('should not able to upload the content if dates are passed', () => {
+    component.programDetails = {
+      content_submission_enddate: '2020-07-02T18:30:00.000Z',
+      enddate: '2020-07-05T18:30:00.000Z'
+    };
+    const result = component.canUploadContent();
+    expect(result).toEqual(false);
+  });
+
+  it('should able to upload the content if future dates', () => {
+    component.programDetails = {
+      content_submission_enddate: '2099-07-02T18:30:00.000Z',
+      enddate: '2099-07-05T18:30:00.000Z'
+    };
+    const result = component.canUploadContent();
+    expect(result).toEqual(true);
+  });
+
+  it('should set correct active date', () => {
+    component.programDetails = {
+      nomination_enddate: '2020-07-03T18:30:00.000Z',
+      shortlisting_enddate: '2020-07-05T18:30:00.000Z',
+      content_submission_enddate: '2020-07-07T18:30:00.000Z',
+      enddate: '2022-07-20T18:30:00.000Z',
+    };
+    component.setActiveDate();
+    expect(component.activeDate).toEqual('enddate');
+  });
+
+  it('checkArrayCondition should keep the array as is if value is array', () => {
+    component.sharedContext = {'gradeLevel' : ['Class 10'] };
+    component.checkArrayCondition('gradeLevel');
+    expect(_.isArray(component.sharedContext['gradeLevel'])).toEqual(true);
+  });
+
+  it('checkArrayCondition should convert into array if value is string', () => {
+    component.sharedContext = {'gradeLevel' : 'Class 10, Class 11' };
+    component.checkArrayCondition('gradeLevel');
+    expect(_.isArray(component.sharedContext['gradeLevel'])).toEqual(true);
+  });
+
+  it('Should call showTexbooklist if called getProgramTextbooks', () => {
+    spyOn(actionService, 'post').and.callFake(() => {
+      return of(SpecData.textbookSearchApiSuccessRes);
+    });
+    spyOn(component, 'showTexbooklist');
+    component.getProgramTextbooks();
+    expect(component.showTexbooklist).toHaveBeenCalled();
+  });
+
+  it('Should handle error if failed to get textbook list', () => {
+    spyOn(actionService, 'post').and.callFake(() => {
+      return throwError(SpecData.textbookSearchApiErrorRes);
+    });
+    spyOn(console, 'log');
+    component.getProgramTextbooks();
+    expect(console.log).toHaveBeenCalled();
+  });
+
+  it('Should add preference values in request body if passed preferences to getProgramTextbooks', () => {
+    let option = {};
+    spyOn(actionService, 'post').and.callFake((opt) => {
+      option = opt;
+      return of(SpecData.textbookSearchApiSuccessRes);
+    });
+    const preferences = {
+      medium: ['Hindi', 'English'],
+      gradeLevel: ['Class 10', 'Class 1'],
+      subject: ['Hindi', 'Science'],
+    };
+    component.getProgramTextbooks(preferences);
+    expect(_.get(option, 'data.request.filters.medium')).toBeTruthy();
+    expect(_.get(option, 'data.request.filters.gradeLevel')).toBeTruthy();
+    expect(_.get(option, 'data.request.filters.subject')).toBeTruthy();
+  });
+
+  it('Should call applyTextbookFilters', () => {
+    spyOn(component, 'applyTextbookFilters');
+    component.applyTextbookFilters();
+    expect(component.applyTextbookFilters).toHaveBeenCalled();
+  });
+
+  it('Should call resetTextbookFilters', () => {
+    spyOn(component, 'resetTextbookFilters');
+    component.resetTextbookFilters();
+    expect(component.resetTextbookFilters).toHaveBeenCalled();
   });
 });

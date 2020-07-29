@@ -4,12 +4,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService, PaginationService } from '@sunbird/shared';
 import * as _ from 'lodash-es';
-import { tap, first } from 'rxjs/operators';
+import { first } from 'rxjs/operators';
 import { CollectionHierarchyService } from '../../../cbse-program/services/collection-hierarchy/collection-hierarchy.service';
 import { ChapterListComponent } from '../../../cbse-program/components/chapter-list/chapter-list.component';
 import { ICollectionComponentInput, IDashboardComponentInput,
   IPagination, IChapterListComponentInput} from '../../../cbse-program/interfaces';
-import { InitialState, ISessionContext, IUserParticipantDetails } from '../../interfaces';
+import { InitialState, ISessionContext } from '../../interfaces';
 import { ProgramStageService } from '../../../program/services/program-stage/program-stage.service';
 import { ProgramComponentsService } from '../../services/program-components/program-components.service';
 import { IImpressionEventInput, IInteractEventEdata } from '@sunbird/telemetry';
@@ -99,11 +99,13 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.programId = this.activatedRoute.snapshot.params.programId;
     localStorage.setItem('programId', this.programId);
   }
-  ngOnInit() {
 
+  ngOnInit() {
     if (['null', null, undefined, 'undefined'].includes(this.programId)) {
-      this.toasterService.error(this.resourceService.messages.emsg.project.m0001);
+      this.toasterService.error(_.get(this.resourceService, 'messages.emsg.project.m0001', ''));
+      return;
     }
+
     this.getProgramDetails();
     this.programStageService.initialize();
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
@@ -166,9 +168,12 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.showSkipReview = !!(_.get(this.userService, 'userProfile.rootOrgId') === _.get(this.programDetails, 'rootorg_id') &&
       this.programDetails.config.defaultContributeOrgReview === false) ;
     }, error => {
-      // TODO: navigate to program list page
-      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-      this.toasterService.error(errorMes || this.resourceService.messages.emsg.project.m0001);
+      // TODO: navigate to program list
+      let errorMsg = _.get(error, 'params.errmsg');
+      if (typeof(errorMsg) !== 'string' ) {
+        errorMsg = _.get(this.resourceService, 'messages.emsg.project.m0001', '');
+      }
+      this.toasterService.error(errorMsg);
     });
   }
 
@@ -181,8 +186,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           this.sessionContext.frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
         }
       }, error => {
-        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-        this.toasterService.error(errorMes || 'Fetching framework details failed');
+        let errorMsg = _.get(error, 'params.errmsg');
+        if (typeof(errorMsg) !== 'string' ) {
+          errorMsg = _.get(this.resourceService, 'messages.emsg.project.m0002', '');
+        }
+        this.toasterService.error(errorMsg);
       });
     }
   }
@@ -277,20 +285,26 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.userPreferences = prefres.result;
                 preffilter = _.get(this.userPreferences, 'contributor_preference');
               }
-              if (!_.isEmpty(this.userPreferences.contributor_preference)) {
+
+              const contributor_preference = _.get(this.userPreferences, 'contributor_preference');
+              if (!_.isEmpty(contributor_preference)) {
                 this.textbookFiltersApplied = true;
                 // tslint:disable-next-line: max-line-length
-                this.setPreferences['medium'] = (this.userPreferences.contributor_preference.medium) ? this.userPreferences.contributor_preference.medium : [];
-                // tslint:disable-next-line: max-line-length
-                this.setPreferences['subject'] = (this.userPreferences.contributor_preference.subject) ? this.userPreferences.contributor_preference.subject : [];
-                // tslint:disable-next-line: max-line-length
-                this.setPreferences['gradeLevel'] = (this.userPreferences.contributor_preference.gradeLevel) ? this.userPreferences.contributor_preference.gradeLevel : [];
+                this.setPreferences['medium'] = _.get(this.userPreferences, 'contributor_preference.medium', []);
+
+                this.setPreferences['subject'] = _.get(this.userPreferences, 'contributor_preference.subject', []);
+
+                this.setPreferences['gradeLevel'] = _.get(this.userPreferences, 'contributor_preference.gradeLevel', []);
               }
               this.getProgramTextbooks(preffilter);
-          }, (err) => { // TODO: navigate to program list page
+          }, (err) => {
+            // TODO: navigate to program list page
             this.getProgramTextbooks();
-            const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-            this.toasterService.warning(errorMes || 'Fetching Preferences  failed');
+            let errorMsg = _.get(err, 'params.errmsg');
+            if (typeof(errorMsg) !== 'string' ) {
+              errorMsg = _.get(this.resourceService, 'messages.emsg.userPreferences.m0001', '');
+            }
+            this.toasterService.warning(errorMsg);
           });
         } else {
           this.getProgramTextbooks();
@@ -564,19 +578,20 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.programsService.setUserPreferencesforProgram(this.userService.userProfile.identifier, this.programId, preferences, 'contributor').subscribe(
       (response) => {
         this.userPreferences =  response.result;
-        if (!_.isEmpty(this.userPreferences.contributor_preference)) {
+        const contributor_preference = _.get(this.userPreferences, 'contributor_preference');
+        if (!_.isEmpty(contributor_preference)) {
           this.textbookFiltersApplied = true;
-          // tslint:disable-next-line: max-line-length
-          this.setPreferences['medium'] = (this.userPreferences.contributor_preference.medium) ? this.userPreferences.contributor_preference.medium : [];
-          // tslint:disable-next-line: max-line-length
-          this.setPreferences['subject'] = (this.userPreferences.contributor_preference.subject) ? this.userPreferences.contributor_preference.subject : [];
-          // tslint:disable-next-line: max-line-length
-          this.setPreferences['gradeLevel'] = (this.userPreferences.contributor_preference.gradeLevel) ? this.userPreferences.contributor_preference.gradeLevel : [];
+          this.setPreferences['medium'] = _.get(contributor_preference, 'medium', []);
+          this.setPreferences['subject'] = _.get(contributor_preference, 'subject', []);
+          this.setPreferences['gradeLevel'] = _.get(contributor_preference, 'gradeLevel', []);
         }
       },
       (error) => {
-        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-        this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+        let errorMsg = _.get(error, 'params.errmsg');
+        if (typeof(errorMsg) !== 'string' ) {
+          errorMsg = _.get(this.resourceService, 'messages.emsg.userPreferences.m0001', '');
+        }
+        this.toasterService.warning(errorMsg);
     });
     this.getProgramTextbooks(preferences);
   }
@@ -588,13 +603,14 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     };
     this.applyPreferences(prefData);
   }
+
   resetTextbookFilters() {
     this.prefModal.deny();
     this.applyPreferences();
   }
 
   isNominationOrg() {
-    return !!(this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.organisation_id);
+    return !!(_.get(this.sessionContext, 'nominationDetails.organisation_id'));
   }
 
   isUserOrgAdmin() {
@@ -612,10 +628,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage = _.last(this.state.stages).stage;
     }
-  }
-
-  tabChangeHandler(e) {
-    this.component = this.programComponentsService.getComponentInstance(e);
   }
 
   getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: any): IInteractEventEdata {
