@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigService, ResourceService, IUserProfile, ToasterService, NavigationHelperService } from '@sunbird/shared';
-import { PublicDataService, UserService, ActionService } from '@sunbird/core';
+import { PublicDataService, UserService, ActionService, ProgramsService } from '@sunbird/core';
 import { TelemetryService } from '@sunbird/telemetry';
 import { Validators, FormGroup, FormControl, NgForm, FormArray, FormBuilder } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -102,7 +102,8 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
     toasterService: ToasterService, resourceService: ResourceService, public telemetryService: TelemetryService,
     public actionService: ActionService, private cdr: ChangeDetectorRef, private helperService: HelperService,
     public programTelemetryService: ProgramTelemetryService, public activeRoute: ActivatedRoute,
-    public router: Router, private navigationHelperService: NavigationHelperService
+    public router: Router, private navigationHelperService: NavigationHelperService,
+    private programsService: ProgramsService
   ) {
     this.userService = userService;
     this.configService = configService;
@@ -566,7 +567,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
             // tslint:disable-next-line:max-line-length
             preSavedValues[code] = (this.questionMetaData.data[code]) ? this.questionMetaData.data[code] : false;
             // tslint:disable-next-line:max-line-length
-            obj.required ? controller[obj.code] = [{value:preSavedValues[code], disabled: this.questionMetaData.data[code]}, [Validators.requiredTrue]] : controller[obj.code] = preSavedValues[code];
+            obj.required ? controller[obj.code] = [{value: preSavedValues[code], disabled: this.questionMetaData.data[code]}, [Validators.requiredTrue]] : controller[obj.code] = preSavedValues[code];
           }
         }
       });
@@ -578,8 +579,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   changePolicyCheckValue (event) {
     if ( event.target.checked ) {
       this.questionMetaForm.controls.contentPolicyCheck.setValue(true);
-    }
-    else {
+    } else {
       this.questionMetaForm.controls.contentPolicyCheck.setValue(false);
     }
   }

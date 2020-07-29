@@ -254,7 +254,7 @@
     </div>
 
     <div class='practical-sb-buttons'>
-        <button id="requestChanges" *ngIf="role.currentRole === 'REVIEWER' && sessionContext.resourceStatus === 'Review' && router.url.includes('/contribute')" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true"
+        <button id="requestChanges" *ngIf="role.currentRole === 'REVIEWER' && sessionContext.resourceStatus === 'Review' && router.url.includes('/contribute') && programsService.checkForContentSubmissionDate(sessionContext.programContext)" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true"
         appTelemetryInteract
         [telemetryInteractEdata]="{id:'reject-question',type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
         [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"

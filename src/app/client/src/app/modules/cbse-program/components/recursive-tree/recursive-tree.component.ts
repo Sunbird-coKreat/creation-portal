@@ -41,14 +41,14 @@ export class RecursiveTreeComponent implements OnInit {
     // tslint:disable-next-line:max-line-length
     this.visibility['showAddresource'] = submissionDateFlag && _.includes(this.programContext.config.actions.showAddResource.roles, this.sessionContext.currentRoleId);
     // tslint:disable-next-line:max-line-length
-    this.visibility['showEditResource'] = _.includes(this.programContext.config.actions.showEditResource.roles, this.sessionContext.currentRoleId);
+    this.visibility['showEditResource'] = submissionDateFlag && _.includes(this.programContext.config.actions.showEditResource.roles, this.sessionContext.currentRoleId);
     // tslint:disable-next-line:max-line-length
-    this.visibility['showMoveResource'] = _.includes(this.programContext.config.actions.showMoveResource.roles, this.sessionContext.currentRoleId);
+    this.visibility['showMoveResource'] = submissionDateFlag && _.includes(this.programContext.config.actions.showMoveResource.roles, this.sessionContext.currentRoleId);
     // tslint:disable-next-line:max-line-length
-    this.visibility['showDeleteResource'] = _.includes(this.programContext.config.actions.showDeleteResource.roles, this.sessionContext.currentRoleId);
+    this.visibility['showDeleteResource'] = submissionDateFlag && _.includes(this.programContext.config.actions.showDeleteResource.roles, this.sessionContext.currentRoleId);
     // tslint:disable-next-line:max-line-length
     this.visibility['showPreviewResource'] = _.includes(this.programContext.config.actions.showPreviewResource.roles, this.sessionContext.currentRoleId);
-    this.visibility['showActionMenu'] = this.shouldActionMenuBeVisible();
+    this.visibility['showActionMenu'] = submissionDateFlag && this.shouldActionMenuBeVisible();
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.sessionContext.programId, 'Program');
     // tslint:disable-next-line:max-line-length

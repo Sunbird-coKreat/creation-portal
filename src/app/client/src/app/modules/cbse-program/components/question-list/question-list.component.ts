@@ -256,7 +256,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     // tslint:disable-next-line:max-line-length
     this.visibility['showCreateQuestion'] = submissionDateFlag && (_.includes(this.actions.showCreateQuestion.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showDeleteQuestion'] = (_.includes(this.actions.showDeleteQuestion.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft' && this.questionList.length > 1);
+    this.visibility['showDeleteQuestion'] =  submissionDateFlag && (_.includes(this.actions.showDeleteQuestion.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft' && this.questionList.length > 1);
     // tslint:disable-next-line:max-line-length
     this.visibility['showRequestChanges'] = this.router.url.includes('/contribute') && submissionDateFlag && !this.resourceDetails.sampleContent === true &&
     (_.includes(this.actions.showRequestChanges.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
