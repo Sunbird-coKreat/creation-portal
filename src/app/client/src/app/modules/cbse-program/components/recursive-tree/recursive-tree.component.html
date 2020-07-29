@@ -7,8 +7,9 @@
   [isOpen]=" (collection.identifier === sessionContext.lastOpenedUnitChild || collection.identifier === sessionContext.lastOpenedUnitParent) ? true : false">
     <div title class="sb-accordion-title d-flex flex-jc-flex-end sb-color-primary"><span class="chapter-status mr-16 mt-5"></span>
      <span class="flex-14"> {{collection.name}}</span>
-     <span class="w-30 text-left" *ngIf="originalCollectionData && originalCollectionData[i].status !== 'Draft' && collection.totalLeaf > 0">{{nodeStatusMessage}}</span>
-      <div class="sb-color-black flex-3">
+     <!-- <span class="w-30 text-left" *ngIf="(originalCollectionData && originalCollectionData.children[i] && originalCollectionData.children[i].status !== 'Draft') || (originalCollectionData.status !== 'Draft')">{{nodeStatusMessage}}</span> -->
+     <span *ngIf="showMessage(originalCollectionData, i)">{{nodeStatusMessage}}</span>
+     <div class="sb-color-black flex-3">
         <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.totalContent}}:</span> <span class="font-weight-bold"> {{collection.totalLeaf}}</span>
       </div>
      <div class="d-flex">
@@ -43,7 +44,7 @@
           [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
           [telemetryInteractCdata]="telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryInteractPdata"
-          (click)="previewResource($event, content, collection, originalCollectionData[i])">
+          (click)="previewResource($event, content, collection, originalCollectionData.children[i])">
             <span class="item-name"> {{content.name}}</span>
             <span class="item-status">{{content.creator}}</span>
             <span class="item-status">
@@ -74,7 +75,7 @@
                     [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
                     [telemetryInteractCdata]="telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryInteractPdata"
-                    (click)="previewResource($event, content, collection, originalCollectionData[i])">{{resourceService.frmelmnts.lbl.edit}}</div>
+                    (click)="previewResource($event, content, collection, originalCollectionData.children[i])">{{resourceService.frmelmnts.lbl.edit}}</div>
                   <div class="item"
                     *ngIf="visibility && visibility['showPreviewResource'] && (content.status === 'Live' || content.status === 'Review')"
                     appTelemetryInteract
@@ -82,7 +83,7 @@
                     [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
                     [telemetryInteractCdata]="telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryInteractPdata"
-                    (click)="previewResource($event, content, collection, originalCollectionData[i])">{{resourceService.frmelmnts.lbl.preview}}</div>
+                    (click)="previewResource($event, content, collection, originalCollectionData.children[i])">{{resourceService.frmelmnts.lbl.preview}}</div>
                   <div class="item"
                     *ngIf="(visibility && visibility['showMoveResource']) && content.status === 'Draft'"
                     appTelemetryInteract

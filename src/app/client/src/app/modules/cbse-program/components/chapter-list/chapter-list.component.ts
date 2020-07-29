@@ -172,15 +172,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       await this.getCollectionHierarchy(this.sessionContext.collection,
                 this.selectedChapterOption === 'all' ? undefined : this.selectedChapterOption);
       const acceptedContents = _.get(this.storedCollectionData, 'acceptedContents', []);
-      if (_.isEmpty(localStorage.getItem(this.collectionData.identifier))) {
         await this.getOriginCollectionHierarchy(this.collectionData.origin, this.collectionData.identifier);
-      } else {
-        this.originalCollectionData = JSON.parse(localStorage.getItem(this.collectionData.identifier));
-        // Check the status of textbook and set message
-        if (this.originalCollectionData.status !== 'Draft') {
-          this.textbookStatusMessage = 'There is no draft version of this textbook found on DIKSHA. Please check.';
-        }
-      }
       if (!_.isEmpty(acceptedContents)) {
         await this.getOriginForApprovedContents(acceptedContents);
       }
@@ -192,8 +184,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       if (!_.isEmpty(this.collectionHierarchy)) { this.lastOpenedUnit(this.collectionHierarchy[0].identifier)}
     }
     if (_.get(this.programContext, 'config.defaultContributeOrgReview') === false
-      && _.get(this.userService,'userProfile.rootOrgId') === _.get(this.programContext,'rootorg_id')
-      && _.get(this.sessionContext,'currentRole') === 'CONTRIBUTOR'
+      && _.get(this.userService, 'userProfile.rootOrgId') === _.get(this.programContext,'rootorg_id')
+      && _.get(this.sessionContext, 'currentRole') === 'CONTRIBUTOR'
       && this.sampleContent === false) {
       this.sessionContext.currentOrgRole = 'individual';
     }
@@ -205,14 +197,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         if (_.get(response, 'result.count') && _.get(response, 'result.count') > 0) {
           this.sessionContext['contentOrigins'] = {};
           _.forEach( _.get(response, 'result.content'), (obj) => {
-            if (obj.status == "Live") {
+            if (obj.status == 'Live') {
               this.sessionContext['contentOrigins'][obj.origin] = obj;
             }
           });
         }
       },
       (error) => {
-        console.log("Getting origin data failed");
+        console.log('Getting origin data failed');
     });
   }
   public fetchFrameWorkDetails() {
@@ -296,8 +288,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       .subscribe((response) => {
         let children = [];
         _.forEach(response.result.content.children, (child) => {
-          if (child.mimeType !== "application/vnd.ekstep.content-collection" ||
-          (child.mimeType === "application/vnd.ekstep.content-collection" && child.openForContribution === true)) {
+          if (child.mimeType !== 'application/vnd.ekstep.content-collection' ||
+          (child.mimeType === 'application/vnd.ekstep.content-collection' && child.openForContribution === true)) {
             children.push(child);
           }
         });
@@ -346,8 +338,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       if (this.originalCollectionData.status !== 'Draft') {
         this.textbookStatusMessage = 'There is no draft version of this textbook found on DIKSHA. Please check.';
       }
-      localStorage.clear();
-      localStorage.setItem(identifier, JSON.stringify(content));
     }, error => console.log(console.error()
     ));
   }

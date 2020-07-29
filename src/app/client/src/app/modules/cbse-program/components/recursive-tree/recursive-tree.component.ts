@@ -115,6 +115,18 @@ export class RecursiveTreeComponent implements OnInit {
     e.stopPropagation();
   }
 
+  showMessage(collection, index) {
+    if ((!_.isUndefined(collection)) && (collection.status === 'Draft')) {
+      if ((!_.isUndefined(collection.children[index])) && (collection.children[index].status === 'Draft')) {
+        return false;
+      } else {
+        return true;
+      }
+      } else {
+        return true;
+    }
+  }
+
   isSourcingOrgReviewer () {
     return !!(this.userService.userProfile.userRoles.includes('ORG_ADMIN') ||
     this.userService.userProfile.userRoles.includes('CONTENT_REVIEWER'));
