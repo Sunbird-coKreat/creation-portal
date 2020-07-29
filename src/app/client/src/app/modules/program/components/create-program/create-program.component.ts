@@ -751,11 +751,15 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programData = {
       ...this.createProgramForm.value
     };
+
     if (this.userFramework) {
       this.programConfig.framework = this.userFramework;
       // tslint:disable-next-line:max-line-length
       _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'framework' }).defaultValue = this.userFramework;
     }
+
+    // tslint:disable-next-line: max-line-length
+    _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'board' }).defaultValue = this.userBoard; 
 
     this.programConfig.defaultContributeOrgReview = !this.defaultContributeOrgReviewChecked;
     this.programData['sourcing_org_name'] = this.userprofile.rootOrgName;
@@ -767,7 +771,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programData['type'] = (!this.isOpenNominations) ? 'private' : 'public';
     this.programData['default_roles'] = ['CONTRIBUTOR'];
     this.programData['enddate'] = this.programData.program_end_date;
-    this.programData['config'] = this.programConfig;
     this.programData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : '';
     this.programData['status'] = this.editLive ? 'Live' : 'Draft';
 
@@ -785,11 +788,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     if (!this.programData['content_submission_enddate']) {
       this.programData['content_submission_enddate'] = null;
-    }
-
-    if (_.isEmpty(this.programData.config.board) &&
-    _.findIndex(this.frameworkCategories, function(item) { return item.code === 'board'; }) < 0) {
-      delete this.programData.config.board;
     }
 
     delete this.programData.defaultContributeOrgReview;
@@ -813,13 +811,18 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         }
       );
     } else {
-
       if (!this.editLive) {
         if (!_.isEmpty(this.collectionListForm.value.pcollections)) {
-          this.programData['config']['collections'] = this.getCollections();
+          const config = this.addCollectionsDataToConfig();
+          this.programConfig['board'] = config.board;
+          this.programConfig['gradeLevel'] = config.gradeLevel;
+          this.programConfig['medium'] = config.medium;
+          this.programConfig['subject'] = config.subject;
+          this.programConfig['collections'] = this.getCollections();
         }
       }
 
+      this.programData['config'] = this.programConfig;
       this.programData['program_id'] = this.programId;
       this.programsService.updateProgram(this.programData).subscribe(
         (res) => {
@@ -954,11 +957,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     const collectionId = collection.identifier;
 
     if (isChecked) {
-      pcollectionsFormArray.push(new FormControl(collectionId));
-      this.tempCollections.push(collection);
+      const controls = _.get(pcollectionsFormArray, 'controls');
+      if (controls.findIndex(c => c.value === collection.identifier) === -1) {
+        pcollectionsFormArray.push(new FormControl(collectionId));
+        this.tempCollections.push(collection);
 
-      if (!this.textbooks[collectionId]) {
+        if (!this.textbooks[collectionId]) {
           this.getCollectionHierarchy(collectionId);
+        }
       }
     } else {
       const index = pcollectionsFormArray.controls.findIndex(x => x.value === collectionId);
@@ -995,65 +1001,15 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     return collections;
   }
 
-  updateProgramCollection() {
-    this.disableCreateProgramBtn = true;
-    if (_.isEmpty(this.collectionListForm.value.pcollections)) {
-      this.disableCreateProgramBtn = false;
-      this.toasterService.warning('Please select at least a textbook');
-      return false;
-    }
-
-    const collections = [];
-
-    _.forEach(this.collectionListForm.value.pcollections, (identifier) => {
-      const obj = {
-        'id' : identifier,
-        'allowed_content_types': [],
-        'children': []
-      };
-
-      _.forEach(this.textbooks[identifier].children, (item) => {
-        if (item.checked === true) {
-          obj.children.push({
-            'id': item.identifier,
-            'allowed_content_types': []
-          });
-        }
-      });
-
-      collections.push(obj);
-    });
-
-    const requestData = {
-      'program_id': this.programId,
-      'collections' : collections,
-      'allowed_content_types': this.programData.content_types,
-      'channel': 'sunbird'
+  addCollectionsDataToConfig() {
+    const config = {
+      'board': null,
+      'gradeLevel': null,
+      'medium': null,
+      'subject': null
     };
 
-    this.programsService.copyCollectionForPlatform(requestData).subscribe(
-      (res) => {
-        let copiedCollections = [];
-        if (res && res.result) {
-          copiedCollections = _.map(res.result, (collection) => {
-            return collection.result.content_id;
-          });
-          this.addCollectionsToProgram(this.programData.content_types, copiedCollections);
-        }
-      },
-      (err) => {
-        this.disableCreateProgramBtn = false;
-        console.log(err);
-        // TODO: navigate to program list page
-        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-        this.toasterService.warning(errorMes || 'Fetching textbooks failed');
-      }
-    );
-  }
-
-  addCollectionsToProgram(contentTypes, copiedCollections) {
     _.forEach(this.tempCollections, (collection) => {
-
       if (_.isArray(collection.medium)) {
         _.forEach(collection.medium, (single) => {
           if (this.mediumOption.indexOf(single) === -1) {
@@ -1084,36 +1040,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       });
     });
 
-    const data = {};
-    data['program_id'] = this.programId;
-    // data['collection_ids'] = this.collectionListForm.value.pcollections;
-    // data['copiedCollections'] = copiedCollections;
-    data['programContentTypes'] = contentTypes;
-
-    this.programConfig.board = this.userBoard;
+    config.board = this.userBoard;
     // tslint:disable-next-line:max-line-length
-    _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'board' }).defaultValue = this.userBoard;
-    this.programConfig.gradeLevel = this.gradeLevelOption;
-    this.programConfig.medium = this.mediumOption;
-    this.programConfig.subject = this.subjectsOption;
-    data['config'] = this.programConfig;
-    if (this.isOpenNominations) {
-      data['status'] = 'Live';
-    } else {
-      data['status'] = 'Unlisted';
-    }
-
-    this.programsService.updateProgram(data).subscribe(
-      (res) => {
-        this.toasterService.success(this.resource.messages.smsg.projectCreateSuccess);
-        this.router.navigate(['/sourcing']);
-        this.generateTelemetryEvent('END');
-      },
-      (err) => {
-        this.disableCreateProgramBtn = false;
-        this.saveProgramError(err);
-      }
-    );
+    config.gradeLevel = this.gradeLevelOption;
+    config.medium = this.mediumOption;
+    config.subject = this.subjectsOption;
+    return config;
   }
 
   getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
@@ -1233,8 +1165,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.tempCollections[cindex]['total']    = content.children.length;
 
       _.forEach(content.children, (item) => {
-        if (!_.isEmpty(_.get(dcollection,'children'))) {
-          if (_.get(dcollection,'children').findIndex(x => x.id === item.identifier) !== -1) {
+        if (!_.isEmpty(_.get(dcollection, 'children'))) {
+          if (_.get(dcollection, 'children').findIndex(x => x.id === item.identifier) !== -1) {
             item['checked'] = true;
             this.tempCollections[cindex]['selected']++;
           }
@@ -1327,7 +1259,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         ($event.target as HTMLButtonElement).disabled = true;
         const cb = (error, resp) => {
           if (!error && resp) {
-            this.toasterService.success(this.resource.messages.smsg.program.draft);
+            this.toasterService.success(
+              '<b>' + this.resource.messages.smsg.program.draft.heading + '</b>',
+              this.resource.messages.smsg.program.draft.message);
             this.router.navigate(['/sourcing']);
           } else {
             this.toasterService.error(this.resource.messages.emsg.m0005);
@@ -1355,6 +1289,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
             this.showTexbooklist();
             ($event.target as HTMLButtonElement).disabled = false;
           } else {
+            this.toasterService.error(this.resource.messages.emsg.m0005);
             ($event.target as HTMLButtonElement).disabled = false;
           }
         };
@@ -1416,7 +1351,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           });
         } else {
           this.programsService.unlistPublishProgram(data).subscribe(res => {
-            this.toasterService.success(this.resource.messages.smsg.program.published);
+            this.toasterService.success(
+              '<b>' + this.resource.messages.smsg.program.published.heading + '</b>',
+              this.resource.messages.smsg.program.published.message);
             this.router.navigate(['/sourcing']);
           },
           err => {

@@ -133,7 +133,7 @@ export class ProgramListComponent implements OnInit {
     this.programsService.getNominationList(req.data.request.filters)
       .subscribe((nominationsResponse) => {
         const nominations = _.get(nominationsResponse, 'result');
- 
+
         if (nominations.length > 1) {
           this.toasterService.error(this.resourceService.frmelmnts.lbl.projectCannotBeDeleted);
           this.showDeleteModal = false;
@@ -156,8 +156,8 @@ export class ProgramListComponent implements OnInit {
     }
 
     const programData = {
-      "program_id": this.program.program_id,
-      "status":"Retired"
+      'program_id': this.program.program_id,
+      'status': 'Retired'
     };
 
     this.programsService.updateProgram(programData).subscribe(
@@ -428,7 +428,7 @@ export class ProgramListComponent implements OnInit {
   }
 
   getMyProgramRole(program) {
-    let programId = program.program_id;
+    const programId = program.program_id;
     let roles = '';
      _.map(_.find(this.roleMapping, obj => {
       if (obj.rolemapping
@@ -486,8 +486,6 @@ export class ProgramListComponent implements OnInit {
   }
 
   getProgramInfo(program, type) {
-    //return type  === 'board' ? program.config[type] : _.join(_.compact(program.config[type]), ', ');
-
     if (program && program.config) {
       return type  === 'board' ? program.config[type] : _.join(_.compact(_.uniq(program.config[type])), ', ');
     } else {

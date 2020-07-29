@@ -155,14 +155,15 @@
                     [telemetryInteractObject]="telemetryInteractObject"
                     [telemetryInteractCdata]="telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
+
+                    <div *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing') && program.status === 'Draft'" class="d-inline-block cursor-pointer" (click)="editOnClick(program)">
+                      <i class="icon edit sb-color-primary ui fs-0-92"></i>
+                      <span class="sb-color-primary mr-10 ">{{resourceService.frmelmnts.lbl.editDraft}}</span>
+                    </div>
                 </td>
                 <td *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')">
                   <div class="sb-dock-icon-tooltip d-inline-block">
                     <i *ngIf="program.status === 'Live' || program.status === 'Unlisted'" class="icon edit sb-color-primary cursor-pointer ui fs-0-785 pl-20 va-text-sup" data-tooltip="Modify" (click)="editOnClick(program)"></i>
-                    <div *ngIf="program.status === 'Draft'" class="d-inline-block cursor-pointer" (click)="editOnClick(program)">
-                      <i class="icon edit sb-color-primary ui fs-0-92"></i>
-                      <span class="sb-color-primary mr-10 ">{{resourceService.frmelmnts.lbl.editDraft}}</span>
-                    </div>
                     <i class="icon trash sb-color-primary cursor-pointer ui fs-0-785 va-text-sup px-20" data-tooltip="Delete" (click)="setDelete(program, i)"></i>
                   </div>
                 </td>
