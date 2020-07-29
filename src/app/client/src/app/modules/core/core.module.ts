@@ -10,11 +10,9 @@ import { FormsModule, ReactiveFormsModule, } from '@angular/forms';
 import { SharedModule } from '@sunbird/shared';
 import { AvatarModule } from 'ngx-avatar';
 import {
-  MainHeaderComponent, MainFooterComponent, MainMenuComponent, SearchComponent,
-  DataDrivenFilterComponent, ErrorPageComponent, SortByComponent, FlagContentComponent,
-  LanguageDropdownComponent, ProminentFilterComponent, TopicPickerComponent
+  MainHeaderComponent, MainFooterComponent, MainMenuComponent, ErrorPageComponent,
+  LanguageDropdownComponent
 } from './components';
-import { ManageModule } from '../manage/manage.module';
 import { AuthGuard } from './guard/auth-gard.service';
 import { CacheService } from 'ng2-cache-service';
 import { WebExtensionModule } from '@project-sunbird/web-extensions';
@@ -25,7 +23,6 @@ import { TelemetryModule } from '@sunbird/telemetry';
     SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule, SuiProgressModule,
     SuiRatingModule, SuiCollapseModule,
     SharedModule,
-    ManageModule,
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
@@ -33,13 +30,11 @@ import { TelemetryModule } from '@sunbird/telemetry';
     TelemetryModule,
     AvatarModule
   ],
-  declarations: [MainHeaderComponent, MainFooterComponent, MainMenuComponent, SearchComponent, PermissionDirective,
-    BodyScrollDirective, DataDrivenFilterComponent, SortByComponent,
-    ErrorPageComponent, FlagContentComponent, LanguageDropdownComponent,
-    ProminentFilterComponent, TopicPickerComponent, StickyHeaderDirective],
+  declarations: [MainHeaderComponent, MainFooterComponent, MainMenuComponent, PermissionDirective,
+    BodyScrollDirective,
+    ErrorPageComponent, LanguageDropdownComponent, StickyHeaderDirective],
   exports: [MainHeaderComponent, MainFooterComponent, PermissionDirective, BodyScrollDirective,
-    DataDrivenFilterComponent, SortByComponent, FlagContentComponent,
-    TelemetryModule, LanguageDropdownComponent, ProminentFilterComponent, TopicPickerComponent],
+    TelemetryModule, LanguageDropdownComponent],
   providers: [
     {
       provide: APP_BASE_HREF,
