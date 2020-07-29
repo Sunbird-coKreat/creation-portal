@@ -230,7 +230,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         originData: this.originalCollectionData,
         action: action,
         programContext: _.get(this.chapterListComponentInput, 'programContext'),
-        sourcingStatus: sourcingStatus
+        sourcingStatus: sourcingStatus,
+        content: content
       },
       practiceQuestionSetComponentInput: {
         config: _.find(this.programContext.config.components, {'id': 'ng.sunbird.practiceSetComponent'}),
@@ -243,7 +244,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         originData: this.originalCollectionData,
         action: action,
         programContext: _.get(this.chapterListComponentInput, 'programContext'),
-        sourcingStatus: sourcingStatus
+        sourcingStatus: sourcingStatus,
+        content: content
       },
       contentEditorComponentInput: {
         contentId: this.contentId,

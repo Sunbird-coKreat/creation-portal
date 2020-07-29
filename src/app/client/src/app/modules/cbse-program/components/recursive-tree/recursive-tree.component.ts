@@ -102,7 +102,9 @@ export class RecursiveTreeComponent implements OnInit {
     });
   }
 
-  previewResource(e, content, collection, origin) {
+  previewResource(e, content, collection, origin, index) {
+    console.log('Choosed index is======', index);
+    content.originalStatus = origin.children[index] && origin.children[index].status ? origin.children[index].status : 'Retired';
     this.nodeMeta.emit({
       action: 'preview',
       content: content,
