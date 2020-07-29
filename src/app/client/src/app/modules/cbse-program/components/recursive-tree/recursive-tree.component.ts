@@ -55,7 +55,7 @@ export class RecursiveTreeComponent implements OnInit {
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.sessionContext.programId, 'Program');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
-    this.nodeStatusMessage = 'This section does not exist in the textbook on DIKSHA. Please check.';
+    this.nodeStatusMessage = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
   }
 
   shouldActionMenuBeVisible() {
