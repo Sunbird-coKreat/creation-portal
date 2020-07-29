@@ -155,6 +155,13 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.telemetryInteractObject = {};
     this.acceptPdfType = this.getAcceptType(this.assetConfig.pdf.accepted, 'pdf');
 
+    this.collectionListForm = this.sbFormBuilder.group({
+      pcollections: this.sbFormBuilder.array([]),
+      medium: [],
+      gradeLevel: [],
+      subject: [],
+    });
+
     if (!_.isEmpty(this.programId)) {
       this.getProgramDetails();
     } else {
@@ -299,7 +306,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     };
     this.programsService.get(req).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
-      this.selectedContentTypes = this.programDetails.content_types;
+      this.selectedContentTypes = _.get(this.programDetails, 'content_types');
       this.programDetails['content_types'] = this.programsService.getContentTypesName(this.programDetails.content_types);
       this.initializeFormFields();
 
@@ -365,7 +372,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.sortColumn = column;
   }
 
-  sortChapters(identifier,column) {
+  sortChapters(identifier, column) {
     this.textbooks[identifier].children = this.programsService.sortCollection(this.textbooks[identifier].children, column, this.chaptersSortDir);
     this.chaptersSortDir = (this.chaptersSortDir === 'asc' || this.chaptersSortDir === '') ? 'desc' : 'asc';
     this.chaptersSortColumn = column;
@@ -476,9 +483,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programScope['gradeLevel'] = [];
     this.programScope['subject'] = [];
 
-    this.collectionListForm.controls['medium'].setValue('');
-    this.collectionListForm.controls['gradeLevel'].setValue('');
-    this.collectionListForm.controls['subject'].setValue('');
+    if (this.collectionListForm) {
+      this.collectionListForm.controls['medium'].setValue('');
+      this.collectionListForm.controls['gradeLevel'].setValue('');
+      this.collectionListForm.controls['subject'].setValue('');
+    }
 
     const board = _.find(this.frameworkCategories, (element) => {
       return element.code === 'board';
@@ -629,13 +638,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     this.showLoader = false;
     this.isFormValueSet = true;
-
-    this.collectionListForm = this.sbFormBuilder.group({
-      pcollections: this.sbFormBuilder.array([]),
-      medium: [],
-      gradeLevel: [],
-      subject: [],
-    });
   }
 
   saveProgramError(err) {
