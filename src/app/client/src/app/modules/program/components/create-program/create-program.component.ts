@@ -105,6 +105,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public showDocumentUploader = false;
   public defaultContributeOrgReviewChecked = false;
   public disableUpload = false;
+  public showPublishModal= false;
   uploadedDocument;
   showAddButton = false;
   loading = false;
@@ -148,8 +149,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programId = this.activatedRoute.snapshot.params.programId;
     this.userprofile = this.userService.userProfile;
     this.programScope['purpose'] = this.programsService.contentTypes;
-    console.log("this.programScope['purpose']", this.programScope['purpose']);
-
     this.programConfig = _.cloneDeep(programConfigObj);
     this.telemetryInteractCdata = [];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
@@ -817,7 +816,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       if (!this.editLive) {
         if (!_.isEmpty(this.collectionListForm.value.pcollections)) {
-          debugger;
           this.programData['config']['collections'] = this.getCollections();
         }
       }
@@ -1325,13 +1323,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
   saveAsDraft($event: MouseEvent) {
     this.clearValidations();
-
     if (this.createProgramForm.valid) {
         ($event.target as HTMLButtonElement).disabled = true;
         const cb = (error, resp) => {
           if (!error && resp) {
+            this.toasterService.success(this.resource.messages.smsg.program.draft);
             this.router.navigate(['/sourcing']);
           } else {
+            this.toasterService.error(this.resource.messages.emsg.m0005);
             ($event.target as HTMLButtonElement).disabled = false;
           }
         };
@@ -1370,7 +1369,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       }
   }
 
-  publishProject($event) {
+  validateFormBeforePublish() {
     this.setValidations();
 
     if (!this.createProgramForm.valid) {
@@ -1386,6 +1385,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       return false;
     }
 
+    this.showPublishModal = true;
+  }
+
+  publishProject($event) {
+    this.showPublishModal = false;
     this.disableCreateProgramBtn = true;
 
     ($event.target as HTMLButtonElement).disabled = true;
@@ -1400,7 +1404,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
         if (this.isOpenNominations) {
           this.programsService.publishProgram(data).subscribe(res => {
-            this.toasterService.success(this.resource.messages.smsg.program.published);
+            this.toasterService.success(
+              '<b>' + this.resource.messages.smsg.program.published.heading + '</b>',
+              this.resource.messages.smsg.program.published.message);
             this.router.navigate(['/sourcing']);
           },
           err => {

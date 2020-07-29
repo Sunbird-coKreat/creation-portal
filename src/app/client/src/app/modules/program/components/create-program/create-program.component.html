@@ -545,11 +545,10 @@
 					[telemetryInteractEdata]="getTelemetryInteractEdata('next', 'click', 'create-program')"
 					[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
 					[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.next}}</button>
-				<button *ngIf="showTextBookSelector && !editLive" class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="disableCreateProgramBtn"
-					(click)="publishProject($event)" appTelemetryInteract
-					[telemetryInteractEdata]="getTelemetryInteractEdata('create-program', 'click', 'create-program')"
-					[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
-					[telemetryInteractPdata]="telemetryInteractPdata">{{ resource.frmelmnts.btn.publishProject }}</button>
+				<button *ngIf="showTextBookSelector && !editLive" 
+					class="sb-btn sb-btn-normal sb-btn-primary" 
+					[disabled]="disableCreateProgramBtn"
+					(click)="validateFormBeforePublish()" appTelemetryInteract >{{ resource.frmelmnts.btn.publishProject }}</button>
 			</div>
 		</div>
 	</div>
@@ -686,4 +685,25 @@ class="sb-modal" appBodyScroll (dismissed)="this.selectChapter = false" #modal>
 		</button>
 		</div>
 	</form>
+</sui-modal>
+
+<sui-modal *ngIf="showPublishModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'"
+  class="sb-modal" appBodyScroll (dismissed)="showPublishModal = false" #modal>
+  <div class="sb-modal-header">
+    {{resource.frmelmnts.lbl.publishProject}}
+  </div>
+  <div class="sb-modal-content">
+   {{resource.frmelmnts.lbl.areYouSurePublishProject}}
+  </div>
+  <div class="sb-modal-actions">
+	<button class="sb-btn sb-btn-normal sb-btn-primary"
+		(click)="publishProject($event)"
+		appTelemetryInteract
+		[telemetryInteractEdata]="getTelemetryInteractEdata('create-program', 'click', 'create-program')"
+		[telemetryInteractObject]="telemetryInteractObject" 
+		[telemetryInteractCdata]="telemetryInteractCdata"
+		[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.yes}}</button>
+	<button class="sb-btn sb-btn-normal sb-btn-outline-primary" 
+		(click)="showPublishModal = false">{{resource.frmelmnts.btn.no}}</button>
+  </div>
 </sui-modal>
