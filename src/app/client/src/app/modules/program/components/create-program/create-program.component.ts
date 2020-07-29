@@ -598,7 +598,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         // tslint:disable-next-line: max-line-length
         content_types: [_.get(this.programDetails, 'content_types') ? _.get(this.programDetails, 'content_types') : null, Validators.required],
         rewards: [_.get(this.programDetails, 'rewards')],
-        defaultContributeOrgReview: new FormControl({ value: this.defaultContributeOrgReviewChecked, disabled: this.editLive })
+        // tslint:disable-next-line: max-line-length
+        defaultContributeOrgReview: new FormControl({ value: _.get(this.programDetails, 'config.defaultContributeOrgReview'), disabled: this.editLive })
       };
 
       if (this.isOpenNominations === true) {
@@ -610,9 +611,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       }
 
       this.createProgramForm = this.sbFormBuilder.group(obj);
-    }
-    else
-    {
+
+      this.defaultContributeOrgReviewChecked = _.get(this.programDetails, 'config.defaultContributeOrgReview') ? false : true;
+    } else {
       this.createProgramForm = this.sbFormBuilder.group({
         name: ['', [Validators.required, Validators.maxLength(100)]],
         description: ['', Validators.maxLength(1000)],
