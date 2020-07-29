@@ -798,6 +798,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programData['program_id'] = '';
 
     if (!this.programId) {
+      this.programData['config'] = this.programConfig;
       this.programsService.createProgram(this.programData).subscribe(
         (res) => {
           this.programId = res.result.program_id;
@@ -821,7 +822,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           this.programConfig['collections'] = this.getCollections();
         }
       }
-
       this.programData['config'] = this.programConfig;
       this.programData['program_id'] = this.programId;
       this.programsService.updateProgram(this.programData).subscribe(
@@ -1121,7 +1121,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   initChaptersSelectionForm(chapters) {
     let values = [];
 
-
     chapters.children.forEach((o, i) => {
       values.push(o.checked);
     });
@@ -1190,7 +1189,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
   updateSelection(identifier) {
     let selectedCount = 0;
-    let selectedChapters = _.get(this.chaptersSelectionForm.controls.chaptersCtrl, "controls");
+    const selectedChapters = _.get(this.chaptersSelectionForm.controls.chaptersCtrl, "controls");
     this.selectChapter = false;
 
     _.forEach(selectedChapters, (item, i) => {
