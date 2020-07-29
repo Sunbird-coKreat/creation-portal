@@ -1,18 +1,18 @@
 <div class="ui container" [appTelemetryImpression]="telemetryImpression">
 	<div class="sb-pageSection mt-24 pb-48">
 		<div class="sb-pageSection-header">
-			<h4 *ngIf="!editLive; else modifyProject" class="sb-pageSection-title">{{resource.frmelmnts.lbl.createNewProgram}}</h4>
-			<ng-template #modifyProject><h4 class="sb-pageSection-title">{{resource.frmelmnts.lbl.modifyProgram}}</h4></ng-template>
+			<h4 *ngIf="!editLive; else modifyProject" class="sb-pageSection-title">{{resource?.frmelmnts?.lbl?.createNewProgram}}</h4>
+			<ng-template #modifyProject><h4 class="sb-pageSection-title">{{resource?.frmelmnts?.lbl?.modifyProgram}}</h4></ng-template>
 		</div>
 		<div class="pb-8" >
 			<sui-tabset>
 				<div class="ui pointing secondary menu sb-bg-color-primary-0">
 					<div class="item" suiTabHeader="1" [ngClass]="{'active' : !showTextBookSelector}">
-						{{resource.frmelmnts.lbl.details}}
+						{{resource?.frmelmnts?.lbl?.details}}
 					</div>
 					<div class="item" suiTabHeader="2" *ngIf="!editLive" [isDisabled]="!showTextBookSelector"
 						[ngClass]="{'active' : showTextBookSelector}">
-						{{resource.frmelmnts.lbl.selectTextbooks}}
+						{{resource?.frmelmnts?.lbl?.selectTextbooks}}
 					</div>
 				</div>
 				<div class="ui segment mt-5" suiTabContent="1" [ngClass]="{'active' : !showTextBookSelector}">
@@ -20,68 +20,68 @@
 						<div class="ui grid">
 							<div class="twelve wide column">
 								<div class="required field">
-									<label class="d-block">{{resource.frmelmnts.lbl.name}}
+									<label class="d-block">{{resource?.frmelmnts?.lbl?.name}}
 										<i class="pull-right question circle link icon pull-right" suiPopup
 											popupDelay="500" [popupPlacement]="'left'"
-											popupText="{{resource.frmelmnts.lbl.programNameHint}}"></i>
+											popupText="{{resource?.frmelmnts?.lbl?.programNameHint}}"></i>
 									</label>
 									<div class="sb-field">
 										<input autofocus="" formControlName="name"
 											class="sb-form-control ng-pristine ng-valid ng-touched" type="text"
-											placeholder="{{resource.frmelmnts.lbl.programNameHint}}">
+											placeholder="{{resource?.frmelmnts?.lbl?.programNameHint}}">
 										<div class="ui pointing red basic label below "
 											*ngIf="createProgramForm.controls['name'].errors && createProgramForm.controls['name'].errors.required && (!createProgramForm.controls['name'].pristine || formIsInvalid)">
-											{{ resource.frmelmnts.lbl.programNameRequired }}
+											{{resource?.frmelmnts?.lbl?.programNameRequired }}
 										</div>
 										<div class="ui pointing red basic label below"
 											*ngIf="createProgramForm.controls['name'].errors && createProgramForm.controls['name'].errors.maxlength && (!createProgramForm.controls['name'].pristine || formIsInvalid)">
-											{{resource.frmelmnts.lbl.characterLengthGreaterHundred}}
+											{{resource?.frmelmnts?.lbl?.characterLengthGreaterHundred}}
 										</div>
-										<span class="fs-0-785 text-right sb-color-gray-200 d-block py-5 pull-right">{{ resource.frmelmnts.lbl.nCharactersLeft | interpolate:'{noOfChars}': 100 - (createProgramForm.controls['name'].value.length > 100 ? 100 : createProgramForm.controls['name'].value.length) }}
+										<span class="fs-0-785 text-right sb-color-gray-200 d-block py-5 pull-right">{{resource?.frmelmnts?.lbl?.nCharactersLeft | interpolate:'{noOfChars}': 100 - (createProgramForm.controls['name'].value.length > 100 ? 100 : createProgramForm.controls['name'].value.length) }}
 										</span>
 									</div>
 								</div>
 							</div>
 							<div class="twelve wide column">
 								<div class="required field ">
-									<label class="d-block">{{resource.frmelmnts.lbl.description}}
+									<label class="d-block">{{resource?.frmelmnts?.lbl?.description}}
 										<i class="pull-right question circle link icon pull-right" suiPopup
 											popupDelay="500" [popupPlacement]="'left'"
-											popupText="{{resource.frmelmnts.lbl.programDescriptionHint}}"></i>
+											popupText="{{resource?.frmelmnts?.lbl?.programDescriptionHint}}"></i>
 									</label>
 									<div class="sb-field relative">
 										<textarea formControlName="description" type="text"
 											class="wmd-input width-100 sb-form-control"
-											placeholder="{{resource.frmelmnts.lbl.programDescriptionHint}}"
+											placeholder="{{resource?.frmelmnts?.lbl?.programDescriptionHint}}"
 											name="description" required></textarea>
 										<div class="ui pointing red basic label below "
 											*ngIf="createProgramForm.controls['description'].errors && createProgramForm.controls['description'].errors.required && (!createProgramForm.controls['description'].pristine || formIsInvalid)">
-											{{ resource.frmelmnts.lbl.programDescriptionRequired }}
+											{{resource?.frmelmnts?.lbl?.programDescriptionRequired }}
 										</div>
-										<span class="fs-0-785 text-right sb-color-gray-200 d-block py-5 pull-right">{{ resource.frmelmnts.lbl.nCharactersLeft | interpolate:'{noOfChars}': 1000 - (createProgramForm.controls['description'].value.length > 1000 ? 1000 : createProgramForm.controls['description'].value.length) }}
+										<span class="fs-0-785 text-right sb-color-gray-200 d-block py-5 pull-right">{{resource?.frmelmnts?.lbl?.nCharactersLeft | interpolate:'{noOfChars}': 1000 - (createProgramForm.controls['description'].value.length > 1000 ? 1000 : createProgramForm.controls['description'].value.length) }}
 										</span>
 										<div class="ui pointing red basic label below"
 											*ngIf="createProgramForm.controls['description'].errors && createProgramForm.controls['description'].errors.maxlength && (!createProgramForm.controls['description'].pristine || formIsInvalid)">
-											{{resource.frmelmnts.lbl.characterLengthGreaterThousand}}
+											{{resource?.frmelmnts?.lbl?.characterLengthGreaterThousand}}
 										</div>
 									</div>
 								</div>
 							</div>
 							<div class="twelve wide column sb-field-group pt-0" [ngClass]="(editLive) ? 'disabled field':''" >
 								<div class="sb-field-group mb-8">
-									<label class="fs-0-92">{{resource.frmelmnts.lbl.isThisProjectOpenForNominations}}
+									<label class="fs-0-92">{{resource?.frmelmnts?.lbl?.isThisProjectOpenForNominations}}
 										<i class="pull-right question circle link icon pull-right ml-10" suiPopup
 										popupDelay="500" [popupPlacement]="'right'"
-										popupText="{{resource.frmelmnts.lbl.isThisProjectOpenForNominationsHint}}"></i>
+										popupText="{{resource?.frmelmnts?.lbl?.isThisProjectOpenForNominationsHint}}"></i>
 									</label>
 									<div class="sb-field mt-4 d-flex">
 										<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
 											<input id="yes" [disabled]="editLive" type="radio" name="openNominations" [checked]="isOpenNominations" (click)="openForNominations(true)" >
-											<label for="yes">{{resource.frmelmnts.btn.yes}}</label>
+											<label for="yes">{{resource?.frmelmnts.btn.yes}}</label>
 										</div>
 										<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
 											<input id="no" [disabled]="editLive" type="radio"  name="openNominations" [checked]="!isOpenNominations" (click)="openForNominations(false)" >
-											<label for="no">{{resource.frmelmnts.btn.no}}</label>
+											<label for="no">{{resource?.frmelmnts.btn.no}}</label>
 										</div>
 									</div>
 								</div>
@@ -89,18 +89,18 @@
 							<div class="twelve wide column" [ngClass]="(editLive) ? 'disabled field':''">
 								<div class="sb-checkbox sb-checkbox-primary">
 									<input type="checkbox" [disabled]="editLive" id="defaultContributeOrgReview" name="defaultContributeOrgReview" formControlName="defaultContributeOrgReview" [checked]="defaultContributeOrgReviewChecked" (change)="defaultContributeOrgReviewChanged($event)">
-									<label for="defaultContributeOrgReview">{{resource.frmelmnts.lbl.twoLevelReview}}</label>
+									<label for="defaultContributeOrgReview">{{resource?.frmelmnts?.lbl?.twoLevelReview}}</label>
 								</div>
 								<div class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-40 va-top pl-20">
-									{{resource.frmelmnts.lbl.twoLevelReviewNote}}
+									{{resource?.frmelmnts?.lbl?.twoLevelReviewNote}}
 								</div>
 							</div>
 							 <div class="twelve wide tablet three wide computer column" *ngIf="isOpenNominations === true">
 								<div class="required field">
-									<label class="d-block">{{resource.frmelmnts.lbl.nominationEndDate}}
+									<label class="d-block">{{resource?.frmelmnts?.lbl?.nominationEndDate}}
 										<i class="pull-right question circle link icon pull-right" suiPopup
 											popupDelay="500" [popupPlacement]="'left'"
-											popupText="{{resource.frmelmnts.lbl.programNominationEnddateHint}}"></i>
+											popupText="{{resource?.frmelmnts?.lbl?.programNominationEnddateHint}}"></i>
 									</label>
 									<div class="ui read-only calendar mb-10 sb-field">
 										<div class="ui input right icon">
@@ -112,17 +112,17 @@
 										</div>
 										<div class="ui pointing red basic label below "
 											*ngIf="createProgramForm.controls['nomination_enddate'].errors && createProgramForm.controls['nomination_enddate'].errors.required && (!createProgramForm.controls['nomination_enddate'].pristine || formIsInvalid)">
-											{{ resource.frmelmnts.lbl.programNominationEnddateRequired }}
+											{{resource?.frmelmnts?.lbl?.programNominationEnddateRequired }}
 										</div>
 									</div>
 								</div>
 							</div>
 							<div class="twelve wide tablet three wide computer column" *ngIf="isOpenNominations === true">
 								<div class="field">
-									<label class="d-block">{{resource.frmelmnts.lbl.nominationShortlistingDate}}
+									<label class="d-block">{{resource?.frmelmnts?.lbl?.nominationShortlistingDate}}
 										<i class="pull-right question circle link icon pull-right" suiPopup
 											popupDelay="500" [popupPlacement]="'left'"
-											popupText="{{resource.frmelmnts.lbl.programShortlistingEnddateHint}}"></i>
+											popupText="{{resource?.frmelmnts?.lbl?.programShortlistingEnddateHint}}"></i>
 									</label>
 									<div class="ui read-only calendar mb-10">
 										<div class="ui input right icon">
@@ -138,10 +138,10 @@
 
 							<div class="twelve wide tablet three wide computer column">
 								<div class="required field">
-									<label class="d-block">{{resource.frmelmnts.lbl.contributionEndDate}}
+									<label class="d-block">{{resource?.frmelmnts?.lbl?.contributionEndDate}}
 										<i class="pull-right question circle link icon pull-right" suiPopup
 											popupDelay="500" [popupPlacement]="'left'"
-											popupText="{{resource.frmelmnts.lbl.programContributionEnddateHint}}"></i>
+											popupText="{{resource?.frmelmnts?.lbl?.programContributionEnddateHint}}"></i>
 									</label>
 									<div class="ui read-only calendar mb-10">
 										<div class="ui input right icon">
@@ -153,7 +153,7 @@
 										</div>
 										<div class="ui pointing red basic label below "
 											*ngIf="createProgramForm.controls['content_submission_enddate'].errors && createProgramForm.controls['content_submission_enddate'].errors.required && (!createProgramForm.controls['content_submission_enddate'].pristine || formIsInvalid)">
-											{{ resource.frmelmnts.lbl.programContributionEndDateRequired }}
+											{{resource?.frmelmnts?.lbl?.programContributionEndDateRequired }}
 										</div>
 									</div>
 								</div>
@@ -161,10 +161,10 @@
 
 							<div class="twelve wide tablet three wide computer column">
 								<div class="required field">
-									<label class="d-block">{{resource.frmelmnts.lbl.programEndDate}}
+									<label class="d-block">{{resource?.frmelmnts?.lbl?.programEndDate}}
 										<i class="pull-right question circle link icon pull-right" suiPopup
 											popupDelay="500" [popupPlacement]="'left'"
-											popupText="{{resource.frmelmnts.lbl.programEnddateHint}}"></i>
+											popupText="{{resource?.frmelmnts?.lbl?.programEnddateHint}}"></i>
 									</label>
 									<div class="ui read-only calendasr mb-10">
 										<div class="ui input right icon">
@@ -174,17 +174,17 @@
 										</div>
 										<div class="ui pointing red basic label below "
 											*ngIf="createProgramForm.controls['program_end_date'].errors && createProgramForm.controls['program_end_date'].errors.required && (!createProgramForm.controls['program_end_date'].pristine || formIsInvalid)">
-											{{ resource.frmelmnts.lbl.programEndDateRequired }}
+											{{resource?.frmelmnts?.lbl?.programEndDateRequired }}
 										</div>
 									</div>
 								</div>
 							</div>
 							<div class="six wide column">
 								<div class="required field">
-									<label class="d-block">{{resource.frmelmnts.lbl.contentType}}
+									<label class="d-block">{{resource?.frmelmnts?.lbl?.contentType}}
 										<i class="pull-right question circle link icon pull-right" suiPopup
 											popupDelay="500" [popupPlacement]="'left'"
-											popupText="{{resource.frmelmnts.lbl.contentTypesHint}}"></i>
+											popupText="{{resource?.frmelmnts?.lbl?.contentTypesHint}}"></i>
 									</label>
 									<sui-multi-select *ngIf="!editLive; else elseBlock" 
 										class="selection" labelField="name" [hasLabels]="true"
@@ -204,13 +204,13 @@
 
 									<div class="ui pointing red basic label below "
 										*ngIf="createProgramForm.controls['content_types'].errors && createProgramForm.controls['content_types'].errors.required && (!createProgramForm.controls['content_types'].pristine || formIsInvalid)">
-										{{ resource.frmelmnts.lbl.contentTypesRequired }}
+										{{resource?.frmelmnts?.lbl?.contentTypesRequired }}
 									</div>
 								</div>
 							</div>
 							<div class="six wide column">
 								<div class="field">
-									<label [ngClass]="(disableUpload) ? 'disabled field':''" class="d-block">{{resource.frmelmnts.lbl.uploadGuideline}}
+									<label [ngClass]="(disableUpload) ? 'disabled field':''" class="d-block">{{resource?.frmelmnts?.lbl?.uploadGuideline}}
 									</label>
 									<button
 										[ngClass]="(disableUpload) ? 'disabled field':''"
@@ -222,7 +222,7 @@
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">
-										<i class="upload icon"></i>{{ resource.frmelmnts.btn.upload}}
+										<i class="upload icon"></i>{{resource?.frmelmnts?.btn?.upload}}
 									</button>
 									<span *ngIf="uploadedDocument; else elseGuideBlock" class="sb-url">
 										<a href="{{uploadedDocument.artifactUrl}}" class="max-w-90 pull-left text-decor-none sb__ellipsis sb__ellipsis--breakAll" target="_blank">
@@ -244,15 +244,15 @@
 							</div>
 							<div class="twelve wide column">
 								<div class="field">
-									<label class="d-block">{{resource.frmelmnts.lbl.recongnitionToContributors}}
+									<label class="d-block">{{resource?.frmelmnts?.lbl?.recongnitionToContributors}}
 										<i class="pull-right question circle link icon pull-right" suiPopup
 											popupDelay="500" [popupPlacement]="'left'"
-											popupText="{{resource.frmelmnts.lbl.recongnitionToContributors}}"></i>
+											popupText="{{resource?.frmelmnts?.lbl?.recongnitionToContributors}}"></i>
 									</label>
 									<div class="sb-field relative">
 										<textarea type="text" formControlName="rewards"
 											class="wmd-input width-100 sb-form-control"
-											placeholder="{{resource.frmelmnts.lbl.programRecognitionHint}}"
+											placeholder="{{resource?.frmelmnts?.lbl?.programRecognitionHint}}"
 											name=""></textarea>
 									</div>
 								</div>
@@ -265,12 +265,12 @@
 						<div class="ui grid">
 							<div class="three wide column">
 								<div class="field">
-									<label class="d-block">{{resource.frmelmnts.lbl.medium}}
+									<label class="d-block">{{resource?.frmelmnts?.lbl?.medium}}
 										<i class="pull-right question circle link icon pull-right" suiPopup
 											popupDelay="500" [popupPlacement]="'left'"
-											popupText="{{resource.frmelmnts.lbl.selectMedium}}"></i>
+											popupText="{{resource?.frmelmnts?.lbl?.selectMedium}}"></i>
 									</label>
-									<sui-multi-select placeholder="{{resource.frmelmnts.lbl.selectMedium}}"
+									<sui-multi-select placeholder="{{resource?.frmelmnts?.lbl?.selectMedium}}"
 										class="selection p-5" formControlName="medium"
 										[options]="programScope['medium']" [isDisabled]="!programScope['medium']"
 										(ngModelChange)="onMediumChange()" labelField="name" #mediums>
@@ -290,12 +290,12 @@
 							</div>
 							<div class="three wide column">
 								<div class="field">
-									<label class="d-block"> {{resource.frmelmnts.lbl.grade}}
+									<label class="d-block"> {{resource?.frmelmnts?.lbl?.grade}}
 										<i class="pull-right question circle link icon pull-right" suiPopup
 											popupDelay="500" [popupPlacement]="'left'"
-											popupText="{{resource.frmelmnts.lbl.selectGrade}}"></i>
+											popupText="{{resource?.frmelmnts?.lbl?.selectGrade}}"></i>
 									</label>
-									<sui-multi-select placeholder="{{resource.frmelmnts.lbl.selectGrade}}"
+									<sui-multi-select placeholder="{{resource?.frmelmnts?.lbl?.selectGrade}}"
 										class="selection p-5" formControlName="gradeLevel" labelField="name"
 										(ngModelChange)="onClassChange()" [options]="programScope['gradeLevel']"
 										#graveLevels>
@@ -315,12 +315,12 @@
 							</div>
 							<div class="three wide column">
 								<div class="field">
-									<label class="d-block"> {{resource.frmelmnts.lbl.subject}}
+									<label class="d-block"> {{resource?.frmelmnts?.lbl?.subject}}
 										<i class="pull-right question circle link icon pull-right" suiPopup
 											popupDelay="500" [popupPlacement]="'left'"
-											popupText="{{resource.frmelmnts.lbl.selectSubject}}"></i>
+											popupText="{{resource?.frmelmnts?.lbl?.selectSubject}}"></i>
 									</label>
-									<sui-multi-select placeholder="{{resource.frmelmnts.lbl.selectSubject}}"
+									<sui-multi-select placeholder="{{resource?.frmelmnts?.lbl?.selectSubject}}"
 										class="selection p-5" formControlName="subject" labelField="name"
 										[hasLabels]="true" [options]="programScope['subject']" valueField="name"
 										#subjects>
@@ -348,7 +348,7 @@
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">
-										{{resource.frmelmnts.btn.reset}}
+										{{resource?.frmelmnts?.btn?.reset}}
 									</button>
 									<button class="sb-btn sb-btn-normal sb-btn-primary ml-8" (click)="showTexbooklist()"
 										appTelemetryInteract
@@ -356,7 +356,7 @@
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">
-										{{resource.frmelmnts.btn.apply}}
+										{{resource?.frmelmnts?.btn?.apply}}
 									</button>
 								</div>
 							</div>
@@ -376,7 +376,7 @@
 											</th>
 											<th class="w-10 text-center cursor-pointer sb-sorting"
 												(click)="sortCollection('name')">
-												{{resource.frmelmnts.lbl.title}} &nbsp;&nbsp;
+												{{resource?.frmelmnts?.lbl?.title}} &nbsp;&nbsp;
 												<i class="fa fa-sort" aria-hidden="true"
 													*ngIf="direction === '' || sortColumn !== 'name' "></i>
 												<span *ngIf="sortColumn === 'name'" class="d-inline-block">
@@ -388,7 +388,7 @@
 											</th>
 											<th class="w-10 text-center cursor-pointer sb-sorting"
 												(click)="sortCollection('medium')">
-												{{resource.frmelmnts.lbl.medium}} &nbsp;&nbsp;
+												{{resource?.frmelmnts?.lbl?.medium}} &nbsp;&nbsp;
 												<i class="fa fa-sort" aria-hidden="true"
 													*ngIf="direction === '' || sortColumn !== 'medium' "></i>
 												<span *ngIf="sortColumn === 'medium'" class="d-inline-block">
@@ -400,7 +400,7 @@
 											</th>
 											<th class="w-10 text-center cursor-pointer sb-sorting"
 												(click)="sortCollection('gradeLevel')">
-												{{resource.frmelmnts.lbl.class}} &nbsp;&nbsp;
+												{{resource?.frmelmnts?.lbl?.class}} &nbsp;&nbsp;
 												<i class="fa fa-sort" aria-hidden="true"
 													*ngIf="direction === '' || sortColumn !== 'gradeLevel' "></i>
 												<span *ngIf="sortColumn === 'gradeLevel'" class="d-inline-block">
@@ -412,7 +412,7 @@
 											</th>
 											<th class="w-10 text-center cursor-pointer sb-sorting"
 												(click)="sortCollection('subject')">
-												{{resource.frmelmnts.lbl.subject}} &nbsp;&nbsp;
+												{{resource?.frmelmnts?.lbl?.subject}} &nbsp;&nbsp;
 												<i class="fa fa-sort" aria-hidden="true"
 													*ngIf="direction === '' || sortColumn !== 'subject' "></i>
 												<span *ngIf="sortColumn === 'subject'" class="d-inline-block">
@@ -422,7 +422,7 @@
 														[ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
 												</span>
 											</th>
-											<th class="w-10">{{resource.frmelmnts.lbl.chapters}}</th>
+											<th class="w-10">{{resource?.frmelmnts?.lbl?.chapters}}</th>
 										</tr>
 									</thead>
 									<tbody class="sb-table-body d-block w-100 o-y-auto max-height">
@@ -471,7 +471,7 @@
 						<div class="five wide column">
 							<div class="sb-bg-white b-1-100 br-4 o-y-auto">
 								<h5 class="py-15 px-20 font-weight-bold fs-0-92 text-capitalize">
-									{{tempCollections.length + ' ' + resource.frmelmnts.lbl.textbooksAdded}}
+									{{tempCollections.length + ' ' + resource?.frmelmnts?.lbl?.textbooksAdded}}
 								</h5>
 								<hr class="mt-0">
 								<div class="o-y-auto maxmin-h-375 fs-0-92 text-capitalize">
@@ -494,10 +494,10 @@
 											</div>
 											<div class="four wide column px-0 mt-5">
 												<div class="sb-color-gray-400 fxsmall text-lowercase">
-													{{ resource.frmelmnts.lbl.selectedOutOfTotal | interpolate:'{selected}': tempCollection.selected | interpolate:'{total}': tempCollection.total }}
+													{{resource?.frmelmnts?.lbl?.selectedOutOfTotal | interpolate:'{selected}': tempCollection.selected | interpolate:'{total}': tempCollection.total }}
 												</div>
 												<div *ngIf="tempCollection.selected" class="sb-color-primary fxsmall cursor-pointer text-none" (click)="chooseChapters(tempCollection);">
-													<i class="edit outline icon"></i>{{resource.frmelmnts.lbl.editChapters}}
+													<i class="edit outline icon"></i>{{resource?.frmelmnts?.lbl?.editChapters}}
 												</div>
 											</div>
 											<div class="two wide column text-right cursor-pointer"
@@ -525,30 +525,30 @@
 					(click)="navigateTo(1)" appTelemetryInteract
 					[telemetryInteractEdata]="getTelemetryInteractEdata('previous', 'click', 'create-program')"
 					[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
-					[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.previous}}</button>
+					[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.previous}}</button>
 			</div>
 			<div>
 				<button *ngIf="editLive" type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="updateProgram($event);"
 					appTelemetryInteract
 					[telemetryInteractEdata]="getTelemetryInteractEdata('update', 'click', 'edit-program')"
 					[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
-					[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.update}}</button>
+					[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.update}}</button>
 				<button *ngIf="!editLive" class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8" 
 					appTelemetryInteract
 					[telemetryInteractEdata]="getTelemetryInteractEdata('draft', 'click', 'edit-program')"
 					[telemetryInteractObject]="telemetryInteractObject" 
 					[telemetryInteractCdata]="telemetryInteractCdata"
 					[telemetryInteractPdata]="telemetryInteractPdata"
-					(click)="saveAsDraft($event)">{{resource.frmelmnts.btn.saveAsDraft}}</button>
+					(click)="saveAsDraft($event)">{{resource?.frmelmnts?.btn?.saveAsDraft}}</button>
 				<button *ngIf="!showTextBookSelector && !editLive" class="sb-btn sb-btn-normal sb-btn-primary" (click)="saveAsDraftAndNext($event)"
 					appTelemetryInteract
 					[telemetryInteractEdata]="getTelemetryInteractEdata('next', 'click', 'create-program')"
 					[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
-					[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.next}}</button>
+					[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.next}}</button>
 				<button *ngIf="showTextBookSelector && !editLive" 
 					class="sb-btn sb-btn-normal sb-btn-primary" 
 					[disabled]="disableCreateProgramBtn"
-					(click)="validateFormBeforePublish()" appTelemetryInteract >{{ resource.frmelmnts.btn.publishProject }}</button>
+					(click)="validateFormBeforePublish()" appTelemetryInteract >{{resource?.frmelmnts?.btn?.publishProject}}</button>
 			</div>
 		</div>
 	</div>
@@ -556,7 +556,7 @@
 
 <sui-modal [isClosable]="isClosable" class="sb-modal" [isInverted]="true" (dismissed)="showDocumentUploader = false"
 	*ngIf="showDocumentUploader" [size]="'normal'" [isFullScreen]="false" [mustScroll]="true" #modal>
-	<div class="sb-modal-header">{{ resource.frmelmnts.lbl.uploadGuideline }}</div>
+	<div class="sb-modal-header">{{resource?.frmelmnts?.lbl?.uploadGuideline }}</div>
 	<div class="sb-modal-content p-0">
 		<div class="content">
 			<div type="text/template" id="qq-template-validation" #fineUploaderUI>
@@ -565,7 +565,7 @@
 						<span class="qq-upload-drop-area-text-selector"></span>
 					</div>
 					<span class="qq-drop-processing-selector qq-drop-processing">
-						<span>{{ resource.messages.imsg.uploadGuideline.m001 }}</span>
+						<span>{{resource?.messages?.imsg?.uploadGuideline?.m001}}</span>
 						<span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
 					</span>
 					<ul class="qq-upload-list-selector qq-upload-list custom-qq-upload-list" aria-live="polite"
@@ -579,17 +579,17 @@
 							<img class="qq-thumbnail-selector" qq-max-size="100" qq-server-scale>
 							<span class="qq-upload-file-selector qq-upload-file custom-qq-upload-file"></span>
 							<span class="qq-upload-size-selector qq-upload-size"></span>
-							<button type="button" class="qq-btn qq-upload-retry-selector qq-upload-retry">{{ resource.frmelmnts.btn.retry }}</button>
+							<button type="button" class="qq-btn qq-upload-retry-selector qq-upload-retry">{{resource?.frmelmnts?.btn?.retry}}</button>
 							<button type="button"
-								class="qq-btn qq-upload-delete-selector qq-upload-delete">{{ resource.frmelmnts.btn.retry }}</button>
+								class="qq-btn qq-upload-delete-selector qq-upload-delete">{{resource?.frmelmnts?.btn?.retry }}</button>
 							<span role="status" class="qq-upload-status-text-selector qq-upload-status-text"></span>
 						</li>
 					</ul>
 					<div id="qq-upload-actions" class="upload-file-description d-flex flex-ai-center flex-dc">
-						<h5 class="mb-8">{{ resource.frmelmnts.lbl.dragDrop }}</h5>
+						<h5 class="mb-8">{{resource?.frmelmnts?.lbl?.dragDrop}}</h5>
 						<span class="fs-0-92 mb-8">Or</span>
 						<div class="qq-upload-button-selector qq-upload-button sb-btn sb-btn-normal sb-btn-success">
-							<div>{{ resource.frmelmnts.btn.selectContentFiles }}</div>
+							<div>{{resource?.frmelmnts?.btn?.selectContentFiles}}</div>
 						</div>
 						<p class="mt-8">Upload {{assetConfig.pdf.accepted}} files ( Max size
 							{{assetConfig.pdf.size}} MB )</p>
@@ -597,16 +597,16 @@
 					<dialog class="qq-confirm-dialog-selector">
 						<div class="qq-dialog-message-selector"></div>
 						<div class="qq-dialog-buttons">
-							<button type="button" class="qq-cancel-button-selector">{{ resource.frmelmnts.btn.no }}</button>
-							<button type="button" class="qq-ok-button-selector">{{ resource.frmelmnts.btn.yes }}</button>
+							<button type="button" class="qq-cancel-button-selector">{{resource?.frmelmnts?.btn?.no}}</button>
+							<button type="button" class="qq-ok-button-selector">{{resource?.frmelmnts?.btn?.yes}}</button>
 						</div>
 					</dialog>
 					<dialog class="qq-prompt-dialog-selector">
 						<div class="qq-dialog-message-selector"></div>
 						<input type="text">
 						<div class="qq-dialog-buttons">
-							<button type="button" class="qq-cancel-button-selector">{{ resource.frmelmnts.btn.cancel }}</button>
-							<button type="button" class="qq-ok-button-selector">{{ resource.frmelmnts.btn.ok }}</button>
+							<button type="button" class="qq-cancel-button-selector">{{resource?.frmelmnts?.btn?.cancel}}</button>
+							<button type="button" class="qq-ok-button-selector">{{resource?.frmelmnts?.btn?.ok}}</button>
 						</div>
 					</dialog>
 				</div>
@@ -624,14 +624,14 @@
 	</div>
 	<div class="sb-modal-actions">
 		<button (click)="addImageInEditor();" class="sb-btn sb-btn-primary sb-btn-normal"
-			[ngClass]="{'sb-btn-primary': showAddButton, 'sb-btn-disabled': !showAddButton}">{{ resource.frmelmnts.btn.add }}</button>
+			[ngClass]="{'sb-btn-primary': showAddButton, 'sb-btn-disabled': !showAddButton}">{{resource?.frmelmnts?.btn?.add}}</button>
 	</div>
 </sui-modal>
 <sui-modal *ngIf="selectChapter" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
 class="sb-modal" appBodyScroll (dismissed)="this.selectChapter = false" #modal>
 	<form [formGroup]="chaptersSelectionForm" (ngSubmit)="updateSelection(choosedTextBook.identifier)">
 		<div class="sb-modal-header">
-		{{resource.frmelmnts.lbl.selectChapters}}
+		{{resource?.frmelmnts?.lbl?.selectChapters}}
 		</div>
 		<div class="sb-modal-content">
 		<div class="pb-20 pt-5">{{choosedTextBook.name}}</div>
@@ -639,7 +639,7 @@ class="sb-modal" appBodyScroll (dismissed)="this.selectChapter = false" #modal>
 				<table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
 					<thead class="sb-table-header sb-table-thead-gray">
 					<tr>
-						<th class="w-70 cursor-pointer sb-sorting" (click)="sortChapters(choosedTextBook.identifier,'name')">{{resource.frmelmnts.lbl.title}}
+						<th class="w-70 cursor-pointer sb-sorting" (click)="sortChapters(choosedTextBook.identifier,'name')">{{resource?.frmelmnts?.lbl?.title}}
 							<i class="fa fa-sort" aria-hidden="true"
 							*ngIf="chaptersSortDir === '' || chaptersSortColumn !== 'name' "></i>
 							<span *ngIf="chaptersSortColumn === 'name'" class="d-inline-block">
@@ -649,7 +649,7 @@ class="sb-modal" appBodyScroll (dismissed)="this.selectChapter = false" #modal>
 									[ngClass]="{'sb-color-gray-100': chaptersSortDir === 'desc'}"></i>
 							</span>
 						</th>
-						<th class="w-30 cursor-pointer sb-sorting">{{resource.frmelmnts.lbl.existingContent}}
+						<th class="w-30 cursor-pointer sb-sorting">{{resource?.frmelmnts?.lbl?.existingContent}}
 							<!-- <i class="fa fa-sort" aria-hidden="true"></i> -->
 						</th>
 					</tr>
@@ -681,7 +681,7 @@ class="sb-modal" appBodyScroll (dismissed)="this.selectChapter = false" #modal>
 		</div>
 		<div class="sb-modal-actions">
 		<button class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="btnDoneDisabled">
-			{{resource.frmelmnts.lbl.done}}
+			{{resource?.frmelmnts?.lbl?.done}}
 		</button>
 		</div>
 	</form>
@@ -690,10 +690,10 @@ class="sb-modal" appBodyScroll (dismissed)="this.selectChapter = false" #modal>
 <sui-modal *ngIf="showPublishModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'"
   class="sb-modal" appBodyScroll (dismissed)="showPublishModal = false" #modal>
   <div class="sb-modal-header">
-    {{resource.frmelmnts.lbl.publishProject}}
+    {{resource?.frmelmnts?.lbl?.publishProject}}
   </div>
   <div class="sb-modal-content">
-   {{resource.frmelmnts.lbl.areYouSurePublishProject}}
+   {{resource?.frmelmnts?.lbl?.areYouSurePublishProject}}
   </div>
   <div class="sb-modal-actions">
 	<button class="sb-btn sb-btn-normal sb-btn-primary"
@@ -702,8 +702,8 @@ class="sb-modal" appBodyScroll (dismissed)="this.selectChapter = false" #modal>
 		[telemetryInteractEdata]="getTelemetryInteractEdata('create-program', 'click', 'create-program')"
 		[telemetryInteractObject]="telemetryInteractObject" 
 		[telemetryInteractCdata]="telemetryInteractCdata"
-		[telemetryInteractPdata]="telemetryInteractPdata">{{resource.frmelmnts.btn.yes}}</button>
+		[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.yes}}</button>
 	<button class="sb-btn sb-btn-normal sb-btn-outline-primary" 
-		(click)="showPublishModal = false">{{resource.frmelmnts.btn.no}}</button>
+		(click)="showPublishModal = false">{{resource?.frmelmnts?.btn?.no}}</button>
   </div>
 </sui-modal>
