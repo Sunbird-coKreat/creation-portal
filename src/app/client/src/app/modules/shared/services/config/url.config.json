@@ -243,6 +243,8 @@
       "CREATE": "program/v1/create",
       "READ": "program/v1/read",
       "UPDATE": "program/v1/update",
+      "PUBLISH": "program/v1/publish",
+      "UNLIST_PUBLISH": "program/v1/unlist/publish",
       "REMOVE": "program/v1/remove",
       "SEARCH": "program/v1/search",
       "LIST": "program/v1/list",
