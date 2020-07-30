@@ -95,81 +95,81 @@ describe('AppComponent', () => {
 afterEach(() => {
   jasmine.clock().uninstall();
 });
-  it('should config telemetry service for login Session', () => {
-    const learnerService = TestBed.get(LearnerService);
-    const publicDataService = TestBed.get(PublicDataService);
-    const tenantService = TestBed.get(TenantService);
-    userService._authenticated = true;
-    spyOn(tenantService, 'get').and.returnValue(of(mockData.tenantResponse));
-    spyOn(publicDataService, 'post').and.returnValue(of({result: { response: { content: 'data'} } }));
-    spyOn(learnerService, 'getWithHeaders').and.returnValue(of(mockData.success));
-    component.ngOnInit();
-    const config = {
-      userOrgDetails: {
-        userId: '4df1bfaf-8352-411e-a7b8-6993d7f6391a',
-        rootOrgId: '01305464129106739256',
-        rootOrg: {
-          'dateTime': null,
-          'preferredLanguage': null,
-          'keys': {},
-          'channel': 'channel1000',
-          'approvedBy': null,
-          'description': null,
-          'updatedDate': null,
-          'addressId': null,
-          'orgType': null,
-          'provider': 'channel1000',
-          'orgCode': null,
-          'locationId': null,
-          'theme': null,
-          'id': '01305464129106739256',
-          'isApproved': null,
-          'communityId': null,
-          'slug': 'channel1000',
-          'email': null,
-          'isSSOEnabled': false,
-          'identifier': '01305464129106739256',
-          'thumbnail': null,
-          'updatedBy': null,
-          'orgName': 'org-success',
-          'address': {},
-          'locationIds': [],
-          'externalId': 'org-success',
-          'isRootOrg': true,
-          'rootOrgId': '01305464129106739256',
-          'imgUrl': null,
-          'approvedDate': null,
-          'orgTypeId': null,
-          'homeUrl': null,
-          'isDefault': null,
-          'createdDate': '2020-07-01 06:04:16:588+0000',
-          'parentOrgId': null,
-          'createdBy': null,
-          'hashTagId': '01305464129106739256',
-          'noOfMembers': null,
-          'status': 1
-        },
-        organisationId: '01305464129106739256'
-      },
-      config: {
-        pdata: {
-          id: component.userService.appId,
-          ver: '1.1.12',
-          pid: configService.appConfig.TELEMETRY.PID
-        },
-        endpoint: configService.urlConFig.URLS.TELEMETRY.SYNC,
-        apislug: configService.urlConFig.URLS.CONTENT_PREFIX,
-        host: '',
-        uid: '4df1bfaf-8352-411e-a7b8-6993d7f6391a',
-        sid: component.userService.sessionId,
-        channel: _.get(userService.userProfile, 'rootOrg.hashTagId'),
-        env: 'home',
-        enableValidation: true,
-        timeDiff: 0
-      }
-    };
-    expect(telemetryService.initialize).toHaveBeenCalledTimes(0);
-  });
+  // it('should config telemetry service for login Session', () => {
+  //   const learnerService = TestBed.get(LearnerService);
+  //   const publicDataService = TestBed.get(PublicDataService);
+  //   const tenantService = TestBed.get(TenantService);
+  //   userService._authenticated = true;
+  //   spyOn(tenantService, 'get').and.returnValue(of(mockData.tenantResponse));
+  //   spyOn(publicDataService, 'post').and.returnValue(of({result: { response: { content: 'data'} } }));
+  //   spyOn(learnerService, 'getWithHeaders').and.returnValue(of(mockData.success));
+  //   component.ngOnInit();
+  //   const config = {
+  //     userOrgDetails: {
+  //       userId: '4df1bfaf-8352-411e-a7b8-6993d7f6391a',
+  //       rootOrgId: '01305464129106739256',
+  //       rootOrg: {
+  //         'dateTime': null,
+  //         'preferredLanguage': null,
+  //         'keys': {},
+  //         'channel': 'channel1000',
+  //         'approvedBy': null,
+  //         'description': null,
+  //         'updatedDate': null,
+  //         'addressId': null,
+  //         'orgType': null,
+  //         'provider': 'channel1000',
+  //         'orgCode': null,
+  //         'locationId': null,
+  //         'theme': null,
+  //         'id': '01305464129106739256',
+  //         'isApproved': null,
+  //         'communityId': null,
+  //         'slug': 'channel1000',
+  //         'email': null,
+  //         'isSSOEnabled': false,
+  //         'identifier': '01305464129106739256',
+  //         'thumbnail': null,
+  //         'updatedBy': null,
+  //         'orgName': 'org-success',
+  //         'address': {},
+  //         'locationIds': [],
+  //         'externalId': 'org-success',
+  //         'isRootOrg': true,
+  //         'rootOrgId': '01305464129106739256',
+  //         'imgUrl': null,
+  //         'approvedDate': null,
+  //         'orgTypeId': null,
+  //         'homeUrl': null,
+  //         'isDefault': null,
+  //         'createdDate': '2020-07-01 06:04:16:588+0000',
+  //         'parentOrgId': null,
+  //         'createdBy': null,
+  //         'hashTagId': '01305464129106739256',
+  //         'noOfMembers': null,
+  //         'status': 1
+  //       },
+  //       organisationId: '01305464129106739256'
+  //     },
+  //     config: {
+  //       pdata: {
+  //         id: component.userService.appId,
+  //         ver: '1.1.12',
+  //         pid: configService.appConfig.TELEMETRY.PID
+  //       },
+  //       endpoint: configService.urlConFig.URLS.TELEMETRY.SYNC,
+  //       apislug: configService.urlConFig.URLS.CONTENT_PREFIX,
+  //       host: '',
+  //       uid: '4df1bfaf-8352-411e-a7b8-6993d7f6391a',
+  //       sid: component.userService.sessionId,
+  //       channel: _.get(userService.userProfile, 'rootOrg.hashTagId'),
+  //       env: 'home',
+  //       enableValidation: true,
+  //       timeDiff: 0
+  //     }
+  //   };
+  //   expect(telemetryService.initialize).toHaveBeenCalledTimes(0);
+  // });
   it('should not call register Device api for login Session', () => {
     const learnerService = TestBed.get(LearnerService);
     const publicDataService = TestBed.get(PublicDataService);

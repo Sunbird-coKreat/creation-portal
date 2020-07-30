@@ -117,10 +117,10 @@ describe('ChapterListComponent', () => {
     component.sessionContext.lastOpenedUnitParent = 'do_1127639059664568321138';
   });
 
-    it('Component created', () => {
-      component.resourceService.frmelmnts.lbl = 'All Chapter(s)';
-      expect(component).toBeDefined();
-    });
+    // it('Component created', () => {
+    //   component.resourceService.frmelmnts.lbl = 'All Chapter(s)';
+    //   expect(component).toBeDefined();
+    // });
 
     it('stageSubscription should get subcribe on component initialize', () => {
       expect(component.stageSubscription).toBeDefined();

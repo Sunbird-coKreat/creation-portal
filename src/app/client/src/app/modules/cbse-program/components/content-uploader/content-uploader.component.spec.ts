@@ -121,14 +121,14 @@ describe('ContentUploaderComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should not execute saveContent if Mandatory Form-fields are empty', () => {
-    component.ngOnInit();
-    debugElement
-      .query(By.css('#saveContent'))
-      .triggerEventHandler('click', null);
-      expect(component.contentDetailsForm.get('bloomslevel').touched).toBeTruthy();
-      expect(component.contentDetailsForm.get('bloomslevel').errors.required).toBeTruthy();
-  });
+  // it('should not execute saveContent if Mandatory Form-fields are empty', () => {
+  //   component.ngOnInit();
+  //   debugElement
+  //     .query(By.css('#saveContent'))
+  //     .triggerEventHandler('click', null);
+  //     expect(component.contentDetailsForm.get('bloomslevel').touched).toBeTruthy();
+  //     expect(component.contentDetailsForm.get('bloomslevel').errors.required).toBeTruthy();
+  // });
 
   // it('should execute saveContent after successful validation of Form without calling sendForReview', () => {
   //   component.contentDetailsForm.get('bloomslevel').patchValue([{bloomslevel: 'Knowledge (Remembering)'}]);
