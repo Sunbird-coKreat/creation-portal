@@ -34,8 +34,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public programId: string;
   public guidLinefileName: String;
   public isFormValueSet = false;
-  public editDraft = false;
-  public editLive = false;
+  // public editDraft = false;
+  public editPublished = false;
   public choosedTextBook: any;
   selectChapter = false;
   public selectedContentTypes: String[];
@@ -384,7 +384,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   getMaxDate(date) {
-    if (!this.editLive) {
+    if (!this.editPublished) {
       if (date === 'nomination_enddate') {
         if (this.createProgramForm.value.shortlisting_enddate) {
           return this.createProgramForm.value.shortlisting_enddate;
@@ -433,7 +433,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       }
     }
 
-    if (!this.editLive) {
+    if (!this.editPublished) {
       return this.pickerMinDate;
     }
     else {
@@ -589,9 +589,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       if (_.get(this.programDetails, 'status') === 'Live' || _.get(this.programDetails, 'status') === 'Unlisted') {
         this.disableUpload = (_.get(this.programDetails, 'guidelines_url')) ? true : false;
-        this.editLive = true;
+        this.editPublished = true;
       } else if (_.get(this.programDetails, 'status') === 'Draft') {
-        this.editDraft = true;
+        // this.editDraft = true;
       }
 
       const obj = {
@@ -608,7 +608,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         content_types: [_.get(this.programDetails, 'content_types') ? _.get(this.programDetails, 'content_types') : null, Validators.required],
         rewards: [_.get(this.programDetails, 'rewards')],
         // tslint:disable-next-line: max-line-length
-        defaultContributeOrgReview: new FormControl({ value: _.get(this.programDetails, 'config.defaultContributeOrgReview'), disabled: this.editLive })
+        defaultContributeOrgReview: new FormControl({ value: _.get(this.programDetails, 'config.defaultContributeOrgReview'), disabled: this.editPublished })
       };
 
       if (this.isOpenNominations === true) {
@@ -665,7 +665,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     if (this.isOpenNominations) {
       // nomination date should be >= today
-      if (!nominationEndDate.isSameOrAfter(today) && !this.editLive) {
+      if (!nominationEndDate.isSameOrAfter(today) && !this.editPublished) {
         this.toasterService.error(this.resource.messages.emsg.createProgram.m0001);
         hasError = true;
       }
@@ -775,7 +775,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programData['default_roles'] = ['CONTRIBUTOR'];
     this.programData['enddate'] = this.programData.program_end_date;
     this.programData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : '';
-    this.programData['status'] = this.editLive ? 'Live' : 'Draft';
+    this.programData['status'] = this.editPublished ? 'Live' : 'Draft';
 
     if (!this.programData['nomination_enddate']) {
       this.programData['nomination_enddate']= null;
@@ -815,7 +815,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         }
       );
     } else {
-      if (!this.editLive) {
+      if (!this.editPublished) {
         if (!_.isEmpty(this.collectionListForm.value.pcollections)) {
           const config = this.addCollectionsDataToConfig();
           this.programConfig['board'] = config.board;
@@ -929,7 +929,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
             this.sortCollection(this.sortColumn);
           }
 
-          if (this.editDraft) {
+          if (!this.editPublished) {
             _.forEach(this.collections, item => {
               const draftCollections = _.get(this.programDetails, 'config.collections');
               if (!_.isEmpty(draftCollections)) {
@@ -940,7 +940,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
               }
             });
           }
-
         } else {
           this.collections = [];
           this.tempSortCollections = [];
@@ -1152,7 +1151,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       let dcollection = {};
 
-      if (this.editDraft) {
+      if (!this.editPublished) {
         const draftCollections = _.get(this.programDetails, 'config.collections');
         if (!_.isEmpty(draftCollections)) {
           const dcindex = draftCollections.findIndex(x => x.id ===  identifier);

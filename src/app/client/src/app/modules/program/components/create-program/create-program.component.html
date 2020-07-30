@@ -1,7 +1,7 @@
 <div class="ui container" [appTelemetryImpression]="telemetryImpression">
 	<div class="sb-pageSection mt-24 pb-48">
 		<div class="sb-pageSection-header">
-			<h4 *ngIf="!editLive; else modifyProject" class="sb-pageSection-title">{{resource?.frmelmnts?.lbl?.createNewProgram}}</h4>
+			<h4 *ngIf="!editPublished; else modifyProject" class="sb-pageSection-title">{{resource?.frmelmnts?.lbl?.createNewProgram}}</h4>
 			<ng-template #modifyProject><h4 class="sb-pageSection-title">{{resource?.frmelmnts?.lbl?.modifyProgram}}</h4></ng-template>
 		</div>
 		<div class="pb-8" >
@@ -10,7 +10,7 @@
 					<div class="item" suiTabHeader="1" [ngClass]="{'active' : !showTextBookSelector}">
 						{{resource?.frmelmnts?.lbl?.details}}
 					</div>
-					<div class="item" suiTabHeader="2" *ngIf="!editLive" [isDisabled]="!showTextBookSelector"
+					<div class="item" suiTabHeader="2" *ngIf="!editPublished" [isDisabled]="!showTextBookSelector"
 						[ngClass]="{'active' : showTextBookSelector}">
 						{{resource?.frmelmnts?.lbl?.selectTextbooks}}
 					</div>
@@ -67,7 +67,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="twelve wide column sb-field-group pt-0" [ngClass]="(editLive) ? 'disabled field':''" >
+							<div class="twelve wide column sb-field-group pt-0" [ngClass]="(editPublished) ? 'disabled field':''" >
 								<div class="sb-field-group mb-8">
 									<label class="fs-0-92">{{resource?.frmelmnts?.lbl?.isThisProjectOpenForNominations}}
 										<i class="pull-right question circle link icon pull-right ml-10" suiPopup
@@ -76,19 +76,19 @@
 									</label>
 									<div class="sb-field mt-4 d-flex">
 										<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-											<input id="yes" [disabled]="editLive" type="radio" name="openNominations" [checked]="isOpenNominations" (click)="openForNominations(true)" >
+											<input id="yes" [disabled]="editPublished" type="radio" name="openNominations" [checked]="isOpenNominations" (click)="openForNominations(true)" >
 											<label for="yes">{{resource?.frmelmnts?.btn?.yes}}</label>
 										</div>
 										<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-											<input id="no" [disabled]="editLive" type="radio"  name="openNominations" [checked]="!isOpenNominations" (click)="openForNominations(false)" >
+											<input id="no" [disabled]="editPublished" type="radio"  name="openNominations" [checked]="!isOpenNominations" (click)="openForNominations(false)" >
 											<label for="no">{{resource?.frmelmnts?.btn?.no}}</label>
 										</div>
 									</div>
 								</div>
 							</div>
-							<div class="twelve wide column" [ngClass]="(editLive) ? 'disabled field':''">
+							<div class="twelve wide column" [ngClass]="(editPublished) ? 'disabled field':''">
 								<div class="sb-checkbox sb-checkbox-primary">
-									<input type="checkbox" [disabled]="editLive" id="defaultContributeOrgReview" name="defaultContributeOrgReview" formControlName="defaultContributeOrgReview" [checked]="defaultContributeOrgReviewChecked" (change)="defaultContributeOrgReviewChanged($event)">
+									<input type="checkbox" [disabled]="editPublished" id="defaultContributeOrgReview" name="defaultContributeOrgReview" formControlName="defaultContributeOrgReview" [checked]="defaultContributeOrgReviewChecked" (change)="defaultContributeOrgReviewChanged($event)">
 									<label for="defaultContributeOrgReview">{{resource?.frmelmnts?.lbl?.twoLevelReview}}</label>
 								</div>
 								<div class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-40 va-top pl-20">
@@ -186,7 +186,7 @@
 											popupDelay="500" [popupPlacement]="'left'"
 											popupText="{{resource?.frmelmnts?.lbl?.contentTypesHint}}"></i>
 									</label>
-									<sui-multi-select *ngIf="!editLive; else elseBlock" 
+									<sui-multi-select *ngIf="!editPublished; else elseBlock" 
 										class="selection" labelField="name" [hasLabels]="true"
 										formControlName="content_types" [options]="programScope.purpose"
 										valueField="value" [(ngModel)]="selectedContentTypes" #multiSelect>
@@ -237,7 +237,7 @@
 											<a href="{{programDetails.guidelines_url}}" class="max-w-90 pull-left text-decor-none sb__ellipsis sb__ellipsis--breakAll" target="_blank">
 												{{guidLinefileName}}
 											</a>
-											<i *ngIf="editDraft" class="icon remove sb-color-error va-top cursor-pointer" (click)="removeUploadedDocument();" ></i>
+											<i *ngIf="!editPublished" class="icon remove sb-color-error va-top cursor-pointer" (click)="removeUploadedDocument();" ></i>
 										</span>
 									</ng-template>
 								</div>
@@ -260,7 +260,7 @@
 						</div>
 					</form>
 				</div>
-				<div class="ui segment mt-5" *ngIf="!editLive" suiTabContent="2" [ngClass]="{'active' : showTextBookSelector}">
+				<div class="ui segment mt-5" *ngIf="!editPublished" suiTabContent="2" [ngClass]="{'active' : showTextBookSelector}">
 					<form class="ui form" [formGroup]="collectionListForm">
 						<div class="ui grid">
 							<div class="three wide column">
@@ -521,31 +521,31 @@
 		</div>
 		<div class="d-flex flex-jc-space-between" [appTelemetryStart]="telemetryStart" [appTelemetryEnd]="telemetryEnd">
 			<div>
-				<button *ngIf="showTextBookSelector && !editLive" class="sb-btn sb-btn-normal sb-btn-outline-primary mr-10"
+				<button *ngIf="showTextBookSelector && !editPublished" class="sb-btn sb-btn-normal sb-btn-outline-primary mr-10"
 					(click)="navigateTo(1)" appTelemetryInteract
 					[telemetryInteractEdata]="getTelemetryInteractEdata('previous', 'click', 'create-program')"
 					[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
 					[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.previous}}</button>
 			</div>
 			<div>
-				<button *ngIf="editLive" type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="updateProgram($event);"
+				<button *ngIf="editPublished" type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="updateProgram($event);"
 					appTelemetryInteract
 					[telemetryInteractEdata]="getTelemetryInteractEdata('update', 'click', 'edit-program')"
 					[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
 					[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.update}}</button>
-				<button *ngIf="!editLive" class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8" 
+				<button *ngIf="!editPublished" class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8" 
 					appTelemetryInteract
 					[telemetryInteractEdata]="getTelemetryInteractEdata('draft', 'click', 'edit-program')"
 					[telemetryInteractObject]="telemetryInteractObject" 
 					[telemetryInteractCdata]="telemetryInteractCdata"
 					[telemetryInteractPdata]="telemetryInteractPdata"
 					(click)="saveAsDraft($event)">{{resource?.frmelmnts?.btn?.saveAsDraft}}</button>
-				<button *ngIf="!showTextBookSelector && !editLive" class="sb-btn sb-btn-normal sb-btn-primary" (click)="saveAsDraftAndNext($event)"
+				<button *ngIf="!showTextBookSelector && !editPublished" class="sb-btn sb-btn-normal sb-btn-primary" (click)="saveAsDraftAndNext($event)"
 					appTelemetryInteract
 					[telemetryInteractEdata]="getTelemetryInteractEdata('next', 'click', 'create-program')"
 					[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
 					[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.next}}</button>
-				<button *ngIf="showTextBookSelector && !editLive" 
+				<button *ngIf="showTextBookSelector && !editPublished" 
 					class="sb-btn sb-btn-normal sb-btn-primary" 
 					[disabled]="disableCreateProgramBtn"
 					(click)="validateFormBeforePublish()" appTelemetryInteract >{{resource?.frmelmnts?.btn?.publishProject}}</button>
