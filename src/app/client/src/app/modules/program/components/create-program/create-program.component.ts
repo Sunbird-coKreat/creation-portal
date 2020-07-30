@@ -1,4 +1,3 @@
-import { collection } from './../list-contributor-textbooks/data';
 import {
   ConfigService, ResourceService, ToasterService, RouterNavigationService,
   ServerResponse, NavigationHelperService
@@ -762,7 +761,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
 
     // tslint:disable-next-line: max-line-length
-    _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'board' }).defaultValue = this.userBoard; 
+    _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'board' }).defaultValue = this.userBoard;
 
     this.programConfig.defaultContributeOrgReview = !this.defaultContributeOrgReviewChecked;
     this.programData['sourcing_org_name'] = this.userprofile.rootOrgName;
