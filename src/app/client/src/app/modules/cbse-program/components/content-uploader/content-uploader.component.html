@@ -16,8 +16,8 @@
         </button>
         <div class="d-flex">
           <div class="d-flex flex-ai-center flex-jc-space-between practical-header__content w-100">
-            <div #contentTitle class="font-weight-bold fs-1" *ngIf="!showTextArea">
-              <div class="d-flex flex-ai-center mb-10"><span class="practical-header__title" suiPopup popupText="{{editTitle}}">{{editTitle}} </span><span class="fsmall ml-16 sb-color-primary font-weight-normal"><a *ngIf="visibility && visibility.showEdit" class="cursor-pointer"
+            <div #contentTitle class="fs-1" *ngIf="!showTextArea">
+              <div class="d-flex flex-ai-center mb-10"><span class="practical-header__title font-weight-bold" suiPopup popupText="{{editTitle}}">{{editTitle}} </span><span class="fsmall ml-16 sb-color-primary font-weight-normal"><a *ngIf="visibility && visibility.showEdit" class="cursor-pointer"
                 appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('edit-resourcetitle', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
@@ -25,8 +25,7 @@
                 [telemetryInteractPdata]="telemetryInteractPdata"
                 (click)="editContentTitle()">Edit</a></span></div>
               <div class="mt-8 practice-set__status">
-                <span class="sb-label sb-label-table sb-label-success-0" *ngIf="!sourcingOrgReviewer"
-                [ngClass]="{ 'sb-label-success-0': (resourceStatus === 'Live' && sourcingReviewStatus === 'Approved'), 'sb-label-warning-0': (resourceStatus === 'Draft'),  'sb-label-error-0': ((resourceStatus === 'Draft' && contentMetaData.prevStatus === 'Review') || (resourceStatus === 'Live' && sourcingReviewStatus === 'Rejected')) ,  'sb-label-gray-0': (resourceStatus === 'Review' || (resourceStatus === 'Live' && !sourcingReviewStatus)) }">{{ resourceStatusText }}</span>
+                <span class="sb-label sb-label-table" [ngClass]="resourceStatusClass">{{ resourceStatusText }}</span>
                 <span class="cursor-pointer fs-0-785 ml-8"
                   *ngIf="showSourcingOrgRejectComments() || showContributorOrgReviewComments()">
                   <i class="comment alternate outline icon sb-color-primary"></i>
