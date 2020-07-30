@@ -6,8 +6,9 @@
   [telemetryInteractPdata]="telemetryInteractPdata"
   [isOpen]=" (collection.identifier === sessionContext.lastOpenedUnitChild || collection.identifier === sessionContext.lastOpenedUnitParent) ? true : false">
     <div title class="sb-accordion-title d-flex flex-jc-flex-end sb-color-primary"><span class="chapter-status mr-16 mt-5"></span>
-     <span class="flex-14"> {{collection.name}}</span>
-      <div class="sb-color-black flex-3">
+     <span class="flex-5"> {{collection.name}}</span>
+     <span *ngIf="showMessage(originalCollectionData, i)">{{nodeStatusMessage}}</span>
+     <div class="sb-color-black flex-2 text-right pr-10">
         <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.totalContent}}:</span> <span class="font-weight-bold"> {{collection.totalLeaf}}</span>
       </div>
      <div class="d-flex">
@@ -34,7 +35,7 @@
     </div>
     <div content>
       <div class="chapter-lists level1" *ngIf="collection.leaf">
-        <ng-container *ngFor="let content of collection.leaf; let i=index">
+        <ng-container *ngFor="let content of collection.leaf; let ind = index">
           <div class="chapter-lists--item"
           *ngIf="content.visibility === true"
           appTelemetryInteract
@@ -42,7 +43,7 @@
           [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
           [telemetryInteractCdata]="telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryInteractPdata"
-          (click)="previewResource($event, content, collection)">
+          (click)="previewResource($event, content, collection, originalCollectionData, i)">
             <span class="item-name"> {{content.name}}</span>
             <span class="item-status">{{content.creator}}</span>
             <span class="item-status">
@@ -73,7 +74,7 @@
                     [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
                     [telemetryInteractCdata]="telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryInteractPdata"
-                    (click)="previewResource($event, content, collection)">{{resourceService.frmelmnts.lbl.edit}}</div>
+                    (click)="previewResource($event, content, collection, originalCollectionData, i)">{{resourceService.frmelmnts.lbl.edit}}</div>
                   <div class="item"
                     *ngIf="visibility && visibility['showPreviewResource'] && (content.status === 'Live' || content.status === 'Review')"
                     appTelemetryInteract
@@ -81,7 +82,7 @@
                     [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
                     [telemetryInteractCdata]="telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryInteractPdata"
-                    (click)="previewResource($event, content, collection)">{{resourceService.frmelmnts.lbl.preview}}</div>
+                    (click)="previewResource($event, content, collection, originalCollectionData, i)">{{resourceService.frmelmnts.lbl.preview}}</div>
                   <div class="item"
                     *ngIf="(visibility && visibility['showMoveResource']) && content.status === 'Draft'"
                     appTelemetryInteract
@@ -105,7 +106,7 @@
         </ng-container>
       </div>
       <div class="sb-chapterlist-child sb-dock-toc-accor" *ngIf="collection.children">
-        <app-recursive-tree [collectionUnits]="collection.children" [level]="childlevel" [programContext]="programContext" [sessionContext]="sessionContext"  [selectedChapter]="selectedChapter"
+        <app-recursive-tree [collectionUnits]="collection.children" [level]="childlevel" [programContext]="programContext" [sessionContext]="sessionContext"  [selectedChapter]="selectedChapter" [originalCollectionData]="originalCollectionData"
           (nodeMeta)="nodeMetaEmitter($event)"></app-recursive-tree>
       </div>
     </div>
