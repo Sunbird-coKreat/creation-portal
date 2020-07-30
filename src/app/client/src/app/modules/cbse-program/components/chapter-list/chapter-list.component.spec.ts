@@ -20,6 +20,7 @@ import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DynamicModule } from 'ng-dynamic-component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 
 describe('ChapterListComponent', () => {
@@ -89,7 +90,7 @@ describe('ChapterListComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [SharedModule.forRoot(), CoreModule, RouterTestingModule, TelemetryModule.forRoot(), SuiModule,
-        SuiTabsModule, FormsModule, DynamicModule],
+        SuiTabsModule, FormsModule, DynamicModule, HttpClientTestingModule],
       declarations: [ChapterListComponent, RecursiveTreeComponent, ResourceTemplateComponent],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [CollectionHierarchyService, ResourceService,

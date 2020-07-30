@@ -4,10 +4,13 @@ import { By } from '@angular/platform-browser';
 import { SuiModalModule, SuiProgressModule, SuiAccordionModule } from 'ng2-semantic-ui';
 import { recursiveTreeComponentInput } from './recursive-tree.component.spec.data';
 import { TelemetryModule, TelemetryInteractDirective } from '@sunbird/telemetry';
-import { ConfigService } from '@sunbird/shared';
+import { ConfigService, NavigationHelperService, BrowserCacheTtlService, ToasterService, ResourceService } from '@sunbird/shared';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { CacheService } from 'ng2-cache-service';
 
 import * as _ from 'lodash-es';
+import { RouterTestingModule } from '@angular/router/testing';
+import { APP_BASE_HREF, DatePipe } from '@angular/common';
 
 describe('RecursiveTreeComponent', () => {
 
@@ -19,9 +22,10 @@ describe('RecursiveTreeComponent', () => {
     TestBed.configureTestingModule({
       imports: [ SuiModalModule, SuiProgressModule,
         SuiAccordionModule, TelemetryModule.forRoot(),
-        HttpClientTestingModule],
+        HttpClientTestingModule, RouterTestingModule],
       declarations: [ RecursiveTreeComponent ],
-      providers: [ ConfigService ]
+      providers: [ ConfigService, { provide: APP_BASE_HREF, useValue: '/'}, NavigationHelperService, CacheService, BrowserCacheTtlService, 
+      ToasterService, ResourceService, DatePipe]
     })
     .compileComponents();
   }));

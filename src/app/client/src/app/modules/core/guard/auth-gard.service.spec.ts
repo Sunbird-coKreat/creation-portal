@@ -5,6 +5,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { ConfigService, ResourceService, ToasterService, BrowserCacheTtlService } from '@sunbird/shared';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { LearnerService, UserService, PermissionService, CoreModule } from '@sunbird/core';
+import { DatePipe } from '@angular/common';
 describe('AuthGardService', () => {
     // const authGuard: AuthGuard;
     const router = {
@@ -32,8 +33,8 @@ describe('AuthGardService', () => {
                             ],
                         },
                     }
-                }],
-            imports: [HttpClientTestingModule, CoreModule]
+                }, DatePipe],
+            imports: [HttpClientTestingModule, CoreModule, RouterTestingModule]
         });
     });
     it('be able to hit route when user is logged in', () => {

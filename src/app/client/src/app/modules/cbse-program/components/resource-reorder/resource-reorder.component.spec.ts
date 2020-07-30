@@ -16,6 +16,7 @@ import { ProgramTelemetryService } from '../../../program/services';
 import { of as observableOf, throwError as observableError } from 'rxjs';
 import { ActionService } from '@sunbird/core';
 import { RouterModule } from '@angular/router';
+import { APP_BASE_HREF } from '@angular/common';
 describe('ResourceReorderComponent', () => {
   let component: ResourceReorderComponent;
   let fixture: ComponentFixture<ResourceReorderComponent>;
@@ -29,7 +30,7 @@ describe('ResourceReorderComponent', () => {
       declarations: [ ResourceReorderComponent ],
       providers: [ProgramTelemetryService, ConfigService, UtilService, ToasterService, TelemetryService,
                        ResourceService, CacheService, BrowserCacheTtlService,
-                       {provide: CollectionHierarchyService, useValue: hierarchyServiceStub}]
+                       {provide: CollectionHierarchyService, useValue: hierarchyServiceStub}, { provide: APP_BASE_HREF, useValue: '/'}]
     })
     .compileComponents();
   }));

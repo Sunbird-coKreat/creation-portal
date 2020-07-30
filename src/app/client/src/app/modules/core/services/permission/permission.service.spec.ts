@@ -7,6 +7,8 @@ import { ConfigService, ToasterService, ResourceService, BrowserCacheTtlService 
 import { PermissionService } from './permission.service';
 import { LearnerService, UserService, CoreModule } from '@sunbird/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { DatePipe } from '@angular/common';
+import { RouterTestingModule } from '@angular/router/testing';
 const mockUserRoles = {
   userRoles: ['PUBLIC']
 };
@@ -18,9 +20,9 @@ const mockResource = {
 describe('PermissionService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, CoreModule],
+      imports: [HttpClientTestingModule, CoreModule, RouterTestingModule],
       providers: [ResourceService, ToasterService, PermissionService, ConfigService, LearnerService, UserService,
-        BrowserCacheTtlService]
+        BrowserCacheTtlService, DatePipe]
     });
   });
   it('should fetch permission', () => {
