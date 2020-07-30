@@ -1316,11 +1316,18 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       return false;
     }
 
+    if (this.validateDates() === true) {
+      this.navigateTo(1);
+      this.formIsInvalid = true;
+      return false;
+    }
+
     if (_.isEmpty(this.collectionListForm.value.pcollections)) {
       this.disableCreateProgramBtn = false;
       this.toasterService.warning('Please select at least a one textbook');
       return false;
     }
+
 
     this.showPublishModal = true;
   }
