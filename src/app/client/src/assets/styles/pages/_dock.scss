@@ -388,3 +388,79 @@ top: -4px;
     width: 11rem;
   }
 }
+// Progress Circle
+$progressCircle:
+xs calculateRem(16px) 4px 10px,
+sm calculateRem(24px) 6px 10px,
+md calculateRem(40px) 12px 10px,
+lg calculateRem(56px) 16px 14px,
+xl calculateRem(72px) 20px 18px,
+xxl calculateRem(88px) 24px 20px,
+xlarge calculateRem(160px) 16px 16px;
+@each $size, $shapeSize, $strokeSize, $fontSize in $progressCircle {
+  .progress-circle--#{$size} {
+    height: $shapeSize;
+    width: $shapeSize;
+    .progress-circle__stroke {
+      stroke-width: calculateRem($strokeSize);
+    }
+    span {
+      font-size: calculateRem($fontSize);
+    }
+  }
+}
+.progress-circle {
+  height: calculateRem(32px);
+  width: calculateRem(32px);
+  position: relative;
+  span {
+    position: absolute;
+    font-size: calculateRem(8px);
+    font-weight: bold;
+    margin: 0 auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  &__svg {
+    border-radius: 50%;
+    height: 100%;
+    transform: scaleX(-1) rotate(-90deg);
+    width: 100%;
+  }
+  &__stroke {
+    fill: none;
+    stroke-width: calculateRem(8px);
+    &:nth-child(1) {
+      stroke: var(--secondary-200);
+    }
+    &:nth-child(2) {
+      stroke: var(--gray-100);
+      stroke-dasharray: 314.1592%;
+    }
+  }
+  &--xs, &--sm {
+    span {
+      display: none;
+    }
+  }
+  @each $size, $shapeSize, $strokeSize, $fontSize in $progressCircle {
+    &.progress-circle--#{$size} {
+      height: #{$shapeSize};
+      width: #{$shapeSize};
+      .progress-circle__stroke {
+        stroke-width: calculateRem($strokeSize);
+      }
+      span {
+        font-size: calculateRem($fontSize);
+      }
+    }
+  }
+  @for $i from 0 to 100 {
+    &[data-percentage="#{$i}"] {
+      .progress-circle__stroke:nth-child(2) {
+        stroke-dashoffset: calc(314.1592% * (#{$i} / 100));
+      }
+    }
+  }
+}

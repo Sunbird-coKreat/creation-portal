@@ -16,9 +16,9 @@
 															<use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
 													</svg>
 											</i>
-											Back
+											{{resourceService.frmelmnts.btn.back}}
                   </button>
-        <div class=" d-flex chapterlist-header pt-5">
+        <div class="d-flex chapterlist-header pt-5">
         <div class="d-flex mr-auto">
           <!-- <div class="chapterlist-header__image">
             <img [src]="collection.image" alt="Book" title="Book">
@@ -96,27 +96,24 @@
       <!-- Accordion Section -->
       <div class="sb-pageSection-content sb-bg-white py-24 px-0 dynamicHeight">
         <div class="ui container sb-textbook-details-container mb-24">
-          <div class="d-flex fs-0-785 mb-15 flex-jc-space-between">
-            <span class="w-30 font-italic sb-color-gray-300">{{resourceService.frmelmnts.lbl.partialTextbookSelectionNote}}</span>
+          <div class="d-flex flex-jc-space-between fs-0-785 font-italic sb-color-gray-300 mb-15">
+            <span class="sb-color-error mr-8 pl-10 fs-0-785 font-weight-bold">{{textbookStatusMessage}}</span>
+            <span class="w-30">{{resourceService.frmelmnts.lbl.partialTextbookSelectionNote}}</span>
             <div class="d-flex">
-              <button type="button" class="sb-btn sb-btn-normal sb-btn-primary text-inherit" (click)="showBulkApproveModal=true">Bulk approve content</button>
               <button type="button" class="sb-btn sb-btn-normal sb-btn-primary text-inherit"
-              suiPopup popupText="{{resourceService.frmelmnts.note.bulkUploadMultipleContentUsingCsv}}">{{resourceService.frmelmnts.btn.bulkUploadContent}}</button> 
+              suiPopup popupText="Bulk upload multiple content at one time using a CSV file" (click)="showBulkUploadModal=true">{{resourceService.frmelmnts.btn.bulkUploadContent}}</button>   
               <div class="divider mx-10"></div>
               <div class="d-flex flex-dc">
-                <div>{{resourceService.frmelmnts.lbl.lastUploaded}} Last approved: 28 July 2020</div>
+                <div>{{resourceService.frmelmnts.lbl.lastUploaded}}: 28 July 2020</div>
                   <!-- Loader icon -->
-                  <div>
+                  <!-- <div>
                   <span class="sb-loader sb-success-loader"></span>
-                  <span class="sb-color-warning fs-1"suiPopup popupText="Bulk upload of content is in progress, once finished you can initiate another batch">Bulk upload in progress</span>
-                  <span class="sb-color-warning fs-1"suiPopup popupText="Bulk approve of content is in progress, once finished you can initiate another batch">Bulk approval in progress</span>
-                </div>
+                  <span class="sb-color-warning fs-1"suiPopup popupText="Bulk upload of content is in progress, once finished you can initiate another batch">{{resourceService.frmelmnts.lbl.bulkUploadInProgress}}</span>
+                </div> -->
+                 <!-- Loader icon -->
                 <a href="#">{{resourceService.frmelmnts.lbl.viewDetails}}</a>
               </div>
             </div>
-          <div class="d-flex flex-jc-flex-end fs-0-785 font-italic sb-color-gray-300 mb-15">
-            <span class="text-left sb-color-error mr-8 pl-10 fs-0-785 font-weight-bold">{{textbookStatusMessage}}</span>
-            <span class="w-30 text-right">{{resourceService.frmelmnts.lbl.partialTextbookSelectionNote}}</span>
           </div>
           <div class="sb-chapterlist">
             <sui-accordion class="styled fluid sb-accordion sb-chapterlist-accordion" [closeOthers]="true">
@@ -196,57 +193,6 @@
 				[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.no}} </button>
   </div>
 </sui-modal>
-<sui-modal *ngIf="showBulkApproveModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
-  [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showBulkApproveModal = false" #modal>
-  <div class="sb-modal-header">
-    Bulk approve 
-  </div>
-  <div class="sb-modal-content">
-      <h6 class="sb-color-gray-400">Are you sure to bulk approve content for this textbook?</h6>
-        <div class="d-flex p-30 sb-bg-color-primary-0">
-          <div class="p-10 sb-bulk-upload">
-            <img src="../../../../../assets/images/progress.png" alt="">
-            <img src="../../../../../assets/images/bulkuploadfile.png" alt="">
-            <div class="text-right my--20">
-              <i class="fa fa-check sb-circle-download-icon"></i>
-            </div>
-          </div>
-          <!-- Approval in progress -->
-            <div class="p-30 pt-10">
-              <h5 class="sb-color-gray-400 font-weight-bold">Bulk approval in progress</h5>
-              <div class="mt-15">
-                <div class="ui list fs-0-785">
-                  <div class="item sb-color-error">Content approval failed : 34</div>
-                  <div class="item">Approved successfully : 56</div>
-                  <div class="item">Content skipped(already approved) : 45</div>
-                  <div class="item">Pending Approval : 134</div>
-                </div>
-              </div>
-          </div>
-          <!-- Approval  -->
-          <div class="p-30 pt-10">
-            <h5 class="sb-color-gray-400 font-weight-bold">Bulk approval completed</h5>
-            <div class="mt-15">
-              <div class="ui list fs-0-785">
-                <div class="item sb-color-error">Content approval failed : 34</div>
-                <div class="item">Content Approval successful : 56</div>
-              </div>
-              <button type="button" class="sb-btn sb-btn-normal sb-btn-success my-20"><i class="fa fa-download pr-10"></i>Download  report</button>
-            </div>
-          </div>
-    </div>
-  </div>
-  <div class="sb-modal-actions">
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary">{{resourceService.frmelmnts.btn.yes}}</button> 
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary">{{resourceService.frmelmnts.btn.no}}</button>
-    <div class="d-flex flex-jc-space-between">
-        <div class="sb-color-gray-200 fxsmall line-height-1-3 w-80">
-        Bulk approval may take time. You can click <b>'close'</b> to continue using Vidyadaan. Approval keep happening in the background.
-        </div>
-      <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary">{{resourceService.frmelmnts.btn.close}}</button>
-    </div>
-  </div>
-</sui-modal>
 
 <!-- Bulk upload -->
 <sui-modal *ngIf="showBulkUploadModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
@@ -258,14 +204,21 @@
       <div class="d-flex p-30 sb-bg-color-primary-0">
           <div class="p-10 sb-bulk-upload">
             <img src="../../../../../assets/images/bulkuploadfile.png" alt="">
-            <img src="../../../../../assets/images/progress.png" alt="">
             <div class="text-right my--20">
-              <!-- <i class="fa fa-download sb-circle-download-icon"></i> -->
-              <i class="fa fa-check sb-circle-download-icon"></i>
+              <i class="fa fa-download sb-circle-download-icon"></i>
+              <!-- <i class="fa fa-check sb-circle-download-icon"></i> -->
             </div>
+            <!-- Progress bar -->
+            <!-- <div class="progress-circle progress-circle--xlarge mr-8" data-percentage="35">
+              <svg class="progress-circle__svg" viewport="0 0 2000 2000">
+                <circle class="progress-circle__stroke" r="50%" cx="50%" cy="50%"></circle>
+                <circle class="progress-circle__stroke" r="50%" cx="50%" cy="50%"></circle>
+              </svg>
+            </div> -->
           </div>
+
           <!-- Upload data -->
-          <div class="pl-20 pt-20 d-block" [ngClass]="shownext===true ? 'd-none' : 'd-block'">
+          <div class="pl-20 pt-20 d-block">
             <h6 class="sb-color-gray-400">{{resourceService.frmelmnts.lbl.downloadSampleMetadataCsvFileAndCreate}}</h6>
             <div class="sb-color-gray-200 pt-20 fs-0-92">{{resourceService.frmelmnts.lbl.makeSureYourFileIs}}:</div>
             <ul class="ui ordered list sb-dock-ordered-list mt-15">
@@ -275,63 +228,69 @@
             </ul>
             <button type="button" class="sb-btn sb-btn-normal sb-btn-success my-20"><i class="fa fa-download pr-10"></i>{{resourceService.frmelmnts.btn.DownloadSampleMetadataCsv}}</button>
           </div>
+
           <!-- Drag drop file -->
-          <div class="p-20 d-none" [ngClass]="shownext===true ? 'd-block' : 'd-none'">
+          <!-- <div class="p-20 d-none">
             <div>Drag and Drop file<br>or</div>
-            <button type="file" class="sb-btn sb-btn-normal sb-btn-success my-20">Select</button>
-            <div class="sb-color-gray-200 fs-0-785">Upload CSV, .xl upto 300 entries</div>
-          </div>
+            <button type="file" class="sb-btn sb-btn-normal sb-btn-success my-20">{{resourceService.frmelmnts.lbl.Select}}</button>
+            <div class="sb-color-gray-200 fs-0-785">{{resourceService.frmelmnts.note.uploadCSVXlEntries}}</div>
+          </div> -->
+
           <!-- Validation -->
-            <div class="p-30">
+            <!-- <div class="p-30">
               <h6 class="sb-color-gray-400">                
-                <span class="sb-loader sb-success-loader"></span>Validationg CSV file</h6>
-            </div>
+                <span class="sb-loader sb-success-loader"></span>{{resourceService.frmelmnts.lbl.validationgCSVFile}}</h6>
+            </div> -->
+
           <!-- Validation error -->
-          <div class="p-20">
-            <div>Uploading your content from CSV</div>
+          <!-- <div class="p-20">
+            <div>{{resourceService.frmelmnts.lbl.uploadingYourContentFromCSV}}</div>
             <div class="mt-20">
               <div class="ui list fs-0-785">
-                <div class="item sb-color-error">Upload failed : 23</div>
-                <div class="item">Upload successful : 23</div>
-                <div class="item">Upload remaining : 140</div>
+                <div class="item sb-color-error">{{resourceService.frmelmnts.lbl.uploadFail}} : 23</div>
+                <div class="item">{{resourceService.frmelmnts.lbl.uploadSuccessful}} : 23</div>
+                <div class="item">{{resourceService.frmelmnts.lbl.uploadRemaining}} : 140</div>
               </div>
             </div>
-            <button type="button" class="sb-btn sb-btn-normal sb-btn-success my-20"><i class="fa fa-download pr-10"></i>Download status report</button>
-          </div>
+            <button type="button" class="sb-btn sb-btn-normal sb-btn-success my-20"><i class="fa fa-download pr-10"></i>{{resourceService.frmelmnts.btn.downloadStatusReport}}</button>
+          </div> -->
+
           <!-- Validation failed -->
-            <div class="pt-20 pl-20">
+            <!-- <div class="pt-20 pl-20">
                 <h6 class="sb-color-gray-400 pl-5">
-                  <i class="fa fa-exclamation-triangle pr-5 sb-color-error"></i>Metadata file validation failed
+                  <i class="fa fa-exclamation-triangle pr-5 sb-color-error"></i>{{resourceService.frmelmnts.lbl.metadataFileValidationFailed}}
                 </h6>
-                <div class="sb-color-gray-200 pt-20 fs-0-92 ml-20 sb-line-height-1.2">Following columns are not found in the file. Please check and upload again</div>
+                <div class="sb-color-gray-200 pt-20 fs-0-92 ml-20 sb-line-height-1.2">{{resourceService.frmelmnts.lbl.pleaseCheckAndUploadAgain}}</div>
                 <ul class="sb-list-circle mt-15">
-                  <li class="item">Audience</li>
-                  <li class="item">File path</li>
-                  <li class="item">Copyright</li>
+                  <li class="item">{{resourceService.frmelmnts.lbl.audience}}</li>
+                  <li class="item">{{resourceService.frmelmnts.lbl.filePath}}</li>
+                  <li class="item">{{resourceService.frmelmnts.lbl.copyRight}}</li>
                 </ul>
                 <button type="button" class="sb-btn sb-btn-normal sb-btn-success my-10 ml-20">
-                  <i class="fa fa-upload pr-10"></i>Upload CSV
+                  <i class="fa fa-upload pr-10"></i>{{resourceService.frmelmnts.lbl.uploadCSV}}
                 </button>
-            </div>
+            </div> -->
+
             <!-- Bulk Upload complete -->
-              <div class="p-30 pt-10">
-                <h6 class="sb-color-gray-400">Bulk upload complete!</h6>
+              <!-- <div class="p-30 pt-10">
+                <h6 class="sb-color-gray-400">{{resourceService.frmelmnts.lbl.bulkUploadComplete}}</h6>
                 <div class="mt-15">
                   <div class="ui list fs-0-785">
-                    <div class="item sb-color-error">Upload failed : 34</div>
-                    <div class="item">Content uploaded : 130</div>
-                    <div class="item">Upload successful : 135</div>
+                    <div class="item sb-color-error">{{resourceService.frmelmnts.lbl.uploadFail}} : 34</div>
+                    <div class="item">{{resourceService.frmelmnts.lbl.contentUploaded}} : 130</div>
+                    <div class="item">{{resourceService.frmelmnts.lbl.uploadSuccessful}} : 135</div>
                   </div>
                 </div>
                 <button type="button" class="sb-btn sb-btn-normal sb-btn-success my-10">
-                  <i class="fa fa-download pr-10"></i>Download report
+                  <i class="fa fa-download pr-10"></i>{{resourceService.frmelmnts.btn.downloadReport}}
                 </button>
-            </div>
+            </div> -->
+
         </div>
   </div>
   <div class="sb-modal-actions">
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="shownext=true">{{resourceService.frmelmnts.btn.next}}</button>
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary">{{resourceService.frmelmnts.btn.back}}</button>
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary">{{resourceService.frmelmnts.btn.next}}</button>
+    <!-- <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary">{{resourceService.frmelmnts.btn.back}}</button>
     <button type="button" class="sb-btn sb-btn-normal sb-btn-primary">{{resourceService.frmelmnts.btn.close}}</button> 
     <div class="d-flex flex-jc-space-between">
       <div class="sb-color-gray-200 fxsmall line-height-1-3 w-80">
@@ -339,6 +298,6 @@
         Your upload will keep running in the background.
       </div>
       <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary">{{resourceService.frmelmnts.btn.close}}</button>
-    </div>
+    </div> -->
   </div>
 </sui-modal>
