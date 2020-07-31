@@ -33,9 +33,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public programId: string;
   public guidLinefileName: String;
   public isFormValueSet = false;
-  public editMode = false;
+  // public editDraft = false;
+  public editPublished = false;
   public choosedTextBook: any;
   selectChapter = false;
+  public selectedContentTypes: String[];
   /**
    * Program creation form name
    */
@@ -102,6 +104,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public showDocumentUploader = false;
   public defaultContributeOrgReviewChecked = false;
   public disableUpload = false;
+  public showPublishModal= false;
   uploadedDocument;
   showAddButton = false;
   loading = false;
@@ -151,11 +154,16 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.telemetryInteractObject = {};
     this.acceptPdfType = this.getAcceptType(this.assetConfig.pdf.accepted, 'pdf');
 
+    this.collectionListForm = this.sbFormBuilder.group({
+      pcollections: this.sbFormBuilder.array([]),
+      medium: [],
+      gradeLevel: [],
+      subject: [],
+    });
+
     if (!_.isEmpty(this.programId)) {
-      this.editMode = true;
       this.getProgramDetails();
-    }
-    else {
+    } else {
       this.initializeFormFields();
     }
     this.fetchFrameWorkDetails();
@@ -297,6 +305,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     };
     this.programsService.get(req).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
+      this.selectedContentTypes = _.get(this.programDetails, 'content_types');
       this.programDetails['content_types'] = this.programsService.getContentTypesName(this.programDetails.content_types);
       this.initializeFormFields();
 
@@ -362,7 +371,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.sortColumn = column;
   }
 
-  sortChapters(identifier,column) {
+  sortChapters(identifier, column) {
     this.textbooks[identifier].children = this.programsService.sortCollection(this.textbooks[identifier].children, column, this.chaptersSortDir);
     this.chaptersSortDir = (this.chaptersSortDir === 'asc' || this.chaptersSortDir === '') ? 'desc' : 'asc';
     this.chaptersSortColumn = column;
@@ -374,7 +383,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   getMaxDate(date) {
-    if (!this.editMode) {
+    if (!this.editPublished) {
       if (date === 'nomination_enddate') {
         if (this.createProgramForm.value.shortlisting_enddate) {
           return this.createProgramForm.value.shortlisting_enddate;
@@ -423,7 +432,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       }
     }
 
-    if (!this.editMode) {
+    if (!this.editPublished) {
       return this.pickerMinDate;
     }
     else {
@@ -473,9 +482,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programScope['gradeLevel'] = [];
     this.programScope['subject'] = [];
 
-    this.collectionListForm.controls['medium'].setValue('');
-    this.collectionListForm.controls['gradeLevel'].setValue('');
-    this.collectionListForm.controls['subject'].setValue('');
+    if (this.collectionListForm) {
+      this.collectionListForm.controls['medium'].setValue('');
+      this.collectionListForm.controls['gradeLevel'].setValue('');
+      this.collectionListForm.controls['subject'].setValue('');
+    }
 
     const board = _.find(this.frameworkCategories, (element) => {
       return element.code === 'board';
@@ -511,6 +522,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programScope['medium'] = mediumOption;
     }
   }
+
   openForNominations(status) {
     this.isOpenNominations = status;
     if (status) {
@@ -524,6 +536,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.createProgramForm.controls['nomination_enddate'].updateValueAndValidity();
     this.createProgramForm.controls['shortlisting_enddate'].updateValueAndValidity();
   }
+
   onMediumChange() {
     // const thisClassOption = this.createProgramForm.value.gradeLevel;
 
@@ -570,42 +583,53 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
    * It helps to initialize form fields and apply field level validation
    */
   initializeFormFields(): void {
-
     if (!_.isEmpty(this.programDetails) && !_.isEmpty(this.programId)) {
-      this.isOpenNominations = (_.get(this.programDetails, 'type') == "public") ? true : false;
-      this.disableUpload = (_.get(this.programDetails, 'guidelines_url')) ? true : false;
+      this.isOpenNominations = (_.get(this.programDetails, 'type') === 'public') ? true : false;
 
-      let obj = {
+      if (_.get(this.programDetails, 'status') === 'Live' || _.get(this.programDetails, 'status') === 'Unlisted') {
+        this.disableUpload = (_.get(this.programDetails, 'guidelines_url')) ? true : false;
+        this.editPublished = true;
+      } else if (_.get(this.programDetails, 'status') === 'Draft') {
+        // this.editDraft = true;
+      }
+
+      const obj = {
         name: [_.get(this.programDetails, 'name'), [Validators.required, Validators.maxLength(100)]],
         description: [_.get(this.programDetails, 'description'), Validators.maxLength(1000)],
-        nomination_enddate : [],
-        shortlisting_enddate: [_.get(this.programDetails, 'shortlisting_enddate') ? new Date(_.get(this.programDetails, 'shortlisting_enddate')) : ''],
-        program_end_date: [_.get(this.programDetails, 'enddate') ? new Date(_.get(this.programDetails, 'enddate')) : '', Validators.required],
-        content_submission_enddate: [_.get(this.programDetails, 'content_submission_enddate') ? new Date(_.get(this.programDetails, 'content_submission_enddate')) : '', Validators.required],
-        content_types: [_.get(this.programDetails, 'content_types'), Validators.required],
+        nomination_enddate : [null],
+        // tslint:disable-next-line: max-line-length
+        shortlisting_enddate: [_.get(this.programDetails, 'shortlisting_enddate') ? new Date(_.get(this.programDetails, 'shortlisting_enddate')) : null],
+        // tslint:disable-next-line: max-line-length
+        program_end_date: [_.get(this.programDetails, 'enddate') ? new Date(_.get(this.programDetails, 'enddate')) : null, Validators.required],
+        // tslint:disable-next-line: max-line-length
+        content_submission_enddate: [_.get(this.programDetails, 'content_submission_enddate') ? new Date(_.get(this.programDetails, 'content_submission_enddate')) : null, Validators.required],
+        // tslint:disable-next-line: max-line-length
+        content_types: [_.get(this.programDetails, 'content_types') ? _.get(this.programDetails, 'content_types') : null, Validators.required],
         rewards: [_.get(this.programDetails, 'rewards')],
-        defaultContributeOrgReview: new FormControl({ value: this.defaultContributeOrgReviewChecked, disabled: this.editMode })
+        // tslint:disable-next-line: max-line-length
+        defaultContributeOrgReview: new FormControl({ value: _.get(this.programDetails, 'config.defaultContributeOrgReview'), disabled: this.editPublished })
       };
 
-      if (this.isOpenNominations == true) {
-        obj.nomination_enddate = [_.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : '', Validators.required];
-      }
-      else {
-        obj.nomination_enddate = [_.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : ''];
+      if (this.isOpenNominations === true) {
+        // tslint:disable-next-line: max-line-length
+        obj.nomination_enddate = [_.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : null, Validators.required];
+      } else {
+        // tslint:disable-next-line: max-line-length
+        obj.nomination_enddate = [_.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : null];
       }
 
       this.createProgramForm = this.sbFormBuilder.group(obj);
-    }
-    else
-    {
+
+      this.defaultContributeOrgReviewChecked = _.get(this.programDetails, 'config.defaultContributeOrgReview') ? false : true;
+    } else {
       this.createProgramForm = this.sbFormBuilder.group({
         name: ['', [Validators.required, Validators.maxLength(100)]],
         description: ['', Validators.maxLength(1000)],
-        nomination_enddate: ['', Validators.required],
-        shortlisting_enddate: [],
-        program_end_date: ['', Validators.required],
-        content_submission_enddate: ['', Validators.required],
-        content_types: ['', Validators.required],
+        nomination_enddate: [null, Validators.required],
+        shortlisting_enddate: [null],
+        program_end_date: [null, Validators.required],
+        content_submission_enddate: [null, Validators.required],
+        content_types: [null, Validators.required],
         rewards: [],
         defaultContributeOrgReview: [true]
       });
@@ -613,13 +637,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     this.showLoader = false;
     this.isFormValueSet = true;
-
-    this.collectionListForm = this.sbFormBuilder.group({
-      pcollections: this.sbFormBuilder.array([]),
-      medium: [],
-      gradeLevel: [],
-      subject: [],
-    });
   }
 
   saveProgramError(err) {
@@ -647,7 +664,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     if (this.isOpenNominations) {
       // nomination date should be >= today
-      if (!nominationEndDate.isSameOrAfter(today) && !this.editMode) {
+      if (!nominationEndDate.isSameOrAfter(today) && !this.editPublished) {
         this.toasterService.error(this.resource.messages.emsg.createProgram.m0001);
         hasError = true;
       }
@@ -704,71 +721,121 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.defaultContributeOrgReviewChecked = $event.target.checked;
   }
 
-  saveProgram() {
-    this.formIsInvalid = false;
+  setValidations() {
+    this.openForNominations(this.isOpenNominations);
+    this.createProgramForm.controls['description'].setValidators(Validators.required);
+    this.createProgramForm.controls['description'].updateValueAndValidity();
+    this.createProgramForm.controls['program_end_date'].setValidators(Validators.required);
+    this.createProgramForm.controls['program_end_date'].updateValueAndValidity();
+    this.createProgramForm.controls['content_submission_enddate'].setValidators(Validators.required);
+    this.createProgramForm.controls['content_submission_enddate'].updateValueAndValidity();
+    this.createProgramForm.controls['content_types'].setValidators(Validators.required);
+    this.createProgramForm.controls['content_types'].updateValueAndValidity();
+  }
+
+  clearValidations() {
+    this.createProgramForm.controls['nomination_enddate'].clearValidators();
+    this.createProgramForm.controls['nomination_enddate'].updateValueAndValidity();
+    this.createProgramForm.controls['description'].clearValidators();
+    this.createProgramForm.controls['description'].updateValueAndValidity();
+    this.createProgramForm.controls['program_end_date'].clearValidators();
+    this.createProgramForm.controls['program_end_date'].updateValueAndValidity();
+    this.createProgramForm.controls['content_submission_enddate'].clearValidators();
+    this.createProgramForm.controls['content_submission_enddate'].updateValueAndValidity();
+    this.createProgramForm.controls['content_types'].clearValidators();
+    this.createProgramForm.controls['content_types'].updateValueAndValidity();
+  }
+
+  saveProgram(cb) {
     this.handleContentTypes();
+    const contentTypes = this.createProgramForm.value.content_types;
+    this.createProgramForm.value.content_types = _.isEmpty(contentTypes) ? [] : contentTypes;
+    this.programData = {
+      ...this.createProgramForm.value
+    };
 
-    if ((this.createProgramForm.dirty || !_.isUndefined(this.uploadedDocument)) && this.createProgramForm.valid) {
-      const contentTypes = this.createProgramForm.value.content_types;
-      this.createProgramForm.value.content_types = _.isEmpty(contentTypes) ? [] : contentTypes;
-      this.programData = {
-        ...this.createProgramForm.value
-      };
-      if (this.userFramework) {
-        this.programConfig.framework = this.userFramework;
-        // tslint:disable-next-line:max-line-length
-        _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'framework' }).defaultValue = this.userFramework;
-      }
-      this.programConfig.defaultContributeOrgReview = !this.defaultContributeOrgReviewChecked;
-      this.programData['sourcing_org_name'] = this.userprofile.rootOrgName;
-      this.programData['rootorg_id'] = this.userprofile.rootOrgId;
-      this.programData['createdby'] = this.userprofile.id;
-      this.programData['createdon'] = new Date();
-      this.programData['startdate'] = new Date();
-      this.programData['slug'] = 'sunbird';
-
-      this.programData['type'] = (!this.isOpenNominations) ? 'private' : 'public';
-      this.programData['default_roles'] = ['CONTRIBUTOR'];
-      this.programData['enddate'] = this.programData.program_end_date;
-      this.programData['config'] = this.programConfig;
-      this.programData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : '';
-
-      if (_.isEmpty(this.programData.config.board) &&
-      _.findIndex(this.frameworkCategories, function(item) { return item.code === 'board'; }) < 0) {
-        delete this.programData.config.board;
-      }
-
-      delete this.programData.defaultContributeOrgReview;
-      delete this.programData.gradeLevel;
-      delete this.programData.medium;
-      delete this.programData.subject;
-      delete this.programData.program_end_date;
-      this.programData['program_id'] = '';
-
-      if (!this.programId) {
-        this.programData['status'] = 'Draft';
-        this.programsService.createProgram(this.programData).subscribe(
-          (res) => {
-            this.programId = res.result.program_id;
-            this.programData['program_id'] = this.programId;
-            this.showTexbooklist();
-            this.generateTelemetryEvent('START');
-          },
-          (err) => this.saveProgramError(err)
-        );
-      } else {
-        this.programData['program_id'] = this.programId;
-        this.programsService.updateProgram(this.programData).subscribe(
-          (res) => { this.showTexbooklist(); },
-          (err) => this.saveProgramError(err)
-        );
-      }
-    } else {
-      this.formIsInvalid = true;
-      this.validateAllFormFields(this.createProgramForm);
+    if (this.userFramework) {
+      this.programConfig.framework = this.userFramework;
+      // tslint:disable-next-line:max-line-length
+      _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'framework' }).defaultValue = this.userFramework;
     }
 
-    this.validateDates();
+    // tslint:disable-next-line: max-line-length
+    _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'board' }).defaultValue = this.userBoard;
+
+    this.programConfig.defaultContributeOrgReview = !this.defaultContributeOrgReviewChecked;
+    this.programData['sourcing_org_name'] = this.userprofile.rootOrgName;
+    this.programData['rootorg_id'] = this.userprofile.rootOrgId;
+    this.programData['createdby'] = this.userprofile.id;
+    this.programData['createdon'] = new Date();
+    this.programData['startdate'] = new Date();
+    this.programData['slug'] = 'sunbird';
+    this.programData['type'] = (!this.isOpenNominations) ? 'private' : 'public';
+    this.programData['default_roles'] = ['CONTRIBUTOR'];
+    this.programData['enddate'] = this.programData.program_end_date;
+    this.programData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : '';
+    this.programData['status'] = this.editPublished ? 'Live' : 'Draft';
+
+    if (!this.programData['nomination_enddate']) {
+      this.programData['nomination_enddate']= null;
+    }
+
+    if (!this.programData['shortlisting_enddate']) {
+      this.programData['shortlisting_enddate'] = null;
+    }
+
+    if (!this.programData['program_end_date']) {
+      this.programData['program_end_date'] = null;
+    }
+
+    if (!this.programData['content_submission_enddate']) {
+      this.programData['content_submission_enddate'] = null;
+    }
+
+    delete this.programData.defaultContributeOrgReview;
+    delete this.programData.gradeLevel;
+    delete this.programData.medium;
+    delete this.programData.subject;
+    delete this.programData.program_end_date;
+    this.programData['program_id'] = '';
+
+    if (!this.programId) {
+      this.programData['config'] = this.programConfig;
+      this.programsService.createProgram(this.programData).subscribe(
+        (res) => {
+          this.programId = res.result.program_id;
+          this.programData['program_id'] = this.programId;
+          this.generateTelemetryEvent('START');
+          cb(null, res);
+        },
+        (err) => {
+          cb(err, null);
+          this.saveProgramError(err);
+        }
+      );
+    } else {
+      if (!this.editPublished) {
+        if (!_.isEmpty(this.collectionListForm.value.pcollections)) {
+          const config = this.addCollectionsDataToConfig();
+          this.programConfig['board'] = config.board;
+          this.programConfig['gradeLevel'] = config.gradeLevel;
+          this.programConfig['medium'] = config.medium;
+          this.programConfig['subject'] = config.subject;
+          this.programConfig['collections'] = this.getCollections();
+        }
+      }
+      this.programData['config'] = this.programConfig;
+      this.programData['program_id'] = this.programId;
+      this.programsService.updateProgram(this.programData).subscribe(
+        (res) => {
+          cb(null, res);
+        },
+        (err) => {
+          cb(err, null);
+          this.saveProgramError(err);
+        }
+      );
+    }
   }
 
   updateProgram($event: MouseEvent) {
@@ -792,7 +859,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       delete prgData.program_end_date;
       delete prgData.content_types;
 
-      if (this.isOpenNominations == false) {
+      if (this.isOpenNominations === false) {
         delete prgData.nomination_enddate;
         delete prgData.shortlisting_enddate;
       }
@@ -860,6 +927,18 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           if (!this.filterApplied) {
             this.sortCollection(this.sortColumn);
           }
+
+          if (!this.editPublished) {
+            _.forEach(this.collections, item => {
+              const draftCollections = _.get(this.programDetails, 'config.collections');
+              if (!_.isEmpty(draftCollections)) {
+                const index = draftCollections.findIndex(x => x.id === item.identifier);
+                if (index !== -1) {
+                  this.onCollectionCheck(item, true);
+                }
+              }
+            });
+          }
         } else {
           this.collections = [];
           this.tempSortCollections = [];
@@ -879,11 +958,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     const collectionId = collection.identifier;
 
     if (isChecked) {
-      pcollectionsFormArray.push(new FormControl(collectionId));
-      this.tempCollections.push(collection);
+      const controls = _.get(pcollectionsFormArray, 'controls');
+      if (controls.findIndex(c => c.value === collection.identifier) === -1) {
+        pcollectionsFormArray.push(new FormControl(collectionId));
+        this.tempCollections.push(collection);
 
-      if (!this.textbooks[collectionId]) {
+        if (!this.textbooks[collectionId]) {
           this.getCollectionHierarchy(collectionId);
+        }
       }
     } else {
       const index = pcollectionsFormArray.controls.findIndex(x => x.value === collectionId);
@@ -895,66 +977,40 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
   }
 
-  updateProgramCollection() {
-    this.disableCreateProgramBtn = true;
-    if (_.isEmpty(this.collectionListForm.value.pcollections)) {
-      this.disableCreateProgramBtn = false;
-      this.toasterService.warning('Please select at least a textbook');
-      return false;
-    }
-
-    let collections = [];
+  getCollections() {
+    const collections = [];
 
     _.forEach(this.collectionListForm.value.pcollections, (identifier) => {
-      let obj = {
-        "id" : identifier,
-        "allowed_content_types": [],
-        "children": []
+      const obj = {
+        'id' : identifier,
+        'allowed_content_types': [],
+        'children': []
       };
 
       _.forEach(this.textbooks[identifier].children, (item) => {
         if (item.checked === true) {
           obj.children.push({
-            "id": item.identifier,
-            "allowed_content_types": []
-          })
+            'id': item.identifier,
+            'allowed_content_types': []
+          });
         }
       });
 
       collections.push(obj);
     });
 
-    const requestData = {
-      'program_id': this.programId,
-      // 'collections': this.collectionListForm.value.pcollections,
-      'collections' : collections,
-      'allowed_content_types': this.programData.content_types,
-      'channel': 'sunbird'
-    };
-
-    this.programsService.copyCollectionForPlatform(requestData).subscribe(
-      (res) => {
-        let copiedCollections = [];
-        if (res && res.result) {
-          copiedCollections = _.map(res.result, (collection) => {
-            return collection.result.content_id;
-          });
-          this.addCollectionsToProgram(this.programData.content_types, copiedCollections);
-        }
-      },
-      (err) => {
-        this.disableCreateProgramBtn = false;
-        console.log(err);
-        // TODO: navigate to program list page
-        const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-        this.toasterService.warning(errorMes || 'Fetching textbooks failed');
-      }
-    );
+    return collections;
   }
 
-  addCollectionsToProgram(contentTypes, copiedCollections) {
-    _.forEach(this.tempCollections, (collection) => {
+  addCollectionsDataToConfig() {
+    const config = {
+      'board': null,
+      'gradeLevel': null,
+      'medium': null,
+      'subject': null
+    };
 
+    _.forEach(this.tempCollections, (collection) => {
       if (_.isArray(collection.medium)) {
         _.forEach(collection.medium, (single) => {
           if (this.mediumOption.indexOf(single) === -1) {
@@ -985,36 +1041,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       });
     });
 
-    const data = {};
-    data['program_id'] = this.programId;
-    data['collection_ids'] = this.collectionListForm.value.pcollections;
-    data['copiedCollections'] = copiedCollections;
-    data['programContentTypes'] = contentTypes;
-
-    this.programConfig.board = this.userBoard;
+    config.board = this.userBoard;
     // tslint:disable-next-line:max-line-length
-    _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'board' }).defaultValue = this.userBoard;
-    this.programConfig.gradeLevel = this.gradeLevelOption;
-    this.programConfig.medium = this.mediumOption;
-    this.programConfig.subject = this.subjectsOption;
-    data['config'] = this.programConfig;
-    if (this.isOpenNominations) {
-      data['status'] = 'Live';
-    } else {
-      data['status'] = 'Unlisted';
-    }
-
-    this.programsService.updateProgram(data).subscribe(
-      (res) => {
-        this.toasterService.success(this.resource.messages.smsg.projectCreateSuccess);
-        this.router.navigate(['/sourcing']);
-        this.generateTelemetryEvent('END');
-      },
-      (err) => {
-        this.disableCreateProgramBtn = false;
-        this.saveProgramError(err);
-      }
-    );
+    config.gradeLevel = this.gradeLevelOption;
+    config.medium = this.mediumOption;
+    config.subject = this.subjectsOption;
+    return config;
   }
 
   getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
@@ -1090,7 +1122,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   initChaptersSelectionForm(chapters) {
     let values = [];
 
-
     chapters.children.forEach((o, i) => {
       values.push(o.checked);
     });
@@ -1104,41 +1135,62 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   public getCollectionHierarchy(identifier: string) {
-    let hierarchyUrl = '/action/content/v3/hierarchy/' + identifier + '?mode=edit';
+    const hierarchyUrl = '/action/content/v3/hierarchy/' + identifier + '?mode=edit';
     const originUrl = this.programsService.getContentOriginEnvironment();
     const url =  originUrl + hierarchyUrl ;
 
     return this.httpClient.get(url).subscribe(res => {
-      let content = _.get(res, "result.content");
+      const content = _.get(res, 'result.content');
       this.textbooks[identifier] = {};
       const chapter = {
-        "id" : identifier,
-        "children": [],
-        "allowed_content_types" : []
+        'id' : identifier,
+        'children': [],
+        'allowed_content_types' : []
       };
 
+      let dcollection = {};
+
+      if (!this.editPublished) {
+        const draftCollections = _.get(this.programDetails, 'config.collections');
+        if (!_.isEmpty(draftCollections)) {
+          const dcindex = draftCollections.findIndex(x => x.id ===  identifier);
+          if (dcindex !== -1) {
+            dcollection = draftCollections[dcindex];
+          }
+        }
+      }
+
+      const cindex = this.tempCollections.findIndex(x => x.identifier === identifier);
+      this.tempCollections[cindex]['selected'] = 0;
+      this.tempCollections[cindex]['total']    = content.children.length;
+
       _.forEach(content.children, (item) => {
-        item['checked'] = true;
+        if (!_.isEmpty(_.get(dcollection, 'children'))) {
+          if (_.get(dcollection, 'children').findIndex(x => x.id === item.identifier) !== -1) {
+            item['checked'] = true;
+            this.tempCollections[cindex]['selected']++;
+          }
+        } else {
+          item['checked'] = true;
+          this.tempCollections[cindex]['selected']++;
+        }
 
         chapter.children.push({
-          "id" : item.identifier,
-          "allowed_content_types" : []
+          'id' : item.identifier,
+          'allowed_content_types' : []
         });
       });
 
       this.textbooks[identifier] = content;
       this.choosedTextBook = content;
       this.initChaptersSelectionForm(this.choosedTextBook);
-      const cindex = this.tempCollections.findIndex(x => x.identifier === identifier);
-      this.tempCollections[cindex]["selected"] = content.children.length;
-      this.tempCollections[cindex]["total"]    = content.children.length
     }, error => console.log(console.error()
     ));
   }
 
   updateSelection(identifier) {
     let selectedCount = 0;
-    let selectedChapters = _.get(this.chaptersSelectionForm.controls.chaptersCtrl, "controls");
+    const selectedChapters = _.get(this.chaptersSelectionForm.controls.chaptersCtrl, "controls");
     this.selectChapter = false;
 
     _.forEach(selectedChapters, (item, i) => {
@@ -1153,7 +1205,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   getChapterLevelCount(collections) {
-    let status = ['Live'];
+    const status = ['Live'];
     let createdBy, visibility;
     visibility = true;
 
@@ -1199,5 +1251,132 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
 
     this.btnDoneDisabled = false;
+  }
+
+  saveAsDraft($event: MouseEvent) {
+    this.clearValidations();
+    if (this.createProgramForm.valid) {
+        ($event.target as HTMLButtonElement).disabled = true;
+        const cb = (error, resp) => {
+          if (!error && resp) {
+            this.toasterService.success(
+              '<b>' + this.resource.messages.smsg.program.draft.heading + '</b>',
+              this.resource.messages.smsg.program.draft.message);
+            this.router.navigate(['/sourcing']);
+          } else {
+            this.toasterService.error(this.resource.messages.emsg.m0005);
+            ($event.target as HTMLButtonElement).disabled = false;
+          }
+        };
+        this.saveProgram(cb);
+      } else if (!this.createProgramForm.valid) {
+        this.formIsInvalid = true;
+        this.validateAllFormFields(this.createProgramForm);
+        return false;
+      }
+  }
+
+  saveAsDraftAndNext ($event) {
+    this.clearValidations();
+
+    if ((this.createProgramForm.dirty
+      || !_.isUndefined(this.uploadedDocument))
+      && this.createProgramForm.valid) {
+        ($event.target as HTMLButtonElement).disabled = true;
+
+        const cb = (error, resp) => {
+          if (!error && resp) {
+            this.showTexbooklist();
+            ($event.target as HTMLButtonElement).disabled = false;
+          } else {
+            this.toasterService.error(this.resource.messages.emsg.m0005);
+            ($event.target as HTMLButtonElement).disabled = false;
+          }
+        };
+
+        this.saveProgram(cb);
+      } else if (this.createProgramForm.valid) {
+        this.showTexbooklist();
+      } else {
+        this.formIsInvalid = true;
+        this.validateAllFormFields(this.createProgramForm);
+        return false;
+      }
+  }
+
+  validateFormBeforePublish() {
+    this.setValidations();
+
+    if (!this.createProgramForm.valid) {
+      this.navigateTo(1);
+      this.formIsInvalid = true;
+      this.validateAllFormFields(this.createProgramForm);
+      return false;
+    }
+
+    if (this.validateDates() === true) {
+      this.navigateTo(1);
+      this.formIsInvalid = true;
+      return false;
+    }
+
+    if (_.isEmpty(this.collectionListForm.value.pcollections)) {
+      this.disableCreateProgramBtn = false;
+      this.toasterService.warning('Please select at least a one textbook');
+      return false;
+    }
+
+
+    this.showPublishModal = true;
+  }
+
+  publishProject($event) {
+    this.showPublishModal = false;
+    this.disableCreateProgramBtn = true;
+
+    ($event.target as HTMLButtonElement).disabled = true;
+    const cb = (error, resp) => {
+      if (!error && resp) {
+        const data = {
+          'request': {
+            'program_id': this.programId,
+            'channel': 'sunbird'
+          }
+        };
+
+        if (this.isOpenNominations) {
+          this.programsService.publishProgram(data).subscribe(res => {
+            this.toasterService.success(
+              '<b>' + this.resource.messages.smsg.program.published.heading + '</b>',
+              this.resource.messages.smsg.program.published.message);
+            this.router.navigate(['/sourcing']);
+          },
+          err => {
+            this.disableCreateProgramBtn = false;
+            this.toasterService.error(this.resource.messages.emsg.m0005);
+            console.log(err);
+          });
+        } else {
+          this.programsService.unlistPublishProgram(data).subscribe(res => {
+            this.toasterService.success(
+              '<b>' + this.resource.messages.smsg.program.published.heading + '</b>',
+              this.resource.messages.smsg.program.published.message);
+            this.router.navigate(['/sourcing']);
+          },
+          err => {
+            this.disableCreateProgramBtn = false;
+            this.toasterService.error(this.resource.messages.emsg.m0005);
+            console.log(err);
+          });
+        }
+
+      } else {
+        this.disableCreateProgramBtn = false;
+        ($event.target as HTMLButtonElement).disabled = false;
+        this.toasterService.error(this.resource.messages.emsg.m0005);
+      }
+    };
+
+    this.saveProgram(cb);
   }
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, EventEmitter, Output, OnChanges, OnDestroy, ChangeDetectorRef, AfterViewInit } from '@angular/core';
-import { PublicDataService, UserService, ActionService, FrameworkService } from '@sunbird/core';
+import { PublicDataService, UserService, ActionService, FrameworkService, ProgramsService } from '@sunbird/core';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService } from '@sunbird/shared';
 import { TelemetryService, IInteractEventEdata , IImpressionEventInput} from '@sunbird/telemetry';
 import * as _ from 'lodash-es';
@@ -17,6 +17,7 @@ import { ProgramComponentsService } from '../../../program/services/program-comp
 import { InitialState } from '../../interfaces';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { HelperService } from '../../services/helper.service';
+import { HttpClient } from '@angular/common/http';
 
 interface IDynamicInput {
   contentUploadComponentInput?: IContentUploadComponentInput;
@@ -83,12 +84,17 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public telemetryPageId = 'chapter-list';
   public storedCollectionData: any;
   public sourcingOrgReviewer: boolean;
+  public originalCollectionData: any;
+  public textbookStatusMessage: string;
+  public textbookFirstChildStatusMessage: string;
   constructor(public publicDataService: PublicDataService, private configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private cbseService: CbseProgramService,
     public toasterService: ToasterService, public router: Router, public frameworkService: FrameworkService,
     public programStageService: ProgramStageService, public programComponentsService: ProgramComponentsService,
     public activeRoute: ActivatedRoute, private ref: ChangeDetectorRef,
+    private programsService: ProgramsService,
+    private httpClient: HttpClient,
     private collectionHierarchyService: CollectionHierarchyService, private resourceService: ResourceService,
     private navigationHelperService: NavigationHelperService, private helperService: HelperService) {
   }
@@ -168,7 +174,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       await this.getCollectionHierarchy(this.sessionContext.collection,
                 this.selectedChapterOption === 'all' ? undefined : this.selectedChapterOption);
       const acceptedContents = _.get(this.storedCollectionData, 'acceptedContents', []);
-
+        await this.getOriginCollectionHierarchy(this.collectionData.origin, this.collectionData.identifier);
       if (!_.isEmpty(acceptedContents)) {
         await this.getOriginForApprovedContents(acceptedContents);
       }
@@ -180,8 +186,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       if (!_.isEmpty(this.collectionHierarchy)) { this.lastOpenedUnit(this.collectionHierarchy[0].identifier)}
     }
     if (_.get(this.programContext, 'config.defaultContributeOrgReview') === false
-      && _.get(this.userService,'userProfile.rootOrgId') === _.get(this.programContext,'rootorg_id')
-      && _.get(this.sessionContext,'currentRole') === 'CONTRIBUTOR'
+      && _.get(this.userService, 'userProfile.rootOrgId') === _.get(this.programContext,'rootorg_id')
+      && _.get(this.sessionContext, 'currentRole') === 'CONTRIBUTOR'
       && this.sampleContent === false) {
       this.sessionContext.currentOrgRole = 'individual';
     }
@@ -193,14 +199,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         if (_.get(response, 'result.count') && _.get(response, 'result.count') > 0) {
           this.sessionContext['contentOrigins'] = {};
           _.forEach( _.get(response, 'result.content'), (obj) => {
-            if (obj.status == "Live") {
+            if (obj.status == 'Live') {
               this.sessionContext['contentOrigins'][obj.origin] = obj;
             }
           });
         }
       },
       (error) => {
-        console.log("Getting origin data failed");
+        console.log('Getting origin data failed');
     });
   }
   public fetchFrameWorkDetails() {
@@ -223,9 +229,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         templateDetails: this.templateDetails,
         selectedSharedContext: this.selectedSharedContext,
         contentId: this.contentId,
+        originCollectionData: this.originalCollectionData,
         action: action,
         programContext: _.get(this.chapterListComponentInput, 'programContext'),
-        sourcingStatus: sourcingStatus
+        sourcingStatus: sourcingStatus,
+        content: content
       },
       practiceQuestionSetComponentInput: {
         config: _.find(this.programContext.config.components, {'id': 'ng.sunbird.practiceSetComponent'}),
@@ -235,9 +243,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         role: this.role,
         selectedSharedContext: this.selectedSharedContext,
         contentIdentifier: this.contentId,
+        originCollectionData: this.originalCollectionData,
         action: action,
         programContext: _.get(this.chapterListComponentInput, 'programContext'),
-        sourcingStatus: sourcingStatus
+        sourcingStatus: sourcingStatus,
+        content: content
       },
       contentEditorComponentInput: {
         contentId: this.contentId,
@@ -282,8 +292,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       .subscribe((response) => {
         let children = [];
         _.forEach(response.result.content.children, (child) => {
-          if (child.mimeType !== "application/vnd.ekstep.content-collection" ||
-          (child.mimeType === "application/vnd.ekstep.content-collection" && child.openForContribution === true)) {
+          if (child.mimeType !== 'application/vnd.ekstep.content-collection' ||
+          (child.mimeType === 'application/vnd.ekstep.content-collection' && child.openForContribution === true)) {
             children.push(child);
           }
         });
@@ -318,6 +328,22 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
          resolve('Done');
       });
     });
+  }
+
+  public getOriginCollectionHierarchy(orgin_identifier: string, identifier: string) {
+    const hierarchyUrl = '/action/content/v3/hierarchy/' + orgin_identifier + '?mode=edit';
+    const originUrl = this.programsService.getContentOriginEnvironment();
+    const url =  originUrl + hierarchyUrl ;
+
+    return this.httpClient.get(url).subscribe(res => {
+      const content = _.get(res, 'result.content');
+      this.originalCollectionData = content;
+      // Check the status of textbook and set message
+      if (this.originalCollectionData.status !== 'Draft') {
+        this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage;
+      }
+    }, error => console.log(console.error()
+    ));
   }
 
   getFolderLevelCount(collections) {

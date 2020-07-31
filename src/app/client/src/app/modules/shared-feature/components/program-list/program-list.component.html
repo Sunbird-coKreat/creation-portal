@@ -57,8 +57,9 @@
                   </span>
                 </th>
                 <th *ngIf="activeMyProgramsMenu && !iscontributeOrgAdmin" class="w-5 text-center">{{ resourceService?.frmelmnts?.lbl?.myRole }}</th>
-                <th class="w-10 text-center"> &nbsp;</th>
+                <th class="w-5 text-center"> &nbsp;</th>
                 <th *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')" class="w-10 text-center"> &nbsp;</th>
+                <th class="w-5 text-center"> &nbsp; &nbsp; &nbsp;</th>
               </tr>
             </thead>
             <tbody class="sb-table-body">
@@ -138,24 +139,34 @@
                 <td *ngIf="activeMyProgramsMenu && !iscontributeOrgAdmin" class="text-center">
                   <div>{{ getMyProgramRole(program) }}</div>
                 </td>
-                <td class="text-center">
-                     <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" *ngIf="!isContributor" (click)="viewDetailsBtnClicked(program)"
+                <td>
+                  <div *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')">
+                    <div *ngIf="program.status === 'Live' || program.status === 'Unlisted'" class="sb-color-success">{{program.status}}</div>
+                    <div *ngIf="program.status === 'Draft'" class="sb-color-gray-300">{{resourceService.frmelmnts.lbl.draft}}</div>
+                  </div>
+                </td>
+                <td>
+                  <button *ngIf="(program.status === 'Live' || program.status === 'Unlisted')" 
+                    type="button" 
+                    class="sb-btn sb-btn-normal sb-btn-outline-primary mr-10" 
+                    (click)="viewDetailsBtnClicked(program)"
                     appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('view-detail', 'click', 'program-list')"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
-      <button class="sb-btn sb-btn-normal sb-btn-outline-primary"  *ngIf="isContributor" (click)="viewDetailsBtnClicked(program)"
-                          appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('view-detail', 'click', 'program-list')"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
-                  </td>
-                  <td *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')" class="fs-1-5 sb-dock-icon-tooltip px-5">
-                    <i class="icon edit sb-color-primary cursor-pointer ui" data-tooltip="Modify" (click)="editOnClick(program)"></i>
-                    <i class="icon trash sb-color-primary cursor-pointer ui" data-tooltip="Delete" (click)="setDelete(program, i)"></i>
-                  </td>
+                    [telemetryInteractEdata]="getTelemetryInteractEdata('view-detail', 'click', 'program-list')"
+                    [telemetryInteractObject]="telemetryInteractObject"
+                    [telemetryInteractCdata]="telemetryInteractCdata"
+                    [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
+
+                    <div *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing') && program.status === 'Draft'" class="d-inline-block cursor-pointer" (click)="editOnClick(program)">
+                      <i class="icon edit sb-color-primary ui fs-0-92"></i>
+                      <span class="sb-color-primary">{{resourceService.frmelmnts.lbl.editDraft}}</span>
+                    </div>
+                </td>
+                <td *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')" class="px-0">
+                  <div class="sb-dock-icon-tooltip d-inline-block">
+                    <i *ngIf="program.status === 'Live' || program.status === 'Unlisted'" class="icon edit sb-color-primary cursor-pointer ui fs-0-785 px-10 va-text-sup" data-tooltip="Modify" (click)="editOnClick(program)"></i>
+                    <i class="icon trash sb-color-primary cursor-pointer ui fs-0-785 va-text-sup px-10" data-tooltip="Delete" (click)="setDelete(program, i)"></i>
+                  </div>
+                </td>
               </tr>
               </tbody>
             </table>

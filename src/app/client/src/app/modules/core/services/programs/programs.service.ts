@@ -307,16 +307,6 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.API_URL(req);
   }
 
-  copyCollectionForPlatform(request): Observable<ServerResponse> {
-    const req = {
-      url: `program/v1/collection/copy`,
-      data: {
-        request
-      }
-    };
-    return this.API_URL(req);
-  }
-
  /**
    * Logic to get the all the users of sourcing organisation and add it to the same cont org as sourcing admin
    */
@@ -498,7 +488,6 @@ export class ProgramsService extends DataService implements CanActivate {
    * makes api call to get the textbooks for program
    */
   updateProgram(request): Observable<ServerResponse> {
-
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.UPDATE}`,
       data: {
@@ -530,6 +519,22 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     }));
+  }
+
+  publishProgram(request) {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.PUBLISH}`,
+      data: request
+    };
+    return this.API_URL(req);
+  }
+
+  unlistPublishProgram(request) {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.UNLIST_PUBLISH}`,
+      data: request
+    };
+    return this.API_URL(req);
   }
 
   updateNomination(request) {

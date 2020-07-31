@@ -93,6 +93,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public allAvailableVidExtns = ['mp4', 'webm'];
   public allAvailableDocExtns = ['pdf', 'epub', 'h5p'];
   public videoSizeLimit: string;
+  public originCollectionData: any;
+  selectedOriginUnitStatus: any;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -108,6 +110,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   ngOnInit() {
     this.config = _.get(this.contentUploadComponentInput, 'config');
+    this.originCollectionData = _.get(this.contentUploadComponentInput, 'originCollectionData');
+    this.selectedOriginUnitStatus = _.get(this.contentUploadComponentInput, 'content.originUnitStatus');
     this.sessionContext  = _.get(this.contentUploadComponentInput, 'sessionContext');
     this.templateDetails  = _.get(this.contentUploadComponentInput, 'templateDetails');
     this.unitIdentifier  = _.get(this.contentUploadComponentInput, 'unitIdentifier');
