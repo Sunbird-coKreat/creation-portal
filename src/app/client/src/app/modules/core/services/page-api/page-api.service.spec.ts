@@ -7,10 +7,11 @@ import { PageApiService } from './page-api.service';
 import { ConfigService, BrowserCacheTtlService } from '@sunbird/shared';
 import { CacheService } from 'ng2-cache-service';
 import { testData } from './page-api.service.spec.data';
+import { RouterTestingModule } from '@angular/router/testing';
 describe('PageApiService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, CoreModule],
+      imports: [HttpClientTestingModule, CoreModule, RouterTestingModule],
       providers: [PageApiService, ConfigService, LearnerService, CacheService, BrowserCacheTtlService, PublicDataService]
     });
   });

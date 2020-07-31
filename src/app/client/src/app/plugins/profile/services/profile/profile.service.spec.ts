@@ -6,10 +6,11 @@ import { SharedModule } from '@sunbird/shared';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CoreModule, LearnerService, UserService } from '@sunbird/core';
 import { mockRes } from './profile.service.spec.data';
+import { RouterTestingModule } from '@angular/router/testing';
 describe('ProfileService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, CoreModule, SharedModule.forRoot()],
+      imports: [HttpClientTestingModule, CoreModule, SharedModule.forRoot(), RouterTestingModule],
       providers: [ProfileService]
     });
   });

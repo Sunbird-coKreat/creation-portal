@@ -4,7 +4,7 @@ import { UserService } from '@sunbird/core';
 import { HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { DatePipe } from '@angular/common';
+import { DatePipe, APP_BASE_HREF } from '@angular/common';
 import { RouterTestingModule } from '@angular/router/testing';
 
 describe('Session Expiry Interceptor', () => {
@@ -25,7 +25,7 @@ describe('Session Expiry Interceptor', () => {
                 provide: HTTP_INTERCEPTORS,
                 useClass: SessionExpiryInterceptor,
                 multi: true,
-            }, DatePipe]
+            }, DatePipe, { provide: APP_BASE_HREF, useValue: '/'}]
         });
         sessionExpiryInterceptor = TestBed.get(SessionExpiryInterceptor);
         httpMock = TestBed.get(HttpTestingController);

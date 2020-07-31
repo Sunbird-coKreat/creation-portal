@@ -10,12 +10,15 @@ import { SearchService } from './search.service';
 import { UserService } from './../user/user.service';
 import { ConfigService } from '@sunbird/shared';
 import { PublicDataService } from './../public-data/public-data.service';
+import { RouterTestingModule } from '@angular/router/testing';
+import { APP_BASE_HREF } from '@angular/common';
 
 describe('SearchService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientModule],
-      providers: [SearchService, ContentService, UserService, LearnerService, ConfigService, PublicDataService]
+      imports: [HttpClientModule, RouterTestingModule],
+      providers: [SearchService, ContentService, UserService, LearnerService, ConfigService, PublicDataService,
+        { provide: APP_BASE_HREF, useValue: '/'}]
     });
   });
 

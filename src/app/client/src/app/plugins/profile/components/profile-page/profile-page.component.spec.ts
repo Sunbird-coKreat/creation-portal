@@ -11,6 +11,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { SlickModule } from 'ngx-slick';
 import { Response } from './profile-page.spec.data';
 import {of as observableOf,  Observable } from 'rxjs';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('ProfilePageComponent', () => {
   let component: ProfilePageComponent;
@@ -57,7 +58,7 @@ describe('ProfilePageComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule,  SharedModule.forRoot(), CoreModule,
-        TelemetryModule, NgInviewModule, SlickModule],
+        TelemetryModule, NgInviewModule, SlickModule, RouterTestingModule],
       declarations: [ ProfilePageComponent ],
       providers: [ProfileService, UserService, SearchService,
         { provide: ActivatedRoute, useClass: ActivatedRouteStub },

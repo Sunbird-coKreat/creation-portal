@@ -28,7 +28,14 @@ describe('ChapterListComponent', () => {
   let fixture: ComponentFixture<ChapterListComponent>;
   let errorInitiate, de: DebugElement;
   let unitLevelResponse;
-  let ResourceServiceMock: ResourceService;
+  const ResourceServiceMock = {
+    messages: {
+      smsg: {m0064: 'Content is successfully removed'}
+    },
+    frmelmnts: {
+      lbl: {allChapters: 'All Chapters'}
+    }
+  };
   const actionServiceStub = {
     get() {
       if (errorInitiate) {
@@ -93,7 +100,7 @@ describe('ChapterListComponent', () => {
         SuiTabsModule, FormsModule, DynamicModule, HttpClientTestingModule],
       declarations: [ChapterListComponent, RecursiveTreeComponent, ResourceTemplateComponent],
       schemas: [NO_ERRORS_SCHEMA],
-      providers: [CollectionHierarchyService, ResourceService,
+      providers: [CollectionHierarchyService, { provide: ResourceService, useValue: ResourceServiceMock },
         DatePipe,
              { provide: ActionService, useValue: actionServiceStub }, { provide: UserService, useValue: UserServiceStub },
       { provide: PublicDataService, useValue: PublicDataServiceStub }, ToasterService,
@@ -117,10 +124,10 @@ describe('ChapterListComponent', () => {
     component.sessionContext.lastOpenedUnitParent = 'do_1127639059664568321138';
   });
 
-    // it('Component created', () => {
-    //   component.resourceService.frmelmnts.lbl = 'All Chapter(s)';
-    //   expect(component).toBeDefined();
-    // });
+    it('Component created', () => {
+    ResourceServiceMock.frmelmnts = {lbl: {allChapters: 'All Chapters'}};
+      expect(component).toBeDefined();
+    });
 
     it('stageSubscription should get subcribe on component initialize', () => {
       expect(component.stageSubscription).toBeDefined();
@@ -312,8 +319,6 @@ describe('ChapterListComponent', () => {
 
     it('should updateAccordianView after successful removal of content', () => {
       component.unitIdentifier = 'do_0000000000';
-      ResourceServiceMock = TestBed.get(ResourceService);
-      ResourceServiceMock.messages = {smsg: {m0064: 'Content is successfully removed'}};
       spyOn(component, 'updateAccordianView');
       component.removeResourceFromHierarchy();
       expect(component.showConfirmationModal).toBeFalsy();

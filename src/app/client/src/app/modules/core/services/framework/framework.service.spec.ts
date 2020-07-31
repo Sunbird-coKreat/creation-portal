@@ -6,6 +6,7 @@ import { FrameworkService, UserService, CoreModule, PublicDataService } from '@s
 import { SharedModule } from '@sunbird/shared';
 import { CacheService } from 'ng2-cache-service';
 import { mockFrameworkData } from './framework.mock.spec.data';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('FrameworkService', () => {
   let userService, publicDataService, frameworkService;
@@ -14,7 +15,7 @@ describe('FrameworkService', () => {
   let makeChannelReadSuc, makeFrameworkReadSuc  = true;
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, SharedModule.forRoot(), CoreModule],
+      imports: [HttpClientTestingModule, SharedModule.forRoot(), CoreModule, RouterTestingModule],
       providers: [CacheService]
     });
     userService = TestBed.get(UserService);

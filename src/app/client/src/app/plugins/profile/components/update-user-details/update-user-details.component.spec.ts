@@ -11,6 +11,7 @@ import { ProfileService } from './../../services';
 import { throwError as observableThrowError, of as observableOf } from 'rxjs';
 import { testData } from './update-user-details.component.spec.data';
 import { Router, ActivatedRoute } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('UpdateUserDetailsComponent', () => {
   let component: UpdateUserDetailsComponent;
@@ -63,7 +64,7 @@ describe('UpdateUserDetailsComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [SharedModule.forRoot(), CoreModule, FormsModule, ReactiveFormsModule,
-        HttpClientTestingModule, SuiModule, TelemetryModule],
+        HttpClientTestingModule, SuiModule, TelemetryModule, RouterTestingModule],
       declarations: [UpdateUserDetailsComponent],
       providers: [{ provide: ResourceService, useValue: resourceBundle }, { provide: ActivatedRoute, useClass: ActivatedRouteStub },
         { provide: Router, useClass: RouterStub }, ProfileService, ToasterService, TelemetryService],

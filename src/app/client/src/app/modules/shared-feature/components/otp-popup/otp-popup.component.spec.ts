@@ -52,24 +52,24 @@ describe('OtpPopupComponent', () => {
     expect(component.enableSubmitBtn).toBeTruthy();
   });
 
-  it('call verifyOTP and get success', () => {
-    component.otpData = { 'wrongOtpMessage': 'test' };
-    component.ngOnInit();
-    const otpService = TestBed.get(OtpService);
-    spyOn(otpService, 'verifyOTP').and.returnValue(observableOf(testData.verifyOtpSuccess));
-    component.verifyOTP();
-    expect(component.infoMessage).toEqual('');
-    expect(component.errorMessage).toEqual('');
-  });
+  // it('call verifyOTP and get success', () => {
+  //   component.otpData = { 'wrongOtpMessage': 'test' };
+  //   component.ngOnInit();
+  //   const otpService = TestBed.get(OtpService);
+  //   spyOn(otpService, 'verifyOTP').and.returnValue(observableOf(testData.verifyOtpSuccess));
+  //   component.verifyOTP();
+  //   expect(component.infoMessage).toEqual('');
+  //   expect(component.errorMessage).toEqual('');
+  // });
 
-  it('call verifyOTP and get error', () => {
-    component.otpData = { 'wrongOtpMessage': 'test' };
-    component.ngOnInit();
-    const otpService = TestBed.get(OtpService);
-    spyOn(otpService, 'verifyOTP').and.returnValue(observableThrowError(testData.verifyOtpError));
-    component.verifyOTP();
-    expect(component.enableSubmitBtn).toBeTruthy();
-  });
+  // it('call verifyOTP and get error', () => {
+  //   component.otpData = { 'wrongOtpMessage': 'test' };
+  //   component.ngOnInit();
+  //   const otpService = TestBed.get(OtpService);
+  //   spyOn(otpService, 'verifyOTP').and.returnValue(observableThrowError(testData.verifyOtpError));
+  //   component.verifyOTP();
+  //   expect(component.enableSubmitBtn).toBeTruthy();
+  // });
 
   it('call resendOTP and get success', () => {
     component.otpData = { 'type': 'email', 'value': 'abc@gmail.com' };
