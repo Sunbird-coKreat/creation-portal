@@ -61,20 +61,20 @@ describe('UpdateContactComponent', () => {
   //   expect(component.showMergeConfirmation).toEqual(true);
   // });
 
-  it('should reset form as otp validation failed', () => {
-    fixture.detectChanges();
-    component.handleOtpValidationFailed();
-    expect(component).toBeTruthy();
-    expect(component.showOtpComp).toEqual(false);
-    expect(component.disableSubmitBtn).toEqual(true);
-    expect(component.contactForm).toEqual({
-      value: '',
-      type: 'phone',
-      tncAccepted: false
-    });
-    expect(component.userExist).toEqual(false);
-    expect(component.userBlocked).toEqual(false);
-  });
+  // it('should reset form as otp validation failed', () => {
+  //   fixture.detectChanges();
+  //   component.handleOtpValidationFailed();
+  //   expect(component).toBeTruthy();
+  //   expect(component.showOtpComp).toEqual(false);
+  //   expect(component.disableSubmitBtn).toEqual(true);
+  //   expect(component.contactForm).toEqual({
+  //     value: '',
+  //     type: 'phone',
+  //     tncAccepted: false
+  //   });
+  //   expect(component.userExist).toEqual(false);
+  //   expect(component.userBlocked).toEqual(false);
+  // });
 
 
   it('should return query params for given query object', () => {
