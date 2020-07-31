@@ -24,7 +24,7 @@ describe('RecursiveTreeComponent', () => {
         SuiAccordionModule, TelemetryModule.forRoot(),
         HttpClientTestingModule, RouterTestingModule],
       declarations: [ RecursiveTreeComponent ],
-      providers: [ ConfigService, { provide: APP_BASE_HREF, useValue: '/'}, NavigationHelperService, CacheService, BrowserCacheTtlService, 
+      providers: [ ConfigService, { provide: APP_BASE_HREF, useValue: '/'}, NavigationHelperService, CacheService, BrowserCacheTtlService,
       ToasterService, ResourceService, DatePipe]
     })
     .compileComponents();

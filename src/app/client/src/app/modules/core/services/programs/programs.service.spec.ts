@@ -53,6 +53,7 @@ describe('ProgramsService', () => {
         });
     }));
 
+    // tslint:disable-next-line:max-line-length
     // it('should return false if error thrown either is userService or orgDetails service', inject([ProgramsService], (programsService) => {
     //   mockResponseData.userData['stateValidated'] = true;
     //   userService['_userData$'].next({ err: null, userProfile: _.get(mockResponseData, 'userData') });

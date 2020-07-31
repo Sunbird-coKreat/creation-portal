@@ -225,7 +225,7 @@ describe('ContentUploaderComponent', () => {
       providers: [CollectionHierarchyService, ConfigService, UtilService, ToasterService, TelemetryService, PlayerService, ResourceService,
                   CacheService, BrowserCacheTtlService, { provide: ActionService, useValue: actionServiceStub }, NavigationHelperService,
                   { provide: PlayerService, useValue: playerServiceStub }, { provide: FrameworkService, useValue: frameWorkServiceStub },
-                 {provide: ActivatedRoute, useValue: {snapshot: {data: {telemetry: { env: 'program'}}}}}, DatePipe, 
+                 {provide: ActivatedRoute, useValue: {snapshot: {data: {telemetry: { env: 'program'}}}}}, DatePipe,
                  { provide: CollectionHierarchyService, useValue: collectionServiceStub}]
     })
     .compileComponents();
