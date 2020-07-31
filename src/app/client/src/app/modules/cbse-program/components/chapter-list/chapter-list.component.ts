@@ -56,7 +56,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public sharedContext: Array<string>;
   public currentStage: any;
   public selectedSharedContext: any;
-  showBulkApproveModal=false;
   showBulkUploadModal=false; 
   public state: InitialState = {
     stages: []
