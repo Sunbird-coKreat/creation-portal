@@ -345,5 +345,46 @@ top: -4px;
       margin-right: 0.8rem;
     }
   }
-
+}
+.sb-circle-download-icon{
+    background: var(--secondary-100);
+    display: inline-block;
+    width: 1.8rem;
+    height: 1.8rem;
+    line-height: 1.8rem;
+    color: var(--white);
+    border-radius: 100%;
+    text-align: center;
+    font-size: 0.8rem;
+}
+.sb-list-circle{
+  li{
+    list-style-type: disc;
+    font-size: 0.8rem;
+    margin-bottom: 0.6rem;
+  }
+}
+.sb-line-height-1.2{
+  line-height: 1.2rem;
+}
+.sb-success-loader{
+    position: absolute !important;
+    top: 30% !important;
+    left: 81% !important ;
+    transform: translate(-30%, -81%)!important;
+    &:after{
+      width: 1.2rem !important;
+      height: 1.2rem !important;
+    }
+}
+.sb-dock-loader{
+    position: absolute;
+    top: 15%;
+    left: -1%;
+    transform: translate(-50%, -50%);
+}
+.sb-bulk-upload{
+  img{
+    width: 11rem;
+  }
 }
