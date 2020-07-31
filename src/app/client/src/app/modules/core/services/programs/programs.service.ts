@@ -38,7 +38,9 @@ export class ProgramsService extends DataService implements CanActivate {
   public config: ConfigService;
   baseUrl: string;
   public http: HttpClient;
-  private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
+  // private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
+  private API_URL = this.post; // TODO: remove API_URL once service is deployed
+
   private _contentTypes: any[];
   private _sourcingOrgReviewers: Array<any>;
   // private orgUsers: Array<any>;
@@ -52,7 +54,8 @@ export class ProgramsService extends DataService implements CanActivate {
     public cacheService: CacheService) {
       super(http);
       this.config = config;
-      this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;
+      // this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;
+      this.baseUrl = 'http://localhost:6000/';
     }
 
   /**
