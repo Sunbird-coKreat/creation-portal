@@ -39,7 +39,6 @@ export class ProgramsService extends DataService implements CanActivate {
   baseUrl: string;
   public http: HttpClient;
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
-
   private _contentTypes: any[];
   private _sourcingOrgReviewers: Array<any>;
   // private orgUsers: Array<any>;
