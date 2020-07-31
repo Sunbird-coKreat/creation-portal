@@ -855,7 +855,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       prgData['enddate'] = prgData.program_end_date;
       prgData['program_id'] = this.programId;
-      prgData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : this.programDetails.guidelines_url;
+      // tslint:disable-next-line: max-line-length
+      prgData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : _.get(this.programDetails, 'guidelines_url');
 
       delete prgData.program_end_date;
       delete prgData.content_types;
