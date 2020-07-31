@@ -21,6 +21,7 @@ import {contentUploadComponentInput, contentMetaData, contentMetaData1, playerCo
              licenseDetails, updateContentResponse, getPreSignedUrl, contentUploadComponentInput1} from './content-uploader.component.data';
 import { HelperService } from '../../services/helper.service';
 import { ActivatedRoute } from '@angular/router';
+import { DatePipe } from '@angular/common';
 
 // Following describe method is for 'PREVIEW' scenario
 describe('ContentUploaderComponent', () => {
@@ -90,12 +91,17 @@ describe('ContentUploaderComponent', () => {
     }
   };
 
+  let helperService: any;
+
   beforeEach(async(() => {
+    helperService = jasmine.createSpy('HelperService');
+    helperService.getNotification();
     TestBed.configureTestingModule({
       imports: [SuiModule, SuiTabsModule, FormsModule, HttpClientTestingModule, ReactiveFormsModule, PlayerHelperModule,
-                  RouterTestingModule, TelemetryModule],
+                  RouterTestingModule, TelemetryModule, SharedModule],
       declarations: [ ContentUploaderComponent ],
-      providers: [CollectionHierarchyService, ConfigService, UtilService, ToasterService, TelemetryService, PlayerService, ResourceService,
+      providers: [CollectionHierarchyService, ConfigService, UtilService, ToasterService,
+         TelemetryService, PlayerService, ResourceService, DatePipe,
                   CacheService, BrowserCacheTtlService, { provide: ActionService, useValue: actionServiceStub }, NavigationHelperService,
                   { provide: PlayerService, useValue: playerServiceStub }, { provide: FrameworkService, useValue: frameWorkServiceStub },
                   { provide: HelperService, useValue: helperServiceStub }, { provide: ResourceService, useValue: resourceServiceStub },
@@ -110,10 +116,13 @@ describe('ContentUploaderComponent', () => {
     component = fixture.componentInstance;
     debugElement = fixture.debugElement;
     component.contentUploadComponentInput = contentUploadComponentInput;
-    fixture.detectChanges();
+    fixture.autoDetectChanges();
+  });
+  afterEach(() => {
+    fixture.destroy();
   });
 
-  it('should create', () => {
+  it('should create ContentUploaderComponent', () => {
     expect(component).toBeTruthy();
   });
 
@@ -321,7 +330,11 @@ describe('ContentUploaderComponent', () => {
     }
   };
 
+  let helperService: any;
+
   beforeEach(async(() => {
+    helperService = jasmine.createSpy('HelperService');
+    helperService.getNotification();
     TestBed.configureTestingModule({
       imports: [SuiModule, SuiTabsModule, FormsModule, HttpClientTestingModule, ReactiveFormsModule, PlayerHelperModule,
                   RouterTestingModule, TelemetryModule],

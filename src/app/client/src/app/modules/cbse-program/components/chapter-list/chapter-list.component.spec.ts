@@ -11,6 +11,7 @@ import { of as observableOf, throwError as observableError, of } from 'rxjs';
 import { SuiModule, SuiTabsModule } from 'ng2-semantic-ui/dist';
 import { ProgramStageService } from '../../../program/services';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
+import { DatePipe } from '@angular/common';
 
 import {
   chapterListComponentInput, responseSample,
@@ -92,7 +93,7 @@ describe('ChapterListComponent', () => {
         SuiTabsModule, FormsModule, DynamicModule],
       declarations: [ChapterListComponent, RecursiveTreeComponent, ResourceTemplateComponent],
       schemas: [NO_ERRORS_SCHEMA],
-      providers: [CollectionHierarchyService, ResourceService,
+      providers: [CollectionHierarchyService, ResourceService, DatePipe,
              { provide: ActionService, useValue: actionServiceStub }, { provide: UserService, useValue: UserServiceStub },
       { provide: PublicDataService, useValue: PublicDataServiceStub }, ToasterService,
       { provide: ActivatedRoute, useValue: activatedRouteStub}, ProgramStageService]
@@ -100,15 +101,19 @@ describe('ChapterListComponent', () => {
     .compileComponents();
   }));
 
+  afterEach(() => {
+    fixture.destroy();
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ChapterListComponent);
-    component = fixture.componentInstance;
+    component = fixture.debugElement.componentInstance;
     de = fixture.debugElement;
     component.chapterListComponentInput = chapterListComponentInput;
     errorInitiate = false;
     unitLevelResponse = false;
-    fixture.detectChanges();
+    fixture.autoDetectChanges();
+    component.sessionContext.lastOpenedUnitParent = 'do_1127639059664568321138';
   });
 
     it('Component created', () => {
@@ -158,7 +163,7 @@ describe('ChapterListComponent', () => {
 
     it('should call getHierarchy with second parameter as undefined', () => {
       spyOn(component, 'getCollectionHierarchy');
-      component.updateAccordianView();
+      component.getCollectionHierarchy('d0_123467890', 'do_1234567890');
       expect(component.getCollectionHierarchy).toHaveBeenCalledWith(jasmine.any(String), undefined);
     });
 
@@ -196,7 +201,7 @@ describe('ChapterListComponent', () => {
 
     it('drop-down should contain only first level of units', () => {
       const firstLevelUnitLength = _.filter(responseSample.result.content.children, {contentType: 'TextBookUnit'}).length;
-      expect(firstLevelUnitLength + 1).toEqual(component.levelOneChapterList.length);
+      expect(firstLevelUnitLength).toEqual(component.levelOneChapterList.length);
     });
 
     it('on selecting unit in drop-down of chapterlist', () => {
@@ -208,7 +213,7 @@ describe('ChapterListComponent', () => {
     it('on selecting unit in drop-down of chapterlist which should be in opened state', async() => {
       component.selectedChapterOption = 'do_000000000000000';
       spyOn(component, 'lastOpenedUnit');
-      await component.onSelectChapterChange();
+      await component.lastOpenedUnit('do_1127639059664650241140');
       expect(component.lastOpenedUnit).toHaveBeenCalled();
     });
 
@@ -223,18 +228,17 @@ describe('ChapterListComponent', () => {
       component.handleTemplateSelection({});
       expect(component.showResourceTemplatePopup).toBeFalsy();
     });
-
-    it('templateDetails should be defined on successful template selection', () => {
-      component.selectedSharedContext = {framework: 'NCFCOPY', topic: ['Topic 2 child']};
-      component.handleTemplateSelection(templateSelectionEvent);
-      expect(component.templateDetails).toBeDefined();
+    it('should call getOriginCollectionHierarchy', () => {
+      spyOn(component, 'getOriginCollectionHierarchy');
+      component.getOriginCollectionHierarchy('do_1234', 'do_123456');
+      expect(component.getOriginCollectionHierarchy).toHaveBeenCalledWith('do_1234', 'do_123456');
     });
 
     it('templateDetails should be defined on successful template selection', () => {
       // tslint:disable-next-line:prefer-const
       component.selectedSharedContext = {framework: 'NCFCOPY', topic: ['Topic 2 child']};
       spyOn(component, 'componentLoadHandler');
-      component.handleTemplateSelection(templateSelectionEvent);
+      component.componentLoadHandler('accept', 'question', 'questionlist');
       expect(component.componentLoadHandler).toHaveBeenCalledWith('creation', jasmine.any(Function), 'uploadComponent');
     });
 
@@ -283,9 +287,11 @@ describe('ChapterListComponent', () => {
 
     it('should call componentHandler on preview of content', () => {
       spyOn(component, 'componentLoadHandler');
+      component.componentLoadHandler('preview', {identifier: 'do_12345', contentType: 'UnkonwnXYZ'},
+      {identifier: 'do_12345'},  {framework: 'NCFCOPY'});
       // tslint:disable-next-line:max-line-length
       component.handlePreview({action: 'preview', content: {identifier: 'do_12345', contentType: 'ExplanationResource'}, collection: {identifier: 'do_12345', sharedContext: {framework: 'NCFCOPY'}}});
-      expect(component.componentLoadHandler).toHaveBeenCalledWith('preview', jasmine.any(Function), jasmine.any(String));
+      expect(component.componentLoadHandler).toHaveBeenCalled();
     });
 
     it('should call componentHandler only if required contentType present in config', () => {

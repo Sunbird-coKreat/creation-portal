@@ -45,7 +45,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public questionReadApiDetails: any = {};
   public resourceDetails: any = {};
   public resourceStatus: string;
-  public resourceStatusText: string;
+  public resourceStatusText = '';
+  public resourceStatusClass = '';
   public questionMetaData: any;
   public refresh = true;
   public showLoader = true;
@@ -75,6 +76,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public sourcingOrgReviewComments: string;
   originPreviewUrl = '';
   originPreviewReady = false;
+  public originCollectionData: any;
+  selectedOriginUnitStatus: any;
 
   constructor(
     private configService: ConfigService, private userService: UserService,
@@ -90,6 +93,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.sessionContext = _.get(this.practiceQuestionSetComponentInput, 'sessionContext');
+    this.originCollectionData = _.get(this.practiceQuestionSetComponentInput, 'originCollectionData');
+    this.selectedOriginUnitStatus = _.get(this.practiceQuestionSetComponentInput, 'content.originUnitStatus');
     this.selectedSharedContext = _.get(this.practiceQuestionSetComponentInput, 'selectedSharedContext');
     this.role = _.get(this.practiceQuestionSetComponentInput, 'role');
     this.templateDetails = _.get(this.practiceQuestionSetComponentInput, 'templateDetails');
@@ -223,20 +228,34 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   setResourceStatus() {
     if (this.resourceStatus === 'Review') {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
+      this.resourceStatusClass = 'sb-color-warning';
     } else if (this.resourceStatus === 'Draft' && this.resourceDetails.rejectComment && this.resourceDetails.rejectComment !== '') {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
+      this.resourceStatusClass = 'sb-color-gray';
     } else if (this.resourceStatus === 'Live' && _.isEmpty(this.sourcingReviewStatus)) {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
+      this.resourceStatusClass = 'sb-color-success';
     } else if (this.sourcingReviewStatus === 'Rejected') {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
+      this.resourceStatusClass = 'sb-color-error';
     } else if (this.sourcingReviewStatus === 'Approved') {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
+      this.resourceStatusClass = 'sb-color-success';
+      // tslint:disable-next-line:max-line-length
       if (!_.isEmpty(this.sessionContext.contentOrigins) && !_.isEmpty(this.sessionContext.contentOrigins[this.sessionContext.resourceIdentifier])) {
+        // tslint:disable-next-line:max-line-length
         this.originPreviewUrl =  this.helperService.getContentOriginUrl(this.sessionContext.contentOrigins[this.sessionContext.resourceIdentifier].identifier);
       }
       this.originPreviewReady = true;
+    } else if (this.resourceStatus === 'Failed') {
+      this.resourceStatusText = this.resourceService.frmelmnts.lbl.failed;
+      this.resourceStatusClass = 'sb-color-error';
+    } else if (this.resourceStatus === 'Processing') {
+      this.resourceStatusText = this.resourceService.frmelmnts.lbl.processing;
+      this.resourceStatusClass = '';
     } else {
       this.resourceStatusText = this.resourceStatus;
+      this.resourceStatusClass = 'sb-color-primary';
     }
   }
 

@@ -97,11 +97,12 @@
       <div class="sb-pageSection-content sb-bg-white py-24 px-0 dynamicHeight">
         <div class="ui container sb-textbook-details-container mb-24">
           <div class="d-flex flex-jc-flex-end fs-0-785 font-italic sb-color-gray-300 mb-15">
+            <span class="text-left sb-color-error mr-8 pl-10 fs-0-785 font-weight-bold">{{textbookStatusMessage}}</span>
             <span class="w-30 text-right">{{resourceService.frmelmnts.lbl.partialTextbookSelectionNote}}</span>
           </div>
           <div class="sb-chapterlist">
             <sui-accordion class="styled fluid sb-accordion sb-chapterlist-accordion" [closeOthers]="true">
-              <app-recursive-tree [collectionUnits]="collectionHierarchy" [level]="1" [programContext]="programContext" [sessionContext]="sessionContext" [selectedChapter]="selectedChapterOption"
+              <app-recursive-tree [collectionUnits]="collectionHierarchy" [level]="1" [programContext]="programContext" [sessionContext]="sessionContext" [selectedChapter]="selectedChapterOption" [originalCollectionData]="originalCollectionData"
                 (nodeMeta)="showResourceTemplate($event)"></app-recursive-tree>
             </sui-accordion>
           </div>

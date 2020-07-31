@@ -45,9 +45,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public playerConfig;
   public showPreview = false;
   public resourceStatus;
-  public resourceStatusText;
+  public resourceStatusText = '';
   public notify;
   public config: any;
+  public resourceStatusClass = '';
   showForm;
   uploader;
   loading;
@@ -92,6 +93,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public allAvailableVidExtns = ['mp4', 'webm'];
   public allAvailableDocExtns = ['pdf', 'epub', 'h5p'];
   public videoSizeLimit: string;
+  public originCollectionData: any;
+  selectedOriginUnitStatus: any;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -107,6 +110,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   ngOnInit() {
     this.config = _.get(this.contentUploadComponentInput, 'config');
+    this.originCollectionData = _.get(this.contentUploadComponentInput, 'originCollectionData');
+    this.selectedOriginUnitStatus = _.get(this.contentUploadComponentInput, 'content.originUnitStatus');
     this.sessionContext  = _.get(this.contentUploadComponentInput, 'sessionContext');
     this.templateDetails  = _.get(this.contentUploadComponentInput, 'templateDetails');
     this.unitIdentifier  = _.get(this.contentUploadComponentInput, 'unitIdentifier');
@@ -500,21 +505,33 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.resourceStatus = this.contentMetaData.status;
       if (this.resourceStatus === 'Review') {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
+        this.resourceStatusClass = 'sb-color-warning';
       } else if (this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Review') {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
+        this.resourceStatusClass = 'sb-color-gray';
       } else if (this.resourceStatus === 'Live' && _.isEmpty(this.sourcingReviewStatus)) {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
+        this.resourceStatusClass = 'sb-color-success';
       } else if (this.sourcingReviewStatus === 'Rejected') {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
+        this.resourceStatusClass = 'sb-color-error';
       } else if (this.sourcingReviewStatus === 'Approved') {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
+        this.resourceStatusClass = 'sb-color-success';
         // get the origin preview url
         if (!_.isEmpty(this.sessionContext.contentOrigins) && !_.isEmpty(this.sessionContext.contentOrigins[contentId])) {
           this.originPreviewUrl =  this.helperService.getContentOriginUrl(this.sessionContext.contentOrigins[contentId].identifier);
         }
         this.originPreviewReady = true;
+      } else if (this.resourceStatus === 'Failed') {
+        this.resourceStatusText = this.resourceService.frmelmnts.lbl.failed;
+        this.resourceStatusClass = 'sb-color-error';
+      } else if (this.resourceStatus === 'Processing') {
+        this.resourceStatusText = this.resourceService.frmelmnts.lbl.processing;
+        this.resourceStatusClass = '';
       } else {
         this.resourceStatusText = this.resourceStatus;
+        this.resourceStatusClass = 'sb-color-primary';
       }
 
       this.playerConfig = this.playerService.getConfig(contentDetails);
