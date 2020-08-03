@@ -25,7 +25,10 @@ export const chapterListComponentInput = {
         category: 'topic',
         status: 'Live'
       }
-    ]
+    ],
+    nominationDetails: {
+      user_id: '874ed8a5-782e-4f6c-8f36-e0288455901e'
+    }
   },
   collection: {
     name: 'बाल रामकथा(HINDHI)',

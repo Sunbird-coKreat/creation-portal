@@ -98,7 +98,8 @@ export const OtpComponentMockResponse = {
             'fmsg': {
                 'm0085': 'There was a technical error. Try again.'
             }
-        }
+        },
+        'instance': 'Dock'
     },
     otpForm: {
         'controls': {
