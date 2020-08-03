@@ -887,7 +887,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   isDefaultContributingOrg() {
     return !!(this.userService.userProfile.userRegData
-      && this.userService.userProfile.userRegData.org
+      && this.userService.userProfile.userRegData.Org
       && this.programContext.sourcing_org_name === this.userService.userProfile.userRegData.Org.name);
   }
 }
