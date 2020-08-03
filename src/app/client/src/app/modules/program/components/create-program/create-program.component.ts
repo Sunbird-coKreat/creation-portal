@@ -773,7 +773,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programData['type'] = (!this.isOpenNominations) ? 'private' : 'public';
     this.programData['default_roles'] = ['CONTRIBUTOR'];
     this.programData['enddate'] = this.programData.program_end_date;
-    this.programData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : '';
+    // tslint:disable-next-line: max-line-length
+    this.programData['guidelines_url'] = (this.uploadedDocument) ? _.get(this.uploadedDocument, 'artifactUrl') : _.get(this.programDetails, 'guidelines_url');
     this.programData['status'] = this.editPublished ? 'Live' : 'Draft';
 
     if (!this.programData['nomination_enddate']) {
@@ -854,7 +855,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       prgData['enddate'] = prgData.program_end_date;
       prgData['program_id'] = this.programId;
-      prgData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : this.programDetails.guidelines_url;
+      // tslint:disable-next-line: max-line-length
+      prgData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : _.get(this.programDetails, 'guidelines_url');
 
       delete prgData.program_end_date;
       delete prgData.content_types;
