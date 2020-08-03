@@ -66,6 +66,8 @@ describe('OtpComponent', () => {
   });
 
   it('should create', () => {
+    const resourceService = TestBed.get(ResourceService);
+    resourceService.instance = 'Dock';
     expect(component).toBeTruthy();
   });
 
