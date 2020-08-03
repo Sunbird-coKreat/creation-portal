@@ -884,8 +884,4 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     && _.get(this.sessionContext, 'currentRole') === 'CONTRIBUTOR'
     && this.sampleContent === false);
   }
-
-  isUserOrgMatchesProgramOrg() {
-    return !!(_.get(this.userService, 'userProfile.rootOrgId') === _.get(this.programContext, 'rootorg_id'));
-  }
 }
