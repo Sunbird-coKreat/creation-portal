@@ -177,7 +177,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     } else {
       if (!_.isEmpty(this.collectionHierarchy)) { this.lastOpenedUnit(this.collectionHierarchy[0].identifier)}
     }
-    if (this.isPublishOrSubmit() && (this.isUserOrgMatchesProgramOrg() || this.isContributingOrgContributor())) {
+    if (this.isPublishOrSubmit() && this.isContributingOrgContributor()) {
       this.sessionContext.currentOrgRole = 'individual';
     }
   }
