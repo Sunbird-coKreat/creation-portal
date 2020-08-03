@@ -177,7 +177,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     } else {
       if (!_.isEmpty(this.collectionHierarchy)) { this.lastOpenedUnit(this.collectionHierarchy[0].identifier)}
     }
-    if (this.isPublishOrSubmit() && this.isContributingOrgContributor()) {
+    if (this.isPublishOrSubmit() && this.isContributingOrgContributor() && this.isDefaultContributingOrg()) {
       this.sessionContext.currentOrgRole = 'individual';
     }
   }
@@ -883,5 +883,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     return !!(_.get(this.programContext, 'config.defaultContributeOrgReview') === false
     && _.get(this.sessionContext, 'currentRole') === 'CONTRIBUTOR'
     && this.sampleContent === false);
+  }
+
+  isDefaultContributingOrg() {
+    return !!(this.userService.userProfile.userRegData
+      && this.userService.userProfile.userRegData.Org
+      && this.programContext.sourcing_org_name === this.userService.userProfile.userRegData.Org.name);
   }
 }
