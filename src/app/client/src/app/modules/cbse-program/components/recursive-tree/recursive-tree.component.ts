@@ -55,7 +55,6 @@ export class RecursiveTreeComponent implements OnInit {
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.sessionContext.programId, 'Program');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
-    this.nodeStatusMessage = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
   }
 
   shouldActionMenuBeVisible() {
@@ -103,8 +102,7 @@ export class RecursiveTreeComponent implements OnInit {
   }
 
   previewResource(e, content, collection, origin, index) {
-    console.log('Choosed index is======', index);
-    content.originUnitStatus = origin.children[index] && origin.children[index].status ? origin.children[index].status : 'Retired';
+    content.originUnitStatus = collection.statusMsg ? 'Retired' : collection.status;
     this.nodeMeta.emit({
       action: 'preview',
       content: content,
@@ -115,18 +113,6 @@ export class RecursiveTreeComponent implements OnInit {
 
   menuClick(e) {
     e.stopPropagation();
-  }
-
-  showMessage(collection, index) {
-    if ((!_.isUndefined(collection)) && (collection.status === 'Draft')) {
-      if ((!_.isUndefined(collection.children[index])) && (collection.children[index].status === 'Draft')) {
-        return false;
-      } else {
-        return true;
-      }
-      } else {
-        return true;
-    }
   }
 
   isSourcingOrgReviewer () {
