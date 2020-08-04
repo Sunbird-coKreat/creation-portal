@@ -183,10 +183,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     } else {
       if (!_.isEmpty(this.collectionHierarchy)) { this.lastOpenedUnit(this.collectionHierarchy[0].identifier)}
     }
-    if (_.get(this.programContext, 'config.defaultContributeOrgReview') === false
-      && _.get(this.userService, 'userProfile.rootOrgId') === _.get(this.programContext,'rootorg_id')
-      && _.get(this.sessionContext, 'currentRole') === 'CONTRIBUTOR'
-      && this.sampleContent === false) {
+    if (this.isPublishOrSubmit() && this.isContributingOrgContributor() && this.isDefaultContributingOrg()) {
       this.sessionContext.currentOrgRole = 'individual';
     }
   }
@@ -912,5 +909,17 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   isContributingOrgReviewer() {
     const reviewers = _.get(this.sessionContext, 'nominationDetails.rolemapping.REVIEWER');
     return !_.isEmpty(reviewers) && _.includes(reviewers, _.get(this.userService, 'userProfile.userId'));
+  }
+
+  isPublishOrSubmit() {
+    return !!(_.get(this.programContext, 'config.defaultContributeOrgReview') === false
+    && _.get(this.sessionContext, 'currentRole') === 'CONTRIBUTOR'
+    && this.sampleContent === false);
+  }
+
+  isDefaultContributingOrg() {
+    return !!(this.userService.userProfile.userRegData
+      && this.userService.userProfile.userRegData.Org
+      && this.programContext.sourcing_org_name === this.userService.userProfile.userRegData.Org.name);
   }
 }
