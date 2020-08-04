@@ -10,7 +10,7 @@
     <button type="button" class="sb-btn sb-btn-normal sb-btn-dark-green shine-effect my-10 pt-4rem fs-0-92 font-weight-bold" (click)="addToLibrary();"
       appTelemetryInteract
       [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('select-content', 'click', 'library')"
-      [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(contentId, 'Content', '1.0', {l1:sessionContext.collectionUnitId,l2: sessionContext.collection})"
+      [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(contentId, 'Content', '1.0', {l1:sessionContext.collection,l2: sessionContext.collectionUnitId})"
       [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
       [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"
       ><i class="plus square icon"></i>{{resourceService.frmelmnts.lbl.addToTextbook}}</button>

@@ -90,7 +90,14 @@ export class RecursiveTreeComponent implements OnInit {
       showPopup: null,
     });
   }
-
+  removeResource(e, content, collection) {
+    this.nodeMeta.emit({
+      action: 'remove',
+      content: content,
+      collection: collection,
+      showPopup: null,
+    });
+  }
   moveResource(e, content, collection) {
     this.nodeMeta.emit({
       action: 'beforeMove',

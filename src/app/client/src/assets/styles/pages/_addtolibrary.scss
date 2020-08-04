@@ -729,9 +729,12 @@
     position: relative;
 
     &.active{
-      background: var(--secondary-300) !important;
-      border: 0.0625rem solid var(--gray-100) !important;
-      border-bottom: 0 !important;
+      background: var(--secondary-300);
+      border: 0.0625rem solid var(--gray-100);
+      border-bottom: 0;
+      &.active:last-child{
+        border-bottom: 0.0625rem solid var(--gray-100);
+      }
       .textbookBtnLink {
         visibility: visible;
         right:12px;
@@ -742,8 +745,11 @@
       }
     }
     &.selected{
-      background: var(--secondary-300) !important;
+      background: var(--secondary-300);
       border: solid 1px var(--primary-600);
+    }
+    &.active.selected{
+      border: solid 1px var(--primary-600) !important;
     }
 
     .btn-addtoLibrary {
@@ -781,7 +787,7 @@
     }
 
     &:hover {
-      background: var(--gray-0);
+      background: var(--secondary-0);
     }
 
     &:hover {

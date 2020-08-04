@@ -50,6 +50,7 @@ export class MvcFilterComponent implements OnInit, OnChanges {
 
   resetFilter() {
     this.searchFilterForm.reset();
+    this.applyFilter();
   }
 
   applyFilter() {

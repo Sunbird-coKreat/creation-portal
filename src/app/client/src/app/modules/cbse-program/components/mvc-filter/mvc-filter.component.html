@@ -4,7 +4,6 @@
       <div class="fs-0-785 cursor-pointer pr-20 font-weight-bold" (click)="showfilter()"
         appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filter-accordion', 'click', 'library',{'isFilterShow':!isFilterShow})"
-        [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(undefined, 'Content', '1.0', {l1:sessionContext.collectionUnitId,l2: sessionContext.collection})"
         [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
         [telemetryInteractPdata]="sessionContext.telemetryInteractPdata" >
         <i class="question circle link icon sb-color-gray-200 fs-0-92" suiPopup popupDelay="500" popupText="{{resourceService.frmelmnts.lbl.changingFilterHelpsYouFindMoreContent}}"></i>
@@ -20,13 +19,11 @@
           formControlName="contentType" #contentTypes [options]="filters.contentType" [isSearchable]='true'
           appTelemetryInteract
           [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('multiselect-contentType', 'click', 'library')"
-          [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(undefined, 'Content', '1.0', {l1:sessionContext.collectionUnitId,l2: sessionContext.collection})"
           [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
           [telemetryInteractPdata]="sessionContext.telemetryInteractPdata">
             <sui-select-option *ngFor="let contentType of contentTypes.filteredOptions" [value]="contentType"
             appTelemetryInteract
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('selectoption-contentType', 'click', 'library',{values:contentType})"
-            [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(undefined, 'Content', '1.0', {l1:sessionContext.collectionUnitId,l2: sessionContext.collection})"
             [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
             [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"> </sui-select-option>
         </sui-multi-select>
@@ -38,13 +35,11 @@
           formControlName="gradeLevel" #gradeLevels [options]="filters.gradeLevel" [isSearchable]='true'
           appTelemetryInteract
           [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('multiselect-gradeLevel', 'click', 'library')"
-          [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(undefined, 'Content', '1.0', {l1:sessionContext.collectionUnitId,l2: sessionContext.collection})"
           [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
           [telemetryInteractPdata]="sessionContext.telemetryInteractPdata">
             <sui-select-option *ngFor="let gradeLevel of gradeLevels.filteredOptions" [value]="gradeLevel"
             appTelemetryInteract
           [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('selectoption-gradeLevel', 'click', 'library',{values:gradeLevel})"
-          [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(undefined, 'Content', '1.0', {l1:sessionContext.collectionUnitId,l2: sessionContext.collection})"
           [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
           [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"> </sui-select-option>
         </sui-multi-select>
@@ -56,13 +51,11 @@
           formControlName="subject" #subjects [options]="filters.subject" [isSearchable]='true'
           appTelemetryInteract
           [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('multiselect-subject', 'click', 'library')"
-          [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(undefined, 'Content', '1.0', {l1:sessionContext.collectionUnitId,l2: sessionContext.collection})"
           [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
           [telemetryInteractPdata]="sessionContext.telemetryInteractPdata">
             <sui-select-option *ngFor="let subject of subjects.filteredOptions" [value]="subject"
             appTelemetryInteract
           [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('selectoption-subject', 'click', 'library',{values:subject})"
-          [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(undefined, 'Content', '1.0', {l1:sessionContext.collectionUnitId,l2: sessionContext.collection})"
           [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
           [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"> </sui-select-option>
         </sui-multi-select>
@@ -73,13 +66,11 @@
           formControlName="chapter" #chapters [options]="filters.chapter" [isSearchable]='true'
           appTelemetryInteract
           [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('multiselect-chapter', 'click', 'library')"
-          [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(undefined, 'Content', '1.0', {l1:sessionContext.collectionUnitId,l2: sessionContext.collection})"
           [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
           [telemetryInteractPdata]="sessionContext.telemetryInteractPdata">
             <sui-select-option *ngFor="let chapter of chapters.filteredOptions" [value]="chapter"
           appTelemetryInteract
           [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('selectoption-chapter', 'click', 'library',{values:chapter})"
-          [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(undefined, 'Content', '1.0', {l1:sessionContext.collectionUnitId,l2: sessionContext.collection})"
           [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
           [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"> </sui-select-option>
         </sui-multi-select>
@@ -88,13 +79,11 @@
         <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary ml-5" (click)="resetFilter();"
         appTelemetryInteract
           [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reset-filter', 'click', 'library',{filters:{}})"
-          [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(undefined, 'Content', '1.0', {l1:sessionContext.collectionUnitId,l2: sessionContext.collection})"
           [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
           [telemetryInteractPdata]="sessionContext.telemetryInteractPdata">{{resourceService.frmelmnts.btn.reset}}</button>
         <button type="button" class="sb-btn sb-btn-normal sb-btn-primary ml-15" (click)="applyFilter();"
         appTelemetryInteract
           [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('apply-filter', 'click', 'library',{filters:searchFilterForm.value})"
-          [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(undefined, 'Content', '1.0', {l1:sessionContext.collectionUnitId,l2: sessionContext.collection})"
           [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
           [telemetryInteractPdata]="sessionContext.telemetryInteractPdata" >{{resourceService.frmelmnts.btn.apply}}</button>
       </div>

@@ -34,7 +34,7 @@ export class ResourceReorderComponent implements OnInit {
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.sessionContext.programId, 'Program');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
-    this.setCollectionUnitBreadcrumb(this.prevUnitSelect);
+    this.setCollectionUnitBreadcrumb();
   }
 
   moveResource() {
@@ -119,9 +119,9 @@ export class ResourceReorderComponent implements OnInit {
     return this.getParentsHelper(tree, id, []);
   }
 
-  setCollectionUnitBreadcrumb(selectedUnit?): void {
+  setCollectionUnitBreadcrumb(): void {
     if (this.sessionContext && !this.sessionContext.selectedMvcContentDetails) { return; }
-    const selctedUnitParents: any = this.getParents(this.collectionUnits, selectedUnit ? selectedUnit : this.unitSelected);
+    const selctedUnitParents: any = this.getParents(this.collectionUnits, this.prevUnitSelect);
     if (selctedUnitParents.found) {
       this.collectionUnitsBreadcrumb = [...this.sessionContext.resourceReorderBreadcrumb, ...selctedUnitParents.parents];
     }

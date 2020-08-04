@@ -7,7 +7,6 @@
         <button class="sb-btn sb-btn-primary sb-btn-xs back-btn px-0" (click)="handleBack();"
         appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('go-back', 'click', 'library')"
-        [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(undefined, 'Content', '1.0', {l1:collectionUnitId,l2: collectionId})"
         [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
         [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"
         ><i class="arrow left icon fs-1"></i></button>
@@ -72,7 +71,6 @@
       <button class="sb-btn sb-btn-secondary sb-btn-normal mt-16" (click)="openFilter();" 
         appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('change-filter', 'click', 'library')"
-        [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(undefined, 'Content', '1.0', {l1:collectionUnitId,l2: collectionId})"
         [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
         [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"
       >{{resourceService.frmelmnts.lbl.changeFilters}}</button>
