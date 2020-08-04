@@ -5,7 +5,7 @@
   [telemetryInteractCdata]="telemetryInteractCdata"
   [telemetryInteractPdata]="telemetryInteractPdata"
   [isOpen]=" (collection.identifier === sessionContext.lastOpenedUnitChild || collection.identifier === sessionContext.lastOpenedUnitParent) ? true : false">
-    <div title class="sb-accordion-title d-flex flex-jc-flex-end sb-color-primary"><span class="chapter-status mr-16 mt-5"></span>
+    <div title class="sb-accordion-title d-flex flex-jc-flex-end sb-color-primary flex-ai-center"><span class="chapter-status mr-16 mt-5"></span>
      <span class="flex-5"> {{collection.name}}</span>
      <span class="sb-color-error font-weight-bold" *ngIf="!visibility['showAddresource']">{{collection.statusMsg}}</span>
      <div class="sb-color-black flex-2 text-right pr-10">
