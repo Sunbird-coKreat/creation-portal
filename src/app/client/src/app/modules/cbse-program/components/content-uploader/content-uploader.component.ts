@@ -45,9 +45,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public playerConfig;
   public showPreview = false;
   public resourceStatus;
-  public resourceStatusText;
+  public resourceStatusText = '';
   public notify;
   public config: any;
+  public resourceStatusClass = '';
   showForm;
   uploader;
   loading;
@@ -79,7 +80,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public contentType: string;
   public rejectBySourcingOrg: boolean;
   public sourcingOrgReviewComments: string;
-  originPreviewUrl: string = '';
+  originPreviewUrl = '';
   originPreviewReady = false;
   public azurFileUploaderSubscrition: Subscription;
   public fileUplaoderProgress = {
@@ -92,6 +93,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public allAvailableVidExtns = ['mp4', 'webm'];
   public allAvailableDocExtns = ['pdf', 'epub', 'h5p'];
   public videoSizeLimit: string;
+  public originCollectionData: any;
+  selectedOriginUnitStatus: any;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -107,6 +110,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   ngOnInit() {
     this.config = _.get(this.contentUploadComponentInput, 'config');
+    this.originCollectionData = _.get(this.contentUploadComponentInput, 'originCollectionData');
+    this.selectedOriginUnitStatus = _.get(this.contentUploadComponentInput, 'content.originUnitStatus');
     this.sessionContext  = _.get(this.contentUploadComponentInput, 'sessionContext');
     this.templateDetails  = _.get(this.contentUploadComponentInput, 'templateDetails');
     this.unitIdentifier  = _.get(this.contentUploadComponentInput, 'unitIdentifier');
@@ -500,21 +505,33 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.resourceStatus = this.contentMetaData.status;
       if (this.resourceStatus === 'Review') {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
+        this.resourceStatusClass = 'sb-color-warning';
       } else if (this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Review') {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
+        this.resourceStatusClass = 'sb-color-gray';
       } else if (this.resourceStatus === 'Live' && _.isEmpty(this.sourcingReviewStatus)) {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
+        this.resourceStatusClass = 'sb-color-success';
       } else if (this.sourcingReviewStatus === 'Rejected') {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
+        this.resourceStatusClass = 'sb-color-error';
       } else if (this.sourcingReviewStatus === 'Approved') {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
+        this.resourceStatusClass = 'sb-color-success';
         // get the origin preview url
         if (!_.isEmpty(this.sessionContext.contentOrigins) && !_.isEmpty(this.sessionContext.contentOrigins[contentId])) {
           this.originPreviewUrl =  this.helperService.getContentOriginUrl(this.sessionContext.contentOrigins[contentId].identifier);
         }
         this.originPreviewReady = true;
+      } else if (this.resourceStatus === 'Failed') {
+        this.resourceStatusText = this.resourceService.frmelmnts.lbl.failed;
+        this.resourceStatusClass = 'sb-color-error';
+      } else if (this.resourceStatus === 'Processing') {
+        this.resourceStatusText = this.resourceService.frmelmnts.lbl.processing;
+        this.resourceStatusClass = '';
       } else {
         this.resourceStatusText = this.resourceStatus;
+        this.resourceStatusClass = 'sb-color-primary';
       }
 
       this.playerConfig = this.playerService.getConfig(contentDetails);
@@ -631,7 +648,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           // tslint:disable-next-line:max-line-length
           preSavedValues[code] = (this.contentMetaData[code]) ? this.contentMetaData[code] : false;
           // tslint:disable-next-line:max-line-length
-          obj.required ? controller[obj.code] = [{value:preSavedValues[code], disabled: this.contentMetaData[code]}, [Validators.requiredTrue]] : controller[obj.code] = preSavedValues[code];
+          obj.required ? controller[obj.code] = [{value: preSavedValues[code], disabled: this.contentMetaData[code]}, [Validators.requiredTrue]] : controller[obj.code] = preSavedValues[code];
         }
       }
     });
@@ -699,8 +716,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   changePolicyCheckValue (event) {
     if ( event.target.checked ) {
       this.contentDetailsForm.controls.contentPolicyCheck.setValue(true);
-    }
-    else {
+    } else {
       this.contentDetailsForm.controls.contentPolicyCheck.setValue(false);
     }
   }
@@ -812,7 +828,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           // tslint:disable-next-line:max-line-length
           this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier || res.result.content_id)
           .subscribe((data) => {
-            this.toasterService.success(this.resourceService.messages.smsg.m0063);
+            this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
             this.programStageService.removeLastStage();
             this.uploadedContentMeta.emit({
               contentId: res.result.identifier
@@ -820,7 +836,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           });
         }
       }, (err) => {
-        this.toasterService.error(this.resourceService.messages.fmsg.m00101);
+        this.toasterService.error(this.resourceService.messages.fmsg.m00102);
       });
   }
 
@@ -904,9 +920,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         console.error('origin data missing');
       }
     } else {
-      action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
-        this.toasterService.error(this.resourceService.messages.fmsg.m00100);
-        console.error('origin data missing');
+      action === 'accept' ? this.toasterService.error(this.resourceService.messages.emsg.approvingFailed) :
+      this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+      console.error('origin data missing');
     }
   }
 

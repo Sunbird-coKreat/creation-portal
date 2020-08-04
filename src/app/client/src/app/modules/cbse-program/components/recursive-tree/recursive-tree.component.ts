@@ -16,6 +16,7 @@ export class RecursiveTreeComponent implements OnInit {
   @Input() selectedChapter;
   @Input() programContext;
   @Input() sessionContext;
+  @Input() originalCollectionData;
   @Input() level;
   @Output() emitSelectedNode = new EventEmitter<any>();
   @Output() nodeMeta = new EventEmitter<any>();
@@ -27,6 +28,7 @@ export class RecursiveTreeComponent implements OnInit {
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public sourcingOrgReviewer: boolean;
+  public nodeStatusMessage: string;
   constructor(public userService: UserService, public configService: ConfigService, private programsService: ProgramsService,
     public programTelemetryService: ProgramTelemetryService, public resourceService: ResourceService, public router: Router) { }
 
@@ -106,11 +108,13 @@ export class RecursiveTreeComponent implements OnInit {
     });
   }
 
-  previewResource(e, content, collection) {
+  previewResource(e, content, collection, origin, index) {
+    content.originUnitStatus = collection.statusMsg ? 'Retired' : collection.status;
     this.nodeMeta.emit({
       action: 'preview',
       content: content,
-      collection: collection
+      collection: collection,
+      originCollectionData: origin
     });
   }
 

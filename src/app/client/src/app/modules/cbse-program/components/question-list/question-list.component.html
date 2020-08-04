@@ -31,8 +31,7 @@
             >Edit</a>
           </div>
           <div class="mt-8 practice-set__status">
-            <span class="sb-label sb-label-table sb-label-success-0" *ngIf="!sourcingOrgReviewer"
-            [ngClass]="{ 'sb-label-success-0':  (resourceStatus === 'Live' && sourcingReviewStatus === 'Approved'), 'sb-label-warning-0': (resourceStatus === 'Draft'),  'sb-label-error-0': ((resourceStatus === 'Draft' && resourceDetails.rejectComment && resourceDetails.rejectComment !== '') || (resourceStatus === 'Live' && sourcingReviewStatus === 'Rejected')) ,  'sb-label-gray-0': ( resourceStatus === 'Review' || (resourceStatus === 'Live' && !sourcingReviewStatus))}">
+            <span class="sb-label sb-label-table" [ngClass]="resourceStatusClass">
               {{ resourceStatusText }}
             </span>
             <span class="cursor-pointer fs-0-785 ml-8"
@@ -105,14 +104,14 @@
           [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
           >{{isIndividualAndNotSample() ? 'Publish' : 'Submit' }}</button>
-          <button id="acceptContent" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentAcceptMessage}}" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live' && !sourcingReviewStatus" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="attachContentToTextbook('accept')"
+          <button id="acceptContent" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentAcceptMessage}}" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live' && !sourcingReviewStatus && (originCollectionData.status === 'Draft' && selectedOriginUnitStatus === 'Draft')" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="attachContentToTextbook('accept')"
           appTelemetryInteract
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('accept-content-for-textbook', 'click', 'question-list')"
             [telemetryInteractObject]="telemetryInteractObject"
             [telemetryInteractCdata]="telemetryInteractCdata"
             [telemetryInteractPdata]="telemetryInteractPdata"
           >{{resourceService.frmelmnts.btn.approve}}</button>
-          <button id="rejectContent" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentRejectMessage}}" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live' && !sourcingReviewStatus" class="sb-btn sb-btn-error sb-btn-normal" (click)="rejectBySourcingOrg = true; showRequestChangesPopup = true;"
+          <button id="rejectContent" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentRejectMessage}}" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live' && !sourcingReviewStatus && (originCollectionData.status === 'Draft' && selectedOriginUnitStatus === 'Draft')" class="sb-btn sb-btn-error sb-btn-normal" (click)="rejectBySourcingOrg = true; showRequestChangesPopup = true;"
           appTelemetryInteract
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-content-for-textbook', 'click', 'question-list')"
             [telemetryInteractObject]="telemetryInteractObject"
