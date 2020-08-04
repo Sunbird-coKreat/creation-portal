@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import * as _ from 'lodash-es';
-import { catchError, map, finalize } from 'rxjs/operators';
+import { catchError, map, finalize, tap } from 'rxjs/operators';
 import { throwError, forkJoin } from 'rxjs';
 import { IImpressionEventInput} from '@sunbird/telemetry';
 import { ContentService, ActionService, ProgramsService, UserService } from '@sunbird/core';
@@ -36,6 +36,7 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
   public filterData: any = {};
   public activeFilterData: any = {};
   public showAddedContent: Boolean = true;
+  public inViewLogs = [];
 
   constructor(
     public programTelemetryService: ProgramTelemetryService,
@@ -87,7 +88,8 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
           type: _.get(this.route, 'snapshot.data.telemetry.type'),
           pageid: _.get(this.route, 'snapshot.data.telemetry.pageid'),
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
-          duration: this.navigationHelperService.getPageLoadTime()
+          duration: this.navigationHelperService.getPageLoadTime(),
+          visits: this.inViewLogs,
         }
       };
     });
@@ -189,6 +191,7 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
       .subscribe((result: any) => {
         const level1Name = _.find(result, { name: 'level1Name' });
         this.filterData['chapter'] = _.map(level1Name['values'], 'name');
+        // this.activeFilterData['chapter'] = _.cloneDeep(this.filterData['chapter']);
         this.fetchContentList();
       });
   }
@@ -200,11 +203,12 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
       data: {
         request: {
           'filters': {
-            'textbookName': this.collectionData.name,
+            'textbook_name': this.collectionData.name,
             'status': [
               'live'
             ],
-            ...this.activeFilterData
+            ..._.pick(this.activeFilterData, ['medium', 'subject', 'gradeLevel', 'contentType']),
+            'level1Name' : this.activeFilterData.chapter ? _.get(this.activeFilterData, 'chapter') : undefined
           }
         }
       }
@@ -213,6 +217,9 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
       const errInfo = { errorMsg: 'Fetching content list failed' };
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     }),
+      tap(data => {
+        this.inViewLogs = [];
+      }),
       finalize(() => {
         this.skeletonLoader = false;
         if (_.isEmpty(this.contentList)) { this.openFilter(); }
@@ -271,8 +278,7 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
 
   onFilterChange(event: any) {
     if (event.action === 'filterDataChange') {
-      this.activeFilterData = _.assign(this.activeFilterData, event.filters);
-      // this.activeFilterData = _.omitBy(filtered, v => _.isEmpty(v));
+      this.activeFilterData = _.omitBy(_.assign(this.activeFilterData, event.filters), v => _.isEmpty(v));
       this.fetchContentList();
     } else if (event.action === 'filterStatusChange') {
       this.isFilterOpen = event.filterStatus;
@@ -289,8 +295,7 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
       case 'afterMove':
         this.showSelectResourceModal = false;
         this.childNodes.push(event.contentId);
-        // this.filterContentList(event.contentId);
-        this.filterContentList();
+        this.filterContentList(this.showAddedContent ? event.contentId : undefined);
         break;
       case 'cancelMove':
         this.showSelectResourceModal = false;
@@ -302,8 +307,25 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
         this.showAddedContent = event.status;
         this.filterContentList();
         break;
+      case 'contentVisits':
+        this.prepareVisits(event.visits);
+        break;
       default:
         break;
+    }
+  }
+
+  public prepareVisits(event) {
+    _.forEach(event, (content, index) => this.inViewLogs.push({
+      objid: content.identifier,
+      objtype: content.contentType,
+      objver : content.pkgVersion.toString(),
+      index: index
+    }));
+    if (this.telemetryImpression) {
+      this.telemetryImpression.edata.visits = this.inViewLogs;
+      this.telemetryImpression.edata.subtype = 'pageexit';
+      this.telemetryImpression = Object.assign({}, this.telemetryImpression);
     }
   }
 
@@ -340,6 +362,11 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
     obj[`level${index}Name`] = {
       value: tree.name
     };
+    if (!_.isEmpty(tree.topic)) {
+      obj[`level${index}Concept`] = {
+        value: tree.topic
+      };
+    }
     return obj;
   }
 

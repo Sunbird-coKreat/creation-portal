@@ -516,6 +516,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       parentId: node.parent || null,
       organisationId: _.has(node, 'organisationId') ? node.organisationId : null,
       prevStatus: node.prevStatus || null,
+      sourceURL : node.sourceURL,
       sampleContent: node.sampleContent || null,
       sharedContext: {
         ...sharedMeta
@@ -581,6 +582,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       } else if (creatorViewRole && this.currentUserID === content.createdBy) {
         return true;
       } else if (contributingOrgAdmin && content.organisationId === this.myOrgId) {
+        return true;
+      } else if (content.status === 'Live' && content.sourceURL) {
         return true;
       }
     }
