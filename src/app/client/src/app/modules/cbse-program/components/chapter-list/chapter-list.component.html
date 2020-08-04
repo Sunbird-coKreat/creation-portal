@@ -177,3 +177,32 @@
 				[telemetryInteractPdata]="telemetryInteractPdata"> No </button>
   </div>
 </sui-modal>
+
+
+<sui-modal *ngIf="showRemoveConfirmationModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
+  [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showRemoveConfirmationModal = false" #modal>
+  <div class="sb-modal-header">
+      {{resourceService.frmelmnts?.lbl?.confirm}}
+  </div>
+  <div class="sb-modal-content">
+      <div class="sb-publish-content">
+        <div class="review-modal-list">
+            {{resourceService.frmelmnts?.lbl?.libContentRemoveConfirm}}
+      </div>
+      </div>
+  </div>
+  <div class="sb-modal-actions">
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="removeMvcContentFromHierarchy()"
+    appTelemetryInteract
+				[telemetryInteractEdata]="getTelemetryInteractEdata('confirm-remove-content', 'click', 'chapter-list')"
+				[telemetryInteractObject]="telemetryInteractObject"
+				[telemetryInteractCdata]="telemetryInteractCdata"
+				[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts?.btn?.yes}}</button>
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showRemoveConfirmationModal = false"
+    appTelemetryInteract
+				[telemetryInteractEdata]="getTelemetryInteractEdata('cancel-remove-content', 'click', 'chapter-list')"
+				[telemetryInteractObject]="telemetryInteractObject"
+				[telemetryInteractCdata]="telemetryInteractCdata"
+				[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts?.btn?.no}} </button>
+  </div>
+</sui-modal>
