@@ -59,7 +59,7 @@
                 <th *ngIf="activeMyProgramsMenu && !iscontributeOrgAdmin" class="w-5 text-center">{{ resourceService?.frmelmnts?.lbl?.myRole }}</th>
                 <th class="w-5 text-center"> &nbsp;</th>
                 <th *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')" class="w-15 text-center"> &nbsp;</th>
-                <!-- <th class="w-5 text-center"> &nbsp; &nbsp; &nbsp;</th> -->
+                <th *ngIf="isContributor" class="w-5 text-center"> &nbsp; &nbsp; &nbsp;</th>
               </tr>
             </thead>
             <tbody class="sb-table-body">
