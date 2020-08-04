@@ -334,13 +334,15 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       const content = _.get(res, 'result.content');
       //  Set message for chapter
       await _.forEach(this.collectionData.children, (node, index) => {
-        if (_.findIndex(content.children, (item) => item.identifier === node.origin) < 0) {
+        if (_.findIndex(content.children, (item) => item.identifier === node.origin) < 0 && this.sourcingOrgReviewer) {
+          this.collectionHierarchy[index].statusMsg = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
+        } else if (content.status === 'Retired' && this.sourcingOrgReviewer) {
           this.collectionHierarchy[index].statusMsg = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
         }
       });
       this.originalCollectionData = content;
       // Check the status of textbook and set message
-      if (this.originalCollectionData.status !== 'Draft') {
+      if (this.originalCollectionData.status !== 'Draft' && this.sourcingOrgReviewer) {
         this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage;
       }
     }, error => console.log(console.error()
