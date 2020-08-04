@@ -141,8 +141,8 @@
                 </td>
                 <td>
                   <div *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')">
-                    <div *ngIf="program.status === 'Live' || program.status === 'Unlisted'" class="sb-color-success">{{program.status}}</div>
-                    <div *ngIf="program.status === 'Draft'" class="sb-color-gray-300">{{resourceService.frmelmnts.lbl.draft}}</div>
+                    <div *ngIf="program.status === 'Live' || program.status === 'Unlisted'" class="sb-color-success">{{resourceService?.frmelmnts?.lbl?.live}}</div>
+                    <div *ngIf="program.status === 'Draft'" class="sb-color-gray-300">{{resourceService?.frmelmnts?.lbl?.draft}}</div>
                   </div>
                 </td>
                 <td>
