@@ -153,7 +153,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
     this.acceptPdfType = this.getAcceptType(this.assetConfig.pdf.accepted, 'pdf');
-
     this.collectionListForm = this.sbFormBuilder.group({
       pcollections: this.sbFormBuilder.array([]),
       medium: [],
@@ -619,8 +618,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       }
 
       this.createProgramForm = this.sbFormBuilder.group(obj);
-
       this.defaultContributeOrgReviewChecked = _.get(this.programDetails, 'config.defaultContributeOrgReview') ? false : true;
+      this.fetchTexbooklist(false);
     } else {
       this.createProgramForm = this.sbFormBuilder.group({
         name: ['', [Validators.required, Validators.maxLength(100)]],
@@ -704,7 +703,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.collectionListForm.controls['medium'].setValue('');
     this.collectionListForm.controls['gradeLevel'].setValue('');
     this.collectionListForm.controls['subject'].setValue('');
-    this.showTexbooklist();
+    this.fetchTexbooklist();
   }
 
   handleContentTypes() {
@@ -773,7 +772,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programData['type'] = (!this.isOpenNominations) ? 'private' : 'public';
     this.programData['default_roles'] = ['CONTRIBUTOR'];
     this.programData['enddate'] = this.programData.program_end_date;
-    this.programData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : '';
+    // tslint:disable-next-line: max-line-length
+    this.programData['guidelines_url'] = (this.uploadedDocument) ? _.get(this.uploadedDocument, 'artifactUrl') : _.get(this.programDetails, 'guidelines_url');
     this.programData['status'] = this.editPublished ? 'Live' : 'Draft';
 
     if (!this.programData['nomination_enddate']) {
@@ -815,6 +815,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       );
     } else {
       if (!this.editPublished) {
+        this.programData['collection_ids'] = [];
         if (!_.isEmpty(this.collectionListForm.value.pcollections)) {
           const config = this.addCollectionsDataToConfig();
           this.programConfig['board'] = config.board;
@@ -822,8 +823,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           this.programConfig['medium'] = config.medium;
           this.programConfig['subject'] = config.subject;
           this.programConfig['collections'] = this.getCollections();
+          _.forEach(this.collectionListForm.value.pcollections, item => {
+            this.programData['collection_ids'].push(item.id);
+          });
         }
       }
+
       this.programData['config'] = this.programConfig;
       this.programData['program_id'] = this.programId;
       this.programsService.updateProgram(this.programData).subscribe(
@@ -854,7 +859,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       prgData['enddate'] = prgData.program_end_date;
       prgData['program_id'] = this.programId;
-      prgData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : this.programDetails.guidelines_url;
+      // tslint:disable-next-line: max-line-length
+      prgData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : _.get(this.programDetails, 'guidelines_url');
 
       delete prgData.program_end_date;
       delete prgData.content_types;
@@ -882,7 +888,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.validateDates();
   }
 
-  showTexbooklist() {
+  fetchTexbooklist(showTextBookSelector = true) {
     const requestData = {
       request: {
         filters: {
@@ -920,7 +926,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     return this.programsService.getCollectionList(requestData).subscribe(
       (res) => {
-        this.showTextBookSelector = true;
+        this.showTextBookSelector = showTextBookSelector;
         if (res.result.count) {
           this.collections = res.result.content;
           this.tempSortCollections = this.collections;
@@ -1286,7 +1292,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
         const cb = (error, resp) => {
           if (!error && resp) {
-            this.showTexbooklist();
+            this.fetchTexbooklist();
             ($event.target as HTMLButtonElement).disabled = false;
           } else {
             this.toasterService.error(this.resource.messages.emsg.m0005);
@@ -1296,7 +1302,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
         this.saveProgram(cb);
       } else if (this.createProgramForm.valid) {
-        this.showTexbooklist();
+        this.fetchTexbooklist();
       } else {
         this.formIsInvalid = true;
         this.validateAllFormFields(this.createProgramForm);
@@ -1325,7 +1331,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.toasterService.warning('Please select at least a one textbook');
       return false;
     }
-
 
     this.showPublishModal = true;
   }
