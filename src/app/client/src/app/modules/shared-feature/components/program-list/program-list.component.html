@@ -59,7 +59,7 @@
                 <th *ngIf="activeMyProgramsMenu && !iscontributeOrgAdmin" class="w-5 text-center">{{ resourceService?.frmelmnts?.lbl?.myRole }}</th>
                 <th class="w-5 text-center"> &nbsp;</th>
                 <th *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')" class="w-15 text-center"> &nbsp;</th>
-                <th class="w-5 text-center"> &nbsp; &nbsp; &nbsp;</th>
+                <!-- <th class="w-5 text-center"> &nbsp; &nbsp; &nbsp;</th> -->
               </tr>
             </thead>
             <tbody class="sb-table-body">
@@ -145,7 +145,7 @@
                     <div *ngIf="program.status === 'Draft'" class="sb-color-gray-300">{{resourceService?.frmelmnts?.lbl?.draft}}</div>
                   </div>
                 </td>
-                <td>
+                <td class="text-right">
                   <button *ngIf="(program.status === 'Live' || program.status === 'Unlisted')"
                     type="button"
                     class="sb-btn sb-btn-normal sb-btn-outline-primary mr-10"
@@ -156,15 +156,16 @@
                     [telemetryInteractCdata]="telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
 
-                    <div *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing') && program.status === 'Draft'" class="d-inline-block cursor-pointer" (click)="editOnClick(program)">
+                    <div *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing') && program.status === 'Draft'" class="d-inline-block cursor-pointer pr-30" (click)="editOnClick(program)">
                       <i class="icon edit sb-color-primary ui fs-0-92"></i>
                       <span class="sb-color-primary">{{resourceService.frmelmnts.lbl.editDraft}}</span>
                     </div>
-                </td>
-                <td *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')" class="px-0">
-                  <div class="sb-dock-icon-tooltip d-inline-block">
-                    <i *ngIf="program.status === 'Live' || program.status === 'Unlisted'" class="icon edit sb-color-primary cursor-pointer ui fs-0-785 px-10 va-text-sup" data-tooltip="Modify" (click)="editOnClick(program)"></i>
-                    <i class="icon trash sb-color-primary cursor-pointer ui fs-0-785 va-text-sup px-10" data-tooltip="Delete" (click)="setDelete(program, i)"></i>
+                
+                  <div *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')" class="px-0 d-inline-block">
+                    <div class="sb-dock-icon-tooltip d-inline-block">
+                      <i *ngIf="program.status === 'Live' || program.status === 'Unlisted'" class="icon edit sb-color-primary cursor-pointer ui fs-0-785 px-20 va-text-sup" data-tooltip="Modify" (click)="editOnClick(program)"></i>
+                      <i class="icon trash sb-color-primary cursor-pointer ui fs-0-785 va-text-sup px-10" data-tooltip="Delete" (click)="setDelete(program, i)"></i>
+                    </div>
                   </div>
                 </td>
               </tr>
