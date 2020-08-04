@@ -6,7 +6,6 @@
   <sui-checkbox class="toggle mb-10"  [(ngModel)]="showAddedContent" (checkChange)="onShowAddedContentChange();"
   appTelemetryInteract
   [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('show-added-content', 'click', 'library',{'showAddedContent':!showAddedContent})"
-  [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(undefined, 'Content', '1.0', {l1:sessionContext.collectionUnitId,l2: sessionContext.collection})"
   [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
   [telemetryInteractPdata]="sessionContext.telemetryInteractPdata">{{resourceService.frmelmnts.lbl.showContentAddedToTextbook}}</sui-checkbox>
   <!-- Class separator -->
@@ -17,7 +16,7 @@
       (click)="onContentChange(content);" [class.d-none]="content.isAdded && !showAddedContent"
       appTelemetryInteract
       [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('preview-content', 'click', 'library')"
-      [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', {l1:sessionContext.collectionUnitId,l2: sessionContext.collection})"
+      [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', {l1:sessionContext.collection,l2: sessionContext.collectionUnitId})"
       [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
       [telemetryInteractPdata]="sessionContext.telemetryInteractPdata">
       <!-- <div class="sbchapter__img"><img src="./assets/images/book.png" /></div> -->
@@ -32,7 +31,7 @@
         <button class="sb-btn sb-btn-xs sb-btn-dark-green sb-left-icon-btn font-weight-bold text-inherit" (click)="addToLibrary();" 
         appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('select-content', 'click', 'library')"
-        [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', {l1:sessionContext.collectionUnitId,l2: sessionContext.collection})"
+        [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', {l1:sessionContext.collection,l2: sessionContext.collectionUnitId})"
         [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
         [telemetryInteractPdata]="sessionContext.telemetryInteractPdata" >
           <i class="plus square icon mr-4"></i>{{resourceService.frmelmnts.lbl.addToTextbook}}
@@ -50,7 +49,6 @@
   <a class="sb-color-primary cursor-pointer font-weight-bold fs-0-785 text-inherit" (click)="changeFilter()"
   appTelemetryInteract
   [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('change-filter', 'click', 'library')"
-  [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(undefined, 'Content', '1.0', {l1:sessionContext.collectionUnitId,l2: sessionContext.collection})"
   [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
   [telemetryInteractPdata]="sessionContext.telemetryInteractPdata">{{resourceService.frmelmnts.lbl.changeFilters}}</a>
 </div>
