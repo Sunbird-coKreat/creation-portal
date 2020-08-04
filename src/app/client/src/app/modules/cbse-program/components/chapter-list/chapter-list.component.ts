@@ -76,6 +76,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   showError = false;
   public questionPattern: Array<any> = [];
   showConfirmationModal = false;
+  showRemoveConfirmationModal = false;
+  contentName: string;
   public userProfile: any;
   public sampleContent = false;
   public telemetryPageId = 'chapter-list';
@@ -684,6 +686,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         this.contentId = event.content.identifier;
         this.prevUnitSelect = event.collection.identifier;
         break;
+        case 'remove':
+          this.contentId = event.content.identifier;
+          this.contentName = event.content.name;
+          this.showRemoveConfirmationModal = true;
+          break;
       case 'afterMove':
         this.showLargeModal = false;
         this.unitIdentifier = '';
@@ -705,7 +712,17 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
     this.resourceTemplateInputData();
   }
-
+  removeMvcContentFromHierarchy() {
+    this.collectionHierarchyService.removeResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, this.contentId)
+       .subscribe(() => {
+         this.showRemoveConfirmationModal = false;
+         this.updateAccordianView(this.unitIdentifier);
+         this.resetContentId();
+         this.toasterService.success(_.replace(this.resourceService.messages.stmsg.m0147, '{CONTENT_NAME}', this.contentName));
+       }, (error) => {
+        this.toasterService.error(_.replace(this.resourceService.messages.emsg.m0078, '{CONTENT_NAME}', this.contentName));
+       });
+  }
   resourceTemplateInputData() {
     let contentTypes = _.get(this.chapterListComponentInput.config, 'config.contentTypes.value')
     || _.get(this.chapterListComponentInput.config, 'config.contentTypes.defaultValue');
