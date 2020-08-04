@@ -157,12 +157,19 @@ $sb-label-status-indicator-error-background: $tertiary-color;
 .sb-label-error {
     @include label-theme($danger-color);
 }
+.sb-color-gray {
+    @include label-theme($gray-100);
+}
 .sb-label-error-0 {
     @include label-theme($red-0);
     color: $red-400;
 }
 .sb-label-gray-0 {
     @include label-theme($gray-0);
+    color: $gray-400;
+}
+.sb-label-gray-100 {
+    @include label-theme($gray-100);
     color: $gray-400;
 }
 .sb-label-text-gray-0 {

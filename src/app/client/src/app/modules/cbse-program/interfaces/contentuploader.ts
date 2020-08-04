@@ -11,4 +11,6 @@ export interface IContentUploadComponentInput {
   programContext?: any;
   action?: string;
   sourcingStatus?: string;
+  originCollectionData?: any;
+  content?: any;
 }
