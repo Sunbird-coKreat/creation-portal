@@ -224,7 +224,6 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
       });
   }
 
-
   filterContentList(selectedContentId?) {
     if (_.isEmpty(this.contentList)) { return; }
     _.forEach(this.contentList, (value, key) => {
