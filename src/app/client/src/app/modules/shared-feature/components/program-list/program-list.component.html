@@ -148,7 +148,7 @@
                 <td class="text-right">
                   <button *ngIf="(program.status === 'Live' || program.status === 'Unlisted')"
                     type="button"
-                    class="sb-btn sb-btn-normal sb-btn-outline-primary mr-10"
+                    class="sb-btn sb-btn-normal sb-btn-outline-primary"
                     (click)="viewDetailsBtnClicked(program)"
                     appTelemetryInteract
                     [telemetryInteractEdata]="getTelemetryInteractEdata('view-detail', 'click', 'program-list')"
