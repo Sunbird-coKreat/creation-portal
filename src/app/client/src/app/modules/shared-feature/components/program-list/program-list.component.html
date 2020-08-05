@@ -120,8 +120,8 @@
                       <div class="status" [class.active]="isActive(program, 'enddate', i)">
                         <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.programEndDate }}</div>
                         <div class="status__date">
-                          {{ program?.enddate | date:'LLLL d, yyyy'  }}
-                          <em class="d-block" *ngIf="isActive(program, 'enddate', i)" [class.sb-color-warning]="isActive(program, 'enddate', i)">{{ program?.enddate | daysToGo  }}</em>
+                          {{ program?.enddate | date:'LLLL d, yyyy' }}
+                          <em class="d-block" *ngIf="isActive(program, 'enddate', i)" [class.sb-color-warning]="isActive(program, 'enddate', i)">{{ program?.enddate | daysToGo }}</em>
                         </div>
                       </div>
                     </div>
