@@ -92,9 +92,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     public telemetryService: TelemetryService, private cbseService: CbseProgramService,
     public toasterService: ToasterService, public router: Router, public frameworkService: FrameworkService,
     public programStageService: ProgramStageService, public programComponentsService: ProgramComponentsService,
-    public activeRoute: ActivatedRoute, private ref: ChangeDetectorRef,
-    private programsService: ProgramsService,
-    private httpClient: HttpClient,
+    public activeRoute: ActivatedRoute, private ref: ChangeDetectorRef, private httpClient: HttpClient,
     private collectionHierarchyService: CollectionHierarchyService, private resourceService: ResourceService,
     private navigationHelperService: NavigationHelperService, private helperService: HelperService,
     private programsService: ProgramsService) {
@@ -889,7 +887,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     if (status && status.length > 0) {
       contents = _.filter(contents, leaf => _.includes(status, leaf.status));
     }
-    const leaves = _.filter(contents, filter);
+    const leaves = _.concat(_.filter(contents, filter), _.filter(contents, 'sourceURL'));
     return leaves.length;
   }
 
