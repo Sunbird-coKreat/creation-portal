@@ -64,7 +64,7 @@ export class ProgramListComponent implements OnInit {
       const orgId = this.activatedRoute.snapshot.params.orgId;
 
       // Check if user part of that organisation
-      if (this.router.url.includes('/contribute/join/' + orgId)) {
+      if (this.router.url.includes('/join/' + orgId)) {
           this.programsService.addUsertoContributorOrg(orgId);
       }
       if (this.isContributorOrgUser()
