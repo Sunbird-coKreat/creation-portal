@@ -184,10 +184,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     } else {
       if (!_.isEmpty(this.collectionHierarchy)) { this.lastOpenedUnit(this.collectionHierarchy[0].identifier)}
     }
-    if (_.get(this.programContext, 'config.defaultContributeOrgReview') === false
-      && _.get(this.userService, 'userProfile.rootOrgId') === _.get(this.programContext,'rootorg_id')
-      && _.get(this.sessionContext, 'currentRole') === 'CONTRIBUTOR'
-      && this.sampleContent === false) {
+    if (this.isPublishOrSubmit() && this.isContributingOrgContributor() && this.isDefaultContributingOrg()) {
       this.sessionContext.currentOrgRole = 'individual';
     }
   }
@@ -334,11 +331,19 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     const originUrl = this.programsService.getContentOriginEnvironment();
     const url =  originUrl + hierarchyUrl ;
 
-    return this.httpClient.get(url).subscribe(res => {
+    return this.httpClient.get(url).subscribe(async res => {
       const content = _.get(res, 'result.content');
+      //  Set message for chapter
+      await _.forEach(this.collectionData.children, (node, index) => {
+        if (_.findIndex(content.children, (item) => item.identifier === node.origin) < 0 && this.sourcingOrgReviewer) {
+          this.collectionHierarchy[index].statusMsg = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
+        } else if (content.status === 'Retired' && this.sourcingOrgReviewer) {
+          this.collectionHierarchy[index].statusMsg = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
+        }
+      });
       this.originalCollectionData = content;
       // Check the status of textbook and set message
-      if (this.originalCollectionData.status !== 'Draft') {
+      if (this.originalCollectionData.status !== 'Draft' && this.sourcingOrgReviewer) {
         this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage;
       }
     }, error => console.log(console.error()
@@ -907,5 +912,17 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   isContributingOrgReviewer() {
     const reviewers = _.get(this.sessionContext, 'nominationDetails.rolemapping.REVIEWER');
     return !_.isEmpty(reviewers) && _.includes(reviewers, _.get(this.userService, 'userProfile.userId'));
+  }
+
+  isPublishOrSubmit() {
+    return !!(_.get(this.programContext, 'config.defaultContributeOrgReview') === false
+    && _.get(this.sessionContext, 'currentRole') === 'CONTRIBUTOR'
+    && this.sampleContent === false);
+  }
+
+  isDefaultContributingOrg() {
+    return !!(this.userService.userProfile.userRegData
+      && this.userService.userProfile.userRegData.Org
+      && this.programContext.sourcing_org_name === this.userService.userProfile.userRegData.Org.name);
   }
 }
