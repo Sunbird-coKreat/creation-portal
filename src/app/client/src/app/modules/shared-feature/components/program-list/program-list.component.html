@@ -57,7 +57,7 @@
                   </span>
                 </th>
                 <th *ngIf="activeMyProgramsMenu && !iscontributeOrgAdmin" class="w-5 text-center">{{ resourceService?.frmelmnts?.lbl?.myRole }}</th>
-                <th class="w-5 text-center"> &nbsp;</th>
+                <th *ngIf="this.router.url.includes('/sourcing')" class="w-5 text-center"> &nbsp;</th>
                 <th *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')" class="w-30 text-center"> &nbsp;</th>
                 <th *ngIf="isContributor" class="w-5 text-center"> &nbsp; &nbsp; &nbsp;</th>
               </tr>
@@ -139,11 +139,9 @@
                 <td *ngIf="activeMyProgramsMenu && !iscontributeOrgAdmin" class="text-center">
                   <div>{{ getMyProgramRole(program) }}</div>
                 </td>
-                <td>
-                  <div *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')">
+                <td *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')">
                     <div *ngIf="program.status === 'Live' || program.status === 'Unlisted'" class="sb-color-success">{{resourceService?.frmelmnts?.lbl?.live}}</div>
                     <div *ngIf="program.status === 'Draft'" class="sb-color-gray-300">{{resourceService?.frmelmnts?.lbl?.draft}}</div>
-                  </div>
                 </td>
                 <td class="text-center">
                   <button *ngIf="(program.status === 'Live' || program.status === 'Unlisted')"
