@@ -388,6 +388,11 @@ top: -4px;
     width: 11rem;
   }
 }
+.sb-count{
+  padding-right: 5rem;
+  text-align: right;
+}
+
 // Progress Circle
 $progressCircle:
 xs calculateRem(16px) 4px 10px,
@@ -395,8 +400,7 @@ sm calculateRem(24px) 6px 10px,
 md calculateRem(40px) 12px 10px,
 lg calculateRem(56px) 16px 14px,
 xl calculateRem(72px) 20px 18px,
-xxl calculateRem(88px) 24px 20px,
-xlarge calculateRem(160px) 16px 16px;
+xxl calculateRem(88px) 24px 20px;
 @each $size, $shapeSize, $strokeSize, $fontSize in $progressCircle {
   .progress-circle--#{$size} {
     height: $shapeSize;
@@ -463,8 +467,4 @@ xlarge calculateRem(160px) 16px 16px;
       }
     }
   }
-
-  .sb-count{
-    padding-right: 5rem;
-    text-align: right;
-  }
+}
