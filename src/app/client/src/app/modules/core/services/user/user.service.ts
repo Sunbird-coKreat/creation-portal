@@ -170,13 +170,13 @@ export class UserService {
           this.timeDiff = data.ts;
         }
 
-        if (this.location.path().includes('/sourcing')) {
+        /*if (this.location.path().includes('/sourcing')) {
           this.setUserProfile(data);
-        } else {
+        } else {*/
           this.openSaberRegistrySearch().then((userRegData) => {
             this.setUserProfile(data, userRegData);
           });
-        }
+        //}
       },
       (err: ServerResponse) => {
         this._userData$.next({ err: err, userProfile: this._userProfile });

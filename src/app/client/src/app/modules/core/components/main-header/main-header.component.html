@@ -130,6 +130,12 @@
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.manageUsers }}</a>
+                    <a routerLink="sourcing/orglist" *ngIf="router.url.includes('/sourcing') && !router.url.includes('/contribute/help') && sourcingOrgAdmin" [class.active]="activeTab['manageUsers']" (click)="handleActiveTabState('manageUsers')"
+                    appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('manage-users', 'click', 'main-header')"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.manageUsers }}</a>
       <span class="computer only mx-10 search-qrcode-divider" *ngIf="router.url.includes('/contribute') && !router.url.includes('/contribute/help') && router.url.includes('/sourcing') && !router.url.includes('/sourcing/help')">|</span>
                     <a class="sb-btn sb-btn-normal sb-btn-orange-link ml-10 py-0 px-10 fs-0-92 font-weight-bold text-inherit" target="_blank"
                     *ngIf="(router.url.includes('/contribute') && !router.url.includes('/contribute/help')) || (router.url.includes('/sourcing') && !router.url.includes('/sourcing/help'))"
