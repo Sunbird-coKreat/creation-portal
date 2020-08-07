@@ -619,7 +619,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       this.createProgramForm = this.sbFormBuilder.group(obj);
       this.defaultContributeOrgReviewChecked = _.get(this.programDetails, 'config.defaultContributeOrgReview') ? false : true;
-      this.fetchTexbooklist(false);
+      this.showTexbooklist(false);
     } else {
       this.createProgramForm = this.sbFormBuilder.group({
         name: ['', [Validators.required, Validators.maxLength(100)]],
@@ -703,7 +703,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.collectionListForm.controls['medium'].setValue('');
     this.collectionListForm.controls['gradeLevel'].setValue('');
     this.collectionListForm.controls['subject'].setValue('');
-    this.fetchTexbooklist();
+    this.showTexbooklist();
   }
 
   handleContentTypes() {
@@ -888,7 +888,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.validateDates();
   }
 
-  fetchTexbooklist(showTextBookSelector = true) {
+  showTexbooklist(showTextBookSelector = true) {
     const requestData = {
       request: {
         filters: {
@@ -1292,7 +1292,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
         const cb = (error, resp) => {
           if (!error && resp) {
-            this.fetchTexbooklist();
+            this.showTexbooklist();
             ($event.target as HTMLButtonElement).disabled = false;
           } else {
             this.toasterService.error(this.resource.messages.emsg.m0005);
@@ -1302,7 +1302,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
         this.saveProgram(cb);
       } else if (this.createProgramForm.valid) {
-        this.fetchTexbooklist();
+        this.showTexbooklist();
       } else {
         this.formIsInvalid = true;
         this.validateAllFormFields(this.createProgramForm);
