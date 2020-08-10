@@ -335,10 +335,11 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       }
     };
     this.programsService.post(req).subscribe((data) => {
+      this.showDashboardLoader =  false;
+
       if (data.result && data.result.length > 0) {
         const filteredArr = _.filter(data.result, (obj) => obj.userData);
         this.getDashboardData(filteredArr);
-        this.showDashboardLoader =  false;
        /* _.forEach(data.result, (res) => {
             this.nominatedContentTypes = _.concat(this.nominatedContentTypes, res.content_types);
         });*/
@@ -864,6 +865,8 @@ this.programsService.post(req).subscribe((data) => {
           }
         });
         this.getSampleContent();
+      } else {
+        this.showNominationLoader = false;
       }
       this.tempNominations = _.cloneDeep(this.nominations);
   }, error => {
