@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, Output, OnChanges, OnDestroy, ChangeDetectorRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, OnChanges, OnDestroy, ChangeDetectorRef, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { PublicDataService, UserService, ActionService, FrameworkService, ProgramsService } from '@sunbird/core';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService } from '@sunbird/shared';
 import { TelemetryService, IInteractEventEdata , IImpressionEventInput} from '@sunbird/telemetry';
@@ -6,7 +6,7 @@ import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
 import { CbseProgramService } from '../../services';
 import { map, catchError, first } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { throwError, Observable } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   IChapterListComponentInput, ISessionContext,
@@ -18,6 +18,8 @@ import { InitialState } from '../../interfaces';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { HelperService } from '../../services/helper.service';
 import { HttpClient } from '@angular/common/http';
+import { FineUploader } from 'fine-uploader';
+import CSVFileValidator from './csv-helper.js';
 
 interface IDynamicInput {
   contentUploadComponentInput?: IContentUploadComponentInput;
@@ -35,6 +37,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   @Input() chapterListComponentInput: IChapterListComponentInput;
   @Output() selectedQuestionTypeTopic = new EventEmitter<any>();
+  @ViewChild('fineUploaderUI') fineUploaderUI: ElementRef;
 
   public sessionContext: ISessionContext;
   public role: any;
@@ -56,7 +59,23 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public sharedContext: Array<string>;
   public currentStage: any;
   public selectedSharedContext: any;
-  showBulkUploadModal=false; 
+  public showBulkUploadModal = false;
+  public bulkUploadState = 0;
+  public bulkUploadLastUpdated = false;
+  public bulkUploadInProgress = false;
+  public loading = false;
+  assetConfig: any = {
+    csv: {
+      accepted : 'csv, xlsx, xls',
+      size: 50
+    }
+  };
+  uploader;
+  showErrorMsg = false;
+  public bulkUploadErrorMsgs = [];
+  public bulkUploadValidationError = '';
+  sampleMetadataCsvUrl = 'https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/assets/do_113080836281720832112688/google.pdf';
+
   public state: InitialState = {
     stages: []
   };
@@ -96,6 +115,144 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     private httpClient: HttpClient,
     private collectionHierarchyService: CollectionHierarchyService, private resourceService: ResourceService,
     private navigationHelperService: NavigationHelperService, private helperService: HelperService) {
+  }
+
+  initiateDocumentUploadModal() {
+    this.loading = false;
+    this.bulkUploadValidationError = '';
+    this.bulkUploadErrorMsgs = [];
+    return setTimeout(() => {
+      this.initiateUploadModal();
+    }, 0);
+  }
+
+  initiateUploadModal() {
+    this.uploader = new FineUploader({
+      element: document.getElementById('upload-document-div'),
+      template: 'qq-template-validation',
+      multiple: false,
+      autoUpload: false,
+      request: {
+        endpoint: '/assets/uploads'
+      },
+      validation: {
+        allowedExtensions: this.assetConfig.csv.accepted.split(', '),
+        acceptFiles: ['text/csv', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+        itemLimit: 1,
+        sizeLimit: _.toNumber(this.assetConfig.csv.size) * 1024 * 1024  // Convert into MB
+      },
+      messages: {
+        sizeError: `{file} is too large, maximum file size is ${this.assetConfig.csv.size} MB.`,
+        typeError: `Invalid content type (supported type: ${this.assetConfig.csv.accepted})`
+      },
+      callbacks: {
+        onStatusChange: () => {},
+        onSubmit: () => {
+          this.uploadContent();
+        },
+        onError: () => {
+          this.uploader.reset();
+        }
+      }
+    });
+    this.fineUploaderUI.nativeElement.remove();
+  }
+
+  uploadContent() {
+    const file = this.uploader.getFile(0);
+    if (file == null) {
+      this.toasterService.error('File is required to upload');
+      this.uploader.reset();
+      return;
+    }
+
+    this.bulkUploadState = 3;
+    const headerError = (headerName) => {
+      this.setError(_.get(this.resourceService, 'frmelmnts.lbl.bulkUploadColumnsNotFound'), headerName);
+    }
+    const requiredError = (headerName, rowNumber, columnNumber) => {
+      this.setError(_.get(this.resourceService, 'frmelmnts.lbl.bulkUploadRowValuesMissing'), `${headerName} at row: ${rowNumber}`);
+    }
+    const uniqueError = (headerName, rowNumber, columnNumber, value) => {
+      this.setError(_.get(this.resourceService, 'frmelmnts.lbl.bulkUploadDuplicateLinks'), `Row: ${rowNumber}, value: ${value}`);
+    }
+    const groupError = (group, rowNumber) => {
+      const names = CSVConfig.headers.filter(header => header.group).map(header => header.name).toString();
+      this.setError(_.get(this.resourceService, 'frmelmnts.lbl.bulkUploadNoGroupValuesFound'), `${group}(${names}) at row: ${rowNumber}`);
+    }
+
+    const CSVConfig = {
+      headers: [
+          { name: 'Name', inputName: 'contentName', required: true, requiredError, headerError },
+          { name: 'Description', inputName: 'contentDescription' },
+          { name: 'Keywords', inputName: 'keywords', isArray: true },
+          { name: 'Audience', inputName: 'audience', required: true, requiredError, headerError },
+          { name: 'Author', inputName: 'author', required: true, requiredError, headerError },
+          { name: 'Copyright', inputName: 'copyright', required: true, requiredError, headerError },
+          { name: 'License', inputName: 'license' },
+          { name: 'Attributions', inputName: 'attributions', isArray: true },
+          { name: 'Icon', inputName: 'iconPath', required: true, requiredError, headerError },
+          { name: 'Format', inputName: 'fileFormat', required: true, requiredError, headerError },
+          { name: 'File', inputName: 'filePath', required: true, requiredError, headerError, unique: true, uniqueError},
+          { name: 'ContentTypes', inputName: 'contentTypes', required: true, requiredError, headerError, isArray: true },
+          { name: 'Level1', inputName: 'level1', group: 'level'},
+          { name: 'Level2', inputName: 'level2', group: 'level'},
+          { name: 'Level3', inputName: 'level3', group: 'level'},
+          { name: 'Level4', inputName: 'level4', group: 'level'},
+      ],
+      groupsError: {
+        level: groupError
+      },
+      maxRows: 300,
+      maxRowsError: (maxRows, actualRows) => {
+        this.setError(_.get(this.resourceService, 'frmelmnts.lbl.bulkUploadErrorMessage'), `Expected max ${maxRows} rows but found ${actualRows} rows in the file`);
+      },
+      minRows: 1,
+      minRowsError: (minRows, actualRows) => {
+        this.setError(_.get(this.resourceService, 'frmelmnts.lbl.bulkUploadErrorMessage'), `Expected min ${minRows} rows but found ${actualRows} rows in the file`);
+      },
+      noRowsError: () => {
+        this.setError(_.get(this.resourceService, 'frmelmnts.lbl.bulkUploadNoRowsFound'), `Empty rows in the file`);
+      },
+    }
+
+    CSVFileValidator(file, CSVConfig)
+        .then(csvData => {
+          console.log('csvData', csvData);
+            if (this.bulkUploadValidationError) {
+              this.uploader.reset();
+              this.bulkUploadState = 4;
+              return;
+            }
+            this.bulkUploadInProgress = true;
+            setTimeout(() => {
+              this.uploadCsvFile(file, csvData);
+            }, 2000);
+        })
+        .catch(err => {
+          this.uploader.reset();
+          console.log(err)
+        })
+
+    // this.uploadDocument();
+  }
+
+  viewDetails($event) {
+    $event.preventDefault();
+    this.showBulkUploadModal = true;
+    this.bulkUploadState = 5;
+  }
+
+  uploadCsvFile(file, csvData) {
+    this.bulkUploadState = 5;
+    setTimeout(() => {
+      this.bulkUploadState = 6;
+    }, 2000);
+  }
+
+  setError(text, message) {
+    this.bulkUploadValidationError = text;
+    this.bulkUploadErrorMsgs.push(message);
   }
 
   ngOnInit() {
@@ -205,6 +362,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         console.log('Getting origin data failed');
     });
   }
+
   public fetchFrameWorkDetails() {
     this.frameworkService.initialize(this.sessionContext.framework);
     this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
@@ -265,6 +423,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       this.resetContentId();
     }
   }
+
   public resetContentId() {
     this.contentId = '';
   }
@@ -561,7 +720,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     return _.isEmpty(leafNodes) ? null : leafNodes;
   }
 
-
   checkSourcingStatus(content) {
     if (this.storedCollectionData.acceptedContents  &&
          _.includes(this.storedCollectionData.acceptedContents || [], content.identifier)) {
@@ -805,6 +963,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
          this.toasterService.success(this.resourceService.messages.smsg.m0064);
        });
   }
+
   deleteContent() {
     this.helperService.retireContent(this.contentId)
       .subscribe(
@@ -850,7 +1009,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     collection.totalLeaf += collection.leaf ? this.filterContentsForCount(collection.leaf, contentStatus, onlySample, organisationId, createdBy, visibility) : 0;
     return collection.totalLeaf;
   }
-
 
   filterContentsForCount (contents, status?, onlySample?, organisationId?, createdBy?, visibility?) {
     const filter = {
@@ -924,5 +1082,31 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     return !!(this.userService.userProfile.userRegData
       && this.userService.userProfile.userRegData.Org
       && this.programContext.sourcing_org_name === this.userService.userProfile.userRegData.Org.name);
+  }
+
+  openBulkUploadModal() {
+    this.showBulkUploadModal = true;
+    this.bulkUploadLastUpdated = true;
+    this.updateBulkUploadState('increment');
+  }
+
+  closeBulkUploadModal() {
+    this.showBulkUploadModal = false;
+    this.bulkUploadLastUpdated = false;
+    this.bulkUploadState = 0;
+    this.uploader.reset();
+  }
+
+  updateBulkUploadState(action) {
+    if (this.bulkUploadState === 6 && action === 'increment') {
+      return this.closeBulkUploadModal();
+    }
+    if (this.bulkUploadState === 4 && action === 'decrement') {
+      this.bulkUploadState = 3;
+    }
+    this.bulkUploadState += (action === 'increment') ? 1 : -1;
+    if (this.bulkUploadState === 2) {
+      this.initiateDocumentUploadModal();
+    }
   }
 }

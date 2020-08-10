@@ -369,9 +369,10 @@ top: -4px;
 }
 .sb-success-loader{
     position: absolute !important;
-    top: 30% !important;
-    left: 81% !important ;
-    transform: translate(-30%, -81%)!important;
+    position: absolute !important;
+    top: 46% !important;
+    left: 50% !important;
+    transform: translate(-46%, -50%) !important; 
     &:after{
       width: 1.2rem !important;
       height: 1.2rem !important;
@@ -392,6 +393,11 @@ top: -4px;
   padding-right: 5rem;
   text-align: right;
 }
+.relative{
+  .sb-success-loader{
+    left: -16% !important;
+  }
+}
 
 // Progress Circle
 $progressCircle:
@@ -400,7 +406,7 @@ sm calculateRem(24px) 6px 10px,
 md calculateRem(40px) 12px 10px,
 lg calculateRem(56px) 16px 14px,
 xl calculateRem(72px) 20px 18px,
-xxl calculateRem(88px) 24px 20px;
+xxl calculateRem(180px) 24px 20px;
 @each $size, $shapeSize, $strokeSize, $fontSize in $progressCircle {
   .progress-circle--#{$size} {
     height: $shapeSize;
@@ -426,10 +432,13 @@ xxl calculateRem(88px) 24px 20px;
     left: 50%;
     transform: translate(-50%, -50%);
   }
+  text{
+    fill: var(--secondary-200);
+  }
   &__svg {
     border-radius: 50%;
     height: 100%;
-    transform: scaleX(-1) rotate(-90deg);
+    transform: scaleX(1) rotate(0deg);
     width: 100%;
   }
   &__stroke {
@@ -439,7 +448,7 @@ xxl calculateRem(88px) 24px 20px;
       stroke: var(--secondary-200);
     }
     &:nth-child(2) {
-      stroke: var(--gray-100);
+      stroke: var(--secondary-0);
       stroke-dasharray: 314.1592%;
     }
   }
