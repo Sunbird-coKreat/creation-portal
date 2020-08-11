@@ -454,6 +454,7 @@ export class ProgramListComponent implements OnInit {
       filters['rootorg_id'] = _.get(this.userService, 'userProfile.rootOrgId');
       filters['status'] = ['Live', 'Unlisted', 'Draft']
     } else {
+      filters['status'] = ['Live', 'Unlisted']
       filters['role'] = ['REVIEWER'];
       filters['user_id'] = this.userService.userProfile.userId;
     }
