@@ -1021,6 +1021,9 @@
     "chapterCount": {
       "type": "number"
     },
+    "mvcContentCount": {
+      "type": "number"
+    },
     "sourcingRejectedComments": {
       "type": "object"
     },
