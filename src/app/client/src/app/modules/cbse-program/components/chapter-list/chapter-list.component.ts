@@ -285,7 +285,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     }))
       .subscribe((response) => {
-        let children = [];
+        const children = [];
         _.forEach(response.result.content.children, (child) => {
           if (child.mimeType !== 'application/vnd.ekstep.content-collection' ||
           (child.mimeType === 'application/vnd.ekstep.content-collection' && child.openForContribution === true)) {
@@ -847,6 +847,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
     // tslint:disable-next-line:max-line-length
     collection.totalLeaf += collection.leaf ? this.filterContentsForCount(collection.leaf, contentStatus, onlySample, organisationId, createdBy, visibility) : 0;
+    if (collection.leaf) {
+      collection.sourcingStatus = this.setUnitContentsStatusCount(collection.leaf);
+    }
     return collection.totalLeaf;
   }
 
@@ -864,6 +867,82 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
     const leaves = _.filter(contents, filter);
     return leaves.length;
+  }
+
+  setUnitContentsStatusCount(contents) {
+    const contentStatusCount = [];
+    if (this.isSourcingOrgReviewer()) {
+      contentStatusCount['approved'] = 0;
+      contentStatusCount['rejected'] = 0;
+      contentStatusCount['approvalPending'] = 0;
+      _.forEach(contents, (content) => {
+        if (content.sourcingStatus === 'Approved') {
+          contentStatusCount['approved'] += 1;
+        } else if (content.sourcingStatus === 'Rejected') {
+          contentStatusCount['rejected'] += 1;
+        } else if (content.sourcingStatus === null && content.prevStatus === 'Processing') {
+          contentStatusCount['approvalPending'] += 1;
+        }
+      });
+    } else if (this.isContributingOrgAdmin() || this.isContributingOrgReviewer()) {
+      contentStatusCount['notAccepted'] = 0;
+      contentStatusCount['approvalPending'] = 0;
+      contentStatusCount['reviewPending'] = 0;
+      contentStatusCount['draft'] = 0;
+      contentStatusCount['rejected'] = 0;
+      contentStatusCount['approved'] = 0;
+      _.forEach(contents, (content) => {
+        if (content.status === 'Draft' && content.prevStatus === 'Review') {
+          contentStatusCount['notAccepted'] += 1;
+        } else if (content.status === 'Live' && !content.sourcingStatus) {
+          contentStatusCount['approvalPending'] += 1;
+        } else if (content.status === 'Review') {
+          contentStatusCount['reviewPending'] += 1;
+        } else if (content.status === 'Draft' && content.prevStatus === null) {
+          contentStatusCount['draft'] += 1;
+        } else if (content.sourcingStatus === 'Approved' && content.status === 'Live') {
+          contentStatusCount['approved'] += 1;
+        } else if (content.sourcingStatus === 'Rejected' && content.status === 'Live') {
+          contentStatusCount['rejected'] += 1;
+        }
+      });
+    } else if (this.isContributingOrgContributor()) {
+      contentStatusCount['notAccepted'] = 0;
+      contentStatusCount['approvalPending'] = 0;
+      contentStatusCount['reviewPending'] = 0;
+      contentStatusCount['rejected'] = 0;
+      contentStatusCount['approved'] = 0;
+      _.forEach(contents, (content) => {
+        if (content.status === 'Draft' && content.prevStatus === 'Review') {
+          contentStatusCount['notAccepted'] += 1;
+        } else if (content.status === 'Live' && !content.sourcingStatus) {
+          contentStatusCount['approvalPending'] += 1;
+        } else if (content.status === 'Review') {
+          contentStatusCount['reviewPending'] += 1;
+        } else if (content.sourcingStatus === 'Approved' && content.status === 'Live') {
+          contentStatusCount['approved'] += 1;
+        } else if (content.sourcingStatus === 'Rejected' && content.status === 'Live') {
+          contentStatusCount['rejected'] += 1;
+        }
+      });
+    } else if (this.sessionContext.currentRole === 'individual') {
+      contentStatusCount['approvalPending'] = 0;
+      contentStatusCount['draft'] = 0;
+      contentStatusCount['rejected'] = 0;
+      contentStatusCount['approved'] = 0;
+      _.forEach(contents, (content) => {
+        if (content.status === 'Live' && !content.sourcingStatus) {
+          contentStatusCount['approvalPending'] += 1;
+        } else if (content.status === 'Review') {
+          contentStatusCount['reviewPending'] += 1;
+        } else if (content.sourcingStatus === 'Approved' && content.status === 'Live') {
+          contentStatusCount['approved'] += 1;
+        } else if (content.sourcingStatus === 'Rejected' && content.status === 'Live') {
+          contentStatusCount['rejected'] += 1;
+        }
+      });
+    }
+    return contentStatusCount;
   }
 
   isNominationByOrg() {
