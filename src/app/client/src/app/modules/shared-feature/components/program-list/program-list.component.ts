@@ -86,7 +86,7 @@ export class ProgramListComponent implements OnInit {
           this.showLoader = false;
         }
       } else {
-        this.getMyProgramsForOrg(['Live', 'Unlisted', 'Draft']);
+        this.getMyProgramsForOrg();
       }
   }
 
@@ -447,16 +447,21 @@ export class ProgramListComponent implements OnInit {
   /**
    * fetch the list of programs.
    */
-  private getMyProgramsForOrg(status) {
-    const filters = {
-      rootorg_id: _.get(this.userService, 'userProfile.rootOrgId'),
-      status: status
-    };
-    // tslint:disable-next-line:max-line-length
-    if (!_.includes(this.userService.userProfile.userRoles, 'ORG_ADMIN') && _.includes(this.userService.userProfile.userRoles, 'CONTENT_REVIEWER')) {
-       filters['role'] = ['REVIEWER'];
-       filters['user_id'] = this.userService.userProfile.userId;
+  private getMyProgramsForOrg() {
+    const filters = {};
+
+    if (this.isSourcingOrgAdmin()) {
+      filters['rootorg_id'] = _.get(this.userService, 'userProfile.rootOrgId');
+      filters['status'] = ['Live', 'Unlisted', 'Draft']
+    } else {
+      filters['status'] = ['Live', 'Unlisted']
+      filters['role'] = ['REVIEWER'];
+      filters['user_id'] = this.userService.userProfile.userId;
     }
+    // tslint:disable-next-line:max-line-length
+    /*if (!_.includes(this.userService.userProfile.userRoles, 'ORG_ADMIN') && _.includes(this.userService.userProfile.userRoles, 'CONTENT_REVIEWER')) {
+
+    }*/
     return this.programsService.getMyProgramsForOrg(filters).subscribe((response) => {
       this.programs = _.get(response, 'result.programs');
       this.count = _.get(response, 'result.count');

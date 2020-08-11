@@ -1,6 +1,6 @@
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService, PaginationService } from '@sunbird/shared';
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
-import { ProgramsService, UserService, FrameworkService } from '@sunbird/core';
+import { ProgramsService, UserService, FrameworkService, RegistryService } from '@sunbird/core';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ISessionContext, InitialState, IPagination} from '../../../cbse-program/interfaces';
@@ -98,7 +98,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
      private activatedRoute: ActivatedRoute, private router: Router,
     private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService,
     public programStageService: ProgramStageService, private datePipe: DatePipe, private paginationService: PaginationService,
-    public programTelemetryService: ProgramTelemetryService) {
+    public programTelemetryService: ProgramTelemetryService, public registryService: RegistryService) {
     this.userProfile = this.userService.userProfile;
     this.programId = this.activatedRoute.snapshot.params.programId;
   }
@@ -249,7 +249,17 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   getsourcingOrgReviewers (offset?, iteration?) {
-    if (!isDefined(iteration) || iteration === 0) {
+    this.registryService.getcontributingOrgUsersDetails(true).then((orgUsers) => {
+      this.paginatedSourcingUsers = orgUsers;
+      this.sourcingOrgUserCnt = this.paginatedSourcingUsers.length;
+      this.readRolesOfOrgUsers();
+      this.paginatedSourcingUsers = this.programsService.sortCollection(this.paginatedSourcingUsers, 'selectedRole', 'desc');
+      this.paginatedSourcingUsers = _.chunk( this.paginatedSourcingUsers, this.pageLimit);
+      this.sourcingOrgUser = this.paginatedSourcingUsers[this.pageNumber - 1];
+      this.pagerUsers = this.paginationService.getPager(this.sourcingOrgUserCnt, this.pageNumberUsers, this.pageLimit);
+      this.showUsersLoader = false;
+    });
+    /*if (!isDefined(iteration) || iteration === 0) {
       iteration = 0;
       this.paginatedSourcingUsers = [];
       this.sourcingOrgUser = [];
@@ -280,7 +290,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           this.showUsersLoader = false;
         }
       },
-    );
+    );*/
   }
 
   /**
