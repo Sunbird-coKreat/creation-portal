@@ -53,7 +53,7 @@ export class ProgramsService extends DataService implements CanActivate {
     public cacheService: CacheService) {
       super(http);
       this.config = config;
-      this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;
+      this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;//"http://localhost:6000/";//
     }
 
   /**
@@ -596,19 +596,7 @@ export class ProgramsService extends DataService implements CanActivate {
         request
       }
     };
-    return this.API_URL(req).pipe(tap((res) => {
-      if (res.result.program_id) {
-        const programId = res.result.program_id;
-        if (request.status === 'Live' || request.status === 'Unlisted') {
-        this.userService.openSaberRegistrySearch().then((userRegData) => {
-            this.userService.userProfile.userRegData = userRegData;
-          if (!this.userService.userProfile.userRegData.User || !this.userService.userProfile.userRegData.User_Org) {
-            this.enableContributorProfileForSourcing();
-          }
-        });
-        }
-      }
-    }));
+    return this.API_URL(req);
   }
 
   publishProgram(request) {
@@ -616,16 +604,7 @@ export class ProgramsService extends DataService implements CanActivate {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.PUBLISH}`,
       data: request
     };
-    return this.API_URL(req).pipe(tap((res) => {
-      if (res.result.program_id) {
-        this.userService.openSaberRegistrySearch().then((userRegData) => {
-            this.userService.userProfile.userRegData = userRegData;
-          //if (!this.userService.userProfile.userRegData.User || !this.userService.userProfile.userRegData.User_Org) {
-            this.enableContributorProfileForSourcing();
-          //}
-        });
-      }
-    }));
+    return this.API_URL(req);
   }
 
   unlistPublishProgram(request) {
@@ -633,17 +612,7 @@ export class ProgramsService extends DataService implements CanActivate {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.UNLIST_PUBLISH}`,
       data: request
     };
-    return this.API_URL(req).pipe(tap((res) => {
-      if (res.result.program_id) {
-
-        this.userService.openSaberRegistrySearch().then((userRegData) => {
-            this.userService.userProfile.userRegData = userRegData;
-          if (!this.userService.userProfile.userRegData.User || !this.userService.userProfile.userRegData.User_Org) {
-            this.enableContributorProfileForSourcing();
-          }
-        });
-      }
-    }));
+    return this.API_URL(req);
   }
 
   updateNomination(request) {
