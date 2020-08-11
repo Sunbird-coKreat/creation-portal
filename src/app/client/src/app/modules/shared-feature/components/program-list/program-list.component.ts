@@ -86,7 +86,11 @@ export class ProgramListComponent implements OnInit {
           this.showLoader = false;
         }
       } else {
-        this.getMyProgramsForOrg(['Live', 'Unlisted', 'Draft']);
+        if (this.isSourcingOrgAdmin() && this.router.url.includes('/sourcing')) {
+          this.getMyProgramsForOrg(['Live', 'Unlisted', 'Draft']);
+        } else {
+          this.getMyProgramsForOrg(['Live', 'Unlisted']);
+        }
       }
   }
 
