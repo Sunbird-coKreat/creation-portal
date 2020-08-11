@@ -41,7 +41,6 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
       ? (<HTMLInputElement>document.getElementById('previewCdnUrl')).value : undefined;
     this.isCdnWorking = (<HTMLInputElement>document.getElementById('cdnWorking'))
       ? (<HTMLInputElement>document.getElementById('cdnWorking')).value : 'no';
-      console.log('Player loading');
   }
   /**
    * loadPlayer method will be called
