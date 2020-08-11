@@ -913,8 +913,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   isSourcingOrgReviewer () {
     return !!(this.userService.userProfile.userRoles.includes('ORG_ADMIN') ||
-    (this.programContext.rolemapping && ( this.programContext.rolemapping.REVIEWER && this.programContext.rolemapping.REVIEWER.includes(this.currentUserID))
-    ));
+    this.userService.userProfile.userRoles.includes('CONTENT_REVIEWER'));
   }
 
   isNominationPendingOrInitiated() {

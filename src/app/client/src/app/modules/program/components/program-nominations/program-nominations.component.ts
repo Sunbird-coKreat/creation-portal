@@ -249,24 +249,16 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   getsourcingOrgReviewers (offset?, iteration?) {
-    const userRegData = {};
-    this.registryService.getOpenSaberOrgByOrgId(this.userService.userProfile).subscribe((res1) => {
-      userRegData['Org'] = (_.get(res1, 'result.Org').length > 0) ? _.first(_.get(res1, 'result.Org')) : {};
-      this.registryService.getcontributingOrgUsersDetails(userRegData, true).then((orgUsers) => {
-          this.paginatedSourcingUsers = orgUsers;
-          this.sourcingOrgUserCnt = this.paginatedSourcingUsers.length;
-          this.readRolesOfOrgUsers();
-          this.paginatedSourcingUsers = this.programsService.sortCollection(this.paginatedSourcingUsers, 'selectedRole', 'desc');
-          this.paginatedSourcingUsers = _.chunk( this.paginatedSourcingUsers, this.pageLimit);
-          this.sourcingOrgUser = this.paginatedSourcingUsers[this.pageNumber - 1];
-          this.pagerUsers = this.paginationService.getPager(this.sourcingOrgUserCnt, this.pageNumberUsers, this.pageLimit);
-          this.showUsersLoader = false;
-      });
-    }, (error1) => {
-     console.log(error1, "No opensaber org for sourcing");
-   });
-
-
+    this.registryService.getcontributingOrgUsersDetails(true).then((orgUsers) => {
+      this.paginatedSourcingUsers = orgUsers;
+      this.sourcingOrgUserCnt = this.paginatedSourcingUsers.length;
+      this.readRolesOfOrgUsers();
+      this.paginatedSourcingUsers = this.programsService.sortCollection(this.paginatedSourcingUsers, 'selectedRole', 'desc');
+      this.paginatedSourcingUsers = _.chunk( this.paginatedSourcingUsers, this.pageLimit);
+      this.sourcingOrgUser = this.paginatedSourcingUsers[this.pageNumber - 1];
+      this.pagerUsers = this.paginationService.getPager(this.sourcingOrgUserCnt, this.pageNumberUsers, this.pageLimit);
+      this.showUsersLoader = false;
+    });
     /*if (!isDefined(iteration) || iteration === 0) {
       iteration = 0;
       this.paginatedSourcingUsers = [];

@@ -31,15 +31,13 @@ export class RegistryService extends DataService {
       this.userService.userProfile.userRegData.User_Org && this.userService.userProfile.userRegData.Org);
   }
 
-  public getcontributingOrgUsersDetails(userRegData?, forSourcing?) {
+  public getcontributingOrgUsersDetails(forSourcing?) {
     const sourcingRoles = ["sourcing_reviewer", "sourcing_admin"];
     const contribRoles = ["user", "admin"];
-    if (_.isUndefined(userRegData)) {
-      userRegData = _.get(this.userService, 'userProfile.userRegData');
-    }
-    const orgId = _.get(userRegData, 'Org.osid');
+    const userRegData = _.get(this.userService, 'userProfile.userRegData');
+    const orgId = userRegData.User_Org.orgId;
     //const storedOrglist = this.cacheService.get('orgUsersDetails');
-    if (orgId) {
+    if (this.checkIfUserBelongsToOrg()) {
       return this.getAllContributionOrgUsers(orgId, forSourcing).then((allOrgUsers) => {
         return new Promise((resolve, reject) => {
           const tempMapping = [];
@@ -48,7 +46,7 @@ export class RegistryService extends DataService {
               _.filter(allOrgUsers, obj => {
                 const isHavingSouringRoles = _.intersection(sourcingRoles, obj.roles);
                 const isHavingContribRoles = _.intersection(contribRoles, obj.roles);
-                if ((obj.userId !== _.get(userRegData, 'User.osid')) &&
+                if ((obj.userId !== userRegData.User.osid) &&
                     (
                       (!_.isUndefined(forSourcing) && forSourcing && isHavingSouringRoles.length > 0) ||
                       ((_.isUndefined(forSourcing) || (!_.isUndefined(forSourcing) && !forSourcing)) && isHavingContribRoles.length > 0)
@@ -242,30 +240,6 @@ export class RegistryService extends DataService {
     };
     return this.contentService.post(req);
   }
-
-  public getOpenSaberOrgByOrgId(userProfile): Observable<ServerResponse> {
-    const req = {
-      url: `reg/search`,
-      data: {
-        'id': 'open-saber.registry.search',
-        'ver': '1.0',
-        'ets': '11234',
-        'params': {
-          'did': '',
-          'key': '',
-          'msgid': ''
-        },
-        'request': {
-          'entityType': ['Org'],
-          'filters': {
-            'orgId': { 'eq': userProfile.rootOrgId }
-          },
-        }
-      }
-    };
-    return this.contentService.post(req);
-  }
-
 
   public openSaberRegistrySearch(userId) {
     const userProfile = {};

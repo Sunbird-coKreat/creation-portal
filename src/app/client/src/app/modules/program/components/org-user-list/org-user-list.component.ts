@@ -34,7 +34,6 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   pager: IPagination;
   pageNumber = 1;
   pageLimit = 250;
-  userRegData: any = {};
 
   constructor(private toasterService: ToasterService, private configService: ConfigService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
@@ -47,20 +46,14 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     } else {
       this.getContributionOrgUsers();
     }*/
-    this.position = 'top center';
-    const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
-    ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
-    this.registryService.getOpenSaberOrgByOrgId(this.userService.userProfile).subscribe((res1) => {
-      this.userRegData['Org'] = (_.get(res1, 'result.Org').length > 0) ? _.first(_.get(res1, 'result.Org')) : {};
-      this.orgLink = `${baseUrl}/sourcing/join/${this.userRegData.Org.osid}`;
-
-      this.getContributionOrgUsers();
-    }, (error1) => {
-     console.log("No opensaber org for sourcing");
-   });
+    this.getContributionOrgUsers();
   }
 
   ngOnInit() {
+    this.position = 'top center';
+    const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
+      ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
+    this.orgLink = `${baseUrl}/sourcing/join/${this.userService.userProfile.userRegData.Org.osid}`;
     this.telemetryInteractCdata = [{id: this.userService.userProfile.rootOrgId || '', type: 'Organisation'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
@@ -92,7 +85,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
       };
      });
   }
-
+  
   setOrgUsers(orgUsersDetails) {
     this.allContributorOrgUsers = orgUsersDetails;
 
@@ -104,10 +97,8 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   }
 
   getContributionOrgUsers() {
-    this.registryService.getcontributingOrgUsersDetails(this.userRegData, true).then((orgUsers) => {
+    this.registryService.getcontributingOrgUsersDetails(true).then((orgUsers) => {
       this.setOrgUsers(orgUsers);
-    }).catch((error) => {
-       console.log('Error while getting all users')
     });
   }
 
