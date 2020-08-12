@@ -2,18 +2,24 @@ import { ProgramsService } from '@sunbird/core';
 import { ProgramListComponent } from '../shared-feature/components/program-list/program-list.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { ProgramComponent, CreateProgramComponent, ProgramNominationsComponent, ListContributorTextbooksComponent } from './components';
+import { ProgramComponent, CreateProgramComponent, ProgramNominationsComponent, ListContributorTextbooksComponent, OrgUserListComponent } from './components';
 import { AuthGuard } from '../core/guard/auth-gard.service';
+
 import { HelpPageComponent } from '../shared-feature/components/help-page/help-page.component';
 
 const routes: Routes = [{
-  path: '', component: ProgramListComponent, canActivate: [ProgramsService, AuthGuard],
+  path: '', component: ProgramListComponent, canActivate: [ProgramsService],
   data: {
-    roles: 'programSourcingRole',
     telemetry: {
       env: 'sourcing-portal', pageid: 'programs-list', type: 'view', subtype: 'paginate'
     }
   }
+},
+{
+  path: 'join/:orgId', component: ProgramListComponent, pathMatch: 'full',
+  data: {
+    telemetry: { env: 'programs', type: 'view', subtype: 'paginate' }
+  },
 },
 {
   path: 'edit/:programId', component: CreateProgramComponent, canActivate: [ProgramsService, AuthGuard], pathMatch: 'full',
@@ -39,18 +45,22 @@ const routes: Routes = [{
   }
 },
 {
-  path: 'nominations/:programId', component: ProgramNominationsComponent, canActivate: [ProgramsService, AuthGuard],
+  path: 'nominations/:programId', component: ProgramNominationsComponent, canActivate: [ProgramsService],
   data: {
-    roles: 'programSourcingRole',
     telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'nomination-details' }
   }
 },
 {
-  path: 'contributor/:programId', component: ListContributorTextbooksComponent, canActivate: [ProgramsService, AuthGuard],
+  path: 'contributor/:programId', component: ListContributorTextbooksComponent, canActivate: [ProgramsService],
   data: {
-    roles: 'programSourcingRole',
     telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'contributor-details' }
   }
+},
+{
+  path: 'orglist', component: OrgUserListComponent, pathMatch: 'full',
+  data: {
+    telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'list-org-users' }
+  },
 },
 {
   path: 'help', component: HelpPageComponent, pathMatch: 'full',
