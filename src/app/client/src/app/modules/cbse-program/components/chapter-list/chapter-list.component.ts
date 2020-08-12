@@ -929,17 +929,17 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           }
         }
       });
-    } else if (this.sessionContext.currentRole === 'individual') {
+    } else if (this.sessionContext.currentOrgRole === 'individual') {
       contentStatusCount['approvalPending'] = 0;
       contentStatusCount['draft'] = 0;
       contentStatusCount['rejected'] = 0;
       contentStatusCount['approved'] = 0;
       _.forEach(contents, (content) => {
-        if (content.organisationId === this.myOrgId) {
-          if (content.status === 'Live' && !content.sourcingStatus) {
+        if (content.createdBy === this.userService.userProfile.userId) {
+          if (content.status === 'Draft' && content.prevStatus === null) {
+            contentStatusCount['draft'] += 1;
+          } else if (content.status === 'Live' && !content.sourcingStatus) {
             contentStatusCount['approvalPending'] += 1;
-          } else if (content.status === 'Review') {
-            contentStatusCount['reviewPending'] += 1;
           } else if (content.sourcingStatus === 'Approved' && content.status === 'Live') {
             contentStatusCount['approved'] += 1;
           } else if (content.sourcingStatus === 'Rejected' && content.status === 'Live') {
