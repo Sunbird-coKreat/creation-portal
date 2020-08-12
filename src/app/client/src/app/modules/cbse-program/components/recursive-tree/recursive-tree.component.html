@@ -51,7 +51,7 @@
       </div>
     </div>
     <div *ngIf="!sourcingOrgReviewer && collection.sourcingStatus && sessionContext.currentOrgRole === 'individual'" class="single-row">
-      <div class="sb-color-warning sb-count" *ngIf="!visibility['showAddresource']">
+      <div class="sb-color-warning sb-count" *ngIf="visibility['showAddresource']">
         <span class="font-weight-normal">Draft:</span> 
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.draft}}</span>
       </div>
