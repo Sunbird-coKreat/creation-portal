@@ -1024,6 +1024,8 @@ textbookLevelReportHeaders() {
     this.resourceService.frmelmnts.lbl.profile.Subjects,
     this.resourceService.frmelmnts.lbl.textbookName,
     this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn6,
+    this.resourceService.frmelmnts.lbl.contentsContributed,
+    this.resourceService.frmelmnts.lbl.contentsReviewed,
     this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn7,
     this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn8,
     this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn9,
@@ -1040,6 +1042,8 @@ chapterLevelReportHeaders() {
     this.resourceService.frmelmnts.lbl.profile.Subjects,
     this.resourceService.frmelmnts.lbl.textbookName,
     this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn6,
+    this.resourceService.frmelmnts.lbl.contentsContributed,
+    this.resourceService.frmelmnts.lbl.contentsReviewed,
     this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn7,
     ..._.map(this.programContentTypes.split(', '), type => `${this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn8} ${type}` )
   ];
