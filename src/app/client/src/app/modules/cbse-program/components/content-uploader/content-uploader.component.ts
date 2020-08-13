@@ -614,6 +614,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.sessionContext.topic = _.first(this.sessionContext.topic);
     }
     this.sessionContext.topic = _.first(this.selectedSharedContext.topic) || this.sessionContext.topic ;
+    this.sessionContext.topic = _.isArray(this.sessionContext.topic) ? this.sessionContext.topic : _.split(this.sessionContext.topic, ',');
     const topicTerm = _.find(this.sessionContext.topicList, { name: this.sessionContext.topic });
     if (topicTerm && topicTerm.associations) {
        this.selectOutcomeOption['learningOutcome'] = _.map(topicTerm.associations, (learningOutcome) => {
