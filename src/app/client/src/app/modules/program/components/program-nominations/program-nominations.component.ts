@@ -1,6 +1,6 @@
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService, PaginationService } from '@sunbird/shared';
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
-import { ProgramsService, UserService, FrameworkService } from '@sunbird/core';
+import { ProgramsService, UserService, FrameworkService, RegistryService } from '@sunbird/core';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ISessionContext, InitialState, IPagination} from '../../../cbse-program/interfaces';
@@ -98,7 +98,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
      private activatedRoute: ActivatedRoute, private router: Router,
     private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService,
     public programStageService: ProgramStageService, private datePipe: DatePipe, private paginationService: PaginationService,
-    public programTelemetryService: ProgramTelemetryService) {
+    public programTelemetryService: ProgramTelemetryService, public registryService: RegistryService) {
     this.userProfile = this.userService.userProfile;
     this.programId = this.activatedRoute.snapshot.params.programId;
   }
@@ -249,7 +249,25 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   getsourcingOrgReviewers (offset?, iteration?) {
-    if (!isDefined(iteration) || iteration === 0) {
+    const userRegData = {};
+    this.registryService.getOpenSaberOrgByOrgId(this.userService.userProfile).subscribe((res1) => {
+      userRegData['Org'] = (_.get(res1, 'result.Org').length > 0) ? _.first(_.get(res1, 'result.Org')) : {};
+      this.registryService.getcontributingOrgUsersDetails(userRegData, true).then((orgUsers) => {
+          this.paginatedSourcingUsers = orgUsers;
+          this.sourcingOrgUserCnt = this.paginatedSourcingUsers.length;
+          this.readRolesOfOrgUsers();
+          this.paginatedSourcingUsers = this.programsService.sortCollection(this.paginatedSourcingUsers, 'selectedRole', 'desc');
+          this.paginatedSourcingUsers = _.chunk( this.paginatedSourcingUsers, this.pageLimit);
+          this.sourcingOrgUser = this.paginatedSourcingUsers[this.pageNumber - 1];
+          this.pagerUsers = this.paginationService.getPager(this.sourcingOrgUserCnt, this.pageNumberUsers, this.pageLimit);
+          this.showUsersLoader = false;
+      });
+    }, (error1) => {
+     console.log(error1, "No opensaber org for sourcing");
+   });
+
+
+    /*if (!isDefined(iteration) || iteration === 0) {
       iteration = 0;
       this.paginatedSourcingUsers = [];
       this.sourcingOrgUser = [];
@@ -280,7 +298,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           this.showUsersLoader = false;
         }
       },
-    );
+    );*/
   }
 
   /**
@@ -335,10 +353,11 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       }
     };
     this.programsService.post(req).subscribe((data) => {
+      this.showDashboardLoader =  false;
+
       if (data.result && data.result.length > 0) {
         const filteredArr = _.filter(data.result, (obj) => obj.userData);
         this.getDashboardData(filteredArr);
-        this.showDashboardLoader =  false;
        /* _.forEach(data.result, (res) => {
             this.nominatedContentTypes = _.concat(this.nominatedContentTypes, res.content_types);
         });*/
@@ -864,6 +883,8 @@ this.programsService.post(req).subscribe((data) => {
           }
         });
         this.getSampleContent();
+      } else {
+        this.showNominationLoader = false;
       }
       this.tempNominations = _.cloneDeep(this.nominations);
   }, error => {
@@ -1003,6 +1024,8 @@ textbookLevelReportHeaders() {
     this.resourceService.frmelmnts.lbl.profile.Subjects,
     this.resourceService.frmelmnts.lbl.textbookName,
     this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn6,
+    this.resourceService.frmelmnts.lbl.contentsContributed,
+    this.resourceService.frmelmnts.lbl.contentsReviewed,
     this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn7,
     this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn8,
     this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn9,
@@ -1019,6 +1042,8 @@ chapterLevelReportHeaders() {
     this.resourceService.frmelmnts.lbl.profile.Subjects,
     this.resourceService.frmelmnts.lbl.textbookName,
     this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn6,
+    this.resourceService.frmelmnts.lbl.contentsContributed,
+    this.resourceService.frmelmnts.lbl.contentsReviewed,
     this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn7,
     ..._.map(this.programContentTypes.split(', '), type => `${this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn8} ${type}` )
   ];

@@ -52,7 +52,7 @@ export class ProgramsService extends DataService implements CanActivate {
     public cacheService: CacheService) {
       super(http);
       this.config = config;
-      this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;
+      this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;//"http://localhost:6000/";//
     }
 
   /**
@@ -132,51 +132,105 @@ export class ProgramsService extends DataService implements CanActivate {
 /**
   * Function used map the user with user role in registry
   */
- mapUsertoContributorOrgReg (orgOsid, UserOsid) {
+ mapUsertoContributorOrgReg (orgOsid, UserOsid, userRegData) {
+  let contribOrgs = [];
+  let sourcingOrgs = [];
+  let updateOsid = '';
+  let uRoles = [];
   // Check if user is already part of the organisation
+  if (!_.isEmpty(_.get(userRegData, 'user_org'))) {
+    _.forEach(_.get(userRegData, 'user_org'), mappingObj => {
+      if (mappingObj.roles.includes('user') || mappingObj.roles.includes('admin')) {
+        contribOrgs.push(mappingObj.orgId);
+      }
+      if (mappingObj.roles.includes('sourcing_reviewer') || mappingObj.roles.includes('sourcing_admin')) {
+        sourcingOrgs.push(mappingObj.orgId);
+      }
 
-  if (this.userService.userRegistryData && !_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
-    const userOrg = this.userService.userProfile.userRegData.User_Org;
+      if (mappingObj.orgId == orgOsid) {
+        uRoles = mappingObj.roles;
+        if (this.router.url.includes('/sourcing') && !(mappingObj.roles.includes('sourcing_reviewer') || mappingObj.roles.includes('sourcing_admin'))) {
+          uRoles.push('sourcing_reviewer');
+          updateOsid = mappingObj.osid;
+        } else if (this.router.url.includes('/contribute') &&  !(mappingObj.roles.includes('user') || mappingObj.roles.includes('admin'))) {
+          updateOsid = mappingObj.osid;
+          uRoles.push('user');
+        }
+      }
+    });
+  }
 
-    if (userOrg.orgId && userOrg.orgId === orgOsid) {
+  if (this.router.url.includes('/sourcing') && sourcingOrgs.length > 0 && sourcingOrgs.includes(orgOsid)) {
+    this.toasterService.warning(this.resourceService.messages.emsg.contributorjoin.m0002);
+    this.router.navigate(['sourcing']);
+    return false;
+  }else if (this.router.url.includes('/contribute') && contribOrgs.length > 0) {
+    if (contribOrgs.includes(orgOsid)) {
       this.toasterService.warning(this.resourceService.messages.emsg.contributorjoin.m0002);
       this.router.navigate(['contribute/myenrollprograms']);
       return false;
-    }
-
-    if (userOrg.orgId && userOrg.orgId !== orgOsid) {
+    } else if (!contribOrgs.includes(orgOsid)) {
       this.toasterService.warning(this.resourceService.messages.emsg.contributorjoin.m0003);
       this.router.navigate(['contribute/myenrollprograms']);
       return false;
     }
+  } else if (updateOsid) {
+    this.updateUserRole(updateOsid, _.uniq(uRoles)).subscribe(
+      (userAddRes) => {
+        console.log("User added to org"+ UserOsid, userAddRes);
+        this.onAfterJoinRedirect();
+      },
+      (userAddErr) => {
+          console.log("Error while adding User added to org"+ UserOsid, userAddErr);
+          this.toasterService.error(this.resourceService.messages.fmsg.contributorjoin.m0002);
+          this.router.navigate(['sourcing']);
+        }
+    );
+  } else if ((this.router.url.includes('/contribute') && contribOrgs.length == 0) ||
+  (this.router.url.includes('/sourcing') && ((sourcingOrgs.length == 0) || (sourcingOrgs.length > 0 && !sourcingOrgs.includes(orgOsid))))) {
+      const userOrgAdd = {
+        User_Org: {
+          userId: UserOsid,
+          orgId: orgOsid,
+          roles: ['user']
+        }
+      };
+
+      if (this.router.url.includes('/sourcing')) {
+        userOrgAdd.User_Org.roles = ['sourcing_reviewer'];
+      }
+
+      this.addToRegistry(userOrgAdd).subscribe(
+        (res) => {
+          this.onAfterJoinRedirect();
+        },
+        (error) => {
+          this.toasterService.error(this.resourceService.messages.fmsg.contributorjoin.m0002);
+          this.router.navigate(['contribute/myenrollprograms']);
+        }
+      );
+    }
   }
 
-  const userOrgAdd = {
-    User_Org: {
-      userId: UserOsid,
-      orgId: orgOsid,
-      roles: ['user']
-    }
-  };
-
-  this.addToRegistry(userOrgAdd).subscribe(
-      (res) => {
-        this.toasterService.success(this.resourceService.messages.smsg.contributorjoin.m0001);
-        this.userService.openSaberRegistrySearch().then((userRegData) => {
-          this.userService.userProfile.userRegData = userRegData;
-          this.router.navigateByUrl('/contribute/myenrollprograms');
-        }).catch((err) => {
-          this.toasterService.error('Please Try Later...');
-          setTimeout(() => {
-            this.router.navigate(['contribute/myenrollprograms']);
-          });
-        });
-      },
-      (error) => {
-        this.toasterService.error(this.resourceService.messages.fmsg.contributorjoin.m0002);
-        this.router.navigate(['contribute/myenrollprograms']);
+  private onAfterJoinRedirect() {
+    this.toasterService.success(this.resourceService.messages.smsg.contributorjoin.m0001);
+    this.userService.openSaberRegistrySearch().then((userRegData) => {
+      this.userService.userProfile.userRegData = userRegData;
+      if (this.router.url.includes('/sourcing')) {
+        this.router.navigateByUrl('/sourcing');
+      } else {
+        this.router.navigateByUrl('/contribute/myenrollprograms');
       }
-    );
+    }).catch((err) => {
+      this.toasterService.error('Please Try Later...');
+      setTimeout(() => {
+        if (this.router.url.includes('/sourcing')) {
+          this.router.navigateByUrl('/sourcing');
+        } else {
+          this.router.navigateByUrl('/contribute/myenrollprograms');
+        }
+      });
+    });
   }
 
   /**
@@ -196,30 +250,36 @@ export class ProgramsService extends DataService implements CanActivate {
             this.toasterService.warning(this.resourceService.messages.emsg.contributorjoin.m0001);
             return false;
           }
-
           const contibutorOrg = response.result.Org[0];
           const orgOsid = contibutorOrg.osid;
-          if (!this.userService.userProfile.userRegData.User) {
-            // Add user to the registry
-            const userAdd = {
-              User: {
-                firstName: this.userService.userProfile.firstName,
-                lastName: this.userService.userProfile.lastName || '',
-                userId: this.userService.userProfile.identifier,
-                enrolledDate: new Date().toISOString(),
-                board : contibutorOrg.board,
-                medium: contibutorOrg.medium,
-                gradeLevel: contibutorOrg.gradeLevel,
-                subject: contibutorOrg.subject
-              }
-            };
+          this.registryService.openSaberRegistrySearch(this.userService.userProfile.identifier).then((userRegData) => {
+            if (_.get(userRegData, 'error') === false) {
+              if (_.isEmpty(_.get(userRegData, 'user'))) {
+                // Add user to the registry
+                const userAdd = {
+                  User: {
+                    firstName: this.userService.userProfile.firstName,
+                    lastName: this.userService.userProfile.lastName || '',
+                    userId: this.userService.userProfile.identifier,
+                    enrolledDate: new Date().toISOString(),
+                    board : contibutorOrg.board,
+                    medium: contibutorOrg.medium,
+                    gradeLevel: contibutorOrg.gradeLevel,
+                    subject: contibutorOrg.subject
+                  }
+                };
 
-            this.addToRegistry(userAdd).subscribe((res) => {
-              this.mapUsertoContributorOrgReg(orgOsid, res.result.User.osid);
-            }, (error) => {});
-          } else {
-            this.mapUsertoContributorOrgReg(orgOsid, this.userService.userProfile.userRegData.User.osid);
-          }
+                this.addToRegistry(userAdd).subscribe((res) => {
+                  this.mapUsertoContributorOrgReg(orgOsid, res.result.User.osid, userRegData);
+                }, (error) => {});
+              } else {
+                this.mapUsertoContributorOrgReg(orgOsid, _.get(userRegData, 'user.osid'), userRegData);
+              }
+            }
+          }).catch((err) => {
+            console.log("errr", err);
+            this.toasterService.warning("Fetching registry failed");
+          });
         },
         (err) => {
           console.log(err);
@@ -307,9 +367,17 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.API_URL(req);
   }
 
- /**
-   * Logic to get the all the users of sourcing organisation and add it to the same cont org as sourcing admin
-   */
+  getUserOrganisationRoles(profileData) {
+    let userRoles = ['PUBLIC'];
+    if (profileData.organisations) {
+      _.forEach(profileData.organisations, (org) => {
+        if (org.roles && _.isArray(org.roles)) {
+          userRoles = _.union(userRoles, org.roles);
+        }
+      });
+    }
+    return userRoles;
+  }
   addSourcingUserstoContribOrg(userRegData) {
     let userOrgAdd;
     let userAdd;
@@ -323,7 +391,7 @@ export class ProgramsService extends DataService implements CanActivate {
       (res) => {
         const sourcingOrgUser =  res.result.response.content;
         _.forEach(sourcingOrgUser, (user) => {
-
+          const userOrgRoles = this.getUserOrganisationRoles(user);
           this.registryService.openSaberRegistrySearch(user.identifier).then((userProfile) => {
 
             if (_.get(userProfile, 'error') === false) {
@@ -349,6 +417,11 @@ export class ProgramsService extends DataService implements CanActivate {
                           roles: ['user']
                         }
                       };
+                      if (userOrgRoles.includes('CONTENT_REVIEWER')) {
+                        userOrgAdd.User_Org.roles = ['user', 'sourcing_reviewer'];
+                      }
+
+
                       this.addToRegistry(userOrgAdd).subscribe(
                         (userAddRes) => {console.log("User added to org"+ user.identifier, userAddRes);},
                         (userAddErr) => {console.log("Errro while adding User added to org"+ user.identifier,userAddErr);}
@@ -364,10 +437,39 @@ export class ProgramsService extends DataService implements CanActivate {
                     roles: ['user']
                   }
                 };
+                if (userOrgRoles.includes('CONTENT_REVIEWER')) {
+                  userOrgAdd.User_Org.roles = ['user', 'sourcing_reviewer'];
+                }
                 this.addToRegistry(userOrgAdd).subscribe(
                   (userAddRes) => {console.log("User added to org"+ user.identifier, userAddRes);},
                   (userAddErr) => {console.log("Errro while adding User added to org"+ user.identifier,userAddErr);}
                 );
+              } else if (userOrgRoles.includes('CONTENT_REVIEWER')) {
+                const uOrgs = _.map(_.get(userProfile, 'user_org'), 'orgId');
+                if (uOrgs.includes(userRegData.User_Org.orgId)){
+                _.forEach(_.get(userProfile, 'user_org'), mapping => {
+                  if (mapping.orgId === userRegData.User_Org.orgId) {
+                      const uroles = mapping.roles;
+                      uroles.push('sourcing_reviewer');
+                      this.updateUserRole(mapping.osid, _.uniq(uroles)).subscribe(
+                        (userAddRes) => {console.log("User added to org"+ user.identifier, userAddRes);},
+                        (userAddErr) => {console.log("Errro while adding User added to org"+ user.identifier,userAddErr);}
+                      );
+                   }
+                  });
+                } else {
+                  userOrgAdd = {
+                    User_Org: {
+                      userId: _.get(userProfile, 'user.osid'),
+                      orgId: userRegData.User_Org.orgId,
+                      roles: ['sourcing_reviewer']
+                    }
+                  };
+                  this.addToRegistry(userOrgAdd).subscribe(
+                    (userAddRes) => {console.log("User added to org"+ user.identifier, userAddRes);},
+                    (userAddErr) => {console.log("Errro while adding User added to org"+ user.identifier,userAddErr);}
+                  );
+                }
               }
             }
           }).catch((err) => {
@@ -380,18 +482,15 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * Logic add contrib user and org for the sourcing admin and make him its admin
    */
-  enableContributorProfileForSourcing (request) {
-    this.makeContributorOrgForSourcing().subscribe(
-      (res) => {
+  enableContributorProfileForSourcing () {
+    /*this.makeContributorOrgForSourcing().subscribe(
+      (res) => {*/
         this.userService.openSaberRegistrySearch().then((userRegData) => {
           this.userService.userProfile.userRegData = userRegData;
 
           this.addSourcingUserstoContribOrg(userRegData).subscribe(
             (res) => {
-              this.addorUpdateNomination(request).subscribe(
-                (res) => { console.log("Nomination added")},
-                (err) => { console.log("error added")}
-              );
+              console.log("Added users to contribution org");
             },
             (error) => {
               console.log("Error while adding users to contribution org");
@@ -400,11 +499,11 @@ export class ProgramsService extends DataService implements CanActivate {
         }).catch((err) => {
           this.toasterService.error('Fetching contributor profile created for sourcing failed...');
         });
-      },
+      /*},
       (error) => {
         this.toasterService.error('Adding contributor profile failed.');
       }
-    );
+    );*/
   }
 
   /**
@@ -436,7 +535,9 @@ export class ProgramsService extends DataService implements CanActivate {
                 name: orgName,
                 code: orgName.toUpperCase(),
                 createdBy: res1.result.User.osid,
-                description: orgName
+                description: orgName,
+                type: ["contribute", "sourcing"],
+                orgId: this.userService.userProfile.rootOrgId,
               }
             };
 
@@ -494,31 +595,7 @@ export class ProgramsService extends DataService implements CanActivate {
         request
       }
     };
-    return this.API_URL(req).pipe(tap((res) => {
-      if (res.result.program_id) {
-        const programId = res.result.program_id;
-        if (request.status === 'Live' || request.status === 'Unlisted') {
-          const nomRequest = {
-            program_id: programId,
-            status: 'Approved',
-            content_types: request.programContentTypes,
-            collection_ids: request.copiedCollections
-          };
-
-        this.userService.openSaberRegistrySearch().then((userRegData) => {
-            this.userService.userProfile.userRegData = userRegData;
-          if (!this.userService.userProfile.userRegData.User || !this.userService.userProfile.userRegData.User_Org) {
-            this.enableContributorProfileForSourcing(nomRequest);
-          } else {
-            this.addorUpdateNomination(nomRequest).subscribe(
-              (res) => { console.log("Nomination added") },
-              (err) => { console.log("error added") }
-            );
-          }
-        });
-        }
-      }
-    }));
+    return this.API_URL(req);
   }
 
   publishProgram(request) {
