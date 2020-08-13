@@ -1,10 +1,10 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit ,ViewChild} from '@angular/core';
 import { ToasterService, ResourceService, NavigationHelperService, ConfigService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
 import { UserService } from '@sunbird/core';
 import * as _ from 'lodash-es';
-
+import { OrgUsersListComponent } from "../../../shared-feature/components/org-users-list/org-users-list.component";
 
 @Component({
   selector: 'app-org-user-list',
@@ -12,6 +12,8 @@ import * as _ from 'lodash-es';
   styleUrls: ['./org-user-list.component.scss']
 })
 export class OrgUserListComponent implements OnInit, AfterViewInit {
+ 
+  @ViewChild(OrgUsersListComponent) childUserlistComponent;
   data;
   position;
   options;
@@ -25,6 +27,8 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public contributorOrgUser: any = [];
   public orgDetails: any = {};
   public showLoader = true;
+  count = 0;
+  isShowCountFromChild = false;
 
   constructor(private toasterService: ToasterService, private configService: ConfigService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
@@ -48,7 +52,6 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
       ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
     this.orgLink = `${baseUrl}/contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
   }
-
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
@@ -76,6 +79,17 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
      });
   }
 
+  ngDoCheck() {
+    // viewchildUserlistComponent is updated after the view has been checked
+    if (this.count === this.childUserlistComponent.contributorOrgUser.length) {
+    } else {
+      if(this.childUserlistComponent.showLoader == false)
+      {
+        this.count = this.childUserlistComponent.contributorOrgUser.length;
+      }
+    }
+    this.showLoader = this.childUserlistComponent.showLoader;
+  }
   copyOnLoad() {
     this.showNormalModal = true;
     setTimeout(() => {

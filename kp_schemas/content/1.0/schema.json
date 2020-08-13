@@ -108,7 +108,8 @@
             "enum": [
                 "inline",
                 "online",
-                "attachment"
+                "attachment",
+                "online-only"
             ],
             "default": "inline"
         },
@@ -452,7 +453,13 @@
                 "ConceptMap",
                 "SelfAssess",
                 "PracticeResource",
-                "eTextBook"
+                "eTextBook",
+                "ClassroomTeachingVideo",
+                "ExplanationVideo",
+                "ExplanationReadingMaterial",
+                "LearningActivity",
+                "PreviousBoardExamPapers",
+                "LessonPlanResource"        
             ]
         },
         "resourceType": {
@@ -1020,6 +1027,36 @@
             "type": "string"
         },
         "organisationId" : {
+            "type": "string"
+        },
+        "contentPolicyCheck" : {
+            "type": "boolean"
+        },
+        "textbook_name" : {
+            "type": "array"
+        },
+        "level1Name" : {
+            "type": "array"
+        },
+        "level1Concept" : {
+            "type": "array"
+        },
+        "level2Name" : {
+            "type": "array"
+        },
+        "level2Concept" : {
+            "type": "array"
+        },
+        "level3Name" : {
+            "type": "array"
+        },
+        "level3Concept" : {
+            "type": "array"
+        },
+        "sourceURL" : {
+            "type": "string"
+        },
+        "label" : {
             "type": "string"
         }
     }
