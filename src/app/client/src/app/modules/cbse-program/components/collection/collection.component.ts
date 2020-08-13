@@ -183,7 +183,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
               // tslint:disable-next-line:max-line-length
               const {sampleDataCount, chapterCount} = this.collectionHierarchyService.getSampleContentStatusCount(hierarchy, this.currentUserID);
               hierarchy.sampleContentCount = sampleDataCount;
-              hierarchy.chapterCount = hierarchy.children ? hierarchy.children.length : 0;
+              hierarchy.chapterCount = chapterCount;
             });
             this.selectedCollectionIds = [];
             this.collectionList = _.map(res.result.content, content => {

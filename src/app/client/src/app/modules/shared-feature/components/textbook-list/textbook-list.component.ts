@@ -130,7 +130,7 @@ export class TextbookListComponent implements OnInit, OnChanges {
             this.chapterCount = 0;
             this.pendingReview = 0;
             const {chapterCount, pendingReview} = this.getSampleContentStatusCount(hierarchy);
-              hierarchy.chapterCount = hierarchy.children ? hierarchy.children.length : 0 ;
+              hierarchy.chapterCount = chapterCount;
               hierarchy.pendingReview = pendingReview;
             return hierarchy;
           });
