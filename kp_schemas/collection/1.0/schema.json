@@ -1024,6 +1024,9 @@
     "mvcContentCount": {
       "type": "number"
     },
+    "mvcContents": {
+      "type": "array"
+    },
     "sourcingRejectedComments": {
       "type": "object"
     },
