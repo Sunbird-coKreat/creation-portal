@@ -45,16 +45,14 @@ const routes: Routes = [{
   }
 },
 {
-  path: 'nominations/:programId', component: ProgramNominationsComponent, canActivate: [ProgramsService, AuthGuard],
+  path: 'nominations/:programId', component: ProgramNominationsComponent, canActivate: [ProgramsService],
   data: {
-    roles: 'programSourcingRole',
     telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'nomination-details' }
   }
 },
 {
-  path: 'contributor/:programId', component: ListContributorTextbooksComponent, canActivate: [ProgramsService, AuthGuard],
+  path: 'contributor/:programId', component: ListContributorTextbooksComponent, canActivate: [ProgramsService],
   data: {
-    roles: 'programSourcingRole',
     telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'contributor-details' }
   }
 },

@@ -170,13 +170,13 @@ export class UserService {
           this.timeDiff = data.ts;
         }
 
-        /*if (this.location.path().includes('/sourcing')) {
+        if (this.location.path().includes('/sourcing')) {
           this.setUserProfile(data);
-        } else {*/
+        } else {
           this.openSaberRegistrySearch().then((userRegData) => {
             this.setUserProfile(data, userRegData);
           });
-        //}
+        }
       },
       (err: ServerResponse) => {
         this._userData$.next({ err: err, userProfile: this._userProfile });
@@ -337,15 +337,20 @@ export class UserService {
       }
     }), tap((res3) => {
       if (res3 && res3.result.User_Org.length) {
-        userRegData['User_Org'] = res3.result.User_Org[0];
+        if (res3.result.User_Org.length > 1) {
+          userRegData['User_Org'] = _.find(res3.result.User_Org, function(o) { return o.roles.includes('user') || o.roles.includes('admin') });
+        } else {
+          userRegData['User_Org'] = res3.result.User_Org[0];
+        }
       }
     }), switchMap((res4) => {
-      if (res4 && res4.result.User_Org.length) {
-        const orgList = res4.result.User_Org.map((value) => value.orgId);
+      if (userRegData['User_Org']) {
+        const org = userRegData['User_Org'];
+        const orgOsid = org.orgId;
         option.data['request'] = {
           entityType: ['Org'],
           filters: {
-            osid: {or: orgList}
+            osid: {or: [orgOsid]}
           }
         };
         return this.contentService.post(option);
