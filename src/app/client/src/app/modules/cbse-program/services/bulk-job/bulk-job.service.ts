@@ -56,7 +56,7 @@ export class BulkJobService {
     if (type === 'bulk_approval') {
       const originUrl = this.programsService.getContentOriginEnvironment();
       const url =  originUrl + '/action/composite/v3/search';
-      return this.programsService.httpClient.post(url, reqData);
+      return this.programsService.http.post(url, reqData);
     } else if (type === 'bulk_upload') {
       const req = {
         url: `${this.configService.urlConFig.URLS.COMPOSITE.SEARCH}`,
@@ -64,5 +64,13 @@ export class BulkJobService {
       };
       return this.contentService.post(req);
     }
+  }
+
+  createBulkJob() {
+
+  }
+
+  updateBulkJob() {
+
   }
 }
