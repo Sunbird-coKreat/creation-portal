@@ -201,17 +201,36 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
     const option = {
       url: this.configService.urlConFig.URLS.DOCKCONTENT_MVC.SEARCH,
       data: {
-        request: {
-          'filters': {
-            'textbook_name': this.collectionData.name,
-            'status': [
-              'live'
-            ],
-            ..._.pick(this.activeFilterData, ['medium', 'subject', 'gradeLevel', 'contentType']),
-            'level1Name' : this.activeFilterData.chapter ? _.get(this.activeFilterData, 'chapter') : undefined
+        
+         "request": {
+             "filters": {
+                 "textbook_name": [
+                     "Mathematics"
+                  ],
+                 "subject": [
+                     "Mathematics"
+                  ],
+                 "status": [
+                     "live"
+                  ],
+                 "medium": [
+                     "English"
+                  ],
+                 "gradeLevel": [
+                     "Class 6",
+                     "Class 7",
+                     "Class 8"
+                  ],
+                 "contentType": [
+                     "ExplanationResource"
+                  ],
+                 "level1Name": [
+                     "Perimeter And Area"
+                  ]
+              }
           }
-        }
-      }
+        
+    }
     };
     this.contentService.post(option).pipe(catchError(err => {
       const errInfo = { errorMsg: 'Fetching content list failed' };

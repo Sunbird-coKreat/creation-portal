@@ -771,10 +771,28 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
          this.showRemoveConfirmationModal = false;
          this.updateAccordianView(this.unitIdentifier);
          this.resetContentId();
+         this.updateTextbookmvcContentCount(this.sessionContext.collection, this.contentId);
          this.toasterService.success(_.replace(this.resourceService.messages.stmsg.m0147, '{CONTENT_NAME}', this.contentName));
        }, (error) => {
         this.toasterService.error(_.replace(this.resourceService.messages.emsg.m0078, '{CONTENT_NAME}', this.contentName));
        });
+  }
+  updateTextbookmvcContentCount(textbookId, contentId) {
+     this.helperService.getTextbookDetails(textbookId).subscribe((data) => {
+      const request = {
+        content: {
+          'versionKey': data.result.content.versionKey,
+          'mvcContentCount':  data.result.content.mvcContentCount - 1,
+        }
+      };
+
+      this.helperService.updateContent(request, textbookId).subscribe((data) => {
+    
+      }, err => {
+      });
+     },(error) => {
+
+     })
   }
   resourceTemplateInputData() {
     let contentTypes = _.get(this.chapterListComponentInput.config, 'config.contentTypes.value')

@@ -164,10 +164,19 @@ export class CollectionHierarchyService {
       live: this.getAllPendingForApprovalCount(orgLevelDataWithReject, collections).length,
       individualStatus: collectionsByStatus,
       individualStatusForSample: collectionsByStatusForSample,
+      mvcContentCount: this.getMvcContentCounts(collections),
       ...(!_.isUndefined(collections) && {sourcingOrgStatus : sourcingOrgStatus})
     };
   }
-
+  getMvcContentCounts(collections) {
+   let count = 0;
+     if (collections && collections.length) {
+       _.map(collections, textbook => {
+        count = count + textbook.mvcContentCount ? textbook.mvcContentCount : 0;
+      })
+     }
+     return count;
+  }
   getSourcingOrgStatus(collections, orgContents) {
     const liveContents = _.has(orgContents, 'Live') ? orgContents.Live : [];
     let acceptedOrgContents, rejectedOrgContents , pendingOrgContents = [];
