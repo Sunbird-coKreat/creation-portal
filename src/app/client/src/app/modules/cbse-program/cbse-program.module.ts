@@ -24,6 +24,7 @@ import { CollectionHierarchyService } from './services/collection-hierarchy/coll
 import { SlickModule } from 'ngx-slick';
 import { SharedFeatureModule } from '../shared-feature';
 import { RouterModule } from '@angular/router';
+import { BulkApprovalComponent } from './components/bulk-approval/bulk-approval.component';
 
 @NgModule({
   declarations: [QuestionListComponent, QuestionCreationComponent,
@@ -31,7 +32,8 @@ import { RouterModule } from '@angular/router';
     McqTemplateSelectionComponent,
     QuestionPreviewComponent, SanitizeHtmlPipe, QuestionCreationHeaderComponent,
     DashboardComponent, RecursiveTreeComponent,
-    ContentUploaderComponent,  ResourceTemplateComponent, CollectionComponent, ResourceReorderComponent, ContentEditorComponent],
+    ContentUploaderComponent,  ResourceTemplateComponent, CollectionComponent, ResourceReorderComponent, ContentEditorComponent, 
+    BulkApprovalComponent],
   imports: [
     RouterModule,
     CommonModule,

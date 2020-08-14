@@ -100,17 +100,7 @@
             <span *ngIf="textbookStatusMessage" class="sb-color-error mr-8 pl-10 fs-0-785 font-weight-bold font-italic">{{textbookStatusMessage}}</span>
             <span class="w-30 font-italic">{{resourceService.frmelmnts.lbl.partialTextbookSelectionNote}}</span>
             <div class="d-flex">
-              <button *ngIf="!showBulkApprovalLoader && sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-primary text-inherit" (click)="showBulkApproveModal=true; bulkApprovalComfirmation=true">{{resourceService.frmelmnts.btn.bulkApproveContent}}</button>
-              <div class="divider mx-10" *ngIf="!showBulkApprovalLoader && bulkApproveHistory"></div>
-              <div class="d-flex flex-dc">
-                <div *ngIf="bulkApproveHistory || showBulkApprovalLoader">{{resourceService.frmelmnts.lbl.lastApproved}}: 28 July 2020</div>
-                  <!-- Loader icon -->
-                  <div *ngIf="showBulkApprovalLoader" class="relative">
-                  <span class="sb-loader sb-success-loader"></span>
-                  <span class="sb-color-warning fs-1"suiPopup popupText="Bulk approve of content is in progress, once finished you can initiate another batch">{{resourceService.frmelmnts.lbl.bulkApprovalInProgress}}</span>
-                </div>
-                <a *ngIf="bulkApproveHistory || showBulkApprovalLoader" href="javascript:void(0)" (click)="showBulkApproveModal=true;viewBulkApprovalStatus()">{{resourceService.frmelmnts.lbl.viewDetails}}</a>
-              </div>
+              <app-bulk-approval [programContext]="programContext" [sessionContext]="sessionContext"></app-bulk-approval>
             </div>
           </div>
           <div class="sb-chapterlist">
@@ -192,64 +182,3 @@
   </div>
 </sui-modal>
 
-<sui-modal *ngIf="showBulkApproveModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
-  [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showBulkApproveModal=false; bulkApprovalComfirmation=false; bulkApprovalInProgress=false; bulkApprovalCompleted=false" #modal>
-  <div class="sb-modal-header">
-    {{resourceService.frmelmnts.lbl.bulkApprove}} 
-  </div>
-  <div class="sb-modal-content">
-      <h6 *ngIf = "bulkApprovalComfirmation" class="sb-color-gray-400">{{resourceService.frmelmnts.lbl.areYouSureBulkApproveContentTextbook}}</h6>
-        <div *ngIf="!bulkApprovalComfirmation" class="d-flex p-30 sb-bg-color-primary-0">
-          <div class="p-10 sb-bulk-upload">
-            <img *ngIf="bulkApprovalCompleted" src="/assets/images/bulkuploadfile.png" alt="">
-            <div *ngIf="bulkApprovalCompleted" class="text-right my--20">
-              <i class="fa fa-check sb-circle-download-icon"></i>
-            </div>
-            <!--Progress Bar-->
-            <div *ngIf="bulkApprovalInProgress" class="progress-circle progress-circle--xxl mr-8" data-percentage="35">
-              <svg class="progress-circle__svg" viewport="0 0 2000 2000">
-                <circle class="progress-circle__stroke" r="50%" cx="50%" cy="50%"></circle>
-                <circle class="progress-circle__stroke" r="50%" cx="50%" cy="50%"></circle>
-                <text x="40%" y="50%" font-size="1.5em">34%</text>
-              </svg>
-            </div>
-          </div>
-          <!-- confirmation message -->
-            <!-- <div *ngIf="bulkApprovalInProgress" class="p-30 pt-10">
-              <h5 class="sb-color-gray-400 font-weight-bold">{{resourceService.frmelmnts.lbl.bulkApprovalInProgress}}</h5>
-            </div> -->
-            <!-- Approval in progress -->
-            <div *ngIf="bulkApprovalInProgress" class="mt-15 p-30 pt-10">
-              <h5 class="sb-color-gray-400 font-weight-bold">{{resourceService.frmelmnts.lbl.bulkApprovalInProgress}}</h5>
-              <div class="ui list fs-0-785">
-                <div class="item sb-color-error">{{resourceService.frmelmnts.lbl.contentApprovalFailed}} : 34</div>
-                <div class="item">{{resourceService.frmelmnts.lbl.approvedSuccessfully}} : 56</div>
-                <div class="item">{{resourceService.frmelmnts.lbl.contentSkipped}} : 45</div>
-                <div class="item">{{resourceService.frmelmnts.lbl.pendingApproval}} : 134</div>
-              </div>
-            </div>
-
-          <!-- Approval completed -->
-          <div *ngIf="bulkApprovalCompleted" class="p-30 pt-10">
-              <h5 class="sb-color-gray-400 font-weight-bold">{{resourceService.frmelmnts.lbl.bulkApprovalCompleted}}</h5>
-              <div class="mt-15">
-                <div class="ui list fs-0-785">
-                  <div class="item sb-color-error">{{resourceService.frmelmnts.lbl.contentApprovalFailed}} : 34</div>
-                  <div class="item">{{resourceService.frmelmnts.lbl.contentApprovalSuccessful}} : 56</div>
-                </div>
-                <button type="button" class="sb-btn sb-btn-normal sb-btn-success my-20"><i class="fa fa-download pr-10"></i>{{resourceService.frmelmnts.btn.downloadReport}}</button>
-              </div>
-          </div> 
-      </div>
-  </div>
-  <div class="sb-modal-actions">
-    <button *ngIf="bulkApprovalComfirmation" type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="bulkApproval()">{{resourceService.frmelmnts.btn.yes}}</button> 
-    <button *ngIf="bulkApprovalComfirmation" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showBulkApproveModal=false;bulkApprovalComfirmation=false">{{resourceService.frmelmnts.btn.no}}</button>
-    <div *ngIf="!bulkApprovalComfirmation" class="d-flex flex-jc-space-between">
-        <div class="sb-color-gray-200 fxsmall line-height-1-3 w-80">
-          {{resourceService.frmelmnts.note.bulkApprovalMayTakeTimeApprovalHappeningBackground}}
-        </div>
-      <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showBulkApproveModal=false;bulkApprovalInProgress=false;bulkApprovalCompleted=false">{{resourceService.frmelmnts.btn.close}}</button>
-    </div>
-  </div>
-</sui-modal>

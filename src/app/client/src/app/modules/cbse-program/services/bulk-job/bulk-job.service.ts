@@ -16,7 +16,7 @@ export class BulkJobService {
 
   getBulkOperationStatus(reqData): Observable<ServerResponse> {
     const req = {
-      url: `program/v1/content/process/search`,
+      url: `${this.configService.urlConFig.URLS.BULKJOB.SEARCH}`,
       data: {
         request: reqData
       }
@@ -42,16 +42,18 @@ export class BulkJobService {
 
   searchContentWithProcessId(processId, type) {
     const reqData = {
-      request: {
-        filters: {
-          objectType: 'content',
-          processId: processId
-        },
-        facets: [
-           'status'
+      filters: {
+        objectType: 'content',
+        processId: processId
+      },
+      fields: [
+              'identifier',
+              'status',
+              'collectionId',
+              'prevStatus',
+              'contentType'
       ],
-      limit: 0
-      }
+      limit: 10000
     };
     if (type === 'bulk_approval') {
       const originUrl = this.programsService.getContentOriginEnvironment();
@@ -66,11 +68,23 @@ export class BulkJobService {
     }
   }
 
-  createBulkJob() {
-
+  createBulkJob(reqData): Observable<ServerResponse> {
+    const req = {
+      url: `${this.configService.urlConFig.URLS.BULKJOB.CREATE}`,
+      data: {
+        request: reqData
+      }
+    };
+    return this.programsService.post(req);
   }
 
-  updateBulkJob() {
-
+  updateBulkJob(reqData): Observable<ServerResponse> {
+    const req = {
+      url: `${this.configService.urlConFig.URLS.BULKJOB.UPDATE}`,
+      data: {
+        request: reqData
+      }
+    };
+    return this.programsService.post(req);
   }
 }
