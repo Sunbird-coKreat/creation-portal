@@ -337,11 +337,7 @@ export class UserService {
       }
     }), tap((res3) => {
       if (res3 && res3.result.User_Org.length) {
-        if (res3.result.User_Org.length > 1) {
           userRegData['User_Org'] = _.find(res3.result.User_Org, function(o) { return o.roles.includes('user') || o.roles.includes('admin') });
-        } else {
-          userRegData['User_Org'] = res3.result.User_Org[0];
-        }
       }
     }), switchMap((res4) => {
       if (userRegData['User_Org']) {
