@@ -172,7 +172,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       await this.getCollectionHierarchy(this.sessionContext.collection,
                 this.selectedChapterOption === 'all' ? undefined : this.selectedChapterOption);
       const acceptedContents = _.get(this.storedCollectionData, 'acceptedContents', []);
-        await this.getOriginCollectionHierarchy(this.collectionData.origin, this.collectionData.identifier);
       if (!_.isEmpty(acceptedContents)) {
         await this.getOriginForApprovedContents(acceptedContents);
       }
@@ -307,8 +306,18 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         instance.countData['sampleMycontribution'] = 0;
         instance.countData['pendingReview'] = 0;
         instance.countData['nominatedUserSample'] = 0;
-        this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
 
+        const hierarchyUrl1 = '/action/content/v3/hierarchy/' + this.collectionData.origin + '?mode=edit';
+        const originUrl = this.programsService.getContentOriginEnvironment();
+        const url =  originUrl + hierarchyUrl1 ;
+
+        this.httpClient.get(url).subscribe(async res => {
+          const content = _.get(res, 'result.content');
+          this.originalCollectionData = content;
+          this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
+          if (this.originalCollectionData.status !== 'Draft' && this.sourcingOrgReviewer) {
+            this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage;
+          }
         this.getFolderLevelCount(this.collectionHierarchy);
         hierarchy = instance.hierarchyObj;
         this.sessionContext.hierarchyObj = { hierarchy };
@@ -321,32 +330,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         this.showError = false;
         this.levelOneChapterList = _.uniqBy(this.levelOneChapterList, 'identifier');
          resolve('Done');
+        }, error => console.log(console.error()
+        ));
       });
     });
-  }
-
-  public getOriginCollectionHierarchy(orgin_identifier: string, identifier: string) {
-    const hierarchyUrl = '/action/content/v3/hierarchy/' + orgin_identifier + '?mode=edit';
-    const originUrl = this.programsService.getContentOriginEnvironment();
-    const url =  originUrl + hierarchyUrl ;
-
-    return this.httpClient.get(url).subscribe(async res => {
-      const content = _.get(res, 'result.content');
-      //  Set message for chapter
-      await _.forEach(this.collectionData.children, (node, index) => {
-        if (_.findIndex(content.children, (item) => item.identifier === node.origin) < 0 && this.sourcingOrgReviewer) {
-          this.collectionHierarchy[index].statusMsg = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
-        } else if (content.status === 'Retired' && this.sourcingOrgReviewer) {
-          this.collectionHierarchy[index].statusMsg = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
-        }
-      });
-      this.originalCollectionData = content;
-      // Check the status of textbook and set message
-      if (this.originalCollectionData.status !== 'Draft' && this.sourcingOrgReviewer) {
-        this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage;
-      }
-    }, error => console.log(console.error()
-    ));
   }
 
   getFolderLevelCount(collections) {
@@ -534,6 +521,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       name: node.name,
       contentType: node.contentType,
       topic: node.topic,
+      origin: node.origin,
       status: node.status,
       creator: node.creator,
       createdBy: node.createdBy || null,
@@ -847,6 +835,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
     // tslint:disable-next-line:max-line-length
     collection.totalLeaf += collection.leaf ? this.filterContentsForCount(collection.leaf, contentStatus, onlySample, organisationId, createdBy, visibility) : 0;
+
+    if (_.indexOf(this.originalCollectionData.childNodes, collection.origin) < 0 || this.originalCollectionData.status !== 'Draft') {
+      collection.statusMessage = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
+    }
     return collection.totalLeaf;
   }
 
