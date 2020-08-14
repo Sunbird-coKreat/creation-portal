@@ -7,7 +7,7 @@
   [isOpen]=" (collection.identifier === sessionContext.lastOpenedUnitChild || collection.identifier === sessionContext.lastOpenedUnitParent) ? true : false">
     <div title class="sb-accordion-title d-flex flex-jc-flex-end sb-color-primary flex-ai-center"><span class="chapter-status mr-16"></span>
      <span class="flex-4"> {{collection.name}}</span>
-     <span class="sb-color-error font-weight-bold px-20" *ngIf="!visibility['showAddresource']">{{collection.statusMsg}}</span>
+     <span class="sb-color-error font-weight-bold px-20 text-left" *ngIf="sourcingOrgReviewer">{{collection.statusMessage}}</span>
      <div class="sb-color-black sb-count">
         <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.totalContent}}:</span> <span class="font-weight-bold"> {{collection.totalLeaf}}</span>
       </div>
