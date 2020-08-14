@@ -40,7 +40,6 @@ export class CkeditorToolComponent implements OnInit, AfterViewInit, OnChanges {
   uploader;
   initialized = false;
   public assetProxyUrl = '/assets/public/';
-  public baseURL = 'https://programs.diksha.gov.in';
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -337,11 +336,13 @@ export class CkeditorToolComponent implements OnInit, AfterViewInit, OnChanges {
 
   addImageInEditor(imageUrl, imageId) {
     const src = this.getMediaOriginURL(imageUrl);
+    const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
+    ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : 'https://dock.sunbirded.org';
     this.mediaobj = {
       id: imageId,
       type: 'image',
       src: src,
-      baseUrl: this.baseURL
+      baseUrl
     };
     this.editorInstance.model.change(writer => {
       const imageElement = writer.createElement('image', {
