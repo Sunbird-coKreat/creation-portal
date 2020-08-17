@@ -529,6 +529,10 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
       if ( _.isArray(this.sessionContext.topic)) {
         this.sessionContext.topic = _.first(this.sessionContext.topic);
       }
+      if (this.sessionContext.topic) {
+        // tslint:disable-next-line:max-line-length
+        this.sessionContext.topic = _.isArray(this.sessionContext.topic) ? this.sessionContext.topic : _.split(this.sessionContext.topic, ',');
+      }
       if (_.isUndefined(this.sessionContext.topicList)) {
         this.sessionContext.topicList = _.get(_.find(this.sessionContext.frameworkData, { code: 'topic' }), 'terms');
       }
