@@ -3,8 +3,8 @@
     <div class="d-flex flex-w-wrap">
       <div class="fs-0-785 cursor-pointer pr-20 font-weight-bold" (click)="showfilter()"
         appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filter-accordion', 'click', 'library',{'isFilterShow':!isFilterShow})"
-        [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filter-accordion', 'click', 'library')"
+        [telemetryInteractCdata]="getTelemetryInteractCdata('show-toggle',!isFilterShow)"
         [telemetryInteractPdata]="sessionContext.telemetryInteractPdata" >
         <i class="question circle link icon sb-color-gray-200 fs-0-92" suiPopup popupDelay="500" popupText="{{resourceService.frmelmnts.lbl.changingFilterHelpsYouFindMoreContent}}"></i>
         {{resourceService.frmelmnts.lbl.filters}} 
@@ -23,8 +23,8 @@
           [telemetryInteractPdata]="sessionContext.telemetryInteractPdata">
             <sui-select-option *ngFor="let contentType of contentTypes.filteredOptions" [value]="contentType"
             appTelemetryInteract
-            [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('selectoption-contentType', 'click', 'library',{values:contentType})"
-            [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
+            [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('selectoption-contentType', 'click', 'library')"
+            [telemetryInteractCdata]="getTelemetryInteractCdata('value',contentType)"
             [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"> </sui-select-option>
         </sui-multi-select>
       </div>
@@ -39,8 +39,8 @@
           [telemetryInteractPdata]="sessionContext.telemetryInteractPdata">
             <sui-select-option *ngFor="let gradeLevel of gradeLevels.filteredOptions" [value]="gradeLevel"
             appTelemetryInteract
-          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('selectoption-gradeLevel', 'click', 'library',{values:gradeLevel})"
-          [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
+          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('selectoption-gradeLevel', 'click', 'library')"
+          [telemetryInteractCdata]="getTelemetryInteractCdata('value',gradeLevel)"
           [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"> </sui-select-option>
         </sui-multi-select>
       </div>
@@ -56,7 +56,7 @@
             <sui-select-option *ngFor="let subject of subjects.filteredOptions" [value]="subject"
             appTelemetryInteract
           [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('selectoption-subject', 'click', 'library',{values:subject})"
-          [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
+          [telemetryInteractCdata]="getTelemetryInteractCdata('value',subject)"
           [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"> </sui-select-option>
         </sui-multi-select>
       </div>
@@ -70,8 +70,8 @@
           [telemetryInteractPdata]="sessionContext.telemetryInteractPdata">
             <sui-select-option *ngFor="let chapter of chapters.filteredOptions" [value]="chapter"
           appTelemetryInteract
-          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('selectoption-chapter', 'click', 'library',{values:chapter})"
-          [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
+          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('selectoption-chapter', 'click', 'library')"
+          [telemetryInteractCdata]="getTelemetryInteractCdata('value',chapter)"
           [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"> </sui-select-option>
         </sui-multi-select>
       </div>

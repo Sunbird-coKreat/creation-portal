@@ -59,4 +59,11 @@ export class MvcFilterComponent implements OnInit, OnChanges {
       filters: this.searchFilterForm.value
     });
   }
+
+  getTelemetryInteractCdata(type, id) {
+    return [
+      ...this.sessionContext.telemetryInteractCdata,
+      { type: type, id: _.toString(id)}
+    ];
+  }
 }
