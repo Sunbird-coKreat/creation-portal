@@ -842,7 +842,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     // tslint:disable-next-line:max-line-length
     collection.totalLeaf += collection.leaf ? this.filterContentsForCount(collection.leaf, contentStatus, onlySample, organisationId, createdBy, visibility) : 0;
 
-    if (_.indexOf(this.originalCollectionData.childNodes, collection.origin) < 0 || this.originalCollectionData.status !== 'Draft') {
+    // tslint:disable-next-line:max-line-length
+    if (this.originalCollectionData && (_.indexOf(this.originalCollectionData.childNodes, collection.origin) < 0 || this.originalCollectionData.status !== 'Draft')) {
       collection.statusMessage = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
     }
     return collection.totalLeaf;
