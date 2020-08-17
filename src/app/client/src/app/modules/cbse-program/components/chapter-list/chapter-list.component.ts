@@ -311,31 +311,38 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         const originUrl = this.programsService.getContentOriginEnvironment();
         const url =  originUrl + hierarchyUrl1 ;
 
-        this.httpClient.get(url).subscribe(async res => {
-          const content = _.get(res, 'result.content');
-          this.originalCollectionData = content;
-          this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
-          if (this.originalCollectionData.status !== 'Draft' && this.sourcingOrgReviewer) {
-            this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage;
-          }
-        this.getFolderLevelCount(this.collectionHierarchy);
-        hierarchy = instance.hierarchyObj;
-        this.sessionContext.hierarchyObj = { hierarchy };
-
-        if (_.get(this.collectionData, 'sourcingRejectedComments')) {
-        // tslint:disable-next-line:max-line-length
-        this.sessionContext.hierarchyObj['sourcingRejectedComments'] = _.isString(_.get(this.collectionData, 'sourcingRejectedComments')) ? JSON.parse(_.get(this.collectionData, 'sourcingRejectedComments')) : _.get(this.collectionData, 'sourcingRejectedComments');
+        if (this.router.url.includes('/sourcing') && this.collectionData && this.collectionData.visibility === 'Default') {
+          this.httpClient.get(url).subscribe(async res => {
+            const content = _.get(res, 'result.content');
+            this.originalCollectionData = content;
+            this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
+            this.setTreeLeafStatusMessage(identifier, instance);
+            resolve('Done');
+          }, error => console.log(console.error()
+          ));
+        } else {
+          this.setTreeLeafStatusMessage(identifier, instance);
         }
-        this.showLoader = false;
-        this.showError = false;
-        this.levelOneChapterList = _.uniqBy(this.levelOneChapterList, 'identifier');
-         resolve('Done');
-        }, error => console.log(console.error()
-        ));
       });
     });
   }
 
+  setTreeLeafStatusMessage(identifier, instance){
+    this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
+    if (this.originalCollectionData.status !== 'Draft' && this.sourcingOrgReviewer) {
+      this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage;
+    }
+    this.getFolderLevelCount(this.collectionHierarchy);
+    const hierarchy = instance.hierarchyObj;
+    this.sessionContext.hierarchyObj = { hierarchy };
+    if (_.get(this.collectionData, 'sourcingRejectedComments')) {
+    // tslint:disable-next-line:max-line-length
+    this.sessionContext.hierarchyObj['sourcingRejectedComments'] = _.isString(_.get(this.collectionData, 'sourcingRejectedComments')) ? JSON.parse(_.get(this.collectionData, 'sourcingRejectedComments')) : _.get(this.collectionData, 'sourcingRejectedComments');
+    }
+    this.showLoader = false;
+    this.showError = false;
+    this.levelOneChapterList = _.uniqBy(this.levelOneChapterList, 'identifier');
+  }
   getFolderLevelCount(collections) {
     let status = this.sampleContent ? ['Review', 'Draft'] : [];
     let createdBy, visibility;
