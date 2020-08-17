@@ -345,9 +345,9 @@ top: -4px;
   .content{
     border: 1px solid var(--gray-100);
   }
-  .chapter-lists--item{
-    border-bottom: 1px solid var(--gray-100);
-  }
+  // .chapter-lists--item{
+  //   border-bottom: 1px solid var(--gray-100);
+  // }
   .content{
     &:last-child{
       border-bottom: 1px solid var(--gray-100) !important;
