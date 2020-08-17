@@ -42,6 +42,7 @@ let envVariables = {
   sunbird_device_api: env.sunbird_device_api || 'https://staging.ntp.net.in/api/',
   dock_api_call_log_status: env.dock_api_call_log_status || false,
   SUNBIRD_PORTAL_URL: env.sunbird_portal_url,
+  SUNBIRD_LEARNER_URL: env.sunbird_learner_url,
 
 
   // TTL and Intervals

@@ -292,7 +292,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     }))
       .subscribe((response) => {
-        let children = [];
+        const children = [];
         _.forEach(response.result.content.children, (child) => {
           if (child.mimeType !== 'application/vnd.ekstep.content-collection' ||
           (child.mimeType === 'application/vnd.ekstep.content-collection' && child.openForContribution === true)) {
@@ -339,45 +339,21 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
     return this.httpClient.get(url).subscribe(async res => {
       const content = _.get(res, 'result.content');
-      this.originalCollectionData = content;
       //  Set message for chapter
       await _.forEach(this.collectionData.children, (node, index) => {
-        if (node.children) {
-          if (_.findIndex(content.children, (item) => item.identifier === node.origin) < 0 && this.sourcingOrgReviewer) {
-            this.collectionHierarchy[index].statusMsg = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
-          } else if (content.status === 'Retired' && this.sourcingOrgReviewer) {
-            this.collectionHierarchy[index].statusMsg = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
-          }
-          this.setStatusMessage(node.children, index);
-        } else {
-          if (_.findIndex(content.children, (item) => item.identifier === node.origin) < 0 && this.sourcingOrgReviewer) {
-            this.collectionHierarchy[index].statusMsg = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
-          } else if (content.status === 'Retired' && this.sourcingOrgReviewer) {
-            this.collectionHierarchy[index].statusMsg = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
-          }
+        if (_.findIndex(content.children, (item) => item.identifier === node.origin) < 0 && this.sourcingOrgReviewer) {
+          this.collectionHierarchy[index].statusMsg = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
+        } else if (content.status === 'Retired' && this.sourcingOrgReviewer) {
+          this.collectionHierarchy[index].statusMsg = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
         }
       });
+      this.originalCollectionData = content;
       // Check the status of textbook and set message
       if (this.originalCollectionData.status !== 'Draft' && this.sourcingOrgReviewer) {
         this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage;
       }
     }, error => console.log(console.error()
     ));
-  }
-
-  setStatusMessage(content, key) {
-    _.forEach(content, (node, index) => {
-      if (node.children) {
-        if (_.findIndex(this.originalCollectionData.children, (item) => item.identifier === node.origin) < 0 && this.sourcingOrgReviewer) {
-          this.collectionHierarchy[key].children[index].statusMsg = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
-        } else if (this.originalCollectionData.status === 'Retired' && this.sourcingOrgReviewer) {
-          this.collectionHierarchy[key].children[index].statusMsg = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
-        }
-        this.setStatusMessage(node.children, index);
-      } else if (this.originalCollectionData.status === 'Retired' && this.sourcingOrgReviewer) {
-        this.collectionHierarchy[key].statusMsg = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
-      }
-    });
   }
 
   getFolderLevelCount(collections) {
@@ -896,6 +872,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
     // tslint:disable-next-line:max-line-length
     collection.totalLeaf += collection.leaf ? this.filterContentsForCount(collection.leaf, contentStatus, onlySample, organisationId, createdBy, visibility) : 0;
+    if (collection.totalLeaf > 0) {
+      collection.sourcingStatus = this.setUnitContentsStatusCount(collection.leaf);
+    }
     return collection.totalLeaf;
   }
 
@@ -913,6 +892,88 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
     const leaves = _.concat(_.filter(contents, filter), _.filter(contents, 'sourceURL'));
     return leaves.length;
+  }
+
+  setUnitContentsStatusCount(contents) {
+    const contentStatusCount = [];
+    if (this.isSourcingOrgReviewer()) {
+      contentStatusCount['approved'] = 0;
+      contentStatusCount['rejected'] = 0;
+      contentStatusCount['approvalPending'] = 0;
+      _.forEach(contents, (content) => {
+        if (content.sourcingStatus === 'Approved') {
+          contentStatusCount['approved'] += 1;
+        } else if (content.sourcingStatus === 'Rejected') {
+          contentStatusCount['rejected'] += 1;
+        } else if (content.sourcingStatus === null && content.prevStatus === 'Processing') {
+          contentStatusCount['approvalPending'] += 1;
+        }
+      });
+    } else if (this.isContributingOrgAdmin() || this.isContributingOrgReviewer()) {
+      contentStatusCount['notAccepted'] = 0;
+      contentStatusCount['approvalPending'] = 0;
+      contentStatusCount['reviewPending'] = 0;
+      contentStatusCount['draft'] = 0;
+      contentStatusCount['rejected'] = 0;
+      contentStatusCount['approved'] = 0;
+      _.forEach(contents, (content) => {
+        if (content.organisationId === this.myOrgId) {
+          if (content.status === 'Draft' && content.prevStatus === 'Review') {
+            contentStatusCount['notAccepted'] += 1;
+          } else if (content.status === 'Live' && !content.sourcingStatus) {
+            contentStatusCount['approvalPending'] += 1;
+          } else if (content.status === 'Review') {
+            contentStatusCount['reviewPending'] += 1;
+          } else if (content.status === 'Draft' && content.prevStatus === null) {
+            contentStatusCount['draft'] += 1;
+          } else if (content.sourcingStatus === 'Approved' && content.status === 'Live') {
+            contentStatusCount['approved'] += 1;
+          } else if (content.sourcingStatus === 'Rejected' && content.status === 'Live') {
+            contentStatusCount['rejected'] += 1;
+          }
+        }
+      });
+    } else if (this.isContributingOrgContributor()) {
+      contentStatusCount['notAccepted'] = 0;
+      contentStatusCount['approvalPending'] = 0;
+      contentStatusCount['reviewPending'] = 0;
+      contentStatusCount['rejected'] = 0;
+      contentStatusCount['approved'] = 0;
+      _.forEach(contents, (content) => {
+        if (content.organisationId === this.myOrgId) {
+          if (content.status === 'Draft' && content.prevStatus === 'Review') {
+            contentStatusCount['notAccepted'] += 1;
+          } else if (content.status === 'Live' && !content.sourcingStatus) {
+            contentStatusCount['approvalPending'] += 1;
+          } else if (content.status === 'Review') {
+            contentStatusCount['reviewPending'] += 1;
+          } else if (content.sourcingStatus === 'Approved' && content.status === 'Live') {
+            contentStatusCount['approved'] += 1;
+          } else if (content.sourcingStatus === 'Rejected' && content.status === 'Live') {
+            contentStatusCount['rejected'] += 1;
+          }
+        }
+      });
+    } else if (this.sessionContext.currentOrgRole === 'individual') {
+      contentStatusCount['approvalPending'] = 0;
+      contentStatusCount['draft'] = 0;
+      contentStatusCount['rejected'] = 0;
+      contentStatusCount['approved'] = 0;
+      _.forEach(contents, (content) => {
+        if (content.createdBy === this.userService.userProfile.userId) {
+          if (content.status === 'Draft' && content.prevStatus === null) {
+            contentStatusCount['draft'] += 1;
+          } else if (content.status === 'Live' && !content.sourcingStatus) {
+            contentStatusCount['approvalPending'] += 1;
+          } else if (content.sourcingStatus === 'Approved' && content.status === 'Live') {
+            contentStatusCount['approved'] += 1;
+          } else if (content.sourcingStatus === 'Rejected' && content.status === 'Live') {
+            contentStatusCount['rejected'] += 1;
+          }
+        }
+      });
+    }
+    return contentStatusCount;
   }
 
   isNominationByOrg() {
@@ -938,7 +999,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   isSourcingOrgReviewer () {
     return !!(this.userService.userProfile.userRoles.includes('ORG_ADMIN') ||
-    this.userService.userProfile.userRoles.includes('CONTENT_REVIEWER'));
+    (this.programContext.rolemapping && ( this.programContext.rolemapping.REVIEWER && this.programContext.rolemapping.REVIEWER.includes(this.currentUserID))
+    ));
   }
 
   isNominationPendingOrInitiated() {
