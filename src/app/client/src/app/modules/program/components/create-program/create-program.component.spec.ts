@@ -1,29 +1,22 @@
+import { By, BrowserModule } from '@angular/platform-browser';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { SharedModule, ResourceService, ConfigService } from '@sunbird/shared';
 import { RouterTestingModule } from '@angular/router/testing';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, tick, fakeAsync } from '@angular/core/testing';
 import { CoreModule } from '@sunbird/core';
 import { CreateProgramComponent } from './create-program.component';
 import { CacheService } from 'ng2-cache-service';
 import * as mockData from './create-program.spec.data';
 import { DatePipe } from '@angular/common';
-import { TelemetryModule } from '@sunbird/telemetry';
-import { FineUploader } from 'fine-uploader';
+import { TelemetryModule, TelemetryService } from '@sunbird/telemetry';
 import { ProgramsService, DataService, FrameworkService, ActionService } from '@sunbird/core';
-import { Subscription, Subject, throwError, Observable } from 'rxjs';
-import { tap, first, map, takeUntil, catchError, count } from 'rxjs/operators';
 import * as _ from 'lodash-es';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FormControl, FormBuilder, Validators, FormGroup, FormArray, FormGroupName } from '@angular/forms';
-import { IProgram } from './../../../core/interfaces';
+import { ActivatedRoute } from '@angular/router';
 import { CbseProgramService } from './../../../cbse-program/services';
 import { UserService } from '@sunbird/core';
-import { programConfigObj } from './programconfig';
-import { HttpClient } from '@angular/common/http';
 import { DeviceDetectorService } from 'ngx-device-detector';
-import * as moment from 'moment';
-import * as alphaNumSort from 'alphanum-sort';
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges } from '@angular/core';
+import { SuiModule } from 'ng2-semantic-ui';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 describe('CreateProgramComponent', () => {
   let component: CreateProgramComponent;
@@ -46,18 +39,33 @@ describe('CreateProgramComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule, SharedModule.forRoot(), HttpClientTestingModule, CoreModule, TelemetryModule],
+      imports: [
+        RouterTestingModule,
+        SharedModule.forRoot(),
+        BrowserModule,
+        HttpClientTestingModule,
+        CoreModule,
+        TelemetryModule,
+        SuiModule,
+        FormsModule,
+        ReactiveFormsModule
+      ],
       declarations: [CreateProgramComponent],
-      providers: [ResourceService, CacheService, ConfigService, DatePipe,
-        ProgramsService, DataService, FrameworkService, ActionService,
-        first, map, takeUntil, catchError, count,
-        Component, ViewChild, ElementRef,
-        FormControl, FormBuilder, Validators, FormGroup, FormArray, FormGroupName,
-        CbseProgramService, programConfigObj, UserService,
+      providers: [
+        ResourceService,
+        CacheService,
+        ConfigService,
+        DatePipe,
+        ProgramsService,
+        DataService,
+        FrameworkService,
+        ActionService,
+        UserService,
+        CbseProgramService,
         DeviceDetectorService,
-        Subscription, Subject, throwError, Observable,
-
-       {provide: ActivatedRoute, useValue: fakeActivatedRoute}]
+        TelemetryService,
+       { provide: ActivatedRoute, useValue: fakeActivatedRoute }
+      ]
     })
       .compileComponents();
   }));
@@ -73,6 +81,114 @@ describe('CreateProgramComponent', () => {
     component.ngOnInit();
     expect(component).toBeTruthy();
     expect(component.ngOnInit).toHaveBeenCalled();
+  });
+  describe('Variable checks', () => {
+    it('editPublished should be defined and false', () => {
+      expect(component.editPublished).toBeDefined();
+      expect(component.editPublished).toBeFalsy();
+    });
+
+    it('programId should be undefined', () => {
+      expect(component.programId).toBeUndefined();
+    });
+
+    it('guidLinefileName should be undefined', () => {
+      expect(component.guidLinefileName).toBeUndefined();
+    });
+
+    it('isFormValueSet should be defined and true', () => {
+      expect(component.isFormValueSet).toBeDefined();
+      expect(component.isFormValueSet).toBeTruthy();
+    });
+
+    it('choosedTextBook should be undefined', () => {
+      expect(component.choosedTextBook).toBeUndefined();
+    });
+
+    it('selectChapter should be defined and false', () => {
+      expect(component.selectChapter).toBeDefined();
+      expect(component.selectChapter).toBeFalsy();
+    });
+
+    it('selectedContentTypes should be undefined', () => {
+      expect(component.selectedContentTypes).toBeUndefined();
+    });
+
+    it('createProgramForm should be defined', () => {
+      expect(component.createProgramForm).toBeDefined();
+    });
+
+    it('collectionListForm should be defined', () => {
+      expect(component.collectionListForm).toBeDefined();
+    });
+
+    it('programDetails should be undefined', () => {
+      expect(component.programDetails).toBeUndefined();
+    });
+
+    it('resourceService should be undefined', () => {
+      expect(component.resourceService).toBeUndefined();
+    });
+
+    it('collections should be undefined', () => {
+     expect(component.collections).toBeUndefined();
+    });
+
+    it('tempCollections should be array', () => {
+      expect(component.tempCollections).toEqual([]);
+    });
+
+    it('textbooks should be Object', () => {
+      expect(component.textbooks).toEqual({});
+    });
+
+    it('chaptersSelectionForm to be undefined', () => {
+      expect(component.chaptersSelectionForm).toBeUndefined();
+    });
+
+    it('frameworkCategories to be undefined', () => {
+      expect(component.frameworkCategories).toBeUndefined();
+    });
+
+    it('programData to be object', () => {
+      expect(component.programData).toEqual({});
+    });
+
+    it('chaptersSelectionForm to be undefined', () => {
+      expect(component.chaptersSelectionForm).toBeUndefined();
+    });
+
+    it('showTextBookSelector to be false', () => {
+      expect(component.showTextBookSelector).toBeFalsy();
+    });
+
+    it('formIsInvalid to be false', () => {
+      expect(component.chaptersSelectionForm).toBeFalsy();
+    });
+
+    it('mediumOption to be array', () => {
+      expect(component.mediumOption).toEqual([]);
+    });
+
+    it('gradeLevelOption to be array', () => {
+      expect(component.gradeLevelOption).toEqual([]);
+    });
+
+    it('telemetryImpression to be undefined', () => {
+      expect(component.telemetryImpression).toBeUndefined();
+    });
+
+    it('telemetryEnd to be undefined', () => {
+      expect(component.telemetryEnd).toBeUndefined();
+    });
+
+    it('sortColumn to be equal "name"', () => {
+      expect(component.sortColumn).toEqual('name');
+    });
+
+    it('chaptersSortColumn to be "name"', () => {
+      expect(component.chaptersSortColumn).toEqual('name');
+    });
   });
   it('Should call the initiateDocumentUploadModal method', () => {
     spyOn(component, 'initiateDocumentUploadModal');
@@ -130,5 +246,67 @@ describe('CreateProgramComponent', () => {
     spyOn(component, 'initializeFormFields');
     component.initializeFormFields();
     expect(component.initializeFormFields).toHaveBeenCalled();
+  });
+  it('Should execute getAcceptType on initialization of component', () => {
+    spyOn(component, 'getAcceptType');
+    component.ngOnInit();
+    expect(component.getAcceptType).toHaveBeenCalled();
+  });
+  it('Verify getAcceptType output', () => {
+    expect(component).toBeDefined();
+    expect(component.getAcceptType('pdf', 'pdf')).toBe('pdf/pdf');
+  });
+  it('Should call initiateDocumentUploadModal on upload button', fakeAsync(() => {
+    fixture.detectChanges();
+    spyOn(component, 'initiateDocumentUploadModal');
+    const button = fixture.debugElement.query(By.css('button')).nativeElement;
+    button.click();
+    expect(component.initiateDocumentUploadModal).toHaveBeenCalled();
+  }));
+  it('Should call setValidations if validateFormBeforePublish called', fakeAsync(() => {
+    spyOn(component, 'setValidations');
+    component.validateFormBeforePublish();
+    expect(component.setValidations).toHaveBeenCalled();
+  }));
+  describe('Remove uploaded document', () => {
+    it('programId should be defined', () => {
+      component.programDetails = {
+        'guidelines_url': null
+      };
+      component.removeUploadedDocument();
+      expect(component.uploadedDocument).toBeNull();
+      expect(component.guidLinefileName).toBeNull();
+      expect(component.programDetails.guidelines_url).toBeNull();
+    });
+  });
+  describe('Test reset sort', () => {
+    it('Sort column should be "name"', () => {
+      component.resetSorting();
+      expect(component.sortColumn).toEqual('name');
+    });
+    it('Sort direction should be "asc"', () => {
+      component.resetSorting();
+      expect(component.direction).toEqual('asc');
+    });
+  });
+  describe('Methods call verification', () => {
+    it('Should call saveAsDraft on save program (edit live)', () => {
+      spyOn(component, 'saveAsDraft');
+      const button = fixture.debugElement.query(By.css('#btnSaveAsDraft'));
+      button.nativeElement.click({});
+      expect(component.saveAsDraft).toHaveBeenCalled();
+    });
+    it('Should call saveAsDraftAndNext on next button click', () => {
+      spyOn(component, 'saveAsDraftAndNext');
+      const button = fixture.debugElement.query(By.css('#btnSaveAsDraftAndNext'));
+      button.nativeElement.click({});
+      expect(component.saveAsDraftAndNext).toHaveBeenCalled();
+    });
+  });
+  describe('Test the form Visibility', () => {
+    it('Check if metadata form visible', () => {
+      const metaForm = fixture.debugElement.query(By.css('.metadata'));
+      expect(metaForm).not.toBeNull();
+    });
   });
 });

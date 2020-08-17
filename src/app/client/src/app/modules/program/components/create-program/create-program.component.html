@@ -15,7 +15,7 @@
 						{{resource?.frmelmnts?.lbl?.selectTextbooks}}
 					</div>
 				</div>
-				<div class="ui segment mt-5" suiTabContent="1" [ngClass]="{'active' : !showTextBookSelector}">
+				<div class="ui segment mt-5 metadata" suiTabContent="1" [ngClass]="{'active' : !showTextBookSelector}">
 					<form class="ui form sb-dock-radio-disable" [formGroup]="createProgramForm" *ngIf="isFormValueSet">
 						<div class="ui grid">
 							<div class="twelve wide column">
@@ -528,22 +528,33 @@
 					[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.previous}}</button>
 			</div>
 			<div>
-				<button *ngIf="editPublished" type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="updateProgram($event);"
+				<button *ngIf="editPublished"
+					id="btnUpdateProgram"
+					type="button"
+					class="sb-btn sb-btn-normal sb-btn-primary"
+					(click)="updateProgram($event);"
 					appTelemetryInteract
 					[telemetryInteractEdata]="getTelemetryInteractEdata('update', 'click', 'edit-program')"
-					[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+					[telemetryInteractObject]="telemetryInteractObject"
+					[telemetryInteractCdata]="telemetryInteractCdata"
 					[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.update}}</button>
-				<button *ngIf="!editPublished" class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8"
+				<button *ngIf="!editPublished"
+					id="btnSaveAsDraft"
+					class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8"
 					appTelemetryInteract
 					[telemetryInteractEdata]="getTelemetryInteractEdata('draft', 'click', 'edit-program')"
 					[telemetryInteractObject]="telemetryInteractObject"
 					[telemetryInteractCdata]="telemetryInteractCdata"
 					[telemetryInteractPdata]="telemetryInteractPdata"
 					(click)="saveAsDraft($event)">{{resource?.frmelmnts?.btn?.saveAsDraft}}</button>
-				<button *ngIf="!showTextBookSelector && !editPublished" class="sb-btn sb-btn-normal sb-btn-primary" (click)="saveAsDraftAndNext($event)"
+				<button id="btnSaveAsDraftAndNext"
+					*ngIf="!showTextBookSelector && !editPublished"
+					class="sb-btn sb-btn-normal sb-btn-primary"
+					(click)="saveAsDraftAndNext($event)"
 					appTelemetryInteract
 					[telemetryInteractEdata]="getTelemetryInteractEdata('next', 'click', 'create-program')"
-					[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+					[telemetryInteractObject]="telemetryInteractObject"
+					[telemetryInteractCdata]="telemetryInteractCdata"
 					[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.next}}</button>
 				<button *ngIf="showTextBookSelector && !editPublished"
 					class="sb-btn sb-btn-normal sb-btn-primary"
@@ -696,7 +707,7 @@ class="sb-modal" appBodyScroll (dismissed)="this.selectChapter = false" #modal>
    {{resource?.frmelmnts?.lbl?.areYouSurePublishProject}}
   </div>
   <div class="sb-modal-actions">
-	<button class="sb-btn sb-btn-normal sb-btn-primary"
+	<button id="publishProject" class="sb-btn sb-btn-normal sb-btn-primary"
 		(click)="publishProject($event)"
 		appTelemetryInteract
 		[telemetryInteractEdata]="getTelemetryInteractEdata('create-program', 'click', 'create-program')"
