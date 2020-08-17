@@ -315,9 +315,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           this.httpClient.get(url).subscribe(async res => {
             const content = _.get(res, 'result.content');
             this.originalCollectionData = content;
-            if (this.originalCollectionData && this.originalCollectionData.status !== 'Draft' && this.sourcingOrgReviewer) {
-              this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage;
-            }
             this.setTreeLeafStatusMessage(identifier, instance);
             resolve('Done');
           }, error => console.log(console.error()
@@ -331,6 +328,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   setTreeLeafStatusMessage(identifier, instance) {
     this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
+    if (this.originalCollectionData && this.originalCollectionData.status !== 'Draft' && this.sourcingOrgReviewer) {
+      this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage;
+    }
     this.getFolderLevelCount(this.collectionHierarchy);
     const hierarchy = instance.hierarchyObj;
     this.sessionContext.hierarchyObj = { hierarchy };
