@@ -345,9 +345,6 @@ top: -4px;
   .content{
     border: 1px solid var(--gray-100);
   }
-  // .chapter-lists--item{
-  //   border-bottom: 1px solid var(--gray-100);
-  // }
   .content{
     &:last-child{
       border-bottom: 1px solid var(--gray-100) !important;
@@ -375,7 +372,7 @@ top: -4px;
   vertical-align: bottom;
   .section{
     &:first-child{
-      width: 30%;
+      max-width: 30%;
       overflow: hidden;
       text-overflow: ellipsis;
       display: inline-block !important;
@@ -384,7 +381,7 @@ top: -4px;
     &:nth-child(2n),
     &:nth-child(3n),
     &:nth-child(4n){
-    width: 10%;
+    max-width: 10%;
     overflow: hidden;
     text-overflow: ellipsis;
     display: inline-block !important;
