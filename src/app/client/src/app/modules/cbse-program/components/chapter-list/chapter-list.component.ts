@@ -942,6 +942,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   setUnitContentsStatusCount(contents) {
+    console.log(contents, 'contents contents');
     const contentStatusCount = [];
     if (this.isSourcingOrgReviewer()) {
       contentStatusCount['approved'] = 0;
@@ -952,7 +953,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           contentStatusCount['approved'] += 1;
         } else if (content.sourcingStatus === 'Rejected') {
           contentStatusCount['rejected'] += 1;
-        } else if (content.status === 'Live' && content.sourceURL) {
+        } else if (content.status === 'Live' && content.sourceURL && content.sourcingStatus === 'Approved') {
           contentStatusCount['approvalPending'] += 1;
         } else if (content.sourcingStatus === null && content.prevStatus === 'Processing') {
           contentStatusCount['approvalPending'] += 1;
@@ -1005,6 +1006,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           }
         } else if (content.status === 'Live' && content.sourceURL){
           contentStatusCount['approvalPending'] += 1;
+        } else if (content.status === 'Live' && content.sourceURL && content.sourcingStatus === 'Approved'){
+          contentStatusCount['approved'] += 1;
         }
       });
     } else if (this.sessionContext.currentOrgRole === 'individual') {
