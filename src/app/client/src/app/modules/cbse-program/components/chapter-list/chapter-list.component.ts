@@ -169,6 +169,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   async updateAccordianView(unitId?, onSelectChapterChange?) {
+    if (this.isPublishOrSubmit() && this.isContributingOrgContributor() && this.isDefaultContributingOrg()) {
+      this.sessionContext.currentOrgRole = 'individual';
+    }
       await this.getCollectionHierarchy(this.sessionContext.collection,
                 this.selectedChapterOption === 'all' ? undefined : this.selectedChapterOption);
       const acceptedContents = _.get(this.storedCollectionData, 'acceptedContents', []);
@@ -181,9 +184,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       this.lastOpenedUnit(this.selectedChapterOption);
     } else {
       if (!_.isEmpty(this.collectionHierarchy)) { this.lastOpenedUnit(this.collectionHierarchy[0].identifier)}
-    }
-    if (this.isPublishOrSubmit() && this.isContributingOrgContributor() && this.isDefaultContributingOrg()) {
-      this.sessionContext.currentOrgRole = 'individual';
     }
   }
 
