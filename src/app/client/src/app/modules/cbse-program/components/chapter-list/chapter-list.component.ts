@@ -766,12 +766,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.resourceTemplateInputData();
   }
   removeMvcContentFromHierarchy() {
+    const contentId = this.contentId;
     this.collectionHierarchyService.removeResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, this.contentId)
        .subscribe(() => {
          this.showRemoveConfirmationModal = false;
          this.updateAccordianView(this.unitIdentifier);
          this.resetContentId();
-         this.updateTextbookmvcContentCount(this.sessionContext.collection, this.contentId);
+         this.updateTextbookmvcContentCount(this.sessionContext.collection, contentId);
          this.toasterService.success(_.replace(this.resourceService.messages.stmsg.m0147, '{CONTENT_NAME}', this.contentName));
        }, (error) => {
         this.toasterService.error(_.replace(this.resourceService.messages.emsg.m0078, '{CONTENT_NAME}', this.contentName));
@@ -779,19 +780,18 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
   updateTextbookmvcContentCount(textbookId, contentId) {
      this.helperService.getTextbookDetails(textbookId).subscribe((data) => {
+     const array = _.remove(data.result.content['mvcContent'], function(content) {return content !== contentId})
       const request = {
         content: {
           'versionKey': data.result.content.versionKey,
           'mvcContentCount':  data.result.content.mvcContentCount - 1,
+          'mvcContent':_.uniq(array),
         }
       };
-
       this.helperService.updateContent(request, textbookId).subscribe((data) => {
-    
       }, err => {
       });
      },(error) => {
-
      })
   }
   resourceTemplateInputData() {
@@ -932,7 +932,12 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     if (status && status.length > 0) {
       contents = _.filter(contents, leaf => _.includes(status, leaf.status));
     }
-    const leaves = _.concat(_.filter(contents, filter), _.filter(contents, 'sourceURL'));
+    let leaves;
+    if (this.router.url.includes('/sourcing')) {
+       leaves = _.concat(_.filter(contents, filter));
+    } else {
+       leaves = _.concat(_.filter(contents, filter), _.filter(contents, 'sourceURL'));
+      }
     return leaves.length;
   }
 
@@ -947,7 +952,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           contentStatusCount['approved'] += 1;
         } else if (content.sourcingStatus === 'Rejected') {
           contentStatusCount['rejected'] += 1;
-        } else if (content.status === 'Live' && content.sourceURL && !this.router.url.includes('/sourcing')) {
+        } else if (content.status === 'Live' && content.sourceURL) {
           contentStatusCount['approvalPending'] += 1;
         } else if (content.sourcingStatus === null && content.prevStatus === 'Processing') {
           contentStatusCount['approvalPending'] += 1;

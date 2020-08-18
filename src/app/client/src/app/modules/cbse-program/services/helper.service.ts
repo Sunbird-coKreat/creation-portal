@@ -261,7 +261,7 @@ export class HelperService {
   getTextbookDetails(textbookId) {
     const option = {
       url: 'content/v3/read/' + textbookId,
-      param: { 'mode': 'edit', 'fields': 'versionKey,mvcContentCount,mvcContents' }
+      param: { 'mode': 'edit', 'fields': 'versionKey,mvcContentCount,mvcContent' }
     };
     return  this.actionService.get(option);
   }

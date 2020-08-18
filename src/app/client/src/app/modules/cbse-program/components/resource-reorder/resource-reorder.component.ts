@@ -71,25 +71,18 @@ export class ResourceReorderComponent implements OnInit {
         this.modal.deny();
 
         this.helperService.getTextbookDetails(this.sessionContext.collection).subscribe((data) => {
-
-          const tableData = {
-            contentId: this.contentId
-          };
           let array = [];
-
-          if(_.has(data.result.content, 'mvcContents')) {
-            array = JSON.parse(data.result.content['mvcContents']);
+          if(_.has(data.result.content, 'mvcContent')) {
+            array = data.result.content['mvcContent'];
           } 
-
-          array.push(tableData);
-
+          array.push(this.contentId);
           const request = {
             content: {
               'versionKey': data.result.content.versionKey,
               'mvcContentCount': data.result.content.mvcContentCount ? data.result.content.mvcContentCount + 1 : 1,
             }
           };
-          // request.content['mvcContents'] = array
+          request.content['mvcContent'] = _.uniq(array)
           this.helperService.updateContent(request, this.sessionContext.collection).subscribe((data) => {
     
           }, err => {
