@@ -942,7 +942,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   setUnitContentsStatusCount(contents) {
-    console.log(contents, 'contents contents');
     const contentStatusCount = [];
     if (this.isSourcingOrgReviewer()) {
       contentStatusCount['approved'] = 0;
