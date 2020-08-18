@@ -536,7 +536,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
       if (_.isUndefined(this.sessionContext.topicList)) {
         this.sessionContext.topicList = _.get(_.find(this.sessionContext.frameworkData, { code: 'topic' }), 'terms');
       }
-      const topicTerm = _.find(this.sessionContext.topicList, { name: this.sessionContext.topic });
+      const topicTerm = _.find(this.sessionContext.topicList, { name: _.first(this.sessionContext.topic) });
       if (topicTerm && topicTerm.associations) {
         this.selectOutcomeOption['learningOutcome'] = _.map(topicTerm.associations, (learningOutcome) => {
           return learningOutcome.name;
