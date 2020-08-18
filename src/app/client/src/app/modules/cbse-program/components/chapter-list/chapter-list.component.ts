@@ -1004,11 +1004,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           } else if (content.sourcingStatus === 'Rejected' && content.status === 'Live') {
             contentStatusCount['rejected'] += 1;
           }
-        } else if (content.status === 'Live' && content.sourceURL){
-          contentStatusCount['approvalPending'] += 1;
         } else if (content.status === 'Live' && content.sourceURL && content.sourcingStatus === 'Approved'){
           contentStatusCount['approved'] += 1;
-        }
+        } else if (content.status === 'Live' && content.sourceURL){
+          contentStatusCount['approvalPending'] += 1;
+        } 
       });
     } else if (this.sessionContext.currentOrgRole === 'individual') {
       contentStatusCount['approvalPending'] = 0;
