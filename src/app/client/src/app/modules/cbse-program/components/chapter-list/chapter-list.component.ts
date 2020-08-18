@@ -780,12 +780,12 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
   updateTextbookmvcContentCount(textbookId, contentId) {
      this.helperService.getTextbookDetails(textbookId).subscribe((data) => {
-     const array = _.remove(data.result.content['mvcContent'], function(content) {return content !== contentId})
+     const array = _.remove(data.result.content['mvcContents'], function(content) {return content !== contentId})
       const request = {
         content: {
           'versionKey': data.result.content.versionKey,
           'mvcContentCount':  data.result.content.mvcContentCount - 1,
-          'mvcContent':_.uniq(array),
+          'mvcContents':_.uniq(array),
         }
       };
       this.helperService.updateContent(request, textbookId).subscribe((data) => {

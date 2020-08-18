@@ -72,8 +72,8 @@ export class ResourceReorderComponent implements OnInit {
 
         this.helperService.getTextbookDetails(this.sessionContext.collection).subscribe((data) => {
           let array = [];
-          if(_.has(data.result.content, 'mvcContent')) {
-            array = data.result.content['mvcContent'];
+          if(_.has(data.result.content, 'mvcContents')) {
+            array = data.result.content['mvcContents'];
           } 
           array.push(this.contentId);
           const request = {
@@ -82,7 +82,7 @@ export class ResourceReorderComponent implements OnInit {
               'mvcContentCount': data.result.content.mvcContentCount ? data.result.content.mvcContentCount + 1 : 1,
             }
           };
-          request.content['mvcContent'] = _.uniq(array)
+          request.content['mvcContents'] = _.uniq(array)
           this.helperService.updateContent(request, this.sessionContext.collection).subscribe((data) => {
     
           }, err => {
