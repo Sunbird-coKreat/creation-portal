@@ -57,6 +57,10 @@ export class MvcListComponent implements OnInit, OnDestroy {
     });
   }
 
+  getTelemetryInteractCdata(type, id) {
+    return [...this.sessionContext.telemetryInteractCdata, { type: type, id: _.toString(id)}];
+  }
+
   ngOnDestroy() {
     this.updateContentViewed();
   }

@@ -75,6 +75,10 @@ export class ResourceReorderComponent implements OnInit {
     e.stopPropagation();
   }
 
+  getTelemetryInteractCdata(type, id) {
+    return [...this.sessionContext.telemetryInteractCdata, { type: type, id: _.toString(id)} ];
+  }
+
   cancelMove() {
     this.moveEvent.emit({
       action: 'cancelMove',

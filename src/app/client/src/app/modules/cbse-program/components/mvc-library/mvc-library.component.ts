@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import * as _ from 'lodash-es';
+import { UUID } from 'angular2-uuid';
 import { catchError, map, finalize, tap } from 'rxjs/operators';
 import { throwError, forkJoin } from 'rxjs';
 import { IImpressionEventInput} from '@sunbird/telemetry';
@@ -37,6 +38,7 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
   public activeFilterData: any = {};
   public showAddedContent: Boolean = true;
   public inViewLogs = [];
+  public uniqueId: string;
 
   constructor(
     public programTelemetryService: ProgramTelemetryService,
@@ -47,6 +49,7 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit() {
+    this.uniqueId = UUID.UUID();
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.collectionId = params.get('collectionId');
       this.collectionUnitId = params.get('collectionUnitId');
@@ -64,7 +67,9 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
       'collectionUnitId': this.collectionUnitId
     };
      // tslint:disable-next-line:max-line-length
-     this.sessionContext.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.programId, 'Program');
+     const programCdata = this.programTelemetryService.getTelemetryInteractCdata(this.programId, 'Program');
+     // tslint:disable-next-line:max-line-length
+     this.sessionContext.telemetryInteractCdata = [...programCdata, ...this.programTelemetryService.getTelemetryInteractCdata(this.uniqueId, 'content-reuse')];
      // tslint:disable-next-line:max-line-length
      this.sessionContext.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
   }
@@ -72,7 +77,8 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-    const telemetryCdata = [{ 'type': 'Program', 'id': this.programId }];
+    // tslint:disable-next-line:max-line-length
+    const telemetryCdata = [{ 'type': 'Program', 'id': this.programId }, { 'type': 'content-reuse', 'id': this.uniqueId }];
     setTimeout(() => {
       this.telemetryImpression = {
         context: {
@@ -279,6 +285,8 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
   onFilterChange(event: any) {
     if (event.action === 'filterDataChange') {
       this.activeFilterData = _.omitBy(_.assign(this.activeFilterData, event.filters), v => _.isEmpty(v));
+      this.uniqueId = UUID.UUID();
+      this.prepareTelemetryEvents();
       this.fetchContentList();
     } else if (event.action === 'filterStatusChange') {
       this.isFilterOpen = event.filterStatus;
