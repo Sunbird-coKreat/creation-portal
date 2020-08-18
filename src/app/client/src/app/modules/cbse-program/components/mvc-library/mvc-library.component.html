@@ -85,6 +85,6 @@
 
 <div *ngIf="showSelectResourceModal">
   <app-resource-reorder [collectionUnits]="collectionHierarchy" [contentId]="selectedContentDetails?.identifier"
-    [sessionContext]="sessionContext" [prevUnitSelect]="collectionUnitId"
+    [sessionContext]="sessionContext"  [prevUnitSelect]="collectionUnitId"
     (moveEvent)="showResourceTemplate($event)"> </app-resource-reorder>
 </div>

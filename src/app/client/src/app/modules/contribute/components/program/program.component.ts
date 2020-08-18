@@ -476,7 +476,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
             // tslint:disable-next-line:max-line-length
             this.contributorTextbooks = this.collectionHierarchyService.getIndividualCollectionStatus(this.contentStatusCounts, contributorTextbooks);
           }
-
           this.tempSortTextbooks = this.contributorTextbooks;
           this.showLoader = false;
           const mvcStageData = this.programsService.getMvcStageData();
