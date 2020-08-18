@@ -100,7 +100,7 @@
             <span *ngIf="textbookStatusMessage" class="sb-color-error mr-8 pl-10 fs-0-785 font-weight-bold font-italic">{{textbookStatusMessage}}</span>
             <span class="w-30 font-italic">{{resourceService.frmelmnts.lbl.partialTextbookSelectionNote}}</span>
             <div class="d-flex">
-              <app-bulk-approval [programContext]="programContext" [sessionContext]="sessionContext"></app-bulk-approval>
+              <app-bulk-approval [programContext]="programContext" [sessionContext]="sessionContext" [myOrgId]="myOrgId"></app-bulk-approval>
             </div>
           </div>
           <div class="sb-chapterlist">

@@ -17,11 +17,15 @@ export class BulkApprovalComponent implements OnInit {
   public bulkApprovalCompleted = false;
   public showBulkApprovalLoader = false;
   public bulkApproveHistory = false;
+  public bulkApprove: any;
+  public processId: string;
   @Input() programContext;
   @Input() sessionContext;
+  @Input() myOrgId;
 
   constructor(public resourceService: ResourceService, private bulkJobService: BulkJobService,
-    private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService) { }
+    private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService,
+    private userService: UserService) { }
 
   ngOnInit() {
   }
@@ -29,6 +33,26 @@ export class BulkApprovalComponent implements OnInit {
   bulkApproval() {
     // this.approvalPendingContents(this.collectionHierarchy);
     // console.log(this.approvalPending, '==========>');
+    const reqData = {
+      process_id: this.processId,
+      program_id: this.programContext.program_id,
+      collection_id: this.sessionContext.collection,
+      org_id: this.myOrgId,
+      type: 'bulk_approval',
+      status: 'processing',
+      overall_stats: {
+        upload_success: 0,
+        upload_failed: 0,
+        upload_pending: 0,
+        total: ''
+      },
+      createdby: this.userService.userProfile.userId
+    };
+    this.bulkJobService.createBulkJob(reqData).subscribe(res => {
+
+    }, err => {
+
+    });
     this.showBulkApproveModal = false;
     this.bulkApprovalComfirmation = false;
     this.showBulkApprovalLoader = true;
@@ -52,19 +76,27 @@ export class BulkApprovalComponent implements OnInit {
   }
 
   viewBulkApprovalStatus() {
-    if (this.bulkApproveHistory) {
-      this.bulkApprovalInProgress = false;
-      this.showBulkApprovalLoader = false;
-      this.bulkApprovalCompleted = true;
-    } else {
-      this.bulkApprovalInProgress = true;
+    // if (this.bulkApproveHistory) {
+    //   this.bulkApprovalInProgress = false;
+    //   this.showBulkApprovalLoader = false;
+    //   this.bulkApprovalCompleted = true;
+    // } else {
+    //   this.bulkApprovalInProgress = true;
+    // }
+    if (this.bulkApprove && this.bulkApprove.status === 'processing') {
+
     }
   }
 
   checkBulkApproveHistory() {
-    if (this.cacheService.get('hasHistory')) {
-      this.bulkApprovalInProgress = true;
-      this.bulkApproval();
+    this.bulkApprove = this.cacheService.get('bulk_approval_' + this.sessionContext.collection);
+    if (this.bulkApprove) {
+      if (this.bulkApprove.status === 'processing') {
+        this.bulkApprovalInProgress = true;
+        this.showBulkApprovalLoader = true;
+      } else {
+        this.bulkApproveHistory = true;
+      }
     }
   }
 }
