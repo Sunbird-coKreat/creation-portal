@@ -32,7 +32,6 @@ export class BulkApprovalComponent implements OnInit {
   public successPercentage: number;
   @Input() programContext;
   @Input() sessionContext;
-  @Input() myOrgId;
   @Input() storedCollectionData;
   @Input() originalCollectionData;
   @Output() updateToc = new EventEmitter<any>();
@@ -146,7 +145,7 @@ export class BulkApprovalComponent implements OnInit {
       process_id: this.processId,
       program_id: this.programContext.program_id,
       collection_id: this.sessionContext.collection,
-      org_id: this.myOrgId,
+      org_id: this.userService.userProfile.rootOrgId || '',
       type: 'bulk_approval',
       status: 'processing',
       overall_stats: {
@@ -223,7 +222,7 @@ export class BulkApprovalComponent implements OnInit {
           // tslint:disable-next-line:max-line-length
           this.successPercentage = Math.round((this.bulkApprove.overall_stats.approve_success / this.bulkApprove.overall_stats.total) * 100);
           if (overallStats.approve_pending) {
-        
+
           } else {
             this.updateCollection();
           }
