@@ -94,8 +94,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     private programsService: ProgramsService,
     private httpClient: HttpClient,
     private collectionHierarchyService: CollectionHierarchyService, private resourceService: ResourceService,
-    private navigationHelperService: NavigationHelperService, private helperService: HelperService
-    ) {
+    private navigationHelperService: NavigationHelperService, private helperService: HelperService) {
   }
 
   ngOnInit() {
