@@ -317,10 +317,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
             this.originalCollectionData = content;
             this.setTreeLeafStatusMessage(identifier, instance);
             resolve('Done');
-          }, error => console.log(console.error()
-          ));
+          }, error => resolve('Done')
+          );
         } else {
           this.setTreeLeafStatusMessage(identifier, instance);
+          resolve('Done');
         }
       });
     });
