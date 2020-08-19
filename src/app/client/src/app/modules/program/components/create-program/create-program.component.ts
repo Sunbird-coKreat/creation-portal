@@ -899,6 +899,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           board: this.userBoard,
           channel: this.userprofile.rootOrgId
         },
+        limit: 1000,
         not_exists: ['programId']
       }
     };
