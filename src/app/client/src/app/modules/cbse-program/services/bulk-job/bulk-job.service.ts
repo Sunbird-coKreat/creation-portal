@@ -42,18 +42,23 @@ export class BulkJobService {
 
   searchContentWithProcessId(processId, type) {
     const reqData = {
-      filters: {
-        objectType: 'content',
-        processId: processId
-      },
-      fields: [
-              'identifier',
-              'status',
-              'collectionId',
-              'prevStatus',
-              'contentType'
-      ],
-      limit: 10000
+      request: {
+        filters: {
+          objectType: 'content',
+          processId: processId,
+          status: []
+        },
+        fields: [
+                'identifier',
+                'status',
+                'collectionId',
+                'prevStatus',
+                'contentType',
+                'origin',
+                'name'
+        ],
+        limit: 10000
+      }
     };
     if (type === 'bulk_approval') {
       const originUrl = this.programsService.getContentOriginEnvironment();
@@ -85,6 +90,6 @@ export class BulkJobService {
         request: reqData
       }
     };
-    return this.programsService.post(req);
+    return this.programsService.patch(req);
   }
 }
