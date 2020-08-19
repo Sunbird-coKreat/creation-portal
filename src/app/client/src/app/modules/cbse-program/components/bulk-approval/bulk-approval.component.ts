@@ -103,7 +103,6 @@ export class BulkApprovalComponent implements OnInit {
     const contents = _.compact(_.map(this.approvalPending, contnet => {
       if (contnet.originUnitId) {
         const reqFormat = {
-          // ${window.location.hostname}
           source: `${window.location.hostname}/api/content/v1/read/${contnet.identifier}`,
           metadata: _.pick(contnet, ['name', 'code', 'mimeType', 'framework', 'contentType']),
           collection: [

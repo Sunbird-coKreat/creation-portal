@@ -9,8 +9,6 @@ const reqDataLimitOfContentUpload = '50mb'
 const contentServiceBaseUrl = envHelper.CONTENT_URL
 const logger = require('sb_logger_util_v2')
 
-const kp_content_service_base_url = envHelper.kp_content_service_base_url
-
 module.exports = function (app) {
     const proxyReqPathResolverMethod = function (req) {
         return require('url').parse(contentProxyUrl + req.originalUrl).path

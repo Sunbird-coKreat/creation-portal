@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, EventEmitter, Output, OnChanges, OnDestroy, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { PublicDataService, UserService, ActionService, FrameworkService, ProgramsService } from '@sunbird/core';
-import { ConfigService, ResourceService, ToasterService, NavigationHelperService, BrowserCacheTtlService } from '@sunbird/shared';
+import { ConfigService, ResourceService, ToasterService, NavigationHelperService } from '@sunbird/shared';
 import { TelemetryService, IInteractEventEdata , IImpressionEventInput} from '@sunbird/telemetry';
 import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
@@ -17,9 +17,7 @@ import { ProgramComponentsService } from '../../../program/services/program-comp
 import { InitialState } from '../../interfaces';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { HelperService } from '../../services/helper.service';
-// import { BulkJobService } from '../../services/bulk-job/bulk-job.service';
 import { HttpClient } from '@angular/common/http';
-import { CacheService } from 'ng2-cache-service';
 
 interface IDynamicInput {
   contentUploadComponentInput?: IContentUploadComponentInput;
@@ -58,12 +56,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public sharedContext: Array<string>;
   public currentStage: any;
   public selectedSharedContext: any;
-  public showBulkApproveModal = false;
-  public bulkApprovalInProgress = false;
-  public bulkApprovalComfirmation = false;
-  public bulkApprovalCompleted = false;
-  public showBulkApprovalLoader = false;
-  public bulkApproveHistory = false;
   public state: InitialState = {
     stages: []
   };
@@ -93,7 +85,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public originalCollectionData: any;
   public textbookStatusMessage: string;
   public textbookFirstChildStatusMessage: string;
-  public approvalPending: Array<any> = [];
   constructor(public publicDataService: PublicDataService, private configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private cbseService: CbseProgramService,
@@ -103,9 +94,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     private programsService: ProgramsService,
     private httpClient: HttpClient,
     private collectionHierarchyService: CollectionHierarchyService, private resourceService: ResourceService,
-    private navigationHelperService: NavigationHelperService, private helperService: HelperService,
-    // private bulkJobService: BulkJobService
-    private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService
+    private navigationHelperService: NavigationHelperService, private helperService: HelperService
     ) {
   }
 
@@ -148,7 +137,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       }
     };
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
-    this.checkBulkApproveHistory();
   }
 
   ngOnChanges(changed: any) {
@@ -936,63 +924,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     return !!(this.userService.userProfile.userRegData
       && this.userService.userProfile.userRegData.Org
       && this.programContext.sourcing_org_name === this.userService.userProfile.userRegData.Org.name);
-  }
-
-  approvalPendingContents(hierarchy) {
-    _.forEach(hierarchy, obj => {
-      if (obj.leaf && obj.leaf.length) {
-        _.forEach(obj.leaf, content => {
-          if (content.contentType !== 'TextBookUnit' && content.status === 'Live' && !content.sourcingStatus && content.visibility) {
-            this.approvalPending.push(content);
-          }
-        });
-      }
-      if (obj.children && obj.children.length) {
-        this.approvalPendingContents(obj.children);
-      }
-    });
-  }
-
-  bulkApproval() {
-    // this.approvalPendingContents(this.collectionHierarchy);
-    // console.log(this.approvalPending, '==========>');
-    this.showBulkApproveModal = false;
-    this.bulkApprovalComfirmation = false;
-    this.showBulkApprovalLoader = true;
-    this.bulkApprovalCompleted = false;
-    this.bulkApproveHistory = false;
-    this.cacheService.set('hasHistory', true,
-    { maxAge: this.browserCacheTtlService.browserCacheTtl });
-    setTimeout(() => {
-      this.bulkApproveHistory = true;
-      this.cacheService.set('hasHistory', false,
-    { maxAge: this.browserCacheTtlService.browserCacheTtl });
-    }, 30000);
-  }
-
-  checkBulkApprovalStatus() {
-    const reqData = {
-      program_id: this.programContext.program_id,
-      collection_id: this.sessionContext.collection
-    };
-    // this.bulkJobService.getBulkOperationStatus(reqData);
-  }
-
-  viewBulkApprovalStatus() {
-    if (this.bulkApproveHistory) {
-      this.bulkApprovalInProgress = false;
-      this.showBulkApprovalLoader = false;
-      this.bulkApprovalCompleted = true;
-    } else {
-      this.bulkApprovalInProgress = true;
-    }
-  }
-
-  checkBulkApproveHistory() {
-    if (this.cacheService.get('hasHistory')) {
-      this.bulkApprovalInProgress = true;
-      this.bulkApproval();
-    }
   }
 
   bulkApprovalSuccess(e) {
