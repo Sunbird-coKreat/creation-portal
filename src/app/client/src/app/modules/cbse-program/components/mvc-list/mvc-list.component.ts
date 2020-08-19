@@ -17,6 +17,7 @@ export class MvcListComponent implements OnInit, OnDestroy {
   @Output() moveEvent = new EventEmitter<any>();
   public width: any;
   public height: any;
+  public inViewLogs = [];
 
   constructor(public resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService) { }
 
@@ -50,10 +51,24 @@ export class MvcListComponent implements OnInit, OnDestroy {
     });
   }
 
+  public inView(event) {
+    _.forEach(event.inview, (elem, key) => {
+      const obj = _.find(this.inViewLogs, { objid: elem.data.identifier});
+      if (!obj) {
+          this.inViewLogs.push({
+              objid: elem.data.identifier,
+              objtype: elem.data.contentType || 'content',
+              objver: elem.data.pkgVersion.toString(),
+              index: elem.id
+          });
+      }
+    });
+  }
+
   updateContentViewed() {
     this.moveEvent.emit({
       action: 'contentVisits',
-      visits: this.contentList
+      visits: this.inViewLogs
     });
   }
 

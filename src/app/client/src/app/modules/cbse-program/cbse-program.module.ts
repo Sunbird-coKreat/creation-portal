@@ -30,7 +30,7 @@ import { MvcListComponent } from './components/mvc-list/mvc-list.component';
 import { MvcFilterComponent } from './components/mvc-filter/mvc-filter.component';
 import { MvcPlayerComponent } from './components/mvc-player/mvc-player.component';
 import { SkeletonLoaderComponent } from './components/skeleton-loader/skeleton-loader.component';
-
+import { NgInviewModule } from 'angular-inport';
 @NgModule({
   declarations: [QuestionListComponent, QuestionCreationComponent,
     ChapterListComponent, McqCreationComponent, CkeditorToolComponent ,
@@ -57,7 +57,7 @@ import { SkeletonLoaderComponent } from './components/skeleton-loader/skeleton-l
       McqTemplateSelectionComponent,
       QuestionPreviewComponent, QuestionCreationHeaderComponent,
       DashboardComponent, RecursiveTreeComponent, ContentUploaderComponent, ResourceTemplateComponent, ContentEditorComponent]),
-      
+      NgInviewModule
   ],
   providers: [CollectionHierarchyService],
   exports: [ SanitizeHtmlPipe ]

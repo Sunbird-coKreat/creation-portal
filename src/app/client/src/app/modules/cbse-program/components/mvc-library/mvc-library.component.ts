@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
 import { catchError, map, finalize, tap } from 'rxjs/operators';
 import { throwError, forkJoin } from 'rxjs';
-import { IImpressionEventInput} from '@sunbird/telemetry';
+import { TelemetryService, IImpressionEventInput} from '@sunbird/telemetry';
 import { ContentService, ActionService, ProgramsService, UserService } from '@sunbird/core';
 import { ConfigService, ToasterService, ResourceService, NavigationHelperService } from '@sunbird/shared';
 import { ProgramTelemetryService } from '../../../program/services';
@@ -37,11 +37,10 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
   public filterData: any = {};
   public activeFilterData: any = {};
   public showAddedContent: Boolean = true;
-  public inViewLogs = [];
   public uniqueId: string;
 
   constructor(
-    public programTelemetryService: ProgramTelemetryService,
+    public programTelemetryService: ProgramTelemetryService, private telemetryService: TelemetryService,
     private contentService: ContentService, private configService: ConfigService, private actionService: ActionService,
     private cbseService: CbseProgramService, private programsService: ProgramsService,
     private toasterService: ToasterService, private route: ActivatedRoute, private router: Router, public resourceService: ResourceService,
@@ -95,7 +94,7 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
           pageid: _.get(this.route, 'snapshot.data.telemetry.pageid'),
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime(),
-          visits: this.inViewLogs,
+          visits: [],
         }
       };
     });
@@ -223,9 +222,6 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
       const errInfo = { errorMsg: 'Fetching content list failed' };
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     }),
-      tap(data => {
-        this.inViewLogs = [];
-      }),
       finalize(() => {
         this.skeletonLoader = false;
         if (_.isEmpty(this.contentList)) { this.openFilter(); }
@@ -316,25 +312,17 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
         this.filterContentList();
         break;
       case 'contentVisits':
-        this.prepareVisits(event.visits);
+        this.logTelemetryImpressionEvent(event.visits);
         break;
       default:
         break;
     }
   }
 
-  public prepareVisits(event) {
-    _.forEach(event, (content, index) => this.inViewLogs.push({
-      objid: content.identifier,
-      objtype: content.contentType,
-      objver : content.pkgVersion.toString(),
-      index: index
-    }));
-    if (this.telemetryImpression) {
-      this.telemetryImpression.edata.visits = this.inViewLogs;
-      this.telemetryImpression.edata.subtype = 'pageexit';
-      this.telemetryImpression = Object.assign({}, this.telemetryImpression);
-    }
+  public logTelemetryImpressionEvent(visits) {
+    const telemetryImpression = _.cloneDeep(this.telemetryImpression);
+    telemetryImpression.edata.visits = visits;
+    this.telemetryService.impression(telemetryImpression);
   }
 
   getParentsHelper(tree: any, id: string, parents: Array<any>) {
