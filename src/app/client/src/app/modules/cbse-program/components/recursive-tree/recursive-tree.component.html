@@ -12,6 +12,10 @@
      </div>
      <div *ngIf="sourcingOrgReviewer && collection.sourcingStatus" class="single-row">
       <div class="sb-color-warning sb-count">
+        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.correctionsPending}}:</span> 
+        <span class="font-weight-bold"> 0</span>
+      </div>
+      <div class="sb-color-warning sb-count">
         <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.approvalPending}}:</span> 
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.approvalPending}}</span>
       </div>
@@ -107,6 +111,7 @@
             <span class="item-name"> {{content.name}}</span>
             <span class="item-status">{{content.creator}}</span>
             <span class="item-status">
+              <span class="sb-color-warning">{{resourceService.frmelmnts.lbl.correctionsPending}}</span>
               <span [ngClass]="{'sb-color-primary':content.status === 'Draft'}" *ngIf="content.status === 'Draft' && content.prevStatus === null">{{content.status}}</span>
               <span [ngClass]="{'sb-color-warning':content.status == 'Review'}"  *ngIf="content.status === 'Review'">{{resourceService.frmelmnts.lbl.reviewInProgress}}</span>
               <span [ngClass]="{'sb-color-success':content.status == 'Live'}"  *ngIf="content.status === 'Live' && !content.sourcingStatus">{{resourceService.frmelmnts.lbl.approvalPending}}</span>

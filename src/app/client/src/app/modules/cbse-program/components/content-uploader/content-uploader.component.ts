@@ -95,6 +95,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public videoSizeLimit: string;
   public originCollectionData: any;
   selectedOriginUnitStatus: any;
+  showReviewPopup = false;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -506,12 +507,15 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       if (this.resourceStatus === 'Review') {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
         this.resourceStatusClass = 'sb-color-warning';
-      } else if (this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Review') {
+      }  else if (this.resourceStatus === 'Corrections pending') {
+        this.resourceStatusText = this.resourceService.frmelmnts.lbl.correctionsPendin;
+        this.resourceStatusClass = 'sb-color-warning';
+      }else if (this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Review') {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
         this.resourceStatusClass = 'sb-color-gray';
       } else if (this.resourceStatus === 'Live' && _.isEmpty(this.sourcingReviewStatus)) {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
-        this.resourceStatusClass = 'sb-color-success';
+        this.resourceStatusClass = 'sb-color-warning';
       } else if (this.sourcingReviewStatus === 'Rejected') {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
         this.resourceStatusClass = 'sb-color-error';
