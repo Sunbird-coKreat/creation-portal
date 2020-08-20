@@ -7,71 +7,72 @@
   [isOpen]=" (collection.identifier === sessionContext.lastOpenedUnitChild || collection.identifier === sessionContext.lastOpenedUnitParent) ? true : false">
     <div title class="sb-accordion-title d-flex flex-jc-flex-end sb-color-primary flex-ai-center"><span class="chapter-status mr-16"></span>
      <span class="flex-4"> {{collection.name}}</span>
+     <!-- <span class="sb-color-error font-weight-bold px-20 text-left" *ngIf="sourcingOrgReviewer">{{collection.statusMessage}}</span> -->
      <div class="sb-color-black">
       <span class="sb-color-error font-weight-bold px-20" *ngIf="!visibility['showAddresource']">{{collection.statusMsg}}</span>
      </div>
      <div *ngIf="sourcingOrgReviewer && collection.sourcingStatus" class="single-row">
       <div class="sb-color-gray-300 sb-count">
-        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.approvalPending}}:</span> 
+        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.approvalPending}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.approvalPending}}</span>
       </div>
       <div class="sb-count sb-color-success">
-        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approved}}:</span> 
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approved}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.approved}}</span>
       </div>
       <div class="sb-count sb-color-error">
-        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.rejected}}:</span> 
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.rejected}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.rejected}}</span>
       </div>
      </div>
      <div *ngIf="!sourcingOrgReviewer && collection.sourcingStatus && sessionContext.currentOrgRole !== 'individual'" class="single-row">
       <div class="sb-color-gray-300 sb-count" *ngIf="!visibility['showAddresource']">
-        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.draft}}:</span> 
+        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.draft}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.draft}}</span>
       </div>
       <div class="sb-count sb-color-warning">
-        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.reviewInProgress}}:</span> 
+        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.reviewInProgress}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.reviewPending}}</span>
       </div>
       <div class="sb-count sb-color-error">
-        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.notAccepted}}:</span> 
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.notAccepted}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.notAccepted}}</span>
       </div>
       <div class="sb-color-gray-300 sb-count">
-        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approvalPending}}:</span> 
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approvalPending}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.approvalPending}}</span>
       </div>
       <div class="sb-count sb-color-success">
-        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.approved}}:</span> 
+        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.approved}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.approved}}</span>
       </div>
       <div class="sb-count sb-color-error">
-        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.rejected}}:</span> 
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.rejected}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.rejected}}</span>
       </div>
     </div>
     <div *ngIf="!sourcingOrgReviewer && collection.sourcingStatus && sessionContext.currentOrgRole === 'individual'" class="single-row">
       <div class="sb-color-gray-300 sb-count" *ngIf="visibility['showAddresource']">
-        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.draft}}:</span> 
+        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.draft}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.draft}}</span>
       </div>
       <div class="sb-color-gray-300 sb-count">
-        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approvalPending}}:</span> 
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approvalPending}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.approvalPending}}</span>
       </div>
       <div class="sb-color-gray-success sb-count">
-        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approved}}:</span> 
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approved}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.approved}}</span>
       </div>
       <div class="sb-count sb-color-error">
-        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.rejected}}:</span> 
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.rejected}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.rejected}}</span>
       </div>
     </div>
       <div class="sb-color-black sb-count">
         <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.totalContent}}:</span> <span class="font-weight-bold"> {{collection.totalLeaf}}</span>
       </div>
-      
+
      <div class="d-flex">
         <!-- <button class="sb-btn sb-btn-xs sb-btn-outline-primary sb-left-icon-btn library-btn mr-8"
         *ngIf="visibility && visibility['showAddresource'] && programContext?.status === 'Unlisted'">

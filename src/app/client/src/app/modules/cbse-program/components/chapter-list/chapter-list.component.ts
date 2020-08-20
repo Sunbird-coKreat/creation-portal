@@ -169,10 +169,12 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   async updateAccordianView(unitId?, onSelectChapterChange?) {
+    if (this.isPublishOrSubmit() && this.isContributingOrgContributor() && this.isDefaultContributingOrg()) {
+      this.sessionContext.currentOrgRole = 'individual';
+    }
       await this.getCollectionHierarchy(this.sessionContext.collection,
                 this.selectedChapterOption === 'all' ? undefined : this.selectedChapterOption);
       const acceptedContents = _.get(this.storedCollectionData, 'acceptedContents', []);
-        await this.getOriginCollectionHierarchy(this.collectionData.origin, this.collectionData.identifier);
       if (!_.isEmpty(acceptedContents)) {
         await this.getOriginForApprovedContents(acceptedContents);
       }
@@ -182,9 +184,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       this.lastOpenedUnit(this.selectedChapterOption);
     } else {
       if (!_.isEmpty(this.collectionHierarchy)) { this.lastOpenedUnit(this.collectionHierarchy[0].identifier)}
-    }
-    if (this.isPublishOrSubmit() && this.isContributingOrgContributor() && this.isDefaultContributingOrg()) {
-      this.sessionContext.currentOrgRole = 'individual';
     }
   }
 
@@ -307,48 +306,43 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         instance.countData['sampleMycontribution'] = 0;
         instance.countData['pendingReview'] = 0;
         instance.countData['nominatedUserSample'] = 0;
-        this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
 
-        this.getFolderLevelCount(this.collectionHierarchy);
-        hierarchy = instance.hierarchyObj;
-        this.sessionContext.hierarchyObj = { hierarchy };
+        const hierarchyUrl1 = '/action/content/v3/hierarchy/' + this.collectionData.origin + '?mode=edit';
+        const originUrl = this.programsService.getContentOriginEnvironment();
+        const url =  originUrl + hierarchyUrl1 ;
 
-        if (_.get(this.collectionData, 'sourcingRejectedComments')) {
-        // tslint:disable-next-line:max-line-length
-        this.sessionContext.hierarchyObj['sourcingRejectedComments'] = _.isString(_.get(this.collectionData, 'sourcingRejectedComments')) ? JSON.parse(_.get(this.collectionData, 'sourcingRejectedComments')) : _.get(this.collectionData, 'sourcingRejectedComments');
+        if (this.router.url.includes('/sourcing') && this.collectionData && this.collectionData.visibility === 'Default') {
+          this.httpClient.get(url).subscribe(async res => {
+            const content = _.get(res, 'result.content');
+            this.originalCollectionData = content;
+            this.setTreeLeafStatusMessage(identifier, instance);
+            resolve('Done');
+          }, error => resolve('Done')
+          );
+        } else {
+          this.setTreeLeafStatusMessage(identifier, instance);
+          resolve('Done');
         }
-        this.showLoader = false;
-        this.showError = false;
-        this.levelOneChapterList = _.uniqBy(this.levelOneChapterList, 'identifier');
-         resolve('Done');
       });
     });
   }
 
-  public getOriginCollectionHierarchy(orgin_identifier: string, identifier: string) {
-    const hierarchyUrl = '/action/content/v3/hierarchy/' + orgin_identifier + '?mode=edit';
-    const originUrl = this.programsService.getContentOriginEnvironment();
-    const url =  originUrl + hierarchyUrl ;
-
-    return this.httpClient.get(url).subscribe(async res => {
-      const content = _.get(res, 'result.content');
-      //  Set message for chapter
-      await _.forEach(this.collectionData.children, (node, index) => {
-        if (_.findIndex(content.children, (item) => item.identifier === node.origin) < 0 && this.sourcingOrgReviewer) {
-          this.collectionHierarchy[index].statusMsg = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
-        } else if (content.status === 'Retired' && this.sourcingOrgReviewer) {
-          this.collectionHierarchy[index].statusMsg = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
-        }
-      });
-      this.originalCollectionData = content;
-      // Check the status of textbook and set message
-      if (this.originalCollectionData.status !== 'Draft' && this.sourcingOrgReviewer) {
-        this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage;
-      }
-    }, error => console.log(console.error()
-    ));
+  setTreeLeafStatusMessage(identifier, instance) {
+    this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
+    if (this.originalCollectionData && this.originalCollectionData.status !== 'Draft' && this.sourcingOrgReviewer) {
+      this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage;
+    }
+    this.getFolderLevelCount(this.collectionHierarchy);
+    const hierarchy = instance.hierarchyObj;
+    this.sessionContext.hierarchyObj = { hierarchy };
+    if (_.get(this.collectionData, 'sourcingRejectedComments')) {
+    // tslint:disable-next-line:max-line-length
+    this.sessionContext.hierarchyObj['sourcingRejectedComments'] = _.isString(_.get(this.collectionData, 'sourcingRejectedComments')) ? JSON.parse(_.get(this.collectionData, 'sourcingRejectedComments')) : _.get(this.collectionData, 'sourcingRejectedComments');
+    }
+    this.showLoader = false;
+    this.showError = false;
+    this.levelOneChapterList = _.uniqBy(this.levelOneChapterList, 'identifier');
   }
-
   getFolderLevelCount(collections) {
     let status = this.sampleContent ? ['Review', 'Draft'] : [];
     let createdBy, visibility;
@@ -534,6 +528,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       name: node.name,
       contentType: node.contentType,
       topic: node.topic,
+      origin: node.origin,
       status: node.status,
       creator: node.creator,
       createdBy: node.createdBy || null,
@@ -849,6 +844,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     collection.totalLeaf += collection.leaf ? this.filterContentsForCount(collection.leaf, contentStatus, onlySample, organisationId, createdBy, visibility) : 0;
     if (collection.totalLeaf > 0) {
       collection.sourcingStatus = this.setUnitContentsStatusCount(collection.leaf);
+    }
+    // tslint:disable-next-line:max-line-length
+    if (this.originalCollectionData && (_.indexOf(this.originalCollectionData.childNodes, collection.origin) < 0 || this.originalCollectionData.status !== 'Draft')) {
+      collection.statusMessage = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
     }
     return collection.totalLeaf;
   }
