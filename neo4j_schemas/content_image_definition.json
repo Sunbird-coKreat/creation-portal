@@ -3028,6 +3028,31 @@
                     "renderingHints": "{ 'inputType': 'text',  'order': 14 }",
                     "indexed": true,
                     "draft": false
+                },{
+                    "required": false,
+                    "dataType": "List",
+                    "propertyName": "mvcContents",
+                    "title": "MVC Contents",
+                    "description": "List of MVC Contents",
+                    "category": "General",
+                    "displayProperty": "Editable",
+                    "defaultValue": "",
+                    "renderingHints": "{ 'inputType': 'text',  'order': 14 }",
+                    "indexed": true,
+                    "draft": false
+                },
+                {
+                    "required": false,
+                    "dataType": "Number",
+                    "propertyName": "mvcContentCount",
+                    "title": "MVC Content Count",
+                    "description": "Count of MVC Contents",
+                    "category": "General",
+                    "displayProperty": "Editable",
+                    "defaultValue": "",
+                    "renderingHints": "{ 'inputType': 'text',  'order': 14 }",
+                    "indexed": true,
+                    "draft": false
                 }
             ],
             "inRelations": [
