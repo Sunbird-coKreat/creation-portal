@@ -258,6 +258,14 @@ export class HelperService {
     return this.programsService.getContentOriginEnvironment() + '/resources/play/content/' + contentId;
   }
 
+  getTextbookDetails(textbookId) {
+    const option = {
+      url: 'content/v3/read/' + textbookId,
+      param: { 'mode': 'edit', 'fields': 'versionKey,mvcContentCount,mvcContents' }
+    };
+    return  this.actionService.get(option);
+  }
+
   /*getContentMetadata(componentInput: any) {
     const contentId = sessionContext.resourceIdentifier;
     const option = {

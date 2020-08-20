@@ -229,7 +229,7 @@ i.icon.file.outline:before{
 
 .sb-toc-accor-1{
 .chapter-lists--item{
-  .item-name{
+  .item-name,label{
     border-left: 0.0625rem dashed var(--gray-300);
     margin-left: 1.1rem;
     padding-left: 1.6rem !important;
@@ -326,6 +326,104 @@ top: -4px;
         min-height: 1rem !important;
       }
     }
+  }
+}
+.sb-dock-accordion{
+  .sb-toc-accor-1{
+    &:last-child{
+      .title{
+        border-bottom: 1px solid var(--gray-100) !important;
+      }
+    }
+  }
+  .title{
+    border: 1px solid var(--gray-100) !important;
+    margin: 0 !important;
+    border-bottom: none !important;
+    border-radius: 0 !important;
+  }
+  .content{
+    border: 1px solid var(--gray-100);
+  }
+  .content{
+    &:last-child{
+      border-bottom: 1px solid var(--gray-100) !important;
+    }
+  }
+.sb-radio-btn-checkbox{
+  label{
+    &:before{
+      width: 1.4rem;
+      height: 1.4rem;
+    }
+      &:after{
+        height: 0.9rem;
+        width: 0.9rem;
+      }
+    }
+  }
+  &.scrolling{
+    &.content{
+      max-height: calc(70vh) !important;
+    }
+  }
+}
+.sb-content-breadcrumb{
+  vertical-align: bottom;
+  .section{
+    &:first-child{
+      max-width: 30%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: inline-block !important;
+      white-space: nowrap;
+    }
+    &:nth-child(2n),
+    &:nth-child(3n),
+    &:nth-child(4n){
+    max-width: 10%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block !important;
+    white-space: nowrap;
+  }
+}
+}
+.sb-prominent-filter-container{
+  input[type='text']{
+    margin: 0.5rem !important;
+  }
+  .sb-btn-cover{
+    width: 33.3%;
+    justify-content: flex-end;
+    border: none;
+  }
+}
+.sb-select-searchfilter{
+  &.ui.dropdown>.dropdown.icon{
+    font-size: 1rem !important;
+    margin: -21px !important;
+    color:  var(--gray);
+  }
+}
+.sb-option-ellipsis{
+  sui-multi-select-label{
+    span{
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 12rem;
+      display: inline-block;
+      vertical-align: bottom;
+    }
+  }
+}
+.sbtoc-container {
+  .checkbox{
+      label{
+        color: var(--gray-400) !important;
+        font-weight: normal;
+      }
   }
 }
 .sb-count{

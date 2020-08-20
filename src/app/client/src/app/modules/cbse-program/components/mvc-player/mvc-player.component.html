@@ -1,0 +1,92 @@
+<div class="d-flex flex-w-wrap content-video__player__details mt-15 pb-0 pl-0">
+  <div class="d-flex flex-dc flex-basis-1">
+    <div class="content-video__player__title mr-auto sb__ellipsis sb__ellipsis--one"> {{contentData.name}} </div>
+    <div class="content-video__player__title__subtitle fs-0-785"><span class="mr-8">By {{contentData.board}}</span> <span
+      class="mr-8" *ngIf="contentData?.me_averageRating">{{contentData?.me_averageRating || '0'}}</span>
+      <i *ngIf="contentData?.me_averageRating" class="icon star"></i>
+    </div>
+  </div>
+  <div class="d-flex content-video__player__screenpart d-flex" *ngIf="!contentDetails.isAdded">
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-dark-green shine-effect my-10 pt-4rem fs-0-92 font-weight-bold" (click)="addToLibrary();"
+      appTelemetryInteract
+      [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('select-content', 'click', 'library')"
+      [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(contentId, 'Content', '1.0', {l1:sessionContext.collection,l2: sessionContext.collectionUnitId})"
+      [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
+      [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"
+      ><i class="plus square icon"></i>{{resourceService.frmelmnts.lbl.addToTextbook}}</button>
+  </div>
+</div>
+<app-player class="content-player" [playerConfig]="playerConfig"></app-player>
+<div class="toc-content-player content-video">
+  <div class="sb-bg-color-white">
+    <div class="mx-16 py-16 content-metadeta__content" *ngIf="contentData?.description">
+      <div class="content-metadeta__title fsmall font-weight-bold">{{resourceService.frmelmnts.lbl.description}}</div>
+      <p class="content-metadeta__text fsmall pt-8">
+        {{contentData?.description}}
+      </p>
+    </div>
+    <sui-accordion class="styled fluid sb-accordion">
+      <sui-accordion-panel>
+        <div title class="sb-accordion-title fsmall">
+          {{resourceService.frmelmnts.lbl.contentinformation}}
+          <i class="chevron down icon ml-8"></i>
+        </div>
+        <div content class="sb-accordion-content sb-bg-color-white pt-0 pb-8 ui grid mx-0">
+          <!-- <div class="six wide column">
+            <div class="content-metadeta__title  fs-0-785 mb-8">{{resourceService.frmelmnts.lbl.content.BOARD}}</div>
+            <div class="content-metadeta__text  fsmall">{{contentData.board}}</div>
+          </div> -->
+          <div class="six wide column">
+            <div class="content-metadeta__title  fs-0-785 mb-8">{{resourceService.frmelmnts.lbl.class}}</div>
+            <div class="content-metadeta__text  fsmall">{{contentData.gradeLevel}}</div>
+          </div>
+          <div class="six wide column">
+            <div class="content-metadeta__title  fs-0-785 mb-8">{{resourceService.frmelmnts.lbl.subject}}</div>
+            <div class="content-metadeta__text  fsmall">{{contentData.subject}}</div>
+          </div>
+          <div class="six wide column" *ngIf="contentData?.contentType">
+            <div class="content-metadeta__title  fs-0-785 mb-8">{{resourceService.frmelmnts.lbl.contentType}}</div>
+            <div class="content-metadeta__text  fsmall">{{contentData.contentType}}</div>
+          </div>
+          <div class="six wide column" *ngIf="contentData?.creator">
+            <div class="content-metadeta__title  fs-0-785 mb-8 text-inherit" [innerHTML]="resourceService.frmelmnts.lbl.content.CreatedOnBy | interpolate:'{instance}': instance"></div>
+            <div class="content-metadeta__text  fs-0-785">{{contentData?.creator}}</div>
+          </div>
+          <div class="six wide column" *ngIf="contentData?.author">
+            <div class="content-metadeta__title  fs-0-785 mb-8">{{resourceService.frmelmnts.lbl.author}}</div>
+            <div class="content-metadeta__text  fsmall">{{contentData?.author}}</div>
+          </div>
+          <div class="six wide column">
+            <div class="content-metadeta__title  fs-0-785 mb-8 text-inherit">{{resourceService.frmelmnts.lbl.coursecreatedon}}</div>
+            <div class="content-metadeta__text  fsmall">{{contentData.createdOn | dateFormat: ' Do MMMM YYYY'}}</div>
+          </div>
+          <div class="six wide column" *ngIf="contentData?.attributions">
+            <div class="content-metadeta__title  fs-0-785 mb-8">{{resourceService.frmelmnts.lbl.attributions }}</div>
+            <div class="content-metadeta__text  fsmall">{{contentData?.attributions}}</div>
+          </div>
+          <div class="six wide column" *ngIf="contentData?.keywords">
+            <div class="content-metadeta__title  fs-0-785 mb-8">{{resourceService.frmelmnts.lbl.keywords}}</div>
+            <div class="content-metadeta__text  fsmall">{{contentData?.keywords}}</div>
+          </div>
+          <div class="six wide column" *ngIf="contentData?.license">
+            <div class="content-metadeta__title fs-0-785 mb-8">{{resourceService.frmelmnts.lbl.licenseTerms}}
+            </div>
+            <div class="content-metadeta__text fsmall">
+              {{contentData.license}} <span *ngIf="contentData?.licenseDetails?.name">:
+                {{contentData.licenseDetails['name']}} {{contentData.licenseDetails['description']}}&#x200E;
+                <a href="{{contentData.licenseDetails['url']}}" *ngIf="contentData.licenseDetails['url']"
+                  class="content-metadeta__text__link cursor-pointer mt-8">
+                  {{contentData.licenseDetails['url']}}</a>
+              </span>
+            </div>
+          </div>
+          <div class="six wide column" *ngIf="contentData?.copyright">
+            <div class="content-metadeta__title fs-0-785 mb-8">{{resourceService.frmelmnts.lbl.copyRight}}</div>
+            <div class="content-metadeta__text fsmall">{{contentData?.copyright}} <span
+                *ngIf="contentData?.copyrightYear">,&nbsp;{{contentData?.copyrightYear}}</span></div>
+          </div>
+        </div>
+      </sui-accordion-panel>
+    </sui-accordion>
+  </div>
+</div>

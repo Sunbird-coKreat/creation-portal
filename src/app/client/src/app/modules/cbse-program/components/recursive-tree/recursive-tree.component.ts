@@ -92,7 +92,14 @@ export class RecursiveTreeComponent implements OnInit {
       showPopup: null,
     });
   }
-
+  removeResource(e, content, collection) {
+    this.nodeMeta.emit({
+      action: 'remove',
+      content: content,
+      collection: collection,
+      showPopup: null,
+    });
+  }
   moveResource(e, content, collection) {
     this.nodeMeta.emit({
       action: 'beforeMove',
@@ -118,6 +125,11 @@ export class RecursiveTreeComponent implements OnInit {
   isSourcingOrgReviewer () {
     return !!(this.userService.userProfile.userRoles.includes('ORG_ADMIN') ||
     this.userService.userProfile.userRoles.includes('CONTENT_REVIEWER'));
+  }
+
+  goToAddLibrary(identifier) {
+    // tslint:disable-next-line:max-line-length
+    this.router.navigateByUrl(`/contribute/program/${this.sessionContext.programId}/textbook/${this.sessionContext.collection}/${identifier}`);
   }
 
 }
