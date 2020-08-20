@@ -9,8 +9,8 @@
   [telemetryInteractCdata]="getTelemetryInteractCdata('show-added-content',!showAddedContent)"
   [telemetryInteractPdata]="sessionContext.telemetryInteractPdata">{{resourceService.frmelmnts.lbl.showContentAddedToTextbook}}</sui-checkbox>
   <!-- Class separator -->
-  <div class="sb-library-scroll" id="suggestions-tab">
-    <ng-container *ngFor="let content of contentList; let i = index">
+  <div class="sb-library-scroll" id="suggestions-tab" in-view-container (inview)="inView($event)">
+    <div in-view-item [id]="i" [data]="content" *ngFor="let content of contentList; let i = index">
       <div class="sbchapter__item mb-0 d-flex flex-dc" 
       [ngClass]="{'selected':content.identifier === selectedContentId,'active':content.isAdded}"
       (click)="onContentChange(content);" [class.d-none]="content.isAdded && !showAddedContent"
@@ -43,7 +43,7 @@
          {{resourceService.frmelmnts.lbl.addedToTextbook}}</button>
       </div>
       </div>
-    </ng-container>
+    </div>
   </div>
   <h6 class="sb-color-gray-400 font-weight-normal mt-20">{{resourceService.frmelmnts.lbl.changingFiltersMakeYouFindMoreContent}}</h6>
   <a class="sb-color-primary cursor-pointer font-weight-bold fs-0-785 text-inherit" (click)="changeFilter()"
