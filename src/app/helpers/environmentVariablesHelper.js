@@ -96,6 +96,7 @@ let envVariables = {
 
 
   // BLOB and Storage Configuration
+  PORTAL_CLOUD_STORAGE_URL: env.portal_cloud_storage_url,
   CACHE_STORE: env.sunbird_cache_store || 'memory',
   PORTAL_SESSION_STORE_TYPE: env.sunbird_session_store_type || 'in-memory',
   CLOUD_STORAGE_URLS: env.sunbird_cloud_storage_urls,
