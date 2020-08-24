@@ -186,7 +186,7 @@
 											popupDelay="500" [popupPlacement]="'left'"
 											popupText="{{resource?.frmelmnts?.lbl?.contentTypesHint}}"></i>
 									</label>
-									<sui-multi-select *ngIf="!editPublished; else elseBlock" 
+									<sui-multi-select *ngIf="!editPublished; else elseBlock"
 										class="selection" labelField="name" [hasLabels]="true"
 										formControlName="content_types" [options]="programScope.purpose"
 										valueField="value" [(ngModel)]="selectedContentTypes" #multiSelect>
@@ -482,7 +482,7 @@
 												<h5
 													class="mx-10 sb-color-gray-400 pb-5 sb__ellipsis sb__ellipsis--three font-weight-bold">
 													{{tempCollection.name}}</h5>
-												<small class="d-flex mx-10">
+												<small class="d-flex mx-10 max-content mt-10">
 													<span>{{tempCollection.medium}}</span>
 													<span class="mx-8"
 														style="border-left: 1px solid var(--gray-200);"></span>
@@ -533,10 +533,10 @@
 					[telemetryInteractEdata]="getTelemetryInteractEdata('update', 'click', 'edit-program')"
 					[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
 					[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.update}}</button>
-				<button *ngIf="!editPublished" class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8" 
+				<button *ngIf="!editPublished" class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8"
 					appTelemetryInteract
 					[telemetryInteractEdata]="getTelemetryInteractEdata('draft', 'click', 'edit-program')"
-					[telemetryInteractObject]="telemetryInteractObject" 
+					[telemetryInteractObject]="telemetryInteractObject"
 					[telemetryInteractCdata]="telemetryInteractCdata"
 					[telemetryInteractPdata]="telemetryInteractPdata"
 					(click)="saveAsDraft($event)">{{resource?.frmelmnts?.btn?.saveAsDraft}}</button>
@@ -545,8 +545,8 @@
 					[telemetryInteractEdata]="getTelemetryInteractEdata('next', 'click', 'create-program')"
 					[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
 					[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.next}}</button>
-				<button *ngIf="showTextBookSelector && !editPublished" 
-					class="sb-btn sb-btn-normal sb-btn-primary" 
+				<button *ngIf="showTextBookSelector && !editPublished"
+					class="sb-btn sb-btn-normal sb-btn-primary"
 					[disabled]="disableCreateProgramBtn"
 					(click)="validateFormBeforePublish()" appTelemetryInteract >{{resource?.frmelmnts?.btn?.publishProject}}</button>
 			</div>
@@ -665,7 +665,7 @@ class="sb-modal" appBodyScroll (dismissed)="this.selectChapter = false" #modal>
 									<label for="" class="sb__ellipsis sb__ellipsis--three">{{choosedTextBook.children[i].name}}</label>
 								</div>
 							</td>
-							<td *ngIf="choosedTextBook.children[i].totalLeaf; else noPopup" 
+							<td *ngIf="choosedTextBook.children[i].totalLeaf; else noPopup"
 								suiPopup popupText="{{choosedTextBook.children[i].contentTypesText}}">
 								{{choosedTextBook.children[i].totalLeaf}}
 							</td>
@@ -700,10 +700,10 @@ class="sb-modal" appBodyScroll (dismissed)="this.selectChapter = false" #modal>
 		(click)="publishProject($event)"
 		appTelemetryInteract
 		[telemetryInteractEdata]="getTelemetryInteractEdata('create-program', 'click', 'create-program')"
-		[telemetryInteractObject]="telemetryInteractObject" 
+		[telemetryInteractObject]="telemetryInteractObject"
 		[telemetryInteractCdata]="telemetryInteractCdata"
 		[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.yes}}</button>
-	<button class="sb-btn sb-btn-normal sb-btn-outline-primary" 
+	<button class="sb-btn sb-btn-normal sb-btn-outline-primary"
 		(click)="showPublishModal = false">{{resource?.frmelmnts?.btn?.no}}</button>
   </div>
 </sui-modal>

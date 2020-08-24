@@ -140,7 +140,7 @@ export class MainHeaderComponent implements OnInit {
     // maintain active tab state
     if (this.router.isActive('/contribute', true)) {
       this.handleActiveTabState('allPrograms');
-    } else if (this.router.isActive('/contribute/orglist', true)) {
+    } else if (this.router.isActive('/contribute/orglist', true) || this.router.isActive('/sourcing/orglist', true)) {
       this.handleActiveTabState('manageUsers');
     } else if (this.router.isActive('/contribute/help', true) || this.router.isActive('/sourcing/help', true)) {
       this.handleActiveTabState('contributorHelp');
@@ -355,7 +355,7 @@ export class MainHeaderComponent implements OnInit {
     // maintain active tab state
     if (this.location.path() === '/contribute') {
      this.handleActiveTabState('allPrograms');
-     } else if (this.location.path() === '/contribute/orglist') {
+     } else if (this.location.path() === '/contribute/orglist' || this.location.path() === '/sourcing/orglist') {
        this.handleActiveTabState('manageUsers');
      } else if (this.location.path() === '/contribute/myenrollprograms' || this.location.path() === '/sourcing') {
       this.handleActiveTabState('myPrograms');

@@ -490,12 +490,17 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     const board = _.find(this.frameworkCategories, (element) => {
       return element.code === 'board';
     });
-    if (!_.isEmpty(board.terms[0].name)) {
-      this.userBoard = board.terms[0].name;
-    }
+    if (board) {
+      if (!_.isEmpty(board.terms[0].name)) {
+        this.userBoard = board.terms[0].name;
+      } else if (_.get(this.userprofile.framework, 'board')) {
+        this.userBoard = this.userprofile.framework.board[0];
+      }
 
-    if (_.get(this.userprofile.framework, 'board')) {
-      this.userBoard = this.userprofile.framework.board[0];
+      const mediumOption = this.programsService.getAssociationData(board.terms, 'medium', this.frameworkCategories);
+      if (mediumOption.length) {
+        this.programScope['medium'] = mediumOption;
+      }
     }
 
     this.frameworkCategories.forEach((element) => {
@@ -514,12 +519,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       return item.name === 'Kindergarten';
     });
     this.programScope['gradeLevel'] = [...Kindergarten, ...this.programScope['gradeLevel']];
-
-    const mediumOption = this.programsService.getAssociationData(board.terms, 'medium', this.frameworkCategories);
-
-    if (mediumOption.length) {
-      this.programScope['medium'] = mediumOption;
-    }
   }
 
   openForNominations(status) {
@@ -619,7 +618,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       this.createProgramForm = this.sbFormBuilder.group(obj);
       this.defaultContributeOrgReviewChecked = _.get(this.programDetails, 'config.defaultContributeOrgReview') ? false : true;
-      this.fetchTexbooklist(false);
+      this.showTexbooklist(false);
     } else {
       this.createProgramForm = this.sbFormBuilder.group({
         name: ['', [Validators.required, Validators.maxLength(100)]],
@@ -703,7 +702,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.collectionListForm.controls['medium'].setValue('');
     this.collectionListForm.controls['gradeLevel'].setValue('');
     this.collectionListForm.controls['subject'].setValue('');
-    this.fetchTexbooklist();
+    this.showTexbooklist();
   }
 
   handleContentTypes() {
@@ -888,7 +887,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.validateDates();
   }
 
-  fetchTexbooklist(showTextBookSelector = true) {
+  showTexbooklist(showTextBookSelector = true) {
     const requestData = {
       request: {
         filters: {
@@ -899,6 +898,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           board: this.userBoard,
           channel: this.userprofile.rootOrgId
         },
+        limit: 1000,
         not_exists: ['programId']
       }
     };
@@ -1292,7 +1292,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
         const cb = (error, resp) => {
           if (!error && resp) {
-            this.fetchTexbooklist();
+            this.showTexbooklist();
             ($event.target as HTMLButtonElement).disabled = false;
           } else {
             this.toasterService.error(this.resource.messages.emsg.m0005);
@@ -1302,7 +1302,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
         this.saveProgram(cb);
       } else if (this.createProgramForm.valid) {
-        this.fetchTexbooklist();
+        this.showTexbooklist();
       } else {
         this.formIsInvalid = true;
         this.validateAllFormFields(this.createProgramForm);

@@ -1,35 +1,49 @@
 <sui-modal [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
 [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="cancelMove()" #modal>
-<div class="sb-modal-header">
-  Move to
+<div class="sb-modal-header" [hidden]="sessionContext?.selectedMvcContentDetails">
+ {{resourceService.frmelmnts.lbl.moveTo}}
+</div>
+<div class="sb-modal-header" [hidden]="!sessionContext?.selectedMvcContentDetails">
+  {{resourceService.frmelmnts.lbl.whereDoYouWantToAddThisContent}}
 </div>
 <!-- Selection of Layout in modal -->
-<div class="sb-modal-content sb-chapterlist-modal">
-
+<div class="sb-modal-content sb-chapterlist-modal scrolling content sb-dock-accordion py-20">
   <sui-accordion class="styled fluid sb-accordion sb-chapterlist-accordion" [closeOthers]="true">
-    <div *ngFor="let mainUnit of collectionUnits">
+    <div *ngFor="let mainUnit of collectionUnits" class="sb-toc-accor-1"> 
     <sui-accordion-panel [isOpen]="true">
-      <div title class="sb-accordion-title d-flex flex-ai-center">
-        <i class="chevron down icon mr-16"></i>
+      <div title class="sb-accordion-title d-flex flex-ai-center mt-0">
         <div class="item d-flex flex-ai-center cursor-pointer width-100">
-          <div [ngClass]="{'sb-radio-btn-checkbox sb-radio-btn-primary width-100': !(this.prevUnitSelect === mainUnit.identifier)}">
-            <input *ngIf = "!(this.prevUnitSelect === mainUnit.identifier)" (click)="onSelectBehaviour($event)" type="radio" id="{{mainUnit.identifier}}" value="{{mainUnit.identifier}}" name="mainUnit" [(ngModel)]="unitSelected" (click)="showMoveButton = true"
+          <div *ngIf="!sessionContext?.selectedMvcContentDetails"  [ngClass]="{'sb-radio-btn-checkbox sb-radio-btn-primary width-100': !(this.prevUnitSelect === mainUnit.identifier)}">
+            <input *ngIf = "!(this.prevUnitSelect === mainUnit.identifier)" (click)="onSelectBehaviour($event)" type="radio" id="{{mainUnit.identifier}}" value="{{mainUnit.identifier}}" name="mainUnit" [(ngModel)]="unitSelected" (click)="showMoveButton = true;"
             appTelemetryInteract 
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('radiobutton-'+ mainUnit.name, 'click', 'chapter-list')"
         [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(mainUnit.identifier, 'Content', '1.0', {l1: sessionContext.collection})"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
             >
-            <label for="{{mainUnit.identifier}}">{{mainUnit.name}}</label>
+            <label for="{{mainUnit.identifier}}" class="sb-color-primary font-weight-bold">{{mainUnit.name}}</label>
           </div>
+          <div *ngIf="sessionContext?.selectedMvcContentDetails"  class="sb-radio-btn-checkbox sb-radio-btn-primary width-100">
+            <input (click)="onSelectBehaviour($event)" type="radio" id="{{mainUnit.identifier}}" value="{{mainUnit.identifier}}" name="mainUnit" [(ngModel)]="prevUnitSelect" (change)="setCollectionUnitBreadcrumb();"
+            appTelemetryInteract 
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('radiobutton-selectChapter', 'click', 'library')"
+        [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(contentId, 'Content', '1.0', {l1:sessionContext.collection,l2: prevUnitSelect})"
+        [telemetryInteractCdata]="getTelemetryInteractCdata('value', mainUnit.name)"
+        [telemetryInteractPdata]="telemetryInteractPdata"
+            >
+            <label for="{{mainUnit.identifier}}" class="sb-color-primary font-weight-bold">{{mainUnit.name}}</label>
+          </div>
+        </div>
+        <div class="chevron-icon">
+          <i class="chevron down icon"></i>
         </div>
       </div>
       <div content *ngFor="let childUnit of mainUnit.children">
         <div class="chapter-lists level1">
           <div class="chapter-lists--item">
             <div class="item d-flex flex-ai-center cursor-pointer width-100">
-              <div class="width-100" [ngClass]="{'sb-radio-btn-checkbox sb-radio-btn-primary': !(this.prevUnitSelect === childUnit.identifier), 'p-16 pl-40': (this.prevUnitSelect === childUnit.identifier)}">
-                <input *ngIf= "!(this.prevUnitSelect === childUnit.identifier)" type="radio" id="{{childUnit.identifier}}" value="{{childUnit.identifier}}" name="childUnit" [(ngModel)]="unitSelected" (click)="showMoveButton = true"
+              <div *ngIf="!sessionContext?.selectedMvcContentDetails" class="width-100" [ngClass]="{'sb-radio-btn-checkbox sb-radio-btn-primary': !(this.prevUnitSelect === childUnit.identifier), 'p-16 pl-40': (this.prevUnitSelect === childUnit.identifier)}">
+                <input *ngIf= "!(this.prevUnitSelect === childUnit.identifier)" type="radio" id="{{childUnit.identifier}}" value="{{childUnit.identifier}}" name="childUnit" [(ngModel)]="unitSelected" (click)="showMoveButton = true;"
                 appTelemetryInteract 
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('radiobutton-' + childUnit.name, 'click', 'chapter-list')"
         [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(childUnit.identifier, 'Content', '1.0', {l1: sessionContext.collection})"
@@ -38,10 +52,18 @@
                 >
                 <label for="{{childUnit.identifier}}">{{childUnit.name}}</label>
               </div>
+              <div *ngIf="sessionContext?.selectedMvcContentDetails" class="width-100 sb-radio-btn-checkbox sb-radio-btn-primary" >
+                <input type="radio" id="{{childUnit.identifier}}" value="{{childUnit.identifier}}" name="childUnit" [(ngModel)]="prevUnitSelect" (change)="setCollectionUnitBreadcrumb();"
+                appTelemetryInteract 
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('radiobutton-selectChapter', 'click', 'library')"
+        [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(contentId, 'Content', '1.0', {l1:sessionContext.collection,l2:prevUnitSelect})"
+        [telemetryInteractCdata]="getTelemetryInteractCdata('value',childUnit.name)"
+        [telemetryInteractPdata]="telemetryInteractPdata"
+                >
+                <label for="{{childUnit.identifier}}">{{childUnit.name}}</label>
+              </div>
             </div>
-          </div>
-
-          
+          </div>         
         </div>
       </div>
     </sui-accordion-panel>
@@ -49,9 +71,28 @@
   </sui-accordion>
 </div>
 
-<!-- Selection of Question in modal -->
+<div class="sb-modal-actions flex-dr flex-jc-space-between py-10" *ngIf="sessionContext?.selectedMvcContentDetails">
+  <div class="ui tiny breadcrumb fxsmall line-height-1-3 w-80 d-flex sb-content-breadcrumb">
+      Adding <span class="font-weight-bold px-10  section">{{sessionContext?.selectedMvcContentDetails?.name}}</span>to
+    <span class="section ml-10" *ngFor="let unit of collectionUnitsBreadcrumb;first as first;last as last;">
+      <i class="right chevron icon divider b-0" [hidden]="first"></i>
+      <span [class.font-weight-bold]="first" > {{ unit }}</span>
+    </span>
+  </div>
+  <div class="w-20 text-right">
+    <button id="moveResource" class="sb-btn sb-btn-normal text-inherit sb-btn-primary text-right" (click)="addResource()"
+    appTelemetryInteract 
+    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add-content', 'click', 'library')"
+    [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(contentId, 'Content', '1.0', {l1:sessionContext.collection,l2: prevUnitSelect})"
+    [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
+    [telemetryInteractPdata]="telemetryInteractPdata"
+    >
+     {{resourceService.frmelmnts.btn.addContent}}
+    </button>
+  </div>
+</div>
 
-<div class="sb-modal-actions">
+<div class="sb-modal-actions" *ngIf="!sessionContext?.selectedMvcContentDetails" >
   <button id="moveResource" class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn sb-btn-primary': showMoveButton, 'sb-btn-disabled': !showMoveButton}" (click)="moveResource()"
   appTelemetryInteract 
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('move-resource', 'click', 'chapter-list')"
@@ -59,7 +100,8 @@
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
   >
-    Move
+    {{resourceService.frmelmnts.btn.move}}
   </button>
 </div>
+
 </sui-modal>

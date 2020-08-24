@@ -164,10 +164,21 @@ export class CollectionHierarchyService {
       live: this.getAllPendingForApprovalCount(orgLevelDataWithReject, collections).length,
       individualStatus: collectionsByStatus,
       individualStatusForSample: collectionsByStatusForSample,
+      mvcContentCount: this.getMvcContentCounts(collections),
       ...(!_.isUndefined(collections) && {sourcingOrgStatus : sourcingOrgStatus})
     };
   }
-
+  getMvcContentCounts(collections) {
+   let count = 0;
+     if (collections && collections.length) {
+       _.map(collections, textbook => {
+       if(_.has(textbook, 'mvcContentCount')) {
+        count +=textbook.mvcContentCount;
+       }
+      })
+     }
+     return count;
+  }
   getSourcingOrgStatus(collections, orgContents) {
     const liveContents = _.has(orgContents, 'Live') ? orgContents.Live : [];
     let acceptedOrgContents, rejectedOrgContents , pendingOrgContents = [];
@@ -360,7 +371,7 @@ export class CollectionHierarchyService {
       textbook.reviewCount = textbookMeta && _.has(textbookMeta, 'Review') ? textbookMeta.Review.length : 0;
       textbook.rejectedCount = textbookMeta && _.has(textbookMeta, 'Reject') ? textbookMeta.Reject.length : 0;
       const reviewedContents = _.union(_.get(textbook, 'acceptedContents', []), _.get(textbook, 'rejectedContents', []));
-      textbook.liveCount = textbookMeta && _.difference(liveContents, reviewedContents).length;
+      textbook.liveCount = (textbookMeta && _.difference(liveContents, reviewedContents)) ? textbookMeta && _.difference(liveContents, reviewedContents).length : 0;
       // tslint:disable-next-line:max-line-length
       textbook.sampleContentInReview = textbookMetaForSample && _.has(textbookMetaForSample, 'Review') ? textbookMetaForSample.Review.length : 0;
       // tslint:disable-next-line:max-line-length

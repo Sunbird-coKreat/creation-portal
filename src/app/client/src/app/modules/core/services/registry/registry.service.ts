@@ -31,17 +31,31 @@ export class RegistryService extends DataService {
       this.userService.userProfile.userRegData.User_Org && this.userService.userProfile.userRegData.Org);
   }
 
-  public getcontributingOrgUsersDetails() {
-    const userRegData = _.get(this.userService, 'userProfile.userRegData');
-    const orgId = userRegData.User_Org.orgId;
-    const storedOrglist = this.cacheService.get('orgUsersDetails');
-    if (this.checkIfUserBelongsToOrg()) {
-      return this.getAllContributionOrgUsers(orgId).then((allOrgUsers) => {
+  public getcontributingOrgUsersDetails(userRegData?, forSourcing?) {
+    const sourcingRoles = ["sourcing_reviewer", "sourcing_admin"];
+    const contribRoles = ["user", "admin"];
+    if (_.isUndefined(userRegData)) {
+      userRegData = _.get(this.userService, 'userProfile.userRegData');
+    }
+    const orgId = _.get(userRegData, 'Org.osid');
+    //const storedOrglist = this.cacheService.get('orgUsersDetails');
+    if (orgId) {
+      return this.getAllContributionOrgUsers(orgId, forSourcing).then((allOrgUsers) => {
         return new Promise((resolve, reject) => {
           const tempMapping = [];
           if (!_.isEmpty(allOrgUsers)) {
             const userList = _.uniq(_.map(
-              _.filter(allOrgUsers, obj => { if (obj.userId !== userRegData.User.osid) { return obj } }),
+              _.filter(allOrgUsers, obj => {
+                const isHavingSouringRoles = _.intersection(sourcingRoles, obj.roles);
+                const isHavingContribRoles = _.intersection(contribRoles, obj.roles);
+                if ((obj.userId !== _.get(userRegData, 'User.osid')) &&
+                    (
+                      (!_.isUndefined(forSourcing) && forSourcing && isHavingSouringRoles.length > 0) ||
+                      ((_.isUndefined(forSourcing) || (!_.isUndefined(forSourcing) && !forSourcing)) && isHavingContribRoles.length > 0)
+                  )) {
+                    return obj
+                  }
+              }),
               (mapObj) => {
                 tempMapping.push(mapObj);
                 return mapObj.userId;
@@ -49,71 +63,72 @@ export class RegistryService extends DataService {
             if (userList.length == 0) {
               return resolve([]);
             }
-            if (userList && storedOrglist && userList.length === storedOrglist.length) {
-              return resolve(this.cacheService.get('orgUsersDetails'));
-            } else {
-              let orgUsersDetails = {};
-              const tempUser = [];
-              const osUsersReq = _.map(_.chunk( userList, this.osReqLimit), chunk => {
-                return this.getUserdetailsByOsIds(chunk);
-              });
 
-              return forkJoin(osUsersReq).pipe(
-                switchMap((res2: any) => {
-                  const usersReq = [];
-                  if (!_.isEmpty(res2) && res2.length > 0) {
-                  _.forEach(res2, (usersReqResult) => {
-                      if (usersReqResult && usersReqResult.result.User.length) {
-                        const userList = _.map(usersReqResult.result.User, (obj) => {
-                          tempUser.push(obj);
-                          return obj.userId;
-                        });
+          let orgUsersDetails = {};
+          const tempUser = [];
+          const osUsersReq = _.map(_.chunk( userList, this.osReqLimit), chunk => {
+            return this.getUserdetailsByOsIds(chunk);
+          });
 
-                        const req = {
-                          url: this.config.urlConFig.URLS.ADMIN.USER_SEARCH,
-                          data: {
-                            'request': {
-                              'filters': {
-                                'identifier': _.compact(userList)
-                              }
-                            }
+          return forkJoin(osUsersReq).pipe(
+            switchMap((res2: any) => {
+              const usersReq = [];
+              if (!_.isEmpty(res2) && res2.length > 0) {
+              _.forEach(res2, (usersReqResult) => {
+                  if (usersReqResult && usersReqResult.result.User.length) {
+                    const userList = _.map(usersReqResult.result.User, (obj) => {
+                      tempUser.push(obj);
+                      return obj.userId;
+                    });
+
+                    const req = {
+                      url: this.config.urlConFig.URLS.ADMIN.USER_SEARCH,
+                      data: {
+                        'request': {
+                          'filters': {
+                            'identifier': _.compact(userList)
                           }
-                        };
-                        usersReq.push(this.learnerService.post(req));
+                        }
                       }
-                    });
-                    if (!_.isEmpty(usersReq)) {
-                      return forkJoin(usersReq);
-                    } else {
-                      return of(null);
-                    }
-                  } else {
-                    return of(null);
+                    };
+                    usersReq.push(this.learnerService.post(req));
                   }
-                })).subscribe((res) => {
-                  if (!_.isEmpty(res) && res.length > 0) {
-                  _.forEach(res, (usersReqResult) => {
-                      orgUsersDetails = _.compact(_.concat(orgUsersDetails, _.get(usersReqResult, 'result.response.content')));
-                    });
-                  }
-                  if (!_.isEmpty(orgUsersDetails)) {
-                      orgUsersDetails = _.map(
-                        _.filter(orgUsersDetails, obj => { if (obj.identifier) { return obj; } }),
-                        (obj) => {
-                          if (obj.identifier) {
-                            const tempUserObj = _.find(tempUser, { 'userId': obj.identifier });
-                            obj.name = `${obj.firstName} ${obj.lastName || ''}`;
-                            obj.User = _.find(tempUser, { 'userId': obj.identifier });
-                            obj.User_Org = _.find(tempMapping, { 'userId': _.get(tempUserObj, 'osid') });
-                            obj.selectedRole = _.first(obj.User_Org.roles);
-                            return obj;
-                          }
-                      });
-                  }
-                  this.cacheService.set('orgUsersDetails', _.compact(orgUsersDetails));
-                  return resolve(this.cacheService.get('orgUsersDetails'));
-                }, (err) => { console.log(err); return reject([]); });
-            }
+                });
+                if (!_.isEmpty(usersReq)) {
+                  return forkJoin(usersReq);
+                } else {
+                  return of(null);
+                }
+              } else {
+                return of(null);
+              }
+            })).subscribe((res) => {
+              if (!_.isEmpty(res) && res.length > 0) {
+              _.forEach(res, (usersReqResult) => {
+                  orgUsersDetails = _.compact(_.concat(orgUsersDetails, _.get(usersReqResult, 'result.response.content')));
+                });
+              }
+              if (!_.isEmpty(orgUsersDetails)) {
+                  orgUsersDetails = _.map(
+                    _.filter(orgUsersDetails, obj => { if (obj.identifier) { return obj; } }),
+                    (obj) => {
+                      if (obj.identifier) {
+                        const tempUserObj = _.find(tempUser, { 'userId': obj.identifier });
+                        obj.name = `${obj.firstName} ${obj.lastName || ''}`;
+                        obj.User = _.find(tempUser, { 'userId': obj.identifier });
+                        obj.User_Org = _.find(tempMapping, { 'userId': _.get(tempUserObj, 'osid') });
+                        if (!_.isUndefined(forSourcing) && forSourcing) {
+                          obj.selectedRole = _.first(_.intersection(sourcingRoles, obj.User_Org.roles));
+                        } else if (_.isUndefined(forSourcing) || (!_.isUndefined(forSourcing) && !forSourcing)) {
+                          obj.selectedRole = _.first(_.intersection(contribRoles, obj.User_Org.roles));
+                        }
+                        return obj;
+                      }
+                  });
+              }
+              this.cacheService.set('orgUsersDetails', _.compact(orgUsersDetails));
+              return resolve(this.cacheService.get('orgUsersDetails'));
+            }, (err) => { console.log(err); return reject([]); });
           } else {
             return resolve([]);
           }
@@ -126,11 +141,11 @@ export class RegistryService extends DataService {
     }
    }
 
-  public getAllContributionOrgUsers(orgId, offset?) {
+  public getAllContributionOrgUsers(orgId, forSourcing?, offset?) {
     offset = (!_.isUndefined(offset)) ? offset : 0;
 
     return new Promise((resolve, reject) => {
-      this.getContributionOrgUsers(orgId, offset, this.osReqLimit).subscribe(
+      this.getContributionOrgUsers(orgId, forSourcing, offset, this.osReqLimit).subscribe(
         (res) => {
           if (res.result && res.result.User_Org && res.result.User_Org.length > 0) {
             this.mycontributionOrgUsers = _.compact(_.concat(this.mycontributionOrgUsers, res.result.User_Org));
@@ -138,7 +153,7 @@ export class RegistryService extends DataService {
               return resolve(this.mycontributionOrgUsers);
             }
             offset = offset + this.osReqLimit;
-            return resolve(this.getAllContributionOrgUsers(orgId, offset));
+            return resolve(this.getAllContributionOrgUsers(orgId, forSourcing, offset));
           } else {
             return resolve(this.mycontributionOrgUsers);
           }
@@ -172,7 +187,7 @@ export class RegistryService extends DataService {
     return this.contentService.post(option);
   }
 
-  public getContributionOrgUsers(orgId, offset?, limit?): Observable<ServerResponse> {
+  public getContributionOrgUsers(orgId, forSourcing?, offset?, limit?): Observable<ServerResponse> {
     const req = {
       url: `reg/search`,
       data: {
@@ -199,6 +214,9 @@ export class RegistryService extends DataService {
     if (!_.isUndefined(offset)) {
       req.data.request['offset'] = offset;
     }
+    /*if (!_.isUndefined(forSourcing)) {
+      req.data.request.filters['roles'] = { 'contains': 'sourcing_reviewer' };
+    }*/
 
     return this.contentService.post(req);
   }
@@ -224,6 +242,30 @@ export class RegistryService extends DataService {
     };
     return this.contentService.post(req);
   }
+
+  public getOpenSaberOrgByOrgId(userProfile): Observable<ServerResponse> {
+    const req = {
+      url: `reg/search`,
+      data: {
+        'id': 'open-saber.registry.search',
+        'ver': '1.0',
+        'ets': '11234',
+        'params': {
+          'did': '',
+          'key': '',
+          'msgid': ''
+        },
+        'request': {
+          'entityType': ['Org'],
+          'filters': {
+            'orgId': { 'eq': userProfile.rootOrgId }
+          },
+        }
+      }
+    };
+    return this.contentService.post(req);
+  }
+
 
   public openSaberRegistrySearch(userId) {
     const userProfile = {};
@@ -266,7 +308,7 @@ export class RegistryService extends DataService {
         }
       }), tap((res3) => {
         if (res3 && res3.result.User_Org.length) {
-          userProfile['user_org'] = res3.result.User_Org[0];
+          userProfile['user_org'] = res3.result.User_Org;
         }
       }), switchMap((res4) => {
         if (res4 && res4.result.User_Org.length) {
@@ -284,7 +326,7 @@ export class RegistryService extends DataService {
       })
       ).subscribe((res: any) => {
         if (res && res.result.Org.length) {
-          userProfile['org'] = res.result.Org[0];
+          userProfile['org'] = res.result.Org;
         }
         userProfile['error'] = false;
         return resolve(userProfile);
