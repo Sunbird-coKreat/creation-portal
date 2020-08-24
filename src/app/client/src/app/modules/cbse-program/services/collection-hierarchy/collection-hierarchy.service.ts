@@ -396,7 +396,7 @@ export class CollectionHierarchyService {
       const textbookMetaForSample = _.get(contentStatusCounts.individualStatusForSample, textbook.identifier);
        let mvcContributions = [];
       if(_.has(textbook, 'mvcContributions')) {
-        mvcContributions = _.intersection(textbook.rejectedContents, textbook.mvcContributions);
+        mvcContributions = _.intersection(textbook.mvcContributions, _.has(textbookMeta, 'rejectedContents') ? textbook.rejectedContents: []);
         if(_.has(textbookMeta, 'Reject')) {
           textbookMeta['Reject'].push(...mvcContributions);
         } else {
