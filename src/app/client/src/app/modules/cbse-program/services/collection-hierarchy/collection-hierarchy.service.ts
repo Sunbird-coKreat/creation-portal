@@ -152,6 +152,16 @@ export class CollectionHierarchyService {
     const groupedByCollectionIdForSample = _.groupBy(totalSampleContent, 'collectionId');
     const collectionsByStatus = this.groupStatusForCollections(groupedByCollectionId);
     const collectionsByStatusForSample = this.groupStatusForCollections(groupedByCollectionIdForSample);
+
+    let mvcRejected = [];
+    if(collections && collections.length) {
+      _.map(collections, textbook => {
+        if(_.has(textbook, 'mvcContributions')) {
+          mvcRejected = _.intersection(_.has(textbook, 'rejectedContents') ? textbook.rejectedContents: [], textbook.mvcContributions);
+        }
+       })
+    }
+    orgLevelDataWithReject.Reject.push(...mvcRejected);
     if (!_.isUndefined(collections)) {
       sourcingOrgStatus = this.getSourcingOrgStatus(collections, orgLevelDataWithReject);
     }
@@ -164,32 +174,50 @@ export class CollectionHierarchyService {
       live: this.getAllPendingForApprovalCount(orgLevelDataWithReject, collections).length,
       individualStatus: collectionsByStatus,
       individualStatusForSample: collectionsByStatusForSample,
-      mvcContentCount: this.getMvcContentCounts(collections),
+      mvcContributionsCount: this.getMvcContentCounts(collections),
       ...(!_.isUndefined(collections) && {sourcingOrgStatus : sourcingOrgStatus})
     };
   }
   getMvcContentCounts(collections) {
-   let count = 0;
+    let mvcContributions = [];
+  
      if (collections && collections.length) {
        _.map(collections, textbook => {
-       if(_.has(textbook, 'mvcContentCount')) {
-        count +=textbook.mvcContentCount;
+        const reviewedContents = _.union(_.get(textbook, 'acceptedContents', []), _.get(textbook, 'rejectedContents', []));
+        if(_.has(textbook, 'mvcContributions')) {
+        mvcContributions = _.intersection(textbook.mvcContributions, reviewedContents);
+       
        }
       })
      }
-     return count;
+
+    return mvcContributions.length;
   }
   getSourcingOrgStatus(collections, orgContents) {
     const liveContents = _.has(orgContents, 'Live') ? orgContents.Live : [];
-    let acceptedOrgContents, rejectedOrgContents , pendingOrgContents = [];
-    if (liveContents.length) {
+    let acceptedOrgContents, rejectedOrgContents , pendingOrgContents , mvcContributions = [];
+
+    if(collections && collections.length) {
+      _.map(collections, textbook => {
+        if(_.has(textbook, 'mvcContributions')) {
+          mvcContributions.push(...textbook.mvcContributions);
+        }
+     })  
+    }
+   
+    if (liveContents.length || (mvcContributions && mvcContributions.length)) {
       const liveContentIds = _.map(liveContents, 'identifier');
+
+      if (mvcContributions && mvcContributions.length) {
+        liveContentIds.push(...mvcContributions);
+      }
       const allAcceptedContentIds = _.flatten(_.map(collections, 'acceptedContents'));
       const allRejectedContentIds = _.flatten(_.map(collections, 'rejectedContents'));
       acceptedOrgContents = _.intersection(liveContentIds, allAcceptedContentIds);
       rejectedOrgContents = _.intersection(liveContentIds, allRejectedContentIds);
       pendingOrgContents = _.difference(liveContentIds, _.concat(acceptedOrgContents, rejectedOrgContents));
-      }
+      } 
+  
       const meta = {
         accepted: acceptedOrgContents ? acceptedOrgContents.length : 0, // converting to string to enable table sorting
         rejected: rejectedOrgContents ? rejectedOrgContents.length : 0,
@@ -363,8 +391,20 @@ export class CollectionHierarchyService {
 
   getIndividualCollectionStatus(contentStatusCounts, collections) {
     return _.map(collections, textbook => {
-      const textbookMeta = _.get(contentStatusCounts.individualStatus, textbook.identifier);
+ 
+      let textbookMeta = _.get(contentStatusCounts.individualStatus, textbook.identifier);
       const textbookMetaForSample = _.get(contentStatusCounts.individualStatusForSample, textbook.identifier);
+       let mvcContributions = [];
+      if(_.has(textbook, 'mvcContributions')) {
+        mvcContributions = _.intersection(textbook.rejectedContents, textbook.mvcContributions);
+        if(_.has(textbookMeta, 'Reject')) {
+          textbookMeta['Reject'].push(...mvcContributions);
+        } else {
+          textbookMeta = {
+            Reject: mvcContributions
+          }
+        }
+      }
       const liveContents = _.has(textbookMeta, 'Live') ? _.map(textbookMeta.Live, 'identifier') : [];
       const sourcingOrgMeta = _.get(contentStatusCounts, 'sourcingOrgStatus');
       textbook.draftCount = textbookMeta && _.has(textbookMeta, 'Draft') ? textbookMeta.Draft.length : 0;
@@ -372,6 +412,7 @@ export class CollectionHierarchyService {
       textbook.rejectedCount = textbookMeta && _.has(textbookMeta, 'Reject') ? textbookMeta.Reject.length : 0;
       const reviewedContents = _.union(_.get(textbook, 'acceptedContents', []), _.get(textbook, 'rejectedContents', []));
       textbook.liveCount = (textbookMeta && _.difference(liveContents, reviewedContents)) ? textbookMeta && _.difference(liveContents, reviewedContents).length : 0;
+      textbook.mvcContributionsCount = (_.difference(textbook.mvcContributions, reviewedContents)) ? (_.difference(textbook.mvcContributions, reviewedContents)).length : 0,
       // tslint:disable-next-line:max-line-length
       textbook.sampleContentInReview = textbookMetaForSample && _.has(textbookMetaForSample, 'Review') ? textbookMetaForSample.Review.length : 0;
       // tslint:disable-next-line:max-line-length
