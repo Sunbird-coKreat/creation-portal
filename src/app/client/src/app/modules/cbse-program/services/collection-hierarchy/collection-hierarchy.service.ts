@@ -394,8 +394,10 @@ export class CollectionHierarchyService {
  
       let textbookMeta = _.get(contentStatusCounts.individualStatus, textbook.identifier);
       const textbookMetaForSample = _.get(contentStatusCounts.individualStatusForSample, textbook.identifier);
+      const reviewedContents = _.union(_.get(textbook, 'acceptedContents', []), _.get(textbook, 'rejectedContents', []));
        let mvcContributions = [];
       if(_.has(textbook, 'mvcContributions')) {
+      textbook.mvcContributionsCount = (_.difference(textbook.mvcContributions, reviewedContents)) ? (_.difference(textbook.mvcContributions, reviewedContents)).length : 0,
         mvcContributions = _.intersection(textbook.mvcContributions, _.has(textbookMeta, 'rejectedContents') ? textbook.rejectedContents: []);
         if(_.has(textbookMeta, 'Reject')) {
           textbookMeta['Reject'].push(...mvcContributions);
@@ -410,9 +412,7 @@ export class CollectionHierarchyService {
       textbook.draftCount = textbookMeta && _.has(textbookMeta, 'Draft') ? textbookMeta.Draft.length : 0;
       textbook.reviewCount = textbookMeta && _.has(textbookMeta, 'Review') ? textbookMeta.Review.length : 0;
       textbook.rejectedCount = textbookMeta && _.has(textbookMeta, 'Reject') ? textbookMeta.Reject.length : 0;
-      const reviewedContents = _.union(_.get(textbook, 'acceptedContents', []), _.get(textbook, 'rejectedContents', []));
       textbook.liveCount = (textbookMeta && _.difference(liveContents, reviewedContents)) ? textbookMeta && _.difference(liveContents, reviewedContents).length : 0;
-      textbook.mvcContributionsCount = (_.difference(textbook.mvcContributions, reviewedContents)) ? (_.difference(textbook.mvcContributions, reviewedContents)).length : 0,
       // tslint:disable-next-line:max-line-length
       textbook.sampleContentInReview = textbookMetaForSample && _.has(textbookMetaForSample, 'Review') ? textbookMetaForSample.Review.length : 0;
       // tslint:disable-next-line:max-line-length
