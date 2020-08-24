@@ -64,8 +64,7 @@ export class BulkUploadComponent implements OnInit {
   public bulkUploadErrorMsgs = [];
   public bulkUploadValidationError = '';
   public levels = [];
-  public sampleMetadataCsvUrl: string = '';
-  // (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value.split(',')  + 'bulk-content-upload-format.csv';
+  public sampleMetadataCsvUrl: string = (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value.split(',')  + 'bulk-content-upload-format.csv';
 
   constructor(
     private userService: UserService,
@@ -188,13 +187,13 @@ export class BulkUploadComponent implements OnInit {
     this.buildReportData();
   }
 
-  tree(ob) {
-    _.forEach(ob.chi, bb => {
-      if (bb.contentType === 'TextBookUnit') {
-        this.unitGroup.push({ name: bb.name, identifier: bb.identifier });
+  tree(content) {
+    _.forEach(content.childs, child => {
+      if (child.contentType === 'TextBookUnit') {
+        this.unitGroup.push({ name: child.name, identifier: child.identifier });
       }
-      if (bb.chi) {
-        this.tree(bb);
+      if (child.childs) {
+        this.tree(child);
       }
     });
   }
@@ -204,7 +203,7 @@ export class BulkUploadComponent implements OnInit {
     if (object.identifier === identifier) {
       return object;
     }
-    return children.some(o => result = this.findFolderLevel(o, identifier)) && Object.assign({}, object, { chi: [result] });
+    return children.some(o => result = this.findFolderLevel(o, identifier)) && Object.assign({}, object, { childs: [result] });
   }
 
   buildReportData() {
@@ -339,13 +338,10 @@ export class BulkUploadComponent implements OnInit {
         return;
       }
       this.uploadCsvFile(csvData);
-    })
-      .catch(err => {
+    }).catch(err => {
         this.uploader.reset();
         console.log(err);
       });
-
-    // this.uploadDocument();
   }
 
   getContentTypeDetails(key, value) {
@@ -477,16 +473,16 @@ export class BulkUploadComponent implements OnInit {
   getContentStatus() {
     // If individual
     if (!this.isContributorOrgUser()) {
-      return 'Live';
+      return 'publish';
     }
 
     // If user from other org
     if (!this.isDefaultContributingOrg()) {
-      return 'Review';
+      return 'review';
     }
 
     // If user from same org then check for skip review option
-    return _.get(this.programContext, 'config.defaultContributeOrgReview') ? 'Review' : 'Live';
+    return _.get(this.programContext, 'config.defaultContributeOrgReview') ? 'review' : 'publish';
   }
 
   isContributorOrgUser() {
@@ -523,35 +519,35 @@ export class BulkUploadComponent implements OnInit {
     }, {});
 
     const content = {
-      status: this.getContentStatus(),
+      stage: this.getContentStatus(),
       metadata: {
-        "name": row.name,
-        "description": row.description,
-        "source": source,
-        "artifactUrl": source,
-        "appIcon": this.getDownloadableLink(row.appIcon),
-        "creator": row.creator,
-        "audience": [row.audience],
-        "code": UUID.UUID(),
-        "mimeType": this.mimeTypes[_.toLower(row.fileFormat)],
-        "contentType": this.getContentTypeDetails('name', row.contentType).value,
-        "lastPublishedBy": userId,
-        "createdBy": userId,
-        "resourceType": 'Learn',
-        "collectionId": collectionId,
-        "organisationId": _.get(this.sessionContext, 'nominationDetails.organisation_id', null),
-        "programId": _.get(this.sessionContext, 'programId', ''),
-        "unitIdentifiers": [unitId],
-        "copyright": row.copyright,
-        "license": row.license,
-        "attributions": row.attributions,
-        "keywords": row.keywords,
-        "contentPolicyCheck": true,
+        name: row.name,
+        description: row.description,
+        source: source,
+        artifactUrl: source,
+        appIcon: this.getDownloadableLink(row.appIcon),
+        creator: row.creator,
+        audience: [row.audience],
+        code: UUID.UUID(),
+        mimeType: this.mimeTypes[_.toLower(row.fileFormat)],
+        contentType: this.getContentTypeDetails('name', row.contentType).value,
+        lastPublishedBy: userId,
+        createdBy: userId,
+        resourceType: 'Learn',
+        collectionId: collectionId,
+        organisationId: _.get(this.sessionContext, 'nominationDetails.organisation_id', null),
+        programId: _.get(this.sessionContext, 'programId', ''),
+        unitIdentifiers: [unitId],
+        copyright: row.copyright,
+        license: row.license,
+        attributions: row.attributions,
+        keywords: row.keywords,
+        contentPolicyCheck: true,
         ...(_.pickBy(reqBody, _.identity))
       },
       collection: [{
-        "identifier": collectionId,
-        "unitId": unitId
+        identifier: collectionId,
+        unitId: unitId
       }]
     };
 
