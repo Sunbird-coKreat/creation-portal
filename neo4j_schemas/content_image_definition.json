@@ -3031,9 +3031,9 @@
                 },{
                     "required": false,
                     "dataType": "List",
-                    "propertyName": "mvcContents",
-                    "title": "MVC Contents",
-                    "description": "List of MVC Contents",
+                    "propertyName": "mvcContributions",
+                    "title": "MVC Contributions",
+                    "description": "List of MVC Contributions",
                     "category": "General",
                     "displayProperty": "Editable",
                     "defaultValue": "",
