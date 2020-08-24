@@ -398,7 +398,7 @@ export class CollectionHierarchyService {
        let mvcContributions = [];
       if(_.has(textbook, 'mvcContributions')) {
       textbook.mvcContributionsCount = (_.difference(textbook.mvcContributions, reviewedContents)) ? (_.difference(textbook.mvcContributions, reviewedContents)).length : 0,
-        mvcContributions = _.intersection(textbook.mvcContributions, _.has(textbookMeta, 'rejectedContents') ? textbook.rejectedContents: []);
+        mvcContributions = _.intersection(textbook.mvcContributions, _.has(textbook, 'rejectedContents') ? textbook.rejectedContents: []);
         if(_.has(textbookMeta, 'Reject')) {
           textbookMeta['Reject'].push(...mvcContributions);
         } else {
