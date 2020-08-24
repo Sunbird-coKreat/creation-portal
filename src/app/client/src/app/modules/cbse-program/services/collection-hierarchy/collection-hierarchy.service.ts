@@ -154,10 +154,12 @@ export class CollectionHierarchyService {
     const collectionsByStatusForSample = this.groupStatusForCollections(groupedByCollectionIdForSample);
 
     let mvcRejected = [];
-    if(collections && collections.length) {
+    if(collections && collections.length) { // for getting rejected mvc contents 
       _.map(collections, textbook => {
+      const reviewedContents = _.union(_.get(textbook, 'acceptedContents', []), _.get(textbook, 'rejectedContents', []));
+
         if(_.has(textbook, 'mvcContributions')) {
-          mvcRejected = _.intersection(_.has(textbook, 'rejectedContents') ? textbook.rejectedContents: [], textbook.mvcContributions);
+          mvcRejected = _.intersection(textbook.mvcContributions, reviewedContents);
         }
        })
     }
@@ -181,7 +183,7 @@ export class CollectionHierarchyService {
   getMvcContentCounts(collections) {
     let mvcContributions = [];
   
-     if (collections && collections.length) {
+     if (collections && collections.length) { // this is to get active (approval pending) counts of mvc contents
        _.map(collections, textbook => {
         const reviewedContents = _.union(_.get(textbook, 'acceptedContents', []), _.get(textbook, 'rejectedContents', []));
         if(_.has(textbook, 'mvcContributions')) {
@@ -208,7 +210,7 @@ export class CollectionHierarchyService {
     if (liveContents.length || (mvcContributions && mvcContributions.length)) {
       const liveContentIds = _.map(liveContents, 'identifier');
 
-      if (mvcContributions && mvcContributions.length) {
+      if (mvcContributions && mvcContributions.length) { // this is to get acceptedContents and rejectedContents counts for mvc 
         liveContentIds.push(...mvcContributions);
       }
       const allAcceptedContentIds = _.flatten(_.map(collections, 'acceptedContents'));
@@ -396,7 +398,7 @@ export class CollectionHierarchyService {
       const textbookMetaForSample = _.get(contentStatusCounts.individualStatusForSample, textbook.identifier);
       const reviewedContents = _.union(_.get(textbook, 'acceptedContents', []), _.get(textbook, 'rejectedContents', []));
        let mvcContributions = [];
-      if(_.has(textbook, 'mvcContributions')) {
+      if(_.has(textbook, 'mvcContributions')) { // this is calculate the approval pending and rejected counts
       textbook.mvcContributionsCount = (_.difference(textbook.mvcContributions, reviewedContents)) ? (_.difference(textbook.mvcContributions, reviewedContents)).length : 0,
         mvcContributions = _.intersection(textbook.mvcContributions, _.has(textbook, 'rejectedContents') ? textbook.rejectedContents: []);
         if(_.has(textbookMeta, 'Reject')) {
