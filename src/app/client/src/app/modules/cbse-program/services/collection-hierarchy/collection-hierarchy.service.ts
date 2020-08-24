@@ -406,6 +406,8 @@ export class CollectionHierarchyService {
             Reject: mvcContributions
           }
         }
+      } else {
+        textbook.mvcContributionsCount = 0;
       }
       const liveContents = _.has(textbookMeta, 'Live') ? _.map(textbookMeta.Live, 'identifier') : [];
       const sourcingOrgMeta = _.get(contentStatusCounts, 'sourcingOrgStatus');
