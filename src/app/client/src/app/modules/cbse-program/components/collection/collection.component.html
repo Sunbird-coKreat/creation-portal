@@ -212,7 +212,7 @@
                 <div class="sb__ellipsis">{{data.subject}}</div>
               </td>
               <td>
-                {{ data.chapterCount || 0 }}
+                {{ data.chapterCountForContribution || data.chapterCount || 0 }}
               </td>
               <td *ngIf="currentNominationStatus === 'Initiated' || currentNominationStatus=== 'Pending'">{{data.totalSampleContent || 0 }}</td>
               <td>

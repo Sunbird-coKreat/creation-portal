@@ -64,7 +64,8 @@ export class BulkUploadComponent implements OnInit {
   public bulkUploadErrorMsgs = [];
   public bulkUploadValidationError = '';
   public levels = [];
-  public sampleMetadataCsvUrl: string = (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value.split(',')  + 'bulk-content-upload-format.csv';
+  public sampleMetadataCsvUrl: string = '';
+  // (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value.split(',')  + 'bulk-content-upload-format.csv';
 
   constructor(
     private userService: UserService,
@@ -175,7 +176,7 @@ export class BulkUploadComponent implements OnInit {
           this.process.status = "completed";
         }
         // console.log('updated process:', JSON.stringify(this.process));
-        // this.updateJob();
+        this.updateJob();
       }
     }, (error) => {
       console.log(error);
@@ -190,7 +191,7 @@ export class BulkUploadComponent implements OnInit {
   tree(ob) {
     _.forEach(ob.chi, bb => {
       if (bb.contentType === 'TextBookUnit') {
-        this.unitGroup.push({name: bb.name, identifier: bb.identifier});
+        this.unitGroup.push({ name: bb.name, identifier: bb.identifier });
       }
       if (bb.chi) {
         this.tree(bb);
@@ -211,7 +212,7 @@ export class BulkUploadComponent implements OnInit {
       return this.findFolderLevel(this.storedCollectionData, content.identifier);
     });
 
-     try {
+    try {
       const headers = _.map(this.uploadCsvConfig.headers, header => header.name);
       headers.push('Status');
       headers.push('Reason for failure');
@@ -225,12 +226,12 @@ export class BulkUploadComponent implements OnInit {
         result['creator'] = _.get(content, 'creator', '');
         result['copyright'] = _.get(content, 'copyright', '');
         result['license'] = _.get(content, 'license', '');
-        result['attributions'] =  _.join(_.get(content, 'attributions', []), ', ');
+        result['attributions'] = _.join(_.get(content, 'attributions', []), ', ');
         result['appIcon'] = _.get(content, 'appIcon', '');
         result['fileFormat'] = this.getFileFormat(_.get(content, 'mimeType', ''));
         result['source'] = _.get(content, 'source', '');
         result['contentType'] = this.getContentTypeDetails('value', _.get(content, 'contentType')).name;
-        
+
         const folderStructure = this.unitsInLevel[i];
         this.unitGroup = [];
         this.tree(folderStructure);
@@ -255,10 +256,10 @@ export class BulkUploadComponent implements OnInit {
       };
       // console.log('csvDownloadConfig:', JSON.stringify(csvDownloadConfig));
       this.programsService.generateCSV(csvDownloadConfig);
-      } catch (err) {
-        console.log(err);
-        this.toasterService.error(this.resourceService.messages.emsg.bulkUpload.somethingFailed);
-      }
+    } catch (err) {
+      console.log(err);
+      this.toasterService.error(this.resourceService.messages.emsg.bulkUpload.somethingFailed);
+    }
   }
 
   getFileFormat(mimeType) {
@@ -375,8 +376,8 @@ export class BulkUploadComponent implements OnInit {
     const licenses = this.licenses.map((license) => license.name);
 
     const headers = [
-      { name: 'Name of the Content', inputName: 'name', maxLength:250,  required: true, requiredError, headerError, maxLengthError },
-      { name: 'Description of the content', inputName: 'description', maxLength:500, maxLengthError },
+      { name: 'Name of the Content', inputName: 'name', maxLength: 250, required: true, requiredError, headerError, maxLengthError },
+      { name: 'Description of the content', inputName: 'description', maxLength: 500, maxLengthError },
       { name: 'Keywords', inputName: 'keywords', isArray: true },
       { name: 'Audience', inputName: 'audience', required: true, requiredError, headerError, in: ['Learner', 'Instructor'], inError },
       { name: 'Author', inputName: 'creator', required: true, requiredError, headerError },
@@ -455,7 +456,7 @@ export class BulkUploadComponent implements OnInit {
 
   viewDetails($event) {
     $event.preventDefault();
-    if (this.process.status  === 'processing') {
+    if (this.process.status === 'processing') {
       this.bulkUploadState = 5;
       this.checkBulkUploadStatus();
     } else {
@@ -467,7 +468,6 @@ export class BulkUploadComponent implements OnInit {
   createImportRequest(csvData) {
     const request = { content: [] };
     _.forEach(csvData, (row) => {
-      const status = this.getContentStatus();
       request.content.push(this.getContentObject(row));
     });
 
@@ -523,6 +523,7 @@ export class BulkUploadComponent implements OnInit {
     }, {});
 
     const content = {
+      status: this.getContentStatus(),
       metadata: {
         "name": row.name,
         "description": row.description,

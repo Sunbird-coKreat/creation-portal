@@ -19,7 +19,7 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
   @Output() playerOnDestroyEvent = new EventEmitter<any>();
   @Output() sceneChangeEvent = new EventEmitter<any>();
   @Input() contentProgressEvents$: Subject<any>;
-
+  playerLoaded = false;
   buildNumber: string;
   @Input() playerOption: any;
   contentRatingModal = false;
@@ -28,6 +28,7 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
   CONSTANT = {
     ACCESSEVENT: 'renderer:question:submitscore'
   };
+
   /**
  * Dom element reference of contentRatingModal
  */
@@ -53,7 +54,12 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
   ngOnChanges() {
     this.contentRatingModal = false;
     if (this.playerConfig) {
-      this.loadPlayer();
+      if (this.playerLoaded) {
+        const playerElement = this.contentIframe.nativeElement;
+        playerElement.contentWindow.initializePreview(this.playerConfig);
+      } else {
+        this.loadPlayer();
+      }
     }
   }
   loadCdnPlayer() {
@@ -64,6 +70,7 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
       playerElement.onload = (event) => {
         try {
           this.adjustPlayerHeight();
+          this.playerLoaded = true;
           playerElement.contentWindow.initializePreview(this.playerConfig);
           playerElement.addEventListener('renderer:telemetry:event', telemetryEvent => this.generateContentReadEvent(telemetryEvent));
           window.frames['contentPlayer'].addEventListener('message', accessEvent => this.generateScoreSubmitEvent(accessEvent), false);
@@ -82,6 +89,7 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
       playerElement.onload = (event) => {
         try {
           this.adjustPlayerHeight();
+          this.playerLoaded = true;
           playerElement.contentWindow.initializePreview(this.playerConfig);
           playerElement.addEventListener('renderer:telemetry:event', telemetryEvent => this.generateContentReadEvent(telemetryEvent));
           window.frames['contentPlayer'].addEventListener('message', accessEvent => this.generateScoreSubmitEvent(accessEvent), false);

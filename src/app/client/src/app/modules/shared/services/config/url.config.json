@@ -267,6 +267,9 @@
       "REJECT": "content/v3/reject",
       "FLAG": "content/v3/flag"
     },
+    "DOCKCONTENT_MVC": {
+      "SEARCH": "mvc/v3/search"
+    },
     "RECAPTCHA": {
       "VALIDATE": "/validate/recaptcha"
     },
