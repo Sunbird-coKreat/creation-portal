@@ -131,6 +131,7 @@ export class BulkApprovalComponent implements OnInit {
         if (res && res.result && res.result.processId) {
           this.processId = res.result.processId;
           this.createBulkApprovalJob();
+          this.updateCollection();
         }
       }, err => {
         this.toasterService.error(this.resourceService.messages.emsg.bulkApprove.something);
@@ -179,6 +180,7 @@ export class BulkApprovalComponent implements OnInit {
         this.showBulkApprovalButton = true;
       }
       this.bulkJobService.setProcess(this.bulkApprove);
+      this.toasterService.success(this.resourceService.messages.smsg.bulkApprove.update);
     }, err => {
       this.toasterService.error(this.resourceService.messages.emsg.bulkApprove.something);
     });
@@ -197,10 +199,9 @@ export class BulkApprovalComponent implements OnInit {
       };
       // tslint:disable-next-line:max-line-length
       request.content['acceptedContents'] = _.compact(_.uniq([...this.storedCollectionData.acceptedContents || [],
-                                            ..._.map(_.filter(this.dikshaContents, content => content.status === 'Live'), 'origin')]));
+                                            ..._.map(_.filter(this.approvalPending, content => content.originUnitId), 'identifier')]));
       this.helperService.updateContent(request, this.sessionContext.collection).subscribe(res => {
         this.updateToc.emit('bulkApproval_completed');
-        this.toasterService.success(this.resourceService.messages.smsg.bulkApprove.update);
         this.showBulkApprovalButton = false;
       }, err => {
         this.toasterService.error(this.resourceService.messages.emsg.bulkApprove.updateToc);
@@ -221,11 +222,6 @@ export class BulkApprovalComponent implements OnInit {
           this.bulkApprove.overall_stats = overallStats;
           // tslint:disable-next-line:max-line-length
           this.successPercentage = Math.round((this.bulkApprove.overall_stats.approve_success / this.bulkApprove.overall_stats.total) * 100);
-          if (overallStats.approve_pending) {
-
-          } else {
-            this.updateCollection();
-          }
           this.updateBulkApprovalJob();
         } else {
           this.successPercentage = 0;
