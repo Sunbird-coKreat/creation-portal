@@ -1069,4 +1069,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       && this.userService.userProfile.userRegData.Org
       && this.programContext.sourcing_org_name === this.userService.userProfile.userRegData.Org.name);
   }
+
+  bulkApprovalSuccess(e) {
+    this.updateAccordianView();
+  }
 }

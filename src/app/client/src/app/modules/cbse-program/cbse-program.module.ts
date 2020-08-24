@@ -24,6 +24,8 @@ import { CollectionHierarchyService } from './services/collection-hierarchy/coll
 import { SlickModule } from 'ngx-slick';
 import { SharedFeatureModule } from '../shared-feature';
 import { RouterModule } from '@angular/router';
+import { BulkApprovalComponent } from './components/bulk-approval/bulk-approval.component';
+
 import {CbseRoutingModule} from './cbse-routing.module';
 import { MvcLibraryComponent } from './components/mvc-library/mvc-library.component';
 import { MvcListComponent } from './components/mvc-list/mvc-list.component';
@@ -38,7 +40,7 @@ import { NgInviewModule } from 'angular-inport';
     QuestionPreviewComponent, SanitizeHtmlPipe, QuestionCreationHeaderComponent,
     DashboardComponent, RecursiveTreeComponent,
     ContentUploaderComponent,  ResourceTemplateComponent, CollectionComponent, ResourceReorderComponent, ContentEditorComponent,
-     MvcLibraryComponent, MvcListComponent, MvcFilterComponent, MvcPlayerComponent,SkeletonLoaderComponent],
+     MvcLibraryComponent, MvcListComponent, MvcFilterComponent, MvcPlayerComponent, SkeletonLoaderComponent, BulkApprovalComponent],
   imports: [
     RouterModule,
     CommonModule,

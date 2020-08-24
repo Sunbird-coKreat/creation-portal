@@ -69,6 +69,27 @@ module.exports = function (app) {
         })
     )
 
+    app.use('/api/content/v1/import',
+      proxy(learnerURL, {
+        proxyReqOptDecorator: proxyHeaders.decorateSunbirdRequestHeaders(),
+        proxyReqPathResolver: function (req) {
+          var originalUrl = req.originalUrl
+          originalUrl = originalUrl.replace('/api/', '')
+          return require('url').parse(learnerURL + originalUrl).path
+        },
+        userResDecorator: function (proxyRes, proxyResData,  req, res) {
+            try {
+            logger.info({msg: '/api/content/v1/import'});
+            const data = JSON.parse(proxyResData.toString('utf8'));
+            if(req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
+            else return proxyHeaders.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
+            } catch(err) {
+            logger.error({msg:'content api user res decorator json parse error:', proxyResData})
+                return proxyHeaders.handleSessionExpiry(proxyRes, proxyResData, req, res);
+            }
+        }
+    }))
+    
     app.use('/api/*', permissionsHelper.checkPermission(), proxy(contentProxyUrl, {
         proxyReqPathResolver: proxyReqPathResolverMethod
     }))

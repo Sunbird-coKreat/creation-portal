@@ -272,6 +272,12 @@
     },
     "RECAPTCHA": {
       "VALIDATE": "/validate/recaptcha"
+    },
+    "BULKJOB": {
+      "CREATE": "program/v1/process/create",
+      "READ": "program/v1/process/read",
+      "UPDATE": "program/v1/process/update",
+      "SEARCH": "program/v1/process/search"
     }
   }
 }
