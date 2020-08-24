@@ -71,7 +71,7 @@ module.exports = function (app) {
     )
 
     app.use('/api/content/v1/import',
-      proxy(kp_learning_service_base_url, {
+      proxy(kp_content_service_base_url, {
         proxyReqOptDecorator: proxyHeaders.decorateSunbirdRequestHeaders(),
         proxyReqPathResolver: function (req) {
             var originalUrl = req.originalUrl
