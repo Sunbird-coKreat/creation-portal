@@ -70,9 +70,8 @@ module.exports = function (app) {
         })
     )
 
-    app.use('/api/content/v1/import',
+    app.use('/api/content/v3/import',
       proxy(kp_content_service_base_url, {
-        proxyReqOptDecorator: proxyHeaders.decorateSunbirdRequestHeaders(),
         proxyReqPathResolver: function (req) {
             var originalUrl = req.originalUrl
             originalUrl = originalUrl.replace('/api/', '')
