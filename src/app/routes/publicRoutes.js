@@ -8,7 +8,6 @@ const learnerURL = envHelper.LEARNER_URL
 const reqDataLimitOfContentUpload = '50mb'
 const contentServiceBaseUrl = envHelper.CONTENT_URL
 const logger = require('sb_logger_util_v2')
-const kp_content_service_base_url = envHelper.kp_content_service_base_url
 
 module.exports = function (app) {
     const proxyReqPathResolverMethod = function (req) {
@@ -69,17 +68,6 @@ module.exports = function (app) {
         }
         })
     )
-
-    app.post('/api/content/v3/import',
-      proxy(kp_content_service_base_url, {
-        proxyReqPathResolver: function (req) {
-            var originalUrl = req.originalUrl
-            originalUrl = originalUrl.replace('/api/', '')
-            logger.info(require('url').parse(kp_content_service_base_url + originalUrl).path)
-            logger.info({msg: '/api/content/v3/import'});
-            return require('url').parse(kp_content_service_base_url + originalUrl).path
-        }
-    }))
     
     app.use('/api/*', permissionsHelper.checkPermission(), proxy(contentProxyUrl, {
         proxyReqPathResolver: proxyReqPathResolverMethod

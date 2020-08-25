@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ConfigService, ServerResponse, BrowserCacheTtlService } from '@sunbird/shared';
-import { ContentService, ProgramsService, PublicDataService } from '@sunbird/core';
+import { ContentService, ProgramsService, PublicDataService, ActionService } from '@sunbird/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import * as _ from 'lodash-es';
@@ -12,7 +12,9 @@ import { CacheService } from 'ng2-cache-service';
 export class BulkJobService {
 
   constructor(private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService,
-    private programsService: ProgramsService, private configService: ConfigService, private contentService: ContentService, private publicDataService: PublicDataService) { }
+    private programsService: ProgramsService, private configService: ConfigService,
+    private contentService: ContentService, private publicDataService: PublicDataService,
+    public actionService: ActionService) { }
 
   getBulkOperationStatus(reqData): Observable<ServerResponse> {
     const req = {
@@ -105,6 +107,6 @@ export class BulkJobService {
         request: reqData
       }
     };
-    return this.publicDataService.post(req);
+    return this.actionService.post(req);
   }
 }
