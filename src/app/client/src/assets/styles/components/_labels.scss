@@ -296,3 +296,11 @@ $sb-label-status-indicator-error-background: $tertiary-color;
     background: $primary-color;
   }
 }
+//dock label
+.sb-label-orange{
+    border: 1px solid #D1CFA7;
+    border-radius: 4px;
+    background-color: #F8F2DB;
+    color: #926E24;
+    font-size: 0.60rem;
+}

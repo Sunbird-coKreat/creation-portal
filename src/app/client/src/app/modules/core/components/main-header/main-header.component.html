@@ -38,6 +38,22 @@
                 <!--/Hamburger Icon-->
                 <!--Main Menu-->
                 <!--/Main Menu-->
+    
+
+                    <a class="profile-avtar computer only p-0 ml-5" *ngIf="sourcingOrgAdmin"
+                    tabindex="0">
+                    <div suiDropdown class="ui dropdown right top pointing" id="dropdown-menu-list-header">
+                        <i class="icon bell fs-1-3 sb-color-black" *ngIf='userProfile'></i>
+                        <div class="sb-circle-notification">1</div>
+                        <div class="menu" suiDropdownMenu>
+                          <ul class="sb-list-notification">
+                              <li class="sb-color-black pl-0"><strong>3</strong> nominations in <strong>Project 1</strong> <span class="divider mx-5"></span><em class="fxsmall sb-color-yellow">Last 3days</em></li>
+                              <div class="ui divider my-10"></div>
+                              <li class="sb-color-black pl-0"><strong>3</strong> nominations in <strong>Project 1</strong> <span class="divider mx-5"></span><em class="fxsmall sb-color-yellow">Last 3days</em></li>
+                          </ul>
+                        </div>
+                    </div>
+                </a>
                 <!--Avtar Dropdown-->
                 <a class="profile-avtar computer only p-0 ml-15" *ngIf="userService.loggedIn && !isOffline"
                     tabindex="0">

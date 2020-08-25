@@ -64,12 +64,20 @@
             </thead>
             <tbody class="sb-table-body">
               <tr *ngFor="let program of programs; let i = index;">
-                <td>
+                <td class="pr-0">
                   <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
                     {{program?.name}}
                   </div>
                   <div class="sb__ellipsis sb__ellipsis--three">{{ getProgramTextbooksCount(program) }}</div>
                   <div *ngIf="activeMyProgramsMenu && getProgramInfo(program, 'board')" class="sb-label-value mt-4">{{ getProgramInfo(program, 'board') }}</div>
+                  <div class="sb-label sb-label-table sb-label-warning-0 text-left sb-label-orange d-flex flex-ai-center">
+                    <div><i class="icon bell"></i></div>
+                    <div>
+                        3 nominations 
+                        <div class="divider mx-5"></div>
+                        4 contributors
+                    </div>
+                  </div>
                 </td>
                 <td *ngIf="isContributor" >
                   <div>{{ getSourcingOrgName(program) }}
@@ -143,7 +151,7 @@
                     <div *ngIf="program.status === 'Live' || program.status === 'Unlisted'" class="sb-color-success">{{resourceService?.frmelmnts?.lbl?.live}}</div>
                     <div *ngIf="program.status === 'Draft'" class="sb-color-gray-300">{{resourceService?.frmelmnts?.lbl?.draft}}</div>
                 </td>
-                <td class="text-center">
+                <td class="text-center pl-0">
                   <button *ngIf="(program.status === 'Live' || program.status === 'Unlisted')"
                     type="button"
                     class="sb-btn sb-btn-normal sb-btn-outline-primary mr-5"
