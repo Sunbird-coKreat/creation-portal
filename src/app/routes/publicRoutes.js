@@ -70,11 +70,13 @@ module.exports = function (app) {
         })
     )
 
-    app.use('/api/content/v3/import',
+    app.post('/api/content/v3/import',
       proxy(kp_content_service_base_url, {
         proxyReqPathResolver: function (req) {
             var originalUrl = req.originalUrl
             originalUrl = originalUrl.replace('/api/', '')
+            logger.info(require('url').parse(kp_content_service_base_url + originalUrl).path)
+            logger.info({msg: '/api/content/v3/import'});
             return require('url').parse(kp_content_service_base_url + originalUrl).path
         }
     }))
