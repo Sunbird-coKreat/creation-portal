@@ -40,6 +40,7 @@ export class BulkUploadComponent implements OnInit {
     'h5p': 'application/vnd.ekstep.h5p-archive',
     'zip': 'application/vnd.ekstep.html-archive',
   };
+  public stageStatus = '';
   public contentTypes: Array<any> = [];
   public unitsInLevel: Array<any> = [];
   public licenses: Array<any> = [];
@@ -81,6 +82,7 @@ export class BulkUploadComponent implements OnInit {
     this.checkBulkUploadStatus();
     this.getChapters();
     this.setBulkUploadCsvConfig();
+    this.stageStatus = this.getContentStatus();
   }
 
   getContentTypes() {
@@ -120,7 +122,7 @@ export class BulkUploadComponent implements OnInit {
     // console.log('process.overall_stats', this.process.overall_stats);
     const { total, upload_pending } = this.process.overall_stats;
 
-    this.completionPercentage = 100 - ((upload_pending / total) * 100);
+    this.completionPercentage = _.toNumber(100 - ((upload_pending / total) * 100));
     // console.log('completionPercentage',  this.completionPercentage);
   }
 
@@ -144,7 +146,6 @@ export class BulkUploadComponent implements OnInit {
 
         this.process = _.first(_.get(statusResponse, 'result.process', []));
         // console.log('process', JSON.stringify(this.process));
-        this.calculateCompletionPercentage();
         this.searchContentWithProcessId();
         this.bulkUploadState = 5;
       }, (error) => {
@@ -161,7 +162,12 @@ export class BulkUploadComponent implements OnInit {
 
       if (_.get(searchResponse, 'result.count', 0) > 0) {
         this.contents = _.get(searchResponse, 'result.content');
-        const status = _.upperFirst(this.getContentStatus());
+        let status = this.stageStatus;
+        if (status === "review") {
+          status = 'Review';
+        } else if (status === "publish") {
+          status = 'Live';
+        }
         _.each(this.contents, (content) => {
           if (content.status === "Failed") {
             this.process.overall_stats.upload_failed++;
@@ -175,6 +181,7 @@ export class BulkUploadComponent implements OnInit {
         if (this.process.overall_stats.upload_pending === 0) {
           this.process.status = "completed";
         }
+        this.calculateCompletionPercentage();
         // console.log('updated process:', JSON.stringify(this.process));
         this.updateJob();
       }
@@ -183,18 +190,13 @@ export class BulkUploadComponent implements OnInit {
     });
   }
 
-  downloadReport() {
-    // console.log('downloadReport:', this.contents);
-    this.buildReportData();
-  }
-
-  tree(content) {
-    _.forEach(content.childs, child => {
-      if (child.contentType === 'TextBookUnit') {
-        this.unitGroup.push({ name: child.name, identifier: child.identifier });
+  tree(ob) {
+    _.forEach(ob.chi, bb => {
+      if (bb.contentType === 'TextBookUnit') {
+        this.unitGroup.push({ name: bb.name, identifier: bb.identifier });
       }
-      if (child.childs) {
-        this.tree(child);
+      if (bb.chi) {
+        this.tree(bb);
       }
     });
   }
@@ -204,10 +206,10 @@ export class BulkUploadComponent implements OnInit {
     if (object.identifier === identifier) {
       return object;
     }
-    return children.some(o => result = this.findFolderLevel(o, identifier)) && Object.assign({}, object, { childs: [result] });
+    return children.some(o => result = this.findFolderLevel(o, identifier)) && Object.assign({}, object, { chi: [result] });
   }
 
-  buildReportData() {
+  downloadReport() {
     this.unitsInLevel = _.map(this.contents, content => {
       return this.findFolderLevel(this.storedCollectionData, content.identifier);
     });
@@ -235,6 +237,12 @@ export class BulkUploadComponent implements OnInit {
         const folderStructure = this.unitsInLevel[i];
         this.unitGroup = [];
         this.tree(folderStructure);
+
+        result['level1'] = '';
+        result['level2'] = '';
+        result['level3'] = '';
+        result['level4'] = '';
+
         if (this.unitGroup.length > 0) {
           result['level1'] = _.get(this.unitGroup, '[0].name', '');
           result['level2'] = _.get(this.unitGroup, '[1].name', '');
@@ -242,7 +250,11 @@ export class BulkUploadComponent implements OnInit {
           result['level4'] = _.get(this.unitGroup, '[3].name', '');
         }
 
-        result['status'] = _.get(content, 'status', '');
+        let status = _.get(content, 'status', '');
+        if ((this.stageStatus === 'review' && status === 'Review') || (this.stageStatus === 'publish' && status === 'Live')) {
+          status = 'Success';
+        }
+        result['status'] = status
         result['failedReason'] = this.getErrorMessage(_.get(content, 'importError', ''));
 
         return result;
@@ -453,13 +465,13 @@ export class BulkUploadComponent implements OnInit {
 
   viewDetails($event) {
     $event.preventDefault();
+    this.showBulkUploadModal = true;
     if (this.process.status === 'processing') {
       this.bulkUploadState = 5;
       this.checkBulkUploadStatus();
     } else {
       this.bulkUploadState = 6;
     }
-    this.showBulkUploadModal = true;
   }
 
   createImportRequest(csvData) {
@@ -514,13 +526,15 @@ export class BulkUploadComponent implements OnInit {
     const userId = _.get(this.userService, 'userProfile.userId');
     const collectionId = _.get(this.sessionContext, 'collection', '');
     const source = this.getDownloadableLink(row.source);
+    const license = _.get(row, 'license');
+    const organisationId =  _.get(this.sessionContext, 'nominationDetails.organisation_id');
 
     const reqBody = this.sharedContext.reduce((obj, context) => {
       return { ...obj, [context]: this.sessionContext[context] };
     }, {});
 
     const content = {
-      stage: this.getContentStatus(),
+      stage: this.stageStatus,
       metadata: {
         name: row.name,
         description: row.description,
@@ -536,11 +550,9 @@ export class BulkUploadComponent implements OnInit {
         createdBy: userId,
         resourceType: 'Learn',
         collectionId: collectionId,
-        organisationId: _.get(this.sessionContext, 'nominationDetails.organisation_id', null),
         programId: _.get(this.sessionContext, 'programId', ''),
         unitIdentifiers: [unitId],
         copyright: row.copyright,
-        license: row.license,
         attributions: row.attributions,
         keywords: row.keywords,
         contentPolicyCheck: true,
@@ -552,8 +564,11 @@ export class BulkUploadComponent implements OnInit {
       }]
     };
 
-    if (_.isEmpty(content.metadata.license)) {
-      delete content.metadata.license
+    if (!_.isEmpty(license)) {
+      content.metadata.license = license;
+    }
+    if (!_.isEmpty(organisationId)) {
+      content.metadata.organisationId = organisationId;
     }
 
     return content;
