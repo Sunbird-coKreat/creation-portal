@@ -100,7 +100,7 @@ export class BulkJobService {
 
   createBulkImport(reqData): Observable<ServerResponse> {
     const req = {
-      url: `${this.configService.urlConFig.URLS.BULKJOB.IMPORT}`,
+      url: `${this.configService.urlConFig.URLS.BULKJOB.DOCK_IMPORT}`,
       data: {
         request: reqData
       }
