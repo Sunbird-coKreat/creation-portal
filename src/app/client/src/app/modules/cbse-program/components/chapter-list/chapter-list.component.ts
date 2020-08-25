@@ -923,7 +923,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       contentStatusCount['rejected'] = 0;
       contentStatusCount['approvalPending'] = 0;
       _.forEach(contents, (content) => {
-        if (content.sampleContent === null) {
+        if (!content.sampleContent) {
           if (content.sourcingStatus === 'Approved') {
             contentStatusCount['approved'] += 1;
           } else if (content.sourcingStatus === 'Rejected') {
@@ -943,7 +943,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       contentStatusCount['rejected'] = 0;
       contentStatusCount['approved'] = 0;
       _.forEach(contents, (content) => {
-        if (content.organisationId === this.myOrgId && content.sampleContent === null) {
+        if (content.organisationId === this.myOrgId && !content.sampleContent) {
           if (content.status === 'Draft' && content.prevStatus === 'Review') {
             contentStatusCount['notAccepted'] += 1;
           } else if (content.status === 'Live' && !content.sourcingStatus && content.sourceURL) {
@@ -952,7 +952,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
             contentStatusCount['approvalPending'] += 1;
           } else if (content.status === 'Review') {
             contentStatusCount['reviewPending'] += 1;
-          } else if (content.status === 'Draft' && content.prevStatus === null) {
+          } else if (content.status === 'Draft' && !content.prevStatus) {
             contentStatusCount['draft'] += 1;
           } else if (content.sourcingStatus === 'Approved' && content.status === 'Live') {
             contentStatusCount['approved'] += 1;
@@ -969,7 +969,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       contentStatusCount['approved'] = 0;
       contentStatusCount['draft'] = 0;
       _.forEach(contents, (content) => {
-        if (content.organisationId === this.myOrgId && !content.sourceURL && content.sampleContent === null) {
+        if (content.organisationId === this.myOrgId && !content.sourceURL && !content.sampleContent) {
           if (content.status === 'Draft' && content.prevStatus === 'Review') {
             contentStatusCount['notAccepted'] += 1;
           } else if (content.status === 'Live' && !content.sourcingStatus) {
@@ -980,7 +980,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
             contentStatusCount['approved'] += 1;
           } else if (content.sourcingStatus === 'Rejected' && content.status === 'Live') {
             contentStatusCount['rejected'] += 1;
-          } else if (content.status === 'Draft' && content.prevStatus === null) {
+          } else if (content.status === 'Draft' && !content.prevStatus) {
             contentStatusCount['draft'] += 1;
           }
         } else if (content.status === 'Live' && content.sourceURL && content.sourcingStatus === 'Approved'){
@@ -997,8 +997,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       contentStatusCount['rejected'] = 0;
       contentStatusCount['approved'] = 0;
       _.forEach(contents, (content) => {
-        if (content.createdBy === this.userService.userProfile.userId && content.sampleContent === null) {
-          if (content.status === 'Draft' && content.prevStatus === null) {
+        if (content.createdBy === this.userService.userProfile.userId && !content.sampleContent) {
+          if (content.status === 'Draft' && content.prevStatus) {
             contentStatusCount['draft'] += 1;
           } else if (content.status === 'Live' && !content.sourcingStatus && content.sourceURL) {
             contentStatusCount['approvalPending'] += 1;
