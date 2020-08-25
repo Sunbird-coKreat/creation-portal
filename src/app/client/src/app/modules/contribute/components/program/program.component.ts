@@ -159,6 +159,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
       this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
       this.roles = _.get(this.programDetails, 'config.roles');
+      this.roles.push({ 'id': 3, 'name': 'NONE', 'tabs': [ 3 ], 'default': true, 'defaultTab': 3 });
       this.roleNames = _.map(this.roles, 'name');
       this.fetchFrameWorkDetails();
       this.getNominationStatus();
@@ -325,9 +326,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       return false;
     }
     this.allContributorOrgUsers = [];
-    orgUsers = _.filter(orgUsers, { "selectedRole": "user" });
+    orgUsers = _.filter(orgUsers, { 'selectedRole': 'user' });
     _.forEach(orgUsers, r => {
-      r.projectselectedRole = 'Select';
+      r.projectselectedRole = 'NONE';
       if (this.nominationDetails.rolemapping) {
         _.find(this.nominationDetails.rolemapping, (users, role) => {
           if (_.includes(users, r.identifier)) {

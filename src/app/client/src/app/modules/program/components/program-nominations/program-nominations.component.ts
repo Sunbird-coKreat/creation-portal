@@ -109,7 +109,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
-    this.roles = [{name: 'REVIEWER'}];
+    this.roles = [{name: 'REVIEWER'}, {name: 'NONE'}];
     this.roleNames = _.map(this.roles, 'name');
     this.sessionContext.currentRole = 'REVIEWER';
     this.programStageService.initialize();
