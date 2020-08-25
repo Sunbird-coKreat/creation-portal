@@ -998,7 +998,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       contentStatusCount['approved'] = 0;
       _.forEach(contents, (content) => {
         if (content.createdBy === this.userService.userProfile.userId && !content.sampleContent) {
-          if (content.status === 'Draft' && content.prevStatus) {
+          if (content.status === 'Draft' && !content.prevStatus) {
             contentStatusCount['draft'] += 1;
           } else if (content.status === 'Live' && !content.sourcingStatus && content.sourceURL) {
             contentStatusCount['approvalPending'] += 1;
