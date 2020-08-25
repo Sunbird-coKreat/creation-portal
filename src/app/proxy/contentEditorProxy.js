@@ -71,7 +71,6 @@ module.exports = function (app) {
     proxyReqPathResolver: function (req) {
       var originalUrl = req.originalUrl
       originalUrl = originalUrl.replace('/action/', '')
-      logger.info({msgss: '/action/content/v3/import'});
       return require('url').parse(kp_content_service_base_url + originalUrl).path
     }
   }))
