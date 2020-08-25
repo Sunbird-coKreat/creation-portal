@@ -161,10 +161,11 @@ export class BulkUploadComponent implements OnInit {
 
       if (_.get(searchResponse, 'result.count', 0) > 0) {
         this.contents = _.get(searchResponse, 'result.content');
+        const status = _.upperFirst(this.getContentStatus());
         _.each(this.contents, (content) => {
           if (content.status === "Failed") {
             this.process.overall_stats.upload_failed++;
-          } else if (content.status === "Live") {
+          } else if (content.status === status) {
             this.process.overall_stats.upload_success++;
           } else {
             this.process.overall_stats.upload_pending++;

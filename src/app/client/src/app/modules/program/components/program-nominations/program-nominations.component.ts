@@ -413,7 +413,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   getDashboardData(approvedNominations) {
     // tslint:disable-next-line:max-line-length
-        if (!_.isEmpty(this.contentAggregationData) && approvedNominations.length && !_.isEmpty(this.programCollections)) {
+        if (!_.isEmpty(this.contentAggregationData) || (approvedNominations.length && !_.isEmpty(this.programCollections))) {
           const contents = _.cloneDeep(this.contentAggregationData);
           this.contributionDashboardData = _.map(approvedNominations, nomination => {
             if (nomination.organisation_id) {
