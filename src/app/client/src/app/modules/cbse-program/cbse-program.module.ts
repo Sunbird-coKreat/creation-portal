@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SanitizeHtmlPipe } from './pipe/sanitize-html.pipe';
 import { QuestionListComponent,
   QuestionCreationComponent, ChapterListComponent, McqCreationComponent, McqTemplateSelectionComponent,
-  CkeditorToolComponent, QuestionPreviewComponent } from './components';
+  CkeditorToolComponent, QuestionPreviewComponent, BulkUploadComponent } from './components';
 import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { SharedModule } from '@sunbird/shared';
@@ -40,7 +40,7 @@ import { NgInviewModule } from 'angular-inport';
     QuestionPreviewComponent, SanitizeHtmlPipe, QuestionCreationHeaderComponent,
     DashboardComponent, RecursiveTreeComponent,
     ContentUploaderComponent,  ResourceTemplateComponent, CollectionComponent, ResourceReorderComponent, ContentEditorComponent,
-     MvcLibraryComponent, MvcListComponent, MvcFilterComponent, MvcPlayerComponent, SkeletonLoaderComponent, BulkApprovalComponent],
+     MvcLibraryComponent, MvcListComponent, MvcFilterComponent, MvcPlayerComponent, SkeletonLoaderComponent, BulkApprovalComponent, BulkUploadComponent],
   imports: [
     RouterModule,
     CommonModule,

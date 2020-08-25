@@ -5,20 +5,20 @@
       <!-- Header Section -->
       <div class="ui container py-10">
         <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="handleBack()"
-						type="button"
-						appTelemetryInteract
-				[telemetryInteractEdata]="getTelemetryInteractEdata('chapter-list', 'click', 'chapter-list')"
-				[telemetryInteractObject]="telemetryInteractObject"
-				[telemetryInteractCdata]="telemetryInteractCdata"
-				[telemetryInteractPdata]="telemetryInteractPdata">
-											<i class="icon-svg icon-svg--xxs icon-back mr-4">
-													<svg class="icon icon-svg--primary">
-															<use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
-													</svg>
-											</i>
-											Back
+                        type="button"
+                        appTelemetryInteract
+                [telemetryInteractEdata]="getTelemetryInteractEdata('chapter-list', 'click', 'chapter-list')"
+                [telemetryInteractObject]="telemetryInteractObject"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata">
+                                            <i class="icon-svg icon-svg--xxs icon-back mr-4">
+                                                    <svg class="icon icon-svg--primary">
+                                                            <use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
+                                                    </svg>
+                                            </i>
+                                            {{resourceService.frmelmnts.btn.back}}
                   </button>
-        <div class=" d-flex chapterlist-header pt-5">
+        <div class="d-flex chapterlist-header pt-5">
         <div class="d-flex mr-auto">
           <!-- <div class="chapterlist-header__image">
             <img [src]="collection.image" alt="Book" title="Book">
@@ -102,6 +102,13 @@
             <div *ngIf="sourcingOrgReviewer && originalCollectionData && originalCollectionData.status === 'Draft'" class="d-flex">
               <app-bulk-approval [programContext]="programContext" [sessionContext]="sessionContext" [storedCollectionData]="storedCollectionData" [originalCollectionData]="originalCollectionData" (updateToc)="bulkApprovalSuccess($event)"></app-bulk-approval>
             </div>
+            <app-bulk-upload 
+              *ngIf="sessionContext?.currentRole === 'CONTRIBUTOR' && submissionDateFlag"
+              [sharedContext]="sharedContext" 
+              [sessionContext]="sessionContext" 
+              [programContext]="programContext"
+              [storedCollectionData]="storedCollectionData"
+              ></app-bulk-upload>
           </div>
           <div class="sb-chapterlist">
             <sui-accordion class="styled fluid sb-accordion sb-chapterlist-accordion" [closeOthers]="true">
@@ -181,7 +188,6 @@
 				[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.no}} </button>
   </div>
 </sui-modal>
-
 
 <sui-modal *ngIf="showRemoveConfirmationModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
   [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showRemoveConfirmationModal = false" #modal>

@@ -474,11 +474,13 @@ top: -4px;
   padding-right: 0.8rem;
   text-align: right;
 }
+
 .relative{
   .sb-success-loader{
     left: -16% !important;
   }
 }
+
 // Progress Circle
 $progressCircle:
 xs calculateRem(16px) 4px 10px,
