@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { ConfigService, ToasterService, ServerResponse, ResourceService, BrowserCacheTtlService } from '@sunbird/shared';
-import { ContentService, ActionService, PublicDataService, ProgramsService, UserService } from '@sunbird/core';
-import { throwError, Observable, of, Subject, forkJoin } from 'rxjs';
-import { catchError, map, switchMap, tap, mergeMap } from 'rxjs/operators';
+import { ConfigService, ServerResponse, BrowserCacheTtlService } from '@sunbird/shared';
+import { ContentService, ProgramsService, PublicDataService } from '@sunbird/core';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 import { CacheService } from 'ng2-cache-service';
 
@@ -12,7 +12,7 @@ import { CacheService } from 'ng2-cache-service';
 export class BulkJobService {
 
   constructor(private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService,
-    private programsService: ProgramsService, private configService: ConfigService, private contentService: ContentService) { }
+    private programsService: ProgramsService, private configService: ConfigService, private contentService: ContentService, private publicDataService: PublicDataService) { }
 
   getBulkOperationStatus(reqData): Observable<ServerResponse> {
     const req = {
@@ -40,7 +40,7 @@ export class BulkJobService {
     { maxAge: this.browserCacheTtlService.browserCacheTtl });
   }
 
-  searchContentWithProcessId(processId, type) {
+  searchContentWithProcessId(processId, type, includeFields = true) {
     const reqData = {
       request: {
         filters: {
@@ -60,6 +60,11 @@ export class BulkJobService {
         limit: 10000
       }
     };
+
+    if (!includeFields) {
+      delete reqData.request.fields;
+    }
+
     if (type === 'bulk_approval') {
       const originUrl = this.programsService.getContentOriginEnvironment();
       const url =  originUrl + '/action/composite/v3/search';
@@ -91,5 +96,15 @@ export class BulkJobService {
       }
     };
     return this.programsService.patch(req);
+  }
+
+  createBulkImport(reqData): Observable<ServerResponse> {
+    const req = {
+      url: `${this.configService.urlConFig.URLS.BULKJOB.IMPORT}`,
+      data: {
+        request: reqData
+      }
+    };
+    return this.publicDataService.post(req);
   }
 }

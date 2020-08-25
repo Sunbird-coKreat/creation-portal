@@ -1,0 +1,192 @@
+<div class="d-flex">
+  <button type="button" class="sb-btn sb-btn-normal sb-btn-primary text-inherit" suiPopup
+    popupText="{{resourceService?.frmelmnts?.lbl?.bulkUploadContentHint}}" (click)="openBulkUploadModal()"
+    *ngIf="['completed', ''].includes(process?.status)">{{resourceService?.frmelmnts?.lbl?.bulkUploadContent}}</button>
+  <div class="divider mx-10" *ngIf="process?.status === 'completed'"></div>
+  <div class="d-flex flex-dc">
+    <div class="sb-color-gray-400" *ngIf="process?.status === 'completed'">{{resourceService?.frmelmnts?.lbl?.lastUploaded}} : {{ process?.updatedon | dateFormat: 'D MMMM YYYY' }}</div>
+    <div *ngIf="process?.status === 'processing'" class="relative">
+      <span class="sb-loader sb-success-loader"></span>
+      <span class="sb-color-warning fs-1" suiPopup
+        popupText="{{resourceService?.frmelmnts?.lbl?.bulkUploadInProgressHint}}">{{resourceService?.frmelmnts?.lbl?.bulkUploadInProgress}}</span>
+    </div>
+    <a href="#" class="text-decor-none" *ngIf="['completed', 'processing'].includes(process?.status)" (click)="viewDetails($event)">{{resourceService?.frmelmnts?.lbl?.viewDetails}}</a>
+  </div>
+</div>
+
+
+<!-- Bulk upload -->
+<sui-modal *ngIf="showBulkUploadModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
+  [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="closeBulkUploadModal()" #modal>
+  <div class="sb-modal-header">
+    {{resourceService?.frmelmnts?.lbl?.bulkUploadContent}}
+  </div>
+  <div class="sb-modal-content">
+    <div class="d-flex p-30 sb-bg-color-primary-0">
+      <div class="p-10 sb-bulk-upload">
+        <img src="assets/images/bulkuploadfile.png" alt="" *ngIf="bulkUploadState !== 5">
+        <div class="text-right my--20">
+          <i class="fa fa-download sb-circle-download-icon" *ngIf="bulkUploadState === 1"></i>
+          <i class="fa fa-check sb-circle-download-icon" *ngIf="bulkUploadState === 6"></i>
+        </div>
+        <!-- Progress bar -->
+        <div class="progress-circle progress-circle--xxl mr-8 mt-20" [attr.data-percentage]="completionPercentage" *ngIf="bulkUploadState === 5">
+          <svg class="progress-circle__svg" viewport="0 0 2000 2000">
+            <circle class="progress-circle__stroke" r="50%" cx="50%" cy="50%"></circle>
+            <circle class="progress-circle__stroke" r="50%" cx="50%" cy="50%"></circle>
+            <text x="40%" y="50%" font-size="1.5em">{{completionPercentage}}%</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Upload data bulkUploadState = 1 -->
+      <div class="pl-20 pt-20 d-block" *ngIf="bulkUploadState === 1">
+        <h6 class="sb-color-gray-400">{{resourceService?.frmelmnts?.lbl?.downloadSampleMetadataCsvFileAndCreate}}</h6>
+        <div class="sb-color-gray-200 pt-20 fs-0-92">{{resourceService?.frmelmnts?.lbl?.makeSureYourFile}} : </div>
+        <ul class="ui ordered list sb-dock-ordered-list mt-15">
+          <li class="item">{{resourceService?.frmelmnts?.lbl?.allColumnsAreAvailableShownFormat}}</li>
+          <li class="item">{{resourceService?.frmelmnts?.lbl?.hasAllMandatoryColumnsFilledAsMarkedInFormat}}</li>
+          <li class="item">{{resourceService?.frmelmnts?.lbl?.hasNoDuplicateUrlsFilepathColumn}}</li>
+        </ul>
+        <a [href]="sampleMetadataCsvUrl" target="_blank"
+          class="sb-btn sb-btn-normal sb-btn-success my-20 text-decor-none"><i
+            class="fa fa-download pr-10"></i>{{resourceService?.frmelmnts?.btn?.downloadSampleMetadataCsv}}</a>
+      </div>
+
+      <div class="content p-10 d-block w-70 flex-as-center text-center" *ngIf="bulkUploadState === 2">
+        <div type="text/template" id="qq-template-validation" #fineUploaderUI>
+          <div class="qq-uploader-selector qq-uploader custom-qq-uploader">
+            <div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
+              <span class="qq-upload-drop-area-text-selector"></span>
+            </div>
+            <span class="qq-drop-processing-selector qq-drop-processing">
+              <span>{{resourceService?.messages?.imsg?.uploadGuideline?.m001}}</span>
+              <span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
+            </span>
+            <ul class="qq-upload-list-selector qq-upload-list custom-qq-upload-list" aria-live="polite"
+              aria-relevant="additions removals">
+              <li>
+                <div class="qq-progress-bar-container-selector">
+                  <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+                    class="qq-progress-bar-selector qq-progress-bar"></div>
+                </div>
+                <span class="qq-upload-spinner-selector qq-upload-spinner"></span>
+                <img class="qq-thumbnail-selector" qq-max-size="100" qq-server-scale>
+                <span class="qq-upload-file-selector qq-upload-file custom-qq-upload-file"></span>
+                <span class="qq-upload-size-selector qq-upload-size"></span>
+                <button type="button"
+                  class="qq-btn qq-upload-retry-selector qq-upload-retry">{{resourceService?.frmelmnts?.btn?.retry}}</button>
+                <button type="button"
+                  class="qq-btn qq-upload-delete-selector qq-upload-delete">{{resourceService?.frmelmnts?.btn?.retry }}</button>
+                <span role="status" class="qq-upload-status-text-selector qq-upload-status-text"></span>
+              </li>
+            </ul>
+            <div id="qq-upload-actions" class="upload-file-description d-flex flex-ai-center flex-dc">
+              <h5 class="mb-8 sb-color-gray-400">
+                {{resourceService?.frmelmnts?.lbl?.dragAndDrop}} <br />
+                {{resourceService?.frmelmnts?.lbl?.or}}
+              </h5>
+              <div class="qq-upload-button-selector qq-upload-button sb-btn sb-btn-normal sb-btn-success my-20">
+                <div>{{resourceService?.frmelmnts?.btn?.selectFile}}</div>
+              </div>
+              <p class="mt-8 sb-color-gray-200 fs-0-785">{{resourceService?.frmelmnts?.note?.uploadCSVXlEntries}}</p>
+            </div>
+            <dialog class="qq-confirm-dialog-selector">
+              <div class="qq-dialog-message-selector"></div>
+              <div class="qq-dialog-buttons">
+                <button type="button" class="qq-cancel-button-selector">{{resourceService?.frmelmnts?.btn?.no}}</button>
+                <button type="button" class="qq-ok-button-selector">{{resourceService?.frmelmnts?.btn?.yes}}</button>
+              </div>
+            </dialog>
+            <dialog class="qq-prompt-dialog-selector">
+              <div class="qq-dialog-message-selector"></div>
+              <input type="text">
+              <div class="qq-dialog-buttons">
+                <button type="button"
+                  class="qq-cancel-button-selector">{{resourceService?.frmelmnts?.btn?.cancel}}</button>
+                <button type="button" class="qq-ok-button-selector">{{resourceService?.frmelmnts?.btn?.ok}}</button>
+              </div>
+            </dialog>
+          </div>
+        </div>
+        <div *ngIf="!loading">
+          <div id="upload-document-div" class="upload-file-section"></div>
+        </div>
+        <div *ngIf='loading' class="uploading-files">
+          <div class='d-flex flex-dc flex-jc-center flex-ai-center icon'>
+            <img src="assets/images/Spin.gif" class='process-icon'>
+          </div>
+        </div>
+        <!-- New upload image design section ends here -->
+      </div>
+
+      <!-- Validation bulkUploadState = 3 -->
+      <div class="p-30 w-70 flex-as-center text-center" *ngIf="bulkUploadState === 3">
+        <h6 class="sb-color-gray-400">
+          <span class="sb-loader sb-success-loader"></span>{{resourceService?.frmelmnts?.lbl?.validatingCSVFile}}</h6>
+      </div>
+
+      <!-- Validation failed bulkUploadState = 4 -->
+      <div class="pt-20 pl-20" *ngIf="bulkUploadState === 4">
+        <h6 class="sb-color-gray-400 pl-5">
+          <i
+            class="fa fa-exclamation-triangle pr-5 sb-color-error"></i>{{resourceService?.frmelmnts?.lbl?.metadataFileValidationFailed}}
+        </h6>
+        <div class="sb-color-gray-200 pt-20 fs-0-92 ml-20 sb-line-height-1.2">{{bulkUploadValidationError}}</div>
+        <ul class="sb-list-circle mt-15" *ngIf="bulkUploadErrorMsgs.length > 0">
+          <li class="item" *ngFor="let msg of bulkUploadErrorMsgs">{{msg}}</li>
+        </ul>
+        <!-- <button type="button" class="sb-btn sb-btn-normal sb-btn-success my-10 ml-20" (click)="bulkUploadState = 3;updateBulkUploadState('decrement');">
+                  <i class="fa fa-upload pr-10"></i>{{resourceService?.frmelmnts?.lbl?.uploadCSV}}
+                </button> -->
+      </div>
+
+      <!-- Validation error bulkUploadState = 5 -->
+      <div class="p-20" *ngIf="bulkUploadState === 5">
+        <div>{{resourceService?.frmelmnts?.lbl?.uploadingYourContentFromCSV}}</div>
+        <div class="mt-20">
+          <div class="ui list fs-0-785">
+            <div class="item sb-color-error">{{resourceService?.frmelmnts?.lbl?.uploadFail}} : {{ process?.overall_stats?.upload_failed }}</div>
+            <div class="item sb-color-gray-200">{{resourceService?.frmelmnts?.lbl?.uploadSuccessful}} : {{ process?.overall_stats?.upload_success}}</div>
+            <div class="item sb-color-gray-200">{{resourceService?.frmelmnts?.lbl?.uploadRemaining}} : {{ process?.overall_stats?.upload_pending }}</div>
+          </div>
+        </div>
+        <!-- <button type="button" class="sb-btn sb-btn-normal sb-btn-success my-20"><i class="fa fa-download pr-10"></i>{{resourceService?.frmelmnts?.btn?.downloadStatusReport}}</button> -->
+      </div>
+
+      <!-- Bulk Upload complete bulkUploadState = 6 -->
+      <div class="p-30 pt-10" *ngIf="bulkUploadState === 6">
+        <h6 class="">{{resourceService?.frmelmnts?.lbl?.bulkUploadComplete}}</h6>
+        <div class="mt-15">
+          <div class="ui list fs-0-785">
+            <div class="item sb-color-error">{{resourceService?.frmelmnts?.lbl?.uploadFail}} : {{ process?.overall_stats?.upload_failed }}</div>
+            <div class="item sb-color-gray-200">{{resourceService?.frmelmnts?.lbl?.contentUploaded}} : {{ process?.overall_stats?.total }}</div>
+            <div class="item sb-color-gray-200">{{resourceService?.frmelmnts?.lbl?.uploadSuccessful}} : {{ process?.overall_stats?.upload_success }}</div>
+          </div>
+        </div>
+        <button type="button" class="sb-btn sb-btn-normal sb-btn-success my-10" (click)="downloadReport()">
+          <i class="fa fa-download pr-10"></i>{{resourceService?.frmelmnts?.btn?.downloadReport}}
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="sb-modal-actions">
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="updateBulkUploadState('increment')"
+      *ngIf="bulkUploadState === 1">{{resourceService?.frmelmnts?.btn?.next}}</button>
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary"
+      (click)="updateBulkUploadState('decrement')"
+      *ngIf="![1,5,6].includes(bulkUploadState)">{{resourceService?.frmelmnts?.btn?.back}}</button>
+    <button type="button" class="sb-btn sb-btn-normal"
+      [ngClass]="{'sb-btn-outline-primary': bulkUploadState === 5, 'sb-btn-primary': bulkUploadState === 6}"
+      (click)="closeBulkUploadModal()"
+      *ngIf="[5,6].includes(bulkUploadState)">{{resourceService?.frmelmnts?.btn?.close}}</button>
+    <div class="d-flex flex-jc-space-between w-100" *ngIf="bulkUploadState === 5">
+      <div class="sb-color-gray-200 fxsmall line-height-1-3 w-100">
+        {{resourceService?.frmelmnts?.lbl?.bulkUploadNoticeLine1}}
+        <b>'{{resourceService?.frmelmnts?.btn?.close}}'</b>
+        {{resourceService?.frmelmnts?.lbl?.bulkUploadNoticeLine2}}<br />
+        {{resourceService?.frmelmnts?.lbl?.bulkUploadNoticeLine3}}
+      </div>
+    </div>
+  </div>
+</sui-modal>

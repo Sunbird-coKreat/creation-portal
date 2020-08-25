@@ -474,11 +474,13 @@ top: -4px;
   padding-right: 0.8rem;
   text-align: right;
 }
+
 .relative{
   .sb-success-loader{
     left: -16% !important;
   }
 }
+
 // Progress Circle
 $progressCircle:
 xs calculateRem(16px) 4px 10px,
@@ -555,5 +557,11 @@ xxl calculateRem(180px) 24px 20px;
         stroke-dashoffset: calc(314.1592% * (#{$i} / 100));
       }
     }
+  }
+}
+
+.sb-bulk-upload{
+  img{
+    width: 11rem;
   }
 }

@@ -277,7 +277,8 @@
       "CREATE": "program/v1/process/create",
       "READ": "program/v1/process/read",
       "UPDATE": "program/v1/process/update",
-      "SEARCH": "program/v1/process/search"
+      "SEARCH": "program/v1/process/search",
+      "IMPORT": "content/v1/import"
     }
   }
 }

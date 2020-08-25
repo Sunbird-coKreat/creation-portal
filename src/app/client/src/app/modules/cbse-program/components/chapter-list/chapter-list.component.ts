@@ -6,7 +6,7 @@ import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
 import { CbseProgramService } from '../../services';
 import { map, catchError, first } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { throwError, Observable } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   IChapterListComponentInput, ISessionContext,
@@ -32,7 +32,6 @@ interface IDynamicInput {
   styleUrls: ['./chapter-list.component.scss']
 })
 export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
-
   @Input() chapterListComponentInput: IChapterListComponentInput;
   @Output() selectedQuestionTypeTopic = new EventEmitter<any>();
 
@@ -60,7 +59,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     stages: []
   };
   public resourceTemplateComponentInput: IResourceTemplateComponentInput = {};
-
+  public submissionDateFlag = false;
   prevUnitSelect: string;
   contentId: string;
   showLargeModal: boolean;
@@ -142,7 +141,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         this.uploadHandler(contentMeta);
       }
     };
-    this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
+    this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false; 
+    this.submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
   }
 
   ngOnChanges(changed: any) {
@@ -210,6 +210,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         console.log('Getting origin data failed');
     });
   }
+
   public fetchFrameWorkDetails() {
     this.frameworkService.initialize(this.sessionContext.framework);
     this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
@@ -270,6 +271,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       this.resetContentId();
     }
   }
+
   public resetContentId() {
     this.contentId = '';
   }
@@ -420,6 +422,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     const self = this;
     this.hierarchyObj[data.identifier] = {
       'name': data.name,
+      'mimeType': data.mimeType,
       'contentType': data.contentType,
       'children': _.map(data.children, (child) => {
         return child.identifier;
@@ -562,7 +565,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     });
     return _.isEmpty(leafNodes) ? null : leafNodes;
   }
-
 
   checkSourcingStatus(content) {
     if (this.storedCollectionData.acceptedContents  &&
@@ -842,6 +844,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
          this.toasterService.success(this.resourceService.messages.smsg.m0064);
        });
   }
+
   deleteContent() {
     this.helperService.retireContent(this.contentId)
       .subscribe(
@@ -894,7 +897,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
     return collection.totalLeaf;
   }
-
 
   filterContentsForCount (contents, status?, onlySample?, organisationId?, createdBy?, visibility?) {
     const filter = {
