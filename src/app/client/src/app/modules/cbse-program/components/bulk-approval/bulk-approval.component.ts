@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { PublicDataService, UserService, ActionService, FrameworkService, ProgramsService } from '@sunbird/core';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService, BrowserCacheTtlService, 
   ServerResponse } from '@sunbird/shared';
@@ -15,7 +15,7 @@ import { Observable } from 'rxjs';
   templateUrl: './bulk-approval.component.html',
   styleUrls: ['./bulk-approval.component.scss']
 })
-export class BulkApprovalComponent implements OnInit {
+export class BulkApprovalComponent implements OnInit, OnChanges {
 
   public showBulkApproveModal = false;
   public bulkApprovalComfirmation = false;
@@ -28,8 +28,8 @@ export class BulkApprovalComponent implements OnInit {
   public unitGroup: any;
   public bulkApprove: any;
   public processId: string;
-  public failedContent: any;
   public successPercentage: number;
+  public initialized: boolean;
   @Input() programContext;
   @Input() sessionContext;
   @Input() storedCollectionData;
@@ -46,6 +46,17 @@ export class BulkApprovalComponent implements OnInit {
     this.checkBulkApproveHistory();
     this.checkOriginFolderStatus([this.originalCollectionData]);
     this.approvalPendingContents([this.storedCollectionData]);
+    this.initialized = true;
+  }
+
+  ngOnChanges() {
+    if (this.initialized) {
+      this.approvalPending = [];
+      this.approvalPendingContents([this.storedCollectionData]);
+      if (this.approvalPending && this.approvalPending.length) {
+        this.showBulkApprovalButton = true;
+      }
+    }
   }
 
   approvalPendingContents(hierarchy) {
@@ -64,7 +75,9 @@ export class BulkApprovalComponent implements OnInit {
           if (unitData) {
             content['originUnitId'] = unitData.origin;
           }
-          this.approvalPending.push(content);
+          if (!_.find(this.approvalPending, cont => cont.identifier === content.identifier)) {
+            this.approvalPending.push(content);
+          }
       }
       if (obj.children && obj.children.length) {
         this.approvalPendingContents(obj.children);
@@ -214,20 +227,19 @@ export class BulkApprovalComponent implements OnInit {
           this.dikshaContents = _.get(res, 'result.content');
 
           overallStats['approve_success'] = _.filter(this.dikshaContents, content => content.status === 'Live').length;
-          overallStats['approve_failed'] = _.filter(this.dikshaContents, content => content.status !== 'Live').length;
+          // tslint:disable-next-line:max-line-length
+          overallStats['approve_failed'] = _.filter(this.dikshaContents, content => content.status === 'Draft' || content.status === 'Failed').length;
           overallStats['approve_pending'] = overallStats.total - (overallStats['approve_success'] + overallStats['approve_failed']);
           this.bulkApprove.overall_stats = overallStats;
           // tslint:disable-next-line:max-line-length
           this.successPercentage = Math.round((this.bulkApprove.overall_stats.approve_success / this.bulkApprove.overall_stats.total) * 100);
           this.updateBulkApprovalJob();
-        } else {
+          } else {
           this.successPercentage = 0;
         }
       }, err => {
         this.toasterService.error(this.resourceService.messages.emsg.bulkApprove.something);
       });
-    } else {
-      this.showBulkApprovalButton = true;
     }
   }
 
@@ -250,9 +262,9 @@ export class BulkApprovalComponent implements OnInit {
     });
   }
 
-  downloadFailedContentReport() {
-    this.failedContent = _.filter(this.dikshaContents, content => content.status !== 'Live');
-    this.unitsInLevel = _.map(this.failedContent, content => {
+  prepareTableData() {
+    const failedContent = _.filter(this.dikshaContents, content => content.status === 'Draft' || content.status === 'Failed');
+    this.unitsInLevel = _.map(failedContent, content => {
       return this.findFolderLevel(this.storedCollectionData, content.origin);
     });
 
@@ -261,7 +273,7 @@ export class BulkApprovalComponent implements OnInit {
        // tslint:disable-next-line:max-line-length
        'identifier', 'name', 'contentType', 'Level 1 Textbook Unit', 'Level 2 Textbook Unit', 'Level 3 Textbook Unit', 'Level 4 Textbook Unit'
       ];
-      const tableData = _.map(this.failedContent, (con, i) => {
+      const tableData = _.map(failedContent, (con, i) => {
         const result = _.pick(con, ['identifier', 'name', 'contentType']);
         const folderStructure = this.unitsInLevel[i];
         this.unitGroup = [];
@@ -285,6 +297,19 @@ export class BulkApprovalComponent implements OnInit {
       } catch (err) {
         this.toasterService.error(this.resourceService.messages.emsg.bulkApprove.something);
       }
+  }
+
+  downloadFailedContentReport() {
+    if (!this.dikshaContents) {
+      this.bulkJobService.searchContentWithProcessId(this.bulkApprove.process_id, this.bulkApprove.type).subscribe((res: any) => {
+        if (res.result && res.result.content && res.result.content.length) {
+          this.dikshaContents = _.get(res, 'result.content');
+          this.prepareTableData();
+        }
+      });
+    } else {
+      this.prepareTableData();
+    }
   }
 
   checkBulkApproveHistory() {
