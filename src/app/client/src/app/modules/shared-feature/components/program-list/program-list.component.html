@@ -70,14 +70,14 @@
                   </div>
                   <div class="sb__ellipsis sb__ellipsis--three">{{ getProgramTextbooksCount(program) }}</div>
                   <div *ngIf="activeMyProgramsMenu && getProgramInfo(program, 'board')" class="sb-label-value mt-4">{{ getProgramInfo(program, 'board') }}</div>
-                  <div class="sb-label sb-label-table sb-label-warning-0 text-left sb-label-orange d-flex flex-ai-center">
+                  <div class="sb-label sb-label-table sb-label-warning-0 text-left sb-label-orange d-flex mt-5">
                     <div><i class="icon bell"></i></div>
                     <div>
-                        3 nominations 
-                        <div class="divider mx-5"></div>
+                       <div></div> 3 nominations <br>
                         4 contributors
                     </div>
                   </div>
+                  <em class="sb-color-yellow fxsmall">Last 3 days</em>
                 </td>
                 <td *ngIf="isContributor" >
                   <div>{{ getSourcingOrgName(program) }}
