@@ -99,10 +99,12 @@ export class BulkApprovalComponent implements OnInit {
   }
 
   sendContentForBulkApproval() {
+    const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
+    ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : window.location.origin;
     const contents = _.compact(_.map(this.approvalPending, contnet => {
       if (contnet.originUnitId) {
         const reqFormat = {
-          source: `${window.location.hostname}/api/content/v1/read/${contnet.identifier}`,
+          source: `${baseUrl}/api/content/v1/read/${contnet.identifier}`,
           metadata: _.pick(contnet, ['name', 'code', 'mimeType', 'framework', 'contentType']),
           collection: [
             {
@@ -114,20 +116,15 @@ export class BulkApprovalComponent implements OnInit {
         return reqFormat;
       }
     }));
-
     if (contents && contents.length) {
-      const option = {
-        url: `content/v1/import`,
-        data: {
-          request: {
-            content: [
-              ...contents
-            ]
-          }
+      const data = {
+        request: {
+          content: [
+            ...contents
+          ]
         }
       };
-
-      this.publicDataService.post(option).subscribe(res => {
+      this.httpClient.post('learner/content/v1/import', data).subscribe((res: any) => {
         if (res && res.result && res.result.processId) {
           this.processId = res.result.processId;
           this.createBulkApprovalJob();
