@@ -43,9 +43,9 @@
               <h5 class="sb-color-gray-400 font-weight-bold">{{resourceService.frmelmnts.lbl.bulkApprovalInProgress}}</h5>
               <div class="ui list fs-0-785">
                 <div class="item sb-color-error">{{resourceService.frmelmnts.lbl.contentApprovalFailed}} : {{bulkApprove?.overall_stats?.approve_failed}}</div>
-                <div class="item">{{resourceService.frmelmnts.lbl.approvedSuccessfully}} : {{bulkApprove?.overall_stats?.approve_success}}</div>
+                <div class="item sb-color-success">{{resourceService.frmelmnts.lbl.approvedSuccessfully}} : {{bulkApprove?.overall_stats?.approve_success}}</div>
                 <!-- <div class="item">{{resourceService.frmelmnts.lbl.contentSkipped}} : 45</div> -->
-                <div class="item">{{resourceService.frmelmnts.lbl.pendingApproval}} : {{bulkApprove?.overall_stats?.approve_pending}}</div>
+                <div class="item sb-color-warning">{{resourceService.frmelmnts.lbl.pendingApproval}} : {{bulkApprove?.overall_stats?.approve_pending}}</div>
               </div>
             </div>
 
@@ -55,7 +55,7 @@
               <div class="mt-15">
                 <div class="ui list fs-0-785">
                   <div class="item sb-color-error">{{resourceService.frmelmnts.lbl.contentApprovalFailed}} : {{bulkApprove?.overall_stats?.approve_failed}}</div>
-                  <div class="item">{{resourceService.frmelmnts.lbl.contentApprovalSuccessful}} : {{bulkApprove?.overall_stats?.approve_success}}</div>
+                  <div class="item sb-color-success">{{resourceService.frmelmnts.lbl.contentApprovalSuccessful}} : {{bulkApprove?.overall_stats?.approve_success}}</div>
                 </div>
                 <button *ngIf="bulkApprove.overall_stats && bulkApprove.overall_stats.approve_failed" type="button" class="sb-btn sb-btn-normal sb-btn-success my-20" (click)="downloadFailedContentReport()"><i class="fa fa-download pr-10"></i>{{resourceService.frmelmnts.btn.downloadReport}}</button>
               </div>
