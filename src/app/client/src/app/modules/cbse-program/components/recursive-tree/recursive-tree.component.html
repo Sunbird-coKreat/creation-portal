@@ -121,7 +121,7 @@
               <span [ngClass]="{'sb-color-error':content.status == 'Failed'}"  *ngIf="content.status === 'Failed'">{{resourceService.frmelmnts.lbl.failed}}</span>
               <span *ngIf="content.status === 'Processing'">{{resourceService.frmelmnts.lbl.processing}}</span>
             </span>
-            <div class="item-dropdown absolute position" (click)="menuClick($event)" *ngIf="content.status === 'Draft' || content.sourceURL">
+            <div class="item-dropdown absolute position" (click)="menuClick($event)" *ngIf="content.status === 'Draft' && !content.sourceURL">
               <div *ngIf="visibility && visibility['showActionMenu']" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
                 suiDropdown
                 appTelemetryInteract
@@ -164,8 +164,22 @@
                     [telemetryInteractCdata]="telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryInteractPdata"
                     (click)="deleteResource($event, content, collection)">Delete</div>
+                </div>
+              </div>
+            </div>
+            <div class="item-dropdown absolute position" (click)="menuClick($event)" *ngIf="content.status === 'Live' && content.sourceURL && (content.sourcingStatus !== 'Approved' && content.sourcingStatus !== 'Rejected')">
+              <div *ngIf="visibility && visibility['showActionMenu']" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
+                suiDropdown
+                appTelemetryInteract
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('context-menu', 'click', 'chapter-list')"
+                [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata"
+                autoClose="itemClick">
+                <div class="px-4 w-auto pb-4"><span class="sb-dotmenu"></span></div>
+                <div class="menu" suiDropdownMenu>
+                  
                     <div class="item"
-                    *ngIf="content.sourceURL"
                     appTelemetryInteract
                     [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('move-content', 'click', 'chapter-list')"
                     [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
@@ -173,7 +187,6 @@
                     [telemetryInteractPdata]="telemetryInteractPdata"
                     (click)="moveResource($event, content, collection)">{{resourceService.frmelmnts?.lbl?.move}}</div>
                     <div class="item"
-                    *ngIf="content.sourceURL"
                     appTelemetryInteract
                     [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('remove-content', 'click', 'chapter-list')"
                     [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
