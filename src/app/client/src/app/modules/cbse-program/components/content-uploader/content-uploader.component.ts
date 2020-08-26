@@ -510,7 +510,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         this.resourceStatusClass = 'sb-color-primary';
       } else if (this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Review') {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
-        this.resourceStatusClass = 'sb-color-gray';
+        this.resourceStatusClass = 'sb-color-error';
       } else if (this.resourceStatus === 'Live' && _.isEmpty(this.sourcingReviewStatus)) {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
         this.resourceStatusClass = 'sb-color-warning';
