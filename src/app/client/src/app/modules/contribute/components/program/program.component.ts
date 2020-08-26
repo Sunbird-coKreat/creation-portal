@@ -476,9 +476,12 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
             // tslint:disable-next-line:max-line-length
             this.contributorTextbooks = this.collectionHierarchyService.getIndividualCollectionStatus(this.contentStatusCounts, contributorTextbooks);
           }
-
           this.tempSortTextbooks = this.contributorTextbooks;
           this.showLoader = false;
+          const mvcStageData = this.programsService.getMvcStageData();
+          if (!_.isEmpty(mvcStageData)) {
+            this.viewContribution(mvcStageData.collection);
+          }
         },
         (error) => {
           console.log(error);
@@ -521,6 +524,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     };
     this.showChapterList = true;
+    this.programsService.clearMvcStageData();
     this.programStageService.addStage('chapterListComponent');
   }
 

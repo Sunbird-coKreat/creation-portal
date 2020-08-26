@@ -267,8 +267,18 @@
       "REJECT": "content/v3/reject",
       "FLAG": "content/v3/flag"
     },
+    "DOCKCONTENT_MVC": {
+      "SEARCH": "mvc/v3/search"
+    },
     "RECAPTCHA": {
       "VALIDATE": "/validate/recaptcha"
+    },
+    "BULKJOB": {
+      "CREATE": "program/v1/process/create",
+      "READ": "program/v1/process/read",
+      "UPDATE": "program/v1/process/update",
+      "SEARCH": "program/v1/process/search",
+      "DOCK_IMPORT": "content/v3/import"
     }
   }
 }

@@ -64,7 +64,8 @@ module.exports = function (app) {
     '/action/content/v3/hierarchy/remove',
     '/action/content/v3/update/*',
     '/action/content/v3/upload/*',
-    '/action/content/v3/hierarchy/*'
+    '/action/content/v3/hierarchy/*',
+    '/action/content/v3/import'
   ], 
   proxy(kp_content_service_base_url, {
     proxyReqPathResolver: function (req) {

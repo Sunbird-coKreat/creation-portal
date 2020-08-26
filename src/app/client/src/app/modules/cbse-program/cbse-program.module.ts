@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SanitizeHtmlPipe } from './pipe/sanitize-html.pipe';
 import { QuestionListComponent,
   QuestionCreationComponent, ChapterListComponent, McqCreationComponent, McqTemplateSelectionComponent,
-  CkeditorToolComponent, QuestionPreviewComponent } from './components';
+  CkeditorToolComponent, QuestionPreviewComponent, BulkUploadComponent } from './components';
 import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { SharedModule } from '@sunbird/shared';
@@ -24,14 +24,23 @@ import { CollectionHierarchyService } from './services/collection-hierarchy/coll
 import { SlickModule } from 'ngx-slick';
 import { SharedFeatureModule } from '../shared-feature';
 import { RouterModule } from '@angular/router';
+import { BulkApprovalComponent } from './components/bulk-approval/bulk-approval.component';
 
+import {CbseRoutingModule} from './cbse-routing.module';
+import { MvcLibraryComponent } from './components/mvc-library/mvc-library.component';
+import { MvcListComponent } from './components/mvc-list/mvc-list.component';
+import { MvcFilterComponent } from './components/mvc-filter/mvc-filter.component';
+import { MvcPlayerComponent } from './components/mvc-player/mvc-player.component';
+import { SkeletonLoaderComponent } from './components/skeleton-loader/skeleton-loader.component';
+import { NgInviewModule } from 'angular-inport';
 @NgModule({
   declarations: [QuestionListComponent, QuestionCreationComponent,
     ChapterListComponent, McqCreationComponent, CkeditorToolComponent ,
     McqTemplateSelectionComponent,
     QuestionPreviewComponent, SanitizeHtmlPipe, QuestionCreationHeaderComponent,
     DashboardComponent, RecursiveTreeComponent,
-    ContentUploaderComponent,  ResourceTemplateComponent, CollectionComponent, ResourceReorderComponent, ContentEditorComponent],
+    ContentUploaderComponent,  ResourceTemplateComponent, CollectionComponent, ResourceReorderComponent, ContentEditorComponent,
+     MvcLibraryComponent, MvcListComponent, MvcFilterComponent, MvcPlayerComponent, SkeletonLoaderComponent, BulkApprovalComponent, BulkUploadComponent],
   imports: [
     RouterModule,
     CommonModule,
@@ -44,12 +53,13 @@ import { RouterModule } from '@angular/router';
     PlayerHelperModule,
     TelemetryModule,
     SlickModule.forRoot(),
+    CbseRoutingModule,
     DynamicModule.withComponents([QuestionListComponent,
        QuestionCreationComponent, ChapterListComponent, McqCreationComponent, CkeditorToolComponent ,
       McqTemplateSelectionComponent,
       QuestionPreviewComponent, QuestionCreationHeaderComponent,
       DashboardComponent, RecursiveTreeComponent, ContentUploaderComponent, ResourceTemplateComponent, ContentEditorComponent]),
-
+      NgInviewModule
   ],
   providers: [CollectionHierarchyService],
   exports: [ SanitizeHtmlPipe ]

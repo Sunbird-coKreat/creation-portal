@@ -95,7 +95,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public videoSizeLimit: string;
   public originCollectionData: any;
   selectedOriginUnitStatus: any;
+<<<<<<< HEAD
   showReviewPopup = false;
+=======
+  public bulkApprove: any;
+>>>>>>> 5e487e7d0e3a76bb1501d178771742586041ea47
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -122,6 +126,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.selectedSharedContext = _.get(this.contentUploadComponentInput, 'selectedSharedContext');
     this.sharedContext = _.get(this.contentUploadComponentInput, 'programContext.config.sharedContext');
     this.sourcingReviewStatus = _.get(this.contentUploadComponentInput, 'sourcingStatus') || '';
+    this.bulkApprove = this.cacheService.get('bulk_approval_' + this.sessionContext.collection);
     if (_.get(this.contentUploadComponentInput, 'action') === 'preview') {
       this.showUploadModal = false;
       this.showPreview = true;
@@ -506,11 +511,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.resourceStatus = this.contentMetaData.status;
       if (this.resourceStatus === 'Review') {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
-        this.resourceStatusClass = 'sb-color-warning';
-      }  else if (this.resourceStatus === 'Corrections pending') {
-        this.resourceStatusText = this.resourceService.frmelmnts.lbl.correctionsPendin;
-        this.resourceStatusClass = 'sb-color-warning';
-      }else if (this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Review') {
+        this.resourceStatusClass = 'sb-color-primary';
+      } else if (this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Review') {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
         this.resourceStatusClass = 'sb-color-gray';
       } else if (this.resourceStatus === 'Live' && _.isEmpty(this.sourcingReviewStatus)) {
@@ -535,7 +537,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         this.resourceStatusClass = '';
       } else {
         this.resourceStatusText = this.resourceStatus;
-        this.resourceStatusClass = 'sb-color-primary';
+        this.resourceStatusClass = 'sb-color-gray-300';
       }
 
       this.playerConfig = this.playerService.getConfig(contentDetails);
@@ -618,8 +620,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.sessionContext.topic = _.first(this.sessionContext.topic);
     }
     this.sessionContext.topic = _.first(this.selectedSharedContext.topic) || this.sessionContext.topic ;
-    this.sessionContext.topic = _.isArray(this.sessionContext.topic) ? this.sessionContext.topic : _.split(this.sessionContext.topic, ',');
-    const topicTerm = _.find(this.sessionContext.topicList, { name: this.sessionContext.topic });
+    if (this.sessionContext.topic) {
+      // tslint:disable-next-line:max-line-length
+      this.sessionContext.topic = _.isArray(this.sessionContext.topic) ? this.sessionContext.topic : _.split(this.sessionContext.topic, ',');
+    }
+    const topicTerm = _.find(this.sessionContext.topicList, { name: _.first(this.sessionContext.topic) });
     if (topicTerm && topicTerm.associations) {
        this.selectOutcomeOption['learningOutcome'] = _.map(topicTerm.associations, (learningOutcome) => {
         return learningOutcome.name;

@@ -68,7 +68,7 @@ module.exports = function (app) {
         }
         })
     )
-
+    
     app.use('/api/*', permissionsHelper.checkPermission(), proxy(contentProxyUrl, {
         proxyReqPathResolver: proxyReqPathResolverMethod
     }))

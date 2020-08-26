@@ -7,87 +7,96 @@
   [isOpen]=" (collection.identifier === sessionContext.lastOpenedUnitChild || collection.identifier === sessionContext.lastOpenedUnitParent) ? true : false">
     <div title class="sb-accordion-title d-flex flex-jc-flex-end sb-color-primary flex-ai-center"><span class="chapter-status mr-16"></span>
      <span class="flex-4"> {{collection.name}}</span>
-     <div class="sb-color-black">
-      <span class="sb-color-error font-weight-bold px-20" *ngIf="!visibility['showAddresource']">{{collection.statusMsg}}</span>
-     </div>
+     <span class="sb-color-error font-weight-bold px-20 text-left" *ngIf="sourcingOrgReviewer">{{collection.statusMessage}}</span>
      <div *ngIf="sourcingOrgReviewer && collection.sourcingStatus" class="single-row">
       <div class="sb-color-warning sb-count">
+<<<<<<< HEAD
         <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.correctionsPending}}:</span> 
         <span class="font-weight-bold"> 0</span>
       </div>
       <div class="sb-color-warning sb-count">
         <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.approvalPending}}:</span> 
+=======
+        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.approvalPending}}:</span>
+>>>>>>> 5e487e7d0e3a76bb1501d178771742586041ea47
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.approvalPending}}</span>
       </div>
-      <div class="sb-color-gray-300 sb-count sb-color-success">
-        <span class="font-weight-normal"> Approved:</span> 
+      <div class="sb-count sb-color-success">
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approved}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.approved}}</span>
       </div>
-      <div class="sb-color-gray-300 sb-count sb-color-error">
-        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.rejected}}:</span> 
+      <div class="sb-count sb-color-error">
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.rejected}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.rejected}}</span>
       </div>
      </div>
      <div *ngIf="!sourcingOrgReviewer && collection.sourcingStatus && sessionContext.currentOrgRole !== 'individual'" class="single-row">
-      <div class="sb-color-warning sb-count" *ngIf="!visibility['showAddresource']">
-        <span class="font-weight-normal">Draft:</span> 
+      <div class="sb-color-gray-300 sb-count">
+        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.draft}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.draft}}</span>
       </div>
-      <div class="sb-color-gray-300 sb-count sb-color-success">
-        <span class="font-weight-normal"> Review Pending:</span> 
+      <div class="sb-count sb-color-primary">
+        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.reviewInProgress}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.reviewPending}}</span>
       </div>
-      <div class="sb-color-gray-300 sb-count sb-color-error">
-        <span class="font-weight-normal"> Not accepted:</span> 
+      <div class="sb-count sb-color-error">
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.notAccepted}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.notAccepted}}</span>
       </div>
-      <div class="sb-color-gray-300 sb-count sb-color-warning">
-        <span class="font-weight-normal"> Approval Pending:</span> 
+      <div class="sb-color-warning sb-count">
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approvalPending}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.approvalPending}}</span>
       </div>
-      <div class="sb-color-gray-300 sb-count sb-color-gray-0">
-        <span class="font-weight-normal"> Approved:</span> 
+      <div class="sb-count sb-color-success">
+        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.approved}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.approved}}</span>
       </div>
-      <div class="sb-color-gray-300 sb-count sb-color-primary">
-        <span class="font-weight-normal"> Rejected:</span> 
+      <div class="sb-count sb-color-error">
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.rejected}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.rejected}}</span>
       </div>
     </div>
     <div *ngIf="!sourcingOrgReviewer && collection.sourcingStatus && sessionContext.currentOrgRole === 'individual'" class="single-row">
-      <div class="sb-color-warning sb-count" *ngIf="visibility['showAddresource']">
-        <span class="font-weight-normal">Draft:</span> 
+      <div class="sb-color-gray-300 sb-count" *ngIf="visibility['showAddresource']">
+        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.draft}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.draft}}</span>
       </div>
-      <div class="sb-color-gray-300 sb-count sb-color-success">
-        <span class="font-weight-normal"> Approval Pending:</span> 
+      <div class="sb-color-gray-300 sb-count">
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approvalPending}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.approvalPending}}</span>
       </div>
-      <div class="sb-color-gray-300 sb-count sb-color-error">
-        <span class="font-weight-normal"> Approved:</span> 
+      <div class="sb-color-gray-success sb-count">
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approved}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.approved}}</span>
       </div>
-      <div class="sb-color-gray-300 sb-count sb-color-warning">
-        <span class="font-weight-normal"> Rejected:</span> 
+      <div class="sb-count sb-color-error">
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.rejected}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.rejected}}</span>
       </div>
     </div>
       <div class="sb-color-black sb-count">
-        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.totalContent}}:</span> <span class="font-weight-bold"> {{collection.totalLeaf}}</span>
+        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.totalContent}}:</span> <span class="font-weight-bold"> {{collection?.totalLeaf}}</span>
       </div>
+
      <div class="d-flex">
-        <!-- <button class="sb-btn sb-btn-xs sb-btn-outline-primary sb-left-icon-btn library-btn mr-8"
-        *ngIf="visibility && visibility['showAddresource'] && programContext?.status === 'Unlisted'">
-          <i class="add icon mr-4"></i>{{resourceService.frmelmnts.lbl.addToLibrary}}</button> -->
-      <button class="sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius"
-        *ngIf="visibility && visibility['showAddresource']"
+      <button (click)="goToAddLibrary(collection.identifier)" class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius text-inherit"
         appTelemetryInteract
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add-from-library', 'click', 'chapter-list')"
+        [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(collection.identifier, 'Content', '1.0', {l1: sessionContext.collection})"
+        [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata"
+        popupText="{{resourceService.frmelmnts.lbl.searchExistingContentFromLibrary}}"  suiPopup  *ngIf="visibility && visibility['showAddresource'] && programContext?.status === 'Unlisted'">
+          <i class="add icon mr-4"></i>{{resourceService.frmelmnts.btn.addFromLibrary}}</button>
+
+      <button class="sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius text-inherit"
+        *ngIf="visibility && visibility['showAddresource']"
+        popupText="{{resourceService.frmelmnts.lbl.uploadFileOrCreateNew}}"  suiPopup appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add-resource', 'click', 'chapter-list')"
         [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(collection.identifier, 'Content', '1.0', {l1: sessionContext.collection})"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
         (click)="showModal = false; createResource($event, collection)">
-          <i class="add icon mr-4"></i>ADD
+          <i class="add icon mr-4"></i>Create new
       </button>
       <!-- Gray color button -->
       <!-- <button class="sb-btn sb-btn-gray sb-btn-xs sb-left-icon-btn" *ngIf="visibility && visibility['showAddresource']"
@@ -111,17 +120,16 @@
             <span class="item-name"> {{content.name}}</span>
             <span class="item-status">{{content.creator}}</span>
             <span class="item-status">
-              <span class="sb-color-warning">{{resourceService.frmelmnts.lbl.correctionsPending}}</span>
-              <span [ngClass]="{'sb-color-primary':content.status === 'Draft'}" *ngIf="content.status === 'Draft' && content.prevStatus === null">{{content.status}}</span>
-              <span [ngClass]="{'sb-color-warning':content.status == 'Review'}"  *ngIf="content.status === 'Review'">{{resourceService.frmelmnts.lbl.reviewInProgress}}</span>
-              <span [ngClass]="{'sb-color-success':content.status == 'Live'}"  *ngIf="content.status === 'Live' && !content.sourcingStatus">{{resourceService.frmelmnts.lbl.approvalPending}}</span>
+              <span [ngClass]="{'sb-color-gray-300':content.status === 'Draft'}" *ngIf="content.status === 'Draft' && content.prevStatus === null">{{content.status}}</span>
+              <span [ngClass]="{'sb-color-primary':content.status == 'Review'}"  *ngIf="content.status === 'Review'">{{resourceService.frmelmnts.lbl.reviewInProgress}}</span>
+              <span [ngClass]="{'sb-color-warning':content.status == 'Live'}"  *ngIf="content.status === 'Live' && !content.sourcingStatus">{{resourceService.frmelmnts.lbl.approvalPending}}</span>
               <span [ngClass]="{'sb-color-success':content.sourcingStatus == 'Approved'}"  *ngIf="content.sourcingStatus === 'Approved' && content.status === 'Live'">{{resourceService.frmelmnts.lbl.approved}}</span>
               <span [ngClass]="{'sb-color-error':content.sourcingStatus == 'Rejected'}"  *ngIf="content.sourcingStatus === 'Rejected' && content.status === 'Live'">{{resourceService.frmelmnts.lbl.rejected}}</span>
               <span [ngClass]="{'sb-color-gray-100':content.status == 'Draft'}"  *ngIf="content.status === 'Draft' && content.prevStatus === 'Review'">{{resourceService.frmelmnts.lbl.notAccepted}}</span>
               <span [ngClass]="{'sb-color-error':content.status == 'Failed'}"  *ngIf="content.status === 'Failed'">{{resourceService.frmelmnts.lbl.failed}}</span>
               <span *ngIf="content.status === 'Processing'">{{resourceService.frmelmnts.lbl.processing}}</span>
             </span>
-            <div class="item-dropdown absolute position" (click)="menuClick($event)" *ngIf="content.status === 'Draft'">
+            <div class="item-dropdown absolute position" (click)="menuClick($event)" *ngIf="content.status === 'Draft' && !content.sourceURL">
               <div *ngIf="visibility && visibility['showActionMenu']" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
                 suiDropdown
                 appTelemetryInteract
@@ -164,6 +172,35 @@
                     [telemetryInteractCdata]="telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryInteractPdata"
                     (click)="deleteResource($event, content, collection)">Delete</div>
+                </div>
+              </div>
+            </div>
+            <div class="item-dropdown absolute position" (click)="menuClick($event)" *ngIf="content.status === 'Live' && content.sourceURL && (content.sourcingStatus !== 'Approved' && content.sourcingStatus !== 'Rejected')">
+              <div *ngIf="visibility && visibility['showActionMenu']" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
+                suiDropdown
+                appTelemetryInteract
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('context-menu', 'click', 'chapter-list')"
+                [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata"
+                autoClose="itemClick">
+                <div class="px-4 w-auto pb-4"><span class="sb-dotmenu"></span></div>
+                <div class="menu" suiDropdownMenu>
+                  
+                    <div class="item"
+                    appTelemetryInteract
+                    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('move-content', 'click', 'chapter-list')"
+                    [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
+                    [telemetryInteractCdata]="telemetryInteractCdata"
+                    [telemetryInteractPdata]="telemetryInteractPdata"
+                    (click)="moveResource($event, content, collection)">{{resourceService.frmelmnts?.lbl?.move}}</div>
+                    <div class="item"
+                    appTelemetryInteract
+                    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('remove-content', 'click', 'chapter-list')"
+                    [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
+                    [telemetryInteractCdata]="telemetryInteractCdata"
+                    [telemetryInteractPdata]="telemetryInteractPdata"
+                    (click)="removeResource($event, content, collection)">{{resourceService.frmelmnts?.btn?.remove}}</div>
                 </div>
               </div>
             </div>
