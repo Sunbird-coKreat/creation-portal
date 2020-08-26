@@ -11,6 +11,7 @@ import { ProgramStageService } from '../../program/services';
 })
 export class HelperService {
 
+  mvcLibraryFeatureConfiguration: any
   private sendNotification = new Subject<string>();
 
   constructor(private configService: ConfigService, private contentService: ContentService,
@@ -248,6 +249,9 @@ export class HelperService {
         if (response !== 'successful') {
           return throwError(data);
         }
+       if (_.get(data, 'result.configuration.key') === 'mvcLibraryFeature') {
+          this.mvcLibraryFeatureConfiguration = _.get(data, 'result.configuration.value');
+       }
         return of(data);
       }));
   }

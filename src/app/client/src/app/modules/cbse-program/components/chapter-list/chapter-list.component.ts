@@ -143,6 +143,12 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     };
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false; 
     this.submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
+    if (this.programContext['status'] === 'Unlisted') {
+      const request = {
+        "key": "mvcLibraryFeature",
+        "status": "active"
+      }
+      this.helperService.getProgramConfiguration(request).subscribe(res => {}, err => {});}
   }
 
   ngOnChanges(changed: any) {

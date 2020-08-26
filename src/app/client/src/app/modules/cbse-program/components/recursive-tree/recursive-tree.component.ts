@@ -24,7 +24,7 @@ export class RecursiveTreeComponent implements OnInit {
   public showModal = false;
   public showAddresource = false;
   visibility: any;
-  mvcLibraryFeature: any;
+  mvcLibraryFeatureConfiguration: any;
   public unitIdentifier;
   public childlevel;
   public telemetryInteractCdata: any;
@@ -40,15 +40,7 @@ export class RecursiveTreeComponent implements OnInit {
     this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
     const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
-    if (this.programContext['status'] === 'Unlisted') {
-      const request = {
-        "key": "mvcLibraryFeature",
-        "status": "active"
-      }
-      this.helperService.getProgramConfiguration(request).subscribe(res => {
-      if (_.get(res, 'result.configuration.value')) {
-        this.mvcLibraryFeature = _.get(res, 'result.configuration.value')}}, err => {});
-    }
+    this.mvcLibraryFeatureConfiguration = this.helperService.mvcLibraryFeatureConfiguration;
 
     this.visibility = {};
     // tslint:disable-next-line:max-line-length
