@@ -8,62 +8,63 @@
     <div title class="sb-accordion-title d-flex flex-jc-flex-end sb-color-primary flex-ai-center"><span class="chapter-status mr-16"></span>
      <span class="flex-4"> {{collection.name}}</span>
      <span class="sb-color-error font-weight-bold px-20 text-left" *ngIf="sourcingOrgReviewer">{{collection.statusMessage}}</span>
-     <div *ngIf="sourcingOrgReviewer && collection.sourcingStatus" class="single-row">
+     <div *ngIf="sourcingOrgReviewer && collection.sourcingStatusDetail" class="single-row">
       <div class="sb-color-warning sb-count">
         <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.approvalPending}}:</span>
-        <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.approvalPending}}</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail.approvalPending}}{{collection.sourcingStatusDetail && collection.sourcingStatusDetail.approvalPending}}</span>
       </div>
       <div class="sb-count sb-color-success">
         <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approved}}:</span>
-        <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.approved}}</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.approved}}</span>
       </div>
       <div class="sb-count sb-color-error">
         <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.rejected}}:</span>
-        <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.rejected}}</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.rejected}}</span>
       </div>
      </div>
-     <div *ngIf="!sourcingOrgReviewer && collection.sourcingStatus && sessionContext.currentOrgRole !== 'individual'" class="single-row">
-      <div class="sb-color-gray-300 sb-count">
+     <div  *ngIf="!sourcingOrgReviewer && collection.sourcingStatusDetail && sessionContext.currentOrgRole !== 'individual'"
+     class="single-row">
+      <div class="sb-color-gray-300 sb-count" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.draft">
         <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.draft}}:</span>
-        <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.draft}}</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.draft}}</span>
       </div>
-      <div class="sb-count sb-color-primary">
+      <div class="sb-count sb-color-primary" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.reviewPending">
         <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.reviewInProgress}}:</span>
-        <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.reviewPending}}</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.reviewPending}}</span>
       </div>
-      <div class="sb-count sb-color-error">
+      <div class="sb-count sb-color-error" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.notAccepted">
         <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.notAccepted}}:</span>
-        <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.notAccepted}}</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.notAccepted}}</span>
       </div>
-      <div class="sb-color-warning sb-count">
+      <div class="sb-color-warning sb-count" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.approvalPending">
         <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approvalPending}}:</span>
-        <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.approvalPending}}</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.approvalPending}}</span>
       </div>
-      <div class="sb-count sb-color-success">
+      <div class="sb-count sb-color-success" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.approved">
         <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.approved}}:</span>
-        <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.approved}}</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.approved}}</span>
       </div>
-      <div class="sb-count sb-color-error">
+      <div class="sb-count sb-color-error" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.rejected">
         <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.rejected}}:</span>
-        <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.rejected}}</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.rejected}}</span>
       </div>
     </div>
-    <div *ngIf="!sourcingOrgReviewer && collection.sourcingStatus && sessionContext.currentOrgRole === 'individual'" class="single-row">
-      <div class="sb-color-gray-300 sb-count" *ngIf="visibility['showAddresource']">
+    <div *ngIf="!sourcingOrgReviewer && collection.sourcingStatusDetail && sessionContext.currentOrgRole === 'individual'" class="single-row">
+      <div class="sb-color-gray-300 sb-count" *ngIf="visibility['showAddresource'] && collection.sourcingStatusDetail && collection.sourcingStatusDetail.draft">
         <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.draft}}:</span>
-        <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.draft}}</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.draft }}</span>
       </div>
-      <div class="sb-color-gray-300 sb-count">
+      <div class="sb-color-gray-300 sb-count" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.approvalPending">
         <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approvalPending}}:</span>
-        <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.approvalPending}}</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.approvalPending}}</span>
       </div>
-      <div class="sb-color-gray-success sb-count">
+      <div class="sb-color-gray-success sb-count" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.approved">
         <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approved}}:</span>
-        <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.approved}}</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.approved}}</span>
       </div>
-      <div class="sb-count sb-color-error">
+      <div class="sb-count sb-color-error" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.rejected">
         <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.rejected}}:</span>
-        <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.rejected}}</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.rejected}}</span>
       </div>
     </div>
       <div class="sb-color-black sb-count">
@@ -178,7 +179,7 @@
                 autoClose="itemClick">
                 <div class="px-4 w-auto pb-4"><span class="sb-dotmenu"></span></div>
                 <div class="menu" suiDropdownMenu>
-                  
+
                     <div class="item"
                     appTelemetryInteract
                     [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('move-content', 'click', 'chapter-list')"
