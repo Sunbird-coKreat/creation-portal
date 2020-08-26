@@ -95,6 +95,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public videoSizeLimit: string;
   public originCollectionData: any;
   selectedOriginUnitStatus: any;
+  public bulkApprove: any;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -121,6 +122,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.selectedSharedContext = _.get(this.contentUploadComponentInput, 'selectedSharedContext');
     this.sharedContext = _.get(this.contentUploadComponentInput, 'programContext.config.sharedContext');
     this.sourcingReviewStatus = _.get(this.contentUploadComponentInput, 'sourcingStatus') || '';
+    this.bulkApprove = this.cacheService.get('bulk_approval_' + this.sessionContext.collection);
     if (_.get(this.contentUploadComponentInput, 'action') === 'preview') {
       this.showUploadModal = false;
       this.showPreview = true;

@@ -6,7 +6,7 @@ import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
 import { CbseProgramService } from '../../services';
 import { map, catchError, first } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { throwError, Observable } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   IChapterListComponentInput, ISessionContext,
@@ -32,7 +32,6 @@ interface IDynamicInput {
   styleUrls: ['./chapter-list.component.scss']
 })
 export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
-
   @Input() chapterListComponentInput: IChapterListComponentInput;
   @Output() selectedQuestionTypeTopic = new EventEmitter<any>();
 
@@ -60,7 +59,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     stages: []
   };
   public resourceTemplateComponentInput: IResourceTemplateComponentInput = {};
-
+  public submissionDateFlag = false;
   prevUnitSelect: string;
   contentId: string;
   showLargeModal: boolean;
@@ -142,7 +141,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         this.uploadHandler(contentMeta);
       }
     };
-    this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
+    this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false; 
+    this.submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
   }
 
   ngOnChanges(changed: any) {
@@ -210,6 +210,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         console.log('Getting origin data failed');
     });
   }
+
   public fetchFrameWorkDetails() {
     this.frameworkService.initialize(this.sessionContext.framework);
     this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
@@ -270,6 +271,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       this.resetContentId();
     }
   }
+
   public resetContentId() {
     this.contentId = '';
   }
@@ -420,6 +422,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     const self = this;
     this.hierarchyObj[data.identifier] = {
       'name': data.name,
+      'mimeType': data.mimeType,
       'contentType': data.contentType,
       'children': _.map(data.children, (child) => {
         return child.identifier;
@@ -562,7 +565,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     });
     return _.isEmpty(leafNodes) ? null : leafNodes;
   }
-
 
   checkSourcingStatus(content) {
     if (this.storedCollectionData.acceptedContents  &&
@@ -751,12 +753,12 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
   updateTextbookmvcContentCount(textbookId, contentId) {
      this.helperService.getTextbookDetails(textbookId).subscribe((data) => {
-     const array = _.remove(data.result.content['mvcContents'], function(content) {return content !== contentId})
+     const array = _.remove(data.result.content['mvcContributions'], function(content) {return content !== contentId})
       const request = {
         content: {
           'versionKey': data.result.content.versionKey,
           'mvcContentCount':  data.result.content.mvcContentCount - 1,
-          'mvcContents':_.uniq(array),
+          'mvcContributions':_.uniq(array),
         }
       };
       this.helperService.updateContent(request, textbookId).subscribe((data) => {
@@ -842,6 +844,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
          this.toasterService.success(this.resourceService.messages.smsg.m0064);
        });
   }
+
   deleteContent() {
     this.helperService.retireContent(this.contentId)
       .subscribe(
@@ -895,7 +898,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     return collection.totalLeaf;
   }
 
-
   filterContentsForCount (contents, status?, onlySample?, organisationId?, createdBy?, visibility?) {
     const filter = {
       ...(onlySample && {sampleContent: true}),
@@ -917,20 +919,22 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   setUnitContentsStatusCount(contents) {
-    const contentStatusCount = [];
+    const contentStatusCount = {};
     if (this.isSourcingOrgReviewer()) {
       contentStatusCount['approved'] = 0;
       contentStatusCount['rejected'] = 0;
       contentStatusCount['approvalPending'] = 0;
       _.forEach(contents, (content) => {
-        if (content.sourcingStatus === 'Approved') {
-          contentStatusCount['approved'] += 1;
-        } else if (content.sourcingStatus === 'Rejected') {
-          contentStatusCount['rejected'] += 1;
-        } else if (content.status === 'Live' && content.sourceURL && content.sourcingStatus === 'Approved') {
-          contentStatusCount['approvalPending'] += 1;
-        } else if (content.sourcingStatus === null && content.prevStatus === 'Processing') {
-          contentStatusCount['approvalPending'] += 1;
+        if (!content.sampleContent) {
+          if (content.sourcingStatus === 'Approved') {
+            contentStatusCount['approved'] += 1;
+          } else if (content.sourcingStatus === 'Rejected') {
+            contentStatusCount['rejected'] += 1;
+          } else if (content.status === 'Live' && content.sourceURL && content.sourcingStatus === 'Approved') {
+            contentStatusCount['approvalPending'] += 1;
+          } else if (content.sourcingStatus === null && content.prevStatus === 'Processing') {
+            contentStatusCount['approvalPending'] += 1;
+          }
         }
       });
     } else if (this.isContributingOrgAdmin() || this.isContributingOrgReviewer()) {
@@ -941,7 +945,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       contentStatusCount['rejected'] = 0;
       contentStatusCount['approved'] = 0;
       _.forEach(contents, (content) => {
-        if (content.organisationId === this.myOrgId) {
+        if (content.organisationId === this.myOrgId && !content.sampleContent) {
           if (content.status === 'Draft' && content.prevStatus === 'Review') {
             contentStatusCount['notAccepted'] += 1;
           } else if (content.status === 'Live' && !content.sourcingStatus && content.sourceURL) {
@@ -950,7 +954,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
             contentStatusCount['approvalPending'] += 1;
           } else if (content.status === 'Review') {
             contentStatusCount['reviewPending'] += 1;
-          } else if (content.status === 'Draft' && content.prevStatus === null) {
+          } else if (content.status === 'Draft' && !content.prevStatus) {
             contentStatusCount['draft'] += 1;
           } else if (content.sourcingStatus === 'Approved' && content.status === 'Live') {
             contentStatusCount['approved'] += 1;
@@ -965,8 +969,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       contentStatusCount['reviewPending'] = 0;
       contentStatusCount['rejected'] = 0;
       contentStatusCount['approved'] = 0;
+      contentStatusCount['draft'] = 0;
       _.forEach(contents, (content) => {
-        if (content.organisationId === this.myOrgId && !content.sourceURL ) {
+        if (content.organisationId === this.myOrgId && !content.sourceURL && !content.sampleContent) {
           if (content.status === 'Draft' && content.prevStatus === 'Review') {
             contentStatusCount['notAccepted'] += 1;
           } else if (content.status === 'Live' && !content.sourcingStatus) {
@@ -977,6 +982,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
             contentStatusCount['approved'] += 1;
           } else if (content.sourcingStatus === 'Rejected' && content.status === 'Live') {
             contentStatusCount['rejected'] += 1;
+          } else if (content.status === 'Draft' && !content.prevStatus) {
+            contentStatusCount['draft'] += 1;
           }
         } else if (content.status === 'Live' && content.sourceURL && content.sourcingStatus === 'Approved'){
           contentStatusCount['approved'] += 1;
@@ -984,7 +991,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           contentStatusCount['rejected'] += 1;
         } else if (content.status === 'Live' && content.sourceURL){
           contentStatusCount['approvalPending'] += 1;
-        } 
+        }
       });
     } else if (this.sessionContext.currentOrgRole === 'individual') {
       contentStatusCount['approvalPending'] = 0;
@@ -992,12 +999,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       contentStatusCount['rejected'] = 0;
       contentStatusCount['approved'] = 0;
       _.forEach(contents, (content) => {
-        if (content.createdBy === this.userService.userProfile.userId) {
-          if (content.status === 'Draft' && content.prevStatus === null) {
+        if (content.createdBy === this.userService.userProfile.userId && !content.sampleContent) {
+          if (content.status === 'Draft' && !content.prevStatus) {
             contentStatusCount['draft'] += 1;
           } else if (content.status === 'Live' && !content.sourcingStatus && content.sourceURL) {
-            contentStatusCount['approvalPending'] += 1;
-          } else if (content.status === 'Live' && !content.sourcingStatus) {
             contentStatusCount['approvalPending'] += 1;
           } else if (content.sourcingStatus === 'Approved' && content.status === 'Live') {
             contentStatusCount['approved'] += 1;
@@ -1007,7 +1012,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         }
       });
     }
-    return contentStatusCount;
+    if (_.mean(_.valuesIn(contentStatusCount)) > 0) {
+      return contentStatusCount;
+    }
   }
 
   isNominationByOrg() {
@@ -1068,5 +1075,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     return !!(this.userService.userProfile.userRegData
       && this.userService.userProfile.userRegData.Org
       && this.programContext.sourcing_org_name === this.userService.userProfile.userRegData.Org.name);
+  }
+
+  bulkApprovalSuccess(e) {
+    this.updateAccordianView();
   }
 }

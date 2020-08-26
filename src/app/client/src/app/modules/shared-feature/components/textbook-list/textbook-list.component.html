@@ -90,7 +90,7 @@
 							</div>
 						</td>
 						<td>{{ data.chapterCountForContribution || data.chapterCount || 0 }}</td>
-						<td class="fsmall"><span class="d-inline-block mr-5">{{ (data?.pendingBySourceOrg?.length + data.mvcContentCount || 0) }}<span class="sb-color-warning"> {{ resourceService?.frmelmnts?.lbl?.approvalPending }}</span></span></td>
+						<td class="fsmall"><span class="d-inline-block mr-5">{{ (data?.pendingBySourceOrg?.length + data.mvcContributionsCount || 0) }}<span class="sb-color-warning"> {{ resourceService?.frmelmnts?.lbl?.approvalPending }}</span></span></td>
 						<td class="text-center"><button type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(data)"
 							appTelemetryInteract
                                                         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('open-textbook', 'click', 'textbook-list')"

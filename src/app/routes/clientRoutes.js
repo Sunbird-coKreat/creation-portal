@@ -129,6 +129,7 @@ function getLocals(req) {
   locals.buildNumber = envHelper.BUILD_NUMBER
   locals.apiCacheTtl = envHelper.PORTAL_API_CACHE_TTL
   locals.cloudStorageUrls = envHelper.CLOUD_STORAGE_URLS
+  locals.portalCloudStorageUrl = envHelper.PORTAL_CLOUD_STORAGE_URL
   locals.userUploadRefLink = envHelper.sunbird_portal_user_upload_ref_link
   locals.deviceRegisterApi = envHelper.DEVICE_REGISTER_API
   locals.deviceApi = envHelper.sunbird_device_api
