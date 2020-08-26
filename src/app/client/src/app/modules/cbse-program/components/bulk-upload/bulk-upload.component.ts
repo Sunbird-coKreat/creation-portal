@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
-import { UserService, ProgramsService } from '@sunbird/core';
+import { UserService, ProgramsService, ActionService } from '@sunbird/core';
 import { ResourceService, ToasterService } from '@sunbird/shared';
 import { FineUploader } from 'fine-uploader';
 import CSVFileValidator from './csv-helper-util';
@@ -73,7 +73,8 @@ export class BulkUploadComponent implements OnInit {
     private toasterService: ToasterService,
     private bulkJobService: BulkJobService,
     private programsService: ProgramsService,
-    private helperService: HelperService
+    private helperService: HelperService,
+    public actionService: ActionService,
   ) { }
 
   ngOnInit() {
@@ -181,9 +182,27 @@ export class BulkUploadComponent implements OnInit {
         if (this.process.overall_stats.upload_pending === 0) {
           this.process.status = "completed";
         }
-        this.calculateCompletionPercentage();
-        // console.log('updated process:', JSON.stringify(this.process));
-        this.updateJob();
+        let hierarchyUrl = 'content/v3/hierarchy/' + this.sessionContext.collection;
+        const req = {
+          url: hierarchyUrl,
+          param: { 'mode': 'edit' }
+        };
+        this.actionService.get(req).subscribe((response) => {
+          const children = [];
+          _.forEach(response.result.content.children, (child) => {
+            if (child.mimeType !== 'application/vnd.ekstep.content-collection' ||
+            (child.mimeType === 'application/vnd.ekstep.content-collection' && child.openForContribution === true)) {
+              children.push(child);
+            }
+          });
+
+          response.result.content.children = children;
+          this.storedCollectionData = response.result.content;
+          this.calculateCompletionPercentage();
+          // console.log('updated process:', JSON.stringify(this.process));
+          this.updateJob();
+        });
+        
       }
     }, (error) => {
       console.log(error);
@@ -287,6 +306,11 @@ export class BulkUploadComponent implements OnInit {
     };
     this.bulkJobService.updateBulkJob(reqData)
       .subscribe((updateResponse) => {
+        if (this.process.status === 'completed') {
+          this.bulkUploadState = 6;
+        } else if (this.process.status === 'processing') {
+          this.bulkUploadState = 5;
+        }
         // console.log('updateResponse res', JSON.stringify(updateResponse));
       }, (error) => {
         console.log(error);
@@ -407,6 +431,7 @@ export class BulkUploadComponent implements OnInit {
       if (_.isEmpty(row.level4) && _.isEmpty(row.level3) && _.isEmpty(row.level2) && _.isEmpty(row.level1)) {
         const name = headers.find((r) => r.inputName === 'level1').name || '';
         this.setError(`${name} is missing at row: ${rowIndex}`);
+        return;
       } else if (_.isEmpty(row.level3) && !_.isEmpty(row.level4)) {
         const name = headers.find((r) => r.inputName === 'level3').name || '';
         this.setError(`${name} is missing at row: ${rowIndex}`);
@@ -420,6 +445,7 @@ export class BulkUploadComponent implements OnInit {
           const name = headers.find((r) => r.inputName === 'level1').name || '';
           this.setError(`${name} is missing at row: ${rowIndex}`);
         }
+        return;
       } else if (_.isEmpty(row.level2) && !_.isEmpty(row.level3)) {
         const name = headers.find((r) => r.inputName === 'level2').name || '';
         this.setError(`${name} is missing at row: ${rowIndex}`);
@@ -428,9 +454,11 @@ export class BulkUploadComponent implements OnInit {
           const name = headers.find((r) => r.inputName === 'level1').name || '';
           this.setError(`${name} is missing at row: ${rowIndex}`);
         }
+        return;
       } else if (_.isEmpty(row.level1) && !_.isEmpty(row.level2)) {
         const name = headers.find((r) => r.inputName === 'level1').name || '';
         this.setError(`${name} is missing at row: ${rowIndex}`);
+        return;
       }
 
       const keys = ['level1', 'level2', 'level3', 'level4'];
