@@ -228,7 +228,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
 
           overallStats['approve_success'] = _.filter(this.dikshaContents, content => content.status === 'Live').length;
           // tslint:disable-next-line:max-line-length
-          overallStats['approve_failed'] = _.filter(this.dikshaContents, content => content.status === 'Draft' || content.status === 'Failed').length;
+          overallStats['approve_failed'] = _.filter(this.dikshaContents, content => content.status === 'Failed').length;
           overallStats['approve_pending'] = overallStats.total - (overallStats['approve_success'] + overallStats['approve_failed']);
           this.bulkApprove.overall_stats = overallStats;
           // tslint:disable-next-line:max-line-length
@@ -263,7 +263,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
   }
 
   prepareTableData() {
-    const failedContent = _.filter(this.dikshaContents, content => content.status === 'Draft' || content.status === 'Failed');
+    const failedContent = _.filter(this.dikshaContents, content => content.status === 'Failed');
     this.unitsInLevel = _.map(failedContent, content => {
       return this.findFolderLevel(this.storedCollectionData, content.origin);
     });
