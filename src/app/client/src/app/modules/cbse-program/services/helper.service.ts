@@ -250,6 +250,25 @@ export class HelperService {
       }));
   }
 
+  getProgramConfiguration(reqData) {
+    const option = {
+      url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.CONFIGURATION_SEARCH}`,
+      data: {
+        request: {
+          key: reqData.key,
+          status: reqData.status
+        }
+      }
+    };
+    return this.contentService.post(option).pipe(
+      mergeMap((data: ServerResponse) => {
+        const response = _.get(data, 'params.status');
+        if (response !== 'successful') {
+          return throwError(data);
+        }
+        return of(data);
+      }));
+  }
   apiErrorHandling(err, errorInfo) {
     this.toasterService.error(_.get(err, 'error.params.errmsg') || errorInfo.errorMsg);
   }
