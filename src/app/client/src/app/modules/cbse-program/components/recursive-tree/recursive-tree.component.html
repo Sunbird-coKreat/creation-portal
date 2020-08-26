@@ -71,14 +71,14 @@
       </div>
 
      <div class="d-flex">
-      <button (click)="goToAddLibrary(collection.identifier)" class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius text-inherit"
+      <!-- <button (click)="goToAddLibrary(collection.identifier)" class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius text-inherit"
         appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add-from-library', 'click', 'chapter-list')"
         [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(collection.identifier, 'Content', '1.0', {l1: sessionContext.collection})"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
         popupText="{{resourceService.frmelmnts.lbl.searchExistingContentFromLibrary}}"  suiPopup  *ngIf="visibility && visibility['showAddresource'] && programContext?.status === 'Unlisted'">
-          <i class="add icon mr-4"></i>{{resourceService.frmelmnts.btn.addFromLibrary}}</button>
+          <i class="add icon mr-4"></i>{{resourceService.frmelmnts.btn.addFromLibrary}}</button> -->
 
       <button class="sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius text-inherit"
         *ngIf="visibility && visibility['showAddresource']"
