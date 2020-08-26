@@ -36,7 +36,7 @@ export class BulkUploadComponent implements OnInit {
     'mp4': 'video/mp4',
     'webm': 'video/webm',
     'html': 'text/html',
-    'epub': 'pplication/epub',
+    'epub': 'application/epub',
     'h5p': 'application/vnd.ekstep.h5p-archive',
     'zip': 'application/vnd.ekstep.html-archive',
   };
@@ -286,7 +286,7 @@ export class BulkUploadComponent implements OnInit {
       });
 
       const csvDownloadConfig = {
-        filename: `Bulk Upload Failed Content Report Of Book - ${this.storedCollectionData.name.trim()}`,
+        filename: `Bulk Upload ${this.storedCollectionData.name.trim()}`,
         tableData: tableData,
         headers: headers,
         showTitle: false
