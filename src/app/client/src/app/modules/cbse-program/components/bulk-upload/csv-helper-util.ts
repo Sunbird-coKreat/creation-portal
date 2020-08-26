@@ -1,27 +1,22 @@
 import * as _ from 'lodash-es';
 import Papa from 'papaparse';
 
+export interface CSVFileValidatorResponse {
+    inValidMessages: any[],
+    data: any[]
+}
+
 export default class CSVFileValidator {
     private csvFile = null;
     private csvData = null;
     private config = null;
-    private response = null;
+    private response: CSVFileValidatorResponse;
 
     /**
      * @param {Object} config
      */
     constructor(config) {
         this.config = config;
-    }
-
-    /**
-     * @private
-     */
-    private getResponse() {
-        return {
-            inValidMessages: [],
-            data: []
-        };
     }
 
     /**
@@ -222,7 +217,10 @@ export default class CSVFileValidator {
      */
     public validate(csvFile) {
         this.csvFile = csvFile;
-        this.response = this.getResponse();
+        this.response = {
+            inValidMessages: [],
+            data: []
+        };
 
         return new Promise((resolve, reject) => {
             Papa.parse(this.csvFile, {
@@ -237,3 +235,4 @@ export default class CSVFileValidator {
         });
     }
 }
+
