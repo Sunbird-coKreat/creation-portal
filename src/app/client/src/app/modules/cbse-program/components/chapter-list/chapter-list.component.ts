@@ -887,16 +887,21 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       // tslint:disable-next-line:max-line-length
       const [restOfTheStatus, totalLeaf] = self.getContentCountPerFolder(child, contentStatus, onlySample, organisationId, createdBy, visibility);
       collection.totalLeaf += totalLeaf;
-      // tslint:disable-next-line:max-line-length
-      collection.sourcingStatusDetail = !_.isEmpty(restOfTheStatus) ?  _.mergeWith(restOfTheStatus, _.cloneDeep(collection.sourcingStatusDetail), this.addTwoObjects) : _.cloneDeep(collection.sourcingStatusDetail);
+      if (!_.isEmpty(restOfTheStatus)) {
+        // tslint:disable-next-line:max-line-length
+        collection.sourcingStatusDetail  =  _.mergeWith(_.cloneDeep(restOfTheStatus), _.cloneDeep(collection.sourcingStatusDetail), this.addTwoObjects);
+      }
     });
 
     // tslint:disable-next-line:max-line-length
     collection.totalLeaf += collection.leaf ? this.filterContentsForCount(collection.leaf, contentStatus, onlySample, organisationId, createdBy, visibility) : 0;
     if (collection.totalLeaf > 0) {
       // collection.sourcingStatus = this.setUnitContentsStatusCount(collection.leaf);
-      // tslint:disable-next-line:max-line-length
-      collection.sourcingStatusDetail = !_.isEmpty(this.setUnitContentsStatusCount(collection.leaf)) ? _.mergeWith(this.setUnitContentsStatusCount(collection.leaf), _.cloneDeep(collection.sourcingStatusDetail), this.addTwoObjects) : _.cloneDeep(collection.sourcingStatusDetail);
+      const unitContentStatusCount =  this.setUnitContentsStatusCount(collection.leaf);
+      if(!_.isEmpty(unitContentStatusCount)) {
+        // tslint:disable-next-line:max-line-length
+        collection.sourcingStatusDetail = _.mergeWith(this.setUnitContentsStatusCount(collection.leaf), _.cloneDeep(collection.sourcingStatusDetail), this.addTwoObjects);
+      }
     }
     // tslint:disable-next-line:max-line-length
     if (this.originalCollectionData && (_.indexOf(this.originalCollectionData.childNodes, collection.origin) < 0 || this.originalCollectionData.status !== 'Draft')) {
