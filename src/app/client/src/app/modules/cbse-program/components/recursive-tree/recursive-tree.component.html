@@ -9,7 +9,7 @@
      <span class="flex-4"> {{collection.name}}</span>
      <span class="sb-color-error font-weight-bold px-20 text-left" *ngIf="sourcingOrgReviewer">{{collection.statusMessage}}</span>
      <div *ngIf="sourcingOrgReviewer && collection.sourcingStatus" class="single-row">
-      <div class="sb-color-gray-300 sb-count">
+      <div class="sb-color-warning sb-count">
         <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.approvalPending}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.approvalPending}}</span>
       </div>
@@ -27,7 +27,7 @@
         <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.draft}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.draft}}</span>
       </div>
-      <div class="sb-count sb-color-warning">
+      <div class="sb-count sb-color-primary">
         <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.reviewInProgress}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.reviewPending}}</span>
       </div>
@@ -35,7 +35,7 @@
         <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.notAccepted}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.notAccepted}}</span>
       </div>
-      <div class="sb-color-gray-300 sb-count">
+      <div class="sb-color-warning sb-count">
         <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approvalPending}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.approvalPending}}</span>
       </div>
@@ -112,9 +112,9 @@
             <span class="item-name"> {{content.name}}</span>
             <span class="item-status">{{content.creator}}</span>
             <span class="item-status">
-              <span [ngClass]="{'sb-color-primary':content.status === 'Draft'}" *ngIf="content.status === 'Draft' && content.prevStatus === null">{{content.status}}</span>
-              <span [ngClass]="{'sb-color-warning':content.status == 'Review'}"  *ngIf="content.status === 'Review'">{{resourceService.frmelmnts.lbl.reviewInProgress}}</span>
-              <span [ngClass]="{'sb-color-success':content.status == 'Live'}"  *ngIf="content.status === 'Live' && !content.sourcingStatus">{{resourceService.frmelmnts.lbl.approvalPending}}</span>
+              <span [ngClass]="{'sb-color-gray-300':content.status === 'Draft'}" *ngIf="content.status === 'Draft' && content.prevStatus === null">{{content.status}}</span>
+              <span [ngClass]="{'sb-color-primary':content.status == 'Review'}"  *ngIf="content.status === 'Review'">{{resourceService.frmelmnts.lbl.reviewInProgress}}</span>
+              <span [ngClass]="{'sb-color-warning':content.status == 'Live'}"  *ngIf="content.status === 'Live' && !content.sourcingStatus">{{resourceService.frmelmnts.lbl.approvalPending}}</span>
               <span [ngClass]="{'sb-color-success':content.sourcingStatus == 'Approved'}"  *ngIf="content.sourcingStatus === 'Approved' && content.status === 'Live'">{{resourceService.frmelmnts.lbl.approved}}</span>
               <span [ngClass]="{'sb-color-error':content.sourcingStatus == 'Rejected'}"  *ngIf="content.sourcingStatus === 'Rejected' && content.status === 'Live'">{{resourceService.frmelmnts.lbl.rejected}}</span>
               <span [ngClass]="{'sb-color-gray-100':content.status == 'Draft'}"  *ngIf="content.status === 'Draft' && content.prevStatus === 'Review'">{{resourceService.frmelmnts.lbl.notAccepted}}</span>
