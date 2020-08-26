@@ -100,6 +100,7 @@ export default class CSVFileValidator {
             }
 
             const rowData = {};
+            let hasError = false;
 
             // Iterate over each column (header) in a row
             headers.forEach((valueConfig, columnIndex) => {
@@ -122,6 +123,8 @@ export default class CSVFileValidator {
                 if (typeof(columnValue) === 'string' && maxLength > -1) {
                     if (columnValue.length > maxLength) {
                         this.handleError(valueConfig, 'maxLengthError', `${valueConfig.name} contains more than ${maxLength} characters at row: ${rowIndex + 1}`, [valueConfig.name, rowIndex + 1, columnIndex + 1, maxLength, columnValue.length]);
+                        hasError = true;
+                        return;
                     }
                 }
 
@@ -129,11 +132,15 @@ export default class CSVFileValidator {
                 //  Required column value validation
                 if (valueConfig.required && !columnValue.length) {
                     this.handleError(valueConfig, 'requiredError', `${valueConfig.name} is required in the (${rowIndex + 1}) row / (${columnIndex + 1}) column`, [valueConfig.name, rowIndex + 1, columnIndex + 1]);
+                    hasError = true;
+                    return;
                 }
 
                 // Custom column (header) validation
                 if (valueConfig.validate && !valueConfig.validate(columnValue)) {
                     this.handleError(valueConfig, 'validateError', `${valueConfig.name} is not valid in the (${rowIndex + 1}) row / (${columnIndex + 1}) column`, [valueConfig.name, rowIndex + 1, columnIndex + 1]);
+                    hasError = true;
+                    return;
                 }
 
                 // Unique validation
@@ -146,6 +153,8 @@ export default class CSVFileValidator {
                         uniqueValues[inputName].push(columnValue);
                     } else {
                         this.handleError(valueConfig, 'uniqueError', `${valueConfig.name} has duplicate value in the (${rowIndex + 1}) row / (${columnIndex + 1}) column`, [valueConfig.name, rowIndex + 1, columnIndex + 1, columnValue]);
+                        hasError = true;
+                        return;
                     }
                 }
 
@@ -165,6 +174,8 @@ export default class CSVFileValidator {
                     const isUrl = !!urlPattern.test(columnValue);
                     if (!isUrl) {
                         this.handleError(valueConfig, 'urlError', `${valueConfig.name} has invalid url at (${rowIndex + 1}) row / (${columnIndex + 1}) column`, [valueConfig.name, rowIndex + 1, columnIndex + 1, columnValue]);
+                        hasError = true;
+                        return;
                     }
                 }
                 // Array validation
@@ -182,9 +193,15 @@ export default class CSVFileValidator {
                     const lowerValues = inValues.map((v) => _.toLower(v));
                     if (!lowerValues.includes(_.toLower(columnValue))) {
                         this.handleError(valueConfig, 'inError', `${valueConfig.name} has invalid value at row: ${rowIndex + 1}`, [valueConfig.name, rowIndex + 1, columnIndex + 1, valueConfig.in, columnValue]);
+                        hasError = true;
+                        return;
                     }
                 }
             });
+
+            if (hasError) {
+                return;
+            }
 
             // Custom row validation
             if (_.isFunction(this.config.validateRow)) {
