@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
 import { UserService, ProgramsService, ActionService } from '@sunbird/core';
 import { ResourceService, ToasterService } from '@sunbird/shared';
 import { FineUploader } from 'fine-uploader';
-import CSVFileValidator from './csv-helper-util';
+import CSVFileValidator, { CSVFileValidatorResponse } from './csv-helper-util';
 import * as _ from 'lodash-es';
 import { BulkJobService } from '../../services/bulk-job/bulk-job.service';
 import { UUID } from 'angular2-uuid';
@@ -36,10 +36,11 @@ export class BulkUploadComponent implements OnInit {
     'mp4': 'video/mp4',
     'webm': 'video/webm',
     'html': 'text/html',
-    'epub': 'pplication/epub',
+    'epub': 'application/epub',
     'h5p': 'application/vnd.ekstep.h5p-archive',
     'zip': 'application/vnd.ekstep.html-archive',
   };
+  public oldProcessStatus = '';
   public stageStatus = '';
   public contentTypes: Array<any> = [];
   public unitsInLevel: Array<any> = [];
@@ -123,7 +124,7 @@ export class BulkUploadComponent implements OnInit {
     // console.log('process.overall_stats', this.process.overall_stats);
     const { total, upload_pending } = this.process.overall_stats;
 
-    this.completionPercentage = _.toNumber(100 - ((upload_pending / total) * 100));
+    this.completionPercentage = parseInt(_.toNumber(100 - ((upload_pending / total) * 100)));
     // console.log('completionPercentage',  this.completionPercentage);
   }
 
@@ -132,7 +133,6 @@ export class BulkUploadComponent implements OnInit {
       filters: {
         program_id: _.get(this.programContext, 'program_id', ''),
         collection_id: _.get(this.sessionContext, 'collection', ''),
-        status: "processing",
         type: "bulk_upload",
         createdby: _.get(this.userService, 'userProfile.userId', '')
       },
@@ -146,6 +146,7 @@ export class BulkUploadComponent implements OnInit {
         }
 
         this.process = _.first(_.get(statusResponse, 'result.process', []));
+        this.oldProcessStatus = this.process.status;
         // console.log('process', JSON.stringify(this.process));
         this.searchContentWithProcessId();
         this.bulkUploadState = 5;
@@ -179,12 +180,15 @@ export class BulkUploadComponent implements OnInit {
           }
         });
 
+        this.process.overall_stats.upload_pending = this.process.overall_stats.total - 
+        (this.process.overall_stats.upload_success + this.process.overall_stats.upload_failed);
+
         if (this.process.overall_stats.upload_pending === 0) {
           this.process.status = "completed";
         }
-        let hierarchyUrl = 'content/v3/hierarchy/' + this.sessionContext.collection;
+
         const req = {
-          url: hierarchyUrl,
+          url: `content/v3/hierarchy/${this.sessionContext.collection}`,
           param: { 'mode': 'edit' }
         };
         this.actionService.get(req).subscribe((response) => {
@@ -200,9 +204,11 @@ export class BulkUploadComponent implements OnInit {
           this.storedCollectionData = response.result.content;
           this.calculateCompletionPercentage();
           // console.log('updated process:', JSON.stringify(this.process));
-          this.updateJob();
-        });
-        
+          if (this.oldProcessStatus !== this.process.status) {
+            this.updateJob();
+          }
+          
+        }); 
       }
     }, (error) => {
       console.log(error);
@@ -280,7 +286,7 @@ export class BulkUploadComponent implements OnInit {
       });
 
       const csvDownloadConfig = {
-        filename: `Bulk Upload Failed Content Report Of Book - ${this.storedCollectionData.name.trim()}`,
+        filename: `Bulk Upload ${this.storedCollectionData.name.trim()}`,
         tableData: tableData,
         headers: headers,
         showTitle: false
@@ -311,6 +317,7 @@ export class BulkUploadComponent implements OnInit {
         } else if (this.process.status === 'processing') {
           this.bulkUploadState = 5;
         }
+        this.oldProcessStatus = this.process.status;
         // console.log('updateResponse res', JSON.stringify(updateResponse));
       }, (error) => {
         console.log(error);
@@ -368,13 +375,13 @@ export class BulkUploadComponent implements OnInit {
 
     this.bulkUploadState = 3;
     const csvValidator = new CSVFileValidator(this.uploadCsvConfig);
-    csvValidator.validate(file).then(csvData => {
+    csvValidator.validate(file).then((csvData: CSVFileValidatorResponse) => {
       if (this.bulkUploadValidationError) {
         this.uploader.reset();
         this.bulkUploadState = 4;
         return;
       }
-      this.uploadCsvFile(csvData);
+      this.startBulkUpload(csvData.data);
     }).catch(err => {
         this.uploader.reset();
         console.log(err);
@@ -636,21 +643,21 @@ export class BulkUploadComponent implements OnInit {
   }
 
   startBulkUpload(csvData) {
+    this.completionPercentage = 0;
     this.createImportRequest(csvData).subscribe((importResponse) => {
       // console.log('createImportRequest res', JSON.stringify(importResponse));
       this.process.process_id = _.get(importResponse, 'result.processId');
       this.createJobRequest(csvData.length)
         .subscribe((jobResponse) => {
+          this.process = _.get(jobResponse, 'result');
+          this.oldProcessStatus = this.process.status;
+          this.calculateCompletionPercentage();
         }, (error) => {
           console.log(error);
         });
     }, (error) => {
       console.log(error);
     });
-  }
-
-  uploadCsvFile(csv) {
-    this.startBulkUpload(csv.data);
   }
 
   setError(message) {
