@@ -563,6 +563,10 @@ export class BulkUploadComponent implements OnInit {
     const source = this.getDownloadableLink(row.source);
     const license = _.get(row, 'license');
     const organisationId =  _.get(this.sessionContext, 'nominationDetails.organisation_id');
+    row.contentType = _.toLower(row.contentType);
+    const contentType = _.find(this.contentTypes, (content_type) => {
+      return _.toLower(content_type.name) === row.contentType;
+    });
 
     const reqBody = this.sharedContext.reduce((obj, context) => {
       return { ...obj, [context]: this.sessionContext[context] };
@@ -580,7 +584,7 @@ export class BulkUploadComponent implements OnInit {
         audience: [row.audience],
         code: UUID.UUID(),
         mimeType: this.mimeTypes[_.toLower(row.fileFormat)],
-        contentType: this.getContentTypeDetails('name', row.contentType).value,
+        contentType: _.get(contentType, 'value', ''),
         lastPublishedBy: userId,
         createdBy: userId,
         resourceType: 'Learn',
