@@ -252,7 +252,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         key: 'contentVideoSize',
         status: 'active'
       };
-      this.helperService.checkFileSizeLimit(request).subscribe(res => {
+      this.helperService.getProgramConfiguration(request).subscribe(res => {
         this.showUploadModal = true;
         this.initiateUploadModal();
         if (_.get(res, 'result.configuration.value')) {
