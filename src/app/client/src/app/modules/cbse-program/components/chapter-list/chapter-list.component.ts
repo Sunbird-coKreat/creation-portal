@@ -141,7 +141,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         this.uploadHandler(contentMeta);
       }
     };
-    this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false; 
+    this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
     this.submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
   }
 
@@ -882,21 +882,38 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   getContentCountPerFolder(collection, contentStatus?: string[], onlySample?: boolean, organisationId?: string, createdBy?: string, visibility?: boolean) {
     const self = this;
     collection.totalLeaf = 0;
+    collection.sourcingStatusDetail = {};
     _.each(collection.children, child => {
-      collection.totalLeaf += self.getContentCountPerFolder(child, contentStatus, onlySample, organisationId, createdBy, visibility);
+      // tslint:disable-next-line:max-line-length
+      const [restOfTheStatus, totalLeaf] = self.getContentCountPerFolder(child, contentStatus, onlySample, organisationId, createdBy, visibility);
+      collection.totalLeaf += totalLeaf;
+      if (!_.isEmpty(restOfTheStatus)) {
+        // tslint:disable-next-line:max-line-length
+        collection.sourcingStatusDetail  =  _.mergeWith(_.cloneDeep(restOfTheStatus), _.cloneDeep(collection.sourcingStatusDetail), this.addTwoObjects);
+      }
     });
 
     // tslint:disable-next-line:max-line-length
     collection.totalLeaf += collection.leaf ? this.filterContentsForCount(collection.leaf, contentStatus, onlySample, organisationId, createdBy, visibility) : 0;
     if (collection.totalLeaf > 0) {
-      collection.sourcingStatus = this.setUnitContentsStatusCount(collection.leaf);
+      // collection.sourcingStatus = this.setUnitContentsStatusCount(collection.leaf);
+      const unitContentStatusCount =  this.setUnitContentsStatusCount(collection.leaf);
+      if(!_.isEmpty(unitContentStatusCount)) {
+        // tslint:disable-next-line:max-line-length
+        collection.sourcingStatusDetail = _.mergeWith(this.setUnitContentsStatusCount(collection.leaf), _.cloneDeep(collection.sourcingStatusDetail), this.addTwoObjects);
+      }
     }
     // tslint:disable-next-line:max-line-length
     if (this.originalCollectionData && (_.indexOf(this.originalCollectionData.childNodes, collection.origin) < 0 || this.originalCollectionData.status !== 'Draft')) {
       collection.statusMessage = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
     }
-    return collection.totalLeaf;
+    return [collection.sourcingStatusDetail, collection.totalLeaf];
   }
+
+  addTwoObjects(objValue, srcValue) {
+    return objValue + srcValue;
+  }
+
 
   filterContentsForCount (contents, status?, onlySample?, organisationId?, createdBy?, visibility?) {
     const filter = {

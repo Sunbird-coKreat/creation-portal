@@ -95,11 +95,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public videoSizeLimit: string;
   public originCollectionData: any;
   selectedOriginUnitStatus: any;
-<<<<<<< HEAD
-  showReviewPopup = false;
-=======
   public bulkApprove: any;
->>>>>>> 5e487e7d0e3a76bb1501d178771742586041ea47
+  showReviewPopup = false;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
