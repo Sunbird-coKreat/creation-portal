@@ -59,7 +59,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     stages: []
   };
   public resourceTemplateComponentInput: IResourceTemplateComponentInput = {};
-  public submissionDateFlag = false;
   prevUnitSelect: string;
   contentId: string;
   showLargeModal: boolean;
@@ -142,13 +141,16 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       }
     };
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
-    this.submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
     if (this.programContext['status'] === 'Unlisted') {
       const request = {
         "key": "mvcLibraryFeature",
         "status": "active"
       }
       this.helperService.getProgramConfiguration(request).subscribe(res => {}, err => {});}
+  }
+
+  showBulkUploadOption() {
+    return !!(this.programsService.checkForContentSubmissionDate(this.programContext) && !this.isNominationPendingOrInitiated() && _.get(this.sessionContext, 'currentRole') === 'CONTRIBUTOR');
   }
 
   ngOnChanges(changed: any) {
