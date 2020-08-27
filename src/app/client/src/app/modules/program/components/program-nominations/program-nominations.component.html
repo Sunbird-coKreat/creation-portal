@@ -135,7 +135,7 @@
                         <div class="sb-color-gray-400 d-inline-block br-2 pr-10"><span class="fs-1-286 font-weight-bold">{{ totalNominations || 0}}</span> {{resourceService.frmelmnts.lbl.total}}</div>
                         <div class="sb-color-success d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{statusCount.Approved || 0}}</span> {{resourceService.frmelmnts.lbl.approved}}</div>
                         <div class="sb-color-error d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{statusCount.Rejected|| 0}}</span> {{resourceService.frmelmnts.lbl.rejected}}</div>
-                        <div class="sb-color-warning d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{ statusCount.Pending || 0}}</span> {{resourceService.frmelmnts.lbl.pending}}</div>
+                        <div class="sb-color-primary d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{ statusCount.Pending || 0}}</span> {{resourceService.frmelmnts.lbl.pending}}</div>
                         <button type="button" class="pull-right sb-btn sb-btn-normal sb-btn-outline-primary mb-5" *ngIf="!isEmptyObject(programDetails) && this.totalNominations > 0" (click)="downloadNominationList()"
                             appTelemetryInteract
                                                         [telemetryInteractEdata]="getTelemetryInteractEdata('download-nominationList', 'click', 'program-nominations')"

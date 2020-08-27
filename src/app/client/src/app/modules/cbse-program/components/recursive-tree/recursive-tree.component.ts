@@ -4,6 +4,7 @@ import { UserService, ProgramsService} from '@sunbird/core';
 import { ConfigService, ResourceService } from '@sunbird/shared';
 import { ProgramTelemetryService } from '../../../program/services';
 import { Router } from '@angular/router';
+import { HelperService } from '../../services/helper.service';
 
 @Component({
   selector: 'app-recursive-tree',
@@ -23,6 +24,7 @@ export class RecursiveTreeComponent implements OnInit {
   public showModal = false;
   public showAddresource = false;
   visibility: any;
+  mvcLibraryFeatureConfiguration: any;
   public unitIdentifier;
   public childlevel;
   public telemetryInteractCdata: any;
@@ -30,7 +32,7 @@ export class RecursiveTreeComponent implements OnInit {
   public sourcingOrgReviewer: boolean;
   public nodeStatusMessage: string;
   constructor(public userService: UserService, public configService: ConfigService, private programsService: ProgramsService,
-    public programTelemetryService: ProgramTelemetryService, public resourceService: ResourceService, public router: Router) { }
+    private helperService: HelperService, public programTelemetryService: ProgramTelemetryService, public resourceService: ResourceService, public router: Router) { }
 
   ngOnInit() {
     this.childlevel = this.level + 1;
@@ -38,6 +40,7 @@ export class RecursiveTreeComponent implements OnInit {
     this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
     const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
+    this.mvcLibraryFeatureConfiguration = this.helperService.mvcLibraryFeatureConfiguration;
 
     this.visibility = {};
     // tslint:disable-next-line:max-line-length

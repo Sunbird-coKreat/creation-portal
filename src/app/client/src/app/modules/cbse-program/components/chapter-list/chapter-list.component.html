@@ -103,7 +103,7 @@
               <app-bulk-approval [programContext]="programContext" [sessionContext]="sessionContext" [storedCollectionData]="storedCollectionData" [originalCollectionData]="originalCollectionData" (updateToc)="bulkApprovalSuccess($event)"></app-bulk-approval>
             </div>
             <app-bulk-upload 
-              *ngIf="sessionContext?.currentRole === 'CONTRIBUTOR' && submissionDateFlag"
+              *ngIf="showBulkUploadOption()"
               [sharedContext]="sharedContext" 
               [sessionContext]="sessionContext" 
               [programContext]="programContext"
@@ -141,7 +141,7 @@
       [ndcDynamicOutputs]="dynamicOutputs"></ndc-dynamic>
 </div>
 <div class="twelve wide column" *ngIf="!collectionHierarchy.length && !showLoader">
-  <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="handleBack()"
+  <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn px-20" (click)="handleBack()"
 						type="button"
 						appTelemetryInteract
 				[telemetryInteractEdata]="getTelemetryInteractEdata('chapter-list', 'click', 'chapter-list')"

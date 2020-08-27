@@ -252,7 +252,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         key: 'contentVideoSize',
         status: 'active'
       };
-      this.helperService.checkFileSizeLimit(request).subscribe(res => {
+      this.helperService.getProgramConfiguration(request).subscribe(res => {
         this.showUploadModal = true;
         this.initiateUploadModal();
         if (_.get(res, 'result.configuration.value')) {
@@ -507,13 +507,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.resourceStatus = this.contentMetaData.status;
       if (this.resourceStatus === 'Review') {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
-        this.resourceStatusClass = 'sb-color-warning';
+        this.resourceStatusClass = 'sb-color-primary';
       } else if (this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Review') {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
-        this.resourceStatusClass = 'sb-color-gray';
+        this.resourceStatusClass = 'sb-color-error';
       } else if (this.resourceStatus === 'Live' && _.isEmpty(this.sourcingReviewStatus)) {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
-        this.resourceStatusClass = 'sb-color-success';
+        this.resourceStatusClass = 'sb-color-warning';
       } else if (this.sourcingReviewStatus === 'Rejected') {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
         this.resourceStatusClass = 'sb-color-error';
@@ -533,7 +533,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         this.resourceStatusClass = '';
       } else {
         this.resourceStatusText = this.resourceStatus;
-        this.resourceStatusClass = 'sb-color-primary';
+        this.resourceStatusClass = 'sb-color-gray-300';
       }
 
       this.playerConfig = this.playerService.getConfig(contentDetails);
