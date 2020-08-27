@@ -147,8 +147,8 @@
         <div class="mt-20">
           <div class="ui list fs-0-785">
             <div class="item sb-color-error">{{resourceService?.frmelmnts?.lbl?.uploadFail}} : {{ process?.overall_stats?.upload_failed }}</div>
-            <div class="item sb-color-gray-200">{{resourceService?.frmelmnts?.lbl?.uploadSuccessful}} : {{ process?.overall_stats?.upload_success}}</div>
-            <div class="item sb-color-gray-200">{{resourceService?.frmelmnts?.lbl?.uploadRemaining}} : {{ process?.overall_stats?.upload_pending }}</div>
+            <div class="item sb-color-success">{{resourceService?.frmelmnts?.lbl?.uploadSuccessful}} : {{ process?.overall_stats?.upload_success}}</div>
+            <div class="item sb-color-warning">{{resourceService?.frmelmnts?.lbl?.uploadRemaining}} : {{ process?.overall_stats?.upload_pending }}</div>
           </div>
         </div>
         <!-- <button type="button" class="sb-btn sb-btn-normal sb-btn-success my-20"><i class="fa fa-download pr-10"></i>{{resourceService?.frmelmnts?.btn?.downloadStatusReport}}</button> -->
@@ -160,8 +160,8 @@
         <div class="mt-15">
           <div class="ui list fs-0-785">
             <div class="item sb-color-error">{{resourceService?.frmelmnts?.lbl?.uploadFail}} : {{ process?.overall_stats?.upload_failed }}</div>
-            <div class="item sb-color-gray-200">{{resourceService?.frmelmnts?.lbl?.contentUploaded}} : {{ process?.overall_stats?.total }}</div>
-            <div class="item sb-color-gray-200">{{resourceService?.frmelmnts?.lbl?.uploadSuccessful}} : {{ process?.overall_stats?.upload_success }}</div>
+            <div class="item sb-color-primary">{{resourceService?.frmelmnts?.lbl?.contentUploaded}} : {{ process?.overall_stats?.total }}</div>
+            <div class="item sb-color-success">{{resourceService?.frmelmnts?.lbl?.uploadSuccessful}} : {{ process?.overall_stats?.upload_success }}</div>
           </div>
         </div>
         <button type="button" class="sb-btn sb-btn-normal sb-btn-success my-10" (click)="downloadReport()">

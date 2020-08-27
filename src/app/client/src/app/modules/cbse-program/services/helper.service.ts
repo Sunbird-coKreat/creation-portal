@@ -11,6 +11,7 @@ import { ProgramStageService } from '../../program/services';
 })
 export class HelperService {
 
+  mvcLibraryFeatureConfiguration: any
   private sendNotification = new Subject<string>();
 
   constructor(private configService: ConfigService, private contentService: ContentService,
@@ -230,13 +231,15 @@ export class HelperService {
     });
   }
 
-   checkFileSizeLimit(reqData) {
+
+
+  getProgramConfiguration(reqData) {
     const option = {
       url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.CONFIGURATION_SEARCH}`,
       data: {
         request: {
-          key: 'contentVideoSize',
-          status: 'active'
+          key: reqData.key,
+          status: reqData.status
         }
       }
     };
@@ -246,10 +249,12 @@ export class HelperService {
         if (response !== 'successful') {
           return throwError(data);
         }
+       if (_.get(data, 'result.configuration.key') === 'mvcLibraryFeature') {
+          this.mvcLibraryFeatureConfiguration = _.get(data, 'result.configuration.value');
+       }
         return of(data);
       }));
   }
-
   apiErrorHandling(err, errorInfo) {
     this.toasterService.error(_.get(err, 'error.params.errmsg') || errorInfo.errorMsg);
   }
