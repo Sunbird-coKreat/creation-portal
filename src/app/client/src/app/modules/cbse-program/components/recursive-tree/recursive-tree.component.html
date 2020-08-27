@@ -54,7 +54,7 @@
         <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.draft}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.draft }}</span>
       </div>
-      <div class="sb-color-gray-300 sb-count" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.approvalPending">
+      <div class="sb-color-warning sb-count" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.approvalPending">
         <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approvalPending}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.approvalPending}}</span>
       </div>
