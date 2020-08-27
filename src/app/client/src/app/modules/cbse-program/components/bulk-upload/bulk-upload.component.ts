@@ -666,6 +666,7 @@ export class BulkUploadComponent implements OnInit {
   }
 
   openBulkUploadModal() {
+    this.bulkUploadState = 0;
     this.showBulkUploadModal = true;
     this.updateBulkUploadState('increment');
   }
