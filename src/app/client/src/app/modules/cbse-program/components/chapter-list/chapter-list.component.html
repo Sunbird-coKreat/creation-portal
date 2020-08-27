@@ -103,7 +103,7 @@
               <app-bulk-approval [programContext]="programContext" [sessionContext]="sessionContext" [storedCollectionData]="storedCollectionData" [originalCollectionData]="originalCollectionData" (updateToc)="bulkApprovalSuccess($event)"></app-bulk-approval>
             </div>
             <app-bulk-upload 
-              *ngIf="sessionContext?.currentRole === 'CONTRIBUTOR' && submissionDateFlag"
+              *ngIf="showBulkUploadOption()"
               [sharedContext]="sharedContext" 
               [sessionContext]="sessionContext" 
               [programContext]="programContext"
