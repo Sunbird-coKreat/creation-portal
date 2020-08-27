@@ -1,5 +1,5 @@
 <div class="d-flex">
-  <button *ngIf="approvalPending && approvalPending.length && showBulkApprovalButton" type="button" class="sb-btn sb-btn-normal sb-btn-primary text-inherit" (click)="showBulkApproveModal=true; bulkApprovalComfirmation=true">{{resourceService.frmelmnts.btn.bulkApproveContent}}</button>
+  <button [disabled]="!originalCollectionData || originalCollectionData && originalCollectionData.status !== 'Draft'" *ngIf="approvalPending && approvalPending.length && showBulkApprovalButton" type="button" class="sb-btn sb-btn-normal sb-btn-primary text-inherit" (click)="showBulkApproveModal=true; bulkApprovalComfirmation=true">{{resourceService.frmelmnts.btn.bulkApproveContent}}</button>
   <div class="divider mx-10" *ngIf="bulkApprove && bulkApprove.status === 'completed' && showBulkApprovalButton"></div>
   <div class="d-flex flex-dc">
     <div *ngIf="bulkApprove && bulkApprove.createdon">{{resourceService.frmelmnts.lbl.lastApproved}}: {{ bulkApprove?.createdon |  date:'LLLL d, yyyy'  }}</div>
