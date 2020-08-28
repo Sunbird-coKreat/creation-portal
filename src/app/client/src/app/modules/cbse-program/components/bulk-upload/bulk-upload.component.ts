@@ -156,7 +156,7 @@ export class BulkUploadComponent implements OnInit {
   }
 
   searchContentWithProcessId() {
-    this.bulkJobService.searchContentWithProcessId(this.process.process_id, "bulk_upload", false).subscribe((searchResponse) => {
+    this.bulkJobService.searchContentWithProcessId(this.process.process_id, "bulk_upload").subscribe((searchResponse) => {
       // console.log('searchResponse res', JSON.stringify(searchResponse));
       this.process.overall_stats.upload_failed = 0;
       this.process.overall_stats.upload_success = 0;
@@ -280,7 +280,7 @@ export class BulkUploadComponent implements OnInit {
           status = 'Success';
         }
         result['status'] = status
-        result['failedReason'] = this.getErrorMessage(_.get(content, 'importError', ''));
+        result['failedReason'] = _.get(content, 'importError', '');
 
         return result;
       });
@@ -546,17 +546,6 @@ export class BulkUploadComponent implements OnInit {
     return !!(this.userService.userProfile.userRegData
       && this.userService.userProfile.userRegData.Org
       && this.programContext.sourcing_org_name === this.userService.userProfile.userRegData.Org.name);
-  }
-
-  getErrorMessage(message) {
-    if (!message) {
-      return '';
-    }
-    const msg = _.split(message, 'Error Message : ');
-    if (msg.length !== 2) {
-      return '';
-    }
-    return msg[1];
   }
 
   getContentObject(row) {
