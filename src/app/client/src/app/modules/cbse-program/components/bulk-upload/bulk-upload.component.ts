@@ -280,7 +280,7 @@ export class BulkUploadComponent implements OnInit {
           status = 'Success';
         }
         result['status'] = status
-        result['failedReason'] = _.get(content, 'importError', '');
+        result['failedReason'] = _.get(content, 'importError', '') ||  _.get(content, 'publishError', '');
 
         return result;
       });
