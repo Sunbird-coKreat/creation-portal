@@ -27,7 +27,7 @@
               <div class="mt-8 practice-set__status">
                 <span class="sb-label sb-label-table sb-color-warning mr-10">{{resourceService.frmelmnts.lbl.correctionsPending}}</span>
                 <span class="sb-label sb-label-table" [ngClass]="resourceStatusClass">{{ resourceStatusText }}</span>
-                <span class="cursor-pointer fs-0-785 ml-8"
+                <!-- <span class="cursor-pointer fs-0-785 ml-8"
                   *ngIf="showSourcingOrgRejectComments() || showContributorOrgReviewComments()">
                   <i class="comment alternate outline icon sb-color-primary"></i>
                   <a (click)="showReviewModal=!showReviewModal"
@@ -36,6 +36,12 @@
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
+                  >View Comments</a>
+                </span> -->
+                <span class="cursor-pointer fs-0-785 ml-8"
+                 >
+                  <i class="comment alternate outline icon sb-color-primary"></i>
+                  <a (click)="showReviewModal=!showReviewModal" 
                   >View Comments</a>
                 </span>
                 <a id="viewContentOnDiksha" *ngIf="sourcingReviewStatus === 'Approved' && originPreviewUrl && originPreviewReady" class="sb-color-primary mr-8 pl-10 fs-0-785 font-weight-bold"
@@ -271,16 +277,12 @@
   [size]="'normal'" class="sb-modal" appBodyScroll
   (dismissed)="showReviewModal = !showReviewModal" #modal>
   <div class="sb-modal-header">
-      Review Comments
+      {{resourceService.frmelmnts.lbl.reviewComments}}
   </div>
   <div class="sb-modal-content">
       <div class="sb-publish-content">
         <div class="review-modal-list">
-          <!-- <ol class="list">
-            <li class="pb-8">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled </li>
-            <li class="pb-8">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled </li>
-            <li class="pb-8">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled </li>
-          </ol> -->
+           Rephrase questions 1-20 to passive voice for better retention.
           {{showSourcingOrgRejectComments() ? sourcingOrgReviewComments : contentMetaData.rejectComment}}
       </div>
       </div>
@@ -387,23 +389,23 @@
     </div>
   </form>
   </div>
-  <sui-modal *ngIf="showReviewPopup" [mustScroll]="true" [isClosable]="false" [transitionDuration]="0"
+  <sui-modal *ngIf="showReviewPopup" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
   [size]="'normal'" class="sb-modal" appBodyScroll #modal (dismissed)="showReviewPopup = false;">
   <div class="sb-modal-header">
-      {{resourceService.frmelmnts.lbl.sendBackCorrections}}
+      {{resourceService.frmelmnts.lbl.suggestCorrections}}
   </div>
   <form #FormControl="ngForm" class="ui form">
   <div class="sb-modal-content">
       <div class="sb-field-group">
-          <label class="fs-1 font-weight-normal pb-10">{{resourceService.frmelmnts.lbl.enterCorrectionDetailsSendToContributor}}</label>
+          <label class="fs-1 font-weight-normal pb-10">{{resourceService.frmelmnts.lbl.enterYourComments}}</label>
           <div class="sb-field relative">
-              <textarea type="text" class="wmd-input width-100 sb-form-control" placeholder="Enter correction details"></textarea>  
+              <textarea type="text" class="wmd-input width-100 sb-form-control" placeholder="Type something.."></textarea>  
           </div>
       </div>
   </div>
   <div class="sb-modal-actions">
-    <button type="submit" class="sb-btn sb-btn-normal"> send </button>
-    <button class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="modal.deny('denied')">{{ resourceService.frmelmnts.btn.cancel }}</button>
+    <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="modal.deny('denied')">{{resourceService.frmelmnts.btn.sendForCorrections}}</button>
+    <button type="submit" class="sb-btn sb-btn-normal sb-btn-outline-primary"> {{resourceService.frmelmnts.btn.cancel}} </button>
   </div>
 </form>
 </sui-modal>
