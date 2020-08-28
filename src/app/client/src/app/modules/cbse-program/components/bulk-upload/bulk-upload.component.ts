@@ -412,7 +412,7 @@ export class BulkUploadComponent implements OnInit {
       this.setError(`${headerName} contains more than ${maxLength} characters at row: ${rowNumber}`);
     };
 
-    const contentTypes = this.contentTypes.map((type) => type.name);
+    const contentTypes = _.union(_.concat(this.contentTypes.map((type) => type.name), this.contentTypes.map((type) => type.value)));
     const licenses = this.licenses.map((license) => license.name);
 
     const headers = [
@@ -580,7 +580,7 @@ export class BulkUploadComponent implements OnInit {
         audience: [row.audience],
         code: UUID.UUID(),
         mimeType: this.mimeTypes[_.toLower(row.fileFormat)],
-        contentType: this.getContentTypeDetails('name', row.contentType).value,
+        contentType: row.contentType,
         lastPublishedBy: userId,
         createdBy: userId,
         resourceType: 'Learn',
@@ -644,6 +644,24 @@ export class BulkUploadComponent implements OnInit {
 
   startBulkUpload(csvData) {
     this.completionPercentage = 0;
+
+    for (let i=0; i< csvData.length; i++) {
+      const row = csvData[i];
+      row.contentType = _.toLower(row.contentType);
+      let contentType = _.find(this.contentTypes, (content_type) => {
+        return (_.toLower(content_type.name) === row.contentType || _.toLower(content_type.value) === row.contentType);
+      });
+
+      if (_.isEmpty(_.get(contentType, 'value'))) {
+        this.setError(`Content Type has invalid value at row: ${i+1}`);
+        this.bulkUploadState = 4;
+        return;
+      }
+
+      row.contentType = _.get(contentType, 'value');
+      csvData[i] = row;
+    }
+
     this.createImportRequest(csvData).subscribe((importResponse) => {
       // console.log('createImportRequest res', JSON.stringify(importResponse));
       this.process.process_id = _.get(importResponse, 'result.processId');
@@ -666,6 +684,7 @@ export class BulkUploadComponent implements OnInit {
   }
 
   openBulkUploadModal() {
+    this.bulkUploadState = 0;
     this.showBulkUploadModal = true;
     this.updateBulkUploadState('increment');
   }

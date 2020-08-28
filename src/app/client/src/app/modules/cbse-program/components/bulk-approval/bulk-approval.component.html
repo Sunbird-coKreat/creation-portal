@@ -1,5 +1,5 @@
 <div class="d-flex">
-  <button *ngIf="approvalPending && approvalPending.length && showBulkApprovalButton" type="button" class="sb-btn sb-btn-normal sb-btn-primary text-inherit" (click)="showBulkApproveModal=true; bulkApprovalComfirmation=true">{{resourceService.frmelmnts.btn.bulkApproveContent}}</button>
+  <button [disabled]="!originalCollectionData || originalCollectionData && originalCollectionData.status !== 'Draft'" *ngIf="approvalPending && approvalPending.length && showBulkApprovalButton" type="button" class="sb-btn sb-btn-normal sb-btn-primary text-inherit" (click)="showBulkApproveModal=true; bulkApprovalComfirmation=true">{{resourceService.frmelmnts.btn.bulkApproveContent}}</button>
   <div class="divider mx-10" *ngIf="bulkApprove && bulkApprove.status === 'completed' && showBulkApprovalButton"></div>
   <div class="d-flex flex-dc">
     <div *ngIf="bulkApprove && bulkApprove.createdon">{{resourceService.frmelmnts.lbl.lastApproved}}: {{ bulkApprove?.createdon |  date:'LLLL d, yyyy'  }}</div>
@@ -8,7 +8,12 @@
       <span class="sb-loader sb-success-loader"></span>
       <span class="sb-color-warning fs-1"suiPopup popupText="Bulk approve of content is in progress, once finished you can initiate another batch">{{resourceService.frmelmnts.lbl.bulkApprovalInProgress}}</span>
     </div>
-    <a *ngIf="bulkApprove && bulkApprove.status" href="javascript:void(0)" (click)="showBulkApproveModal=true;viewBulkApprovalStatus()">{{resourceService.frmelmnts.lbl.viewDetails}}</a>
+    <a *ngIf="bulkApprove && bulkApprove.status" href="javascript:void(0)" (click)="showBulkApproveModal=true;viewBulkApprovalStatus()"
+    appTelemetryInteract
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('view-details', 'click', 'bulk-approval', {values: [bulkApprove.process_id]})"
+        [telemetryInteractObject]="telemetryInteractObject"
+        [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.viewDetails}}</a>
   </div>
 </div>
 
@@ -43,9 +48,9 @@
               <h5 class="sb-color-gray-400 font-weight-bold">{{resourceService.frmelmnts.lbl.bulkApprovalInProgress}}</h5>
               <div class="ui list fs-0-785">
                 <div class="item sb-color-error">{{resourceService.frmelmnts.lbl.contentApprovalFailed}} : {{bulkApprove?.overall_stats?.approve_failed}}</div>
-                <div class="item">{{resourceService.frmelmnts.lbl.approvedSuccessfully}} : {{bulkApprove?.overall_stats?.approve_success}}</div>
+                <div class="item sb-color-success">{{resourceService.frmelmnts.lbl.approvedSuccessfully}} : {{bulkApprove?.overall_stats?.approve_success}}</div>
                 <!-- <div class="item">{{resourceService.frmelmnts.lbl.contentSkipped}} : 45</div> -->
-                <div class="item">{{resourceService.frmelmnts.lbl.pendingApproval}} : {{bulkApprove?.overall_stats?.approve_pending}}</div>
+                <div class="item sb-color-warning">{{resourceService.frmelmnts.lbl.pendingApproval}} : {{bulkApprove?.overall_stats?.approve_pending}}</div>
               </div>
             </div>
 
@@ -55,7 +60,7 @@
               <div class="mt-15">
                 <div class="ui list fs-0-785">
                   <div class="item sb-color-error">{{resourceService.frmelmnts.lbl.contentApprovalFailed}} : {{bulkApprove?.overall_stats?.approve_failed}}</div>
-                  <div class="item">{{resourceService.frmelmnts.lbl.contentApprovalSuccessful}} : {{bulkApprove?.overall_stats?.approve_success}}</div>
+                  <div class="item sb-color-success">{{resourceService.frmelmnts.lbl.contentApprovalSuccessful}} : {{bulkApprove?.overall_stats?.approve_success}}</div>
                 </div>
                 <button *ngIf="bulkApprove.overall_stats && bulkApprove.overall_stats.approve_failed" type="button" class="sb-btn sb-btn-normal sb-btn-success my-20" (click)="downloadFailedContentReport()"><i class="fa fa-download pr-10"></i>{{resourceService.frmelmnts.btn.downloadReport}}</button>
               </div>
@@ -63,7 +68,12 @@
       </div>
   </div>
   <div class="sb-modal-actions">
-    <button *ngIf="bulkApprovalComfirmation" type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showBulkApproveModal=false;bulkApprovalComfirmation=false;bulkApproval()">{{resourceService.frmelmnts.btn.yes}}</button> 
+    <button *ngIf="bulkApprovalComfirmation" type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showBulkApproveModal=false;bulkApprovalComfirmation=false;bulkApproval()"
+    appTelemetryInteract
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('confirm-bulk-approval', 'click', 'bulk-approval')"
+        [telemetryInteractObject]="telemetryInteractObject"
+        [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.yes}}</button> 
     <button *ngIf="bulkApprovalComfirmation" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showBulkApproveModal=false;bulkApprovalComfirmation=false">{{resourceService.frmelmnts.btn.no}}</button>
     <div *ngIf="!bulkApprovalComfirmation" class="d-flex flex-jc-space-between">
         <div class="sb-color-gray-200 fxsmall line-height-1-3 w-80">
