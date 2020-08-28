@@ -66,20 +66,20 @@
             </dl>
           </div>
         </div>
-        <!-- <div *ngIf="sampleContent" class="sb-meta-data-container sb-meta-data-column d-flex flex-w-wrap ml-16">
+        <div *ngIf="sampleContent" class="sb-meta-data-container sb-meta-data-column d-flex flex-w-wrap ml-16">
           <label class="d-block width-100" >Number of Samples</label>
           <div class="d-flex">
             <dl class="sb-meta-data">
-              <dt *ngIf="!isSourcingOrgReviewer()">{{countData['sampleContenttotal'] || 0}}</dt>
+              <!-- <dt *ngIf="!isSourcingOrgReviewer()">{{countData['sampleContenttotal'] || 0}}</dt> -->
               <dt *ngIf="isNominationPendingOrInitiated()">{{countData['nominatedUserSample'] || 0}}</dt>
               <dd>Total Content</dd>
             </dl>
-            <dl *ngIf="!isSourcingOrgReviewer() && !isNominationPendingOrInitiated()" class="sb-meta-data">
+            <!-- <dl *ngIf="!isSourcingOrgReviewer() && !isNominationPendingOrInitiated()" class="sb-meta-data">
               <dt>{{countData['sampleMycontribution'] || 0 }}</dt>
               <dd>My Content</dd>
-            </dl>
+            </dl> -->
           </div>
-        </div> -->
+        </div>
 
         <div class="sb-textbook-allchapters sb-field">
           <label class="fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.selectChapters}}</label>
