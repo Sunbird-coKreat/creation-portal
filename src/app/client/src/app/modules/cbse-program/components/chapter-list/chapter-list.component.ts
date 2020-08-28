@@ -362,6 +362,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
   getFolderLevelCount(collections) {
     let status = this.sampleContent ? ['Review', 'Draft'] : [];
+    let prevStatus;
     let createdBy, visibility;
     if (this.sampleContent === false && this.isSourcingOrgReviewer()) {
       if (this.sourcingOrgReviewer) {
@@ -373,16 +374,18 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       createdBy = this.currentUserID;
     }
     if (this.isContributingOrgReviewer()) {
-      status = ['Review'];
+      status = ['Review', 'Live'];
+      prevStatus = 'Review';
     }
     if (this.isNominationByOrg()) {
       _.forEach(collections, collection => {
-        this.getContentCountPerFolder(collection , status , this.sampleContent, this.getNominationId('org'), createdBy, visibility);
+        // tslint:disable-next-line:max-line-length
+        this.getContentCountPerFolder(collection , status , this.sampleContent, this.getNominationId('org'), createdBy, visibility, prevStatus);
       });
     } else {
       _.forEach(collections, collection => {
         createdBy = this.getNominationId('individual');
-        this.getContentCountPerFolder(collection , status , this.sampleContent, undefined, createdBy, visibility);
+        this.getContentCountPerFolder(collection , status , this.sampleContent, undefined, createdBy, visibility, prevStatus);
       });
     }
   }
@@ -887,13 +890,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   // tslint:disable-next-line:max-line-length
-  getContentCountPerFolder(collection, contentStatus?: string[], onlySample?: boolean, organisationId?: string, createdBy?: string, visibility?: boolean) {
+  getContentCountPerFolder(collection, contentStatus?: string[], onlySample?: boolean, organisationId?: string, createdBy?: string, visibility?: boolean, prevStatus?: string) {
     const self = this;
     collection.totalLeaf = 0;
     collection.sourcingStatusDetail = {};
     _.each(collection.children, child => {
       // tslint:disable-next-line:max-line-length
-      const [restOfTheStatus, totalLeaf] = self.getContentCountPerFolder(child, contentStatus, onlySample, organisationId, createdBy, visibility);
+      const [restOfTheStatus, totalLeaf] = self.getContentCountPerFolder(child, contentStatus, onlySample, organisationId, createdBy, visibility, prevStatus);
       collection.totalLeaf += totalLeaf;
       if (!_.isEmpty(restOfTheStatus)) {
         // tslint:disable-next-line:max-line-length
@@ -902,13 +905,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     });
 
     // tslint:disable-next-line:max-line-length
-    collection.totalLeaf += collection.leaf ? this.filterContentsForCount(collection.leaf, contentStatus, onlySample, organisationId, createdBy, visibility) : 0;
+    collection.totalLeaf += collection.leaf ? this.filterContentsForCount(collection.leaf, contentStatus, onlySample, organisationId, createdBy, visibility, prevStatus) : 0;
     if (collection.totalLeaf > 0) {
       // collection.sourcingStatus = this.setUnitContentsStatusCount(collection.leaf);
       const unitContentStatusCount =  this.setUnitContentsStatusCount(collection.leaf);
-      if(!_.isEmpty(unitContentStatusCount)) {
+      if (!_.isEmpty(unitContentStatusCount)) {
         // tslint:disable-next-line:max-line-length
-        collection.sourcingStatusDetail = _.mergeWith(this.setUnitContentsStatusCount(collection.leaf), _.cloneDeep(collection.sourcingStatusDetail), this.addTwoObjects);
+        collection.sourcingStatusDetail = _.mergeWith(unitContentStatusCount, _.cloneDeep(collection.sourcingStatusDetail), this.addTwoObjects);
       }
     }
     // tslint:disable-next-line:max-line-length
@@ -923,23 +926,30 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
 
-  filterContentsForCount (contents, status?, onlySample?, organisationId?, createdBy?, visibility?) {
+  filterContentsForCount (contents, status?, onlySample?, organisationId?, createdBy?, visibility?, prevStatus?) {
     const filter = {
       ...(onlySample && {sampleContent: true}),
       ...(!onlySample && {sampleContent: null}),
       ...(createdBy && {createdBy}),
       ...(organisationId && {organisationId}),
-      ...(visibility && {visibility}),
+      ...(visibility && {visibility})
     };
     if (status && status.length > 0) {
-      contents = _.filter(contents, leaf => _.includes(status, leaf.status));
+      contents = _.filter(contents, leaf => {
+        if (prevStatus && leaf.status === 'Draft' && leaf.prevStatus === 'Review') {
+          return true;
+        } else {
+          return _.includes(status, leaf.status);
+        }
+      });
     }
+
     let leaves;
     if (this.router.url.includes('/sourcing')) {
        leaves = _.concat(_.filter(contents, filter));
     } else {
        leaves = _.concat(_.filter(contents, filter), _.filter(contents, 'sourceURL'));
-      }
+    }
     return leaves.length;
   }
 
@@ -956,6 +966,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           } else if (content.sourcingStatus === 'Rejected') {
             contentStatusCount['rejected'] += 1;
           } else if (content.status === 'Live' && content.sourceURL && content.sourcingStatus === 'Approved') {
+            contentStatusCount['approvalPending'] += 1;
+          } else if (content.status === 'Live' && content.sourcingStatus === 'Approved') {
             contentStatusCount['approvalPending'] += 1;
           } else if (content.sourcingStatus === null && content.prevStatus === 'Processing') {
             contentStatusCount['approvalPending'] += 1;
@@ -979,7 +991,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
             contentStatusCount['approvalPending'] += 1;
           } else if (content.status === 'Review') {
             contentStatusCount['reviewPending'] += 1;
-          } else if (content.status === 'Draft' && !content.prevStatus) {
+          } else if (content.status === 'Draft' && !content.prevStatus && this.isContributingOrgAdmin()) {
             contentStatusCount['draft'] += 1;
           } else if (content.sourcingStatus === 'Approved' && content.status === 'Live') {
             contentStatusCount['approved'] += 1;
@@ -996,7 +1008,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       contentStatusCount['approved'] = 0;
       contentStatusCount['draft'] = 0;
       _.forEach(contents, (content) => {
-        if (content.organisationId === this.myOrgId && !content.sourceURL && !content.sampleContent) {
+        // tslint:disable-next-line:max-line-length
+        if (content.organisationId === this.myOrgId && !content.sourceURL && !content.sampleContent && content.createdBy === this.currentUserID) {
           if (content.status === 'Draft' && content.prevStatus === 'Review') {
             contentStatusCount['notAccepted'] += 1;
           } else if (content.status === 'Live' && !content.sourcingStatus) {
@@ -1010,12 +1023,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           } else if (content.status === 'Draft' && !content.prevStatus) {
             contentStatusCount['draft'] += 1;
           }
-        } else if (content.status === 'Live' && content.sourceURL && content.sourcingStatus === 'Approved'){
-          contentStatusCount['approved'] += 1;
-        } else if (content.status === 'Live' && content.sourceURL && content.sourcingStatus === 'Rejected'){
-          contentStatusCount['rejected'] += 1;
-        } else if (content.status === 'Live' && content.sourceURL){
-          contentStatusCount['approvalPending'] += 1;
         }
       });
     } else if (this.sessionContext.currentOrgRole === 'individual') {
@@ -1027,7 +1034,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         if (content.createdBy === this.userService.userProfile.userId && !content.sampleContent) {
           if (content.status === 'Draft' && !content.prevStatus) {
             contentStatusCount['draft'] += 1;
-          } else if (content.status === 'Live' && !content.sourcingStatus && content.sourceURL) {
+          } else if (content.status === 'Live' && !content.sourcingStatus) {
             contentStatusCount['approvalPending'] += 1;
           } else if (content.sourcingStatus === 'Approved' && content.status === 'Live') {
             contentStatusCount['approved'] += 1;
