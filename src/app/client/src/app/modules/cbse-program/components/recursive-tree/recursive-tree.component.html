@@ -11,10 +11,9 @@
      <div *ngIf="sourcingOrgReviewer && collection.sourcingStatusDetail" class="single-row">
       <div class="sb-color-warning sb-count">
         <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.correctionsPending}}:</span> 
-        <span class="font-weight-bold"> 0</span>
-        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.approvalPending}}:</span> 
-        <span class="font-weight-bold"> {{collection.sourcingStatus && collection.sourcingStatus.approvalPending}}</span>
-        <span class="font-weight-bold"> {{collection.sourcingStatusDetail.approvalPending}}{{collection.sourcingStatusDetail && collection.sourcingStatusDetail.approvalPending}}</span>
+        <span class="font-weight-bold mr-10"> 0</span>
+        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.approvalPending}}:</span>
+        <span class="font-weight-bold">{{collection.sourcingStatusDetail && collection.sourcingStatusDetail.approvalPending}}</span>
       </div>
       <div class="sb-count sb-color-success">
         <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approved}}:</span>
@@ -61,7 +60,7 @@
         <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approvalPending}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.approvalPending}}</span>
       </div>
-      <div class="sb-color-gray-success sb-count" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.approved">
+      <div class="sb-color-success sb-count" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.approved">
         <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approved}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.approved}}</span>
       </div>
