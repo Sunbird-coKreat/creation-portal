@@ -412,7 +412,7 @@ export class BulkUploadComponent implements OnInit {
       this.setError(`${headerName} contains more than ${maxLength} characters at row: ${rowNumber}`);
     };
 
-    const contentTypes = this.contentTypes.map((type) => type.name);
+    const contentTypes = _.union(_.concat(this.contentTypes.map((type) => type.name), this.contentTypes.map((type) => type.value)));
     const licenses = this.licenses.map((license) => license.name);
 
     const headers = [
