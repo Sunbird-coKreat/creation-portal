@@ -51,6 +51,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public direction = 'asc';
   public sortColumn = '';
   public sourcingOrgUser = [];
+  public initialSourcingOrgUser = [];
   public sourcingOrgUserCnt = 0;
   public roles;
   roleNames;
@@ -89,10 +90,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   pager: IPagination;
   pageNumber = 1;
-  pageLimit = 200;
+  pageLimit = 10;
   pagerUsers: IPagination;
   pageNumberUsers = 1;
-
+  searchInput: any;
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
      private activatedRoute: ActivatedRoute, private router: Router,
@@ -247,6 +248,24 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     }
     this.sortColumn = column;
   }
+  getUserDetailsBySearch(clearInput?) {
+    clearInput ? this.searchInput = '': this.searchInput;
+    if (this.searchInput) {
+      let filteredUser = this.registryService.getSearchedUserList(this.initialSourcingOrgUser, this.searchInput);
+      this.sortUsersList(filteredUser);
+    } else {
+      this.sortUsersList(this.initialSourcingOrgUser);
+    }
+  }
+
+  sortUsersList(usersList) {
+     this.sourcingOrgUserCnt = usersList.length;
+     this.paginatedSourcingUsers = this.programsService.sortCollection(usersList, 'selectedRole', 'desc');
+     usersList = _.chunk(usersList, this.pageLimit);
+     this.paginatedSourcingUsers = usersList;
+     this.sourcingOrgUser = usersList[0];
+     this.pagerUsers = this.paginationService.getPager(this.sourcingOrgUserCnt, 1 , this.pageLimit);
+ }
 
   getsourcingOrgReviewers (offset?, iteration?) {
     const userRegData = {};
@@ -257,6 +276,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           this.sourcingOrgUserCnt = this.paginatedSourcingUsers.length;
           this.readRolesOfOrgUsers();
           this.paginatedSourcingUsers = this.programsService.sortCollection(this.paginatedSourcingUsers, 'selectedRole', 'desc');
+          this.initialSourcingOrgUser = this.paginatedSourcingUsers;
           this.paginatedSourcingUsers = _.chunk( this.paginatedSourcingUsers, this.pageLimit);
           this.sourcingOrgUser = this.paginatedSourcingUsers[this.pageNumber - 1];
           this.pagerUsers = this.paginationService.getPager(this.sourcingOrgUserCnt, this.pageNumberUsers, this.pageLimit);
@@ -311,6 +331,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 	 * @example navigateToPage(1)
 	 */
   navigateToSourcingPage(page: number): undefined | void {
+    console.log(">>>>>>>>>>>>>>>>>");
+    console.log(this.sourcingOrgUser, 'this.sourcingOrgUser');
+    console.log(this.paginatedSourcingUsers, 'this.paginatedSourcingUsers');
     if (page < 1 || page > this.pagerUsers.totalPages) {
       return;
     }

@@ -83,10 +83,12 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   pageLimit = 250;
   sharedContext;
   showSkipReview = false;
-
+  searchInput: any;
+  initialSourcingOrgUser = [];
   public telemetryPageId = 'collection';
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
+  public telemetryInteractObject: any;
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
     public extPluginService: ExtPluginService, public userService: UserService,
@@ -112,6 +114,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.programStageService.addStage('programComponent');
     this.currentStage = 'programComponent';
+    this.telemetryInteractObject = {};
     this.telemetryInteractCdata = [{
       id: this.activatedRoute.snapshot.params.programId,
       type: 'Program'
@@ -318,7 +321,23 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
   }
-
+  getUserDetailsBySearch(clearInput?) {
+    clearInput ? this.searchInput = '': this.searchInput;
+    if (this.searchInput) {
+      let filteredUser = this.registryService.getSearchedUserList(this.initialSourcingOrgUser, this.searchInput);
+      this.sortUsersList(filteredUser);
+    } else {
+      this.sortUsersList(this.initialSourcingOrgUser);
+    }
+  }
+  sortUsersList(usersList) {
+     this.OrgUsersCnt = usersList.length;
+     this.paginatedContributorOrgUsers = this.programsService.sortCollection(usersList, 'selectedRole', 'desc');
+     usersList = _.chunk(usersList, this.pageLimit);
+     this.paginatedContributorOrgUsers = usersList;
+     this.contributorOrgUser = usersList[0];
+     this.pager = this.paginationService.getPager(this.OrgUsersCnt, 1 , this.pageLimit);
+  }
   setOrgUsers(orgUsers) {
     if (_.isEmpty(orgUsers)) {
       this.showUsersLoader = false;
@@ -409,6 +428,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
 
   sortOrgUsers(column) {
     this.allContributorOrgUsers = this.programsService.sortCollection(this.allContributorOrgUsers, column, this.directionOrgUsers);
+    this.initialSourcingOrgUser =  this.allContributorOrgUsers;
     this.paginatedContributorOrgUsers = _.chunk(this.allContributorOrgUsers, this.pageLimit);
     this.contributorOrgUser = this.paginatedContributorOrgUsers[this.pageNumber - 1];
     this.pager = this.paginationService.getPager(this.OrgUsersCnt, this.pageNumber, this.pageLimit);

@@ -335,4 +335,14 @@ export class RegistryService extends DataService {
       });
     });
   }
+  
+  public getSearchedUserList(userList,searchInput) {
+    let searchedUserList = [];
+    _.forEach(userList, (user) => {
+      if (user.firstName.includes(searchInput)) {
+        searchedUserList.push(user);
+      }
+    });
+    return searchedUserList;
+  }
 }
