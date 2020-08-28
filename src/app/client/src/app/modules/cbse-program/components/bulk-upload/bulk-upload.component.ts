@@ -411,6 +411,9 @@ export class BulkUploadComponent implements OnInit {
     const maxLengthError = (headerName, rowNumber, columnNumber, maxLength, length) => {
       this.setError(`${headerName} contains more than ${maxLength} characters at row: ${rowNumber}`);
     };
+    const extraHeaderError = (invalidColumns, expectedColumns, foundColumns) => {
+      this.setError(`Invalid data found in columns: ${invalidColumns.join(",")}`);
+    };
 
     const contentTypes = _.union(_.concat(this.contentTypes.map((type) => type.name), this.contentTypes.map((type) => type.value)));
     const licenses = this.licenses.map((license) => license.name);
@@ -489,7 +492,8 @@ export class BulkUploadComponent implements OnInit {
       maxRows: this.bulkUploadConfig.maxRows,
       validateRow,
       maxRowsError,
-      noRowsError
+      noRowsError,
+      extraHeaderError
     };
   }
 
