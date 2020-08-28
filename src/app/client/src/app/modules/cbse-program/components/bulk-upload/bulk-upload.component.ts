@@ -649,7 +649,7 @@ export class BulkUploadComponent implements OnInit {
       const row = csvData[i];
       row.contentType = _.toLower(row.contentType);
       let contentType = _.find(this.contentTypes, (content_type) => {
-        return _.toLower(content_type.name) === row.contentType;
+        return (_.toLower(content_type.name) === row.contentType || _.toLower(content_type.value) === row.contentType);
       });
 
       if (_.isEmpty(_.get(contentType, 'value'))) {
