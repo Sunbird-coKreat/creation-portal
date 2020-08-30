@@ -466,4 +466,21 @@ export class UserService {
     return this.learnerService.post(option);
   }
 
+  public getMyRoleForNomination(nomination, userId?) {
+    if (_.isUndefined(userId)) {
+      userId = _.get(this, 'userProfile.userId');
+    }
+    const contributors = _.get(nomination, 'rolemapping.CONTRIBUTOR', []);
+    const reviewers = _.get(nomination, 'rolemapping.REVIEWER', []);
+    const roles = [];
+
+    if (!_.isEmpty(contributors) && contributors.includes(userId)) {
+      roles.push('contributor');
+    }
+    if (!_.isEmpty(reviewers) && reviewers.includes(userId)) {
+      roles.push('reviewer');
+    }
+    return roles;
+  }
+
 }

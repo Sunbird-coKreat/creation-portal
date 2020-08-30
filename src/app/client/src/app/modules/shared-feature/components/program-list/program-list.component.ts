@@ -45,13 +45,13 @@ export class ProgramListComponent implements OnInit {
   showDeleteModal = false;
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
-    public router: Router, private datePipe: DatePipe, public configService: ConfigService ) { }
+    public router: Router, private datePipe: DatePipe, public configService: ConfigService) { }
 
   ngOnInit() {
     this.checkIfUserIsContributor();
     this.issourcingOrgAdmin = this.isSourcingOrgAdmin();
     this.telemetryInteractCdata = [];
-    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
+    this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
   }
 
@@ -59,35 +59,35 @@ export class ProgramListComponent implements OnInit {
    * Check if logged in user is contributor or sourcing org
    */
   private checkIfUserIsContributor() {
-      // TODO implement based on api and remove url checks
-      // this.isContributor = !isContributor;
-      const orgId = this.activatedRoute.snapshot.params.orgId;
+    // TODO implement based on api and remove url checks
+    // this.isContributor = !isContributor;
+    const orgId = this.activatedRoute.snapshot.params.orgId;
 
-      // Check if user part of that organisation
-      if (this.router.url.includes('/join/' + orgId)) {
-          this.programsService.addUsertoContributorOrg(orgId);
-      }
-      if (this.isContributorOrgUser()
+    // Check if user part of that organisation
+    if (this.router.url.includes('/join/' + orgId)) {
+      this.programsService.addUsertoContributorOrg(orgId);
+    }
+    if (this.isContributorOrgUser()
       && !this.router.url.includes('/sourcing')
-      &&  !this.router.isActive('/contribute/myenrollprograms', true)) {
-        return this.router.navigateByUrl('/contribute/myenrollprograms');
-      }
+      && !this.router.isActive('/contribute/myenrollprograms', true)) {
+      return this.router.navigateByUrl('/contribute/myenrollprograms');
+    }
 
-      this.isContributor = this.router.url.includes('/contribute');
-      this.activeAllProgramsMenu =  this.router.isActive('/contribute', true);
-      this.activeMyProgramsMenu = this.router.isActive('/contribute/myenrollprograms', true);
+    this.isContributor = this.router.url.includes('/contribute');
+    this.activeAllProgramsMenu = this.router.isActive('/contribute', true);
+    this.activeMyProgramsMenu = this.router.isActive('/contribute/myenrollprograms', true);
 
-      if (this.isContributor) {
-        if (this.activeMyProgramsMenu) {
-          this.getMyProgramsForContrib(['Live', 'Unlisted']);
-        } else if (this.activeAllProgramsMenu) {
-          this.getAllProgramsForContrib('public', ['Live', 'Unlisted']);
-        } else {
-          this.showLoader = false;
-        }
+    if (this.isContributor) {
+      if (this.activeMyProgramsMenu) {
+        this.getMyProgramsForContrib(['Live', 'Unlisted']);
+      } else if (this.activeAllProgramsMenu) {
+        this.getAllProgramsForContrib('public', ['Live', 'Unlisted']);
       } else {
-        this.getMyProgramsForOrg();
+        this.showLoader = false;
       }
+    } else {
+      this.getMyProgramsForOrg();
+    }
   }
 
   isUserOrgAdmin() {
@@ -143,13 +143,13 @@ export class ProgramListComponent implements OnInit {
 
         this.showDeleteModal = true;
       },
-      error =>{
-        console.log(error);
-    });
+        error => {
+          console.log(error);
+        });
 
   }
 
-  deleteProject($event: MouseEvent){
+  deleteProject($event: MouseEvent) {
     if (!this.issourcingOrgAdmin) {
       this.toasterService.error(this.resourceService.messages.imsg.m0035);
       return this.router.navigate(['home']);
@@ -165,8 +165,8 @@ export class ProgramListComponent implements OnInit {
         this.toasterService.success(this.resourceService.frmelmnts.lbl.successTheProjectHasBeenDeleted);
         ($event.target as HTMLButtonElement).disabled = false;
         this.programs.splice(this.programIndex, 1);
-        this.showDeleteModal=false;
-        },
+        this.showDeleteModal = false;
+      },
       (err) => {
         console.log(err, err)
         this.toasterService.error(this.resourceService.frmelmnts.lbl.errorMessageTheProjectHasBeenDeleted);
@@ -191,16 +191,16 @@ export class ProgramListComponent implements OnInit {
             this.programsService.getNominationList(filters)
               .subscribe(
                 (nominationsResponse) => {
-                const nominations = _.get(nominationsResponse, 'result');
-                let enrolledPrograms = [];
-                if (!_.isEmpty(nominations)) {
-                  enrolledPrograms = _.uniq(_.map(nominations, 'program_id'));
-                }
-                this.filterOutEnrolledPrograms(allPrograms, enrolledPrograms);
-              }, (error) => {
-                console.log(error);
-                this.toasterService.error(this.resourceService.messages.emsg.projects.m0002);
-              });
+                  const nominations = _.get(nominationsResponse, 'result');
+                  let enrolledPrograms = [];
+                  if (!_.isEmpty(nominations)) {
+                    enrolledPrograms = _.uniq(_.map(nominations, 'program_id'));
+                  }
+                  this.filterOutEnrolledPrograms(allPrograms, enrolledPrograms);
+                }, (error) => {
+                  console.log(error);
+                  this.toasterService.error(this.resourceService.messages.emsg.projects.m0002);
+                });
           } else {
             this.iscontributeOrgAdmin = false;
             const req = {
@@ -214,7 +214,7 @@ export class ProgramListComponent implements OnInit {
               }
             };
             this.programsService.getMyProgramsForContrib(req)
-            .subscribe((myProgramsResponse) => {
+              .subscribe((myProgramsResponse) => {
                 const enrolledPrograms = _.map(_.get(myProgramsResponse, 'result.programs'), (nomination: any) => {
                   return nomination.program_id;
                 });
@@ -223,7 +223,7 @@ export class ProgramListComponent implements OnInit {
                 this.showLoader = false;
                 this.toasterService.error(_.get(error, 'error.params.errmsg') || this.resourceService.messages.emsg.projects.m0001);
               }
-            );
+              );
           }
         } else {
           this.showLoader = false;
@@ -259,7 +259,7 @@ export class ProgramListComponent implements OnInit {
     const filteredProgram = [];
     _.forEach(programs, (program) => {
       const nominationEndDate = this.datePipe.transform(program.nomination_enddate, 'yyyy-MM-dd');
-      if (nominationEndDate >= dates ) {
+      if (nominationEndDate >= dates) {
         filteredProgram.push(program);
       }
     });
@@ -267,7 +267,7 @@ export class ProgramListComponent implements OnInit {
   }
 
   sortCollection(column) {
-    this.programs =  this.programsService.sortCollection(this.tempSortPrograms, column, this.direction);
+    this.programs = this.programsService.sortCollection(this.tempSortPrograms, column, this.direction);
     if (this.direction === 'asc' || this.direction === '') {
       this.direction = 'desc';
     } else {
@@ -283,7 +283,7 @@ export class ProgramListComponent implements OnInit {
 
   public getContributionProgramList(req) {
     this.programsService.getMyProgramsForContrib(req)
-        .subscribe((response) => {
+      .subscribe((response) => {
         this.programs = _.map(_.get(response, 'result.programs'), (nomination: any) => {
           if (nomination.program) {
             nomination.program = _.merge({}, nomination.program, {
@@ -291,16 +291,15 @@ export class ProgramListComponent implements OnInit {
               nomination_status: nomination.status,
               nominated_collection_ids: nomination.collection_ids
             });
-            return  nomination.program;
-          } else {
-            nomination = _.merge({}, nomination, {
-              contributionDate: nomination.createdon,
-              nomination_status: nomination.status,
-              nominated_collection_ids: nomination.collection_ids
-            });
-            return  nomination;
+            return nomination.program;
           }
 
+          nomination = _.merge({}, nomination, {
+            contributionDate: nomination.createdon,
+            nomination_status: nomination.status,
+            nominated_collection_ids: nomination.collection_ids
+          });
+          return nomination;
         });
         this.showLoader = false;
         this.enrollPrograms = this.programs;
@@ -316,103 +315,8 @@ export class ProgramListComponent implements OnInit {
    * fetch the list of programs.
    */
   private getMyProgramsForContrib(status) {
-    // If user is an org
-    if (this.checkIfUserBelongsToOrg()) {
-      // If user is not an org admin
-      if (!this.isUserOrgAdmin()) {
-        const filters = {
-          organisation_id: this.userService.userProfile.userRegData.User_Org.orgId
-        };
-        this.iscontributeOrgAdmin = false;
-        this.programsService.getNominationList(filters)
-        .subscribe(
-          (data) => {
-            // Get only those programs for which user has been added contributor or reviewer and the nomination is in "Approved" state
-            if (data.result && data.result.length > 0) {
-              this.nominationList = _.uniq(_.map(_.filter(data.result, obj => {
-                if (obj.rolemapping
-                  && (( obj.rolemapping.CONTRIBUTOR && obj.rolemapping.CONTRIBUTOR.includes(_.get(this.userService, 'userProfile.userId' )))
-                  || ( obj.rolemapping.REVIEWER && obj.rolemapping.REVIEWER.includes(_.get(this.userService, 'userProfile.userId' ))))
-                  && obj.status === 'Approved') {
-                    this.roleMapping.push(obj);
-                    return obj;
-                  }
-              }), 'program_id'));
-              if (!_.isUndefined(this.nominationList) && this.nominationList.length > 0) {
-                const req = {
-                  request: {
-                    filters: {
-                      program_id: this.nominationList,
-                      status: status
-                    }
-                  }
-                };
-                this.getContributionProgramList(req);
-              } else {
-                this.showLoader = false;
-              }
-            } else {
-              this.showLoader = false;
-            }
-          }, (error) => {
-            console.log(error);
-            this.toasterService.error(this.resourceService.messages.emsg.projects.m0002);
-          });
-        } else {
-          // If user is an org admin
-          const filters = {
-            organisation_id: this.userService.userProfile.userRegData.User_Org.orgId
-          };
-          this.iscontributeOrgAdmin = true;
-          this.programsService.getNominationList(filters)
-            .subscribe(
-              (nominationsResponse) => {
-              const nominations = _.get(nominationsResponse, 'result');
-              if (!_.isEmpty(nominations)) {
-                this.nominationList = _.uniq(_.map(nominations, 'program_id'));
-                const req = {
-                  request: {
-                    filters: {
-                      program_id: this.nominationList,
-                      status: status
-                    }
-                  }
-                };
-                this.programsService.getMyProgramsForContrib(req).subscribe((programsResponse) => {
-                  // Get only those programs for which the nominations are added
-                  const programs = _.get(programsResponse, 'result.programs');
-                  this.programs = _.map(programs, (program) => {
-                    const nomination = _.find(nominations, (n) => {
-                      return n.program_id === program.program_id;
-                    });
-                    if (nomination) {
-                      program = _.merge(program , {
-                        contributionDate: nomination.createdon,
-                        nomination_status: nomination.status,
-                        nominated_collection_ids: nomination.collection_ids
-                      });
-                      return program;
-                    }
-                  });
-                  this.enrollPrograms = this.programs;
-                  this.tempSortPrograms = this.programs;
-                  this.count = this.programs.length;
-                  this.sortColumn = 'createdon';
-                  this.direction = 'desc';
-                  this.sortCollection(this.sortColumn);
-                  this.showLoader = false;
-              });
-            } else {
-              this.showLoader = false;
-            }
-          }, (error) => {
-            this.showLoader = false;
-            console.log(error);
-            this.toasterService.error(this.resourceService.messages.emsg.projects.m0002);
-          });
-      }
-    } else {
-      // If user is an individual user
+    // If user is an individual user
+    if (!this.checkIfUserBelongsToOrg()) {
       const req = {
         request: {
           filters: {
@@ -424,24 +328,116 @@ export class ProgramListComponent implements OnInit {
         }
       };
       this.getContributionProgramList(req);
+      return;
     }
+
+    // If user is an org admin
+    if (this.isUserOrgAdmin()) {
+      this.iscontributeOrgAdmin = true;
+      this.getNominationsByMyOrg().subscribe(
+        (nominationsResponse) => {
+          const nominations = _.get(nominationsResponse, 'result');
+          if (_.isEmpty(nominations)) {
+            this.showLoader = false;
+            return;
+          }
+
+          this.nominationList = _.uniq(_.map(nominations, 'program_id'));
+          const req = {
+            request: {
+              filters: {
+                program_id: this.nominationList,
+                status: status
+              }
+            }
+          };
+          this.programsService.getMyProgramsForContrib(req).subscribe((programsResponse) => {
+            // Get only those programs for which the nominations are added
+            const programs = _.get(programsResponse, 'result.programs');
+            this.programs = _.map(programs, (program) => {
+              const nomination = _.find(nominations, (n) => {
+                return n.program_id === program.program_id;
+              });
+              if (nomination) {
+                program = _.merge(program, {
+                  contributionDate: nomination.createdon,
+                  nomination_status: nomination.status,
+                  nominated_collection_ids: nomination.collection_ids
+                });
+                return program;
+              }
+            });
+            this.enrollPrograms = this.programs;
+            this.tempSortPrograms = this.programs;
+            this.count = this.programs.length;
+            this.sortColumn = 'createdon';
+            this.direction = 'desc';
+            this.sortCollection(this.sortColumn);
+            this.showLoader = false;
+          });
+        }, (error) => {
+          this.showLoader = false;
+          console.log(error);
+          this.toasterService.error(this.resourceService.messages.emsg.projects.m0002);
+        });
+      return;
+    }
+
+    // If user is contributor org contributor and/or reviewer
+    this.iscontributeOrgAdmin = false;
+    this.getNominationsByMyOrg().subscribe(
+      (data) => {
+        let nominations = _.get(data, 'result');
+        if (_.isEmpty(nominations)) {
+          this.showLoader = false;
+          return;
+        }
+
+        this.nominationList = this.getProgramsAssignedToMe(nominations);
+        if (_.isEmpty(this.nominationList)) {
+          this.showLoader = false;
+          return;
+        }
+
+        const req = {
+          request: {
+            filters: {
+              program_id: this.nominationList,
+              status: status
+            }
+          }
+        };
+        this.getContributionProgramList(req);
+      },
+      (error) => {
+        console.log(error);
+        this.toasterService.error(this.resourceService.messages.emsg.projects.m0002);
+      });
+  }
+
+  getProgramsAssignedToMe(nominations) {
+    const nominationsAssignedToMe = _.filter(nominations, (nomination) => {
+      const myRoles = this.userService.getMyRoleForNomination(nomination);
+
+      if (myRoles.includes('contributor') || myRoles.includes('reviewer') && nomination.status === 'Approved') {
+        this.roleMapping.push(nomination);
+        return true;
+      }
+    });
+
+    return _.uniq(_.map(nominationsAssignedToMe, 'program_id'));
+  }
+
+  getNominationsByMyOrg() {
+    const filters = {
+      organisation_id: this.userService.userProfile.userRegData.User_Org.orgId
+    };
+    return this.programsService.getNominationList(filters);
   }
 
   getMyProgramRole(program) {
-    const programId = program.program_id;
-    let roles = '';
-     _.map(_.find(this.roleMapping, obj => {
-      if (obj.rolemapping
-        && (( obj.rolemapping.REVIEWER && obj.rolemapping.REVIEWER.includes(_.get(this.userService, 'userProfile.userId' ))))
-        && obj.status === 'Approved' && obj.program_id === programId ) {
-          roles = 'Reviewer';
-        } else if  (obj.rolemapping
-        && (( obj.rolemapping.CONTRIBUTOR && obj.rolemapping.CONTRIBUTOR.includes(_.get(this.userService, 'userProfile.userId' ))))
-        && obj.status === 'Approved' && obj.program_id === programId ) {
-          roles = 'Contributor';
-        }
-    }));
-    return roles;
+    const nomination = _.find(this.roleMapping, { program_id: program.program_id });
+    return !_.isEmpty(nomination) ? this.userService.getMyRoleForNomination(nomination).join(", ") : '-';
   }
 
   /**
@@ -492,9 +488,9 @@ export class ProgramListComponent implements OnInit {
 
   getProgramInfo(program, type) {
     if (program && program.config) {
-      return type  === 'board' ? program.config[type] : _.join(_.compact(_.uniq(program.config[type])), ', ');
+      return type === 'board' ? program.config[type] : _.join(_.compact(_.uniq(program.config[type])), ', ');
     } else {
-      return type  === 'board' ? program[type] : _.join(_.compact(_.uniq(JSON.parse(program[type]))), ', ');
+      return type === 'board' ? program[type] : _.join(_.compact(_.uniq(JSON.parse(program[type]))), ', ');
     }
   }
 
@@ -527,7 +523,7 @@ export class ProgramListComponent implements OnInit {
   }
 
   isActive(program, name, index) {
-    const date  = moment(program[name]);
+    const date = moment(program[name]);
     const today = moment();
     const isFutureDate = date.isAfter(today);
 
@@ -545,14 +541,14 @@ export class ProgramListComponent implements OnInit {
       return true;
     }
 
-    if (!this.activeDates[index]['nomination_enddate']  && !this.activeDates[index]['shortlisting_enddate']
-     && name === 'content_submission_enddate' && isFutureDate) {
+    if (!this.activeDates[index]['nomination_enddate'] && !this.activeDates[index]['shortlisting_enddate']
+      && name === 'content_submission_enddate' && isFutureDate) {
       this.activeDates[index]['content_submission_enddate'] = true;
       return true;
     }
 
-    if (!this.activeDates[index]['nomination_enddate']  && !this.activeDates[index]['shortlisting_enddate']  &&
-    !this.activeDates[index]['content_submission_enddate'] && name === 'content_submission_enddate' && isFutureDate) {
+    if (!this.activeDates[index]['nomination_enddate'] && !this.activeDates[index]['shortlisting_enddate'] &&
+      !this.activeDates[index]['content_submission_enddate'] && name === 'content_submission_enddate' && isFutureDate) {
       this.activeDates[index]['enddate'] = true;
       return true;
     }
