@@ -158,7 +158,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
       this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
       this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
-      this.roles = _.get(this.programDetails, 'config.roles');
+      this.roles =_.get(this.programDetails, 'config.roles');
+      this.roles.push({'id': 3, 'name': 'BOTH', 'defaultTab': 3, 'tabs': [3]})
       this.roleNames = _.map(this.roles, 'name');
       this.fetchFrameWorkDetails();
       this.getNominationStatus();
@@ -329,11 +330,14 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     _.forEach(orgUsers, r => {
       r.projectselectedRole = 'Select';
       if (this.nominationDetails.rolemapping) {
-        _.find(this.nominationDetails.rolemapping, (users, role) => {
-          if (_.includes(users, r.identifier)) {
-            r.projectselectedRole = role;
-          }
-        });
+        const userRoles = this.userService.getMyRoleForNomination(this.nominationDetails, r.identifier);
+        if (userRoles.includes("contributor") && userRoles.includes("reviewer")) {
+          r.projectselectedRole = "BOTH";
+        } else if (userRoles.includes("contributor")) {
+          r.projectselectedRole = "CONTRIBUTOR";
+        } else if (userRoles.includes("reviewer")) {
+          r.projectselectedRole = "REVIEWER";
+        }
       }
       this.allContributorOrgUsers.push(r);
     });
@@ -362,24 +366,32 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     let progRoleMapping = this.nominationDetails.rolemapping;
     if (isNullOrUndefined(progRoleMapping)) {
       progRoleMapping = {};
-      progRoleMapping[newRole] = [];
     }
     const programRoleNames = _.keys(progRoleMapping);
-    if (!_.includes(programRoleNames, newRole)) {
+    if (newRole !== 'BOTH' && !_.includes(programRoleNames, newRole)) {
       progRoleMapping[newRole] = [];
     }
+    console.log('before:', progRoleMapping);
     _.forEach(progRoleMapping, (users, role) => {
-      // Add to selected user to current selected role's array
-      if (newRole === role && !_.includes(users, user.identifier)) {
-        users.push(user.identifier);
-      }
-      // Remove selected user from other role's array
-      if (newRole !== role && _.includes(users, user.identifier)) {
-        _.remove(users, (id) => id === user.identifier);
+      if (newRole === 'BOTH') {
+        if (!_.includes(users, user.identifier)) {
+          users.push(user.identifier);
+        }
+      } else {
+        // Add to selected user to current selected role's array
+        if (newRole === role && !_.includes(users, user.identifier)) {
+          users.push(user.identifier);
+        }
+        // Remove selected user from other role's array
+        if (newRole !== role && _.includes(users, user.identifier)) {
+          _.remove(users, (id) => id === user.identifier);
+        }
       }
       // Remove duplicate users ids and falsy values
       progRoleMapping[role] = _.uniq(_.compact(users));
     });
+    console.log('after:', progRoleMapping);
+    return;
     const req = {
       'request': {
         'program_id': this.activatedRoute.snapshot.params.programId,
