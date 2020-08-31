@@ -261,7 +261,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   sortUsersList(usersList) {
      this.sourcingOrgUserCnt = usersList.length;
      this.paginatedSourcingUsers = this.programsService.sortCollection(usersList, 'selectedRole', 'desc');
-     usersList = _.chunk(usersList, this.pageLimit);
+     usersList = _.chunk(this.paginatedSourcingUsers, this.pageLimit);
      this.paginatedSourcingUsers = usersList;
      this.sourcingOrgUser = usersList[0];
      this.pagerUsers = this.paginationService.getPager(this.sourcingOrgUserCnt, 1 , this.pageLimit);
@@ -331,9 +331,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 	 * @example navigateToPage(1)
 	 */
   navigateToSourcingPage(page: number): undefined | void {
-    console.log(">>>>>>>>>>>>>>>>>");
-    console.log(this.sourcingOrgUser, 'this.sourcingOrgUser');
-    console.log(this.paginatedSourcingUsers, 'this.paginatedSourcingUsers');
     if (page < 1 || page > this.pagerUsers.totalPages) {
       return;
     }

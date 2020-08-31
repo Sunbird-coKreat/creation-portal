@@ -80,7 +80,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   OrgUsersCnt = 0;
   pager: IPagination;
   pageNumber = 1;
-  pageLimit = 250;
+  pageLimit = 10;
+  searchForm: FormGroup;
   sharedContext;
   showSkipReview = false;
   searchInput: any;
@@ -332,8 +333,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   sortUsersList(usersList) {
      this.OrgUsersCnt = usersList.length;
-     this.paginatedContributorOrgUsers = this.programsService.sortCollection(usersList, 'selectedRole', 'desc');
-     usersList = _.chunk(usersList, this.pageLimit);
+     this.paginatedContributorOrgUsers = this.programsService.sortCollection(usersList, 'projectselectedRole', 'asc');
+     usersList = _.chunk(this.paginatedContributorOrgUsers, this.pageLimit);
      this.paginatedContributorOrgUsers = usersList;
      this.contributorOrgUser = usersList[0];
      this.pager = this.paginationService.getPager(this.OrgUsersCnt, 1 , this.pageLimit);

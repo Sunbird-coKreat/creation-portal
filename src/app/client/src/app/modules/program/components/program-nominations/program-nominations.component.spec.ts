@@ -1,6 +1,6 @@
 import { async, TestBed, ComponentFixture } from '@angular/core/testing';
 import { SharedModule, ResourceService } from '@sunbird/shared';
-import { FrameworkService, UserService, ExtPluginService, ProgramsService } from '@sunbird/core';
+import { FrameworkService, UserService, ExtPluginService, ProgramsService , RegistryService} from '@sunbird/core';
 
 import { DynamicModule } from 'ng-dynamic-component';
 import * as _ from 'lodash-es';
@@ -226,4 +226,36 @@ describe('Program Component', () => {
 
     expect(programsService.generateCSV).toHaveBeenCalled();
   });
+  it('reset the user list when there is no search input', () => {
+    spyOn(component, 'sortUsersList');
+    component.searchInput = '';
+    expect(component.sortUsersList).toHaveBeenCalledWith(SpecData.userDetail.result.response.content);
+  });
+  it('get the user list when there is a search input', () => {
+    spyOn(component, 'sortUsersList');
+    component.searchInput = 'jnc68';
+    const  registryService  = TestBed.get(RegistryService);
+    const userList = registryService.getSearchedUserList(SpecData.userDetail.result.response.content, component.searchInput)
+    expect(component.sortUsersList).toHaveBeenCalledWith(userList);
+    });
+ it('call the sortUsersList method when there is input', () => {
+    component.pageLimit = 1;
+    component.searchInput = 'jnc68';
+    const  programsService  = TestBed.get(ProgramsService);
+    component.sortUsersList(SpecData.userDetail.result.response.content);
+    const sortedList = programsService.sortCollection(SpecData.userDetail.result.response.content,  'selectedRole', 'desc')
+    expect(component.paginatedSourcingUsers).toBe(sortedList);
+    expect(component.sourcingOrgUser).toBe(SpecData.chunkedUserList[0]);
+    expect(component.sourcingOrgUserCnt).toBe(SpecData.chunkedUserList[0].length);
+  });
+  it('call the sortUsersList method when there is empty input', () => {
+     component.pageLimit = 1;
+     component.searchInput = '';
+     const  programsService  = TestBed.get(ProgramsService);
+     component.sortUsersList(SpecData.userDetail.result.response.content);
+     const sortedList = programsService.sortCollection(SpecData.userDetail.result.response.content,  'selectedRole', 'desc')
+     expect(component.paginatedSourcingUsers).toBe(sortedList);
+     expect(component.sourcingOrgUser).toBe(SpecData.userDetail.result.response.content);
+     expect(component.sourcingOrgUserCnt).toBe(SpecData.userDetail.result.response.content.length);
+    });
 });
