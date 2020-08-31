@@ -42,7 +42,7 @@ export class BulkJobService {
     { maxAge: this.browserCacheTtlService.browserCacheTtl });
   }
 
-  searchContentWithProcessId(processId, type, includeFields = true) {
+  searchContentWithProcessId(processId, type) {
     const reqData = {
       request: {
         filters: {
@@ -63,15 +63,14 @@ export class BulkJobService {
       }
     };
 
-    if (!includeFields) {
-      delete reqData.request.fields;
-    }
-
     if (type === 'bulk_approval') {
       const originUrl = this.programsService.getContentOriginEnvironment();
       const url =  originUrl + '/action/composite/v3/search';
       return this.programsService.http.post(url, reqData);
     } else if (type === 'bulk_upload') {
+      // Get the extra fields that are needed in bulk upload download report
+      const extraFields =  ["copyright", "keywords", "mimeType", "source", "appIcon", "gradeLevel", "artifactUrl", "audience", "license", "attributions", "description", "creator", "importError", "publishError"];
+      reqData.request.fields = _.concat(reqData.request.fields, extraFields);
       const req = {
         url: `${this.configService.urlConFig.URLS.COMPOSITE.SEARCH}`,
         data: reqData
