@@ -466,7 +466,7 @@ export class UserService {
     return this.learnerService.post(option);
   }
 
-  public getMyRoleForNomination(nomination, userId?) {
+  public getMyRoleForProgram(nomination, userId?) {
     if (_.isUndefined(userId)) {
       userId = _.get(this, 'userProfile.userId');
     }
@@ -475,10 +475,10 @@ export class UserService {
     const roles = [];
 
     if (!_.isEmpty(contributors) && contributors.includes(userId)) {
-      roles.push('contributor');
+      roles.push('CONTRIBUTOR');
     }
     if (!_.isEmpty(reviewers) && reviewers.includes(userId)) {
-      roles.push('reviewer');
+      roles.push('REVIEWER');
     }
     return roles;
   }
@@ -496,9 +496,21 @@ export class UserService {
     return !_.isEmpty(roles) && _.includes(roles, 'admin');
   }
 
-  isContributorOrgUser() {
+  isContributingOrgUser() {
     const roles = _.get(this, 'userProfile.userRegData.User_Org.roles');
     return !_.isEmpty(roles) && _.includes(roles, 'user');
+  }
+
+  isUserBelongsToOrg() {
+    return !!(_.get(this, 'userProfile.userRegData.User_Org'));
+  }
+
+  getUserOrgRole() {
+    return _.get(this, 'userProfile.userRegData.User_Org.roles', []);
+  }
+
+  isSourcingOrgAdmin() {
+    return _.get(this, 'userProfile.userRoles', []).includes('ORG_ADMIN');
   }
 
   isContributingOrgContributor(nomination, userId?) {

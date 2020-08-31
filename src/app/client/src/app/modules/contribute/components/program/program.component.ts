@@ -100,7 +100,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     localStorage.setItem('programId', this.programId);
   }
   ngOnInit() {
-
     if (['null', null, undefined, 'undefined'].includes(this.programId)) {
       this.toasterService.error(this.resourceService.messages.emsg.project.m0001);
     }
@@ -217,43 +216,40 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     };
 
-    if (this.checkIfUserBelongsToOrg()) {
+    if (this.userService.isUserBelongsToOrg()) {
       req.data.request.filters['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
     } else {
       req.data.request.filters['user_id'] = this.userService.userProfile.userId;
     }
     this.programsService.post(req).subscribe((data) => {
-      if (data.result && !_.isEmpty(data.result)) {
-        this.nominationDetails = _.first(data.result);
+      const result = _.first(_.get(data, 'result[0]'));
+      if (!_.isEmpty(result)) {
+        this.nominationDetails = result;
       }
-      if (!_.isEmpty(this.nominationDetails) && this.nominationDetails.status !== 'Initiated') {
+      const status = _.get(this.nominationDetails, 'status');
+      if (!_.isEmpty(this.nominationDetails) && status !== 'Initiated') {
         this.nominated = true;
-        this.sessionContext.nominationDetails = _.first(data.result);
-        this.currentNominationStatus = _.get(_.first(data.result), 'status');
-        if (this.checkIfUserBelongsToOrg()) {
-          this.sessionContext.currentOrgRole = this.userService.userProfile.userRegData.User_Org.roles[0];
-          if (this.userService.userProfile.userRegData.User_Org.roles[0] === 'admin') {
+        this.sessionContext.nominationDetails = this.nominationDetails;
+        this.currentNominationStatus = status;
+        if (this.userService.isUserBelongsToOrg()) {
+          this.sessionContext.currentOrgRole = this.userService.getUserOrgRole();
+          if (this.sessionContext.currentOrgRole.includes('admin')) {
             // tslint:disable-next-line:max-line-length
-            this.sessionContext.currentRole = (this.currentNominationStatus === 'Approved' || this.currentNominationStatus === 'Rejected') ? 'REVIEWER' : 'CONTRIBUTOR';
-          } else if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.rolemapping) {
-            _.find(this.sessionContext.nominationDetails.rolemapping, (users, role) => {
-              if (_.includes(users, this.userService.userProfile.userRegData.User.userId)) {
-                this.sessionContext.currentRole = role;
-              }
-            });
+            this.sessionContext.currentRole = (['Approved', 'Rejected'].includes(status)) ? ['REVIEWER'] : ['CONTRIBUTOR'];
+          } else if (this.nominationDetails.rolemapping) {
+            this.sessionContext.currentRole = this.userService.getMyRoleForProgram(this.nominationDetails);
           } else {
-            this.sessionContext.currentRole = 'CONTRIBUTOR';
+            this.sessionContext.currentRole = ['CONTRIBUTOR'];
           }
         } else {
-          this.sessionContext.currentRole = 'CONTRIBUTOR';
+          this.sessionContext.currentRole = ['CONTRIBUTOR'];
           this.sessionContext.currentOrgRole = 'individual';
         }
-        if (this.programDetails.config) {
-          const getCurrentRoleId = _.find(this.programDetails.config.roles, { 'name': this.sessionContext.currentRole });
-          this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
-        }
+        
+        const roles = _.filter(this.roles, role => this.sessionContext.currentRole.includes(role.name));
+        this.sessionContext.currentRoleId = !_.isEmpty(roles) ? _.map(roles, role => role.id) : null;
 
-        if (this.isUserOrgAdmin()) {
+        if (this.userService.isContributingOrgAdmin()) {
           this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
             this.setOrgUsers(orgUsers);
           });
@@ -265,7 +261,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       }
 
       if (this.nominated) {
-        if (this.isUserOrgAdmin() || this.sessionContext.currentRole === 'REVIEWER') {
+        if (this.userService.isContributingOrgAdmin() || this.sessionContext.currentRole.includes('REVIEWER')) {
           this.prefernceForm = this.sbFormBuilder.group({
             medium: [],
             subject: [],
@@ -326,11 +322,13 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       return false;
     }
     this.allContributorOrgUsers = [];
+
+    // Get only the users and skip admins
     orgUsers = _.filter(orgUsers, { "selectedRole": "user" });
     _.forEach(orgUsers, r => {
       r.projectselectedRole = 'Select';
       if (this.nominationDetails.rolemapping) {
-        const userRoles = this.userService.getMyRoleForNomination(this.nominationDetails, r.identifier);
+        const userRoles = this.userService.getMyRoleForProgram(this.nominationDetails, r.identifier);
         if (userRoles.includes("contributor") && userRoles.includes("reviewer")) {
           r.projectselectedRole = "BOTH";
         } else if (userRoles.includes("contributor")) {
@@ -370,10 +368,18 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     const programRoleNames = _.keys(progRoleMapping);
     if (newRole !== 'BOTH' && !_.includes(programRoleNames, newRole)) {
       progRoleMapping[newRole] = [];
+    } else if (newRole == 'BOTH') {
+      if (!_.includes(programRoleNames, 'CONTRIBUTOR')) {
+        progRoleMapping['CONTRIBUTOR'] = [];
+      }
+      if (!_.includes(programRoleNames, 'REVIEWER')) {
+        progRoleMapping['REVIEWER'] = [];
+      }
     }
     console.log('before:', progRoleMapping);
     _.forEach(progRoleMapping, (users, role) => {
       if (newRole === 'BOTH') {
+        // If both option selected add user in both the roles array
         if (!_.includes(users, user.identifier)) {
           users.push(user.identifier);
         }
@@ -391,7 +397,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       progRoleMapping[role] = _.uniq(_.compact(users));
     });
     console.log('after:', progRoleMapping);
-    return;
     const req = {
       'request': {
         'program_id': this.activatedRoute.snapshot.params.programId,
@@ -604,24 +609,14 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     };
     this.applyPreferences(prefData);
   }
+
   resetTextbookFilters() {
     this.prefModal.deny();
     this.applyPreferences();
   }
 
   isNominationOrg() {
-    return !!(this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.organisation_id);
-  }
-
-  isUserOrgAdmin() {
-    return !!(this.userService.userRegistryData && this.userService.userProfile.userRegData &&
-      this.userService.userProfile.userRegData.User_Org &&
-      this.userService.userProfile.userRegData.User_Org.roles.includes('admin'));
-  }
-
-  checkIfUserBelongsToOrg() {
-    return !!(this.userService.userRegistryData && this.userService.userProfile.userRegData &&
-      this.userService.userProfile.userRegData.User_Org);
+    return !!(_.get(this.sessionContext, 'nominationDetails.organisation_id'));
   }
 
   changeView() {

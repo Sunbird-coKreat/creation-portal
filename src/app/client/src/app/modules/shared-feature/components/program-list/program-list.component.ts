@@ -49,7 +49,7 @@ export class ProgramListComponent implements OnInit {
 
   ngOnInit() {
     this.checkIfUserIsContributor();
-    this.issourcingOrgAdmin = this.isSourcingOrgAdmin();
+    this.issourcingOrgAdmin = this.userService.isSourcingOrgAdmin();
     this.telemetryInteractCdata = [];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
@@ -67,7 +67,7 @@ export class ProgramListComponent implements OnInit {
     if (this.router.url.includes('/join/' + orgId)) {
       this.programsService.addUsertoContributorOrg(orgId);
     }
-    if (this.isContributorOrgUser()
+    if (this.userService.isContributingOrgUser()
       && !this.router.url.includes('/sourcing')
       && !this.router.isActive('/contribute/myenrollprograms', true)) {
       return this.router.navigateByUrl('/contribute/myenrollprograms');
@@ -88,23 +88,6 @@ export class ProgramListComponent implements OnInit {
     } else {
       this.getMyProgramsForOrg();
     }
-  }
-
-  isUserOrgAdmin() {
-    return !!(this.userService.userRegistryData && this.userService.userProfile.userRegData &&
-      this.userService.userProfile.userRegData.User_Org &&
-      this.userService.userProfile.userRegData.User_Org.roles.includes('admin'));
-  }
-
-  isContributorOrgUser() {
-    return !!(this.userService.userRegistryData && this.userService.userProfile.userRegData &&
-      this.userService.userProfile.userRegData.User_Org &&
-      this.userService.userProfile.userRegData.User_Org.roles.includes('user'));
-  }
-
-  checkIfUserBelongsToOrg() {
-    return !!(this.userService.userRegistryData && this.userService.userProfile.userRegData &&
-      this.userService.userProfile.userRegData.User_Org);
   }
 
   setDelete(program, index) {
@@ -183,7 +166,7 @@ export class ProgramListComponent implements OnInit {
       response => {
         const allPrograms = _.get(response, 'result.programs');
         if (allPrograms.length) {
-          if (this.isUserOrgAdmin()) {
+          if (this.userService.isContributingOrgAdmin()) {
             this.iscontributeOrgAdmin = true;
             const filters = {
               organisation_id: _.get(this.userService, 'userProfile.userRegData.User_Org.orgId')
@@ -233,10 +216,6 @@ export class ProgramListComponent implements OnInit {
         this.toasterService.error(_.get(error, 'error.params.errmsg') || this.resourceService.messages.emsg.projects.m0001);
       }
     );
-  }
-
-  isSourcingOrgAdmin() {
-    return _.get(this.userService, 'userProfile.userRoles', []).includes('ORG_ADMIN');
   }
 
   filterOutEnrolledPrograms(allPrograms, enrolledPrograms) {
@@ -316,7 +295,7 @@ export class ProgramListComponent implements OnInit {
    */
   private getMyProgramsForContrib(status) {
     // If user is an individual user
-    if (!this.checkIfUserBelongsToOrg()) {
+    if (!this.userService.isUserBelongsToOrg()) {
       const req = {
         request: {
           filters: {
@@ -332,7 +311,7 @@ export class ProgramListComponent implements OnInit {
     }
 
     // If user is an org admin
-    if (this.isUserOrgAdmin()) {
+    if (this.userService.isContributingOrgAdmin()) {
       this.iscontributeOrgAdmin = true;
       this.getNominationsByMyOrg().subscribe(
         (nominationsResponse) => {
@@ -417,9 +396,9 @@ export class ProgramListComponent implements OnInit {
 
   getProgramsAssignedToMe(nominations) {
     const nominationsAssignedToMe = _.filter(nominations, (nomination) => {
-      const myRoles = this.userService.getMyRoleForNomination(nomination);
+      const myRoles = this.userService.getMyRoleForProgram(nomination);
 
-      if (myRoles.includes('contributor') || myRoles.includes('reviewer') && nomination.status === 'Approved') {
+      if (myRoles.includes('CONTRIBUTOR') || myRoles.includes('REVIEWER') && nomination.status === 'Approved') {
         this.roleMapping.push(nomination);
         return true;
       }
@@ -437,7 +416,11 @@ export class ProgramListComponent implements OnInit {
 
   getMyProgramRole(program) {
     const nomination = _.find(this.roleMapping, { program_id: program.program_id });
-    return !_.isEmpty(nomination) ? this.userService.getMyRoleForNomination(nomination).join(", ") : '-';
+    const roles = this.userService.getMyRoleForProgram(nomination);
+    if (_.isEmpty(roles)) {
+      return '-';
+    }
+    return _.map(roles, role => _.upperFirst(_.toLower(role))).join(", ");
   }
 
   /**
@@ -446,7 +429,7 @@ export class ProgramListComponent implements OnInit {
   private getMyProgramsForOrg() {
     const filters = {};
 
-    if (this.isSourcingOrgAdmin()) {
+    if (this.userService.isSourcingOrgAdmin()) {
       filters['rootorg_id'] = _.get(this.userService, 'userProfile.rootOrgId');
       filters['status'] = ['Live', 'Unlisted', 'Draft']
     } else {

@@ -16,8 +16,8 @@ export interface ISessionContext { // TODO: remove any 'textbook' reference
   questionType?: string;
   programId?: string;
   program?: string;
-  currentRole?: string;
-  currentRoleId?: null | number;
+  currentRole?: Array<string>;
+  currentRoleId?: null |  Array<number>;
   bloomsLevel?: Array<any>;
   topicList?: Array<any>;
   onBoardSchool?: string;
