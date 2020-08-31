@@ -81,7 +81,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   pager: IPagination;
   pageNumber = 1;
   pageLimit = 10;
-  searchForm: FormGroup;
   sharedContext;
   showSkipReview = false;
   searchInput: any;
