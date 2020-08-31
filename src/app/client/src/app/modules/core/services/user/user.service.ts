@@ -483,4 +483,42 @@ export class UserService {
     return roles;
   }
 
+  isSourcingOrgReviewer (programContext) {
+    const userId = _.get(this, 'userProfile.userId');
+    const userRoles = _.get(this, 'userProfile.userRoles');
+    const reviewers = _.get(programContext, 'rolemapping.REVIEWER');
+
+    return !!(userRoles.includes('ORG_ADMIN') || reviewers.includes(userId));
+  }
+
+  isContributingOrgAdmin() {
+    const roles = _.get(this, 'userProfile.userRegData.User_Org.roles');
+    return !_.isEmpty(roles) && _.includes(roles, 'admin');
+  }
+
+  isContributorOrgUser() {
+    const roles = _.get(this, 'userProfile.userRegData.User_Org.roles');
+    return !_.isEmpty(roles) && _.includes(roles, 'user');
+  }
+
+  isContributingOrgContributor(nomination, userId?) {
+    if (_.isUndefined(userId)) {
+      userId = _.get(this, 'userProfile.userId');
+    }
+    const contributors = _.get(nomination, 'rolemapping.CONTRIBUTOR');
+    return !_.isEmpty(contributors) && _.includes(contributors, userId);
+  }
+
+  isContributingOrgReviewer(nomination, userId?) {
+    if (_.isUndefined(userId)) {
+      userId = _.get(this, 'userProfile.userId');
+    }
+    const contributors = _.get(nomination, 'rolemapping.REVIEWER');
+    return !_.isEmpty(contributors) && _.includes(contributors, userId);
+  }
+
+  isDefaultContributingOrg(programContext) {
+    const userOrgName = _.get(this, 'userProfile.userRegData.Org.name');
+    return !!(programContext.sourcing_org_name === userOrgName);
+  }
 }
