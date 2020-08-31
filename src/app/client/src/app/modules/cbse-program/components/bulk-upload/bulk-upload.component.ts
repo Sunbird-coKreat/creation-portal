@@ -394,7 +394,7 @@ export class BulkUploadComponent implements OnInit {
 
   setBulkUploadCsvConfig() {
     const headerError = (headerName) => {
-      this.setError(`${headerName} column is missing.`);
+      this.setError(`${headerName} header is missing.`);
     };
     const requiredError = (headerName, rowNumber, columnNumber) => {
       this.setError(`${headerName} value is missing at row: ${rowNumber}`);
@@ -420,13 +420,13 @@ export class BulkUploadComponent implements OnInit {
 
     const headers = [
       { name: 'Name of the Content', inputName: 'name', maxLength: 250, required: true, requiredError, headerError, maxLengthError },
-      { name: 'Description of the content', inputName: 'description', maxLength: 500, maxLengthError },
-      { name: 'Keywords', inputName: 'keywords', isArray: true },
+      { name: 'Description of the content', inputName: 'description', maxLength: 500, maxLengthError, headerError },
+      { name: 'Keywords', inputName: 'keywords', isArray: true, headerError },
       { name: 'Audience', inputName: 'audience', required: true, requiredError, headerError, in: ['Learner', 'Instructor'], inError },
       { name: 'Author', inputName: 'creator', required: true, requiredError, headerError },
       { name: 'Copyright', inputName: 'copyright', required: true, requiredError, headerError },
-      { name: 'License', inputName: 'license', in: licenses, inError, isDefault: true, default: '' },
-      { name: 'Attributions', inputName: 'attributions', isArray: true },
+      { name: 'License', inputName: 'license', in: licenses, inError, isDefault: true, default: '', headerError },
+      { name: 'Attributions', inputName: 'attributions', isArray: true, headerError },
       { name: 'Icon File Path', inputName: 'appIcon', required: true, requiredError, headerError, isUrl: true, urlError },
       { name: 'File Format', inputName: 'fileFormat', required: true, requiredError, headerError, in: this.bulkUploadConfig.fileFormats, inError },
       { name: 'File Path', inputName: 'source', required: true, requiredError, headerError, unique: true, uniqueError, isUrl: true, urlError },
