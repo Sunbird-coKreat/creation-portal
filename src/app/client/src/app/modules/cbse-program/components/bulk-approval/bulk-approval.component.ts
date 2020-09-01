@@ -64,7 +64,9 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
       this.approvalPending = [];
       this.approvalPendingContents([this.storedCollectionData]);
       if (this.approvalPending && this.approvalPending.length) {
-        this.showBulkApprovalButton = true;
+        if (!this.bulkApprove || this.bulkApprove && this.bulkApprove.status !== 'processing') {
+          this.showBulkApprovalButton = true;
+        }
       }
     }
   }
