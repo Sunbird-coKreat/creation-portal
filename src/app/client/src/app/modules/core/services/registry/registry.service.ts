@@ -19,6 +19,9 @@ export class RegistryService extends DataService {
   public http: HttpClient;
   public mycontributionOrgUsers = [];
   osReqLimit =  250;
+  searchLimitCount = 10;
+  orgUserPageLimit = 10; // need to chnage once dev testing done (250)
+  programUserPageLimit = 10; // need to chnage once dev testing done (200)
   constructor(config: ConfigService, http: HttpClient, public contentService: ContentService,
     public userService: UserService, public learnerService: LearnerService, public cacheService: CacheService) {
     super(http);

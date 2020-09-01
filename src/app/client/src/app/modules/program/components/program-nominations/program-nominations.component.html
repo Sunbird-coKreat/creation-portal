@@ -349,6 +349,9 @@
 							[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService?.frmelmnts?.lbl?.search}}</button>
                         </div>
 					  </div>
+						<div *ngIf="searchLimitMessage" class="font-italic sb-color-gray-300 mb-10 text-right fs-0-785 ">
+                            {{resourceService?.messages?.smsg?.searchLimitMessage | interpolate:'{SEARCH_LIMIT_COUNT}': searchLimitCount}}
+                            </div>
                     </div>
                     <app-loader *ngIf='showUsersLoader'></app-loader>
 					<div class="sb-table-responsive desktop-o-x-unset" *ngIf="sourcingOrgUserCnt > 0">

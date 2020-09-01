@@ -52,6 +52,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public sortColumn = '';
   public sourcingOrgUser = [];
   public initialSourcingOrgUser = [];
+  public searchLimitMessage: any;
   public sourcingOrgUserCnt = 0;
   public roles;
   roleNames;
@@ -90,7 +91,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   pager: IPagination;
   pageNumber = 1;
-  pageLimit = 10;
+  pageLimit: any;
+  searchLimitCount: any;
   pagerUsers: IPagination;
   pageNumberUsers = 1;
   searchInput: any;
@@ -120,6 +122,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.state.stages = state.stages;
       this.changeView();
     });
+    this.searchLimitCount = this.registryService.searchLimitCount;
+    this.pageLimit = this.registryService.programUserPageLimit;
   }
 
   ngAfterViewInit() {
@@ -252,8 +256,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     clearInput ? this.searchInput = '': this.searchInput;
     if (this.searchInput) {
       let filteredUser = this.registryService.getSearchedUserList(this.initialSourcingOrgUser, this.searchInput);
+      filteredUser.length > this.searchLimitCount ? this.searchLimitMessage = true: this.searchLimitMessage = false;   
       this.sortUsersList(filteredUser);
     } else {
+      this.searchLimitMessage = false;
       this.sortUsersList(this.initialSourcingOrgUser);
     }
   }

@@ -264,6 +264,9 @@
 							[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService?.frmelmnts?.lbl?.search}}</button>
                         </div>
 					  </div>
+						<div *ngIf="searchLimitMessage" class="font-italic sb-color-gray-300 mb-10 text-right fs-0-785 ">
+							{{resourceService?.messages?.smsg?.searchLimitMessage | interpolate:'{SEARCH_LIMIT_COUNT}': searchLimitCount}}
+							</div>
 					</div>
 					<div class="sb-table-responsive desktop-o-x-unset" *ngIf="OrgUsersCnt > 0">
 					  <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">

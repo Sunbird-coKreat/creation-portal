@@ -80,11 +80,13 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   OrgUsersCnt = 0;
   pager: IPagination;
   pageNumber = 1;
-  pageLimit = 10;
+  pageLimit: any;
   sharedContext;
   showSkipReview = false;
   searchInput: any;
   initialSourcingOrgUser = [];
+  searchLimitMessage: any;
+  searchLimitCount: any;
   public telemetryPageId = 'collection';
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
@@ -121,6 +123,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       id: this.userService.appId,
       pid: this.configService.appConfig.TELEMETRY.PID
     };
+    this.searchLimitCount = this.registryService.searchLimitCount;
+    this.pageLimit = this.registryService.programUserPageLimit;
   }
 
   ngAfterViewInit() {
@@ -323,8 +327,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     clearInput ? this.searchInput = '': this.searchInput;
     if (this.searchInput) {
       let filteredUser = this.registryService.getSearchedUserList(this.initialSourcingOrgUser, this.searchInput);
+       filteredUser.length > this.searchLimitCount ? this.searchLimitMessage = true: this.searchLimitMessage = false;   
       this.sortUsersList(filteredUser);
     } else {
+      this.searchLimitMessage = false;
       this.sortUsersList(this.initialSourcingOrgUser);
     }
   }
