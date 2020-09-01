@@ -4,6 +4,7 @@ import { ConfigService, ResourceService, ToasterService, NavigationHelperService
   ServerResponse } from '@sunbird/shared';
 import { BulkJobService } from '../../services/bulk-job/bulk-job.service';
 import { HelperService } from '../../services/helper.service';
+import { ProgramTelemetryService } from '../../../program/services';
 import { CacheService } from 'ng2-cache-service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import * as _ from 'lodash-es';
@@ -30,6 +31,9 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
   public processId: string;
   public successPercentage: number;
   public initialized: boolean;
+  public telemetryInteractCdata: any;
+  public telemetryInteractPdata: any;
+  public telemetryInteractObject: any;
   @Input() programContext;
   @Input() sessionContext;
   @Input() storedCollectionData;
@@ -40,13 +44,19 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
     private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService,
     private userService: UserService, private programsService: ProgramsService, private httpClient: HttpClient,
     public toasterService: ToasterService, public publicDataService: PublicDataService, private helperService: HelperService,
-    private actionService: ActionService) { }
+    private actionService: ActionService, public programTelemetryService: ProgramTelemetryService, private configService: ConfigService) { }
 
   ngOnInit() {
     this.checkBulkApproveHistory();
     this.checkOriginFolderStatus([this.originalCollectionData]);
     this.approvalPendingContents([this.storedCollectionData]);
     this.initialized = true;
+    // tslint:disable-next-line:max-line-length
+    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.programContext.program_id, 'Program');
+    // tslint:disable-next-line:max-line-length
+    this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
+    // tslint:disable-next-line:max-line-length
+    this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.sessionContext.collection, 'Content', '1.0', { l1: this.sessionContext.collection });
   }
 
   ngOnChanges() {

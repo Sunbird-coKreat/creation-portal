@@ -471,7 +471,7 @@
                             class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
                             <thead class="sb-table-header sb-table-thead-gray">
                                 <tr>
-                                    <th rowspan="2" (click)="sortCollection('contributorName', contributionDashboardData)" class="va-top sb-sorting cursor-pointer">
+                                    <th rowspan="2" (click)="sortCollection('contributorName', contributionDashboardData)" class="va-top sb-sorting cursor-pointer fxsmall">
                                         {{resourceService.frmelmnts.lbl.contributor}}
                                         <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'contributorName' "></i>
                                         <span  *ngIf="sortColumn == 'contributorName'" class="d-inline-block">
@@ -479,7 +479,7 @@
                                             <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                         </span>
                                     </th>
-                                    <th rowspan="2" (click)="sortCollection('type', contributionDashboardData)" class="va-top sb-sorting cursor-pointer">
+                                    <th rowspan="2" (click)="sortCollection('type', contributionDashboardData)" class="va-top sb-sorting cursor-pointerfxsmall ">
                                         {{resourceService.frmelmnts.lbl.typeOfContributor}}
                                         <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'type' "></i>
                                         <span  *ngIf="sortColumn == 'type'" class="d-inline-block">
@@ -487,11 +487,11 @@
                                             <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                         </span>
                                     </th>
-                                    <th colspan="4" class="bb-0 pb-0">{{resourceService.frmelmnts.lbl.profile.contributingOrg}}</th>
-                                    <th colspan="3" class="bb-0 pb-0">{{resourceService.frmelmnts.lbl.profile.yourOrganisation}}</th>
+                                    <th colspan="5" class="bb-0 pb-0">{{resourceService.frmelmnts.lbl.profile.contributingOrg}}</th>
+                                    <th colspan="4" class="bb-0 pb-0">{{resourceService.frmelmnts.lbl.profile.yourOrganisation}}</th>
                                 </tr>
                                 <tr>
-                                    <th (click)="sortCollection('draft', contributionDashboardData)" class="border-l va-top sb-sorting cursor-pointer">
+                                    <th (click)="sortCollection('draft', contributionDashboardData)" class="border-l va-top sb-sorting cursor-pointer fxsmall">
                                        {{resourceService.frmelmnts.lbl.draft}}
                                         <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'draft' "></i>
                                         <span  *ngIf="sortColumn == 'draft'" class="d-inline-block">
@@ -499,7 +499,7 @@
                                             <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                         </span>
                                     </th>
-                                    <th (click)="sortCollection('review', contributionDashboardData)" class="va-top sb-sorting cursor-pointer">
+                                    <th (click)="sortCollection('review', contributionDashboardData)" class="va-top sb-sorting cursor-pointer fxsmall">
                                         {{resourceService.frmelmnts.lbl.reviewInProgress}}
                                         <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'review' "></i>
                                         <span  *ngIf="sortColumn == 'review'" class="d-inline-block">
@@ -507,15 +507,19 @@
                                             <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                         </span>
                                     </th>
-                                    <th (click)="sortCollection('live', contributionDashboardData)" class="va-top sb-sorting cursor-pointer">
+                                    <th class="va-top sb-sorting cursor-pointer fxsmall">
+                                        {{resourceService.frmelmnts.lbl.correctionsPending}}
+                                        <i class="fa fa-sort ml-4" aria-hidden="true"></i>
+                                    </th>
+                                    <th (click)="sortCollection('live', contributionDashboardData)" class="va-top sb-sorting cursor-pointer fxsmall">
                                         {{resourceService.frmelmnts.lbl.accepted}}
                                         <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'live' "></i>
                                         <span  *ngIf="sortColumn == 'live'" class="d-inline-block">
                                             <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
-                                            <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                         </span>
                                     </th>
-                                    <th (click)="sortCollection('rejected', contributionDashboardData)" class="va-top sb-sorting cursor-pointer">
+                          
+                                    <th (click)="sortCollection('rejected', contributionDashboardData)" class="va-top sb-sorting cursor-pointer fxsmall">
                                         {{resourceService.frmelmnts.lbl.notAccepted}}
                                         <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'rejected' "></i>
                                         <span  *ngIf="sortColumn == 'rejected'" class="d-inline-block">
@@ -523,7 +527,7 @@
                                             <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                         </span>
                                     </th>
-                                    <th (click)="sortCollection('sourcingPending', contributionDashboardData)" class="border-l va-top sb-sorting cursor-pointer">
+                                    <th (click)="sortCollection('sourcingPending', contributionDashboardData)" class="border-l va-top sb-sorting cursor-pointer fxsmall">
                                         {{resourceService.frmelmnts.lbl.approvalPending}}
                                         <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'sourcingPending' "></i>
                                         <span  *ngIf="sortColumn == 'sourcingPending'" class="d-inline-block">
@@ -531,7 +535,7 @@
                                             <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                         </span>
                                     </th>
-                                    <th (click)="sortCollection('sourcingAccepted', contributionDashboardData)" class="va-top sb-sorting cursor-pointer">
+                                    <th (click)="sortCollection('sourcingAccepted', contributionDashboardData)" class="va-top sb-sorting cursor-pointer fxsmall">
                                         {{resourceService.frmelmnts.lbl.approved}}
                                         <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'sourcingAccepted' "></i>
                                         <span  *ngIf="sortColumn == 'sourcingAccepted'" class="d-inline-block">
@@ -539,7 +543,7 @@
                                             <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                         </span>
                                     </th>
-                                    <th (click)="sortCollection('sourcingRejected', contributionDashboardData)" class="va-top sb-sorting cursor-pointer">
+                                    <th (click)="sortCollection('sourcingRejected', contributionDashboardData)" class="va-top sb-sorting cursor-pointer fxsmall">
                                         {{resourceService.frmelmnts.lbl.rejected}}
                                         <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'sourcingRejected' "></i>
                                         <span  *ngIf="sortColumn == 'sourcingRejected'" class="d-inline-block">
@@ -554,6 +558,7 @@
                                     <td class="sb-color-primary">{{contributor?.contributorName}}</td>
                                     <td>{{contributor.type === 'org' ? 'Organisation' : 'Individual'}}</td>
                                     <td class="sb-color-gray-300">{{contributor.draft || 0}}</td>
+                                    <td class="sb-color-warning">1</td>
                                     <td class="sb-color-warning">{{contributor.type !== 'individual' ? contributor.review: '-'}}</td>
                                     <td class="sb-color-success">{{contributor.live || 0}}</td>
                                     <td class="sb-color-error">{{contributor.type !== 'individual' ? contributor?.rejected: '-'}}</td>

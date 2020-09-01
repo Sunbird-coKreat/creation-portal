@@ -66,20 +66,20 @@
             </dl>
           </div>
         </div>
-        <!-- <div *ngIf="sampleContent" class="sb-meta-data-container sb-meta-data-column d-flex flex-w-wrap ml-16">
+        <div *ngIf="sampleContent" class="sb-meta-data-container sb-meta-data-column d-flex flex-w-wrap ml-16">
           <label class="d-block width-100" >Number of Samples</label>
           <div class="d-flex">
             <dl class="sb-meta-data">
-              <dt *ngIf="!isSourcingOrgReviewer()">{{countData['sampleContenttotal'] || 0}}</dt>
+              <!-- <dt *ngIf="!isSourcingOrgReviewer()">{{countData['sampleContenttotal'] || 0}}</dt> -->
               <dt *ngIf="isNominationPendingOrInitiated()">{{countData['nominatedUserSample'] || 0}}</dt>
               <dd>Total Content</dd>
             </dl>
-            <dl *ngIf="!isSourcingOrgReviewer() && !isNominationPendingOrInitiated()" class="sb-meta-data">
+            <!-- <dl *ngIf="!isSourcingOrgReviewer() && !isNominationPendingOrInitiated()" class="sb-meta-data">
               <dt>{{countData['sampleMycontribution'] || 0 }}</dt>
               <dd>My Content</dd>
-            </dl>
+            </dl> -->
           </div>
-        </div> -->
+        </div>
 
         <div class="sb-textbook-allchapters sb-field">
           <label class="fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.selectChapters}}</label>
@@ -99,7 +99,7 @@
           <div class="d-flex flex-jc-space-between fs-0-785 sb-color-gray-300 mb-15">
             <span *ngIf="textbookStatusMessage" class="sb-color-error mr-8 pl-10 fs-0-785 font-weight-bold font-italic">{{textbookStatusMessage}}</span>
             <span class="w-30 font-italic">{{resourceService.frmelmnts.lbl.partialTextbookSelectionNote}}</span>
-            <div *ngIf="sourcingOrgReviewer && originalCollectionData && originalCollectionData.status === 'Draft'" class="d-flex">
+            <div *ngIf="sourcingOrgReviewer && storedCollectionData && !sessionContext.nominationDetails" class="d-flex">
               <app-bulk-approval [programContext]="programContext" [sessionContext]="sessionContext" [storedCollectionData]="storedCollectionData" [originalCollectionData]="originalCollectionData" (updateToc)="bulkApprovalSuccess($event)"></app-bulk-approval>
             </div>
             <app-bulk-upload 

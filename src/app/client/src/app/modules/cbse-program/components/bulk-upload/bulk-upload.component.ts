@@ -156,7 +156,7 @@ export class BulkUploadComponent implements OnInit {
   }
 
   searchContentWithProcessId() {
-    this.bulkJobService.searchContentWithProcessId(this.process.process_id, "bulk_upload", false).subscribe((searchResponse) => {
+    this.bulkJobService.searchContentWithProcessId(this.process.process_id, "bulk_upload").subscribe((searchResponse) => {
       // console.log('searchResponse res', JSON.stringify(searchResponse));
       this.process.overall_stats.upload_failed = 0;
       this.process.overall_stats.upload_success = 0;
@@ -280,7 +280,7 @@ export class BulkUploadComponent implements OnInit {
           status = 'Success';
         }
         result['status'] = status
-        result['failedReason'] = this.getErrorMessage(_.get(content, 'importError', ''));
+        result['failedReason'] = _.get(content, 'importError', '') ||  _.get(content, 'publishError', '');
 
         return result;
       });
@@ -411,8 +411,11 @@ export class BulkUploadComponent implements OnInit {
     const maxLengthError = (headerName, rowNumber, columnNumber, maxLength, length) => {
       this.setError(`${headerName} contains more than ${maxLength} characters at row: ${rowNumber}`);
     };
+    const extraHeaderError = (invalidColumns, expectedColumns, foundColumns) => {
+      this.setError(`Invalid data found in columns: ${invalidColumns.join(",")}`);
+    };
 
-    const contentTypes = this.contentTypes.map((type) => type.name);
+    const contentTypes = _.union(_.concat(this.contentTypes.map((type) => type.name), this.contentTypes.map((type) => type.value)));
     const licenses = this.licenses.map((license) => license.name);
 
     const headers = [
@@ -489,7 +492,8 @@ export class BulkUploadComponent implements OnInit {
       maxRows: this.bulkUploadConfig.maxRows,
       validateRow,
       maxRowsError,
-      noRowsError
+      noRowsError,
+      extraHeaderError
     };
   }
 
@@ -544,17 +548,6 @@ export class BulkUploadComponent implements OnInit {
       && this.programContext.sourcing_org_name === this.userService.userProfile.userRegData.Org.name);
   }
 
-  getErrorMessage(message) {
-    if (!message) {
-      return '';
-    }
-    const msg = _.split(message, 'Error Message : ');
-    if (msg.length !== 2) {
-      return '';
-    }
-    return msg[1];
-  }
-
   getContentObject(row) {
     const unitName = row.level4 || row.level3 || row.level2 || row.level1;
     const unitId = this.getTextbookUnitIdFromName(unitName);
@@ -580,7 +573,7 @@ export class BulkUploadComponent implements OnInit {
         audience: [row.audience],
         code: UUID.UUID(),
         mimeType: this.mimeTypes[_.toLower(row.fileFormat)],
-        contentType: this.getContentTypeDetails('name', row.contentType).value,
+        contentType: row.contentType,
         lastPublishedBy: userId,
         createdBy: userId,
         resourceType: 'Learn',
@@ -644,6 +637,24 @@ export class BulkUploadComponent implements OnInit {
 
   startBulkUpload(csvData) {
     this.completionPercentage = 0;
+
+    for (let i=0; i< csvData.length; i++) {
+      const row = csvData[i];
+      row.contentType = _.toLower(row.contentType);
+      let contentType = _.find(this.contentTypes, (content_type) => {
+        return (_.toLower(content_type.name) === row.contentType || _.toLower(content_type.value) === row.contentType);
+      });
+
+      if (_.isEmpty(_.get(contentType, 'value'))) {
+        this.setError(`Content Type has invalid value at row: ${i+1}`);
+        this.bulkUploadState = 4;
+        return;
+      }
+
+      row.contentType = _.get(contentType, 'value');
+      csvData[i] = row;
+    }
+
     this.createImportRequest(csvData).subscribe((importResponse) => {
       // console.log('createImportRequest res', JSON.stringify(importResponse));
       this.process.process_id = _.get(importResponse, 'result.processId');
@@ -666,6 +677,7 @@ export class BulkUploadComponent implements OnInit {
   }
 
   openBulkUploadModal() {
+    this.bulkUploadState = 0;
     this.showBulkUploadModal = true;
     this.updateBulkUploadState('increment');
   }
