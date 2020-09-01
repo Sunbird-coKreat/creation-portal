@@ -85,10 +85,9 @@ export default class CSVFileValidator {
             difference.map((column) => {
                 const valueConfig = headers.find(row => row.name === column);
                 if (valueConfig) {
-                    this.handleError(valueConfig, 'headerError', `Header name ${column} is missing`, [column]);
+                    return this.handleError(valueConfig, 'headerError', `${column} header is missing`, [column]);
                 }
             });
-            return this.response;
         }
 
         const uniqueValues = {};
