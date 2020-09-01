@@ -123,7 +123,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       id: this.userService.appId,
       pid: this.configService.appConfig.TELEMETRY.PID
     };
-    this.searchLimitCount = this.registryService.searchLimitCount;
+    this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit 
     this.pageLimit = this.registryService.programUserPageLimit;
   }
 

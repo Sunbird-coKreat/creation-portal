@@ -122,7 +122,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.state.stages = state.stages;
       this.changeView();
     });
-    this.searchLimitCount = this.registryService.searchLimitCount;
+    this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
     this.pageLimit = this.registryService.programUserPageLimit;
   }
 

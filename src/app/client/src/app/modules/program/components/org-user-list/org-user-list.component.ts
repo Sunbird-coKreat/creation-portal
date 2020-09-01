@@ -67,7 +67,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     this.telemetryInteractCdata = [{id: this.userService.userProfile.rootOrgId || '', type: 'Organisation'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
-    this.searchLimitCount = this.registryService.searchLimitCount;
+    this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
     this.pageLimit = this.registryService.orgUserPageLimit;
   }
 
