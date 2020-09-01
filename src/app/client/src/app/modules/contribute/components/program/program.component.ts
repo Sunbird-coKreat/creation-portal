@@ -88,7 +88,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public telemetryPageId = 'collection';
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
-  public telemetryInteractObject: any;
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
     public extPluginService: ExtPluginService, public userService: UserService,
@@ -114,7 +113,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.programStageService.addStage('programComponent');
     this.currentStage = 'programComponent';
-    this.telemetryInteractObject = {};
     this.telemetryInteractCdata = [{
       id: this.activatedRoute.snapshot.params.programId,
       type: 'Program'
