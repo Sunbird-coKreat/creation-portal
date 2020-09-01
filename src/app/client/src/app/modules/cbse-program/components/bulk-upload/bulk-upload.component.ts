@@ -394,7 +394,7 @@ export class BulkUploadComponent implements OnInit {
 
   setBulkUploadCsvConfig() {
     const headerError = (headerName) => {
-      this.setError(`${headerName} column is missing.`);
+      this.setError(`${headerName} header is missing.`);
     };
     const requiredError = (headerName, rowNumber, columnNumber) => {
       this.setError(`${headerName} value is missing at row: ${rowNumber}`);
@@ -420,13 +420,13 @@ export class BulkUploadComponent implements OnInit {
 
     const headers = [
       { name: 'Name of the Content', inputName: 'name', maxLength: 250, required: true, requiredError, headerError, maxLengthError },
-      { name: 'Description of the content', inputName: 'description', maxLength: 500, maxLengthError },
-      { name: 'Keywords', inputName: 'keywords', isArray: true },
+      { name: 'Description of the content', inputName: 'description', maxLength: 500, maxLengthError, headerError },
+      { name: 'Keywords', inputName: 'keywords', isArray: true, headerError },
       { name: 'Audience', inputName: 'audience', required: true, requiredError, headerError, in: ['Learner', 'Instructor'], inError },
       { name: 'Author', inputName: 'creator', required: true, requiredError, headerError },
       { name: 'Copyright', inputName: 'copyright', required: true, requiredError, headerError },
-      { name: 'License', inputName: 'license', in: licenses, inError, isDefault: true, default: '' },
-      { name: 'Attributions', inputName: 'attributions', isArray: true },
+      { name: 'License', inputName: 'license', in: licenses, inError, isDefault: true, default: '', headerError },
+      { name: 'Attributions', inputName: 'attributions', isArray: true, headerError },
       { name: 'Icon File Path', inputName: 'appIcon', required: true, requiredError, headerError, isUrl: true, urlError },
       { name: 'File Format', inputName: 'fileFormat', required: true, requiredError, headerError, in: this.bulkUploadConfig.fileFormats, inError },
       { name: 'File Path', inputName: 'source', required: true, requiredError, headerError, unique: true, uniqueError, isUrl: true, urlError },
@@ -471,6 +471,7 @@ export class BulkUploadComponent implements OnInit {
         return;
       }
 
+      // Validate the textbook level units
       const keys = ['level1', 'level2', 'level3', 'level4'];
       _.map(keys, key => {
         const value = row[key];
@@ -479,6 +480,20 @@ export class BulkUploadComponent implements OnInit {
           this.setError(`${name} is invalid at row: ${rowIndex}`);
         }
       });
+
+      // Validate the content types
+      row.contentType = _.toLower(row.contentType);
+      let contentType = _.find(this.contentTypes, (content_type) => {
+        return (_.toLower(content_type.name) === row.contentType || _.toLower(content_type.value) === row.contentType);
+      });
+
+      if (_.isEmpty(_.get(contentType, 'value'))) {
+        this.setError(`Content Type has invalid value at row: ${rowIndex}`);
+        this.bulkUploadState = 4;
+        return;
+      }
+
+      row.contentType = _.get(contentType, 'value');
     };
     const maxRowsError = (maxRows, actualRows) => {
       this.setError(`Expected max ${maxRows} rows but found ${actualRows} rows in the file`);
@@ -518,7 +533,6 @@ export class BulkUploadComponent implements OnInit {
     _.forEach(csvData, (row) => {
       request.content.push(this.getContentObject(row));
     });
-
     return this.bulkJobService.createBulkImport(request);
   }
 
@@ -570,7 +584,7 @@ export class BulkUploadComponent implements OnInit {
         artifactUrl: source,
         appIcon: this.getDownloadableLink(row.appIcon),
         creator: row.creator,
-        audience: [row.audience],
+        audience: [_.upperFirst(_.toLower(row.audience))],
         code: UUID.UUID(),
         mimeType: this.mimeTypes[_.toLower(row.fileFormat)],
         contentType: row.contentType,
@@ -637,24 +651,6 @@ export class BulkUploadComponent implements OnInit {
 
   startBulkUpload(csvData) {
     this.completionPercentage = 0;
-
-    for (let i=0; i< csvData.length; i++) {
-      const row = csvData[i];
-      row.contentType = _.toLower(row.contentType);
-      let contentType = _.find(this.contentTypes, (content_type) => {
-        return (_.toLower(content_type.name) === row.contentType || _.toLower(content_type.value) === row.contentType);
-      });
-
-      if (_.isEmpty(_.get(contentType, 'value'))) {
-        this.setError(`Content Type has invalid value at row: ${i+1}`);
-        this.bulkUploadState = 4;
-        return;
-      }
-
-      row.contentType = _.get(contentType, 'value');
-      csvData[i] = row;
-    }
-
     this.createImportRequest(csvData).subscribe((importResponse) => {
       // console.log('createImportRequest res', JSON.stringify(importResponse));
       this.process.process_id = _.get(importResponse, 'result.processId');
