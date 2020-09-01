@@ -161,7 +161,7 @@
     <div class='licence-form__content'>
         <div class="ui stackable grid licence-form__content__fields my-0">
             <div class="row">
-                <div class="sb-field mb-16 six wide column" *ngIf="sessionContext.currentRole ==='REVIEWER'">
+                <div class="sb-field mb-16 six wide column" *ngIf="sessionContext.currentRoles.includes('REVIEWER')">
                     <div class="width-100">
                         <label class="font-weight-bold fsmall">{{resourceService.frmelmnts.lbl.contentType}}:</label><i class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentType}}"></i>
                         <div><span class="sb-color-gray-200 fs-0-785">{{sessionContext.contentMetadata.contentTypeName}}</span></div>
@@ -254,7 +254,7 @@
     </div>
 
     <div class='practical-sb-buttons'>
-        <button id="requestChanges" *ngIf="role.currentRole === 'REVIEWER' && sessionContext.resourceStatus === 'Review' && router.url.includes('/contribute')" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true"
+        <button id="requestChanges" *ngIf="canReviewContent()" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true"
         appTelemetryInteract
         [telemetryInteractEdata]="{id:'reject-question',type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
         [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"

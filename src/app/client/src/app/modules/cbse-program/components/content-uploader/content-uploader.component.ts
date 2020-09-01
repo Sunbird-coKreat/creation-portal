@@ -171,25 +171,37 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
      });
   }
 
+  hasAccessFor(action) {
+    const roles = _.get(this.actions, `${action}.roles`, []);
+    return !_.isEmpty(_.intersection(roles, this.sessionContext.currentRoleIds));
+  }
+
   handleActionButtons() {
     this.visibility = {};
     const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
 
     // tslint:disable-next-line:max-line-length
-    this.visibility['showChangeFile'] = submissionDateFlag && (_.includes(this.actions.showChangeFile.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
+    this.visibility['showChangeFile'] = submissionDateFlag && this.hasAccessFor('showChangeFile') && this.resourceStatus === 'Draft';
     // tslint:disable-next-line:max-line-length
-    this.visibility['showRequestChanges'] = this.router.url.includes('/contribute') && submissionDateFlag && !this.contentMetaData.sampleContent === true &&
-     (_.includes(this.actions.showRequestChanges.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
+    this.visibility['showRequestChanges'] = this.canReviewContent(submissionDateFlag);
 
     // tslint:disable-next-line:max-line-length
-    this.visibility['showPublish'] = submissionDateFlag && this.router.url.includes('/contribute') && !this.contentMetaData.sampleContent === true &&
-    (_.includes(this.actions.showPublish.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
+    this.visibility['showPublish'] = this.canPublishContent(submissionDateFlag);
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSubmit'] = submissionDateFlag && (_.includes(this.actions.showSubmit.roles, this.sessionContext.currentRoleId)  && this.resourceStatus === 'Draft');
+    this.visibility['showSubmit'] = submissionDateFlag && this.hasAccessFor('showSubmit') && this.resourceStatus === 'Draft';
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSave'] = submissionDateFlag && !this.contentMetaData.sampleContent === true && (_.includes(this.actions.showSave.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
+    this.visibility['showSave'] = submissionDateFlag && !this.contentMetaData.sampleContent === true && this.hasAccessFor('showSave') && this.resourceStatus === 'Draft';
     // tslint:disable-next-line:max-line-length
-    this.visibility['showEdit'] = submissionDateFlag && (_.includes(this.actions.showEdit.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
+    this.visibility['showEdit'] = submissionDateFlag && this.hasAccessFor('showEdit') && this.resourceStatus === 'Draft';
+  }
+
+  canPublishContent(submissionDateFlag) {
+    return !!(submissionDateFlag && this.router.url.includes('/contribute') && !this.contentMetaData.sampleContent === true &&
+    this.hasAccessFor('showPublish') && this.resourceStatus === 'Review' && this.userService.userid !== this.contentMetaData.createdBy);
+  }
+
+  canReviewContent(submissionDateFlag) {
+    return !!(this.router.url.includes('/contribute') && submissionDateFlag && !this.contentMetaData.sampleContent === true && this.hasAccessFor('showRequestChanges') && this.resourceStatus === 'Review' && this.userService.userid !== this.contentMetaData.createdBy);
   }
 
   initiateUploadModal() {
@@ -602,7 +614,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.textFields = _.filter(this.formConfiguration, {'inputType': 'text', 'visible': true});
     this.allFormFields = _.filter(this.formConfiguration, {'visible': true});
 
-    this.disableFormField = (this.sessionContext.currentRole === 'CONTRIBUTOR' && this.resourceStatus === 'Draft') ? false : true ;
+    this.disableFormField = (this.sessionContext.currentRoles.includes('CONTRIBUTOR') && this.resourceStatus === 'Draft') ? false : true ;
     _.forEach(this.formConfiguration, (formData) => {
       this.selectOutcomeOption[formData.code] = formData.defaultValue;
     });
@@ -940,9 +952,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   showSourcingOrgRejectComments() {
-    if (this.resourceStatus === 'Live' && _.get(this.sessionContext.hierarchyObj, 'sourcingRejectedComments') &&
-    _.get(this.sessionContext.hierarchyObj.sourcingRejectedComments, this.contentMetaData.identifier)) {
-      this.sourcingOrgReviewComments = _.get(this.sessionContext.hierarchyObj.sourcingRejectedComments, this.contentMetaData.identifier);
+    const id = _.get(this.contentMetaData, 'identifier');
+    const sourcingRejectedComments = _.get(this.sessionContext, 'hierarchyObj.sourcingRejectedComments')
+    if (this.resourceStatus === 'Live' && !_.isEmpty(sourcingRejectedComments) && id) {
+      this.sourcingOrgReviewComments = sourcingRejectedComments[id];
      return true;
     } else {
       return false;
@@ -950,11 +963,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   showContributorOrgReviewComments() {
-    if (this.contentMetaData && this.contentMetaData.rejectComment && this.sessionContext.currentRoleId === 1 &&
-        this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Review') {
-      return true;
-    } else {
-      return false;
-    }
+    const rejectComment = _.get(this.contentMetaData, 'rejectComment');
+    const roles = _.get(this.sessionContext, 'currentRoles');
+    return !!(rejectComment && roles.includes('CONTRIBUTOR') && this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Review');
   }
 }

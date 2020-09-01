@@ -33,34 +33,29 @@
           </div>
         </div>
 
-        <div *ngIf="!sampleContent && actions.showCountPanel.roles.includes(sessionContext.currentRoleId)" class="sb-meta-data-container sb-meta-data-column d-flex flex-w-wrap ml-16">
-          <label class="d-block width-100" *ngIf="actions.showContribution.roles.includes(sessionContext.currentRoleId)">Contributions</label>
-          <label class="d-block width-100" *ngIf="actions.showUpforReview.roles.includes(sessionContext.currentRoleId)">Up for Review</label>
+        <div *ngIf="!sampleContent && hasAccessFor('showCountPanel')" class="sb-meta-data-container sb-meta-data-column d-flex flex-w-wrap ml-16 width-inherit">
+          <label class="d-block width-100" *ngIf="hasAccessFor('showContribution') && ((sessionContext.currentRoles.includes('CONTRIBUTOR') && sessionContext.currentRoles.includes('REVIEWER')) || sessionContext.currentRoles.includes('CONTRIBUTOR'))">Contributions</label>
+          <label class="d-block width-100" *ngIf="hasAccessFor('showUpforReview') && sessionContext.currentRoles.includes('REVIEWER') && sessionContext.currentRoles.length === 1">Up for Review</label>
           <div class="d-flex">
-            <dl *ngIf="actions.showTotalContribution.roles.includes(sessionContext.currentRoleId)"
+            <dl *ngIf="hasAccessFor('showTotalContribution') || hasAccessFor('showTotalUnderReview')"
               class="sb-meta-data">
               <dt>{{countData['total']}}</dt>
               <dd>Total</dd>
             </dl>
-            <dl *ngIf="actions.showMyContribution.roles.includes(sessionContext.currentRoleId)"
+            <dl *ngIf="hasAccessFor('showMyContribution')"
               class="sb-meta-data">
               <dt>{{countData['mycontribution']}}</dt>
               <dd>My Content</dd>
             </dl>
-            <dl *ngIf="actions.showRejected.roles.includes(sessionContext.currentRoleId)" class="sb-meta-data">
+            <dl *ngIf="hasAccessFor('showRejected')" class="sb-meta-data">
               <dt>{{countData['reject']}}</dt>
               <dd>Rejected</dd>
             </dl>
-            <dl *ngIf="actions.showUnderReview.roles.includes(sessionContext.currentRoleId)" class="sb-meta-data">
+            <dl *ngIf="hasAccessFor('showUnderReview')" class="sb-meta-data">
               <dt>{{countData['review']}}</dt>
               <dd>Review in Progress</dd>
             </dl>
-            <dl *ngIf="actions.showTotalUnderReview.roles.includes(sessionContext.currentRoleId)"
-              class="sb-meta-data">
-              <dt>{{countData['total']}}</dt>
-              <dd>Total</dd>
-            </dl>
-            <dl *ngIf="actions.showAawaitingReview.roles.includes(sessionContext.currentRoleId)" class="sb-meta-data">
+            <dl *ngIf="hasAccessFor('showAawaitingReview')" class="sb-meta-data">
               <dt>{{sourcingOrgReviewer ? countData['pendingReview'] : countData['awaitingreview']}}</dt>
               <dd>Awaiting my review</dd>
             </dl>

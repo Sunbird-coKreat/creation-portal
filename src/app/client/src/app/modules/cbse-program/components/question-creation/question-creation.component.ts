@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigService, ResourceService, IUserProfile, ToasterService, NavigationHelperService } from '@sunbird/shared';
-import { PublicDataService, UserService, ActionService } from '@sunbird/core';
+import { PublicDataService, UserService, ActionService, ProgramsService } from '@sunbird/core';
 import { TelemetryService } from '@sunbird/telemetry';
 import { Validators, FormGroup, FormControl, NgForm, FormArray, FormBuilder } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -102,7 +102,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
     toasterService: ToasterService, resourceService: ResourceService, public telemetryService: TelemetryService,
     public actionService: ActionService, private cdr: ChangeDetectorRef, private helperService: HelperService,
     public programTelemetryService: ProgramTelemetryService, public activeRoute: ActivatedRoute,
-    public router: Router, private navigationHelperService: NavigationHelperService
+    public router: Router, private navigationHelperService: NavigationHelperService, private programsService: ProgramsService
   ) {
     this.userService = userService;
     this.configService = configService;
@@ -517,7 +517,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
       this.formConfiguration = this.componentConfiguration.config.formConfiguration;
       this.allFormFields = _.filter(this.formConfiguration, {'visible': true});
       // tslint:disable-next-line:max-line-length
-      this.disableFormField = (this.sessionContext.currentRole === 'CONTRIBUTOR' && this.sessionContext.resourceStatus === 'Draft') ? false : true ;
+      this.disableFormField = (this.sessionContext.currentRoles.includes('CONTRIBUTOR') && this.sessionContext.resourceStatus === 'Draft') ? false : true ;
       const formFields = _.map(this.formConfiguration, (formData) => {
         if (!formData.defaultValue) {
           return formData.code;
@@ -607,5 +607,9 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
         this.markFormGroupTouched(control);
       }
     });
+  }
+
+  canReviewContent() {
+    return !!(this.role.currentRoles.includes('REVIEWER') && this.sessionContext.resourceStatus === 'Review' && this.programsService.checkForContentSubmissionDate(this.sessionContext.programContext) && this.router.url.includes('/contribute') && this.userService.userid !== _.get(this.sessionContext, 'contentMetadata.createdBy'));
   }
 }

@@ -36,28 +36,35 @@ export class RecursiveTreeComponent implements OnInit {
 
   ngOnInit() {
     this.childlevel = this.level + 1;
+    // TODO NITESH
     const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
     this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
+     
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
     const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
     this.mvcLibraryFeatureConfiguration = this.helperService.mvcLibraryFeatureConfiguration;
 
     this.visibility = {};
     // tslint:disable-next-line:max-line-length
-    this.visibility['showAddresource'] = submissionDateFlag && _.includes(this.programContext.config.actions.showAddResource.roles, this.sessionContext.currentRoleId);
+    this.visibility['showAddresource'] = submissionDateFlag && this.hasAccessFor('showAddResource');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showEditResource'] = _.includes(this.programContext.config.actions.showEditResource.roles, this.sessionContext.currentRoleId);
+    this.visibility['showEditResource'] = this.hasAccessFor('showEditResource');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showMoveResource'] = _.includes(this.programContext.config.actions.showMoveResource.roles, this.sessionContext.currentRoleId);
+    this.visibility['showMoveResource'] = this.hasAccessFor('showMoveResource');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showDeleteResource'] = _.includes(this.programContext.config.actions.showDeleteResource.roles, this.sessionContext.currentRoleId);
+    this.visibility['showDeleteResource'] = this.hasAccessFor('showDeleteResource');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showPreviewResource'] = _.includes(this.programContext.config.actions.showPreviewResource.roles, this.sessionContext.currentRoleId);
+    this.visibility['showPreviewResource'] = this.hasAccessFor('showPreviewResource');
     this.visibility['showActionMenu'] = this.shouldActionMenuBeVisible();
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.sessionContext.programId, 'Program');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
+  }
+
+  hasAccessFor(action) {
+    const roles = _.get(this.programContext.config.actions, `${action}.roles`, []);
+    return !_.isEmpty(_.intersection(roles, this.sessionContext.currentRoleIds));
   }
 
   shouldActionMenuBeVisible() {

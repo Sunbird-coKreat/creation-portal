@@ -136,7 +136,7 @@
 							<i class="file sb-file-icon outline icon pr-10 sb-color-primary"></i>
 							{{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
 						</a>
-						<button *ngIf="userService.isContributingOrgAdmin() || sessionContext.currentRole === 'REVIEWER'" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" (click)="showTextbookFiltersModal = true"
+						<button *ngIf="userService.isContributingOrgAdmin() || sessionContext?.currentRoles?.includes('REVIEWER')" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" (click)="showTextbookFiltersModal = true"
 						appTelemetryInteract
 										[telemetryInteractEdata]="getTelemetryInteractEdata('add-filters', 'click', 'list-nominated-textbooks')"
 										[telemetryInteractObject]="telemetryInteractObject"
@@ -206,7 +206,7 @@
 												</div>
 											</td>
 											<td>
-												<button *ngIf="currentNominationStatus === 'Approved' && sessionContext.currentRole === 'CONTRIBUTOR' && canUploadContent()"
+												<button *ngIf="currentNominationStatus === 'Approved' && sessionContext?.currentRoles?.includes('CONTRIBUTOR') && canUploadContent()"
 												type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary"
 												(click)="viewContribution(contributorTextbook)" appTelemetryInteract
 												[telemetryInteractEdata]="getTelemetryInteractEdata('upload-content', 'click', 'list-nominated-textbooks', {values: [contributorTextbook.identifier]})"
@@ -221,7 +221,7 @@
 												[telemetryInteractCdata]="telemetryInteractCdata"
 												[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.viewContent}}</button>
 
-												<button *ngIf="currentNominationStatus === 'Approved' && sessionContext.currentRole !== 'CONTRIBUTOR' && canUploadContent()"
+												<button *ngIf="currentNominationStatus === 'Approved' && sessionContext?.currentRoles?.includes('REVIEWER') && !sessionContext?.currentRoles?.includes('CONTRIBUTOR') && canUploadContent()"
 												type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(contributorTextbook)" appTelemetryInteract
 												[telemetryInteractEdata]="getTelemetryInteractEdata('review-content', 'click', 'list-nominated-textbooks', {values: [contributorTextbook.identifier]})"
 												[telemetryInteractObject]="telemetryInteractObject"
@@ -315,7 +315,6 @@
 								</div>
 							</td>
 							<td class="text-center">
-								{{ orgUser?.projectselectedRole }}
 								<div *ngIf="nominationDetails?.status === 'Rejected'; else elseBlock">
 									{{ (orgUser?.projectselectedRole) ? orgUser.projectselectedRole : '-' }}
 								</div>
