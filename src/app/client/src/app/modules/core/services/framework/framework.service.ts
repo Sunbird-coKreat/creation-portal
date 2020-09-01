@@ -81,6 +81,14 @@ export class FrameworkService {
     };
     return this.learnerService.get(channelOptions);
   }
+
+  public getChannel(hashTagId) {
+    const channelOptions = {
+      url: this.configService.urlConFig.URLS.CHANNEL.READ + '/' + hashTagId
+    };
+    return this.publicDataService.get(channelOptions);
+  }
+
   public getFrameworkCategories(framework: string) {
     const frameworkOptions = {
       url: this.configService.urlConFig.URLS.FRAMEWORK.READ + '/' + framework

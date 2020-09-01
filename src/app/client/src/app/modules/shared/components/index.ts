@@ -14,3 +14,4 @@ export * from './contentlock-info-popup/contentlock-info-popup.component';
 export * from './batch-card/batch-card.component';
 export * from './full-page-modal/full-page-modal.component';
 export * from './account-merge-modal/account-merge-modal.component';
+export * from './confirm-popup/confirm-popup.component';

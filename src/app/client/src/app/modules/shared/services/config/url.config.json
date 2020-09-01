@@ -15,6 +15,7 @@
   "URLS": {
     "LEARNER_PREFIX": "/learner/",
     "CONTENT_PREFIX": "/content/",
+    "REPORT_PREFIX": "/report",
     "ELECTRON_DIALOG_PREFIX": "/dialog/",
     "PUBLIC_PREFIX": "/api/",
     "ACTION_PREFIX": "/action/",
@@ -31,6 +32,20 @@
       "READ": "review/comment/v1/read/comment",
       "DELETE": "review/comment/v1/delete/comment",
       "CREATE": "review/comment/v1/create/comment"
+    },
+    "REPORT": {
+      "READ": "/get",
+      "LIST": "/list",
+      "UPDATE": "/update",
+      "PUBLISH": "/publish",
+      "RETIRE": "/retire",
+      "SUMMARY": {
+        "PREFIX": "/summary",
+        "CREATE": "/summary/create"
+      }
+    },
+    "DATASET": {
+      "READ": "/dataset/get"
     },
     "USER": {
       "SIGNUP": "user/v1/create",
@@ -75,7 +90,8 @@
       "ENROLL_USER_COURSE": "course/v1/enrol",
       "RECOMMENDED_COURSE": "recommended/courses",
       "UNENROLL_USER_COURSE":"course/v1/unenrol",
-      "GET_QR_CODE_FILE":"course/v1/qrcode/download"
+      "GET_QR_CODE_FILE":"course/v1/qrcode/download",
+      "GET_REPORTS_METADATA": "course-reports/metadata"
     },
     "CONTENT": {
       "SEARCH": "content/v1/search",

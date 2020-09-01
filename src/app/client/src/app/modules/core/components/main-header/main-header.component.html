@@ -79,6 +79,10 @@
                                 [permission]='orgAdminRole' routerLink="manage">
                                 {{resourceService.frmelmnts?.lbl?.manage}}
                             </a> -->
+                            <a class="item" *ngIf='permissionService.permissionAvailable' appPermission
+                            [permission]='adminDashboard' [routerLink]="reportsListVersion === 'v2' ? 'dashBoard/reports': 'dashBoard/organization' ">
+                                {{resourceService?.frmelmnts?.lnk?.dashboard}}
+                            </a>
                             <a class="item" appTelemetryInteract [telemetryInteractEdata]="getLogoutInteractEdata()"
                                 (click)="logout()">
                                 {{resourceService?.frmelmnts?.lnk?.logout}}

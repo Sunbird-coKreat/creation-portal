@@ -10,6 +10,7 @@ import { CacheService } from 'ng2-cache-service';
 import { environment } from '@sunbird/environment';
 declare var jQuery: any;
 import { Observable } from 'rxjs';
+type reportsListVersionType = 'v1' | 'v2';
 
 @Component({
   selector: 'app-header',
@@ -76,6 +77,7 @@ export class MainHeaderComponent implements OnInit {
   contributeTabActive: boolean;
   activeTab = {};
   public sourcingOrgAdmin: boolean;
+  reportsListVersion: reportsListVersionType;
 
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
@@ -84,8 +86,10 @@ export class MainHeaderComponent implements OnInit {
     public programsService: ProgramsService, private location: Location) {
       try {
         this.exploreButtonVisibility = (<HTMLInputElement>document.getElementById('exploreButtonVisibility')).value;
+        this.reportsListVersion = (<HTMLInputElement>document.getElementById('reportsListVersion')).value as reportsListVersionType;
       } catch (error) {
         this.exploreButtonVisibility = 'false';
+        this.reportsListVersion = 'v1';
       }
       this.adminDashboard = this.config.rolesConfig.headerDropdownRoles.adminDashboard;
       this.announcementRole = this.config.rolesConfig.headerDropdownRoles.announcementRole;

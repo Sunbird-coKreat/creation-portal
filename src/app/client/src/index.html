@@ -111,6 +111,12 @@
   <% if (portalBaseUrl) { %>
     <input type="hidden" id="portalBaseUrl" value="<%=portalBaseUrl%>" />
   <% } %>
+  <% if (reportsListVersion) { %>
+    <input type="hidden" id="reportsListVersion" value="<%=reportsListVersion%>" />
+    <% } %>
+  <% if (superAdminSlug) { %>
+    <input type="hidden" id="superAdminSlug" value="<%=superAdminSlug%>" />
+  <% } %>
   <app-root></app-root>
 </body>
 

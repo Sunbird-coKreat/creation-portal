@@ -147,6 +147,8 @@ function getLocals(req) {
   locals.deviceId = '';
   locals.deviceProfileApi = envHelper.DEVICE_PROFILE_API;
   locals.slug = slug || '';
+  locals.superAdminSlug = envHelper.sunbird_super_admin_slug;
+  locals.reportsListVersion = envHelper.reportsListVersion;
   return locals
 }
 

@@ -233,3 +233,9 @@ app-workspace {
     padding: 20px 0;
   }
 }
+
+.sb-modal-addsummary {
+  .ck.ck-editor__editable_inline {
+    min-height: calc(100vh - 271px);
+  }
+}

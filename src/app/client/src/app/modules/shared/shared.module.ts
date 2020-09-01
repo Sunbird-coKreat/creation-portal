@@ -6,14 +6,14 @@ import {
   AnnouncementInboxCardComponent, PageSectionComponent, NoResultComponent, AppLoaderComponent, CardComponent,
   CardCreationComponent, ShareLinkComponent, BrowserCompatibilityComponent, QrCodeModalComponent, RedirectComponent,
   CustomMultiSelectComponent, InstallAppComponent, LockInfoPopupComponent, BatchCardComponent, AccountMergeModalComponent,
-  FullPageModalComponent
+  FullPageModalComponent, ConfirmPopupComponent
 } from './components';
 import {
   ConfigService, ResourceService, ToasterService, WindowScrollService, BrowserCacheTtlService,
   PaginationService, RouterNavigationService, NavigationHelperService, UtilService, ContentUtilsServiceService, ExternalUrlPreviewService,
   OfflineCardService, RecaptchaService,
 } from './services';
-import { ContentDirectionDirective } from './directives';
+import { ContentDirectionDirective, MarkdownDirective } from './directives';
 import { CommonModule } from '@angular/common';
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { DateFormatPipe, DateFilterXtimeAgoPipe, FilterPipe, InterpolatePipe } from './pipes';
@@ -23,7 +23,8 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { CdnprefixPipe } from './pipes/cdnprefix.pipe';
 import { HighlightTextDirective } from './directives/highlight-text/highlight-text.directive';
-
+import { AppLandingSectionComponent } from './components/app-landing-section/app-landing-section.component';
+import { TranslateModule, TranslateStore } from '@ngx-translate/core';
 
 @NgModule({
   imports: [
@@ -32,18 +33,18 @@ import { HighlightTextDirective } from './directives/highlight-text/highlight-te
     SuiRatingModule, SuiCollapseModule,
     SlickModule,
     FormsModule,
-    TelemetryModule
+    TelemetryModule, TranslateModule.forChild()
   ],
   declarations: [AppLoaderComponent, AnnouncementInboxCardComponent, DateFormatPipe, PageSectionComponent,
     BatchCardComponent, NoResultComponent, DateFilterXtimeAgoPipe, CardComponent, CardCreationComponent, FilterPipe, InterpolatePipe,
     ShareLinkComponent, BrowserCompatibilityComponent, QrCodeModalComponent, CdnprefixPipe, RedirectComponent, CustomMultiSelectComponent,
-    InstallAppComponent, LockInfoPopupComponent, ContentDirectionDirective,
-    HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent],
-  exports: [AppLoaderComponent, AnnouncementInboxCardComponent, DateFormatPipe, DateFilterXtimeAgoPipe,
+    InstallAppComponent, LockInfoPopupComponent, ContentDirectionDirective, MarkdownDirective,
+    HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent, AppLandingSectionComponent, ConfirmPopupComponent],
+  exports: [TranslateModule, AppLoaderComponent, AnnouncementInboxCardComponent, DateFormatPipe, DateFilterXtimeAgoPipe,
     PageSectionComponent, BatchCardComponent, NoResultComponent, CardComponent, CardCreationComponent, FilterPipe,
     ShareLinkComponent, BrowserCompatibilityComponent, QrCodeModalComponent, CdnprefixPipe, InterpolatePipe, RedirectComponent,
-    CustomMultiSelectComponent, InstallAppComponent, LockInfoPopupComponent, ContentDirectionDirective,
-    HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent]
+    CustomMultiSelectComponent, InstallAppComponent, LockInfoPopupComponent, ContentDirectionDirective, MarkdownDirective,
+    HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent, AppLandingSectionComponent, ConfirmPopupComponent]
 })
 export class SharedModule {
   static forRoot(): ModuleWithProviders {
@@ -51,7 +52,8 @@ export class SharedModule {
       ngModule: SharedModule,
       providers: [ResourceService, ConfigService, ToasterService, PaginationService, RecaptchaService,
         RouterNavigationService, WindowScrollService, NavigationHelperService, CacheService, UtilService, ContentUtilsServiceService,
-        DeviceDetectorModule, DeviceDetectorService, BrowserCacheTtlService, ExternalUrlPreviewService, OfflineCardService]
+        DeviceDetectorModule, DeviceDetectorService, BrowserCacheTtlService, ExternalUrlPreviewService, OfflineCardService,
+        TranslateStore]
     };
   }
 }
