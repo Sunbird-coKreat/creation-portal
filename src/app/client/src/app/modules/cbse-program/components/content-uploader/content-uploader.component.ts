@@ -270,20 +270,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         status: 'active'
       };
       this.helperService.getProgramConfiguration(request).subscribe(res => {
-        // if (_.get(res, 'result.configuration.value'))
-        {
-          // @T0d0 remove before merge
-          res.result.configuration = {
-              "id": 7,
-              "key": "overrideMetaData",
-              "value": '[{"code":"name","dataType":"text","editable":true},{"code":"learningOutcome","dataType":"list","editable":true},{"code":"attributions","dataType":"list","editable":true},{"code":"copyright","dataType":"text","editable":true},{"code":"creator","dataType":"text","editable":true},{"code":"license","dataType":"list","editable":true},{"code":"contentPolicyCheck","dataType":"boolean","editable":false}]',
-              "status": "active",
-              "createdby": null,
-              "updatedby": null,
-              "createdon": "2020-09-01T01:16:36.568Z",
-              "updatedon": "2020-09-01T01:16:36.568Z"
-          };
-
+        if (_.get(res, 'result.configuration.value')) {
           this.overrideMetaData = JSON.parse(_.get(res, 'result.configuration.value'));
           this.cacheService.set(request.key, _.get(res, 'result.configuration.value'),
             { maxAge: this.browserCacheTtlService.browserCacheTtl });
