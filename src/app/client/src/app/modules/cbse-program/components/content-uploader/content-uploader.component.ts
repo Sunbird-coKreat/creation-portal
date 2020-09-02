@@ -200,10 +200,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     if (!this.visibility['showEdit']) {
       const nameFieldConfig = _.find(this.overrideMetaData, (item) => item.code === 'name');
       if (nameFieldConfig.editable === true
-        && this.sourcingOrgReviewer
-        && this.resourceStatus === 'Live'
+        && (this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
+        && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
         && !this.sourcingReviewStatus
-        && (this.originCollectionData.status === 'Draft' && this.selectedOriginUnitStatus === 'Draft')) {
+        && (this.selectedOriginUnitStatus === 'Draft')) {
           this.visibility['showEdit'] = true;
       }
     }
@@ -936,6 +936,18 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
 
+  updateBeforePublish() {
+    const cb = (err, res ) => {
+      if (!err && res) {
+        this.publishContent();
+      } else {
+        console.log(err);
+      }
+    };
+
+    this.updateContent(cb);
+  }
+
   publishContent(cb = (err, res) => {}) {
     this.helperService.publishContent(this.contentMetaData.identifier, this.userService.userProfile.userId)
        .subscribe(res => {
@@ -1096,10 +1108,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       _.forEach(this.allFormFields, (field) => {
         this.editableFields.push(field.code);
       });
-    } else if (this.sourcingOrgReviewer
-      && this.resourceStatus === 'Live'
+    } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
+      && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
       && !this.sourcingReviewStatus
-      && (this.originCollectionData.status === 'Draft' && this.selectedOriginUnitStatus === 'Draft')) {
+      && (this.selectedOriginUnitStatus === 'Draft')) {
       _.forEach(this.allFormFields, (field) => {
         const fieldConfig = _.find(this.overrideMetaData, (item) => item.code === field.code);
         if (fieldConfig.editable === true) {
