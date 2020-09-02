@@ -1,8 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { OrgUserListComponent } from './org-user-list.component';
-import {userDetail, chunkedUserList} from './org-user-list.component.spec.data'
 import { RegistryService , ProgramsService} from '@sunbird/core';
+import {userDetail, chunkedUserList} from '../../services/programUserTestData'
 
 describe('OrgUserListComponent', () => {
   let component: OrgUserListComponent;

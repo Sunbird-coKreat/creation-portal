@@ -8,7 +8,7 @@ import * as _ from 'lodash-es';
 import {  throwError , of } from 'rxjs';
 // tslint:disable-next-line:max-line-length
 import { addParticipentResponseSample, userProfile,  frameWorkData, programDetailsWithOutUserDetails,
-  programDetailsWithOutUserAndForm, extFrameWorkPostData, programDetailsWithUserDetails , userDetail, chunkedUserList } from './program.component.spec.data';
+  programDetailsWithOutUserAndForm, extFrameWorkPostData, programDetailsWithUserDetails } from './program.component.spec.data';
 import { CollectionComponent } from '../../../cbse-program/components/collection/collection.component';
 import { ProgramHeaderComponent } from '../program-header/program-header.component';
 import { OnboardPopupComponent } from '../onboard-popup/onboard-popup.component';
@@ -19,6 +19,7 @@ import { FormsModule } from '@angular/forms';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { ActivatedRoute, Router } from '@angular/router';
+import {userDetail, chunkedUserList} from '../../services/programUserTestData'
 
 const userServiceStub = {
   get() {
