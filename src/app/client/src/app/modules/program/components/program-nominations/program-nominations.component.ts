@@ -267,7 +267,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   sortUsersList(usersList,isUserSearch?) {
      this.sourcingOrgUserCnt = usersList.length;
      this.paginatedSourcingUsers = this.programsService.sortCollection(usersList, 'selectedRole', 'desc');
-     this.initialSourcingOrgUser = this.paginatedSourcingUsers;
+     isUserSearch? this.paginatedSourcingUsers :this.initialSourcingOrgUser = this.paginatedSourcingUsers;
      usersList = _.chunk(this.paginatedSourcingUsers, this.pageLimit);
      this.paginatedSourcingUsers = usersList;
      this.sourcingOrgUser = isUserSearch ? usersList[0] : usersList[this.pageNumber - 1];

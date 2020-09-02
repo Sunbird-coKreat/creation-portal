@@ -328,19 +328,20 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.searchInput) {
       let filteredUser = this.registryService.getSearchedUserList(this.initialSourcingOrgUser, this.searchInput);
        filteredUser.length > this.searchLimitCount ? this.searchLimitMessage = true: this.searchLimitMessage = false;   
-      this.sortUsersList(filteredUser);
+      this.sortUsersList(filteredUser, true);
     } else {
       this.searchLimitMessage = false;
-      this.sortUsersList(this.initialSourcingOrgUser);
+      this.sortUsersList(this.initialSourcingOrgUser, true);
     }
   }
-  sortUsersList(usersList) {
+  sortUsersList(usersList, isUserSearch?) {
      this.OrgUsersCnt = usersList.length;
-     this.paginatedContributorOrgUsers = this.programsService.sortCollection(usersList, 'projectselectedRole', 'asc');
-     usersList = _.chunk(this.paginatedContributorOrgUsers, this.pageLimit);
+     this.allContributorOrgUsers = this.programsService.sortCollection(usersList, 'projectselectedRole', 'asc');
+     isUserSearch ?  this.allContributorOrgUsers: this.initialSourcingOrgUser =  this.allContributorOrgUsers;
+     usersList = _.chunk(this.allContributorOrgUsers, this.pageLimit);
      this.paginatedContributorOrgUsers = usersList;
-     this.contributorOrgUser = usersList[0];
-     this.pager = this.paginationService.getPager(this.OrgUsersCnt, 1 , this.pageLimit);
+     this.contributorOrgUser = isUserSearch ? usersList[0] : usersList[this.pageNumber - 1];
+     this.pager = this.paginationService.getPager(this.OrgUsersCnt, isUserSearch ? 1 : this.pageNumber, this.pageLimit);
   }
   setOrgUsers(orgUsers) {
     if (_.isEmpty(orgUsers)) {
@@ -431,12 +432,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   sortOrgUsers(column) {
-    this.allContributorOrgUsers = this.programsService.sortCollection(this.allContributorOrgUsers, column, this.directionOrgUsers);
-    this.initialSourcingOrgUser =  this.allContributorOrgUsers;
-    this.paginatedContributorOrgUsers = _.chunk(this.allContributorOrgUsers, this.pageLimit);
-    this.contributorOrgUser = this.paginatedContributorOrgUsers[this.pageNumber - 1];
-    this.pager = this.paginationService.getPager(this.OrgUsersCnt, this.pageNumber, this.pageLimit);
-
+    this.sortUsersList(this.allContributorOrgUsers);
     if (this.directionOrgUsers === 'asc' || this.directionOrgUsers === '') {
       this.directionOrgUsers = 'desc';
     } else {

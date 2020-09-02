@@ -120,7 +120,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   sortUsersList(usersList, isUserSearch?) {
      this.orgUserscnt = usersList.length;
      this.allContributorOrgUsers = this.programsService.sortCollection(usersList, 'selectedRole', 'asc');
-     this.initialSourcingOrgUser = this.allContributorOrgUsers;
+     isUserSearch ?  this.allContributorOrgUsers:  this.initialSourcingOrgUser = this.allContributorOrgUsers;
      usersList = _.chunk(this.allContributorOrgUsers, this.pageLimit);
      this.paginatedContributorOrgUsers = usersList;
      this.contributorOrgUsers = isUserSearch? usersList[0] : usersList[this.pageNumber-1];
@@ -137,7 +137,6 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   }
 
   sortCollection(column) {
-    this.allContributorOrgUsers = this.programsService.sortCollection(this.allContributorOrgUsers, column, this.direction);
     this.sortUsersList(this.allContributorOrgUsers);
     if (this.direction === 'asc' || this.direction === '') {
       this.direction = 'desc';
