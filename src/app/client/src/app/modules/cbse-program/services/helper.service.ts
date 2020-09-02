@@ -120,9 +120,12 @@ export class HelperService {
       url: 'content/v3/read/' + collectionId,
       param: { 'mode': 'edit', 'fields': 'acceptedContents,rejectedContents,versionKey,sourcingRejectedComments' }
     };
+
+    // @Todo remove after testing
+    // this.sendNotification.next(_.capitalize(action));
     this.actionService.get(option).pipe(map((res: any) => res.result.content)).subscribe((data) => {
       if (this.checkIfContentPublishedOrRejected(data, action, contentId)) { return; }
-      if (action === 'accept') {
+      if (action === 'accept' || action === 'acceptWithChanges') {
         const req = {
           url: `program/v1/content/publish`,
           data: {
@@ -159,14 +162,14 @@ export class HelperService {
       }
     };
     // tslint:disable-next-line:max-line-length
-    action === 'accept' ? request.content['acceptedContents'] = _.uniq([...data.acceptedContents || [], contentId]) : request.content['rejectedContents'] = _.uniq([...data.rejectedContents || [], contentId]);
+    action === 'accept' || action === 'acceptWithChanges' ? request.content['acceptedContents'] = _.uniq([...data.acceptedContents || [], contentId]) : request.content['rejectedContents'] = _.uniq([...data.rejectedContents || [], contentId]);
     if (action === 'reject' && rejectedComments) {
       // tslint:disable-next-line:max-line-length
       request.content['sourcingRejectedComments'] = data.sourcingRejectedComments && _.isString(data.sourcingRejectedComments) ? JSON.parse(data.sourcingRejectedComments) : data.sourcingRejectedComments || {};
       request.content['sourcingRejectedComments'][contentId] = rejectedComments;
     }
     this.updateContent(request, collectionId).subscribe(() => {
-      action === 'accept' ? this.toasterService.success(this.resourceService.messages.smsg.m0066) :
+      action === 'accept' || action === 'acceptWithChanges' ? this.toasterService.success(this.resourceService.messages.smsg.m0066) :
         this.toasterService.success(this.resourceService.messages.smsg.m0067);
       this.programStageService.removeLastStage();
       this.sendNotification.next(_.capitalize(action));
@@ -176,7 +179,7 @@ export class HelperService {
   }
 
   acceptContent_errMsg(action) {
-    action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.approvingFailed) :
+    action === 'accept' || action === 'acceptWithChanges' ? this.toasterService.error(this.resourceService.messages.fmsg.approvingFailed) :
     this.toasterService.error(this.resourceService.messages.fmsg.m00100);
   }
 

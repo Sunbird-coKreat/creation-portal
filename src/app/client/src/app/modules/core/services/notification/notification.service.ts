@@ -189,18 +189,25 @@ export class NotificationService {
     let subject = this.resourceService.messages.stmsg.content.notification.status.subject;
     subject = _.replace(subject, '{PROJECT_NAME}', notificationData.program.name);
     subject = _.replace(subject, '{CONTENT_NAME}', notificationData.content.name);
-    if (notificationData.status === 'Published') {
-      status = 'published';
+
+    switch (notificationData.status) {
+      case 'Published':
+        status = 'published';
+      break;
+      case 'Request':
+        status = 'requested changes';
+      break;
+      case 'Accept':
+        status = 'accepted';
+      break;
+      case 'Acceptwithchanges':
+        status = 'approved with few changes';
+      break;
+      case 'Reject':
+        status = 'rejected';
+      break;
     }
-    if (notificationData.status === 'Request') {
-      status = 'requested changes';
-    }
-    if (notificationData.status === 'Accept') {
-      status = 'accepted';
-    }
-    if (notificationData.status === 'Reject') {
-      status = 'rejected';
-    }
+
     subject = _.replace(subject, '{CONTENT_STATUS}', status);
     return subject;
   }
@@ -215,6 +222,9 @@ export class NotificationService {
     }
     if (status === 'Accept') {
       template = type + 'ContentAccept';
+    }
+    if (status === 'Acceptwithchanges') {
+      template = type + 'ContentAcceptWithChanges';
     }
     if (status === 'Reject') {
       template = type + 'ContentReject';
