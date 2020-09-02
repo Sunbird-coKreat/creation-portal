@@ -19,7 +19,7 @@ import { FormsModule } from '@angular/forms';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { ActivatedRoute, Router } from '@angular/router';
-import {userDetail, chunkedUserList} from '../../services/programUserTestData'
+import {userDetail, chunkedUserList} from '../../services/programUserTestData';
 
 const userServiceStub = {
   get() {

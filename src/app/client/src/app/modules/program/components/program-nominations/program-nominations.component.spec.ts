@@ -6,7 +6,7 @@ import { DynamicModule } from 'ng-dynamic-component';
 import * as _ from 'lodash-es';
 import {  throwError , of } from 'rxjs';
 import * as SpecData from './program-nominations.spec.data';
-import {userDetail, chunkedUserList} from '../../services/programUserTestData'
+import {userDetail, chunkedUserList} from '../../services/programUserTestData';
 import { ProgramNominationsComponent } from './program-nominations.component';
 import { OnboardPopupComponent } from '../onboard-popup/onboard-popup.component';
 import { SuiModule } from 'ng2-semantic-ui';
