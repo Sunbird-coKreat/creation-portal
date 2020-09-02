@@ -643,6 +643,7 @@ export class ProgramsService extends DataService implements CanActivate {
             request: request
           }
         };
+        const nomination = _.first(data.result);
 
         if (!_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
           req.data.request['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
@@ -657,7 +658,12 @@ export class ProgramsService extends DataService implements CanActivate {
           req.data.request['user_id'] = this.userService.userProfile.identifier;
           req.data.request['createdby'] = this.userService.userProfile.userRegData.User.osid;
         }
-        return this.post(req);
+
+        if (_.get(nomination, 'status') === 'Approved' || _.get(nomination, 'status') === 'Rejected') {
+          return of(_.get(nomination, 'status'));
+        } else {
+          return this.post(req);
+        }
       }), catchError(err => throwError(err) ));
   }
 

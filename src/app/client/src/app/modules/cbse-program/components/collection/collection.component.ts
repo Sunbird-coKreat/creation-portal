@@ -463,7 +463,9 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.programsService.addorUpdateNomination(request).subscribe(
       (data) => {
-        if (data.result && !_.isEmpty(data.result)) {
+        if (data === 'Approved' || data === 'Rejected') {
+          this.toasterService.success(`Nomination already been ${data}`);
+        } else if (data.result && !_.isEmpty(data.result)) {
             this.showNominateModal = false;
             const router = this.router;
             setTimeout(function() {
