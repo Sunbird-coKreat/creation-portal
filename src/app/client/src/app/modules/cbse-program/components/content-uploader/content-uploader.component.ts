@@ -807,7 +807,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       _.forEach(this.overrideMetaData, (field) => {
         if (Array.isArray(contentObj[field.code])) {
           if (JSON.stringify(contentObj[field.code]) !== JSON.stringify(this.contentMetaData[field.code])) {
-            this.isMetadataOverridden = true;
+            if (typeof this.contentMetaData[field.code] === 'undefined'){
+              if (contentObj[field.code].length) {
+                this.isMetadataOverridden = true;
+              }
+            } else {
+              this.isMetadataOverridden = true;
+            }
           }
         } else if (typeof contentObj[field.code] !== 'undefined') {
           if (contentObj[field.code].localeCompare(this.contentMetaData[field.code]) !== 0) {
@@ -815,9 +821,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           }
         }
       });
-
-      console.log('isMetadataOverridden', this.isMetadataOverridden);
-      console.log('contentObj', contentObj);
 
       this.helperService.updateContent(request, this.contentMetaData.identifier).subscribe((res) => {
         cb(null, res);
