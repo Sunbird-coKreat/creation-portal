@@ -36,10 +36,8 @@ export class RecursiveTreeComponent implements OnInit {
 
   ngOnInit() {
     this.childlevel = this.level + 1;
-    // TODO NITESH
-    const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
-    this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
-     
+    const currentRoles = _.filter(this.programContext.config.roles, role => this.sessionContext.currentRoles.includes(role.name));
+    this.sessionContext.currentRoleIds = !_.isEmpty(currentRoles) ? _.map(currentRoles, role => role.id) : null;
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
     const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
     this.mvcLibraryFeatureConfiguration = this.helperService.mvcLibraryFeatureConfiguration;

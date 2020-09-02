@@ -38,7 +38,7 @@ export class CbseProgramService {
     return this.actionService.get(req);
   }
 
-  getQuestionPluginConfig(res, questionSetConfigCdata, collections, role) {
+  getQuestionPluginConfig(res, questionSetConfigCdata, collections, roles) {
     const question = _.cloneDeep(questionObject);
     const questionConfigCdata: any = {};
     question.id = UUID.UUID();
@@ -56,7 +56,7 @@ export class CbseProgramService {
       questionSetConfigCdata.shuffle_questions = false;
       questionConfigCdata.responseDeclaration = _.get(res, 'result.assessment_item.responseDeclaration');
     }
-    if ( role !== 'CONTRIBUTOR') {
+    if (!roles.includes('CONTRIBUTOR')) {
       questionSetConfigCdata.total_items = collections.length;
     }
     questionConfigCdata.options = res.result.assessment_item.options || [];
@@ -74,7 +74,7 @@ export class CbseProgramService {
     return question;
   }
 
-  getECMLJSON(collections: Array < string > , role ?: any, previewQuestionData ?: any) {
+  getECMLJSON(collections: Array < string > , roles ?: any, previewQuestionData ?: any) {
     const theme = _.cloneDeep(themeObject);
     const stage = _.cloneDeep(stageObject);
     const questionSet = _.cloneDeep(questionSetObject);
@@ -88,8 +88,8 @@ export class CbseProgramService {
 
     return of(collections)
       .pipe(mergeMap((collectionIds: Array < string > ) => {
-        if ((collectionIds && collectionIds.length > 0) || (role === 'CONTRIBUTOR')) {
-          if (role !== 'CONTRIBUTOR') {
+        if ((collectionIds && collectionIds.length > 0) || (roles.includes('CONTRIBUTOR'))) {
+          if (!roles.includes('CONTRIBUTOR')) {
             return forkJoin(_.map(collectionIds, (collectionId: string) => {
               const req = {
                 url: `${this.configService.urlConFig.URLS.ASSESSMENT.READ}/${collectionId}`
@@ -101,13 +101,13 @@ export class CbseProgramService {
 
               return this.actionService.get(req).pipe(
                 map(res => {
-                  return this.getQuestionPluginConfig(res, questionSetConfigCdata, collections, role);
+                  return this.getQuestionPluginConfig(res, questionSetConfigCdata, collections, roles);
                 }),
                 catchError(err => of(err))
               );
             }));
           } else {
-            return of(this.getQuestionPluginConfig(previewQuestionData, questionSetConfigCdata, collections, role));
+            return of(this.getQuestionPluginConfig(previewQuestionData, questionSetConfigCdata, collections, roles));
           }
         }
         // else {

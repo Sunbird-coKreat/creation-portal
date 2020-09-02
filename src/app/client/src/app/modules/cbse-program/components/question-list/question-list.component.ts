@@ -36,7 +36,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public programContext: any;
   public sharedContext: any;
   public selectedSharedContext: any;
-  public role: any;
+  public roles: any;
   public templateDetails: any;
   public actions: any;
   public notify;
@@ -96,7 +96,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.originCollectionData = _.get(this.practiceQuestionSetComponentInput, 'originCollectionData');
     this.selectedOriginUnitStatus = _.get(this.practiceQuestionSetComponentInput, 'content.originUnitStatus');
     this.selectedSharedContext = _.get(this.practiceQuestionSetComponentInput, 'selectedSharedContext');
-    this.role = _.get(this.practiceQuestionSetComponentInput, 'role');
+    this.roles = _.get(this.practiceQuestionSetComponentInput, 'roles');
     this.templateDetails = _.get(this.practiceQuestionSetComponentInput, 'templateDetails');
     this.programContext = _.get(this.practiceQuestionSetComponentInput, 'programContext');
     this.sessionContext.programContext = this.programContext;

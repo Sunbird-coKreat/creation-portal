@@ -23,7 +23,7 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() sessionContext: any;
   @Input() telemetryEventsInput: any;
   @Input() questionMetaData: any;
-  @Input() role: any;
+  @Input() roles: any;
   @Output() questionStatus = new EventEmitter<any>();
   @Output() questionFormChangeStatus = new EventEmitter<any>();
   @ViewChild('author_names') authorName;
@@ -596,6 +596,6 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   canReviewContent() {
-    return !!(this.role.currentRoles.includes('REVIEWER') && this.sessionContext.resourceStatus === 'Review' && this.router.url.includes('/contribute') && this.programsService.checkForContentSubmissionDate(this.sessionContext.programContext) && this.userService.userid !== _.get(this.sessionContext, 'contentMetadata.createdBy'));
+    return !!(this.roles.currentRoles.includes('REVIEWER') && this.sessionContext.resourceStatus === 'Review' && this.router.url.includes('/contribute') && this.programsService.checkForContentSubmissionDate(this.sessionContext.programContext) && this.userService.userid !== _.get(this.sessionContext, 'contentMetadata.createdBy'));
   }
 }

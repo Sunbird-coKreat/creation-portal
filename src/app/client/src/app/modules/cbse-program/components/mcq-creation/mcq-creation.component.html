@@ -1,5 +1,5 @@
 
-<app-question-creation-header *ngIf="questionMetaData && !showPreview" [telemetryEventsInput]="telemetryEventsInput" [questionMetaData]="questionMetaData" [role]="role" [resourceStatus]="sessionContext.resourceStatus"></app-question-creation-header>
+<app-question-creation-header *ngIf="questionMetaData && !showPreview" [telemetryEventsInput]="telemetryEventsInput" [questionMetaData]="questionMetaData" [roles]="roles" [resourceStatus]="sessionContext.resourceStatus"></app-question-creation-header>
 
 <app-question-preview *ngIf="showPreview" [sessionContext]="sessionContext">
 </app-question-preview>

@@ -29,7 +29,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   @Output() questionFormChangeStatus = new EventEmitter<any>();
   @Input() sessionContext: any;
   @Input() telemetryEventsInput: any;
-  @Input() role: any;
+  @Input() roles: any;
   @ViewChild('author_names') authorName;
   @ViewChild('reuestChangeForm') ReuestChangeForm: NgForm;
 
@@ -610,6 +610,6 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   }
 
   canReviewContent() {
-    return !!(this.role.currentRoles.includes('REVIEWER') && this.sessionContext.resourceStatus === 'Review' && this.programsService.checkForContentSubmissionDate(this.sessionContext.programContext) && this.router.url.includes('/contribute') && this.userService.userid !== _.get(this.sessionContext, 'contentMetadata.createdBy'));
+    return !!(this.roles.currentRoles.includes('REVIEWER') && this.sessionContext.resourceStatus === 'Review' && this.programsService.checkForContentSubmissionDate(this.sessionContext.programContext) && this.router.url.includes('/contribute') && this.userService.userid !== _.get(this.sessionContext, 'contentMetadata.createdBy'));
   }
 }

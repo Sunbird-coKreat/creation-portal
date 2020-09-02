@@ -509,6 +509,14 @@ export class UserService {
     return _.get(this, 'userProfile.userRegData.User_Org.roles', []);
   }
 
+  getUserId() {
+    return _.get(this, 'userProfile.userId');
+  }
+
+  getUserOrgId() {
+    return _.get(this, 'userProfile.userRegData.User_Org.orgId');
+  }
+
   isSourcingOrgAdmin() {
     return _.get(this, 'userProfile.userRoles', []).includes('ORG_ADMIN');
   }

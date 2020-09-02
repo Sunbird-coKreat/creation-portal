@@ -36,7 +36,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   @Output() selectedQuestionTypeTopic = new EventEmitter<any>();
 
   public sessionContext: ISessionContext;
-  public role: any;
+  public roles: any;
   public textBookChapters: Array<any> = [];
   public telemetryImpression: IImpressionEventInput;
   private questionType: Array<any> = [];
@@ -106,7 +106,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.programContext = _.get(this.chapterListComponentInput, 'programContext');
     this.currentUserID = this.userService.userProfile.userId;
     // this.currentUserID = _.get(this.programContext, 'userDetails.userId');
-    this.role = _.get(this.chapterListComponentInput, 'role');
+    this.roles = _.get(this.chapterListComponentInput, 'roles');
     this.collection = _.get(this.chapterListComponentInput, 'collection');
     this.actions = _.get(this.chapterListComponentInput, 'programContext.config.actions');
     this.sharedContext = _.get(this.chapterListComponentInput, 'programContext.config.sharedContext');
@@ -150,12 +150,12 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   showBulkUploadOption() {
-    return !!(this.programsService.checkForContentSubmissionDate(this.programContext) && !this.isNominationPendingOrInitiated() && _.get(this.sessionContext, 'currentRoles').includes('CONTRIBUTOR'));
+    return !!(this.programsService.checkForContentSubmissionDate(this.programContext) && !this.isNominationPendingOrInitiated() && _.get(this.sessionContext, 'currentRoles', []).includes('CONTRIBUTOR'));
   }
 
   ngOnChanges(changed: any) {
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
-    this.role = _.get(this.chapterListComponentInput, 'role');
+    this.roles = _.get(this.chapterListComponentInput, 'roles');
   }
 
   ngAfterViewInit() {
@@ -250,7 +250,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         sessionContext: this.sessionContext,
         templateDetails: this.templateDetails,
         unitIdentifier: this.unitIdentifier,
-        role: this.role,
+        roles: this.roles,
         selectedSharedContext: this.selectedSharedContext,
         contentIdentifier: this.contentId,
         originCollectionData: this.originalCollectionData,
