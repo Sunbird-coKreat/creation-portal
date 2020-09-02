@@ -257,20 +257,21 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     if (this.searchInput) {
       let filteredUser = this.registryService.getSearchedUserList(this.initialSourcingOrgUser, this.searchInput);
       filteredUser.length > this.searchLimitCount ? this.searchLimitMessage = true: this.searchLimitMessage = false;   
-      this.sortUsersList(filteredUser);
+      this.sortUsersList(filteredUser, true);
     } else {
       this.searchLimitMessage = false;
-      this.sortUsersList(this.initialSourcingOrgUser);
+      this.sortUsersList(this.initialSourcingOrgUser, true);
     }
   }
 
-  sortUsersList(usersList) {
+  sortUsersList(usersList,isUserSearch?) {
      this.sourcingOrgUserCnt = usersList.length;
      this.paginatedSourcingUsers = this.programsService.sortCollection(usersList, 'selectedRole', 'desc');
+     this.initialSourcingOrgUser = this.paginatedSourcingUsers;
      usersList = _.chunk(this.paginatedSourcingUsers, this.pageLimit);
      this.paginatedSourcingUsers = usersList;
-     this.sourcingOrgUser = usersList[0];
-     this.pagerUsers = this.paginationService.getPager(this.sourcingOrgUserCnt, 1 , this.pageLimit);
+     this.sourcingOrgUser = isUserSearch ? usersList[0] : usersList[this.pageNumber - 1];
+     this.pagerUsers = this.paginationService.getPager(this.sourcingOrgUserCnt, isUserSearch ? 1 : this.pageNumberUsers, this.pageLimit);
  }
 
   getsourcingOrgReviewers (offset?, iteration?) {
@@ -279,13 +280,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       userRegData['Org'] = (_.get(res1, 'result.Org').length > 0) ? _.first(_.get(res1, 'result.Org')) : {};
       this.registryService.getcontributingOrgUsersDetails(userRegData, true).then((orgUsers) => {
           this.paginatedSourcingUsers = orgUsers;
-          this.sourcingOrgUserCnt = this.paginatedSourcingUsers.length;
           this.readRolesOfOrgUsers();
-          this.paginatedSourcingUsers = this.programsService.sortCollection(this.paginatedSourcingUsers, 'selectedRole', 'desc');
-          this.initialSourcingOrgUser = this.paginatedSourcingUsers;
-          this.paginatedSourcingUsers = _.chunk( this.paginatedSourcingUsers, this.pageLimit);
-          this.sourcingOrgUser = this.paginatedSourcingUsers[this.pageNumber - 1];
-          this.pagerUsers = this.paginationService.getPager(this.sourcingOrgUserCnt, this.pageNumberUsers, this.pageLimit);
+          this.sortUsersList(this.paginatedSourcingUsers);
           this.showUsersLoader = false;
       });
     }, (error1) => {
