@@ -41,6 +41,8 @@ export class ProgramListComponent implements OnInit {
   public roleMapping = [];
   public iscontributeOrgAdmin = true;
   public issourcingOrgAdmin = false;
+  public selectedProgramToModify: any;
+  public showModifyConfirmation: boolean;
 
   showDeleteModal = false;
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
@@ -456,7 +458,8 @@ export class ProgramListComponent implements OnInit {
   getProgramTextbooksCount(program) {
     let count = 0;
 
-    if (program.nominated_collection_ids && program.nominated_collection_ids.length) {
+    // tslint:disable-next-line:max-line-length
+    if (program.nominated_collection_ids && program.nominated_collection_ids.length && _.get(program, 'nomination_status') !== 'Initiated') {
       count = program.nominated_collection_ids.length;
     } else if (program.collection_ids && program.collection_ids.length) {
       count = program.collection_ids.length;
@@ -544,5 +547,39 @@ export class ProgramListComponent implements OnInit {
       pageid,
       extra
     }, _.isUndefined);
+  }
+
+  canNominate(program) {
+    const today = moment();
+    return moment(program.nomination_enddate).isSameOrAfter(today, 'day');
+  }
+
+  getProjectToModify(program) {
+    this.selectedProgramToModify = program;
+    this.showModifyConfirmation = true;
+  }
+
+  modifyNomination() {
+    if (this.selectedProgramToModify) {
+      // Update nomination back to Initiated stage
+      const req = {
+        program_id: this.selectedProgramToModify.program_id,
+        status: 'Initiated',
+        updatedby: this.userService.userProfile.userId
+      };
+
+      this.programsService.addorUpdateNomination(req).subscribe((data) => {
+        if (data === 'Approved' || data === 'Rejected') {
+          this.toasterService.error(`${this.resourceService.messages.emsg.modifyNomination.error} ${data}`);
+          this.ngOnInit();
+        } else {
+          this.router.navigateByUrl('/contribute/program/' + this.selectedProgramToModify.program_id);
+        }
+      }, err => {
+        this.toasterService.error(this.resourceService.messages.emsg.bulkApprove.something);
+      });
+    } else {
+      this.toasterService.error(this.resourceService.messages.emsg.bulkApprove.something);
+    }
   }
 }
