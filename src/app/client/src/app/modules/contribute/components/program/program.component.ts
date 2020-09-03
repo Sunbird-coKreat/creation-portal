@@ -164,7 +164,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
       this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
       this.roles =_.get(this.programDetails, 'config.roles');
-      this.roles.push({'id': 3, 'name': 'BOTH', 'defaultTab': 3, 'tabs': [3]})
+      this.roles.push({'id': 3, 'name': 'BOTH', 'defaultTab': 3, 'tabs': [3]});
+      this.roles.push({'id': 4, 'name': 'NONE', 'tabs': [4], 'default': true, 'defaultTab': 4});
       this.roleNames = _.map(this.roles, 'name');
       this.fetchFrameWorkDetails();
       this.getNominationStatus();
@@ -346,11 +347,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       return false;
     }
     this.allContributorOrgUsers = [];
-
     // Get only the users and skip admins
     orgUsers = _.filter(orgUsers, { "selectedRole": "user" });
     _.forEach(orgUsers, r => {
-      r.projectselectedRole = 'Select';
+      r.projectselectedRole = 'Select Role';
       if (this.nominationDetails.rolemapping) {
         const userRoles = this.userService.getMyRoleForProgram(this.nominationDetails, r.identifier);
         if (userRoles.includes("CONTRIBUTOR") && userRoles.includes("REVIEWER")) {
@@ -386,11 +386,12 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
     let progRoleMapping = this.nominationDetails.rolemapping;
-    if (isNullOrUndefined(progRoleMapping)) {
+    if (isNullOrUndefined(progRoleMapping) && newRole !== 'NONE') {
       progRoleMapping = {};
     }
     const programRoleNames = _.keys(progRoleMapping);
-    if (newRole !== 'BOTH' && !_.includes(programRoleNames, newRole)) {
+
+    if (!_.includes(programRoleNames, newRole) && !_.includes(["NONE", "BOTH"], newRole)) {
       progRoleMapping[newRole] = [];
     } else if (newRole == 'BOTH') {
       if (!_.includes(programRoleNames, 'CONTRIBUTOR')) {
@@ -409,7 +410,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       } else {
         // Add to selected user to current selected role's array
-        if (newRole === role && !_.includes(users, user.identifier)) {
+        if (newRole === role && !_.includes(users, user.identifier) && newRole !== 'NONE') {
           users.push(user.identifier);
         }
         // Remove selected user from other role's array
