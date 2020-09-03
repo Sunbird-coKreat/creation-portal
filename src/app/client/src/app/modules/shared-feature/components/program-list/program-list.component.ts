@@ -591,7 +591,7 @@ export class ProgramListComponent implements OnInit {
 
       this.programsService.addorUpdateNomination(req).subscribe((data) => {
         if (data === 'Approved' || data === 'Rejected') {
-          this.toasterService.error(`Nomination already been ${data}`);
+          this.toasterService.error(`${this.resourceService.messages.emsg.modifyNomination.error} ${data}`);
           this.ngOnInit();
         } else {
           this.router.navigateByUrl('/contribute/program/' + this.selectedProgramToModify.program_id);

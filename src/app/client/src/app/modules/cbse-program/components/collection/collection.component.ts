@@ -465,7 +465,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       (data) => {
         if (data === 'Approved' || data === 'Rejected') {
           this.showNominateModal = false;
-          this.toasterService.error(`Nomination already been ${data}`);
+          this.toasterService.error(`${this.resourceService.messages.emsg.modifyNomination.error} ${data}`);
           this.router.navigateByUrl('/contribute/myenrollprograms');
         } else if (data.result && !_.isEmpty(data.result)) {
             this.showNominateModal = false;
