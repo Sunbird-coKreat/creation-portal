@@ -170,9 +170,9 @@ export class HelperService {
     }
     this.updateContent(request, collectionId).subscribe(() => {
       action === 'accept' || action === 'acceptWithChanges' ? this.toasterService.success(this.resourceService.messages.smsg.m0066) :
+        this.sendNotification.next(_.capitalize(action));
         this.toasterService.success(this.resourceService.messages.smsg.m0067);
-      this.programStageService.removeLastStage();
-      this.sendNotification.next(_.capitalize(action));
+        this.programStageService.removeLastStage();
     }, (err) => {
       this.acceptContent_errMsg(action);
     });
