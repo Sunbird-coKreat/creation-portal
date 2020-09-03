@@ -211,7 +211,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
           if (this.currentNominationStatus === 'Initiated' ||  this.currentNominationStatus === 'Pending') {
             sampleValue = true;
           }
-          if (this.userService.isContributingOrgUser()) {
+          if (this.userService.isUserBelongsToOrg()) {
             organisation_id = this.userService.getUserOrgId();
           } else {
             createdBy = this.userService.getUserId();
@@ -222,7 +222,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
             (response) => {
               if (response && response.result && response.result.content) {
                 const contents = _.get(response.result, 'content');
-                if (this.userService.isContributingOrgUser()) {
+                if (this.userService.isUserBelongsToOrg()) {
                   this.contentStatusCounts = this.collectionHierarchyService.getContentCounts(contents, this.userService.getUserOrgId(), collections);
                 } else {
                   // tslint:disable-next-line:max-line-length
@@ -572,7 +572,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
               user_id: userId,
               content_types: this.selectedContentTypes
             };
-            if (this.userService.isContributingOrgUser()) {
+            if (this.userService.isUserBelongsToOrg()) {
               this.sessionContext.nominationDetails['organisation_id'] = this.userService.getUserOrgId();
             }
             this.gotoChapterView(collection);
