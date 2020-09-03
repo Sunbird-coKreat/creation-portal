@@ -39,7 +39,16 @@ export default class CSVFileValidator {
      * @private
      */
     private prepareDataAndValidateFile() {
-        // one row for headers and one empty blank row at last
+        const expectedColumns = this.config.headers.length;
+        const foundColumns = this.csvData[0].length;
+
+        // Check if extra columns are present other than specified
+        if (foundColumns > expectedColumns) {
+            const invalidColumns = _.map(_.range(expectedColumns, foundColumns), (number) => this.csvData[0][number] || `Column ${number}`)
+            return this.handleError(this.config, 'extraHeaderError', `Invalid data found in columns: ${invalidColumns.join(',')}`, [invalidColumns, expectedColumns, foundColumns]);
+        }
+
+        // One row for headers and one empty blank row at last
         const actualRows = this.csvData.length - 2;
 
         // Empty rows or file validation
@@ -76,10 +85,9 @@ export default class CSVFileValidator {
             difference.map((column) => {
                 const valueConfig = headers.find(row => row.name === column);
                 if (valueConfig) {
-                    this.handleError(valueConfig, 'headerError', `Header name ${column} is missing`, [column]);
+                    return this.handleError(valueConfig, 'headerError', `${column} header is missing`, [column]);
                 }
             });
-            return this.response;
         }
 
         const uniqueValues = {};
