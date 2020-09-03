@@ -78,7 +78,7 @@
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{resourceService.frmelmnts.btn.requestChanges}}</button>
-              <button id="publishContent" suiPopup popupText="{{resourceService.frmelmnts.btn.accept}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showPublish" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="updateBeforePublish();"
+              <button id="publishContent" suiPopup popupText="{{resourceService.frmelmnts.btn.accept}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showPublish" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="updateContentBeforePublishing();"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('publish-resource', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
@@ -93,7 +93,7 @@
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{isIndividualAndNotSample() ? 'Publish' : 'Submit' }}</button>
               <button id="acceptContent" suiPopup
-              popupText="{{resourceService.frmelmnts.lbl.contentAcceptMessage}}" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live' && !sourcingReviewStatus && (originCollectionData.status === 'Draft' && selectedOriginUnitStatus === 'Draft')" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="beforeAcceptingContent('accept')"
+              popupText="{{resourceService.frmelmnts.lbl.contentAcceptMessage}}" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live' && !sourcingReviewStatus && (originCollectionData.status === 'Draft' && selectedOriginUnitStatus === 'Draft')" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="updateContentBeforeApproving('accept')"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('accept-content-for-textbook', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"

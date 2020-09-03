@@ -114,8 +114,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   ngOnInit() {
     this.config = _.get(this.contentUploadComponentInput, 'config');
     this.overrideMetaData = this.programsService.overrideMetaData;
-    console.log(this.overrideMetaData);
-
     this.originCollectionData = _.get(this.contentUploadComponentInput, 'originCollectionData');
     this.selectedOriginUnitStatus = _.get(this.contentUploadComponentInput, 'content.originUnitStatus');
     this.sessionContext  = _.get(this.contentUploadComponentInput, 'sessionContext');
@@ -342,8 +340,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-}
-
+  }
 
   uploadByURL(fileUpload, mimeType) {
     this.loading = true;
@@ -875,7 +872,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     return this.isMetadataOverridden;
   }
 
-  updateBeforePublish() {
+  updateContentBeforePublishing() {
     if (this.isMetaDataModified()) {
       const cb = (err, res ) => {
         if (!err && res) {
@@ -1001,7 +998,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
 
-  beforeAcceptingContent(action) {
+  updateContentBeforeApproving(action) {
 
     if (this.isMetaDataModified()) {
       const cb = (err, res) => {
