@@ -904,11 +904,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       }
     });
 
-    // tslint:disable-next-line:max-line-length
-    collection.totalLeaf += collection.leaf ? this.filterContentsForCount(collection.leaf, contentStatus, onlySample, organisationId, createdBy, visibility, prevStatus) : 0;
-    if (collection.totalLeaf > 0) {
-      // collection.sourcingStatus = this.setUnitContentsStatusCount(collection.leaf);
-      const unitContentStatusCount =  this.setUnitContentsStatusCount(collection.leaf);
+    if (collection.leaf) {
+      // tslint:disable-next-line:max-line-length
+      const filteredContents = this.filterContentsForCount(collection.leaf, contentStatus, onlySample, organisationId, createdBy, visibility, prevStatus);
+      collection.totalLeaf = collection.totalLeaf + filteredContents.length;
+      const unitContentStatusCount =  this.setUnitContentsStatusCount(filteredContents);
       if (!_.isEmpty(unitContentStatusCount)) {
         // tslint:disable-next-line:max-line-length
         collection.sourcingStatusDetail = _.mergeWith(unitContentStatusCount, _.cloneDeep(collection.sourcingStatusDetail), this.addTwoObjects);
@@ -950,12 +950,12 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     } else {
        leaves = _.concat(_.filter(contents, filter), _.filter(contents, 'sourceURL'));
     }
-    return leaves.length;
+    return leaves;
   }
 
   setUnitContentsStatusCount(contents) {
     const contentStatusCount = {};
-    if (this.isSourcingOrgReviewer()) {
+    if (this.isSourcingOrgReviewer() && this.router.url.includes('/sourcing')) {
       contentStatusCount['approved'] = 0;
       contentStatusCount['rejected'] = 0;
       contentStatusCount['approvalPending'] = 0;
@@ -965,11 +965,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
             contentStatusCount['approved'] += 1;
           } else if (content.sourcingStatus === 'Rejected') {
             contentStatusCount['rejected'] += 1;
-          } else if (content.status === 'Live' && content.sourceURL && content.sourcingStatus === 'Approved') {
+          } else if (content.status === 'Live' && content.sourceURL) {
             contentStatusCount['approvalPending'] += 1;
-          } else if (content.status === 'Live' && content.sourcingStatus === 'Approved') {
-            contentStatusCount['approvalPending'] += 1;
-          } else if (content.sourcingStatus === null && content.prevStatus === 'Processing') {
+          } else if (content.status === 'Live') {
             contentStatusCount['approvalPending'] += 1;
           }
         }
