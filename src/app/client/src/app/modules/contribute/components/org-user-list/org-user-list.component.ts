@@ -32,11 +32,8 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public roles = [{ name: 'User', value: 'user'}, { name: 'Admin', value: 'admin'}];
   pager: IPagination;
   pageNumber = 1;
-  pageLimit: any;
-  searchInput: any;
-  initialSourcingOrgUser = [];
-  searchLimitMessage: any;
-  searchLimitCount: any;
+  pageLimit = 250;
+
   constructor(private toasterService: ToasterService, private configService: ConfigService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
@@ -59,8 +56,6 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     this.telemetryInteractCdata = [{id: this.userService.userProfile.rootOrgId || '', type: 'Organisation'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
-    this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
-    this.pageLimit = this.registryService.programUserPageLimit;
   }
 
   ngAfterViewInit() {
@@ -105,27 +100,6 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
       this.setOrgUsers(orgUsers);
     });
   }
-  getUserDetailsBySearch(clearInput?) {
-    clearInput ? this.searchInput = '': this.searchInput;
-    if (this.searchInput) {
-      let filteredUser = this.registryService.getSearchedUserList(this.initialSourcingOrgUser, this.searchInput);
-      filteredUser.length > this.searchLimitCount ? this.searchLimitMessage = true: this.searchLimitMessage = false;   
-      this.sortUsersList(filteredUser, true);
-    } else {
-      this.searchLimitMessage = false;
-      this.sortUsersList(this.initialSourcingOrgUser, true);
-    }
-  }
-  
-  sortUsersList(usersList, isUserSearch?) {
-     this.orgUserscnt = usersList.length;
-     this.allContributorOrgUsers = this.programsService.sortCollection(usersList, 'selectedRole', 'asc');
-     isUserSearch ?  this.allContributorOrgUsers:  this.initialSourcingOrgUser = this.allContributorOrgUsers;
-     usersList = _.chunk(this.allContributorOrgUsers, this.pageLimit);
-     this.paginatedContributorOrgUsers = usersList;
-     this.contributorOrgUsers = isUserSearch? usersList[0] : usersList[this.pageNumber-1];
-     this.pager = this.paginationService.getPager(this.orgUserscnt, isUserSearch? 1 : this.pageNumber, this.pageLimit);
-  }
 
   NavigateToPage(page: number): undefined | void {
     if (page < 1 || page > this.pager.totalPages) {
@@ -137,7 +111,10 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   }
 
   sortCollection(column) {
-    this.sortUsersList(this.allContributorOrgUsers);
+    this.allContributorOrgUsers = this.programsService.sortCollection(this.allContributorOrgUsers, column, this.direction);
+    this.paginatedContributorOrgUsers = _.chunk( this.allContributorOrgUsers, this.pageLimit);
+    this.contributorOrgUsers = this.paginatedContributorOrgUsers[this.pageNumber-1];
+    this.pager = this.paginationService.getPager(this.orgUserscnt, this.pageNumber, this.pageLimit);
     if (this.direction === 'asc' || this.direction === '') {
       this.direction = 'desc';
     } else {
