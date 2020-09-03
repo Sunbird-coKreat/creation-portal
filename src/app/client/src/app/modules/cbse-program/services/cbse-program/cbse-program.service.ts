@@ -74,7 +74,7 @@ export class CbseProgramService {
     return question;
   }
 
-  getECMLJSON(collections: Array < string > , roles ?: any, previewQuestionData ?: any) {
+  getECMLJSON(collections: Array<string> , roles:Array<string>=[], previewQuestionData ?: any) {
     const theme = _.cloneDeep(themeObject);
     const stage = _.cloneDeep(stageObject);
     const questionSet = _.cloneDeep(questionSetObject);

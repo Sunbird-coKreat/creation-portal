@@ -444,7 +444,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
       });
     };
     let latexBody;
-    const isMathML = body.match(/((<math("[^"]*"|[^\/">])*)(.*?)<\/math>)/gi);
+    const isMathML = body && body.match(/((<math("[^"]*"|[^\/">])*)(.*?)<\/math>)/gi);
     if (isMathML && isMathML.length > 0) {
       latexBody = isMathML.map(math => {
         const encodedMath = encodeURIComponent(math);

@@ -393,6 +393,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       if (this.templateDetails.metadata.appIcon) {
         option.data.request.content.appIcon = this.templateDetails.metadata.appIcon;
       }
+
       this.actionService.post(option).pipe(map((res: any) => res.result), catchError(err => {
         const errInfo = { errorMsg: 'Unable to create contentId, Please Try Again' };
         this.programStageService.removeLastStage();

@@ -217,16 +217,16 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     };
 
     if (this.userService.isUserBelongsToOrg()) {
-      req.data.request.filters['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
+      req.data.request.filters['organisation_id'] = this.userService.getUserOrgId();
     } else {
-      req.data.request.filters['user_id'] = this.userService.userProfile.userId;
+      req.data.request.filters['user_id'] = this.userService.getUserId();
     }
     this.programsService.post(req).subscribe((data) => {
       const nominationDetails = _.first(_.get(data, 'result', []));
       if (!_.isEmpty(nominationDetails)) {
         this.nominationDetails = nominationDetails;
       }
-      if (_.get(this.nominationDetails, 'status') !== 'Initiated') {
+      if (!_.isEmpty(nominationDetails) && this.nominationDetails.status !== 'Initiated') {
         this.nominated = true;
         this.sessionContext.nominationDetails = nominationDetails;
         this.currentNominationStatus = _.get(nominationDetails, 'status');

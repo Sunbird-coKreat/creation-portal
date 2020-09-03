@@ -31,7 +31,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   public filteredList: Array<any>;
   public collection;
   public collectionsWithCardImage;
-  public roles: any;
+  public roles: any = {};
   public collectionList: any = [];
   public tempSortCollectionList: any = [];
   public direction = 'asc';

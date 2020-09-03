@@ -18,8 +18,8 @@ getTestBed().initTestEnvironment(
 );
 
 // then we find all the tests.
-const filterRegExp = (tags) ? new RegExp(tags, 'g') : /\.spec\.ts$/,
-    context = require.context('./', true, /\.spec\.ts$/),
+const filterRegExp = (tags) ? new RegExp(tags, 'g') : /\/program\/components\/create-program\/create-program.component\.spec\.ts$/,
+    context = require.context('./', true, /\/program\/components\/create-program\/create-program.component\.spec\.ts$/),
     specFiles = context.keys().filter(path => filterRegExp.test(path));
 // and load the modules.
 specFiles.map(context);
