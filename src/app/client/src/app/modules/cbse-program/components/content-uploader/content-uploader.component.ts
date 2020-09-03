@@ -1,4 +1,3 @@
-import { role } from './../dashboard/dashboard.component.spec.data';
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef,
   AfterViewInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FineUploader } from 'fine-uploader';
@@ -137,9 +136,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.contentStatusNotify(action);
     });
 
-    // Get overridable medata configuration
-    this.getOverridableMetaDataConfig();
-
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.contentUploadComponentInput.programContext.program_id, 'Program');
@@ -196,17 +192,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.visibility['showSave'] = submissionDateFlag && !this.contentMetaData.sampleContent === true && (_.includes(this.actions.showSave.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
     // tslint:disable-next-line:max-line-length
     this.visibility['showEdit'] = submissionDateFlag && (_.includes(this.actions.showEdit.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
-
-    if (!this.visibility['showEdit']) {
-      const nameFieldConfig = _.find(this.overrideMetaData, (item) => item.code === 'name');
-      if (nameFieldConfig.editable === true
-        && (this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
-        && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
-        && !this.sourcingReviewStatus
-        && (this.selectedOriginUnitStatus === 'Draft')) {
-          this.visibility['showEdit'] = true;
-      }
-    }
   }
 
   initiateUploadModal() {
@@ -263,7 +248,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     return acceptedFiles.toString();
   }
 
-  getOverridableMetaDataConfig() {
+  getOverridableMetaDataConfig(cb) {
     if (!this.cacheService.get('overrideMetaData')) {
       const request = {
         key: 'overrideMetaData',
@@ -275,11 +260,14 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           this.cacheService.set(request.key, _.get(res, 'result.configuration.value'),
             { maxAge: this.browserCacheTtlService.browserCacheTtl });
         }
+        cb(null, res);
       }, err => {
         this.toasterService.error('Unable to fetch override meta data configuration...Please try later!');
+        cb(err, null);
       });
     } else {
       this.overrideMetaData = JSON.parse(this.cacheService.get('overrideMetaData'));
+      cb(null, true);
     }
   }
 
@@ -663,7 +651,15 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       });
     }
 
-    this.getEditableFields();
+    const cb = (err, res) => {
+      if (!err && res) {
+        this.getEditableFields();
+      }
+    };
+
+    // Get overridable medata configuration
+    this.getOverridableMetaDataConfig(cb);
+
      _.map(this.allFormFields, (obj) => {
       const code = obj.code;
       const preSavedValues = {};
@@ -764,62 +760,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
 
-  updateContent(cb) {
-    // tslint:disable-next-line:max-line-length
-    if (this.contentDetailsForm.valid && this.editTitle && this.editTitle !== '') {
-      this.showTextArea = false;
-      this.formValues = {};
-      let contentObj = {
-          'versionKey': this.contentMetaData.versionKey,
-          'name': this.editTitle
-      };
-      const trimmedValue = _.mapValues(this.contentDetailsForm.value, (value) => {
-         if (_.isString(value)) {
-           return _.trim(value);
-         } else {
-           return value;
-         }
-      });
-
-      _.forEach(this.textFields, field => {
-        if (field.dataType === 'list') {
-          trimmedValue[field.code] = trimmedValue[field.code] ? trimmedValue[field.code].split(', ') : [];
-        }
-      });
-      contentObj = _.pickBy(_.assign(contentObj, trimmedValue), _.identity);
-      const request = {
-        'content': contentObj
-      };
-
-      _.forEach(this.overrideMetaData, (field) => {
-        if (Array.isArray(contentObj[field.code])) {
-          if (JSON.stringify(contentObj[field.code]) !== JSON.stringify(this.contentMetaData[field.code])) {
-            if (typeof this.contentMetaData[field.code] === 'undefined'){
-              if (contentObj[field.code].length) {
-                this.isMetadataOverridden = true;
-              }
-            } else {
-              this.isMetadataOverridden = true;
-            }
-          }
-        } else if (typeof contentObj[field.code] !== 'undefined') {
-          if (contentObj[field.code].localeCompare(this.contentMetaData[field.code]) !== 0) {
-            this.isMetadataOverridden = true;
-          }
-        }
-      });
-
-      this.helperService.updateContent(request, this.contentMetaData.identifier).subscribe((res) => {
-        cb(null, res);
-      }, (err) => {
-        cb(err, null);
-      });
-    } else {
-      this.markFormGroupTouched(this.contentDetailsForm);
-      this.toasterService.error(this.resourceService.messages.fmsg.m0076);
-    }
-  }
-
   saveContent(action?) {
     const requiredTextFields = _.filter(this.textFields, {required: true});
     const validText = _.map(requiredTextFields, (obj) => {
@@ -850,8 +790,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       const request = {
         'content': contentObj
       };
-
-      console.log(contentObj, contentObj);
 
       this.helperService.updateContent(request, this.contentMetaData.identifier).subscribe((res) => {
         this.contentMetaData.versionKey = res.result.versionKey;
@@ -923,16 +861,60 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
 
-  updateBeforePublish() {
-    const cb = (err, res ) => {
-      if (!err && res) {
-        this.publishContent();
-      } else {
-        console.log(err);
-      }
+  isMetaDataModified() {
+    let contentObj = {
+      'name': this.editTitle
     };
+    const trimmedValue = _.mapValues(this.contentDetailsForm.value, (value) => {
+      if (_.isString(value)) {
+        return _.trim(value);
+      } else {
+        return value;
+      }
+    });
 
-    this.updateContent(cb);
+    _.forEach(this.textFields, field => {
+      if (field.dataType === 'list') {
+        trimmedValue[field.code] = trimmedValue[field.code] ? trimmedValue[field.code].split(', ') : [];
+      }
+    });
+    contentObj = _.pickBy(_.assign(contentObj, trimmedValue), _.identity);
+    _.forEach(this.overrideMetaData, (field) => {
+      if (field.editable === true) {
+        if (Array.isArray(contentObj[field.code])) {
+          if (JSON.stringify(contentObj[field.code]) !== JSON.stringify(this.contentMetaData[field.code])) {
+            if (typeof this.contentMetaData[field.code] === 'undefined'){
+              if (contentObj[field.code].length) {
+                this.isMetadataOverridden = true;
+              }
+            } else {
+              this.isMetadataOverridden = true;
+            }
+          }
+        } else if (typeof contentObj[field.code] !== 'undefined') {
+          if (contentObj[field.code].localeCompare(this.contentMetaData[field.code]) !== 0) {
+            this.isMetadataOverridden = true;
+          }
+        }
+      }
+    });
+
+    return this.isMetadataOverridden;
+  }
+
+  updateBeforePublish() {
+    if (this.isMetaDataModified()) {
+      const cb = (err, res ) => {
+        if (!err && res) {
+          this.publishContent();
+        } else {
+          console.log(err);
+        }
+      };
+      this.updateContent(cb);
+    } else {
+      this.publishContent();
+    }
   }
 
   publishContent(cb = (err, res) => {}) {
@@ -1008,25 +990,67 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.fetchFileSizeLimit();
   }
 
-  acceptContent(action) {
-    const cb = (err, res) => {
-      if (!err && res) {
-        const callback = (error, resp) => {
-          if (!error && resp) {
-            this.attachContentToTextbook(action);
-          } else if (error) {
-            this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-            console.log(err);
-          }
-        };
-        this.publishContent(callback);
-      } else if (err) {
-        this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-        console.log(err);
-      }
-    };
+  updateContent(cb) {
+    // tslint:disable-next-line:max-line-length
+    if (this.contentDetailsForm.valid && this.editTitle && this.editTitle !== '') {
+      this.showTextArea = false;
+      this.formValues = {};
+      let contentObj = {
+          'versionKey': this.contentMetaData.versionKey,
+          'name': this.editTitle
+      };
+      const trimmedValue = _.mapValues(this.contentDetailsForm.value, (value) => {
+         if (_.isString(value)) {
+           return _.trim(value);
+         } else {
+           return value;
+         }
+      });
 
-    this.updateContent(cb);
+      _.forEach(this.textFields, field => {
+        if (field.dataType === 'list') {
+          trimmedValue[field.code] = trimmedValue[field.code] ? trimmedValue[field.code].split(', ') : [];
+        }
+      });
+      contentObj = _.pickBy(_.assign(contentObj, trimmedValue), _.identity);
+      const request = {
+        'content': contentObj
+      };
+
+      this.helperService.updateContent(request, this.contentMetaData.identifier).subscribe((res) => {
+        cb(null, res);
+      }, (err) => {
+        cb(err, null);
+      });
+    } else {
+      this.markFormGroupTouched(this.contentDetailsForm);
+      this.toasterService.error(this.resourceService.messages.fmsg.m0076);
+    }
+  }
+
+  acceptContent(action) {
+
+    if (this.isMetaDataModified()) {
+      const cb = (err, res) => {
+        if (!err && res) {
+          const callback = (error, resp) => {
+            if (!error && resp) {
+              this.attachContentToTextbook(action);
+            } else if (error) {
+              this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+              console.log(err);
+            }
+          };
+          this.publishContent(callback);
+        } else if (err) {
+          this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+          console.log(err);
+        }
+      };
+      this.updateContent(cb);
+    } else {
+      this.attachContentToTextbook('accept');
+    }
   }
 
   attachContentToTextbook (action) {
@@ -1092,6 +1116,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   getEditableFields() {
     if (this.sessionContext.currentRole === 'CONTRIBUTOR' && this.resourceStatus === 'Draft') {
+      this.editableFields.push('name');
       _.forEach(this.allFormFields, (field) => {
         this.editableFields.push(field.code);
       });
@@ -1099,7 +1124,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
       && !this.sourcingReviewStatus
       && (this.selectedOriginUnitStatus === 'Draft')) {
-      _.forEach(this.allFormFields, (field) => {
+        const nameFieldConfig = _.find(this.overrideMetaData, (item) => item.code === 'name');
+        if (nameFieldConfig.editable === true) {
+          this.editableFields.push(nameFieldConfig.code);
+        }
+
+        _.forEach(this.allFormFields, (field) => {
         const fieldConfig = _.find(this.overrideMetaData, (item) => item.code === field.code);
         if (fieldConfig.editable === true) {
           this.editableFields.push(fieldConfig.code);
