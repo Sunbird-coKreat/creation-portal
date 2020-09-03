@@ -112,7 +112,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
-    this.roles = [{name: 'REVIEWER'}];
+    this.roles = [{name: 'REVIEWER'}, {name: 'NONE'}];
     this.roleNames = _.map(this.roles, 'name');
     this.sessionContext.currentRole = 'REVIEWER';
     this.programStageService.initialize();
@@ -280,7 +280,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       userRegData['Org'] = (_.get(res1, 'result.Org').length > 0) ? _.first(_.get(res1, 'result.Org')) : {};
       this.registryService.getcontributingOrgUsersDetails(userRegData, true).then((orgUsers) => {
           this.paginatedSourcingUsers = orgUsers;
-          this.readRolesOfOrgUsers();
+          this.readRolesOfOrgUsers(orgUsers);
           this.sortUsersList(this.paginatedSourcingUsers);
           this.showUsersLoader = false;
       });
@@ -572,20 +572,20 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     });
   }
 
-  readRolesOfOrgUsers() {
-    if (this.programDetails.rolemapping) {
-      _.forEach(this.roles, (role) => {
-        if (this.programDetails.rolemapping[role.name]) {
-          _.forEach(this.paginatedSourcingUsers, (user) => {
-            if (_.includes(this.programDetails.rolemapping[role.name], user.identifier)) {
-              user['selectedRole'] = role.name;
-            } else {
-              user['selectedRole'] = '-';
-            }
-          });
-        }
-      });
+  readRolesOfOrgUsers(orgUsers) {
+    if (_.isEmpty(orgUsers)) {
+      return false;
     }
+    _.forEach(orgUsers, r => {
+      r.selectedRole = 'Select Role';
+      if (this.programDetails.rolemapping) {
+        _.find(this.programDetails.rolemapping, (users, role) => {
+          if (_.includes(users, r.identifier)) {
+            r.selectedRole = role;
+          }
+        });
+      }
+    });
   }
 
   public fetchFrameWorkDetails() {
@@ -707,7 +707,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   onRoleChange(user) {
     if (_.includes(this.roleNames, user.selectedRole)) {
         let progRoleMapping = this.programDetails.rolemapping;
-         if (isNullOrUndefined(progRoleMapping)) {
+         if (isNullOrUndefined(progRoleMapping) && user.selectedRole !== 'NONE') {
           progRoleMapping = {};
           progRoleMapping[user.selectedRole] = [];
          }
@@ -717,13 +717,19 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         if (!_.includes(programRoleNames, user.selectedRole)) {
           progRoleMapping[user.selectedRole] = [];
         }
-        _.forEach(progRoleMapping, function(ua, role, arr) {
-            if (user.selectedRole === role) {
-              ua.push(user.identifier);
-              _.compact(ua);
-              progRoleMapping[role] = ua;
-            }
-          });
+
+        _.forEach(progRoleMapping, (users, role) => {
+          // Add to selected user to current selected role's array
+          if (user.selectedRole === role && !_.includes(users, user.identifier) && user.selectedRole !== 'NONE') {
+            users.push(user.identifier);
+          }
+          // Remove selected user from other role's array
+          if (user.selectedRole !== role && _.includes(users, user.identifier)) {
+            _.remove(users, (id) => id === user.identifier);
+          }
+          // Remove duplicate users ids and falsy values
+          progRoleMapping[role] = _.uniq(_.compact(users));
+        });
 
       const request = {
             'program_id': this.activatedRoute.snapshot.params.programId,

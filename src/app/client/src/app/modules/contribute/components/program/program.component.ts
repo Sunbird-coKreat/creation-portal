@@ -164,6 +164,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
       this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
       this.roles = _.get(this.programDetails, 'config.roles');
+      this.roles.push({ 'id': 3, 'name': 'NONE', 'tabs': [ 3 ], 'default': true, 'defaultTab': 3 });
       this.roleNames = _.map(this.roles, 'name');
       this.fetchFrameWorkDetails();
       this.getNominationStatus();
@@ -349,9 +350,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       return false;
     }
     this.allContributorOrgUsers = [];
-    orgUsers = _.filter(orgUsers, { "selectedRole": "user" });
+    orgUsers = _.filter(orgUsers, { 'selectedRole': 'user' });
     _.forEach(orgUsers, r => {
-      r.projectselectedRole = 'Select';
+      r.projectselectedRole = 'Select Role';
       if (this.nominationDetails.rolemapping) {
         _.find(this.nominationDetails.rolemapping, (users, role) => {
           if (_.includes(users, r.identifier)) {
@@ -384,17 +385,17 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
     let progRoleMapping = this.nominationDetails.rolemapping;
-    if (isNullOrUndefined(progRoleMapping)) {
+    if (isNullOrUndefined(progRoleMapping) && newRole !== 'NONE') {
       progRoleMapping = {};
       progRoleMapping[newRole] = [];
     }
     const programRoleNames = _.keys(progRoleMapping);
-    if (!_.includes(programRoleNames, newRole)) {
+    if (!_.includes(programRoleNames, newRole) && newRole !== 'NONE') {
       progRoleMapping[newRole] = [];
     }
     _.forEach(progRoleMapping, (users, role) => {
       // Add to selected user to current selected role's array
-      if (newRole === role && !_.includes(users, user.identifier)) {
+      if (newRole === role && !_.includes(users, user.identifier) && newRole !== 'NONE') {
         users.push(user.identifier);
       }
       // Remove selected user from other role's array
