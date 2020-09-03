@@ -113,6 +113,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   ngOnInit() {
     this.config = _.get(this.contentUploadComponentInput, 'config');
+    this.overrideMetaData = this.programsService.overrideMetaData;
+    console.log(this.overrideMetaData);
+
     this.originCollectionData = _.get(this.contentUploadComponentInput, 'originCollectionData');
     this.selectedOriginUnitStatus = _.get(this.contentUploadComponentInput, 'content.originUnitStatus');
     this.sessionContext  = _.get(this.contentUploadComponentInput, 'sessionContext');
@@ -246,29 +249,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       }) : '';
     }
     return acceptedFiles.toString();
-  }
-
-  getOverridableMetaDataConfig(cb) {
-    if (!this.cacheService.get('overrideMetaData')) {
-      const request = {
-        key: 'overrideMetaData',
-        status: 'active'
-      };
-      this.helperService.getProgramConfiguration(request).subscribe(res => {
-        if (_.get(res, 'result.configuration.value')) {
-          this.overrideMetaData = JSON.parse(_.get(res, 'result.configuration.value'));
-          this.cacheService.set(request.key, _.get(res, 'result.configuration.value'),
-            { maxAge: this.browserCacheTtlService.browserCacheTtl });
-        }
-        cb(null, res);
-      }, err => {
-        this.toasterService.error('Unable to fetch override meta data configuration...Please try later!');
-        cb(err, null);
-      });
-    } else {
-      this.overrideMetaData = JSON.parse(this.cacheService.get('overrideMetaData'));
-      cb(null, true);
-    }
   }
 
   fetchFileSizeLimit() {
@@ -651,14 +631,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       });
     }
 
-    const cb = (err, res) => {
-      if (!err && res) {
-        this.getEditableFields();
-      }
-    };
-
-    // Get overridable medata configuration
-    this.getOverridableMetaDataConfig(cb);
+    this.getEditableFields();
 
      _.map(this.allFormFields, (obj) => {
       const code = obj.code;
@@ -1028,7 +1001,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
 
-  acceptContent(action) {
+  beforeAcceptingContent(action) {
 
     if (this.isMetaDataModified()) {
       const cb = (err, res) => {
