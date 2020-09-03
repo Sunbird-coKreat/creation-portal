@@ -19,6 +19,8 @@ export class RegistryService extends DataService {
   public http: HttpClient;
   public mycontributionOrgUsers = [];
   osReqLimit =  250;
+  searchLimitCount = 100;// setting count here , because in future we can get/set limit from configuration
+  programUserPageLimit = 200; // setting page limit here , because in future we can get/set limit from configuration 
   constructor(config: ConfigService, http: HttpClient, public contentService: ContentService,
     public userService: UserService, public learnerService: LearnerService, public cacheService: CacheService) {
     super(http);
@@ -334,5 +336,15 @@ export class RegistryService extends DataService {
         return reject(userProfile);
       });
     });
+  }
+  
+  public getSearchedUserList(userList,searchInput) {
+    let searchedUserList = [];
+    _.forEach(userList, (user) => {
+      if (user.firstName.includes(searchInput)) {
+        searchedUserList.push(user);
+      }
+    });
+    return searchedUserList;
   }
 }
