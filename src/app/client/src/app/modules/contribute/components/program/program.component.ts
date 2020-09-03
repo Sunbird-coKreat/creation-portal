@@ -80,13 +80,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   OrgUsersCnt = 0;
   pager: IPagination;
   pageNumber = 1;
-  pageLimit: any;
+  pageLimit = 250;
   sharedContext;
   showSkipReview = false;
-  searchInput: any;
-  initialSourcingOrgUser = [];
-  searchLimitMessage: any;
-  searchLimitCount: any;
+
   public telemetryPageId = 'collection';
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
@@ -123,8 +120,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       id: this.userService.appId,
       pid: this.configService.appConfig.TELEMETRY.PID
     };
-    this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit 
-    this.pageLimit = this.registryService.programUserPageLimit;
   }
 
   ngAfterViewInit() {
@@ -323,26 +318,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
   }
-  getUserDetailsBySearch(clearInput?) {
-    clearInput ? this.searchInput = '': this.searchInput;
-    if (this.searchInput) {
-      let filteredUser = this.registryService.getSearchedUserList(this.initialSourcingOrgUser, this.searchInput);
-       filteredUser.length > this.searchLimitCount ? this.searchLimitMessage = true: this.searchLimitMessage = false;   
-      this.sortUsersList(filteredUser, true);
-    } else {
-      this.searchLimitMessage = false;
-      this.sortUsersList(this.initialSourcingOrgUser, true);
-    }
-  }
-  sortUsersList(usersList, isUserSearch?) {
-     this.OrgUsersCnt = usersList.length;
-     this.allContributorOrgUsers = this.programsService.sortCollection(usersList, 'projectselectedRole', 'asc');
-     isUserSearch ?  this.allContributorOrgUsers: this.initialSourcingOrgUser =  this.allContributorOrgUsers;
-     usersList = _.chunk(this.allContributorOrgUsers, this.pageLimit);
-     this.paginatedContributorOrgUsers = usersList;
-     this.contributorOrgUser = isUserSearch ? usersList[0] : usersList[this.pageNumber - 1];
-     this.pager = this.paginationService.getPager(this.OrgUsersCnt, isUserSearch ? 1 : this.pageNumber, this.pageLimit);
-  }
+
   setOrgUsers(orgUsers) {
     if (_.isEmpty(orgUsers)) {
       this.showUsersLoader = false;
@@ -432,7 +408,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   sortOrgUsers(column) {
-    this.sortUsersList(this.allContributorOrgUsers);
+    this.allContributorOrgUsers = this.programsService.sortCollection(this.allContributorOrgUsers, column, this.directionOrgUsers);
+    this.paginatedContributorOrgUsers = _.chunk(this.allContributorOrgUsers, this.pageLimit);
+    this.contributorOrgUser = this.paginatedContributorOrgUsers[this.pageNumber - 1];
+    this.pager = this.paginationService.getPager(this.OrgUsersCnt, this.pageNumber, this.pageLimit);
+
     if (this.directionOrgUsers === 'asc' || this.directionOrgUsers === '') {
       this.directionOrgUsers = 'desc';
     } else {

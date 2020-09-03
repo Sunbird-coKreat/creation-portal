@@ -51,8 +51,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public direction = 'asc';
   public sortColumn = '';
   public sourcingOrgUser = [];
-  public initialSourcingOrgUser = [];
-  public searchLimitMessage: any;
   public sourcingOrgUserCnt = 0;
   public roles;
   roleNames;
@@ -91,11 +89,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   pager: IPagination;
   pageNumber = 1;
-  pageLimit: any;
-  searchLimitCount: any;
+  pageLimit = 200;
   pagerUsers: IPagination;
   pageNumberUsers = 1;
-  searchInput: any;
+
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
      private activatedRoute: ActivatedRoute, private router: Router,
@@ -122,8 +119,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.state.stages = state.stages;
       this.changeView();
     });
-    this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
-    this.pageLimit = this.registryService.programUserPageLimit;
   }
 
   ngAfterViewInit() {
@@ -252,27 +247,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     }
     this.sortColumn = column;
   }
-  getUserDetailsBySearch(clearInput?) {
-    clearInput ? this.searchInput = '': this.searchInput;
-    if (this.searchInput) {
-      let filteredUser = this.registryService.getSearchedUserList(this.initialSourcingOrgUser, this.searchInput);
-      filteredUser.length > this.searchLimitCount ? this.searchLimitMessage = true: this.searchLimitMessage = false;   
-      this.sortUsersList(filteredUser, true);
-    } else {
-      this.searchLimitMessage = false;
-      this.sortUsersList(this.initialSourcingOrgUser, true);
-    }
-  }
-
-  sortUsersList(usersList,isUserSearch?) {
-     this.sourcingOrgUserCnt = usersList.length;
-     this.paginatedSourcingUsers = this.programsService.sortCollection(usersList, 'selectedRole', 'desc');
-     isUserSearch? this.paginatedSourcingUsers :this.initialSourcingOrgUser = this.paginatedSourcingUsers;
-     usersList = _.chunk(this.paginatedSourcingUsers, this.pageLimit);
-     this.paginatedSourcingUsers = usersList;
-     this.sourcingOrgUser = isUserSearch ? usersList[0] : usersList[this.pageNumber - 1];
-     this.pagerUsers = this.paginationService.getPager(this.sourcingOrgUserCnt, isUserSearch ? 1 : this.pageNumberUsers, this.pageLimit);
- }
 
   getsourcingOrgReviewers (offset?, iteration?) {
     const userRegData = {};
@@ -280,8 +254,12 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       userRegData['Org'] = (_.get(res1, 'result.Org').length > 0) ? _.first(_.get(res1, 'result.Org')) : {};
       this.registryService.getcontributingOrgUsersDetails(userRegData, true).then((orgUsers) => {
           this.paginatedSourcingUsers = orgUsers;
+          this.sourcingOrgUserCnt = this.paginatedSourcingUsers.length;
           this.readRolesOfOrgUsers();
-          this.sortUsersList(this.paginatedSourcingUsers);
+          this.paginatedSourcingUsers = this.programsService.sortCollection(this.paginatedSourcingUsers, 'selectedRole', 'desc');
+          this.paginatedSourcingUsers = _.chunk( this.paginatedSourcingUsers, this.pageLimit);
+          this.sourcingOrgUser = this.paginatedSourcingUsers[this.pageNumber - 1];
+          this.pagerUsers = this.paginationService.getPager(this.sourcingOrgUserCnt, this.pageNumberUsers, this.pageLimit);
           this.showUsersLoader = false;
       });
     }, (error1) => {
