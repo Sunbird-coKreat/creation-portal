@@ -258,6 +258,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           });
         }
       } else {
+        if (data.result && !_.isEmpty(data.result)) {
+          this.sessionContext.nominationDetails = _.first(data.result);
+        }
         this.component = this.programComponentsService.getComponentInstance('collectionComponent');
         this.tabs = _.get(this.programDetails.config, 'header.config.tabs');
         this.initiateInputs();
