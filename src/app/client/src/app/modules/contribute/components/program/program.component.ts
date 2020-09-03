@@ -326,9 +326,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       return false;
     }
     this.allContributorOrgUsers = [];
-    orgUsers = _.filter(orgUsers, { "selectedRole": "user" });
+    orgUsers = _.filter(orgUsers, { 'selectedRole': 'user' });
     _.forEach(orgUsers, r => {
-      r.projectselectedRole = 'NONE';
+      r.projectselectedRole = 'Select Role';
       if (this.nominationDetails.rolemapping) {
         _.find(this.nominationDetails.rolemapping, (users, role) => {
           if (_.includes(users, r.identifier)) {

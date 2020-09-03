@@ -256,7 +256,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           this.paginatedSourcingUsers = orgUsers;
           this.sourcingOrgUserCnt = this.paginatedSourcingUsers.length;
           this.readRolesOfOrgUsers(orgUsers);
-          this.paginatedSourcingUsers = this.programsService.sortCollection(this.paginatedSourcingUsers, 'selectedRole', 'desc');
+          this.paginatedSourcingUsers = this.programsService.sortCollection(this.paginatedSourcingUsers, 'selectedRole', 'asc');
           this.paginatedSourcingUsers = _.chunk( this.paginatedSourcingUsers, this.pageLimit);
           this.sourcingOrgUser = this.paginatedSourcingUsers[this.pageNumber - 1];
           this.pagerUsers = this.paginationService.getPager(this.sourcingOrgUserCnt, this.pageNumberUsers, this.pageLimit);
@@ -555,7 +555,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       return false;
     }
     _.forEach(orgUsers, r => {
-      r.selectedRole = 'NONE';
+      r.selectedRole = 'Select Role';
       if (this.programDetails.rolemapping) {
         _.find(this.programDetails.rolemapping, (users, role) => {
           if (_.includes(users, r.identifier)) {
