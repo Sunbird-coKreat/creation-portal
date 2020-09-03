@@ -1,9 +1,4 @@
-<app-landing-section [noTitle]="true" [layoutConfiguration]="layoutConfiguration">
-
-</app-landing-section>
-
-<div [ngClass]="layoutConfiguration ? 'sbt-container relative9':''">
-
+<div>
   <div class="ui" [appTelemetryImpression]="getTelemetryImpressionObj({type: 'page-request'})" #reportElement>
     <div class="twelve wide column px-0">
       <div *ngIf="!hideElements" class="sb-bg-white relative position cc-player__btn-back relative9 reports-back-btn">

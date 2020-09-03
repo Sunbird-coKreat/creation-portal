@@ -5,13 +5,7 @@ import * as _ from 'lodash-es';
 import * as dayjs from 'dayjs';
 import { DomSanitizer } from '@angular/platform-browser';
 import { UserService } from '@sunbird/core';
-import {
-  ToasterService,
-  ResourceService,
-  INoResultMessage,
-  NavigationHelperService,
-  LayoutService
-} from '@sunbird/shared';
+import { ToasterService, ResourceService, INoResultMessage, NavigationHelperService} from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
@@ -39,21 +33,18 @@ export class UsageReportsComponent implements OnInit, AfterViewInit {
   telemetryInteractDownloadEdata: IInteractEventEdata;
   downloadUrl;
   public courseProgressService: CourseProgressService;
-  layoutConfiguration: any;
   private unsubscribe$ = new Subject<void>();
   @ViewChild(TelemetryInteractDirective) telemetryInteractDirective;
   constructor(private usageService: UsageService, private sanitizer: DomSanitizer,
     public userService: UserService, private toasterService: ToasterService,
     public resourceService: ResourceService, activatedRoute: ActivatedRoute, private router: Router,
-    public navigationhelperService: NavigationHelperService, public layoutService: LayoutService,
-    courseProgressService: CourseProgressService
+    public navigationhelperService: NavigationHelperService, courseProgressService: CourseProgressService
   ) {
     this.activatedRoute = activatedRoute;
     this.courseProgressService = courseProgressService;
   }
 
   ngOnInit() {
-    this.initLayout();
     const reportsLocation = (<HTMLInputElement>document.getElementById('reportsLocation')).value;
     this.slug = _.get(this.userService, 'userProfile.rootOrg.slug');
     this.usageService.getData(`/${reportsLocation}/${this.slug}/config.json`)
@@ -78,15 +69,6 @@ export class UsageReportsComponent implements OnInit, AfterViewInit {
       type: 'Report',
       ver: '1.0'
     };
-  }
-
-  initLayout() {
-    this.layoutConfiguration = this.layoutService.initlayoutConfig();
-    this.layoutService.switchableLayout().pipe(takeUntil(this.unsubscribe$)).subscribe(layoutConfig => {
-      if (layoutConfig != null) {
-        this.layoutConfiguration = layoutConfig.layout;
-      }
-    });
   }
 
   setTelemetryInteractEdata(val) {

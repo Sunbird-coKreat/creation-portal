@@ -1,5 +1,5 @@
 import { TelemetryService } from '@sunbird/telemetry';
-import { INoResultMessage, ResourceService, ToasterService, NavigationHelperService, LayoutService } from '@sunbird/shared';
+import { INoResultMessage, ResourceService, ToasterService, NavigationHelperService} from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit, ViewChildren, QueryList, ViewChild } from '@angular/core';
 import { ReportService } from '../../services';
@@ -51,7 +51,6 @@ export class ReportComponent implements OnInit {
   public getParametersValueForDropDown$: Observable<any>;
   public type: ReportType = ReportType.report;
   private reportConfig: object;
-  layoutConfiguration: any;
 
   private set setMaterializedReportStatus(val: string) {
     this.materializedReport = (val === 'true');
@@ -68,10 +67,9 @@ export class ReportComponent implements OnInit {
   constructor(public reportService: ReportService, private activatedRoute: ActivatedRoute,
     private resourceService: ResourceService, private toasterService: ToasterService,
     private navigationhelperService: NavigationHelperService,
-    private router: Router, private telemetryService: TelemetryService, private layoutService: LayoutService) { }
+    private router: Router, private telemetryService: TelemetryService) { }
 
   ngOnInit() {
-    this.initLayout();
     this.report$ = combineLatest(this.activatedRoute.params, this.activatedRoute.queryParams).pipe(
       switchMap(params => {
         const { reportId, hash } = this.activatedRoute.snapshot.params;
@@ -521,17 +519,6 @@ export class ReportComponent implements OnInit {
       })
     );
   }
-
-  initLayout() {
-    this.layoutConfiguration = this.layoutService.initlayoutConfig();
-    this.layoutService.switchableLayout()
-      .subscribe(layoutConfig => {
-        if (layoutConfig != null) {
-          this.layoutConfiguration = layoutConfig.layout;
-        }
-      });
-  }
-
 }
 
 

@@ -1,6 +1,6 @@
 import { UserService } from '@sunbird/core';
 import { TelemetryService } from '@sunbird/telemetry';
-import { ResourceService, NavigationHelperService, LayoutService } from '@sunbird/shared';
+import { ResourceService, NavigationHelperService} from '@sunbird/shared';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { catchError, mergeMap, map } from 'rxjs/operators';
 import * as _ from 'lodash-es';
@@ -21,12 +21,11 @@ export class ListAllReportsComponent implements OnInit {
 
   constructor(public resourceService: ResourceService, public reportService: ReportService, private activatedRoute: ActivatedRoute,
     private router: Router, private userService: UserService, private navigationhelperService: NavigationHelperService,
-    private telemetryService: TelemetryService, private layoutService: LayoutService) { }
+    private telemetryService: TelemetryService) { }
 
   public reportsList$: Observable<any>;
   public noResultFoundError: string;
   private _isUserReportAdmin: boolean;
-  layoutConfiguration: any;
 
 
   @ViewChild('all_reports') set inputTag(element: ElementRef | null) {
@@ -45,7 +44,6 @@ export class ListAllReportsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.initLayout();
     this.reportsList$ = this.reportService.isAuthenticated(_.get(this.activatedRoute, 'snapshot.data.roles')).pipe(
       mergeMap((isAuthenticated: boolean) => {
         this._isUserReportAdmin = this.reportService.isUserReportAdmin();
@@ -82,6 +80,7 @@ export class ListAllReportsComponent implements OnInit {
     return this.reportService.listAllReports(filters).pipe(
       mergeMap(res => this.filterReportsBasedOnRoles(res.reports)),
       map(reports => {
+        // tslint:disable-next-line:max-line-length
         const [reportsArr, datasetsArr] = this.reports = _.partition(reports, report => _.toLower(_.get(report, 'report_type')) === 'report');
         const count = _.get(reports, 'length');
         return { count, reportsArr, datasetsArr };
@@ -131,6 +130,7 @@ export class ListAllReportsComponent implements OnInit {
   private renderTags(data) {
 
     if (Array.isArray(data)) {
+      // tslint:disable-next-line:max-line-length
       const elements = _.join(_.map(data, tag => `<span class="sb-label-name sb-label-table sb-label-primary-100 mr-5 px-8 py-4">${_.startCase(_.toLower(tag))}</span>`), ' ');
       return `<div class="sb-filter-label"><div class="d-inline-flex m-0">${elements}</div></div>`;
     }
@@ -347,15 +347,4 @@ export class ListAllReportsComponent implements OnInit {
   private getReportsCount({ reports = [], status = 'draft' }) {
     return _.size(_.filter(reports, report => _.get(report, 'status') === status));
   }
-
-  initLayout() {
-    this.layoutConfiguration = this.layoutService.initlayoutConfig();
-    this.layoutService.switchableLayout()
-      .subscribe(layoutConfig => {
-        if (layoutConfig != null) {
-          this.layoutConfiguration = layoutConfig.layout;
-        }
-      });
-  }
-
 }

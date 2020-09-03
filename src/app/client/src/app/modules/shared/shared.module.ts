@@ -23,7 +23,6 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { CdnprefixPipe } from './pipes/cdnprefix.pipe';
 import { HighlightTextDirective } from './directives/highlight-text/highlight-text.directive';
-import { AppLandingSectionComponent } from './components/app-landing-section/app-landing-section.component';
 import { TranslateModule, TranslateStore } from '@ngx-translate/core';
 
 @NgModule({
@@ -39,12 +38,12 @@ import { TranslateModule, TranslateStore } from '@ngx-translate/core';
     BatchCardComponent, NoResultComponent, DateFilterXtimeAgoPipe, CardComponent, CardCreationComponent, FilterPipe, InterpolatePipe,
     ShareLinkComponent, BrowserCompatibilityComponent, QrCodeModalComponent, CdnprefixPipe, RedirectComponent, CustomMultiSelectComponent,
     InstallAppComponent, LockInfoPopupComponent, ContentDirectionDirective, MarkdownDirective,
-    HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent, AppLandingSectionComponent, ConfirmPopupComponent],
+    HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent, ConfirmPopupComponent],
   exports: [TranslateModule, AppLoaderComponent, AnnouncementInboxCardComponent, DateFormatPipe, DateFilterXtimeAgoPipe,
     PageSectionComponent, BatchCardComponent, NoResultComponent, CardComponent, CardCreationComponent, FilterPipe,
     ShareLinkComponent, BrowserCompatibilityComponent, QrCodeModalComponent, CdnprefixPipe, InterpolatePipe, RedirectComponent,
     CustomMultiSelectComponent, InstallAppComponent, LockInfoPopupComponent, ContentDirectionDirective, MarkdownDirective,
-    HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent, AppLandingSectionComponent, ConfirmPopupComponent]
+    HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent, ConfirmPopupComponent]
 })
 export class SharedModule {
   static forRoot(): ModuleWithProviders {
