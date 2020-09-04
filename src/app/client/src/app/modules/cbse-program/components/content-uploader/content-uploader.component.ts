@@ -1081,9 +1081,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   showSourcingOrgRejectComments() {
     const id = _.get(this.contentMetaData, 'identifier');
     const sourcingRejectedComments = _.get(this.sessionContext, 'hierarchyObj.sourcingRejectedComments')
-    if (this.resourceStatus === 'Live' && !_.isEmpty(sourcingRejectedComments) && id) {
-      this.sourcingOrgReviewComments = sourcingRejectedComments[id];
-     return true;
+    if (this.resourceStatus === 'Live' && id && !_.isEmpty(_.get(sourcingRejectedComments, id))) {
+      this.sourcingOrgReviewComments = _.get(sourcingRejectedComments, id);
+      return true;
     } else {
       return false;
     }

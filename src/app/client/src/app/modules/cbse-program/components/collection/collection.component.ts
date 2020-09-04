@@ -108,14 +108,15 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       program: _.get(this.programContext, 'name'),
       onBoardSchool: _.get(this.programContext, 'userDetails.onBoardingData.school'),
       collectionType: _.get(this.collectionComponentConfig, 'collectionType'),
-      collectionStatus: _.get(this.collectionComponentConfig, 'status')
+      collectionStatus: _.get(this.collectionComponentConfig, 'status'),
+      currentRoles: []
     }, this.sharedContext);
     if (this.userService.isUserBelongsToOrg()) {
       this.sessionContext.currentRoles = _.first(this.userService.getUserOrgRole()) === 'admin' ? ['REVIEWER'] : ['CONTRIBUTOR'];
     }
     this.filters = this.getImplicitFilters();
 
-    const currentRoles = _.filter(this.programContext.config.roles, role => this.sessionContext.currentRoles.includes(role.name));
+    const currentRoles = _.filter(this.programContext.config.roles, role => _.get(this.sessionContext, 'currentRoles', []).includes(role.name));
     this.sessionContext.currentRoleIds = !_.isEmpty(currentRoles) ? _.map(currentRoles, role => role.id) : null;
     this.roles.currentRoles = this.sessionContext.currentRoles;
 
