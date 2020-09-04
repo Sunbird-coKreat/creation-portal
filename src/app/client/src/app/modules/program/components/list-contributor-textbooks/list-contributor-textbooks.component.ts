@@ -52,7 +52,6 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   public currentStage: any;
   showChapterList = false;
   showcontributorProfile = false;
-  role: any = {};
   collection;
   configData;
   selectedNominationDetails: any;
@@ -283,9 +282,9 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     this.sessionContext.programId = this.programDetails.program_id;
     this.sessionContext.collection =  collection.identifier;
     this.sessionContext.collectionName = collection.name;
-    this.sessionContext.currentRole = 'REVIEWER';
-    const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
-    this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
+    this.sessionContext.currentRoles = ['REVIEWER'] ;
+    const currentRoles = _.filter(this.programContext.config.roles, role => this.sessionContext.currentRoles.includes(role.name));
+    this.sessionContext.currentRoleIds = !_.isEmpty(currentRoles) ? _.map(currentRoles, role => role.id) : null;
     this.sharedContext = this.programContext.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});
@@ -302,8 +301,8 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
         collection: collection,
         config: this.configData,
         programContext: this.programContext,
-        role: {
-          currentRole: 'REVIEWER'
+        roles: {
+          currentRoles: ['REVIEWER']
         }
       }
     };
