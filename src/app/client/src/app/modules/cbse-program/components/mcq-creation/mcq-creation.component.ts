@@ -23,7 +23,7 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() sessionContext: any;
   @Input() telemetryEventsInput: any;
   @Input() questionMetaData: any;
-  @Input() role: any;
+  @Input() roles: any;
   @Output() questionStatus = new EventEmitter<any>();
   @Output() questionFormChangeStatus = new EventEmitter<any>();
   @ViewChild('author_names') authorName;
@@ -492,7 +492,7 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
       this.formConfiguration = this.componentConfiguration.config.formConfiguration;
       this.allFormFields = _.filter(this.formConfiguration, {'visible': true});
       // tslint:disable-next-line:max-line-length
-      this.disableFormField = (this.sessionContext.currentRole === 'CONTRIBUTOR' && this.sessionContext.resourceStatus === 'Draft') ? false : true ;
+      this.disableFormField = (this.sessionContext.currentRoles.includes('CONTRIBUTOR') && this.sessionContext.resourceStatus === 'Draft') ? false : true ;
       const formFields = _.map(this.formConfiguration, (formData) => {
         if (!formData.defaultValue) {
           return formData.code;
@@ -595,4 +595,7 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
     });
   }
 
+  canReviewContent() {
+    return !!(this.roles.currentRoles.includes('REVIEWER') && this.sessionContext.resourceStatus === 'Review' && this.router.url.includes('/contribute') && this.programsService.checkForContentSubmissionDate(this.sessionContext.programContext) && this.userService.userid !== _.get(this.sessionContext, 'contentMetadata.createdBy'));
+  }
 }

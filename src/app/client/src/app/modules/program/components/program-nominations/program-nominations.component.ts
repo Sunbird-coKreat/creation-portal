@@ -51,6 +51,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public direction = 'asc';
   public sortColumn = '';
   public sourcingOrgUser = [];
+  public initialSourcingOrgUser = [];
+  public searchLimitMessage: any;
   public sourcingOrgUserCnt = 0;
   public roles;
   roleNames;
@@ -89,10 +91,11 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   pager: IPagination;
   pageNumber = 1;
-  pageLimit = 200;
+  pageLimit: any;
+  searchLimitCount: any;
   pagerUsers: IPagination;
   pageNumberUsers = 1;
-
+  searchInput: any;
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
      private activatedRoute: ActivatedRoute, private router: Router,
@@ -109,9 +112,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
-    this.roles = [{name: 'REVIEWER'}];
+    this.roles = [{name: 'REVIEWER'}, {name: 'NONE'}];
     this.roleNames = _.map(this.roles, 'name');
-    this.sessionContext.currentRole = 'REVIEWER';
+    this.sessionContext.currentRoles = ['REVIEWER'];
     this.programStageService.initialize();
     this.programStageService.addStage('programNominations');
     this.currentStage = 'programNominations';
@@ -119,6 +122,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.state.stages = state.stages;
       this.changeView();
     });
+    this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
+    this.pageLimit = this.registryService.programUserPageLimit;
   }
 
   ngAfterViewInit() {
@@ -247,6 +252,27 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     }
     this.sortColumn = column;
   }
+  getUserDetailsBySearch(clearInput?) {
+    clearInput ? this.searchInput = '': this.searchInput;
+    if (this.searchInput) {
+      let filteredUser = this.registryService.getSearchedUserList(this.initialSourcingOrgUser, this.searchInput);
+      filteredUser.length > this.searchLimitCount ? this.searchLimitMessage = true: this.searchLimitMessage = false;   
+      this.sortUsersList(filteredUser, true);
+    } else {
+      this.searchLimitMessage = false;
+      this.sortUsersList(this.initialSourcingOrgUser, true);
+    }
+  }
+
+  sortUsersList(usersList,isUserSearch?) {
+     this.sourcingOrgUserCnt = usersList.length;
+     this.paginatedSourcingUsers = this.programsService.sortCollection(usersList, 'selectedRole', 'desc');
+     isUserSearch? this.paginatedSourcingUsers :this.initialSourcingOrgUser = this.paginatedSourcingUsers;
+     usersList = _.chunk(this.paginatedSourcingUsers, this.pageLimit);
+     this.paginatedSourcingUsers = usersList;
+     this.sourcingOrgUser = isUserSearch ? usersList[0] : usersList[this.pageNumber - 1];
+     this.pagerUsers = this.paginationService.getPager(this.sourcingOrgUserCnt, isUserSearch ? 1 : this.pageNumberUsers, this.pageLimit);
+ }
 
   getsourcingOrgReviewers (offset?, iteration?) {
     const userRegData = {};
@@ -254,12 +280,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       userRegData['Org'] = (_.get(res1, 'result.Org').length > 0) ? _.first(_.get(res1, 'result.Org')) : {};
       this.registryService.getcontributingOrgUsersDetails(userRegData, true).then((orgUsers) => {
           this.paginatedSourcingUsers = orgUsers;
-          this.sourcingOrgUserCnt = this.paginatedSourcingUsers.length;
-          this.readRolesOfOrgUsers();
-          this.paginatedSourcingUsers = this.programsService.sortCollection(this.paginatedSourcingUsers, 'selectedRole', 'desc');
-          this.paginatedSourcingUsers = _.chunk( this.paginatedSourcingUsers, this.pageLimit);
-          this.sourcingOrgUser = this.paginatedSourcingUsers[this.pageNumber - 1];
-          this.pagerUsers = this.paginationService.getPager(this.sourcingOrgUserCnt, this.pageNumberUsers, this.pageLimit);
+          this.readRolesOfOrgUsers(orgUsers);
+          this.sortUsersList(this.paginatedSourcingUsers);
           this.showUsersLoader = false;
       });
     }, (error1) => {
@@ -540,9 +562,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.collectionsCount = _.get(this.programDetails, 'collection_ids').length;
       this.totalContentTypeCount = _.get(this.programDetails, 'content_types').length;
       this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
-      const getCurrentRoleId = _.find(this.programDetails.config.roles, {'name': this.sessionContext.currentRole});
-      this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
 
+      const currentRoles = _.filter(this.programDetails.config.roles, role => this.sessionContext.currentRoles.includes(role.name));
+      this.sessionContext.currentRoleIds = !_.isEmpty(currentRoles) ? _.map(currentRoles, role => role.id) : null;
     }, error => {
       // TODO: navigate to program list page
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
@@ -550,20 +572,20 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     });
   }
 
-  readRolesOfOrgUsers() {
-    if (this.programDetails.rolemapping) {
-      _.forEach(this.roles, (role) => {
-        if (this.programDetails.rolemapping[role.name]) {
-          _.forEach(this.paginatedSourcingUsers, (user) => {
-            if (_.includes(this.programDetails.rolemapping[role.name], user.identifier)) {
-              user['selectedRole'] = role.name;
-            } else {
-              user['selectedRole'] = '-';
-            }
-          });
-        }
-      });
+  readRolesOfOrgUsers(orgUsers) {
+    if (_.isEmpty(orgUsers)) {
+      return false;
     }
+    _.forEach(orgUsers, r => {
+      r.selectedRole = 'Select Role';
+      if (this.programDetails.rolemapping) {
+        _.find(this.programDetails.rolemapping, (users, role) => {
+          if (_.includes(users, r.identifier)) {
+            r.selectedRole = role;
+          }
+        });
+      }
+    });
   }
 
   public fetchFrameWorkDetails() {
@@ -685,23 +707,29 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   onRoleChange(user) {
     if (_.includes(this.roleNames, user.selectedRole)) {
         let progRoleMapping = this.programDetails.rolemapping;
-         if (isNullOrUndefined(progRoleMapping)) {
+         if (isNullOrUndefined(progRoleMapping) && user.selectedRole !== 'NONE') {
           progRoleMapping = {};
           progRoleMapping[user.selectedRole] = [];
          }
          const programRoleNames = _.map(progRoleMapping, function(currentelement, index, arrayobj) {
           return index;
         });
-        if (!_.includes(programRoleNames, user.selectedRole)) {
+        if (!_.includes(programRoleNames, user.selectedRole) && user.selectedRole !== 'NONE') {
           progRoleMapping[user.selectedRole] = [];
         }
-        _.forEach(progRoleMapping, function(ua, role, arr) {
-            if (user.selectedRole === role) {
-              ua.push(user.identifier);
-              _.compact(ua);
-              progRoleMapping[role] = ua;
-            }
-          });
+
+        _.forEach(progRoleMapping, (users, role) => {
+          // Add to selected user to current selected role's array
+          if (user.selectedRole === role && !_.includes(users, user.identifier) && user.selectedRole !== 'NONE') {
+            users.push(user.identifier);
+          }
+          // Remove selected user from other role's array
+          if (user.selectedRole !== role && _.includes(users, user.identifier)) {
+            _.remove(users, (id) => id === user.identifier);
+          }
+          // Remove duplicate users ids and falsy values
+          progRoleMapping[role] = _.uniq(_.compact(users));
+        });
 
       const request = {
             'program_id': this.activatedRoute.snapshot.params.programId,
@@ -764,8 +792,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         collection: collection,
         config: _.find(this.programDetails.config.components, { 'id': 'ng.sunbird.chapterList' }),
         programContext: this.programDetails,
-        role: {
-          currentRole: this.sessionContext.currentRole
+        roles: {
+          currentRoles: this.sessionContext.currentRoles
         }
       }
     };

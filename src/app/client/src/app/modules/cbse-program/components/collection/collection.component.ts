@@ -31,7 +31,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   public filteredList: Array<any>;
   public collection;
   public collectionsWithCardImage;
-  public role: any = {};
+  public roles: any = {};
   public collectionList: any = [];
   public tempSortCollectionList: any = [];
   public direction = 'asc';
@@ -103,23 +103,24 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       return _.includes(_.get(this.programContext, 'content_types'), type.value);
     });
     this.sessionContext = _.assign(this.collectionComponentInput.sessionContext, {
-      // currentRole: _.get(this.programContext, 'userDetails.roles[0]'),
       bloomsLevel: _.get(this.programContext, 'config.scope.bloomsLevel'),
       programId: _.get(this.programContext, 'programId'),
       program: _.get(this.programContext, 'name'),
       onBoardSchool: _.get(this.programContext, 'userDetails.onBoardingData.school'),
       collectionType: _.get(this.collectionComponentConfig, 'collectionType'),
-      collectionStatus: _.get(this.collectionComponentConfig, 'status')
+      collectionStatus: _.get(this.collectionComponentConfig, 'status'),
+      currentRoles: []
     }, this.sharedContext);
-    if (this.userService.userRegistryData && this.userProfile.userRegData && this.userProfile.userRegData.User_Org) {
-      this.sessionContext.currentRole = this.userProfile.userRegData.User_Org.roles[0] === 'admin' ? 'CONTRIBUTOR' : 'REVIEWER';
+    if (this.userService.isUserBelongsToOrg()) {
+      this.sessionContext.currentRoles = _.first(this.userService.getUserOrgRole()) === 'admin' ? ['REVIEWER'] : ['CONTRIBUTOR'];
     }
     this.filters = this.getImplicitFilters();
 
-    const getCurrentRoleId = _.find(this.programContext.config.roles, {'name': this.sessionContext.currentRole});
-    this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
+    const currentRoles = _.filter(this.programContext.config.roles, role => _.get(this.sessionContext, 'currentRoles', []).includes(role.name));
+    this.sessionContext.currentRoleIds = !_.isEmpty(currentRoles) ? _.map(currentRoles, role => role.id) : null;
+    this.roles.currentRoles = this.sessionContext.currentRoles;
+
     this.sessionContext.programId = this.programContext.program_id;
-    this.role.currentRole = this.sessionContext.currentRole;
     this.classes = _.find(this.collectionComponentConfig.config.filters.explicit, {'code': 'gradeLevel'}).range;
     this.mediums = _.find(this.collectionComponentConfig.config.filters.implicit, {'code': 'medium'}).defaultValue;
     this.board = _.find(this.collectionComponentConfig.config.filters.implicit, {'code': 'board'}).defaultValue;
@@ -216,10 +217,10 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
           if (this.currentNominationStatus === 'Initiated' ||  this.currentNominationStatus === 'Pending') {
             sampleValue = true;
           }
-          if (this.isContributorOrgUser()) {
-            organisation_id = this.getUserOrgId();
+          if (this.userService.isUserBelongsToOrg()) {
+            organisation_id = this.userService.getUserOrgId();
           } else {
-            createdBy = this.getUserId();
+            createdBy = this.userService.getUserId();
           }
         // tslint:disable-next-line:max-line-length
         this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId, sampleValue, organisation_id, createdBy)
@@ -227,11 +228,11 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
             (response) => {
               if (response && response.result && response.result.content) {
                 const contents = _.get(response.result, 'content');
-                if (this.isContributorOrgUser()) {
-                  this.contentStatusCounts = this.collectionHierarchyService.getContentCounts(contents, this.getUserOrgId(), collections);
+                if (this.userService.isUserBelongsToOrg()) {
+                  this.contentStatusCounts = this.collectionHierarchyService.getContentCounts(contents, this.userService.getUserOrgId(), collections);
                 } else {
                   // tslint:disable-next-line:max-line-length
-                  this.contentStatusCounts = this.collectionHierarchyService.getContentCountsForIndividual(contents, this.getUserId(), collections);
+                  this.contentStatusCounts = this.collectionHierarchyService.getContentCountsForIndividual(contents, this.userService.getUserId(), collections);
                 }
               } else {
                 this.contentStatusCounts = this.collectionHierarchyService.getContentCountsForAll([], collections);
@@ -449,7 +450,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       collection: this.collection,
       config: _.find(this.programContext.config.components, {'id': 'ng.sunbird.chapterList'}),
       programContext: this.programContext,
-      role: this.role
+      roles: this.roles
     };
     this.programStageService.addStage('chapterListComponent');
     this.isCollectionSelected.emit(collection.metaData.identifier ? true : false);
@@ -515,10 +516,10 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     };
-    if (this.userService.userRegistryData && this.userProfile.userRegData && this.userProfile.userRegData.User_Org) {
-      req.data.request.filters['organisation_id'] = this.userProfile.userRegData.User_Org.orgId;
+    if (this.userService.isUserBelongsToOrg()) {
+      req.data.request.filters['organisation_id'] = this.userService.getUserOrgId();
     } else {
-      req.data.request.filters['user_id'] = this.userService.userProfile.userId;
+      req.data.request.filters['user_id'] = this.userService.getUserId();
     }
     this.programsService.post(req).subscribe((data) => {
       if (data.result && !_.isEmpty(data.result)) {
@@ -575,7 +576,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
         this.toasterService.error(this.resourceService.messages.emsg.nomination.m001);
     } else {
       const programId = this.activatedRoute.snapshot.params.programId;
-      const userId = this.getUserId();
+      const userId = this.userService.getUserId();
       const request = {
         program_id: programId,
         status: 'Initiated',
@@ -592,8 +593,8 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
               user_id: userId,
               content_types: this.selectedContentTypes
             };
-            if (this.isContributorOrgUser()) {
-              this.sessionContext.nominationDetails['organisation_id'] = this.getUserOrgId();
+            if (this.userService.isUserBelongsToOrg()) {
+              this.sessionContext.nominationDetails['organisation_id'] = this.userService.getUserOrgId();
             }
             this.gotoChapterView(collection);
           }
@@ -619,7 +620,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       userProfile: this.userProfile,
       config: _.find(this.programContext.config.components, {'id': 'ng.sunbird.chapterList'}),
       programContext: this.programContext,
-      role: this.role
+      roles: this.roles
     };
     this.programStageService.addStage('chapterListComponent');
   }
@@ -630,24 +631,5 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     if (event && !this.selectedContentTypes.length) {
       this.toasterService.error(this.resourceService.messages.emsg.nomination.m001);
     }
-  }
-
-  isContributorOrgUser() {
-    return !!(this.userService.userRegistryData && this.userService.userProfile.userRegData &&
-      this.userService.userProfile.userRegData.User_Org);
-  }
-
-  getUserOrgId() {
-   return this.userService.userProfile.userRegData.User_Org.orgId;
-  }
-
-  getUserId() {
-    return this.userService.userProfile.userId;
-  }
-
-  isContributorOrgAdmin() {
-    return !!(this.userService.userRegistryData && this.userService.userProfile.userRegData &&
-      this.userService.userProfile.userRegData.User_Org &&
-      this.userService.userProfile.userRegData.User_Org.roles.includes('admin'));
   }
 }

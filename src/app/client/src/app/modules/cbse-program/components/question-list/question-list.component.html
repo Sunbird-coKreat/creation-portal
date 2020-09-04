@@ -171,7 +171,7 @@
         <div *ngIf="sessionContext.questionType === 'mcq'" class="ui segment">
           <div [hidden]="showLoader">
             <app-mcq-creation #questionCreationChild [sessionContext]="sessionContext" [telemetryEventsInput]="telemetryEventsInput" [questionMetaData]="questionMetaData"
-              [role]="role" (questionStatus)="questionStatusHandler($event)"
+              [roles]="roles" (questionStatus)="questionStatusHandler($event)"
               (questionFormChangeStatus)="handleQuestionFormChangeStatus($event)">
             </app-mcq-creation>
           </div>
@@ -179,7 +179,7 @@
         <div *ngIf="sessionContext.questionType !== 'mcq'" class="ui segment">
           <div [hidden]="showLoader">
             <app-question-creation #questionCreationChild [sessionContext]="sessionContext" [telemetryEventsInput]="telemetryEventsInput" [questionMetaData]="questionMetaData"
-              [role]="role" (questionStatus)="questionStatusHandler($event)"
+              [roles]="roles" (questionStatus)="questionStatusHandler($event)"
               (questionFormChangeStatus)="handleQuestionFormChangeStatus($event)">
             </app-question-creation>
           </div>

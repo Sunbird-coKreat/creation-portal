@@ -17,7 +17,7 @@
         <div class="d-flex">
           <div class="d-flex flex-ai-center flex-jc-space-between practical-header__content w-100">
             <div #contentTitle class="fs-1" *ngIf="!showTextArea">
-              <div class="d-flex flex-ai-center mb-10"><span class="practical-header__title font-weight-bold" suiPopup popupText="{{editTitle}}">{{editTitle}} </span><span class="fsmall ml-16 sb-color-primary font-weight-normal"><a *ngIf="visibility && visibility.showEdit" class="cursor-pointer"
+              <div class="d-flex flex-ai-center mb-10"><span class="practical-header__title font-weight-bold" suiPopup popupText="{{editTitle}}">{{editTitle}} </span><span class="fsmall ml-16 sb-color-primary font-weight-normal"><a *ngIf="(visibility && visibility.showEdit) || (editableFields.indexOf('name') > -1)" class="cursor-pointer"
                 appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('edit-resourcetitle', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
@@ -78,7 +78,7 @@
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{resourceService.frmelmnts.btn.requestChanges}}</button>
-              <button id="publishContent" suiPopup popupText="{{resourceService.frmelmnts.btn.accept}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showPublish" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="publishContent();"
+              <button id="publishContent" suiPopup popupText="{{resourceService.frmelmnts.btn.accept}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showPublish" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="updateContentBeforePublishing();"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('publish-resource', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
@@ -93,7 +93,7 @@
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{isIndividualAndNotSample() ? 'Publish' : 'Submit' }}</button>
               <button id="acceptContent" suiPopup
-              popupText="{{resourceService.frmelmnts.lbl.contentAcceptMessage}}" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live' && !sourcingReviewStatus && (originCollectionData.status === 'Draft' && selectedOriginUnitStatus === 'Draft')" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="attachContentToTextbook('accept')"
+              popupText="{{resourceService.frmelmnts.lbl.contentAcceptMessage}}" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live' && !sourcingReviewStatus && (originCollectionData.status === 'Draft' && selectedOriginUnitStatus === 'Draft')" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="updateContentBeforeApproving('accept')"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('accept-content-for-textbook', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
@@ -291,7 +291,7 @@
     <div class="middle-section-set">
       <div class="licence-form__content">
           <div class='licence-form__content__fields py-16 ui stackable grid'>
-          <div class="sb-field" *ngIf="sourcingOrgReviewer || sessionContext.currentRole ==='REVIEWER'">
+          <div class="sb-field" *ngIf="sourcingOrgReviewer || sessionContext.currentRoles.includes('REVIEWER')">
             <div class="width-100">
               <label class="font-weight-bold fsmall">{{resourceService.frmelmnts.lbl.contentType}}:</label><i class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentType}}"></i>
               <div><span class="sb-color-gray-200 fs-0-785">{{ contentType }}</span></div>
@@ -301,7 +301,7 @@
                 <div *ngIf="field.inputType === 'select'" class="width-100">
                   <div>
                     <label class="font-weight-bold fsmall">{{field.label}}:</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span><i *ngIf="field.helpText" class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{field.helpText}}"></i>
-                    <sui-select *ngIf="!disableFormField" formControlName="{{field.code}}" class="selection" [isDisabled]="disableFormField" placeholder="{{field.placeholder}}"
+                    <sui-select *ngIf="editableFields.indexOf(field?.code) > -1" formControlName="{{field.code}}" class="selection" [isDisabled]="editableFields.indexOf(field?.code) == -1" placeholder="{{field.placeholder}}"
                     appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('select-' + field.code, 'click', 'content-uploader')"
         [telemetryInteractObject]="telemetryInteractObject"
@@ -317,7 +317,7 @@
                       >
                       </sui-select-option>
                     </sui-select>
-                    <div *ngIf="disableFormField"><span class="sb-color-gray-200 fs-0-785">{{contentMetaData[field.code]}}</span></div>
+                    <div *ngIf="editableFields.indexOf(field?.code) == -1"><span class="sb-color-gray-200 fs-0-785">{{contentMetaData[field.code]}}</span></div>
                     <label class="warning-message" *ngIf="((contentDetailsForm.get(field.code).touched) && (contentDetailsForm.get(field.code).errors?.required))">{{resourceService.frmelmnts.lbl.mandatoryField}}</label>
                   </div>
                 </div>
@@ -325,7 +325,7 @@
                 <div *ngIf="field.inputType === 'multiselect'" class="width-100">
                     <div>
                         <label class="font-weight-bold fsmall">{{field.label}} :</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span><i *ngIf="field.helpText" class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{field.helpText}}"></i>
-                        <sui-multi-select *ngIf="!disableFormField" formControlName="{{field.code}}" class="selection" [isDisabled]="disableFormField" placeholder="{{field.placeholder}}"
+                        <sui-multi-select *ngIf="editableFields.indexOf(field?.code) > -1" formControlName="{{field.code}}" class="selection" [isDisabled]="editableFields.indexOf(field?.code) == -1" placeholder="{{field.placeholder}}"
                         appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('multiselect-' + field.code, 'click', 'content-uploader')"
         [telemetryInteractObject]="telemetryInteractObject"
@@ -341,7 +341,7 @@
                           >
                           </sui-select-option>
                         </sui-multi-select>
-                        <div *ngIf="disableFormField"><span class="sb-color-gray-200 fs-0-785">{{contentMetaData[field.code]}}</span></div>
+                        <div *ngIf="editableFields.indexOf(field?.code) == -1"><span class="sb-color-gray-200 fs-0-785">{{contentMetaData[field.code]}}</span></div>
                         <label class="warning-message" *ngIf="((contentDetailsForm.get(field.code).touched) && (contentDetailsForm.get(field.code).errors?.required))">{{resourceService.frmelmnts.lbl.mandatoryField}}</label>
                     </div>
                 </div>
@@ -349,14 +349,14 @@
                 <div *ngIf="field.inputType === 'text'" class="width-100">
                   <div>
                     <label class="font-weight-bold fsmall">{{field.label}} :</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span><i *ngIf="field.helpText" class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{field.helpText}}"></i>
-                      <input *ngIf="!disableFormField" formControlName="{{field.code}}" type="{{field.inputType}}" name="{{field.code}}" class="sb-form-control" placeholder="{{field.placeholder}}"
+                      <input *ngIf="editableFields.indexOf(field?.code) > -1" formControlName="{{field.code}}" type="{{field.inputType}}" name="{{field.code}}" class="sb-form-control" placeholder="{{field.placeholder}}"
                       appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('input-' + field.code, 'click', 'content-uploader')"
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
                       >
-                      <div *ngIf="disableFormField"><span class="sb-color-gray-200 fs-0-785">{{contentMetaData[field.code]}}</span></div>
+                      <div *ngIf="editableFields.indexOf(field?.code) == -1"><span class="sb-color-gray-200 fs-0-785">{{contentMetaData[field.code]}}</span></div>
                     <label class="warning-message" *ngIf="((contentDetailsForm.get(field.code).touched) && (field.required) && (contentDetailsForm.value[field.code].trim().length === 0))">{{resourceService.frmelmnts.lbl.mandatoryField}}</label>
                   </div>
                 </div>

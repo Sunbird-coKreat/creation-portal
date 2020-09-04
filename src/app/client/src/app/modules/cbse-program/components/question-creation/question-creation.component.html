@@ -2,7 +2,7 @@
     <button type="button" [ngClass]="{'active':enableBtn === 'edit' }" (click)="showPreview= false; btnClick($event, 'edit'); initializeDropdown()" class="sb-btn sb-btn-normal sb-btn-outline-primary">Edit</button>
     <button type="button" [ngClass]="{'active': enableBtn === 'preview' }" (click)="showPreview= true; btnClick($event, 'preview'); generatePreview()" class="sb-btn sb-btn-normal sb-btn-outline-primary">Preview</button>
 </div> -->
-<app-question-creation-header *ngIf="questionMetaData && !showPreview" [telemetryEventsInput]="telemetryEventsInput" [questionMetaData]="questionMetaData" [role]="role" [resourceStatus]="sessionContext.resourceStatus"></app-question-creation-header>
+<app-question-creation-header *ngIf="questionMetaData && !showPreview" [telemetryEventsInput]="telemetryEventsInput" [questionMetaData]="questionMetaData" [roles]="roles" [resourceStatus]="sessionContext.resourceStatus"></app-question-creation-header>
 
 <app-question-preview *ngIf="showPreview" [sessionContext]="sessionContext">
 </app-question-preview>
@@ -161,7 +161,7 @@
     <div class='licence-form__content'>
         <div class="ui stackable grid licence-form__content__fields my-0">
             <div class="row">
-                <div class="sb-field mb-16 six wide column" *ngIf="sessionContext.currentRole ==='REVIEWER'">
+                <div class="sb-field mb-16 six wide column" *ngIf="sessionContext.currentRoles.includes('REVIEWER')">
                     <div class="width-100">
                         <label class="font-weight-bold fsmall">{{resourceService.frmelmnts.lbl.contentType}}:</label><i class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentType}}"></i>
                         <div><span class="sb-color-gray-200 fs-0-785">{{sessionContext.contentMetadata.contentTypeName}}</span></div>
@@ -254,7 +254,7 @@
     </div>
 
     <div class='practical-sb-buttons'>
-        <button id="requestChanges" *ngIf="role.currentRole === 'REVIEWER' && sessionContext.resourceStatus === 'Review' && router.url.includes('/contribute')" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true"
+        <button id="requestChanges" *ngIf="canReviewContent()" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true"
         appTelemetryInteract
         [telemetryInteractEdata]="{id:'reject-question',type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
         [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
