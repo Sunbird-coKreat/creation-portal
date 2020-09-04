@@ -19,11 +19,11 @@
             [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService?.frmelmnts?.lbl?.search}}</button>
       </div>
         <div>
-        <button class="sb-btn sb-btn-outline-primary sb-btn-normal ml-10 " (click)="copyOnLoad()"><i
-            class="plus circle icon" appTelemetryInteract
-            [telemetryInteractEdata]="getTelemetryInteractEdata('user-link', 'click', 'org-user-list')"
-            [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
-            [telemetryInteractPdata]="telemetryInteractPdata"></i>
+        <button class="sb-btn sb-btn-outline-primary sb-btn-normal ml-10 " (click)="copyOnLoad()" appTelemetryInteract
+        [telemetryInteractEdata]="getTelemetryInteractEdata('user-link', 'click', 'org-user-list')"
+        [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata"><i
+            class="plus circle icon" ></i>
           {{ resourceService.frmelmnts.lbl.inviteUser }}</button>
       </div>
     </div>
