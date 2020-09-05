@@ -27,7 +27,7 @@
               [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
               [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
               (click)="showResourceTitleEditor()"
-              *ngIf="visibility && visibility.showSave"
+              *ngIf="canEditContentTitle()"
             >Edit</a>
           </div>
           <div class="mt-8 practice-set__status">
@@ -179,7 +179,7 @@
         <div *ngIf="sessionContext.questionType !== 'mcq'" class="ui segment">
           <div [hidden]="showLoader">
             <app-question-creation #questionCreationChild [sessionContext]="sessionContext" [telemetryEventsInput]="telemetryEventsInput" [questionMetaData]="questionMetaData"
-              [roles]="roles" (questionStatus)="questionStatusHandler($event)"
+              [roles]="roles" [editableFieldsACL]="getEditableFieldsACL()" (questionStatus)="questionStatusHandler($event)"
               (questionFormChangeStatus)="handleQuestionFormChangeStatus($event)">
             </app-question-creation>
           </div>

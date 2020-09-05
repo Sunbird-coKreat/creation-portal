@@ -30,6 +30,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   @Input() sessionContext: any;
   @Input() telemetryEventsInput: any;
   @Input() roles: any;
+  @Input() editableFieldsACL: any;
   @ViewChild('author_names') authorName;
   @ViewChild('reuestChangeForm') ReuestChangeForm: NgForm;
 
@@ -94,6 +95,9 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   }];
   telemetryImpression: any;
   public telemetryPageId = 'question-creation';
+  public overrideMetaData: any;
+  public editableFields = [];
+  public isMetadataOverridden = false;
 
   constructor(
     private userService: UserService, private configService: ConfigService,
@@ -113,6 +117,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
 
   ngOnInit() {
     this.initialized = true;
+    this.overrideMetaData = this.programsService.overrideMetaData;
     this.solutionUUID = UUID.UUID();
     this.initialize();
     if (this.questionMetaData && this.questionMetaData.data) {
@@ -542,7 +547,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
           return learningOutcome.name;
         });
       }
-
+      this.getEditableFields();
       _.map(this.allFormFields, (obj) => {
         const code = obj.code;
         const preSavedValues = {};
@@ -610,6 +615,30 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   }
 
   canReviewContent() {
-    return !!(this.roles.currentRoles.includes('REVIEWER') && this.sessionContext.resourceStatus === 'Review' && this.programsService.checkForContentSubmissionDate(this.sessionContext.programContext) && this.router.url.includes('/contribute') && this.userService.userid !== _.get(this.sessionContext, 'contentMetadata.createdBy'));
+    return !!(this.roles.currentRoles.includes('REVIEWER')
+      && this.sessionContext.resourceStatus === 'Review'
+      && this.programsService.checkForContentSubmissionDate(this.sessionContext.programContext)
+      && this.router.url.includes('/contribute')
+      && this.userService.userid !== _.get(this.sessionContext, 'contentMetadata.createdBy'));
+  }
+
+  getEditableFields() {
+    if (this.editableFieldsACL === 'CONTRIBUTOR') {
+      this.editableFields.push('name');
+      _.forEach(this.allFormFields, (field) => {
+        this.editableFields.push(field.code);
+      });
+    } else if (this.editableFieldsACL === 'REVIEWER') {
+      const nameFieldConfig = _.find(this.overrideMetaData, (item) => item.code === 'name');
+      if (nameFieldConfig.editable === true) {
+        this.editableFields.push(nameFieldConfig.code);
+      }
+      _.forEach(this.allFormFields, (field) => {
+        const fieldConfig = _.find(this.overrideMetaData, (item) => item.code === field.code);
+        if (fieldConfig.editable === true) {
+          this.editableFields.push(fieldConfig.code);
+        }
+      });
+    }
   }
 }

@@ -78,6 +78,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   originPreviewReady = false;
   public originCollectionData: any;
   selectedOriginUnitStatus: any;
+  public overrideMetaData: any;
 
   constructor(
     private configService: ConfigService, private userService: UserService,
@@ -92,6 +93,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     public programTelemetryService: ProgramTelemetryService, private programsService: ProgramsService) { }
 
   ngOnInit() {
+    this.overrideMetaData = this.programsService.overrideMetaData;
     this.sessionContext = _.get(this.practiceQuestionSetComponentInput, 'sessionContext');
     this.originCollectionData = _.get(this.practiceQuestionSetComponentInput, 'originCollectionData');
     this.selectedOriginUnitStatus = _.get(this.practiceQuestionSetComponentInput, 'content.originUnitStatus');
@@ -114,7 +116,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getLicences();
     this.preprareTelemetryEvents();
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
-
     this.notify = this.helperService.getNotification().subscribe((action) => {
       this.contentStatusNotify(action);
     });
@@ -301,6 +302,19 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     return !!(this.router.url.includes('/contribute') && submissionDateFlag && !this.resourceDetails.sampleContent === true && this.hasAccessFor('showRequestChanges') && this.resourceStatus === 'Review' && this.userService.userid !== this.resourceDetails.createdBy);
   }
 
+  canEditContentTitle() {
+    const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
+    if (submissionDateFlag && this.hasAccessFor('showSave') && this.resourceStatus === 'Draft') {
+      return true;
+    } else if (this.getEditableFieldsACL() === 'REVIEWER') {
+      const nameFieldConfig = _.find(this.overrideMetaData, (item) => item.code === 'name');
+      if (nameFieldConfig.editable === true) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 
   get isPublishBtnDisable(): boolean {
     return _.find(this.questionList, (question) => question.rejectComment && question.rejectComment !== '');
@@ -965,5 +979,16 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     const rejectComment = _.get(this.resourceDetails, 'rejectComment');
     const roles = _.get(this.sessionContext, 'currentRoles');
     return !!(rejectComment && roles.includes('CONTRIBUTOR') && this.resourceStatus === 'Draft' && this.resourceDetails.prevStatus === 'Review');
+  }
+
+  getEditableFieldsACL() {
+    if (this.sessionContext.currentRoles.includes('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
+      return 'CONTRIBUTOR';
+    } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
+      && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
+      && !this.sourcingReviewStatus
+      && (this.selectedOriginUnitStatus === 'Draft')) {
+        return 'REVIEWER';
+    }
   }
 }
