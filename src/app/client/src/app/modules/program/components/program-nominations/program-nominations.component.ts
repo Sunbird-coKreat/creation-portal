@@ -114,7 +114,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.telemetryInteractObject = {};
     this.roles = [{name: 'REVIEWER'}, {name: 'NONE'}];
     this.roleNames = _.map(this.roles, 'name');
-    this.sessionContext.currentRole = 'REVIEWER';
+    this.sessionContext.currentRoles = ['REVIEWER'];
     this.programStageService.initialize();
     this.programStageService.addStage('programNominations');
     this.currentStage = 'programNominations';
@@ -562,9 +562,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.collectionsCount = _.get(this.programDetails, 'collection_ids').length;
       this.totalContentTypeCount = _.get(this.programDetails, 'content_types').length;
       this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
-      const getCurrentRoleId = _.find(this.programDetails.config.roles, {'name': this.sessionContext.currentRole});
-      this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
 
+      const currentRoles = _.filter(this.programDetails.config.roles, role => this.sessionContext.currentRoles.includes(role.name));
+      this.sessionContext.currentRoleIds = !_.isEmpty(currentRoles) ? _.map(currentRoles, role => role.id) : null;
     }, error => {
       // TODO: navigate to program list page
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
@@ -714,7 +714,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
          const programRoleNames = _.map(progRoleMapping, function(currentelement, index, arrayobj) {
           return index;
         });
-        if (!_.includes(programRoleNames, user.selectedRole)) {
+        if (!_.includes(programRoleNames, user.selectedRole) && user.selectedRole !== 'NONE') {
           progRoleMapping[user.selectedRole] = [];
         }
 
@@ -792,8 +792,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         collection: collection,
         config: _.find(this.programDetails.config.components, { 'id': 'ng.sunbird.chapterList' }),
         programContext: this.programDetails,
-        role: {
-          currentRole: this.sessionContext.currentRole
+        roles: {
+          currentRoles: this.sessionContext.currentRoles
         }
       }
     };

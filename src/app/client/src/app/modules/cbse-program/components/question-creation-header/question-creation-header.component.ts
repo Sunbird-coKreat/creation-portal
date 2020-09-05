@@ -8,7 +8,7 @@ import { ProgramTelemetryService } from '../../../program/services';
 })
 export class QuestionCreationHeaderComponent implements OnInit {
   public reviewerCommentModal = false;
-  @Input() role: any;
+  @Input() roles: any;
   @Input() questionMetaData: any;
   @Input() resourceStatus: any;
   @Input() telemetryEventsInput: any;
