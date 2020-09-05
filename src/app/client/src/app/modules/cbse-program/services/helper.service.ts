@@ -161,17 +161,27 @@ export class HelperService {
         'versionKey': data.versionKey
       }
     };
+
     // tslint:disable-next-line:max-line-length
-    action === 'accept' || action === 'acceptWithChanges' ? request.content['acceptedContents'] = _.uniq([...data.acceptedContents || [], contentId]) : request.content['rejectedContents'] = _.uniq([...data.rejectedContents || [], contentId]);
+    if (action === 'accept' || action === 'acceptWithChanges') {
+      request.content['acceptedContents'] = _.uniq([...data.acceptedContents || [], contentId]);
+    } else {
+      request.content['rejectedContents'] = _.uniq([...data.rejectedContents || [], contentId]);
+    }
+
     if (action === 'reject' && rejectedComments) {
       // tslint:disable-next-line:max-line-length
       request.content['sourcingRejectedComments'] = data.sourcingRejectedComments && _.isString(data.sourcingRejectedComments) ? JSON.parse(data.sourcingRejectedComments) : data.sourcingRejectedComments || {};
       request.content['sourcingRejectedComments'][contentId] = rejectedComments;
     }
+
     this.updateContent(request, collectionId).subscribe(() => {
-      action === 'accept' || action === 'acceptWithChanges' ? this.toasterService.success(this.resourceService.messages.smsg.m0066) :
+        if (action === 'accept' || action === 'acceptWithChanges') {
+          this.toasterService.success(this.resourceService.messages.smsg.m0066);
+        } else if (action === 'reject') {
+          this.toasterService.success(this.resourceService.messages.smsg.m0067);
+        }
         this.sendNotification.next(_.capitalize(action));
-        this.toasterService.success(this.resourceService.messages.smsg.m0067);
         this.programStageService.removeLastStage();
     }, (err) => {
       this.acceptContent_errMsg(action);

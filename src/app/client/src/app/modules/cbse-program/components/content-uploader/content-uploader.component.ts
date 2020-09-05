@@ -764,7 +764,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.helperService.updateContent(request, this.contentMetaData.identifier).subscribe((res) => {
         this.contentMetaData.versionKey = res.result.versionKey;
         if (action === 'review' && this.isIndividualAndNotSample()) {
-          this.publishContent();
+          const cb = (err, resp) => {
+            if (!err && resp) {
+              this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
+              this.programStageService.removeLastStage();
+            }
+          };
+          this.publishContent(cb);
         } else if (action === 'review') {
           this.sendForReview();
         } else if (this.sessionContext.collection && this.unitIdentifier && action !== 'review') {
@@ -876,14 +882,26 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     if (this.isMetaDataModified()) {
       const cb = (err, res ) => {
         if (!err && res) {
-          this.publishContent();
+          const callbackPublish = (er, rs) => {
+            if (!er && rs) {
+              this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
+              this.programStageService.removeLastStage();
+            }
+          };
+          this.publishContent(callbackPublish);
         } else {
           console.log(err);
         }
       };
       this.updateContent(cb);
     } else {
-      this.publishContent();
+      const cb = (err, res) => {
+        if (!err && res) {
+          this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
+          this.programStageService.removeLastStage();
+        }
+      };
+      this.publishContent(cb);
     }
   }
 
@@ -895,8 +913,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier || res.result.content_id)
           .subscribe((data) => {
             cb(null, data);
-            this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
-            this.programStageService.removeLastStage();
+            // this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
+            // this.programStageService.removeLastStage();
             this.uploadedContentMeta.emit({
               contentId: res.result.identifier
             });
@@ -999,7 +1017,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   updateContentBeforeApproving(action) {
-
     if (this.isMetaDataModified()) {
       const cb = (err, res) => {
         if (!err && res) {
