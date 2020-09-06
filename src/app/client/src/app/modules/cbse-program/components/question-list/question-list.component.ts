@@ -312,7 +312,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         return true;
       }
     }
-
     return false;
   }
 
@@ -479,7 +478,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public questionStatusHandler(event) {
-
     if (this.isPublishBtnDisable && event.type === 'review') {
       this.toasterService.error('Please resolve rejected questions or delete');
       return;
@@ -560,14 +558,19 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((res) => {
           if (res.responseCode === 'OK' && (res.result.content_id || res.result.node_id)) {
             if (actionStatus === 'review' && this.isIndividualAndNotSample()) {
-              this.publishContent();
+              const cb = (err, resp) => {
+                if (!err && resp) {
+                  this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
+                  this.programStageService.removeLastStage();
+                }
+              };
+              this.publishContent(cb);
             } else if (actionStatus === 'review') {
               this.sendForReview();
             }
           }
         });
     });
-
   }
 
   isIndividualAndNotSample() {
@@ -597,7 +600,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
      });
   }
 
-  publishContent() {
+  publishContent(cb = (err, res) => {}) {
     this.helperService.publishContent(this.sessionContext.resourceIdentifier, this.userService.userProfile.userId)
       .subscribe(res => {
         const contentId = res.result.node_id || res.result.identifier || res.result.content_id;
@@ -606,14 +609,14 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         // tslint:disable-next-line:max-line-length
         this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, contentId )
         .subscribe((data) => {
-          this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
-          this.programStageService.removeLastStage();
+          cb(null, data);
           this.uploadedContentMeta.emit({
             contentId: contentId
           });
         });
       }
     }, (err) => {
+      cb(err, null);
       this.toasterService.error(this.resourceService.messages.fmsg.m00102);
     });
   }
@@ -726,7 +729,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  public saveResourceName() {
+  public saveResourceName(cb = (err, res) => {}) {
     this.resourceName = (_.trim(this.resourceName) !== 'Untitled') ? _.trim(this.resourceName) : '' ;
     if (this.resourceName.length > 0 && this.resourceName.length <= this.resourceTitleLimit) {
       this.showTextArea = false;
@@ -744,9 +747,11 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
             this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, contentId
           )
           .subscribe((data) => {
+            cb(null, data);
             this.toasterService.success(this.resourceService.messages.smsg.m0060);
             this.sessionContext.contentMetadata.name = this.resourceName;
           }, (err) => {
+            cb(err, null);
             this.toasterService.error(this.resourceService.messages.fmsg.m0098);
           });
         }
@@ -929,6 +934,35 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   handleBack() {
     this.programStageService.removeLastStage();
+  }
+
+  updateContentBeforeApproving(action) {
+    if (this.isMetaDataModified()) {
+      const cb = (err, res) => {
+        if (!err && res) {
+          const callback = (error, resp) => {
+            if (!error && resp) {
+              this.attachContentToTextbook(action);
+            } else if (error) {
+              this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+              console.log(err);
+            }
+          };
+          this.publishContent(callback);
+        } else if (err) {
+          this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+          console.log(err);
+        }
+      };
+      this.saveResourceName(cb);
+      this.questionCreationChild.buttonTypeHandler('save');
+    } else {
+      this.attachContentToTextbook('accept');
+    }
+  }
+
+  isMetaDataModified() {
+    return this.questionCreationChild.isMetaDataModified(this.resourceDetails.name, this.resourceName);
   }
 
   attachContentToTextbook(action) {

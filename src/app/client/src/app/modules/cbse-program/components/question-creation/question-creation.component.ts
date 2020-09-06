@@ -622,6 +622,46 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
       && this.userService.userid !== _.get(this.sessionContext, 'contentMetadata.createdBy'));
   }
 
+  isMetaDataModified(beforeUpdateResourceTitle, afterUpdatedResourceTitle) {
+    const beforeUpdateMetaData = _.clone(this.questionMetaData.data);
+    beforeUpdateMetaData['name'] = beforeUpdateResourceTitle;
+
+    let afterUpdateMetaData = {
+      'name': afterUpdatedResourceTitle
+    };
+
+    const trimmedValue = _.mapValues(this.questionMetaForm.value, (value) => {
+      if (_.isString(value)) {
+        return _.trim(value);
+      } else {
+        return value;
+      }
+    });
+
+    afterUpdateMetaData = _.pickBy(_.assign(afterUpdateMetaData, trimmedValue), _.identity);
+    _.forEach(this.overrideMetaData, (field) => {
+      if (field.editable === true) {
+        if (Array.isArray(afterUpdateMetaData[field.code])) {
+          if (JSON.stringify(afterUpdateMetaData[field.code]) !== JSON.stringify(beforeUpdateMetaData[field.code])) {
+            if (typeof beforeUpdateMetaData[field.code] === 'undefined'){
+              if (afterUpdateMetaData[field.code].length) {
+                this.isMetadataOverridden = true;
+              }
+            } else {
+              this.isMetadataOverridden = true;
+            }
+          }
+        } else if (typeof afterUpdateMetaData[field.code] !== 'undefined') {
+          if (afterUpdateMetaData[field.code].localeCompare(beforeUpdateMetaData[field.code]) !== 0) {
+            this.isMetadataOverridden = true;
+          }
+        }
+      }
+    });
+
+    return this.isMetadataOverridden;
+  }
+
   getEditableFields() {
     if (this.editableFieldsACL === 'CONTRIBUTOR') {
       this.editableFields.push('name');
