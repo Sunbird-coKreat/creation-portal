@@ -40,6 +40,7 @@ export class ProgramsService extends DataService implements CanActivate {
   public http: HttpClient;
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
   private _contentTypes: any[];
+  private _overrideMetaData: any[];
   private _sourcingOrgReviewers: Array<any>;
   // private orgUsers: Array<any>;
   public mvcStageData: any;
@@ -62,6 +63,7 @@ export class ProgramsService extends DataService implements CanActivate {
   public initialize() {
     // this.enableContributeMenu().subscribe();
     this.getAllContentTypes().subscribe();
+    this.getOverridableMetaDataConfig().subscribe();
     this.mapSlugstoOrgId();
   }
 
@@ -643,6 +645,7 @@ export class ProgramsService extends DataService implements CanActivate {
             request: request
           }
         };
+        const nomination = _.first(data.result);
 
         if (!_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
           req.data.request['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
@@ -657,7 +660,12 @@ export class ProgramsService extends DataService implements CanActivate {
           req.data.request['user_id'] = this.userService.userProfile.identifier;
           req.data.request['createdby'] = this.userService.userProfile.userRegData.User.osid;
         }
-        return this.post(req);
+
+        if (_.get(nomination, 'status') === 'Approved' || _.get(nomination, 'status') === 'Rejected') {
+          return of(_.get(nomination, 'status'));
+        } else {
+          return this.post(req);
+        }
       }), catchError(err => throwError(err) ));
   }
 
@@ -846,6 +854,13 @@ export class ProgramsService extends DataService implements CanActivate {
     return _.cloneDeep(this._contentTypes);
   }
 
+  /**
+   * Get all overridable meta fields configured
+   */
+  get overrideMetaData() {
+    return _.cloneDeep(this._overrideMetaData);
+  }
+
   private getAllContentTypes(): Observable<any[]> {
     const option = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.CONTENTTYPE_LIST}`,
@@ -857,6 +872,27 @@ export class ProgramsService extends DataService implements CanActivate {
     ).pipe(
       tap(contentTypes => {
         this._contentTypes = contentTypes;
+      })
+    );
+  }
+
+  getOverridableMetaDataConfig(): Observable<any[]> {
+    const option = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.CONFIGURATION_SEARCH}`,
+      data: {
+        request: {
+          key: 'overrideMetaData',
+          status: 'active'
+        }
+      }
+    };
+
+    return this.post(option).pipe(
+      map(result => _.get(result, 'result.configuration.value')),
+      catchError(err => of([]))
+    ).pipe(
+      tap(data => {
+        this._overrideMetaData = JSON.parse(data);
       })
     );
   }

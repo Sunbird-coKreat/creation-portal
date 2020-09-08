@@ -80,10 +80,17 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   OrgUsersCnt = 0;
   pager: IPagination;
   pageNumber = 1;
-  pageLimit = 250;
+  pageLimit: any;
   sharedContext;
   showSkipReview = false;
-
+  searchInput: any;
+  initialSourcingOrgUser = [];
+  searchLimitMessage: any;
+  searchLimitCount: any;
+  @ViewChild('userRemoveRoleModal') userRemoveRoleModal;
+  public userRemoveRoleLoader = false;
+  public showUserRemoveRoleModal = false;
+  public selectedUserToRemoveRole: any;
   public telemetryPageId = 'collection';
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
@@ -120,6 +127,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       id: this.userService.appId,
       pid: this.configService.appConfig.TELEMETRY.PID
     };
+    this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit 
+    this.pageLimit = this.registryService.programUserPageLimit;
   }
 
   ngAfterViewInit() {
@@ -158,7 +167,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
       this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
       this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
-      this.roles = _.get(this.programDetails, 'config.roles');
+      this.roles =_.get(this.programDetails, 'config.roles');
+      this.roles.push({'id': 3, 'name': 'BOTH', 'defaultTab': 3, 'tabs': [3]});
+      this.roles.push({'id': 4, 'name': 'NONE', 'tabs': [4], 'default': true, 'defaultTab': 4});
       this.roleNames = _.map(this.roles, 'name');
       this.fetchFrameWorkDetails();
       this.getNominationStatus();
@@ -216,43 +227,39 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     };
 
-    if (this.checkIfUserBelongsToOrg()) {
-      req.data.request.filters['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
+    if (this.userService.isUserBelongsToOrg()) {
+      req.data.request.filters['organisation_id'] = this.userService.getUserOrgId();
     } else {
-      req.data.request.filters['user_id'] = this.userService.userProfile.userId;
+      req.data.request.filters['user_id'] = this.userService.getUserId();
     }
     this.programsService.post(req).subscribe((data) => {
-      if (data.result && !_.isEmpty(data.result)) {
-        this.nominationDetails = _.first(data.result);
+      const nominationDetails = _.first(_.get(data, 'result', []));
+      if (!_.isEmpty(nominationDetails)) {
+        this.nominationDetails = nominationDetails;
       }
-      if (!_.isEmpty(this.nominationDetails) && this.nominationDetails.status !== 'Initiated') {
+      if (!_.isEmpty(nominationDetails) && this.nominationDetails.status !== 'Initiated') {
         this.nominated = true;
-        this.sessionContext.nominationDetails = _.first(data.result);
-        this.currentNominationStatus = _.get(_.first(data.result), 'status');
-        if (this.checkIfUserBelongsToOrg()) {
-          this.sessionContext.currentOrgRole = this.userService.userProfile.userRegData.User_Org.roles[0];
-          if (this.userService.userProfile.userRegData.User_Org.roles[0] === 'admin') {
-            // tslint:disable-next-line:max-line-length
-            this.sessionContext.currentRole = (this.currentNominationStatus === 'Approved' || this.currentNominationStatus === 'Rejected') ? 'REVIEWER' : 'CONTRIBUTOR';
-          } else if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.rolemapping) {
-            _.find(this.sessionContext.nominationDetails.rolemapping, (users, role) => {
-              if (_.includes(users, this.userService.userProfile.userRegData.User.userId)) {
-                this.sessionContext.currentRole = role;
-              }
-            });
+        this.sessionContext.nominationDetails = nominationDetails;
+        this.currentNominationStatus = _.get(nominationDetails, 'status');
+        if (this.userService.isUserBelongsToOrg()) {
+          this.sessionContext.currentOrgRole = _.first(this.userService.getUserOrgRole());
+          if (this.sessionContext.currentOrgRole === 'admin') {
+            this.sessionContext.currentRoles = (['Approved', 'Rejected'].includes(this.currentNominationStatus)) ? ['REVIEWER'] : ['CONTRIBUTOR'];
+          } else if (this.sessionContext.nominationDetails.rolemapping) {
+            this.sessionContext.currentRoles = this.userService.getMyRoleForProgram(this.nominationDetails);
           } else {
-            this.sessionContext.currentRole = 'CONTRIBUTOR';
+            this.sessionContext.currentRoles = ['CONTRIBUTOR'];
           }
         } else {
-          this.sessionContext.currentRole = 'CONTRIBUTOR';
+          this.sessionContext.currentRoles = ['CONTRIBUTOR'];
           this.sessionContext.currentOrgRole = 'individual';
         }
-        if (this.programDetails.config) {
-          const getCurrentRoleId = _.find(this.programDetails.config.roles, { 'name': this.sessionContext.currentRole });
-          this.sessionContext.currentRoleId = (getCurrentRoleId) ? getCurrentRoleId.id : null;
-        }
 
-        if (this.isUserOrgAdmin()) {
+        const roles = _.filter(this.roles, role => this.sessionContext.currentRoles.includes(role.name));
+
+        this.sessionContext.currentRoleIds = !_.isEmpty(roles) ? _.map(roles, role => role.id) : null;
+
+        if (this.userService.isUserBelongsToOrg()) {
           this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
             this.setOrgUsers(orgUsers);
           });
@@ -264,7 +271,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       }
 
       if (this.nominated) {
-        if (this.isUserOrgAdmin() || this.sessionContext.currentRole === 'REVIEWER') {
+        if (this.userService.isContributingOrgAdmin() || this.sessionContext.currentRoles.includes('REVIEWER')) {
           this.prefernceForm = this.sbFormBuilder.group({
             medium: [],
             subject: [],
@@ -318,6 +325,26 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
   }
+  getUserDetailsBySearch(clearInput?) {
+    clearInput ? this.searchInput = '': this.searchInput;
+    if (this.searchInput) {
+      let filteredUser = this.registryService.getSearchedUserList(this.initialSourcingOrgUser, this.searchInput);
+       filteredUser.length > this.searchLimitCount ? this.searchLimitMessage = true: this.searchLimitMessage = false;   
+      this.sortUsersList(filteredUser, true);
+    } else {
+      this.searchLimitMessage = false;
+      this.sortUsersList(this.initialSourcingOrgUser, true);
+    }
+  }
+  sortUsersList(usersList, isUserSearch?) {
+     this.OrgUsersCnt = usersList.length;
+     this.allContributorOrgUsers = this.programsService.sortCollection(usersList, 'projectselectedRole', 'asc');
+     isUserSearch ?  this.allContributorOrgUsers: this.initialSourcingOrgUser =  this.allContributorOrgUsers;
+     usersList = _.chunk(this.allContributorOrgUsers, this.pageLimit);
+     this.paginatedContributorOrgUsers = usersList;
+     this.contributorOrgUser = isUserSearch ? usersList[0] : usersList[this.pageNumber - 1];
+     this.pager = this.paginationService.getPager(this.OrgUsersCnt, isUserSearch ? 1 : this.pageNumber, this.pageLimit);
+  }
 
   setOrgUsers(orgUsers) {
     if (_.isEmpty(orgUsers)) {
@@ -325,16 +352,21 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       return false;
     }
     this.allContributorOrgUsers = [];
+    // Get only the users and skip admins
     orgUsers = _.filter(orgUsers, { "selectedRole": "user" });
     _.forEach(orgUsers, r => {
-      r.projectselectedRole = 'Select';
+      r.projectselectedRole = 'Select Role';
       if (this.nominationDetails.rolemapping) {
-        _.find(this.nominationDetails.rolemapping, (users, role) => {
-          if (_.includes(users, r.identifier)) {
-            r.projectselectedRole = role;
-          }
-        });
+        const userRoles = this.userService.getMyRoleForProgram(this.nominationDetails, r.identifier);
+        if (userRoles.includes("CONTRIBUTOR") && userRoles.includes("REVIEWER")) {
+          r.projectselectedRole = "BOTH";
+        } else if (userRoles.includes("CONTRIBUTOR")) {
+          r.projectselectedRole = "CONTRIBUTOR";
+        } else if (userRoles.includes("REVIEWER")) {
+          r.projectselectedRole = "REVIEWER";
+        }
       }
+      r.newRole = r.projectselectedRole;
       this.allContributorOrgUsers.push(r);
     });
 
@@ -353,33 +385,78 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.pager = this.paginationService.getPager(this.OrgUsersCnt, this.pageNumber, this.pageLimit);
   }
 
-  onRoleChange(user) {
-    const newRole = user.projectselectedRole;
-    if (!_.includes(this.roleNames, newRole)) {
-      this.toasterService.error(this.resourceService.messages.emsg.roles.m0003);
-      return;
+  showUserRoleOption(roleName, userRole) {
+    return (roleName !== 'NONE' || (roleName === 'NONE' && userRole !== 'Select Role'))
+  }
+
+  removeUserFromProgram() {
+    if (this.userRemoveRoleLoader) {
+      return false;
     }
+    this.userRemoveRoleLoader = true;
+    this.updateUserRoleMapping(this.getProgramRoleMapping(this.selectedUserToRemoveRole), this.selectedUserToRemoveRole);
+  }
+
+  cancelRemoveUserFromProgram() {
+    this.showUserRemoveRoleModal = false;
+    this.selectedUserToRemoveRole.newRole = this.selectedUserToRemoveRole.projectselectedRole;
+  }
+
+  getProgramRoleMapping(user) {
+    const newRole = user.newRole;
     let progRoleMapping = this.nominationDetails.rolemapping;
-    if (isNullOrUndefined(progRoleMapping)) {
+    if (isNullOrUndefined(progRoleMapping) && newRole !== 'NONE') {
       progRoleMapping = {};
-      progRoleMapping[newRole] = [];
     }
     const programRoleNames = _.keys(progRoleMapping);
-    if (!_.includes(programRoleNames, newRole)) {
+    if (!_.includes(programRoleNames, newRole) && !_.includes(["NONE", "BOTH"], newRole)) {
       progRoleMapping[newRole] = [];
+    } else if (newRole == 'BOTH') {
+      if (!_.includes(programRoleNames, 'CONTRIBUTOR')) {
+        progRoleMapping['CONTRIBUTOR'] = [];
+      }
+      if (!_.includes(programRoleNames, 'REVIEWER')) {
+        progRoleMapping['REVIEWER'] = [];
+      }
     }
     _.forEach(progRoleMapping, (users, role) => {
-      // Add to selected user to current selected role's array
-      if (newRole === role && !_.includes(users, user.identifier)) {
-        users.push(user.identifier);
-      }
-      // Remove selected user from other role's array
-      if (newRole !== role && _.includes(users, user.identifier)) {
-        _.remove(users, (id) => id === user.identifier);
+      if (newRole === 'BOTH') {
+        // If both option selected add user in both the roles array
+        if (!_.includes(users, user.identifier)) {
+          users.push(user.identifier);
+        }
+      } else {
+        // Add to selected user to current selected role's array
+        if (newRole === role && !_.includes(users, user.identifier) && newRole !== 'NONE') {
+          users.push(user.identifier);
+        }
+        // Remove selected user from other role's array
+        if (newRole !== role && _.includes(users, user.identifier)) {
+          _.remove(users, (id) => id === user.identifier);
+        }
       }
       // Remove duplicate users ids and falsy values
       progRoleMapping[role] = _.uniq(_.compact(users));
     });
+    return progRoleMapping;
+  }
+
+  onRoleChange(user) {
+    const newRole = user.newRole;
+    if (!_.includes(this.roleNames, newRole)) {
+      this.toasterService.error(this.resourceService.messages.emsg.roles.m0003);
+      return false;
+    }
+    // If new role is none then show remove user from program confirmation modal
+    if (newRole === 'NONE') {
+      this.selectedUserToRemoveRole = user;
+      this.showUserRemoveRoleModal = true;
+      return false;
+    }
+    this.updateUserRoleMapping(this.getProgramRoleMapping(user), user);
+  }
+
+  updateUserRoleMapping(progRoleMapping, user) {
     const req = {
       'request': {
         'program_id': this.activatedRoute.snapshot.params.programId,
@@ -387,11 +464,18 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         'rolemapping': progRoleMapping
       }
     };
-    const updateNomination = this.programsService.updateNomination(req);
-    updateNomination.subscribe(response => {
+    return this.programsService.updateNomination(req).subscribe(response => {
+      this.showUserRemoveRoleModal = false;
+      this.userRemoveRoleLoader = false;
+      if (user.newRole === "NONE") {
+        user.newRole = 'Select Role';
+      }
+      user.projectselectedRole = user.newRole;
       this.nominationDetails.rolemapping = progRoleMapping;
       this.toasterService.success(this.resourceService.messages.smsg.roles.m0001);
     }, error => {
+      this.showUserRemoveRoleModal = false;
+      this.userRemoveRoleLoader = false;
       console.log(error);
       this.toasterService.error(this.resourceService.messages.emsg.roles.m0002);
     });
@@ -408,11 +492,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   sortOrgUsers(column) {
-    this.allContributorOrgUsers = this.programsService.sortCollection(this.allContributorOrgUsers, column, this.directionOrgUsers);
-    this.paginatedContributorOrgUsers = _.chunk(this.allContributorOrgUsers, this.pageLimit);
-    this.contributorOrgUser = this.paginatedContributorOrgUsers[this.pageNumber - 1];
-    this.pager = this.paginationService.getPager(this.OrgUsersCnt, this.pageNumber, this.pageLimit);
-
+    this.sortUsersList(this.allContributorOrgUsers);
     if (this.directionOrgUsers === 'asc' || this.directionOrgUsers === '') {
       this.directionOrgUsers = 'desc';
     } else {
@@ -518,8 +598,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         collection: collection,
         config: _.find(this.programDetails.config.components, { 'id': 'ng.sunbird.chapterList' }),
         programContext: this.programDetails,
-        role: {
-          currentRole: this.sessionContext.currentRole
+        roles: {
+          currentRoles: this.sessionContext.currentRoles
         }
       }
     };
@@ -592,24 +672,14 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     };
     this.applyPreferences(prefData);
   }
+
   resetTextbookFilters() {
     this.prefModal.deny();
     this.applyPreferences();
   }
 
   isNominationOrg() {
-    return !!(this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.organisation_id);
-  }
-
-  isUserOrgAdmin() {
-    return !!(this.userService.userRegistryData && this.userService.userProfile.userRegData &&
-      this.userService.userProfile.userRegData.User_Org &&
-      this.userService.userProfile.userRegData.User_Org.roles.includes('admin'));
-  }
-
-  checkIfUserBelongsToOrg() {
-    return !!(this.userService.userRegistryData && this.userService.userProfile.userRegData &&
-      this.userService.userProfile.userRegData.User_Org);
+    return !!(_.get(this.sessionContext, 'nominationDetails.organisation_id'));
   }
 
   changeView() {

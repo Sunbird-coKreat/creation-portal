@@ -63,7 +63,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   showTextArea: boolean;
   changeFile_instance: boolean;
   showRequestChangesPopup = false;
-  disableFormField: boolean;
   showReviewModal = false;
   showUploadModal: boolean;
   submitButton: boolean;
@@ -96,6 +95,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public originCollectionData: any;
   selectedOriginUnitStatus: any;
   public bulkApprove: any;
+  public overrideMetaData: any;
+  public editableFields = [];
+  public isMetadataOverridden = false;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -111,6 +113,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   ngOnInit() {
     this.config = _.get(this.contentUploadComponentInput, 'config');
+    this.overrideMetaData = this.programsService.overrideMetaData;
     this.originCollectionData = _.get(this.contentUploadComponentInput, 'originCollectionData');
     this.selectedOriginUnitStatus = _.get(this.contentUploadComponentInput, 'content.originUnitStatus');
     this.sessionContext  = _.get(this.contentUploadComponentInput, 'sessionContext');
@@ -171,25 +174,37 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
      });
   }
 
+  hasAccessFor(action) {
+    const roles = _.get(this.actions, `${action}.roles`, []);
+    return !_.isEmpty(_.intersection(roles, this.sessionContext.currentRoleIds));
+  }
+
   handleActionButtons() {
     this.visibility = {};
     const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
 
     // tslint:disable-next-line:max-line-length
-    this.visibility['showChangeFile'] = submissionDateFlag && (_.includes(this.actions.showChangeFile.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
+    this.visibility['showChangeFile'] = submissionDateFlag && this.hasAccessFor('showChangeFile') && this.resourceStatus === 'Draft';
     // tslint:disable-next-line:max-line-length
-    this.visibility['showRequestChanges'] = this.router.url.includes('/contribute') && submissionDateFlag && !this.contentMetaData.sampleContent === true &&
-     (_.includes(this.actions.showRequestChanges.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
+    this.visibility['showRequestChanges'] = this.canReviewContent(submissionDateFlag);
 
     // tslint:disable-next-line:max-line-length
-    this.visibility['showPublish'] = submissionDateFlag && this.router.url.includes('/contribute') && !this.contentMetaData.sampleContent === true &&
-    (_.includes(this.actions.showPublish.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
+    this.visibility['showPublish'] = this.canPublishContent(submissionDateFlag);
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSubmit'] = submissionDateFlag && (_.includes(this.actions.showSubmit.roles, this.sessionContext.currentRoleId)  && this.resourceStatus === 'Draft');
+    this.visibility['showSubmit'] = submissionDateFlag && this.hasAccessFor('showSubmit') && this.resourceStatus === 'Draft';
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSave'] = submissionDateFlag && !this.contentMetaData.sampleContent === true && (_.includes(this.actions.showSave.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
+    this.visibility['showSave'] = submissionDateFlag && !this.contentMetaData.sampleContent === true && this.hasAccessFor('showSave') && this.resourceStatus === 'Draft';
     // tslint:disable-next-line:max-line-length
-    this.visibility['showEdit'] = submissionDateFlag && (_.includes(this.actions.showEdit.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Draft');
+    this.visibility['showEdit'] = submissionDateFlag && this.hasAccessFor('showEdit') && this.resourceStatus === 'Draft';
+  }
+
+  canPublishContent(submissionDateFlag) {
+    return !!(submissionDateFlag && this.router.url.includes('/contribute') && !this.contentMetaData.sampleContent === true &&
+    this.hasAccessFor('showPublish') && this.resourceStatus === 'Review' && this.userService.userid !== this.contentMetaData.createdBy);
+  }
+
+  canReviewContent(submissionDateFlag) {
+    return !!(this.router.url.includes('/contribute') && submissionDateFlag && !this.contentMetaData.sampleContent === true && this.hasAccessFor('showRequestChanges') && this.resourceStatus === 'Review' && this.userService.userid !== this.contentMetaData.createdBy);
   }
 
   initiateUploadModal() {
@@ -337,8 +352,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-}
-
+  }
 
   uploadByURL(fileUpload, mimeType) {
     this.loading = true;
@@ -381,6 +395,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       if (this.templateDetails.metadata.appIcon) {
         option.data.request.content.appIcon = this.templateDetails.metadata.appIcon;
       }
+
       this.actionService.post(option).pipe(map((res: any) => res.result), catchError(err => {
         const errInfo = { errorMsg: 'Unable to create contentId, Please Try Again' };
         this.programStageService.removeLastStage();
@@ -602,7 +617,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.textFields = _.filter(this.formConfiguration, {'inputType': 'text', 'visible': true});
     this.allFormFields = _.filter(this.formConfiguration, {'visible': true});
 
-    this.disableFormField = (this.sessionContext.currentRole === 'CONTRIBUTOR' && this.resourceStatus === 'Draft') ? false : true ;
     _.forEach(this.formConfiguration, (formData) => {
       this.selectOutcomeOption[formData.code] = formData.defaultValue;
     });
@@ -627,6 +641,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       });
     }
 
+    this.getEditableFields();
+
      _.map(this.allFormFields, (obj) => {
       const code = obj.code;
       const preSavedValues = {};
@@ -649,7 +665,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
             preSavedValues[code] = (this.contentMetaData[code]) ? this.contentMetaData[code] : '';
           }
           // tslint:disable-next-line:max-line-length
-          obj.required ? controller[obj.code] = [{value: preSavedValues[code], disabled: this.disableFormField}, [Validators.required]] : controller[obj.code] = preSavedValues[code];
+          obj.required ? controller[obj.code] = [{value: preSavedValues[code], disabled: this.editableFields.indexOf(code) === -1}, [Validators.required]] : controller[obj.code] = preSavedValues[code];
         } else if (obj.inputType === 'checkbox') {
           // tslint:disable-next-line:max-line-length
           preSavedValues[code] = (this.contentMetaData[code]) ? this.contentMetaData[code] : false;
@@ -757,6 +773,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       const request = {
         'content': contentObj
       };
+
       this.helperService.updateContent(request, this.contentMetaData.identifier).subscribe((res) => {
         this.contentMetaData.versionKey = res.result.versionKey;
         if (action === 'review' && this.isIndividualAndNotSample()) {
@@ -827,13 +844,70 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
 
-  publishContent() {
+  isMetaDataModified() {
+    let contentObj = {
+      'name': this.editTitle
+    };
+    const trimmedValue = _.mapValues(this.contentDetailsForm.value, (value) => {
+      if (_.isString(value)) {
+        return _.trim(value);
+      } else {
+        return value;
+      }
+    });
+
+    _.forEach(this.textFields, field => {
+      if (field.dataType === 'list') {
+        trimmedValue[field.code] = trimmedValue[field.code] ? trimmedValue[field.code].split(', ') : [];
+      }
+    });
+    contentObj = _.pickBy(_.assign(contentObj, trimmedValue), _.identity);
+    _.forEach(this.overrideMetaData, (field) => {
+      if (field.editable === true) {
+        if (Array.isArray(contentObj[field.code])) {
+          if (JSON.stringify(contentObj[field.code]) !== JSON.stringify(this.contentMetaData[field.code])) {
+            if (typeof this.contentMetaData[field.code] === 'undefined'){
+              if (contentObj[field.code].length) {
+                this.isMetadataOverridden = true;
+              }
+            } else {
+              this.isMetadataOverridden = true;
+            }
+          }
+        } else if (typeof contentObj[field.code] !== 'undefined') {
+          if (contentObj[field.code].localeCompare(this.contentMetaData[field.code]) !== 0) {
+            this.isMetadataOverridden = true;
+          }
+        }
+      }
+    });
+
+    return this.isMetadataOverridden;
+  }
+
+  updateContentBeforePublishing() {
+    if (this.isMetaDataModified()) {
+      const cb = (err, res ) => {
+        if (!err && res) {
+          this.publishContent();
+        } else {
+          console.log(err);
+        }
+      };
+      this.updateContent(cb);
+    } else {
+      this.publishContent();
+    }
+  }
+
+  publishContent(cb = (err, res) => {}) {
     this.helperService.publishContent(this.contentMetaData.identifier, this.userService.userProfile.userId)
        .subscribe(res => {
         if (this.sessionContext.collection && this.unitIdentifier) {
           // tslint:disable-next-line:max-line-length
           this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier || res.result.content_id)
           .subscribe((data) => {
+            cb(null, data);
             this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
             this.programStageService.removeLastStage();
             this.uploadedContentMeta.emit({
@@ -843,6 +917,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         }
       }, (err) => {
         this.toasterService.error(this.resourceService.messages.fmsg.m00102);
+        cb(err, null);
       });
   }
 
@@ -898,7 +973,70 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.fetchFileSizeLimit();
   }
 
-  attachContentToTextbook(action) {
+  updateContent(cb) {
+    // tslint:disable-next-line:max-line-length
+    if (this.contentDetailsForm.valid && this.editTitle && this.editTitle !== '') {
+      this.showTextArea = false;
+      this.formValues = {};
+      let contentObj = {
+          'versionKey': this.contentMetaData.versionKey,
+          'name': this.editTitle
+      };
+      const trimmedValue = _.mapValues(this.contentDetailsForm.value, (value) => {
+         if (_.isString(value)) {
+           return _.trim(value);
+         } else {
+           return value;
+         }
+      });
+
+      _.forEach(this.textFields, field => {
+        if (field.dataType === 'list') {
+          trimmedValue[field.code] = trimmedValue[field.code] ? trimmedValue[field.code].split(', ') : [];
+        }
+      });
+      contentObj = _.pickBy(_.assign(contentObj, trimmedValue), _.identity);
+      const request = {
+        'content': contentObj
+      };
+
+      this.helperService.updateContent(request, this.contentMetaData.identifier).subscribe((res) => {
+        cb(null, res);
+      }, (err) => {
+        cb(err, null);
+      });
+    } else {
+      this.markFormGroupTouched(this.contentDetailsForm);
+      this.toasterService.error(this.resourceService.messages.fmsg.m0076);
+    }
+  }
+
+  updateContentBeforeApproving(action) {
+
+    if (this.isMetaDataModified()) {
+      const cb = (err, res) => {
+        if (!err && res) {
+          const callback = (error, resp) => {
+            if (!error && resp) {
+              this.attachContentToTextbook(action);
+            } else if (error) {
+              this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+              console.log(err);
+            }
+          };
+          this.publishContent(callback);
+        } else if (err) {
+          this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+          console.log(err);
+        }
+      };
+      this.updateContent(cb);
+    } else {
+      this.attachContentToTextbook('accept');
+    }
+  }
+
+  attachContentToTextbook (action) {
     const hierarchyObj  = _.get(this.sessionContext.hierarchyObj, 'hierarchy');
     if (hierarchyObj) {
       const rootOriginInfo = _.get(_.get(hierarchyObj, this.sessionContext.collection), 'originData');
@@ -914,6 +1052,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       };
       if (originData.textbookOriginId && originData.unitOriginId && originData.channel) {
         if (action === 'accept') {
+          action = this.isMetadataOverridden ? 'acceptWithChanges' : 'accept';
           // tslint:disable-next-line:max-line-length
           this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentMetaData.identifier, originData);
         } else if (action === 'reject' && this.FormControl.value.rejectComment.length) {
@@ -940,21 +1079,43 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   showSourcingOrgRejectComments() {
-    if (this.resourceStatus === 'Live' && _.get(this.sessionContext.hierarchyObj, 'sourcingRejectedComments') &&
-    _.get(this.sessionContext.hierarchyObj.sourcingRejectedComments, this.contentMetaData.identifier)) {
-      this.sourcingOrgReviewComments = _.get(this.sessionContext.hierarchyObj.sourcingRejectedComments, this.contentMetaData.identifier);
-     return true;
+    const id = _.get(this.contentMetaData, 'identifier');
+    const sourcingRejectedComments = _.get(this.sessionContext, 'hierarchyObj.sourcingRejectedComments')
+    if (this.resourceStatus === 'Live' && id && !_.isEmpty(_.get(sourcingRejectedComments, id))) {
+      this.sourcingOrgReviewComments = _.get(sourcingRejectedComments, id);
+      return true;
     } else {
       return false;
     }
   }
 
   showContributorOrgReviewComments() {
-    if (this.contentMetaData && this.contentMetaData.rejectComment && this.sessionContext.currentRoleId === 1 &&
-        this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Review') {
-      return true;
-    } else {
-      return false;
+    const rejectComment = _.get(this.contentMetaData, 'rejectComment');
+    const roles = _.get(this.sessionContext, 'currentRoles');
+    return !!(rejectComment && roles.includes('CONTRIBUTOR') && this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Review');
+  }
+
+  getEditableFields() {
+    if (this.sessionContext.currentRoles.includes('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
+      this.editableFields.push('name');
+      _.forEach(this.allFormFields, (field) => {
+        this.editableFields.push(field.code);
+      });
+    } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
+      && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
+      && !this.sourcingReviewStatus
+      && (this.selectedOriginUnitStatus === 'Draft')) {
+        const nameFieldConfig = _.find(this.overrideMetaData, (item) => item.code === 'name');
+        if (nameFieldConfig.editable === true) {
+          this.editableFields.push(nameFieldConfig.code);
+        }
+
+        _.forEach(this.allFormFields, (field) => {
+        const fieldConfig = _.find(this.overrideMetaData, (item) => item.code === field.code);
+        if (fieldConfig.editable === true) {
+          this.editableFields.push(fieldConfig.code);
+        }
+      });
     }
   }
 }

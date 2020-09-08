@@ -59,7 +59,7 @@
                 <th *ngIf="activeMyProgramsMenu && !iscontributeOrgAdmin" class="w-5 text-center">{{ resourceService?.frmelmnts?.lbl?.myRole }}</th>
                 <th *ngIf="this.router.url.includes('/sourcing')" class="w-5 text-center"> &nbsp;</th>
                 <th *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')" class="w-30 text-center"> &nbsp;</th>
-                <th *ngIf="isContributor" class="w-5 text-center"> &nbsp; &nbsp; &nbsp;</th>
+                <th *ngIf="isContributor" class="w-15 text-center"> &nbsp; &nbsp; &nbsp;</th>
               </tr>
             </thead>
             <tbody class="sb-table-body">
@@ -143,7 +143,13 @@
                     <div *ngIf="program.status === 'Live' || program.status === 'Unlisted'" class="sb-color-success">{{resourceService?.frmelmnts?.lbl?.live}}</div>
                     <div *ngIf="program.status === 'Draft'" class="sb-color-gray-300">{{resourceService?.frmelmnts?.lbl?.draft}}</div>
                 </td>
-                <td class="text-center">
+                <td class="text-center pr-10 va-text-sub">
+
+                  <div *ngIf="activeMyProgramsMenu && program.nomination_status  == 'Pending' && canNominate(program)" (click)="getProjectToModify(program)" class="d-inline-block cursor-pointer pr-10">
+                    <i class="icon edit sb-color-primary ui fs-0-92"></i>
+                    <span class="sb-color-primary">{{ resourceService?.frmelmnts?.lbl?.modifyNomination.button }}</span>
+                  </div>
+                  <span [ngClass]="{'pull-right': !issourcingOrgAdmin}">
                   <button *ngIf="(program.status === 'Live' || program.status === 'Unlisted')"
                     type="button"
                     class="sb-btn sb-btn-normal sb-btn-outline-primary mr-5"
@@ -153,6 +159,7 @@
                     [telemetryInteractObject]="telemetryInteractObject"
                     [telemetryInteractCdata]="telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
+                    </span>
 
                     <div *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing') && program.status === 'Draft'" class="d-inline-block cursor-pointer pr-20 pl-5" (click)="editOnClick(program)">
                       <i class="icon edit sb-color-primary ui fs-0-92"></i>
@@ -194,6 +201,24 @@
       {{resourceService.frmelmnts.btn.yes}}
     </button>
     <button class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showDeleteModal = false">
+      {{resourceService.frmelmnts.btn.no}}
+    </button>
+  </div>
+</sui-modal>
+
+<sui-modal *ngIf="showModifyConfirmation" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'"
+  class="sb-modal" appBodyScroll (dismissed)="showModifyConfirmation = false" #modal>
+  <div class="sb-modal-header">
+    {{resourceService.frmelmnts.lbl.modifyNomination.heading}}
+  </div>
+  <div class="sb-modal-content">
+   {{resourceService.frmelmnts.lbl.modifyNomination.confirm}}
+  </div>
+  <div class="sb-modal-actions" (click)="showModifyConfirmation = false;modifyNomination(program)">
+    <button class="sb-btn sb-btn-normal sb-btn-primary">
+      {{resourceService.frmelmnts.btn.yes}}
+    </button>
+    <button class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showModifyConfirmation = false">
       {{resourceService.frmelmnts.btn.no}}
     </button>
   </div>

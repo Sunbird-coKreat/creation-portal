@@ -466,4 +466,78 @@ export class UserService {
     return this.learnerService.post(option);
   }
 
+  public getMyRoleForProgram(nomination, userId?) {
+    if (_.isUndefined(userId)) {
+      userId = _.get(this, 'userProfile.userId');
+    }
+    const contributors = _.get(nomination, 'rolemapping.CONTRIBUTOR', []);
+    const reviewers = _.get(nomination, 'rolemapping.REVIEWER', []);
+    const roles = [];
+
+    if (!_.isEmpty(contributors) && contributors.includes(userId)) {
+      roles.push('CONTRIBUTOR');
+    }
+    if (!_.isEmpty(reviewers) && reviewers.includes(userId)) {
+      roles.push('REVIEWER');
+    }
+    return roles;
+  }
+
+  isSourcingOrgReviewer (program) {
+    const userId = _.get(this, 'userProfile.userId');
+    const userRoles = _.get(this, 'userProfile.userRoles', []);
+    const reviewers = _.get(program, 'rolemapping.REVIEWER', []);
+
+    return !!(userRoles.includes('ORG_ADMIN') || reviewers.includes(userId));
+  }
+
+  isContributingOrgAdmin() {
+    const roles = _.get(this, 'userProfile.userRegData.User_Org.roles', []);
+    return !_.isEmpty(roles) && _.includes(roles, 'admin');
+  }
+
+  isContributingOrgUser() {
+    const roles = _.get(this, 'userProfile.userRegData.User_Org.roles', []);
+    return !_.isEmpty(roles) && _.includes(roles, 'user');
+  }
+
+  isUserBelongsToOrg() {
+    return !!(_.get(this, 'userProfile.userRegData.User_Org'));
+  }
+
+  getUserOrgRole() {
+    return _.get(this, 'userProfile.userRegData.User_Org.roles', []);
+  }
+
+  getUserId() {
+    return _.get(this, 'userProfile.userId');
+  }
+
+  getUserOrgId() {
+    return _.get(this, 'userProfile.userRegData.User_Org.orgId');
+  }
+
+  isSourcingOrgAdmin() {
+    return _.get(this, 'userProfile.userRoles', []).includes('ORG_ADMIN');
+  }
+
+  isContributingOrgContributor(nomination, userId?) {
+    if (_.isUndefined(userId)) {
+      userId = _.get(this, 'userProfile.userId');
+    }
+    const contributors = _.get(nomination, 'rolemapping.CONTRIBUTOR', []);
+    return !_.isEmpty(contributors) && _.includes(contributors, userId);
+  }
+
+  isContributingOrgReviewer(nomination, userId?) {
+    if (_.isUndefined(userId)) {
+      userId = _.get(this, 'userProfile.userId');
+    }
+    const contributors = _.get(nomination, 'rolemapping.REVIEWER', []);
+    return !_.isEmpty(contributors) && _.includes(contributors, userId);
+  }
+
+  isDefaultContributingOrg(program) {
+    return program.sourcing_org_name === _.get(this, 'userProfile.userRegData.Org.name');
+  }
 }

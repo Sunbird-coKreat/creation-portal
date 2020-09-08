@@ -1,22 +1,36 @@
 <div class="ui container" [appTelemetryImpression]="telemetryImpression">
-  <div class="my-24">
-    <div class="d-flex flex-ai-center flex-jc-space-between">
-      <div class="sb-pageSection-header mb-0">
-        <h4 class="sb-pageSection-title">{{ resourceService.frmelmnts.lbl.allUsers }}</h4>
-        <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-5 px-5"
-          *ngIf="!showLoader && orgUserscnt">{{orgUserscnt}}</span>
+  <div class="mt-24">
+      <div class="sb-pageSection-header mb-0 flex-jc-space-between">
+          <div class="w-60">
+              <h4 class="sb-pageSection-title">{{ resourceService.frmelmnts.lbl.allUsers }}</h4>
+              <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-5 px-5"
+                  *ngIf="!showLoader && orgUserscnt">{{orgUserscnt}}</span>
+          </div>
+            <div class="sb-search-box medium mt-5 mr-10">
+              <div class="input-div relative">
+                  <i class="search icon"></i>
+                  <input class="sb-search-input"  [(ngModel)]="searchInput" type="text"  placeholder="Search..." />
+                  <i class="close icon" *ngIf="searchInput" (click)="getUserDetailsBySearch('clearSearch')"></i>
+              </div>
+              <button class="sb-btn sb-btn-normal" (click)="getUserDetailsBySearch()" appTelemetryInteract
+            [telemetryInteractEdata]="getTelemetryInteractEdata('users-search', 'click', 'sourcing-org-manage-users-list', {values: {searchInput: searchInput}})"
+            [telemetryInteractObject]="telemetryInteractObject"
+            [telemetryInteractCdata]="telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService?.frmelmnts?.lbl?.search}}</button>
       </div>
-      <div>
-        <button class="sb-btn sb-btn-outline-primary sb-btn-normal ml-10 " (click)="copyOnLoad()"><i
-            class="plus circle icon" appTelemetryInteract
-            [telemetryInteractEdata]="getTelemetryInteractEdata('user-link', 'click', 'org-user-list')"
-            [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
-            [telemetryInteractPdata]="telemetryInteractPdata"></i>
+        <div>
+        <button class="sb-btn sb-btn-outline-primary sb-btn-normal ml-10 " (click)="copyOnLoad()" appTelemetryInteract
+        [telemetryInteractEdata]="getTelemetryInteractEdata('user-link', 'click', 'org-user-list')"
+        [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata"><i
+            class="plus circle icon" ></i>
           {{ resourceService.frmelmnts.lbl.inviteUser }}</button>
       </div>
     </div>
+    <div *ngIf="searchLimitMessage" class="font-italic sb-color-gray-300 text-right fs-0-785 my-10 w-87 pull-left "  >
+       {{resourceService?.messages?.smsg?.searchLimitMessage | interpolate:'{SEARCH_LIMIT_COUNT}': searchLimitCount}}</div>
   </div>
-  <div class="sb-pageSection my-24">
+  <div class="sb-pageSection mb-24 mt-20">
     <div class="sb-table-responsive desktop-o-x-unset"
       *ngIf="orgUserscnt && orgUserscnt > 0 && !showLoader">
       <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
