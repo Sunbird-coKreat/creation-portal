@@ -130,7 +130,8 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
       if (contnet.originUnitId) {
         const reqFormat = {
           source: `${baseUrl}/api/content/v1/read/${contnet.identifier}`,
-          metadata: _.pick(contnet, ['name', 'code', 'mimeType', 'framework', 'contentType']),
+          metadata: _.merge(_.pick(contnet, ['name', 'code', 'mimeType', 'framework', 'contentType']),
+                            {lastPublishedBy: this.userService.userProfile.userId}),
           collection: [
             {
               identifier: this.storedCollectionData.origin,
