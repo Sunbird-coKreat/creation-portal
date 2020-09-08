@@ -615,6 +615,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           });
         });
       }
+      cb(null, res);
     }, (err) => {
       cb(err, null);
       this.toasterService.error(this.resourceService.messages.fmsg.m00102);
@@ -938,6 +939,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   updateContentBeforeApproving(action) {
     if (this.isMetaDataModified()) {
+      console.log('getQuestionMetaData', this.getQuestionMetaData());
       const cb = (err, res) => {
         if (!err && res) {
           const callback = (error, resp) => {
@@ -954,8 +956,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           console.log(err);
         }
       };
-      this.saveResourceName(cb);
-      this.questionCreationChild.buttonTypeHandler('save');
+      this.updateContentMetaData(cb);
+      // this.questionCreationChild.buttonTypeHandler('save');
     } else {
       this.attachContentToTextbook('accept');
     }
@@ -963,6 +965,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isMetaDataModified() {
     return this.questionCreationChild.isMetaDataModified(this.resourceDetails.name, this.resourceName);
+  }
+
+  getQuestionMetaData() {
+    return this.questionCreationChild.getMetaData();
   }
 
   attachContentToTextbook(action) {
@@ -1024,5 +1030,36 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       && (this.selectedOriginUnitStatus === 'Draft')) {
         return 'REVIEWER';
     }
+  }
+
+  updateContentMetaData(cb = (err, res) => {}) {
+    const questionMeta = this.getQuestionMetaData();
+    this.getContentVersion(this.sessionContext.resourceIdentifier).subscribe((response: any) => {
+      const existingContentVersionKey = _.get(response, 'content.versionKey');
+      const requestBody = {
+        'content': {
+          versionKey: existingContentVersionKey,
+          'author': _.get(questionMeta, 'author'),
+          'attributions': _.get(questionMeta, 'attributions'),
+          'learningOutcome': _.get(questionMeta, 'learningOutcome') ? _.get(questionMeta, 'learningOutcome') : [],
+          'license': _.get(questionMeta, 'license'),
+          'name': this.resourceName
+        }
+      };
+
+      this.updateContent(requestBody, this.sessionContext.resourceIdentifier)
+      .subscribe((res) => {
+          if (res.responseCode === 'OK' && (res.result.content_id || res.result.node_id)) {
+            cb(null, res);
+          } else {
+            cb(res, null);
+          }
+        }, (err) => {
+          cb(err, null);
+        });
+    },
+    (err) =>{
+      cb(err, null);
+    });
   }
 }

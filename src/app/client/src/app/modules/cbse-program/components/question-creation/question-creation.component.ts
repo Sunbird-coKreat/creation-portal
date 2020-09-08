@@ -681,4 +681,15 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
       });
     }
   }
+
+  getMetaData() {
+    const trimmedValue = _.mapValues(this.questionMetaForm.value, (value) => {
+      if (_.isString(value)) {
+        return _.trim(value);
+      } else {
+        return value;
+      }
+    });
+    return trimmedValue;
+  }
 }

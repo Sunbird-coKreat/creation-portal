@@ -81,6 +81,10 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
   solutionValue: string;
   telemetryImpression: any;
   public telemetryPageId = 'mcq-creation';
+  public overrideMetaData: any;
+  public editableFields = [];
+  public isMetadataOverridden = false;
+  @Input() editableFieldsACL: any;
 
   constructor(public configService: ConfigService, private http: HttpClient,
     private userService: UserService, public actionService: ActionService,
@@ -198,6 +202,7 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
     }
     return userName;
   }
+
   videoDataOutput(event) {
     if (event) {
       this.videoSolutionData = event;
@@ -517,7 +522,7 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
           return learningOutcome.name;
         });
       }
-
+      this.getEditableFields();
       _.map(this.allFormFields, (obj) => {
         const code = obj.code;
         const preSavedValues = {};
@@ -573,6 +578,46 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
     });
   }
 
+  isMetaDataModified(beforeUpdateResourceTitle, afterUpdatedResourceTitle) {
+    const beforeUpdateMetaData = _.clone(this.questionMetaData.data);
+    beforeUpdateMetaData['name'] = beforeUpdateResourceTitle;
+
+    let afterUpdateMetaData = {
+      'name': afterUpdatedResourceTitle
+    };
+
+    const trimmedValue = _.mapValues(this.questionMetaForm.value, (value) => {
+      if (_.isString(value)) {
+        return _.trim(value);
+      } else {
+        return value;
+      }
+    });
+
+    afterUpdateMetaData = _.pickBy(_.assign(afterUpdateMetaData, trimmedValue), _.identity);
+    _.forEach(this.programsService.overrideMetaData, (field) => {
+      if (field.editable === true) {
+        if (Array.isArray(afterUpdateMetaData[field.code])) {
+          if (JSON.stringify(afterUpdateMetaData[field.code]) !== JSON.stringify(beforeUpdateMetaData[field.code])) {
+            if (typeof beforeUpdateMetaData[field.code] === 'undefined'){
+              if (afterUpdateMetaData[field.code].length) {
+                this.isMetadataOverridden = true;
+              }
+            } else {
+              this.isMetadataOverridden = true;
+            }
+          }
+        } else if (typeof afterUpdateMetaData[field.code] !== 'undefined') {
+          if (afterUpdateMetaData[field.code].localeCompare(beforeUpdateMetaData[field.code]) !== 0) {
+            this.isMetadataOverridden = true;
+          }
+        }
+      }
+    });
+
+    return this.isMetadataOverridden;
+  }
+
   requestChanges() {
     if (this.ReuestChangeForm.value.rejectComment) {
       this.handleReviewrStatus({ 'status' : 'Draft', 'rejectComment':  this.ReuestChangeForm.value.rejectComment});
@@ -596,6 +641,41 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   canReviewContent() {
-    return !!(this.roles.currentRoles.includes('REVIEWER') && this.sessionContext.resourceStatus === 'Review' && this.router.url.includes('/contribute') && this.programsService.checkForContentSubmissionDate(this.sessionContext.programContext) && this.userService.userid !== _.get(this.sessionContext, 'contentMetadata.createdBy'));
+    return !!(this.roles.currentRoles.includes('REVIEWER')
+            && this.sessionContext.resourceStatus === 'Review'
+            && this.router.url.includes('/contribute')
+            && this.programsService.checkForContentSubmissionDate(this.sessionContext.programContext)
+            && this.userService.userid !== _.get(this.sessionContext, 'contentMetadata.createdBy'));
+  }
+
+  getEditableFields() {
+    if (this.editableFieldsACL === 'CONTRIBUTOR') {
+      this.editableFields.push('name');
+      _.forEach(this.allFormFields, (field) => {
+        this.editableFields.push(field.code);
+      });
+    } else if (this.editableFieldsACL === 'REVIEWER') {
+      const nameFieldConfig = _.find(this.programsService.overrideMetaData, (item) => item.code === 'name');
+      if (nameFieldConfig.editable === true) {
+        this.editableFields.push(nameFieldConfig.code);
+      }
+      _.forEach(this.allFormFields, (field) => {
+        const fieldConfig = _.find(this.programsService.overrideMetaData, (item) => item.code === field.code);
+        if (fieldConfig.editable === true) {
+          this.editableFields.push(fieldConfig.code);
+        }
+      });
+    }
+  }
+
+  getMetaData() {
+    const trimmedValue = _.mapValues(this.questionMetaForm.value, (value) => {
+      if (_.isString(value)) {
+        return _.trim(value);
+      } else {
+        return value;
+      }
+    });
+    return trimmedValue;
   }
 }
