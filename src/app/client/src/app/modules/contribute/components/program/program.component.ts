@@ -87,7 +87,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   initialSourcingOrgUser = [];
   searchLimitMessage: any;
   searchLimitCount: any;
-  @ViewChild('userRemoveRoleModal') userRemoveRoleModal;
   public userRemoveRoleLoader = false;
   public showUserRemoveRoleModal = false;
   public selectedUserToRemoveRole: any;
@@ -107,9 +106,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     localStorage.setItem('programId', this.programId);
   }
   ngOnInit() {
-
     if (['null', null, undefined, 'undefined'].includes(this.programId)) {
-      this.toasterService.error(this.resourceService.messages.emsg.project.m0001);
+      this.toasterService.error(_.get(this.resourceService, 'messages.emsg.project.m0001', ''));
+      return;
     }
     this.getProgramDetails();
     this.programStageService.initialize();
@@ -178,8 +177,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.programDetails.config.defaultContributeOrgReview === false) ;
     }, error => {
       // TODO: navigate to program list page
-      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-      this.toasterService.error(errorMes || this.resourceService.messages.emsg.project.m0001);
+      this.handleError(error, _.get(this.resourceService, 'messages.emsg.project.m0001'));
     });
   }
 
@@ -192,10 +190,15 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           this.sessionContext.frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
         }
       }, error => {
-        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-        this.toasterService.error(errorMes || 'Fetching framework details failed');
+        this.handleError(error, 'Fetching framework details failed');
       });
     }
+  }
+
+  handleError(error, defaultErrMsg) {
+    const msg = _.get(error, 'params.errmsg');
+    const errorMes = typeof(msg) === 'string' && msg;
+    this.toasterService.error(errorMes || defaultErrMsg);
   }
 
   initiateInputs() {
@@ -444,7 +447,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   onRoleChange(user) {
     const newRole = user.newRole;
     if (!_.includes(this.roleNames, newRole)) {
-      this.toasterService.error(this.resourceService.messages.emsg.roles.m0003);
+      this.toasterService.error(_.get(this.resourceService, 'messages.emsg.roles.m0003', ''));
       return false;
     }
     // If new role is none then show remove user from program confirmation modal
@@ -472,12 +475,12 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       user.projectselectedRole = user.newRole;
       this.nominationDetails.rolemapping = progRoleMapping;
-      this.toasterService.success(this.resourceService.messages.smsg.roles.m0001);
+      this.toasterService.success(_.get(this.resourceService, 'messages.smsg.roles.m0001', ''));
     }, error => {
       this.showUserRemoveRoleModal = false;
       this.userRemoveRoleLoader = false;
       console.log(error);
-      this.toasterService.error(this.resourceService.messages.emsg.roles.m0002);
+      this.toasterService.error(_.get(this.resourceService, 'messages.emsg.roles.m0002', ''));
     });
   }
 

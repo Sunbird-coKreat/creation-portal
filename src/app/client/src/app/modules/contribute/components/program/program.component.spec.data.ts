@@ -390,3 +390,51 @@ export const userProfile = {
     'b00bc992ef25f1a9a8d63291e20efc8d'
   ]
 };
+
+export const roleNames = ["CONTRIBUTOR", "REVIEWER", "NONE", "BOTH"];
+
+export const orgUser = {
+	"email": "li****@yopmail.com",
+	"firstName": "lily21",
+	"id": "d31960d0-613f-4f5d-803d-9354a7bc056d",
+	"identifier": "d31960d0-613f-4f5d-803d-9354a7bc056d",
+	"lastName": null,
+	"maskedEmail": "li****@yopmail.com",
+	"maskedPhone": null,
+	"phone": "",
+	"phoneVerified": false,
+	"userName": "lily21@yopmail.com",
+	"newRole": "CONTRIBUTOR",
+	"projectselectedRole": "CONTRIBUTOR"
+};
+
+export const updateNominationSuccessResponse = {
+	"id": "api.nomination.update",
+	"ts": "2020-09-08T07:33:09.364Z",
+	"params": {
+		"resmsgid": "8b16b341-f1a5-11ea-a9b9-b77f44b99f80",
+		"msgid": "8b16b340-f1a5-11ea-a9b9-b77f44b99f80",
+		"status": "successful",
+		"err": null,
+		"errmsg": null
+	},
+	"responseCode": "OK",
+	"result": {
+		"program_id": "14423170-ee78-11ea-a157-278232e1d499",
+		"user_id": "149d152e-9192-4721-9e69-01e1e47f9b70"
+	}
+};
+
+export const updateNominationErrorResponse = {
+	"id": "api.nomination.update",
+	"ts": "2020-09-08T07:33:09.364Z",
+	"params": {
+		"resmsgid": "58660230-575f-11e8-97d3-b1c7504700f9",
+		"msgid": null,
+		"status": "failed",
+		"err": "Error in updating nomination",
+		"errmsg": "Given program_id not found"
+	},
+	"responseCode": "CLIENT_ERROR",
+	"result": {}
+};

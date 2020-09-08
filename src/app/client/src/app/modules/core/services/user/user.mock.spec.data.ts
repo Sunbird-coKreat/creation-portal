@@ -1186,6 +1186,752 @@ export const mockUserData = {
             'response': 'SUCCESS',
             'errors': []
         }
-    }
+    },
+
+    contributorOrgAdminDetails: {
+        "tcStatus": null,
+        "maskedPhone": null,
+        "rootOrgName": "Vidya2",
+        "channel": "V12",
+        "updatedDate": "2020-08-12 00:14:54:265+0000",
+        "managedBy": null,
+        "flagsValue": 6,
+        "id": "48dc0e70-2775-474b-9b78-def27d047836",
+        "recoveryEmail": "",
+        "identifier": "48dc0e70-2775-474b-9b78-def27d047836",
+        "thumbnail": null,
+        "profileVisibility": {},
+        "updatedBy": "48dc0e70-2775-474b-9b78-def27d047836",
+        "accesscode": null,
+        "externalIds": [],
+        "registryId": null,
+        "roleList": [{
+            "name": "Content Curation",
+            "id": "CONTENT_CURATION"
+        }, {
+            "name": "Content Creator",
+            "id": "CONTENT_CREATOR"
+        }, {
+            "name": "Official TextBook Badge Issuer",
+            "id": "OFFICIAL_TEXTBOOK_BADGE_ISSUER"
+        }, {
+            "name": "Admin",
+            "id": "ADMIN"
+        }, {
+            "name": "Course Mentor",
+            "id": "COURSE_MENTOR"
+        }, {
+            "name": "Org Admin",
+            "id": "ORG_ADMIN"
+        }, {
+            "name": "Content Review",
+            "id": "CONTENT_REVIEW"
+        }, {
+            "name": "Flag Reviewer",
+            "id": "FLAG_REVIEWER"
+        }, {
+            "name": "Announcement Sender",
+            "id": "ANNOUNCEMENT_SENDER"
+        }, {
+            "name": "System Administration",
+            "id": "SYSTEM_ADMINISTRATION"
+        }, {
+            "name": "Book Creator",
+            "id": "BOOK_CREATOR"
+        }, {
+            "name": "Course Creator",
+            "id": "COURSE_CREATOR"
+        }, {
+            "name": "Report Viewer",
+            "id": "REPORT_VIEWER"
+        }, {
+            "name": "Flag Reviewer",
+            "id": "FLAG_REVIEWER "
+        }, {
+            "name": "Membership Management",
+            "id": "MEMBERSHIP_MANAGEMENT"
+        }, {
+            "name": "Content Creation",
+            "id": "CONTENT_CREATION"
+        }, {
+            "name": "Book Reviewer",
+            "id": "BOOK_REVIEWER"
+        }, {
+            "name": "Teacher Badge Issuer",
+            "id": "TEACHER_BADGE_ISSUER"
+        }, {
+            "name": "Org Management",
+            "id": "ORG_MANAGEMENT"
+        }, {
+            "name": "Course Admin",
+            "id": "COURSE_ADMIN"
+        }, {
+            "name": "Org Moderator",
+            "id": "ORG_MODERATOR"
+        }, {
+            "name": "Public",
+            "id": "PUBLIC"
+        }, {
+            "name": "Content Reviewer",
+            "id": "CONTENT_REVIEWER"
+        }, {
+            "name": "Report Admin",
+            "id": "REPORT_ADMIN"
+        }],
+        "rootOrgId": "012983850117177344161",
+        "prevUsedEmail": "",
+        "firstName": "Kayal new as old not there",
+        "tncAcceptedOn": "2020-07-21T09:45:47.622Z",
+        "phone": "",
+        "currentLoginTime": null,
+        "userType": "OTHER",
+        "status": 1,
+        "lastName": null,
+        "tncLatestVersion": "v1",
+        "roles": ["PUBLIC"],
+        "prevUsedPhone": "",
+        "stateValidated": true,
+        "isDeleted": false,
+        "organisations": [{
+            "updatedBy": null,
+            "organisationId": "012983850117177344161",
+            "orgName": "Vidya2",
+            "addedByName": null,
+            "addedBy": null,
+            "roles": ["BOOK_CREATOR", "ORG_ADMIN", "PUBLIC"],
+            "approvedBy": null,
+            "channel": "V12",
+            "locationIds": [],
+            "updatedDate": "2020-07-16 10:30:01:562+0000",
+            "userId": "48dc0e70-2775-474b-9b78-def27d047836",
+            "approvaldate": null,
+            "isDeleted": false,
+            "parentOrgId": null,
+            "hashTagId": "012983850117177344161",
+            "isRejected": false,
+            "locations": [],
+            "position": null,
+            "id": "0130653848562401280",
+            "orgjoindate": "2020-07-16 10:29:20:739+0000",
+            "isApproved": false,
+            "orgLeftDate": null
+        }],
+        "provider": null,
+        "tncLatestVersionUrl": "https://dev-sunbird-temp.azureedge.net/portal/terms-and-conditions-v1.html",
+        "maskedEmail": "ka******@yopmail.com",
+        "tempPassword": null,
+        "email": "ka******@yopmail.com",
+        "rootOrg": {
+            "dateTime": null,
+            "preferredLanguage": null,
+            "keys": {},
+            "channel": "V12",
+            "approvedBy": null,
+            "description": "Preprod Kayal Org",
+            "updatedDate": null,
+            "addressId": null,
+            "orgType": null,
+            "provider": null,
+            "orgCode": null,
+            "locationId": null,
+            "theme": null,
+            "id": "012983850117177344161",
+            "isApproved": null,
+            "communityId": null,
+            "slug": "v12",
+            "email": null,
+            "isSSOEnabled": false,
+            "identifier": "012983850117177344161",
+            "thumbnail": null,
+            "updatedBy": null,
+            "orgName": "Vidya2",
+            "address": {},
+            "locationIds": [],
+            "externalId": null,
+            "isRootOrg": true,
+            "rootOrgId": "012983850117177344161",
+            "imgUrl": null,
+            "approvedDate": null,
+            "orgTypeId": null,
+            "homeUrl": null,
+            "isDefault": null,
+            "createdDate": "2020-03-23 05:48:49:660+0000",
+            "parentOrgId": null,
+            "createdBy": null,
+            "hashTagId": "012983850117177344161",
+            "noOfMembers": null,
+            "status": 1
+        },
+        "profileSummary": null,
+        "phoneVerified": false,
+        "tcUpdatedDate": null,
+        "userLocations": [],
+        "recoveryPhone": "",
+        "userName": "kayalnew",
+        "userId": "48dc0e70-2775-474b-9b78-def27d047836",
+        "promptTnC": false,
+        "emailVerified": true,
+        "framework": {},
+        "createdDate": "2020-07-16 10:29:16:509+0000",
+        "createdBy": "8454cb21-3ce9-4e30-85b5-fade097880d8",
+        "tncAcceptedVersion": "v1",
+        "skills": [],
+        "rootOrgAdmin": true,
+        "userRoles": ["PUBLIC", "BOOK_CREATOR", "ORG_ADMIN"],
+        "orgRoleMap": {
+            "012983850117177344161": ["BOOK_CREATOR", "ORG_ADMIN", "PUBLIC"]
+        },
+        "organisationIds": ["012983850117177344161"],
+        "hashTagIds": ["012983850117177344161"],
+        "userRegData": {
+            "User": {
+                "lastName": "",
+                "osUpdatedAt": "2020-07-17T00:54:17.566Z",
+                "firstName": "kayal",
+                "osCreatedAt": "2020-07-17T00:54:17.566Z",
+                "enrolledDate": "2020-07-17T00:54:16.773Z",
+                "@type": "User",
+                "channel": "012983850117177344161",
+                "osid": "d27d83cd-4e20-4d1d-902a-0d148ad87afe",
+                "userId": "48dc0e70-2775-474b-9b78-def27d047836"
+            },
+            "User_Org": {
+                "osUpdatedAt": "2020-08-11T14:01:10.738Z",
+                "osCreatedAt": "2020-08-11T14:01:10.738Z",
+                "@type": "User_Org",
+                "roles": ["admin"],
+                "osid": "b25d93c7-7cb9-4e87-adf0-95a850404e8f",
+                "userId": "d27d83cd-4e20-4d1d-902a-0d148ad87afe",
+                "orgId": "e0ab89f4-0fcb-47ea-9b70-3ed0f12b1b7a"
+            },
+            "Org": {
+                "osUpdatedAt": "2020-08-11T14:01:10.690Z",
+                "code": "VIDYA2",
+                "osCreatedAt": "2020-08-11T14:01:10.690Z",
+                "createdBy": "d27d83cd-4e20-4d1d-902a-0d148ad87afe",
+                "@type": "Org",
+                "name": "Vidya2",
+                "description": "Vidya2",
+                "osid": "e0ab89f4-0fcb-47ea-9b70-3ed0f12b1b7a",
+                "type": ["contribute", "sourcing"],
+                "orgId": "012983850117177344161"
+            }
+        },
+        "roleOrgMap": {
+            "BOOK_CREATOR": ["012983850117177344161"],
+            "ORG_ADMIN": ["012983850117177344161"],
+            "PUBLIC": ["012983850117177344161"]
+        }
+    },
+
+    contributingOrgContributorDetails: {
+        "tcStatus": null,
+        "maskedPhone": null,
+        "rootOrgName": "Vidyanikethan",
+        "subject": [],
+        "channel": "VID123",
+        "language": [],
+        "updatedDate": null,
+        "managedBy": null,
+        "flagsValue": 6,
+        "id": "1b0cd97d-e2b8-4bb8-8c19-7bf9a37b4a56",
+        "recoveryEmail": "",
+        "identifier": "1b0cd97d-e2b8-4bb8-8c19-7bf9a37b4a56",
+        "thumbnail": null,
+        "profileVisibility": {
+            "lastName": "public",
+            "webPages": "private",
+            "jobProfile": "private",
+            "address": "private",
+            "education": "private",
+            "gender": "private",
+            "profileSummary": "public",
+            "subject": "private",
+            "language": "private",
+            "avatar": "private",
+            "userName": "public",
+            "skills": "private",
+            "firstName": "public",
+            "badgeAssertions": "private",
+            "phone": "private",
+            "countryCode": "private",
+            "dob": "private",
+            "grade": "private",
+            "location": "private",
+            "email": "private"
+        },
+        "updatedBy": null,
+        "accesscode": null,
+        "externalIds": [],
+        "registryId": null,
+        "roleList": [{
+            "name": "Content Curation",
+            "id": "CONTENT_CURATION"
+        }, {
+            "name": "Content Creator",
+            "id": "CONTENT_CREATOR"
+        }, {
+            "name": "Official TextBook Badge Issuer",
+            "id": "OFFICIAL_TEXTBOOK_BADGE_ISSUER"
+        }, {
+            "name": "Admin",
+            "id": "ADMIN"
+        }, {
+            "name": "Course Mentor",
+            "id": "COURSE_MENTOR"
+        }, {
+            "name": "Org Admin",
+            "id": "ORG_ADMIN"
+        }, {
+            "name": "Content Review",
+            "id": "CONTENT_REVIEW"
+        }, {
+            "name": "Flag Reviewer",
+            "id": "FLAG_REVIEWER"
+        }, {
+            "name": "Announcement Sender",
+            "id": "ANNOUNCEMENT_SENDER"
+        }, {
+            "name": "System Administration",
+            "id": "SYSTEM_ADMINISTRATION"
+        }, {
+            "name": "Book Creator",
+            "id": "BOOK_CREATOR"
+        }, {
+            "name": "Course Creator",
+            "id": "COURSE_CREATOR"
+        }, {
+            "name": "Report Viewer",
+            "id": "REPORT_VIEWER"
+        }, {
+            "name": "Flag Reviewer",
+            "id": "FLAG_REVIEWER "
+        }, {
+            "name": "Membership Management",
+            "id": "MEMBERSHIP_MANAGEMENT"
+        }, {
+            "name": "Content Creation",
+            "id": "CONTENT_CREATION"
+        }, {
+            "name": "Book Reviewer",
+            "id": "BOOK_REVIEWER"
+        }, {
+            "name": "Teacher Badge Issuer",
+            "id": "TEACHER_BADGE_ISSUER"
+        }, {
+            "name": "Org Management",
+            "id": "ORG_MANAGEMENT"
+        }, {
+            "name": "Course Admin",
+            "id": "COURSE_ADMIN"
+        }, {
+            "name": "Org Moderator",
+            "id": "ORG_MODERATOR"
+        }, {
+            "name": "Public",
+            "id": "PUBLIC"
+        }, {
+            "name": "Content Reviewer",
+            "id": "CONTENT_REVIEWER"
+        }, {
+            "name": "Report Admin",
+            "id": "REPORT_ADMIN"
+        }],
+        "rootOrgId": "0130659746662727680",
+        "prevUsedEmail": "",
+        "firstName": "lily10",
+        "tncAcceptedOn": "2020-09-08T10:04:47.264Z",
+        "phone": "",
+        "dob": null,
+        "grade": [],
+        "currentLoginTime": null,
+        "userType": "OTHER",
+        "status": 1,
+        "lastName": null,
+        "tncLatestVersion": "v1",
+        "gender": null,
+        "roles": ["PUBLIC"],
+        "prevUsedPhone": "",
+        "stateValidated": true,
+        "badgeAssertions": [],
+        "isDeleted": false,
+        "organisations": [{
+            "updatedBy": null,
+            "organisationId": "0130659746662727680",
+            "orgName": "Vidyanikethan",
+            "addedByName": null,
+            "addedBy": null,
+            "roles": ["CONTENT_REVIEWER", "BOOK_REVIEWER", "PUBLIC"],
+            "approvedBy": null,
+            "channel": "VID123",
+            "locationIds": [],
+            "updatedDate": "2020-07-17 06:30:33:073+0000",
+            "userId": "1b0cd97d-e2b8-4bb8-8c19-7bf9a37b4a56",
+            "approvaldate": null,
+            "isDeleted": false,
+            "parentOrgId": null,
+            "hashTagId": "0130659746662727680",
+            "isRejected": false,
+            "locations": [],
+            "position": null,
+            "id": "01306598073661030410",
+            "orgjoindate": "2020-07-17 06:30:32:373+0000",
+            "isApproved": false,
+            "orgLeftDate": null
+        }],
+        "provider": null,
+        "countryCode": null,
+        "tncLatestVersionUrl": "https://dev-sunbird-temp.azureedge.net/portal/terms-and-conditions-v1.html",
+        "maskedEmail": "li****@yopmail.com",
+        "tempPassword": null,
+        "email": "li****@yopmail.com",
+        "rootOrg": {
+            "dateTime": null,
+            "preferredLanguage": null,
+            "keys": {},
+            "channel": "VID123",
+            "approvedBy": null,
+            "description": "Dev",
+            "updatedDate": null,
+            "addressId": null,
+            "orgType": null,
+            "provider": null,
+            "orgCode": null,
+            "locationId": null,
+            "theme": null,
+            "id": "0130659746662727680",
+            "isApproved": null,
+            "communityId": null,
+            "slug": "vid123",
+            "email": null,
+            "isSSOEnabled": false,
+            "identifier": "0130659746662727680",
+            "thumbnail": null,
+            "updatedBy": null,
+            "orgName": "Vidyanikethan",
+            "address": {},
+            "locationIds": [],
+            "externalId": null,
+            "isRootOrg": true,
+            "rootOrgId": "0130659746662727680",
+            "imgUrl": null,
+            "approvedDate": null,
+            "orgTypeId": null,
+            "homeUrl": null,
+            "isDefault": null,
+            "createdDate": "2020-07-17 06:26:52:318+0000",
+            "parentOrgId": null,
+            "createdBy": null,
+            "hashTagId": "0130659746662727680",
+            "noOfMembers": null,
+            "status": 1
+        },
+        "defaultProfileFieldVisibility": "private",
+        "profileSummary": null,
+        "phoneVerified": false,
+        "tcUpdatedDate": null,
+        "userLocations": [],
+        "recoveryPhone": "",
+        "userName": "lily10@yopmail.com",
+        "userId": "1b0cd97d-e2b8-4bb8-8c19-7bf9a37b4a56",
+        "promptTnC": false,
+        "emailVerified": true,
+        "framework": {},
+        "createdDate": "2020-07-17 06:30:32:099+0000",
+        "createdBy": "347606ea-cf25-41b2-8c45-a78242695014",
+        "location": null,
+        "tncAcceptedVersion": "v1",
+        "skills": [],
+        "rootOrgAdmin": false,
+        "userRoles": ["PUBLIC", "CONTENT_REVIEWER", "BOOK_REVIEWER"],
+        "orgRoleMap": {
+            "0130659746662727680": ["CONTENT_REVIEWER", "BOOK_REVIEWER", "PUBLIC"]
+        },
+        "organisationIds": ["0130659746662727680"],
+        "hashTagIds": ["0130659746662727680"],
+        "userRegData": {
+            "User": {
+                "lastName": "",
+                "osUpdatedAt": "2020-07-17T07:54:47.713Z",
+                "firstName": "lily10",
+                "osCreatedAt": "2020-07-17T07:54:47.713Z",
+                "enrolledDate": "2020-07-17T07:54:47.243Z",
+                "@type": "User",
+                "channel": "0130659746662727680",
+                "osid": "c20f7a12-4b01-43d3-86ab-1335edbac50b",
+                "userId": "1b0cd97d-e2b8-4bb8-8c19-7bf9a37b4a56"
+            },
+            "User_Org": {
+                "osUpdatedAt": "2020-08-10T10:32:51.284Z",
+                "osCreatedAt": "2020-08-10T10:32:51.284Z",
+                "@type": "User_Org",
+                "roles": ["user", "sourcing_reviewer"],
+                "osid": "fd949c24-ab2c-4777-b575-98acb63e67bc",
+                "userId": "c20f7a12-4b01-43d3-86ab-1335edbac50b",
+                "orgId": "13495698-a117-460b-920c-41007923c764"
+            },
+            "Org": {
+                "osUpdatedAt": "2020-08-12T13:00:28.145Z",
+                "code": "VIDYANIKETHAN",
+                "osCreatedAt": "2020-08-12T13:00:28.145Z",
+                "createdBy": "470df59e-8bf2-40ac-a51d-c751b04ddbc2",
+                "@type": "Org",
+                "name": "Vidyanikethan",
+                "description": "Vidyanikethan",
+                "osid": "13495698-a117-460b-920c-41007923c764",
+                "type": ["contribute", "sourcing"],
+                "orgId": "0130659746662727680"
+            }
+        },
+        "roleOrgMap": {
+            "CONTENT_REVIEWER": ["0130659746662727680"],
+            "BOOK_REVIEWER": ["0130659746662727680"],
+            "PUBLIC": ["0130659746662727680"]
+        }
+    },
+
+    individualContributorDetails : {
+        "tncLatestVersion": "v1",
+        "maskedPhone": "******4144",
+        "rootOrgName": null,
+        "roles": ["PUBLIC"],
+        "channel": "custchannel",
+        "stateValidated": false,
+        "isDeleted": false,
+        "organisations": [{
+            "orgJoinDate": "2020-09-01 04:21:19:643+0000",
+            "organisationId": "01285019302823526477",
+            "orgName": "CustROOTOrg10",
+            "isDeleted": false,
+            "hashTagId": "01285019302823526477",
+            "roles": ["PUBLIC"],
+            "channel": "custchannel",
+            "locationIds": [],
+            "locations": [],
+            "id": "013098470981632000186",
+            "userId": "19ba0e4e-9285-4335-8dd0-f674bf03fa4d"
+        }],
+        "countryCode": "+91",
+        "flagsValue": 1,
+        "tncLatestVersionUrl": "https://dev-sunbird-temp.azureedge.net/portal/terms-and-conditions-v1.html",
+        "id": "19ba0e4e-9285-4335-8dd0-f674bf03fa4d",
+        "email": "",
+        "rootOrg": {
+            "dateTime": null,
+            "preferredLanguage": null,
+            "keys": {},
+            "channel": "custchannel",
+            "approvedBy": null,
+            "description": null,
+            "updatedDate": null,
+            "addressId": null,
+            "orgType": null,
+            "provider": "custchannel",
+            "orgCode": null,
+            "locationId": null,
+            "theme": null,
+            "id": "01285019302823526477",
+            "isApproved": null,
+            "communityId": null,
+            "slug": "custchannel",
+            "email": null,
+            "identifier": "01285019302823526477",
+            "thumbnail": null,
+            "updatedBy": null,
+            "orgName": "CustROOTOrg10",
+            "address": {},
+            "locationIds": [],
+            "externalId": "custexternalid",
+            "isRootOrg": true,
+            "rootOrgId": "01285019302823526477",
+            "imgUrl": null,
+            "approvedDate": null,
+            "orgTypeId": null,
+            "homeUrl": null,
+            "isDefault": null,
+            "createdDate": "2019-09-16 09:40:27:984+0000",
+            "parentOrgId": null,
+            "createdBy": null,
+            "hashTagId": "01285019302823526477",
+            "noOfMembers": null,
+            "status": 1
+        },
+        "identifier": "19ba0e4e-9285-4335-8dd0-f674bf03fa4d",
+        "profileVisibility": {
+            "lastName": "public",
+            "webPages": "private",
+            "jobProfile": "private",
+            "address": "private",
+            "education": "private",
+            "gender": "private",
+            "profileSummary": "public",
+            "subject": "private",
+            "language": "private",
+            "avatar": "private",
+            "userName": "public",
+            "skills": "private",
+            "firstName": "public",
+            "badgeAssertions": "private",
+            "phone": "private",
+            "countryCode": "private",
+            "dob": "private",
+            "grade": "private",
+            "location": "private",
+            "email": "private"
+        },
+        "defaultProfileFieldVisibility": "private",
+        "phoneVerified": true,
+        "userLocations": [],
+        "externalIds": [],
+        "userName": "anusha_87mu",
+        "roleList": [{
+            "name": "Content Curation",
+            "id": "CONTENT_CURATION"
+        }, {
+            "name": "Content Creator",
+            "id": "CONTENT_CREATOR"
+        }, {
+            "name": "Official TextBook Badge Issuer",
+            "id": "OFFICIAL_TEXTBOOK_BADGE_ISSUER"
+        }, {
+            "name": "Admin",
+            "id": "ADMIN"
+        }, {
+            "name": "Course Mentor",
+            "id": "COURSE_MENTOR"
+        }, {
+            "name": "Org Admin",
+            "id": "ORG_ADMIN"
+        }, {
+            "name": "Content Review",
+            "id": "CONTENT_REVIEW"
+        }, {
+            "name": "Flag Reviewer",
+            "id": "FLAG_REVIEWER"
+        }, {
+            "name": "Announcement Sender",
+            "id": "ANNOUNCEMENT_SENDER"
+        }, {
+            "name": "System Administration",
+            "id": "SYSTEM_ADMINISTRATION"
+        }, {
+            "name": "Book Creator",
+            "id": "BOOK_CREATOR"
+        }, {
+            "name": "Course Creator",
+            "id": "COURSE_CREATOR"
+        }, {
+            "name": "Report Viewer",
+            "id": "REPORT_VIEWER"
+        }, {
+            "name": "Flag Reviewer",
+            "id": "FLAG_REVIEWER "
+        }, {
+            "name": "Membership Management",
+            "id": "MEMBERSHIP_MANAGEMENT"
+        }, {
+            "name": "Content Creation",
+            "id": "CONTENT_CREATION"
+        }, {
+            "name": "Book Reviewer",
+            "id": "BOOK_REVIEWER"
+        }, {
+            "name": "Teacher Badge Issuer",
+            "id": "TEACHER_BADGE_ISSUER"
+        }, {
+            "name": "Org Management",
+            "id": "ORG_MANAGEMENT"
+        }, {
+            "name": "Course Admin",
+            "id": "COURSE_ADMIN"
+        }, {
+            "name": "Org Moderator",
+            "id": "ORG_MODERATOR"
+        }, {
+            "name": "Public",
+            "id": "PUBLIC"
+        }, {
+            "name": "Content Reviewer",
+            "id": "CONTENT_REVIEWER"
+        }, {
+            "name": "Report Admin",
+            "id": "REPORT_ADMIN"
+        }],
+        "userId": "19ba0e4e-9285-4335-8dd0-f674bf03fa4d",
+        "rootOrgId": "01285019302823526477",
+        "promptTnC": true,
+        "firstName": "anusha",
+        "emailVerified": false,
+        "createdDate": "2020-09-01 04:21:19:614+0000",
+        "phone": "******4144",
+        "userType": "OTHER",
+        "status": 1,
+        "skills": [],
+        "rootOrgAdmin": false,
+        "userRoles": ["PUBLIC"],
+        "orgRoleMap": {
+            "01285019302823526477": ["PUBLIC"]
+        },
+        "organisationIds": ["01285019302823526477"],
+        "hashTagIds": ["01285019302823526477"],
+        "userRegData": {
+            "User": {
+                "lastName": "",
+                "osUpdatedAt": "2020-09-01T04:21:42.644Z",
+                "firstName": "anusha",
+                "osCreatedAt": "2020-09-01T04:21:42.644Z",
+                "enrolledDate": "2020-09-01T04:21:40.531Z",
+                "@type": "User",
+                "channel": "01285019302823526477",
+                "osid": "bcc23eec-5290-4ca2-8f3e-144a24f03b6d",
+                "userId": "19ba0e4e-9285-4335-8dd0-f674bf03fa4d"
+            }
+        },
+        "roleOrgMap": {
+            "PUBLIC": ["01285019302823526477"]
+        }
+    },
+
+    nominationDetails: {
+		"id": 13165,
+		"program_id": "14423170-ee78-11ea-a157-278232e1d499",
+		"user_id": "149d152e-9192-4721-9e69-01e1e47f9b70",
+		"organisation_id": "13495698-a117-460b-920c-41007923c764",
+		"status": "Approved",
+		"content_types": ["FocusSpot", "PedagogyFlow"],
+		"collection_ids": ["do_11310065488551116811802", "do_11310065488553574411804"],
+		"feedback": null,
+		"rolemapping": {
+			"CONTRIBUTOR": ["1b0cd97d-e2b8-4bb8-8c19-7bf9a37b4a56"],
+			"REVIEWER": ["1b0cd97d-e2b8-4bb8-8c19-7bf9a37b4a56"]
+		},
+		"createdby": "470df59e-8bf2-40ac-a51d-c751b04ddbc2",
+		"updatedby": "5a587cc1-e018-4859-a0a8-e842650b9d64",
+		"createdon": "2020-09-04T07:02:01.962Z",
+		"updatedon": "2020-09-08T07:33:09.350Z",
+		"userData": {
+			"lastName": "",
+			"osUpdatedAt": "2020-07-17T07:54:46.573Z",
+			"firstName": "lily1",
+			"osCreatedAt": "2020-07-17T07:54:46.573Z",
+			"enrolledDate": "2020-07-17T07:54:46.568Z",
+			"@type": "User",
+			"channel": "0130659746662727680",
+			"osid": "470df59e-8bf2-40ac-a51d-c751b04ddbc2",
+			"userId": "149d152e-9192-4721-9e69-01e1e47f9b70"
+		},
+		"orgData": {
+			"osUpdatedAt": "2020-08-12T13:00:28.145Z",
+			"code": "VIDYANIKETHAN",
+			"osCreatedAt": "2020-08-12T13:00:28.145Z",
+			"createdBy": "470df59e-8bf2-40ac-a51d-c751b04ddbc2",
+			"@type": "Org",
+			"name": "Vidyanikethan",
+			"description": "Vidyanikethan",
+			"osid": "13495698-a117-460b-920c-41007923c764",
+			"type": ["contribute", "sourcing"],
+			"orgId": "0130659746662727680"
+		}
+	}
 };
 
