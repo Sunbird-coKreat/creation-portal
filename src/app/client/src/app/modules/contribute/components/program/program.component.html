@@ -125,8 +125,8 @@
 						<div *ngIf="isUserOrgAdmin()" class="sb-color-primary d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.review || 0}}</span> {{resourceService.frmelmnts.lbl.reviewInProgress}}</div>
 						<div *ngIf="isUserOrgAdmin()" class="sb-color-error d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.rejected || 0}}</span> {{resourceService.frmelmnts.lbl.notAccepted}}</div>
 						<div *ngIf="isUserOrgAdmin()" class="sb-color-warning d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.live + contentStatusCounts.mvcContributionsCount || 0}}</span> {{resourceService.frmelmnts.lbl.sentForApproval}}</div>
-						<!-- <div *ngIf="isUserOrgAdmin()" class="sb-color-error d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts?.sourcingOrgStatus?.rejected || 0}}</span> {{resourceService.frmelmnts.lbl.notAccepted}}</div> -->
-						<!-- <div *ngIf="isUserOrgAdmin()" class="sb-color-warning d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts?.sourcingOrgStatus?.pending|| 0}}</span> {{resourceService.frmelmnts.lbl.sentForApproval}}</div> -->
+						<!-- <div *ngIf="isUserOrgAdmin()" class="sb-color-error d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts?.sourcingOrgStatus?.rejected || 0}}</span> {{resourceService.frmelmnts.lbl.notAccepted}}</div>
+						<div *ngIf="isUserOrgAdmin()" class="sb-color-warning d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts?.sourcingOrgStatus?.pending|| 0}}</span> {{resourceService.frmelmnts.lbl.sentForApproval}}</div> -->
 					</div>
 					<div class="twelve wide tablet seven wide computer column text-right">
 						<a class="fs-0-785 text-decor-none font-weight-bold sb-color-primary pt-10" href="{{ programDetails?.guidelines_url }}" target="_blank" *ngIf="programDetails?.guidelines_url" [ngClass]="{'mb-10': !isUserOrgAdmin()}"
