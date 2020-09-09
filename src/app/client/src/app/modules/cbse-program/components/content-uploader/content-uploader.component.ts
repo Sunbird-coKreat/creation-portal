@@ -516,6 +516,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         contentData: res
       };
       this.contentMetaData = res;
+      if (_.get(this.contentUploadComponentInput, 'action') === 'creation') {
+        this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.contentMetaData.identifier, 'Content', '1.0', { l1: this.sessionContext.collection, l2: this.unitIdentifier });
+      }
       const contentTypeValue = [this.contentMetaData.contentType];
       this.contentType = this.programsService.getContentTypesName(contentTypeValue);
       this.editTitle = (this.contentMetaData.name !== 'Untitled') ? this.contentMetaData.name : '' ;
