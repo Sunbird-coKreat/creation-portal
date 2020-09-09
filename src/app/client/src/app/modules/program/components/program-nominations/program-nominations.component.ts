@@ -80,6 +80,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public showDownloadCsvBtn = false;
   public directionOrgUsers = 'desc';
   public columnOrgUsers = '';
+  public userRemoveRoleLoader = false;
+  public showUserRemoveRoleModal = false;
+  public selectedUserToRemoveRole: any;
   paginatedSourcingUsers;
   showLoader = true;
   showTextbookLoader = false;
@@ -572,22 +575,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     });
   }
 
-  readRolesOfOrgUsers(orgUsers) {
-    if (_.isEmpty(orgUsers)) {
-      return false;
-    }
-    _.forEach(orgUsers, r => {
-      r.selectedRole = 'Select Role';
-      if (this.programDetails.rolemapping) {
-        _.find(this.programDetails.rolemapping, (users, role) => {
-          if (_.includes(users, r.identifier)) {
-            r.selectedRole = role;
-          }
-        });
-      }
-    });
-  }
-
   public fetchFrameWorkDetails() {
     this.sessionContext.framework = _.get(this.programDetails, 'config.framework');
     if (this.sessionContext.framework) {
@@ -704,46 +691,103 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     }
   }
 
-  onRoleChange(user) {
-    if (_.includes(this.roleNames, user.selectedRole)) {
-        let progRoleMapping = this.programDetails.rolemapping;
-         if (isNullOrUndefined(progRoleMapping) && user.selectedRole !== 'NONE') {
-          progRoleMapping = {};
-          progRoleMapping[user.selectedRole] = [];
-         }
-         const programRoleNames = _.map(progRoleMapping, function(currentelement, index, arrayobj) {
-          return index;
-        });
-        if (!_.includes(programRoleNames, user.selectedRole) && user.selectedRole !== 'NONE') {
-          progRoleMapping[user.selectedRole] = [];
-        }
-
-        _.forEach(progRoleMapping, (users, role) => {
-          // Add to selected user to current selected role's array
-          if (user.selectedRole === role && !_.includes(users, user.identifier) && user.selectedRole !== 'NONE') {
-            users.push(user.identifier);
-          }
-          // Remove selected user from other role's array
-          if (user.selectedRole !== role && _.includes(users, user.identifier)) {
-            _.remove(users, (id) => id === user.identifier);
-          }
-          // Remove duplicate users ids and falsy values
-          progRoleMapping[role] = _.uniq(_.compact(users));
-        });
-
-      const request = {
-            'program_id': this.activatedRoute.snapshot.params.programId,
-            'rolemapping': progRoleMapping
-      };
-      this.programsService.updateProgram(request)
-        .subscribe(response => {
-          this.toasterService.success(this.resourceService.messages.smsg.roles.m0001);
-        }, error => {
-          this.toasterService.error(this.resourceService.messages.emsg.roles.m0001);
-        });
-    } else {
-      this.toasterService.error('Role not found');
+  readRolesOfOrgUsers(orgUsers) {
+    if (_.isEmpty(orgUsers)) {
+      return false;
     }
+    _.forEach(orgUsers, r => {
+      r.selectedRole = 'Select Role';
+      const rolemapping = _.get(this.programDetails, 'rolemapping', {});
+      if (!_.isEmpty(rolemapping)) {
+        _.find(rolemapping, (users, role) => {
+          if (_.includes(users, r.identifier)) {
+            r.selectedRole = role;
+          }
+        });
+      }
+      r.newRole = r.selectedRole;
+    });
+  }
+
+  updateUserRoleMapping(progRoleMapping, user) {
+    const request = {
+      'program_id': this.activatedRoute.snapshot.params.programId,
+      'rolemapping': progRoleMapping
+    };
+    this.programsService.updateProgram(request)
+      .subscribe((response) => {
+        this.showUserRemoveRoleModal = false;
+        this.userRemoveRoleLoader = false;
+        if (user.newRole === "NONE") {
+          user.newRole = 'Select Role';
+        }
+        user.selectedRole = user.newRole;
+        this.programDetails.rolemapping = progRoleMapping;
+        this.toasterService.success(this.resourceService.messages.smsg.roles.m0001);
+      }, error => {
+        this.showUserRemoveRoleModal = false;
+        this.userRemoveRoleLoader = false;
+        console.log(error);
+        this.toasterService.error(this.resourceService.messages.emsg.roles.m0002);
+      });
+  }
+
+  getProgramRoleMapping(user) {
+    const newRole = user.newRole;
+    let progRoleMapping = this.programDetails.rolemapping;
+    if (isNullOrUndefined(progRoleMapping) && newRole !== 'NONE') {
+      progRoleMapping = {};
+      progRoleMapping[newRole] = [];
+    }
+    const programRoleNames = _.keys(progRoleMapping);
+    if (!_.includes(programRoleNames, newRole) && newRole !== 'NONE') {
+      progRoleMapping[newRole] = [];
+    }
+    _.forEach(progRoleMapping, (users, role) => {
+      // Add to selected user to current selected role's array
+      if (newRole === role && !_.includes(users, user.identifier) && newRole !== 'NONE') {
+        users.push(user.identifier);
+      }
+      // Remove selected user from other role's array
+      if (newRole !== role && _.includes(users, user.identifier)) {
+        _.remove(users, (id) => id === user.identifier);
+      }
+      // Remove duplicate users ids and falsy values
+      progRoleMapping[role] = _.uniq(_.compact(users));
+    });
+    return progRoleMapping;
+  }
+
+  removeUserFromProgram() {
+    if (this.userRemoveRoleLoader) {
+      return false;
+    }
+    this.userRemoveRoleLoader = true;
+    this.updateUserRoleMapping(this.getProgramRoleMapping(this.selectedUserToRemoveRole), this.selectedUserToRemoveRole);
+  }
+
+  showUserRoleOption(roleName, userRole) {
+    return (roleName !== 'NONE' || (roleName === 'NONE' && userRole !== 'Select Role'))
+  }
+
+  cancelRemoveUserFromProgram() {
+    this.showUserRemoveRoleModal = false;
+    this.selectedUserToRemoveRole.newRole = this.selectedUserToRemoveRole.selectedRole;
+  }
+
+  onRoleChange(user) {
+    const newRole = user.newRole;
+    if (!_.includes(this.roleNames, newRole)) {
+      this.toasterService.error(this.resourceService.messages.emsg.roles.m0003);
+      return false;
+    }
+    // If new role is none then show remove user from program confirmation modal
+    if (newRole === 'NONE') {
+      this.selectedUserToRemoveRole = user;
+      this.showUserRemoveRoleModal = true;
+      return false;
+    }
+    this.updateUserRoleMapping(this.getProgramRoleMapping(user), user);
   }
 
   changeView() {
