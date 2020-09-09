@@ -939,7 +939,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   updateContentBeforeApproving(action) {
     if (this.isMetaDataModified()) {
-      console.log('getQuestionMetaData', this.getQuestionMetaData());
       const cb = (err, res) => {
         if (!err && res) {
           const callback = (error, resp) => {
@@ -947,7 +946,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
               this.attachContentToTextbook(action);
             } else if (error) {
               this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-              console.log(err);
+              console.log(error);
             }
           };
           this.publishContent(callback);
@@ -957,9 +956,33 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       };
       this.updateContentMetaData(cb);
-      // this.questionCreationChild.buttonTypeHandler('save');
     } else {
       this.attachContentToTextbook('accept');
+    }
+  }
+
+  updateContentBeforePublishing() {
+    if (this.isMetaDataModified()) {
+      const cb = (err, res ) => {
+        if (!err && res) {
+          const callbackPublish = (er, rs) => {
+            if (!er && rs) {
+              this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
+              this.programStageService.removeLastStage();
+            }
+          };
+          this.publishContent(callbackPublish);
+        }
+      };
+      this.updateContentMetaData(cb);
+    } else {
+      const cb = (err, res) => {
+        if (!err && res) {
+          this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
+          this.programStageService.removeLastStage();
+        }
+      };
+      this.publishContent(cb);
     }
   }
 
@@ -1049,11 +1072,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.updateContent(requestBody, this.sessionContext.resourceIdentifier)
       .subscribe((res) => {
-          if (res.responseCode === 'OK' && (res.result.content_id || res.result.node_id)) {
-            cb(null, res);
-          } else {
-            cb(res, null);
-          }
+          cb(null, res);
         }, (err) => {
           cb(err, null);
         });
