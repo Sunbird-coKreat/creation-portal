@@ -43,6 +43,11 @@ export class ProgramListComponent implements OnInit {
   public issourcingOrgAdmin = false;
   public selectedProgramToModify: any;
   public showModifyConfirmation: boolean;
+  public showFiltersModal = false;
+  public programDetails: any;
+  public programContentTypes: string;
+  public programId: string;
+
 
   showDeleteModal = false;
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
@@ -55,6 +60,19 @@ export class ProgramListComponent implements OnInit {
     this.telemetryInteractCdata = [];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
+    this.getProgramDetails();
+  }
+  getProgramDetails() {
+    const req = {
+      url: `program/v1/read/${this.programId}`
+    };
+    this.programsService.get(req).subscribe((programDetails) => {
+      this.programDetails = _.get(programDetails, 'result');
+      this.programDetails.config.medium = _.compact(this.programDetails.config.medium);
+      this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
+      this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
+      this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
+    });
   }
 
   /**
