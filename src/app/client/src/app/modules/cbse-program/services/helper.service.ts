@@ -148,11 +148,9 @@ export class HelperService {
       } else {
         this.attachContentToTextbook(action, collectionId, contentId, data, rejectedComments);
       }
-
     }, (err) => {
       this.acceptContent_errMsg(action);
     });
-
   }
 
   attachContentToTextbook(action, collectionId, contentId, data, rejectedComments?) {

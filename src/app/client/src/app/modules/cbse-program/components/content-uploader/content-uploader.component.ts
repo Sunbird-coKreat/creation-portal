@@ -777,13 +777,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.helperService.updateContent(request, this.contentMetaData.identifier).subscribe((res) => {
         this.contentMetaData.versionKey = res.result.versionKey;
         if (action === 'review' && this.isIndividualAndNotSample()) {
-          const cb = (err, resp) => {
-            if (!err && resp) {
-              this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
-              this.programStageService.removeLastStage();
-            }
-          };
-          this.publishContent(cb);
+          this.publishContent();
         } else if (action === 'review') {
           this.sendForReview();
         } else if (this.sessionContext.collection && this.unitIdentifier && action !== 'review') {
@@ -895,39 +889,26 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     if (this.isMetaDataModified()) {
       const cb = (err, res ) => {
         if (!err && res) {
-          const callbackPublish = (er, rs) => {
-            if (!er && rs) {
-              this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
-              this.programStageService.removeLastStage();
-            }
-          };
-          this.publishContent(callbackPublish);
+          this.publishContent();
         } else {
           console.log(err);
         }
       };
       this.updateContent(cb);
     } else {
-      const cb = (err, res) => {
-        if (!err && res) {
-          this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
-          this.programStageService.removeLastStage();
-        }
-      };
-      this.publishContent(cb);
+      this.publishContent();
     }
   }
 
-  publishContent(cb = (err, res) => {}) {
+  publishContent() {
     this.helperService.publishContent(this.contentMetaData.identifier, this.userService.userProfile.userId)
        .subscribe(res => {
         if (this.sessionContext.collection && this.unitIdentifier) {
           // tslint:disable-next-line:max-line-length
           this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier || res.result.content_id)
           .subscribe((data) => {
-            cb(null, data);
-            // this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
-            // this.programStageService.removeLastStage();
+            this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
+            this.programStageService.removeLastStage();
             this.uploadedContentMeta.emit({
               contentId: res.result.identifier
             });
@@ -935,7 +916,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         }
       }, (err) => {
         this.toasterService.error(this.resourceService.messages.fmsg.m00102);
-        cb(err, null);
       });
   }
 
@@ -1033,15 +1013,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     if (this.isMetaDataModified()) {
       const cb = (err, res) => {
         if (!err && res) {
-          const callback = (error, resp) => {
-            if (!error && resp) {
-              this.attachContentToTextbook(action);
-            } else if (error) {
-              this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-              console.log(err);
-            }
-          };
-          this.publishContent(callback);
+          this.helperService.publishContent(this.contentMetaData.identifier, this.userService.userProfile.userId)
+          .subscribe(res => {
+            this.attachContentToTextbook(action);
+          }, err => {
+            this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+            console.log(err);
+          });
         } else if (err) {
           this.toasterService.error(this.resourceService.messages.fmsg.m0098);
           console.log(err);

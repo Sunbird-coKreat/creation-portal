@@ -558,13 +558,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((res) => {
           if (res.responseCode === 'OK' && (res.result.content_id || res.result.node_id)) {
             if (actionStatus === 'review' && this.isIndividualAndNotSample()) {
-              const cb = (err, resp) => {
-                if (!err && resp) {
-                  this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
-                  this.programStageService.removeLastStage();
-                }
-              };
-              this.publishContent(cb);
+              this.publishContent();
             } else if (actionStatus === 'review') {
               this.sendForReview();
             }
@@ -600,7 +594,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
      });
   }
 
-  publishContent(cb = (err, res) => {}) {
+  publishContent() {
     this.helperService.publishContent(this.sessionContext.resourceIdentifier, this.userService.userProfile.userId)
       .subscribe(res => {
         const contentId = res.result.node_id || res.result.identifier || res.result.content_id;
@@ -609,15 +603,14 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         // tslint:disable-next-line:max-line-length
         this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, contentId )
         .subscribe((data) => {
-          cb(null, data);
+          this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
+          this.programStageService.removeLastStage();
           this.uploadedContentMeta.emit({
             contentId: contentId
           });
         });
       }
-      cb(null, res);
     }, (err) => {
-      cb(err, null);
       this.toasterService.error(this.resourceService.messages.fmsg.m00102);
     });
   }
@@ -941,15 +934,12 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.isMetaDataModified()) {
       const cb = (err, res) => {
         if (!err && res) {
-          const callback = (error, resp) => {
-            if (!error && resp) {
-              this.attachContentToTextbook(action);
-            } else if (error) {
-              this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-              console.log(error);
-            }
-          };
-          this.publishContent(callback);
+          this.helperService.publishContent(this.sessionContext.resourceIdentifier, this.userService.userProfile.userId)
+          .subscribe(res => {
+            this.attachContentToTextbook(action);
+           }, (err) => {
+            this.toasterService.error(this.resourceService.messages.fmsg.m00102);
+          });
         } else if (err) {
           this.toasterService.error(this.resourceService.messages.fmsg.m0098);
           console.log(err);
@@ -965,24 +955,12 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.isMetaDataModified()) {
       const cb = (err, res ) => {
         if (!err && res) {
-          const callbackPublish = (er, rs) => {
-            if (!er && rs) {
-              this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
-              this.programStageService.removeLastStage();
-            }
-          };
-          this.publishContent(callbackPublish);
+          this.publishContent();
         }
       };
       this.updateContentMetaData(cb);
     } else {
-      const cb = (err, res) => {
-        if (!err && res) {
-          this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
-          this.programStageService.removeLastStage();
-        }
-      };
-      this.publishContent(cb);
+      this.publishContent();
     }
   }
 
@@ -1063,7 +1041,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         'content': {
           versionKey: existingContentVersionKey,
           'author': _.get(questionMeta, 'author'),
-          'attributions': _.get(questionMeta, 'attributions'),
+          'attributions': _.get(questionMeta, 'attributions') ? _.uniq(_.compact(_.get(questionMeta, 'attributions'))) : [],
           'learningOutcome': _.get(questionMeta, 'learningOutcome') ? _.get(questionMeta, 'learningOutcome') : [],
           'license': _.get(questionMeta, 'license'),
           'name': this.resourceName
