@@ -143,9 +143,8 @@
                     <div *ngIf="program.status === 'Live' || program.status === 'Unlisted'" class="sb-color-success">{{resourceService?.frmelmnts?.lbl?.live}}</div>
                     <div *ngIf="program.status === 'Draft'" class="sb-color-gray-300">{{resourceService?.frmelmnts?.lbl?.draft}}</div>
                 </td>
-                <td class="text-center pr-10 va-text-sub">
-
-                  <div *ngIf="activeMyProgramsMenu && program.nomination_status  == 'Pending' && canNominate(program)" (click)="getProjectToModify(program)" class="d-inline-block cursor-pointer pr-10">
+                <td class="text-center pr-10">
+                  <div *ngIf="activeMyProgramsMenu && program.nomination_status  == 'Pending' && canNominate(program)" (click)="getProjectToModify(program)" class="d-inline-block cursor-pointer pr-10 va-text-sub">
                     <i class="icon edit sb-color-primary ui fs-0-92"></i>
                     <span class="sb-color-primary">{{ resourceService?.frmelmnts?.lbl?.modifyNomination.button }}</span>
                   </div>
