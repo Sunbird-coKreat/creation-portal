@@ -582,7 +582,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
             return 'Approved';
       } else if (this.storedCollectionData.rejectedContents  &&
               _.includes(this.storedCollectionData.rejectedContents || [], content.identifier)) {
-                 return 'Rejected';
+            return 'Rejected';
+      } else if (content.status === "Draft" && content.prevStatus === "Live") {
+            return 'PendingForCorrections';
       } else {
         return null;
       }
