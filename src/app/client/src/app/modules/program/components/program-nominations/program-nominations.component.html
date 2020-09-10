@@ -413,16 +413,16 @@
 							<td>{{orgUser?.framework?.gradeLevel?.join(', ')}}</td>
 							<td>{{orgUser?.framework?.subject?.join(', ')}}</td>
 							<td class="text-center">
-							        <sui-select class="selection pt-5" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="options" valueField="name"
-									(selectedOptionChange)="onRoleChange(orgUser)">
-                                        <sui-select-option *ngFor="let option of roles;" [value]="option"
-                                        appTelemetryInteract
-                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('assign-role-by-sourcingOrg', 'click', 'program-nominations', {values: [orgUser.identifier, option.name]})"
-                                                        [telemetryInteractObject]="telemetryInteractObject"
-                                                        [telemetryInteractCdata]="telemetryInteractCdata"
-                                                        [telemetryInteractPdata]="telemetryInteractPdata">
-										</sui-select-option>
-									</sui-select>
+                                <sui-select class="selection pt-5" [(ngModel)]="orgUser.newRole" labelField="name" [options]="options" valueField="name" (selectedOptionChange)="onRoleChange(orgUser)">
+                                    <ng-container *ngFor="let option of roles;">
+                                        <sui-select-option *ngIf="showUserRoleOption(option?.name, orgUser?.selectedRole)" [value]="option" appTelemetryInteract
+                                            [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('assign-role-by-sourcingOrg', 'click', 'program-nominations', {values: [orgUser.identifier, option.name]})"
+                                            [telemetryInteractObject]="telemetryInteractObject"
+                                            [telemetryInteractCdata]="telemetryInteractCdata"
+                                            [telemetryInteractPdata]="telemetryInteractPdata">
+                                        </sui-select-option>
+                                    </ng-container>
+                                </sui-select>
 							</td>
 						  </tr>
 						</tbody>
@@ -639,3 +639,25 @@
 	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs">
 	</ndc-dynamic>
 </ng-container>
+
+<sui-modal *ngIf="showUserRemoveRoleModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
+    [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showUserRemoveRoleModal = false" #userRemoveRoleModal>
+    <div class="sb-modal-header">
+        {{resourceService?.frmelmnts?.lbl?.confirm}}
+    </div>
+    <div class="sb-modal-content">
+        <div class="sb-publish-content">
+            <div class="review-modal-list">
+                {{resourceService?.frmelmnts?.lbl?.removeUserFromProgramConfirmationMsg}}
+            </div>
+        </div>
+    </div>
+    <div class="sb-modal-actions">
+        <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" [class.sb-btn-disabled]="userRemoveRoleLoader"
+            (click)="removeUserFromProgram()">
+            {{resourceService?.frmelmnts?.btn?.yes}}
+        </button>
+        <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary"
+            (click)="cancelRemoveUserFromProgram();"> {{resourceService?.frmelmnts?.btn?.no}} </button>
+    </div>
+</sui-modal>
