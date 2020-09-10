@@ -448,6 +448,7 @@ export class ProgramListComponent implements OnInit {
       this.count = _.get(response, 'result.count');
       this.tempSortPrograms = this.programs;
       this.showLoader = false;
+      this.fetchProjectFeedDays();
     }, error => {
       this.showLoader = false;
       console.log(error);
@@ -580,6 +581,69 @@ export class ProgramListComponent implements OnInit {
       });
     } else {
       this.toasterService.error(this.resourceService.messages.emsg.bulkApprove.something);
+    }
+  }
+
+  getNotificationData() {
+    const reqData = {
+        nomination: {
+            programId: _.map(this.getProgramsForNotification('nomination'), 'program_id'),
+            status: [
+                'Pending'
+            ]
+        },
+        contribution: {
+            programId: _.map(this.getProgramsForNotification('contribution'), 'program_id'),
+            status: [
+                'Live'
+            ]
+        },
+        channel: _.get(this.userService, 'userProfile.rootOrgId')
+    };
+    if (!_.isEmpty(reqData.nomination.programId) || !_.isEmpty(reqData.contribution.programId) ) {
+      this.programsService.getProgramsNotificationData(reqData).subscribe(data => {
+        if (!_.isEmpty(data.result)) {
+          const countData = data.result;
+          _.forEach(this.programs, prg => {
+            if (_.get(_.get(countData, prg.program_id), 'nominationCount') ||
+                  _.get(_.get(countData, prg.program_id), 'contributionCount')) {
+              prg['notificationData'] = _.get(countData, prg.program_id);
+            }
+          });
+          this.programsService.sendprogramsNotificationData(this.programs);
+        }
+      });
+    }
+  }
+
+  getProgramsForNotification(query) {
+    let programsForNotification;
+    if (query === 'nomination') {
+      programsForNotification = _.filter(this.programs, program => {
+        if (program.status === 'Live' && program.nomination_enddate &&
+            // tslint:disable-next-line:max-line-length
+            ((new Date().getTime() - new Date(program.nomination_enddate).getTime()) / (1000 * 60 * 60 * 24) <= _.toNumber(this.programsService.projectFeedDays))) {
+              return program;
+        }
+      });
+      return programsForNotification;
+    } else if (query === 'contribution') {
+      programsForNotification = _.filter(this.programs, program => {
+        if (program.status === 'Live' && program.content_submission_enddate &&
+            // tslint:disable-next-line:max-line-length
+            ((new Date().getTime() - new Date(program.content_submission_enddate).getTime()) / (1000 * 60 * 60 * 24) <= _.toNumber(this.programsService.projectFeedDays))) {
+              return program;
+        }
+      });
+      return programsForNotification;
+    }
+  }
+
+  fetchProjectFeedDays() {
+    if (!this.programsService.projectFeedDays) {
+      this.programsService.fetchProjectFeedDays().subscribe(data => data && this.getNotificationData());
+    } else {
+      this.getNotificationData();
     }
   }
 }
