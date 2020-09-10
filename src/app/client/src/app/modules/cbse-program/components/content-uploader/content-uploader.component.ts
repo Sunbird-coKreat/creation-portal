@@ -198,6 +198,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.visibility['showEdit'] = submissionDateFlag && this.hasAccessFor('showEdit') && this.resourceStatus === 'Draft';
   }
 
+  canViewContentType() {
+    return !!(this.sourcingOrgReviewer || (this.sessionContext.currentRoles.includes('REVIEWER') && this.userService.userid !== this.contentMetaData.createdBy));
+  }
+
   canPublishContent(submissionDateFlag) {
     return !!(submissionDateFlag && this.router.url.includes('/contribute') && !this.contentMetaData.sampleContent === true &&
     this.hasAccessFor('showPublish') && this.resourceStatus === 'Review' && this.userService.userid !== this.contentMetaData.createdBy);

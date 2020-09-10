@@ -291,7 +291,7 @@
     <div class="middle-section-set">
       <div class="licence-form__content">
           <div class='licence-form__content__fields py-16 ui stackable grid'>
-          <div class="sb-field" *ngIf="sourcingOrgReviewer || sessionContext.currentRoles.includes('REVIEWER')">
+          <div class="sb-field" *ngIf="canViewContentType()">
             <div class="width-100">
               <label class="font-weight-bold fsmall">{{resourceService.frmelmnts.lbl.contentType}}:</label><i class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentType}}"></i>
               <div><span class="sb-color-gray-200 fs-0-785">{{ contentType }}</span></div>
