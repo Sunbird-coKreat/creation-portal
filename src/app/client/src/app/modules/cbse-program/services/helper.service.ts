@@ -141,12 +141,18 @@ export class HelperService {
           }
         };
         this.programsService.post(req).subscribe((response) => {
-          this.attachContentToTextbook(action, collectionId, contentId, data);
+          const me = this;
+          setTimeout(() => {
+            me.attachContentToTextbook(action, collectionId, contentId, data);
+          }, 1000);
         }, err => {
           this.acceptContent_errMsg(action);
         });
       } else {
-        this.attachContentToTextbook(action, collectionId, contentId, data, rejectedComments);
+        const me = this;
+        setTimeout(() => {
+          me.attachContentToTextbook(action, collectionId, contentId, data, rejectedComments);
+        }, 1000);
       }
     }, (err) => {
       this.acceptContent_errMsg(action);

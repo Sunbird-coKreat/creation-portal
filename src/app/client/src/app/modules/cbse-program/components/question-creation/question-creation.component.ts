@@ -521,6 +521,8 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
     if (this.questionMetaData) {
       this.formConfiguration = this.componentConfiguration.config.formConfiguration;
       this.allFormFields = _.filter(this.formConfiguration, {'visible': true});
+      this.textFields = _.filter(this.formConfiguration, {'inputType': 'text', 'visible': true});
+
       // tslint:disable-next-line:max-line-length
       this.disableFormField = (this.sessionContext.currentRoles.includes('CONTRIBUTOR') && this.sessionContext.resourceStatus === 'Draft') ? false : true ;
       const formFields = _.map(this.formConfiguration, (formData) => {
@@ -690,6 +692,11 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
         return value;
       }
     });
-    return trimmedValue;
+    _.forEach(this.textFields, field => {
+      if (field.dataType === 'list') {
+        trimmedValue[field.code] = trimmedValue[field.code] ? trimmedValue[field.code].split(', ') : [];
+      }
+    });
+    return _.pickBy(_.assign({}, trimmedValue), _.identity);
   }
 }

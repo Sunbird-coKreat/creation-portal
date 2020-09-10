@@ -935,8 +935,11 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       const cb = (err, res) => {
         if (!err && res) {
           this.helperService.publishContent(this.sessionContext.resourceIdentifier, this.userService.userProfile.userId)
-          .subscribe(res => {
-            this.attachContentToTextbook(action);
+          .subscribe( res => {
+            const me = this;
+            setTimeout(() => {
+              me.attachContentToTextbook(action);
+            }, 1000);
            }, (err) => {
             this.toasterService.error(this.resourceService.messages.fmsg.m00102);
           });
@@ -966,10 +969,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isMetaDataModified() {
     return this.questionCreationChild.isMetaDataModified(this.resourceDetails.name, this.resourceName);
-  }
-
-  getQuestionMetaData() {
-    return this.questionCreationChild.getMetaData();
   }
 
   attachContentToTextbook(action) {
@@ -1034,21 +1033,17 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   updateContentMetaData(cb = (err, res) => {}) {
-    const questionMeta = this.getQuestionMetaData();
     this.getContentVersion(this.sessionContext.resourceIdentifier).subscribe((response: any) => {
       const existingContentVersionKey = _.get(response, 'content.versionKey');
-      const requestBody = {
-        'content': {
-          versionKey: existingContentVersionKey,
-          'author': _.get(questionMeta, 'author'),
-          'attributions': _.get(questionMeta, 'attributions') ? _.uniq(_.compact(_.get(questionMeta, 'attributions'))) : [],
-          'learningOutcome': _.get(questionMeta, 'learningOutcome') ? _.get(questionMeta, 'learningOutcome') : [],
-          'license': _.get(questionMeta, 'license'),
-          'name': this.resourceName
-        }
+      let requestBody = {
+          'versionKey': existingContentVersionKey,
+          'name': this.resourceName,
+          'itemSets': _.map(this.resourceDetails.itemSets, (obj) =>{
+            return {'identifier': obj.identifier};
+          })
       };
-
-      this.updateContent(requestBody, this.sessionContext.resourceIdentifier)
+      requestBody = Object.assign({}, requestBody, this.questionCreationChild.getMetaData());
+      this.updateContent({'content': requestBody}, this.sessionContext.resourceIdentifier)
       .subscribe((res) => {
           cb(null, res);
         }, (err) => {
