@@ -293,7 +293,7 @@
             </div>
             </div>
          
-          <div class="six wide column py-10">
+          <div class="six wide column py-10" *ngIf="!iscontributeOrgAdmin">
 						<div class="field">
 							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.nominations}}</label>
 							<sui-multi-select formControlName="gradeLevel"
@@ -303,7 +303,7 @@
 							</sui-multi-select>
 						</div>
           </div>
-          <div class="six wide column py-10">
+          <div class="six wide column py-10" *ngIf="!iscontributeOrgAdmin">
 						<div class="field">
 							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.contributions}}</label>
 							<sui-multi-select formControlName=""
