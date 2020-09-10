@@ -563,3 +563,28 @@ xxl calculateRem(180px) 24px 20px;
   }
 }
 .w-87{width:87%;max-width:87%;}
+
+.sb-circle-notification{
+  width: 1rem;
+  height: 1rem;
+  border-radius: 100%;
+  color: $white;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: orangered;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.7rem;
+}
+
+.sb-list-notification{
+  padding-left: 2rem;
+  padding-right: 1rem;
+  padding-top: 0.6rem;
+  li{
+    margin-bottom: 0rem;
+    list-style-type: disc;
+    font-size: 0.8rem;
+  }
+}
