@@ -469,7 +469,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
           this.toasterService.error(`${this.resourceService.messages.emsg.modifyNomination.error} ${data}`);
           setTimeout(() => {
             this.router.navigateByUrl('/contribute/myenrollprograms');
-          });
+          }, 10);
         } else if (data.result && !_.isEmpty(data.result)) {
             this.showNominateModal = false;
             const router = this.router;
