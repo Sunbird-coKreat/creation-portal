@@ -27,6 +27,7 @@ export class CkeditorToolComponent implements OnInit, AfterViewInit, OnChanges {
   @Output() hasError = new EventEmitter<any>();
   @Output() videoDataOutput = new EventEmitter<any>();
   @Input() videoShow;
+  public imageUploadLoader = false;
   public editorInstance: any;
   public isEditorFocused: boolean;
   public limitExceeded: boolean;
@@ -515,9 +516,11 @@ getAllVideos(offset, query) {
       this.errorMsg = 'Please choose an image file';
     }
     if (!this.showErrorMsg) {
+      this.imageUploadLoader = true;
       // reader.onload = (uploadEvent: any) => {
       const req = this.generateAssetCreateRequest(fileName, fileType, 'image');
       this.cbseService.createMediaAsset(req).pipe(catchError(err => {
+        this.imageUploadLoader = false;
         const errInfo = { errorMsg: 'Image upload failed' };
         return throwError(this.cbseService.apiErrorHandling(err, errInfo));
       })).subscribe((res) => {
@@ -526,9 +529,11 @@ getAllVideos(offset, query) {
           data: formData
         };
         this.cbseService.uploadMedia(request, imgId).pipe(catchError(err => {
+          this.imageUploadLoader = false;
           const errInfo = { errorMsg: 'Image upload failed' };
           return throwError(this.cbseService.apiErrorHandling(err, errInfo));
         })).subscribe((response) => {
+          this.imageUploadLoader = false;
           this.addImageInEditor(response.result.content_url, response.result.node_id);
           this.showImagePicker = false;
           this.showImageUploadModal = false;
