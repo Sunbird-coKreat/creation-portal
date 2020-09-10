@@ -723,7 +723,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  public saveResourceName(cb = (err, res) => {}) {
+  public saveResourceName() {
     this.resourceName = (_.trim(this.resourceName) !== 'Untitled') ? _.trim(this.resourceName) : '' ;
     if (this.resourceName.length > 0 && this.resourceName.length <= this.resourceTitleLimit) {
       this.showTextArea = false;
@@ -741,11 +741,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
             this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, contentId
           )
           .subscribe((data) => {
-            cb(null, data);
             this.toasterService.success(this.resourceService.messages.smsg.m0060);
             this.sessionContext.contentMetadata.name = this.resourceName;
           }, (err) => {
-            cb(err, null);
             this.toasterService.error(this.resourceService.messages.fmsg.m0098);
           });
         }
