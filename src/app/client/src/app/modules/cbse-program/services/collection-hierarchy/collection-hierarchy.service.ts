@@ -253,10 +253,10 @@ export class CollectionHierarchyService {
     return  {
       total: totalUserContents && totalUserContents.length,
       sample: totalUserSampleContents && totalUserSampleContents.length,
-      draft: _.has(tempcontentGroupByStatus, 'Draft') ? contentGroupByStatus.Draft.length : 0,
+      draft: _.has(tempcontentGroupByStatus, 'Draft') ? tempcontentGroupByStatus.Draft.length : 0,
       review: 0,
       rejected: 0,
-      correctionsPending: _.has(tempcontentGroupByStatus, 'correctionsPending') ? contentGroupByStatus.correctionsPending.length : 0,
+      correctionsPending: _.has(tempcontentGroupByStatus, 'correctionsPending') ? tempcontentGroupByStatus.correctionsPending.length : 0,
       live: _.has(contentGroupByStatus, 'Live') ? contentGroupByStatus.Live.length : 0,
       individualStatusForSample: contentGroupByStatusForSample,
       ...(!_.isUndefined(collections) && {sourcingOrgStatus : sourcingOrgStatus})
