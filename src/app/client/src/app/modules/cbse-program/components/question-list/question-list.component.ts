@@ -929,7 +929,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   updateContentBeforeApproving(action) {
-    if (this.isMetaDataModified()) {
+    if (this.isQuestionMetaDataModified()) {
       const cb = (err, res) => {
         if (!err && res) {
           this.helperService.publishContent(this.sessionContext.resourceIdentifier, this.userService.userProfile.userId)
@@ -953,7 +953,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   updateContentBeforePublishing() {
-    if (this.isMetaDataModified()) {
+    if (this.isQuestionMetaDataModified()) {
       const cb = (err, res ) => {
         if (!err && res) {
           this.publishContent();
@@ -963,10 +963,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.publishContent();
     }
-  }
-
-  isMetaDataModified() {
-    return this.questionCreationChild.isMetaDataModified(this.resourceDetails.name, this.resourceName);
   }
 
   attachContentToTextbook(action) {
@@ -1051,5 +1047,32 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     (err) =>{
       cb(err, null);
     });
+  }
+
+  isQuestionMetaDataModified() {
+    const beforeUpdateMetaData = _.clone(this.questionMetaData.data);
+    beforeUpdateMetaData['name'] = this.resourceDetails.name;
+    const afterUpdateMetaData = this.questionCreationChild.getMetaData();
+    afterUpdateMetaData['name'] = this.resourceName;
+    const overridableFields = _.filter(this.programsService.overrideMetaData, (field) => field.editable === true);
+    let isMetaDataModified = false;
+    _.forEach(overridableFields, (field) => {
+        if (Array.isArray(afterUpdateMetaData[field.code])) {
+          if (JSON.stringify(afterUpdateMetaData[field.code]) !== JSON.stringify(beforeUpdateMetaData[field.code])) {
+            if (typeof beforeUpdateMetaData[field.code] === 'undefined'){
+              if (afterUpdateMetaData[field.code].length) {
+                isMetaDataModified = true;
+              }
+            } else {
+              isMetaDataModified = true;
+            }
+          }
+        } else if (typeof afterUpdateMetaData[field.code] !== 'undefined'
+          && afterUpdateMetaData[field.code].localeCompare(beforeUpdateMetaData[field.code]) !== 0) {
+            isMetaDataModified = true;
+        }
+    });
+
+    return isMetaDataModified;
   }
 }
