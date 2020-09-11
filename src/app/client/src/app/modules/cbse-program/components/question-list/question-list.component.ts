@@ -657,6 +657,20 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
+  getContentStatus(contentId) {
+    const req = {
+      url: `${this.configService.urlConFig.URLS.CONTENT.GET}/${contentId}?mode=edit&fields=status,createdBy`
+    };
+    return this.contentService.get(req).pipe(
+      map(res => {
+        return _.get(res, 'result');
+      }, err => {
+        console.log(err);
+        this.toasterService.error(_.get(err, 'error.params.errmsg') || 'content update failed');
+      })
+    );
+  }
+
   public dismissPublishModal() {
     setTimeout(() => this.changeStage.emit('prev'), 0);
   }
@@ -937,7 +951,14 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           .subscribe( res => {
             const me = this;
             setTimeout(() => {
-              me.attachContentToTextbook(action);
+              this.getContentStatus(this.sessionContext.resourceIdentifier).subscribe((response: any) => {
+                const status = _.get(response, 'content.status');
+                if (status === 'Live') {
+                  me.attachContentToTextbook(action);
+                }
+              }, err => {
+                this.toasterService.error(this.resourceService.messages.fmsg.m00102);
+              });
             }, 1000);
            }, (err) => {
             this.toasterService.error(this.resourceService.messages.fmsg.m00102);
