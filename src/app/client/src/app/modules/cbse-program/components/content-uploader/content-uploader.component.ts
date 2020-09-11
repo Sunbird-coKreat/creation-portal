@@ -865,19 +865,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       .subscribe(res => {
         this.showRequestChangesPopup = false;
         this.contentStatusNotify('Reject');
-        if (this.sessionContext.collection && this.unitIdentifier) {
-          // tslint:disable-next-line:max-line-length
-          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
-          .subscribe((data) => {
-            this.toasterService.success(this.resourceService.messages.smsg.m0062);
-            this.programStageService.removeLastStage();
-            this.uploadedContentMeta.emit({
-              contentId: res.result.node_id
-            });
-          });
-        }
+        this.toasterService.success(this.resourceService.messages.smsg.m0069);
+        this.programStageService.removeLastStage();
+        this.uploadedContentMeta.emit({
+          contentId: res.result.node_id
+        });
       }, (err) => {
-        this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+        this.toasterService.error(this.resourceService.messages.fmsg.m00106);
       });
     }
   }
