@@ -1,6 +1,6 @@
 import {filter, first, map} from 'rxjs/operators';
 import { UserService, PermissionService, TenantService, OrgDetailsService, FormService, ProgramsService} from './../../services';
-import { Component, OnInit, ChangeDetectorRef, Input } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Input, OnDestroy } from '@angular/core';
 import { ConfigService, ResourceService, IUserProfile, IUserData } from '@sunbird/shared';
 import { Router, ActivatedRoute, NavigationEnd, RoutesRecognized } from '@angular/router';
 import { Location } from '@angular/common';
@@ -9,14 +9,14 @@ import { IInteractEventObject, IInteractEventEdata } from '@sunbird/telemetry';
 import { CacheService } from 'ng2-cache-service';
 import { environment } from '@sunbird/environment';
 declare var jQuery: any;
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 type reportsListVersionType = 'v1' | 'v2';
 
 @Component({
   selector: 'app-header',
   templateUrl: './main-header.component.html'
 })
-export class MainHeaderComponent implements OnInit {
+export class MainHeaderComponent implements OnInit, OnDestroy {
   @Input() routerEvents;
   languageFormQuery = {
     formType: 'content',
@@ -78,6 +78,8 @@ export class MainHeaderComponent implements OnInit {
   activeTab = {};
   public sourcingOrgAdmin: boolean;
   reportsListVersion: reportsListVersionType;
+  public notificationSubscription: Subscription;
+  public notificationData: Array<any>;
 
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
@@ -154,6 +156,18 @@ export class MainHeaderComponent implements OnInit {
     this.telemetryInteractCdata = [];
   this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
   this.telemetryInteractObject = {};
+
+  this.notificationSubscription = this.programsService.programsNotificationData.subscribe(data => {
+    if (!_.isEmpty(data)) {
+      this.notificationData = _.filter(data, prg => prg.notificationData);
+    }
+  });
+  }
+
+  ngOnDestroy() {
+    if (this.notificationSubscription) {
+      this.notificationSubscription.unsubscribe();
+    }
   }
 
   private isCustodianOrgUser() {
@@ -190,6 +204,7 @@ export class MainHeaderComponent implements OnInit {
       this.router.navigate(['']);
     } else if (this.userService.loggedIn) {
       if (this.router.url.includes('/contribute')) {
+        // tslint:disable-next-line:max-line-length
         if (this.userService.userRegistryData && this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org &&
           !this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
           this.router.navigateByUrl('/contribute/myenrollprograms');
@@ -366,5 +381,12 @@ export class MainHeaderComponent implements OnInit {
      } else if (this.location.path() === '/contribute/help' || this.location.path() === '/sourcing/help' ) {
       this.handleActiveTabState('contributorHelp');
     }
+  }
+
+  getNumberofNotification() {
+    const notificationArray = _.map(this.notificationData, data => {
+      return _.compact([_.get(data, 'notificationData.nominationCount'), _.get(data, 'notificationData.contributionCount')]);
+    });
+    return _.flattenDeep(notificationArray).length;
   }
 }

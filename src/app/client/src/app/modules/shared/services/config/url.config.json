@@ -273,7 +273,8 @@
       "CONTENTTYPE_LIST": "program/v1/contenttypes/list",
       "CONFIGURATION_SEARCH": "program/v1/configuration/search",
       "PREFERENCE_READ": "program/v1/preference/read",
-      "PREFERENCE_ADD": "program/v1/preference/create"
+      "PREFERENCE_ADD": "program/v1/preference/create",
+      "FEED_SEARCH": "program/v1/feed/search"
     },
     "DOCKCONTENT": {
       "CREATE": "content/v3/create",

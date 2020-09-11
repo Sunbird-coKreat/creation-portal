@@ -112,7 +112,7 @@
           (click)="previewResource($event, content, collection, originalCollectionData, i)">
             <span class="item-name"> {{content.name}}</span>
             <span class="item-status">{{content.creator}}</span>
-            <span class="item-status">
+            <span class="item-status" *ngIf="!content.sampleContent">
               <span [ngClass]="{'sb-color-gray-300':content.status === 'Draft'}" *ngIf="content.status === 'Draft' && content.prevStatus === null">{{content.status}}</span>
               <span [ngClass]="{'sb-color-primary':content.status === 'Review'}"  *ngIf="content.status === 'Review'">{{resourceService.frmelmnts.lbl.reviewInProgress}}</span>
               <span [ngClass]="{'sb-color-warning':content.status === 'Live'}"  *ngIf="content.status === 'Live' && !content.sourcingStatus">{{resourceService.frmelmnts.lbl.approvalPending}}</span>
@@ -121,6 +121,7 @@
               <span [ngClass]="{'sb-color-gray-100': content.status === 'Draft' && content.prevStatus !== 'Review','sb-color-error': content.status === 'Draft' && content.prevStatus === 'Review'}" *ngIf="content.status === 'Draft' && content.prevStatus === 'Review'">{{resourceService.frmelmnts.lbl.notAccepted}}</span>
               <span [ngClass]="{'sb-color-error':content.status == 'Failed'}"  *ngIf="content.status === 'Failed'">{{resourceService.frmelmnts.lbl.failed}}</span>
               <span *ngIf="content.status === 'Processing'">{{resourceService.frmelmnts.lbl.processing}}</span>
+              <span class="sb-color-primary"  *ngIf="content.sourcingStatus === 'PendingForCorrections' && content.status === 'Draft' && content.prevStatus === 'Live'">{{resourceService.frmelmnts.contentStatus.lbl.correctionsPending}}</span>
             </span>
             <div class="item-dropdown absolute position" (click)="menuClick($event)" *ngIf="content.status === 'Draft' && !content.sourceURL">
               <div *ngIf="visibility && visibility['showActionMenu']" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"

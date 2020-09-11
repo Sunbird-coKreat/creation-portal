@@ -38,6 +38,27 @@
                 <!--/Hamburger Icon-->
                 <!--Main Menu-->
                 <!--/Main Menu-->
+                <a class="profile-avtar computer only p-0 ml-5" *ngIf="router.url.includes('sourcing')"
+                tabindex="0">
+                <div suiDropdown class="ui dropdown right top pointing" id="dropdown-menu-list-header">
+                    <i class="icon bell fs-1-3 sb-color-black" *ngIf='userProfile'></i>
+                    <div *ngIf= "notificationData && getNumberofNotification()" class="sb-circle-notification">{{getNumberofNotification()}}</div>
+                    <div class="menu" suiDropdownMenu>
+                      <ul class="sb-list-notification">
+                          <div *ngFor="let notification of notificationData">
+                              <div *ngIf="notification?.notificationData?.nominationCount">
+                                <li class="sb-color-black pl-0"><strong>{{notification?.notificationData?.nominationCount}}</strong> {{resourceService?.frmelmnts?.lbl?.nominationIn}} <strong>{{notification?.name}}</strong> <span class="divider mx-5"></span><em class="fxsmall sb-color-yellow">Last {{programsService.projectFeedDays}}days</em></li>
+                                <div class="ui divider my-10"></div>
+                            </div>
+                            <div *ngIf="notification?.notificationData?.contributionCount">
+                                <li class="sb-color-black pl-0"><strong>{{notification?.notificationData?.contributionCount}}</strong> {{resourceService?.frmelmnts?.lbl?.contributionIn}} <strong>{{notification?.name}}</strong> <span class="divider mx-5"></span><em class="fxsmall sb-color-yellow">Last {{programsService.projectFeedDays}}days</em></li>
+                                <div class="ui divider my-10"></div>
+                            </div>
+                          </div>
+                      </ul>
+                    </div>
+                </div>
+            </a>
                 <!--Avtar Dropdown-->
                 <a class="profile-avtar computer only p-0 ml-15" *ngIf="userService.loggedIn && !isOffline"
                     tabindex="0">
