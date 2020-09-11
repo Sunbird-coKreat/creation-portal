@@ -12,7 +12,7 @@ import { ICollectionComponentInput, IDashboardComponentInput,
 import { InitialState, ISessionContext, IUserParticipantDetails } from '../../interfaces';
 import { ProgramStageService } from '../../../program/services/program-stage/program-stage.service';
 import { ProgramComponentsService } from '../../services/program-components/program-components.service';
-import { IImpressionEventInput, IInteractEventEdata } from '@sunbird/telemetry';
+import { IImpressionEventInput, IInteractEventEdata, TelemetryService } from '@sunbird/telemetry';
 import { isUndefined, isNullOrUndefined } from 'util';
 import * as moment from 'moment';
 
@@ -101,7 +101,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     public programComponentsService: ProgramComponentsService, public programsService: ProgramsService,
     private navigationHelperService: NavigationHelperService, public registryService: RegistryService,
     private paginationService: PaginationService, public actionService: ActionService,
-    private collectionHierarchyService: CollectionHierarchyService,
+    private collectionHierarchyService: CollectionHierarchyService, private telemetryService: TelemetryService,
     private sbFormBuilder: FormBuilder) {
     this.programId = this.activatedRoute.snapshot.params.programId;
     localStorage.setItem('programId', this.programId);
@@ -386,7 +386,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   showUserRoleOption(roleName, userRole) {
-    return (roleName !== 'NONE' || (roleName === 'NONE' && userRole !== 'Select Role'))
+    if (!(roleName !== 'NONE' || (roleName === 'NONE' && userRole !== 'Select Role'))) {
+     return 'Select Role'
+    } else {
+      return roleName;
+    }
   }
 
   removeUserFromProgram() {
@@ -440,8 +444,24 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     return progRoleMapping;
   }
-
+  settelemetryForUpdaterole(user) {
+     const appTelemetryInteractData = {
+      context: {
+        env: this.activatedRoute.snapshot.data.telemetry.env,
+        cdata: this.telemetryInteractCdata || [],
+        pdata: this.telemetryInteractPdata
+      },
+      edata: {
+        id: 'assign-users-to-program',
+        type: 'click',
+        pageid: 'list-nominated-textbooks',
+        extra : {values: [user.identifier, user.newRole]}
+      },
+    };
+    this.telemetryService.interact(appTelemetryInteractData);
+ }
   onRoleChange(user) {
+    this.settelemetryForUpdaterole(user);
     const newRole = user.newRole;
     if (!_.includes(this.roleNames, newRole)) {
       this.toasterService.error(this.resourceService.messages.emsg.roles.m0003);

@@ -588,3 +588,43 @@ xxl calculateRem(180px) 24px 20px;
     font-size: 0.8rem;
   }
 }
+
+.custom-selectbx{
+  select{
+    border-radius: 0.1875rem;
+    min-height: 2rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 12px;
+    background: #fff;
+    min-width: 14em;
+    display: inline-block;
+    color: #212121;
+    box-shadow: none;
+    border: 1px solid rgba(34,36,38,.15);
+    transition: box-shadow .1s ease,width .1s ease;
+    -webkit-appearance: none;
+    box-shadow: none !important;
+    option{
+      background-color: #fff !important;
+      outline: 0;
+      padding: 6px 12px;
+    }
+  }
+  :-webkit-autofill { 
+    color: #fff !important; 
+  }
+      &:focus,&:active{
+        border: 1px solid var(--primary-300) !important; 
+        outline: 0;
+      }
+    label:after {
+      content:'\25BC';
+      display:inline-block;
+      box-sizing:border-box;
+      color:#000;
+      background-color:#fff;
+      margin-left: -14px;
+      pointer-events: none;
+      font-size: 10px;
+    }
+}
