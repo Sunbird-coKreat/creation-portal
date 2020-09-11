@@ -13,6 +13,7 @@ import { CbseProgramService } from '../../services';
 import { Validators, FormGroup, FormArray, FormBuilder, NgForm } from '@angular/forms';
 import { mcqTemplateConfig } from '../mcq-template-selection/mcq-template-data';
 import { ProgramTelemetryService } from '../../../program/services';
+import { HelperService } from '../../services/helper.service';
 
 @Component({
   selector: 'app-mcq-creation',
@@ -91,7 +92,7 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
     private formBuilder: FormBuilder, public telemetryService: TelemetryService,
     public activeRoute: ActivatedRoute, public programTelemetryService: ProgramTelemetryService,
     public router: Router, private navigationHelperService: NavigationHelperService, private resourceService: ResourceService,
-    private programsService: ProgramsService) {
+    private programsService: ProgramsService, private helperService: HelperService) {
   }
 
   initForm() {
@@ -522,7 +523,6 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
           return learningOutcome.name;
         });
       }
-      this.getEditableFields();
       _.map(this.allFormFields, (obj) => {
         const code = obj.code;
         const preSavedValues = {};
@@ -554,6 +554,7 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
           }
         }
       });
+      this.editableFields = this.helperService.getEditableFields(this.editableFieldsACL, this.allFormFields);
       this.questionMetaForm = this.formBuilder.group(controller);
       this.onFormValueChange();
     }
@@ -608,39 +609,7 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
             && this.userService.userid !== _.get(this.sessionContext, 'contentMetadata.createdBy'));
   }
 
-  getEditableFields() {
-    if (this.editableFieldsACL === 'CONTRIBUTOR') {
-      this.editableFields.push('name');
-      _.forEach(this.allFormFields, (field) => {
-        this.editableFields.push(field.code);
-      });
-    } else if (this.editableFieldsACL === 'REVIEWER') {
-      const nameFieldConfig = _.find(this.programsService.overrideMetaData, (item) => item.code === 'name');
-      if (nameFieldConfig.editable === true) {
-        this.editableFields.push(nameFieldConfig.code);
-      }
-      _.forEach(this.allFormFields, (field) => {
-        const fieldConfig = _.find(this.programsService.overrideMetaData, (item) => item.code === field.code);
-        if (fieldConfig.editable === true) {
-          this.editableFields.push(fieldConfig.code);
-        }
-      });
-    }
-  }
-
   getMetaData() {
-    const trimmedValue = _.mapValues(this.questionMetaForm.value, (value) => {
-      if (_.isString(value)) {
-        return _.trim(value);
-      } else {
-        return value;
-      }
-    });
-    _.forEach(this.textFields, field => {
-      if (field.dataType === 'list') {
-        trimmedValue[field.code] = trimmedValue[field.code] ? trimmedValue[field.code].split(', ') : [];
-      }
-    });
-    return _.pickBy(_.assign({}, trimmedValue), _.identity);
+    return this.helperService.getQuestionMetaData(this.questionMetaForm.value, this.textFields);
   }
 }

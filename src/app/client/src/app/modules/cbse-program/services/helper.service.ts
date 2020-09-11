@@ -307,6 +307,47 @@ export class HelperService {
     return  this.actionService.get(option);
   }
 
+  getEditableFields(role, formFields) {
+    const editableFields = [];
+    switch (role) {
+      case 'CONTRIBUTOR':
+        editableFields.push('name');
+      _.forEach(formFields, (field) => {
+        editableFields.push(field.code);
+      });
+      break;
+      case 'REVIEWER':
+        const nameFieldConfig = _.find(this.programsService.overrideMetaData, (item) => item.code === 'name');
+        if (nameFieldConfig.editable === true) {
+          editableFields.push(nameFieldConfig.code);
+        }
+        _.forEach(formFields, (field) => {
+          const fieldConfig = _.find(this.programsService.overrideMetaData, (item) => item.code === field.code);
+          if (fieldConfig.editable === true) {
+            editableFields.push(fieldConfig.code);
+          }
+        });
+      break;
+    }
+    return editableFields;
+  }
+
+  getQuestionMetaData(formValue, textFields) {
+    const trimmedValue = _.mapValues(formValue, (value) => {
+      if (_.isString(value)) {
+        return _.trim(value);
+      } else {
+        return value;
+      }
+    });
+    _.forEach(textFields, field => {
+      if (field.dataType === 'list') {
+        trimmedValue[field.code] = trimmedValue[field.code] ? trimmedValue[field.code].split(', ') : [];
+      }
+    });
+    return _.pickBy(_.assign({}, trimmedValue), _.identity);
+  }
+
   /*getContentMetadata(componentInput: any) {
     const contentId = sessionContext.resourceIdentifier;
     const option = {

@@ -548,7 +548,6 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
           return learningOutcome.name;
         });
       }
-      this.getEditableFields();
       _.map(this.allFormFields, (obj) => {
         const code = obj.code;
         const preSavedValues = {};
@@ -580,6 +579,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
           }
         }
       });
+      this.editableFields = this.helperService.getEditableFields(this.editableFieldsACL, this.allFormFields);
       this.questionMetaForm = this.formBuilder.group(controller);
       this.onFormValueChange();
     }
@@ -624,38 +624,10 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   }
 
   getEditableFields() {
-    if (this.editableFieldsACL === 'CONTRIBUTOR') {
-      this.editableFields.push('name');
-      _.forEach(this.allFormFields, (field) => {
-        this.editableFields.push(field.code);
-      });
-    } else if (this.editableFieldsACL === 'REVIEWER') {
-      const nameFieldConfig = _.find(this.overrideMetaData, (item) => item.code === 'name');
-      if (nameFieldConfig.editable === true) {
-        this.editableFields.push(nameFieldConfig.code);
-      }
-      _.forEach(this.allFormFields, (field) => {
-        const fieldConfig = _.find(this.overrideMetaData, (item) => item.code === field.code);
-        if (fieldConfig.editable === true) {
-          this.editableFields.push(fieldConfig.code);
-        }
-      });
-    }
+    this.editableFields = this.helperService.getEditableFields(this.editableFieldsACL, this.allFormFields);
   }
 
   getMetaData() {
-    const trimmedValue = _.mapValues(this.questionMetaForm.value, (value) => {
-      if (_.isString(value)) {
-        return _.trim(value);
-      } else {
-        return value;
-      }
-    });
-    _.forEach(this.textFields, field => {
-      if (field.dataType === 'list') {
-        trimmedValue[field.code] = trimmedValue[field.code] ? trimmedValue[field.code].split(', ') : [];
-      }
-    });
-    return _.pickBy(_.assign({}, trimmedValue), _.identity);
+    return this.helperService.getQuestionMetaData(this.questionMetaForm.value, this.textFields);
   }
 }
