@@ -47,11 +47,11 @@
                       <ul class="sb-list-notification">
                           <div *ngFor="let notification of notificationData">
                               <div *ngIf="notification?.notificationData?.nominationCount">
-                                <li class="sb-color-black pl-0"><strong>{{notification?.notificationData?.nominationCount}}</strong> noination in <strong>{{notification?.name}}</strong> <span class="divider mx-5"></span><em class="fxsmall sb-color-yellow">Last {{programsService.projectFeedDays}}days</em></li>
+                                <li class="sb-color-black pl-0"><strong>{{notification?.notificationData?.nominationCount}}</strong> {{resourceService?.frmelmnts?.lbl?.nominationIn}} <strong>{{notification?.name}}</strong> <span class="divider mx-5"></span><em class="fxsmall sb-color-yellow">Last {{programsService.projectFeedDays}}days</em></li>
                                 <div class="ui divider my-10"></div>
                             </div>
                             <div *ngIf="notification?.notificationData?.contributionCount">
-                                <li class="sb-color-black pl-0"><strong>{{notification?.notificationData?.contributionCount}}</strong> contribution in <strong>{{notification?.name}}</strong> <span class="divider mx-5"></span><em class="fxsmall sb-color-yellow">Last {{programsService.projectFeedDays}}days</em></li>
+                                <li class="sb-color-black pl-0"><strong>{{notification?.notificationData?.contributionCount}}</strong> {{resourceService?.frmelmnts?.lbl?.contributionIn}} <strong>{{notification?.name}}</strong> <span class="divider mx-5"></span><em class="fxsmall sb-color-yellow">Last {{programsService.projectFeedDays}}days</em></li>
                                 <div class="ui divider my-10"></div>
                             </div>
                           </div>

@@ -77,8 +77,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public sourcingOrgReviewer: boolean;
   public sourcingReviewStatus: string;
   public contentType: string;
-  public rejectBySourcingOrg: boolean;
-  public sourcingOrgReviewComments: string;
+  public popupAction: string;
+  //public sourcingOrgReviewComments: string;
+  public contentComment: string;
   originPreviewUrl = '';
   originPreviewReady = false;
   public azurFileUploaderSubscrition: Subscription;
@@ -187,7 +188,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.visibility['showChangeFile'] = submissionDateFlag && this.hasAccessFor('showChangeFile') && this.resourceStatus === 'Draft';
     // tslint:disable-next-line:max-line-length
     this.visibility['showRequestChanges'] = this.canReviewContent(submissionDateFlag);
-
     // tslint:disable-next-line:max-line-length
     this.visibility['showPublish'] = this.canPublishContent(submissionDateFlag);
     // tslint:disable-next-line:max-line-length
@@ -196,6 +196,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.visibility['showSave'] = submissionDateFlag && !this.contentMetaData.sampleContent === true && this.hasAccessFor('showSave') && this.resourceStatus === 'Draft';
     // tslint:disable-next-line:max-line-length
     this.visibility['showEdit'] = submissionDateFlag && this.hasAccessFor('showEdit') && this.resourceStatus === 'Draft';
+    // tslint:disable-next-line:max-line-length
+    this.visibility['showSourcingActionButtons'] = this.canSourcingReviewerPerformActions();
+
   }
 
   canPublishContent(submissionDateFlag) {
@@ -204,7 +207,16 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   canReviewContent(submissionDateFlag) {
+    // tslint:disable-next-line:max-line-length
     return !!(this.router.url.includes('/contribute') && submissionDateFlag && !this.contentMetaData.sampleContent === true && this.hasAccessFor('showRequestChanges') && this.resourceStatus === 'Review' && this.userService.userid !== this.contentMetaData.createdBy);
+  }
+
+  canSourcingReviewerPerformActions() {
+    return !!(this.router.url.includes('/sourcing')
+    && !this.contentMetaData.sampleContent === true && this.resourceStatus === 'Live'
+    && this.userService.userid !== this.contentMetaData.createdBy
+    && this.resourceStatus === 'Live' && !this.sourcingReviewStatus &&
+    (this.originCollectionData.status === 'Draft' && this.selectedOriginUnitStatus === 'Draft'));
   }
 
   initiateUploadModal() {
@@ -526,6 +538,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       } else if (this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Review') {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
         this.resourceStatusClass = 'sb-color-error';
+      } else if (this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Live') {
+        this.resourceStatusText = this.resourceService.frmelmnts.contentStatus.lbl.correctionsPending;
+        this.resourceStatusClass = 'sb-color-error';
       } else if (this.resourceStatus === 'Live' && _.isEmpty(this.sourcingReviewStatus)) {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
         this.resourceStatusClass = 'sb-color-warning';
@@ -844,6 +859,23 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
 
+  requestCorrectionsBySourcing() {
+    if (this.FormControl.value.rejectComment) {
+      this.helperService.updateContentStatus(this.contentMetaData.identifier, "Draft", this.FormControl.value.rejectComment)
+      .subscribe(res => {
+        this.showRequestChangesPopup = false;
+        this.contentStatusNotify('Reject');
+        this.toasterService.success(this.resourceService.messages.smsg.m0069);
+        this.programStageService.removeLastStage();
+        this.uploadedContentMeta.emit({
+          contentId: res.result.node_id
+        });
+      }, (err) => {
+        this.toasterService.error(this.resourceService.messages.fmsg.m00106);
+      });
+    }
+  }
+
   isMetaDataModified() {
     let contentObj = {
       'name': this.editTitle
@@ -1073,7 +1105,22 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
 
-  showSourcingOrgRejectComments() {
+  showCommentAddedAgainstContent() {
+    const id = _.get(this.contentMetaData, 'identifier');
+    //const roles = _.get(this.sessionContext, 'currentRoles');
+    const sourcingRejectedComments = _.get(this.sessionContext, 'hierarchyObj.sourcingRejectedComments')
+    if (id && this.contentMetaData.status === "Draft"
+        && (_.includes(["Review", "Live"], this.contentMetaData.prevStatus))) {
+      this.contentComment = _.get(this.contentMetaData, 'rejectComment');
+      return true;
+    } else  if (id && this.contentMetaData.status === 'Live' && !_.isEmpty(_.get(sourcingRejectedComments, id))) {
+        this.contentComment = _.get(sourcingRejectedComments, id);
+        return true;
+    }
+    return false;
+  }
+
+  /*showSourcingOrgRejectComments() {
     const id = _.get(this.contentMetaData, 'identifier');
     const sourcingRejectedComments = _.get(this.sessionContext, 'hierarchyObj.sourcingRejectedComments')
     if (this.resourceStatus === 'Live' && id && !_.isEmpty(_.get(sourcingRejectedComments, id))) {
@@ -1082,13 +1129,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     } else {
       return false;
     }
-  }
+  }*/
 
-  showContributorOrgReviewComments() {
+  /*showContributorOrgReviewComments() {
     const rejectComment = _.get(this.contentMetaData, 'rejectComment');
     const roles = _.get(this.sessionContext, 'currentRoles');
     return !!(rejectComment && roles.includes('CONTRIBUTOR') && this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Review');
-  }
+  }*/
 
   getEditableFields() {
     if (this.sessionContext.currentRoles.includes('CONTRIBUTOR') && this.resourceStatus === 'Draft') {

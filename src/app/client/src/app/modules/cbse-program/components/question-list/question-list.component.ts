@@ -73,7 +73,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public telemetryPageId = 'question-list';
   public sourcingOrgReviewer: boolean;
   public sourcingReviewStatus: string;
-  public sourcingOrgReviewComments: string;
+  public popupAction: string;
+  public contentComment: string;
   originPreviewUrl = '';
   originPreviewReady = false;
   public originCollectionData: any;
@@ -293,6 +294,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.visibility['showSave'] = submissionDateFlag && this.hasAccessFor('showSave') && this.resourceStatus === 'Draft';
      // tslint:disable-next-line:max-line-length
     this.visibility['showEdit'] = submissionDateFlag && this.hasAccessFor('showEdit') && this.resourceStatus === 'Draft';
+    // tslint:disable-next-line:max-line-length
+    this.visibility['showSourcingActionButtons'] = this.canSourcingReviewerPerformActions();
   }
 
   canPublishContent(submissionDateFlag) {
@@ -301,6 +304,14 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   canReviewContent(submissionDateFlag) {
     return !!(this.router.url.includes('/contribute') && submissionDateFlag && !this.resourceDetails.sampleContent === true && this.hasAccessFor('showRequestChanges') && this.resourceStatus === 'Review' && this.userService.userid !== this.resourceDetails.createdBy);
+  }
+
+  canSourcingReviewerPerformActions() {
+    return !!(this.router.url.includes('/sourcing')
+    && !this.resourceDetails.sampleContent === true && this.resourceStatus === 'Live'
+    && this.userService.userid !== this.resourceDetails.createdBy
+    && this.resourceStatus === 'Live' && !this.sourcingReviewStatus &&
+    (this.originCollectionData.status === 'Draft' && this.selectedOriginUnitStatus === 'Draft'));
   }
 
   canEditContentTitle() {
@@ -639,6 +650,23 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }, (err) => {
         this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+      });
+    }
+  }
+
+  requestCorrectionsBySourcing() {
+    if (this.FormControl.value.contentRejectComment) {
+      this.helperService.updateContentStatus(this.resourceDetails.identifier, "Draft", this.FormControl.value.contentRejectComment)
+      .subscribe(res => {
+        this.showRequestChangesPopup = false;
+        this.contentStatusNotify('Reject');
+        this.toasterService.success(this.resourceService.messages.smsg.m0069);
+        this.programStageService.removeLastStage();
+        this.uploadedContentMeta.emit({
+          contentId: res.result.node_id
+        });
+      }, (err) => {
+        this.toasterService.error(this.resourceService.messages.fmsg.m00106);
       });
     }
   }
@@ -1021,7 +1049,21 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  showSourcingOrgRejectComments() {
+  showCommentAddedAgainstContent() {
+    const id = _.get(this.resourceDetails, 'identifier');
+    //const roles = _.get(this.sessionContext, 'currentRoles');
+    const sourcingRejectedComments = _.get(this.sessionContext, 'hierarchyObj.sourcingRejectedComments')
+    if (id && this.resourceDetails.status === "Draft"
+        && (_.includes(["Review", "Live"], this.resourceDetails.prevStatus))) {
+      this.contentComment = _.get(this.resourceDetails, 'rejectComment');
+      return true;
+    } else  if (id && this.resourceDetails.status === 'Live' && !_.isEmpty(_.get(sourcingRejectedComments, id))) {
+        this.contentComment = _.get(sourcingRejectedComments, id);
+        return true;
+    }
+    return false;
+  }
+  /*showSourcingOrgRejectComments() {
     const id = _.get(this.resourceDetails, 'identifier');
     const sourcingRejectedComments = _.get(this.sessionContext, 'hierarchyObj.sourcingRejectedComments')
     if (this.resourceStatus === 'Live' && !_.isEmpty(sourcingRejectedComments) && id) {
@@ -1036,7 +1078,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     const rejectComment = _.get(this.resourceDetails, 'rejectComment');
     const roles = _.get(this.sessionContext, 'currentRoles');
     return !!(rejectComment && roles.includes('CONTRIBUTOR') && this.resourceStatus === 'Draft' && this.resourceDetails.prevStatus === 'Review');
-  }
+  }*/
 
   getEditableFieldsACL() {
     if (this.sessionContext.currentRoles.includes('CONTRIBUTOR') && this.resourceStatus === 'Draft') {

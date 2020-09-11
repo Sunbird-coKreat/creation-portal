@@ -484,6 +484,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         draft: 0,
         rejected: 0,
         live: 0,
+        correctionsPending: 0,
         sourcingPending: 0,
         sourcingAccepted: 0,
         sourcingRejected: 0,
