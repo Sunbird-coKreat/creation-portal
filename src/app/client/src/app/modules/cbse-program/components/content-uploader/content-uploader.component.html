@@ -55,7 +55,7 @@
                 <div class="warning-message" *ngIf="editTitle.length > titleCharacterLimit">{{resourceService.frmelmnts.lbl.contentNameLength }} {{titleCharacterLimit}}</div>
               </div>
             </div>
-            <div class='practical-sb-buttons'>
+            <div class="practical-sb-buttons mt-20">
               <button id="saveContent" suiPopup popupText="Save" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSave" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="saveContent()"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('save-resourcemetadata', 'click', 'content-uploader')"
@@ -92,7 +92,7 @@
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{isIndividualAndNotSample() ? 'Publish' : 'Submit' }}</button>
-              <button id="sendForCorrections" suiPopup popupText="Send back for corrections" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" class="sb-btn sb-btn-normal" (click)="popupAction='sendForCorrections';showRequestChangesPopup = true"
+              <button id="sendForCorrections" suiPopup popupText="Send back for corrections" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" class="sb-btn sb-btn-normal sb-btn-outline-primary mr-10" (click)="popupAction='sendForCorrections';showRequestChangesPopup = true"
                 appTelemetryInteract
                   [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('save-resourcemetadata', 'click', 'content-uploader')"
                   [telemetryInteractObject]="telemetryInteractObject"
