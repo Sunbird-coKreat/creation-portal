@@ -1120,7 +1120,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     const afterUpdateMetaData = this.questionCreationChild.getMetaData();
     afterUpdateMetaData['name'] = this.resourceName;
     const overridableFields = _.filter(this.programsService.overrideMetaData, (field) => field.editable === true);
-    // let isMetaDataModified = false;
     _.forEach(overridableFields, (field) => {
         if (Array.isArray(afterUpdateMetaData[field.code])) {
           if (JSON.stringify(afterUpdateMetaData[field.code]) !== JSON.stringify(beforeUpdateMetaData[field.code])) {
