@@ -1138,26 +1138,18 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }*/
 
   getEditableFields() {
+    let role;
     if (this.sessionContext.currentRoles.includes('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
-      this.editableFields.push('name');
-      _.forEach(this.allFormFields, (field) => {
-        this.editableFields.push(field.code);
-      });
+      role = 'CONTRIBUTOR';
     } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
       && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
       && !this.sourcingReviewStatus
       && (this.selectedOriginUnitStatus === 'Draft')) {
-        const nameFieldConfig = _.find(this.overrideMetaData, (item) => item.code === 'name');
-        if (nameFieldConfig.editable === true) {
-          this.editableFields.push(nameFieldConfig.code);
-        }
+      role = 'REVIEWER';
+    }
 
-        _.forEach(this.allFormFields, (field) => {
-        const fieldConfig = _.find(this.overrideMetaData, (item) => item.code === field.code);
-        if (fieldConfig.editable === true) {
-          this.editableFields.push(fieldConfig.code);
-        }
-      });
+    if (!!role) {
+      this.editableFields = this.helperService.getEditableFields(role, this.allFormFields);
     }
   }
 }
