@@ -102,6 +102,25 @@ export class HelperService {
     return this.actionService.post(option);
   }
 
+  updateContentStatus(contentId, status, comment?) {
+    const requestBody = {
+      request: {
+        content: {
+          status: status
+        }
+      }
+    };
+
+    if (!_.isUndefined(comment)) {
+      requestBody.request.content['rejectComment'] = _.trim(comment);
+    }
+    const option = {
+      url: `system/v3/content/update/${contentId}`,
+      data: requestBody
+    };
+    return this.actionService.patch(option);
+  }
+
   checkIfContentPublishedOrRejected(data, action, contentId) {
     if ((action === 'accept' && _.includes(data.acceptedContents, contentId))
       || (action === 'reject' && _.includes(data.rejectedContents, contentId))) {

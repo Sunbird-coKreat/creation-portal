@@ -41,7 +41,7 @@
             [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
             [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
             (click)="showReviewModal=!showReviewModal"
-            *ngIf="showSourcingOrgRejectComments() || showContributorOrgReviewComments()"><i class="comment alternate outline icon sb-color-primary"></i><a>View Comments</a></span>
+            *ngIf="resourceDetails && showCommentAddedAgainstContent()"><i class="comment alternate outline icon sb-color-primary"></i><a>View Comments</a></span>
             <a id="viewContentOnDiksha" *ngIf="sourcingReviewStatus === 'Approved' && originPreviewUrl && originPreviewReady" class="sb-color-primary mr-8 pl-10 fs-0-785 font-weight-bold"
               href="{{originPreviewUrl}}" target="_blank">{{resourceService.frmelmnts.btn.viewContentOnDiksha}}
             </a>
@@ -67,7 +67,7 @@
           [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
           >Save</button>
-          <button id="requestChanges" *ngIf="visibility && visibility.showRequestChanges && resourceStatus === 'Review'" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true;"
+          <button id="requestChanges" *ngIf="visibility && visibility.showRequestChanges && resourceStatus === 'Review'" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="popupAction='requestChanges';showRequestChangesPopup = true;"
           appTelemetryInteract
           [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-resource', 'click', 'question-list')"
           [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
@@ -104,14 +104,21 @@
           [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
           >{{isIndividualAndNotSample() ? 'Publish' : 'Submit' }}</button>
-          <button id="acceptContent" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentAcceptMessage}}" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live' && !sourcingReviewStatus && (originCollectionData.status === 'Draft' && selectedOriginUnitStatus === 'Draft')" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="attachContentToTextbook('accept')"
+          <button id="sendForCorrections" suiPopup popupText="Send back for corrections" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" class="sb-btn sb-btn-normal" (click)="popupAction='sendForCorrections';showRequestChangesPopup = true"
+            appTelemetryInteract
+            [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('save-resourcemetadata', 'click', 'content-uploader')"
+            [telemetryInteractObject]="telemetryInteractObject"
+            [telemetryInteractCdata]="telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryInteractPdata"
+          >{{resourceService.frmelmnts.btn.sendForCorrections}}</button>
+          <button id="acceptContent" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentAcceptMessage}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="attachContentToTextbook('accept')"
           appTelemetryInteract
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('accept-content-for-textbook', 'click', 'question-list')"
             [telemetryInteractObject]="telemetryInteractObject"
             [telemetryInteractCdata]="telemetryInteractCdata"
             [telemetryInteractPdata]="telemetryInteractPdata"
           >{{resourceService.frmelmnts.btn.approve}}</button>
-          <button id="rejectContent" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentRejectMessage}}" [popupPlacement]="'top'" *ngIf="sourcingOrgReviewer && resourceStatus === 'Live' && !sourcingReviewStatus && (originCollectionData.status === 'Draft' && selectedOriginUnitStatus === 'Draft')" class="sb-btn sb-btn-error sb-btn-normal" (click)="rejectBySourcingOrg = true; showRequestChangesPopup = true;"
+          <button id="rejectContent" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentRejectMessage}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" class="sb-btn sb-btn-error sb-btn-normal" (click)="popupAction='rejectContent'; showRequestChangesPopup = true"
           appTelemetryInteract
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-content-for-textbook', 'click', 'question-list')"
             [telemetryInteractObject]="telemetryInteractObject"
@@ -256,7 +263,7 @@
   <div class="sb-modal-content">
       <div class="sb-publish-content">
         <div class="review-modal-list">
-          {{showSourcingOrgRejectComments() ? sourcingOrgReviewComments : resourceDetails.rejectComment}}
+          {{ contentComment }}
       </div>
       </div>
   </div>
@@ -285,7 +292,10 @@
       </div>
   </div>
   <div class="sb-modal-actions">
-    <button id="submitReview" type="submit" class="sb-btn sb-btn-normal" [disabled]="contentRejectComment.length > commentCharLimit"  [ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid || contentRejectComment.length > commentCharLimit}"   (click)="rejectBySourcingOrg ? attachContentToTextbook('reject') : requestChanges(); showRequestChangesPopup = false"> Submit Review </button>
+    <button id="submitReviewbtn" type="submit" class="sb-btn sb-btn-normal" [disabled]="contentRejectComment.length > commentCharLimit"  [ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid || contentRejectComment.length > commentCharLimit}"   *ngIf="popupAction=='requestChanges'" (click)="requestChanges(); showRequestChangesPopup = false"> Submit Review </button>
+    <button id="rejectContentbtn" type="submit" class="sb-btn sb-btn-normal" [disabled]="contentRejectComment.length > commentCharLimit"  [ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid || contentRejectComment.length > commentCharLimit}"  *ngIf="popupAction=='rejectContent'" (click)="attachContentToTextbook('reject'); showRequestChangesPopup = false"> Submit Review </button>
+    <button id="sendForCorrectionsbtn" type="submit" class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid}" *ngIf="popupAction=='sendForCorrections'" (click)="requestCorrectionsBySourcing(); showRequestChangesPopup = false;"
+    > Submit Review </button>
   </div>
 </form>
 </sui-modal>
