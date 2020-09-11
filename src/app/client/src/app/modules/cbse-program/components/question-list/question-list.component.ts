@@ -79,6 +79,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public originCollectionData: any;
   selectedOriginUnitStatus: any;
   public overrideMetaData: any;
+  public isMetadataOverridden = false;
 
   constructor(
     private configService: ConfigService, private userService: UserService,
@@ -981,6 +982,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       };
       if (originData.textbookOriginId && originData.unitOriginId && originData.channel) {
         if (action === 'accept') {
+          action = this.isMetadataOverridden ? 'acceptWithChanges' : 'accept';
           this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.resourceDetails.identifier, originData);
         } else if (action === 'reject' && this.FormControl.value.contentRejectComment.length) {
           // tslint:disable-next-line:max-line-length
@@ -1055,24 +1057,24 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     const afterUpdateMetaData = this.questionCreationChild.getMetaData();
     afterUpdateMetaData['name'] = this.resourceName;
     const overridableFields = _.filter(this.programsService.overrideMetaData, (field) => field.editable === true);
-    let isMetaDataModified = false;
+    // let isMetaDataModified = false;
     _.forEach(overridableFields, (field) => {
         if (Array.isArray(afterUpdateMetaData[field.code])) {
           if (JSON.stringify(afterUpdateMetaData[field.code]) !== JSON.stringify(beforeUpdateMetaData[field.code])) {
             if (typeof beforeUpdateMetaData[field.code] === 'undefined'){
               if (afterUpdateMetaData[field.code].length) {
-                isMetaDataModified = true;
+                this.isMetadataOverridden = true;
               }
             } else {
-              isMetaDataModified = true;
+              this.isMetadataOverridden = true;
             }
           }
         } else if (typeof afterUpdateMetaData[field.code] !== 'undefined'
           && afterUpdateMetaData[field.code].localeCompare(beforeUpdateMetaData[field.code]) !== 0) {
-            isMetaDataModified = true;
+            this.isMetadataOverridden = true;
         }
     });
 
-    return isMetaDataModified;
+    return this.isMetadataOverridden;
   }
 }
