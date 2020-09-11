@@ -444,7 +444,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     return progRoleMapping;
   }
-  settelemetryForUpdaterole(user) {
+  setTelemetryForonRoleChange(user) {
      const appTelemetryInteractData = {
       context: {
         env: this.activatedRoute.snapshot.data.telemetry.env,
@@ -461,7 +461,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.telemetryService.interact(appTelemetryInteractData);
  }
   onRoleChange(user) {
-    this.settelemetryForUpdaterole(user);
+    this.setTelemetryForonRoleChange(user);
     const newRole = user.newRole;
     if (!_.includes(this.roleNames, newRole)) {
       this.toasterService.error(this.resourceService.messages.emsg.roles.m0003);
