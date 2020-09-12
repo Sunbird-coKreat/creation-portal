@@ -12,7 +12,7 @@ import { ICollectionComponentInput, IDashboardComponentInput,
 import { InitialState, ISessionContext, IUserParticipantDetails } from '../../interfaces';
 import { ProgramStageService } from '../../../program/services/program-stage/program-stage.service';
 import { ProgramComponentsService } from '../../services/program-components/program-components.service';
-import { IImpressionEventInput, IInteractEventEdata, TelemetryService } from '@sunbird/telemetry';
+import { IImpressionEventInput, IInteractEventEdata } from '@sunbird/telemetry';
 import { isUndefined, isNullOrUndefined } from 'util';
 import * as moment from 'moment';
 
@@ -101,7 +101,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     public programComponentsService: ProgramComponentsService, public programsService: ProgramsService,
     private navigationHelperService: NavigationHelperService, public registryService: RegistryService,
     private paginationService: PaginationService, public actionService: ActionService,
-    private collectionHierarchyService: CollectionHierarchyService, private telemetryService: TelemetryService,
+    private collectionHierarchyService: CollectionHierarchyService,
     private sbFormBuilder: FormBuilder) {
     this.programId = this.activatedRoute.snapshot.params.programId;
     localStorage.setItem('programId', this.programId);
@@ -445,20 +445,13 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     return progRoleMapping;
   }
   setTelemetryForonRoleChange(user) {
-     const appTelemetryInteractData = {
-      context: {
-        env: this.activatedRoute.snapshot.data.telemetry.env,
-        cdata: this.telemetryInteractCdata || [],
-        pdata: this.telemetryInteractPdata
-      },
-      edata: {
+     const edata =  {
         id: 'assign-users-to-program',
         type: 'click',
         pageid: 'list-nominated-textbooks',
         extra : {values: [user.identifier, user.newRole]}
-      },
-    };
-    this.telemetryService.interact(appTelemetryInteractData);
+      }
+    this.registryService.generateUserRoleUpdateTelemetry(this.activatedRoute.snapshot.data.telemetry.env,this.telemetryInteractCdata,this.telemetryInteractPdata, edata )
  }
   onRoleChange(user) {
     this.setTelemetryForonRoleChange(user);
