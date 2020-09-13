@@ -624,10 +624,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       // tslint:disable-next-line:max-line-length
       } else if (creatorAndReviewerRole) {
         if (((_.includes(['Review', 'Live'], content.status) || (content.prevStatus === 'Review' && content.status === 'Draft' )) && this.currentUserID !== content.createdBy && content.organisationId === this.myOrgId) || this.currentUserID === content.createdBy) {
-          // console.log('shouldContentBeVisible PASS : ', JSON.stringify(content));
           return true;
         }
-        // console.log('shouldContentBeVisible FAIL : ', JSON.stringify(content));
       } else if (reviewerViewRole && (content.status === 'Review' || content.status === 'Live' || (content.prevStatus === 'Review' && content.status === 'Draft' ) || (content.prevStatus === 'Live' && content.status === 'Draft' ))
       && this.currentUserID !== content.createdBy
       && content.organisationId === this.myOrgId) {
@@ -969,19 +967,15 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     } else {
       leaves = _.concat(_.filter(contents, filter), _.filter(contents, 'sourceURL'));
 
+      // If user is having contributor and reviewer both roles
       if (this.isContributingOrgContributor() && this.isContributingOrgReviewer()) {
-        // console.log('filterContentsForCount filter: ', JSON.stringify(filter));
-        // console.log('filterContentsForCount 1 leaves: ', JSON.stringify(leaves.length));
         leaves = _.concat(leaves, _.filter(contents, (c) => {
           const result = (c.organisationId === organisationId && c.status === 'Draft' &&
             ((c.createdBy === createdBy && c.visibility === true) || c.prevStatus === 'Review'));
-          //if (result === false) console.log('c:', JSON.stringify(c));
           return result;
         }));
-        // console.log('filterContentsForCount 2 leaves: ', JSON.stringify(leaves.length));
 
         leaves = _.uniqBy(leaves, 'identifier');
-        // console.log('filterContentsForCount 3 leaves: ', JSON.stringify(leaves.length));
       }
     }
     return leaves;
@@ -1007,7 +1001,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         }
       });
     } else if (this.isContributingOrgContributor() && this.isContributingOrgReviewer()) {
-      // console.log('setUnitContentsStatusCount contents: ', JSON.stringify(contents));
       contentStatusCount['notAccepted'] = 0;
       contentStatusCount['approvalPending'] = 0;
       contentStatusCount['reviewPending'] = 0;
@@ -1031,8 +1024,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           }
         }
       });
-
-      // console.log('setUnitContentsStatusCount PASS : ', JSON.stringify(contentStatusCount));
     } else if (this.userService.isContributingOrgAdmin() || this.isContributingOrgReviewer()) {
       contentStatusCount['notAccepted'] = 0;
       contentStatusCount['approvalPending'] = 0;
