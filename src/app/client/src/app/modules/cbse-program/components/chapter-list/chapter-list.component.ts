@@ -374,7 +374,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       createdBy = this.currentUserID;
     }
     if (this.isContributingOrgReviewer()) {
-      status = ['Review', 'Live'];
+      status = ['Review', 'Live', 'Draft'];
       prevStatus = 'Review';
     }
     if (this.isNominationByOrg()) {
@@ -598,6 +598,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   shouldContentBeVisible(content) {
     const creatorViewRole = this.hasAccessFor('showCreatorView');
     const reviewerViewRole = this.hasAccessFor('showReviewerView');
+    const creatorAndReviewerRole = creatorViewRole && reviewerViewRole;
     const contributingOrgAdmin = this.userService.isContributingOrgAdmin();
     if (this.isSourcingOrgReviewer() && this.sourcingOrgReviewer) {
       if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.status === 'Pending') {
@@ -621,6 +622,12 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
        && content.sampleContent === true) {
         return false;
       // tslint:disable-next-line:max-line-length
+      } else if (creatorAndReviewerRole) {
+        if (((_.includes(['Review', 'Live'], content.status) || (content.prevStatus === 'Review' && content.status === 'Draft' )) && this.currentUserID !== content.createdBy && content.organisationId === this.myOrgId) || this.currentUserID === content.createdBy) {
+          // console.log('shouldContentBeVisible PASS : ', JSON.stringify(content));
+          return true;
+        }
+        // console.log('shouldContentBeVisible FAIL : ', JSON.stringify(content));
       } else if (reviewerViewRole && (content.status === 'Review' || content.status === 'Live' || (content.prevStatus === 'Review' && content.status === 'Draft' ) || (content.prevStatus === 'Live' && content.status === 'Draft' ))
       && this.currentUserID !== content.createdBy
       && content.organisationId === this.myOrgId) {
@@ -904,7 +911,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     _.each(collection.children, child => {
       // tslint:disable-next-line:max-line-length
       const [restOfTheStatus, totalLeaf] = self.getContentCountPerFolder(child, contentStatus, onlySample, organisationId, createdBy, visibility, prevStatus);
-      collection.totalLeaf += totalLeaf;
+      // collection.totalLeaf += totalLeaf;
       if (!_.isEmpty(restOfTheStatus)) {
         // tslint:disable-next-line:max-line-length
         collection.sourcingStatusDetail  =  _.mergeWith(_.cloneDeep(restOfTheStatus), _.cloneDeep(collection.sourcingStatusDetail), this.addTwoObjects);
@@ -925,6 +932,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     if (this.originalCollectionData && (_.indexOf(this.originalCollectionData.childNodes, collection.origin) < 0 || this.originalCollectionData.status !== 'Draft')) {
       collection.statusMessage = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
     }
+
+    collection.totalLeaf = _.sum(_.values(collection.sourcingStatusDetail));
     return [collection.sourcingStatusDetail, collection.totalLeaf];
   }
 
@@ -932,13 +941,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     return objValue + srcValue;
   }
 
-  filterContentsForCount (contents, status?, onlySample?, organisationId?, createdBy?, visibility?, prevStatus?) {
+  filterContentsForCount(contents, status?, onlySample?, organisationId?, createdBy?, visibility?, prevStatus?) {
     const filter = {
-      ...(onlySample && {sampleContent: true}),
-      ...(!onlySample && {sampleContent: null}),
-      ...(createdBy && {createdBy}),
-      ...(organisationId && {organisationId}),
-      ...(visibility && {visibility})
+      ...(onlySample && { sampleContent: true }),
+      ...(!onlySample && { sampleContent: null }),
+      ...(createdBy && { createdBy }),
+      ...(organisationId && { organisationId }),
+      ...(visibility && { visibility })
     };
     if (status && status.length > 0) {
       contents = _.filter(contents, leaf => {
@@ -950,11 +959,30 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       });
     }
 
+    if (this.isContributingOrgContributor() && this.isContributingOrgReviewer()) {
+      delete filter.createdBy;
+    }
+
     let leaves;
     if (this.router.url.includes('/sourcing')) {
-       leaves = _.concat(_.filter(contents, filter));
+      leaves = _.concat(_.filter(contents, filter));
     } else {
-       leaves = _.concat(_.filter(contents, filter), _.filter(contents, 'sourceURL'));
+      leaves = _.concat(_.filter(contents, filter), _.filter(contents, 'sourceURL'));
+
+      if (this.isContributingOrgContributor() && this.isContributingOrgReviewer()) {
+        // console.log('filterContentsForCount filter: ', JSON.stringify(filter));
+        // console.log('filterContentsForCount 1 leaves: ', JSON.stringify(leaves.length));
+        leaves = _.concat(leaves, _.filter(contents, (c) => {
+          const result = (c.organisationId === organisationId && c.status === 'Draft' &&
+            ((c.createdBy === createdBy && c.visibility === true) || c.prevStatus === 'Review'));
+          //if (result === false) console.log('c:', JSON.stringify(c));
+          return result;
+        }));
+        // console.log('filterContentsForCount 2 leaves: ', JSON.stringify(leaves.length));
+
+        leaves = _.uniqBy(leaves, 'identifier');
+        // console.log('filterContentsForCount 3 leaves: ', JSON.stringify(leaves.length));
+      }
     }
     return leaves;
   }
@@ -978,6 +1006,33 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           }
         }
       });
+    } else if (this.isContributingOrgContributor() && this.isContributingOrgReviewer()) {
+      // console.log('setUnitContentsStatusCount contents: ', JSON.stringify(contents));
+      contentStatusCount['notAccepted'] = 0;
+      contentStatusCount['approvalPending'] = 0;
+      contentStatusCount['reviewPending'] = 0;
+      contentStatusCount['draft'] = 0;
+      contentStatusCount['rejected'] = 0;
+      contentStatusCount['approved'] = 0;
+      _.forEach(contents, (content) => {
+        if (content.organisationId === this.myOrgId && !content.sampleContent) {
+          if (content.status === 'Draft' && content.prevStatus === 'Review') {
+            contentStatusCount['notAccepted'] += 1;
+          } else if (content.status === 'Live' && !content.sourcingStatus) {
+            contentStatusCount['approvalPending'] += 1;
+          } else if (content.status === 'Review') {
+            contentStatusCount['reviewPending'] += 1;
+          } else if (content.status === 'Draft' && !content.prevStatus && content.createdBy === this.currentUserID) {
+            contentStatusCount['draft'] += 1;
+          } else if (content.sourcingStatus === 'Approved' && content.status === 'Live') {
+            contentStatusCount['approved'] += 1;
+          } else if (content.sourcingStatus === 'Rejected' && content.status === 'Live') {
+            contentStatusCount['rejected'] += 1;
+          }
+        }
+      });
+
+      // console.log('setUnitContentsStatusCount PASS : ', JSON.stringify(contentStatusCount));
     } else if (this.userService.isContributingOrgAdmin() || this.isContributingOrgReviewer()) {
       contentStatusCount['notAccepted'] = 0;
       contentStatusCount['approvalPending'] = 0;
