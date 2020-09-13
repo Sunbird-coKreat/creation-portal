@@ -628,6 +628,6 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   }
 
   getMetaData() {
-    return this.helperService.getQuestionMetaData(this.questionMetaForm.value, this.textFields);
+    return this.helperService.getFormattedData(this.questionMetaForm.value, this.textFields);
   }
 }

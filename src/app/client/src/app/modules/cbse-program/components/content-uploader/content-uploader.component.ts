@@ -877,44 +877,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   isMetaDataModified() {
-    let contentObj = {
-      'name': this.editTitle
-    };
-    const trimmedValue = _.mapValues(this.contentDetailsForm.value, (value) => {
-      if (_.isString(value)) {
-        return _.trim(value);
-      } else {
-        return value;
-      }
-    });
-
-    _.forEach(this.textFields, field => {
-      if (field.dataType === 'list') {
-        trimmedValue[field.code] = trimmedValue[field.code] ? trimmedValue[field.code].split(', ') : [];
-      }
-    });
-    contentObj = _.pickBy(_.assign(contentObj, trimmedValue), _.identity);
-    _.forEach(this.overrideMetaData, (field) => {
-      if (field.editable === true) {
-        if (Array.isArray(contentObj[field.code])) {
-          if (JSON.stringify(contentObj[field.code]) !== JSON.stringify(this.contentMetaData[field.code])) {
-            if (typeof this.contentMetaData[field.code] === 'undefined'){
-              if (contentObj[field.code].length) {
-                this.isMetadataOverridden = true;
-              }
-            } else {
-              this.isMetadataOverridden = true;
-            }
-          }
-        } else if (typeof contentObj[field.code] !== 'undefined') {
-          if (contentObj[field.code].localeCompare(this.contentMetaData[field.code]) !== 0) {
-            this.isMetadataOverridden = true;
-          }
-        }
-      }
-    });
-
-    return this.isMetadataOverridden;
+    const metaAfterUpdate = this.helperService.getFormattedData(this.contentDetailsForm.value, this.textFields);
+    metaAfterUpdate['name'] = _.trim(this.editTitle);
+    return this.isMetadataOverridden = this.helperService.isMetaDataModified(this.contentMetaData, metaAfterUpdate);
   }
 
   updateContentBeforePublishing() {
@@ -1004,33 +969,15 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   updateContent(cb) {
-    // tslint:disable-next-line:max-line-length
     if (this.contentDetailsForm.valid && this.editTitle && this.editTitle !== '') {
       this.showTextArea = false;
       this.formValues = {};
-      let contentObj = {
-          'versionKey': this.contentMetaData.versionKey,
-          'name': this.editTitle
+      let requestBody = {
+        'versionKey': this.contentMetaData.versionKey,
+        'name': _.trim(this.editTitle)
       };
-      const trimmedValue = _.mapValues(this.contentDetailsForm.value, (value) => {
-         if (_.isString(value)) {
-           return _.trim(value);
-         } else {
-           return value;
-         }
-      });
-
-      _.forEach(this.textFields, field => {
-        if (field.dataType === 'list') {
-          trimmedValue[field.code] = trimmedValue[field.code] ? trimmedValue[field.code].split(', ') : [];
-        }
-      });
-      contentObj = _.pickBy(_.assign(contentObj, trimmedValue), _.identity);
-      const request = {
-        'content': contentObj
-      };
-
-      this.helperService.updateContent(request, this.contentMetaData.identifier).subscribe((res) => {
+      requestBody = Object.assign({}, requestBody, this.helperService.getFormattedData(this.contentDetailsForm.value, this.textFields));
+      this.helperService.updateContent({'content': requestBody}, this.contentMetaData.identifier).subscribe((res) => {
         cb(null, res);
       }, (err) => {
         cb(err, null);
@@ -1047,7 +994,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         if (!err && res) {
           this.helperService.publishContent(this.contentMetaData.identifier, this.userService.userProfile.userId)
           .subscribe(res => {
-            this.attachContentToTextbook(action);
+            setTimeout(() => {
+              this.attachContentToTextbook(action);
+            }, 2000);
           }, err => {
             this.toasterService.error(this.resourceService.messages.fmsg.m0098);
             console.log(err);
@@ -1146,5 +1095,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       && (this.selectedOriginUnitStatus === 'Draft')) {
       this.editableFields = this.helperService.getEditableFields('REVIEWER', this.allFormFields);
     }
+  }
+
+  getMetaData() {
+    return this.helperService.getFormattedData(this.contentDetailsForm.value, this.textFields);
   }
 }

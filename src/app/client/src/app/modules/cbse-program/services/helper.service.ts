@@ -332,7 +332,7 @@ export class HelperService {
     return editableFields;
   }
 
-  getQuestionMetaData(formValue, textFields) {
+  getFormattedData(formValue, textFields) {
     const trimmedValue = _.mapValues(formValue, (value) => {
       if (_.isString(value)) {
         return _.trim(value);
@@ -346,6 +346,29 @@ export class HelperService {
       }
     });
     return _.pickBy(_.assign({}, trimmedValue), _.identity);
+  }
+
+  isMetaDataModified(metaBeforeUpdate, metaAfterUpdate) {
+    let metaDataModified = false;
+    const overridableFields = _.filter(this.programsService.overrideMetaData, (field) => field.editable === true);
+    _.forEach(overridableFields, (field) => {
+        if (Array.isArray(metaAfterUpdate[field.code])) {
+          if (JSON.stringify(metaAfterUpdate[field.code]) !== JSON.stringify(metaBeforeUpdate[field.code])) {
+            if (typeof metaBeforeUpdate[field.code] === 'undefined') {
+              if (metaAfterUpdate[field.code].length) {
+                metaDataModified = true;
+              }
+            } else {
+              metaDataModified = true;
+            }
+          }
+        } else if (typeof metaAfterUpdate[field.code] !== 'undefined'
+          && metaAfterUpdate[field.code].localeCompare(metaBeforeUpdate[field.code]) !== 0) {
+            metaDataModified = true;
+        }
+    });
+
+    return metaDataModified;
   }
 
   /*getContentMetadata(componentInput: any) {

@@ -972,7 +972,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   updateContentBeforeApproving(action) {
-    if (this.isQuestionMetaDataModified()) {
+    if (this.isMetaDataModified()) {
       const cb = (err, res) => {
         if (!err && res) {
           this.helperService.publishContent(this.sessionContext.resourceIdentifier, this.userService.userProfile.userId)
@@ -987,7 +987,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
               }, err => {
                 this.toasterService.error(this.resourceService.messages.fmsg.m00102);
               });
-            }, 1000);
+            }, 2000);
            }, (err) => {
             this.toasterService.error(this.resourceService.messages.fmsg.m00102);
           });
@@ -1003,7 +1003,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   updateContentBeforePublishing() {
-    if (this.isQuestionMetaDataModified()) {
+    if (this.isMetaDataModified()) {
       const cb = (err, res ) => {
         if (!err && res) {
           this.publishContent();
@@ -1096,7 +1096,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       const existingContentVersionKey = _.get(response, 'content.versionKey');
       let requestBody = {
           'versionKey': existingContentVersionKey,
-          'name': this.resourceName,
+          'name': _.trim(this.resourceName),
           'itemSets': _.map(this.resourceDetails.itemSets, (obj) =>{
             return {'identifier': obj.identifier};
           })
@@ -1114,29 +1114,11 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  isQuestionMetaDataModified() {
+  isMetaDataModified() {
     const beforeUpdateMetaData = _.clone(this.questionMetaData.data);
     beforeUpdateMetaData['name'] = this.resourceDetails.name;
     const afterUpdateMetaData = this.questionCreationChild.getMetaData();
-    afterUpdateMetaData['name'] = this.resourceName;
-    const overridableFields = _.filter(this.programsService.overrideMetaData, (field) => field.editable === true);
-    _.forEach(overridableFields, (field) => {
-        if (Array.isArray(afterUpdateMetaData[field.code])) {
-          if (JSON.stringify(afterUpdateMetaData[field.code]) !== JSON.stringify(beforeUpdateMetaData[field.code])) {
-            if (typeof beforeUpdateMetaData[field.code] === 'undefined'){
-              if (afterUpdateMetaData[field.code].length) {
-                this.isMetadataOverridden = true;
-              }
-            } else {
-              this.isMetadataOverridden = true;
-            }
-          }
-        } else if (typeof afterUpdateMetaData[field.code] !== 'undefined'
-          && afterUpdateMetaData[field.code].localeCompare(beforeUpdateMetaData[field.code]) !== 0) {
-            this.isMetadataOverridden = true;
-        }
-    });
-
-    return this.isMetadataOverridden;
+    afterUpdateMetaData['name'] = _.trim(this.resourceName);
+    return this.isMetadataOverridden = this.helperService.isMetaDataModified(beforeUpdateMetaData, afterUpdateMetaData);
   }
 }

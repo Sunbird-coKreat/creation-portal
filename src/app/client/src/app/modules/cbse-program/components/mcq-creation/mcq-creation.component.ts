@@ -610,6 +610,6 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   getMetaData() {
-    return this.helperService.getQuestionMetaData(this.questionMetaForm.value, this.textFields);
+    return this.helperService.getFormattedData(this.questionMetaForm.value, this.textFields);
   }
 }
