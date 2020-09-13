@@ -1096,8 +1096,4 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.editableFields = this.helperService.getEditableFields('REVIEWER', this.allFormFields);
     }
   }
-
-  getMetaData() {
-    return this.helperService.getFormattedData(this.contentDetailsForm.value, this.textFields);
-  }
 }
