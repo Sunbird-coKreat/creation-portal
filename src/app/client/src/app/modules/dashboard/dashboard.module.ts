@@ -15,9 +15,9 @@ import {
   UsageService, ReportService
 } from './services';
 import {
-  OrganisationComponent, CourseConsumptionComponent, CourseProgressComponent, UsageReportsComponent,
+  OrganisationComponent, UsageReportsComponent,
   DataTableComponent, DataChartComponent, ReportComponent, ReportSummaryComponent, ListAllReportsComponent,
-  AddSummaryModalComponent, CourseDashboardComponent, ReIssueCertificateComponent, DashboardSidebarComponent,
+  AddSummaryModalComponent, DashboardSidebarComponent,
   DatasetComponent
 } from './components';
 import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
@@ -43,10 +43,10 @@ import { AceEditorModule } from 'ng2-ace-editor';
     NgxDaterangepickerMd.forRoot(),
     AceEditorModule
   ],
-  declarations: [CourseConsumptionComponent, OrganisationComponent, CourseProgressComponent, UsageReportsComponent,
-    DataTableComponent, DataChartComponent, ListAllReportsComponent, ReportSummaryComponent, ReportComponent, AddSummaryModalComponent,
-    CourseDashboardComponent, ReIssueCertificateComponent, DashboardSidebarComponent, DatasetComponent],
-  exports: [CourseProgressComponent, DataTableComponent],
+  declarations: [OrganisationComponent, UsageReportsComponent,
+    DataTableComponent, DataChartComponent, ListAllReportsComponent, ReportSummaryComponent,
+    ReportComponent, AddSummaryModalComponent, DashboardSidebarComponent, DatasetComponent],
+  exports: [DataTableComponent],
   providers: [
     RendererService,
     DashboardUtilsService,

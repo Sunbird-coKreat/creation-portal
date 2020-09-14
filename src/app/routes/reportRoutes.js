@@ -13,8 +13,7 @@ module.exports = function (app) {
         reportHelper.validateRoles(['REPORT_ADMIN']),
         proxy(REPORT_SERVICE_URL, {
             limit: reqDataLimitOfContentUpload,
-            // proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(REPORT_SERVICE_URL),
-            proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
+            proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
             proxyReqPathResolver: function (req) {
                 return `${REPORT_SERVICE_URL}${req.originalUrl}`
             },
@@ -35,8 +34,7 @@ module.exports = function (app) {
         reportHelper.validateRoles(['REPORT_VIEWER', 'REPORT_ADMIN']),
         proxy(REPORT_SERVICE_URL, {
             limit: reqDataLimitOfContentUpload,
-            // proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(REPORT_SERVICE_URL),
-            proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
+            proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
             proxyReqPathResolver: function (req) {
                 return `${REPORT_SERVICE_URL}${req.originalUrl}`
             },
@@ -64,8 +62,7 @@ module.exports = function (app) {
         reportHelper.validateRoles(['REPORT_VIEWER', 'REPORT_ADMIN']),
         proxy(REPORT_SERVICE_URL, {
             limit: reqDataLimitOfContentUpload,
-            // proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(REPORT_SERVICE_URL),
-            proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
+            proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
             proxyReqPathResolver: function (req) {
                 return `${REPORT_SERVICE_URL}${req.originalUrl}`
             },
@@ -114,8 +111,7 @@ module.exports = function (app) {
         reportHelper.validateRoles(['REPORT_ADMIN']),
         proxy(DATASERVICE_URL, {
             limit: reqDataLimitOfContentUpload,
-            // proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(DATASERVICE_URL),
-            proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
+            proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
             proxyReqPathResolver: function (req) {
                 const updatedUrl = req.originalUrl.replace("/report", "");
                 return `/api/data/v3${updatedUrl}`;

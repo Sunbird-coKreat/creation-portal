@@ -25,5 +25,4 @@ export * from './enroll-contributor/enroll-contributor.service';
 export * from './textbook-list/textbook-list.service';
 export * from './registry/registry.service';
 export * from './notification/notification.service';
-export * from './cert-reg/cert-reg.service';
 export * from './report/report.service';

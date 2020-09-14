@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
 import { ResourceService } from '@sunbird/shared';
 import { FlagContentComponent, AuthGuard } from '@sunbird/core';
-import { CourseProgressComponent } from '@sunbird/dashboard';
+// import { CourseProgressComponent } from '@sunbird/dashboard';
 import { RedirectComponent } from './../shared/components/redirect/redirect.component';
 import { ViewAllComponent } from '@sunbird/shared-feature';
 const telemetryEnv = 'Course';
@@ -79,13 +79,13 @@ const routes: Routes = [
           }
         ]
       },
-      {
-        path: ':courseId/dashboard', component: CourseProgressComponent, canActivate: [AuthGuard],
-        data: {
-          roles: 'courseBatchRoles',
-          telemetry: { env: telemetryEnv, pageid: 'course-stats', type: 'view', object: { ver: '1.0', type: 'course' } }
-        }
-      },
+      // {
+      //   path: ':courseId/dashboard', component: CourseProgressComponent, canActivate: [AuthGuard],
+      //   data: {
+      //     roles: 'courseBatchRoles',
+      //     telemetry: { env: telemetryEnv, pageid: 'course-stats', type: 'view', object: { ver: '1.0', type: 'course' } }
+      //   }
+      // },
       {
         path: ':courseId/batch/:batchId', component: CoursePlayerComponent,
         data: {
