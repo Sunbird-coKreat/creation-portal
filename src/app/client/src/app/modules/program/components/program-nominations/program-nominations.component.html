@@ -415,7 +415,7 @@
 							<td class="text-center">
                                 <div class="custom-selectbx">
                                     <label>
-                                        <select class="custom-selectbx" [(ngModel)]="orgUser.newRole" labelField="name"  valueField="name" (change)="onRoleChange(orgUser)" >
+                                        <select [(ngModel)]="orgUser.newRole" labelField="name"  valueField="name" (change)="onRoleChange(orgUser)" >
                                             <option *ngFor="let option of roles;" >
                                                 {{showUserRoleOption(option?.name, orgUser?.newRole)}}
                                             </option>

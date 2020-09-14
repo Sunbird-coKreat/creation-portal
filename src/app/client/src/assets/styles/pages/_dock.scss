@@ -604,6 +604,10 @@ xxl calculateRem(180px) 24px 20px;
     transition: box-shadow .1s ease,width .1s ease;
     -webkit-appearance: none;
     box-shadow: none !important;
+    &:focus,&:active{
+      border: 1px solid var(--primary-300) !important; 
+      outline: 0 !important;
+    }
     option{
       background-color: #fff !important;
       outline: 0 !important;
@@ -613,10 +617,6 @@ xxl calculateRem(180px) 24px 20px;
   :-webkit-autofill { 
     color: #fff !important; 
   }
-      &:focus,&:active{
-        border: 1px solid var(--primary-300) !important; 
-        outline: 0 !important;
-      }
     label:after {
       content:'\25BC';
       display:inline-block;
