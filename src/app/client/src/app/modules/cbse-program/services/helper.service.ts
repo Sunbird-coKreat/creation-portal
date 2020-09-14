@@ -160,18 +160,22 @@ export class HelperService {
           }
         };
         this.programsService.post(req).subscribe((response) => {
-          this.attachContentToTextbook(action, collectionId, contentId, data);
+          const me = this;
+          setTimeout(() => {
+            me.attachContentToTextbook(action, collectionId, contentId, data);
+          }, 1000);
         }, err => {
           this.acceptContent_errMsg(action);
         });
       } else {
-        this.attachContentToTextbook(action, collectionId, contentId, data, rejectedComments);
+        const me = this;
+        setTimeout(() => {
+          me.attachContentToTextbook(action, collectionId, contentId, data, rejectedComments);
+        }, 1000);
       }
-
     }, (err) => {
       this.acceptContent_errMsg(action);
     });
-
   }
 
   attachContentToTextbook(action, collectionId, contentId, data, rejectedComments?) {
@@ -180,17 +184,27 @@ export class HelperService {
         'versionKey': data.versionKey
       }
     };
+
     // tslint:disable-next-line:max-line-length
-    action === 'accept' || action === 'acceptWithChanges' ? request.content['acceptedContents'] = _.uniq([...data.acceptedContents || [], contentId]) : request.content['rejectedContents'] = _.uniq([...data.rejectedContents || [], contentId]);
+    if (action === 'accept' || action === 'acceptWithChanges') {
+      request.content['acceptedContents'] = _.uniq([...data.acceptedContents || [], contentId]);
+    } else {
+      request.content['rejectedContents'] = _.uniq([...data.rejectedContents || [], contentId]);
+    }
+
     if (action === 'reject' && rejectedComments) {
       // tslint:disable-next-line:max-line-length
       request.content['sourcingRejectedComments'] = data.sourcingRejectedComments && _.isString(data.sourcingRejectedComments) ? JSON.parse(data.sourcingRejectedComments) : data.sourcingRejectedComments || {};
       request.content['sourcingRejectedComments'][contentId] = rejectedComments;
     }
+
     this.updateContent(request, collectionId).subscribe(() => {
-      action === 'accept' || action === 'acceptWithChanges' ? this.toasterService.success(this.resourceService.messages.smsg.m0066) :
+        if (action === 'accept' || action === 'acceptWithChanges') {
+          this.toasterService.success(this.resourceService.messages.smsg.m0066);
+        } else if (action === 'reject') {
+          this.toasterService.success(this.resourceService.messages.smsg.m0067);
+        }
         this.sendNotification.next(_.capitalize(action));
-        this.toasterService.success(this.resourceService.messages.smsg.m0067);
         this.programStageService.removeLastStage();
     }, (err) => {
       this.acceptContent_errMsg(action);
@@ -291,6 +305,70 @@ export class HelperService {
       param: { 'mode': 'edit', 'fields': 'versionKey,mvcContentCount,mvcContributions' }
     };
     return  this.actionService.get(option);
+  }
+
+  getEditableFields(role, formFields) {
+    const editableFields = [];
+    switch (role) {
+      case 'CONTRIBUTOR':
+        editableFields.push('name');
+      _.forEach(formFields, (field) => {
+        editableFields.push(field.code);
+      });
+      break;
+      case 'REVIEWER':
+        const nameFieldConfig = _.find(this.programsService.overrideMetaData, (item) => item.code === 'name');
+        if (nameFieldConfig.editable === true) {
+          editableFields.push(nameFieldConfig.code);
+        }
+        _.forEach(formFields, (field) => {
+          const fieldConfig = _.find(this.programsService.overrideMetaData, (item) => item.code === field.code);
+          if (fieldConfig.editable === true) {
+            editableFields.push(fieldConfig.code);
+          }
+        });
+      break;
+    }
+    return editableFields;
+  }
+
+  getFormattedData(formValue, textFields) {
+    const trimmedValue = _.mapValues(formValue, (value) => {
+      if (_.isString(value)) {
+        return _.trim(value);
+      } else {
+        return value;
+      }
+    });
+    _.forEach(textFields, field => {
+      if (field.dataType === 'list') {
+        trimmedValue[field.code] = trimmedValue[field.code] ? trimmedValue[field.code].split(', ') : [];
+      }
+    });
+    return _.pickBy(_.assign({}, trimmedValue), _.identity);
+  }
+
+  isMetaDataModified(metaBeforeUpdate, metaAfterUpdate) {
+    let metaDataModified = false;
+    const overridableFields = _.filter(this.programsService.overrideMetaData, (field) => field.editable === true);
+    _.forEach(overridableFields, (field) => {
+        if (Array.isArray(metaAfterUpdate[field.code])) {
+          if (JSON.stringify(metaAfterUpdate[field.code]) !== JSON.stringify(metaBeforeUpdate[field.code])) {
+            if (typeof metaBeforeUpdate[field.code] === 'undefined') {
+              if (metaAfterUpdate[field.code].length) {
+                metaDataModified = true;
+              }
+            } else {
+              metaDataModified = true;
+            }
+          }
+        } else if (typeof metaAfterUpdate[field.code] !== 'undefined'
+          && metaAfterUpdate[field.code].localeCompare(metaBeforeUpdate[field.code]) !== 0) {
+            metaDataModified = true;
+        }
+    });
+
+    return metaDataModified;
   }
 
   /*getContentMetadata(componentInput: any) {

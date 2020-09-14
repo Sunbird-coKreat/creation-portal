@@ -13,6 +13,7 @@ import { CbseProgramService } from '../../services';
 import { Validators, FormGroup, FormArray, FormBuilder, NgForm } from '@angular/forms';
 import { mcqTemplateConfig } from '../mcq-template-selection/mcq-template-data';
 import { ProgramTelemetryService } from '../../../program/services';
+import { HelperService } from '../../services/helper.service';
 
 @Component({
   selector: 'app-mcq-creation',
@@ -81,6 +82,9 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
   solutionValue: string;
   telemetryImpression: any;
   public telemetryPageId = 'mcq-creation';
+  public overrideMetaData: any;
+  public editableFields = [];
+  @Input() editableFieldsACL: any;
 
   constructor(public configService: ConfigService, private http: HttpClient,
     private userService: UserService, public actionService: ActionService,
@@ -88,7 +92,7 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
     private formBuilder: FormBuilder, public telemetryService: TelemetryService,
     public activeRoute: ActivatedRoute, public programTelemetryService: ProgramTelemetryService,
     public router: Router, private navigationHelperService: NavigationHelperService, private resourceService: ResourceService,
-    private programsService: ProgramsService) {
+    private programsService: ProgramsService, private helperService: HelperService) {
   }
 
   initForm() {
@@ -177,6 +181,10 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
     }
   }
 
+  canViewContentType() {
+    return !!(this.sessionContext.currentRoles.includes('REVIEWER') && this.userService.userid !== _.get(this.questionMetaData, 'data.createdBy'));
+  }
+
   handleTemplateSelection(event) {
     this.showTemplatePopup = false;
     if (event.type === 'submit') {
@@ -198,6 +206,7 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
     }
     return userName;
   }
+
   videoDataOutput(event) {
     if (event) {
       this.videoSolutionData = event;
@@ -491,6 +500,7 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
     if (this.questionMetaData) {
       this.formConfiguration = this.componentConfiguration.config.formConfiguration;
       this.allFormFields = _.filter(this.formConfiguration, {'visible': true});
+      this.textFields = _.filter(this.formConfiguration, {'inputType': 'text', 'visible': true});
       // tslint:disable-next-line:max-line-length
       this.disableFormField = (this.sessionContext.currentRoles.includes('CONTRIBUTOR') && this.sessionContext.resourceStatus === 'Draft') ? false : true ;
       const formFields = _.map(this.formConfiguration, (formData) => {
@@ -517,7 +527,6 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
           return learningOutcome.name;
         });
       }
-
       _.map(this.allFormFields, (obj) => {
         const code = obj.code;
         const preSavedValues = {};
@@ -549,6 +558,7 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
           }
         }
       });
+      this.editableFields = this.helperService.getEditableFields(this.editableFieldsACL, this.allFormFields);
       this.questionMetaForm = this.formBuilder.group(controller);
       this.onFormValueChange();
     }
@@ -596,6 +606,14 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   canReviewContent() {
-    return !!(this.roles.currentRoles.includes('REVIEWER') && this.sessionContext.resourceStatus === 'Review' && this.router.url.includes('/contribute') && this.programsService.checkForContentSubmissionDate(this.sessionContext.programContext) && this.userService.userid !== _.get(this.sessionContext, 'contentMetadata.createdBy'));
+    return !!(this.roles.currentRoles.includes('REVIEWER')
+            && this.sessionContext.resourceStatus === 'Review'
+            && this.router.url.includes('/contribute')
+            && this.programsService.checkForContentSubmissionDate(this.sessionContext.programContext)
+            && this.userService.userid !== _.get(this.sessionContext, 'contentMetadata.createdBy'));
+  }
+
+  getMetaData() {
+    return this.helperService.getFormattedData(this.questionMetaForm.value, this.textFields);
   }
 }

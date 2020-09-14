@@ -27,7 +27,7 @@
               [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
               [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
               (click)="showResourceTitleEditor()"
-              *ngIf="visibility && visibility.showSave"
+              *ngIf="canEditContentTitle()"
             >Edit</a>
           </div>
           <div class="mt-8 practice-set__status">
@@ -90,7 +90,7 @@
           >Edit</button>
           <button id="publishContent" *ngIf="visibility && visibility.showPublish && resourceStatus === 'Review'" class="sb-btn sb-btn-normal mr-8"
           [ngClass]="isPublishBtnDisable ? 'sb-btn-disabled' : 'sb-btn-secondary'"
-          [disabled] = "isPublishBtnDisable" (click)="publishContent();"
+          [disabled] = "isPublishBtnDisable" (click)="updateContentBeforePublishing();"
           appTelemetryInteract
           [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('publish-resource', 'click', 'question-list')"
           [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
@@ -111,7 +111,7 @@
             [telemetryInteractCdata]="telemetryInteractCdata"
             [telemetryInteractPdata]="telemetryInteractPdata"
           >{{resourceService.frmelmnts.btn.sendForCorrections}}</button>
-          <button id="acceptContent" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentAcceptMessage}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="attachContentToTextbook('accept')"
+          <button id="acceptContent" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentAcceptMessage}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="updateContentBeforeApproving('accept')"
           appTelemetryInteract
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('accept-content-for-textbook', 'click', 'question-list')"
             [telemetryInteractObject]="telemetryInteractObject"
@@ -178,7 +178,7 @@
         <div *ngIf="sessionContext.questionType === 'mcq'" class="ui segment">
           <div [hidden]="showLoader">
             <app-mcq-creation #questionCreationChild [sessionContext]="sessionContext" [telemetryEventsInput]="telemetryEventsInput" [questionMetaData]="questionMetaData"
-              [roles]="roles" (questionStatus)="questionStatusHandler($event)"
+              [roles]="roles" [editableFieldsACL]="getEditableFieldsACL()" (questionStatus)="questionStatusHandler($event)"
               (questionFormChangeStatus)="handleQuestionFormChangeStatus($event)">
             </app-mcq-creation>
           </div>
@@ -186,7 +186,7 @@
         <div *ngIf="sessionContext.questionType !== 'mcq'" class="ui segment">
           <div [hidden]="showLoader">
             <app-question-creation #questionCreationChild [sessionContext]="sessionContext" [telemetryEventsInput]="telemetryEventsInput" [questionMetaData]="questionMetaData"
-              [roles]="roles" (questionStatus)="questionStatusHandler($event)"
+              [roles]="roles" [editableFieldsACL]="getEditableFieldsACL()" (questionStatus)="questionStatusHandler($event)"
               (questionFormChangeStatus)="handleQuestionFormChangeStatus($event)">
             </app-question-creation>
           </div>
