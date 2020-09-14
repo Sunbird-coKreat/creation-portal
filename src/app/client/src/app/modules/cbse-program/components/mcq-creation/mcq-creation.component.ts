@@ -177,6 +177,10 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
     }
   }
 
+  canViewContentType() {
+    return !!(this.sessionContext.currentRoles.includes('REVIEWER') && this.userService.userid !== _.get(this.questionMetaData, 'data.createdBy'));
+  }
+
   handleTemplateSelection(event) {
     this.showTemplatePopup = false;
     if (event.type === 'submit') {

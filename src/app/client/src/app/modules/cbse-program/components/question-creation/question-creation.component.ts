@@ -437,6 +437,10 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
     this.onFormValueChange(true);
   }
 
+  canViewContentType() {
+    return !!(this.sessionContext.currentRoles.includes('REVIEWER') && this.userService.userid !== _.get(this.questionMetaData, 'data.createdBy'));
+  }
+
   getConvertedLatex(body) {
     const getLatex = (encodedMath) => {
       return this.http.get('https://www.wiris.net/demo/editor/mathml2latex?mml=' + encodedMath, {
