@@ -474,7 +474,7 @@
 	</div>
   </sui-modal>
 
-  <sui-modal *ngIf="showUserRemoveRoleModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showUserRemoveRoleModal = false" #userRemoveRoleModal>
+  <sui-modal *ngIf="showUserRemoveRoleModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="cancelRemoveUserFromProgram();" #userRemoveRoleModal>
   <div class="sb-modal-header">
     {{resourceService?.frmelmnts?.lbl?.confirm}}
   </div>
