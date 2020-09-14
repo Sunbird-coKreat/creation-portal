@@ -70,8 +70,8 @@
               <div class="custom-selectbx">
                 <label>
                   <select class="custom-selectbx" [(ngModel)]="orgUser.selectedRole" labelField="name"  valueField="name" (change)="onRoleChange(orgUser)" >
-                    <option *ngFor="let option of roles;" >
-                    {{option.value}}
+                    <option *ngFor="let option of roles;" [value]=option.value>
+                      {{option.name}}
                     </option>
                   </select>
                 </label>

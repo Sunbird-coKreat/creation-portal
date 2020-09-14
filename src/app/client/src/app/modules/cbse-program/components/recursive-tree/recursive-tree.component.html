@@ -124,7 +124,7 @@
               <span class="sb-color-primary"  *ngIf="content.sourcingStatus === 'PendingForCorrections' && content.status === 'Draft' && content.prevStatus === 'Live'">{{resourceService.frmelmnts.contentStatus.lbl.correctionsPending}}</span>
             </span>
             <div class="item-dropdown absolute position" (click)="menuClick($event)" *ngIf="content.status === 'Draft' && !content.sourceURL">
-              <div *ngIf="visibility && visibility['showActionMenu']" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
+              <div *ngIf="canViewActionMenu(content)" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
                 suiDropdown
                 appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('context-menu', 'click', 'chapter-list')"
@@ -170,7 +170,7 @@
               </div>
             </div>
             <div class="item-dropdown absolute position" (click)="menuClick($event)" *ngIf="content.status === 'Live' && content.sourceURL && (content.sourcingStatus !== 'Approved' && content.sourcingStatus !== 'Rejected')">
-              <div *ngIf="visibility && visibility['showActionMenu']" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
+              <div *ngIf="canViewActionMenu(content)" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
                 suiDropdown
                 appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('context-menu', 'click', 'chapter-list')"
