@@ -467,7 +467,9 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
         if (data === 'Approved' || data === 'Rejected') {
           this.showNominateModal = false;
           this.toasterService.error(`${this.resourceService.messages.emsg.modifyNomination.error} ${data}`);
-          this.router.navigateByUrl('/contribute/myenrollprograms');
+          setTimeout(() => {
+            this.router.navigateByUrl('/contribute/myenrollprograms');
+          }, 10);
         } else if (data.result && !_.isEmpty(data.result)) {
             this.showNominateModal = false;
             const router = this.router;

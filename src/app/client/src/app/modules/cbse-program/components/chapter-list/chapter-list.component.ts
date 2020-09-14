@@ -582,7 +582,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
             return 'Approved';
       } else if (this.storedCollectionData.rejectedContents  &&
               _.includes(this.storedCollectionData.rejectedContents || [], content.identifier)) {
-                 return 'Rejected';
+            return 'Rejected';
+      } else if (content.status === "Draft" && content.prevStatus === "Live") {
+            return 'PendingForCorrections';
       } else {
         return null;
       }
@@ -606,11 +608,12 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           return false;
       } else if (this.sessionContext.nominationDetails
         && (this.sessionContext.nominationDetails.status === 'Approved' || this.sessionContext.nominationDetails.status === 'Rejected')) {
-          if ( reviewerViewRole && content.status === 'Live' && content.sampleContent !== true ) {
+          if ( reviewerViewRole && content.sampleContent !== true &&
+          (content.status === 'Live' || (content.prevStatus === 'Live' && content.status === 'Draft' ))) {
               return true;
           }
           return false;
-      } else if (reviewerViewRole && content.status === 'Live') {
+      } else if (reviewerViewRole && (content.status === 'Live'|| (content.prevStatus === 'Live' && content.status === 'Draft' ))) {
           return true;
       }
     } else {
@@ -618,7 +621,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
        && content.sampleContent === true) {
         return false;
       // tslint:disable-next-line:max-line-length
-      } else if (reviewerViewRole && (content.status === 'Review' || content.status === 'Live' || (content.prevStatus === 'Review' && content.status === 'Draft' ))
+      } else if (reviewerViewRole && (content.status === 'Review' || content.status === 'Live' || (content.prevStatus === 'Review' && content.status === 'Draft' ) || (content.prevStatus === 'Live' && content.status === 'Draft' ))
       && this.currentUserID !== content.createdBy
       && content.organisationId === this.myOrgId) {
         return true;

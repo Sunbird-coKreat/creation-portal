@@ -340,8 +340,9 @@ export class RegistryService extends DataService {
   
   public getSearchedUserList(userList,searchInput) {
     let searchedUserList = [];
+    searchInput = searchInput.toUpperCase();
     _.forEach(userList, (user) => {
-      if (user.firstName.includes(searchInput)) {
+      if (user.firstName.toUpperCase().includes(searchInput)) {
         searchedUserList.push(user);
       }
     });

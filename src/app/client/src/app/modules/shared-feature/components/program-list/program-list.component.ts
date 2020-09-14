@@ -418,7 +418,8 @@ export class ProgramListComponent implements OnInit {
     const nominationsAssignedToMe = _.filter(nominations, (nomination) => {
       const myRoles = this.userService.getMyRoleForProgram(nomination);
 
-      if (myRoles.includes('CONTRIBUTOR') || myRoles.includes('REVIEWER') && nomination.status === 'Approved') {
+      // Check if user have CONTRIBUTOR/REVIEWER role and nomination is Approved
+      if ((myRoles.includes('CONTRIBUTOR') || myRoles.includes('REVIEWER')) && nomination.status === 'Approved') {
         this.roleMapping.push(nomination);
         return true;
       }
