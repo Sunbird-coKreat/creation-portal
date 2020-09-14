@@ -245,7 +245,7 @@
               <div *ngIf="field.inputType === 'select'" class="width-100">
                 <div>
                   <label class="font-weight-bold fsmall">{{field.label}}:</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span><i *ngIf="field.helpText" class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{field.helpText}}"></i>
-                  <sui-select *ngIf="!disableFormField" formControlName="{{field.code}}" class="selection" [isDisabled]="disableFormField" placeholder="{{field.placeholder}}"
+                  <sui-select *ngIf="editableFields.indexOf(field?.code) > -1" formControlName="{{field.code}}" class="selection" [isDisabled]="editableFields.indexOf(field?.code) == -1" placeholder="{{field.placeholder}}"
                   appTelemetryInteract
                   [telemetryInteractEdata]="{id:'select-' + field.code,type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
                   [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
@@ -261,7 +261,7 @@
                     >
                     </sui-select-option>
                   </sui-select>
-                  <div *ngIf="disableFormField"><span class="sb-color-gray-200 fs-0-785">{{questionMetaData.data[field.code]}}</span></div>
+                  <div *ngIf="editableFields.indexOf(field?.code) == -1"><span class="sb-color-gray-200 fs-0-785">{{questionMetaData.data[field.code]}}</span></div>
                   <label class="sb-color-error mb-0 font-weight-normal" *ngIf="((questionMetaForm.get(field.code).touched) && (questionMetaForm.get(field.code).errors?.required))">* This field is mandatory</label>
                 </div>
               </div>
@@ -269,7 +269,7 @@
               <div *ngIf="field.inputType === 'multiselect'" class="width-100">
                   <div>
                       <label class="font-weight-bold fsmall">{{field.label}}:</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span><i *ngIf="field.helpText" class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{field.helpText}}"></i>
-                      <sui-multi-select *ngIf="!disableFormField" formControlName="{{field.code}}" class="selection" [isDisabled]="disableFormField" placeholder="{{field.placeholder}}"
+                      <sui-multi-select *ngIf="editableFields.indexOf(field?.code) > -1" formControlName="{{field.code}}" class="selection" [isDisabled]="editableFields.indexOf(field?.code) == -1" placeholder="{{field.placeholder}}"
                       appTelemetryInteract
                       [telemetryInteractEdata]="{id:'multiselect-' + field.code,type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
                       [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
@@ -285,7 +285,7 @@
                         >
                         </sui-select-option>
                       </sui-multi-select>
-                      <div *ngIf="disableFormField"><span class="sb-color-gray-200 fs-0-785">{{questionMetaData.data[field.code]}}</span></div>
+                      <div *ngIf="editableFields.indexOf(field?.code) == -1"><span class="sb-color-gray-200 fs-0-785">{{questionMetaData.data[field.code]}}</span></div>
                       <label class="sb-color-error mb-0 font-weight-normal" *ngIf="((questionMetaForm.get(field.code).touched) && (questionMetaForm.get(field.code).errors?.required))">* This field is mandatory</label>
                   </div>
               </div>
@@ -293,14 +293,14 @@
               <div *ngIf="field.inputType === 'text'" class="width-100">
                 <div>
                   <label class="font-weight-bold fsmall">{{field.label}}:</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span><i *ngIf="field.helpText" class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{field.helpText}}"></i>
-                    <input *ngIf="!disableFormField" formControlName="{{field.code}}" type="{{field.inputType}}" name="{{field.code}}" class="sb-form-control" placeholder="{{field.placeholder}}"
+                    <input *ngIf="editableFields.indexOf(field?.code) > -1" formControlName="{{field.code}}" type="{{field.inputType}}" name="{{field.code}}" class="sb-form-control" placeholder="{{field.placeholder}}"
                     appTelemetryInteract
                     [telemetryInteractEdata]="{id:'input-' + field.code,type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
                     [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
                     [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
                     >
-                    <div *ngIf="disableFormField"><span class="sb-color-gray-200 fs-0-785">{{questionMetaData.data[field.code]}}</span></div>
+                    <div *ngIf="editableFields.indexOf(field?.code) == -1"><span class="sb-color-gray-200 fs-0-785">{{questionMetaData.data[field.code]}}</span></div>
                   <label class="sb-color-error mb-0 font-weight-normal" *ngIf="((questionMetaForm.get(field.code).touched) && (questionMetaForm.get(field.code).errors?.required))">* This field is mandatory</label>
 
                 </div>

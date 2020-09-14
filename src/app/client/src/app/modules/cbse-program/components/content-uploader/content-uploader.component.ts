@@ -881,44 +881,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   isMetaDataModified() {
-    let contentObj = {
-      'name': this.editTitle
-    };
-    const trimmedValue = _.mapValues(this.contentDetailsForm.value, (value) => {
-      if (_.isString(value)) {
-        return _.trim(value);
-      } else {
-        return value;
-      }
-    });
-
-    _.forEach(this.textFields, field => {
-      if (field.dataType === 'list') {
-        trimmedValue[field.code] = trimmedValue[field.code] ? trimmedValue[field.code].split(', ') : [];
-      }
-    });
-    contentObj = _.pickBy(_.assign(contentObj, trimmedValue), _.identity);
-    _.forEach(this.overrideMetaData, (field) => {
-      if (field.editable === true) {
-        if (Array.isArray(contentObj[field.code])) {
-          if (JSON.stringify(contentObj[field.code]) !== JSON.stringify(this.contentMetaData[field.code])) {
-            if (typeof this.contentMetaData[field.code] === 'undefined'){
-              if (contentObj[field.code].length) {
-                this.isMetadataOverridden = true;
-              }
-            } else {
-              this.isMetadataOverridden = true;
-            }
-          }
-        } else if (typeof contentObj[field.code] !== 'undefined') {
-          if (contentObj[field.code].localeCompare(this.contentMetaData[field.code]) !== 0) {
-            this.isMetadataOverridden = true;
-          }
-        }
-      }
-    });
-
-    return this.isMetadataOverridden;
+    const metaAfterUpdate = this.helperService.getFormattedData(this.contentDetailsForm.value, this.textFields);
+    metaAfterUpdate['name'] = _.trim(this.editTitle);
+    return this.isMetadataOverridden = this.helperService.isMetaDataModified(this.contentMetaData, metaAfterUpdate);
   }
 
   updateContentBeforePublishing() {
@@ -936,14 +901,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
 
-  publishContent(cb = (err, res) => {}) {
+  publishContent() {
     this.helperService.publishContent(this.contentMetaData.identifier, this.userService.userProfile.userId)
        .subscribe(res => {
         if (this.sessionContext.collection && this.unitIdentifier) {
           // tslint:disable-next-line:max-line-length
           this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier || res.result.content_id)
           .subscribe((data) => {
-            cb(null, data);
             this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
             this.programStageService.removeLastStage();
             this.uploadedContentMeta.emit({
@@ -953,7 +917,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         }
       }, (err) => {
         this.toasterService.error(this.resourceService.messages.fmsg.m00102);
-        cb(err, null);
       });
   }
 
@@ -1010,33 +973,15 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   updateContent(cb) {
-    // tslint:disable-next-line:max-line-length
     if (this.contentDetailsForm.valid && this.editTitle && this.editTitle !== '') {
       this.showTextArea = false;
       this.formValues = {};
-      let contentObj = {
-          'versionKey': this.contentMetaData.versionKey,
-          'name': this.editTitle
+      let requestBody = {
+        'versionKey': this.contentMetaData.versionKey,
+        'name': _.trim(this.editTitle)
       };
-      const trimmedValue = _.mapValues(this.contentDetailsForm.value, (value) => {
-         if (_.isString(value)) {
-           return _.trim(value);
-         } else {
-           return value;
-         }
-      });
-
-      _.forEach(this.textFields, field => {
-        if (field.dataType === 'list') {
-          trimmedValue[field.code] = trimmedValue[field.code] ? trimmedValue[field.code].split(', ') : [];
-        }
-      });
-      contentObj = _.pickBy(_.assign(contentObj, trimmedValue), _.identity);
-      const request = {
-        'content': contentObj
-      };
-
-      this.helperService.updateContent(request, this.contentMetaData.identifier).subscribe((res) => {
+      requestBody = Object.assign({}, requestBody, this.helperService.getFormattedData(this.contentDetailsForm.value, this.textFields));
+      this.helperService.updateContent({'content': requestBody}, this.contentMetaData.identifier).subscribe((res) => {
         cb(null, res);
       }, (err) => {
         cb(err, null);
@@ -1048,19 +993,27 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   updateContentBeforeApproving(action) {
-
     if (this.isMetaDataModified()) {
       const cb = (err, res) => {
         if (!err && res) {
-          const callback = (error, resp) => {
-            if (!error && resp) {
-              this.attachContentToTextbook(action);
-            } else if (error) {
-              this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-              console.log(err);
-            }
-          };
-          this.publishContent(callback);
+          this.helperService.publishContent(this.contentMetaData.identifier, this.userService.userProfile.userId)
+          .subscribe(res => {
+            const me = this;
+            setTimeout(() => {
+              me.getContentStatus(this.contentMetaData.identifier).subscribe((response: any) => {
+                const status = _.get(response, 'content.status');
+                if (status === 'Live') {
+                  me.attachContentToTextbook(action);
+                }
+              }, err => {
+                me.toasterService.error(this.resourceService.messages.fmsg.m00102);
+              });
+            }, 2000);
+
+          }, err => {
+            this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+            console.log(err);
+          });
         } else if (err) {
           this.toasterService.error(this.resourceService.messages.fmsg.m0098);
           console.log(err);
@@ -1070,6 +1023,20 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     } else {
       this.attachContentToTextbook('accept');
     }
+  }
+
+  getContentStatus(contentId) {
+    const req = {
+      url: `${this.configService.urlConFig.URLS.CONTENT.GET}/${contentId}?mode=edit&fields=status,createdBy`
+    };
+    return this.contentService.get(req).pipe(
+      map(res => {
+        return _.get(res, 'result');
+      }, err => {
+        console.log(err);
+        this.toasterService.error(_.get(err, 'error.params.errmsg') || 'content update failed');
+      })
+    );
   }
 
   attachContentToTextbook (action) {
@@ -1148,25 +1115,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   getEditableFields() {
     if (this.sessionContext.currentRoles.includes('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
-      this.editableFields.push('name');
-      _.forEach(this.allFormFields, (field) => {
-        this.editableFields.push(field.code);
-      });
+      this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.allFormFields);
     } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
       && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
       && !this.sourcingReviewStatus
       && (this.selectedOriginUnitStatus === 'Draft')) {
-        const nameFieldConfig = _.find(this.overrideMetaData, (item) => item.code === 'name');
-        if (nameFieldConfig.editable === true) {
-          this.editableFields.push(nameFieldConfig.code);
-        }
-
-        _.forEach(this.allFormFields, (field) => {
-        const fieldConfig = _.find(this.overrideMetaData, (item) => item.code === field.code);
-        if (fieldConfig.editable === true) {
-          this.editableFields.push(fieldConfig.code);
-        }
-      });
+      this.editableFields = this.helperService.getEditableFields('REVIEWER', this.allFormFields);
     }
   }
 }
