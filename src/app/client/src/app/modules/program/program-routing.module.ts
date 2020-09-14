@@ -2,7 +2,7 @@ import { ProgramsService } from '@sunbird/core';
 import { ProgramListComponent } from '../shared-feature/components/program-list/program-list.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { ProgramComponent, CreateProgramComponent, ProgramNominationsComponent, ListContributorTextbooksComponent, OrgUserListComponent } from './components';
+import { ProgramComponent, CreateProgramComponent, ProgramNominationsComponent, ListContributorTextbooksComponent, OrgUserListComponent, OrgReportComponent } from './components';
 import { AuthGuard } from '../core/guard/auth-gard.service';
 
 import { HelpPageComponent } from '../shared-feature/components/help-page/help-page.component';
@@ -61,6 +61,9 @@ const routes: Routes = [{
   data: {
     telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'list-org-users' }
   },
+},
+{
+  path: 'orgreport', component: OrgReportComponent, pathMatch: 'full',
 },
 {
   path: 'help', component: HelpPageComponent, pathMatch: 'full',

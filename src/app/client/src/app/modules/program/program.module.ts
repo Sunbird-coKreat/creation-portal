@@ -15,6 +15,7 @@ import { CreateProgramComponent } from './components/create-program/create-progr
 import { ProgramNominationsComponent } from './components/program-nominations/program-nominations.component';
 import { ListContributorTextbooksComponent } from './components/list-contributor-textbooks/list-contributor-textbooks.component';
 import { OrgUserListComponent } from './components/org-user-list/org-user-list.component';
+import { OrgReportComponent } from './components/org-report/org-report.component';
 import { NgInviewModule } from 'angular-inport';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { DynamicModule } from 'ng-dynamic-component';
@@ -28,7 +29,7 @@ import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
     ProgramComponent, OnboardPopupComponent,
     ProgramHeaderComponent, CreateProgramComponent,
     ProgramNominationsComponent,
-    ListContributorTextbooksComponent, ContributorProfilePopupComponent, OrgUserListComponent],
+    ListContributorTextbooksComponent, ContributorProfilePopupComponent, OrgUserListComponent,OrgReportComponent],
   imports: [
   SuiModule,
     CommonModule,
