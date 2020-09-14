@@ -78,6 +78,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   public sourcingOrgAdmin: boolean;
   public notificationSubscription: Subscription;
   public notificationData: Array<any>;
+  public showGlobalNotification: boolean;
 
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
@@ -375,6 +376,12 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       this.handleActiveTabState('myPrograms');
      } else if (this.location.path() === '/contribute/help' || this.location.path() === '/sourcing/help' ) {
       this.handleActiveTabState('contributorHelp');
+    }
+
+    if (this.location.path() === '/sourcing') {
+      this.showGlobalNotification = true;
+    } else {
+      this.showGlobalNotification = false;
     }
   }
 
