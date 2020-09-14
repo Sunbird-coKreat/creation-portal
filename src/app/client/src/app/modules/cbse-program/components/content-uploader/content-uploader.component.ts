@@ -994,9 +994,18 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         if (!err && res) {
           this.helperService.publishContent(this.contentMetaData.identifier, this.userService.userProfile.userId)
           .subscribe(res => {
+            const me = this;
             setTimeout(() => {
-              this.attachContentToTextbook(action);
+              me.getContentStatus(this.contentMetaData.identifier).subscribe((response: any) => {
+                const status = _.get(response, 'content.status');
+                if (status === 'Live') {
+                  me.attachContentToTextbook(action);
+                }
+              }, err => {
+                me.toasterService.error(this.resourceService.messages.fmsg.m00102);
+              });
             }, 2000);
+
           }, err => {
             this.toasterService.error(this.resourceService.messages.fmsg.m0098);
             console.log(err);
@@ -1010,6 +1019,20 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     } else {
       this.attachContentToTextbook('accept');
     }
+  }
+
+  getContentStatus(contentId) {
+    const req = {
+      url: `${this.configService.urlConFig.URLS.CONTENT.GET}/${contentId}?mode=edit&fields=status,createdBy`
+    };
+    return this.contentService.get(req).pipe(
+      map(res => {
+        return _.get(res, 'result');
+      }, err => {
+        console.log(err);
+        this.toasterService.error(_.get(err, 'error.params.errmsg') || 'content update failed');
+      })
+    );
   }
 
   attachContentToTextbook (action) {
