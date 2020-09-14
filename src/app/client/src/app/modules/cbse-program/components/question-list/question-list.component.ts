@@ -408,6 +408,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showLoader = true;
     this.getQuestionDetails(questionId).pipe(tap(data => this.showLoader = false))
       .subscribe((assessment_item) => {
+        assessment_item.createdBy = _.get(this.practiceQuestionSetComponentInput, 'content.createdBy');
         this.questionMetaData = {
           mode: 'edit',
           data: assessment_item

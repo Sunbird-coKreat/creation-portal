@@ -235,7 +235,7 @@
     <div class='licence-form__content mt-15'>
       <div class="ui stackable grid licence-form__content__fields">
           <div class="row">
-            <div class="sb-field mb-16 six wide column" *ngIf="sessionContext.currentRoles.includes('REVIEWER')">
+            <div class="sb-field mb-16 six wide column" *ngIf="canViewContentType();">
               <div class="width-100">
                   <label class="font-weight-bold fsmall">{{resourceService.frmelmnts.lbl.contentType}}:</label><i class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentType}}"></i>
                   <div><span class="sb-color-gray-200 fs-0-785">{{sessionContext.contentMetadata.contentTypeName}}</span></div>

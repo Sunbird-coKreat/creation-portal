@@ -67,18 +67,15 @@
               <div *ngIf="orgUser?.maskedPhone"> {{orgUser?.maskedPhone}}</div>
             </td>
             <td>
-              <div>
-                <sui-select class="selection pt-5" [(ngModel)]="orgUser.selectedRole" labelField="name"
-                  [options]="roles" valueField="value" (selectedOptionChange)="onRoleChange(orgUser)" #orgRole>
-                  <sui-select-option *ngFor="let option of orgRole.filteredOptions;" [value]="option"
-                    [class.active]="orgUser.selectedRole === option.value"
-                    appTelemetryInteract
-                        [telemetryInteractEdata]="getTelemetryInteractEdata('assign-role-by-contributingOrg', 'click', 'org-user-list', {values: [orgUser.identifier, option.name]})"
-                        [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
-                        [telemetryInteractPdata]="telemetryInteractPdata">
-                  </sui-select-option>
-                </sui-select>
-              </div>
+              <div class="custom-selectbx">
+                <label>
+                  <select class="custom-selectbx" [(ngModel)]="orgUser.selectedRole" labelField="name"  valueField="name" (change)="onRoleChange(orgUser)" >
+                    <option *ngFor="let option of roles;" >
+                    {{option.value}}
+                    </option>
+                  </select>
+                </label>
+            </div>
             </td>
           </tr>
         </tbody>
