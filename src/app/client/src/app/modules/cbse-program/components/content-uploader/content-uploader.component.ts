@@ -137,7 +137,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.notify = this.helperService.getNotification().subscribe((action) => {
       this.contentStatusNotify(action);
     });
-
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.contentUploadComponentInput.programContext.program_id, 'Program');
@@ -187,24 +186,26 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     // tslint:disable-next-line:max-line-length
     this.visibility['showChangeFile'] = submissionDateFlag && this.canChangeFile();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showRequestChanges'] = this.canReviewContent(submissionDateFlag);
+    this.visibility['showRequestChanges'] = submissionDateFlag && this.canReviewContent();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showPublish'] = this.canPublishContent(submissionDateFlag);
+    this.visibility['showPublish'] = submissionDateFlag && this.canPublishContent();
     // tslint:disable-next-line:max-line-length
     this.visibility['showSubmit'] = submissionDateFlag && this.canSubmit();
     // tslint:disable-next-line:max-line-length
-    // this.visibility['showSave'] = submissionDateFlag && !this.contentMetaData.sampleContent === true && this.hasAccessFor('showSave') && this.resourceStatus === 'Draft';
     this.visibility['showSave'] = submissionDateFlag && this.canSave();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showEdit'] = submissionDateFlag && this.hasAccessFor('showEdit') && this.resourceStatus === 'Draft';
+    this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
     // tslint:disable-next-line:max-line-length
     this.visibility['showSourcingActionButtons'] = this.canSourcingReviewerPerformActions();
+  }
 
+  canEdit() {
+    return !!(this.hasAccessFor('showEdit') && this.resourceStatus === 'Draft' && this.userService.getUserId() === this.contentMetaData.createdBy);
   }
 
   canSave() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.hasAccessFor('showSave') && !this.contentMetaData.sampleContent === true && this.resourceStatus === 'Draft' && (this.userService.getUserId() === this.contentMetaData.createdBy || this.userService.isContributingOrgReviewer(this.sessionContext.nominationDetails)));
+    return !!(this.hasAccessFor('showSave') && !this.contentMetaData.sampleContent === true && this.resourceStatus === 'Draft' && (this.userService.getUserId() === this.contentMetaData.createdBy));
   }
 
   canSubmit() {
@@ -218,20 +219,23 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   canViewContentType() {
+    // tslint:disable-next-line:max-line-length
     return !!(this.sourcingOrgReviewer || (this.sessionContext.currentRoles.includes('REVIEWER') && this.userService.getUserId() !== this.contentMetaData.createdBy));
   }
 
-  canPublishContent(submissionDateFlag) {
-    return !!(submissionDateFlag && this.router.url.includes('/contribute') && !this.contentMetaData.sampleContent === true &&
+  canPublishContent() {
+    // tslint:disable-next-line:max-line-length
+    return !!(this.router.url.includes('/contribute') && !this.contentMetaData.sampleContent === true &&
     this.hasAccessFor('showPublish') && this.resourceStatus === 'Review' && this.userService.getUserId() !== this.contentMetaData.createdBy);
   }
 
-  canReviewContent(submissionDateFlag) {
+  canReviewContent() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.router.url.includes('/contribute') && submissionDateFlag && !this.contentMetaData.sampleContent === true && this.hasAccessFor('showRequestChanges') && this.resourceStatus === 'Review' && this.userService.getUserId() !== this.contentMetaData.createdBy);
+    return !!(this.router.url.includes('/contribute') && !this.contentMetaData.sampleContent === true && this.hasAccessFor('showRequestChanges') && this.resourceStatus === 'Review' && this.userService.getUserId() !== this.contentMetaData.createdBy);
   }
 
   canSourcingReviewerPerformActions() {
+    // tslint:disable-next-line:max-line-length
     return !!(this.router.url.includes('/sourcing')
     && !this.contentMetaData.sampleContent === true && this.resourceStatus === 'Live'
     && this.userService.getUserId() !== this.contentMetaData.createdBy
@@ -1131,9 +1135,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   getEditableFields() {
     if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
-      if (this.userService.getUserId() === this.contentMetaData.createdBy) {
+      if (this.userService.getUserId() === this.contentMetaData.createdBy && this.resourceStatus === 'Draft') {
         this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.allFormFields);
-      } else {
+      } else if (this.canPublishContent()){
         this.editableFields = this.helperService.getEditableFields('REVIEWER', this.allFormFields);
       }
     } else if (this.hasRole('CONTRIBUTOR') && this.resourceStatus === 'Draft') {

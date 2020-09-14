@@ -54,9 +54,9 @@
           <div class="required inline field">
             <label class="font-weight-bold fsmall">{{resourceService.frmelmnts.lbl.contentName}}:</label>
             <textarea rows="4" name="resourceName" class="sb-form-control fs-1" #resourceTtlTextarea placeholder="Type here..." [(ngModel)]='resourceName' (keydown)="onResourceNameChange($event)" (keyup.enter)="saveResourceName()">{{resourceName}}</textarea>
-            <span class="characters-left">{{resourceTitleLimit - resourceName.length}} {{resourceService.frmelmnts.lbl.characterLeft }}</span>
-            <span class="sb-error-text" *ngIf="resourceName.length > resourceTitleLimit">{{resourceService.frmelmnts.lbl.contentNameLength }} {{resourceTitleLimit}}</span>
-            <span class="sb-error-text" *ngIf="!resourceName.length">{{resourceService.frmelmnts.lbl.contentNameRequired}}</span>
+            <span class="characters-left">{{resourceTitleLimit - resourceName?.length}} {{resourceService.frmelmnts.lbl.characterLeft }}</span>
+            <span class="sb-error-text" *ngIf="resourceName?.length > resourceTitleLimit">{{resourceService.frmelmnts.lbl.contentNameLength }} {{resourceTitleLimit}}</span>
+            <span class="sb-error-text" *ngIf="!resourceName?.length">{{resourceService.frmelmnts.lbl.contentNameRequired}}</span>
           </div>
         </div>
         <div class='practical-sb-buttons'>

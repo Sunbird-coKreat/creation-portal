@@ -281,13 +281,13 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
 
     // tslint:disable-next-line:max-line-length
-    this.visibility['showCreateQuestion'] = submissionDateFlag && this.hasAccessFor('showCreateQuestion') && this.resourceStatus === 'Draft';
+    this.visibility['showCreateQuestion'] = submissionDateFlag && this.canCreateQuestion();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showDeleteQuestion'] = (this.hasAccessFor('showDeleteQuestion') && this.resourceStatus === 'Draft' && this.questionList.length > 1);
+    this.visibility['showDeleteQuestion'] = submissionDateFlag && this.canDeleteQuestion();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showRequestChanges'] = this.canReviewContent(submissionDateFlag);
+    this.visibility['showRequestChanges'] = submissionDateFlag && this.canReviewContent();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showPublish'] = this.canPublishContent(submissionDateFlag);
+    this.visibility['showPublish'] = submissionDateFlag && this.canPublishContent();
     // tslint:disable-next-line:max-line-length
     this.visibility['showSubmit'] = submissionDateFlag && this.canSubmit();
     // tslint:disable-next-line:max-line-length
@@ -298,9 +298,19 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.visibility['showSourcingActionButtons'] = this.canSourcingReviewerPerformActions();
   }
 
+  canDeleteQuestion() {
+    // tslint:disable-next-line:max-line-length
+    return !!(this.hasAccessFor('showDeleteQuestion') && this.resourceStatus === 'Draft' && this.questionList.length > 1 && this.userService.getUserId() === this.resourceDetails.createdBy);
+  }
+
+  canCreateQuestion() {
+    // tslint:disable-next-line:max-line-length
+    return !!(this.hasAccessFor('showCreateQuestion') && this.resourceStatus === 'Draft' && this.userService.getUserId() === this.resourceDetails.createdBy);
+  }
+
   canEdit() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.hasAccessFor('showEdit') && this.resourceStatus === 'Draft'  && (this.userService.getUserId() === _.get(this.questionMetaData, 'data.createdBy') || this.userService.isContributingOrgReviewer(this.sessionContext.nominationDetails)));
+    return !!(this.hasAccessFor('showEdit') && this.resourceStatus === 'Draft' && this.userService.getUserId() === this.resourceDetails.createdBy);
   }
 
   canSubmit() {
@@ -310,15 +320,15 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   canSave() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.hasAccessFor('showSave') && this.resourceStatus === 'Draft' && (this.userService.getUserId() === this.resourceDetails.createdBy || this.userService.isContributingOrgReviewer(this.sessionContext.nominationDetails)));
+    return !!(this.hasAccessFor('showSave') && this.resourceStatus === 'Draft' && (this.userService.getUserId() === this.resourceDetails.createdBy));
   }
 
-  canPublishContent(submissionDateFlag) {
-    return !!(this.router.url.includes('/contribute') && submissionDateFlag && !this.resourceDetails.sampleContent === true && this.hasAccessFor('showPublish') && this.resourceStatus === 'Review' && this.userService.userid !== this.resourceDetails.createdBy);
+  canPublishContent() {
+    return !!(this.router.url.includes('/contribute') && !this.resourceDetails.sampleContent === true && this.hasAccessFor('showPublish') && this.resourceStatus === 'Review' && this.userService.getUserId() !== this.resourceDetails.createdBy);
   }
 
-  canReviewContent(submissionDateFlag) {
-    return !!(this.router.url.includes('/contribute') && submissionDateFlag && !this.resourceDetails.sampleContent === true && this.hasAccessFor('showRequestChanges') && this.resourceStatus === 'Review' && this.userService.userid !== this.resourceDetails.createdBy);
+  canReviewContent() {
+    return !!(this.router.url.includes('/contribute') && !this.resourceDetails.sampleContent === true && this.hasAccessFor('showRequestChanges') && this.resourceStatus === 'Review' && this.userService.userid !== this.resourceDetails.createdBy);
   }
 
   canSourcingReviewerPerformActions() {
@@ -330,7 +340,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   canEditContentTitle() {
-    if (this.canEdit()) {
+    const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
+    if (submissionDateFlag && this.hasAccessFor('showSave') && this.resourceStatus === 'Draft' && this.userService.getUserId() === this.resourceDetails.createdBy) {
       return true;
     } else if (this.getEditableFieldsACL() === 'REVIEWER') {
       const nameFieldConfig = _.find(this.overrideMetaData, (item) => item.code === 'name');
@@ -427,7 +438,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           mode: 'edit',
           data: assessment_item
         };
-        if (this.resourceStatus === 'Draft') {
+        if (this.resourceStatus === 'Draft' && this.userService.getUserId() === this.resourceDetails.createdBy) {
           this.sessionContext.isReadOnlyMode = false;
         } else {
           this.sessionContext.isReadOnlyMode = true;
@@ -1097,9 +1108,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getEditableFieldsACL() {
     if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
-      if (this.userService.getUserId() === this.resourceDetails.createdBy) {
+      if (this.userService.getUserId() === this.resourceDetails.createdBy && this.resourceStatus === 'Draft') {
         return 'CONTRIBUTOR';
-      } else {
+      } else if (this.canPublishContent()) {
         return 'REVIEWER';
       }
     } else if (this.hasRole('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
