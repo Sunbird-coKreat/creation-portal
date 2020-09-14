@@ -155,8 +155,17 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     }
     this.sortColumn = column;
   }
-
+  setTelemetryForonRoleChange(user) {
+    const edata =  {
+      id: 'assign-role-by-sourcingOrg',
+      type: 'click',
+      pageid: 'org-user-list',
+      extra : {values: [user.identifier, user.selectedRole]}
+    }
+     this.registryService.generateUserRoleUpdateTelemetry(this.activatedRoute.snapshot.data.telemetry.env,this.telemetryInteractCdata,this.telemetryInteractPdata, edata )
+  }
   onRoleChange(user) {
+    this.setTelemetryForonRoleChange(user);
     const selectedRole = _.get(user, 'selectedRole');
     const osid = _.get(user, 'User_Org.osid');
     // const org = this.userService.userProfile.userRegData.Org;

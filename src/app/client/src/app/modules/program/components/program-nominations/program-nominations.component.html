@@ -413,16 +413,15 @@
 							<td>{{orgUser?.framework?.gradeLevel?.join(', ')}}</td>
 							<td>{{orgUser?.framework?.subject?.join(', ')}}</td>
 							<td class="text-center">
-                                <sui-select class="selection pt-5" [(ngModel)]="orgUser.newRole" labelField="name" [options]="options" valueField="name" (selectedOptionChange)="onRoleChange(orgUser)">
-                                    <ng-container *ngFor="let option of roles;">
-                                        <sui-select-option *ngIf="showUserRoleOption(option?.name, orgUser?.selectedRole)" [value]="option" appTelemetryInteract
-                                            [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('assign-role-by-sourcingOrg', 'click', 'program-nominations', {values: [orgUser.identifier, option.name]})"
-                                            [telemetryInteractObject]="telemetryInteractObject"
-                                            [telemetryInteractCdata]="telemetryInteractCdata"
-                                            [telemetryInteractPdata]="telemetryInteractPdata">
-                                        </sui-select-option>
-                                    </ng-container>
-                                </sui-select>
+                                <div class="custom-selectbx">
+                                    <label>
+                                        <select class="custom-selectbx" [(ngModel)]="orgUser.newRole" labelField="name"  valueField="name" (change)="onRoleChange(orgUser)" >
+                                            <option *ngFor="let option of roles;" >
+                                                {{showUserRoleOption(option?.name, orgUser?.newRole)}}
+                                            </option>
+                                        </select>
+                                    </label>
+                                </div>
 							</td>
 						  </tr>
 						</tbody>
