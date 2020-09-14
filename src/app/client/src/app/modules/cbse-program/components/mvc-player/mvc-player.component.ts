@@ -34,24 +34,17 @@ export class MvcPlayerComponent implements OnInit, OnChanges {
   ngOnChanges() {
     if (this.contentDetails.identifier && this.contentId !== this.contentDetails.identifier) {
       this.contentId = this.contentDetails.identifier;
-      this.getUploadedContentMeta(this.contentId);
+      this.getConfigByContent(this.contentId);
     }
   }
 
-  getUploadedContentMeta(contentId: string) {
-    const option = {
-      url: 'content/v3/read/' + contentId
-    };
-    this.actionService.get(option).pipe(map((data: any) => data.result.content), catchError(err => {
+  getConfigByContent(contentId: string) {
+    this.playerService.getConfigByContent(contentId).pipe(catchError(err => {
       const errInfo = { errorMsg: 'Unable to read the Content, Please Try Again' };
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
-  })).subscribe(res => {
-      const contentDetails = {
-        contentId: contentId,
-        contentData: res
-      };
-      this.contentData = res;
-      this.playerConfig = this.playerService.getConfig(contentDetails);
+  })).subscribe(config => {
+      this.contentData = config.metadata;
+      this.playerConfig = config;
       this.playerConfig.context.pdata.pid = `${this.configService.appConfig.TELEMETRY.PID}`;
       this.cd.detectChanges();
     });

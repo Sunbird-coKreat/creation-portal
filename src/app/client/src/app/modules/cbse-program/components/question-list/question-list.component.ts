@@ -79,6 +79,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   originPreviewReady = false;
   public originCollectionData: any;
   selectedOriginUnitStatus: any;
+  public overrideMetaData: any;
+  public isMetadataOverridden = false;
 
   constructor(
     private configService: ConfigService, private userService: UserService,
@@ -93,6 +95,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     public programTelemetryService: ProgramTelemetryService, private programsService: ProgramsService) { }
 
   ngOnInit() {
+    this.overrideMetaData = this.programsService.overrideMetaData;
     this.sessionContext = _.get(this.practiceQuestionSetComponentInput, 'sessionContext');
     this.originCollectionData = _.get(this.practiceQuestionSetComponentInput, 'originCollectionData');
     this.selectedOriginUnitStatus = _.get(this.practiceQuestionSetComponentInput, 'content.originUnitStatus');
@@ -115,7 +118,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getLicences();
     this.preprareTelemetryEvents();
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
-
     this.notify = this.helperService.getNotification().subscribe((action) => {
       this.contentStatusNotify(action);
     });
@@ -312,6 +314,19 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     (this.originCollectionData.status === 'Draft' && this.selectedOriginUnitStatus === 'Draft'));
   }
 
+  canEditContentTitle() {
+    const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
+    if (submissionDateFlag && this.hasAccessFor('showSave') && this.resourceStatus === 'Draft') {
+      return true;
+    } else if (this.getEditableFieldsACL() === 'REVIEWER') {
+      const nameFieldConfig = _.find(this.overrideMetaData, (item) => item.code === 'name');
+      if (nameFieldConfig.editable === true) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   get isPublishBtnDisable(): boolean {
     return _.find(this.questionList, (question) => question.rejectComment && question.rejectComment !== '');
   }
@@ -393,6 +408,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showLoader = true;
     this.getQuestionDetails(questionId).pipe(tap(data => this.showLoader = false))
       .subscribe((assessment_item) => {
+        assessment_item.createdBy = _.get(this.practiceQuestionSetComponentInput, 'content.createdBy');
         this.questionMetaData = {
           mode: 'edit',
           data: assessment_item
@@ -475,7 +491,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public questionStatusHandler(event) {
-
     if (this.isPublishBtnDisable && event.type === 'review') {
       this.toasterService.error('Please resolve rejected questions or delete');
       return;
@@ -563,7 +578,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         });
     });
-
   }
 
   isIndividualAndNotSample() {
@@ -661,6 +675,20 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   getContentVersion(contentId) {
     const req = {
       url: `${this.configService.urlConFig.URLS.CONTENT.GET}/${contentId}?mode=edit&fields=versionKey,createdBy`
+    };
+    return this.contentService.get(req).pipe(
+      map(res => {
+        return _.get(res, 'result');
+      }, err => {
+        console.log(err);
+        this.toasterService.error(_.get(err, 'error.params.errmsg') || 'content update failed');
+      })
+    );
+  }
+
+  getContentStatus(contentId) {
+    const req = {
+      url: `${this.configService.urlConFig.URLS.CONTENT.GET}/${contentId}?mode=edit&fields=status,createdBy`
     };
     return this.contentService.get(req).pipe(
       map(res => {
@@ -944,6 +972,50 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.programStageService.removeLastStage();
   }
 
+  updateContentBeforeApproving(action) {
+    if (this.isMetaDataModified()) {
+      const cb = (err, res) => {
+        if (!err && res) {
+          this.helperService.publishContent(this.sessionContext.resourceIdentifier, this.userService.userProfile.userId)
+          .subscribe( res => {
+            const me = this;
+            setTimeout(() => {
+              this.getContentStatus(this.sessionContext.resourceIdentifier).subscribe((response: any) => {
+                const status = _.get(response, 'content.status');
+                if (status === 'Live') {
+                  me.attachContentToTextbook(action);
+                }
+              }, err => {
+                this.toasterService.error(this.resourceService.messages.fmsg.m00102);
+              });
+            }, 2000);
+           }, (err) => {
+            this.toasterService.error(this.resourceService.messages.fmsg.m00102);
+          });
+        } else if (err) {
+          this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+          console.log(err);
+        }
+      };
+      this.updateContentMetaData(cb);
+    } else {
+      this.attachContentToTextbook('accept');
+    }
+  }
+
+  updateContentBeforePublishing() {
+    if (this.isMetaDataModified()) {
+      const cb = (err, res ) => {
+        if (!err && res) {
+          this.publishContent();
+        }
+      };
+      this.updateContentMetaData(cb);
+    } else {
+      this.publishContent();
+    }
+  }
+
   attachContentToTextbook(action) {
     const hierarchyObj  = _.get(this.sessionContext.hierarchyObj, 'hierarchy');
     if (hierarchyObj) {
@@ -960,6 +1032,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       };
       if (originData.textbookOriginId && originData.unitOriginId && originData.channel) {
         if (action === 'accept') {
+          action = this.isMetadataOverridden ? 'acceptWithChanges' : 'accept';
           this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.resourceDetails.identifier, originData);
         } else if (action === 'reject' && this.FormControl.value.contentRejectComment.length) {
           // tslint:disable-next-line:max-line-length
@@ -1007,4 +1080,46 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     const roles = _.get(this.sessionContext, 'currentRoles');
     return !!(rejectComment && roles.includes('CONTRIBUTOR') && this.resourceStatus === 'Draft' && this.resourceDetails.prevStatus === 'Review');
   }*/
+
+  getEditableFieldsACL() {
+    if (this.sessionContext.currentRoles.includes('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
+      return 'CONTRIBUTOR';
+    } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
+      && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
+      && !this.sourcingReviewStatus
+      && (this.selectedOriginUnitStatus === 'Draft')) {
+        return 'REVIEWER';
+    }
+  }
+
+  updateContentMetaData(cb = (err, res) => {}) {
+    this.getContentVersion(this.sessionContext.resourceIdentifier).subscribe((response: any) => {
+      const existingContentVersionKey = _.get(response, 'content.versionKey');
+      let requestBody = {
+          'versionKey': existingContentVersionKey,
+          'name': _.trim(this.resourceName),
+          'itemSets': _.map(this.resourceDetails.itemSets, (obj) =>{
+            return {'identifier': obj.identifier};
+          })
+      };
+      requestBody = Object.assign({}, requestBody, this.questionCreationChild.getMetaData());
+      this.updateContent({'content': requestBody}, this.sessionContext.resourceIdentifier)
+      .subscribe((res) => {
+          cb(null, res);
+        }, (err) => {
+          cb(err, null);
+        });
+    },
+    (err) =>{
+      cb(err, null);
+    });
+  }
+
+  isMetaDataModified() {
+    const beforeUpdateMetaData = _.clone(this.questionMetaData.data);
+    beforeUpdateMetaData['name'] = this.resourceDetails.name;
+    const afterUpdateMetaData = this.questionCreationChild.getMetaData();
+    afterUpdateMetaData['name'] = _.trim(this.resourceName);
+    return this.isMetadataOverridden = this.helperService.isMetaDataModified(beforeUpdateMetaData, afterUpdateMetaData);
+  }
 }
