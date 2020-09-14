@@ -81,7 +81,7 @@
           [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
           >Preview</button>
-          <button class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" *ngIf="!previewBtnVisibility && visibility && visibility.showEdit" (click)="questionCreationChild.buttonTypeHandler('edit');previewBtnVisibility = true;"
+          <button id="editContent" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" *ngIf="!previewBtnVisibility && visibility && visibility.showEdit" (click)="questionCreationChild.buttonTypeHandler('edit');previewBtnVisibility = true;"
           appTelemetryInteract
           [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('edit-resource', 'click', 'question-list')"
           [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"

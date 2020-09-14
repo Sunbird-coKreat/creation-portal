@@ -289,13 +289,28 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     // tslint:disable-next-line:max-line-length
     this.visibility['showPublish'] = this.canPublishContent(submissionDateFlag);
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSubmit'] = submissionDateFlag && this.hasAccessFor('showSubmit') && this.resourceStatus === 'Draft';
+    this.visibility['showSubmit'] = submissionDateFlag && this.canSubmit();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSave'] = submissionDateFlag && this.hasAccessFor('showSave') && this.resourceStatus === 'Draft';
+    this.visibility['showSave'] = submissionDateFlag && this.canSave();
      // tslint:disable-next-line:max-line-length
-    this.visibility['showEdit'] = submissionDateFlag && this.hasAccessFor('showEdit') && this.resourceStatus === 'Draft';
+    this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
     // tslint:disable-next-line:max-line-length
     this.visibility['showSourcingActionButtons'] = this.canSourcingReviewerPerformActions();
+  }
+
+  canEdit() {
+    // tslint:disable-next-line:max-line-length
+    return !!(this.hasAccessFor('showEdit') && this.resourceStatus === 'Draft'  && (this.userService.getUserId() === _.get(this.questionMetaData, 'data.createdBy') || this.userService.isContributingOrgReviewer(this.sessionContext.nominationDetails)));
+  }
+
+  canSubmit() {
+    // tslint:disable-next-line:max-line-length
+    return !!(this.hasAccessFor('showSubmit') && this.resourceStatus === 'Draft' && this.userService.getUserId() === this.resourceDetails.createdBy);
+  }
+
+  canSave() {
+    // tslint:disable-next-line:max-line-length
+    return !!(this.hasAccessFor('showSave') && this.resourceStatus === 'Draft' && (this.userService.getUserId() === this.resourceDetails.createdBy || this.userService.isContributingOrgReviewer(this.sessionContext.nominationDetails)));
   }
 
   canPublishContent(submissionDateFlag) {
@@ -315,8 +330,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   canEditContentTitle() {
-    const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
-    if (submissionDateFlag && this.hasAccessFor('showSave') && this.resourceStatus === 'Draft') {
+    if (this.canEdit()) {
       return true;
     } else if (this.getEditableFieldsACL() === 'REVIEWER') {
       const nameFieldConfig = _.find(this.overrideMetaData, (item) => item.code === 'name');
@@ -1082,7 +1096,13 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }*/
 
   getEditableFieldsACL() {
-    if (this.sessionContext.currentRoles.includes('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
+    if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
+      if (this.userService.getUserId() === this.resourceDetails.createdBy) {
+        return 'CONTRIBUTOR';
+      } else {
+        return 'REVIEWER';
+      }
+    } else if (this.hasRole('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
       return 'CONTRIBUTOR';
     } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
       && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
@@ -1090,6 +1110,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       && (this.selectedOriginUnitStatus === 'Draft')) {
         return 'REVIEWER';
     }
+  }
+
+  hasRole(role) {
+    return this.sessionContext.currentRoles.includes(role);
   }
 
   updateContentMetaData(cb = (err, res) => {}) {
