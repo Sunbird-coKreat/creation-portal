@@ -703,13 +703,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         _.find(rolemapping, (users, role) => {
           if (_.includes(users, r.identifier)) {
             r.selectedRole = role;
-            r.roles = this.roles;
-          } else {
-            r.roles = this.reviewerRole;
-
-          }
+          } 
         });
       }
+      r.selectedRole === 'Select Role' ? r.roles = this.reviewerRole : r.roles = this.roles;
       r.newRole = r.selectedRole;
     });
   }
