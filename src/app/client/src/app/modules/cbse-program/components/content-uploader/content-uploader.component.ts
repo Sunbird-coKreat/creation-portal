@@ -1083,11 +1083,16 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   showCommentAddedAgainstContent() {
     const id = _.get(this.contentMetaData, 'identifier');
-    //const roles = _.get(this.sessionContext, 'currentRoles');
     const sourcingRejectedComments = _.get(this.sessionContext, 'hierarchyObj.sourcingRejectedComments')
-    if (id && this.contentMetaData.status === "Draft"
-        && (_.includes(["Review", "Live"], this.contentMetaData.prevStatus))) {
+    if (id && this.contentMetaData.status === "Draft" && this.contentMetaData.prevStatus  === "Review") {
+      // if the contributing org reviewer has requested for changes
       this.contentComment = _.get(this.contentMetaData, 'rejectComment');
+      return true;
+    } else if (id && !_.isEmpty(_.get(this.contentMetaData, 'requestChanges')) &&
+    ((this.contentMetaData.status === "Draft" && this.contentMetaData.prevStatus === "Live") ||
+    this.contentMetaData.status === "Live")) {
+      // if the souring org reviewer has requested for changes
+      this.contentComment = _.get(this.contentMetaData, 'requestChanges');
       return true;
     } else  if (id && this.contentMetaData.status === 'Live' && !_.isEmpty(_.get(sourcingRejectedComments, id))) {
         this.contentComment = _.get(sourcingRejectedComments, id);

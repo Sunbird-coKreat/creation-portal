@@ -21,6 +21,10 @@
         <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.rejected}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.rejected}}</span>
       </div>
+      <div class="sb-count sb-color-error" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.correctionsPending">
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.contentStatus.lbl.correctionsPending}}:</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.correctionsPending}}</span>
+      </div>
      </div>
      <div  *ngIf="!sourcingOrgReviewer && collection.sourcingStatusDetail && sessionContext.currentOrgRole !== 'individual'"
      class="single-row">
@@ -48,6 +52,10 @@
         <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.rejected}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.rejected}}</span>
       </div>
+      <div class="sb-count sb-color-error" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.correctionsPending">
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.contentStatus.lbl.correctionsPending}}:</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.correctionsPending}}</span>
+      </div>
     </div>
     <div *ngIf="!sourcingOrgReviewer && collection.sourcingStatusDetail && sessionContext.currentOrgRole === 'individual'" class="single-row">
       <div class="sb-color-gray-300 sb-count" *ngIf="visibility['showAddresource'] && collection.sourcingStatusDetail && collection.sourcingStatusDetail.draft">
@@ -65,6 +73,10 @@
       <div class="sb-count sb-color-error" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.rejected">
         <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.rejected}}:</span>
         <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.rejected}}</span>
+      </div>
+      <div class="sb-count sb-color-error" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.correctionsPending">
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.contentStatus.lbl.correctionsPending}}:</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.correctionsPending}}</span>
       </div>
     </div>
       <div class="sb-color-black sb-count">
