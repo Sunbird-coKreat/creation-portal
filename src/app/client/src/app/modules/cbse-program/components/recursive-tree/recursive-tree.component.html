@@ -133,7 +133,7 @@
               <span [ngClass]="{'sb-color-gray-100': content.status === 'Draft' && content.prevStatus !== 'Review','sb-color-error': content.status === 'Draft' && content.prevStatus === 'Review'}" *ngIf="content.status === 'Draft' && content.prevStatus === 'Review'">{{resourceService.frmelmnts.lbl.notAccepted}}</span>
               <span [ngClass]="{'sb-color-error':content.status == 'Failed'}"  *ngIf="content.status === 'Failed'">{{resourceService.frmelmnts.lbl.failed}}</span>
               <span *ngIf="content.status === 'Processing'">{{resourceService.frmelmnts.lbl.processing}}</span>
-              <span class="sb-color-primary"  *ngIf="content.sourcingStatus === 'PendingForCorrections' && content.status === 'Draft' && content.prevStatus === 'Live'">{{resourceService.frmelmnts.lbl.correctionsPending}}</span>
+              <span class="sb-color-primary"  *ngIf="content.status === 'Draft' && content.prevStatus === 'Live'">{{resourceService.frmelmnts.lbl.correctionsPending}}</span>
             </span>
             <div class="item-dropdown absolute position" (click)="menuClick($event)" *ngIf="content.status === 'Draft' && !content.sourceURL">
               <div *ngIf="canViewActionMenu(content)" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
