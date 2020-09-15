@@ -1027,6 +1027,7 @@ downloadContribDashboardDetails() {
           contributor.type === 'org' ? 'Organisation' : 'Individual',
           contributor.draft || 0,
           contributor.type !== 'individual' ? contributor.review : '-',
+          contributor.correctionsPending || 0,
           contributor.live || 0,
           contributor.type !== 'individual' ? contributor.rejected : '-',
           contributor.sourcingPending || 0,
@@ -1051,7 +1052,7 @@ downloadContribDashboardDetails() {
 getContribDashboardHeaders() {
   const columnNames = [
     'projectName', 'contributorName', 'typeOfContributor', 'draftContributingOrg',
-    'pendingContributingOrg', 'acceptedContributingOrg', 'rejectedContributingOrg', 'pendingtSourcingOrg',
+    'pendingContributingOrg', 'correctionsPending', 'acceptedContributingOrg', 'rejectedContributingOrg', 'pendingtSourcingOrg',
     'acceptedSourcingOrg', 'rejectedSourcingOrg'];
   return _.map(columnNames, name => _.get(this.resourceService, `frmelmnts.lbl.${name}`));
 }
