@@ -91,7 +91,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   showDashboardLoader = false;
   userPreferences = '';
   sharedContext;
-
+  reviewerRole = [{name: 'REVIEWER'}];
   pager: IPagination;
   pageNumber = 1;
   pageLimit: any;
@@ -703,6 +703,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         _.find(rolemapping, (users, role) => {
           if (_.includes(users, r.identifier)) {
             r.selectedRole = role;
+            r.roles = this.roles;
+          } else {
+            r.roles = this.reviewerRole;
+
           }
         });
       }
@@ -721,6 +725,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         this.userRemoveRoleLoader = false;
         if (user.newRole === "NONE") {
           user.newRole = 'Select Role';
+          user.roles = this.reviewerRole;
+        } else {
+          user.roles  = this.roles;
         }
         user.selectedRole = user.newRole;
         this.programDetails.rolemapping = progRoleMapping;
@@ -776,13 +783,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
      this.registryService.generateUserRoleUpdateTelemetry(this.activatedRoute.snapshot.data.telemetry.env,this.telemetryInteractCdata,this.telemetryInteractPdata, edata )
   }
 
-showUserRoleOption(roleName, userRole) {
-  if (!(roleName !== 'NONE' || (roleName === 'NONE' && userRole !== 'Select Role'))) {
-   return 'Select Role'
-  } else {
-    return roleName;
-  }
-}
+
 
   cancelRemoveUserFromProgram() {
     this.showUserRemoveRoleModal = false;
