@@ -543,7 +543,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
         this.resourceStatusClass = 'sb-color-error';
       } else if (this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Live') {
-        this.resourceStatusText = this.resourceService.frmelmnts.contentStatus.lbl.correctionsPending;
+        this.resourceStatusText = this.resourceService.frmelmnts.lbl.correctionsPending;
         this.resourceStatusClass = 'sb-color-error';
       } else if (this.resourceStatus === 'Live' && _.isEmpty(this.sourcingReviewStatus)) {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
@@ -934,7 +934,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       };
       this.notificationService.onAfterContentStatusChange(notificationForContributor)
       .subscribe((res) => {  });
-      if (!_.isUndefined(this.sessionContext.nominationDetails.user_id) && status !== 'Request') {
+      if (!_.isEmpty(this.sessionContext.nominationDetails) && !_.isEmpty(this.sessionContext.nominationDetails.user_id) && status !== 'Request') {
         const notificationForPublisher = {
           user_id: this.sessionContext.nominationDetails.user_id,
           content: { name: this.contentMetaData.name },
@@ -1083,11 +1083,16 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   showCommentAddedAgainstContent() {
     const id = _.get(this.contentMetaData, 'identifier');
-    //const roles = _.get(this.sessionContext, 'currentRoles');
     const sourcingRejectedComments = _.get(this.sessionContext, 'hierarchyObj.sourcingRejectedComments')
-    if (id && this.contentMetaData.status === "Draft"
-        && (_.includes(["Review", "Live"], this.contentMetaData.prevStatus))) {
+    if (id && this.contentMetaData.status === "Draft" && this.contentMetaData.prevStatus  === "Review") {
+      // if the contributing org reviewer has requested for changes
       this.contentComment = _.get(this.contentMetaData, 'rejectComment');
+      return true;
+    } else if (id && !_.isEmpty(_.get(this.contentMetaData, 'requestChanges')) &&
+    ((this.contentMetaData.status === "Draft" && this.contentMetaData.prevStatus === "Live") ||
+    this.contentMetaData.status === "Live")) {
+      // if the souring org reviewer has requested for changes
+      this.contentComment = _.get(this.contentMetaData, 'requestChanges');
       return true;
     } else  if (id && this.contentMetaData.status === 'Live' && !_.isEmpty(_.get(sourcingRejectedComments, id))) {
         this.contentComment = _.get(sourcingRejectedComments, id);
