@@ -91,7 +91,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   showDashboardLoader = false;
   userPreferences = '';
   sharedContext;
-  reviewerRole = [{name: 'REVIEWER'}];
+  userRoles = [{name: 'REVIEWER'}];
   pager: IPagination;
   pageNumber = 1;
   pageLimit: any;
@@ -706,7 +706,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           } 
         });
       }
-      r.selectedRole === 'Select Role' ? r.roles = this.reviewerRole : r.roles = this.roles;
+      r.selectedRole !== 'Select Role' ? r.roles = this.roles : r.roles = this.userRoles;
       r.newRole = r.selectedRole;
     });
   }
@@ -722,7 +722,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         this.userRemoveRoleLoader = false;
         if (user.newRole === "NONE") {
           user.newRole = 'Select Role';
-          user.roles = this.reviewerRole;
+          user.roles = this.userRoles;
         } else {
           user.roles  = this.roles;
         }
