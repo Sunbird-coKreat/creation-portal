@@ -112,7 +112,7 @@ export class HelperService {
     };
 
     if (!_.isUndefined(comment)) {
-      requestBody.request.content['rejectComment'] = _.trim(comment);
+      requestBody.request.content['requestChanges'] = _.trim(comment);
     }
     const option = {
       url: `system/v3/content/update/${contentId}`,

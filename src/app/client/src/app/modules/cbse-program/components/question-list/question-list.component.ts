@@ -232,7 +232,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resourceStatusClass = 'sb-color-warning';
     } else if (this.resourceStatus === 'Draft' && this.resourceDetails.rejectComment && this.resourceDetails.rejectComment !== '') {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
-      this.resourceStatusClass = 'sb-color-gray';
+      this.resourceStatusClass = 'sb-color-error';
+    } else if (this.resourceStatus === 'Draft' && this.resourceDetails.prevStatus === 'Live') {
+      this.resourceStatusText = this.resourceService.frmelmnts.contentStatus.lbl.correctionsPending;
+      this.resourceStatusClass = 'sb-color-error';
     } else if (this.resourceStatus === 'Live' && _.isEmpty(this.sourcingReviewStatus)) {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
       this.resourceStatusClass = 'sb-color-success';
@@ -979,11 +982,16 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   showCommentAddedAgainstContent() {
     const id = _.get(this.resourceDetails, 'identifier');
-    //const roles = _.get(this.sessionContext, 'currentRoles');
     const sourcingRejectedComments = _.get(this.sessionContext, 'hierarchyObj.sourcingRejectedComments')
-    if (id && this.resourceDetails.status === "Draft"
-        && (_.includes(["Review", "Live"], this.resourceDetails.prevStatus))) {
+    if (id && this.resourceDetails.status === "Draft" && this.resourceDetails.prevStatus  === "Review") {
+      // if the contributing org reviewer has requested for changes
       this.contentComment = _.get(this.resourceDetails, 'rejectComment');
+      return true;
+    } else if (id && !_.isEmpty(_.get(this.resourceDetails, 'requestChanges')) &&
+    ((this.resourceDetails.status === "Draft" && this.resourceDetails.prevStatus === "Live") ||
+    this.resourceDetails.status === "Live")) {
+      // if the souring org reviewer has requested for changes
+      this.contentComment = _.get(this.resourceDetails, 'requestChanges');
       return true;
     } else  if (id && this.resourceDetails.status === 'Live' && !_.isEmpty(_.get(sourcingRejectedComments, id))) {
         this.contentComment = _.get(sourcingRejectedComments, id);
@@ -991,6 +999,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     return false;
   }
+
+
   /*showSourcingOrgRejectComments() {
     const id = _.get(this.resourceDetails, 'identifier');
     const sourcingRejectedComments = _.get(this.sessionContext, 'hierarchyObj.sourcingRejectedComments')
