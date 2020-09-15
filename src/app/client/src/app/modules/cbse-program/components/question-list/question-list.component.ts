@@ -214,7 +214,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         };
         this.notificationService.onAfterContentStatusChange(notificationForContributor)
         .subscribe((res) => {  });
-        if (!_.isUndefined(this.sessionContext.nominationDetails.user_id) && status !== 'Request') {
+        if (!_.isEmpty(this.sessionContext.nominationDetails) && !_.isEmpty(this.sessionContext.nominationDetails.user_id) && status !== 'Request') {
           const notificationForPublisher = {
             user_id: this.sessionContext.nominationDetails.user_id,
             content: { name: this.resourceDetails.name },
