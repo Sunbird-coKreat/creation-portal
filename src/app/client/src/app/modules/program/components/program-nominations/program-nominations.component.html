@@ -522,6 +522,14 @@
                                             <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                         </span>
                                     </th>
+                                    <th (click)="sortCollection('rejected', contributionDashboardData)" class="va-top sb-sorting cursor-pointer">
+                                        {{resourceService.frmelmnts.lbl.correctionsPending}}
+                                        <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'rejected' "></i>
+                                        <span  *ngIf="sortColumn == 'rejected'" class="d-inline-block">
+                                            <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+                                            <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+                                        </span>
+                                    </th>
                                     <th (click)="sortCollection('live', contributionDashboardData)" class="va-top sb-sorting cursor-pointer">
                                         {{resourceService.frmelmnts.lbl.accepted}}
                                         <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'live' "></i>
@@ -532,14 +540,6 @@
                                     </th>
                                     <th (click)="sortCollection('rejected', contributionDashboardData)" class="va-top sb-sorting cursor-pointer">
                                         {{resourceService.frmelmnts.lbl.notAccepted}}
-                                        <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'rejected' "></i>
-                                        <span  *ngIf="sortColumn == 'rejected'" class="d-inline-block">
-                                            <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
-                                            <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
-                                        </span>
-                                    </th>
-                                    <th (click)="sortCollection('rejected', contributionDashboardData)" class="va-top sb-sorting cursor-pointer">
-                                        {{resourceService.frmelmnts.contentStatus.lbl.correctionsPending}}
                                         <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'rejected' "></i>
                                         <span  *ngIf="sortColumn == 'rejected'" class="d-inline-block">
                                             <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
@@ -578,9 +578,9 @@
                                     <td>{{contributor.type === 'org' ? 'Organisation' : 'Individual'}}</td>
                                     <td class="sb-color-gray-300">{{contributor.draft || 0}}</td>
                                     <td class="sb-color-warning">{{contributor.type !== 'individual' ? contributor.review: '-'}}</td>
+                                    <td class="sb-color-error">{{contributor?.correctionsPending}}</td>
                                     <td class="sb-color-success">{{contributor.live || 0}}</td>
                                     <td class="sb-color-error">{{contributor.type !== 'individual' ? contributor?.rejected: '-'}}</td>
-                                    <td class="sb-color-error">{{contributor?.correctionsPending}}</td>
                                     <td class="sb-color-warning">{{contributor?.sourcingPending || 0}}</td>
                                     <td class="sb-color-success">{{contributor?.sourcingAccepted || 0}}</td>
                                     <td class="sb-color-error">{{contributor?.sourcingRejected || 0}}</td>
