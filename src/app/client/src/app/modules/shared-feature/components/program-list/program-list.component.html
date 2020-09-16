@@ -153,7 +153,7 @@
                 </td>
                 <td class="text-center pr-10">
 
-                  <div *ngIf="activeMyProgramsMenu && program.nomination_status  == 'Pending' && canNominate(program)" (click)="getProjectToModify(program)" class="d-inline-block cursor-pointer pr-10 pt-8">
+                  <div *ngIf="activeMyProgramsMenu && program.nomination_status  == 'Pending' && canNominate(program)" (click)="getProjectToModify(program)" class="d-inline-block cursor-pointer pr-10 pt-5">
                     <i class="icon edit sb-color-primary ui fs-0-92"></i>
                     <span class="sb-color-primary">{{ resourceService?.frmelmnts?.lbl?.modifyNomination.button }}</span>
                   </div>
