@@ -915,6 +915,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         // tslint:disable-next-line:max-line-length
         collection.sourcingStatusDetail  =  _.mergeWith(_.cloneDeep(restOfTheStatus), _.cloneDeep(collection.sourcingStatusDetail), this.addTwoObjects);
       }
+      collection.totalLeaf = collection.totalLeaf + totalLeaf;
     });
 
     if (collection.leaf) {
@@ -932,7 +933,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       collection.statusMessage = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
     }
 
-    collection.totalLeaf = _.sum(_.values(collection.sourcingStatusDetail));
+    collection.totalLeaf = !_.isEmpty(collection.sourcingStatusDetail) ? _.sum(_.values(collection.sourcingStatusDetail)) :  collection.totalLeaf;
     return [collection.sourcingStatusDetail, collection.totalLeaf];
   }
 
