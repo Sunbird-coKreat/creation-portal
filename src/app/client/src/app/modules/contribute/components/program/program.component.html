@@ -338,7 +338,7 @@
 								<ng-template #elseBlock>
 									<div class="custom-selectbx">
 										<label>
-											<select class="custom-selectbx" [(ngModel)]="orgUser.newRole" labelField="name"  valueField="name" (change)="onRoleChange(orgUser)" >
+											<select [(ngModel)]="orgUser.newRole" labelField="name"  valueField="name" (change)="onRoleChange(orgUser)" >
 												<option *ngFor="let option of roles;" >
 													{{showUserRoleOption(option?.name, orgUser?.projectselectedRole)}}
 												</option>
@@ -474,7 +474,7 @@
 	</div>
   </sui-modal>
 
-  <sui-modal *ngIf="showUserRemoveRoleModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showUserRemoveRoleModal = false" #userRemoveRoleModal>
+  <sui-modal *ngIf="showUserRemoveRoleModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="cancelRemoveUserFromProgram();" #userRemoveRoleModal>
   <div class="sb-modal-header">
     {{resourceService?.frmelmnts?.lbl?.confirm}}
   </div>

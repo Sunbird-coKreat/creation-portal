@@ -54,9 +54,9 @@
           <div class="required inline field">
             <label class="font-weight-bold fsmall">{{resourceService.frmelmnts.lbl.contentName}}:</label>
             <textarea rows="4" name="resourceName" class="sb-form-control fs-1" #resourceTtlTextarea placeholder="Type here..." [(ngModel)]='resourceName' (keydown)="onResourceNameChange($event)" (keyup.enter)="saveResourceName()">{{resourceName}}</textarea>
-            <span class="characters-left">{{resourceTitleLimit - resourceName.length}} {{resourceService.frmelmnts.lbl.characterLeft }}</span>
-            <span class="sb-error-text" *ngIf="resourceName.length > resourceTitleLimit">{{resourceService.frmelmnts.lbl.contentNameLength }} {{resourceTitleLimit}}</span>
-            <span class="sb-error-text" *ngIf="!resourceName.length">{{resourceService.frmelmnts.lbl.contentNameRequired}}</span>
+            <span class="characters-left">{{resourceTitleLimit - resourceName?.length}} {{resourceService.frmelmnts.lbl.characterLeft }}</span>
+            <span class="sb-error-text" *ngIf="resourceName?.length > resourceTitleLimit">{{resourceService.frmelmnts.lbl.contentNameLength }} {{resourceTitleLimit}}</span>
+            <span class="sb-error-text" *ngIf="!resourceName?.length">{{resourceService.frmelmnts.lbl.contentNameRequired}}</span>
           </div>
         </div>
         <div class='practical-sb-buttons'>
@@ -81,7 +81,7 @@
           [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
           >Preview</button>
-          <button class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" *ngIf="!previewBtnVisibility && visibility && visibility.showEdit" (click)="questionCreationChild.buttonTypeHandler('edit');previewBtnVisibility = true;"
+          <button id="editContent" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" *ngIf="!previewBtnVisibility && visibility && visibility.showEdit" (click)="questionCreationChild.buttonTypeHandler('edit');previewBtnVisibility = true;"
           appTelemetryInteract
           [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('edit-resource', 'click', 'question-list')"
           [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
@@ -104,7 +104,7 @@
           [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
           >{{isIndividualAndNotSample() ? 'Publish' : 'Submit' }}</button>
-          <button id="sendForCorrections" suiPopup popupText="Send back for corrections" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" class="sb-btn sb-btn-normal" (click)="popupAction='sendForCorrections';showRequestChangesPopup = true"
+          <button id="sendForCorrections" suiPopup popupText="Send back for corrections" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" class="sb-btn sb-btn-normal mr-10" (click)="popupAction='sendForCorrections';showRequestChangesPopup = true"
             appTelemetryInteract
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('save-resourcemetadata', 'click', 'content-uploader')"
             [telemetryInteractObject]="telemetryInteractObject"

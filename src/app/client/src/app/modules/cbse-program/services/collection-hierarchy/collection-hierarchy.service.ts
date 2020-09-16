@@ -227,11 +227,14 @@ export class CollectionHierarchyService {
         accepted: acceptedOrgContents ? acceptedOrgContents.length : 0, // converting to string to enable table sorting
         rejected: rejectedOrgContents ? rejectedOrgContents.length : 0,
         pending: pendingOrgContents ? pendingOrgContents.length : 0,
+        correctionsPending: !_.isEmpty(orgContents['correctionsPending']) ? orgContents['correctionsPending'].length : 0
       };
+
       meta['total'] = _.sumBy(_.values(meta), _.toNumber);
       meta['acceptedContents'] = acceptedOrgContents || [];
       meta['rejectedOrgContents'] = rejectedOrgContents || [];
       meta['pendingOrgContents'] = pendingOrgContents || [];
+      meta['correctionsPendingContents'] = orgContents['correctionsPending'] || [];
       return meta;
   }
 
