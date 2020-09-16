@@ -64,8 +64,9 @@ const routes: Routes = [{
   },
 },
 {
-  path: 'orgreports', component: OrgReportsComponent, pathMatch: 'full',
+  path: 'orgreports', component: OrgReportsComponent,canActivate: [ProgramsService, AuthGuard], pathMatch: 'full',
   data: {
+    roles: 'programSourcingRole',
     telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'list-org-reports' }
   },
 },
