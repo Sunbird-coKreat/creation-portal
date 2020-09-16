@@ -168,7 +168,8 @@ export class TextbookListComponent implements OnInit {
           this.resourceService.frmelmnts.lbl.contributionReceived,
           this.resourceService.frmelmnts.lbl.contributionApproved,
           this.resourceService.frmelmnts.lbl.contributionRejected,
-          this.resourceService.frmelmnts.lbl.contributionPending
+          this.resourceService.frmelmnts.lbl.contributionPending,
+          this.resourceService.frmelmnts.lbl.contributioncorrectionsPending
         ];
         const resObj = _.get(_.find(res.result.tableData, {program_id: this.programId}), 'values');
         const tableData = [];

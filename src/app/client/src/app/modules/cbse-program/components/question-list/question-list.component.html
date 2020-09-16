@@ -104,7 +104,7 @@
           [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
           >{{isIndividualAndNotSample() ? 'Publish' : 'Submit' }}</button>
-          <button id="sendForCorrections" suiPopup popupText="Send back for corrections" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" class="sb-btn sb-btn-normal" (click)="popupAction='sendForCorrections';showRequestChangesPopup = true"
+          <button id="sendForCorrections" suiPopup popupText="Send back for corrections" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" class="sb-btn sb-btn-normal mr-10" (click)="popupAction='sendForCorrections';showRequestChangesPopup = true"
             appTelemetryInteract
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('save-resourcemetadata', 'click', 'content-uploader')"
             [telemetryInteractObject]="telemetryInteractObject"
