@@ -56,7 +56,7 @@ export class ProgramListComponent implements OnInit {
 
   ngOnInit() {
     this.checkIfUserIsContributor();
-    this.issourcingOrgAdmin = this.userService.isSourcingOrgAdmin();
+    this.issourcingOrgAdmin = this.userService.isSourcingOrgAdmin() && this.router.url.includes('/sourcing');
     this.telemetryInteractCdata = [];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
