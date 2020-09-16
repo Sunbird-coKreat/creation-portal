@@ -3,9 +3,9 @@ import { Component, OnInit, Output, EventEmitter, Input, ChangeDetectorRef, View
 import { FormGroup, FormArray, FormBuilder, Validators, NgForm, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigService, ToasterService, ResourceService, NavigationHelperService } from '@sunbird/shared';
-import { UserService, ActionService, ContentService, NotificationService, ProgramsService } from '@sunbird/core';
+import { UserService, ActionService, ContentService, NotificationService, ProgramsService, FrameworkService } from '@sunbird/core';
 import { TelemetryService} from '@sunbird/telemetry';
-import { tap, map, catchError, mergeMap } from 'rxjs/operators';
+import { tap, map, catchError, mergeMap, first } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
 import { of, forkJoin, throwError } from 'rxjs';
@@ -92,7 +92,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     private resourceService: ResourceService, private collectionHierarchyService: CollectionHierarchyService,
     public programStageService: ProgramStageService, public activeRoute: ActivatedRoute,
     public router: Router, private navigationHelperService: NavigationHelperService,
-    public programTelemetryService: ProgramTelemetryService, private programsService: ProgramsService) { }
+    public programTelemetryService: ProgramTelemetryService, private programsService: ProgramsService,
+    public frameworkService: FrameworkService) { }
 
   ngOnInit() {
     this.overrideMetaData = this.programsService.overrideMetaData;
@@ -121,6 +122,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.notify = this.helperService.getNotification().subscribe((action) => {
       this.contentStatusNotify(action);
     });
+
+    if ( _.isUndefined(this.sessionContext.topicList)) {
+      this.fetchFrameWorkDetails();
+    }
   }
 
   ngAfterViewInit() {
@@ -146,6 +151,16 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       };
      });
+  }
+
+  fetchFrameWorkDetails() {
+    this.frameworkService.initialize(this.sessionContext.framework);
+    this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
+      if (frameworkDetails && !frameworkDetails.err) {
+        const frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
+        this.sessionContext.topicList = _.get(_.find(frameworkData, { code: 'topic' }), 'terms');
+      }
+    });
   }
 
   public preprareTelemetryEvents() {
