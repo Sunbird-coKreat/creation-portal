@@ -8,6 +8,7 @@ import * as moment from 'moment';
 import { DatePipe } from '@angular/common';
 import { IInteractEventEdata } from '@sunbird/telemetry';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { FormGroup, FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-program-list',
@@ -43,11 +44,15 @@ export class ProgramListComponent implements OnInit {
   public issourcingOrgAdmin = false;
   public selectedProgramToModify: any;
   public showModifyConfirmation: boolean;
-
+  public showFiltersModal = false;
+  public filterForm: FormGroup;
+  public showFilters = {};
+  classF = ["Class 8", "Class 7"]
+  classF1 = ["Class 8"]
   showDeleteModal = false;
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
-    public router: Router, private datePipe: DatePipe, public configService: ConfigService) { }
+    public router: Router, private datePipe: DatePipe, public configService: ConfigService, public sbFormBuilder: FormBuilder) { }
 
   ngOnInit() {
     this.checkIfUserIsContributor();
@@ -55,8 +60,35 @@ export class ProgramListComponent implements OnInit {
     this.telemetryInteractCdata = [];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
+    this.createFilterForm();
+  }    
+  createFilterForm() {
+    this.filterForm = this.sbFormBuilder.group({
+      sourcingOrganisations: [],
+      medium: [],
+      subject: [],
+      gradeLevel: [],
+      contentTypes: [],
+      nominations: [],
+      contributions: []
+    });
   }
-
+  checkFilterShowCondition() {
+    this.showFiltersModal = true;
+    if (this.activeMyProgramsMenu) { // for my projects conditions
+        this.showFilters['sourcingOrganisations'] = false;
+        this.showFilters['nominations'] = false;
+        this.showFilters['contributions'] = false;
+    } else if (this.userService.isContributingOrgAdmin() && this.activeAllProgramsMenu){
+        this.showFilters['sourcingOrganisations'] = false;
+        this.showFilters['nominations'] = true;
+        this.showFilters['contributions'] = true;
+    } else if (this.programsService.checkforshowAllPrograms() && this.activeAllProgramsMenu) {
+        this.showFilters['sourcingOrganisations'] = true;
+        this.showFilters['nominations'] = false;
+        this.showFilters['contributions'] = false;
+    }
+  }
   /**
    * Check if logged in user is contributor or sourcing org
    */
@@ -646,5 +678,8 @@ export class ProgramListComponent implements OnInit {
     } else {
       this.getNotificationData();
     }
+  }
+  applyFilter() {
+    console.log(this.filterForm.value);
   }
 }
