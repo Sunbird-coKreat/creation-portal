@@ -252,9 +252,19 @@
 		<div class="segment mt-5 pb-30 pt-10">
 			<form class="ui form sb-dock-dropdown"> 
 				<div class="ui grid">
+          <div class="six wide column py-10">
+						<div class="field">
+							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.sourcingOrganisations}}</label>
+							<sui-multi-select class="selection p-5 b-100"
+							formControlName="sourcing" #sourcing
+							>
+								<sui-select-option *ngFor="let sourcing of sourcing.filteredOptions" [value]="sourcing"> </sui-select-option>
+							</sui-multi-select>
+						</div>
+					</div>
 					<div class="six wide column py-10">
 						<div class="field">
-							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.medium}}</label>
+							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.mediums}}</label>
 							<sui-multi-select class="selection p-5 b-100"
 							formControlName="medium" #mediums
 							>
@@ -293,9 +303,9 @@
             </div>
             </div>
          
-          <div class="six wide column py-10" *ngIf="!iscontributeOrgAdmin">
+          <div class="six wide column py-10">
 						<div class="field">
-							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.nominations}}</label>
+							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.nominationDate}}</label>
 							<sui-multi-select formControlName="gradeLevel"
 							class="selection p-5 b-100" 
 							>
@@ -303,9 +313,9 @@
 							</sui-multi-select>
 						</div>
           </div>
-          <div class="six wide column py-10" *ngIf="!iscontributeOrgAdmin">
+          <div class="six wide column py-10">
 						<div class="field">
-							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.contributions}}</label>
+							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.contributionDate}}</label>
 							<sui-multi-select formControlName=""
 							class="selection p-5 b-100"
 							>
