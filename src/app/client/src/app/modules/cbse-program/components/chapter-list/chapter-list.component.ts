@@ -626,6 +626,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       } else if (creatorAndReviewerRole) {
         if (( (_.includes(['Review', 'Live'], content.status) || (content.prevStatus === 'Live' && content.status === 'Draft' ) || (content.prevStatus === 'Review' && content.status === 'Draft' )) && this.currentUserID !== content.createdBy && content.organisationId === this.myOrgId) || this.currentUserID === content.createdBy) {
           return true;
+        } else if (content.status === 'Live' && content.sourceURL) {
+          return true;
         }
       } else if (reviewerViewRole && (content.status === 'Review' || content.status === 'Live' || (content.prevStatus === 'Review' && content.status === 'Draft' ) || (content.prevStatus === 'Live' && content.status === 'Draft' ))
       && this.currentUserID !== content.createdBy
