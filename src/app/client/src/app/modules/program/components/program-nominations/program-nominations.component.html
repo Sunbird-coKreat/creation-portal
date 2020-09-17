@@ -413,16 +413,15 @@
 							<td>{{orgUser?.framework?.gradeLevel?.join(', ')}}</td>
 							<td>{{orgUser?.framework?.subject?.join(', ')}}</td>
 							<td class="text-center">
-							        <sui-select class="selection pt-5" [(ngModel)]="orgUser.selectedRole" labelField="name" [options]="options" valueField="name"
-									(selectedOptionChange)="onRoleChange(orgUser)">
-                                        <sui-select-option *ngFor="let option of roles;" [value]="option"
-                                        appTelemetryInteract
-                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('assign-role-by-sourcingOrg', 'click', 'program-nominations', {values: [orgUser.identifier, option.name]})"
-                                                        [telemetryInteractObject]="telemetryInteractObject"
-                                                        [telemetryInteractCdata]="telemetryInteractCdata"
-                                                        [telemetryInteractPdata]="telemetryInteractPdata">
-										</sui-select-option>
-									</sui-select>
+                                <div class="custom-selectbx">
+                                    <label>
+                                        <select [(ngModel)]="orgUser.newRole" labelField="name"  valueField="name" (change)="onRoleChange(orgUser)" >
+                                            <option *ngFor="let option of roles;" >
+                                                {{showUserRoleOption(option?.name, orgUser?.newRole)}}
+                                            </option>
+                                        </select>
+                                    </label>
+                                </div>
 							</td>
 						  </tr>
 						</tbody>
@@ -502,7 +501,7 @@
                                             <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                         </span>
                                     </th>
-                                    <th colspan="4" class="bb-0 pb-0">{{resourceService.frmelmnts.lbl.profile.contributingOrg}}</th>
+                                    <th colspan="5" class="bb-0 pb-0">{{resourceService.frmelmnts.lbl.profile.contributingOrg}}</th>
                                     <th colspan="3" class="bb-0 pb-0">{{resourceService.frmelmnts.lbl.profile.yourOrganisation}}</th>
                                 </tr>
                                 <tr>
@@ -518,6 +517,14 @@
                                         {{resourceService.frmelmnts.lbl.reviewInProgress}}
                                         <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'review' "></i>
                                         <span  *ngIf="sortColumn == 'review'" class="d-inline-block">
+                                            <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+                                            <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th (click)="sortCollection('rejected', contributionDashboardData)" class="va-top sb-sorting cursor-pointer">
+                                        {{resourceService.frmelmnts.lbl.correctionsPending}}
+                                        <i class="fa fa-sort ml-4" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'rejected' "></i>
+                                        <span  *ngIf="sortColumn == 'rejected'" class="d-inline-block">
                                             <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
                                             <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                         </span>
@@ -570,6 +577,7 @@
                                     <td>{{contributor.type === 'org' ? 'Organisation' : 'Individual'}}</td>
                                     <td class="sb-color-gray-300">{{contributor.draft || 0}}</td>
                                     <td class="sb-color-warning">{{contributor.type !== 'individual' ? contributor.review: '-'}}</td>
+                                    <td class="sb-color-error">{{contributor?.correctionsPending}}</td>
                                     <td class="sb-color-success">{{contributor.live || 0}}</td>
                                     <td class="sb-color-error">{{contributor.type !== 'individual' ? contributor?.rejected: '-'}}</td>
                                     <td class="sb-color-warning">{{contributor?.sourcingPending || 0}}</td>
@@ -639,3 +647,25 @@
 	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs">
 	</ndc-dynamic>
 </ng-container>
+
+<sui-modal *ngIf="showUserRemoveRoleModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
+    [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="cancelRemoveUserFromProgram();" #userRemoveRoleModal>
+    <div class="sb-modal-header">
+        {{resourceService?.frmelmnts?.lbl?.confirm}}
+    </div>
+    <div class="sb-modal-content">
+        <div class="sb-publish-content">
+            <div class="review-modal-list">
+                {{resourceService?.frmelmnts?.lbl?.removeUserFromProgramConfirmationMsg}}
+            </div>
+        </div>
+    </div>
+    <div class="sb-modal-actions">
+        <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" [class.sb-btn-disabled]="userRemoveRoleLoader"
+            (click)="removeUserFromProgram()">
+            {{resourceService?.frmelmnts?.btn?.yes}}
+        </button>
+        <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary"
+            (click)="cancelRemoveUserFromProgram();"> {{resourceService?.frmelmnts?.btn?.no}} </button>
+    </div>
+</sui-modal>
