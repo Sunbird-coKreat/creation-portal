@@ -4,10 +4,10 @@ import { OrgDetailsService } from './../org-details/org-details.service';
 import { FrameworkService } from './../framework/framework.service';
 import { ExtPluginService } from './../ext-plugin/ext-plugin.service';
 import { PublicDataService } from './../public-data/public-data.service';
-import { ConfigService, ServerResponse, ToasterService, ResourceService, HttpOptions } from '@sunbird/shared';
+import { ConfigService, ServerResponse, ToasterService, ResourceService, HttpOptions, BrowserCacheTtlService } from '@sunbird/shared';
 import { Injectable } from '@angular/core';
 import { UserService } from '../user/user.service';
-import { combineLatest, of, iif, Observable, BehaviorSubject, throwError, merge, forkJoin} from 'rxjs';
+import { combineLatest, of, iif, Observable, BehaviorSubject, throwError, merge, forkJoin, Subject} from 'rxjs';
 import * as _ from 'lodash-es';
 import { CanActivate, Router } from '@angular/router';
 import { DataService } from '../data/data.service';
@@ -45,13 +45,18 @@ export class ProgramsService extends DataService implements CanActivate {
   // private orgUsers: Array<any>;
   public mvcStageData: any;
 
+  private _programsNotificationData = new Subject();
+  public readonly programsNotificationData = this._programsNotificationData.asObservable()
+    .pipe(skipWhile(data => data === undefined || data === null));
+  private _projectFeedDays: string;
+
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService,
     private extFrameworkService: ExtPluginService, private datePipe: DatePipe,
     private contentService: ContentService, private router: Router,
     private toasterService: ToasterService, private resourceService: ResourceService,
     public learnerService: LearnerService, private registryService: RegistryService,
-    public cacheService: CacheService) {
+    public cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService) {
       super(http);
       this.config = config;
       this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;//"http://localhost:6000/";//
@@ -180,11 +185,11 @@ export class ProgramsService extends DataService implements CanActivate {
   } else if (updateOsid) {
     this.updateUserRole(updateOsid, _.uniq(uRoles)).subscribe(
       (userAddRes) => {
-        console.log("User added to org"+ UserOsid, userAddRes);
+        console.log('User added to org'+ UserOsid, userAddRes);
         this.onAfterJoinRedirect();
       },
       (userAddErr) => {
-          console.log("Error while adding User added to org"+ UserOsid, userAddErr);
+          console.log('Error while adding User added to org'+ UserOsid, userAddErr);
           this.toasterService.error(this.resourceService.messages.fmsg.contributorjoin.m0002);
           this.router.navigate(['sourcing']);
         }
@@ -280,8 +285,8 @@ export class ProgramsService extends DataService implements CanActivate {
               }
             }
           }).catch((err) => {
-            console.log("errr", err);
-            this.toasterService.warning("Fetching registry failed");
+            console.log('errr', err);
+            this.toasterService.warning('Fetching registry failed');
           });
         },
         (err) => {
@@ -426,11 +431,11 @@ export class ProgramsService extends DataService implements CanActivate {
 
 
                       this.addToRegistry(userOrgAdd).subscribe(
-                        (userAddRes) => {console.log("User added to org"+ user.identifier, userAddRes);},
-                        (userAddErr) => {console.log("Errro while adding User added to org"+ user.identifier,userAddErr);}
+                        (userAddRes) => {console.log('User added to org'+ user.identifier, userAddRes);},
+                        (userAddErr) => {console.log('Errro while adding User added to org'+ user.identifier,userAddErr);}
                       );
                     },
-                    (error) => {console.log("Errro while adding User added to reg"+ user.identifier, error);}
+                    (error) => {console.log('Errro while adding User added to reg'+ user.identifier, error);}
                 );
               } else if (!_.isEmpty(_.get(userProfile, 'user')) && _.isEmpty(_.get(userProfile, 'user_org'))) {
                 userOrgAdd = {
@@ -444,8 +449,8 @@ export class ProgramsService extends DataService implements CanActivate {
                   userOrgAdd.User_Org.roles = ['user', 'sourcing_reviewer'];
                 }
                 this.addToRegistry(userOrgAdd).subscribe(
-                  (userAddRes) => {console.log("User added to org"+ user.identifier, userAddRes);},
-                  (userAddErr) => {console.log("Errro while adding User added to org"+ user.identifier,userAddErr);}
+                  (userAddRes) => {console.log('User added to org'+ user.identifier, userAddRes);},
+                  (userAddErr) => {console.log('Errro while adding User added to org'+ user.identifier,userAddErr);}
                 );
               } else if (userOrgRoles.includes('CONTENT_REVIEWER')) {
                 const uOrgs = _.map(_.get(userProfile, 'user_org'), 'orgId');
@@ -455,8 +460,8 @@ export class ProgramsService extends DataService implements CanActivate {
                       const uroles = mapping.roles;
                       uroles.push('sourcing_reviewer');
                       this.updateUserRole(mapping.osid, _.uniq(uroles)).subscribe(
-                        (userAddRes) => {console.log("User added to org"+ user.identifier, userAddRes);},
-                        (userAddErr) => {console.log("Errro while adding User added to org"+ user.identifier,userAddErr);}
+                        (userAddRes) => {console.log('User added to org'+ user.identifier, userAddRes);},
+                        (userAddErr) => {console.log('Errro while adding User added to org'+ user.identifier,userAddErr);}
                       );
                    }
                   });
@@ -469,14 +474,14 @@ export class ProgramsService extends DataService implements CanActivate {
                     }
                   };
                   this.addToRegistry(userOrgAdd).subscribe(
-                    (userAddRes) => {console.log("User added to org"+ user.identifier, userAddRes);},
-                    (userAddErr) => {console.log("Errro while adding User added to org"+ user.identifier,userAddErr);}
+                    (userAddRes) => {console.log('User added to org'+ user.identifier, userAddRes);},
+                    (userAddErr) => {console.log('Errro while adding User added to org'+ user.identifier,userAddErr);}
                   );
                 }
               }
             }
           }).catch((err) => {
-            console.log("errr", err);
+            console.log('errr', err);
           });
         });
       }));
@@ -493,10 +498,10 @@ export class ProgramsService extends DataService implements CanActivate {
 
           this.addSourcingUserstoContribOrg(userRegData).subscribe(
             (res) => {
-              console.log("Added users to contribution org");
+              console.log('Added users to contribution org');
             },
             (error) => {
-              console.log("Error while adding users to contribution org");
+              console.log('Error while adding users to contribution org');
             }
           );
         }).catch((err) => {
@@ -539,7 +544,7 @@ export class ProgramsService extends DataService implements CanActivate {
                 code: orgName.toUpperCase(),
                 createdBy: res1.result.User.osid,
                 description: orgName,
-                type: ["contribute", "sourcing"],
+                type: ['contribute', 'sourcing'],
                 orgId: this.userService.userProfile.rootOrgId,
               }
             };
@@ -1093,7 +1098,7 @@ export class ProgramsService extends DataService implements CanActivate {
   getContentOriginEnvironment() {
     switch(window.location.hostname) {
       case 'dock.sunbirded.org': return 'https://dev.sunbirded.org'; break;
-      case 'vdn.diksha.gov.in': return "https://diksha.gov.in"; break;
+      case 'vdn.diksha.gov.in': return 'https://diksha.gov.in'; break;
       case 'dock.preprod.ntp.net.in': return 'https://preprod.ntp.net.in'; break;
       default: return  'https://dev.sunbirded.org'; break;
     }
@@ -1111,6 +1116,52 @@ export class ProgramsService extends DataService implements CanActivate {
     this.mvcStageData = undefined;
   }
 
+  getProgramsNotificationData(reqData): Observable<any> {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.FEED_SEARCH}`,
+      data: {
+        request: reqData
+      }
+    };
+    if (this.cacheService.get('programsNotificationData')) {
+      return  of(this.cacheService.get('programsNotificationData'));
+    } else {
+      return this.post(req).pipe(tap(data => this.setSessionCache({name: 'programsNotificationData', value: data})));
+    }
+  }
+
+  fetchProjectFeedDays() {
+    const option = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.CONFIGURATION_SEARCH}`,
+      data: {
+        request: {
+          key: 'projectFeedDays',
+          status: 'active'
+        }
+      }
+    };
+
+    return this.post(option).pipe(
+      map(result => _.get(result, 'result.configuration.value')),
+      catchError(err => of('')),
+      tap(data => {
+        this._projectFeedDays = data;
+      })
+    );
+  }
+
+  get projectFeedDays(): string {
+    return this._projectFeedDays;
+  }
+
+  setSessionCache(data) {
+    this.cacheService.set(data.name, data.value,
+    { maxAge: this.browserCacheTtlService.browserCacheTtl });
+  }
+
+  sendprogramsNotificationData(programData) {
+    this._programsNotificationData.next(programData);
+  }
   /*getSourcingOrgUserList(sourcingOrgId, roles, limit?) {
     return new Promise((resolve, reject) => {
       // Get all diskha users

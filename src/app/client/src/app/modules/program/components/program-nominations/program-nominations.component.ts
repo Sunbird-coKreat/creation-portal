@@ -484,6 +484,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         draft: 0,
         rejected: 0,
         live: 0,
+        correctionsPending: 0,
         sourcingPending: 0,
         sourcingAccepted: 0,
         sourcingRejected: 0,
@@ -765,10 +766,23 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.userRemoveRoleLoader = true;
     this.updateUserRoleMapping(this.getProgramRoleMapping(this.selectedUserToRemoveRole), this.selectedUserToRemoveRole);
   }
-
-  showUserRoleOption(roleName, userRole) {
-    return (roleName !== 'NONE' || (roleName === 'NONE' && userRole !== 'Select Role'))
+  setTelemetryForonRoleChange(user) {
+    const edata =  {
+      id: 'assign-role-by-sourcingOrg',
+      type: 'click',
+      pageid: 'program-nominations',
+      extra : {values: [user.identifier, user.newRole]}
+    }
+     this.registryService.generateUserRoleUpdateTelemetry(this.activatedRoute.snapshot.data.telemetry.env,this.telemetryInteractCdata,this.telemetryInteractPdata, edata )
   }
+
+showUserRoleOption(roleName, userRole) {
+  if (!(roleName !== 'NONE' || (roleName === 'NONE' && userRole !== 'Select Role'))) {
+   return 'Select Role'
+  } else {
+    return roleName;
+  }
+}
 
   cancelRemoveUserFromProgram() {
     this.showUserRemoveRoleModal = false;
@@ -776,6 +790,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   onRoleChange(user) {
+    this.setTelemetryForonRoleChange(user);
     const newRole = user.newRole;
     if (!_.includes(this.roleNames, newRole)) {
       this.toasterService.error(this.resourceService.messages.emsg.roles.m0003);
@@ -1012,6 +1027,7 @@ downloadContribDashboardDetails() {
           contributor.type === 'org' ? 'Organisation' : 'Individual',
           contributor.draft || 0,
           contributor.type !== 'individual' ? contributor.review : '-',
+          contributor.correctionsPending || 0,
           contributor.live || 0,
           contributor.type !== 'individual' ? contributor.rejected : '-',
           contributor.sourcingPending || 0,
@@ -1036,7 +1052,7 @@ downloadContribDashboardDetails() {
 getContribDashboardHeaders() {
   const columnNames = [
     'projectName', 'contributorName', 'typeOfContributor', 'draftContributingOrg',
-    'pendingContributingOrg', 'acceptedContributingOrg', 'rejectedContributingOrg', 'pendingtSourcingOrg',
+    'pendingContributingOrg', 'correctionsPending', 'acceptedContributingOrg', 'rejectedContributingOrg', 'pendingtSourcingOrg',
     'acceptedSourcingOrg', 'rejectedSourcingOrg'];
   return _.map(columnNames, name => _.get(this.resourceService, `frmelmnts.lbl.${name}`));
 }

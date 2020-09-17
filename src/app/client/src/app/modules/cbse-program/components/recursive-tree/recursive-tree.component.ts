@@ -73,6 +73,11 @@ export class RecursiveTreeComponent implements OnInit {
       this.visibility['showDeleteResource']
     );
   }
+
+  canViewActionMenu(content) {
+    return !!(this.visibility && this.visibility['showActionMenu'] && content.createdBy === this.userService.getUserId());
+  }
+
   nodeMetaEmitter(event) {
     this.nodeMeta.emit({
       action: event.action,
@@ -128,11 +133,6 @@ export class RecursiveTreeComponent implements OnInit {
 
   menuClick(e) {
     e.stopPropagation();
-  }
-
-  isSourcingOrgReviewer () {
-    return !!(this.userService.userProfile.userRoles.includes('ORG_ADMIN') ||
-    this.userService.userProfile.userRoles.includes('CONTENT_REVIEWER'));
   }
 
   goToAddLibrary(identifier) {

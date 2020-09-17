@@ -336,17 +336,15 @@
 									{{ (orgUser?.projectselectedRole) ? orgUser.projectselectedRole : '-' }}
 								</div>
 								<ng-template #elseBlock>
-									<sui-select class="selection pt-5" [(ngModel)]="orgUser.newRole" labelField="name" [options]="options" valueField="name"
-									(selectedOptionChange)="onRoleChange(orgUser)">
-										<ng-container *ngFor="let option of roles;">
-											<sui-select-option *ngIf="showUserRoleOption(option?.name, orgUser?.projectselectedRole)" [value]="option" appTelemetryInteract
-											[telemetryInteractEdata]="getTelemetryInteractEdata('assign-users-to-program', 'click', 'list-nominated-textbooks', {values: [orgUser.identifier, option.name]})"
-											[telemetryInteractObject]="telemetryInteractObject"
-											[telemetryInteractCdata]="telemetryInteractCdata"
-											[telemetryInteractPdata]="telemetryInteractPdata">
-											</sui-select-option>
-										</ng-container>
-									</sui-select>
+									<div class="custom-selectbx">
+										<label>
+											<select [(ngModel)]="orgUser.newRole" labelField="name"  valueField="name" (change)="onRoleChange(orgUser)" >
+												<option *ngFor="let option of roles;" >
+													{{showUserRoleOption(option?.name, orgUser?.projectselectedRole)}}
+												</option>
+											</select>
+										</label>
+									</div>
 								</ng-template>
 							</td>
 						  </tr>
@@ -476,7 +474,7 @@
 	</div>
   </sui-modal>
 
-  <sui-modal *ngIf="showUserRemoveRoleModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showUserRemoveRoleModal = false" #userRemoveRoleModal>
+  <sui-modal *ngIf="showUserRemoveRoleModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="cancelRemoveUserFromProgram();" #userRemoveRoleModal>
   <div class="sb-modal-header">
     {{resourceService?.frmelmnts?.lbl?.confirm}}
   </div>
