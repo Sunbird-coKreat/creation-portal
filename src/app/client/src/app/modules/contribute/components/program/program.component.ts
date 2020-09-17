@@ -87,6 +87,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   initialSourcingOrgUser = [];
   searchLimitMessage: any;
   searchLimitCount: any;
+  @ViewChild('userRemoveRoleModal') userRemoveRoleModal;
+  public userRemoveRoleLoader = false;
+  public showUserRemoveRoleModal = false;
+  public selectedUserToRemoveRole: any;
   public telemetryPageId = 'collection';
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
@@ -341,6 +345,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
      this.contributorOrgUser = isUserSearch ? usersList[0] : usersList[this.pageNumber - 1];
      this.pager = this.paginationService.getPager(this.OrgUsersCnt, isUserSearch ? 1 : this.pageNumber, this.pageLimit);
   }
+
   setOrgUsers(orgUsers) {
     if (_.isEmpty(orgUsers)) {
       this.showUsersLoader = false;
@@ -361,6 +366,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           r.projectselectedRole = "REVIEWER";
         }
       }
+      r.newRole = r.projectselectedRole;
       this.allContributorOrgUsers.push(r);
     });
 
@@ -379,18 +385,34 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.pager = this.paginationService.getPager(this.OrgUsersCnt, this.pageNumber, this.pageLimit);
   }
 
-  onRoleChange(user) {
-    const newRole = user.projectselectedRole;
-    if (!_.includes(this.roleNames, newRole)) {
-      this.toasterService.error(this.resourceService.messages.emsg.roles.m0003);
-      return;
+  showUserRoleOption(roleName, userRole) {
+    if (!(roleName !== 'NONE' || (roleName === 'NONE' && userRole !== 'Select Role'))) {
+     return 'Select Role'
+    } else {
+      return roleName;
     }
+  }
+
+  removeUserFromProgram() {
+    if (this.userRemoveRoleLoader) {
+      return false;
+    }
+    this.userRemoveRoleLoader = true;
+    this.updateUserRoleMapping(this.getProgramRoleMapping(this.selectedUserToRemoveRole), this.selectedUserToRemoveRole);
+  }
+
+  cancelRemoveUserFromProgram() {
+    this.showUserRemoveRoleModal = false;
+    this.selectedUserToRemoveRole.newRole = this.selectedUserToRemoveRole.projectselectedRole;
+  }
+
+  getProgramRoleMapping(user) {
+    const newRole = user.newRole;
     let progRoleMapping = this.nominationDetails.rolemapping;
     if (isNullOrUndefined(progRoleMapping) && newRole !== 'NONE') {
       progRoleMapping = {};
     }
     const programRoleNames = _.keys(progRoleMapping);
-
     if (!_.includes(programRoleNames, newRole) && !_.includes(["NONE", "BOTH"], newRole)) {
       progRoleMapping[newRole] = [];
     } else if (newRole == 'BOTH') {
@@ -401,7 +423,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         progRoleMapping['REVIEWER'] = [];
       }
     }
-    // console.log('before:', progRoleMapping);
     _.forEach(progRoleMapping, (users, role) => {
       if (newRole === 'BOTH') {
         // If both option selected add user in both the roles array
@@ -421,7 +442,34 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       // Remove duplicate users ids and falsy values
       progRoleMapping[role] = _.uniq(_.compact(users));
     });
-    // console.log('after:', progRoleMapping);
+    return progRoleMapping;
+  }
+  setTelemetryForonRoleChange(user) {
+     const edata =  {
+        id: 'assign-users-to-program',
+        type: 'click',
+        pageid: 'list-nominated-textbooks',
+        extra : {values: [user.identifier, user.newRole]}
+      }
+    this.registryService.generateUserRoleUpdateTelemetry(this.activatedRoute.snapshot.data.telemetry.env,this.telemetryInteractCdata,this.telemetryInteractPdata, edata )
+ }
+  onRoleChange(user) {
+    this.setTelemetryForonRoleChange(user);
+    const newRole = user.newRole;
+    if (!_.includes(this.roleNames, newRole)) {
+      this.toasterService.error(this.resourceService.messages.emsg.roles.m0003);
+      return false;
+    }
+    // If new role is none then show remove user from program confirmation modal
+    if (newRole === 'NONE') {
+      this.selectedUserToRemoveRole = user;
+      this.showUserRemoveRoleModal = true;
+      return false;
+    }
+    this.updateUserRoleMapping(this.getProgramRoleMapping(user), user);
+  }
+
+  updateUserRoleMapping(progRoleMapping, user) {
     const req = {
       'request': {
         'program_id': this.activatedRoute.snapshot.params.programId,
@@ -429,11 +477,18 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         'rolemapping': progRoleMapping
       }
     };
-    const updateNomination = this.programsService.updateNomination(req);
-    updateNomination.subscribe(response => {
+    return this.programsService.updateNomination(req).subscribe(response => {
+      this.showUserRemoveRoleModal = false;
+      this.userRemoveRoleLoader = false;
+      if (user.newRole === "NONE") {
+        user.newRole = 'Select Role';
+      }
+      user.projectselectedRole = user.newRole;
       this.nominationDetails.rolemapping = progRoleMapping;
       this.toasterService.success(this.resourceService.messages.smsg.roles.m0001);
     }, error => {
+      this.showUserRemoveRoleModal = false;
+      this.userRemoveRoleLoader = false;
       console.log(error);
       this.toasterService.error(this.resourceService.messages.emsg.roles.m0002);
     });

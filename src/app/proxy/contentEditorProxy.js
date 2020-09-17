@@ -59,14 +59,14 @@ module.exports = function (app) {
 
   // Proxy for content create ,update & review Start
   app.use([
-    '/action/content/v3/create', 
+    '/action/content/v3/create',
     '/action/content/v3/hierarchy/add',
     '/action/content/v3/hierarchy/remove',
     '/action/content/v3/update/*',
     '/action/content/v3/upload/*',
     '/action/content/v3/hierarchy/*',
     '/action/content/v3/import'
-  ], 
+  ],
   proxy(kp_content_service_base_url, {
     proxyReqPathResolver: function (req) {
       var originalUrl = req.originalUrl
@@ -81,8 +81,9 @@ module.exports = function (app) {
     '/action/content/v3/publish/*',
     '/action/content/v3/reject/*',
     '/action/content/v3/retire/*',
-    '/action/assessment/v3/items/retire/*'
-  ],  
+    '/action/assessment/v3/items/retire/*',
+    '/action/system/v3/content/update/*'
+  ],
     proxy(kp_learning_service_base_url, {
     proxyReqPathResolver: function (req) {
       var originalUrl = req.originalUrl

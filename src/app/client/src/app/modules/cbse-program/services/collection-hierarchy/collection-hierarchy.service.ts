@@ -148,13 +148,15 @@ export class CollectionHierarchyService {
       this.getRejectOrDraft(orgLevelDataWithoutReject['Draft'], 'Draft') : [];
     orgLevelDataWithReject['Reject'] = _.has(orgLevelDataWithoutReject, 'Draft') ?
       this.getRejectOrDraft(orgLevelDataWithoutReject['Draft'], 'Reject') : [];
+      orgLevelDataWithReject['correctionsPending'] = _.has(orgLevelDataWithoutReject, 'Draft') ?
+      this.getRejectOrDraft(orgLevelDataWithoutReject['Draft'], 'correctionsPending') : [];
     const groupedByCollectionId = _.groupBy(totalContents, 'collectionId');
     const groupedByCollectionIdForSample = _.groupBy(totalSampleContent, 'collectionId');
     const collectionsByStatus = this.groupStatusForCollections(groupedByCollectionId);
     const collectionsByStatusForSample = this.groupStatusForCollections(groupedByCollectionIdForSample);
 
     let mvcRejected = [];
-    if(collections && collections.length) { // for getting rejected mvc contents 
+    if(collections && collections.length) { // for getting rejected mvc contents
       _.map(collections, textbook => {
       const reviewedContents = _.union(_.get(textbook, 'acceptedContents', []), _.get(textbook, 'rejectedContents', []));
 
@@ -173,6 +175,7 @@ export class CollectionHierarchyService {
       review: _.has(orgLevelDataWithReject, 'Review') ? orgLevelDataWithReject.Review.length : 0,
       draft: _.has(orgLevelDataWithReject, 'Draft') ? orgLevelDataWithReject.Draft.length : 0,
       rejected: _.has(orgLevelDataWithReject, 'Reject') ? orgLevelDataWithReject.Reject.length : 0,
+      correctionsPending: _.has(orgLevelDataWithReject, 'correctionsPending') ? orgLevelDataWithReject.correctionsPending.length : 0,
       live: this.getAllPendingForApprovalCount(orgLevelDataWithReject, collections).length,
       individualStatus: collectionsByStatus,
       individualStatusForSample: collectionsByStatusForSample,
@@ -182,13 +185,13 @@ export class CollectionHierarchyService {
   }
   getMvcContentCounts(collections) {
     let mvcContributions = [];
-  
+
      if (collections && collections.length) { // this is to get active (approval pending) counts of mvc contents
        _.map(collections, textbook => {
         const reviewedContents = _.union(_.get(textbook, 'acceptedContents', []), _.get(textbook, 'rejectedContents', []));
         if(_.has(textbook, 'mvcContributions')) {
         mvcContributions = _.intersection(textbook.mvcContributions, reviewedContents);
-       
+
        }
       })
      }
@@ -204,13 +207,13 @@ export class CollectionHierarchyService {
         if(_.has(textbook, 'mvcContributions')) {
           mvcContributions.push(...textbook.mvcContributions);
         }
-     })  
+     })
     }
-   
+
     if (liveContents.length || (mvcContributions && mvcContributions.length)) {
       const liveContentIds = _.map(liveContents, 'identifier');
 
-      if (mvcContributions && mvcContributions.length) { // this is to get acceptedContents and rejectedContents counts for mvc 
+      if (mvcContributions && mvcContributions.length) { // this is to get acceptedContents and rejectedContents counts for mvc
         liveContentIds.push(...mvcContributions);
       }
       const allAcceptedContentIds = _.flatten(_.map(collections, 'acceptedContents'));
@@ -218,17 +221,20 @@ export class CollectionHierarchyService {
       acceptedOrgContents = _.intersection(liveContentIds, allAcceptedContentIds);
       rejectedOrgContents = _.intersection(liveContentIds, allRejectedContentIds);
       pendingOrgContents = _.difference(liveContentIds, _.concat(acceptedOrgContents, rejectedOrgContents));
-      } 
-  
+      }
+
       const meta = {
         accepted: acceptedOrgContents ? acceptedOrgContents.length : 0, // converting to string to enable table sorting
         rejected: rejectedOrgContents ? rejectedOrgContents.length : 0,
         pending: pendingOrgContents ? pendingOrgContents.length : 0,
+        correctionsPending: !_.isEmpty(orgContents['correctionsPending']) ? orgContents['correctionsPending'].length : 0
       };
+
       meta['total'] = _.sumBy(_.values(meta), _.toNumber);
       meta['acceptedContents'] = acceptedOrgContents || [];
       meta['rejectedOrgContents'] = rejectedOrgContents || [];
       meta['pendingOrgContents'] = pendingOrgContents || [];
+      meta['correctionsPendingContents'] = orgContents['correctionsPending'] || [];
       return meta;
   }
 
@@ -238,6 +244,11 @@ export class CollectionHierarchyService {
     let sourcingOrgStatus = {};
     const groupedByCollectionIdForSample = _.groupBy(totalUserSampleContents, 'collectionId');
     const contentGroupByStatus = _.groupBy(totalUserContents, 'status');
+    const tempcontentGroupByStatus = _.cloneDeep(contentGroupByStatus);
+    tempcontentGroupByStatus['Draft'] = _.has(contentGroupByStatus, 'Draft') ?
+    this.getRejectOrDraft(contentGroupByStatus['Draft'], 'Draft') : [];
+    tempcontentGroupByStatus['correctionsPending'] = _.has(contentGroupByStatus, 'Draft') ?
+    this.getRejectOrDraft(contentGroupByStatus['Draft'], 'correctionsPending') : [];
     const contentGroupByStatusForSample = this.groupStatusForCollections(groupedByCollectionIdForSample);
     if (!_.isUndefined(collections)) {
       sourcingOrgStatus = this.getSourcingOrgStatus(collections, contentGroupByStatus);
@@ -245,9 +256,10 @@ export class CollectionHierarchyService {
     return  {
       total: totalUserContents && totalUserContents.length,
       sample: totalUserSampleContents && totalUserSampleContents.length,
-      draft: _.has(contentGroupByStatus, 'Draft') ? contentGroupByStatus.Draft.length : 0,
+      draft: _.has(tempcontentGroupByStatus, 'Draft') ? tempcontentGroupByStatus.Draft.length : 0,
       review: 0,
       rejected: 0,
+      correctionsPending: _.has(tempcontentGroupByStatus, 'correctionsPending') ? tempcontentGroupByStatus.correctionsPending.length : 0,
       live: _.has(contentGroupByStatus, 'Live') ? contentGroupByStatus.Live.length : 0,
       individualStatusForSample: contentGroupByStatusForSample,
       ...(!_.isUndefined(collections) && {sourcingOrgStatus : sourcingOrgStatus})
@@ -257,10 +269,13 @@ export class CollectionHierarchyService {
   getRejectOrDraft(contents, status) {
     let splitter = [];
     if (status === 'Draft') {
-      splitter = _.reject(contents, data =>  data.status === 'Draft' && data.prevStatus === 'Review');
+      splitter = _.reject(contents, data =>  data.status === 'Draft' && (data.prevStatus === 'Review' || data.prevStatus === 'Live'));
     } else if (status === 'Reject') {
       splitter = _.filter(contents, data =>  data.status === 'Draft' && data.prevStatus === 'Review');
+    } else if (status === 'correctionsPending') {
+      splitter = _.filter(contents, data =>  data.status === 'Draft' && data.prevStatus === 'Live');
     }
+
     return splitter;
   }
 

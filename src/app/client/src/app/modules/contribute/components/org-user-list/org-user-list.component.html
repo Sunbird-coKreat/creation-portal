@@ -1,12 +1,12 @@
 <div class="ui container" [appTelemetryImpression]="telemetryImpression">
   <div class="mt-24">
       <div class="sb-pageSection-header mb-0 flex-jc-space-between">
-          <div class="w-50">
+          <div class="w-60">
               <h4 class="sb-pageSection-title">{{ resourceService.frmelmnts.lbl.allUsers }}</h4>
               <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-5 px-5"
                   *ngIf="!showLoader && orgUserscnt">{{orgUserscnt}}</span>
           </div>
-            <div class="sb-search-box medium mt-5">
+            <div class="sb-search-box medium mt-5 mr-10">
               <div class="input-div relative">
                   <i class="search icon"></i>
                   <input class="sb-search-input"  [(ngModel)]="searchInput" type="text"  placeholder="Search..." />
@@ -19,11 +19,11 @@
             [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService?.frmelmnts?.lbl?.search}}</button>
       </div>
         <div>
-        <button class="sb-btn sb-btn-outline-primary sb-btn-normal ml-10 " (click)="copyOnLoad()"><i
-            class="plus circle icon" appTelemetryInteract
-            [telemetryInteractEdata]="getTelemetryInteractEdata('user-link', 'click', 'org-user-list')"
-            [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
-            [telemetryInteractPdata]="telemetryInteractPdata"></i>
+        <button class="sb-btn sb-btn-outline-primary sb-btn-normal ml-10 " (click)="copyOnLoad()" appTelemetryInteract
+        [telemetryInteractEdata]="getTelemetryInteractEdata('user-link', 'click', 'org-user-list')"
+        [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata"><i
+            class="plus circle icon" ></i>
           {{ resourceService.frmelmnts.lbl.inviteUser }}</button>
       </div>
     </div>
@@ -31,7 +31,7 @@
        {{resourceService?.messages?.smsg?.searchLimitMessage | interpolate:'{SEARCH_LIMIT_COUNT}': searchLimitCount }}
       </div>
   </div>
-  <div class="sb-pageSection mb-24 mt-10">
+  <div class="sb-pageSection mb-24 mt-20">
     <div class="sb-table-responsive desktop-o-x-unset"
       *ngIf="orgUserscnt && orgUserscnt > 0 && !showLoader">
       <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
@@ -68,18 +68,15 @@
               <div *ngIf="orgUser?.maskedPhone"> {{orgUser?.maskedPhone}}</div>
             </td>
             <td>
-              <div>
-                <sui-select class="selection pt-5" [(ngModel)]="orgUser.selectedRole" labelField="name"
-                  [options]="roles" valueField="value" (selectedOptionChange)="onRoleChange(orgUser)" #orgRole>
-                  <sui-select-option *ngFor="let option of orgRole.filteredOptions;" [value]="option"
-                    [class.active]="orgUser.selectedRole === option.value"
-                    appTelemetryInteract
-                        [telemetryInteractEdata]="getTelemetryInteractEdata('assign-role-by-contributingOrg', 'click', 'org-user-list', {values: [orgUser.identifier, option.name]})"
-                        [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
-                        [telemetryInteractPdata]="telemetryInteractPdata">
-                  </sui-select-option>
-                </sui-select>
-              </div>
+              <div class="custom-selectbx">
+                <label>
+                  <select class="custom-selectbx" [(ngModel)]="orgUser.selectedRole" labelField="name"  valueField="name" (change)="onRoleChange(orgUser)" >
+                    <option *ngFor="let option of roles;" [value]=option.value>
+                    {{option.name}}
+                    </option>
+                  </select>
+                </label>
+            </div>
             </td>
           </tr>
         </tbody>
