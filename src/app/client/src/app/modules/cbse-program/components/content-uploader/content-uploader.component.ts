@@ -197,6 +197,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
     // tslint:disable-next-line:max-line-length
     this.visibility['showSourcingActionButtons'] = this.canSourcingReviewerPerformActions();
+    this.visibility['showSendForCorrections'] = this.canSendForCorrections();
+  }
+
+  canSendForCorrections() {
+    return !this.contentMetaData.sourceURL;
   }
 
   canEdit() {
