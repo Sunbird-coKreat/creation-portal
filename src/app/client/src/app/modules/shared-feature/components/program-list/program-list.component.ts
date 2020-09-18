@@ -47,6 +47,7 @@ export class ProgramListComponent implements OnInit {
   public showFiltersModal = false;
   public filterForm: FormGroup;
   public showFilters = {};
+  public filtersAppliedCount: any;
   classF = ["Class 8", "Class 7"]
   classF1 = ["Class 8"]
   showDeleteModal = false;
@@ -75,19 +76,20 @@ export class ProgramListComponent implements OnInit {
   }
   checkFilterShowCondition() {
     this.showFiltersModal = true;
-    if (this.activeMyProgramsMenu) { // for my projects conditions
-        this.showFilters['sourcingOrganisations'] = false;
-        this.showFilters['nominations'] = false;
-        this.showFilters['contributions'] = false;
-    } else if (this.userService.isContributingOrgAdmin() && this.activeAllProgramsMenu){
+    this.filtersAppliedCount = 0;
+    if (this.userService.isSourcingOrgAdmin() && this.router.url.includes('/sourcing')) {  // show filter for sourcing org admin for my projects 
         this.showFilters['sourcingOrganisations'] = false;
         this.showFilters['nominations'] = true;
         this.showFilters['contributions'] = true;
-    } else if (this.programsService.checkforshowAllPrograms() && this.activeAllProgramsMenu) {
+    } else if (this.activeAllProgramsMenu  && this.programsService.checkforshowAllPrograms()) { // for all projects 
         this.showFilters['sourcingOrganisations'] = true;
         this.showFilters['nominations'] = false;
         this.showFilters['contributions'] = false;
-    }
+    }  else if (this.activeMyProgramsMenu) { // for my projects for other user role
+       this.showFilters['sourcingOrganisations'] = false;
+       this.showFilters['nominations'] = false;
+       this.showFilters['contributions'] = false;
+    } 
   }
   /**
    * Check if logged in user is contributor or sourcing org
@@ -681,5 +683,8 @@ export class ProgramListComponent implements OnInit {
   }
   applyFilter() {
     console.log(this.filterForm.value);
+  }
+  resetFilter() {
+    
   }
 }

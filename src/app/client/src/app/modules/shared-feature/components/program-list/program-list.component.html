@@ -11,14 +11,18 @@
         </span>
       </div>
       <div class="text-right"> 
-        <i class="icon check circle pr-5 sb-color-success"></i>
-        <div class="fs-0-785 font-italic sb-color-gray-300 mb-10 d-inline-block">
-          3 {{resourceService.frmelmnts.lbl.filtersApplied}}</div>
-        <button type="button" 
+        <div class="fs-0-785 font-italic sb-color-gray-300 mb-10 d-inline-block" *ngIf="filtersAppliedCount">
+          <i class="icon check circle pr-5 sb-color-success"></i>  
+          {{filtersAppliedCount}} {{resourceService?.frmelmnts?.lbl?.filtersApplied}}</div>
+        <button type="button"  	appTelemetryInteract
+        [telemetryInteractEdata]="getTelemetryInteractEdata('apply-filters', 'click', 'program-list')"
+        [telemetryInteractObject]="telemetryInteractObject"
+        [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata"
         class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" 
         (click)="checkFilterShowCondition()">
         <i class="filter icon"></i>
-            {{resourceService.frmelmnts.btn.applyFilter}}
+            {{resourceService?.frmelmnts?.btn?.applyFilter}}
         </button>
       </div>
       <!-- <button routerLink="sourcing/create-program" *ngIf="this.router.url.includes('/sourcing')" class="sb-btn sb-btn-normal sb-btn-primary"><i class="plus outline icon"></i> Add New Program</button> -->
@@ -326,7 +330,15 @@ class="sb-modal" appBodyScroll (dismissed)="showFiltersModal = false">
 </div>
 </div>
 <div class="sb-modal-actions py-20">
-<button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="applyFilter()"> {{resourceService?.frmelmnts?.btn?.apply}} </button>
-<button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary"> {{resourceService?.frmelmnts?.btn?.reset}}</button>
+<button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="applyFilter()" 	appTelemetryInteract
+[telemetryInteractEdata]="getTelemetryInteractEdata('apply-filters', 'click', 'program-list', {values: [filterForm.value]})"
+[telemetryInteractObject]="telemetryInteractObject"
+[telemetryInteractCdata]="telemetryInteractCdata"
+[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService?.frmelmnts?.btn?.apply}} </button>
+<button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="resetFilter()"	appTelemetryInteract
+[telemetryInteractEdata]="getTelemetryInteractEdata('reset-filters', 'click', 'program-list')"
+[telemetryInteractObject]="telemetryInteractObject"
+[telemetryInteractCdata]="telemetryInteractCdata"
+[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService?.frmelmnts?.btn?.reset}}</button>
 </div>
 </sui-modal> 
