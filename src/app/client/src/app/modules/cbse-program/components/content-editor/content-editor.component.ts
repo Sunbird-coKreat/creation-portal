@@ -177,6 +177,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
             this.playerConfig.data
           );
          this.contentData = response.result.content;
+         this.contentEditorComponentInput.content = this.contentData;
          this.resourceStatus = this.contentData.status;
       if (this.resourceStatus === 'Review') {
         this.resourceStatusText = 'Review in Progress';
@@ -205,9 +206,9 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   getDetails() {
-      // return combineLatest(this.tenantService.tenantData$, this.getOwnershipType())
-      // .pipe(map((data: any) => ({ tenantDetails: data[0].tenantData, ownershipType: data[1] })));
-      return of({'tenantDetails': {'logo': 'xyz.png'}, 'ownershipType': ['createdBy']});
+      return combineLatest(this.tenantService.tenantData$, this.getOwnershipType())
+      .pipe(map((data: any) => ({ tenantDetails: data[0].tenantData, ownershipType: data[1] })));
+      // return of({'tenantDetails': {'logo': 'xyz.png'}, 'ownershipType': ['createdBy']});
   }
 
   private initEditor() {
@@ -284,7 +285,6 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection,
        this.contentEditorComponentInput.unitIdentifier, this.contentEditorComponentInput.contentId)
     .subscribe((res) => {
-      // this.programStageService.removeLastStage();
       this.handlePreview();
     }, (err) => {
       this.toasterService.error(this.resourceService.messages.fmsg.m0098);
