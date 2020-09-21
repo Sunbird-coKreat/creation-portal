@@ -94,36 +94,11 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.contentEditorComponentInput.contentId, 'Content', '1.0', { l1: this.sessionContext.collection, l2: this.contentEditorComponentInput.unitIdentifier});
-    if (
-      this.contentEditorComponentInput.action === 'preview' &&
-      this.contentEditorComponentInput.content.status === 'Review'
-    ) {
-      return this.handlePreview();
+    if (this.contentEditorComponentInput.action === 'preview' && this.contentEditorComponentInput.content.status === 'Draft') {
+      this.handlePreview();
+    } else {
+      this.loadContentEditor();
     }
-    setTimeout(() => {
-      this.getDetails()
-      .pipe(
-        first(),
-        tap(data => {
-          this.logo = data.tenantDetails.logo;
-          this.ownershipType = data.ownershipType;
-          this.showLoader = false;
-          this.initEditor();
-          this.setWindowContext();
-          this.setWindowConfig();
-        }),
-        delay(10)
-      ) // wait for iziModal lo load
-      .subscribe(
-        data => {
-          jQuery('#contentEditor').iziModal('open');
-        },
-        error => {
-            this.toasterService.error(this.resourceService.messages.emsg.m0004);
-          this.closeModal();
-        }
-      );
-    }, 0);
   }
   ngAfterViewInit() {
     const telemetryCdata = [{ 'type': 'Program', 'id': this.contentEditorComponentInput.programContext.program_id }];
@@ -148,12 +123,41 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   });
   }
 
+  loadContentEditor() {
+    setTimeout(() => {
+      this.getDetails()
+      .pipe(
+        first(),
+        tap(data => {
+          this.logo = data.tenantDetails.logo;
+          this.ownershipType = data.ownershipType;
+          this.showLoader = false;
+          this.initEditor();
+          this.setWindowContext();
+          this.setWindowConfig();
+        }),
+        delay(10)
+      ) // wait for iziModal to load
+      .subscribe(
+        data => {
+          jQuery('#contentEditor').iziModal('open');
+        },
+        error => {
+            this.toasterService.error(this.resourceService.messages.emsg.m0004);
+            this.closeModal();
+        }
+      );
+    }, 0);
+  }
+
   handleActionButtons() {
     this.visibility = {};
     // tslint:disable-next-line:max-line-length
     this.visibility['showRequestChanges'] = (_.includes(this.actions.showRequestChanges.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
     // tslint:disable-next-line:max-line-length
     this.visibility['showPublish'] = (_.includes(this.actions.showPublish.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
+    // tslint:disable-next-line: max-line-length
+    this.visibility['showEdit'] = (_.includes(this.actions.showEdit.roles, this.sessionContext.currentRoleIds[0]) && this.resourceStatus === 'Draft');
   }
 
   handlePreview() {
@@ -201,8 +205,9 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   getDetails() {
-      return combineLatest(this.tenantService.tenantData$, this.getOwnershipType()).
-      pipe(map((data: any) => ({ tenantDetails: data[0].tenantData, ownershipType: data[1] })));
+      // return combineLatest(this.tenantService.tenantData$, this.getOwnershipType())
+      // .pipe(map((data: any) => ({ tenantDetails: data[0].tenantData, ownershipType: data[1] })));
+      return of({'tenantDetails': {'logo': 'xyz.png'}, 'ownershipType': ['createdBy']});
   }
 
   private initEditor() {
@@ -276,8 +281,11 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       document.getElementById('contentEditor').remove();
     }
     // tslint:disable-next-line:max-line-length
-    this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.contentEditorComponentInput.unitIdentifier, this.contentEditorComponentInput.contentId).subscribe(() => {
-      this.programStageService.removeLastStage();
+    this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection,
+       this.contentEditorComponentInput.unitIdentifier, this.contentEditorComponentInput.contentId)
+    .subscribe((res) => {
+      // this.programStageService.removeLastStage();
+      this.handlePreview();
     }, (err) => {
       this.toasterService.error(this.resourceService.messages.fmsg.m0098);
       this.getDetails();
@@ -317,6 +325,10 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       }, (err) => {
         this.toasterService.error(this.resourceService.messages.fmsg.m00101);
       });
+  }
+
+  handleBack() {
+    this.programStageService.removeLastStage();
   }
 
   ngOnDestroy() {

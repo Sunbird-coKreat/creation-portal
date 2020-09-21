@@ -712,7 +712,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       return templateData.metadata.contentType === event.content.contentType;
     });
     if (this.templateDetails) {
-    this.componentLoadHandler('preview',
+    this.componentLoadHandler(event.action,
     this.programComponentsService.getComponentInstance(this.templateDetails.onClick), this.templateDetails.onClick, event);
     }
   }
@@ -752,6 +752,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         this.unitIdentifier = '';
         this.contentId = ''; // Clearing selected unit/content details
         break;
+      case 'edit':
       case 'preview':
         this.contentId = event.content.identifier;
         this.handlePreview(event);
