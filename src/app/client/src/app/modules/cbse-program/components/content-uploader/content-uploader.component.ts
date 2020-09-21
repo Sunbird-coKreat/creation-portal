@@ -1147,17 +1147,17 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   getEditableFields() {
     if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
       if (this.userService.getUserId() === this.contentMetaData.createdBy && this.resourceStatus === 'Draft') {
-        this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.allFormFields);
+        this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.allFormFields, this.contentMetaData);
       } else if (this.canPublishContent()){
-        this.editableFields = this.helperService.getEditableFields('REVIEWER', this.allFormFields);
+        this.editableFields = this.helperService.getEditableFields('REVIEWER', this.allFormFields, this.contentMetaData);
       }
     } else if (this.hasRole('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
-      this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.allFormFields);
+      this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.allFormFields, this.contentMetaData);
     } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
       && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
       && !this.sourcingReviewStatus
       && (this.selectedOriginUnitStatus === 'Draft')) {
-      this.editableFields = this.helperService.getEditableFields('REVIEWER', this.allFormFields);
+      this.editableFields = this.helperService.getEditableFields('REVIEWER', this.allFormFields, this.contentMetaData);
     }
   }
 
