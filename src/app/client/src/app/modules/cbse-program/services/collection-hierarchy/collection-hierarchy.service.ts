@@ -190,8 +190,8 @@ export class CollectionHierarchyService {
        _.map(collections, textbook => {
         const reviewedContents = _.union(_.get(textbook, 'acceptedContents', []), _.get(textbook, 'rejectedContents', []));
         if(_.has(textbook, 'mvcContributions')) {
-        mvcContributions = _.intersection(textbook.mvcContributions, reviewedContents);
-
+          const  mvcContribution = _.difference(textbook.mvcContributions, reviewedContents);
+          mvcContributions.push(...mvcContribution);
        }
       })
      }
