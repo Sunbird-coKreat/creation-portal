@@ -386,7 +386,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   showUserRoleOption(roleName, userRole) {
-    return (roleName !== 'NONE' || (roleName === 'NONE' && userRole !== 'Select Role'))
+    if (!(roleName !== 'NONE' || (roleName === 'NONE' && userRole !== 'Select Role'))) {
+     return 'Select Role'
+    } else {
+      return roleName;
+    }
   }
 
   removeUserFromProgram() {
@@ -440,8 +444,17 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     return progRoleMapping;
   }
-
+  setTelemetryForonRoleChange(user) {
+     const edata =  {
+        id: 'assign-users-to-program',
+        type: 'click',
+        pageid: 'list-nominated-textbooks',
+        extra : {values: [user.identifier, user.newRole]}
+      }
+    this.registryService.generateUserRoleUpdateTelemetry(this.activatedRoute.snapshot.data.telemetry.env,this.telemetryInteractCdata,this.telemetryInteractPdata, edata )
+ }
   onRoleChange(user) {
+    this.setTelemetryForonRoleChange(user);
     const newRole = user.newRole;
     if (!_.includes(this.roleNames, newRole)) {
       this.toasterService.error(this.resourceService.messages.emsg.roles.m0003);

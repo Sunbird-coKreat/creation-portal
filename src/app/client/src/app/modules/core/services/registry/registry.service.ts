@@ -9,6 +9,7 @@ import { UserService } from './../user/user.service';
 import { LearnerService } from '../learner/learner.service';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'lodash-es';
+import {TelemetryService } from '@sunbird/telemetry';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,7 @@ export class RegistryService extends DataService {
   osReqLimit =  250;
   searchLimitCount = 100;// setting count here , because in future we can get/set limit from configuration
   programUserPageLimit = 200; // setting page limit here , because in future we can get/set limit from configuration 
-  constructor(config: ConfigService, http: HttpClient, public contentService: ContentService,
+  constructor(config: ConfigService, http: HttpClient, public contentService: ContentService, public telemetryService: TelemetryService,
     public userService: UserService, public learnerService: LearnerService, public cacheService: CacheService) {
     super(http);
     this.config = config;
@@ -340,11 +341,23 @@ export class RegistryService extends DataService {
   
   public getSearchedUserList(userList,searchInput) {
     let searchedUserList = [];
+    searchInput = searchInput.toUpperCase();
     _.forEach(userList, (user) => {
-      if (user.firstName.includes(searchInput)) {
+      if (user.firstName.toUpperCase().includes(searchInput)) {
         searchedUserList.push(user);
       }
     });
     return searchedUserList;
+  }
+  public generateUserRoleUpdateTelemetry (env, cdata, pdata, edata) {
+    const appTelemetryInteractData = {
+      context: {
+        env: env,
+        cdata: cdata || [],
+        pdata: pdata
+      },
+      edata: edata
+    };
+    this.telemetryService.interact(appTelemetryInteractData);
   }
 }
