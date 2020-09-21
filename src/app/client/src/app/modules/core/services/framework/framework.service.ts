@@ -16,7 +16,7 @@ import { CacheService } from 'ng2-cache-service';
 export class FrameworkService {
   private _frameworkData: FrameworkData = {};
   private _channelData: any = {};
-  private _frameworkData$ = new BehaviorSubject<Framework>(undefined);
+  private _frameworkData$ = new BehaviorSubject<Framework>(undefined); 
   private _channelData$ = new BehaviorSubject<any>(undefined);
   public readonly frameworkData$: Observable<Framework> = this._frameworkData$
     .asObservable().pipe(skipWhile(data => data === undefined || data === null));
