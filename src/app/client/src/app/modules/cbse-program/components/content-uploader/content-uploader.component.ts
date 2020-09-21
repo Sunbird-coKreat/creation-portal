@@ -6,7 +6,7 @@ import { PublicDataService, UserService, ActionService, PlayerService, Framework
   ProgramsService, ContentService} from '@sunbird/core';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import * as _ from 'lodash-es';
-import { catchError, map, first } from 'rxjs/operators';
+import { catchError, map, first, filter } from 'rxjs/operators';
 import { throwError, Observable, Subscription } from 'rxjs';
 import { IContentUploadComponentInput} from '../../interfaces';
 import { FormGroup, FormArray, FormBuilder, Validators, NgForm } from '@angular/forms';
@@ -680,7 +680,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   fetchFrameWorkDetails() {
     this.frameworkService.initialize(this.sessionContext.framework);
-    this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
+    this.frameworkService.frameworkData$.pipe(filter(data => _.get(data, `frameworkdata.${this.sessionContext.framework}`)),
+      first()).subscribe((frameworkDetails: any) => {
       if (frameworkDetails && !frameworkDetails.err) {
         const frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
         this.sessionContext.topicList = _.get(_.find(frameworkData, { code: 'topic' }), 'terms');
