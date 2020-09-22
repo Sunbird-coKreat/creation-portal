@@ -2,7 +2,8 @@ import { ProgramsService } from '@sunbird/core';
 import { ProgramListComponent } from '../shared-feature/components/program-list/program-list.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { ProgramComponent, CreateProgramComponent, ProgramNominationsComponent, ListContributorTextbooksComponent, OrgUserListComponent } from './components';
+import { ProgramComponent, CreateProgramComponent, ProgramNominationsComponent, ListContributorTextbooksComponent,
+   OrgUserListComponent, OrgReportsComponent } from './components';
 import { AuthGuard } from '../core/guard/auth-gard.service';
 
 import { HelpPageComponent } from '../shared-feature/components/help-page/help-page.component';
@@ -60,6 +61,13 @@ const routes: Routes = [{
   path: 'orglist', component: OrgUserListComponent, pathMatch: 'full',
   data: {
     telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'list-org-users' }
+  },
+},
+{
+  path: 'orgreports', component: OrgReportsComponent,canActivate: [ProgramsService, AuthGuard], pathMatch: 'full',
+  data: {
+    roles: 'programSourcingRole',
+    telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'list-org-reports' }
   },
 },
 {
