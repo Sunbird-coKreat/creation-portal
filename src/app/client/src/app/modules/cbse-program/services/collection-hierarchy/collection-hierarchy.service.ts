@@ -155,17 +155,6 @@ export class CollectionHierarchyService {
     const collectionsByStatus = this.groupStatusForCollections(groupedByCollectionId);
     const collectionsByStatusForSample = this.groupStatusForCollections(groupedByCollectionIdForSample);
 
-    let mvcRejected = [];
-    if(collections && collections.length) { // for getting rejected mvc contents
-      _.map(collections, textbook => {
-      const reviewedContents = _.union(_.get(textbook, 'acceptedContents', []), _.get(textbook, 'rejectedContents', []));
-
-        if(_.has(textbook, 'mvcContributions')) {
-          mvcRejected = _.intersection(textbook.mvcContributions, reviewedContents);
-        }
-       })
-    }
-    orgLevelDataWithReject.Reject.push(...mvcRejected);
     if (!_.isUndefined(collections)) {
       sourcingOrgStatus = this.getSourcingOrgStatus(collections, orgLevelDataWithReject);
     }
@@ -190,8 +179,9 @@ export class CollectionHierarchyService {
        _.map(collections, textbook => {
         const reviewedContents = _.union(_.get(textbook, 'acceptedContents', []), _.get(textbook, 'rejectedContents', []));
         if(_.has(textbook, 'mvcContributions')) {
-        mvcContributions = _.intersection(textbook.mvcContributions, reviewedContents);
-
+        //mvcContributions = _.intersection(textbook.mvcContributions, reviewedContents);
+        const  mvcContribution = _.difference(textbook.mvcContributions, reviewedContents);
+        mvcContributions.push(...mvcContribution);
        }
       })
      }
@@ -400,15 +390,27 @@ export class CollectionHierarchyService {
     if (_.isUndefined(collections)) {
       return liveContents.length;
     }
-    // Merge the accepted and rejected contents
+
     const reviewedContents = _.union(_.flatten(_.map(collections, 'acceptedContents')), _.flatten(_.map(collections, 'rejectedContents')));
+
+    if(collections && collections.length) { // for getting  mvc contents
+      _.map(collections, textbook => {
+
+        if (_.has(textbook, 'mvcContributions')) {
+          //mvcRejected = _.intersection(textbook.mvcContributions, reviewedContents);
+          const  mvcContribution = _.difference(textbook.mvcContributions, reviewedContents);
+          liveContents.push(...mvcContribution);
+        }
+       });
+    }
+    // Merge the accepted and rejected contents
     // Get contents that are neither accepted nor rejected
     return _.difference(liveContents, reviewedContents);
   }
 
   getIndividualCollectionStatus(contentStatusCounts, collections) {
     return _.map(collections, textbook => {
- 
+
       let textbookMeta = _.get(contentStatusCounts.individualStatus, textbook.identifier);
       const textbookMetaForSample = _.get(contentStatusCounts.individualStatusForSample, textbook.identifier);
       const reviewedContents = _.union(_.get(textbook, 'acceptedContents', []), _.get(textbook, 'rejectedContents', []));
