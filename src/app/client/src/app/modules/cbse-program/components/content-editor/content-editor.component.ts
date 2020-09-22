@@ -370,10 +370,10 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       if (originData.textbookOriginId && originData.unitOriginId && originData.channel) {
         if (action === 'accept') {
           // tslint:disable-next-line: max-line-length
-          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentEditorComponentInput.unitIdentifier, originData);
+          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentEditorComponentInput.contentId, originData);
         } else if (action === 'reject' && this.FormControl.value.rejectComment.length) {
           // tslint:disable-next-line:max-line-length
-          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentEditorComponentInput.unitIdentifier, originData, this.FormControl.value.rejectComment);
+          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentEditorComponentInput.contentId, originData, this.FormControl.value.rejectComment);
         }
       } else {
         action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
