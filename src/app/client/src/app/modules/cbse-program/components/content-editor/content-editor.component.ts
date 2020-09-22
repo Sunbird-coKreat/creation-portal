@@ -37,6 +37,8 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   public showPreview = false;
   public playerConfig: any;
   public sessionContext: any;
+  public popupAction: string;
+  public commentCharLimit = 1000;
   public showRequestChangesPopup: boolean;
   public visibility: any;
   public actions: any;
@@ -94,7 +96,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.contentEditorComponentInput.contentId, 'Content', '1.0', { l1: this.sessionContext.collection, l2: this.contentEditorComponentInput.unitIdentifier});
-    if (this.contentEditorComponentInput.action === 'preview' && this.contentEditorComponentInput.content.status === 'Draft') {
+    if (this.contentEditorComponentInput.action === 'preview' && this.contentEditorComponentInput.content.status === 'Live') {
       this.handlePreview();
     } else {
       this.loadContentEditor();
@@ -155,9 +157,11 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     // tslint:disable-next-line:max-line-length
     this.visibility['showRequestChanges'] = (_.includes(this.actions.showRequestChanges.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
     // tslint:disable-next-line:max-line-length
-    this.visibility['showPublish'] = (_.includes(this.actions.showPublish.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
+    this.visibility['showPublish'] = ((_.includes(this.actions.showPublish.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review') ||
+      (this.sessionContext.currentOrgRole === 'individual') && this.resourceStatus === 'Draft');
     // tslint:disable-next-line: max-line-length
     this.visibility['showEdit'] = (_.includes(this.actions.showEdit.roles, this.sessionContext.currentRoleIds[0]) && this.resourceStatus === 'Draft');
+    this.visibility['showSourcingActionButtons'] = this.canSourcingReviewerPerformActions();
   }
 
   handlePreview() {
@@ -316,7 +320,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
        .subscribe(res => {
         if (this.sessionContext.collection && this.contentEditorComponentInput.unitIdentifier) {
           // tslint:disable-next-line:max-line-length
-          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.contentEditorComponentInput.unitIdentifier, res.result.identifier)
+          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.contentEditorComponentInput.unitIdentifier, res.result.node_id)
           .subscribe((data) => {
             this.toasterService.success(this.resourceService.messages.smsg.m0063);
             this.programStageService.removeLastStage();
@@ -338,6 +342,48 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     const removeIzi = document.querySelector('.iziModal-isAttached');
     if (removeIzi) {
       removeIzi.classList.remove('iziModal-isAttached');
+    }
+  }
+
+  canSourcingReviewerPerformActions() {
+    return !!(this.router.url.includes('/sourcing') && this.resourceStatus === 'Live');
+  }
+
+  updateContentBeforeApproving(action) {
+    this.attachContentToTextbook(action);
+  }
+
+  attachContentToTextbook(action) {
+    const hierarchyObj  = _.get(this.sessionContext.hierarchyObj, 'hierarchy');
+    if (hierarchyObj) {
+      const rootOriginInfo = _.get(_.get(hierarchyObj, this.sessionContext.collection), 'originData');
+      let channel =  rootOriginInfo && rootOriginInfo.channel;
+      if (_.isUndefined(channel)) {
+        const originInfo = _.get(_.get(hierarchyObj, this.contentEditorComponentInput.unitIdentifier), 'originData');
+        channel = originInfo && originInfo.channel;
+      }
+      const originData = {
+        textbookOriginId: _.get(_.get(hierarchyObj, this.sessionContext.collection), 'origin'),
+        unitOriginId: _.get(_.get(hierarchyObj, this.contentEditorComponentInput.unitIdentifier), 'origin'),
+        channel: channel
+      };
+      if (originData.textbookOriginId && originData.unitOriginId && originData.channel) {
+        if (action === 'accept') {
+          // tslint:disable-next-line: max-line-length
+          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentEditorComponentInput.unitIdentifier, originData);
+        } else if (action === 'reject' && this.FormControl.value.rejectComment.length) {
+          // tslint:disable-next-line:max-line-length
+          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentEditorComponentInput.unitIdentifier, originData, this.FormControl.value.rejectComment);
+        }
+      } else {
+        action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
+        this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+        console.error('origin data missing');
+      }
+    } else {
+      action === 'accept' ? this.toasterService.error(this.resourceService.messages.emsg.approvingFailed) :
+      this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+      console.error('origin data missing');
     }
   }
 }

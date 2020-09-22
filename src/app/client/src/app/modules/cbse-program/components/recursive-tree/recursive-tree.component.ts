@@ -124,7 +124,7 @@ export class RecursiveTreeComponent implements OnInit {
   previewResource(e, content, collection, origin, index) {
     content.originUnitStatus = collection.statusMessage ? 'Retired' : collection.status;
     let action = 'preview';
-    if (content.contentType === 'Resource') {
+    if (content.contentType === 'Resource' && content.status === 'Draft') {
       action = 'edit';
     }
     this.nodeMeta.emit({
