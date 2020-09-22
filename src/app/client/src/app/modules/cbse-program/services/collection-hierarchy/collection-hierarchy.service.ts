@@ -165,7 +165,7 @@ export class CollectionHierarchyService {
       draft: _.has(orgLevelDataWithReject, 'Draft') ? orgLevelDataWithReject.Draft.length : 0,
       rejected: _.has(orgLevelDataWithReject, 'Reject') ? orgLevelDataWithReject.Reject.length : 0,
       correctionsPending: _.has(orgLevelDataWithReject, 'correctionsPending') ? orgLevelDataWithReject.correctionsPending.length : 0,
-      live: this.getAllPendingForApprovalCount(orgLevelDataWithReject, collections).length,
+      live: this.getAllAcceptedContentsCount(orgLevelDataWithReject, collections).length,
       individualStatus: collectionsByStatus,
       individualStatusForSample: collectionsByStatusForSample,
       mvcContributionsCount: this.getMvcContentCounts(collections),
@@ -383,6 +383,23 @@ export class CollectionHierarchyService {
       }
     };
     this.telemetryService.error(telemetryErrorData);
+  }
+
+  getAllAcceptedContentsCount(textbookMeta, collections?) {
+    let liveContents = _.has(textbookMeta, 'Live') ? _.map(textbookMeta.Live, 'identifier') : [];
+    if (_.isUndefined(collections)) {
+      return liveContents.length;
+    }
+
+    if(collections && collections.length) { // for getting  mvc contents
+      _.map(collections, textbook => {
+        if (_.has(textbook, 'mvcContributions')) {
+          liveContents.push(...textbook.mvcContributions);
+        }
+       });
+    }
+
+    return liveContents;
   }
 
   getAllPendingForApprovalCount(textbookMeta, collections?) {
