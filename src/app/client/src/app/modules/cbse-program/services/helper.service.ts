@@ -307,7 +307,7 @@ export class HelperService {
     return  this.actionService.get(option);
   }
 
-  getEditableFields(role, formFields) {
+  getEditableFields(role, formFields, contentMetaData) {
     const editableFields = [];
     switch (role) {
       case 'CONTRIBUTOR':
@@ -317,16 +317,18 @@ export class HelperService {
       });
       break;
       case 'REVIEWER':
-        const nameFieldConfig = _.find(this.programsService.overrideMetaData, (item) => item.code === 'name');
-        if (nameFieldConfig.editable === true) {
-          editableFields.push(nameFieldConfig.code);
-        }
-        _.forEach(formFields, (field) => {
-          const fieldConfig = _.find(this.programsService.overrideMetaData, (item) => item.code === field.code);
-          if (fieldConfig.editable === true) {
-            editableFields.push(fieldConfig.code);
+        if (!contentMetaData.sourceURL) {
+          const nameFieldConfig = _.find(this.programsService.overrideMetaData, (item) => item.code === 'name');
+          if (nameFieldConfig.editable === true) {
+            editableFields.push(nameFieldConfig.code);
           }
-        });
+          _.forEach(formFields, (field) => {
+            const fieldConfig = _.find(this.programsService.overrideMetaData, (item) => item.code === field.code);
+            if (fieldConfig.editable === true) {
+              editableFields.push(fieldConfig.code);
+            }
+          });
+        }
       break;
     }
     return editableFields;
