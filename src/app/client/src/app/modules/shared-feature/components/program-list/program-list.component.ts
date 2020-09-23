@@ -8,7 +8,6 @@ import * as moment from 'moment';
 import { DatePipe } from '@angular/common';
 import { IInteractEventEdata } from '@sunbird/telemetry';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
-import { FormGroup, FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-program-list',
@@ -45,15 +44,10 @@ export class ProgramListComponent implements OnInit {
   public selectedProgramToModify: any;
   public showModifyConfirmation: boolean;
   public showFiltersModal = false;
-  public filterForm: FormGroup;
-  public showFilters = {};
-  public filtersAppliedCount: any;
-  public currentFilters: any
-  classF1 = ["Class 8"]
   showDeleteModal = false;
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
-    public router: Router, private datePipe: DatePipe, public configService: ConfigService, public sbFormBuilder: FormBuilder) { }
+    public router: Router, private datePipe: DatePipe, public configService: ConfigService) { }
 
   ngOnInit() {
     this.checkIfUserIsContributor();
@@ -61,50 +55,9 @@ export class ProgramListComponent implements OnInit {
     this.telemetryInteractCdata = [];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
-    this.createFilterForm();
-    this.currentFilters = {
-      'gradeLevel': [],
-      'subject': [],
-      'contentTypes': [],
-      'medium': []
-    }
-  }    
-  createFilterForm() {
-    this.filterForm = this.sbFormBuilder.group({
-      sourcingOrganisations: [],
-      medium: [],
-      subject: [],
-      gradeLevel: [],
-      content_types: [],
-      nominations: [],
-      contributions: []
-    });
   }
   checkFilterShowCondition() {
     this.showFiltersModal = true;
-    this.filtersAppliedCount = 0;
-    if (this.userService.isSourcingOrgAdmin() && this.router.url.includes('/sourcing')) {  // show filter for sourcing org admin for my projects 
-        this.showFilters['sourcingOrganisations'] = false;
-        this.showFilters['nominations'] = true;
-        this.showFilters['contributions'] = true;
-    } else if (this.activeAllProgramsMenu  && this.programsService.checkforshowAllPrograms()) { // for all projects 
-        this.showFilters['sourcingOrganisations'] = false;
-        this.showFilters['nominations'] = false;
-        this.showFilters['contributions'] = false;
-    }  else if (this.activeMyProgramsMenu) { // for my projects for contributor user role  
-      _.map(this.programs, (program) => {
-        
-        this.currentFilters['gradeLevel'] = _.uniq(_.concat(this.currentFilters['gradeLevel'], JSON.parse(program.gradeLevel)));
-        this.currentFilters['contentTypes'] = _.uniq(_.concat(this.currentFilters['contentTypes'], program.content_types));
-        this.currentFilters['medium'] = _.uniq(_.concat(this.currentFilters['medium'], JSON.parse(program.medium)));
-        this.currentFilters['subject'] = _.uniq(_.concat(this.currentFilters['subject'], JSON.parse(program.subject)));
-      })
-       this.showFilters['sourcingOrganisations'] = false;
-       this.showFilters['nominations'] = false;
-       this.showFilters['contributions'] = false;
-    }  else {
-
-    }
   }
   /**
    * Check if logged in user is contributor or sourcing org
@@ -695,11 +648,5 @@ export class ProgramListComponent implements OnInit {
     } else {
       this.getNotificationData();
     }
-  }
-  applyFilter() {
-    console.log(this.filterForm.value);
-  }
-  resetFilter() {
-    
   }
 }
