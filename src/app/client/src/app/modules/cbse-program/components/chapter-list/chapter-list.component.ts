@@ -5,7 +5,7 @@ import { TelemetryService, IInteractEventEdata , IImpressionEventInput} from '@s
 import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
 import { CbseProgramService } from '../../services';
-import { map, catchError, first } from 'rxjs/operators';
+import { map, catchError, first, filter } from 'rxjs/operators';
 import { throwError, Observable } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
@@ -221,7 +221,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   public fetchFrameWorkDetails() {
     this.frameworkService.initialize(this.sessionContext.framework);
-    this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
+    this.frameworkService.frameworkData$.pipe(filter(data => _.get(data, `frameworkdata.${this.sessionContext.framework}`)),
+      first()).subscribe((frameworkDetails: any) => {
       if (frameworkDetails && !frameworkDetails.err) {
         const frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
         this.sessionContext.topicList = _.get(_.find(frameworkData, { code: 'topic' }), 'terms');

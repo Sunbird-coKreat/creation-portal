@@ -260,17 +260,18 @@ class="sb-modal" appBodyScroll (dismissed)="showFiltersModal = false">
     <div class="six wide column py-10" *ngIf="showFilters['sourcingOrganisations']">
       <div class="field">
         <label class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.sourcingOrganisations}}</label>
-        <sui-multi-select class="selection p-5 b-100" placeholder="{{resourceService?.frmelmnts?.lbl?.selectSourcingFilter}}"
-        formControlName="sourcingOrganisations" #sourcing 
-        > 
-          <sui-select-option *ngFor="let sourcing of sourcing.filteredOptions" [value]="sourcing"> </sui-select-option>
-        </sui-multi-select>
+   
+        <sui-select class="selection"  [options]="currentFilters['gradeLevel']" placeholder="{{resourceService?.frmelmnts?.lbl?.selectSourcingFilter}}"
+        formControlName="sourcingOrganisations" #sourcingOrganisations>
+          <sui-select-option *ngFor="let sourcing of sourcingOrganisations.filteredOptions" [value]="sourcing">
+          </sui-select-option>
+        </sui-select>
       </div>
     </div>
     <div class="six wide column py-10">
       <div class="field">
         <label class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.mediumsFilter}}</label>
-        <sui-multi-select class="selection p-5 b-100"  placeholder="{{resourceService?.messages?.stmsg?.m0127}}"
+        <sui-multi-select class="selection p-5 b-100" [options]="currentFilters['medium']" placeholder="{{resourceService?.messages?.stmsg?.m0127}}"
         formControlName="medium" #mediums
         >
           <sui-select-option *ngFor="let medium of mediums.filteredOptions" [value]="medium"> </sui-select-option>
@@ -280,7 +281,7 @@ class="sb-modal" appBodyScroll (dismissed)="showFiltersModal = false">
     <div class="six wide column py-10">
       <div class="field">
         <label class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.classesFilter}}</label>
-        <sui-multi-select formControlName="gradeLevel" [options] = "classF" [(ngModel)]="classF1"  placeholder="{{resourceService?.messages?.stmsg?.m0128}}"
+        <sui-multi-select formControlName="gradeLevel" [options]="currentFilters['gradeLevel']"   placeholder="{{resourceService?.messages?.stmsg?.m0128}}"
         class="selection p-5 b-100" #gradeLevels
         >
           <sui-select-option *ngFor="let gradeLevel of gradeLevels.filteredOptions" [value]="gradeLevel"></sui-select-option>
@@ -290,7 +291,7 @@ class="sb-modal" appBodyScroll (dismissed)="showFiltersModal = false">
     <div class="six wide column py-10">
       <div class="field">
         <label class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.subjectsFilter}}</label>
-        <sui-multi-select class="selection p-5 b-100" placeholder="{{resourceService?.frmelmnts?.lbl?.selectSubjectFilter}}"
+        <sui-multi-select class="selection p-5 b-100" [options]="currentFilters['subject']" placeholder="{{resourceService?.frmelmnts?.lbl?.selectSubjectFilter}}"
         formControlName="subject" #subjects
         >
           <sui-select-option *ngFor="let subject of subjects.filteredOptions" [value]="subject"></sui-select-option>
@@ -300,7 +301,7 @@ class="sb-modal" appBodyScroll (dismissed)="showFiltersModal = false">
     <div class="six wide column py-10">
       <div class="field">
         <label class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.contentsFilter}}</label>
-        <sui-multi-select formControlName="contentTypes"  placeholder="{{resourceService?.frmelmnts?.lbl?.selectcontentTypesFilter}}"
+        <sui-multi-select formControlName="content_types" [options]="currentFilters['contentTypes']" placeholder="{{resourceService?.frmelmnts?.lbl?.selectcontentTypesFilter}}"
         class="selection p-5 b-100" #contentTypes
         >
           <sui-select-option *ngFor="let contentType of contentTypes.filteredOptions" [value]="contentType"></sui-select-option>

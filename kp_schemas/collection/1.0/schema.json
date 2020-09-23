@@ -12,9 +12,7 @@
     "code",
     "contentEncoding",
     "contentDisposition",
-    "mediaType",
-    "origin",
-    "originData"
+    "mediaType"
   ],
   "properties": {
     "name": {
@@ -110,7 +108,8 @@
       "enum": [
         "inline",
         "online",
-        "attachment"
+        "attachment",
+        "online-only"
       ],
       "default": "inline"
     },
@@ -180,7 +179,8 @@
         "type": "string",
         "enum": [
           "Learner",
-          "Instructor"
+          "Instructor",
+          "Student"
         ]
       },
       "default": ["Learner"]
@@ -1022,8 +1022,17 @@
     "chapterCount": {
       "type": "number"
     },
+    "mvcContentCount": {
+      "type": "number"
+    },
+    "mvcContributions": {
+      "type": "array"
+    },
     "sourcingRejectedComments": {
       "type": "object"
+    },
+    "chapterCountForContribution": {
+      "type": "number"
     }
   }
 }

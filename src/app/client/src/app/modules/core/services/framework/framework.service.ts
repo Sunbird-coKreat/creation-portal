@@ -5,7 +5,7 @@ import {
   ConfigService, ToasterService, ResourceService, ServerResponse, Framework, FrameworkData,
   BrowserCacheTtlService
 } from '@sunbird/shared';
-import { Observable, BehaviorSubject, Subject } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { skipWhile, mergeMap } from 'rxjs/operators';
 import { PublicDataService } from './../public-data/public-data.service';
 import * as _ from 'lodash-es';
@@ -16,7 +16,7 @@ import { CacheService } from 'ng2-cache-service';
 export class FrameworkService {
   private _frameworkData: FrameworkData = {};
   private _channelData: any = {};
-  private _frameworkData$ = new Subject<Framework>();
+  private _frameworkData$ = new BehaviorSubject<Framework>(undefined);
   private _channelData$ = new BehaviorSubject<any>(undefined);
   public readonly frameworkData$: Observable<Framework> = this._frameworkData$
     .asObservable().pipe(skipWhile(data => data === undefined || data === null));

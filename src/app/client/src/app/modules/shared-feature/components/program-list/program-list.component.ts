@@ -48,7 +48,7 @@ export class ProgramListComponent implements OnInit {
   public filterForm: FormGroup;
   public showFilters = {};
   public filtersAppliedCount: any;
-  classF = ["Class 8", "Class 7"]
+  public currentFilters: any
   classF1 = ["Class 8"]
   showDeleteModal = false;
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
@@ -62,6 +62,12 @@ export class ProgramListComponent implements OnInit {
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
     this.createFilterForm();
+    this.currentFilters = {
+      'gradeLevel': [],
+      'subject': [],
+      'contentTypes': [],
+      'medium': []
+    }
   }    
   createFilterForm() {
     this.filterForm = this.sbFormBuilder.group({
@@ -69,7 +75,7 @@ export class ProgramListComponent implements OnInit {
       medium: [],
       subject: [],
       gradeLevel: [],
-      contentTypes: [],
+      content_types: [],
       nominations: [],
       contributions: []
     });
@@ -82,14 +88,23 @@ export class ProgramListComponent implements OnInit {
         this.showFilters['nominations'] = true;
         this.showFilters['contributions'] = true;
     } else if (this.activeAllProgramsMenu  && this.programsService.checkforshowAllPrograms()) { // for all projects 
-        this.showFilters['sourcingOrganisations'] = true;
+        this.showFilters['sourcingOrganisations'] = false;
         this.showFilters['nominations'] = false;
         this.showFilters['contributions'] = false;
-    }  else if (this.activeMyProgramsMenu) { // for my projects for other user role
+    }  else if (this.activeMyProgramsMenu) { // for my projects for contributor user role  
+      _.map(this.programs, (program) => {
+        
+        this.currentFilters['gradeLevel'] = _.uniq(_.concat(this.currentFilters['gradeLevel'], JSON.parse(program.gradeLevel)));
+        this.currentFilters['contentTypes'] = _.uniq(_.concat(this.currentFilters['contentTypes'], program.content_types));
+        this.currentFilters['medium'] = _.uniq(_.concat(this.currentFilters['medium'], JSON.parse(program.medium)));
+        this.currentFilters['subject'] = _.uniq(_.concat(this.currentFilters['subject'], JSON.parse(program.subject)));
+      })
        this.showFilters['sourcingOrganisations'] = false;
        this.showFilters['nominations'] = false;
        this.showFilters['contributions'] = false;
-    } 
+    }  else {
+
+    }
   }
   /**
    * Check if logged in user is contributor or sourcing org
