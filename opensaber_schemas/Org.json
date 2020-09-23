@@ -93,8 +93,24 @@
         "createdBy": {
           "$id": "#/properties/createdBy",
           "type": "string",
-          "title":"User Id"
-         
+          "title":"User Id"         
+        },
+         "updatedBy": {
+          "$id": "#/properties/updateBy",
+          "type": "string",
+          "title":"User Id"         
+        },
+	"type":{
+          "$id": "#/properties/type",
+          "type": "array",
+          "items": {
+	    "$ref": "Common.json#/definitions/Type"
+	   }
+        },
+        "orgId":{
+          "$id": "#/properties/orgId",
+          "type": "string",
+          "title":"Org Id"
         }
       }
     }
@@ -108,7 +124,7 @@
                                            
          "privateFields": [],
          "signedFields": [],
-         "systemFields": ["osCreatedAt", "osUpdatedAt"]
-         
+   		 "systemFields": ["osCreatedAt","osUpdatedAt"]
+        
   } 
 }

@@ -21,6 +21,7 @@ import { DynamicModule } from 'ng-dynamic-component';
 import { CbseProgramModule } from '../../modules/cbse-program/cbse-program.module';
 import { CollectionComponent, DashboardComponent, ChapterListComponent } from '../cbse-program';
 import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
+import { OrgReportsComponent } from './components/org-reports/org-reports.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,7 @@ import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
     ProgramComponent, OnboardPopupComponent,
     ProgramHeaderComponent, CreateProgramComponent,
     ProgramNominationsComponent,
-    ListContributorTextbooksComponent, ContributorProfilePopupComponent, OrgUserListComponent],
+    ListContributorTextbooksComponent, ContributorProfilePopupComponent, OrgUserListComponent, OrgReportsComponent],
   imports: [
   SuiModule,
     CommonModule,
