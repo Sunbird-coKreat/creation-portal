@@ -43,6 +43,7 @@ export class ProgramListComponent implements OnInit {
   public issourcingOrgAdmin = false;
   public selectedProgramToModify: any;
   public showModifyConfirmation: boolean;
+  public issourcingOrg;
 
   showDeleteModal = false;
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
@@ -51,7 +52,8 @@ export class ProgramListComponent implements OnInit {
 
   ngOnInit() {
     this.checkIfUserIsContributor();
-    this.issourcingOrgAdmin = this.userService.isSourcingOrgAdmin() && this.router.url.includes('/sourcing');
+    this.issourcingOrgAdmin = this.userService.isSourcingOrgAdmin();
+    this.issourcingOrg = this.userService.isSourcingOrgAdmin() && this.router.url.includes('/sourcing');
     this.telemetryInteractCdata = [];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
