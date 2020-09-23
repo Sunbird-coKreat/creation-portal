@@ -583,7 +583,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
           }
         }
       });
-      this.editableFields = this.helperService.getEditableFields(this.editableFieldsACL, this.allFormFields);
+      this.editableFields = this.helperService.getEditableFields(this.editableFieldsACL, this.allFormFields, this.questionMetaData);
       this.questionMetaForm = this.formBuilder.group(controller);
       this.onFormValueChange();
     }
@@ -628,7 +628,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   }
 
   getEditableFields() {
-    this.editableFields = this.helperService.getEditableFields(this.editableFieldsACL, this.allFormFields);
+    this.editableFields = this.helperService.getEditableFields(this.editableFieldsACL, this.allFormFields, this.questionMetaData);
   }
 
   getMetaData() {
