@@ -82,8 +82,9 @@ export class ProjectFilterComponent implements OnInit {
       this.currentFilters['subject'] = _.uniq(_.concat(this.currentFilters['subject'], _.get(program, 'config.subject') ? program.config.subject : JSON.parse(program.subject)));
     })
   }
-  applyFilter() {
-    this.applyFilters.emit(this.setPreferences);
+  applyFilter(resetFilter?) {
+    resetFilter ? this.applyFilters.emit(): this.applyFilters.emit(this.setPreferences);
+    this.dismissed()
   }
 
   dismissed() {

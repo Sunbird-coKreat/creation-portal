@@ -103,7 +103,7 @@
       [telemetryInteractEdata]="getTelemetryInteractEdata('apply-filters', 'click', 'program-list', {values: [filterForm.value]})"
       [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService?.frmelmnts?.btn?.apply}} </button>
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="dismissed()"
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="applyFilter('resetFilter')"
       appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('reset-filters', 'click', 'program-list')"
       [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
