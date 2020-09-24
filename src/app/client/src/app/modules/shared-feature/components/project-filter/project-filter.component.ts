@@ -20,7 +20,6 @@ export class ProjectFilterComponent implements OnInit {
   public showFilters = {};
   public filtersAppliedCount: any;
   public currentFilters: any
-  public appliedFilters: any;
   public setPreferences = {};
   public activeAllProgramsMenu: any;
   public activeMyProgramsMenu: any;
@@ -36,8 +35,8 @@ export class ProjectFilterComponent implements OnInit {
       'subject': [],
       'contentTypes': [],
       'medium': [],
-      'nominations': ['Open','Closed'],
-      'contributions': ['Open','Closed']
+      'nominations': ['Open', 'Closed', 'Any'],
+      'contributions': ['Open', 'Closed', 'Any']
 
     }
     this.checkFilterShowCondition();
