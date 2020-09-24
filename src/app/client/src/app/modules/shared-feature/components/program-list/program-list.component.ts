@@ -88,16 +88,16 @@ export class ProgramListComponent implements OnInit {
     if (this.isContributor) {
       if (this.activeMyProgramsMenu) {
         this.getMyProgramsForContrib(['Live', 'Unlisted'], appliedfilters);
-      this.filtersAppliedCount =  localStorage.getItem('contributeMyProgramAppliedFilters');
+        this.filtersAppliedCount = localStorage.getItem('contributeMyProgramAppliedFilters');
       } else if (this.activeAllProgramsMenu) {
         this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], appliedfilters);
-      this.filtersAppliedCount =  localStorage.getItem('contributeAllProgramAppliedFilters');
+        this.filtersAppliedCount = localStorage.getItem('contributeAllProgramAppliedFilters');
       } else {
         this.showLoader = false;
       }
     } else {
       this.getMyProgramsForOrg(appliedfilters);
-      this.filtersAppliedCount =  localStorage.getItem('sourcingMyProgramAppliedFilters');
+      this.filtersAppliedCount = localStorage.getItem('sourcingMyProgramAppliedFilters');
     }
   }
   setDelete(program, index) {
