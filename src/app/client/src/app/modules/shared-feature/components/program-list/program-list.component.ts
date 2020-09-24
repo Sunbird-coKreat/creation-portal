@@ -161,11 +161,13 @@ export class ProgramListComponent implements OnInit {
       }
     );
   }
-
+  applyFilters(filters?) {
+this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], filters);
+  }
   /**programContext
    * fetch the list of programs.
    */
-  private getAllProgramsForContrib(type, status) {
+  private getAllProgramsForContrib(type, status, filters?) {
     this.programsService.getAllProgramsByType(type, status).subscribe(
       response => {
         const allPrograms = _.get(response, 'result.programs');
@@ -200,6 +202,9 @@ export class ProgramListComponent implements OnInit {
                 }
               }
             };
+           if(filters) {
+            filters.medium.length ? req.request.filters['medium'] = filters.medium : []
+           }
             this.programsService.getMyProgramsForContrib(req)
               .subscribe((myProgramsResponse) => {
                 const enrolledPrograms = _.map(_.get(myProgramsResponse, 'result.programs'), (nomination: any) => {

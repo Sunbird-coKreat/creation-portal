@@ -1,0 +1,164 @@
+{
+    "roles": [
+        {
+            "sourcingOrgAdmin": {
+                "tabs": [
+                   {
+                    "tab": "myProjectsTab",
+                    "filters": [
+                          {
+                            "value": "board",
+                            "type": "multiselect"
+                          },
+                          {
+                            "value": "medium",
+                            "type": "multiselect"
+                          },
+                          {
+                            "value": "subject",
+                            "type": "multiselect"
+                          },
+                          {
+                            "value": "content_type",
+                            "type": "multiselect"
+                          },
+                          {
+                            "value": "nomination",
+                            "type": "select"
+                          },
+                          {
+                            "value": "contribution",
+                            "type": "select"
+                          }
+                        
+                    ]
+                   }
+                ]
+            },
+            "sourcingReviwer": {
+                "tabs": [
+                   {
+                    "tab": "myProjectsTab",
+                    "filters": [
+                          {
+                            "value": "board",
+                            "type": "multiselect"
+                          },
+                          {
+                            "value": "medium",
+                            "type": "multiselect"
+                          },
+                          {
+                            "value": "subject",
+                            "type": "multiselect"
+                          },
+                          {
+                            "value": "content_type",
+                            "type": "multiselect"
+                          }
+                    ]
+                   }
+                ]
+            },
+            "contributor": {
+                "tabs": [
+                   {
+                    "tab": "myProjectsTab",
+                    "filters": [
+                          {
+                            "value": "board",
+                            "type": "multiselect"
+                          },
+                          {
+                            "value": "medium",
+                            "type": "multiselect"
+                          },
+                          {
+                            "value": "subject",
+                            "type": "multiselect"
+                          },
+                          {
+                            "value": "content_type",
+                            "type": "multiselect"
+                          }
+                    ]
+                   }
+                ]
+            },
+            "induvidualContributor": {
+                "tabs": [
+                   {
+                    "tab": "myProjectsTab",
+                    "filters": [
+                          {
+                            "value": "board",
+                            "type": "multiselect"
+                          },
+                          {
+                            "value": "medium",
+                            "type": "multiselect"
+                          },
+                          {
+                            "value": "subject",
+                            "type": "multiselect"
+                          },
+                          {
+                            "value": "content_type",
+                            "type": "multiselect"
+                          }
+                    ]
+                   },
+                   {
+                    "tab": "allProjectsTab",
+                    "accesses": "tenant_specific",
+                    "filters": [
+                          {
+                            "value": "board",
+                            "type": "multiselect"
+                          },
+                          {
+                            "value": "medium",
+                            "type": "multiselect"
+                          },
+                          {
+                            "value": "subject",
+                            "type": "multiselect"
+                          },
+                          {
+                            "value": "content_type",
+                            "type": "multiselect"
+                          }
+                    ]
+                   },
+                   {
+                    "tab": "allProjectsTab",
+                    "accesses": "generic",
+                    "filters": [
+                         
+                        {
+                            "value": "rootorg_id",
+                            "type": "select"
+                          },{
+                            "value": "board",
+                            "type": "multiselect"
+                          },
+                          {
+                            "value": "medium",
+                            "type": "multiselect"
+                          },
+                          {
+                            "value": "subject",
+                            "type": "multiselect"
+                          },
+                          {
+                            "value": "content_type",
+                            "type": "multiselect"
+                          }
+                    ]
+                   }
+                ]
+            }
+
+        }
+    ]
+}

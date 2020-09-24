@@ -247,5 +247,6 @@
   </div>
 </sui-modal>
 
-<app-project-filter *ngIf="showFiltersModal" [activeAllProgramsMenu]="activeAllProgramsMenu"  (dismiss)="showFiltersModal = false"
+<app-project-filter *ngIf="showFiltersModal" [activeAllProgramsMenu]="activeAllProgramsMenu" 
+ (dismiss)="showFiltersModal = false" (applyFilters)="applyFilters($event)"
 [activeMyProgramsMenu]="activeMyProgramsMenu" [programs]="programs"> </app-project-filter>

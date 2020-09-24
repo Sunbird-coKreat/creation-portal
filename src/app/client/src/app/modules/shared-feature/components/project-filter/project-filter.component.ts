@@ -17,11 +17,13 @@ export class ProjectFilterComponent implements OnInit {
   @Input() activeMyProgramsMenu;
   @Input() programs;
   @Output() dismiss = new EventEmitter<any>();
+  @Output() applyFilters = new EventEmitter<any>();
   public filterForm: FormGroup;
   public showFilters = {};
   public filtersAppliedCount: any;
   public currentFilters: any
   public appliedFilters: any;
+  public setPreferences = {};
   constructor(public sbFormBuilder: FormBuilder, public programsService: ProgramsService,
       public resourceService: ResourceService, private userService: UserService, public router: Router) { }
 
@@ -75,8 +77,8 @@ checkFilterShowCondition() {
   }
 }
 applyFilter() {
-  console.log(this.filterForm.value);
-  
+  console.log(this.setPreferences); 
+this.applyFilters.emit(this.setPreferences);
 }
 resetFilter() {
   
