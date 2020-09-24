@@ -10,19 +10,18 @@
          *ngIf="!showLoader && programs !== undefined && programs.length">{{count}}
         </span>
       </div>
-      <div class="text-right"> 
+      <div class="text-right">
         <div class="fs-0-785 font-italic sb-color-gray-300 mb-10 d-inline-block" *ngIf="filtersAppliedCount">
-          <i class="icon check circle pr-5 sb-color-success"></i>  
-          {{filtersAppliedCount}} {{resourceService?.frmelmnts?.lbl?.filtersApplied}}</div>
-        <button type="button"  	appTelemetryInteract
-        [telemetryInteractEdata]="getTelemetryInteractEdata('apply-filters', 'click', 'program-list')"
-        [telemetryInteractObject]="telemetryInteractObject"
-        [telemetryInteractCdata]="telemetryInteractCdata"
-        [telemetryInteractPdata]="telemetryInteractPdata"
-        class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" 
-        (click)="checkFilterShowCondition()">
-        <i class="filter icon"></i>
-            {{resourceService?.frmelmnts?.btn?.applyFilter}}
+          <i class="icon check circle pr-5 sb-color-success"></i>
+          {{filtersAppliedCount}} {{resourceService?.frmelmnts?.lbl?.filtersApplied}}
+        </div>
+        <button type="button" appTelemetryInteract
+          [telemetryInteractEdata]="getTelemetryInteractEdata('apply-filters', 'click', 'program-list')"
+          [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+          [telemetryInteractPdata]="telemetryInteractPdata" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10"
+          (click)="showFiltersModal = true">
+          <i class="filter icon"></i>
+          {{resourceService?.frmelmnts?.btn?.applyFilter}}
         </button>
       </div>
       <!-- <button routerLink="sourcing/create-program" *ngIf="this.router.url.includes('/sourcing')" class="sb-btn sb-btn-normal sb-btn-primary"><i class="plus outline icon"></i> Add New Program</button> -->
@@ -247,6 +246,5 @@
   </div>
 </sui-modal>
 
-<app-project-filter *ngIf="showFiltersModal" [activeAllProgramsMenu]="activeAllProgramsMenu" 
- (dismiss)="showFiltersModal = false" (applyFilters)="applyFilters($event)"
-[activeMyProgramsMenu]="activeMyProgramsMenu" [programs]="programs"> </app-project-filter>
+<app-project-filter *ngIf="showFiltersModal"  (dismiss)="showFiltersModal = false" (applyFilters)="getProgramsListByRole($event)"
+ [programs]="programs"> </app-project-filter>

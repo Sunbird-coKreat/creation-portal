@@ -44,6 +44,8 @@ export class ProgramListComponent implements OnInit {
   public selectedProgramToModify: any;
   public showModifyConfirmation: boolean;
   public showFiltersModal = false;
+  public filtersAppliedCount: any;
+
   showDeleteModal = false;
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
@@ -56,9 +58,7 @@ export class ProgramListComponent implements OnInit {
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
   }
-  checkFilterShowCondition() {
-    this.showFiltersModal = true;
-  }
+
   /**
    * Check if logged in user is contributor or sourcing org
    */
@@ -81,19 +81,25 @@ export class ProgramListComponent implements OnInit {
     this.activeAllProgramsMenu = this.router.isActive('/contribute', true);
     this.activeMyProgramsMenu = this.router.isActive('/contribute/myenrollprograms', true);
 
+    this.getProgramsListByRole();
+  }
+
+  getProgramsListByRole(appliedfilters?) {
     if (this.isContributor) {
       if (this.activeMyProgramsMenu) {
-        this.getMyProgramsForContrib(['Live', 'Unlisted']);
+        this.getMyProgramsForContrib(['Live', 'Unlisted'], appliedfilters);
+      this.filtersAppliedCount =  localStorage.getItem('contributeMyProgramAppliedFilters');
       } else if (this.activeAllProgramsMenu) {
-        this.getAllProgramsForContrib('public', ['Live', 'Unlisted']);
+        this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], appliedfilters);
+      this.filtersAppliedCount =  localStorage.getItem('contributeAllProgramAppliedFilters');
       } else {
         this.showLoader = false;
       }
     } else {
-      this.getMyProgramsForOrg();
+      this.getMyProgramsForOrg(appliedfilters);
+      this.filtersAppliedCount =  localStorage.getItem('sourcingMyProgramAppliedFilters');
     }
   }
-
   setDelete(program, index) {
     if (!this.issourcingOrgAdmin) {
       this.toasterService.error(this.resourceService.messages.imsg.m0035);
@@ -161,13 +167,10 @@ export class ProgramListComponent implements OnInit {
       }
     );
   }
-  applyFilters(filters?) {
-this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], filters);
-  }
   /**programContext
    * fetch the list of programs.
    */
-  private getAllProgramsForContrib(type, status, filters?) {
+  private getAllProgramsForContrib(type, status, appliedfilters?) {
     this.programsService.getAllProgramsByType(type, status).subscribe(
       response => {
         const allPrograms = _.get(response, 'result.programs');
@@ -202,8 +205,8 @@ this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], filters);
                 }
               }
             };
-           if(filters) {
-            filters.medium.length ? req.request.filters['medium'] = filters.medium : []
+           if(appliedfilters) {
+            req.request.filters = this.addFiltersInRequestBody(req.request.filters,appliedfilters);
            }
             this.programsService.getMyProgramsForContrib(req)
               .subscribe((myProgramsResponse) => {
@@ -302,7 +305,7 @@ this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], filters);
   /**
    * fetch the list of programs.
    */
-  private getMyProgramsForContrib(status) {
+  private getMyProgramsForContrib(status, appliedfilters?) {
     // If user is an individual user
     if (!this.userService.isUserBelongsToOrg()) {
       const req = {
@@ -315,6 +318,9 @@ this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], filters);
           }
         }
       };
+      if(appliedfilters) {
+        req.request.filters = this.addFiltersInRequestBody(req.request.filters,appliedfilters);
+       }
       this.getContributionProgramList(req);
       return;
     }
@@ -339,6 +345,9 @@ this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], filters);
               }
             }
           };
+          if(appliedfilters) {
+            req.request.filters = this.addFiltersInRequestBody(req.request.filters,appliedfilters);
+           }
           this.programsService.getMyProgramsForContrib(req).subscribe((programsResponse) => {
             // Get only those programs for which the nominations are added
             const programs = _.get(programsResponse, 'result.programs');
@@ -395,6 +404,9 @@ this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], filters);
             }
           }
         };
+        if(appliedfilters) {
+          req.request.filters = this.addFiltersInRequestBody(req.request.filters,appliedfilters);
+         }
         this.getContributionProgramList(req);
       },
       (error) => {
@@ -432,12 +444,35 @@ this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], filters);
     }
     return _.map(roles, role => _.upperFirst(_.toLower(role))).join(", ");
   }
-
+  addFiltersInRequestBody(request,appliedfilters) {
+          if(appliedfilters.rootorg_id) {
+            request['rootorg_id'] = appliedfilters.rootorg_id;
+          }
+          if(appliedfilters.medium && appliedfilters.medium.length) {
+            request['medium'] = appliedfilters.medium;
+          } 
+          if(appliedfilters.gradeLevel && appliedfilters.gradeLevel.length) {
+            request['gradeLevel'] = appliedfilters.gradeLevel;
+          }
+          if(appliedfilters.subject && appliedfilters.subject.length) {
+            request['subject'] = appliedfilters.subject;
+          }
+          if(appliedfilters.content_types && appliedfilters.content_types.length) {
+            request['content_type'] = appliedfilters.content_types;
+          }
+          if(appliedfilters.contribution_date ) {
+            request['content_submission_enddate'] = appliedfilters.contribution_date;
+          }
+          if(appliedfilters.nomination_date ) {
+            request['nomination_enddate'] = appliedfilters.nomination_date;
+          }
+          return request;
+  }
   /**
    * fetch the list of programs.
    */
-  private getMyProgramsForOrg() {
-    const filters = {};
+  private getMyProgramsForOrg(appliedfilters?) {
+    let filters = {};
 
     if (this.userService.isSourcingOrgAdmin()) {
       filters['rootorg_id'] = _.get(this.userService, 'userProfile.rootOrgId');
@@ -446,6 +481,9 @@ this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], filters);
       filters['status'] = ['Live', 'Unlisted']
       filters['role'] = ['REVIEWER'];
       filters['user_id'] = this.userService.userProfile.userId;
+    }
+    if(appliedfilters) {
+      filters = this.addFiltersInRequestBody(filters, appliedfilters);
     }
     // tslint:disable-next-line:max-line-length
     /*if (!_.includes(this.userService.userProfile.userRoles, 'ORG_ADMIN') && _.includes(this.userService.userProfile.userRoles, 'CONTENT_REVIEWER')) {
