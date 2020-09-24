@@ -84,27 +84,35 @@ export class ProgramListComponent implements OnInit {
     this.getProgramsListByRole();
   }
 
-  getProgramsListByRole(appliedfilters?) {
+  getProgramsListByRole(setfilters?) {
     if (this.isContributor) {
       if (this.activeMyProgramsMenu) {
-        this.filtersAppliedCount = this.getfiltersAppliedCount(localStorage.getItem('contributeMyProgramAppliedFilters'));
-        this.getMyProgramsForContrib(['Live', 'Unlisted'], appliedfilters);
+        const applyFilters =  this.getFilterDetails(setfilters,'contributeMyProgramAppliedFilters');
+        this.getMyProgramsForContrib(['Live', 'Unlisted'], applyFilters);
       } else if (this.activeAllProgramsMenu) {
-        this.filtersAppliedCount = this.getfiltersAppliedCount(localStorage.getItem('contributeAllProgramAppliedFilters'));
-        this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], appliedfilters);
+        const applyFilters =  this.getFilterDetails(setfilters,'contributeAllProgramAppliedFilters');
+        this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], applyFilters);
       } else {
         this.showLoader = false;
       }
     } else {
-      this.filtersAppliedCount = this.getfiltersAppliedCount(localStorage.getItem('sourcingMyProgramAppliedFilters'));
-      this.getMyProgramsForOrg(appliedfilters);
+      const applyFilters =  this.getFilterDetails(setfilters,'sourcingMyProgramAppliedFilters');
+      this.getMyProgramsForOrg(applyFilters);
     }
   }
- getfiltersAppliedCount(appliedfilters) {
+  getFilterDetails(setfilters, localStorageReferenec) {
+    const appliedfilters = localStorage.getItem(localStorageReferenec); 
+    const applyFilters = setfilters ? setfilters : JSON.parse(appliedfilters);
+    this.filtersAppliedCount = this.getFiltersAppliedCount(applyFilters);
+    return applyFilters;
+  }
+ getFiltersAppliedCount(appliedfilters) {
      let count = 0;
-     _.map(_.compact(Object.values(JSON.parse(appliedfilters))), (values) =>{
-      values.length ? count++ : 0;
-       })
+     if (appliedfilters) {
+      _.map(_.compact(Object.values(appliedfilters)), (values) =>{
+        values.length ? count++ : 0;
+         });
+     }
    return count;
  }
   setDelete(program, index) {
@@ -465,7 +473,7 @@ export class ProgramListComponent implements OnInit {
             request['subject'] = appliedfilters.subject;
           }
           if(appliedfilters.content_types && appliedfilters.content_types.length) {
-            request['content_type'] = appliedfilters.content_types;
+            request['content_types'] = appliedfilters.content_types;
           }
           if(appliedfilters.contribution_date  && appliedfilters.contribution_date !== 'Any') {
             request['content_submission_enddate'] = appliedfilters.contribution_date;
