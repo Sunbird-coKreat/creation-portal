@@ -100,7 +100,6 @@ export class ProjectFilterComponent implements OnInit {
     }
   }
   setAppliedFilters(appliedFilters) {
-    console.log(appliedFilters, 'appliedFilters');
     if (appliedFilters) {
       this.setPreferences['rootorg_id'] = appliedFilters['rootorg_id'];
       this.setPreferences['medium'] = appliedFilters['medium'];
