@@ -87,19 +87,26 @@ export class ProgramListComponent implements OnInit {
   getProgramsListByRole(appliedfilters?) {
     if (this.isContributor) {
       if (this.activeMyProgramsMenu) {
+        this.filtersAppliedCount = this.getfiltersAppliedCount(localStorage.getItem('contributeMyProgramAppliedFilters'));
         this.getMyProgramsForContrib(['Live', 'Unlisted'], appliedfilters);
-        this.filtersAppliedCount = localStorage.getItem('contributeMyProgramAppliedFilters');
       } else if (this.activeAllProgramsMenu) {
+        this.filtersAppliedCount = this.getfiltersAppliedCount(localStorage.getItem('contributeAllProgramAppliedFilters'));
         this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], appliedfilters);
-        this.filtersAppliedCount = localStorage.getItem('contributeAllProgramAppliedFilters');
       } else {
         this.showLoader = false;
       }
     } else {
+      this.filtersAppliedCount = this.getfiltersAppliedCount(localStorage.getItem('sourcingMyProgramAppliedFilters'));
       this.getMyProgramsForOrg(appliedfilters);
-      this.filtersAppliedCount = localStorage.getItem('sourcingMyProgramAppliedFilters');
     }
   }
+ getfiltersAppliedCount(appliedfilters) {
+     let count = 0;
+     _.map(_.compact(Object.values(JSON.parse(appliedfilters))), (values) =>{
+      values.length ? count++ : 0;
+       })
+   return count;
+ }
   setDelete(program, index) {
     if (!this.issourcingOrgAdmin) {
       this.toasterService.error(this.resourceService.messages.imsg.m0035);

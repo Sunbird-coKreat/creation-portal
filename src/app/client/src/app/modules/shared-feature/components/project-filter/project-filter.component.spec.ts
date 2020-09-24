@@ -27,7 +27,6 @@ describe('ProjectFilterComponent', () => {
   it('should show filters for my projects tab for contributor user ', () => {
     component.activeMyProgramsMenu = true;
     component.checkFilterShowCondition();
-    expect(component.showFiltersModal).toBeTruthy();
     expect(component.showFilters['sourcingOrganisations']).toBeFalsy();
     expect(component.showFilters['nominations']).toBeFalsy();
     expect(component.showFilters['contributions']).toBeFalsy();
@@ -87,7 +86,6 @@ it('should get error while appling filters when user clicks on appy buuton', () 
   });
 it('should show filters for my projects tab for sourcing user other than sourcing org ', () => {
     component.checkFilterShowCondition();
-    expect(component.showFiltersModal).toBeTruthy();
     expect(component.showFilters['sourcingOrganisations']).toBeFalsy();
     expect(component.showFilters['nominations']).toBeFalsy();
     expect(component.showFilters['contributions']).toBeFalsy();

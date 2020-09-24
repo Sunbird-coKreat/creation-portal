@@ -1,8 +1,8 @@
 import { Component, OnInit, Input, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ProgramsService, RegistryService, UserService } from '@sunbird/core';
-import { ResourceService, ToasterService } from '@sunbird/shared';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ProgramsService, UserService } from '@sunbird/core';
+import { ResourceService } from '@sunbird/shared';
+import { Router } from '@angular/router';
 import * as _ from 'lodash-es';
 import { IInteractEventEdata } from '@sunbird/telemetry';
 import { EventEmitter } from '@angular/core';
@@ -18,11 +18,11 @@ export class ProjectFilterComponent implements OnInit {
   @Output() applyFilters = new EventEmitter<any>();
   public filterForm: FormGroup;
   public showFilters = {};
-  public filtersAppliedCount: any;
   public currentFilters: any
   public setPreferences = {};
   public activeAllProgramsMenu: any;
   public activeMyProgramsMenu: any;
+  public activeUser: string;
   constructor(public sbFormBuilder: FormBuilder, public programsService: ProgramsService,
     public resourceService: ResourceService, private userService: UserService, public router: Router) { }
 
@@ -55,23 +55,60 @@ export class ProjectFilterComponent implements OnInit {
   }
 
   checkFilterShowCondition() {
-    this.filtersAppliedCount = 0;
     if (this.userService.isSourcingOrgAdmin() && this.router.url.includes('/sourcing')) {  // show filter for sourcing org admin for my projects 
       this.showFilters['sourcingOrganisations'] = false;
       this.showFilters['nomination_date'] = true;
       this.showFilters['contribution_date'] = true;
+      this.activeUser = 'sourcingOrgAdmin';
     } else if (this.activeAllProgramsMenu && this.programsService.checkforshowAllPrograms()) { // for all projects 
       this.showFilters['sourcingOrganisations'] = true;
       this.showFilters['nomination_date'] = false;
       this.showFilters['contribution_date'] = false;
-    } else if (this.activeMyProgramsMenu) { // for my projects for contributor user role  
+      this.activeUser = 'contributeOrgAdminAllProject';
 
+    } else if (this.activeMyProgramsMenu) { // for my projects for contributor user role  
       this.showFilters['sourcingOrganisations'] = false;
       this.showFilters['nomination_date'] = false;
       this.showFilters['contribution_date'] = false;
+      this.activeUser = 'contributeOrgAdminMyProject';
       this.getFiltersUnionFromList();
     } else {
+      this.activeUser = 'sourcingReviwerMyProject';
       this.getFiltersUnionFromList(); // for sourcing reviewer 
+    }
+    this.getAppliedFiltersDetails();
+  }
+  getAppliedFiltersDetails() {
+    let appliedFilters: any;
+    switch (this.activeUser) {
+      case 'sourcingOrgAdmin':
+        appliedFilters = JSON.parse(localStorage.getItem('sourcingMyProgramAppliedFilters'));
+        this.setAppliedFilters(appliedFilters);
+        break;
+      case 'contributeOrgAdminAllProject':
+        appliedFilters = JSON.parse(localStorage.getItem('contributeAllProgramAppliedFilters'));
+        this.setAppliedFilters(appliedFilters);
+        break;
+      case 'contributeOrgAdminMyProject':
+        appliedFilters = JSON.parse(localStorage.getItem('contributeMyProgramAppliedFilters'));
+        this.setAppliedFilters(appliedFilters);
+        break;
+      case 'sourcingReviwerMyProject':
+        appliedFilters = JSON.parse(localStorage.getItem('sourcingMyProgramAppliedFilters'));
+        this.setAppliedFilters(appliedFilters);
+        break;
+    }
+  }
+  setAppliedFilters(appliedFilters) {
+    console.log(appliedFilters, 'appliedFilters');
+    if (appliedFilters) {
+      this.setPreferences['rootorg_id'] = appliedFilters['rootorg_id'];
+      this.setPreferences['medium'] = appliedFilters['medium'];
+      this.setPreferences['gradeLevel'] = appliedFilters['gradeLevel'];
+      this.setPreferences['subject'] = appliedFilters['subject'];
+      this.setPreferences['content_types'] = appliedFilters['content_types'];
+      this.setPreferences['nomination_date'] = appliedFilters['nomination_date'];
+      this.setPreferences['contribution_date'] = appliedFilters['contribution_date'];
     }
   }
   getFiltersUnionFromList() {
@@ -83,8 +120,15 @@ export class ProjectFilterComponent implements OnInit {
     })
   }
   applyFilter(resetFilter?) {
-    resetFilter ? this.applyFilters.emit(): this.applyFilters.emit(this.setPreferences);
-    this.dismissed()
+    const filterLocalStorage = resetFilter ? [] : this.setPreferences;
+    switch (this.activeUser) {
+      case 'sourcingOrgAdmin': localStorage.setItem('sourcingMyProgramAppliedFilters', JSON.stringify(filterLocalStorage)); break;
+      case 'contributeOrgAdminAllProject': localStorage.setItem('contributeAllProgramAppliedFilters', JSON.stringify(filterLocalStorage)); break;
+      case 'contributeOrgAdminMyProject': localStorage.setItem('contributeMyProgramAppliedFilters', JSON.stringify(filterLocalStorage)); break;
+      case 'sourcingReviwerMyProject': localStorage.setItem('sourcingMyProgramAppliedFilters', JSON.stringify(filterLocalStorage)); break;
+    }
+    resetFilter ? this.applyFilters.emit() : this.applyFilters.emit(this.setPreferences);
+    this.dismissed();
   }
 
   dismissed() {
