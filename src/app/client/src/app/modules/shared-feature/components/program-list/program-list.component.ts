@@ -478,10 +478,10 @@ export class ProgramListComponent implements OnInit {
           if(appliedfilters.content_types && appliedfilters.content_types.length) {
             newFilters['content_types'] = appliedfilters.content_types;
           }
-          if(appliedfilters.contribution_date  && appliedfilters.contribution_date !== 'Any') {
+          if(appliedfilters.contribution_date  && appliedfilters.contribution_date !== 'any') {
             newFilters['content_submission_enddate'] = appliedfilters.contribution_date;
           }
-          if(appliedfilters.nomination_date && appliedfilters.nomination_date !== 'Any') {
+          if(appliedfilters.nomination_date && appliedfilters.nomination_date !== 'any') {
             newFilters['nomination_enddate'] = appliedfilters.nomination_date;
           }
           return newFilters;
