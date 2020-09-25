@@ -28,7 +28,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public contributorOrgUsers: any = [];
   public tempSortOrgUser: any = [];
   public direction = 'asc';
-  public sortColumn = '';
+  public sortColumn = 'selectedRole';
   public roles = [{ name: 'User', value: 'user'}, { name: 'Admin', value: 'admin'}];
   pager: IPagination;
   pageNumber = 1;
@@ -91,17 +91,20 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   }
   
   setOrgUsers(orgUsersDetails) {
-    this.allContributorOrgUsers = orgUsersDetails;
 
+    this.allContributorOrgUsers = orgUsersDetails;
+   
     if (!_.isEmpty(this.allContributorOrgUsers)) {
       this.orgUserscnt =  this.allContributorOrgUsers.length;
+    
       this.sortCollection('selectedRole');
     }
     this.showLoader = false;
   }
 
   getContributionOrgUsers() {
-    this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
+    this.registryService.getcontributingOrgUsersDetails().then((orgUsers:[]) => {
+    
       this.setOrgUsers(orgUsers);
     });
   }
@@ -118,8 +121,10 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   }
   
   sortUsersList(usersList, isUserSearch?) {
+ 
      this.orgUserscnt = usersList.length;
-     this.allContributorOrgUsers = this.programsService.sortCollection(usersList, 'selectedRole', 'asc');
+     this.allContributorOrgUsers = this.programsService.sortCollection(usersList, this.sortColumn, this.direction);
+  
      isUserSearch ?  this.allContributorOrgUsers:  this.initialSourcingOrgUser = this.allContributorOrgUsers;
      usersList = _.chunk(this.allContributorOrgUsers, this.pageLimit);
      this.paginatedContributorOrgUsers = usersList;
@@ -137,6 +142,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   }
 
   sortCollection(column) {
+ 
     this.sortUsersList(this.allContributorOrgUsers);
     if (this.direction === 'asc' || this.direction === '') {
       this.direction = 'desc';
