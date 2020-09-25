@@ -91,12 +91,12 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   }
   
   setOrgUsers(orgUsersDetails) {
-    console.log("line 94");
+
     this.allContributorOrgUsers = orgUsersDetails;
-    console.log(this.allContributorOrgUsers.length);
+   
     if (!_.isEmpty(this.allContributorOrgUsers)) {
       this.orgUserscnt =  this.allContributorOrgUsers.length;
-      console.log("line 100");
+    
       this.sortCollection('selectedRole');
     }
     this.showLoader = false;
@@ -104,7 +104,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
 
   getContributionOrgUsers() {
     this.registryService.getcontributingOrgUsersDetails().then((orgUsers:[]) => {
-      console.log("line 107 :", orgUsers.length);
+    
       this.setOrgUsers(orgUsers);
     });
   }
@@ -121,11 +121,10 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   }
   
   sortUsersList(usersList, isUserSearch?) {
-    console.log("line 124 :" + usersList.length);
-    console.log(usersList);
+ 
      this.orgUserscnt = usersList.length;
      this.allContributorOrgUsers = this.programsService.sortCollection(usersList, this.sortColumn, this.direction);
-     console.log("line 128" + this.allContributorOrgUsers)
+  
      isUserSearch ?  this.allContributorOrgUsers:  this.initialSourcingOrgUser = this.allContributorOrgUsers;
      usersList = _.chunk(this.allContributorOrgUsers, this.pageLimit);
      this.paginatedContributorOrgUsers = usersList;
@@ -143,7 +142,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   }
 
   sortCollection(column) {
-    console.log("line 140", column);
+ 
     this.sortUsersList(this.allContributorOrgUsers);
     if (this.direction === 'asc' || this.direction === '') {
       this.direction = 'desc';
