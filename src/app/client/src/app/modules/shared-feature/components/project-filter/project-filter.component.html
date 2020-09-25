@@ -62,8 +62,8 @@
             <div class="field">
               <label
                 class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.contentsFilter}}</label>
-              <sui-multi-select formControlName="content_types" [(ngModel)]="setPreferences['content_types']"
-                [options]="currentFilters['contentTypes']"
+              <sui-multi-select formControlName="content_types" [(ngModel)]="setPreferences['content_types']" 
+                valueField="value" labelField="name" [options]="currentFilters['contentTypes']"
                 placeholder="{{resourceService?.frmelmnts?.lbl?.selectcontentTypesFilter}}" class="selection p-5 b-100"
                 #contentTypes>
                 <sui-select-option *ngFor="let contentType of contentTypes.filteredOptions" [value]="contentType">

@@ -734,7 +734,9 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
-    req.data.request.filters = {...req.data.request.filters , ...appliedfilters};
+    if (appliedfilters) {
+      req.data.request.filters = {...req.data.request.filters , ...appliedfilters};
+    }
 
     // Check if slug is present in the URL, if yes then fetch the program those slug org only
     const urlSlug = this.userService.slug;

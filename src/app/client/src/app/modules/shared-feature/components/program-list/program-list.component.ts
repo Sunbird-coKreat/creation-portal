@@ -187,8 +187,11 @@ export class ProgramListComponent implements OnInit {
    * fetch the list of programs.
    */
   private getAllProgramsForContrib(type, status, appliedfilters?) {
-    const getFilters =  this.addFiltersInRequestBody(appliedfilters);
-    this.programsService.getAllProgramsByType(type, status, getFilters).subscribe(
+        let getAppliedFilters: any;
+       if(appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
+           getAppliedFilters =  this.addFiltersInRequestBody(appliedfilters);
+         }
+    this.programsService.getAllProgramsByType(type, status, getAppliedFilters).subscribe(
       response => {
         const allPrograms = _.get(response, 'result.programs');
         if (allPrograms.length) {
@@ -222,7 +225,7 @@ export class ProgramListComponent implements OnInit {
                 }
               }
             };
-           if(appliedfilters) {
+           if(appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
             req.request.filters = {...req.request.filters , ...this.addFiltersInRequestBody(appliedfilters)};
            }
             this.programsService.getMyProgramsForContrib(req)
@@ -335,7 +338,7 @@ export class ProgramListComponent implements OnInit {
           }
         }
       };
-      if(appliedfilters) {
+      if(appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
         req.request.filters = {...req.request.filters , ...this.addFiltersInRequestBody(appliedfilters)};
        }
       this.getContributionProgramList(req);
@@ -362,7 +365,7 @@ export class ProgramListComponent implements OnInit {
               }
             }
           };
-          if(appliedfilters) {
+          if(appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
             req.request.filters = {...req.request.filters , ...this.addFiltersInRequestBody(appliedfilters)};
            }
           this.programsService.getMyProgramsForContrib(req).subscribe((programsResponse) => {
@@ -421,7 +424,7 @@ export class ProgramListComponent implements OnInit {
             }
           }
         };
-        if(appliedfilters) {
+        if(appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
           req.request.filters = {...req.request.filters , ...this.addFiltersInRequestBody(appliedfilters)};
          }
         this.getContributionProgramList(req);
@@ -463,25 +466,25 @@ export class ProgramListComponent implements OnInit {
   }
   addFiltersInRequestBody(appliedfilters) {
     const newFilters  = {};
-          if(appliedfilters.rootorg_id) {
+          if(_.get(appliedfilters, 'rootorg_id')) {
             newFilters['rootorg_id'] = appliedfilters.rootorg_id;
           }
-          if(appliedfilters.medium && appliedfilters.medium.length) {
+          if(_.get(appliedfilters, 'medium') && (_.get(appliedfilters, 'medium').length)) {
             newFilters['medium'] = appliedfilters.medium;
           } 
-          if(appliedfilters.gradeLevel && appliedfilters.gradeLevel.length) {
+          if(_.get(appliedfilters, 'gradeLevel') && (_.get(appliedfilters, 'gradeLevel').length)) {
             newFilters['gradeLevel'] = appliedfilters.gradeLevel;
           }
-          if(appliedfilters.subject && appliedfilters.subject.length) {
+          if(_.get(appliedfilters, 'subject') && (_.get(appliedfilters, 'subject').length)) {
             newFilters['subject'] = appliedfilters.subject;
           }
-          if(appliedfilters.content_types && appliedfilters.content_types.length) {
+          if(_.get(appliedfilters, 'content_types') && (_.get(appliedfilters, 'content_types').length)) {
             newFilters['content_types'] = appliedfilters.content_types;
           }
-          if(appliedfilters.contribution_date  && appliedfilters.contribution_date !== 'any') {
+          if(_.get(appliedfilters, 'contribution_date')  && _.get(appliedfilters, 'contribution_date') !== 'any') {
             newFilters['content_submission_enddate'] = appliedfilters.contribution_date;
           }
-          if(appliedfilters.nomination_date && appliedfilters.nomination_date !== 'any') {
+          if(_.get(appliedfilters, 'nomination_date') && _.get(appliedfilters, 'nomination_date') !== 'any') {
             newFilters['nomination_enddate'] = appliedfilters.nomination_date;
           }
           return newFilters;
@@ -500,7 +503,7 @@ export class ProgramListComponent implements OnInit {
       filters['role'] = ['REVIEWER'];
       filters['user_id'] = this.userService.userProfile.userId;
     }
-    if(appliedfilters) {
+    if(appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
       filters = {...filters , ...this.addFiltersInRequestBody(appliedfilters)};
     }
     // tslint:disable-next-line:max-line-length

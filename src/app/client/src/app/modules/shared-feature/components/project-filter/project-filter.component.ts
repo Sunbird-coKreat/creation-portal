@@ -1,11 +1,13 @@
 import { Component, OnInit, Input, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ProgramsService, UserService } from '@sunbird/core';
+import { ProgramsService, UserService , FrameworkService} from '@sunbird/core';
 import { ResourceService } from '@sunbird/shared';
 import { Router } from '@angular/router';
 import * as _ from 'lodash-es';
 import { IInteractEventEdata } from '@sunbird/telemetry';
 import { EventEmitter } from '@angular/core';
+import { first } from 'rxjs/operators';
+import * as alphaNumSort from 'alphanum-sort';
 @Component({
   selector: 'app-project-filter',
   templateUrl: './project-filter.component.html',
@@ -23,11 +25,15 @@ export class ProjectFilterComponent implements OnInit {
   public activeAllProgramsMenu: any;
   public activeMyProgramsMenu: any;
   public activeUser: string;
+  public userprofile;
+  private userBoard;
+  public frameworkCategories;
   public nominationContributionStatus = [{ 'name': 'Open', 'value': 'open' }, { 'name': 'Closed', 'value': 'closed' }, { 'name': 'Any', 'value': 'any' }];
-  constructor(public sbFormBuilder: FormBuilder, public programsService: ProgramsService,
+  constructor(public sbFormBuilder: FormBuilder, public programsService: ProgramsService, public frameworkService: FrameworkService,
     public resourceService: ResourceService, private userService: UserService, public router: Router) { }
 
   ngOnInit() {
+    this.userprofile = this.userService.userProfile;
     this.activeAllProgramsMenu = this.router.isActive('/contribute', true);
     this.activeMyProgramsMenu = this.router.isActive('/contribute/myenrollprograms', true);
     this.createFilterForm();
@@ -41,6 +47,7 @@ export class ProjectFilterComponent implements OnInit {
       'contributions': this.nominationContributionStatus
     }
     this.checkFilterShowCondition();
+    this.currentFilters['contentTypes'] = this.programsService.contentTypes; // getting global content types all the time 
   }
 
   createFilterForm() {
@@ -78,6 +85,7 @@ export class ProjectFilterComponent implements OnInit {
     }
     this.getAppliedFiltersDetails();
   }
+
   getAppliedFiltersDetails() {
     let appliedFilters: any;
     switch (this.activeUser) {
@@ -113,10 +121,9 @@ export class ProjectFilterComponent implements OnInit {
   getFiltersUnionFromList() {
     _.map(this.programs, (program) => {
       this.currentFilters['gradeLevel'] = _.compact(_.uniq(_.concat(this.currentFilters['gradeLevel'], _.get(program, 'config.gradeLevel') ? program.config.gradeLevel : JSON.parse(program.gradeLevel))));
-      this.currentFilters['contentTypes'] = _.compact(_.uniq(_.concat(this.currentFilters['contentTypes'], program.content_types)));
       this.currentFilters['medium'] = _.compact(_.uniq(_.concat(this.currentFilters['medium'], _.get(program, 'config.medium') ? program.config.medium : JSON.parse(program.medium))));
       this.currentFilters['subject'] = _.compact(_.uniq(_.concat(this.currentFilters['subject'], _.get(program, 'config.subject') ? program.config.subject : JSON.parse(program.subject))));
-    })
+    });
   }
   applyFilter(resetFilter?) {
     const filterLocalStorage = resetFilter ? [] : this.setPreferences;
