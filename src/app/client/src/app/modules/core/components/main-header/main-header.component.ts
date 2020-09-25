@@ -315,6 +315,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   logout() {
     window.location.replace('/logoff');
     this.cacheService.removeAll();
+    localStorage.clear();
   }
   setWindowConfig() {
     if (window.innerWidth <= 1023 && window.innerWidth > 548) {

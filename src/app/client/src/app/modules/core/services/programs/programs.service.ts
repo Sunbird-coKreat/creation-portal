@@ -722,7 +722,7 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * makes api call to get list of programs from ext framework Service
    */
-  getAllProgramsByType(type, status): Observable<ServerResponse> {
+  getAllProgramsByType(type, status, appliedfilters?): Observable<ServerResponse> {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
       data: {
@@ -734,6 +734,7 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
+    req.data.request.filters = {...req.data.request.filters , ...appliedfilters};
 
     // Check if slug is present in the URL, if yes then fetch the program those slug org only
     const urlSlug = this.userService.slug;

@@ -85,6 +85,7 @@ export class ProgramListComponent implements OnInit {
   }
 
   getProgramsListByRole(setfilters?) {
+    this.showLoader = true;
     if (this.isContributor) {
       if (this.activeMyProgramsMenu) {
         const applyFilters =  this.getFilterDetails(setfilters,'contributeMyProgramAppliedFilters');
@@ -186,7 +187,8 @@ export class ProgramListComponent implements OnInit {
    * fetch the list of programs.
    */
   private getAllProgramsForContrib(type, status, appliedfilters?) {
-    this.programsService.getAllProgramsByType(type, status).subscribe(
+    const getFilters =  this.addFiltersInRequestBody(appliedfilters);
+    this.programsService.getAllProgramsByType(type, status, getFilters).subscribe(
       response => {
         const allPrograms = _.get(response, 'result.programs');
         if (allPrograms.length) {
@@ -221,7 +223,7 @@ export class ProgramListComponent implements OnInit {
               }
             };
            if(appliedfilters) {
-            req.request.filters = this.addFiltersInRequestBody(req.request.filters,appliedfilters);
+            req.request.filters = {...req.request.filters , ...this.addFiltersInRequestBody(appliedfilters)};
            }
             this.programsService.getMyProgramsForContrib(req)
               .subscribe((myProgramsResponse) => {
@@ -334,7 +336,7 @@ export class ProgramListComponent implements OnInit {
         }
       };
       if(appliedfilters) {
-        req.request.filters = this.addFiltersInRequestBody(req.request.filters,appliedfilters);
+        req.request.filters = {...req.request.filters , ...this.addFiltersInRequestBody(appliedfilters)};
        }
       this.getContributionProgramList(req);
       return;
@@ -361,7 +363,7 @@ export class ProgramListComponent implements OnInit {
             }
           };
           if(appliedfilters) {
-            req.request.filters = this.addFiltersInRequestBody(req.request.filters,appliedfilters);
+            req.request.filters = {...req.request.filters , ...this.addFiltersInRequestBody(appliedfilters)};
            }
           this.programsService.getMyProgramsForContrib(req).subscribe((programsResponse) => {
             // Get only those programs for which the nominations are added
@@ -420,7 +422,7 @@ export class ProgramListComponent implements OnInit {
           }
         };
         if(appliedfilters) {
-          req.request.filters = this.addFiltersInRequestBody(req.request.filters,appliedfilters);
+          req.request.filters = {...req.request.filters , ...this.addFiltersInRequestBody(appliedfilters)};
          }
         this.getContributionProgramList(req);
       },
@@ -459,29 +461,30 @@ export class ProgramListComponent implements OnInit {
     }
     return _.map(roles, role => _.upperFirst(_.toLower(role))).join(", ");
   }
-  addFiltersInRequestBody(request,appliedfilters) {
+  addFiltersInRequestBody(appliedfilters) {
+    const newFilters  = {};
           if(appliedfilters.rootorg_id) {
-            request['rootorg_id'] = appliedfilters.rootorg_id;
+            newFilters['rootorg_id'] = appliedfilters.rootorg_id;
           }
           if(appliedfilters.medium && appliedfilters.medium.length) {
-            request['medium'] = appliedfilters.medium;
+            newFilters['medium'] = appliedfilters.medium;
           } 
           if(appliedfilters.gradeLevel && appliedfilters.gradeLevel.length) {
-            request['gradeLevel'] = appliedfilters.gradeLevel;
+            newFilters['gradeLevel'] = appliedfilters.gradeLevel;
           }
           if(appliedfilters.subject && appliedfilters.subject.length) {
-            request['subject'] = appliedfilters.subject;
+            newFilters['subject'] = appliedfilters.subject;
           }
           if(appliedfilters.content_types && appliedfilters.content_types.length) {
-            request['content_types'] = appliedfilters.content_types;
+            newFilters['content_types'] = appliedfilters.content_types;
           }
           if(appliedfilters.contribution_date  && appliedfilters.contribution_date !== 'Any') {
-            request['content_submission_enddate'] = appliedfilters.contribution_date;
+            newFilters['content_submission_enddate'] = appliedfilters.contribution_date;
           }
           if(appliedfilters.nomination_date && appliedfilters.nomination_date !== 'Any') {
-            request['nomination_enddate'] = appliedfilters.nomination_date;
+            newFilters['nomination_enddate'] = appliedfilters.nomination_date;
           }
-          return request;
+          return newFilters;
   }
   /**
    * fetch the list of programs.
@@ -498,7 +501,7 @@ export class ProgramListComponent implements OnInit {
       filters['user_id'] = this.userService.userProfile.userId;
     }
     if(appliedfilters) {
-      filters = this.addFiltersInRequestBody(filters, appliedfilters);
+      filters = {...filters , ...this.addFiltersInRequestBody(appliedfilters)};
     }
     // tslint:disable-next-line:max-line-length
     /*if (!_.includes(this.userService.userProfile.userRoles, 'ORG_ADMIN') && _.includes(this.userService.userProfile.userRoles, 'CONTENT_REVIEWER')) {

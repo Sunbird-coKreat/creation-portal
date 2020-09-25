@@ -10,7 +10,7 @@
          *ngIf="!showLoader && programs !== undefined && programs.length">{{count}}
         </span>
       </div>
-      <div class="text-right">
+      <div class="text-right" *ngIf="programs?.length || filtersAppliedCount">
         <div class="fs-0-785 font-italic sb-color-gray-300 mb-10 d-inline-block" *ngIf="filtersAppliedCount">
           <i class="icon check circle pr-5 sb-color-success"></i>
           {{filtersAppliedCount}} {{resourceService?.frmelmnts?.lbl?.filtersApplied}}

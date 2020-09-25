@@ -13,7 +13,7 @@
               <label
                 class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.sourcingOrganisations}}</label>
 
-              <sui-select class="selection" [options]="currentFilters['gradeLevel']"
+              <sui-select class="selection" [options]="currentFilters['rootorg_id']"
                 [(ngModel)]="setPreferences['rootorg_id']"
                 placeholder="{{resourceService?.frmelmnts?.lbl?.selectSourcingFilter}}"
                 formControlName="sourcingOrganisations" #sourcingOrganisations>
@@ -75,8 +75,8 @@
             <div class="field">
               <label
                 class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.nominationDate}}</label>
-              <sui-select class="selection" [options]="currentFilters['nominations']"
-                placeholder="{{resourceService?.frmelmnts?.lbl?.selectNominationDate}}"
+              <sui-select class="selection" [options]="currentFilters['nominations']" valueField="value"
+                labelField="name" placeholder="{{resourceService?.frmelmnts?.lbl?.selectNominationDate}}"
                 [(ngModel)]="setPreferences['nomination_date']" formControlName="nominations" #nominations>
                 <sui-select-option *ngFor="let nomination of nominations.filteredOptions" [value]="nomination">
                 </sui-select-option>
@@ -87,8 +87,8 @@
             <div class="field">
               <label
                 class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.contributionDate}}</label>
-              <sui-select class="selection" [options]="currentFilters['nominations']"
-                placeholder="{{resourceService?.frmelmnts?.lbl?.selectContributationDate}}"
+              <sui-select class="selection" [options]="currentFilters['contributions']" valueField="value"
+                labelField="name" placeholder="{{resourceService?.frmelmnts?.lbl?.selectContributationDate}}"
                 [(ngModel)]="setPreferences['contribution_date']" formControlName="contributions" #contributions>
                 <sui-select-option *ngFor="let contribution of contributions.filteredOptions" [value]="contribution">
                 </sui-select-option>
@@ -101,7 +101,7 @@
   </div>
   <div class="sb-modal-actions py-20">
     <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="applyFilter()" appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('apply-filters', 'click', 'program-list', {values: [filterForm.value]})"
+      [telemetryInteractEdata]="getTelemetryInteractEdata('apply-filters', 'click', 'program-list', {values: [setPreferences]})"
       [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService?.frmelmnts?.btn?.apply}} </button>
     <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="applyFilter('resetFilter')"
