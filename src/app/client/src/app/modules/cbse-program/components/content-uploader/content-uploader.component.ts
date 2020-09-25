@@ -544,6 +544,14 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     });
   }
 
+  getContentID(){
+    if (_.get(this.contentUploadComponentInput, 'action') === 'creation') {
+      this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.contentMetaData.identifier, 
+    'Content', '1.0', { l1: this.sessionContext.collection, l2: this.unitIdentifier });
+ }
+
+  }
+
   getUploadedContentMeta(contentId) {
     const option = {
       url: 'content/v3/read/' + contentId
@@ -557,6 +565,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         contentData: res
       };
       this.contentMetaData = res;
+      this.getContentID();
       const contentTypeValue = [this.contentMetaData.contentType];
       this.contentType = this.programsService.getContentTypesName(contentTypeValue);
       this.editTitle = (this.contentMetaData.name !== 'Untitled') ? this.contentMetaData.name : '' ;
