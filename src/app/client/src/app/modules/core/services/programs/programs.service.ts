@@ -1165,6 +1165,21 @@ export class ProgramsService extends DataService implements CanActivate {
   sendprogramsNotificationData(programData) {
     this._programsNotificationData.next(programData);
   }
+
+  getAllSourcingFrameworkDetails(): Observable<ServerResponse> {
+    const req = {
+      url: this.config.urlConFig.URLS.DOCK_TENANT.LIST,
+      data: {
+        request: {
+          filters: {
+            status:'Live'
+          }
+        }
+      }
+    };
+
+    return this.post(req);
+  }
   /*getSourcingOrgUserList(sourcingOrgId, roles, limit?) {
     return new Promise((resolve, reject) => {
       // Get all diskha users

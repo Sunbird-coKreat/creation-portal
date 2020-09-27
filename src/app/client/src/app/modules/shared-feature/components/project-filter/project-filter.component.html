@@ -12,9 +12,8 @@
             <div class="field">
               <label
                 class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.sourcingOrganisations}}</label>
-
-              <sui-select class="selection" [options]="currentFilters['rootorg_id']"
-                [(ngModel)]="setPreferences['rootorg_id']"
+              <sui-select class="selection" [options]="currentFilters['rootorg_id']" (selectedOptionChange)="onChangeSourcingOrg()"
+                [(ngModel)]="setPreferences['rootorg_id']" valueField="id" labelField="orgName"
                 placeholder="{{resourceService?.frmelmnts?.lbl?.selectSourcingFilter}}"
                 formControlName="sourcingOrganisations" #sourcingOrganisations>
                 <sui-select-option *ngFor="let sourcing of sourcingOrganisations.filteredOptions" [value]="sourcing">

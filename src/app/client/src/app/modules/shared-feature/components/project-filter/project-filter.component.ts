@@ -38,7 +38,7 @@ export class ProjectFilterComponent implements OnInit {
     this.activeMyProgramsMenu = this.router.isActive('/contribute/myenrollprograms', true);
     this.createFilterForm();
     this.currentFilters = {
-      'rootorg_id': '',
+      'rootorg_id': [],
       'medium': [],
       'gradeLevel': [],
       'subject': [],
@@ -73,6 +73,8 @@ export class ProjectFilterComponent implements OnInit {
       this.showFilters['nomination_date'] = false;
       this.showFilters['contribution_date'] = false;
       this.activeUser = 'contributeOrgAdminAllProject';
+      this.fetchFrameWorkDetails(undefined, undefined);
+      this.getAllSourcingFrameworkDetails();
     } else if (this.activeMyProgramsMenu) { // for my projects for contributor user role  
       this.showFilters['sourcingOrganisations'] = false;
       this.showFilters['nomination_date'] = false;
@@ -85,7 +87,22 @@ export class ProjectFilterComponent implements OnInit {
     }
     this.getAppliedFiltersDetails();
   }
-
+  getAllSourcingFrameworkDetails() {
+    this.programsService.getAllSourcingFrameworkDetails().subscribe((frameworkInfo: any) => {
+      this.currentFilters['rootorg_id'] = _.get(frameworkInfo,'result.content');
+    }); 
+  }
+  onChangeSourcingOrg() {
+    this.fetchFrameWorkDetails(undefined, this.filterForm.controls.sourcingOrganisations.value);
+  }
+  fetchFrameWorkDetails(undefined,orgId) {
+    this.frameworkService.initialize(undefined, orgId);
+    this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
+      if (frameworkInfo && !frameworkInfo.err) {
+        this.frameworkCategories = frameworkInfo.frameworkdata.defaultFramework.categories;
+      }
+    });
+  }
   getAppliedFiltersDetails() {
     let appliedFilters: any;
     switch (this.activeUser) {
