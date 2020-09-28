@@ -8,6 +8,7 @@ import * as moment from 'moment';
 import { DatePipe } from '@angular/common';
 import { IInteractEventEdata } from '@sunbird/telemetry';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { CacheService } from 'ng2-cache-service';
 
 @Component({
   selector: 'app-program-list',
@@ -51,7 +52,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   showDeleteModal = false;
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
-    public router: Router, private datePipe: DatePipe, public configService: ConfigService,
+    public router: Router, private datePipe: DatePipe, public configService: ConfigService, public cacheService: CacheService,
     private navigationHelperService: NavigationHelperService, public activeRoute: ActivatedRoute) { }
 
   ngOnInit() {
@@ -111,29 +112,30 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   }
 
   getProgramsListByRole(setfilters?) {
-    this.showLoader = true;
+    this.showLoader = true; // show loader till getting the data
     if (this.isContributor) {
       if (this.activeMyProgramsMenu) {
         const applyFilters =  this.getFilterDetails(setfilters,this.userService.slug ? 'contributeMyProgramAppliedFiltersTenantAccess': 'contributeMyProgramAppliedFilters');
-        this.getMyProgramsForContrib(['Live', 'Unlisted'], applyFilters);
+        this.getMyProgramsForContrib(['Live', 'Unlisted'], applyFilters); // this method will call with applied req filters data other wise with origional req body
       } else if (this.activeAllProgramsMenu) {
         const applyFilters =  this.getFilterDetails(setfilters,this.userService.slug ? 'contributeAllProgramAppliedFiltersTenantAccess' :'contributeAllProgramAppliedFilters');
-        this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], applyFilters);
+        this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], applyFilters); // this method will call with applied req filters data other wise with origional req body
       } else {
         this.showLoader = false;
       }
     } else {
       const applyFilters =  this.getFilterDetails(setfilters,'sourcingMyProgramAppliedFilters');
-      this.getMyProgramsForOrg(applyFilters);
+      this.getMyProgramsForOrg(applyFilters); // this method will call with applied req filters data other wise with origional req body
     }
   }
-  getFilterDetails(setfilters, localStorageReferenec) {
-    const appliedfilters = localStorage.getItem(localStorageReferenec); 
-    const applyFilters = setfilters ? setfilters : JSON.parse(appliedfilters);
+  // finding the applied filters count and putting them into rquest body other wise put origional req body to api call
+  getFilterDetails(setfilters, storageReferenec) {
+    const appliedfilters = this.cacheService.get(storageReferenec);  // getting the strored data from cache service 
+    const applyFilters = setfilters ? setfilters : appliedfilters;   
     this.filtersAppliedCount = this.getFiltersAppliedCount(applyFilters);
     return applyFilters;
   }
- getFiltersAppliedCount(appliedfilters) {
+ getFiltersAppliedCount(appliedfilters) { // finding the applied filters count
      let count = 0;
      if (appliedfilters) {
       _.map(_.compact(Object.values(appliedfilters)), (values) =>{
@@ -490,6 +492,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     }
     return _.map(roles, role => _.upperFirst(_.toLower(role))).join(", ");
   }
+  // add filters to request body 
   addFiltersInRequestBody(appliedfilters) {
     const newFilters  = {};
           if(_.get(appliedfilters, 'rootorg_id')) {
