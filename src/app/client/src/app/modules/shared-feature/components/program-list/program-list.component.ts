@@ -88,10 +88,10 @@ export class ProgramListComponent implements OnInit {
     this.showLoader = true;
     if (this.isContributor) {
       if (this.activeMyProgramsMenu) {
-        const applyFilters =  this.getFilterDetails(setfilters,'contributeMyProgramAppliedFilters');
+        const applyFilters =  this.getFilterDetails(setfilters,this.userService.slug ? 'contributeMyProgramAppliedFiltersTenantAccess': 'contributeMyProgramAppliedFilters');
         this.getMyProgramsForContrib(['Live', 'Unlisted'], applyFilters);
       } else if (this.activeAllProgramsMenu) {
-        const applyFilters =  this.getFilterDetails(setfilters,'contributeAllProgramAppliedFilters');
+        const applyFilters =  this.getFilterDetails(setfilters,this.userService.slug ? 'contributeAllProgramAppliedFiltersTenantAccess' :'contributeAllProgramAppliedFilters');
         this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], applyFilters);
       } else {
         this.showLoader = false;

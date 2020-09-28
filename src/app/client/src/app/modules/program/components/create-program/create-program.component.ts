@@ -486,7 +486,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.collectionListForm.controls['gradeLevel'].setValue('');
       this.collectionListForm.controls['subject'].setValue('');
     }
-console.log(this.frameworkCategories, 'this.frameworkCategories');
     const board = _.find(this.frameworkCategories, (element) => {
       return element.code === 'board';
     });
