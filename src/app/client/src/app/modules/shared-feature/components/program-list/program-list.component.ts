@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ProgramsService, RegistryService, UserService } from '@sunbird/core';
-import { ResourceService, ToasterService, ConfigService } from '@sunbird/shared';
+import { ResourceService, ToasterService, ConfigService, NavigationHelperService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IProgram } from '../../../core/interfaces';
 import * as _ from 'lodash-es';
@@ -15,7 +15,7 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
   styleUrls: ['./program-list.component.scss'],
   providers: [DatePipe]
 })
-export class ProgramListComponent implements OnInit {
+export class ProgramListComponent implements OnInit, AfterViewInit {
 
   public programs: IProgram[];
   public program: any;
@@ -43,11 +43,14 @@ export class ProgramListComponent implements OnInit {
   public issourcingOrgAdmin = false;
   public selectedProgramToModify: any;
   public showModifyConfirmation: boolean;
+  public telemetryImpression: any;
+  public telemetryPageId = 'programs-list';
 
   showDeleteModal = false;
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
-    public router: Router, private datePipe: DatePipe, public configService: ConfigService) { }
+    public router: Router, private datePipe: DatePipe, public configService: ConfigService,
+    private navigationHelperService: NavigationHelperService, public activeRoute: ActivatedRoute) { }
 
   ngOnInit() {
     this.checkIfUserIsContributor();
@@ -55,6 +58,29 @@ export class ProgramListComponent implements OnInit {
     this.telemetryInteractCdata = [];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
+  }
+
+  ngAfterViewInit() {
+    const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
+    const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+     setTimeout(() => {
+      this.telemetryImpression = {
+        context: {
+          env: this.activeRoute.snapshot.data.telemetry.env,
+          pdata: {
+            id: this.userService.appId,
+            ver: version,
+            pid: `${this.configService.appConfig.TELEMETRY.PID}`
+          }
+        },
+        edata: {
+          type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
+          pageid: this.telemetryPageId,
+          uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
+          duration: this.navigationHelperService.getPageLoadTime()
+        }
+      };
+     });
   }
 
   /**
