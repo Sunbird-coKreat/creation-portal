@@ -17,8 +17,10 @@ import { CacheService } from 'ng2-cache-service';
 export class ProjectFilterComponent implements OnInit {
   @ViewChild('modal') modal;
   @Input() programs;
+  @Input() filtersAppliedCount;
   @Output() dismiss = new EventEmitter<any>();
   @Output() applyFilters = new EventEmitter<any>();
+  public initialProgramDetails = [];
   public filterForm: FormGroup;
   public showFilters = {};
   public currentFilters: any
@@ -62,7 +64,7 @@ export class ProjectFilterComponent implements OnInit {
       contributions: []
     });
   }
-// check the filters to dispaly to user with respect to roles and tab's
+  // check the filters to dispaly to user with respect to roles and tab's
   checkFilterShowCondition() {
     if (this.userService.isSourcingOrgAdmin() && this.router.url.includes('/sourcing')) {  // show filter for sourcing org admin for my projects 
       this.fetchFrameWorkDetails(undefined, undefined);
@@ -75,31 +77,41 @@ export class ProjectFilterComponent implements OnInit {
       this.showFilters['nomination_date'] = false;
       this.showFilters['contribution_date'] = false;
       this.isOnChangeFilterEnable = true;
-      this.checkTenantAccessSpecification();
-
+      this.checkTenantAccessSpecification(); // check the access specefication weather tenant access or generic access
     } else if (this.activeMyProgramsMenu) { // for my projects for contributor user role  
-      this.getFiltersUnionFromList();
       this.showFilters['sourcingOrganisations'] = false;
       this.showFilters['nomination_date'] = false;
       this.showFilters['contribution_date'] = false;
       this.isOnChangeFilterEnable = false;
-      this.userService.slug ? this.activeUser = 'contributeOrgAdminMyProjectTenantAccess' : this.activeUser = 'contributeOrgAdminMyProject' // this is purpose of storing and getting the filters values
+      // this is purpose of storing and getting the filters values
+      if (this.userService.slug) {
+        this.activeUser = 'contributeOrgAdminMyProjectTenantAccess';
+        // this is to get the origional filters values when we are taking filters from union of this.programs
+        const tenantOrigionalMyPrograms = this.filtersAppliedCount ? this.cacheService.get('tenantOrigionalMyPrograms') : [];
+        this.getFiltersUnionFromList(tenantOrigionalMyPrograms);
+      } else {
+        this.activeUser = 'contributeOrgAdminMyProject';
+        // this is to get the origional filters values when we are taking filters from union of this.programs
+        const genericOrigionalMyPrograms = this.filtersAppliedCount ? this.cacheService.get('genericOrigionalMyPrograms') : [];
+        this.getFiltersUnionFromList(genericOrigionalMyPrograms);
+      }
     } else {
-      this.getFiltersUnionFromList(); // for sourcing reviewer 
+      const genericOrigionalMyPrograms = this.filtersAppliedCount ? this.cacheService.get('genericOrigionalMyPrograms') : [];
+      this.getFiltersUnionFromList(genericOrigionalMyPrograms); // for sourcing reviewer 
       this.activeUser = 'sourcingReviwerMyProject';
       this.isOnChangeFilterEnable = false;
     }
     this.getAppliedFiltersDetails();
   }
-  checkTenantAccessSpecification() {
+  checkTenantAccessSpecification() { // check the access specefication weather tenant access or generic access
     if (this.userService.slug) { // checking In case the contributor accesses tenant specific contribution page
       this.showFilters['sourcingOrganisations'] = false;
       this.activeUser = 'contributeOrgAdminAllProjectTenantAccess';
       const orgId = _.get(this.programs[0], 'rootorg_id') || this.userService.slug;
-      this.fetchFrameWorkDetails(undefined, orgId); //  Have fix bug when projects list is empty
+      this.fetchFrameWorkDetails(undefined, orgId);
     } else {
       this.getAllSourcingFrameworkDetails();
-      this.fetchFrameWorkDetails(undefined, undefined);
+      this.fetchFrameWorkDetails(undefined, undefined); //  Union of all Medium, Class, Subjects across all frameworks ??????
       this.showFilters['sourcingOrganisations'] = true;
       this.activeUser = 'contributeOrgAdminAllProject';
     }
@@ -254,8 +266,8 @@ export class ProjectFilterComponent implements OnInit {
     }
   }
   // this method is for getting union of filters for my projects tab other than sourcing org admin my project tab
-  getFiltersUnionFromList() {
-    _.map(this.programs, (program) => {
+  getFiltersUnionFromList(origionalPrograms?) { // taking origional Programs list display the all filter values 
+    _.map(origionalPrograms.length ? origionalPrograms : this.programs, (program) => {
       this.currentFilters['gradeLevel'] = _.compact(_.uniq(_.concat(this.currentFilters['gradeLevel'], _.get(program, 'config.gradeLevel') ? program.config.gradeLevel : JSON.parse(program.gradeLevel))));
       this.currentFilters['medium'] = _.compact(_.uniq(_.concat(this.currentFilters['medium'], _.get(program, 'config.medium') ? program.config.medium : JSON.parse(program.medium))));
       this.currentFilters['subject'] = _.compact(_.uniq(_.concat(this.currentFilters['subject'], _.get(program, 'config.subject') ? program.config.subject : JSON.parse(program.subject))));
@@ -273,11 +285,15 @@ export class ProjectFilterComponent implements OnInit {
       case 'contributeOrgAdminAllProject':
         this.cacheService.set('contributeAllProgramAppliedFilters', filterLocalStorage); break;
       case 'contributeOrgAdminMyProject':
-        this.cacheService.set('contributeMyProgramAppliedFilters', filterLocalStorage); break;
+        this.cacheService.set('contributeMyProgramAppliedFilters', filterLocalStorage);
+        !this.filtersAppliedCount ? this.cacheService.set('genericOrigionalMyPrograms', this.programs) : ''; // this is to set the origional filters values when we are taking filters from union of this.programs 
+        break;
       case 'sourcingReviwerMyProject':
         this.cacheService.set('sourcingMyProgramAppliedFilters', filterLocalStorage); break;
       case 'contributeOrgAdminMyProjectTenantAccess':
-        this.cacheService.set('contributeMyProgramAppliedFiltersTenantAccess', filterLocalStorage); break;
+        this.cacheService.set('contributeMyProgramAppliedFiltersTenantAccess', filterLocalStorage);
+        !this.filtersAppliedCount ? this.cacheService.set('tenantOrigionalMyPrograms', this.programs) : ''; // this is to set the origional filters values when we are taking filters from union of this.programs
+        break;
       case 'contributeOrgAdminAllProjectTenantAccess':
         this.cacheService.set('contributeAllProgramAppliedFiltersTenantAccess', filterLocalStorage); break;
     }
