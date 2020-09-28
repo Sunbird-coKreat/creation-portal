@@ -128,7 +128,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       this.getMyProgramsForOrg(applyFilters); // this method will call with applied req filters data other wise with origional req body
     }
   }
-  // finding the applied filters count and putting them into rquest body other wise put origional req body to api call
+  // finding the applied filters count and putting them into request body other wise put origional req body to api call
   getFilterDetails(setfilters, storageReferenec) {
     const appliedfilters = this.cacheService.get(storageReferenec);  // getting the strored data from cache service 
     const applyFilters = setfilters ? setfilters : appliedfilters;   
