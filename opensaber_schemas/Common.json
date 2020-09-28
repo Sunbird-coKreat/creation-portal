@@ -22,10 +22,10 @@
     },
     "Date": {
       "type": "string",
-      "format": "date",
-      "$comment": "YYYY-MM-DD format",
+      "format": "date-time",
+      "$comment": "YYYY-MM-DDThh:mm:ssZ",
       "examples": [
-        "1990-12-01"
+        "1990-12-01T12:12:12Z"
       ]
     },
     "Year": {
@@ -161,7 +161,16 @@
       "type": "string",
       "enum": [
         "admin",
-        "user"
+        "user",
+	"sourcing_reviewer",
+	"sourcing_admin"
+      ]
+    },
+    "Type": {
+      "type": "string",
+      "enum": [
+        "contribute",
+        "sourcing"
       ]
     }
   }

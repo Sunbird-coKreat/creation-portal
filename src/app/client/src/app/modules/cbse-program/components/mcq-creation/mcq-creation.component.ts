@@ -558,7 +558,7 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
           }
         }
       });
-      this.editableFields = this.helperService.getEditableFields(this.editableFieldsACL, this.allFormFields);
+      this.editableFields = this.helperService.getEditableFields(this.editableFieldsACL, this.allFormFields, this.questionMetaData);
       this.questionMetaForm = this.formBuilder.group(controller);
       this.onFormValueChange();
     }
