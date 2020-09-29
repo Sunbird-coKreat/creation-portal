@@ -139,11 +139,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     });
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
     // tslint:disable-next-line:max-line-length
-    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.contentUploadComponentInput.programContext.program_id, 'Program');
+    // this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.contentUploadComponentInput.programContext.program_id, 'Program');
     // tslint:disable-next-line:max-line-length
-    this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
+    // this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
     // tslint:disable-next-line:max-line-length
-    this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.contentUploadComponentInput.contentId, 'Content', '1.0', { l1: this.sessionContext.collection, l2: this.unitIdentifier});
+    // this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.contentUploadComponentInput.contentId, 'Content', '1.0', { l1: this.sessionContext.collection, l2: this.unitIdentifier});
   }
 
   ngAfterViewInit() {
@@ -543,6 +543,14 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.uploadInprogress = false;
     });
   }
+  getTelemetryData() {
+    // tslint:disable-next-line:max-line-length
+    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.contentUploadComponentInput.programContext.program_id, 'Program');
+    // tslint:disable-next-line:max-line-length
+    this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
+    // tslint:disable-next-line:max-line-length
+    this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.contentMetaData.identifier, 'Content', '1.0', { l1: this.sessionContext.collection, l2: this.unitIdentifier});
+  }
 
   getUploadedContentMeta(contentId) {
     const option = {
@@ -613,6 +621,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       if ( _.isUndefined(this.sessionContext.topicList)) {
         this.fetchFrameWorkDetails();
       }
+      this.getTelemetryData();
       this.manageFormConfiguration();
       this.cd.detectChanges();
     });
