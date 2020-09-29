@@ -101,7 +101,7 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
   }
 
   initialize() {
-    forkJoin(this.getCollectionHierarchy(this.collectionId), this.getProgramDetails()).subscribe(
+    forkJoin([this.getCollectionHierarchy(this.collectionId), this.getProgramDetails()]).subscribe(
       ([collection, programDetails]) => {
         this.collectionData = collection;
         this.childNodes = _.get(this.collectionData, 'childNodes');
