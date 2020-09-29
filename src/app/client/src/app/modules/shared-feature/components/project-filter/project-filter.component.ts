@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ProgramsService, UserService, FrameworkService } from '@sunbird/core';
-import { ResourceService } from '@sunbird/shared';
+import { ResourceService, ConfigService } from '@sunbird/shared';
 import { Router } from '@angular/router';
 import * as _ from 'lodash-es';
 import { IInteractEventEdata } from '@sunbird/telemetry';
@@ -32,14 +32,20 @@ export class ProjectFilterComponent implements OnInit {
   public originalFiltersScope: any = {};
   public frameworkCategories;
   public enableApplyBtn = 0;
+  public telemetryInteractCdata: any;
+  public telemetryInteractPdata: any;
+  public telemetryInteractObject: any;
   public nominationContributionStatus = [{ 'name': 'Open', 'value': 'open' }, { 'name': 'Closed', 'value': 'closed' }, { 'name': 'Any', 'value': 'any' }];
   constructor(public sbFormBuilder: FormBuilder, public programsService: ProgramsService, public frameworkService: FrameworkService,
-    public resourceService: ResourceService, private userService: UserService, public router: Router,
+    public resourceService: ResourceService, public userService: UserService, public router: Router, public configService: ConfigService,
     public cacheService: CacheService) { }
 
   ngOnInit() {
     this.activeAllProgramsMenu = this.router.isActive('/contribute', true); // checking the router path 
     this.activeMyProgramsMenu = this.router.isActive('/contribute/myenrollprograms', true);
+    this.telemetryInteractCdata = [];
+    this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
+    this.telemetryInteractObject = {};
     this.createFilterForm(); // creating the filter form
     this.currentFilters = { // setting up initial values
       'rootorg_id': [],
@@ -276,9 +282,9 @@ export class ProjectFilterComponent implements OnInit {
       programs = origionalPrograms;
     } 
     _.map( programs , (program) => {
-      this.currentFilters['gradeLevel'] = _.compact(_.uniq(_.concat(this.currentFilters['gradeLevel'], _.get(program, 'config.gradeLevel') ? program.config.gradeLevel : JSON.parse(program.gradeLevel))));
-      this.currentFilters['medium'] = _.compact(_.uniq(_.concat(this.currentFilters['medium'], _.get(program, 'config.medium') ? program.config.medium : JSON.parse(program.medium))));
-      this.currentFilters['subject'] = _.compact(_.uniq(_.concat(this.currentFilters['subject'], _.get(program, 'config.subject') ? program.config.subject : JSON.parse(program.subject))));
+      this.currentFilters['gradeLevel'] = _.flattenDeep(_.compact(_.uniq(_.concat(this.currentFilters['gradeLevel'], _.get(program, 'config.gradeLevel') ? program.config.gradeLevel : JSON.parse(program.gradeLevel)))));
+      this.currentFilters['medium'] = _.flattenDeep(_.compact(_.uniq(_.concat(this.currentFilters['medium'], _.get(program, 'config.medium') ? program.config.medium : JSON.parse(program.medium)))));
+      this.currentFilters['subject'] = _.flattenDeep(_.compact(_.uniq(_.concat(this.currentFilters['subject'], _.get(program, 'config.subject') ? program.config.subject : JSON.parse(program.subject)))));
     });
     // this is map name and code for form , have label and value field in form
     this.currentFilters['gradeLevel'] = _.map(this.currentFilters['gradeLevel'], (filter) => { return { name: filter, code: filter } });
