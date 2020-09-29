@@ -293,13 +293,21 @@ right: -5px;
 top: -4px;
 }
 .sb-dock-dropdown{
-    .ui {
-      .multiple{
-        &.dropdown {
-          border: 1px solid rgba(34,36,38,.15) !important;
-      }
+  .ui {
+    .multiple{
+      &.dropdown {
+        border: 1px solid rgba(34,36,38,.15) !important;
+        background: #fff !important;
+         .menu {
+          max-height: 7.4em !important;
+        }
+        .label{
+         font-size: 0.65rem;
+         margin: .14285714rem .28571429rem .14285714rem 0 !important;
+        }
     }
   }
+}
 }
 .sb-dock-radio-disable{
   .field{
