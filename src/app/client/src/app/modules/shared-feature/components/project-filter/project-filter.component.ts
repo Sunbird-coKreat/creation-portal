@@ -270,8 +270,12 @@ export class ProjectFilterComponent implements OnInit {
     }
   }
   // this method is for getting union of filters for my projects tab other than sourcing org admin my project tab
-  getFiltersUnionFromList(origionalPrograms?) { // taking origional Programs list display the all filter values 
-    _.map(origionalPrograms.length ? origionalPrograms : this.programs, (program) => {
+  getFiltersUnionFromList(origionalPrograms?) { 
+    let programs  = this.programs;
+    if (origionalPrograms && origionalPrograms['length']) { // taking origional Programs list display the all filter values 
+      programs = origionalPrograms;
+    } 
+    _.map( programs , (program) => {
       this.currentFilters['gradeLevel'] = _.compact(_.uniq(_.concat(this.currentFilters['gradeLevel'], _.get(program, 'config.gradeLevel') ? program.config.gradeLevel : JSON.parse(program.gradeLevel))));
       this.currentFilters['medium'] = _.compact(_.uniq(_.concat(this.currentFilters['medium'], _.get(program, 'config.medium') ? program.config.medium : JSON.parse(program.medium))));
       this.currentFilters['subject'] = _.compact(_.uniq(_.concat(this.currentFilters['subject'], _.get(program, 'config.subject') ? program.config.subject : JSON.parse(program.subject))));
@@ -293,7 +297,9 @@ export class ProjectFilterComponent implements OnInit {
         !this.filtersAppliedCount ? this.cacheService.set('genericOrigionalMyPrograms', this.programs) : ''; // this is to set the origional filters values when we are taking filters from union of this.programs 
         break;
       case 'sourcingReviwerMyProject':
-        this.cacheService.set('sourcingMyProgramAppliedFilters', filterLocalStorage); break;
+        this.cacheService.set('sourcingMyProgramAppliedFilters', filterLocalStorage);
+        !this.filtersAppliedCount ? this.cacheService.set('genericOrigionalMyPrograms', this.programs) : '';
+        break;
       case 'contributeOrgAdminMyProjectTenantAccess':
         this.cacheService.set('contributeMyProgramAppliedFiltersTenantAccess', filterLocalStorage);
         !this.filtersAppliedCount ? this.cacheService.set('tenantOrigionalMyPrograms', this.programs) : ''; // this is to set the origional filters values when we are taking filters from union of this.programs
