@@ -261,6 +261,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
               );
           }
         } else {
+          this.programs = []; // for empty response programs need to set to []
           this.showLoader = false;
         }
       }, error => {
