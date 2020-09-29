@@ -214,6 +214,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     this.programsService.getAllProgramsByType(type, status, getAppliedFilters).subscribe(
       response => {
         const allPrograms = _.get(response, 'result.programs');
+        console.log(allPrograms, 'allPrograms');
         if (allPrograms.length) {
           if (this.userService.isContributingOrgAdmin()) {
             this.iscontributeOrgAdmin = true;
@@ -261,6 +262,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
               );
           }
         } else {
+          this.programs = []; // for empty response programs need to set to []
           this.showLoader = false;
         }
       }, error => {
