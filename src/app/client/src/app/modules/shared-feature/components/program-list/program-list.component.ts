@@ -132,18 +132,10 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   getFilterDetails(setfilters, storageReferenec) {
     const appliedfilters = this.cacheService.get(storageReferenec);  // getting the strored data from cache service 
     const applyFilters = setfilters ? setfilters : appliedfilters;   
-    this.filtersAppliedCount = this.getFiltersAppliedCount(applyFilters);
+    this.filtersAppliedCount = this.programsService.getFiltersAppliedCount(applyFilters); // getting applied filters count
     return applyFilters;
   }
- getFiltersAppliedCount(appliedfilters) { // finding the applied filters count
-     let count = 0;
-     if (appliedfilters) {
-      _.map(_.compact(Object.values(appliedfilters)), (values) =>{
-        values.length ? count++ : 0;
-         });
-     }
-   return count;
- }
+
   setDelete(program, index) {
     if (!this.issourcingOrgAdmin) {
       this.toasterService.error(this.resourceService.messages.imsg.m0035);

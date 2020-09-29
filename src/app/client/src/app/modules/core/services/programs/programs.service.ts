@@ -1180,6 +1180,15 @@ export class ProgramsService extends DataService implements CanActivate {
 
     return this.post(req);
   }
+  getFiltersAppliedCount(appliedfilters) { // finding the applied filters count
+    let count = 0;
+    if (appliedfilters) {
+     _.map(_.compact(Object.values(appliedfilters)), (values) =>{
+       values.length ? count++ : 0;
+        });
+    }
+  return count;
+}
   /*getSourcingOrgUserList(sourcingOrgId, roles, limit?) {
     return new Promise((resolve, reject) => {
       // Get all diskha users

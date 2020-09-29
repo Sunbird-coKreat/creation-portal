@@ -31,6 +31,7 @@ export class ProjectFilterComponent implements OnInit {
   public isOnChangeFilterEnable: Boolean;
   public originalFiltersScope: any = {};
   public frameworkCategories;
+  public enableApplyBtn = 0;
   public nominationContributionStatus = [{ 'name': 'Open', 'value': 'open' }, { 'name': 'Closed', 'value': 'closed' }, { 'name': 'Any', 'value': 'any' }];
   constructor(public sbFormBuilder: FormBuilder, public programsService: ProgramsService, public frameworkService: FrameworkService,
     public resourceService: ResourceService, private userService: UserService, public router: Router,
@@ -62,6 +63,9 @@ export class ProjectFilterComponent implements OnInit {
       content_types: [],
       nominations: [],
       contributions: []
+    });
+    this.filterForm.valueChanges.subscribe(val => {
+      this.enableApplyBtn =  this.programsService.getFiltersAppliedCount(val); // getting applied filters count
     });
   }
   // check the filters to dispaly to user with respect to roles and tab's

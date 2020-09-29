@@ -99,7 +99,7 @@
     </div>
   </div>
   <div class="sb-modal-actions py-20">
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="applyFilter()" appTelemetryInteract
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary"  [disabled]="!enableApplyBtn" (click)="applyFilter()" appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('apply-filters', 'click', 'program-list', {values: [setPreferences],tenantAccess: userService.slug})"
       [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService?.frmelmnts?.btn?.apply}} </button>
