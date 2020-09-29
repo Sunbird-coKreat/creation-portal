@@ -138,13 +138,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.contentStatusNotify(action);
     });
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
-    // tslint:disable-next-line:max-line-length
-    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.contentUploadComponentInput.programContext.program_id, 'Program');
-    // tslint:disable-next-line:max-line-length
-    this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
-    // tslint:disable-next-line:max-line-length
-    this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.contentUploadComponentInput.contentId, 'Content', '1.0', { l1: this.sessionContext.collection, l2: this.unitIdentifier});
-  }
+   }
 
   ngAfterViewInit() {
     if (_.get(this.contentUploadComponentInput, 'action') !== 'preview') {
