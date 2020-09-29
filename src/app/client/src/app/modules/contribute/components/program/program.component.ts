@@ -74,7 +74,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public allContributorOrgUsers: any = [];
   public contributorOrgUser: any = [];
   public directionOrgUsers = 'asc';
-  public sortColumnOrgUsers = '';
+  public sortColumnOrgUsers = 'BOTH';
   collection;
   showUsersLoader = true;
   OrgUsersCnt = 0;
@@ -338,7 +338,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   sortUsersList(usersList, isUserSearch?) {
      this.OrgUsersCnt = usersList.length;
-     this.allContributorOrgUsers = this.programsService.sortCollection(usersList, 'projectselectedRole', 'asc');
+     this.allContributorOrgUsers = this.programsService.sortCollection(usersList, this.sortColumnOrgUsers, this.directionOrgUsers);
      isUserSearch ?  this.allContributorOrgUsers: this.initialSourcingOrgUser =  this.allContributorOrgUsers;
      usersList = _.chunk(this.allContributorOrgUsers, this.pageLimit);
      this.paginatedContributorOrgUsers = usersList;
