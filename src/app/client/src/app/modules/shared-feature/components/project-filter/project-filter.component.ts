@@ -115,7 +115,7 @@ export class ProjectFilterComponent implements OnInit {
       this.fetchFrameWorkDetails(undefined, orgId);
     } else {
       this.getAllSourcingFrameworkDetails();
-      this.fetchFrameWorkDetails(undefined, undefined); //  Union of all Medium, Class, Subjects across all frameworks ??????
+      this.fetchFrameWorkDetails(undefined, undefined); //  Union of all Medium, Class, Subjects across all frameworks 
       this.showFilters['sourcingOrganisations'] = true;
       this.activeUser = 'contributeOrgAdminAllProject';
     }
