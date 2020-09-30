@@ -73,7 +73,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
             pid: `${this.configService.appConfig.TELEMETRY.PID}`
           },
           // tslint:disable-next-line:max-line-length
-          channel: this.userService.slug ? (this.programsService.organisationDetails[this.userService.slug] || '') : (this.userService.hashTagId || '')
+          channel: this.userService.slug ? (this.programsService.organisationDetails[this.userService.slug] || this.userService.hashTagId) : this.userService.hashTagId
         },
         edata: {
           type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
