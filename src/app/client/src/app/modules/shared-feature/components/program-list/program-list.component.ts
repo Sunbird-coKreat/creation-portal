@@ -113,7 +113,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     this.getProgramsListByRole();
   }
   fetchFrameWorkDetails() {// get framework details here
-    this.frameworkService.initialize(undefined, undefined);
+    this.frameworkService.initialize();
     this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
       if (frameworkInfo && !frameworkInfo.err) {
         this.isFrameworkDetailsAvailable = true;; // set frame work details
