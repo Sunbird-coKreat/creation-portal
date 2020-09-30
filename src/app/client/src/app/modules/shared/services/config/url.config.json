@@ -280,6 +280,9 @@
       "UPDATE": "program/v1/process/update",
       "SEARCH": "program/v1/process/search",
       "DOCK_IMPORT": "content/v3/import"
+    },
+    "DOCK_TENANT": {
+      "LIST": "program/v1/tenant/list"
     }
   }
 }

@@ -1,4 +1,4 @@
-<div class="ui container pb-48">
+<div class="ui container pb-48" [appTelemetryImpression]="telemetryImpression">
   <div class="sb-pageSection my-24">
     <div class="d-flex flex-ai-center flex-jc-space-between">
       <div class="sb-pageSection-header mb-0">
@@ -9,6 +9,20 @@
          <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning"
          *ngIf="!showLoader && programs !== undefined && programs.length">{{count}}
         </span>
+      </div>
+      <div class="text-right" *ngIf="programs?.length || filtersAppliedCount">
+        <div class="fs-0-785 font-italic sb-color-gray-300 mb-10 d-inline-block" *ngIf="filtersAppliedCount">
+          <i class="icon check circle pr-5 sb-color-success"></i>
+          {{filtersAppliedCount}} {{resourceService?.frmelmnts?.lbl?.filtersApplied}}
+        </div>
+        <button type="button" appTelemetryInteract
+          [telemetryInteractEdata]="getTelemetryInteractEdata('apply-filters', 'click', 'program-list')"
+          [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+          [telemetryInteractPdata]="telemetryInteractPdata" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10"
+          (click)="showFiltersModal = true">
+          <i class="filter icon"></i>
+          {{resourceService?.frmelmnts?.btn?.applyFilter}}
+        </button>
       </div>
       <!-- <button routerLink="sourcing/create-program" *ngIf="this.router.url.includes('/sourcing')" class="sb-btn sb-btn-normal sb-btn-primary"><i class="plus outline icon"></i> Add New Program</button> -->
     </div>
@@ -231,3 +245,6 @@
     </button>
   </div>
 </sui-modal>
+
+<app-project-filter *ngIf="showFiltersModal"  (dismiss)="showFiltersModal = false" (applyFilters)="getProgramsListByRole($event)"
+ [programs]="programs" [filtersAppliedCount]="filtersAppliedCount"> </app-project-filter>

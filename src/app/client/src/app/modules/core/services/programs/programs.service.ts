@@ -722,7 +722,7 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * makes api call to get list of programs from ext framework Service
    */
-  getAllProgramsByType(type, status): Observable<ServerResponse> {
+  getAllProgramsByType(type, status, appliedfilters?): Observable<ServerResponse> {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
       data: {
@@ -734,6 +734,9 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
+    if (appliedfilters) {
+      req.data.request.filters = {...req.data.request.filters , ...appliedfilters};
+    }
 
     // Check if slug is present in the URL, if yes then fetch the program those slug org only
     const urlSlug = this.userService.slug;
@@ -1162,6 +1165,30 @@ export class ProgramsService extends DataService implements CanActivate {
   sendprogramsNotificationData(programData) {
     this._programsNotificationData.next(programData);
   }
+
+  getAllSourcingFrameworkDetails(): Observable<ServerResponse> {
+    const req = {
+      url: this.config.urlConFig.URLS.DOCK_TENANT.LIST,
+      data: {
+        request: {
+          filters: {
+            status:'Live'
+          }
+        }
+      }
+    };
+
+    return this.post(req);
+  }
+  getFiltersAppliedCount(appliedfilters) { // finding the applied filters count
+    let count = 0;
+    if (appliedfilters) {
+     _.map(_.compact(Object.values(appliedfilters)), (values) =>{
+       values.length ? count++ : 0;
+        });
+    }
+  return count;
+}
   /*getSourcingOrgUserList(sourcingOrgId, roles, limit?) {
     return new Promise((resolve, reject) => {
       // Get all diskha users

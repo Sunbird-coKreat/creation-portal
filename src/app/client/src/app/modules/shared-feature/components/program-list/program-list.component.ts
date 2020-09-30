@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ProgramsService, RegistryService, UserService } from '@sunbird/core';
-import { ResourceService, ToasterService, ConfigService } from '@sunbird/shared';
+import { ResourceService, ToasterService, ConfigService, NavigationHelperService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IProgram } from '../../../core/interfaces';
 import * as _ from 'lodash-es';
@@ -8,6 +8,7 @@ import * as moment from 'moment';
 import { DatePipe } from '@angular/common';
 import { IInteractEventEdata } from '@sunbird/telemetry';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { CacheService } from 'ng2-cache-service';
 
 @Component({
   selector: 'app-program-list',
@@ -15,7 +16,7 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
   styleUrls: ['./program-list.component.scss'],
   providers: [DatePipe]
 })
-export class ProgramListComponent implements OnInit {
+export class ProgramListComponent implements OnInit, AfterViewInit {
 
   public programs: IProgram[];
   public program: any;
@@ -44,11 +45,16 @@ export class ProgramListComponent implements OnInit {
   public selectedProgramToModify: any;
   public showModifyConfirmation: boolean;
   public issourcingOrg;
+  public showFiltersModal = false;
+  public filtersAppliedCount: any;
+  public telemetryImpression: any;
+  public telemetryPageId = 'programs-list';
 
   showDeleteModal = false;
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
-    public router: Router, private datePipe: DatePipe, public configService: ConfigService) { }
+    public router: Router, private datePipe: DatePipe, public configService: ConfigService, public cacheService: CacheService,
+    private navigationHelperService: NavigationHelperService, public activeRoute: ActivatedRoute) { }
 
   ngOnInit() {
     this.checkIfUserIsContributor();
@@ -57,6 +63,29 @@ export class ProgramListComponent implements OnInit {
     this.telemetryInteractCdata = [];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
+  }
+
+  ngAfterViewInit() {
+    const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
+    const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+     setTimeout(() => {
+      this.telemetryImpression = {
+        context: {
+          env: this.activeRoute.snapshot.data.telemetry.env,
+          pdata: {
+            id: this.userService.appId,
+            ver: version,
+            pid: `${this.configService.appConfig.TELEMETRY.PID}`
+          }
+        },
+        edata: {
+          type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
+          pageid: this.telemetryPageId,
+          uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
+          duration: this.navigationHelperService.getPageLoadTime()
+        }
+      };
+     });
   }
 
   /**
@@ -81,17 +110,32 @@ export class ProgramListComponent implements OnInit {
     this.activeAllProgramsMenu = this.router.isActive('/contribute', true);
     this.activeMyProgramsMenu = this.router.isActive('/contribute/myenrollprograms', true);
 
+    this.getProgramsListByRole();
+  }
+
+  getProgramsListByRole(setfilters?) {
+    this.showLoader = true; // show loader till getting the data
     if (this.isContributor) {
       if (this.activeMyProgramsMenu) {
-        this.getMyProgramsForContrib(['Live', 'Unlisted']);
+        const applyFilters =  this.getFilterDetails(setfilters,this.userService.slug ? 'contributeMyProgramAppliedFiltersTenantAccess': 'contributeMyProgramAppliedFilters');
+        this.getMyProgramsForContrib(['Live', 'Unlisted'], applyFilters); // this method will call with applied req filters data other wise with origional req body
       } else if (this.activeAllProgramsMenu) {
-        this.getAllProgramsForContrib('public', ['Live', 'Unlisted']);
+        const applyFilters =  this.getFilterDetails(setfilters,this.userService.slug ? 'contributeAllProgramAppliedFiltersTenantAccess' :'contributeAllProgramAppliedFilters');
+        this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], applyFilters); // this method will call with applied req filters data other wise with origional req body
       } else {
         this.showLoader = false;
       }
     } else {
-      this.getMyProgramsForOrg();
+      const applyFilters =  this.getFilterDetails(setfilters,'sourcingMyProgramAppliedFilters');
+      this.getMyProgramsForOrg(applyFilters); // this method will call with applied req filters data other wise with origional req body
     }
+  }
+  // finding the applied filters count and putting them into request body other wise put origional req body to api call
+  getFilterDetails(setfilters, storageReferenec) {
+    const appliedfilters = this.cacheService.get(storageReferenec);  // getting the strored data from cache service 
+    const applyFilters = setfilters ? setfilters : appliedfilters;   
+    this.filtersAppliedCount = this.programsService.getFiltersAppliedCount(applyFilters); // getting applied filters count
+    return applyFilters;
   }
 
   setDelete(program, index) {
@@ -161,12 +205,15 @@ export class ProgramListComponent implements OnInit {
       }
     );
   }
-
   /**programContext
    * fetch the list of programs.
    */
-  private getAllProgramsForContrib(type, status) {
-    this.programsService.getAllProgramsByType(type, status).subscribe(
+  private getAllProgramsForContrib(type, status, appliedfilters?) {
+        let getAppliedFilters: any;
+       if(appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
+           getAppliedFilters =  this.addFiltersInRequestBody(appliedfilters);
+         }
+    this.programsService.getAllProgramsByType(type, status, getAppliedFilters).subscribe(
       response => {
         const allPrograms = _.get(response, 'result.programs');
         if (allPrograms.length) {
@@ -200,6 +247,9 @@ export class ProgramListComponent implements OnInit {
                 }
               }
             };
+           if(appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
+            req.request.filters = {...req.request.filters , ...this.addFiltersInRequestBody(appliedfilters)};
+           }
             this.programsService.getMyProgramsForContrib(req)
               .subscribe((myProgramsResponse) => {
                 const enrolledPrograms = _.map(_.get(myProgramsResponse, 'result.programs'), (nomination: any) => {
@@ -213,6 +263,7 @@ export class ProgramListComponent implements OnInit {
               );
           }
         } else {
+          this.programs = []; // for empty response programs need to set to []
           this.showLoader = false;
         }
       }, error => {
@@ -297,7 +348,7 @@ export class ProgramListComponent implements OnInit {
   /**
    * fetch the list of programs.
    */
-  private getMyProgramsForContrib(status) {
+  private getMyProgramsForContrib(status, appliedfilters?) {
     // If user is an individual user
     if (!this.userService.isUserBelongsToOrg()) {
       const req = {
@@ -310,6 +361,9 @@ export class ProgramListComponent implements OnInit {
           }
         }
       };
+      if(appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
+        req.request.filters = {...req.request.filters , ...this.addFiltersInRequestBody(appliedfilters)};
+       }
       this.getContributionProgramList(req);
       return;
     }
@@ -334,6 +388,9 @@ export class ProgramListComponent implements OnInit {
               }
             }
           };
+          if(appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
+            req.request.filters = {...req.request.filters , ...this.addFiltersInRequestBody(appliedfilters)};
+           }
           this.programsService.getMyProgramsForContrib(req).subscribe((programsResponse) => {
             // Get only those programs for which the nominations are added
             const programs = _.get(programsResponse, 'result.programs');
@@ -390,6 +447,9 @@ export class ProgramListComponent implements OnInit {
             }
           }
         };
+        if(appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
+          req.request.filters = {...req.request.filters , ...this.addFiltersInRequestBody(appliedfilters)};
+         }
         this.getContributionProgramList(req);
       },
       (error) => {
@@ -427,12 +487,37 @@ export class ProgramListComponent implements OnInit {
     }
     return _.map(roles, role => _.upperFirst(_.toLower(role))).join(", ");
   }
-
+  // add filters to request body 
+  addFiltersInRequestBody(appliedfilters) {
+    const newFilters  = {};
+          if(_.get(appliedfilters, 'rootorg_id')) {
+            newFilters['rootorg_id'] = appliedfilters.rootorg_id;
+          }
+          if(_.get(appliedfilters, 'medium') && (_.get(appliedfilters, 'medium').length)) {
+            newFilters['medium'] = appliedfilters.medium;
+          } 
+          if(_.get(appliedfilters, 'gradeLevel') && (_.get(appliedfilters, 'gradeLevel').length)) {
+            newFilters['gradeLevel'] = appliedfilters.gradeLevel;
+          }
+          if(_.get(appliedfilters, 'subject') && (_.get(appliedfilters, 'subject').length)) {
+            newFilters['subject'] = appliedfilters.subject;
+          }
+          if(_.get(appliedfilters, 'content_types') && (_.get(appliedfilters, 'content_types').length)) {
+            newFilters['content_types'] = appliedfilters.content_types;
+          }
+          if(_.get(appliedfilters, 'contribution_date')  && _.get(appliedfilters, 'contribution_date') !== 'any') {
+            newFilters['content_submission_enddate'] = appliedfilters.contribution_date;
+          }
+          if(_.get(appliedfilters, 'nomination_date') && _.get(appliedfilters, 'nomination_date') !== 'any') {
+            newFilters['nomination_enddate'] = appliedfilters.nomination_date;
+          }
+          return newFilters;
+  }
   /**
    * fetch the list of programs.
    */
-  private getMyProgramsForOrg() {
-    const filters = {};
+  private getMyProgramsForOrg(appliedfilters?) {
+    let filters = {};
 
     if (this.userService.isSourcingOrgAdmin()) {
       filters['rootorg_id'] = _.get(this.userService, 'userProfile.rootOrgId');
@@ -441,6 +526,9 @@ export class ProgramListComponent implements OnInit {
       filters['status'] = ['Live', 'Unlisted']
       filters['role'] = ['REVIEWER'];
       filters['user_id'] = this.userService.userProfile.userId;
+    }
+    if(appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
+      filters = {...filters , ...this.addFiltersInRequestBody(appliedfilters)};
     }
     // tslint:disable-next-line:max-line-length
     /*if (!_.includes(this.userService.userProfile.userRoles, 'ORG_ADMIN') && _.includes(this.userService.userProfile.userRoles, 'CONTENT_REVIEWER')) {
