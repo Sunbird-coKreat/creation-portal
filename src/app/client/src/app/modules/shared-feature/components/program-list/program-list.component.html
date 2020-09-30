@@ -171,7 +171,7 @@
                     <i class="icon edit sb-color-primary ui fs-0-92"></i>
                     <span class="sb-color-primary">{{ resourceService?.frmelmnts?.lbl?.modifyNomination.button }}</span>
                   </div>
-                  <span [ngClass]="{'pull-right': !issourcingOrg}">
+                  <span [ngClass]="{'pull-right': !(issourcingOrgAdmin && this.router.url.includes('/sourcing'))}">
                   <button *ngIf="(program.status === 'Live' || program.status === 'Unlisted')"
                     type="button"
                     class="sb-btn sb-btn-normal sb-btn-outline-primary mr-5"

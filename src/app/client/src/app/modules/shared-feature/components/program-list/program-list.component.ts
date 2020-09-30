@@ -44,7 +44,6 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   public issourcingOrgAdmin = false;
   public selectedProgramToModify: any;
   public showModifyConfirmation: boolean;
-  public issourcingOrg;
   public showFiltersModal = false;
   public filtersAppliedCount: any;
   public telemetryImpression: any;
@@ -59,7 +58,6 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.checkIfUserIsContributor();
     this.issourcingOrgAdmin = this.userService.isSourcingOrgAdmin();
-    this.issourcingOrg = this.userService.isSourcingOrgAdmin() && this.router.url.includes('/sourcing');
     this.telemetryInteractCdata = [];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
