@@ -94,7 +94,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     } else if (this.router.url.includes('/sourcing')) {
       return 'sourcing_my_projects';
     }
-
+  }
 
   /**
    * Check if logged in user is contributor or sourcing org
