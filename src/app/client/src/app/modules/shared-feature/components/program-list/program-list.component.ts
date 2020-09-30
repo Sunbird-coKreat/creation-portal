@@ -75,7 +75,8 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
             ver: version,
             pid: `${this.configService.appConfig.TELEMETRY.PID}`
           },
-          channel: this.userService.slug ? this.programsService.organisationDetails[this.userService.slug] : this.userService.hashTagId
+          channel: this.userService.slug ?
+                      (this.programsService.organisationDetails[this.userService.slug] || '') : (this.userService.hashTagId || '')
         },
         edata: {
           type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
