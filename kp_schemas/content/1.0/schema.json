@@ -181,9 +181,9 @@
             "items": {
                 "type": "string",
                 "enum": [
-                    "Learner",
-                    "Instructor",
-                    "Student"
+                    "Student",
+                    "Teacher",
+                    "Administrator"
                 ]
             },
             "default": ["Student"]
@@ -1062,6 +1062,12 @@
         },
         "label" : {
             "type": "string"
+        },
+        "plugins": {
+            "type": "array",
+            "items": {
+                "type": "object"
+            }
         }
     }
 }
