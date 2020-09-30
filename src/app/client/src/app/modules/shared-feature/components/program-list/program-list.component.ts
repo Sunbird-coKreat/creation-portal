@@ -57,7 +57,12 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     private navigationHelperService: NavigationHelperService, public activeRoute: ActivatedRoute, public frameworkService: FrameworkService,) { }
 
   ngOnInit() {
-   this.fetchFrameWorkDetails();
+    this.frameworkService.initialize(); // get framework details here
+    this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
+      if (frameworkInfo && !frameworkInfo.err) {
+        this.isFrameworkDetailsAvailable = true;; // set apply apply filter button enable condition
+      }
+    });
     this.checkIfUserIsContributor();
     this.issourcingOrgAdmin = this.userService.isSourcingOrgAdmin();
     this.telemetryInteractCdata = [];
@@ -112,14 +117,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
 
     this.getProgramsListByRole();
   }
-  fetchFrameWorkDetails() {// get framework details here
-    this.frameworkService.initialize();
-    this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
-      if (frameworkInfo && !frameworkInfo.err) {
-        this.isFrameworkDetailsAvailable = true;; // set frame work details
-      }
-    });
-  }
+
   getProgramsListByRole(setfilters?) {
     this.showLoader = true; // show loader till getting the data
     if (this.isContributor) {
