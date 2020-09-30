@@ -41,7 +41,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   public classes;
   public board;
   public filters;
-  public telemetryPageId = 'collection';
+  public telemetryPageId = 'contribution_project_contributions';
   public telemetryInteractCdata: any;
   public contentStatusCounts: any = {};
   public telemetryInteractPdata: any;

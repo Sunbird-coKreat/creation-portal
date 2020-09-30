@@ -93,6 +93,12 @@ export class ProgramsService extends DataService implements CanActivate {
      );
    }
   }
+
+  // Get organisation details based on tenant user visit page
+  get organisationDetails() {
+    return this._organisations;
+  }
+
   /**
    * Function used to search user or org in registry
    */
@@ -741,7 +747,6 @@ export class ProgramsService extends DataService implements CanActivate {
     // Check if slug is present in the URL, if yes then fetch the program those slug org only
     const urlSlug = this.userService.slug;
     if (urlSlug && !_.isEmpty(this._organisations[urlSlug])) {
-      req.data.request.filters['rootorg_id'] = this._organisations[urlSlug];
       return this.API_URL(req);
     } else {
       return this.API_URL(req);
