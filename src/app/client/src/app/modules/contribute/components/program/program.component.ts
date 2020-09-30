@@ -91,7 +91,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public userRemoveRoleLoader = false;
   public showUserRemoveRoleModal = false;
   public selectedUserToRemoveRole: any;
-  public telemetryPageId = 'collection';
+  public telemetryPageId = 'contribution_project_contributions';
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
