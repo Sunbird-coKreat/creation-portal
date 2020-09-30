@@ -11,7 +11,7 @@ const routes: Routes = [{
   path: '', component: ProgramListComponent, canActivate: [ProgramsService],
   data: {
     telemetry: {
-      env: 'sourcing-portal', pageid: 'programs-list', type: 'view', subtype: 'paginate'
+      env: 'sourcing-portal', pageid: 'programs-list', type: 'list', subtype: 'paginate'
     }
   }
 },

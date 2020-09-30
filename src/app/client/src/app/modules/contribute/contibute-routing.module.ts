@@ -17,14 +17,14 @@ const routes: Routes = [
   path: '', component: ProgramListComponent, canActivate: [ProgramsService],
   data: {
     telemetry: {
-      env: 'creation-portal', pageid: 'list-all-programs', type: 'view', subtype: 'paginate'
+      env: 'creation-portal', pageid: 'list-all-programs', type: 'list', subtype: 'paginate'
     }
   }
 },
 {
   path: 'myenrollprograms', component: ProgramListComponent, pathMatch: 'full',
   data: {
-    telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'list-my-programs' }
+    telemetry: { env: 'creation-portal', type: 'list', subtype: 'paginate', pageid: 'list-my-programs' }
   },
 },
 {

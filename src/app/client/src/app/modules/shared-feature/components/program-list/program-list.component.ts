@@ -71,17 +71,30 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
             id: this.userService.appId,
             ver: version,
             pid: `${this.configService.appConfig.TELEMETRY.PID}`
-          }
+          },
+          // tslint:disable-next-line:max-line-length
+          channel: this.userService.slug ? (this.programsService.organisationDetails[this.userService.slug] || '') : (this.userService.hashTagId || '')
         },
         edata: {
           type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
-          pageid: this.telemetryPageId,
+          pageid: this.getPageId(),
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
      });
   }
+
+  // check the active tab
+  getPageId() {
+    if (this.router.url.includes('/contribute/myenrollprograms')) {
+      return 'contribution_my_projects';
+    } else if (this.router.url.includes('/contribute')) {
+      return 'contribution_all_projects';
+    } else if (this.router.url.includes('/sourcing')) {
+      return 'sourcing_my_projects';
+    }
+
 
   /**
    * Check if logged in user is contributor or sourcing org

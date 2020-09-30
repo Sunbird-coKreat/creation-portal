@@ -94,6 +94,12 @@ export class ProgramsService extends DataService implements CanActivate {
    }
   }
   /**
+   * Get organisation details based on tenant user visit page
+   */
+  get organisationDetails() {
+    return this._organisations;
+  }
+  /**
    * Function used to search user or org in registry
    */
   searchRegistry(reqData) {
