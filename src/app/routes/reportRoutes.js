@@ -8,7 +8,7 @@ module.exports = function (app) {
         reportHelper.validateRoles(['CONTENT_CREATOR']),
         reportHelper.azureBlobStream());
 
-    app.get('/reports/:slug/:filename',
+    app.get('/reports/:reportPrefix/:slug/:filename',
         proxyUtils.verifyToken(),
         reportHelper.validateSlug(['public']),
         reportHelper.validateRoles(['ORG_ADMIN', 'REPORT_VIEWER']),
