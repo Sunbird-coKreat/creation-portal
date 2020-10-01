@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { ProgramsService, RegistryService, UserService } from '@sunbird/core';
+import { ProgramsService, RegistryService, UserService, FrameworkService } from '@sunbird/core';
 import { ResourceService, ToasterService, ConfigService, NavigationHelperService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IProgram } from '../../../core/interfaces';
@@ -9,6 +9,7 @@ import { DatePipe } from '@angular/common';
 import { IInteractEventEdata } from '@sunbird/telemetry';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { CacheService } from 'ng2-cache-service';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-program-list',
@@ -48,14 +49,20 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   public filtersAppliedCount: any;
   public telemetryImpression: any;
   public telemetryPageId = 'programs-list';
-
+  public isFrameworkDetailsAvailable = false;
   showDeleteModal = false;
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService, public cacheService: CacheService,
-    private navigationHelperService: NavigationHelperService, public activeRoute: ActivatedRoute) { }
+    private navigationHelperService: NavigationHelperService, public activeRoute: ActivatedRoute, public frameworkService: FrameworkService,) { }
 
   ngOnInit() {
+    this.frameworkService.initialize(); // get framework details here
+    this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
+      if (frameworkInfo && !frameworkInfo.err) {
+        this.isFrameworkDetailsAvailable = true;; // set apply apply filter button enable condition
+      }
+    });
     this.checkIfUserIsContributor();
     this.issourcingOrgAdmin = this.userService.isSourcingOrgAdmin();
     this.telemetryInteractCdata = [];
