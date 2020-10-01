@@ -68,6 +68,9 @@ export class FrameworkService {
                this.setFrameWorkData(frameworkData);
                const frameWorkName = framework ? framework : 'defaultFramework';
                 this._frameworkData[frameWorkName] = frameworkData.result.framework;
+                if (_.get(frameworkData, 'result.framework.identifier')) {
+                  this._frameworkData[_.get(frameworkData, 'result.framework.identifier')] = frameworkData.result.framework;
+                  }
                 this._frameworkData$.next({ err: null, frameworkdata: this._frameworkData });
               },
               err => {

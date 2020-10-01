@@ -82,7 +82,7 @@ export class ProjectFilterComponent implements OnInit {
   checkFilterShowCondition() {
       // show filter for sourcing org admin for my projects
     if (this.userService.isSourcingOrgAdmin() && this.router.url.includes('/sourcing')) {
-      this.fetchFrameWorkDetails(this.userService.hashTagId, true);
+      this.fetchFrameWorkDetails(this.userService.hashTagId);
       this.showFilters['sourcingOrganisations'] = false;
       this.showFilters['nomination_date'] = true;
       this.showFilters['contribution_date'] = true;
@@ -124,7 +124,7 @@ export class ProjectFilterComponent implements OnInit {
       this.showFilters['sourcingOrganisations'] = false;
       this.activeUser = 'contributeOrgAdminAllProjectTenantAccess';
       const orgId = this.programsService.organisationDetails[this.userService.slug];
-      this.fetchFrameWorkDetails(orgId, true);
+      this.fetchFrameWorkDetails(orgId);
     } else {
       this.getAllSourcingFrameworkDetails();
       this.showFilters['sourcingOrganisations'] = true;
@@ -156,9 +156,8 @@ export class ProjectFilterComponent implements OnInit {
     this.cacheService.set(hashTagId ? hashTagId : this.userService.hashTagId, channelData,
       { maxAge: this.browserCacheTtlService.browserCacheTtl });
   }
-  fetchFrameWorkDetails(orgId, isFrameworkInitialized?) {// get framework details here
+  fetchFrameWorkDetails(orgId) {// get framework details here
     this.showLoader = true; // show loader
-    if (!isFrameworkInitialized) {
     this.getDefaultFrameWork(orgId).subscribe(channelData => {
       const frameworkName = _.get(channelData, 'defaultFramework');
       this.frameworkService.initialize(frameworkName);
@@ -172,16 +171,6 @@ export class ProjectFilterComponent implements OnInit {
           }
         });
     });
-  } else {
-      this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
-        if (frameworkInfo && !frameworkInfo.err) {
-          this.frameworkCategories = frameworkInfo.frameworkdata.defaultFramework.categories;
-          this.setChannelData(orgId, _.get(frameworkInfo, 'frameworkdata.defaultFramework.categories'));
-          this.setFrameworkDataToProgram(); // set frame work details
-          this.showLoader = false; // hide loader
-        }
-      });
-    }
   }
   setFrameworkDataToProgram() { // set frame work details
     const board = _.find(this.frameworkCategories, (element) => {
@@ -213,6 +202,7 @@ export class ProjectFilterComponent implements OnInit {
     this.currentFilters['gradeLevel'] = [...Kindergarten, ...this.currentFilters['gradeLevel']];
   }
   onMediumChange() {
+    console.log(this.frameworkCategories, 'this.frameworkCategories');
     // should enable for sourcing org admin(my projects tab) and for contributor org all projects and induvidual contributor all projects
     if (this.isOnChangeFilterEnable) {
       this.filterForm.controls['gradeLevel'].setValue('');
@@ -318,7 +308,7 @@ export class ProjectFilterComponent implements OnInit {
 
     if (this.activeUser === 'contributeOrgAdminAllProject') {
         // tslint:disable-next-line: max-line-length
-      _.get(this.setPreferences, 'rootorg_id') ? this.fetchFrameWorkDetails(this.setPreferences['rootorg_id']) : this.fetchFrameWorkDetails(this.userService.hashTagId, true);
+      _.get(this.setPreferences, 'rootorg_id') ? this.fetchFrameWorkDetails(this.setPreferences['rootorg_id']) : this.fetchFrameWorkDetails(this.userService.hashTagId);
     }
 
   }
