@@ -202,7 +202,6 @@ export class ProjectFilterComponent implements OnInit {
     this.currentFilters['gradeLevel'] = [...Kindergarten, ...this.currentFilters['gradeLevel']];
   }
   onMediumChange() {
-    console.log(this.frameworkCategories, 'this.frameworkCategories');
     // should enable for sourcing org admin(my projects tab) and for contributor org all projects and induvidual contributor all projects
     if (this.isOnChangeFilterEnable) {
       this.filterForm.controls['gradeLevel'].setValue('');
