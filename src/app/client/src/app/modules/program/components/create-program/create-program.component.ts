@@ -649,6 +649,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   navigateTo(stepNo) {
+    window.scrollTo(0,0);
     this.showTextBookSelector = false;
   }
 
