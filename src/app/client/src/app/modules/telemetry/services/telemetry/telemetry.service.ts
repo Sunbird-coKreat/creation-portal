@@ -265,7 +265,7 @@ export class TelemetryService {
    */
   private getEventContext(eventInput: any) {
     const eventContextData: ITelemetryContextData = {
-      channel: eventInput.edata.channel || this.context.config.channel,
+      channel: eventInput.edata.channel || eventInput.context.channel || this.context.config.channel,
       pdata: eventInput.context.pdata || this.context.config.pdata,
       env: eventInput.context.env || this.context.config.env,
       sid: eventInput.sid || this.context.config.sid,
