@@ -27,8 +27,8 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public showLoader = true;
   public contributorOrgUsers: any = [];
   public tempSortOrgUser: any = [];
-  public direction = 'asc';
-  public sortColumn = '';
+  public direction = 'desc';
+  public sortColumn = 'selectedRole';
   //public roles = [{ name: 'Reviewer', value: 'sourcing_reviewer'}, { name: 'Admin', value: 'sourcing_admin'}];
   public roles = [{ name: 'Reviewer', value: 'sourcing_reviewer'}];
   pager: IPagination;

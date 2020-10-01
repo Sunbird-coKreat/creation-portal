@@ -102,4 +102,14 @@ describe('OrgUserListComponent', () => {
       expect(component.contributorOrgUsers).toBe(userDetail.result.response.content);
       expect(component.orgUserscnt).toBe(userDetail.result.response.content.length);
      });
+     it('call the sortUsersList method and put user to initial org list', () => {
+      component.isInitialSourcingOrgUser = true;
+      const  programsService  = TestBed.get(ProgramsService);
+      component.sortUsersList(userDetail.result.response.content);
+      const sortedList = programsService.sortCollection(userDetail.result.response.content,  'selectedRole', 'desc')
+      expect(component.paginatedContributorOrgUsers).toBe(sortedList);
+      expect(component.contributorOrgUsers).toBe(userDetail.result.response.content);
+      expect(component.initialSourcingOrgUser).toBe(userDetail.result.response.content);
+      expect(component.orgUserscnt).toBe(userDetail.result.response.content.length);
+     });
 });

@@ -138,13 +138,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.contentStatusNotify(action);
     });
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
-    // tslint:disable-next-line:max-line-length
-    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.contentUploadComponentInput.programContext.program_id, 'Program');
-    // tslint:disable-next-line:max-line-length
-    this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
-    // tslint:disable-next-line:max-line-length
-    this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.contentUploadComponentInput.contentId, 'Content', '1.0', { l1: this.sessionContext.collection, l2: this.unitIdentifier});
-  }
+   }
 
   ngAfterViewInit() {
     if (_.get(this.contentUploadComponentInput, 'action') !== 'preview') {
@@ -544,6 +538,16 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     });
   }
 
+//   }
+    getTelemetryData() {
+      // tslint:disable-next-line:max-line-length
+      this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.contentUploadComponentInput.programContext.program_id, 'Program');
+      // tslint:disable-next-line:max-line-length
+      this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
+      // tslint:disable-next-line:max-line-length
+      this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.contentMetaData.identifier, 'Content', '1.0', { l1: this.sessionContext.collection, l2: this.unitIdentifier});
+    }
+
   getUploadedContentMeta(contentId) {
     const option = {
       url: 'content/v3/read/' + contentId
@@ -557,6 +561,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         contentData: res
       };
       this.contentMetaData = res;
+     
       const contentTypeValue = [this.contentMetaData.contentType];
       this.contentType = this.programsService.getContentTypesName(contentTypeValue);
       this.editTitle = (this.contentMetaData.name !== 'Untitled') ? this.contentMetaData.name : '' ;
@@ -613,6 +618,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       if ( _.isUndefined(this.sessionContext.topicList)) {
         this.fetchFrameWorkDetails();
       }
+      this.getTelemetryData();
       this.manageFormConfiguration();
       this.cd.detectChanges();
     });

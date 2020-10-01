@@ -10,6 +10,7 @@ export * from './enroll-contributor/enroll-contributor.component';
 export * from './textbook-list/textbook-list.component';
 export * from './program-list/program-list.component';
 export * from './org-users-list/org-users-list.component';
+export * from './project-filter/project-filter.component';
 
 
 

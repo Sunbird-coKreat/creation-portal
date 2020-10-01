@@ -75,6 +75,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public contributorOrgUser: any = [];
   public directionOrgUsers = 'asc';
   public sortColumnOrgUsers = 'BOTH';
+  public isInitialSourcingOrgUser = true;
   collection;
   showUsersLoader = true;
   OrgUsersCnt = 0;
@@ -91,7 +92,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public userRemoveRoleLoader = false;
   public showUserRemoveRoleModal = false;
   public selectedUserToRemoveRole: any;
-  public telemetryPageId = 'collection';
+  public telemetryPageId = 'contribution_project_contributions';
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
@@ -335,11 +336,16 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.searchLimitMessage = false;
       this.sortUsersList(this.initialSourcingOrgUser, true);
     }
+    this.sortColumnOrgUsers = 'projectselectedRole';
   }
   sortUsersList(usersList, isUserSearch?) {
      this.OrgUsersCnt = usersList.length;
      this.allContributorOrgUsers = this.programsService.sortCollection(usersList, this.sortColumnOrgUsers, this.directionOrgUsers);
      isUserSearch ?  this.allContributorOrgUsers: this.initialSourcingOrgUser =  this.allContributorOrgUsers;
+    if (this.isInitialSourcingOrgUser) {
+      this.initialSourcingOrgUser = this.allContributorOrgUsers;
+      this.isInitialSourcingOrgUser = false;
+    } 
      usersList = _.chunk(this.allContributorOrgUsers, this.pageLimit);
      this.paginatedContributorOrgUsers = usersList;
      this.contributorOrgUser = isUserSearch ? usersList[0] : usersList[this.pageNumber - 1];
@@ -505,13 +511,13 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   sortOrgUsers(column) {
-    this.sortUsersList(this.allContributorOrgUsers);
     if (this.directionOrgUsers === 'asc' || this.directionOrgUsers === '') {
       this.directionOrgUsers = 'desc';
     } else {
       this.directionOrgUsers = 'asc';
     }
     this.sortColumnOrgUsers = column;
+    this.sortUsersList(this.allContributorOrgUsers);
   }
 
   getProgramTextbooks(preferencefilters?) {
