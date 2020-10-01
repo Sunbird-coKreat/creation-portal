@@ -133,8 +133,8 @@ export class ProjectFilterComponent implements OnInit {
   }
   // get all frame work details
   getAllTenantList() {
-    this.programsService.getAllTenantList().subscribe((frameworkInfo: any) => {
-      this.currentFilters['rootorg_id'] = _.sortBy(_.get(frameworkInfo, 'result.content'), ['orgName']);
+    this.programsService.getAllTenantList().subscribe((response: any) => {
+      this.currentFilters['rootorg_id'] = _.sortBy(_.get(response, 'result.content'), ['orgName']);
     });
   }
   onChangeSourcingOrg() { // this method will call only when any change in sourcing org drop down
