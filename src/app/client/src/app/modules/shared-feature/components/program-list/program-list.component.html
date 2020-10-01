@@ -10,7 +10,7 @@
          *ngIf="!showLoader && programs !== undefined && programs.length">{{count}}
         </span>
       </div>
-      <div class="text-right" *ngIf="programs?.length || filtersAppliedCount">
+      <div class="text-right" *ngIf="(programs?.length || filtersAppliedCount) && isFrameworkDetailsAvailable">
         <div class="fs-0-785 font-italic sb-color-gray-300 mb-10 d-inline-block" *ngIf="filtersAppliedCount">
           <i class="icon check circle pr-5 sb-color-success"></i>
           {{filtersAppliedCount}} {{resourceService?.frmelmnts?.lbl?.filtersApplied}}
@@ -167,11 +167,11 @@
                 </td>
                 <td class="text-center pr-10">
 
-                  <div *ngIf="activeMyProgramsMenu && program.nomination_status  == 'Pending' && canNominate(program)" (click)="getProjectToModify(program)" class="d-inline-block cursor-pointer pr-10 va-text-sub">
+                  <div *ngIf="activeMyProgramsMenu && program.nomination_status  == 'Pending' && canNominate(program)" (click)="getProjectToModify(program)" class="d-inline-block cursor-pointer pr-10 pt-5">
                     <i class="icon edit sb-color-primary ui fs-0-92"></i>
                     <span class="sb-color-primary">{{ resourceService?.frmelmnts?.lbl?.modifyNomination.button }}</span>
                   </div>
-                  <span [ngClass]="{'pull-right': !issourcingOrgAdmin}">
+                  <span [ngClass]="{'pull-right': !(issourcingOrgAdmin && this.router.url.includes('/sourcing'))}">
                   <button *ngIf="(program.status === 'Live' || program.status === 'Unlisted')"
                     type="button"
                     class="sb-btn sb-btn-normal sb-btn-outline-primary mr-5"

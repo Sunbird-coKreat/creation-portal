@@ -73,8 +73,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public paginatedContributorOrgUsers: any = [];
   public allContributorOrgUsers: any = [];
   public contributorOrgUser: any = [];
-  public directionOrgUsers = 'asc';
-  public sortColumnOrgUsers = '';
+  public directionOrgUsers = 'desc';
+  public sortColumnOrgUsers = 'projectselectedRole';
+  public isInitialSourcingOrgUser = true;
   collection;
   showUsersLoader = true;
   OrgUsersCnt = 0;
@@ -265,6 +266,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           });
         }
       } else {
+        if (data.result && !_.isEmpty(data.result)) {
+          this.sessionContext.nominationDetails = _.first(data.result);
+        }
         this.component = this.programComponentsService.getComponentInstance('collectionComponent');
         this.tabs = _.get(this.programDetails.config, 'header.config.tabs');
         this.initiateInputs();
@@ -335,11 +339,15 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.searchLimitMessage = false;
       this.sortUsersList(this.initialSourcingOrgUser, true);
     }
+    this.sortColumnOrgUsers = 'projectselectedRole';
   }
   sortUsersList(usersList, isUserSearch?) {
      this.OrgUsersCnt = usersList.length;
-     this.allContributorOrgUsers = this.programsService.sortCollection(usersList, 'projectselectedRole', 'asc');
-     isUserSearch ?  this.allContributorOrgUsers: this.initialSourcingOrgUser =  this.allContributorOrgUsers;
+     this.allContributorOrgUsers = this.programsService.sortCollection(usersList, this.sortColumnOrgUsers, this.directionOrgUsers); 
+    if (this.isInitialSourcingOrgUser) {
+      this.initialSourcingOrgUser = this.allContributorOrgUsers;
+      this.isInitialSourcingOrgUser = false;
+    } 
      usersList = _.chunk(this.allContributorOrgUsers, this.pageLimit);
      this.paginatedContributorOrgUsers = usersList;
      this.contributorOrgUser = isUserSearch ? usersList[0] : usersList[this.pageNumber - 1];
@@ -505,13 +513,13 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   sortOrgUsers(column) {
-    this.sortUsersList(this.allContributorOrgUsers);
     if (this.directionOrgUsers === 'asc' || this.directionOrgUsers === '') {
       this.directionOrgUsers = 'desc';
     } else {
       this.directionOrgUsers = 'asc';
     }
     this.sortColumnOrgUsers = column;
+    this.sortUsersList(this.allContributorOrgUsers);
   }
 
   getProgramTextbooks(preferencefilters?) {

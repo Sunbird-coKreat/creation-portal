@@ -27,8 +27,8 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public showLoader = true;
   public contributorOrgUsers: any = [];
   public tempSortOrgUser: any = [];
-  public direction = 'asc';
-  public sortColumn = '';
+  public direction = 'desc';
+  public sortColumn = 'selectedRole';
   //public roles = [{ name: 'Reviewer', value: 'sourcing_reviewer'}, { name: 'Admin', value: 'sourcing_admin'}];
   public roles = [{ name: 'Reviewer', value: 'sourcing_reviewer'}];
   pager: IPagination;
@@ -129,7 +129,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   
   sortUsersList(usersList, isUserSearch?) {
      this.orgUserscnt = usersList.length;
-     this.allContributorOrgUsers = this.programsService.sortCollection(usersList, 'selectedRole', 'desc');
+     this.allContributorOrgUsers = this.programsService.sortCollection(usersList, this.sortColumn, this.direction);
      isUserSearch ? this.allContributorOrgUsers:  this.initialSourcingOrgUser =  this.allContributorOrgUsers
      usersList = _.chunk(this.allContributorOrgUsers, this.pageLimit);
      this.paginatedContributorOrgUsers = usersList;

@@ -133,7 +133,9 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     this.telemetryInteractObject = {};
     this.programContentTypes = this.programsService.getContentTypesName(this.programContext.content_types);
     this.setActiveDate();
-    this.getNominationStatus();
+
+    // To avoid nomination list api call if nominationDetails already available
+    this.afterNominationCheck(this.sessionContext.nominationDetails);
   }
 
   ngAfterViewInit() {
@@ -520,32 +522,36 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this.programsService.post(req).subscribe((data) => {
       const nomination = _.first(_.get(data, 'result', []));
-      if (!_.isEmpty(nomination)) {
-          this.currentNominationStatus =  _.get(nomination, 'status');
-          this.sessionContext.nominationDetails = nomination;
-          this.selectedContentTypes = _.get(nomination, 'content_types', []);
-          this.markSelectedContentTypes();
-      }
-      if (this.userService.isUserBelongsToOrg()) {
-        this.sessionContext.currentOrgRole = _.first(this.userService.getUserOrgRole());
-
-        if (this.sessionContext.currentOrgRole === 'admin') {
-          this.sessionContext.currentRoles = ['Approved', 'Rejected'].includes(this.currentNominationStatus) ? ['REVIEWER'] : ['CONTRIBUTOR'];
-        } else if (this.sessionContext.nominationDetails.rolemapping) {
-          this.sessionContext.currentRoles = this.userService.getMyRoleForProgram(this.nominationDetails);
-        }
-      } else {
-        this.sessionContext.currentRoles = ['CONTRIBUTOR'];
-        this.sessionContext.currentOrgRole = 'individual';
-      }
-      this.getCollectionCard();
-      const currentRoles = _.filter(this.programContext.config.roles, role => this.sessionContext.currentRoles.includes(role.name));
-      this.sessionContext.currentRoleIds = !_.isEmpty(currentRoles) ? _.map(currentRoles, role => role.id) : null;
-      this.roles.currentRoles = this.sessionContext.currentRoles;
+      this.afterNominationCheck(nomination);
     }, error => {
       this.getCollectionCard();
       this.toasterService.error('Failed fetching current nomination status');
     });
+  }
+
+  afterNominationCheck(nominationDetails) {
+    if (!_.isEmpty(nominationDetails)) {
+      this.currentNominationStatus =  _.get(nominationDetails, 'status');
+      this.sessionContext.nominationDetails = nominationDetails;
+      this.selectedContentTypes = _.get(nominationDetails, 'content_types', []);
+      this.markSelectedContentTypes();
+    }
+    if (this.userService.isUserBelongsToOrg()) {
+      this.sessionContext.currentOrgRole = _.first(this.userService.getUserOrgRole());
+
+      if (this.sessionContext.currentOrgRole === 'admin') {
+        this.sessionContext.currentRoles = ['Approved', 'Rejected'].includes(this.currentNominationStatus) ? ['REVIEWER'] : ['CONTRIBUTOR'];
+      } else if (this.sessionContext.nominationDetails.rolemapping) {
+        this.sessionContext.currentRoles = this.userService.getMyRoleForProgram(this.sessionContext.nominationDetails);
+      }
+    } else {
+      this.sessionContext.currentRoles = ['CONTRIBUTOR'];
+      this.sessionContext.currentOrgRole = 'individual';
+    }
+    this.getCollectionCard();
+    const currentRoles = _.filter(this.programContext.config.roles, role => this.sessionContext.currentRoles.includes(role.name));
+    this.sessionContext.currentRoleIds = !_.isEmpty(currentRoles) ? _.map(currentRoles, role => role.id) : null;
+    this.roles.currentRoles = this.sessionContext.currentRoles;
   }
 
   toggleUploadSampleButton(data) {

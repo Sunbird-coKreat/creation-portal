@@ -291,4 +291,16 @@ describe('ProgramComponent On Bording test', () => {
      expect(component.contributorOrgUser).toBe(userDetail.result.response.content);
      expect(component.OrgUsersCnt).toBe(userDetail.result.response.content.length);
     });
+    it('call the sortUsersList method and put user to initial org list', () => {
+      component.pageLimit = 1;
+      component.searchInput = '';
+      component.isInitialSourcingOrgUser = true;
+      const  programsService  = TestBed.get(ProgramsService);
+      component.sortUsersList(userDetail.result.response.content);
+      const sortedList = programsService.sortCollection(userDetail.result.response.content,  'projectselectedRole', 'asc')
+      expect(component.paginatedContributorOrgUsers).toBe(sortedList);
+      expect(component.contributorOrgUser).toBe(userDetail.result.response.content);
+      expect(component.initialSourcingOrgUser).toBe(userDetail.result.response.content);
+      expect(component.OrgUsersCnt).toBe(userDetail.result.response.content.length);
+     });
 });

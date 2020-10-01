@@ -57,7 +57,7 @@ export class ProjectFilterComponent implements OnInit {
       'contributions': this.nominationContributionStatus // adding default values for open, close and any
     }
     this.checkFilterShowCondition();
-    this.currentFilters['contentTypes'] = this.programsService.contentTypes; // getting global content types all the time 
+    this.currentFilters['contentTypes'] =  _.sortBy(this.programsService.contentTypes,['name']); // getting global content types all the time 
   }
 
   createFilterForm() {
@@ -129,7 +129,7 @@ export class ProjectFilterComponent implements OnInit {
   // get all frame work details 
   getAllSourcingFrameworkDetails() {
     this.programsService.getAllSourcingFrameworkDetails().subscribe((frameworkInfo: any) => {
-      this.currentFilters['rootorg_id'] = _.get(frameworkInfo, 'result.content');
+      this.currentFilters['rootorg_id'] = _.sortBy(_.get(frameworkInfo, 'result.content'),['orgName']);
     });
   }
   onChangeSourcingOrg() { // this method will call only when any change in sourcing org drop down 
@@ -287,9 +287,9 @@ export class ProjectFilterComponent implements OnInit {
       this.currentFilters['subject'] = _.flattenDeep(_.compact(_.uniq(_.concat(this.currentFilters['subject'], _.get(program, 'config.subject') ? program.config.subject : JSON.parse(program.subject)))));
     });
     // this is map name and code for form , have label and value field in form
-    this.currentFilters['gradeLevel'] = _.map(this.currentFilters['gradeLevel'], (filter) => { return { name: filter, code: filter } });
-    this.currentFilters['medium'] = _.map(this.currentFilters['medium'], (filter) => { return { name: filter, code: filter } });
-    this.currentFilters['subject'] = _.map(this.currentFilters['subject'], (filter) => { return { name: filter, code: filter } });
+    this.currentFilters['gradeLevel'] = _.sortBy(_.map(this.currentFilters['gradeLevel'], (filter) => { return { name: filter, code: filter } }),['name']);
+    this.currentFilters['medium'] = _.sortBy(_.map(this.currentFilters['medium'], (filter) => { return { name: filter, code: filter } }),['name']);
+    this.currentFilters['subject'] =_.sortBy( _.map(this.currentFilters['subject'], (filter) => { return { name: filter, code: filter } }),['name']);
   }
   applyFilter(resetFilter?) { // when user clicks on apply filter and storing selected filter data in cache service
     const filterLocalStorage = resetFilter ? [] : this.setPreferences; // this is to check set or reset condition
