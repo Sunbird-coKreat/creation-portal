@@ -739,7 +739,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       return programsForNotification;
     } else if (query === 'contribution') {
       programsForNotification = _.filter(this.programs, program => {
-        if (program.status === 'Live' && program.content_submission_enddate &&
+        if ((program.status === 'Live' || program.status === 'Unlisted') && program.content_submission_enddate &&
             // tslint:disable-next-line:max-line-length
             ((new Date().getTime() - new Date(program.content_submission_enddate).getTime()) / (1000 * 60 * 60 * 24) <= _.toNumber(this.programsService.projectFeedDays))) {
               return program;
