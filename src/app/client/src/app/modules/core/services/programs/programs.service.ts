@@ -1172,19 +1172,22 @@ export class ProgramsService extends DataService implements CanActivate {
     this._programsNotificationData.next(programData);
   }
 
-  getAllSourcingFrameworkDetails(): Observable<ServerResponse> {
+  getAllTenantList(): Observable<ServerResponse> {
     const req = {
       url: this.config.urlConFig.URLS.DOCK_TENANT.LIST,
       data: {
         request: {
           filters: {
-            status:'Live'
+            status: 'Live'
           }
         }
       }
     };
-
-    return this.post(req);
+    if (this.cacheService.get('allTenantList')) {
+      return  of(this.cacheService.get('allTenantList'));
+    } else {
+      return this.post(req).pipe(tap(data => this.setSessionCache({name: 'allTenantList', value: data})));
+    }
   }
   getFiltersAppliedCount(appliedfilters) { // finding the applied filters count
     let count = 0;

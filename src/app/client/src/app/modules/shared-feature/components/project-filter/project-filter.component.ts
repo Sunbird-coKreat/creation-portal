@@ -126,14 +126,14 @@ export class ProjectFilterComponent implements OnInit {
       const orgId = this.programsService.organisationDetails[this.userService.slug];
       this.fetchFrameWorkDetails(orgId);
     } else {
-      this.getAllSourcingFrameworkDetails();
+      this.getAllTenantList();
       this.showFilters['sourcingOrganisations'] = true;
       this.activeUser = 'contributeOrgAdminAllProject';
     }
   }
   // get all frame work details
-  getAllSourcingFrameworkDetails() {
-    this.programsService.getAllSourcingFrameworkDetails().subscribe((frameworkInfo: any) => {
+  getAllTenantList() {
+    this.programsService.getAllTenantList().subscribe((frameworkInfo: any) => {
       this.currentFilters['rootorg_id'] = _.sortBy(_.get(frameworkInfo, 'result.content'), ['orgName']);
     });
   }
