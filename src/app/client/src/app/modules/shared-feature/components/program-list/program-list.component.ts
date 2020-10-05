@@ -58,7 +58,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     public frameworkService: FrameworkService) { }
 
   ngOnInit() {
-    this.frameworkService.initialize(); // get framework details here
+    this.programsService.frameworkInitialize(); // initialize framework details here
     this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
       if (frameworkInfo && !frameworkInfo.err) {
         this.isFrameworkDetailsAvailable = true; // set apply apply filter button enable condition

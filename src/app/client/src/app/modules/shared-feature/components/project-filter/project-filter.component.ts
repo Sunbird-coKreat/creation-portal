@@ -163,7 +163,7 @@ export class ProjectFilterComponent implements OnInit {
     this.showLoader = true; // show loader
     this.getDefaultFrameWork(orgId).subscribe(channelData => {
       const frameworkName = _.get(channelData, 'defaultFramework');
-      this.frameworkService.initialize(frameworkName);
+      this.programsService.frameworkInitialize(frameworkName); // initialize framework details here
       this.frameworkService.frameworkData$.pipe(filter(data =>
         _.get(data, `frameworkdata.${frameworkName}`)),
         first()).subscribe((frameworkInfo: any) => {

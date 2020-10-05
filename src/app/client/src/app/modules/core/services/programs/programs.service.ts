@@ -56,6 +56,7 @@ export class ProgramsService extends DataService implements CanActivate {
     private contentService: ContentService, private router: Router,
     private toasterService: ToasterService, private resourceService: ResourceService,
     public learnerService: LearnerService, private registryService: RegistryService,
+    public frameworkService: FrameworkService,
     public cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService) {
       super(http);
       this.config = config;
@@ -1171,7 +1172,9 @@ export class ProgramsService extends DataService implements CanActivate {
   sendprogramsNotificationData(programData) {
     this._programsNotificationData.next(programData);
   }
-
+  frameworkInitialize(frameworkName?) {
+    this.frameworkService.initialize(frameworkName); // get framework details here
+  }
   getAllTenantList(): Observable<ServerResponse> {
     const req = {
       url: this.config.urlConFig.URLS.DOCK_TENANT.LIST,
