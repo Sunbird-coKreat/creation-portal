@@ -359,10 +359,13 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
           });
           return nomination;
         });
-        this.showLoader = false;
         this.enrollPrograms = this.programs;
         this.tempSortPrograms = this.programs;
         this.count = _.get(response, 'result.count');
+        this.sortColumn = 'contributionDate';
+        this.direction = 'desc';
+        this.sortCollection(this.sortColumn);
+        this.showLoader = false;
       }, error => {
         console.log(error);
         // TODO: Add error toaster
@@ -434,7 +437,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
             this.enrollPrograms = this.programs;
             this.tempSortPrograms = this.programs;
             this.count = this.programs.length;
-            this.sortColumn = 'createdon';
+            this.sortColumn = 'contributionDate';
             this.direction = 'desc';
             this.sortCollection(this.sortColumn);
             this.showLoader = false;
