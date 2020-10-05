@@ -5,6 +5,7 @@
   </div>
   <div class="sb-modal-content">
     <p class="fs-0-92 font-weight-bold">{{resourceService?.frmelmnts?.lbl?.searchRelevantProjects}}</p>
+    <span class="sb-loader sb-success-loader sb-loader-top" *ngIf="showLoader"></span>
     <div class="segment mt-5 pb-30 pt-10">
       <form class="ui form sb-dock-dropdown" [formGroup]="filterForm">
         <div class="ui grid">
@@ -75,7 +76,7 @@
               <label
                 class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.nominationDate}}</label>
               <sui-select class="selection" [options]="currentFilters['nominations']" valueField="value"
-                labelField="name" placeholder="{{resourceService?.frmelmnts?.lbl?.selectNominationDate}}"
+                labelField="name" placeholder="{{resourceService?.frmelmnts?.lbl?.Select}}"
                 [(ngModel)]="setPreferences['nomination_date']" formControlName="nominations" #nominations>
                 <sui-select-option *ngFor="let nomination of nominations.filteredOptions" [value]="nomination">
                 </sui-select-option>
@@ -87,7 +88,7 @@
               <label
                 class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.contributionDate}}</label>
               <sui-select class="selection" [options]="currentFilters['contributions']" valueField="value"
-                labelField="name" placeholder="{{resourceService?.frmelmnts?.lbl?.selectContributationDate}}"
+                labelField="name" placeholder="{{resourceService?.frmelmnts?.lbl?.Select}}"
                 [(ngModel)]="setPreferences['contribution_date']" formControlName="contributions" #contributions>
                 <sui-select-option *ngFor="let contribution of contributions.filteredOptions" [value]="contribution">
                 </sui-select-option>

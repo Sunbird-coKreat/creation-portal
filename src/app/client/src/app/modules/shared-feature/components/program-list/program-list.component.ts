@@ -54,13 +54,14 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService, public cacheService: CacheService,
-    private navigationHelperService: NavigationHelperService, public activeRoute: ActivatedRoute, public frameworkService: FrameworkService,) { }
+    private navigationHelperService: NavigationHelperService, public activeRoute: ActivatedRoute,
+    public frameworkService: FrameworkService) { }
 
   ngOnInit() {
-    this.frameworkService.initialize(); // get framework details here
+    this.programsService.frameworkInitialize(); // initialize framework details here
     this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
       if (frameworkInfo && !frameworkInfo.err) {
-        this.isFrameworkDetailsAvailable = true;; // set apply apply filter button enable condition
+        this.isFrameworkDetailsAvailable = true; // set apply apply filter button enable condition
       }
     });
     this.checkIfUserIsContributor();
@@ -73,7 +74,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-     setTimeout(() => {
+    setTimeout(() => {
       this.telemetryImpression = {
         context: {
           env: this.activeRoute.snapshot.data.telemetry.env,
@@ -84,7 +85,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
           },
           channel: this.userService.slug ?
             (this.programsService.organisationDetails[this.userService.slug] || this.userService.hashTagId) :
-              (this.userService.hashTagId || '')
+            (this.userService.hashTagId || '')
         },
         edata: {
           type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
@@ -93,7 +94,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
-     });
+    });
   }
 
   // check the active tab
@@ -136,23 +137,27 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     this.showLoader = true; // show loader till getting the data
     if (this.isContributor) {
       if (this.activeMyProgramsMenu) {
-        const applyFilters =  this.getFilterDetails(setfilters,this.userService.slug ? 'contributeMyProgramAppliedFiltersTenantAccess': 'contributeMyProgramAppliedFilters');
+        // tslint:disable-next-line: max-line-length
+        const applyFilters = this.getFilterDetails(setfilters, this.userService.slug ? 'contributeMyProgramAppliedFiltersTenantAccess' : 'contributeMyProgramAppliedFilters');
+        // tslint:disable-next-line: max-line-length
         this.getMyProgramsForContrib(['Live', 'Unlisted'], applyFilters); // this method will call with applied req filters data other wise with origional req body
       } else if (this.activeAllProgramsMenu) {
-        const applyFilters =  this.getFilterDetails(setfilters,this.userService.slug ? 'contributeAllProgramAppliedFiltersTenantAccess' :'contributeAllProgramAppliedFilters');
+        // tslint:disable-next-line: max-line-length
+        const applyFilters = this.getFilterDetails(setfilters, this.userService.slug ? 'contributeAllProgramAppliedFiltersTenantAccess' : 'contributeAllProgramAppliedFilters');
+        // tslint:disable-next-line: max-line-length
         this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], applyFilters); // this method will call with applied req filters data other wise with origional req body
       } else {
         this.showLoader = false;
       }
     } else {
-      const applyFilters =  this.getFilterDetails(setfilters,'sourcingMyProgramAppliedFilters');
+      const applyFilters = this.getFilterDetails(setfilters, 'sourcingMyProgramAppliedFilters');
       this.getMyProgramsForOrg(applyFilters); // this method will call with applied req filters data other wise with origional req body
     }
   }
   // finding the applied filters count and putting them into request body other wise put origional req body to api call
   getFilterDetails(setfilters, storageReferenec) {
-    const appliedfilters = this.cacheService.get(storageReferenec);  // getting the strored data from cache service 
-    const applyFilters = setfilters ? setfilters : appliedfilters;   
+    const appliedfilters = this.cacheService.get(storageReferenec);  // getting the strored data from cache service
+    const applyFilters = setfilters ? setfilters : appliedfilters;
     this.filtersAppliedCount = this.programsService.getFiltersAppliedCount(applyFilters); // getting applied filters count
     return applyFilters;
   }
@@ -228,10 +233,10 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
    * fetch the list of programs.
    */
   private getAllProgramsForContrib(type, status, appliedfilters?) {
-        let getAppliedFilters: any;
-       if(appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
-           getAppliedFilters =  this.addFiltersInRequestBody(appliedfilters);
-         }
+    let getAppliedFilters: any;
+    if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
+      getAppliedFilters = this.addFiltersInRequestBody(appliedfilters);
+    }
     this.programsService.getAllProgramsByType(type, status, getAppliedFilters).subscribe(
       response => {
         const allPrograms = _.get(response, 'result.programs');
@@ -266,9 +271,9 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
                 }
               }
             };
-           if(appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
-            req.request.filters = {...req.request.filters , ...this.addFiltersInRequestBody(appliedfilters)};
-           }
+            if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
+              req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
+            }
             this.programsService.getMyProgramsForContrib(req)
               .subscribe((myProgramsResponse) => {
                 const enrolledPrograms = _.map(_.get(myProgramsResponse, 'result.programs'), (nomination: any) => {
@@ -380,9 +385,9 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
           }
         }
       };
-      if(appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
-        req.request.filters = {...req.request.filters , ...this.addFiltersInRequestBody(appliedfilters)};
-       }
+      if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
+        req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
+      }
       this.getContributionProgramList(req);
       return;
     }
@@ -407,9 +412,9 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
               }
             }
           };
-          if(appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
-            req.request.filters = {...req.request.filters , ...this.addFiltersInRequestBody(appliedfilters)};
-           }
+          if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
+            req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
+          }
           this.programsService.getMyProgramsForContrib(req).subscribe((programsResponse) => {
             // Get only those programs for which the nominations are added
             const programs = _.get(programsResponse, 'result.programs');
@@ -466,9 +471,9 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
             }
           }
         };
-        if(appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
-          req.request.filters = {...req.request.filters , ...this.addFiltersInRequestBody(appliedfilters)};
-         }
+        if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
+          req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
+        }
         this.getContributionProgramList(req);
       },
       (error) => {
@@ -506,31 +511,31 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     }
     return _.map(roles, role => _.upperFirst(_.toLower(role))).join(", ");
   }
-  // add filters to request body 
+  // add filters to request body
   addFiltersInRequestBody(appliedfilters) {
-    const newFilters  = {};
-          if(_.get(appliedfilters, 'rootorg_id')) {
-            newFilters['rootorg_id'] = appliedfilters.rootorg_id;
-          }
-          if(_.get(appliedfilters, 'medium') && (_.get(appliedfilters, 'medium').length)) {
-            newFilters['medium'] = appliedfilters.medium;
-          } 
-          if(_.get(appliedfilters, 'gradeLevel') && (_.get(appliedfilters, 'gradeLevel').length)) {
-            newFilters['gradeLevel'] = appliedfilters.gradeLevel;
-          }
-          if(_.get(appliedfilters, 'subject') && (_.get(appliedfilters, 'subject').length)) {
-            newFilters['subject'] = appliedfilters.subject;
-          }
-          if(_.get(appliedfilters, 'content_types') && (_.get(appliedfilters, 'content_types').length)) {
-            newFilters['content_types'] = appliedfilters.content_types;
-          }
-          if(_.get(appliedfilters, 'contribution_date')  && _.get(appliedfilters, 'contribution_date') !== 'any') {
-            newFilters['content_submission_enddate'] = appliedfilters.contribution_date;
-          }
-          if(_.get(appliedfilters, 'nomination_date') && _.get(appliedfilters, 'nomination_date') !== 'any') {
-            newFilters['nomination_enddate'] = appliedfilters.nomination_date;
-          }
-          return newFilters;
+    const newFilters = {};
+    if (_.get(appliedfilters, 'rootorg_id')) {
+      newFilters['rootorg_id'] = appliedfilters.rootorg_id;
+    }
+    if (_.get(appliedfilters, 'medium') && (_.get(appliedfilters, 'medium').length)) {
+      newFilters['medium'] = appliedfilters.medium;
+    }
+    if (_.get(appliedfilters, 'gradeLevel') && (_.get(appliedfilters, 'gradeLevel').length)) {
+      newFilters['gradeLevel'] = appliedfilters.gradeLevel;
+    }
+    if (_.get(appliedfilters, 'subject') && (_.get(appliedfilters, 'subject').length)) {
+      newFilters['subject'] = appliedfilters.subject;
+    }
+    if (_.get(appliedfilters, 'content_types') && (_.get(appliedfilters, 'content_types').length)) {
+      newFilters['content_types'] = appliedfilters.content_types;
+    }
+    if (_.get(appliedfilters, 'contribution_date') && _.get(appliedfilters, 'contribution_date') !== 'any') {
+      newFilters['content_submission_enddate'] = appliedfilters.contribution_date;
+    }
+    if (_.get(appliedfilters, 'nomination_date') && _.get(appliedfilters, 'nomination_date') !== 'any') {
+      newFilters['nomination_enddate'] = appliedfilters.nomination_date;
+    }
+    return newFilters;
   }
   /**
    * fetch the list of programs.
@@ -540,14 +545,14 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
 
     if (this.userService.isSourcingOrgAdmin()) {
       filters['rootorg_id'] = _.get(this.userService, 'userProfile.rootOrgId');
-      filters['status'] = ['Live', 'Unlisted', 'Draft']
+      filters['status'] = ['Live', 'Unlisted', 'Draft'];
     } else {
-      filters['status'] = ['Live', 'Unlisted']
+      filters['status'] = ['Live', 'Unlisted'];
       filters['role'] = ['REVIEWER'];
       filters['user_id'] = this.userService.userProfile.userId;
     }
-    if(appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
-      filters = {...filters , ...this.addFiltersInRequestBody(appliedfilters)};
+    if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
+      filters = { ...filters, ...this.addFiltersInRequestBody(appliedfilters) };
     }
     // tslint:disable-next-line:max-line-length
     /*if (!_.includes(this.userService.userProfile.userRoles, 'ORG_ADMIN') && _.includes(this.userService.userProfile.userRoles, 'CONTENT_REVIEWER')) {
@@ -696,27 +701,27 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
 
   getNotificationData() {
     const reqData = {
-        nomination: {
-            programId: _.map(this.getProgramsForNotification('nomination'), 'program_id'),
-            status: [
-                'Pending'
-            ]
-        },
-        contribution: {
-            programId: _.map(this.getProgramsForNotification('contribution'), 'program_id'),
-            status: [
-                'Live'
-            ]
-        },
-        channel: _.get(this.userService, 'userProfile.rootOrgId')
+      nomination: {
+        programId: _.map(this.getProgramsForNotification('nomination'), 'program_id'),
+        status: [
+          'Pending'
+        ]
+      },
+      contribution: {
+        programId: _.map(this.getProgramsForNotification('contribution'), 'program_id'),
+        status: [
+          'Live'
+        ]
+      },
+      channel: _.get(this.userService, 'userProfile.rootOrgId')
     };
-    if (!_.isEmpty(reqData.nomination.programId) || !_.isEmpty(reqData.contribution.programId) ) {
+    if (!_.isEmpty(reqData.nomination.programId) || !_.isEmpty(reqData.contribution.programId)) {
       this.programsService.getProgramsNotificationData(reqData).subscribe(data => {
         if (!_.isEmpty(data.result)) {
           const countData = data.result;
           _.forEach(this.programs, prg => {
             if (_.get(_.get(countData, prg.program_id), 'nominationCount') ||
-                  _.get(_.get(countData, prg.program_id), 'contributionCount')) {
+              _.get(_.get(countData, prg.program_id), 'contributionCount')) {
               prg['notificationData'] = _.get(countData, prg.program_id);
             }
           });
@@ -731,9 +736,9 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     if (query === 'nomination') {
       programsForNotification = _.filter(this.programs, program => {
         if (program.status === 'Live' && program.nomination_enddate &&
-            // tslint:disable-next-line:max-line-length
-            ((new Date().getTime() - new Date(program.nomination_enddate).getTime()) / (1000 * 60 * 60 * 24) <= _.toNumber(this.programsService.projectFeedDays))) {
-              return program;
+          // tslint:disable-next-line:max-line-length
+          ((new Date().getTime() - new Date(program.nomination_enddate).getTime()) / (1000 * 60 * 60 * 24) <= _.toNumber(this.programsService.projectFeedDays))) {
+          return program;
         }
       });
       return programsForNotification;
