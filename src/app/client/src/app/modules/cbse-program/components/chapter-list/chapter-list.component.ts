@@ -324,6 +324,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         instance.countData['sampleMycontribution'] = 0;
         instance.countData['pendingReview'] = 0;
         instance.countData['nominatedUserSample'] = 0;
+        instance.countData['sourcing_total'] = 0;
+        instance.countData['sourcing_approvalPending'] = 0;
+        instance.countData['sourcing_correctionPending'] = 0;
+        instance.countData['sourcing_approved'] = 0;
+        instance.countData['sourcing_rejected'] = 0;
 
         const hierarchyUrl1 = '/action/content/v3/hierarchy/' + this.collectionData.origin + '?mode=edit';
         const originUrl = this.programsService.getContentOriginEnvironment();
@@ -532,6 +537,20 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         // tslint:disable-next-line:max-line-length
         !_.includes([...this.storedCollectionData.acceptedContents || [], ...this.storedCollectionData.rejectedContents || []], data.identifier)) {
           this.countData['pendingReview'] = this.countData['pendingReview'] + 1;
+          this.countData['sourcing_approvalPending'] = this.countData['pendingReview'] + 1;
+          this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
+        }
+        if (this.sourcingOrgReviewer && data.status === 'Draft' && data.prevStatus === 'Live' ) {
+          this.countData['sourcing_correctionPending'] = this.countData['sourcing_correctionPending'] + 1;
+          this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
+        }
+        if (this.sourcingOrgReviewer && data.status === 'Live' && !_.includes([...this.storedCollectionData.acceptedContents || []], data.identifier)) {
+          this.countData['sourcing_approved'] = this.countData['sourcing_approved'] + 1;
+          this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
+        }
+        if (this.sourcingOrgReviewer && data.status === 'Live' && !_.includes([...this.storedCollectionData.rejectedContents || []], data.identifier)) {
+          this.countData['sourcing_rejected'] = this.countData['sourcing_rejected'] + 1;
+          this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
         }
       }
     }
