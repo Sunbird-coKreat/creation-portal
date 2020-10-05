@@ -1173,7 +1173,7 @@ export class ProgramsService extends DataService implements CanActivate {
     this._programsNotificationData.next(programData);
   }
   frameworkInitialize(frameworkName?) {
-    this.frameworkService.initialize(frameworkName); // get framework details here
+    this.frameworkService.initialize(frameworkName); // initialize framework details here
   }
   getAllTenantList(): Observable<ServerResponse> {
     const req = {
