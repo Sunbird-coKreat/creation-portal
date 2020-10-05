@@ -65,7 +65,7 @@ export class OrgReportsComponent implements OnInit, AfterViewInit {
 
   downloadReport(reportName: string, isSourcingPrefix: boolean) {
     let filepath;
-    if (_.isUndefined(isSourcingPrefix)) {
+    if (isSourcingPrefix) {
       filepath = `/${this.reportsLocation}/${this.reportPrefix}/${this.slug}/${reportName}${this.reportFormat}`;
     } else {
       filepath = `/${this.reportsLocation}/${this.slug}/${reportName}${this.reportFormat}`;
