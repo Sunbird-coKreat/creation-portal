@@ -63,8 +63,13 @@ export class OrgReportsComponent implements OnInit, AfterViewInit {
      });
   }
 
-  downloadReport(reportName: string) {
-    const filepath = `/${this.reportsLocation}/${this.reportPrefix}/${this.slug}/${reportName}${this.reportFormat}`;
+  downloadReport(reportName: string, isSourcingPrefix: boolean) {
+    let filepath;
+    if (_.isUndefined(isSourcingPrefix)) {
+      filepath = `/${this.reportsLocation}/${this.reportPrefix}/${this.slug}/${reportName}${this.reportFormat}`;
+    } else {
+      filepath = `/${this.reportsLocation}/${this.slug}/${reportName}${this.reportFormat}`;
+    }
     this.usageService.getData(filepath).subscribe((response) => {
       if (_.get(response, 'responseCode') === 'OK') {
         const url = _.get(response, 'result.signedUrl');
