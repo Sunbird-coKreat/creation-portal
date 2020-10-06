@@ -424,7 +424,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
               'identifier': questionIds,
               'status': ['Live', 'Review', 'Draft']
             },
-            'sort_by': { 'createdOn': 'desc' },
+            'sort_by': { 'createdOn': 'asc' },
             'limit': 20
           }
         }
