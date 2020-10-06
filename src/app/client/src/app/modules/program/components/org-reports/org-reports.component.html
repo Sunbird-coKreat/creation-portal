@@ -26,7 +26,7 @@
                     <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.textbookLevelContentGaps}}</td>
                     <td>{{resourceService.frmelmnts.lbl.textbookLevelReportGapDescription}}</td>
                     <td class="text-center">
-                      <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('TextbookLevel');" 
+                      <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('TextbookLevel', true);" 
                       appTelemetryInteract
                       [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download-textbookLevelReport', 'click', 'list-org-reports')"
                       [telemetryInteractObject]="telemetryInteractObject"
@@ -37,7 +37,7 @@
                     <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.chapterLevelContentGaps}}</td>
                     <td>{{resourceService.frmelmnts.lbl.ChapterLevelReportGapDescription}}</td>
                     <td class="text-center">
-                      <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('ChapterLevel');" 
+                      <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('ChapterLevel', true);" 
                       appTelemetryInteract
                       [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download-chapterLevelReport', 'click', 'list-org-reports')"
                       [telemetryInteractObject]="telemetryInteractObject"
@@ -48,7 +48,7 @@
                   <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.visitorsReport}}</td>
                   <td>{{resourceService.frmelmnts.lbl.visitorsReportDescription}}</td>
                   <td class="text-center">
-                    <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('VisitorsReport');" 
+                    <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('vidyadaan_visitor', false);" 
                     appTelemetryInteract
                     [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download-visitorsReport', 'click', 'list-org-reports')"
                     [telemetryInteractObject]="telemetryInteractObject"
@@ -59,7 +59,7 @@
                   <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.projectLevelFunnelReport}}</td>
                   <td>{{resourceService.frmelmnts.lbl.projectLevelFunnelReportDescription}}</td>
                   <td class="text-center">
-                    <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('FunnelReport');" 
+                    <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('FunnelReport', true);" 
                     appTelemetryInteract
                     [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download-projectLevelFunnelReport', 'click', 'list-org-reports')"
                     [telemetryInteractObject]="telemetryInteractObject"

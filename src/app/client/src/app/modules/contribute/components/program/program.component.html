@@ -204,7 +204,7 @@
 												<div class="text-capitalize fs-0-785">
 													<span class="sb-color-primary d-inline-block br-2 pr-5">{{contributorTextbook.reviewCount || 0}}  {{resourceService.frmelmnts.lbl.pending}}</span>
 													<span class="sb-color-error d-inline-block br-2 px-5">{{contributorTextbook.rejectedCount || 0}} {{resourceService.frmelmnts.lbl.notAccepted}}</span>
-													<span class="sb-color-warning d-inline-block px-5">{{contributorTextbook.liveCount + contributorTextbook.mvcContributionsCount || 0}} {{resourceService.frmelmnts.lbl.sentForApproval}}</span>
+													<span class="sb-color-warning d-inline-block px-5">{{contributorTextbook.liveCount || 0}} {{resourceService.frmelmnts.lbl.sentForApproval}}</span>
 												</div>
 											</td>
 											<td>

@@ -56,6 +56,7 @@ export class ProgramsService extends DataService implements CanActivate {
     private contentService: ContentService, private router: Router,
     private toasterService: ToasterService, private resourceService: ResourceService,
     public learnerService: LearnerService, private registryService: RegistryService,
+    public frameworkService: FrameworkService,
     public cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService) {
       super(http);
       this.config = config;
@@ -1171,20 +1172,25 @@ export class ProgramsService extends DataService implements CanActivate {
   sendprogramsNotificationData(programData) {
     this._programsNotificationData.next(programData);
   }
-
-  getAllSourcingFrameworkDetails(): Observable<ServerResponse> {
+  frameworkInitialize(frameworkName?) {
+    this.frameworkService.initialize(frameworkName); // initialize framework details here
+  }
+  getAllTenantList(): Observable<ServerResponse> {
     const req = {
       url: this.config.urlConFig.URLS.DOCK_TENANT.LIST,
       data: {
         request: {
           filters: {
-            status:'Live'
+            status: 'Live'
           }
         }
       }
     };
-
-    return this.post(req);
+    if (this.cacheService.get('allTenantList')) {
+      return  of(this.cacheService.get('allTenantList'));
+    } else {
+      return this.post(req).pipe(tap(data => this.setSessionCache({name: 'allTenantList', value: data})));
+    }
   }
   getFiltersAppliedCount(appliedfilters) { // finding the applied filters count
     let count = 0;
