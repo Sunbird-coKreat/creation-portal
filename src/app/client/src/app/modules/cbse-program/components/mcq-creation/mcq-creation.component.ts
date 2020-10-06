@@ -404,7 +404,12 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
           if (field.inputType === 'text' && field.dataType === 'list') {
             // tslint:disable-next-line:max-line-length
             const dataVal = this.questionMetaForm.value[field.code];
-            this.questionMetaForm.value[field.code] = dataVal ? dataVal.split(', ') : [];
+            if(typeof(dataVal) === 'string') {
+              this.questionMetaForm.value[field.code] =  dataVal.split(', ') ;
+            }
+            else {
+              this.questionMetaForm.value[field.code] = dataVal? dataVal: [];
+            }
           }
         });
         metadata = _.pickBy(_.assign(metadata, this.questionMetaForm.value), _.identity);
