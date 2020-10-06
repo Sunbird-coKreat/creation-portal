@@ -450,7 +450,7 @@ export class CollectionHierarchyService {
       textbook.draftCount = textbookMeta && _.has(textbookMeta, 'Draft') ? textbookMeta.Draft.length : 0;
       textbook.reviewCount = textbookMeta && _.has(textbookMeta, 'Review') ? textbookMeta.Review.length : 0;
       textbook.rejectedCount = textbookMeta && _.has(textbookMeta, 'Reject') ? textbookMeta.Reject.length : 0;
-      textbook.liveCount = (textbookMeta && _.difference(liveContents, reviewedContents)) ? textbookMeta && _.difference(liveContents, reviewedContents).length : 0;
+      textbook.liveCount = textbook.mvcContributionsCount + liveContents.length; //(textbookMeta && _.difference(liveContents, reviewedContents)) ? textbookMeta && _.difference(liveContents, reviewedContents).length : 0;
       // tslint:disable-next-line:max-line-length
       textbook.sampleContentInReview = textbookMetaForSample && _.has(textbookMetaForSample, 'Review') ? textbookMetaForSample.Review.length : 0;
       // tslint:disable-next-line:max-line-length
