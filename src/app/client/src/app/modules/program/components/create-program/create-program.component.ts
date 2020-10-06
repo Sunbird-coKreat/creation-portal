@@ -147,7 +147,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.programId = this.activatedRoute.snapshot.params.programId;
     this.userprofile = this.userService.userProfile;
-    this.programScope['purpose'] = this.programsService.contentTypes;
+    this.programScope['purpose'] = this.userService.userChannelData.contentPrimaryCategories;
     this.programConfig = _.cloneDeep(programConfigObj);
     this.telemetryInteractCdata = [];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
@@ -305,7 +305,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programsService.get(req).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
       this.selectedContentTypes = _.get(this.programDetails, 'content_types');
-      this.programDetails['content_types'] = this.programsService.getContentTypesName(this.programDetails.content_types);
+      this.programDetails['content_types'] = _.join(this.programDetails.content_types, ', ');
       this.initializeFormFields();
 
       if (!_.isEmpty(this.programDetails.guidelines_url)) {

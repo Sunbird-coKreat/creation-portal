@@ -99,8 +99,8 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sharedContext = this.collectionComponentInput.programContext.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});
-    this.contentType = _.filter(this.programsService.contentTypes, (type) => {
-      return _.includes(_.get(this.programContext, 'content_types'), type.value);
+    this.contentType = _.map(_.get(this.programContext, 'content_types'), (type) => {
+      return {value: type};
     });
     this.sessionContext = _.assign(this.collectionComponentInput.sessionContext, {
       bloomsLevel: _.get(this.programContext, 'config.scope.bloomsLevel'),
@@ -131,7 +131,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
     this.telemetryInteractObject = {};
-    this.programContentTypes = this.programsService.getContentTypesName(this.programContext.content_types);
+    this.programContentTypes = _.join(this.programContext.content_types, ', ');
     this.setActiveDate();
 
     // To avoid nomination list api call if nominationDetails already available

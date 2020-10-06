@@ -187,9 +187,9 @@
 											popupText="{{resource?.frmelmnts?.lbl?.contentTypesHint}}"></i>
 									</label>
 									<sui-multi-select *ngIf="!editPublished; else elseBlock"
-										class="selection" labelField="name" [hasLabels]="true"
+										class="selection"
 										formControlName="content_types" [options]="programScope.purpose"
-										valueField="value" [(ngModel)]="selectedContentTypes" #multiSelect>
+										[(ngModel)]="selectedContentTypes" #multiSelect>
 										<sui-select-option *ngFor="let option of programScope.purpose" [value]="option"
 										appTelemetryInteract
 										[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('contentType-selection', 'click', 'create-program', {values: [option.name]})"
