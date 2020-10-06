@@ -20,6 +20,7 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 import * as moment from 'moment';
 import * as alphaNumSort from 'alphanum-sort';
 import { ProgramTelemetryService } from '../../services';
+import { CacheService } from 'ng2-cache-service';
 
 @Component({
   selector: 'app-create-program',
@@ -141,13 +142,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     private configService: ConfigService,
     private deviceDetectorService: DeviceDetectorService,
     public programTelemetryService: ProgramTelemetryService,
-    public actionService: ActionService) {
+    public actionService: ActionService, public cacheService: CacheService) {
   }
 
   ngOnInit() {
     this.programId = this.activatedRoute.snapshot.params.programId;
     this.userprofile = this.userService.userProfile;
-    this.programScope['purpose'] = this.userService.userChannelData.contentPrimaryCategories;
     this.programConfig = _.cloneDeep(programConfigObj);
     this.telemetryInteractCdata = [];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
@@ -477,6 +477,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   setFrameworkDataToProgram() {
+    this.programScope['purpose'] = _.get(this.cacheService.get(this.userService.hashTagId), 'contentPrimaryCategories');
     this.programScope['medium'] = [];
     this.programScope['gradeLevel'] = [];
     this.programScope['subject'] = [];
