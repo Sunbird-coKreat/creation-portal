@@ -22,6 +22,9 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
+          name: Remove Package Lock
+          command: 'rm -f package-lock.json'    
+      - run:
           name: Installing npm deps
           command: 'npm install'
       - save_cache: # special step to save the dependency cache
