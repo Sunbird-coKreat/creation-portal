@@ -632,3 +632,10 @@ xxl calculateRem(180px) 24px 20px;
 .sb-loader-top{
   top: 18% !important;
 }
+.dot-separator {
+  margin: 0 8px;
+  background: #999;
+  height: 5px;
+  width: 5px;
+  border-radius: 50%;
+}
