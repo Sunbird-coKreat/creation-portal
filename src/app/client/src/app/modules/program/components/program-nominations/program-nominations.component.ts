@@ -413,9 +413,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   getProgramCollection (preferencefilters?) {
     return this.collectionHierarchyService.getCollectionWithProgramId(this.programId, preferencefilters).pipe(
       tap((response: any) => {
-        if (response && response.result) {
-          this.programCollections = response.result.content || [];
-        }
+        let contents = _.get(response, 'result.content', []);
+         // TODO - remove this filtering when api returns correct data
+         const mediums = _.get(preferencefilters, 'medium', []);
+         if (!_.isEmpty(mediums)) {
+              contents = _.filter(contents, (textbook) => _.includes(mediums, textbook.medium))
+             }
+            this.programCollections = contents;
       }),
       catchError(err => {
         return of(err);
