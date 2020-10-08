@@ -152,9 +152,9 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     } else {
       this.handleActiveTabState('myPrograms');
     }
-    this.telemetryInteractCdata = [];
-  this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
-  this.telemetryInteractObject = {};
+    this.telemetryInteractCdata = [{id: this.userService.channel || '', type: 'sourcing_organization'}];
+    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
+    this.telemetryInteractObject = {};
 
   this.notificationSubscription = this.programsService.programsNotificationData.subscribe(data => {
     if (!_.isEmpty(data)) {
@@ -359,10 +359,11 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     this.activeTab[tab] = true;
   }
 
-  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+  getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: string): IInteractEventEdata {
     return _.omitBy({
       id,
       type,
+      subtype,
       pageid,
       extra
     }, _.isUndefined);

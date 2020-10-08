@@ -5,14 +5,15 @@ import { Routes, RouterModule } from '@angular/router';
 import { ProgramComponent, CreateProgramComponent, ProgramNominationsComponent, ListContributorTextbooksComponent,
    OrgUserListComponent, OrgReportsComponent } from './components';
 import { AuthGuard } from '../core/guard/auth-gard.service';
-
+import * as telemetryConfig from '../shared/services/config/telemetry.config.json';
 import { HelpPageComponent } from '../shared-feature/components/help-page/help-page.component';
+const telemetryPage = telemetryConfig.default;
 
 const routes: Routes = [{
   path: '', component: ProgramListComponent, canActivate: [ProgramsService],
   data: {
     telemetry: {
-      env: 'sourcing-portal', pageid: 'programs-list', type: 'list', subtype: 'paginate'
+      env: 'sourcing-portal', pageid: telemetryPage.sourcing_my_projects, type: 'list', subtype: 'paginate'
     }
   }
 },
@@ -26,7 +27,7 @@ const routes: Routes = [{
   path: 'edit/:programId', component: CreateProgramComponent, canActivate: [ProgramsService, AuthGuard], pathMatch: 'full',
   data: {
     roles: 'programSourcingRole',
-    telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'create-program', mode: 'edit',
+    telemetry: { env: 'sourcing-portal', type: 'edit', subtype: 'paginate', pageid: telemetryPage.sourcing_modify_project, mode: 'edit',
                  object: { type: 'program', ver: '1.0'} }
   }
 },
@@ -34,8 +35,8 @@ const routes: Routes = [{
   path: 'create-program', component: CreateProgramComponent, canActivate: [ProgramsService, AuthGuard], pathMatch: 'full',
   data: {
     roles: 'programSourcingRole',
-    telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'create-program', mode: 'create',
-                 object: { type: 'program', ver: '1.0'} }
+    telemetry: { env: 'sourcing-portal', type: 'workflow', subtype: 'paginate', pageid: telemetryPage.sourcing_create_project_details,
+     mode: 'create', object: { type: 'program', ver: '1.0'} }
   }
 },
 {
@@ -48,32 +49,32 @@ const routes: Routes = [{
 {
   path: 'nominations/:programId', component: ProgramNominationsComponent, canActivate: [ProgramsService],
   data: {
-    telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'nomination-details' }
+    telemetry: { env: 'sourcing-portal', type: 'list', subtype: 'paginate', pageid: telemetryPage.sourcing_project_contributions }
   }
 },
 {
   path: 'contributor/:programId', component: ListContributorTextbooksComponent, canActivate: [ProgramsService],
   data: {
-    telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'contributor-details' }
+    telemetry: { env: 'sourcing-portal', type: 'detail', subtype: 'paginate', pageid: telemetryPage.sourcing_project_nomination_details }
   }
 },
 {
   path: 'orglist', component: OrgUserListComponent, pathMatch: 'full',
   data: {
-    telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'list-org-users' }
+    telemetry: { env: 'sourcing-portal', type: 'list', subtype: 'paginate', pageid: telemetryPage.sourcing_manage_users }
   },
 },
 {
-  path: 'orgreports', component: OrgReportsComponent,canActivate: [ProgramsService, AuthGuard], pathMatch: 'full',
+  path: 'orgreports', component: OrgReportsComponent, canActivate: [ProgramsService, AuthGuard], pathMatch: 'full',
   data: {
     roles: 'programSourcingRole',
-    telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'list-org-reports' }
+    telemetry: { env: 'sourcing-portal', type: 'report', subtype: 'paginate', pageid: telemetryPage.sourcing_organisation_reports }
   },
 },
 {
   path: 'help', component: HelpPageComponent, pathMatch: 'full',
   data: {
-    telemetry: { env: 'creation-portal', type: 'view', subtype: 'paginate', pageid: 'help-page' }
+    telemetry: { env: 'sourcing-portal', type: 'documentation', subtype: 'paginate', pageid: telemetryPage.sourcing_help  }
   },
 },
 ];

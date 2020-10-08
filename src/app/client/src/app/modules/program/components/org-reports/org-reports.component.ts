@@ -4,6 +4,7 @@ import { ResourceService, ToasterService, ConfigService, NavigationHelperService
 import { UserService } from '@sunbird/core';
 import { UsageService } from '@sunbird/dashboard';
 import { IImpressionEventInput} from '@sunbird/telemetry';
+import { IInteractEventEdata } from '@sunbird/telemetry';
 import { ProgramTelemetryService } from '../../../program/services';
 import * as _ from 'lodash-es';
 
@@ -31,7 +32,7 @@ export class OrgReportsComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.reportsLocation = (<HTMLInputElement>document.getElementById('reportsLocation')).value;
     this.slug = _.get(this.userService, 'userProfile.rootOrg.slug');
-    this.telemetryInteractCdata = [{id: this.userService.userProfile.rootOrgId || '', type: 'Organisation'}];
+    this.telemetryInteractCdata = [{id: this.userService.channel || '', type: 'sourcing_organization'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
   }
@@ -40,7 +41,7 @@ export class OrgReportsComponent implements OnInit, AfterViewInit {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     const deviceId = <HTMLInputElement>document.getElementById('deviceId');
-    const telemetryCdata = [{ 'type': 'Organisation', 'id': this.userService.userProfile.rootOrgId || '' }];
+    const telemetryCdata = [{id: this.userService.channel || '', type: 'sourcing_organization'}];
      setTimeout(() => {
       this.telemetryImpression = {
         context: {
@@ -81,5 +82,16 @@ export class OrgReportsComponent implements OnInit, AfterViewInit {
       this.toasterService.error(this.resourceService.messages.emsg.m0076);
     });
   }
+
+  getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: any): IInteractEventEdata {
+    return _.omitBy({
+      id,
+      type,
+      subtype,
+      pageid,
+      extra
+    }, _.isUndefined);
+  }
+
 
 }

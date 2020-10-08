@@ -10,7 +10,7 @@
     </div>
     <a *ngIf="bulkApprove && bulkApprove.status" href="javascript:void(0)" (click)="showBulkApproveModal=true;viewBulkApprovalStatus()"
     appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('view-details', 'click', 'bulk-approval', {values: [bulkApprove.process_id]})"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('view-details', 'click',undefined, 'bulk-approval', {values: [bulkApprove.process_id]})"
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.viewDetails}}</a>
@@ -70,7 +70,7 @@
   <div class="sb-modal-actions">
     <button *ngIf="bulkApprovalComfirmation" type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showBulkApproveModal=false;bulkApprovalComfirmation=false;bulkApproval()"
     appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('confirm-bulk-approval', 'click', 'bulk-approval')"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('confirm-bulk-approval', 'click',undefined,'bulk-approval')"
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.yes}}</button> 

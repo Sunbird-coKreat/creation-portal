@@ -104,6 +104,7 @@ footerAlign() {
     return {
       id: type,
       type: 'click',
+      subtype: 'launch',
       pageid: _.get(this.activatedRoute, 'root.firstChild.snapshot.data.telemetry.pageid')
     };
   }

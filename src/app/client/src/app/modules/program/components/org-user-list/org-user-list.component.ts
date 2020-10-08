@@ -39,6 +39,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   initialSourcingOrgUser = [];
   searchLimitMessage: any;
   searchLimitCount: any;
+  public telemetryPageId: string;
   constructor(private toasterService: ToasterService, private configService: ConfigService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
@@ -64,7 +65,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.telemetryInteractCdata = [{id: this.userService.userProfile.rootOrgId || '', type: 'Organisation'}];
+    this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
     this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
@@ -75,7 +76,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     const deviceId = <HTMLInputElement>document.getElementById('deviceId');
-    const telemetryCdata = [{ 'type': 'Organisation', 'id': this.userService.userProfile.rootOrgId || '' }];
+    const telemetryCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
      setTimeout(() => {
       this.telemetryImpression = {
         context: {
@@ -90,12 +91,17 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
         },
         edata: {
           type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
-          pageid: _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid'),
+          pageid: this.getPageId(),
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
      });
+  }
+
+  getPageId() {
+    this.telemetryPageId = _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid');
+    return this.telemetryPageId;
   }
 
   setOrgUsers(orgUsersDetails) {
@@ -273,10 +279,11 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     }
   }
 
-  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: any): IInteractEventEdata {
+  getTelemetryInteractEdata(id: string, type: string, subtype: string,  pageid: string, extra?: any): IInteractEventEdata {
     return _.omitBy({
       id,
       type,
+      subtype,
       pageid,
       extra
     }, _.isUndefined);

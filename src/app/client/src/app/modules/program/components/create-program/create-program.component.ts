@@ -124,6 +124,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public disableCreateProgramBtn = false;
   public showLoader = true;
   public btnDoneDisabled = false;
+  public telemetryPageId: string;
 
   constructor(
     public frameworkService: FrameworkService,
@@ -149,7 +150,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.userprofile = this.userService.userProfile;
     this.programScope['purpose'] = this.programsService.contentTypes;
     this.programConfig = _.cloneDeep(programConfigObj);
-    this.telemetryInteractCdata = [];
+    this.telemetryInteractCdata = [{id: this.userService.channel || '', type: 'sourcing_organization'}];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
     this.acceptPdfType = this.getAcceptType(this.assetConfig.pdf.accepted, 'pdf');
@@ -161,6 +162,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     });
 
     if (!_.isEmpty(this.programId)) {
+      this.telemetryInteractCdata = [...this.telemetryInteractCdata, {id: this.programId, type: 'project'}];
       this.getProgramDetails();
     } else {
       this.initializeFormFields();
@@ -433,8 +435,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     if (!this.editPublished) {
       return this.pickerMinDate;
-    }
-    else {
+    } else {
       return this.createProgramForm.value.nomination_enddate;
     }
   }
@@ -447,7 +448,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.telemetryImpression = {
         context: {
           env: this.activatedRoute.snapshot.data.telemetry.env,
-          cdata: [],
+          cdata: this.telemetryInteractCdata,
           pdata: {
             id: this.userService.appId,
             ver: version,
@@ -457,12 +458,17 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         },
         edata: {
           type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
-          pageid: _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid'),
+          pageid: this.getPageId(),
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
     });
+  }
+
+  getPageId() {
+    this.telemetryPageId = _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid');
+    return this.telemetryPageId;
   }
 
   fetchFrameWorkDetails() {
@@ -1059,10 +1065,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     return config;
   }
 
-  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+  getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: string): IInteractEventEdata {
     return _.omitBy({
       id,
       type,
+      subtype,
       pageid,
       extra
     }, _.isUndefined);

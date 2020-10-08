@@ -1,0 +1,17 @@
+{
+    "sourcing_my_projects" : "sourcing_my_projects",
+    "sourcing_manage_users" : "sourcing_manage_users",
+    "sourcing_organisation_reports" : "sourcing_organisation_reports",
+    "main_header" : "main_header",
+    "sourcing_create_project_details" : "sourcing_create_project_details",
+    "sourcing_create_project_requirements" : "sourcing_create_project_requirements",
+    "sourcing_modify_project": "sourcing_modify_project",
+    "sourcing_project_contributions": "sourcing_project_contributions",
+    "sourcing_project_nominations" : "sourcing_project_nominations",
+    "sourcing_project_assign_users" : "sourcing_project_assign_users",
+    "sourcing_project_contribution_dashboard" : "sourcing_project_contribution_dashboard",
+    "sourcing_project_reports" : "sourcing_project_reports",
+    "sourcing_project_nomination_details": "sourcing_project_nomination_details",
+    "sourcing_help" : "sourcing_help",
+    "sourcing_terms_of_use": "sourcing_terms_of_use"
+}

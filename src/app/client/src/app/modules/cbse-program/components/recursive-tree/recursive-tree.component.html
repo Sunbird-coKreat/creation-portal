@@ -1,6 +1,6 @@
 <div *ngFor="let collection of collectionUnits; let i = index" class="sb-toc-accor-{{level}}">
   <sui-accordion-panel appTelemetryInteract
-  [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('node-accordion', 'click', 'chapter-list')"
+  [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('node-accordion', 'click', undefined,'chapter-list')"
   [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(collection.identifier, 'Content', '1.0', {l1: sessionContext.collection})"
   [telemetryInteractCdata]="telemetryInteractCdata"
   [telemetryInteractPdata]="telemetryInteractPdata"
@@ -86,7 +86,7 @@
      <div class="d-flex">
       <button (click)="goToAddLibrary(collection.identifier)" class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius text-inherit"
         appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add-from-library', 'click', 'chapter-list')"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add-from-library', 'click', undefined,'chapter-list')"
         [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(collection.identifier, 'Content', '1.0', {l1: sessionContext.collection})"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
@@ -96,7 +96,7 @@
       <button class="sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius text-inherit"
         *ngIf="visibility && visibility['showAddresource']"
         popupText="{{resourceService.frmelmnts.lbl.uploadFileOrCreateNew}}"  suiPopup appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add-resource', 'click', 'chapter-list')"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add-resource', 'click',undefined, 'chapter-list')"
         [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(collection.identifier, 'Content', '1.0', {l1: sessionContext.collection})"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
@@ -117,7 +117,7 @@
           <div class="chapter-lists--item"
           *ngIf="content.visibility === true"
           appTelemetryInteract
-          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('previewResource', 'click', 'chapter-list')"
+          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('previewResource', 'click',undefined, 'chapter-list')"
           [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
           [telemetryInteractCdata]="telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryInteractPdata"
@@ -139,7 +139,7 @@
               <div *ngIf="canViewActionMenu(content)" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
                 suiDropdown
                 appTelemetryInteract
-                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('context-menu', 'click', 'chapter-list')"
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('context-menu', 'click',undefined,'chapter-list')"
                 [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
@@ -149,7 +149,7 @@
                   <div class="item"
                     *ngIf="visibility && visibility['showEditResource'] && (content.status === 'Draft' || content.status === 'Reject')"
                     appTelemetryInteract
-                    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('edit-resource', 'click', 'chapter-list')"
+                    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('edit-resource', 'click', undefined,'chapter-list')"
                     [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
                     [telemetryInteractCdata]="telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryInteractPdata"
@@ -157,7 +157,7 @@
                   <div class="item"
                     *ngIf="visibility && visibility['showPreviewResource'] && (content.status === 'Live' || content.status === 'Review')"
                     appTelemetryInteract
-                    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('preview-resource', 'click', 'chapter-list')"
+                    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('preview-resource', 'click',undefined, 'chapter-list')"
                     [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
                     [telemetryInteractCdata]="telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryInteractPdata"
@@ -165,7 +165,7 @@
                   <div class="item"
                     *ngIf="(visibility && visibility['showMoveResource']) && content.status === 'Draft'"
                     appTelemetryInteract
-                    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('move-resource', 'click', 'chapter-list')"
+                    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('move-resource', 'click',undefined, 'chapter-list')"
                     [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
                     [telemetryInteractCdata]="telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryInteractPdata"
@@ -173,7 +173,7 @@
                   <div class="item"
                     *ngIf="(visibility && visibility['showDeleteResource']) && content.status === 'Draft'"
                     appTelemetryInteract
-                    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('delete-resource', 'click', 'chapter-list')"
+                    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('delete-resource', 'click',undefined, 'chapter-list')"
                     [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
                     [telemetryInteractCdata]="telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryInteractPdata"
@@ -185,7 +185,7 @@
               <div *ngIf="canViewActionMenu(content)" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
                 suiDropdown
                 appTelemetryInteract
-                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('context-menu', 'click', 'chapter-list')"
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('context-menu', 'click', undefined,'chapter-list')"
                 [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
@@ -195,14 +195,14 @@
 
                     <div class="item"
                     appTelemetryInteract
-                    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('move-content', 'click', 'chapter-list')"
+                    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('move-content', 'click',undefined, 'chapter-list')"
                     [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
                     [telemetryInteractCdata]="telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryInteractPdata"
                     (click)="moveResource($event, content, collection)">{{resourceService.frmelmnts?.lbl?.move}}</div>
                     <div class="item"
                     appTelemetryInteract
-                    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('remove-content', 'click', 'chapter-list')"
+                    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('remove-content', 'click',undefined, 'chapter-list')"
                     [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
                     [telemetryInteractCdata]="telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryInteractPdata"

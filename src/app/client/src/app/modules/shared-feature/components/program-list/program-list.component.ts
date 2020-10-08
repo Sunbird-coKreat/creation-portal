@@ -48,9 +48,11 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   public showFiltersModal = false;
   public filtersAppliedCount: any;
   public telemetryImpression: any;
-  public telemetryPageId = 'programs-list';
+  public telemetryPageId: string;
   public isFrameworkDetailsAvailable = false;
   showDeleteModal = false;
+  public inviewLogs: any = [];
+
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService, public cacheService: CacheService,
@@ -66,7 +68,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     });
     this.checkIfUserIsContributor();
     this.issourcingOrgAdmin = this.userService.isSourcingOrgAdmin();
-    this.telemetryInteractCdata = [];
+    this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
   }
@@ -74,10 +76,12 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+    const telemetryCdata = [{id: this.userService.channel || '', type: 'sourcing_organization'}];
     setTimeout(() => {
       this.telemetryImpression = {
         context: {
           env: this.activeRoute.snapshot.data.telemetry.env,
+          cdata: telemetryCdata,
           pdata: {
             id: this.userService.appId,
             ver: version,
@@ -99,13 +103,8 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
 
   // check the active tab
   getPageId() {
-    if (this.router.url.includes('/contribute/myenrollprograms')) {
-      return 'contribution_my_projects';
-    } else if (this.router.url.includes('/contribute')) {
-      return 'contribution_all_projects';
-    } else if (this.router.url.includes('/sourcing')) {
-      return 'sourcing_my_projects';
-    }
+    this.telemetryPageId = _.get(this.activeRoute, 'snapshot.data.telemetry.pageid');
+    return this.telemetryPageId;
   }
 
   /**
@@ -659,10 +658,11 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     }
   }
 
-  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+  getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: any): IInteractEventEdata {
     return _.omitBy({
       id,
       type,
+      subtype,
       pageid,
       extra
     }, _.isUndefined);
@@ -763,5 +763,9 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     } else {
       this.getNotificationData();
     }
+  }
+
+  getTelemetryInteractCdata(id, type) {
+    return [...this.telemetryInteractCdata, { type: type, id: _.toString(id)} ];
   }
 }

@@ -1,5 +1,5 @@
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService, PaginationService } from '@sunbird/shared';
-import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
+import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject, TelemetryService } from '@sunbird/telemetry';
 import { ProgramsService, UserService, FrameworkService, RegistryService } from '@sunbird/core';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
@@ -99,12 +99,14 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   pagerUsers: IPagination;
   pageNumberUsers = 1;
   searchInput: any;
+  public telemetryPageId: string;
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
      private activatedRoute: ActivatedRoute, private router: Router,
     private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService,
     public programStageService: ProgramStageService, private datePipe: DatePipe, private paginationService: PaginationService,
-    public programTelemetryService: ProgramTelemetryService, public registryService: RegistryService) {
+    public programTelemetryService: ProgramTelemetryService, public registryService: RegistryService,
+     public telemetryService: TelemetryService) {
     this.userProfile = this.userService.userProfile;
     this.programId = this.activatedRoute.snapshot.params.programId;
   }
@@ -112,7 +114,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   ngOnInit() {
     this.filterApplied = null;
     this.getProgramDetails();
-    this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program'}];
+    this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}, {id: this.programId, type: 'project'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
     this.roles = [{name: 'REVIEWER'}, {name: 'NONE'}];
@@ -133,12 +135,11 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     const deviceId = <HTMLInputElement>document.getElementById('deviceId');
-    const telemetryCdata = [{type: 'Program', id: this.activatedRoute.snapshot.params.programId}];
      setTimeout(() => {
       this.telemetryImpression = {
         context: {
           env: this.activatedRoute.snapshot.data.telemetry.env,
-          cdata: telemetryCdata || [],
+          cdata: this.telemetryInteractCdata || [],
           pdata: {
             id: this.userService.appId,
             ver: version,
@@ -148,12 +149,17 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         },
         edata: {
           type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
-          pageid: _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid'),
+          pageid: this.getPageId(),
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
      });
+  }
+
+  getPageId() {
+    this.telemetryPageId = _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid');
+    return this.telemetryPageId;
   }
 
   canAssignUsersToProgram() {
@@ -188,7 +194,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   resetStatusFilter(tab) {
     this.router.navigate([], { relativeTo: this.activatedRoute, queryParams: { tab: tab }, queryParamsHandling: 'merge' });
-
+    this.setTelemetryPageId(tab);
     if (tab === 'textbook' && !_.includes(this.visitedTab, 'textbook')) {
       this.visitedTab.push('textbook');
       this.showTextbookLoader = true;
@@ -211,6 +217,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
           this.toasterService.warning(errorMes || 'Fetching Preferences  failed');
       });
+      this.generateImpressionEvent();
     }
 
     if (tab === 'nomination' && !_.includes(this.visitedTab, 'nomination')) {
@@ -220,11 +227,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.sortColumn = 'createdon';
       this.getPaginatedNominations(0);
       this.sortCollection(this.sortColumn, this.nominations);
+      this.generateImpressionEvent();
     }
     if (tab === 'user' && !_.includes(this.visitedTab, 'user')) {
       this.showUsersLoader = true;
       this.visitedTab.push('user');
       this.getsourcingOrgReviewers();
+      this.generateImpressionEvent();
     }
 
     if (tab === 'contributionDashboard' && !_.includes(this.visitedTab, 'contributionDashboard')) {
@@ -241,8 +250,26 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       } else {
         this.getNominationList();
       }
-
       this.visitedTab.push('contributionDashboard');
+      this.generateImpressionEvent();
+    }
+
+    if (tab === 'report' && !_.includes(this.visitedTab, 'report')) {
+      this.generateImpressionEvent();
+    }
+  }
+
+  setTelemetryPageId(tab: string) {
+    if (tab === 'textbook') {
+      this.telemetryPageId = _.get(this.config, 'telemetryConfig.sourcing_project_contributions');
+    } else if (tab === 'nomination') {
+      this.telemetryPageId = _.get(this.config, 'telemetryConfig.sourcing_project_nominations');
+    } else if (tab === 'user') {
+      this.telemetryPageId = _.get(this.config, 'telemetryConfig.sourcing_project_assign_users');
+    } else if (tab === 'contributionDashboard') {
+      this.telemetryPageId = _.get(this.config, 'telemetryConfig.sourcing_project_contribution_dashboard');
+    } else if (tab === 'report') {
+      this.telemetryPageId = _.get(this.config, 'telemetryConfig.sourcing_project_reports');
     }
   }
 
@@ -630,10 +657,11 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     });
   }
 
-  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+  getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: string): IInteractEventEdata {
     return _.omitBy({
       id,
       type,
+      subtype,
       pageid,
       extra
     }, _.isUndefined);
@@ -645,8 +673,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         this.activeTab = !_.isEmpty(params.get('tab')) ? params.get('tab') : 'textbook';
     });
     this.visitedTab.push(this.activeTab);
+    this.setTelemetryPageId(this.activeTab);
     this.showLoader = false;
-
     if (this.activeTab === 'textbook') {
       this.showTextbookLoader = true;
         this.programsService.getUserPreferencesforProgram(this.userProfile.identifier, this.programId).subscribe(
@@ -690,6 +718,18 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         }
       );
     }
+
+    this.generateImpressionEvent();
+  }
+
+  generateImpressionEvent() {
+    const appTelemetryImpression = _.cloneDeep(this.telemetryImpression);
+    appTelemetryImpression.edata.pageid = this.telemetryPageId;
+    // tslint:disable-next-line:max-line-length
+    if (_.isEqual(this.telemetryPageId, 'sourcing_project_contribution_dashboard') || _.isEqual(this.telemetryPageId, 'sourcing_project_reports')) {
+      appTelemetryImpression.edata.type = 'report';
+    }
+    this.telemetryService.impression(appTelemetryImpression);
   }
 
   readRolesOfOrgUsers(orgUsers) {
@@ -768,12 +808,12 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
   setTelemetryForonRoleChange(user) {
     const edata =  {
-      id: 'assign-role-by-sourcingOrg',
+      id: 'assign_role_by_sourcingOrg',
       type: 'click',
-      pageid: 'program-nominations',
+      pageid: this.telemetryPageId,
       extra : {values: [user.identifier, user.newRole]}
-    }
-     this.registryService.generateUserRoleUpdateTelemetry(this.activatedRoute.snapshot.data.telemetry.env,this.telemetryInteractCdata,this.telemetryInteractPdata, edata )
+    };
+    this.registryService.generateUserRoleUpdateTelemetry(this.activatedRoute.snapshot.data.telemetry.env,this.telemetryInteractCdata,this.telemetryInteractPdata, edata )
   }
 
 showUserRoleOption(roleName, userRole) {

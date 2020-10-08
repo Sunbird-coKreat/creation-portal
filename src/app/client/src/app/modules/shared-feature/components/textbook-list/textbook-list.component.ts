@@ -56,7 +56,7 @@ export class TextbookListComponent implements OnInit {
     public programsService: ProgramsService, private httpClient: HttpClient,
     public toasterService: ToasterService, public resourceService: ResourceService,
     public actionService: ActionService, private collectionHierarchyService: CollectionHierarchyService,
-    private userService: UserService, private formBuilder: FormBuilder, private configService: ConfigService,
+    private userService: UserService, private formBuilder: FormBuilder, public configService: ConfigService,
     public programTelemetryService: ProgramTelemetryService
   )  {
     this.sbFormBuilder = formBuilder;
@@ -64,7 +64,10 @@ export class TextbookListComponent implements OnInit {
 
   ngOnInit(): void {
     this.initialize();
-    this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program'}];
+    this.telemetryInteractCdata = [
+      {id: this.activatedRoute.snapshot.params.programId, type: 'project'},
+      {id: this.userService.channel, type: 'sourcing_organization'}
+    ];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
   }

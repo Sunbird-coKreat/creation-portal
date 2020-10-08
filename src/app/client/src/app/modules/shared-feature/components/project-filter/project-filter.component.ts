@@ -46,8 +46,9 @@ export class ProjectFilterComponent implements OnInit {
   ngOnInit() {
     this.activeAllProgramsMenu = this.router.isActive('/contribute', true); // checking the router path
     this.activeMyProgramsMenu = this.router.isActive('/contribute/myenrollprograms', true);
-    this.telemetryInteractCdata = [];
+    this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
+    console.log('userService', this.userService);
     this.telemetryInteractObject = {};
     this.createFilterForm(); // creating the filter form
     this.currentFilters = { // setting up initial values
@@ -381,10 +382,11 @@ export class ProjectFilterComponent implements OnInit {
     this.modal.deny();
     this.dismiss.emit();
   }
-  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+  getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: any): IInteractEventEdata {
     return _.omitBy({
       id,
       type,
+      subtype,
       pageid,
       extra
     }, _.isUndefined);

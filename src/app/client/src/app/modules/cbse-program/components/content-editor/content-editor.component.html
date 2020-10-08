@@ -18,14 +18,14 @@
     <div class='practical-sb-buttons'>
       <button id="requestChanges" suiPopup popupText="Request Changes" [popupPlacement]="'top'" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true;" *ngIf="visibility && visibility.showRequestChanges"
       appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-resource', 'click', 'content-editor')"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-resource', 'click',undefined,'content-editor')"
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
       >Request Changes</button>
       <button id="publishContent" suiPopup popupText="Publish" [popupPlacement]="'top'" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="publichContent()" *ngIf="visibility && visibility.showRequestChanges"
       appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('publish-resource', 'click', 'content-editor')"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('publish-resource', 'click',undefined, 'content-editor')"
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
@@ -57,7 +57,7 @@
   <div class="sb-modal-actions">
     <button id="submitReview" type="submit" class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid}"   (click)="requestChanges()"
     appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-resourcewithcomments', 'click', 'content-editor')"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-resourcewithcomments', 'click',undefined, 'content-editor')"
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"

@@ -4,7 +4,7 @@
 				<button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn fs-0-92 pl-0" (click)="goBack()"
 						type="button"
 						appTelemetryInteract
-				[telemetryInteractEdata]="getTelemetryInteractEdata('list-textbooks', 'click', 'list-nominated-textbooks')"
+				[telemetryInteractEdata]="getTelemetryInteractEdata('back', 'click', 'launch', telemetryPageId)"
 				[telemetryInteractObject]="telemetryInteractObject"
 				[telemetryInteractCdata]="telemetryInteractCdata"
 				[telemetryInteractPdata]="telemetryInteractPdata">
@@ -128,10 +128,10 @@
 							<a class="cursor-pointer text-decoration-underline sb-color-primary"
 								(click)="showcontributorProfile=true"
 								appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('name-contributor', 'click', 'list-nominated-textbooks')"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">{{contributor?.name}} </a>
+								[telemetryInteractEdata]="getTelemetryInteractEdata('name_contributor', 'click','launch', telemetryPageId)"
+								[telemetryInteractObject]="telemetryInteractObject"
+								[telemetryInteractCdata]="telemetryInteractCdata"
+								[telemetryInteractPdata]="telemetryInteractPdata">{{contributor?.name}} </a>
 						</dd>
 					</dl>
 					<div class="d-flex flex-ai-center flex-jc-space-around flex-basis-1">
@@ -190,7 +190,7 @@
 				[ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid}"
 				(click)="updateNomination('reject')"
 				appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('rejection-feedback', 'click', 'list-nominated-textbooks')"
+      [telemetryInteractEdata]="getTelemetryInteractEdata('submit', 'click','submit' ,telemetryPageId,{key:'dialog_id',value:'reasons_for_rejection'})"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.submit}} </button>
@@ -213,7 +213,7 @@
 							*ngIf="contributor?.nominationData?.status === 'Pending'"
 							(click)="updateNomination('accept')"
 							appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('accept-nomination', 'click', 'list-nominated-textbooks')"
+      [telemetryInteractEdata]="getTelemetryInteractEdata('accept', 'click','submit',telemetryPageId)"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.accept}}</button>
@@ -221,7 +221,7 @@
 							*ngIf="contributor?.nominationData?.status === 'Pending'"
 							(click)="rejectNomination();"
 							appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('reject-nomination', 'click', 'list-nominated-textbooks')"
+      [telemetryInteractEdata]="getTelemetryInteractEdata('reject', 'click','launch', telemetryPageId)"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.reject}}</button>
@@ -282,7 +282,7 @@
 								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" [disabled]="contributorTextbook?.totalSampleContent === 0 ? true : false "
 									*ngIf="contributor?.nominationData?.status == 'Pending'" (click)="viewContribution(contributorTextbook)"
 									appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('view-content', 'click', 'list-nominated-textbooks')"
+      [telemetryInteractEdata]="getTelemetryInteractEdata('view_content', 'click','launch',telemetryPageId)"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.viewSampleContent}}</button>
@@ -290,7 +290,7 @@
 									*ngIf="contributor?.nominationData?.status == 'Approved'"
 									(click)="viewContribution(contributorTextbook)"
 									appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('view-contribution', 'click', 'list-nominated-textbooks')"
+      [telemetryInteractEdata]="getTelemetryInteractEdata('view_contributions', 'click','launch', telemetryPageId)"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.viewContributions}}</button>
