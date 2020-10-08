@@ -183,7 +183,7 @@
           "Administrator"
         ]
       },
-      "default": ["Learner"]
+      "default": ["Student"]
     },
     "posterImage": {
       "type": "string",
