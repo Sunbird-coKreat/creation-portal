@@ -56,6 +56,7 @@ export class ProgramsService extends DataService implements CanActivate {
     private contentService: ContentService, private router: Router,
     private toasterService: ToasterService, private resourceService: ResourceService,
     public learnerService: LearnerService, private registryService: RegistryService,
+    public frameworkService: FrameworkService,
     public cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService) {
       super(http);
       this.config = config;
@@ -93,6 +94,12 @@ export class ProgramsService extends DataService implements CanActivate {
      );
    }
   }
+
+  // Get organisation details based on tenant user visit page
+  get organisationDetails() {
+    return this._organisations;
+  }
+
   /**
    * Function used to search user or org in registry
    */
@@ -722,7 +729,7 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * makes api call to get list of programs from ext framework Service
    */
-  getAllProgramsByType(type, status, sort): Observable<ServerResponse> {
+  getAllProgramsByType(type, status, appliedfilters?, sort?): Observable<ServerResponse> {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
       data: {
@@ -735,6 +742,9 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
+    if (appliedfilters) {
+      req.data.request.filters = {...req.data.request.filters , ...appliedfilters};
+    }
 
     // Check if slug is present in the URL, if yes then fetch the program those slug org only
     const urlSlug = this.userService.slug;
@@ -1163,6 +1173,35 @@ export class ProgramsService extends DataService implements CanActivate {
   sendprogramsNotificationData(programData) {
     this._programsNotificationData.next(programData);
   }
+  frameworkInitialize(frameworkName?) {
+    this.frameworkService.initialize(frameworkName); // initialize framework details here
+  }
+  getAllTenantList(): Observable<ServerResponse> {
+    const req = {
+      url: this.config.urlConFig.URLS.DOCK_TENANT.LIST,
+      data: {
+        request: {
+          filters: {
+            status: 'Live'
+          }
+        }
+      }
+    };
+    if (this.cacheService.get('allTenantList')) {
+      return  of(this.cacheService.get('allTenantList'));
+    } else {
+      return this.post(req).pipe(tap(data => this.setSessionCache({name: 'allTenantList', value: data})));
+    }
+  }
+  getFiltersAppliedCount(appliedfilters) { // finding the applied filters count
+    let count = 0;
+    if (appliedfilters) {
+     _.map(_.compact(Object.values(appliedfilters)), (values) =>{
+       values.length ? count++ : 0;
+        });
+    }
+  return count;
+}
   /*getSourcingOrgUserList(sourcingOrgId, roles, limit?) {
     return new Promise((resolve, reject) => {
       // Get all diskha users

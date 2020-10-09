@@ -147,6 +147,9 @@ a {
 .break-word {
   word-break: break-word;
 }
+.break-word-initial {
+  word-break: initial;
+}
 .white-space-nowrap {
   white-space: nowrap !important;
 }
@@ -259,4 +262,9 @@ a {
 .sb-color-yellow{
   color: #926E24;
 } 
-
+.sb-maxw-10{
+  max-width: 10rem;
+}
+.sb-maxw-5{
+  max-width: 5rem;
+}

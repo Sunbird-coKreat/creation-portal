@@ -17,6 +17,7 @@ export class OrgReportsComponent implements OnInit, AfterViewInit {
   public reportsLocation: string;
   public slug: string;
   public reportFormat = '.csv';
+  public reportPrefix = 'sourcing';
   public telemetryImpression: IImpressionEventInput;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
@@ -62,8 +63,13 @@ export class OrgReportsComponent implements OnInit, AfterViewInit {
      });
   }
 
-  downloadReport(reportName: string) {
-    const filepath = `/${this.reportsLocation}/${this.slug}/${reportName}${this.reportFormat}`;
+  downloadReport(reportName: string, isSourcingPrefix: boolean) {
+    let filepath;
+    if (isSourcingPrefix) {
+      filepath = `/${this.reportsLocation}/${this.reportPrefix}/${this.slug}/${reportName}${this.reportFormat}`;
+    } else {
+      filepath = `/${this.reportsLocation}/${this.slug}/${reportName}${this.reportFormat}`;
+    }
     this.usageService.getData(filepath).subscribe((response) => {
       if (_.get(response, 'responseCode') === 'OK') {
         const url = _.get(response, 'result.signedUrl');

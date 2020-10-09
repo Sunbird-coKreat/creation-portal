@@ -178,9 +178,9 @@
       "items": {
         "type": "string",
         "enum": [
-          "Learner",
-          "Instructor",
-          "Student"
+          "Student",
+          "Teacher",
+          "Administrator"
         ]
       },
       "default": ["Learner"]
@@ -1033,6 +1033,120 @@
     },
     "chapterCountForContribution": {
       "type": "number"
+    },
+    "licenseterms" : {
+      "type": "string"
+    },
+    "copyrightYear" : {
+      "type": "number"
+    },
+    "monitorable": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "progress-report",
+          "score-report"
+        ]
+      }
+    },
+    "userConsent": {
+      "type": "string",
+      "enum": [
+        "Yes",
+        "No"
+      ]
+    },
+    "trackable": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "string",
+          "enum": ["Yes","No"],
+          "default": "No"
+        },
+        "autoBatch": {
+          "type": "string",
+          "enum": ["Yes","No"],
+          "default": "No"
+        }
+      },
+      "default": {
+        "enabled": "No",
+        "autoBatch": "No"
+      },
+      "additionalProperties": false
+    },
+    "credentials": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "string",
+          "enum": ["Yes","No"],
+          "default": "No"
+        }
+      },
+      "default": {
+        "enabled": "No"
+      },
+      "additionalProperties": false
+    },
+    "primaryCategory": {
+      "type": "string",
+      "enum": [
+        "Explanation Content",
+        "Learning Resource",
+        "Course",
+        "Practice Question Set",
+        "eTextbook",
+        "Teacher Resource",
+        "Course Assessment",
+        "Digital Textbook",
+        "Content Playlist",
+        "Template",
+        "Asset",
+        "Plugin",
+        "Lesson Plan Unit",
+        "Course Unit",
+        "Textbook Unit"
+      ]
+    },
+    "additionalCategories": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Textbook",
+          "Lesson Plan"
+        ]
+      }
+    },
+    "prevStatus": {
+      "type": "string"
+    },
+    "batches": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "year": {
+      "type": "string"
+    },
+    "plugins": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "showNotification": {
+      "type": "boolean"
+    },
+    "collectionId": {
+       "type": "string"
+    },
+    "courseId": {
+      "type": "string"
     }
   }
 }

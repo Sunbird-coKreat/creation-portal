@@ -37,9 +37,14 @@
           <label class="d-block width-100" *ngIf="hasAccessFor('showContribution') && ((sessionContext.currentRoles.includes('CONTRIBUTOR') && sessionContext.currentRoles.includes('REVIEWER')) || sessionContext.currentRoles.includes('CONTRIBUTOR'))">Contributions</label>
           <label class="d-block width-100" *ngIf="hasAccessFor('showUpforReview') && sessionContext.currentRoles.includes('REVIEWER') && sessionContext.currentRoles.length === 1">Up for Review</label>
           <div class="d-flex">
-            <dl *ngIf="hasAccessFor('showTotalContribution') || hasAccessFor('showTotalUnderReview')"
+            <dl *ngIf="!sourcingOrgReviewer && (hasAccessFor('showTotalContribution') || hasAccessFor('showTotalUnderReview'))"
               class="sb-meta-data">
               <dt>{{countData['total']}}</dt>
+              <dd>Total</dd>
+            </dl>
+            <dl *ngIf="sourcingOrgReviewer && (hasAccessFor('showTotalContribution') || hasAccessFor('showTotalUnderReview'))"
+              class="sb-meta-data">
+              <dt>{{countData['sourcing_total']}}</dt>
               <dd>Total</dd>
             </dl>
             <dl *ngIf="hasAccessFor('showMyContribution')"

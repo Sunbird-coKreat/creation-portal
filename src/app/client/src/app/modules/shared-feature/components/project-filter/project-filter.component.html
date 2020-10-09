@@ -1,0 +1,113 @@
+<sui-modal [mustScroll]="true" #modal [isClosable]="true" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
+  appBodyScroll (dismissed)="dismissed()">
+  <div class="sb-modal-header">
+    {{resourceService?.frmelmnts?.lbl?.applyFilters}}
+  </div>
+  <div class="sb-modal-content">
+    <p class="fs-0-92 font-weight-bold">{{resourceService?.frmelmnts?.lbl?.searchRelevantProjects}}</p>
+    <span class="sb-loader sb-success-loader sb-loader-top" *ngIf="showLoader"></span>
+    <div class="segment mt-5 pb-30 pt-10">
+      <form class="ui form sb-dock-dropdown" [formGroup]="filterForm">
+        <div class="ui grid">
+          <div class="six wide column py-10" *ngIf="showFilters['sourcingOrganisations']">
+            <div class="field">
+              <label
+                class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.sourcingOrganisations}}</label>
+              <sui-select class="selection" [options]="currentFilters['rootorg_id']" (selectedOptionChange)="onChangeSourcingOrg()"
+                [(ngModel)]="setPreferences['rootorg_id']" valueField="id" labelField="orgName"
+                placeholder="{{resourceService?.frmelmnts?.lbl?.selectSourcingFilter}}"
+                formControlName="sourcingOrganisations" #sourcingOrganisations>
+                <sui-select-option *ngFor="let sourcing of sourcingOrganisations.filteredOptions" [value]="sourcing">
+                </sui-select-option>
+              </sui-select>
+            </div>
+          </div>
+          <div class="six wide column py-10">
+            <div class="field">
+              <label
+                class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.mediumsFilter}}</label>
+              <sui-multi-select class="selection p-5 b-100" [(ngModel)]="setPreferences['medium']" valueField="name"  labelField="name"
+              (ngModelChange)="onMediumChange()" [options]="currentFilters['medium']" placeholder="{{resourceService?.messages?.stmsg?.m0127}}"
+                formControlName="medium" #mediums>
+                <sui-select-option *ngFor="let medium of mediums.filteredOptions" [value]="medium"> </sui-select-option>
+              </sui-multi-select>
+            </div>
+          </div>
+          <div class="six wide column py-10">
+            <div class="field">
+              <label
+                class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.classesFilter}}</label>
+              <sui-multi-select formControlName="gradeLevel" [(ngModel)]="setPreferences['gradeLevel']" valueField="name" labelField="name"
+              (ngModelChange)="onClassChange()"  [options]="currentFilters['gradeLevel']" placeholder="{{resourceService?.messages?.stmsg?.m0128}}"
+                class="selection p-5 b-100" #gradeLevels>
+                <sui-select-option *ngFor="let gradeLevel of gradeLevels.filteredOptions" [value]="gradeLevel">
+                </sui-select-option>
+              </sui-multi-select>
+            </div>
+          </div>
+          <div class="six wide column py-10">
+            <div class="field">
+              <label
+                class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.subjectsFilter}}</label>
+              <sui-multi-select class="selection p-5 b-100" [(ngModel)]="setPreferences['subject']"
+                [options]="currentFilters['subject']" valueField="name" labelField="name"
+                placeholder="{{resourceService?.frmelmnts?.lbl?.selectSubjectFilter}}" formControlName="subject"
+                #subjects>
+                <sui-select-option *ngFor="let subject of subjects.filteredOptions" [value]="subject">
+                </sui-select-option>
+              </sui-multi-select>
+            </div>
+          </div>
+          <div class="six wide column py-10">
+            <div class="field">
+              <label
+                class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.contentsFilter}}</label>
+              <sui-multi-select formControlName="content_types" [(ngModel)]="setPreferences['content_types']" 
+                valueField="value" labelField="name" [options]="currentFilters['contentTypes']"
+                placeholder="{{resourceService?.frmelmnts?.lbl?.selectcontentTypesFilter}}" class="selection p-5 b-100"
+                #contentTypes>
+                <sui-select-option *ngFor="let contentType of contentTypes.filteredOptions" [value]="contentType">
+                </sui-select-option>
+              </sui-multi-select>
+            </div>
+          </div>
+          <div class="six wide column py-10" *ngIf="showFilters['nomination_date']">
+            <div class="field">
+              <label
+                class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.nominationDate}}</label>
+              <sui-select class="selection" [options]="currentFilters['nominations']" valueField="value"
+                labelField="name" placeholder="{{resourceService?.frmelmnts?.lbl?.Select}}"
+                [(ngModel)]="setPreferences['nomination_date']" formControlName="nominations" #nominations>
+                <sui-select-option *ngFor="let nomination of nominations.filteredOptions" [value]="nomination">
+                </sui-select-option>
+              </sui-select>
+            </div>
+          </div>
+          <div class="six wide column py-10" *ngIf="showFilters['contribution_date']">
+            <div class="field">
+              <label
+                class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.contributionDate}}</label>
+              <sui-select class="selection" [options]="currentFilters['contributions']" valueField="value"
+                labelField="name" placeholder="{{resourceService?.frmelmnts?.lbl?.Select}}"
+                [(ngModel)]="setPreferences['contribution_date']" formControlName="contributions" #contributions>
+                <sui-select-option *ngFor="let contribution of contributions.filteredOptions" [value]="contribution">
+                </sui-select-option>
+              </sui-select>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="sb-modal-actions py-20">
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary"  [disabled]="!enableApplyBtn" (click)="applyFilter()" appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('apply-filters', 'click', 'program-list', {values: [setPreferences],tenantAccess: userService.slug})"
+      [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService?.frmelmnts?.btn?.apply}} </button>
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="applyFilter('resetFilter')"
+      appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('reset-filters', 'click', 'program-list')"
+      [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService?.frmelmnts?.btn?.reset}}</button>
+  </div>
+</sui-modal>

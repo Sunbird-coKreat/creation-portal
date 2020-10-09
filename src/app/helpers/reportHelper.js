@@ -73,7 +73,8 @@ const apiResponse = ({ responseCode, result, params: { err, errmsg, status } }) 
 function azureBlobStream() {
     return function (req, res, next) {
         let container = envHelper.sunbird_azure_report_container_name;
-        let fileToGet = req.params.slug + '/' + req.params.filename;
+        let fileToGet =  req.params.slug + '/' + req.params.filename;
+        if(req.params.reportPrefix){ fileToGet = req.params.reportPrefix + '/' + fileToGet;}
         if (fileToGet.includes('.json')) {
             const readStream = blobService.createReadStream(container, fileToGet);
             readStream.pipe(res);

@@ -27,7 +27,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public showLoader = true;
   public contributorOrgUsers: any = [];
   public tempSortOrgUser: any = [];
-  public direction = 'asc';
+  public direction = 'desc';
   public sortColumn = 'selectedRole';
   public roles = [{ name: 'User', value: 'user'}, { name: 'Admin', value: 'admin'}];
   pager: IPagination;
@@ -37,6 +37,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   initialSourcingOrgUser = [];
   searchLimitMessage: any;
   searchLimitCount: any;
+  isInitialSourcingOrgUser = true;
   constructor(private toasterService: ToasterService, private configService: ConfigService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
@@ -118,14 +119,17 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
       this.searchLimitMessage = false;
       this.sortUsersList(this.initialSourcingOrgUser, true);
     }
+    this.sortColumn = 'selectedRole';
   }
   
   sortUsersList(usersList, isUserSearch?) {
  
      this.orgUserscnt = usersList.length;
      this.allContributorOrgUsers = this.programsService.sortCollection(usersList, this.sortColumn, this.direction);
-  
-     isUserSearch ?  this.allContributorOrgUsers:  this.initialSourcingOrgUser = this.allContributorOrgUsers;
+     if (this.isInitialSourcingOrgUser) {
+      this.initialSourcingOrgUser = this.allContributorOrgUsers;
+      this.isInitialSourcingOrgUser = false;
+    }
      usersList = _.chunk(this.allContributorOrgUsers, this.pageLimit);
      this.paginatedContributorOrgUsers = usersList;
      this.contributorOrgUsers = isUserSearch? usersList[0] : usersList[this.pageNumber-1];

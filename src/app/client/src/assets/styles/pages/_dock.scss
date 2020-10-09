@@ -293,10 +293,11 @@ right: -5px;
 top: -4px;
 }
 .sb-dock-dropdown{
-    .ui {
-      .multiple{
-        &.dropdown {
-          border: 1px solid rgba(34,36,38,.15) !important;
+  .ui {
+    .multiple{
+      &.dropdown {
+        border: 1px solid rgba(34,36,38,.15) !important;
+        background: #fff !important;
       }
     }
   }
@@ -627,4 +628,7 @@ xxl calculateRem(180px) 24px 20px;
       pointer-events: none;
       font-size: 10px;
     }
+}
+.sb-loader-top{
+  top: 18% !important;
 }

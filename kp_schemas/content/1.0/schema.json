@@ -181,9 +181,9 @@
             "items": {
                 "type": "string",
                 "enum": [
-                    "Learner",
-                    "Instructor",
-                    "Student"
+                    "Student",
+                    "Teacher",
+                    "Administrator"
                 ]
             },
             "default": ["Student"]
@@ -1062,6 +1062,149 @@
         },
         "label" : {
             "type": "string"
+        },
+        "plugins": {
+            "type": "array",
+            "items": {
+                "type": "object"
+            }
+        },
+        "licenseterms" : {
+            "type": "string"
+        },
+        "copyrightYear" : {
+            "type": "number"
+        },
+        "itemSetPreviewUrl": {
+            "type": "string"
+        },
+        "me_totalTimeSpentInSec": {
+            "type": "object"
+        },
+        "me_totalPlaySessionCount": {
+            "type": "object"
+        },
+        "me_totalRatingsCount": {
+            "type": "number"
+        },
+        "monitorable": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "enum": [
+                    "progress-report",
+                    "score-report"
+                ]
+            }
+        },
+        "userConsent": {
+            "type": "string",
+            "enum": [
+                "Yes",
+                "No"
+            ]
+        },
+        "trackable": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "string",
+                    "enum": ["Yes","No"],
+                    "default": "No"
+                },
+                "autoBatch": {
+                    "type": "string",
+                    "enum": ["Yes","No"],
+                    "default": "No"
+                }
+            },
+            "default": {
+                "enabled": "No",
+                "autoBatch": "No"
+            },
+            "additionalProperties": false
+        },
+        "credentials": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "string",
+                    "enum": ["Yes","No"],
+                    "default": "No"
+                }
+            },
+            "default": {
+                "enabled": "No"
+            },
+            "additionalProperties": false
+        },
+        "processId": {
+            "type": "string"
+        },
+        "primaryCategory": {
+            "type": "string",
+            "enum": [
+                "Explanation Content",
+                "Learning Resource",
+                "Course",
+                "Practice Question Set",
+                "eTextbook",
+                "Teacher Resource",
+                "Course Assessment",
+                "Digital Textbook",
+                "Content Playlist",
+                "Template",
+                "Asset",
+                "Plugin",
+                "Lesson Plan Unit",
+                "Course Unit",
+                "Textbook Unit"
+            ]
+        },
+        "additionalCategories": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "enum": [
+                    "Textbook",
+                    "TV Lesson",
+                    "Previous Board Exam Papers",
+                    "Pedagogy Flow",
+                    "Marking Scheme Rubric",
+                    "Lesson Plan",
+                    "Learning Outcome Definition",
+                    "Focus Spot",
+                    "Explanation Video",
+                    "Experiential Resource",
+                    "Curiosity Question Set",
+                    "Concept Map",
+                    "Classroom Teaching Video"
+                ]
+            }
+        },
+        "prevStatus": {
+            "type": "string"
+        },
+        "cloudStorageKey": {
+            "type": "string"
+        },
+        "batches": {
+            "type": "array",
+            "items": {
+                "type": "object"
+            }
+        },
+        "year": {
+            "type": "string"
+        },
+        "showNotification": {
+            "type": "boolean"
+        },
+        "learningOutcome": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
         }
     }
 }

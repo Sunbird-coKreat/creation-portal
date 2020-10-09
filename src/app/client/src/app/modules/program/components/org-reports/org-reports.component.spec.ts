@@ -76,7 +76,7 @@ describe('OrgReportsComponent', () => {
     const usageService = TestBed.get(UsageService);
     spyOn(usageService, 'getData').and.returnValue(observableOf(mockData.reportReadSuccess));
     spyOn(window, 'open');
-    component.downloadReport('TextbookLevel');
+    component.downloadReport('TextbookLevel', true);
     expect(window.open).toHaveBeenCalledWith(mockData.reportReadSuccess.result.signedUrl, '_blank');
 
   });
@@ -88,7 +88,7 @@ describe('OrgReportsComponent', () => {
     resourceService.messages = resourceBundle.messages;
     spyOn(usageService, 'getData').and.returnValue(observableThrowError({}));
     spyOn(toasterService, 'error').and.callThrough();
-    component.downloadReport('TextbookLevel');
+    component.downloadReport('TextbookLevel', true);
     expect(toasterService.error).toHaveBeenCalledWith(resourceService.messages.emsg.m0076);
   });
 
@@ -97,7 +97,7 @@ describe('OrgReportsComponent', () => {
     const toasterService = TestBed.get(ToasterService);
     spyOn(usageService, 'getData').and.returnValue(observableOf(mockData.reportReadFailed));
     spyOn(toasterService, 'error').and.callThrough();
-    component.downloadReport('TextbookLevel');
+    component.downloadReport('TextbookLevel', true);
     const resourceService = TestBed.get(ResourceService);
     resourceService.messages = resourceBundle.messages;
     expect(toasterService.error).toHaveBeenCalledWith(resourceService.messages.emsg.m0076);

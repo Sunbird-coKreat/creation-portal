@@ -3,6 +3,9 @@
         "create" : [
             "status", "dialcodes"
         ],
+        "copy" : [
+            "status"
+        ],
         "update": []
     },
     "objectType": "Content",
@@ -72,5 +75,27 @@
             "license": "License"
         }
     },
-    "cacheEnabled": true
+    "copy": {
+        "scheme": {
+            "TextBookToCourse": {
+                "TextBook": "Course",
+                "TextBookUnit": "CourseUnit"
+            },
+            "TextBookToLessonPlan": {
+            }
+        }
+    },
+    "cacheEnabled": true,
+    "searchProps": {
+        "status": ["Live"],
+        "softConstraints": {
+            "medium": 15,
+            "subject": 15,
+            "ageGroup": 1,
+            "gradeLevel": 7,
+            "board": 4,
+            "relatedBoards": 4
+        }
+    },
+    "schema_restrict_api": true
 }
