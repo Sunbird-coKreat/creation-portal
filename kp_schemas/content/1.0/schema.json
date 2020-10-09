@@ -1199,6 +1199,12 @@
         },
         "showNotification": {
             "type": "boolean"
-        }
+        },
+        "learningOutcome": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
     }
 }
