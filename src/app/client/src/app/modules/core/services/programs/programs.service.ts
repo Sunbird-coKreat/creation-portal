@@ -722,7 +722,7 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * makes api call to get list of programs from ext framework Service
    */
-  getAllProgramsByType(type, status): Observable<ServerResponse> {
+  getAllProgramsByType(type, status, sort): Observable<ServerResponse> {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
       data: {
@@ -730,7 +730,8 @@ export class ProgramsService extends DataService implements CanActivate {
           filters: {
             type: type,
             status: status
-          }
+          },
+          sort: sort
         }
       }
     };

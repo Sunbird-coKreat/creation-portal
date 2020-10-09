@@ -1,3 +1,4 @@
+import { userProfile } from './../../../program/components/program-nominations/program-nominations.spec.data';
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ProgramsService, RegistryService, UserService } from '@sunbird/core';
 import { ResourceService, ToasterService, ConfigService, NavigationHelperService } from '@sunbird/shared';
@@ -109,7 +110,13 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       if (this.activeMyProgramsMenu) {
         this.getMyProgramsForContrib(['Live', 'Unlisted']);
       } else if (this.activeAllProgramsMenu) {
-        this.getAllProgramsForContrib('public', ['Live', 'Unlisted']);
+        const sort = {
+          'medium': _.get(this.userService.userProfile, 'medium') ? _.get(this.userService.userProfile, 'medium') : [],
+          'gradeLevel': _.get(this.userService.userProfile, 'gradeLevel') ? _.get(this.userService.userProfile, 'gradeLevel') : [],
+          'subject': _.get(this.userService.userProfile, 'subject') ? _.get(this.userService.userProfile, 'subject') : []
+        };
+
+        this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], sort);
       } else {
         this.showLoader = false;
       }
@@ -189,8 +196,8 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   /**programContext
    * fetch the list of programs.
    */
-  private getAllProgramsForContrib(type, status) {
-    this.programsService.getAllProgramsByType(type, status).subscribe(
+  private getAllProgramsForContrib(type, status, sort) {
+    this.programsService.getAllProgramsByType(type, status, sort).subscribe(
       response => {
         const allPrograms = _.get(response, 'result.programs');
         if (allPrograms.length) {
