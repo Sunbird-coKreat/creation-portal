@@ -3208,6 +3208,18 @@
           "defaultValue": "",
           "renderingHints": "{ 'inputType': 'multiselect',  'order': 14 }",
           "indexed": true
+        },
+        {
+          "required": false,
+          "propertyName": "learningOutcome",
+          "title": "Learning Outcome",
+          "description": "Learning Outcome",
+          "category": "Pedagogy",
+          "dataType": "List",
+          "displayProperty": "Editable",
+          "defaultValue": "",
+          "renderingHints": "{'inputType': 'table', 'order': 20}",
+          "indexed": true
         }
       ],
       "inRelations": [
