@@ -1,5 +1,5 @@
 {
-  "objectType": "Content",
+  "objectType": "Collection",
   "external": {
     "tableName": "content_hierarchy",
     "properties": {
@@ -47,5 +47,16 @@
     "properties": {
       "license": "License"
     }
-  }
+  },
+  "copy": {
+    "scheme": {
+      "TextBookToCourse": {
+        "TextBook": "Course",
+        "TextBookUnit": "CourseUnit"
+      },
+      "TextBookToLessonPlan": {
+      }
+    }
+  },
+  "schema_restrict_api": true
 }
