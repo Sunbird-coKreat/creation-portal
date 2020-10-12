@@ -4,6 +4,7 @@ import { ISessionContext } from './index';
 export interface IContentUploadComponentInput {
   config?: any;
   sessionContext?: ISessionContext;
+  telemetryPageId?: string;
   unitIdentifier?: string;
   selectedSharedContext?: any;
   contentId?: string;

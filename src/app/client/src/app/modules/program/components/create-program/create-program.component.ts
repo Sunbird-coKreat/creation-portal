@@ -139,7 +139,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     private sbFormBuilder: FormBuilder,
     private httpClient: HttpClient,
     private navigationHelperService: NavigationHelperService,
-    private configService: ConfigService,
+    public configService: ConfigService,
     private deviceDetectorService: DeviceDetectorService,
     public programTelemetryService: ProgramTelemetryService,
     public actionService: ActionService) {

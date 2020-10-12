@@ -1,17 +1,51 @@
 {
-    "sourcing_my_projects" : "sourcing_my_projects",
-    "sourcing_manage_users" : "sourcing_manage_users",
-    "sourcing_organisation_reports" : "sourcing_organisation_reports",
-    "main_header" : "main_header",
-    "sourcing_create_project_details" : "sourcing_create_project_details",
-    "sourcing_create_project_requirements" : "sourcing_create_project_requirements",
-    "sourcing_modify_project": "sourcing_modify_project",
-    "sourcing_project_contributions": "sourcing_project_contributions",
-    "sourcing_project_nominations" : "sourcing_project_nominations",
-    "sourcing_project_assign_users" : "sourcing_project_assign_users",
-    "sourcing_project_contribution_dashboard" : "sourcing_project_contribution_dashboard",
-    "sourcing_project_reports" : "sourcing_project_reports",
-    "sourcing_project_nomination_details": "sourcing_project_nomination_details",
-    "sourcing_help" : "sourcing_help",
-    "sourcing_terms_of_use": "sourcing_terms_of_use"
+    "pageId" : {
+        "sourcing" : {
+            "myProjects" : "sourcing_my_projects",
+            "manageUsers" : "sourcing_manage_users",
+            "organisationReports" : "sourcing_organisation_reports",
+            "mainHeader" : "main_header",
+            "createProjectDetails" : "sourcing_create_project_details",
+            "createProjectRequirements" : "sourcing_create_project_requirements",
+            "modifyProject": "sourcing_modify_project",
+            "projectContributions": "sourcing_project_contributions",
+            "projectNominations" : "sourcing_project_nominations",
+            "projectAssignUsers" : "sourcing_project_assign_users",
+            "projectContributionDashboard" : "sourcing_project_contribution_dashboard",
+            "projectReports" : "sourcing_project_reports",
+            "projectNominationDetails": "sourcing_project_nomination_details",
+            "projectNominationTargetCollection" : "sourcing_project_nomination_target_collection",
+            "projectNominationContributionDetails" : "sourcing_project_nomination_contribution_details",
+            "help" : "sourcing_help",
+            "termsOfUse": "sourcing_terms_of_use"
+        }       
+    },
+    "pageType": {
+        "list" : "list",
+        "workflow" : "workflow",
+        "edit" : "edit",
+        "report" : "report",
+        "detail" : "detail",
+        "view" : "view",
+        "documentation" : "documentation"
+    },
+    "pageSubtype" : {
+        "paginate" : "paginate"
+    },
+    "pageMode" : {
+        "edit": "edit",
+        "create" : "create"
+    },
+    "eventType" : {
+        "click" : "click",
+        "select" : "select"
+    },
+    "eventSubtype" : {
+        "launch" : "launch",
+        "cancel" : "cancel",
+        "submit" : "submit",
+        "multiSelect" : "multi_select",
+        "singleSelect" : "single_select",
+        "radioButton" : "radio_button"
+    }
 }

@@ -103,8 +103,8 @@ footerAlign() {
   setTelemetryInteractEdata(type): IInteractEventEdata {
     return {
       id: type,
-      type: 'click',
-      subtype: 'launch',
+      type: this.configService.telemetryConfig.eventType.click,
+      subtype: this.configService.telemetryConfig.eventSubtype.launch,
       pageid: _.get(this.activatedRoute, 'root.firstChild.snapshot.data.telemetry.pageid')
     };
   }

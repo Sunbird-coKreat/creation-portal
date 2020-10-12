@@ -78,7 +78,7 @@
 										<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
 											<input id="yes" [disabled]="editPublished" type="radio" name="openNominations" [checked]="isOpenNominations" (click)="openForNominations(true)" 
 											appTelemetryInteract
-											[telemetryInteractEdata]="getTelemetryInteractEdata('yes', 'select', 'radio_button',telemetryPageId)"
+											[telemetryInteractEdata]="getTelemetryInteractEdata('yes', configService.telemetryConfig.eventType.select, configService.telemetryConfig.eventSubtype.radioButton,telemetryPageId)"
 											[telemetryInteractObject]="telemetryInteractObject"
 											[telemetryInteractCdata]="telemetryInteractCdata"
 											[telemetryInteractPdata]="telemetryInteractPdata">
@@ -87,7 +87,7 @@
 										<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
 											<input id="no" [disabled]="editPublished" type="radio"  name="openNominations" [checked]="!isOpenNominations" (click)="openForNominations(false)" 
 											appTelemetryInteract
-											[telemetryInteractEdata]="getTelemetryInteractEdata('no', 'select', 'radio_button',telemetryPageId)"
+											[telemetryInteractEdata]="getTelemetryInteractEdata('no', configService.telemetryConfig.eventType.select, configService.telemetryConfig.eventSubtype.radioButton,telemetryPageId)"
 											[telemetryInteractObject]="telemetryInteractObject"
 											[telemetryInteractCdata]="telemetryInteractCdata"
 											[telemetryInteractPdata]="telemetryInteractPdata">
@@ -202,7 +202,7 @@
 										valueField="value" [(ngModel)]="selectedContentTypes" #multiSelect>
 										<sui-select-option *ngFor="let option of programScope.purpose" [value]="option"
 										appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('content_type', 'click', 'multi_select',telemetryPageId, {values: [option.name]})"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('content_type', configService.telemetryConfig.eventType.select, configService.telemetryConfig.eventSubtype.multiSelect,telemetryPageId, {values: [option.name]})"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">
@@ -228,7 +228,7 @@
 										(click)="initiateDocumentUploadModal()"
 										[disabled]="disableUpload"
 										appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('guidelines-document', 'click', 'launch',telemetryPageId)"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('guidelines-document', configService.telemetryConfig.eventType.click, 'launch',telemetryPageId)"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">
@@ -287,7 +287,7 @@
 										<sui-select-option *ngFor="let medium of mediums.filteredOptions"
 											[value]="medium"
 											appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('medium', 'select', 'multi_select',telemetryPageId, {values: [medium.name]})"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('medium', configService.telemetryConfig.eventType.select, configService.telemetryConfig.eventSubtype.multiSelect,telemetryPageId, {values: [medium.name]})"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata"> </sui-select-option>
@@ -312,7 +312,7 @@
 										<sui-select-option *ngFor="let gradeLevel of graveLevels.filteredOptions"
 											[value]="gradeLevel"
 											appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('grade', 'select', 'multi_select',telemetryPageId, {values: [gradeLevel.name]})"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('grade', configService.telemetryConfig.eventType.select, configService.telemetryConfig.eventSubtype.multiSelect,telemetryPageId, {values: [gradeLevel.name]})"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">
@@ -337,7 +337,7 @@
 										<sui-select-option *ngFor="let subject of subjects.filteredOptions"
 											[value]="subject"
 											appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('subject', 'select', 'multi_select',telemetryPageId, {values: [subject.name]})"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('subject', configService.telemetryConfig.eventType.select, configService.telemetryConfig.eventSubtype.multiSelect,telemetryPageId, {values: [subject.name]})"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">
@@ -354,7 +354,7 @@
 									<button class="sb-btn sb-btn-normal sb-btn-outline-primary"
 										(click)="resetFilters()"
 										appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('reset', 'click', 'cancel',telemetryPageId)"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('reset', configService.telemetryConfig.eventType.click, configService.telemetryConfig.eventSubtype.cancel,telemetryPageId)"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">
@@ -362,7 +362,7 @@
 									</button>
 									<button class="sb-btn sb-btn-normal sb-btn-primary ml-8" (click)="showTexbooklist()"
 										appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('apply', 'click', 'submit',telemetryPageId)"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('apply', configService.telemetryConfig.eventType.click, configService.telemetryConfig.eventSubtype.submit,telemetryPageId)"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">
@@ -444,7 +444,7 @@
 														[checked]="collectionListForm.value.pcollections.indexOf(data.identifier) != -1"
 														name="checkitem"
 														appTelemetryInteract
-														[telemetryInteractEdata]="getTelemetryInteractEdata('textbook_selection_checkbox', 'click', undefined, telemetryPageId, {values: [data.identifier]})"
+														[telemetryInteractEdata]="getTelemetryInteractEdata('textbook_selection_checkbox', configService.telemetryConfig.eventType.click, undefined, telemetryPageId, {values: [data.identifier]})"
 														[telemetryInteractObject]="telemetryInteractObject"
 														[telemetryInteractCdata]="telemetryInteractCdata"
 														[telemetryInteractPdata]="telemetryInteractPdata">
@@ -512,7 +512,7 @@
 											</div>
 											<div class="two wide column text-right cursor-pointer"
 												(click)="onCollectionCheck(tempCollection, false)" appTelemetryInteract
-												[telemetryInteractEdata]="getTelemetryInteractEdata('collection_check', 'click', 'cancel', telemetryPageId)"
+												[telemetryInteractEdata]="getTelemetryInteractEdata('collection_check', configService.telemetryConfig.eventType.click, configService.telemetryConfig.eventSubtype.cancel, telemetryPageId)"
 												[telemetryInteractObject]="telemetryInteractObject"
 												[telemetryInteractCdata]="telemetryInteractCdata"
 												[telemetryInteractPdata]="telemetryInteractPdata">
@@ -533,33 +533,33 @@
 			<div>
 				<button *ngIf="showTextBookSelector && !editPublished" class="sb-btn sb-btn-normal sb-btn-outline-primary mr-10"
 					(click)="navigateTo(1)" appTelemetryInteract
-					[telemetryInteractEdata]="getTelemetryInteractEdata('previous', 'click', 'launch',telemetryPageId)"
+					[telemetryInteractEdata]="getTelemetryInteractEdata('previous', configService.telemetryConfig.eventType.click, configService.telemetryConfig.eventSubtype.launch,telemetryPageId)"
 					[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
 					[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.previous}}</button>
 			</div>
 			<div>
 				<button *ngIf="editPublished" type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="updateProgram($event);"
 					appTelemetryInteract
-					[telemetryInteractEdata]="getTelemetryInteractEdata('update', 'click', 'submit',telemetryPageId)"
+					[telemetryInteractEdata]="getTelemetryInteractEdata('update', configService.telemetryConfig.eventType.click, configService.telemetryConfig.eventSubtype.submit,telemetryPageId)"
 					[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
 					[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.update}}</button>
 				<button *ngIf="!editPublished" class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8"
 					appTelemetryInteract
-					[telemetryInteractEdata]="getTelemetryInteractEdata('save_as_draft', 'click', 'submit',telemetryPageId)"
+					[telemetryInteractEdata]="getTelemetryInteractEdata('save_as_draft', configService.telemetryConfig.eventType.click, configService.telemetryConfig.eventSubtype.submit,telemetryPageId)"
 					[telemetryInteractObject]="telemetryInteractObject"
 					[telemetryInteractCdata]="telemetryInteractCdata"
 					[telemetryInteractPdata]="telemetryInteractPdata"
 					(click)="saveAsDraft($event)">{{resource?.frmelmnts?.btn?.saveAsDraft}}</button>
 				<button *ngIf="!showTextBookSelector && !editPublished" class="sb-btn sb-btn-normal sb-btn-primary" (click)="saveAsDraftAndNext($event)"
 					appTelemetryInteract
-					[telemetryInteractEdata]="getTelemetryInteractEdata('next', 'click', 'submit',telemetryPageId)"
+					[telemetryInteractEdata]="getTelemetryInteractEdata('next', configService.telemetryConfig.eventType.click, configService.telemetryConfig.eventSubtype.submit,telemetryPageId)"
 					[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
 					[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.next}}</button>
 				<button *ngIf="showTextBookSelector && !editPublished"
 					class="sb-btn sb-btn-normal sb-btn-primary"
 					[disabled]="disableCreateProgramBtn"
 					(click)="validateFormBeforePublish()" appTelemetryInteract 
-					[telemetryInteractEdata]="getTelemetryInteractEdata('publish_project', 'click', 'submit',telemetryPageId)"
+					[telemetryInteractEdata]="getTelemetryInteractEdata('publish_project', configService.telemetryConfig.eventType.click, configService.telemetryConfig.eventSubtype.submit,telemetryPageId)"
 					[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
 					[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.publishProject}}</button>
 			</div>
@@ -712,14 +712,14 @@ class="sb-modal" appBodyScroll (dismissed)="this.selectChapter = false" #modal>
 	<button class="sb-btn sb-btn-normal sb-btn-primary"
 		(click)="publishProject($event)"
 		appTelemetryInteract
-		[telemetryInteractEdata]="getTelemetryInteractEdata('yes', 'click', 'submit',telemetryPageId,{key:'dialog_id',value:'publish_project'})"
+		[telemetryInteractEdata]="getTelemetryInteractEdata('yes', configService.telemetryConfig.eventType.click, configService.telemetryConfig.eventSubtype.submit,telemetryPageId,{key:'dialog_id',value:'publish_project'})"
 		[telemetryInteractObject]="telemetryInteractObject"
 		[telemetryInteractCdata]="telemetryInteractCdata"
 		[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.yes}}</button>
 	<button class="sb-btn sb-btn-normal sb-btn-outline-primary"
 		(click)="showPublishModal = false"
 		appTelemetryInteract
-		[telemetryInteractEdata]="getTelemetryInteractEdata('no', 'click', 'cancel',telemetryPageId,{key:'dialog_id',value:'publish_project'})"
+		[telemetryInteractEdata]="getTelemetryInteractEdata('no', configService.telemetryConfig.eventType.click, configService.telemetryConfig.eventSubtype.cancel,telemetryPageId,{key:'dialog_id',value:'publish_project'})"
 		[telemetryInteractObject]="telemetryInteractObject"
 		[telemetryInteractCdata]="telemetryInteractCdata"
 		[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.no}}</button>

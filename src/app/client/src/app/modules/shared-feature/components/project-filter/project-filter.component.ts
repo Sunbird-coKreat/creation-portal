@@ -18,6 +18,7 @@ import { of, Observable } from 'rxjs';
 export class ProjectFilterComponent implements OnInit {
   @ViewChild('modal') modal;
   @Input() programs;
+  @Input() telemetryPageId;
   @Input() filtersAppliedCount;
   @Output() dismiss = new EventEmitter<any>();
   @Output() applyFilters = new EventEmitter<any>();

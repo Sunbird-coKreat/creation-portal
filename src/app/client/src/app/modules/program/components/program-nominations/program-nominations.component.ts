@@ -101,7 +101,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   searchInput: any;
   public telemetryPageId: string;
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
-    public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
+    public resourceService: ResourceService, public config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
      private activatedRoute: ActivatedRoute, private router: Router,
     private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService,
     public programStageService: ProgramStageService, private datePipe: DatePipe, private paginationService: PaginationService,
@@ -158,7 +158,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   getPageId() {
-    this.telemetryPageId = _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid');
+    this.telemetryPageId = this.telemetryPageId || _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid');
     return this.telemetryPageId;
   }
 
@@ -207,17 +207,18 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
             }
             this.getProgramCollection(preffilter).subscribe((res) => {
               this.showTextbookLoader  =  false;
+              this.logTelemetryImpressionEvent(this.programCollections, 'identifier', 'collection');
             }, (err) => { // TODO: navigate to program list page
               this.showTextbookLoader  =  false;
               const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
               this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+              this.logTelemetryImpressionEvent();
             });
         }, (err) => { // TODO: navigate to program list page
           this.showTextbookLoader  =  false;
           const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
           this.toasterService.warning(errorMes || 'Fetching Preferences  failed');
       });
-      this.generateImpressionEvent();
     }
 
     if (tab === 'nomination' && !_.includes(this.visitedTab, 'nomination')) {
@@ -227,13 +228,11 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.sortColumn = 'createdon';
       this.getPaginatedNominations(0);
       this.sortCollection(this.sortColumn, this.nominations);
-      this.generateImpressionEvent();
     }
     if (tab === 'user' && !_.includes(this.visitedTab, 'user')) {
       this.showUsersLoader = true;
       this.visitedTab.push('user');
       this.getsourcingOrgReviewers();
-      this.generateImpressionEvent();
     }
 
     if (tab === 'contributionDashboard' && !_.includes(this.visitedTab, 'contributionDashboard')) {
@@ -251,25 +250,25 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         this.getNominationList();
       }
       this.visitedTab.push('contributionDashboard');
-      this.generateImpressionEvent();
+      this.logTelemetryImpressionEvent();
     }
 
     if (tab === 'report' && !_.includes(this.visitedTab, 'report')) {
-      this.generateImpressionEvent();
+      this.logTelemetryImpressionEvent();
     }
   }
 
   setTelemetryPageId(tab: string) {
     if (tab === 'textbook') {
-      this.telemetryPageId = _.get(this.config, 'telemetryConfig.sourcing_project_contributions');
+      this.telemetryPageId = _.get(this.config, 'telemetryConfig.pageId.sourcing.projectContributions');
     } else if (tab === 'nomination') {
-      this.telemetryPageId = _.get(this.config, 'telemetryConfig.sourcing_project_nominations');
+      this.telemetryPageId = _.get(this.config, 'telemetryConfig.pageId.sourcing.projectNominations');
     } else if (tab === 'user') {
-      this.telemetryPageId = _.get(this.config, 'telemetryConfig.sourcing_project_assign_users');
+      this.telemetryPageId = _.get(this.config, 'telemetryConfig.pageId.sourcing.projectAssignUsers');
     } else if (tab === 'contributionDashboard') {
-      this.telemetryPageId = _.get(this.config, 'telemetryConfig.sourcing_project_contribution_dashboard');
+      this.telemetryPageId = _.get(this.config, 'telemetryConfig.pageId.sourcing.projectContributionDashboard');
     } else if (tab === 'report') {
-      this.telemetryPageId = _.get(this.config, 'telemetryConfig.sourcing_project_reports');
+      this.telemetryPageId = _.get(this.config, 'telemetryConfig.pageId.sourcing.projectReports');
     }
   }
 
@@ -301,8 +300,25 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
      usersList = _.chunk(this.paginatedSourcingUsers, this.pageLimit);
      this.paginatedSourcingUsers = usersList;
      this.sourcingOrgUser = isUserSearch ? usersList[0] : usersList[this.pageNumber - 1];
+     this.logTelemetryImpressionEvent(this.sourcingOrgUser, 'identifier', 'user');
      this.pagerUsers = this.paginationService.getPager(this.sourcingOrgUserCnt, isUserSearch ? 1 : this.pageNumberUsers, this.pageLimit);
  }
+
+ public logTelemetryImpressionEvent(data?, keyName?, type?) {
+  const telemetryImpression = _.cloneDeep(this.telemetryImpression);
+  if (data && !_.isEmpty(data)) {
+    telemetryImpression.edata.visits = _.map(data, (row) => {
+      return { objid: _.toString(row[keyName]), objtype: type };
+    });
+  }
+  // tslint:disable-next-line:max-line-length
+  if (_.isEqual(this.telemetryPageId, this.config.telemetryConfig.pageId.sourcing.projectContributionDashboard) || _.isEqual(this.telemetryPageId, this.config.telemetryConfig.pageId.sourcing.projectReports)) {
+    telemetryImpression.edata.type = this.config.telemetryConfig.pageType.report;
+  }
+  telemetryImpression.edata.pageid = this.telemetryPageId;
+  this.telemetryService.impression(telemetryImpression);
+}
+
 
   getsourcingOrgReviewers (offset?, iteration?) {
     const userRegData = {};
@@ -315,6 +331,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           this.showUsersLoader = false;
       });
     }, (error1) => {
+      this.logTelemetryImpressionEvent();
      console.log(error1, "No opensaber org for sourcing");
    });
 
@@ -686,10 +703,12 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
             }
             this.getProgramCollection(preffilter).subscribe((res) => {
               this.showTextbookLoader  =  false;
+              this.logTelemetryImpressionEvent(this.programCollections, 'identifier', 'collection');
             }, (err) => { // TODO: navigate to program list page
               this.showTextbookLoader  =  false;
               const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
               this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+              this.logTelemetryImpressionEvent();
             });
         }, (err) => { // TODO: navigate to program list page
           this.showTextbookLoader  =  false;
@@ -710,6 +729,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
     if (this.activeTab === 'contributionDashboard') {
       this.showDashboardLoader =  true;
+      this.logTelemetryImpressionEvent();
       this.getProgramCollection().subscribe(
         (res) => { this.getNominationList(); },
         (err) => { // TODO: navigate to program list page
@@ -719,17 +739,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       );
     }
 
-    this.generateImpressionEvent();
-  }
-
-  generateImpressionEvent() {
-    const appTelemetryImpression = _.cloneDeep(this.telemetryImpression);
-    appTelemetryImpression.edata.pageid = this.telemetryPageId;
-    // tslint:disable-next-line:max-line-length
-    if (_.isEqual(this.telemetryPageId, 'sourcing_project_contribution_dashboard') || _.isEqual(this.telemetryPageId, 'sourcing_project_reports')) {
-      appTelemetryImpression.edata.type = 'report';
+    if (this.activeTab === 'report') {
+      this.logTelemetryImpressionEvent();
     }
-    this.telemetryService.impression(appTelemetryImpression);
   }
 
   readRolesOfOrgUsers(orgUsers) {
@@ -809,7 +821,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   setTelemetryForonRoleChange(user) {
     const edata =  {
       id: 'assign_role_by_sourcingOrg',
-      type: 'click',
+      type: this.config.telemetryConfig.eventType.click,
+      subtype: this.config.telemetryConfig.eventSubtype.submit,
       pageid: this.telemetryPageId,
       extra : {values: [user.identifier, user.newRole]}
     };
@@ -1006,6 +1019,7 @@ this.programsService.post(req).subscribe((data) => {
               user_id: res.user_id,
               organisation_id: res.organisation_id,
               nominationData: res,
+              id: res.id
             });
           }
         });
@@ -1014,8 +1028,10 @@ this.programsService.post(req).subscribe((data) => {
         this.showNominationLoader = false;
       }
       this.tempNominations = _.cloneDeep(this.nominations);
+      this.logTelemetryImpressionEvent(this.nominations, 'id', 'nomination');
   }, error => {
     this.showNominationLoader = false;
+    this.logTelemetryImpressionEvent();
     this.toasterService.error(this.resourceService.messages.emsg.projects.m0003);
   });
 }

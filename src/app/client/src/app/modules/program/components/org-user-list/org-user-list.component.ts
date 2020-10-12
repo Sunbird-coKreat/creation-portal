@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ToasterService, ResourceService, NavigationHelperService, ConfigService, PaginationService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IPagination} from '../../../cbse-program/interfaces';
-import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
+import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject, TelemetryService } from '@sunbird/telemetry';
 import { UserService, RegistryService, ProgramsService } from '@sunbird/core';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'lodash-es';
@@ -25,6 +25,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public orgUserscnt = 0;
   public orgDetails: any = {};
   public showLoader = true;
+  public impressionEventTriggered: Boolean = false;
   public contributorOrgUsers: any = [];
   public tempSortOrgUser: any = [];
   public direction = 'desc';
@@ -40,7 +41,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   searchLimitMessage: any;
   searchLimitCount: any;
   public telemetryPageId: string;
-  constructor(private toasterService: ToasterService, private configService: ConfigService,
+  constructor(private toasterService: ToasterService, public configService: ConfigService, private telemetryService: TelemetryService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
     public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService,
@@ -140,8 +141,20 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
      usersList = _.chunk(this.allContributorOrgUsers, this.pageLimit);
      this.paginatedContributorOrgUsers = usersList;
      this.contributorOrgUsers = isUserSearch ? usersList[0] : usersList[this.pageNumber-1];
+     this.logTelemetryImpressionEvent();
      this.pager = this.paginationService.getPager(this.orgUserscnt, isUserSearch ? 1 : this.pageNumber, this.pageLimit);
   }
+
+  public logTelemetryImpressionEvent() {
+    if (this.impressionEventTriggered) { return false; }
+    this.impressionEventTriggered = true;
+    const telemetryImpression = _.cloneDeep(this.telemetryImpression);
+    telemetryImpression.edata.visits = _.map(this.contributorOrgUsers, (user) => {
+      return { objid: user.identifier, objtype: 'user' };
+    });
+    this.telemetryService.impression(telemetryImpression);
+  }
+
 
   NavigateToPage(page: number): undefined | void {
     if (page < 1 || page > this.pager.totalPages) {
@@ -164,10 +177,11 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   setTelemetryForonRoleChange(user) {
     const edata =  {
       id: 'assign-role-by-sourcingOrg',
-      type: 'click',
-      pageid: 'org-user-list',
+      type: this.configService.telemetryConfig.eventType.click,
+      subtype: this.configService.telemetryConfig.eventSubtype.submit,
+      pageid: this.telemetryPageId,
       extra : {values: [user.identifier, user.selectedRole]}
-    }
+    };
      this.registryService.generateUserRoleUpdateTelemetry(this.activatedRoute.snapshot.data.telemetry.env,this.telemetryInteractCdata,this.telemetryInteractPdata, edata )
   }
   onRoleChange(user) {

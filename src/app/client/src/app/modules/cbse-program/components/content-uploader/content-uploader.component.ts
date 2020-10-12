@@ -118,6 +118,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.originCollectionData = _.get(this.contentUploadComponentInput, 'originCollectionData');
     this.selectedOriginUnitStatus = _.get(this.contentUploadComponentInput, 'content.originUnitStatus');
     this.sessionContext  = _.get(this.contentUploadComponentInput, 'sessionContext');
+    this.telemetryPageId = _.get(this.contentUploadComponentInput, 'telemetryPageId');
     this.templateDetails  = _.get(this.contentUploadComponentInput, 'templateDetails');
     this.unitIdentifier  = _.get(this.contentUploadComponentInput, 'unitIdentifier');
     this.programContext = _.get(this.contentUploadComponentInput, 'programContext');
@@ -146,8 +147,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-    const telemetryCdata = [{ 'type': 'Program', 'id': this.programContext.program_id }];
-     setTimeout(() => {
+    const telemetryCdata = [
+      {id: this.userService.channel, type: 'sourcing_organization'}, {id: this.programContext.program_id, type: 'project'},
+      {id: this.programContext.program_id, type: 'nomination'}];
+    setTimeout(() => {
       this.telemetryImpression = {
         context: {
           env: this.activeRoute.snapshot.data.telemetry.env,
@@ -159,7 +162,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           }
         },
         edata: {
-          type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
+          type: this.configService.telemetryConfig.pageType.view || _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
           pageid: this.telemetryPageId,
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
@@ -541,7 +544,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 //   }
     getTelemetryData() {
       // tslint:disable-next-line:max-line-length
-      this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.contentUploadComponentInput.programContext.program_id, 'Program');
+      this.telemetryInteractCdata = [
+        {id: this.userService.channel, type: 'sourcing_organization'},
+        {id: this.programContext.program_id, type: 'project'},
+        {id: this.programContext.program_id, type: 'nomination'}
+      ];
       // tslint:disable-next-line:max-line-length
       this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
       // tslint:disable-next-line:max-line-length
@@ -561,7 +568,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         contentData: res
       };
       this.contentMetaData = res;
-     
       const contentTypeValue = [this.contentMetaData.contentType];
       this.contentType = this.programsService.getContentTypesName(contentTypeValue);
       this.editTitle = (this.contentMetaData.name !== 'Untitled') ? this.contentMetaData.name : '' ;

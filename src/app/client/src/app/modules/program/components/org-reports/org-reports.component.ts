@@ -23,8 +23,9 @@ export class OrgReportsComponent implements OnInit, AfterViewInit {
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
+  public telemetryPageId: string;
 
-  constructor( public resourceService: ResourceService, private userService: UserService, private configService: ConfigService,
+  constructor( public resourceService: ResourceService, private userService: UserService, public configService: ConfigService,
     private usageService: UsageService, private toasterService: ToasterService, private activatedRoute: ActivatedRoute,
     private router: Router, private navigationHelperService: NavigationHelperService,
     public programTelemetryService: ProgramTelemetryService) {}
@@ -56,12 +57,17 @@ export class OrgReportsComponent implements OnInit, AfterViewInit {
         },
         edata: {
           type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
-          pageid: _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid'),
+          pageid: this.getPageId(),
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
      });
+  }
+
+  getPageId() {
+    this.telemetryPageId = _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid');
+    return this.telemetryPageId;
   }
 
   downloadReport(reportName: string, isSourcingPrefix: boolean) {

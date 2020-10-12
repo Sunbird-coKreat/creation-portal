@@ -307,7 +307,8 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   getLogoutInteractEdata() {
     return {
       id: 'logout',
-      type: 'click',
+      type: this.config.telemetryConfig.eventType.click,
+      subtype: this.config.telemetryConfig.eventSubtype.launch,
       pageid: this.router.url.split('/')[1]
     };
   }

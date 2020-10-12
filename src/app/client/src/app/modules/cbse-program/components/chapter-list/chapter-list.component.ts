@@ -79,13 +79,16 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   contentName: string;
   public userProfile: any;
   public sampleContent = false;
-  public telemetryPageId = 'chapter-list';
+  public telemetryPageId: string;
   public storedCollectionData: any;
   public sourcingOrgReviewer: boolean;
   public originalCollectionData: any;
   public textbookStatusMessage: string;
   public textbookFirstChildStatusMessage: string;
-  constructor(public publicDataService: PublicDataService, private configService: ConfigService,
+  public telemetryInteractCdata: any;
+  public telemetryInteractPdata: any;
+  public telemetryInteractObject: any;
+  constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private cbseService: CbseProgramService,
     public toasterService: ToasterService, public router: Router, public frameworkService: FrameworkService,
@@ -110,6 +113,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.collection = _.get(this.chapterListComponentInput, 'collection');
     this.actions = _.get(this.chapterListComponentInput, 'programContext.config.actions');
     this.sharedContext = _.get(this.chapterListComponentInput, 'programContext.config.sharedContext');
+    this.telemetryPageId = _.get(this.chapterListComponentInput, 'sessionContext.telemetryPageId');
     this.myOrgId = (this.userService.userRegistryData
       && this.userService.userProfile.userRegData
       && this.userService.userProfile.userRegData.User_Org
@@ -143,13 +147,23 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
     if (this.programContext['status'] === 'Unlisted') {
       const request = {
-        "key": "mvcLibraryFeature",
-        "status": "active"
-      }
-      this.helperService.getProgramConfiguration(request).subscribe(res => {}, err => {});}
+        'key': 'mvcLibraryFeature',
+        'status': 'active'
+      };
+      this.helperService.getProgramConfiguration(request).subscribe(res => {}, err => {});
+    }
+
+    this.telemetryInteractCdata = [
+      {id: this.userService.channel, type: 'sourcing_organization'},
+      {id: this.sessionContext.programId, type: 'project'},
+      {id: this.sessionContext.programId, type: 'nomination'}
+    ];
+    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
+
   }
 
   showBulkUploadOption() {
+    // tslint:disable-next-line:max-line-length
     return !!(this.programsService.checkForContentSubmissionDate(this.programContext) && !this.isNominationPendingOrInitiated() && _.get(this.sessionContext, 'currentRoles', []).includes('CONTRIBUTOR'));
   }
 
@@ -161,12 +175,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-    const telemetryCdata = [{ 'type': 'Program', 'id': this.programContext.program_id }];
     setTimeout(() => {
       this.telemetryImpression = {
         context: {
           env: this.activeRoute.snapshot.data.telemetry.env,
-          cdata: telemetryCdata || [],
+          cdata: this.telemetryInteractCdata || [],
           pdata: {
             id: this.userService.appId,
             ver: version,
@@ -230,12 +243,20 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     });
   }
 
+  getTelemeryPageIdForContentDetailsPage() {
+    if (this.telemetryPageId === this.configService.telemetryConfig.pageId.sourcing.projectNominationTargetCollection) {
+      return this.configService.telemetryConfig.pageId.sourcing.projectNominationContributionDetails;
+    }
+  }
+
   public initiateInputs(action?, content?) {
     const sourcingStatus = !_.isUndefined(content) ? content.sourcingStatus : null;
+    const telemetryPageId = this.getTelemeryPageIdForContentDetailsPage();
     this.dynamicInputs = {
       contentUploadComponentInput: {
         config: _.find(this.programContext.config.components, {'id': 'ng.sunbird.uploadComponent'}),
         sessionContext: this.sessionContext,
+        telemetryPageId: telemetryPageId,
         unitIdentifier: this.unitIdentifier,
         templateDetails: this.templateDetails,
         selectedSharedContext: this.selectedSharedContext,
@@ -249,6 +270,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       practiceQuestionSetComponentInput: {
         config: _.find(this.programContext.config.components, {'id': 'ng.sunbird.practiceSetComponent'}),
         sessionContext: this.sessionContext,
+        telemetryPageId: telemetryPageId,
         templateDetails: this.templateDetails,
         unitIdentifier: this.unitIdentifier,
         roles: this.roles,
@@ -265,6 +287,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         action: action,
         content: content,
         sessionContext: this.sessionContext,
+        telemetryPageId: telemetryPageId,
         unitIdentifier: this.unitIdentifier,
         programContext: _.get(this.chapterListComponentInput, 'programContext')
       }
@@ -604,7 +627,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       } else if (this.storedCollectionData.rejectedContents  &&
               _.includes(this.storedCollectionData.rejectedContents || [], content.identifier)) {
             return 'Rejected';
-      } else if (content.status === "Draft" && content.prevStatus === "Live") {
+      } else if (content.status === 'Draft' && content.prevStatus === 'Live') {
             return 'PendingForCorrections';
       } else {
         return null;
@@ -784,6 +807,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
     this.resourceTemplateInputData();
   }
+
   removeMvcContentFromHierarchy() {
     const contentId = this.contentId;
     this.collectionHierarchyService.removeResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, this.contentId)
@@ -915,10 +939,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.stageSubscription.unsubscribe();
   }
 
-  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+  getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: string): IInteractEventEdata {
     return _.omitBy({
       id,
       type,
+      subtype,
       pageid,
       extra
     }, _.isUndefined);

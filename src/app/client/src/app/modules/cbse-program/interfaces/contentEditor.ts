@@ -7,4 +7,5 @@ export interface IContentEditorComponentInput {
     sessionContext?: ISessionContext;
     unitIdentifier?: string;
     programContext?: any;
+    telemetryPageId?: string;
 }
