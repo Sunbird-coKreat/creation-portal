@@ -9,7 +9,7 @@ import { ResourceService } from '@sunbird/shared';
 import { FlagContentComponent, AuthGuard } from '@sunbird/core';
 import { CourseProgressComponent } from '@sunbird/dashboard';
 import { RedirectComponent } from './../shared/components/redirect/redirect.component';
-import { ViewAllComponent } from '@sunbird/shared-feature';
+import {ViewAllComponent} from '@sunbird/content-search';
 const telemetryEnv = 'Course';
 const objectType = 'Course';
 const routes: Routes = [

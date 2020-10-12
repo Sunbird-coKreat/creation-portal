@@ -12,19 +12,13 @@
             <div class="six wide column p-0">
                 <!--Logo-->
                 <a class="d-flex logo" tabindex="0" title="DOCK" role="banner">
-                    <img (click)="navigateToHome()" class="cursor-pointer" alt="DOCK" src="/tenant/ntp/logo.png">
+                    <img (click)="navigateToHome()" class="cursor-pointer" alt="DOCK" src="{{tenantInfo.logo}}">
                 </a>
                 <!--/Logo-->
             </div>
             <div class="six wide column p-0 d-flex flex-jc-flex-end flex-ai-center">
                 <app-main-menu class="d-flex computer only ml-auto"></app-main-menu>
-                <button routerLink="sourcing/create-program" class="px-10 sb-btn sb-btn-normal sb-btn-outline-primary" *ngIf="sourcingOrgAdmin && this.router.url.includes('/sourcing') && !this.router.url.includes('sourcing/create-program') && !this.router.url.includes('sourcing/help')"
-                    appTelemetryInteract
-            [telemetryInteractEdata]="getTelemetryInteractEdata('create-program', 'click', 'main-header')"
-            [telemetryInteractObject]="telemetryInteractObject"
-            [telemetryInteractCdata]="telemetryInteractCdata"
-            [telemetryInteractPdata]="telemetryInteractPdata">
-            <i class="plus outline icon"></i> {{resourceService?.frmelmnts?.lbl?.createNewProgram}}</button>
+             
                 <div class="item flex-jc-flex-end" *ngIf="router.url.includes('/sourcing') && userProfile?.organisationNames?.length">
                     <span> {{ resourceService?.frmelmnts?.lbl?.organisation + ' : ' }} </span>
                     <span class="pl-5 font-weight-bold"> {{ userProfile?.organisationNames?.join(', ') }} </span>

@@ -170,7 +170,7 @@ export class AppComponent implements OnInit, OnDestroy {
           }
         }))
       .subscribe(data => {
-        // this.tenantService.getTenantInfo(this.slug);
+        this.tenantService.getTenantInfo(this.slug); // this method is calling to set app logo based on tenant specefic
         this.setPortalTitleLogo();
         this.telemetryService.initialize(this.getTelemetryContext());
         this.logCdnStatus();

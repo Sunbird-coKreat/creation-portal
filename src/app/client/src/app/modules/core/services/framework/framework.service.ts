@@ -78,7 +78,14 @@ export class FrameworkService {
               });
         }
   }
-  private getDefaultFrameWork(hashTagId) {
+  public getSelectedFrameworkCategories(frameworkId: string, queryParams?: object) { // used in library/search pages
+    const frameworkOptions = {
+      url: this.configService.urlConFig.URLS.FRAMEWORK.READ + '/' + frameworkId,
+      ...queryParams && { param: queryParams}
+    };
+    return this.learnerService.get(frameworkOptions);
+  }
+  public getDefaultFrameWork(hashTagId) {
     const channelOptions = {
       url: this.configService.urlConFig.URLS.CHANNEL.READ + '/' + hashTagId
     };

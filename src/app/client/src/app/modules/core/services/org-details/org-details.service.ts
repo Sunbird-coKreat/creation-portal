@@ -119,6 +119,19 @@ export class OrgDetailsService {
       maxAge: this.browserCacheTtlService.browserCacheTtl
     });
   }
+  searchOrgDetails(request) {
+    const option = {
+      url: this.configService.urlConFig.URLS.ADMIN.ORG_SEARCH,
+      data: {
+        request: request
+      }
+    };
+    return this.publicDataService.post(option).pipe(mergeMap((data: ServerResponse) => {
+      if (_.get(data, 'result.response.count') > 0) {
+        return of(_.get(data, 'result.response'));
+      }
+    }));
+  }
   public setOrg(orgdata) {
     this.orgInfo = orgdata;
   }
