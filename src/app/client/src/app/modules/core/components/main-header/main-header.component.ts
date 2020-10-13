@@ -75,6 +75,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   showOfflineHelpCentre = false;
   contributeTabActive: boolean;
   activeTab = {};
+  workSpaceRole: Array<string>;
   public sourcingOrgAdmin: boolean;
   public notificationSubscription: Subscription;
   public notificationData: Array<any>;
@@ -95,6 +96,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       this.myActivityRole = this.config.rolesConfig.headerDropdownRoles.myActivityRole;
       this.orgSetupRole = this.config.rolesConfig.headerDropdownRoles.orgSetupRole;
       this.orgAdminRole = this.config.rolesConfig.headerDropdownRoles.orgAdminRole;
+      this.workSpaceRole = this.config.rolesConfig.headerDropdownRoles.workSpaceRole;
       router.events.subscribe((event) => {
         if (event instanceof NavigationEnd) {
           this.onRouterChange();
@@ -153,6 +155,8 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       this.handleActiveTabState('contributorHelp');
     } else if (this.router.isActive('/sourcing/orgreports', true)) {
       this.handleActiveTabState('organisationReports');
+    } else if (this.router.url.includes('/workspace')) {
+      this.handleActiveTabState('manageContents');
     } else {
       this.handleActiveTabState('myPrograms');
     }
@@ -167,6 +171,12 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   });
   }
 
+  navigateToWorkspace() {
+    const authroles = this.permissionService.getWorkspaceAuthRoles();
+    if (authroles) {
+      return authroles.url;
+    }
+  }
   ngOnDestroy() {
     if (this.notificationSubscription) {
       this.notificationSubscription.unsubscribe();
@@ -384,6 +394,8 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       this.handleActiveTabState('contributorHelp');
     } else if (this.location.path() === '/sourcing/orgreports') {
       this.handleActiveTabState('organisationReports');
+    } else if (this.router.url.includes('/workspace')) {
+      this.handleActiveTabState('manageContents');
     }
 
     if (this.location.path() === '/sourcing') {
