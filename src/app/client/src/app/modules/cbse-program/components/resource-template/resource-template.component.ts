@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, OnDestroy, Output, Input, EventEmitter } 
 import * as _ from 'lodash-es';
 import { ISessionContext, IChapterListComponentInput, IResourceTemplateComponentInput } from '../../interfaces';
 import { ProgramTelemetryService } from '../../../program/services';
-import { ConfigService } from '@sunbird/shared';
+import { ConfigService,ResourceService  } from '@sunbird/shared';
 import { UserService } from '@sunbird/core';
 
 @Component({
@@ -24,8 +24,9 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
   public programContext;
   public sessionContext;
   public unitIdentifier;
+  showModeCreationModal = false;
   constructor( public programTelemetryService: ProgramTelemetryService, public userService: UserService,
-    public configService: ConfigService ) { }
+    public configService: ConfigService, public resourceService: ResourceService ) { }
 
 
   ngOnInit() {
@@ -49,6 +50,7 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
     });
     this.templateSelection.emit({ type: 'next', template: this.templateSelected, templateDetails: templateDetails });
   }
+  
 
   ngOnDestroy() {
     if (this.modal && this.modal.deny) {

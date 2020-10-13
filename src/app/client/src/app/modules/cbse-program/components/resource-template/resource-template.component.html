@@ -1,7 +1,7 @@
 <sui-modal [mustScroll]="false" [isClosable]="true" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
   appBodyScroll (dismissed)="modal.deny(); templateSelection.emit({type: 'close'})" #modal>
   <div class="sb-modal-header">
-    Select to contribute
+    {{resourceService.frmelmnts.lbl.selectToContribute}}
   </div>
   <div class="sb-modal-content">
     <div class="twelve wide column">
@@ -25,13 +25,43 @@
   <!-- Selection of Question in modal -->
 
   <div class="sb-modal-actions">
+    <button class="sb-btn sb-btn-normal"  [ngClass]="{'sb-btn-primary': showButton, 'sb-btn-disabled': !showButton}" (click)="showModeCreationModal = true"
+    appTelemetryInteract 
+            [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('templateSelection-button', 'click', 'chapter-list')"
+            [telemetryInteractObject]="telemetryInteractObject"
+            [telemetryInteractCdata]="telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryInteractPdata">
+      {{resourceService.frmelmnts.lbl.continue}}
+    </button>
+  </div>
+</sui-modal>
+
+<sui-modal *ngIf="showModeCreationModal" [mustScroll]="false" [isClosable]="true" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
+  appBodyScroll (dismissed)="modal.deny();" #modal>
+  <div class="sb-modal-header">
+    {{resourceService.frmelmnts.lbl.modeOfCreation}}
+  </div>
+  <div class="sb-modal-content">
+    <div class="py-10">
+      <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+        <input type="radio" id="radio1" name="example">
+        <label for="radio1">{{resourceService.frmelmnts.lbl.createNewContentUsingEditorTool}}</label>
+        </div>
+        <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+          <input type="radio" id="radio2" name="example">
+          <label for="radio2">{{resourceService.frmelmnts.lbl.uploadAnExistingFile}}</label>
+          </div>
+    </div>
+  </div>
+  <div class="sb-modal-actions">
     <button class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': showButton, 'sb-btn-disabled': !showButton}" (click)="handleSubmit()"
     appTelemetryInteract 
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('templateSelection-button', 'click', 'chapter-list')"
             [telemetryInteractObject]="telemetryInteractObject"
             [telemetryInteractCdata]="telemetryInteractCdata"
             [telemetryInteractPdata]="telemetryInteractPdata">
-      Continue
+      {{resourceService.frmelmnts.lbl.continue}}
     </button>
   </div>
 </sui-modal>
+
