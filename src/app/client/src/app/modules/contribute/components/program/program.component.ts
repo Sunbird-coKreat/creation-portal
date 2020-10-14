@@ -159,6 +159,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getProgramDetails() {
+    // console.log("line 162");
     const req = {
       url: `program/v1/read/${this.programId}`
     };
@@ -169,6 +170,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
       this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
       this.roles =_.get(this.programDetails, 'config.roles');
+      // console.log("line 172" + this.roles);
       this.roles.push({'id': 3, 'name': 'BOTH', 'defaultTab': 3, 'tabs': [3]});
       this.roles.push({'id': 4, 'name': 'NONE', 'tabs': [4], 'default': true, 'defaultTab': 4});
       this.roleNames = _.map(this.roles, 'name');

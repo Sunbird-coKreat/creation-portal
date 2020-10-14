@@ -108,13 +108,15 @@
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.textbooks }}<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{contributorTextbooks.length || 0}}</span></div>
-					<div class="item cursor-pointer" *ngIf="userService.isContributingOrgAdmin()" suiTabHeader="3"
-					appTelemetryInteract
+					<div *ngIf="this.sessionContext.currentRoles != Initiated ">
+										<div class="item cursor-pointer" *ngIf="userService.isContributingOrgAdmin()" suiTabHeader="3"
+					                   appTelemetryInteract
 										[telemetryInteractEdata]="getTelemetryInteractEdata('assign-role-tab', 'click', 'list-nominated-textbooks')"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.assignUsersToProject}} <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ OrgUsersCnt}}</span></div>
-				</div>
+				        </div>
+									</div>
 			</div>
 
 			<div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" isActive='true' suiTabContent="2">
