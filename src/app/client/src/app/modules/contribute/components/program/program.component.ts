@@ -247,7 +247,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         if (this.userService.isUserBelongsToOrg()) {
           this.sessionContext.currentOrgRole = _.first(this.userService.getUserOrgRole());
           if (this.sessionContext.currentOrgRole === 'admin') {
-            this.sessionContext.currentRoles = (['Approved', 'Rejected'].includes(this.currentNominationStatus)) ? ['REVIEWER'] : ['CONTRIBUTOR'];
+            this.sessionContext.currentRoles = (['Approved'].includes(this.currentNominationStatus)) ? ['REVIEWER'] : ['CONTRIBUTOR'];
           } else if (this.sessionContext.nominationDetails.rolemapping) {
             this.sessionContext.currentRoles = this.userService.getMyRoleForProgram(this.nominationDetails);
           } else {
