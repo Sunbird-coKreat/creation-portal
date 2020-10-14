@@ -887,7 +887,7 @@ showUserRoleOption(roleName, userRole) {
     this.sessionContext.programId = this.programDetails.program_id;
     this.sessionContext.collection = collection.identifier;
     this.sessionContext.collectionName = collection.name;
-
+    this.sessionContext.telemetryPageId = this.config.telemetryConfig.pageId.sourcing.projectTargetCollection;
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});

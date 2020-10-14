@@ -16,6 +16,8 @@
             "projectNominationDetails": "sourcing_project_nomination_details",
             "projectNominationTargetCollection" : "sourcing_project_nomination_target_collection",
             "projectNominationContributionDetails" : "sourcing_project_nomination_contribution_details",
+            "projectTargetCollection" : "sourcing_project_target_collection",
+            "projectContributionDetails" : "sourcing_project_contribution_details",
             "help" : "sourcing_help",
             "termsOfUse": "sourcing_terms_of_use"
         }       

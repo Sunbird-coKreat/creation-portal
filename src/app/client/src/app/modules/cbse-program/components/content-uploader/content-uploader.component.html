@@ -31,7 +31,7 @@
                   <i class="comment alternate outline icon sb-color-primary"></i>
                   <a (click)="showReviewModal=!showReviewModal"
                   appTelemetryInteract
-                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('view-reviewercomments', configService.telemetryConfig.eventType.click,configService.telemetryConfig.eventSubtype.launch,telemetryPageId)"
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('view_comments', configService.telemetryConfig.eventType.click,configService.telemetryConfig.eventSubtype.launch,telemetryPageId)"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
@@ -58,14 +58,14 @@
             <div class="practical-sb-buttons mt-20">
               <button id="saveContent" suiPopup popupText="Save" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSave" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="saveContent()"
               appTelemetryInteract
-                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('save-resourcemetadata', configService.telemetryConfig.eventType.click, undefined,telemetryPageId)"
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('save', configService.telemetryConfig.eventType.click,configService.telemetryConfig.eventSubtype.submit,telemetryPageId)"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >Save</button>
               <button id="changeContent" suiPopup popupText="Replace File" [popupPlacement]="'top'" *ngIf="visibility && visibility.showChangeFile" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="changeFile()"
               appTelemetryInteract
-                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('replace-resourcefile', configService.telemetryConfig.eventType.click,undefined, telemetryPageId)"
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('replace_file', configService.telemetryConfig.eventType.click,configService.telemetryConfig.eventSubtype.cancel, telemetryPageId)"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
@@ -73,28 +73,28 @@
                 File</button>
               <button id="requestChanges" suiPopup popupText="{{resourceService.frmelmnts.btn.requestChanges}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showRequestChanges" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="popupAction='requestChanges';showRequestChangesPopup = true;"
               appTelemetryInteract
-                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-resource', configService.telemetryConfig.eventType.click,undefined, telemetryPageId)"
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('request_changes', configService.telemetryConfig.eventType.click,configService.telemetryConfig.eventSubtype.launch, telemetryPageId)"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{resourceService.frmelmnts.btn.requestChanges}}</button>
               <button id="publishContent" suiPopup popupText="{{resourceService.frmelmnts.btn.accept}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showPublish" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="updateContentBeforePublishing();"
               appTelemetryInteract
-                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('publish-resource', configService.telemetryConfig.eventType.click,undefined, telemetryPageId)"
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('accept', configService.telemetryConfig.eventType.click,configService.telemetryConfig.eventSubtype.submit, telemetryPageId)"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{resourceService.frmelmnts.btn.accept}}</button>
               <button id="submitContent" suiPopup popupText="{{sessionContext.currentOrgRole === 'individual' ? 'Publish' : 'Send For Review' }}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSubmit" class="sb-btn sb-btn-secondary sb-btn-normal" (click)="saveContent('review')"
               appTelemetryInteract
-                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('submit-resourceforreview', configService.telemetryConfig.eventType.click,undefined, telemetryPageId)"
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('submit', configService.telemetryConfig.eventType.click,undefined, telemetryPageId)"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{isIndividualAndNotSample() ? 'Publish' : 'Submit' }}</button>
               <button id="sendForCorrections" suiPopup popupText="Send back for corrections" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons && visibility.showSendForCorrections" class="sb-btn sb-btn-normal sb-btn-outline-primary mr-10" (click)="popupAction='sendForCorrections';showRequestChangesPopup = true"
                 appTelemetryInteract
-                  [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('save-resourcemetadata', configService.telemetryConfig.eventType.click,undefined, telemetryPageId)"
+                  [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('send_back_for_corrections', configService.telemetryConfig.eventType.click,configService.telemetryConfig.eventSubtype.launch, telemetryPageId)"
                   [telemetryInteractObject]="telemetryInteractObject"
                   [telemetryInteractCdata]="telemetryInteractCdata"
                   [telemetryInteractPdata]="telemetryInteractPdata"
@@ -102,14 +102,14 @@
               <button id="acceptContent" suiPopup
               popupText="{{resourceService.frmelmnts.lbl.contentAcceptMessage}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="updateContentBeforeApproving('accept')"
               appTelemetryInteract
-                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('accept-content-for-textbook', configService.telemetryConfig.eventType.click, undefined,telemetryPageId)"
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('approve', configService.telemetryConfig.eventType.click, configService.telemetryConfig.eventSubtype.submit,telemetryPageId)"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{resourceService.frmelmnts.btn.approve}}</button>
               <button id="rejectContent" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentRejectMessage}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="popupAction='rejectContent'; showRequestChangesPopup = true"
               appTelemetryInteract
-                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-content-for-textbook', configService.telemetryConfig.eventType.click,undefined, telemetryPageId)"
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject', configService.telemetryConfig.eventType.click,configService.telemetryConfig.eventSubtype.launch, telemetryPageId)"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
@@ -221,14 +221,14 @@
     <div class="sb-modal-actions">
       <button id="uploadContent" class="sb-btn sb-btn-normal ml-8" [ngClass]="{'sb-btn-primary': uploadButton, 'sb-btn-disabled': !uploadButton}" (click)="uploadContent()"
       appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('upload-resource', configService.telemetryConfig.eventType.click, undefined,telemetryPageId)"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('upload', configService.telemetryConfig.eventType.click, configService.telemetryConfig.eventSubtype.submit,telemetryPageId, {key:'dialog_id',value:'upload_files'})"
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
       >Upload</button>
       <button (click)="closeUploadModal()" class="sb-btn sb-btn-normal" [disabled]="uploadButton" [ngClass]="{'sb-btn-outline-primary': !uploadButton, 'sb-btn-disabled': uploadButton}"
       appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('cancel-resourceupload', configService.telemetryConfig.eventType.click,undefined, telemetryPageId)"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('cancel', configService.telemetryConfig.eventType.click,configService.telemetryConfig.eventSubtype.cancel, telemetryPageId,{key:'dialog_id',value:'upload_files'})"
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
@@ -260,21 +260,21 @@
   <div class="sb-modal-actions">
     <button id="submitReview" type="submit" class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid}" *ngIf="popupAction=='requestChanges'" (click)="requestChanges(); showRequestChangesPopup = false;"
     appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('requestChangesfor-resourcewithcomments', configService.telemetryConfig.eventType.click, undefined,telemetryPageId)"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('submit_review', configService.telemetryConfig.eventType.click, configService.telemetryConfig.eventSubtype.submit,telemetryPageId,{key:'dialog_id',value:'add_review_comments'})"
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
     > Submit Review </button>
     <button id="submitReview" type="submit" class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid}" *ngIf="popupAction=='rejectContent'"  (click)="attachContentToTextbook('reject');showRequestChangesPopup = false;"
     appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-resourcewithcomments', configService.telemetryConfig.eventType.click,undefined, telemetryPageId)"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('submit_review', configService.telemetryConfig.eventType.click,configService.telemetryConfig.eventSubtype.submit, telemetryPageId,{key:'dialog_id',value:'add_review_comments'})"
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
     > Submit Review </button>
     <button id="submitReview" type="submit" class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid}" *ngIf="popupAction=='sendForCorrections'" (click)="requestCorrectionsBySourcing(); showRequestChangesPopup = false;"
     appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('requestChangesfor-resourcewithcomments', configService.telemetryConfig.eventType.click,undefined, telemetryPageId)"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('submit_review', configService.telemetryConfig.eventType.click,configService.telemetryConfig.eventSubtype.submit, telemetryPageId,{key:'dialog_id',value:'add_review_comments'})"
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
@@ -319,14 +319,14 @@
                     <label class="font-weight-bold fsmall">{{field.label}}:</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span><i *ngIf="field.helpText" class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{field.helpText}}"></i>
                     <sui-select *ngIf="editableFields.indexOf(field?.code) > -1" formControlName="{{field.code}}" class="selection" [isDisabled]="editableFields.indexOf(field?.code) == -1" placeholder="{{field.placeholder}}"
                     appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('select-' + field.code, configService.telemetryConfig.eventType.click,undefined, telemetryPageId)"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata(field.code, configService.telemetryConfig.eventType.select,configService.telemetryConfig.eventSubtype.singleSelect, telemetryPageId)"
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
                     >
                       <sui-select-option *ngFor="let option of selectOutcomeOption[field.code]" [value]="option"
                       appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('selectoption-' + option, configService.telemetryConfig.eventType.click,undefined, telemetryPageId)"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('selectoption-' + option, configService.telemetryConfig.eventType.select,configService.telemetryConfig.eventSubtype.singleSelect, telemetryPageId)"
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
@@ -343,14 +343,14 @@
                         <label class="font-weight-bold fsmall">{{field.label}} :</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span><i *ngIf="field.helpText" class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{field.helpText}}"></i>
                         <sui-multi-select *ngIf="editableFields.indexOf(field?.code) > -1" formControlName="{{field.code}}" class="selection" [isDisabled]="editableFields.indexOf(field?.code) == -1" placeholder="{{field.placeholder}}"
                         appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('multiselect-' + field.code, configService.telemetryConfig.eventType.click, undefined,telemetryPageId)"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata(field.code, configService.telemetryConfig.eventType.select, configService.telemetryConfig.eventSubtype.multiSelect,telemetryPageId)"
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
                         >
                           <sui-select-option *ngFor="let option of selectOutcomeOption[field.code]" [value]="option"
                           appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('selectoption-' + option, configService.telemetryConfig.eventType.click,undefined, telemetryPageId)"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('selectoption-' + option, configService.telemetryConfig.eventType.select,configService.telemetryConfig.eventSubtype.multiSelect, telemetryPageId)"
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"

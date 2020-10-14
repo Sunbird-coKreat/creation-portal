@@ -13,7 +13,7 @@
 		</a>
 		<button *ngIf="sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary my-10" (click)="showTextbookFiltersModal = true"
 		appTelemetryInteract
-                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filter_textbooks', 'click','launch',configService.telemetryConfig.pageId.sourcing.projectContributions)"
+                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filter_textbooks', configService.telemetryConfig.eventType.click,configService.telemetryConfig.eventSubtype.launch,telemetryPageId)"
                                                         [telemetryInteractObject]="telemetryInteractObject"
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata"> <i class="filter icon"></i>
@@ -23,7 +23,7 @@
 		</button>
 		<button *ngIf="sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary ml-10" (click)="downloadCSV()"
 		appTelemetryInteract
-                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download_textbook_details', 'click','launch', configService.telemetryConfig.pageId.sourcing.projectContributions)"
+                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download_textbook_details', configService.telemetryConfig.eventType.click,configService.telemetryConfig.eventSubtype.launch, telemetryPageId)"
                                                         [telemetryInteractObject]="telemetryInteractObject"
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata"> <i class="download icon"></i> {{resourceService.frmelmnts.lbl.downloadProjectDetails}}</button>
@@ -94,10 +94,10 @@
 						<td class="fsmall"><span class="d-inline-block mr-5">{{ (data?.pendingBySourceOrg?.length + data.mvcContributionsCount || 0) }}<span class="sb-color-warning"> {{ resourceService?.frmelmnts?.lbl?.approvalPending }}</span></span></td>
 						<td class="text-center"><button type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(data)"
 							appTelemetryInteract
-                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('open', 'click','launch',configService.telemetryConfig.pageId.sourcing.projectContributions)"
-                                                        [telemetryInteractObject]="telemetryInteractObject"
-                                                        [telemetryInteractCdata]="telemetryInteractCdata"
-                                                        [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.open}}</button></td>
+							[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('open', configService.telemetryConfig.eventType.click,configService.telemetryConfig.eventSubtype.launch,telemetryPageId)"
+							[telemetryInteractObject]="telemetryInteractObject"
+							[telemetryInteractCdata]="telemetryInteractCdata"
+							[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.open}}</button></td>
 					</tr>
 				</tbody>
 			</table>
@@ -129,7 +129,7 @@
 							[(ngModel)]="setPreferences['medium']">
 								<sui-select-option *ngFor="let medium of mediums.filteredOptions" [value]="medium"
 								appTelemetryInteract
-								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('medium', 'select', 'multi_select',configService.telemetryConfig.pageId.sourcing.projectContributions, {values: [medium]})"
+								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('medium', configService.telemetryConfig.eventType.select, configService.telemetryConfig.eventSubtype.multiSelect,telemetryPageId, {values: [medium]})"
 								[telemetryInteractObject]="telemetryInteractObject"
 								[telemetryInteractCdata]="telemetryInteractCdata"
 								[telemetryInteractPdata]="telemetryInteractPdata"> </sui-select-option>
@@ -145,7 +145,7 @@
 							[(ngModel)]="setPreferences['subject']">
 								<sui-select-option *ngFor="let subject of subjects.filteredOptions" [value]="subject"
 								appTelemetryInteract
-								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('subject', 'select','multi_select',configService.telemetryConfig.pageId.sourcing.projectContributions, {values: [subject]})"
+								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('subject', configService.telemetryConfig.eventType.select,configService.telemetryConfig.eventSubtype.multiSelect,telemetryPageId, {values: [subject]})"
 								[telemetryInteractObject]="telemetryInteractObject"
 								[telemetryInteractCdata]="telemetryInteractCdata"
 								[telemetryInteractPdata]="telemetryInteractPdata"></sui-select-option>
@@ -161,7 +161,7 @@
 							[(ngModel)]="setPreferences['gradeLevel']">
 								<sui-select-option *ngFor="let gradeLevel of gradeLevels.filteredOptions" [value]="gradeLevel"
 								appTelemetryInteract
-								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('class', 'select','multi_select',configService.telemetryConfig.pageId.sourcing.projectContributions, {values: [gradeLevel]})"
+								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('class', configService.telemetryConfig.eventType.select,configService.telemetryConfig.eventSubtype.multiSelect,telemetryPageId, {values: [gradeLevel]})"
 								[telemetryInteractObject]="telemetryInteractObject"
 								[telemetryInteractCdata]="telemetryInteractCdata"
 								[telemetryInteractPdata]="telemetryInteractPdata"></sui-select-option>
@@ -175,13 +175,13 @@
 	<div class="sb-modal-actions py-20">
 		<button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="applyTextbookFilters();"
 		appTelemetryInteract
-		[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('apply', 'click','submit',configService.telemetryConfig.pageId.sourcing.projectContributions, {values: [setPreferences]})"
+		[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('apply', configService.telemetryConfig.eventType.click,configService.telemetryConfig.eventSubtype.submit,telemetryPageId, {values: [setPreferences]})"
 		[telemetryInteractObject]="telemetryInteractObject"
 		[telemetryInteractCdata]="telemetryInteractCdata"
 		[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.apply}} </button>
 		<button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="resetTextbookFilters();"
 		appTelemetryInteract
-		[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reset', 'click', 'cancel', configService.telemetryConfig.pageId.sourcing.projectContributions)"
+		[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reset', configService.telemetryConfig.eventType.click, configService.telemetryConfig.eventSubtype.cancel, telemetryPageId)"
 		[telemetryInteractObject]="telemetryInteractObject"
 		[telemetryInteractCdata]="telemetryInteractCdata"
 		[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.reset}}</button>

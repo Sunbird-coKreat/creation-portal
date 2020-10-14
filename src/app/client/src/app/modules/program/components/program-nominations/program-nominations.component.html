@@ -130,7 +130,7 @@
             <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="2">
                 <app-loader *ngIf='showTextbookLoader'></app-loader>
                 <div *ngIf="!showTextbookLoader && contentAggregationData && !isEmptyObject(programDetails)" class="ui container p-0 m-0">
-                    <app-textbook-list [programDetails]="programDetails" [collectionsInput]="programCollections" [contentAggregationInput]="contentAggregationData" [userPreferences]=userPreferences (selectedCollection)="viewContribution($event)" (applyTextbookPreference)="applyPreferences($event)"></app-textbook-list>
+                    <app-textbook-list [programDetails]="programDetails" [telemetryPageId]="telemetryPageId" [collectionsInput]="programCollections" [contentAggregationInput]="contentAggregationData" [userPreferences]=userPreferences (selectedCollection)="viewContribution($event)" (applyTextbookPreference)="applyPreferences($event)"></app-textbook-list>
                 </div>
             </div>
             <div class="ui segment  p-0 m-0 mt-4 sb-bg-color-white dynamicHeight"  suiTabContent="1">

@@ -19,6 +19,7 @@ export class TextbookListComponent implements OnInit {
   @Input() programDetails: any = {};
   @Input() contentAggregationInput: Array<any> = [];
   @Input() userPreferences: any = {};
+  @Input() telemetryPageId;
   public programId: string;
   public config: any;
   public collections: Array<any> = [];

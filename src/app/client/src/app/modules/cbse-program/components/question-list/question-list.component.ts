@@ -83,7 +83,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public isMetadataOverridden = false;
 
   constructor(
-    private configService: ConfigService, private userService: UserService,
+    public configService: ConfigService, private userService: UserService,
     public actionService: ActionService,
     private cdr: ChangeDetectorRef, public toasterService: ToasterService,
     public telemetryService: TelemetryService, private fb: FormBuilder,
@@ -113,6 +113,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.practiceSetConfig = _.get(this.practiceQuestionSetComponentInput, 'config');
     this.sourcingReviewStatus = _.get(this.practiceQuestionSetComponentInput, 'sourcingStatus') || '';
     this.resourceTitleLimit = this.practiceSetConfig.config.resourceTitleLength;
+    this.telemetryPageId = _.get(this.practiceQuestionSetComponentInput, 'telemetryPageId');
+    this.sessionContext.telemetryPageId = this.telemetryPageId;
     this.sessionContext.practiceSetConfig = this.practiceSetConfig;
     this.sessionContext.topic = _.isEmpty(this.selectedSharedContext.topic) ? this.sessionContext.topic : this.selectedSharedContext.topic;
     this.getContentMetadata(this.sessionContext.resourceIdentifier);
@@ -131,12 +133,11 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-    const telemetryCdata = [{ 'type': 'Program', 'id': this.programContext.program_id }];
      setTimeout(() => {
       this.telemetryImpression = {
         context: {
           env: this.activeRoute.snapshot.data.telemetry.env,
-          cdata: telemetryCdata || [],
+          cdata: this.telemetryEventsInput.telemetryInteractCdata || [],
           pdata: {
             id: this.userService.appId,
             ver: version,
@@ -144,7 +145,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         },
         edata: {
-          type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
+          type: this.configService.telemetryConfig.pageType.view || _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
           pageid: this.telemetryPageId,
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
@@ -165,9 +166,11 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public preprareTelemetryEvents() {
     // tslint:disable-next-line:max-line-length
-    this.telemetryEventsInput.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.sessionContext.collection, 'Content', '1.0');
-    // tslint:disable-next-line:max-line-length
-    this.telemetryEventsInput.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.sessionContext.programId, 'Program');
+    this.telemetryEventsInput.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.sessionContext.resourceIdentifier, 'Content', '1.0', { l1: this.sessionContext.collection, l2: this.sessionContext.textBookUnitIdentifier});
+    this.telemetryEventsInput.telemetryInteractCdata = [
+      {id: this.userService.channel, type: 'sourcing_organization'},
+      {id: this.sessionContext.programId, type: 'project'}
+    ];
     // tslint:disable-next-line:max-line-length
     this.telemetryEventsInput.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
   }

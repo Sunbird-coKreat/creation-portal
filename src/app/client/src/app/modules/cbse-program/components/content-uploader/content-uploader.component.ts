@@ -73,7 +73,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
-  public telemetryPageId = 'content-uploader';
+  public telemetryPageId: string;
   public sourcingOrgReviewer: boolean;
   public sourcingReviewStatus: string;
   public contentType: string;
