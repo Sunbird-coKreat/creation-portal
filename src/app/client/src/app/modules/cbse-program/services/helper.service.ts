@@ -102,6 +102,14 @@ export class HelperService {
     return this.actionService.post(option);
   }
 
+  systemUpdateforContent(contentId, requestBody) {
+    const option = {
+      url: `system/v3/content/update/${contentId}`,
+      data: requestBody
+    };
+    return this.actionService.patch(option);
+  }
+
   updateContentStatus(contentId, status, comment?) {
     const requestBody = {
       request: {

@@ -815,27 +815,44 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resourceName = (_.trim(this.resourceName) !== 'Untitled') ? _.trim(this.resourceName) : '' ;
     if (this.resourceName.length > 0 && this.resourceName.length <= this.resourceTitleLimit) {
       this.showTextArea = false;
-      const reqBody = {
-        'content': {
-            'versionKey': this.existingContentVersionKey,
-            'name' : this.resourceName
-        }
-      };
-      this.updateContent(reqBody, this.sessionContext.resourceIdentifier)
-      .subscribe((res) => {
-        const contentId = res.result.node_id || res.result.identifier;
-        if (this.sessionContext.collection && this.sessionContext.textBookUnitIdentifier) {
-          this.collectionHierarchyService.addResourceToHierarchy(
-            this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, contentId
-          )
-          .subscribe((data) => {
-            this.toasterService.success(this.resourceService.messages.smsg.m0060);
-            this.sessionContext.contentMetadata.name = this.resourceName;
-          }, (err) => {
-            this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-          });
-        }
-      });
+      if (this.getEditableFieldsACL() === 'CONTRIBUTOR') {
+        const reqBody = {
+          'content': {
+              'versionKey': this.existingContentVersionKey,
+              'name' : this.resourceName
+          }
+        };
+        this.updateContent(reqBody, this.sessionContext.resourceIdentifier)
+        .subscribe((res) => {
+          const contentId = res.result.node_id || res.result.identifier;
+          if (this.sessionContext.collection && this.sessionContext.textBookUnitIdentifier) {
+            this.collectionHierarchyService.addResourceToHierarchy(
+              this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, contentId
+            )
+            .subscribe((data) => {
+              this.toasterService.success(this.resourceService.messages.smsg.m0060);
+              this.sessionContext.contentMetadata.name = this.resourceName;
+            }, (err) => {
+              this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+            });
+          }
+        });
+      } else if (this.getEditableFieldsACL() === 'REVIEWER') {
+        const requestBody = {
+          request: {
+            content: {
+              'name': this.resourceName
+            }
+          }
+        };
+        this.helperService.systemUpdateforContent(this.sessionContext.resourceIdentifier, requestBody)
+        .subscribe(res => {
+          this.toasterService.success(this.resourceService.messages.smsg.m0060);
+          this.sessionContext.contentMetadata.name = this.resourceName;
+        }, (err) => {
+          this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+        });
+      }
     }
   }
 
@@ -1113,24 +1130,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     return false;
   }
-
-
-  /*showSourcingOrgRejectComments() {
-    const id = _.get(this.resourceDetails, 'identifier');
-    const sourcingRejectedComments = _.get(this.sessionContext, 'hierarchyObj.sourcingRejectedComments')
-    if (this.resourceStatus === 'Live' && !_.isEmpty(sourcingRejectedComments) && id) {
-      this.sourcingOrgReviewComments = sourcingRejectedComments[id];
-     return true;
-    } else {
-      return false;
-    }
-  }
-
-  showContributorOrgReviewComments() {
-    const rejectComment = _.get(this.resourceDetails, 'rejectComment');
-    const roles = _.get(this.sessionContext, 'currentRoles');
-    return !!(rejectComment && roles.includes('CONTRIBUTOR') && this.resourceStatus === 'Draft' && this.resourceDetails.prevStatus === 'Review');
-  }*/
 
   getEditableFieldsACL() {
     if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {

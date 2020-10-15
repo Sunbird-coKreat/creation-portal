@@ -78,7 +78,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public sourcingReviewStatus: string;
   public contentType: string;
   public popupAction: string;
-  //public sourcingOrgReviewComments: string;
   public contentComment: string;
   originPreviewUrl = '';
   originPreviewReady = false;
@@ -99,6 +98,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public overrideMetaData: any;
   public editableFields = [];
   public isMetadataOverridden = false;
+  public editRole = '';
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -754,35 +754,49 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     if (_.trim(this.editTitle) === _.trim(this.contentMetaData.name)) {
       this.showTextArea = true;
       return;
-    } else {
-   this.editTitle = _.trim(this.editTitle);
-   const contentObj = {
-     'versionKey': this.contentMetaData.versionKey,
-     'name': this.editTitle
-    };
-    const request = {
-    'content': contentObj
-    };
-   this.helperService.updateContent(request, this.contentMetaData.identifier).subscribe((res) => {
-   this.contentMetaData.versionKey = res.result.versionKey;
-   this.contentMetaData.name = this.editTitle;
-   const contentDetails = {
-    contentId: this.contentMetaData.identifier,
-    contentData: this.contentMetaData
-    };
-   this.playerConfig = this.playerService.getConfig(contentDetails);
-   // tslint:disable-next-line:max-line-length
-   this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
-   .subscribe((data) => {
-       this.toasterService.success(this.resourceService.messages.smsg.m0060);
-     }, (err) => {
-       this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-     });
-    }, (err) => {
-    this.editTitle = this.contentMetaData.name;
-    this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-   });
-  }
+    } else if (this.editRole === 'CONTRIBUTOR') {
+        this.editTitle = _.trim(this.editTitle);
+        const contentObj = {
+          'versionKey': this.contentMetaData.versionKey,
+          'name': this.editTitle
+          };
+          const request = {
+          'content': contentObj
+          };
+        this.helperService.updateContent(request, this.contentMetaData.identifier).subscribe((res) => {
+        this.contentMetaData.versionKey = res.result.versionKey;
+        this.contentMetaData.name = this.editTitle;
+        const contentDetails = {
+          contentId: this.contentMetaData.identifier,
+          contentData: this.contentMetaData
+          };
+        this.playerConfig = this.playerService.getConfig(contentDetails);
+        // tslint:disable-next-line:max-line-length
+        this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
+        .subscribe((data) => {
+            this.toasterService.success(this.resourceService.messages.smsg.m0060);
+          }, (err) => {
+            this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+          });
+          }, (err) => {
+          this.editTitle = this.contentMetaData.name;
+          this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+        });
+      } else if (this.editRole === 'REVIEWER') {
+        const requestBody = {
+          request: {
+            content: {
+              'name': this.editTitle
+            }
+          }
+        };
+        this.helperService.systemUpdateforContent(this.contentMetaData.identifier, requestBody)
+        .subscribe(res => {
+          this.toasterService.success(this.resourceService.messages.smsg.m0060);
+        }, (err) => {
+          this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+        });
+      }
    }
   }
 
@@ -1133,37 +1147,24 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     return false;
   }
 
-  /*showSourcingOrgRejectComments() {
-    const id = _.get(this.contentMetaData, 'identifier');
-    const sourcingRejectedComments = _.get(this.sessionContext, 'hierarchyObj.sourcingRejectedComments')
-    if (this.resourceStatus === 'Live' && id && !_.isEmpty(_.get(sourcingRejectedComments, id))) {
-      this.sourcingOrgReviewComments = _.get(sourcingRejectedComments, id);
-      return true;
-    } else {
-      return false;
-    }
-  }*/
-
-  /*showContributorOrgReviewComments() {
-    const rejectComment = _.get(this.contentMetaData, 'rejectComment');
-    const roles = _.get(this.sessionContext, 'currentRoles');
-    return !!(rejectComment && roles.includes('CONTRIBUTOR') && this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Review');
-  }*/
-
   getEditableFields() {
     if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
       if (this.userService.getUserId() === this.contentMetaData.createdBy && this.resourceStatus === 'Draft') {
         this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.allFormFields, this.contentMetaData);
+        this.editRole = 'CONTRIBUTOR';
       } else if (this.canPublishContent()){
         this.editableFields = this.helperService.getEditableFields('REVIEWER', this.allFormFields, this.contentMetaData);
+        this.editRole = 'REVIEWER';
       }
     } else if (this.hasRole('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
       this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.allFormFields, this.contentMetaData);
+      this.editRole = 'CONTRIBUTOR';
     } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
       && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
       && !this.sourcingReviewStatus
       && (this.selectedOriginUnitStatus === 'Draft')) {
       this.editableFields = this.helperService.getEditableFields('REVIEWER', this.allFormFields, this.contentMetaData);
+      this.editRole = 'REVIEWER';
     }
   }
 
