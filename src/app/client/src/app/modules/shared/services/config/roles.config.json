@@ -58,46 +58,46 @@
     ,"WORKSPACEAUTHGARDROLES":[
     {
         "roles":["CONTENT_CREATOR","CONTENT_CREATION","CONTENT_REVIEWER","CONTENT_REVIEW","BOOK_CREATOR"],
-        "roleName":"createRole","url":"workspace/content/create","tab":"CREATE"
+        "roleName":"createRole","url":"sourcing/workspace/content/create","tab":"CREATE"
     },
     {
         "roles":["CONTENT_CREATOR","CONTENT_CREATION","CONTENT_REVIEWER","CONTENT_REVIEW","BOOK_CREATOR"],
-        "roleName":"draftRole","url":"workspace/content/draft/1","tab":"DRAFTS"
+        "roleName":"draftRole","url":"sourcing/workspace/content/draft/1","tab":"DRAFTS"
     },
     {
         "roles":["CONTENT_CREATOR","CONTENT_CREATION","CONTENT_REVIEWER","CONTENT_REVIEW","BOOK_CREATOR"],
-        "roleName":"inreviewRole","url":"/workspace/content/review/1","tab":"Review Submissions"
+        "roleName":"inreviewRole","url":"sourcing/workspace/content/review/1","tab":"Review Submissions"
     },
     {
         "roles":["CONTENT_CREATOR","CONTENT_CREATION","CONTENT_REVIEWER","CONTENT_REVIEW","BOOK_CREATOR"],
-        "roleName":"publishedRole","url":"workspace/content/published/1","tab":"PUBLISHED"
+        "roleName":"publishedRole","url":"sourcing/workspace/content/published/1","tab":"PUBLISHED"
     },
     {
         "roles":["CONTENT_CREATOR","CONTENT_CREATION","CONTENT_REVIEWER","CONTENT_REVIEW"],
-        "roleName":"alluploadsRole","url":"workspace/content/uploaded/1","tab":"All UPLOADS"
+        "roleName":"alluploadsRole","url":"sourcing/workspace/content/uploaded/1","tab":"All UPLOADS"
     },
     {
         "roles":["CONTENT_REVIEWER","CONTENT_REVIEW","BOOK_REVIEWER"],
-        "roleName":"upForReviewRole","url":"workspace/content/upForReview/1","tab":"Up FOR REVIEW"
+        "roleName":"upForReviewRole","url":"sourcing/workspace/content/upForReview/1","tab":"Up FOR REVIEW"
     },
     {
-        "roles":["COURSE_MENTOR"],"roleName":"courseBatchRoles","url":"/workspace/content/batches/1","tab":"Course Batches"
-    },
-    {
-        "roles":["FLAG_REVIEWER"],
-        "roleName":"flagReviewerRole","url":"workspace/content/flagreviewer/1","tab":"FLAG REVIEWER"
+        "roles":["COURSE_MENTOR"],"roleName":"courseBatchRoles","url":"sourcing/workspace/content/batches/1","tab":"Course Batches"
     },
     {
         "roles":["FLAG_REVIEWER"],
-        "roleName":"flaggedRole","url":"workspace/content/flagged/1","tab":"Flagged"
+        "roleName":"flagReviewerRole","url":"sourcing/workspace/content/flagreviewer/1","tab":"FLAG REVIEWER"
+    },
+    {
+        "roles":["FLAG_REVIEWER"],
+        "roleName":"flaggedRole","url":"sourcing/workspace/content/flagged/1","tab":"Flagged"
     },
     {
         "roles":["CONTENT_CREATOR","CONTENT_CREATION","CONTENT_REVIEWER","CONTENT_REVIEW","BOOK_CREATOR"],
-        "roleName":"limitedPublishingRole","url":"workspace/content/upForReview/1","tab":"Limited Publishing"
+        "roleName":"limitedPublishingRole","url":"sourcing/workspace/content/upForReview/1","tab":"Limited Publishing"
     },
     {
         "roles":["CONTENT_CREATOR","CONTENT_CREATION","CONTENT_REVIEWER","CONTENT_REVIEW","BOOK_CREATOR"],
-        "roleName":"collaboratingRole","url":"workspace/content/collaborating-on","tab":"Collaborating On"
+        "roleName":"collaboratingRole","url":"sourcing/workspace/content/collaborating-on","tab":"Collaborating On"
     }
    ]
 

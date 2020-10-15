@@ -253,9 +253,9 @@ export class GenericEditorComponent implements OnInit, OnDestroy {
 
   redirectToWorkSpace () {
     if (this.routeParams.state === 'collaborating-on') {
-      this.navigationHelperService.navigateToWorkSpace('/workspace/content/collaborating-on/1');
+      this.navigationHelperService.navigateToWorkSpace('/sourcing/workspace/content/collaborating-on/1');
     } else {
-      this.navigationHelperService.navigateToWorkSpace('/workspace/content/draft/1');
+      this.navigationHelperService.navigateToWorkSpace('/sourcing/workspace/content/draft/1');
     }
   }
 

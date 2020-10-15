@@ -251,7 +251,7 @@ export class DataDrivenComponent extends WorkSpace implements OnInit, OnDestroy,
 * Redirects to workspace create section
 */
   goToCreate() {
-    this.router.navigate(['/workspace/content/create']);
+    this.router.navigate(['/sourcing/workspace/content/create']);
   }
 
   /**
@@ -325,10 +325,10 @@ export class DataDrivenComponent extends WorkSpace implements OnInit, OnDestroy,
     const state = 'draft';
     const framework = this.framework;
     if (this.contentType === 'studymaterial' || this.contentType === 'assessment') {
-      this.router.navigate(['/workspace/content/edit/content/', content.identifier, state, framework, 'Draft']);
+      this.router.navigate(['/sourcing/workspace/content/edit/content/', content.identifier, state, framework, 'Draft']);
     } else {
       const type = this.configService.appConfig.contentCreateTypeForEditors[this.contentType];
-      this.router.navigate(['/workspace/content/edit/collection', content.identifier, type, state, framework, 'Draft']);
+      this.router.navigate(['/sourcing/workspace/content/edit/collection', content.identifier, type, state, framework, 'Draft']);
     }
     this.logTelemetry(content.identifier);
   }
@@ -338,13 +338,13 @@ export class DataDrivenComponent extends WorkSpace implements OnInit, OnDestroy,
   */
  checkForPreviousRouteForRedirect() {
   const previousUrlObj = this.navigationHelperService.getPreviousUrl();
-    if (previousUrlObj && previousUrlObj.url && (previousUrlObj.url !== '/workspace/content/create')) {
+    if (previousUrlObj && previousUrlObj.url && (previousUrlObj.url !== '/sourcing/workspace/content/create')) {
       this.redirect();
     }
 }
 
   redirect() {
-    this.router.navigate(['/workspace/content/create']);
+    this.router.navigate(['/sourcing/workspace/content/create']);
   }
 
   ngAfterViewInit () {

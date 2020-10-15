@@ -124,14 +124,14 @@
 
             <div class="ui container d-flex flex-ai-center mx-0 sb-dock-menu">
                 <!-- <a routerLink="contribute/dashboard" *ngIf="this.router.url.includes('/contribute')" [class.active]="this.router.isActive('/contribute/dashboard', true)">{{ resourceService.frmelmnts.lnk.dashboard }}</a> -->
-                    <a routerLink="sourcing" *ngIf="router.url.includes('/sourcing') && !router.url.includes('/sourcing/help')" [class.active]="activeTab['myPrograms']" (click)="handleActiveTabState('myPrograms')"
+                    <a routerLink="sourcing" *ngIf="router.url.includes('/sourcing') && !router.url.includes('/sourcing/help') && isManageProgramAccess" [class.active]="activeTab['myPrograms']" (click)="handleActiveTabState('myPrograms')"
                     appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('manage-programs', 'click', 'main-header')"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService?.frmelmnts?.lbl?.managePrograms}}</a>
 
-      <a [class.active]="activeTab['manageContents']"  (click)="handleActiveTabState('manageContents')"
+      <a [class.active]="activeTab['manageContents']" *ngIf="!router.url.includes('/help') && !router.url.includes('/contribute')" (click)="handleActiveTabState('manageContents')"
         appTelemetryInteract appPermission
         [permission]='workSpaceRole' [routerLink]="[navigateToWorkspace()]"
         [telemetryInteractEdata]="getTelemetryInteractEdata('manage-contents', 'click', 'main-header')"
