@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ConfigService, ServerResponse, BrowserCacheTtlService } from '@sunbird/shared';
-import { ContentService, ProgramsService, PublicDataService, ActionService } from '@sunbird/core';
+import { ContentService, ProgramsService, PublicDataService, ActionService, LearnerService } from '@sunbird/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import * as _ from 'lodash-es';
@@ -14,7 +14,7 @@ export class BulkJobService {
   constructor(private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService,
     private programsService: ProgramsService, private configService: ConfigService,
     private contentService: ContentService, private publicDataService: PublicDataService,
-    public actionService: ActionService) { }
+    public actionService: ActionService, public learnerService: LearnerService) { }
 
   getBulkOperationStatus(reqData): Observable<ServerResponse> {
     const req = {
@@ -44,36 +44,38 @@ export class BulkJobService {
 
   searchContentWithProcessId(processId, type) {
     const reqData = {
-      request: {
-        filters: {
-          objectType: 'content',
-          processId: processId,
-          status: []
-        },
-        fields: [
-                'identifier',
-                'status',
-                'collectionId',
-                'prevStatus',
-                'contentType',
-                'origin',
-                'name'
-        ],
-        limit: 10000
+      url: 'composite/v1/search',
+      data: {
+        request: {
+          filters: {
+            objectType: 'content',
+            processId: processId,
+            status: []
+          },
+          fields: [
+                  'identifier',
+                  'status',
+                  'collectionId',
+                  'prevStatus',
+                  'contentType',
+                  'origin',
+                  'name'
+          ],
+          limit: 10000
+        }
       }
     };
 
     if (type === 'bulk_approval') {
-      const originUrl = this.programsService.getContentOriginEnvironment();
-      const url =  originUrl + '/action/composite/v3/search';
-      return this.programsService.http.post(url, reqData);
+      return this.learnerService.post(reqData);
     } else if (type === 'bulk_upload') {
       // Get the extra fields that are needed in bulk upload download report
-      const extraFields =  ["copyright", "keywords", "mimeType", "source", "appIcon", "gradeLevel", "artifactUrl", "audience", "license", "attributions", "description", "creator", "importError", "publishError"];
-      reqData.request.fields = _.concat(reqData.request.fields, extraFields);
+      // tslint:disable-next-line:max-line-length
+      const extraFields =  ['copyright', 'keywords', 'mimeType', 'source', 'appIcon', 'gradeLevel', 'artifactUrl', 'audience', 'license', 'attributions', 'description', 'creator', 'importError', 'publishError'];
+      reqData.data.request.fields = _.concat(reqData.data.request.fields, extraFields);
       const req = {
         url: `${this.configService.urlConFig.URLS.COMPOSITE.SEARCH}`,
-        data: reqData
+        data: reqData.data
       };
       return this.contentService.post(req);
     }
