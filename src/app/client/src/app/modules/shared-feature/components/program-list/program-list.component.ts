@@ -146,9 +146,12 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         const applyFilters = this.getFilterDetails(setfilters, this.userService.slug ? 'contributeAllProgramAppliedFiltersTenantAccess' : 'contributeAllProgramAppliedFilters');
         // tslint:disable-next-line: max-line-length
         const sort = {
-          'medium': _.get(this.userService.userProfile, 'medium') ? _.get(this.userService.userProfile, 'medium') : [],
-          'gradeLevel': _.get(this.userService.userProfile, 'gradeLevel') ? _.get(this.userService.userProfile, 'gradeLevel') : [],
-          'subject': _.get(this.userService.userProfile, 'subject') ? _.get(this.userService.userProfile, 'subject') : []
+          // tslint:disable-next-line: max-line-length
+          'medium': _.get(this.userService.userProfile, 'userRegData.User.medium') ? _.get(this.userService.userProfile, 'userRegData.User.medium') : [],
+          // tslint:disable-next-line: max-line-length
+          'gradeLevel': _.get(this.userService.userProfile, 'userRegData.User.gradeLevel') ? _.get(this.userService.userProfile, 'userRegData.User.gradeLevel') : [],
+          // tslint:disable-next-line: max-line-length
+          'subject': _.get(this.userService.userProfile, 'userRegData.User.subject') ? _.get(this.userService.userProfile, 'userRegData.User.subject') : []
         };
 
         // tslint:disable-next-line: max-line-length
