@@ -5,9 +5,9 @@ import { Routes, RouterModule } from '@angular/router';
 import { ProgramComponent, CreateProgramComponent, ProgramNominationsComponent, ListContributorTextbooksComponent,
    OrgUserListComponent, OrgReportsComponent } from './components';
 import { AuthGuard } from '../core/guard/auth-gard.service';
-import * as telemetryConfig from '../shared/services/config/telemetry.config.json';
+import * as telemetryLabels from '../shared/services/config/telemetry-label.config.json';
 import { HelpPageComponent } from '../shared-feature/components/help-page/help-page.component';
-const telemetryPage = telemetryConfig.default;
+const telemetryPage = telemetryLabels.default;
 
 const routes: Routes = [{
   path: '', component: ProgramListComponent, canActivate: [ProgramsService],

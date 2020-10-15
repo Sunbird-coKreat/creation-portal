@@ -177,8 +177,8 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   setTelemetryForonRoleChange(user) {
     const edata =  {
       id: 'assign-role-by-sourcingOrg',
-      type: this.configService.telemetryConfig.eventType.click,
-      subtype: this.configService.telemetryConfig.eventSubtype.submit,
+      type: this.configService.telemetryLabels.eventType.click,
+      subtype: this.configService.telemetryLabels.eventSubtype.submit,
       pageid: this.telemetryPageId,
       extra : {values: [user.identifier, user.selectedRole]}
     };

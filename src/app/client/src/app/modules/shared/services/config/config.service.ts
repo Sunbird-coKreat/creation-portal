@@ -6,7 +6,7 @@ import * as appConfig from './app.config.json';
 import * as editorConfig from './editor.config.json';
 import * as offlineConfig from './offline.config.json';
 import * as constants from './constants.json';
-import * as telemetryConfig from './telemetry.config.json';
+import * as telemetryLabels from './telemetry-label.config.json';
 
 /**
  * Service to fetch config details.
@@ -54,6 +54,6 @@ export class ConfigService {
   * property containing telemetry config
   *
   */
- telemetryConfig = (<any>telemetryConfig.default);
+ telemetryLabels = (<any>telemetryLabels.default);
 }
 

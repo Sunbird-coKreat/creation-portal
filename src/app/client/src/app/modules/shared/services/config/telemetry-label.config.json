@@ -20,6 +20,20 @@
             "projectContributionDetails" : "sourcing_project_contribution_details",
             "help" : "sourcing_help",
             "termsOfUse": "sourcing_terms_of_use"
+        },
+        "contribute" : {
+            "allProjects" : "contribution_all_projects",
+            "adminMyProjects" : "contribution_admin_my_projects",
+            "manageUsers" : "contribution_manage_users",
+            "projectContributions" : "contribution_project_contributions",
+            "projectAssignUsers" : "contribution_project_assign_users",
+            "projectTargetCollection" : "contribution_project_target_collection",
+            "projectContributionDetails" : "contribution_project_contribution_details",
+            "submitNomination" : "contribution_submit_nomination",
+            "submitNominationTargetCollection" : "contribution_submit_nomination_target_collection",
+            "submitNominationSampleDetails" : "contribution_submit_nomination_sample_details",
+            "myProjects" : "contribution_my_projects",
+            "help": "contribution_help"
         }       
     },
     "pageType": {

@@ -12,7 +12,7 @@ import { ICollectionComponentInput, IDashboardComponentInput,
 import { InitialState, ISessionContext, IUserParticipantDetails } from '../../interfaces';
 import { ProgramStageService } from '../../../program/services/program-stage/program-stage.service';
 import { ProgramComponentsService } from '../../services/program-components/program-components.service';
-import { IImpressionEventInput, IInteractEventEdata } from '@sunbird/telemetry';
+import { IImpressionEventInput, IInteractEventEdata, TelemetryService } from '@sunbird/telemetry';
 import { isUndefined, isNullOrUndefined } from 'util';
 import * as moment from 'moment';
 
@@ -88,11 +88,12 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   initialSourcingOrgUser = [];
   searchLimitMessage: any;
   searchLimitCount: any;
+  visitedTab = [];
   @ViewChild('userRemoveRoleModal') userRemoveRoleModal;
   public userRemoveRoleLoader = false;
   public showUserRemoveRoleModal = false;
   public selectedUserToRemoveRole: any;
-  public telemetryPageId = 'contribution_project_contributions';
+  public telemetryPageId: string;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
@@ -102,7 +103,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     public programComponentsService: ProgramComponentsService, public programsService: ProgramsService,
     private navigationHelperService: NavigationHelperService, public registryService: RegistryService,
     private paginationService: PaginationService, public actionService: ActionService,
-    private collectionHierarchyService: CollectionHierarchyService,
+    private collectionHierarchyService: CollectionHierarchyService, private telemetryService: TelemetryService,
     private sbFormBuilder: FormBuilder) {
     this.programId = this.activatedRoute.snapshot.params.programId;
     localStorage.setItem('programId', this.programId);
@@ -122,7 +123,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.currentStage = 'programComponent';
     this.telemetryInteractCdata = [{
       id: this.activatedRoute.snapshot.params.programId,
-      type: 'Program'
+      type: 'project'
     }];
     this.telemetryInteractPdata = {
       id: this.userService.appId,
@@ -135,7 +136,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-    const telemetryCdata = [{ 'type': 'Program', 'id': this.programId }];
+    const telemetryCdata = [{ 'type': 'project', 'id': this.programId }];
     setTimeout(() => {
       this.telemetryImpression = {
         context: {
@@ -149,13 +150,18 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         },
         edata: {
           type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
-          pageid: this.telemetryPageId,
+          pageid: this.getPageId(),
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           subtype: _.get(this.activatedRoute, 'snapshot.data.telemetry.subtype'),
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
     });
+  }
+
+  getPageId() {
+    this.telemetryPageId = _.get(this.activatedRoute,'snapshot.data.telemetry.pageid');
+    return this.telemetryPageId;
   }
 
   getProgramDetails() {
@@ -202,6 +208,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   initiateInputs() {
     this.showLoader = false;
     this.sessionContext.programId = this.programDetails.program_id;
+    this.sessionContext.telemetryPageId = this.configService.telemetryLabels.pageId.contribute.submitNomination;
     this.dynamicInputs = {
       collectionComponentInput: {
         sessionContext: this.sessionContext,
@@ -381,7 +388,17 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.OrgUsersCnt = this.allContributorOrgUsers.length;
     this.sortOrgUsers('projectselectedRole');
     this.showUsersLoader = false;
+    // tslint:disable-next-line:max-line-length
+    this.logTelemetryImpressionEvent(this.allContributorOrgUsers, 'user', this.configService.telemetryLabels.pageId.contribute.projectAssignUsers);
     return true;
+  }
+
+  setTelemetryPageId(tabName) {
+    if (tabName === 'textbook') {
+      this.telemetryPageId = this.configService.telemetryLabels.pageId.contribute.projectContributions;
+    } else if (tabName === 'user') {
+      this.telemetryPageId = this.configService.telemetryLabels.pageId.contribute.projectAssignUsers;
+    }
   }
 
   NavigateToPage(page: number): undefined | void {
@@ -454,9 +471,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   setTelemetryForonRoleChange(user) {
      const edata =  {
-        id: 'assign-users-to-program',
-        type: 'click',
-        pageid: 'list-nominated-textbooks',
+        id: 'assign_users_to_program',
+        type: this.configService.telemetryLabels.eventType.click,
+        subtype: this.configService.telemetryLabels.eventSubtype.submit,
+        pageid: this.telemetryPageId,
         extra : {values: [user.identifier, user.newRole]}
       }
     this.registryService.generateUserRoleUpdateTelemetry(this.activatedRoute.snapshot.data.telemetry.env,this.telemetryInteractCdata,this.telemetryInteractPdata, edata )
@@ -580,6 +598,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           this.tempSortTextbooks = this.contributorTextbooks;
           this.showLoader = false;
           const mvcStageData = this.programsService.getMvcStageData();
+          this.logTelemetryImpressionEvent(this.contributorTextbooks, 'collection');
           if (!_.isEmpty(mvcStageData)) {
             this.viewContribution(mvcStageData.collection);
           }
@@ -589,13 +608,30 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           this.showLoader = false;
           const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
           this.toasterService.error(errorMes || 'Fetching textbooks failed. Please try again...');
+          this.logTelemetryImpressionEvent(contributorTextbooks, 'collection');
         }
       );
     } else {
       this.contributorTextbooks = contributorTextbooks;
       this.tempSortTextbooks = this.contributorTextbooks;
       this.showLoader = false;
+      this.logTelemetryImpressionEvent(this.contributorTextbooks, 'collection');
     }
+  }
+
+  public logTelemetryImpressionEvent(data, type, pageId?) {
+    if (_.includes(this.visitedTab, type)) { return false; }
+    this.visitedTab.push(type);
+    const telemetryImpression = _.cloneDeep(this.telemetryImpression);
+    if (data && !_.isEmpty(data)) {
+      telemetryImpression.edata.visits = _.map(data, (row) => {
+        return { objid: _.toString(row['identifier']), objtype: type };
+      });
+    } else {
+      telemetryImpression.edata.visits = [];
+    }
+    telemetryImpression.edata.pageid = pageId ? pageId : this.telemetryPageId;
+    this.telemetryService.impression(telemetryImpression);
   }
 
   viewContribution(collection) {
@@ -603,6 +639,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sessionContext.programId = this.programDetails.program_id;
     this.sessionContext.collection = collection.identifier;
     this.sessionContext.collectionName = collection.name;
+    this.sessionContext.telemetryPageId = this.configService.telemetryLabels.pageId.contribute.projectTargetCollection;
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});
@@ -713,10 +750,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.component = this.programComponentsService.getComponentInstance(e);
   }
 
-  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: any): IInteractEventEdata {
+  getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: any): IInteractEventEdata {
     return _.omitBy({
       id,
       type,
+      subtype,
       pageid,
       extra
     }, _.isUndefined);

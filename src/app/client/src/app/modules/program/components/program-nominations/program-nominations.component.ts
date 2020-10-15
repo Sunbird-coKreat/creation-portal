@@ -312,8 +312,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     });
   }
   // tslint:disable-next-line:max-line-length
-  if (_.isEqual(this.telemetryPageId, this.config.telemetryConfig.pageId.sourcing.projectContributionDashboard) || _.isEqual(this.telemetryPageId, this.config.telemetryConfig.pageId.sourcing.projectReports)) {
-    telemetryImpression.edata.type = this.config.telemetryConfig.pageType.report;
+  if (_.isEqual(this.telemetryPageId, this.config.telemetryLabels.pageId.sourcing.projectContributionDashboard) || _.isEqual(this.telemetryPageId, this.config.telemetryLabels.pageId.sourcing.projectReports)) {
+    telemetryImpression.edata.type = this.config.telemetryLabels.pageType.report;
   }
   telemetryImpression.edata.pageid = this.telemetryPageId;
   this.telemetryService.impression(telemetryImpression);
@@ -821,8 +821,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   setTelemetryForonRoleChange(user) {
     const edata =  {
       id: 'assign_role_by_sourcingOrg',
-      type: this.config.telemetryConfig.eventType.click,
-      subtype: this.config.telemetryConfig.eventSubtype.submit,
+      type: this.config.telemetryLabels.eventType.click,
+      subtype: this.config.telemetryLabels.eventSubtype.submit,
       pageid: this.telemetryPageId,
       extra : {values: [user.identifier, user.newRole]}
     };
@@ -887,7 +887,7 @@ showUserRoleOption(roleName, userRole) {
     this.sessionContext.programId = this.programDetails.program_id;
     this.sessionContext.collection = collection.identifier;
     this.sessionContext.collectionName = collection.name;
-    this.sessionContext.telemetryPageId = this.config.telemetryConfig.pageId.sourcing.projectTargetCollection;
+    this.sessionContext.telemetryPageId = this.config.telemetryLabels.pageId.sourcing.projectTargetCollection;
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});

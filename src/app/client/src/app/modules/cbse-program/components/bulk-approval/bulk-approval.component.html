@@ -2,7 +2,7 @@
   <button [disabled]="!originalCollectionData || originalCollectionData && originalCollectionData.status !== 'Draft'" *ngIf="approvalPending && approvalPending.length && showBulkApprovalButton" type="button"
    class="sb-btn sb-btn-normal sb-btn-primary text-inherit" (click)="showBulkApproveModal=true; bulkApprovalComfirmation=true"
    appTelemetryInteract
-    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('bulk_approve_content', configService.telemetryConfig.eventType.click,configService.telemetryConfig.eventSubtype.launch, telemetryPageId)"
+    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('bulk_approve_content', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
     [telemetryInteractObject]="telemetryInteractObject"
     [telemetryInteractCdata]="telemetryInteractCdata"
     [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.bulkApproveContent}}</button>
@@ -16,7 +16,7 @@
     </div>
     <a *ngIf="bulkApprove && bulkApprove.status" href="javascript:void(0)" (click)="showBulkApproveModal=true;viewBulkApprovalStatus()"
     appTelemetryInteract
-    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('view_details', configService.telemetryConfig.eventType.click,configService.telemetryConfig.eventSubtype.launch, telemetryPageId, {values: [bulkApprove.process_id]})"
+    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('view_details', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId, {values: [bulkApprove.process_id]})"
     [telemetryInteractObject]="telemetryInteractObject"
     [telemetryInteractCdata]="telemetryInteractCdata"
     [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.viewDetails}}</a>
@@ -76,13 +76,13 @@
   <div class="sb-modal-actions">
     <button *ngIf="bulkApprovalComfirmation" type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showBulkApproveModal=false;bulkApprovalComfirmation=false;bulkApproval()"
     appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('yes', configService.telemetryConfig.eventType.click,configService.telemetryConfig.eventSubtype.submit,telemetryPageId,{key:'dialog_id',value:'bulk_approval'})"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('yes', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit,telemetryPageId,{key:'dialog_id',value:'bulk_approval'})"
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.yes}}</button> 
     <button *ngIf="bulkApprovalComfirmation" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showBulkApproveModal=false;bulkApprovalComfirmation=false"
     appTelemetryInteract
-    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('no', configService.telemetryConfig.eventType.click,configService.telemetryConfig.eventSubtype.cancel,telemetryPageId,{key:'dialog_id',value:'bulk_approval'})"
+    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('no', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.cancel,telemetryPageId,{key:'dialog_id',value:'bulk_approval'})"
     [telemetryInteractObject]="telemetryInteractObject"
     [telemetryInteractCdata]="telemetryInteractCdata"
     [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.no}}</button>

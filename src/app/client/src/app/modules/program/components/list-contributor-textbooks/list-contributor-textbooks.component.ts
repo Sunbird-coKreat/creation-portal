@@ -291,7 +291,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   viewContribution(collection) {
     this.component = ChapterListComponent;
     this.sessionContext.programId = this.programDetails.program_id;
-    this.sessionContext.telemetryPageId = this.config.telemetryConfig.pageId.sourcing.projectNominationTargetCollection;
+    this.sessionContext.telemetryPageId = this.config.telemetryLabels.pageId.sourcing.projectNominationTargetCollection;
     this.sessionContext.collection =  collection.identifier;
     this.sessionContext.collectionName = collection.name;
     this.sessionContext.currentRoles = ['REVIEWER'] ;

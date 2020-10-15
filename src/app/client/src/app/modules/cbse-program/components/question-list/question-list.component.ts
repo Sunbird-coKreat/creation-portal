@@ -145,7 +145,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         },
         edata: {
-          type: this.configService.telemetryConfig.pageType.view || _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
+          type: this.configService.telemetryLabels.pageType.view || _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
           pageid: this.telemetryPageId,
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()

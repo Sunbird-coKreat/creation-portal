@@ -41,7 +41,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   public classes;
   public board;
   public filters;
-  public telemetryPageId = 'contribution_project_contributions';
+  public telemetryPageId: string;
   public telemetryInteractCdata: any;
   public contentStatusCounts: any = {};
   public telemetryInteractPdata: any;
@@ -73,7 +73,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   _slideConfig = {'slidesToShow': 10, 'slidesToScroll': 1, 'variableWidth': true};
   public preSavedContentTypes = [];
   public disableNominate = false;
-  constructor(private configService: ConfigService, public publicDataService: PublicDataService,
+  constructor(public configService: ConfigService, public publicDataService: PublicDataService,
     public actionService: ActionService,
     private cbseService: CbseProgramService, private collectionHierarchyService: CollectionHierarchyService,
     public programStageService: ProgramStageService, public resourceService: ResourceService,
@@ -86,6 +86,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.programStageService.initialize();
+    this.telemetryPageId = _.get(this.collectionComponentInput, 'sessionContext.telemetryPageId');
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
       this.changeView();
@@ -127,7 +128,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     (_.size(this.mediums) > 1) ? this.isMediumClickable = true : this.isMediumClickable = false;
 
     // tslint:disable-next-line:max-line-length
-    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.collectionComponentInput.programContext.program_id, 'Program');
+    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.collectionComponentInput.programContext.program_id, 'project');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
     this.telemetryInteractObject = {};
@@ -141,7 +142,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-    const telemetryCdata = [{ 'type': 'Program', 'id': this.programContext.program_id }];
+    const telemetryCdata = [{ 'type': 'project', 'id': this.programContext.program_id }];
     setTimeout(() => {
       this.telemetryImpression = {
         context: {
@@ -154,7 +155,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
           }
         },
         edata: {
-          type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
+          type: this.configService.telemetryLabels.pageType.workflow || _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
           pageid: this.telemetryPageId,
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
@@ -606,6 +607,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sessionContext = _.assign(this.sessionContext, this.sharedContext);
     this.sessionContext.collection =  collection.identifier;
     this.sessionContext.collectionName = collection.name;
+    this.sessionContext.telemetryPageId = this.configService.telemetryLabels.pageId.contribute.submitNominationTargetCollection;
     this.chapterListComponentInput = {
       sessionContext: this.sessionContext,
       collection: collection,

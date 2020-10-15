@@ -104,7 +104,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
 
   // check the active tab
   getPageId() {
-    this.telemetryPageId = _.get(this.activeRoute, 'snapshot.data.telemetry.pageid');
+    this.telemetryPageId = this.userService.isContributingOrgUser() ? this.configService.telemetryLabels.pageId.contribute.myProjects : _.get(this.activeRoute, 'snapshot.data.telemetry.pageid');
     return this.telemetryPageId;
   }
 
@@ -293,6 +293,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       }, error => {
         this.showLoader = false;
         this.toasterService.error(_.get(error, 'error.params.errmsg') || this.resourceService.messages.emsg.projects.m0001);
+        this.logTelemetryImpressionEvent();
       }
     );
   }
@@ -303,6 +304,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         return !enrolledPrograms.includes(program.program_id);
       });
       this.programs = this.filterProgramByDate(temp);
+      this.logTelemetryImpressionEvent();
     } else {
       this.programs = this.filterProgramByDate(allPrograms);
     }
@@ -440,11 +442,13 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
             this.sortColumn = 'contributionDate';
             this.direction = 'desc';
             this.sortCollection(this.sortColumn);
+            this.logTelemetryImpressionEvent();
             this.showLoader = false;
           });
         }, (error) => {
           this.showLoader = false;
           console.log(error);
+          this.logTelemetryImpressionEvent();
           this.toasterService.error(this.resourceService.messages.emsg.projects.m0002);
         });
       return;

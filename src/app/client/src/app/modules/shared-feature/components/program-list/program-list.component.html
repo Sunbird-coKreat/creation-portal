@@ -16,7 +16,7 @@
           {{filtersAppliedCount}} {{resourceService?.frmelmnts?.lbl?.filtersApplied}}
         </div>
         <button type="button" appTelemetryInteract
-          [telemetryInteractEdata]="getTelemetryInteractEdata('apply_filter', configService.telemetryConfig.eventType.click,configService.telemetryConfig.eventSubtype.launch,telemetryPageId)"
+          [telemetryInteractEdata]="getTelemetryInteractEdata('apply_filter', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
           [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryInteractPdata" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10"
           (click)="showFiltersModal = true">
@@ -43,7 +43,7 @@
                 </th>
                 <th *ngIf="isContributor" class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('sourcing_org_name')"
                 appTelemetryInteract
-              [telemetryInteractEdata]="getTelemetryInteractEdata('sort-program-name', configService.telemetryConfig.eventType.click,undefined,telemetryPageId)"
+              [telemetryInteractEdata]="getTelemetryInteractEdata('sort-program-name', configService.telemetryLabels.eventType.click,undefined,telemetryPageId)"
               [telemetryInteractObject]="telemetryInteractObject"
               [telemetryInteractCdata]="telemetryInteractCdata"
               [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService?.frmelmnts?.lbl?.sourcingOrganisation }} &nbsp;&nbsp;
@@ -177,7 +177,7 @@
                     class="sb-btn sb-btn-normal sb-btn-outline-primary mr-5"
                     (click)="viewDetailsBtnClicked(program)"
                     appTelemetryInteract
-                    [telemetryInteractEdata]="getTelemetryInteractEdata('open', configService.telemetryConfig.eventType.click, configService.telemetryConfig.eventSubtype.launch, telemetryPageId)"
+                    [telemetryInteractEdata]="getTelemetryInteractEdata('open', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                     [telemetryInteractObject]="telemetryInteractObject"
                     [telemetryInteractCdata]="getTelemetryInteractCdata(program.program_id,'project')"
                     [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
@@ -185,7 +185,7 @@
 
                     <div *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing') && program.status === 'Draft'" class="d-inline-block cursor-pointer pr-20 pl-5" (click)="editOnClick(program)"
                     appTelemetryInteract
-                    [telemetryInteractEdata]="getTelemetryInteractEdata('edit_draft', configService.telemetryConfig.eventType.click, configService.telemetryConfig.eventSubtype.launch, telemetryPageId)"
+                    [telemetryInteractEdata]="getTelemetryInteractEdata('edit_draft', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                     [telemetryInteractObject]="telemetryInteractObject"
                     [telemetryInteractCdata]="getTelemetryInteractCdata(program.program_id,'project')"
                     [telemetryInteractPdata]="telemetryInteractPdata">
@@ -197,13 +197,13 @@
                     <div class="sb-dock-icon-tooltip d-inline-block">
                       <i *ngIf="program.status === 'Live' || program.status === 'Unlisted'" class="icon edit sb-color-primary cursor-pointer ui fs-0-785 px-20 va-text-sup" data-tooltip="Modify" (click)="editOnClick(program)"
                       appTelemetryInteract
-                    [telemetryInteractEdata]="getTelemetryInteractEdata('modify', configService.telemetryConfig.eventType.click, configService.telemetryConfig.eventSubtype.launch, telemetryPageId)"
+                    [telemetryInteractEdata]="getTelemetryInteractEdata('modify', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                     [telemetryInteractObject]="telemetryInteractObject"
                     [telemetryInteractCdata]="getTelemetryInteractCdata(program.program_id,'project')"
                     [telemetryInteractPdata]="telemetryInteractPdata"></i>
                       <i class="icon trash sb-color-primary cursor-pointer ui fs-0-785 va-text-sup pl-20" data-tooltip="Delete" (click)="setDelete(program, i)"
                       appTelemetryInteract
-                    [telemetryInteractEdata]="getTelemetryInteractEdata('delete', configService.telemetryConfig.eventType.click, configService.telemetryConfig.eventSubtype.launch, telemetryPageId)"
+                    [telemetryInteractEdata]="getTelemetryInteractEdata('delete', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                     [telemetryInteractObject]="telemetryInteractObject"
                     [telemetryInteractCdata]="getTelemetryInteractCdata(program.program_id,'project')"
                     [telemetryInteractPdata]="telemetryInteractPdata"></i>
@@ -235,7 +235,7 @@
   </div>
   <div class="sb-modal-actions" (click)="deleteProject($event)"
   appTelemetryInteract
-  [telemetryInteractEdata]="getTelemetryInteractEdata('yes', configService.telemetryConfig.eventType.click, configService.telemetryConfig.eventSubtype.submit, telemetryPageId, {key:'dialog_id',value:'delete_project'})"
+  [telemetryInteractEdata]="getTelemetryInteractEdata('yes', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit, telemetryPageId, {key:'dialog_id',value:'delete_project'})"
   [telemetryInteractObject]="telemetryInteractObject"
   [telemetryInteractCdata]="getTelemetryInteractCdata(program.program_id,'project')"
   [telemetryInteractPdata]="telemetryInteractPdata">
@@ -244,7 +244,7 @@
     </button>
     <button class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showDeleteModal = false"
     appTelemetryInteract
-  [telemetryInteractEdata]="getTelemetryInteractEdata('no', configService.telemetryConfig.eventType.click, configService.telemetryConfig.eventSubtype.cancel, telemetryPageId,{key:'dialog_id',value:'delete_project'})"
+  [telemetryInteractEdata]="getTelemetryInteractEdata('no', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel, telemetryPageId,{key:'dialog_id',value:'delete_project'})"
   [telemetryInteractObject]="telemetryInteractObject"
   [telemetryInteractCdata]="getTelemetryInteractCdata(program.program_id,'project')"
   [telemetryInteractPdata]="telemetryInteractPdata">

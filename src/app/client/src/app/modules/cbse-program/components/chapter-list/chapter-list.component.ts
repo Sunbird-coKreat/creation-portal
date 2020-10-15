@@ -187,7 +187,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           }
         },
         edata: {
-          type: this.configService.telemetryConfig.pageType.detail || _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
+          type: this.configService.telemetryLabels.pageType.detail || _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
           pageid: this.telemetryPageId,
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
@@ -244,10 +244,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   getTelemeryPageIdForContentDetailsPage() {
-    if (this.telemetryPageId === this.configService.telemetryConfig.pageId.sourcing.projectNominationTargetCollection) {
-      return this.configService.telemetryConfig.pageId.sourcing.projectNominationContributionDetails;
-    } else if (this.telemetryPageId === this.configService.telemetryConfig.pageId.sourcing.projectTargetCollection) {
-      return this.configService.telemetryConfig.pageId.sourcing.projectContributionDetails;
+    if (this.telemetryPageId === this.configService.telemetryLabels.pageId.sourcing.projectNominationTargetCollection) {
+      return this.configService.telemetryLabels.pageId.sourcing.projectNominationContributionDetails;
+    } else if (this.telemetryPageId === this.configService.telemetryLabels.pageId.sourcing.projectTargetCollection) {
+      return this.configService.telemetryLabels.pageId.sourcing.projectContributionDetails;
+    } else if (this.telemetryPageId === this.configService.telemetryLabels.pageId.contribute.projectTargetCollection) {
+      return this.configService.telemetryLabels.pageId.contribute.projectContributionDetails;
+    } else if (this.telemetryPageId === this.configService.telemetryLabels.pageId.contribute.submitNominationTargetCollection) {
+      return this.configService.telemetryLabels.pageId.contribute.submitNominationSampleDetails;
     }
   }
 

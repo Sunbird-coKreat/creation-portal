@@ -24,6 +24,7 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
   public programContext;
   public sessionContext;
   public unitIdentifier;
+  public telemetryPageId;
   constructor( public programTelemetryService: ProgramTelemetryService, public userService: UserService,
     public configService: ConfigService ) { }
 
@@ -33,9 +34,9 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
     this.programContext = _.get(this.resourceTemplateComponentInput, 'programContext');
     this.sessionContext = _.get(this.resourceTemplateComponentInput, 'sessionContext');
     this.unitIdentifier  = _.get(this.resourceTemplateComponentInput, 'unitIdentifier');
-
+    this.telemetryPageId = this.sessionContext.telemetryPageId;
     // tslint:disable-next-line:max-line-length
-    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.sessionContext.programId, 'Program');
+    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.sessionContext.programId, 'project');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
      // tslint:disable-next-line:max-line-length
