@@ -422,7 +422,8 @@ export class BulkUploadComponent implements OnInit {
       { name: 'Name of the Content', inputName: 'name', maxLength: 250, required: true, requiredError, headerError, maxLengthError },
       { name: 'Description of the content', inputName: 'description', maxLength: 500, maxLengthError, headerError },
       { name: 'Keywords', inputName: 'keywords', isArray: true, headerError },
-      { name: 'Audience', inputName: 'audience', required: true, requiredError, headerError, in: ['Learner', 'Instructor'], inError },
+      // tslint:disable-next-line:max-line-length
+      { name: 'Audience', inputName: 'audience', required: true, requiredError, headerError, in: ['Student', 'Teacher', 'Administrator'], inError },
       { name: 'Author', inputName: 'creator', required: true, requiredError, headerError },
       { name: 'Copyright', inputName: 'copyright', required: true, requiredError, headerError },
       { name: 'License', inputName: 'license', in: licenses, inError, isDefault: true, default: '', headerError },
