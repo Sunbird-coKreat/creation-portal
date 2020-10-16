@@ -88,6 +88,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   initialSourcingOrgUser = [];
   searchLimitMessage: any;
   searchLimitCount: any;
+  userRoles = [{'id': 1, 'name': 'CONTRIBUTOR', 'defaultTab': 1, 'tabs': [1]}, {'id': 2, 'name': 'REVIEWER', 'defaultTab': 2, 'tabs': [2]}, {'id': 3, 'name': 'BOTH', 'defaultTab': 3, 'tabs': [3]}]
   @ViewChild('userRemoveRoleModal') userRemoveRoleModal;
   public userRemoveRoleLoader = false;
   public showUserRemoveRoleModal = false;
@@ -374,6 +375,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           r.projectselectedRole = "REVIEWER";
         }
       }
+      r.projectselectedRole !=='Select Role' ? r.roles = this.roles : r.roles = this.userRoles
       r.newRole = r.projectselectedRole;
       this.allContributorOrgUsers.push(r);
     });
@@ -393,13 +395,13 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.pager = this.paginationService.getPager(this.OrgUsersCnt, this.pageNumber, this.pageLimit);
   }
 
-  showUserRoleOption(roleName, userRole) {
-    if (!(roleName !== 'NONE' || (roleName === 'NONE' && userRole !== 'Select Role'))) {
-     return 'Select Role'
-    } else {
-      return roleName;
-    }
-  }
+  // showUserRoleOption(roleName, userRole) {
+  //   if (!(roleName !== 'NONE' || (roleName === 'NONE' && userRole !== 'Select Role'))) {
+  //    return 'Select Role'
+  //   } else {
+  //     return roleName;
+  //   }
+  // }
 
   removeUserFromProgram() {
     if (this.userRemoveRoleLoader) {
@@ -490,6 +492,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.userRemoveRoleLoader = false;
       if (user.newRole === "NONE") {
         user.newRole = 'Select Role';
+        user.roles = this.userRoles;
+      } else {
+        user.roles = this.roles;
       }
       user.projectselectedRole = user.newRole;
       this.nominationDetails.rolemapping = progRoleMapping;
