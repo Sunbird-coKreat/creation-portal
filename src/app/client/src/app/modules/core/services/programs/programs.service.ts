@@ -737,11 +737,15 @@ export class ProgramsService extends DataService implements CanActivate {
           filters: {
             type: type,
             status: status
-          },
-          sort: sort
+          }
         }
       }
     };
+
+    if (sort) {
+      req.data.request['sort'] = sort;
+    }
+
     if (appliedfilters) {
       req.data.request.filters = {...req.data.request.filters , ...appliedfilters};
     }
