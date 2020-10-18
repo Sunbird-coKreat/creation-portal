@@ -12,7 +12,7 @@ import { AvatarModule } from 'ngx-avatar';
 import {
   MainHeaderComponent, MainFooterComponent, MainMenuComponent, SearchComponent,
   DataDrivenFilterComponent, ErrorPageComponent, SortByComponent, FlagContentComponent,
-  LanguageDropdownComponent, ProminentFilterComponent, TopicPickerComponent
+  LanguageDropdownComponent, ProminentFilterComponent, TopicPickerComponent, DataFormComponent
 } from './components';
 import { ManageModule } from '../manage/manage.module';
 import { AuthGuard } from './guard/auth-gard.service';
@@ -36,9 +36,9 @@ import { TelemetryModule } from '@sunbird/telemetry';
   declarations: [MainHeaderComponent, MainFooterComponent, MainMenuComponent, SearchComponent, PermissionDirective,
     BodyScrollDirective, DataDrivenFilterComponent, SortByComponent,
     ErrorPageComponent, FlagContentComponent, LanguageDropdownComponent,
-    ProminentFilterComponent, TopicPickerComponent, StickyHeaderDirective],
+    ProminentFilterComponent, TopicPickerComponent, StickyHeaderDirective, DataFormComponent],
   exports: [MainHeaderComponent, MainFooterComponent, PermissionDirective, BodyScrollDirective,
-    DataDrivenFilterComponent, SortByComponent, FlagContentComponent,
+    DataDrivenFilterComponent, SortByComponent, FlagContentComponent, DataFormComponent,
     TelemetryModule, LanguageDropdownComponent, ProminentFilterComponent, TopicPickerComponent],
   providers: [
     {

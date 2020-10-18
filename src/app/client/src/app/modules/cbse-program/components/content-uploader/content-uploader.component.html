@@ -54,6 +54,9 @@
                 <div class="warning-message" *ngIf="editTitle.length === 0">{{resourceService.frmelmnts.lbl.contentNameRequired}}</div>
                 <div class="warning-message" *ngIf="editTitle.length > titleCharacterLimit">{{resourceService.frmelmnts.lbl.contentNameLength }} {{titleCharacterLimit}}</div>
               </div>
+              <div>
+                <button class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="showEditform()">edit metadata</button>
+              </div>
             </div>
             <div class="practical-sb-buttons mt-20">
               <button id="saveContent" suiPopup popupText="Save" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSave" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="saveContent()"
@@ -302,8 +305,49 @@
   </div> -->
 </sui-modal>
 
+<!--  edit metadata --> 
+
+<sui-modal *ngIf="showEditMetaForm" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+    class="sb-modal" appBodyScroll (dismissed)="showEditMetaForm= false" #editmodal>
+    <i class="icon close" (click)="showEditMetaForm= false; editmodal.deny('denied')" tabindex="0"></i>
+    <!--Header-->
+    <div class="sb-modal-header">Edit Details</div>
+    <!--/Header-->
+
+    <!--Content-->
+    <div class="sb-modal-content o-y-visible pb-8" *ngIf="formFieldProperties && categoryMasterList">
+      <app-data-form
+        #formData
+        [formFieldProperties]="formFieldProperties" 
+        [categoryMasterList]="categoryMasterList">
+      </app-data-form>
+    </div>
+    <!--/Content-->
+
+    <!--Actions-->
+    <div class="sb-modal-actions">
+        <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="showEditMetaForm= false">save</button>
+    </div>
+    <!--/Actions-->
+</sui-modal>
+
+
+<!-- edit metadata -->
+
+
+<!--Content-->
+ <!-- <div class="sb-modal-content o-y-visible pb-8" *ngIf="formFieldProperties && categoryMasterList && showEditForm">
+  <app-data-form
+    #formData
+    [formFieldProperties]="formFieldProperties" 
+    [categoryMasterList]="categoryMasterList">
+  </app-data-form>
+</div> -->
+<!--/Content-->
+
+
 <div *ngIf="showForm && showPreview">
-  <form #contentForm [formGroup]="contentDetailsForm" class='ui container licence-form mt-24' >
+  <!-- <form #contentForm [formGroup]="contentDetailsForm" class='ui container licence-form mt-24' >
     <div class="middle-section-set">
       <div class="licence-form__content">
           <div class='licence-form__content__fields py-16 ui stackable grid'>
@@ -397,5 +441,5 @@
             </div>
       </div>
     </div>
-  </form>
+  </form> -->
   </div>

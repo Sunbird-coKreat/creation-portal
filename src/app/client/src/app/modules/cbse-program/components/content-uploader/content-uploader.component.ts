@@ -17,6 +17,7 @@ import { CollectionHierarchyService } from '../../services/collection-hierarchy/
 import { ActivatedRoute, Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
 import { CacheService } from 'ng2-cache-service';
+import { DataFormComponent } from '../../../core/components/data-form/data-form.component';
 
 @Component({
   selector: 'app-content-uploader',
@@ -24,7 +25,9 @@ import { CacheService } from 'ng2-cache-service';
   styleUrls: ['./content-uploader.component.scss']
 })
 export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('formData') formData: DataFormComponent;
   @ViewChild('modal') modal;
+  @ViewChild('editmodal') editmodal;
   @ViewChild('fineUploaderUI') fineUploaderUI: ElementRef;
   @ViewChild('qq-upload-actions') actionButtons: ElementRef;
   @ViewChild('titleTextArea') titleTextAreaa: ElementRef;
@@ -78,7 +81,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public sourcingReviewStatus: string;
   public contentType: string;
   public popupAction: string;
-  //public sourcingOrgReviewComments: string;
+  // public sourcingOrgReviewComments: string;
   public contentComment: string;
   originPreviewUrl = '';
   originPreviewReady = false;
@@ -99,6 +102,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public overrideMetaData: any;
   public editableFields = [];
   public isMetadataOverridden = false;
+  public formFieldProperties: any;
+  public validForm = false;
+  public fromSubmited = false;
+  public categoryMasterList: any;
+  public showEditMetaForm = false;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -138,7 +146,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.contentStatusNotify(action);
     });
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
-   }
+  }
 
   ngAfterViewInit() {
     if (_.get(this.contentUploadComponentInput, 'action') !== 'preview') {
@@ -166,6 +174,191 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         }
       };
      });
+  }
+
+  showEditform() {
+    this.categoryMasterList = this.sessionContext.frameworkData;
+    this.formFieldProperties = [{
+      'code': 'name',
+      'editable': true,
+      'displayProperty': 'Editable',
+      'dataType': 'text',
+      'renderingHints': {
+        'semanticColumnWidth': 'twelve'
+      },
+      'description': 'Name',
+      'index': 1,
+      'label': 'Name',
+      'required': true,
+      'name': 'Name',
+      'inputType': 'text',
+      'placeholder': 'Name'
+    },
+    {
+      'code': 'board',
+      'visible': true,
+      'depends': [
+        'medium',
+        'gradeLevel',
+        'subject'
+      ],
+      'editable': true,
+      'displayProperty': 'Editable',
+      'dataType': 'text',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'description': 'Education Board (Like MP Board, NCERT, etc)',
+      'index': 2,
+      'label': 'Board',
+      'required': false,
+      'name': 'Board',
+      'inputType': 'select',
+      'placeholder': 'Board'
+    },
+    {
+      'code': 'medium',
+      'visible': true,
+      'depends': [
+        'gradeLevel',
+        'subject'
+      ],
+      'editable': true,
+      'displayProperty': 'Editable',
+      'dataType': 'list',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'description': 'Medium of instruction',
+      'index': 3,
+      'label': 'Medium',
+      'required': true,
+      'name': 'Medium',
+      'inputType': 'multiSelect',
+      'placeholder': 'Medium'
+    },
+    {
+      'code': 'gradeLevel',
+      'visible': true,
+      'depends': [
+        'subject'
+      ],
+      'editable': true,
+      'displayProperty': 'Editable',
+      'dataType': 'list',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'description': 'Class',
+      'index': 4,
+      'label': 'Class',
+      'required': true,
+      'name': 'Class',
+      'inputType': 'multiSelect',
+      'placeholder': 'Class'
+    },
+    {
+      'code': 'subject',
+      'visible': true,
+      'editable': true,
+      'displayProperty': 'Editable',
+      'dataType': 'list',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'description': 'Subject of the Content to use to teach',
+      'index': 5,
+      'label': 'Subject',
+      'required': true,
+      'name': 'Subject',
+      'inputType': 'multiSelect',
+      'placeholder': 'Subject'
+    },
+    // {
+    //   'code': 'learningOutcome',
+    //   'visible': true,
+    //   'editable': true,
+    //   'displayProperty': 'Editable',
+    //   'dataType': 'list',
+    //   'renderingHints': {
+    //     'semanticColumnWidth': 'six'
+    //   },
+    //   'description': 'Subject of the Content to use to teach',
+    //   'index': 6,
+    //   'label': 'Learning Outcome',
+    //   'required': true,
+    //   'name': 'learningOutcome',
+    //   'inputType': 'select',
+    //   'placeholder': 'learningOutcome'
+    // },
+    {
+      'code': 'attributions',
+      'dataType': 'list',
+      'description': 'Attributions',
+      'editable': true,
+      'index': 7,
+      'inputType': 'text',
+      'label': 'Attributions',
+      'name': 'attribution',
+      'placeholder': '',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'required': false
+    },
+    {
+      'code': 'author',
+      'dataType': 'text',
+      'description': 'Author',
+      'editable': true,
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'index': 8,
+      'inputType': 'text',
+      'label': 'Author',
+      'name': 'Author',
+      'placeholder': 'Author',
+      'required': true
+    },
+    {
+      'code': 'copyright',
+      'dataType': 'text',
+      'description': 'Copyright',
+      'editable': true,
+      'index': 9,
+      'inputType': 'text',
+      'label': 'Copyright',
+      'name': 'Copyright',
+      'placeholder': 'Copyright',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'required': false
+    }];
+    _.forEach(this.categoryMasterList, (category) => {
+      _.forEach(this.formFieldProperties, (formFieldCategory) => {
+        if (category.code === formFieldCategory.code) {
+          formFieldCategory.range = category.terms;
+        }
+        return formFieldCategory;
+      });
+    });
+    _.forEach(this.formFieldProperties, (formFieldCategory) => {
+      if (formFieldCategory.code === 'author') {
+        let creator = this.userService.userProfile.firstName;
+        if (!_.isEmpty(this.userService.userProfile.lastName)) {
+          creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
+        }
+        formFieldCategory.defaultValue = creator;
+      }
+      if (!_.isUndefined(this.sessionContext[formFieldCategory.code])) {
+        formFieldCategory.defaultValue = this.sessionContext[formFieldCategory.code];
+      }
+      return formFieldCategory;
+    });
+    this.formFieldProperties = _.sortBy(_.uniqBy(this.formFieldProperties, 'code'), 'index');
+    this.showEditMetaForm = true;
   }
 
   hasAccessFor(action) {
@@ -199,6 +392,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   canEdit() {
+    // tslint:disable-next-line:max-line-length
     return !!(this.hasAccessFor('showEdit') && this.resourceStatus === 'Draft' && this.userService.getUserId() === this.contentMetaData.createdBy);
   }
 
@@ -225,6 +419,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   canPublishContent() {
     // tslint:disable-next-line:max-line-length
     return !!(this.router.url.includes('/contribute') && !this.contentMetaData.sampleContent === true &&
+    // tslint:disable-next-line:max-line-length
     this.hasAccessFor('showPublish') && this.resourceStatus === 'Review' && this.userService.getUserId() !== this.contentMetaData.createdBy);
   }
 
@@ -561,7 +756,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         contentData: res
       };
       this.contentMetaData = res;
-     
       const contentTypeValue = [this.contentMetaData.contentType];
       this.contentType = this.programsService.getContentTypesName(contentTypeValue);
       this.editTitle = (this.contentMetaData.name !== 'Untitled') ? this.contentMetaData.name : '' ;
@@ -619,7 +813,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         this.fetchFrameWorkDetails();
       }
       this.getTelemetryData();
-      this.manageFormConfiguration();
+      //  this.manageFormConfiguration();
       this.cd.detectChanges();
     });
   }
@@ -691,7 +885,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       });
     }
 
-    this.getEditableFields();
+    // this.getEditableFields();
 
      _.map(this.allFormFields, (obj) => {
       const code = obj.code;
@@ -734,6 +928,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       first()).subscribe((frameworkDetails: any) => {
       if (frameworkDetails && !frameworkDetails.err) {
         const frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
+        this.categoryMasterList = _.cloneDeep(frameworkDetails.frameworkdata[this.sessionContext.framework].categories);
         this.sessionContext.topicList = _.get(_.find(frameworkData, { code: 'topic' }), 'terms');
       }
     });
@@ -795,60 +990,70 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   saveContent(action?) {
-    const requiredTextFields = _.filter(this.textFields, {required: true});
-    const validText = _.map(requiredTextFields, (obj) => {
-       return _.trim(this.contentDetailsForm.value[obj.code]).length !== 0;
-    });
-    // tslint:disable-next-line:max-line-length
-    if (this.contentDetailsForm.valid && this.editTitle && this.editTitle !== '' && !_.includes(validText, false)) {
-      this.showTextArea = false;
-      this.formValues = {};
-      let contentObj = {
-          'versionKey': this.contentMetaData.versionKey,
-          'name': this.editTitle
-      };
-      const trimmedValue = _.mapValues(this.contentDetailsForm.value, (value) => {
-         if (_.isString(value)) {
-           return _.trim(value);
-         } else {
-           return value;
-         }
-      });
-
-      _.forEach(this.textFields, field => {
-        if (field.dataType === 'list') {
-          trimmedValue[field.code] = trimmedValue[field.code] ? trimmedValue[field.code].split(', ') : [];
+      let requiredFields = [];
+      requiredFields = _.map(_.filter(this.formFieldProperties, { 'required': true }), field => field.code );
+      const content = this.formData ? _.pickBy(this.formData.formInputData) : [];
+      for (let i = 0; i < requiredFields.length; i++) {
+        if (_.isUndefined(content[requiredFields[i]])) {
+          this.toasterService.error(this.resourceService.messages.fmsg.m0101);
+          return;
         }
-      });
-      contentObj = _.pickBy(_.assign(contentObj, trimmedValue), _.identity);
-      const request = {
-        'content': contentObj
-      };
+      }
 
-      this.helperService.updateContent(request, this.contentMetaData.identifier).subscribe((res) => {
-        this.contentMetaData.versionKey = res.result.versionKey;
-        if (action === 'review' && this.isIndividualAndNotSample()) {
-          this.publishContent();
-        } else if (action === 'review') {
-          this.sendForReview();
-        } else if (this.sessionContext.collection && this.unitIdentifier && action !== 'review') {
-          // tslint:disable-next-line:max-line-length
-          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
-          .subscribe((data) => {
+      const requiredTextFields = _.filter(this.textFields, {required: true});
+      const validText = _.map(requiredTextFields, (obj) => {
+        return _.trim(this.contentDetailsForm.value[obj.code]).length !== 0;
+      });
+      // tslint:disable-next-line:max-line-length
+      if (this.contentDetailsForm.valid && this.editTitle && this.editTitle !== '' && !_.includes(validText, false)) {
+        this.showTextArea = false;
+        this.formValues = {};
+        let contentObj = {
+            'versionKey': this.contentMetaData.versionKey,
+            'name': this.editTitle
+        };
+        const trimmedValue = _.mapValues(this.contentDetailsForm.value, (value) => {
+          if (_.isString(value)) {
+            return _.trim(value);
+          } else {
+            return value;
+          }
+        });
+
+        _.forEach(this.textFields, field => {
+          if (field.dataType === 'list') {
+            trimmedValue[field.code] = trimmedValue[field.code] ? trimmedValue[field.code].split(', ') : [];
+          }
+        });
+        contentObj = _.pickBy(_.assign(contentObj, trimmedValue), _.identity);
+        const request = {
+          'content': contentObj
+        };
+
+        this.helperService.updateContent(request, this.contentMetaData.identifier).subscribe((res) => {
+          this.contentMetaData.versionKey = res.result.versionKey;
+          if (action === 'review' && this.isIndividualAndNotSample()) {
+            this.publishContent();
+          } else if (action === 'review') {
+            this.sendForReview();
+          } else if (this.sessionContext.collection && this.unitIdentifier && action !== 'review') {
+            // tslint:disable-next-line:max-line-length
+            this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
+            .subscribe((data) => {
+              this.toasterService.success(this.resourceService.messages.smsg.m0060);
+            }, (err) => {
+              this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+            });
+          } else {
             this.toasterService.success(this.resourceService.messages.smsg.m0060);
-          }, (err) => {
-            this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-          });
-        } else {
-          this.toasterService.success(this.resourceService.messages.smsg.m0060);
-        }
-      }, (err) => {
-        this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-      });
-    } else {
-      this.markFormGroupTouched(this.contentDetailsForm);
-      this.toasterService.error(this.resourceService.messages.fmsg.m0076);
-    }
+          }
+        }, (err) => {
+          this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+        });
+      } else {
+        this.markFormGroupTouched(this.contentDetailsForm);
+        this.toasterService.error(this.resourceService.messages.fmsg.m0076);
+      }
   }
 
   sendForReview() {
@@ -1110,6 +1315,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.notify.unsubscribe();
     if (this.azurFileUploaderSubscrition) {
       this.azurFileUploaderSubscrition.unsubscribe();
+    }
+    if (this.editmodal && this.editmodal.deny) {
+      this.editmodal.deny();
     }
   }
 
