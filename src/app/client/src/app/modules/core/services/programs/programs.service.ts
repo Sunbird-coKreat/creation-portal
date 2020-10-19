@@ -729,7 +729,7 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * makes api call to get list of programs from ext framework Service
    */
-  getAllProgramsByType(type, status, appliedfilters?): Observable<ServerResponse> {
+  getAllProgramsByType(type, status, appliedfilters?, sort?): Observable<ServerResponse> {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
       data: {
@@ -741,6 +741,11 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
+
+    if (sort) {
+      req.data.request['sort'] = sort;
+    }
+
     if (appliedfilters) {
       req.data.request.filters = {...req.data.request.filters , ...appliedfilters};
     }
