@@ -78,7 +78,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   workSpaceRole: Array<string>;
   manageProgramsRole: Array<string>;
   manageUserRole: Array<string>;
-  manageOrgReportRole: Array<string>;
+  orgReportRole: Array<string>;
   public sourcingOrgAdmin: boolean;
   public notificationSubscription: Subscription;
   public notificationData: Array<any>;
@@ -101,7 +101,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       this.workSpaceRole = this.config.rolesConfig.headerDropdownRoles.workSpaceRole;
       this.manageProgramsRole = this.config.rolesConfig.headerTabsRoles.manageProgramsRole;
       this.manageUserRole = this.config.rolesConfig.headerTabsRoles.manageUserRole;
-      this.manageOrgReportRole = this.config.rolesConfig.headerTabsRoles.manageOrgReportRole;
+      this.orgReportRole = this.config.rolesConfig.headerTabsRoles.orgReportRole;
       router.events.subscribe((event) => {
         if (event instanceof NavigationEnd) {
           this.onRouterChange();
