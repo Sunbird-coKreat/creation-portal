@@ -16,7 +16,6 @@ let envVariables = {
   LEARNER_URL: env.sunbird_learner_player_url || 'https://staging.open-sunbird.org/api/',
   CONTENT_URL: env.sunbird_content_player_url || 'https://staging.open-sunbird.org/api/',
   CONTENT_PROXY_URL: env.sunbird_content_proxy_url || 'https://staging.open-sunbird.org',
-  FORM_URL: env.form_url || 'https://dev.sunbirded.org/api/',
   PORTAL_REALM: env.sunbird_portal_realm || 'sunbird',
   PORTAL_AUTH_SERVER_URL: env.sunbird_portal_auth_server_url || 'https://staging.open-sunbird.org/auth',
   PORTAL_AUTH_SERVER_CLIENT: env.sunbird_portal_auth_server_client || 'portal',
