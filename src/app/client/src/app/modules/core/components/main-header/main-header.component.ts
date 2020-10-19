@@ -82,7 +82,6 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   public notificationSubscription: Subscription;
   public notificationData: Array<any>;
   public showGlobalNotification: boolean;
-  public isManageProgramAccess: boolean;
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
     public orgDetailsService: OrgDetailsService, private _cacheService: CacheService, public formService: FormService,
@@ -115,7 +114,6 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
           this.getLanguage(this.userService.channel);
           // this.isCustodianOrgUser();
           this.sourcingOrgAdmin = this.userProfile.userRoles.includes('ORG_ADMIN') ? true : false;
-          this.checkManageProgramAccess(this.userProfile);
         }
       });
     } else {
@@ -182,16 +180,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       return authroles.url;
     }
   }
-  checkManageProgramAccess(userProfile) {
-   if (userProfile.userRoles.includes('ORG_ADMIN'))  {
-      this.isManageProgramAccess =  true;
-   } else if (userProfile.userRoles.includes('CONTENT_REVIEWER')) {
-    this.isManageProgramAccess =  true;
-   } else {
-    // this.router.navigateByUrl('sourcing/workspace/content/create');
-    this.isManageProgramAccess =  false;
-   }
-  }
+
   ngOnDestroy() {
     if (this.notificationSubscription) {
       this.notificationSubscription.unsubscribe();
