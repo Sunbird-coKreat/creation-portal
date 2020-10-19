@@ -162,7 +162,7 @@
       [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.manageUsers }}</a>
 
                     <a routerLink="sourcing/orglist" *ngIf=" permissionService.permissionAvailable && router.url.includes('/sourcing') && !router.url.includes('/contribute/help')" [class.active]="activeTab['manageUsers']" (click)="handleActiveTabState('manageUsers')"
-                    appTelemetryInteract  appPermission
+                    appTelemetryInteract  appPermission 
                     [permission]='manageUserRole' 
       [telemetryInteractEdata]="getTelemetryInteractEdata('manage-users', 'click', 'main-header')"
       [telemetryInteractObject]="telemetryInteractObject"
