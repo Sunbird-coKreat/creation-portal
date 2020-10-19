@@ -76,6 +76,8 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   contributeTabActive: boolean;
   activeTab = {};
   workSpaceRole: Array<string>;
+  manageProgramsRole: Array<string>;
+  manageUserRole: Array<string>;
   public sourcingOrgAdmin: boolean;
   public notificationSubscription: Subscription;
   public notificationData: Array<any>;
@@ -97,6 +99,8 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       this.orgSetupRole = this.config.rolesConfig.headerDropdownRoles.orgSetupRole;
       this.orgAdminRole = this.config.rolesConfig.headerDropdownRoles.orgAdminRole;
       this.workSpaceRole = this.config.rolesConfig.headerDropdownRoles.workSpaceRole;
+      this.manageProgramsRole = this.config.rolesConfig.headerTabsRoles.manageProgramsRole;
+      this.manageUserRole = this.config.rolesConfig.headerTabsRoles.manageUserRole;
       router.events.subscribe((event) => {
         if (event instanceof NavigationEnd) {
           this.onRouterChange();
@@ -184,6 +188,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
    } else if (userProfile.userRoles.includes('CONTENT_REVIEWER')) {
     this.isManageProgramAccess =  true;
    } else {
+    // this.router.navigateByUrl('sourcing/workspace/content/create');
     this.isManageProgramAccess =  false;
    }
   }

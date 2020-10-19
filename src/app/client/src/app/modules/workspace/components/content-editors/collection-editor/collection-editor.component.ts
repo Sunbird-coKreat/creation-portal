@@ -70,7 +70,6 @@ export class CollectionEditorComponent implements OnInit, OnDestroy {
     this.getDetails().pipe(
       first(),
       tap(data => {
-        console.log(data, 'tenant details');
         if (data.tenantDetails) {
           this.logo = data.tenantDetails.logo;
         }
@@ -101,7 +100,6 @@ export class CollectionEditorComponent implements OnInit, OnDestroy {
     const allowedEditState = ['draft', 'allcontent', 'collaborating-on', 'uploaded', 'alltextbooks'].includes(this.routeParams.state);
     const allowedEditStatus = this.routeParams.contentStatus ? ['draft'].includes(this.routeParams.contentStatus.toLowerCase()) : false;
     this.userService.userOrgDetails$.subscribe(data => {
-      console.log(data, 'userOrgDetails');
     });
     if (_.isEmpty(lockInfo) && allowedEditState && allowedEditStatus) {
       return combineLatest(

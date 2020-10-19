@@ -7,7 +7,10 @@
         "orgSetupRole" : ["SYSTEM_ADMINISTRATION"],
         "orgAdminRole" : ["ORG_ADMIN","SYSTEM_ADMINISTRATION"]
     },
-
+    "headerTabsRoles" : {
+        "manageProgramsRole": ["ORG_ADMIN","CONTENT_REVIEWER"],
+        "manageUserRole": ["ORG_ADMIN"]
+    },
     "workSpaceRole":{
        "createRole": ["CONTENT_CREATOR","CONTENT_CREATION","CONTENT_REVIEWER","CONTENT_REVIEW","BOOK_CREATOR"], 
        "draftRole": ["CONTENT_CREATOR","CONTENT_CREATION","CONTENT_REVIEWER","CONTENT_REVIEW","BOOK_CREATOR"],

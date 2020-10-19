@@ -124,8 +124,9 @@
 
             <div class="ui container d-flex flex-ai-center mx-0 sb-dock-menu">
                 <!-- <a routerLink="contribute/dashboard" *ngIf="this.router.url.includes('/contribute')" [class.active]="this.router.isActive('/contribute/dashboard', true)">{{ resourceService.frmelmnts.lnk.dashboard }}</a> -->
-                    <a routerLink="sourcing" *ngIf="router.url.includes('/sourcing') && !router.url.includes('/sourcing/help') && isManageProgramAccess" [class.active]="activeTab['myPrograms']" (click)="handleActiveTabState('myPrograms')"
-                    appTelemetryInteract
+                    <a routerLink="sourcing" *ngIf=" permissionService.permissionAvailable && router.url.includes('/sourcing') && !router.url.includes('/sourcing/help')" [class.active]="activeTab['myPrograms']" (click)="handleActiveTabState('myPrograms')"
+                    appTelemetryInteract appPermission
+                    [permission]='manageProgramsRole' 
       [telemetryInteractEdata]="getTelemetryInteractEdata('manage-programs', 'click', 'main-header')"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
@@ -159,12 +160,15 @@
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.manageUsers }}</a>
-                    <a routerLink="sourcing/orglist" *ngIf="router.url.includes('/sourcing') && !router.url.includes('/contribute/help') && sourcingOrgAdmin " [class.active]="activeTab['manageUsers']" (click)="handleActiveTabState('manageUsers')"
-                    appTelemetryInteract
+
+                    <a routerLink="sourcing/orglist" *ngIf=" permissionService.permissionAvailable && router.url.includes('/sourcing') && !router.url.includes('/contribute/help')" [class.active]="activeTab['manageUsers']" (click)="handleActiveTabState('manageUsers')"
+                    appTelemetryInteract  appPermission
+                    [permission]='manageUserRole' 
       [telemetryInteractEdata]="getTelemetryInteractEdata('manage-users', 'click', 'main-header')"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.manageUsers }}</a>
+
       <a routerLink="sourcing/orgreports" *ngIf="router.url.includes('/sourcing') && !router.url.includes('/contribute/help') && sourcingOrgAdmin && !router.url.includes('/sourcing/help')" [class.active]="activeTab['organisationReports']" (click)="handleActiveTabState('organisationReports')"
                     appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('organisation-reports', 'click', 'main-header')"
