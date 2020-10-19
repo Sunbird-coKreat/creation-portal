@@ -7,7 +7,7 @@ import { SearchService, UserService, PermissionService } from '@sunbird/core';
 import {
   ServerResponse, PaginationService, ConfigService, ToasterService,
   ResourceService, IContents, ILoaderMessage, INoResultMessage, IUserData,
-  NavigationHelperService
+  NavigationHelperService, IPagination
 } from '@sunbird/shared';
 import { WorkSpaceService } from '../../services';
 import * as _ from 'lodash-es';
@@ -106,7 +106,7 @@ export class FlagReviewerComponent extends WorkSpace implements OnInit, AfterVie
   * Contains returned object of the pagination service
   * which is needed to show the pagination on inbox view
   */
-  pager;
+  pager: IPagination;
 
   /**
   * To show toaster(error, success etc) after any API calls

@@ -3,9 +3,10 @@ import { SharedModule } from '@sunbird/shared';
 import { NgModule , ModuleWithProviders} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  ViewAllComponent, ProfileFrameworkPopupComponent, TermsAndConditionsPopupComponent,
+  ProfileFrameworkPopupComponent, TermsAndConditionsPopupComponent,
   OtpPopupComponent, BatchInfoComponent, SsoMergeConfirmationComponent, ValidateTeacherIdentifierPopupComponent,
-  UserLocationComponent, EnrollContributorComponent, TextbookListComponent, ProgramListComponent, OrgUsersListComponent, ProjectFilterComponent
+  UserLocationComponent, EnrollContributorComponent, TextbookListComponent,
+   ProgramListComponent, OrgUsersListComponent, ProjectFilterComponent
 } from './components';
 import { DaysToGoPipe } from './pipes';
 import { SlickModule } from 'ngx-slick';
@@ -31,12 +32,12 @@ import { HelpPageComponent } from './components/help-page/help-page.component';
     ReactiveFormsModule,
     SuiModule
   ],
-  declarations: [ViewAllComponent, ProfileFrameworkPopupComponent, TermsAndConditionsPopupComponent,
+  declarations: [ProfileFrameworkPopupComponent, TermsAndConditionsPopupComponent,
     OtpPopupComponent, BatchInfoComponent, SsoMergeConfirmationComponent, ValidateTeacherIdentifierPopupComponent,
     UserLocationComponent, EnrollContributorComponent, ProgramListComponent, DaysToGoPipe,
     TextbookListComponent, OrgUsersListComponent, HelpPageComponent, ProjectFilterComponent
   ],
-  exports: [ViewAllComponent, ProfileFrameworkPopupComponent, TermsAndConditionsPopupComponent,
+  exports: [ProfileFrameworkPopupComponent, TermsAndConditionsPopupComponent,
     OtpPopupComponent, BatchInfoComponent, SsoMergeConfirmationComponent, ValidateTeacherIdentifierPopupComponent,
     UserLocationComponent, EnrollContributorComponent, ProgramListComponent, DaysToGoPipe, TextbookListComponent, OrgUsersListComponent]
 })

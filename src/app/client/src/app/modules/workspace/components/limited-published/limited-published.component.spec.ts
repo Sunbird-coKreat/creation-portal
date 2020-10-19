@@ -20,6 +20,8 @@ import * as mockData from './limited-published.component.spec.data';
 const testData = mockData.mockRes;
 import { TelemetryModule } from '@sunbird/telemetry';
 import { NgInviewModule } from 'angular-inport';
+import { CoreModule } from '@sunbird/core';
+import { configureTestSuite } from '@sunbird/test-util';
 
 describe('LimitedPublishedComponent', () => {
   let component: LimitedPublishedComponent;
@@ -61,10 +63,11 @@ describe('LimitedPublishedComponent', () => {
     },
     languageSelected$: observableOf({})
   };
+  configureTestSuite();
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [LimitedPublishedComponent],
-      imports: [HttpClientTestingModule, RouterTestingModule, SharedModule.forRoot(),
+      imports: [HttpClientTestingModule, RouterTestingModule, CoreModule, SharedModule.forRoot(),
         TelemetryModule.forRoot(), NgInviewModule],
       providers: [PaginationService, WorkSpaceService, UserService,
         SearchService, ContentService, LearnerService, CoursesService,
@@ -114,15 +117,13 @@ describe('LimitedPublishedComponent', () => {
       'Course',
       'LessonPlan',
       'Resource',
-      'FocusSpot',
       'SelfAssess',
       'PracticeResource',
       'LearningOutcomeDefinition',
-      'PracticeQuestionSet',
-      'CuriosityQuestions',
-      'MarkingSchemeRubric',
       'ExplanationResource',
-      'ExperientialResource'
+      'ExperientialResource',
+      'eTextBook',
+      'TVLesson'
     ],
     'objectType': 'Content'
     },

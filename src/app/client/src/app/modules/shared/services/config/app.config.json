@@ -805,15 +805,26 @@
       "Course",
       "LessonPlan",
       "Resource",
-      "FocusSpot",
       "SelfAssess",
       "PracticeResource",
       "LearningOutcomeDefinition",
-      "PracticeQuestionSet",
-      "CuriosityQuestions",
-      "MarkingSchemeRubric",
       "ExplanationResource",
-      "ExperientialResource"
+      "ExperientialResource",
+      "eTextBook",
+      "TVLesson"
+    ],
+    "primaryCategory": [
+      "Course",
+      "Digital Textbook",
+      "Content Playlist",
+      "Explanation Content",
+      "Learning Resource",
+      "Practice Question Set",
+      "eTextbook",
+      "Teacher Resource"
+    ],
+    "adminHandledContentType" :[
+      "TextBook"
     ],
     "mimeType": [
       "application/vnd.ekstep.ecml-archive",
@@ -881,7 +892,7 @@
         ]
       },
       "dynamicFields": {
-        "ribbon.right.name": "contentType"
+        "ribbon.right.name": "primaryCategory"
       }
     },
     "Published": {
@@ -919,7 +930,7 @@
         ]
       },
       "dynamicFields": {
-        "ribbon.right.name": "contentType"
+        "ribbon.right.name": "primaryCategory"
       }
     },
     "Uploaded": {
@@ -1069,6 +1080,16 @@
         "ribbon.right.name": "contentType"
       }
     }
+  },
+  "draft": {
+    "filterType": "draft",
+    "inPageredirectUrl": "workspace/content/draft/1",
+    "searchPageredirectUrl": "workspace/content/draft/1"
+  },
+  "published": {
+    "filterType": "published",
+    "inPageredirectUrl": "workspace/content/published/1",
+    "searchPageredirectUrl": "workspace/content/published/1"
   },
   "DASHBOARD": {
     "PAGE_LIMIT": 200

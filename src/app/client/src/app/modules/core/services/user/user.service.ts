@@ -2,8 +2,8 @@ import { ConfigService, ServerResponse, IUserProfile, IUserData, IOrganization, 
 import { LearnerService } from './../learner/learner.service';
 import { ContentService } from './../content/content.service';
 import { Injectable, Inject } from '@angular/core';
-import { Observable, BehaviorSubject, of } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { Observable, BehaviorSubject, of, iif } from 'rxjs';
+import { map, switchMap, tap, mergeMap, shareReplay} from 'rxjs/operators';
 import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash-es';
 import { HttpClient } from '@angular/common/http';
@@ -89,12 +89,16 @@ export class UserService {
   /**
    * Reference of orgNames
    */
-  private orgNames: Array<string> = [];
+  public orgNames: Array<string> = [];
 
   public rootOrgName: string;
 
   public orgnisationsDetails: Array<IOrganization>;
 
+  public readonly userOrgDetails$ = this.userData$.pipe(
+    mergeMap(data => iif(() =>
+    !this._userProfile.organisationIds, of([]), this.getOrganizationDetails(this._userProfile.organisationIds))),
+    shareReplay(1));
   /**
    * Reference of public data service.
    */
@@ -297,6 +301,23 @@ export class UserService {
       );
   }
 
+  public getOrganizationDetails(organisationIds) {
+    const option = {
+      url: this.config.urlConFig.URLS.ADMIN.ORG_SEARCH,
+      data: {
+        request: {
+          filters: {
+            id: organisationIds,
+          }
+        }
+      }
+    };
+    return this.publicDataService.post(option)
+    .pipe(tap((data: ServerResponse) => {
+        this.orgnisationsDetails = _.get(data, 'result.response.content');
+        this.orgNames = _.map(this.orgnisationsDetails, org => org.orgName);
+      }));
+  }
   openSaberRegistrySearch() {
     const userRegData = {};
     const option = {

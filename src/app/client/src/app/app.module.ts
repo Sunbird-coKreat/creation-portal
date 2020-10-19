@@ -2,7 +2,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app.routing';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
 import { SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule, SuiProgressModule,
   SuiRatingModule, SuiCollapseModule } from 'ng2-semantic-ui';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -18,7 +18,9 @@ import { CacheSessionStorage } from 'ng2-cache-service/dist/src/services/storage
 import { DeviceDetectorModule } from 'ngx-device-detector';
 import { PluginModules } from './framework.config';
 import { ChatLibModule, ChatLibService } from 'sunbird-chatbot-client';
-
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { TranslateStore } from "@ngx-translate/core";
 @NgModule({
   declarations: [
     AppComponent
@@ -34,6 +36,13 @@ import { ChatLibModule, ChatLibService } from 'sunbird-chatbot-client';
     SharedModule.forRoot(),
     WebExtensionModule.forRoot(),
     TelemetryModule.forRoot(),
+    TranslateModule.forRoot({
+      loader: {
+          provide: TranslateLoader,
+          useFactory: HttpLoaderFactory,
+          deps: [HttpClient]
+      }
+    }),
     DeviceDetectorModule.forRoot(),
     SharedFeatureModule,
     ...PluginModules,
@@ -45,6 +54,7 @@ import { ChatLibModule, ChatLibService } from 'sunbird-chatbot-client';
     CacheService,
     DatePipe,
     ChatLibService,
+    TranslateStore,
     { provide: CacheStorageAbstract, useClass: CacheSessionStorage },
     { provide: HTTP_INTERCEPTORS, useClass: SessionExpiryInterceptor, multi: true }
   ]
@@ -53,4 +63,8 @@ export class AppModule {
   constructor(bootstrapFramework: BootstrapFramework) {
     bootstrapFramework.initialize(WebExtensionsConfig);
   }
+}
+// required for AOT compilation
+export function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http, "/resourcebundles/v1/readLang/"," ");
 }

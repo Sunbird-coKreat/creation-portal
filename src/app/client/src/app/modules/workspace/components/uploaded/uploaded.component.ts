@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { WorkSpace } from '../../classes/workspace';
 import { SearchService, UserService } from '@sunbird/core';
 import {
-  ServerResponse, PaginationService, ConfigService, ToasterService,
+  ServerResponse, PaginationService, ConfigService, ToasterService, IPagination,
   ResourceService, IContents, ILoaderMessage, INoResultMessage, NavigationHelperService
 } from '@sunbird/shared';
 import { WorkSpaceService } from '../../services';
@@ -98,7 +98,7 @@ export class UploadedComponent extends WorkSpace implements OnInit, AfterViewIni
   * Contains returned object of the pagination service
   * which is needed to show the pagination on inbox view
   */
-  pager;
+  pager: IPagination;
 
   /**
   * To show toaster(error, success etc) after any API calls

@@ -5,7 +5,7 @@ import { SearchService, UserService } from '@sunbird/core';
 import {
   ServerResponse, PaginationService, ToasterService,
   ResourceService, ConfigService, IContents, ILoaderMessage, INoResultMessage,
-  NavigationHelperService
+  NavigationHelperService, IPagination
 } from '@sunbird/shared';
 import { WorkSpaceService } from '../../services';
 import * as _ from 'lodash-es';
@@ -96,7 +96,7 @@ export class FlaggedComponent extends WorkSpace implements OnInit, AfterViewInit
   * Contains returned object of the pagination service
   * which is needed to show the pagination on inbox view
   */
-  pager;
+  pager: IPagination;
   /**
     * To call resource service which helps to use language constant
   */

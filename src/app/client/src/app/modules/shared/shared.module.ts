@@ -3,10 +3,10 @@ import { SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, Su
 import { SlickModule } from 'ngx-slick';
 import { FormsModule } from '@angular/forms';
 import {
-  AnnouncementInboxCardComponent, PageSectionComponent, NoResultComponent, AppLoaderComponent, CardComponent,
+  AnnouncementInboxCardComponent, NoResultComponent, AppLoaderComponent, CardComponent,
   CardCreationComponent, ShareLinkComponent, BrowserCompatibilityComponent, QrCodeModalComponent, RedirectComponent,
   CustomMultiSelectComponent, InstallAppComponent, LockInfoPopupComponent, BatchCardComponent, AccountMergeModalComponent,
-  FullPageModalComponent
+  FullPageModalComponent, SelectOptionGroupComponent, AppLandingSectionComponent
 } from './components';
 import {
   ConfigService, ResourceService, ToasterService, WindowScrollService, BrowserCacheTtlService,
@@ -16,13 +16,14 @@ import {
 import { ContentDirectionDirective } from './directives';
 import { CommonModule } from '@angular/common';
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { DateFormatPipe, DateFilterXtimeAgoPipe, FilterPipe, InterpolatePipe } from './pipes';
+import { DateFormatPipe, DateFilterXtimeAgoPipe, FilterPipe, InterpolatePipe, SortByPipe} from './pipes';
 import { CacheService } from 'ng2-cache-service';
 import { DeviceDetectorModule } from 'ngx-device-detector';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { CdnprefixPipe } from './pipes/cdnprefix.pipe';
 import { HighlightTextDirective } from './directives/highlight-text/highlight-text.directive';
+import { TranslateModule, TranslateStore } from '@ngx-translate/core';
 
 
 @NgModule({
@@ -32,18 +33,19 @@ import { HighlightTextDirective } from './directives/highlight-text/highlight-te
     SuiRatingModule, SuiCollapseModule,
     SlickModule,
     FormsModule,
-    TelemetryModule
+    TelemetryModule,
+    TranslateModule.forChild()
   ],
-  declarations: [AppLoaderComponent, AnnouncementInboxCardComponent, DateFormatPipe, PageSectionComponent,
+  declarations: [AppLoaderComponent, AnnouncementInboxCardComponent, DateFormatPipe,
     BatchCardComponent, NoResultComponent, DateFilterXtimeAgoPipe, CardComponent, CardCreationComponent, FilterPipe, InterpolatePipe,
     ShareLinkComponent, BrowserCompatibilityComponent, QrCodeModalComponent, CdnprefixPipe, RedirectComponent, CustomMultiSelectComponent,
-    InstallAppComponent, LockInfoPopupComponent, ContentDirectionDirective,
-    HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent],
-  exports: [AppLoaderComponent, AnnouncementInboxCardComponent, DateFormatPipe, DateFilterXtimeAgoPipe,
-    PageSectionComponent, BatchCardComponent, NoResultComponent, CardComponent, CardCreationComponent, FilterPipe,
-    ShareLinkComponent, BrowserCompatibilityComponent, QrCodeModalComponent, CdnprefixPipe, InterpolatePipe, RedirectComponent,
-    CustomMultiSelectComponent, InstallAppComponent, LockInfoPopupComponent, ContentDirectionDirective,
-    HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent]
+    InstallAppComponent, LockInfoPopupComponent, ContentDirectionDirective, SelectOptionGroupComponent, SortByPipe,
+    HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent, AppLandingSectionComponent],
+  exports: [AppLoaderComponent, AnnouncementInboxCardComponent, DateFormatPipe, DateFilterXtimeAgoPipe, SelectOptionGroupComponent,
+    BatchCardComponent, NoResultComponent, CardComponent, CardCreationComponent, FilterPipe,
+    ShareLinkComponent, BrowserCompatibilityComponent, QrCodeModalComponent, CdnprefixPipe, InterpolatePipe, SortByPipe, RedirectComponent,
+    CustomMultiSelectComponent, InstallAppComponent, LockInfoPopupComponent, ContentDirectionDirective, TranslateModule,
+    HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent, AppLandingSectionComponent]
 })
 export class SharedModule {
   static forRoot(): ModuleWithProviders {
@@ -51,7 +53,7 @@ export class SharedModule {
       ngModule: SharedModule,
       providers: [ResourceService, ConfigService, ToasterService, PaginationService, RecaptchaService,
         RouterNavigationService, WindowScrollService, NavigationHelperService, CacheService, UtilService, ContentUtilsServiceService,
-        DeviceDetectorModule, DeviceDetectorService, BrowserCacheTtlService, ExternalUrlPreviewService, OfflineCardService]
+        DeviceDetectorModule, DeviceDetectorService, BrowserCacheTtlService, ExternalUrlPreviewService, OfflineCardService, TranslateStore]
     };
   }
 }

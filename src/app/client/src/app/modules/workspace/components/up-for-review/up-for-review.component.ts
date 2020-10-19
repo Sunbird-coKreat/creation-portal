@@ -7,7 +7,7 @@ import { SearchService, UserService, PermissionService } from '@sunbird/core';
 import {
   ServerResponse, PaginationService, ConfigService, ToasterService,
   ResourceService, IContents, ILoaderMessage, INoResultMessage, IUserData,
-  NavigationHelperService
+  NavigationHelperService, IPagination
 } from '@sunbird/shared';
 import { WorkSpaceService } from '../../services';
 import * as _ from 'lodash-es';
@@ -95,7 +95,7 @@ export class UpForReviewComponent extends WorkSpace implements OnInit, AfterView
   * Contains returned object of the pagination service
   * which is needed to show the pagination on inbox view
   */
-  pager;
+  pager: IPagination;
 
   /**
   * To show toaster(error, success etc) after any API calls
@@ -203,7 +203,7 @@ export class UpForReviewComponent extends WorkSpace implements OnInit, AfterView
         board: bothParams.queryParams.board,
         subject: bothParams.queryParams.subject,
         medium: bothParams.queryParams.medium,
-        gradeLevel: bothParams.queryParams.gradeLevel,
+        gradeLevel: bothParams.queryParams.gradeLevel
       },
       limit: limit,
       offset: (pageNumber - 1) * (limit),
