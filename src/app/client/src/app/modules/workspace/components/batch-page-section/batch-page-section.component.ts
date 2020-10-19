@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { WorkSpace } from '../../classes/workspace';
 import { SearchService, UserService, PageApiService } from '@sunbird/core';
 import {
-  ServerResponse, ConfigService, ToasterService,
+  ServerResponse, ConfigService, ToasterService, IPagination,
   ResourceService, ILoaderMessage, INoResultMessage, ICaraouselData, NavigationHelperService
 } from '@sunbird/shared';
 import { WorkSpaceService, BatchService } from '../../services';
@@ -92,7 +92,7 @@ export class BatchPageSectionComponent extends WorkSpace implements OnInit, OnDe
   * Contains returned object of the pagination service
   * which is needed to show the pagination on inbox view
   */
-  pager;
+  pager: IPagination;
 
   filters: object;
 
@@ -200,6 +200,26 @@ export class BatchPageSectionComponent extends WorkSpace implements OnInit, OnDe
       this.showLoader = false;
       return;
     }
+    const courseIds = _.map(this.batchList, 'courseId');
+    const searchOption = {
+      'filters': {
+        'identifier': _.uniq(courseIds),
+        'status': ['Live'],
+        'contentType': ['Course']
+      },
+      'fields': ['name']
+    };
+
+    // Get course details for the batches to show content name on batch card
+    this.searchService.contentSearch(searchOption, false)
+      .subscribe(data => {
+        if (_.get(data, 'result.content')) {
+          _.map(this.batchList, (batchData) => {
+            batchData.courseDetails = _.find(_.get(data, 'result.content'), courseData => courseData.identifier === batchData.courseId);
+          });
+        }
+      });
+
     const userList = _.compact(_.uniq(_.map(this.batchList, 'createdBy')));
     const { slickSize } = this.config.appConfig.CourseBatchPageSection;
     const req = {

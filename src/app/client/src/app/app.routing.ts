@@ -18,6 +18,9 @@ const appRoutes: Routes = [
     path: 'dashBoard', loadChildren: 'app/modules/dashboard/dashboard.module#DashboardModule'
   },
   {
+    path: 'sourcing/workspace', loadChildren: 'app/modules/workspace/workspace.module#WorkspaceModule'
+  },
+  {
     path: 'profile', loadChildren: 'app/plugins/profile/profile.module#ProfileModule'
   },
   {

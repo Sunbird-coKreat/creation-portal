@@ -5,7 +5,7 @@ import { WorkSpace } from '../../classes/workspace';
 import { SearchService, UserService } from '@sunbird/core';
 import {
   ServerResponse, PaginationService, ConfigService, ToasterService,
-  ResourceService, IContents, ILoaderMessage, INoResultMessage,
+  ResourceService, IContents, ILoaderMessage, INoResultMessage, IPagination,
   ContentUtilsServiceService, ITelemetryShare, NavigationHelperService
 } from '@sunbird/shared';
 import { WorkSpaceService } from '../../services';
@@ -111,7 +111,7 @@ export class LimitedPublishedComponent extends WorkSpace implements OnInit, Afte
   * Contains returned object of the pagination service
   * which is needed to show the pagination on inbox view
   */
-  pager;
+  pager: IPagination;
 
   /**
   * To show toaster(error, success etc) after any API calls

@@ -11,7 +11,7 @@ import { SharedModule } from '@sunbird/shared';
 import { AvatarModule } from 'ngx-avatar';
 import {
   MainHeaderComponent, MainFooterComponent, MainMenuComponent, SearchComponent,
-  DataDrivenFilterComponent, ErrorPageComponent, SortByComponent, FlagContentComponent,
+  ErrorPageComponent, SortByComponent, FlagContentComponent,
   LanguageDropdownComponent, ProminentFilterComponent, TopicPickerComponent
 } from './components';
 import { ManageModule } from '../manage/manage.module';
@@ -34,11 +34,11 @@ import { TelemetryModule } from '@sunbird/telemetry';
     AvatarModule
   ],
   declarations: [MainHeaderComponent, MainFooterComponent, MainMenuComponent, SearchComponent, PermissionDirective,
-    BodyScrollDirective, DataDrivenFilterComponent, SortByComponent,
+    BodyScrollDirective, SortByComponent,
     ErrorPageComponent, FlagContentComponent, LanguageDropdownComponent,
     ProminentFilterComponent, TopicPickerComponent, StickyHeaderDirective],
   exports: [MainHeaderComponent, MainFooterComponent, PermissionDirective, BodyScrollDirective,
-    DataDrivenFilterComponent, SortByComponent, FlagContentComponent,
+   SortByComponent, FlagContentComponent,
     TelemetryModule, LanguageDropdownComponent, ProminentFilterComponent, TopicPickerComponent],
   providers: [
     {

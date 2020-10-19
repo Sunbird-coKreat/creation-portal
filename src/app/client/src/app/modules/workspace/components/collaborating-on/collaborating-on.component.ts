@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { WorkSpace } from '../../classes/workspace';
 import { SearchService, UserService, ISort } from '@sunbird/core';
 import {
-  ServerResponse, PaginationService, ConfigService, ToasterService,
+  ServerResponse, PaginationService, ConfigService, ToasterService, IPagination,
   ResourceService, ILoaderMessage, INoResultMessage, IContents, NavigationHelperService
 } from '@sunbird/shared';
 import { Ibatch, IStatusOption } from './../../interfaces/';
@@ -115,7 +115,7 @@ export class CollaboratingOnComponent extends WorkSpace implements OnInit, After
   * Contains returned object of the pagination service
   * which is needed to show the pagination on all content view
   */
-  pager;
+  pager: IPagination;
   /**
   * To show toaster(error, success etc) after any API calls
   */
@@ -213,13 +213,12 @@ export class CollaboratingOnComponent extends WorkSpace implements OnInit, After
       filters: {
         status: bothParams.queryParams.status ? bothParams.queryParams.status : preStatus,
         collaborators: [this.userService.userid],
-        contentType: this.config.appConfig.WORKSPACE.contentType,
+        primaryCategory: _.get(bothParams, 'queryParams.primaryCategory') || this.config.appConfig.WORKSPACE.primaryCategory,
         objectType: this.config.appConfig.WORKSPACE.objectType,
         board: bothParams.queryParams.board,
         subject: bothParams.queryParams.subject,
         medium: bothParams.queryParams.medium,
-        gradeLevel: bothParams.queryParams.gradeLevel,
-        resourceType: bothParams.queryParams.resourceType
+        gradeLevel: bothParams.queryParams.gradeLevel
       },
       limit: limit,
       offset: (pageNumber - 1) * (limit),

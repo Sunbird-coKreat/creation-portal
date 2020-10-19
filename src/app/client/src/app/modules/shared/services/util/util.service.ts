@@ -290,4 +290,13 @@ export class UtilService {
       throw new Error('ERROR_PARSING_STRING');
     }
   }
+  removeDuplicate(dataToProcess) {
+    const processedData = {};
+    let uniqueKey: string;
+    _.forEach(dataToProcess, (data, key) => {
+      uniqueKey = key === 'channel' ? 'identifier' : 'name';
+      processedData[key] = _.uniqBy(data, uniqueKey);
+    });
+    return processedData;
+  }
 }

@@ -1,0 +1,116 @@
+@import "variables";
+@import "mixins/mixins";
+@import "pages/sbt-filter";
+
+.sb-header-filter-bar {
+  box-shadow: 0 calculateRem(2px) calculateRem(8px) 0 rgba(var(--rc-rgba-black), 0.2);
+  position: relative;
+}
+
+.state-medium-container {
+  position: relative;
+  z-index: 999;
+  height: calculateRem(64px);
+
+  &__dropdown {
+    padding: calculateRem(16px) 0;
+    z-index: 1;
+  }
+
+  &__separator {
+    height: calculateRem(24px);
+    width: calculateRem(1px);
+    background-color: var(--gray-200);
+    margin: 0px calculateRem(16px) 0px calculateRem(16px);
+
+    @include respond-below(sm) {
+      margin: 0px calculateRem(8px) 0px calculateRem(8px);
+    }
+  }
+
+  &__medium {
+    overflow-x: auto;
+    overflow-y: hidden;
+    height: calculateRem(64px);
+
+    @include respond-below(xs) {
+      flex: 0 0 50%;
+    }
+  }
+}
+
+// state dropdown css
+.ui.selection.dropdown .menu>.item {
+  font-size: calculateRem(12px);
+  padding: 1em 1em !important;
+}
+
+.ui.selection.dropdown.state-medium {
+  color: var(--primary-400);
+  display: flex;
+  align-items: center;
+  border: none;
+  background: none;
+  min-width: calculateRem(100px);
+  margin: 0;
+
+  .medium-selection {
+    min-width: calculateRem(120px);
+  }
+
+  &:hover {
+    background: var(--rc-E5EDF5);
+  }
+}
+
+.ui.selection.dropdown.state-selection {
+  color: var(--primary-400);
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  min-width: calculateRem(208px);
+
+  @include respond-below(sm) {
+    min-width: 10rem;
+  }
+
+  border-radius: calculateRem(2px);
+  border: calculateRem(0.5px) solid var(--primary-400);
+
+  &.active {
+    background: var(--rc-E5EDF5) !important;
+    color: var(--primary-400) !important;
+    border-color: var(--primary-400);
+    box-shadow: none;
+  }
+
+  &:hover {
+    color: var(--primary-400) !important;
+    box-sizing: border-box;
+    border-radius: calculateRem(2px);
+    background-color: var(--rc-E5EDF5);
+    box-shadow: none;
+  }
+}
+
+.ui.selection.dropdown .menu {
+  max-height: 20em;
+}
+
+.ui.default.dropdown:not(.button)>.text,
+.ui.dropdown:not(.button)>.default.text {
+  color: var(--red-400);
+}
+
+:host ::ng-deep .dropdown:not(.button)>.default.text {
+  color: var(--primary-400) !important;
+}
+
+:host ::ng-deep .sb-slider-pills-container .sb-pills-container {
+  padding: 0.5rem 0 !important;
+}
+
+
+
+
+

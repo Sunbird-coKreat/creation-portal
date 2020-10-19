@@ -75,11 +75,14 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   showOfflineHelpCentre = false;
   contributeTabActive: boolean;
   activeTab = {};
+  workSpaceRole: Array<string>;
+  manageProgramsRole: Array<string>;
+  manageUserRole: Array<string>;
   public sourcingOrgAdmin: boolean;
   public notificationSubscription: Subscription;
   public notificationData: Array<any>;
   public showGlobalNotification: boolean;
-
+  public isManageProgramAccess: boolean;
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
     public orgDetailsService: OrgDetailsService, private _cacheService: CacheService, public formService: FormService,
@@ -95,6 +98,9 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       this.myActivityRole = this.config.rolesConfig.headerDropdownRoles.myActivityRole;
       this.orgSetupRole = this.config.rolesConfig.headerDropdownRoles.orgSetupRole;
       this.orgAdminRole = this.config.rolesConfig.headerDropdownRoles.orgAdminRole;
+      this.workSpaceRole = this.config.rolesConfig.headerDropdownRoles.workSpaceRole;
+      this.manageProgramsRole = this.config.rolesConfig.headerTabsRoles.manageProgramsRole;
+      this.manageUserRole = this.config.rolesConfig.headerTabsRoles.manageUserRole;
       router.events.subscribe((event) => {
         if (event instanceof NavigationEnd) {
           this.onRouterChange();
@@ -109,6 +115,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
           this.getLanguage(this.userService.channel);
           // this.isCustodianOrgUser();
           this.sourcingOrgAdmin = this.userProfile.userRoles.includes('ORG_ADMIN') ? true : false;
+          this.checkManageProgramAccess(this.userProfile);
         }
       });
     } else {
@@ -120,10 +127,14 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     }
     this.getUrl();
     this.activatedRoute.queryParams.subscribe(queryParams => this.queryParam = { ...queryParams });
-    this.tenantService.tenantData$.subscribe(({tenantData}) => {
-      this.tenantInfo.logo = tenantData ? tenantData.logo : undefined;
-      this.tenantInfo.titleName = (tenantData && tenantData.titleName) ? tenantData.titleName.toUpperCase() : undefined;
-    });
+    if (!this.router.url.includes('/sourcing')) {
+      this.tenantInfo['logo'] = '/tenant/ntp/logo.png';
+    } else {
+      this.tenantService.tenantData$.subscribe(({tenantData}) => {
+        this.tenantInfo.logo = tenantData ? tenantData.logo : undefined;
+        this.tenantInfo.titleName = (tenantData && tenantData.titleName) ? tenantData.titleName.toUpperCase() : undefined;
+      });
+    }
     this.setInteractEventData();
     this.cdr.detectChanges();
     this.setWindowConfig();
@@ -149,6 +160,8 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       this.handleActiveTabState('contributorHelp');
     } else if (this.router.isActive('/sourcing/orgreports', true)) {
       this.handleActiveTabState('organisationReports');
+    } else if (this.router.url.includes('/workspace')) {
+      this.handleActiveTabState('manageContents');
     } else {
       this.handleActiveTabState('myPrograms');
     }
@@ -163,6 +176,22 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   });
   }
 
+  navigateToWorkspace() {
+    const authroles = this.permissionService.getWorkspaceAuthRoles();
+    if (authroles) {
+      return authroles.url;
+    }
+  }
+  checkManageProgramAccess(userProfile) {
+   if (userProfile.userRoles.includes('ORG_ADMIN'))  {
+      this.isManageProgramAccess =  true;
+   } else if (userProfile.userRoles.includes('CONTENT_REVIEWER')) {
+    this.isManageProgramAccess =  true;
+   } else {
+    // this.router.navigateByUrl('sourcing/workspace/content/create');
+    this.isManageProgramAccess =  false;
+   }
+  }
   ngOnDestroy() {
     if (this.notificationSubscription) {
       this.notificationSubscription.unsubscribe();
@@ -380,6 +409,8 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       this.handleActiveTabState('contributorHelp');
     } else if (this.location.path() === '/sourcing/orgreports') {
       this.handleActiveTabState('organisationReports');
+    } else if (this.router.url.includes('/workspace')) {
+      this.handleActiveTabState('manageContents');
     }
 
     if (this.location.path() === '/sourcing') {
