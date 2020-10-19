@@ -15,13 +15,16 @@ export class MvcListComponent implements OnInit, OnDestroy {
   @Input() selectedContentId: any;
   @Output() contentChangeEvent = new EventEmitter<any>();
   @Output() moveEvent = new EventEmitter<any>();
+  public telemetryPageId: string;
   public width: any;
   public height: any;
   public inViewLogs = [];
 
   constructor(public resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.telemetryPageId = this.sessionContext.telemetryPageId;
+  }
 
   onContentChange(selectedContent: any) {
     this.contentChangeEvent.emit({content: selectedContent});

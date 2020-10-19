@@ -26,7 +26,7 @@
           <div *ngIf="sessionContext?.selectedMvcContentDetails"  class="sb-radio-btn-checkbox sb-radio-btn-primary width-100">
             <input (click)="onSelectBehaviour($event)" type="radio" id="{{mainUnit.identifier}}" value="{{mainUnit.identifier}}" name="mainUnit" [(ngModel)]="prevUnitSelect" (change)="setCollectionUnitBreadcrumb();"
             appTelemetryInteract 
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('radiobutton_selectChapter', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton, 'library')"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('radiobutton_selectChapter', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton, configService.telemetryLabels.pageId.contribute.projectAddFromLibrary)"
         [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(contentId, 'Content', '1.0', {l1:sessionContext.collection,l2: prevUnitSelect})"
         [telemetryInteractCdata]="getTelemetryInteractCdata('value', mainUnit.name)"
         [telemetryInteractPdata]="telemetryInteractPdata"
@@ -55,7 +55,7 @@
               <div *ngIf="sessionContext?.selectedMvcContentDetails" class="width-100 sb-radio-btn-checkbox sb-radio-btn-primary" >
                 <input type="radio" id="{{childUnit.identifier}}" value="{{childUnit.identifier}}" name="childUnit" [(ngModel)]="prevUnitSelect" (change)="setCollectionUnitBreadcrumb();"
                 appTelemetryInteract 
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('radiobutton_selectChapter', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,'library')"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('radiobutton_selectChapter', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,configService.telemetryLabels.pageId.contribute.projectAddFromLibrary)"
         [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(contentId, 'Content', '1.0', {l1:sessionContext.collection,l2:prevUnitSelect})"
         [telemetryInteractCdata]="getTelemetryInteractCdata('value',childUnit.name)"
         [telemetryInteractPdata]="telemetryInteractPdata"
@@ -82,7 +82,7 @@
   <div class="w-20 text-right">
     <button id="moveResource" class="sb-btn sb-btn-normal text-inherit sb-btn-primary text-right" (click)="addResource()"
     appTelemetryInteract 
-    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add_content', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, 'library')"
+    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add_content', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, configService.telemetryLabels.pageId.contribute.projectAddFromLibrary)"
     [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(contentId, 'Content', '1.0', {l1:sessionContext.collection,l2: prevUnitSelect})"
     [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
     [telemetryInteractPdata]="telemetryInteractPdata"

@@ -5,8 +5,8 @@
   <small class="font-italic sb-color-gray-200 d-block pb-10">{{resourceService.frmelmnts.lbl.selectAcontentToAddToTheTextbook}}</small>
   <sui-checkbox class="toggle mb-10"  [(ngModel)]="showAddedContent" (checkChange)="onShowAddedContentChange();"
   appTelemetryInteract
-  [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('show-added-content', 'click', undefined,'library')"
-  [telemetryInteractCdata]="getTelemetryInteractCdata('show-added-content',!showAddedContent)"
+  [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('show_added_content', configService.telemetryLabels.eventType.click, undefined,telemetryPageId)"
+  [telemetryInteractCdata]="getTelemetryInteractCdata('show_added_content',!showAddedContent)"
   [telemetryInteractPdata]="sessionContext.telemetryInteractPdata">{{resourceService.frmelmnts.lbl.showContentAddedToTextbook}}</sui-checkbox>
   <!-- Class separator -->
   <div class="sb-library-scroll" id="suggestions-tab" in-view-container (inview)="inView($event)">
@@ -15,7 +15,7 @@
       [ngClass]="{'selected':content.identifier === selectedContentId,'active':content.isAdded}"
       (click)="onContentChange(content);" [class.d-none]="content.isAdded && !showAddedContent"
       appTelemetryInteract
-      [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('preview-content', 'click',undefined, 'library')"
+      [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('preview_content', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
       [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', {l1:sessionContext.collection,l2: sessionContext.collectionUnitId})"
       [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
       [telemetryInteractPdata]="sessionContext.telemetryInteractPdata">
@@ -30,7 +30,7 @@
       <div class="btn-addtoLibrary pt-5 pr-10" *ngIf="content.identifier === selectedContentId && !content.isAdded">
         <button class="sb-btn sb-btn-xs sb-btn-dark-green sb-left-icon-btn font-weight-bold text-inherit" (click)="addToLibrary();" 
         appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('select-content-from-list', 'click', undefined,'library')"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('select_content_from_list', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
         [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', {l1:sessionContext.collection,l2: sessionContext.collectionUnitId})"
         [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
         [telemetryInteractPdata]="sessionContext.telemetryInteractPdata" >
@@ -48,7 +48,7 @@
   <h6 class="sb-color-gray-400 font-weight-normal mt-20">{{resourceService.frmelmnts.lbl.changingFiltersMakeYouFindMoreContent}}</h6>
   <a class="sb-color-primary cursor-pointer font-weight-bold fs-0-785 text-inherit" (click)="changeFilter()"
   appTelemetryInteract
-  [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('change-filter-from-list', 'click', undefined,'library')"
+  [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('change_filter_from_list', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
   [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
   [telemetryInteractPdata]="sessionContext.telemetryInteractPdata">{{resourceService.frmelmnts.lbl.changeFilters}}</a>
 </div>

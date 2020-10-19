@@ -38,10 +38,11 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
   public activeFilterData: any = {};
   public showAddedContent: Boolean = true;
   public uniqueId: string;
+  public telemetryPageId: string;
 
   constructor(
     public programTelemetryService: ProgramTelemetryService, private telemetryService: TelemetryService,
-    private contentService: ContentService, private configService: ConfigService, private actionService: ActionService,
+    private contentService: ContentService, public configService: ConfigService, private actionService: ActionService,
     private cbseService: CbseProgramService, private programsService: ProgramsService,
     private toasterService: ToasterService, private route: ActivatedRoute, private router: Router, public resourceService: ResourceService,
     private userService: UserService, private navigationHelperService: NavigationHelperService,
@@ -65,8 +66,9 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
       'programId': this.programId,
       'collectionUnitId': this.collectionUnitId
     };
+    this.sessionContext.telemetryPageId = this.getPageId();
      // tslint:disable-next-line:max-line-length
-     const programCdata = this.programTelemetryService.getTelemetryInteractCdata(this.programId, 'Program');
+     const programCdata = this.programTelemetryService.getTelemetryInteractCdata(this.programId, 'project');
      // tslint:disable-next-line:max-line-length
      this.sessionContext.telemetryInteractCdata = [...programCdata, ...this.programTelemetryService.getTelemetryInteractCdata(this.uniqueId, 'content-reuse')];
      // tslint:disable-next-line:max-line-length
@@ -77,7 +79,7 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     // tslint:disable-next-line:max-line-length
-    const telemetryCdata = [{ 'type': 'Program', 'id': this.programId }, { 'type': 'content-reuse', 'id': this.uniqueId }];
+    const telemetryCdata = [{ 'type': 'project', 'id': this.programId }, { 'type': 'content-reuse', 'id': this.uniqueId }];
     setTimeout(() => {
       this.telemetryImpression = {
         context: {
@@ -91,7 +93,7 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
         },
         edata: {
           type: _.get(this.route, 'snapshot.data.telemetry.type'),
-          pageid: _.get(this.route, 'snapshot.data.telemetry.pageid'),
+          pageid: this.getPageId(),
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime(),
           visits: [],
@@ -99,6 +101,12 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
       };
     });
   }
+
+  getPageId() {
+    this.telemetryPageId = _.get(this.route, 'snapshot.data.telemetry.pageid');
+    return this.telemetryPageId;
+  }
+ 
 
   initialize() {
     forkJoin([this.getCollectionHierarchy(this.collectionId), this.getProgramDetails()]).subscribe(

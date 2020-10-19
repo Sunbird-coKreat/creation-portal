@@ -33,6 +33,7 @@
             "submitNominationTargetCollection" : "contribution_submit_nomination_target_collection",
             "submitNominationSampleDetails" : "contribution_submit_nomination_sample_details",
             "myProjects" : "contribution_my_projects",
+            "projectAddFromLibrary" : "contribution_project_add_from_library",
             "help": "contribution_help"
         }       
     },
