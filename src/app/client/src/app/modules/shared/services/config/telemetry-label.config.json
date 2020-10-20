@@ -44,7 +44,8 @@
         "report" : "report",
         "detail" : "detail",
         "view" : "view",
-        "documentation" : "documentation"
+        "documentation" : "documentation",
+        "editor": "editor"
     },
     "pageSubtype" : {
         "paginate" : "paginate"

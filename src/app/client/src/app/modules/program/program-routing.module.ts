@@ -37,7 +37,8 @@ const routes: Routes = [{
   data: {
     roles: 'programSourcingRole',
     telemetry: { env: 'sourcing-portal', type: telemetryPage.pageType.workflow, subtype: telemetryPage.pageSubtype.paginate,
-    pageid: telemetryPage.pageId.sourcing.createProjectDetails, mode: telemetryPage.pageMode.create, object: { type: 'program', ver: '1.0'} }
+    pageid: telemetryPage.pageId.sourcing.createProjectDetails, mode: telemetryPage.pageMode.create,
+    object: { type: 'project', ver: '1.0'} }
   }
 },
 {
