@@ -42,7 +42,7 @@ export class RecursiveTreeComponent implements OnInit {
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
     const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
     this.mvcLibraryFeatureConfiguration = this.helperService.mvcLibraryFeatureConfiguration;
-    this.telemetryPageId = this.sessionContext.telemetryPageId;
+    this.telemetryPageId = this.sessionContext.telemetryPageDetails.telemetryPageId;
 
     this.visibility = {};
     // tslint:disable-next-line:max-line-length
@@ -57,11 +57,7 @@ export class RecursiveTreeComponent implements OnInit {
     this.visibility['showPreviewResource'] = this.hasAccessFor('showPreviewResource');
     this.visibility['showActionMenu'] = this.shouldActionMenuBeVisible();
     // tslint:disable-next-line:max-line-length
-    this.telemetryInteractCdata = [
-      {id: this.userService.channel, type: 'sourcing_organization'},
-      {id: this.sessionContext.programId, type: 'project'},
-      {id: this.sessionContext.programId, type: 'nomination'}
-    ];
+    this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
   }

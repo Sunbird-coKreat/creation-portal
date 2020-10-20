@@ -121,10 +121,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.programStageService.addStage('programComponent');
     this.currentStage = 'programComponent';
-    this.telemetryInteractCdata = [{
-      id: this.activatedRoute.snapshot.params.programId,
-      type: 'project'
-    }];
+    this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}, {id: this.programId, type: 'project'}];
     this.telemetryInteractPdata = {
       id: this.userService.appId,
       pid: this.configService.appConfig.TELEMETRY.PID
@@ -136,12 +133,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-    const telemetryCdata = [{ 'type': 'project', 'id': this.programId }];
     setTimeout(() => {
       this.telemetryImpression = {
         context: {
           env: this.activatedRoute.snapshot.data.telemetry.env,
-          cdata: telemetryCdata || [],
+          cdata: this.telemetryInteractCdata || [],
           pdata: {
             id: this.userService.appId,
             ver: version,
@@ -208,7 +204,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   initiateInputs() {
     this.showLoader = false;
     this.sessionContext.programId = this.programDetails.program_id;
-    this.sessionContext.telemetryPageId = this.configService.telemetryLabels.pageId.contribute.submitNomination;
+    this.sessionContext.telemetryPageDetails = {
+      telemetryPageId : this.configService.telemetryLabels.pageId.contribute.submitNomination,
+      telemetryInteractCdata: this.telemetryInteractCdata
+    };
     this.dynamicInputs = {
       collectionComponentInput: {
         sessionContext: this.sessionContext,
@@ -639,7 +638,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sessionContext.programId = this.programDetails.program_id;
     this.sessionContext.collection = collection.identifier;
     this.sessionContext.collectionName = collection.name;
-    this.sessionContext.telemetryPageId = this.configService.telemetryLabels.pageId.contribute.projectTargetCollection;
+    this.sessionContext.telemetryPageDetails = {
+      telemetryPageId : this.configService.telemetryLabels.pageId.contribute.projectTargetCollection,
+      telemetryInteractCdata: this.getTelemetryInteractCdata(collection.identifier, 'linked_collection')
+    };
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});
@@ -758,6 +760,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       pageid,
       extra
     }, _.isUndefined);
+  }
+
+  getTelemetryInteractCdata(id, type) {
+    return [ ...this.telemetryInteractCdata, {id: _.toString(id), type: type } ];
   }
 
   ngOnDestroy() {

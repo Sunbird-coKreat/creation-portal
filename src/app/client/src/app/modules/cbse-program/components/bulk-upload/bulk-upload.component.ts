@@ -90,15 +90,12 @@ export class BulkUploadComponent implements OnInit {
     this.getChapters();
     this.setBulkUploadCsvConfig();
     this.stageStatus = this.getContentStatus();
-    this.telemetryInteractCdata = [
-      {id: this.userService.channel, type: 'sourcing_organization'},
-      {id: this.programContext.program_id, type: 'project'}
-    ];
+    this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.sessionContext.collection, 'Content', '1.0');
-    this.telemetryPageId = this.sessionContext.telemetryPageId;
+    this.telemetryPageId = this.sessionContext.telemetryPageDetails.telemetryPageId;
   }
 
   getContentTypes() {

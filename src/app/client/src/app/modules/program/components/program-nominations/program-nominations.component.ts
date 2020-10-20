@@ -260,15 +260,15 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   setTelemetryPageId(tab: string) {
     if (tab === 'textbook') {
-      this.telemetryPageId = _.get(this.config, 'telemetryConfig.pageId.sourcing.projectContributions');
+      this.telemetryPageId = _.get(this.config, 'telemetryLabels.pageId.sourcing.projectContributions');
     } else if (tab === 'nomination') {
-      this.telemetryPageId = _.get(this.config, 'telemetryConfig.pageId.sourcing.projectNominations');
+      this.telemetryPageId = _.get(this.config, 'telemetryLabels.pageId.sourcing.projectNominations');
     } else if (tab === 'user') {
-      this.telemetryPageId = _.get(this.config, 'telemetryConfig.pageId.sourcing.projectAssignUsers');
+      this.telemetryPageId = _.get(this.config, 'telemetryLabels.pageId.sourcing.projectAssignUsers');
     } else if (tab === 'contributionDashboard') {
-      this.telemetryPageId = _.get(this.config, 'telemetryConfig.pageId.sourcing.projectContributionDashboard');
+      this.telemetryPageId = _.get(this.config, 'telemetryLabels.pageId.sourcing.projectContributionDashboard');
     } else if (tab === 'report') {
-      this.telemetryPageId = _.get(this.config, 'telemetryConfig.pageId.sourcing.projectReports');
+      this.telemetryPageId = _.get(this.config, 'telemetryLabels.pageId.sourcing.projectReports');
     }
   }
 
@@ -887,7 +887,10 @@ showUserRoleOption(roleName, userRole) {
     this.sessionContext.programId = this.programDetails.program_id;
     this.sessionContext.collection = collection.identifier;
     this.sessionContext.collectionName = collection.name;
-    this.sessionContext.telemetryPageId = this.config.telemetryLabels.pageId.sourcing.projectTargetCollection;
+    this.sessionContext.telemetryPageDetails = {
+      telemetryPageId : this.config.telemetryLabels.pageId.sourcing.projectTargetCollection,
+      telemetryInteractCdata: [...this.telemetryInteractCdata, { 'id': collection.identifier, 'type': 'linked_collection'}]
+    };
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});

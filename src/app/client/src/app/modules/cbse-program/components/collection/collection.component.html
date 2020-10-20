@@ -226,7 +226,7 @@
                 appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('textbook_selection', configService.telemetryLabels.eventType.click,undefined, telemetryPageId, {values: [data.identifier]})"
                 [telemetryInteractObject]="telemetryInteractObject"
-                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractCdata]="getTelemetryInteractCdata('linked_collection',data.identifier)"
                 [telemetryInteractPdata]="telemetryInteractPdata">
                   <input  type="checkbox" [checked]="data.isSelected || data.totalSampleContent" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
                   <label></label>
@@ -234,7 +234,7 @@
                 <button type="button" *ngIf="(data.isSelected || data.totalSampleContent) && canNominate()" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary px-10" appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('upload_sample', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId, {values: [data.identifier]})"
                 [telemetryInteractObject]="telemetryInteractObject"
-                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractCdata]="getTelemetryInteractCdata('linked_collection',data.identifier)"
                 [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.uploadSample}}</button>
                 </div>
               </td>

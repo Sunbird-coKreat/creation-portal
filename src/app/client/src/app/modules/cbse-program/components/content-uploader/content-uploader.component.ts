@@ -124,7 +124,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.originCollectionData = _.get(this.contentUploadComponentInput, 'originCollectionData');
     this.selectedOriginUnitStatus = _.get(this.contentUploadComponentInput, 'content.originUnitStatus');
     this.sessionContext  = _.get(this.contentUploadComponentInput, 'sessionContext');
-    this.telemetryPageId = _.get(this.contentUploadComponentInput, 'telemetryPageId');
+    this.telemetryPageId = _.get(this.sessionContext, 'telemetryPageDetails.telemetryPageId');
     this.templateDetails  = _.get(this.contentUploadComponentInput, 'templateDetails');
     this.unitIdentifier  = _.get(this.contentUploadComponentInput, 'unitIdentifier');
     this.programContext = _.get(this.contentUploadComponentInput, 'programContext');
@@ -175,7 +175,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   generateTelemetryEndEvent(eventMode) {
-    const telemetryCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
+    const telemetryCdata = [{id: this.userService.channel, type: 'sourcing_organization'},
+    {id: this.programContext.program_id, type: 'project'}, {id: this.sessionContext.collection, type: 'linked_collection'}];
     this.telemetryEnd = {
       object: {
         id: this.contentMetaData.identifier || '',
@@ -201,14 +202,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-    const telemetryCdata = [
-      {id: this.userService.channel, type: 'sourcing_organization'}, {id: this.programContext.program_id, type: 'project'},
-      {id: this.programContext.program_id, type: 'nomination'}];
+    const telemetryCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
     setTimeout(() => {
       this.telemetryImpression = {
         context: {
           env: this.activeRoute.snapshot.data.telemetry.env,
-          cdata: telemetryCdata || [],
+          cdata: telemetryCdata,
           pdata: {
             id: this.userService.appId,
             ver: version,
@@ -598,11 +597,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 //   }
     getTelemetryData() {
       // tslint:disable-next-line:max-line-length
-      this.telemetryInteractCdata = [
-        {id: this.userService.channel, type: 'sourcing_organization'},
-        {id: this.programContext.program_id, type: 'project'},
-        {id: this.programContext.program_id, type: 'nomination'}
-      ];
+      this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
       // tslint:disable-next-line:max-line-length
       this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
       // tslint:disable-next-line:max-line-length

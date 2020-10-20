@@ -228,7 +228,7 @@
 										(click)="initiateDocumentUploadModal()"
 										[disabled]="disableUpload"
 										appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('guidelines-document', configService.telemetryLabels.eventType.click, 'launch',telemetryPageId)"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('guidelines_document', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">

@@ -18,6 +18,7 @@ import { InitialState } from '../../interfaces';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { HelperService } from '../../services/helper.service';
 import { HttpClient } from '@angular/common/http';
+import { ProgramTelemetryService } from '../../../program/services';
 
 interface IDynamicInput {
   contentUploadComponentInput?: IContentUploadComponentInput;
@@ -96,7 +97,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     public activeRoute: ActivatedRoute, private ref: ChangeDetectorRef, private httpClient: HttpClient,
     private collectionHierarchyService: CollectionHierarchyService, private resourceService: ResourceService,
     private navigationHelperService: NavigationHelperService, private helperService: HelperService,
-    private programsService: ProgramsService) {
+    private programsService: ProgramsService, public programTelemetryService: ProgramTelemetryService) {
   }
 
   ngOnInit() {
@@ -113,7 +114,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.collection = _.get(this.chapterListComponentInput, 'collection');
     this.actions = _.get(this.chapterListComponentInput, 'programContext.config.actions');
     this.sharedContext = _.get(this.chapterListComponentInput, 'programContext.config.sharedContext');
-    this.telemetryPageId = _.get(this.chapterListComponentInput, 'sessionContext.telemetryPageId');
+    this.telemetryPageId = _.get(this.sessionContext, 'telemetryPageDetails.telemetryPageId');
     this.myOrgId = (this.userService.userRegistryData
       && this.userService.userProfile.userRegData
       && this.userService.userProfile.userRegData.User_Org
@@ -153,11 +154,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       this.helperService.getProgramConfiguration(request).subscribe(res => {}, err => {});
     }
 
-    this.telemetryInteractCdata = [
-      {id: this.userService.channel, type: 'sourcing_organization'},
-      {id: this.sessionContext.programId, type: 'project'},
-      {id: this.sessionContext.programId, type: 'nomination'}
-    ];
+    this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
 
   }
@@ -243,7 +240,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     });
   }
 
-  getTelemeryPageIdForContentDetailsPage() {
+  getTelemetryPageIdForContentDetailsPage() {
     if (this.telemetryPageId === this.configService.telemetryLabels.pageId.sourcing.projectNominationTargetCollection) {
       return this.configService.telemetryLabels.pageId.sourcing.projectNominationContributionDetails;
     } else if (this.telemetryPageId === this.configService.telemetryLabels.pageId.sourcing.projectTargetCollection) {
@@ -257,12 +254,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   public initiateInputs(action?, content?) {
     const sourcingStatus = !_.isUndefined(content) ? content.sourcingStatus : null;
-    const telemetryPageId = this.getTelemeryPageIdForContentDetailsPage();
+    this.sessionContext.telemetryPageDetails.telemetryPageId = this.getTelemetryPageIdForContentDetailsPage();
     this.dynamicInputs = {
       contentUploadComponentInput: {
         config: _.find(this.programContext.config.components, {'id': 'ng.sunbird.uploadComponent'}),
         sessionContext: this.sessionContext,
-        telemetryPageId: telemetryPageId,
         unitIdentifier: this.unitIdentifier,
         templateDetails: this.templateDetails,
         selectedSharedContext: this.selectedSharedContext,
@@ -276,7 +272,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       practiceQuestionSetComponentInput: {
         config: _.find(this.programContext.config.components, {'id': 'ng.sunbird.practiceSetComponent'}),
         sessionContext: this.sessionContext,
-        telemetryPageId: telemetryPageId,
         templateDetails: this.templateDetails,
         unitIdentifier: this.unitIdentifier,
         roles: this.roles,
@@ -293,7 +288,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         action: action,
         content: content,
         sessionContext: this.sessionContext,
-        telemetryPageId: telemetryPageId,
         unitIdentifier: this.unitIdentifier,
         programContext: _.get(this.chapterListComponentInput, 'programContext')
       }

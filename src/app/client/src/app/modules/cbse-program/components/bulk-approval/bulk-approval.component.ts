@@ -52,15 +52,12 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
     this.checkOriginFolderStatus([this.originalCollectionData]);
     this.approvalPendingContents([this.storedCollectionData]);
     this.initialized = true;
-    this.telemetryInteractCdata = [
-      {id: this.userService.channel, type: 'sourcing_organization'},
-      {id: this.programContext.program_id, type: 'project'}
-    ];
+    this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.sessionContext.collection, 'Content', '1.0', { l1: this.sessionContext.collection });
-    this.telemetryPageId = this.sessionContext.telemetryPageId;
+    this.telemetryPageId = this.sessionContext.telemetryPageDetails.telemetryPageId;
   }
 
   ngOnChanges() {

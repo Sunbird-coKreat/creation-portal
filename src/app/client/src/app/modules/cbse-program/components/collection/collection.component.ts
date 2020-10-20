@@ -86,7 +86,6 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.programStageService.initialize();
-    this.telemetryPageId = _.get(this.collectionComponentInput, 'sessionContext.telemetryPageId');
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
       this.changeView();
@@ -126,9 +125,9 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mediums = _.find(this.collectionComponentConfig.config.filters.implicit, {'code': 'medium'}).defaultValue;
     this.board = _.find(this.collectionComponentConfig.config.filters.implicit, {'code': 'board'}).defaultValue;
     (_.size(this.mediums) > 1) ? this.isMediumClickable = true : this.isMediumClickable = false;
-
+    this.telemetryPageId = _.get(this.sessionContext, 'telemetryPageDetails.telemetryPageId');
     // tslint:disable-next-line:max-line-length
-    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.collectionComponentInput.programContext.program_id, 'project');
+    this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
     this.telemetryInteractObject = {};
@@ -142,12 +141,11 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-    const telemetryCdata = [{ 'type': 'project', 'id': this.programContext.program_id }];
     setTimeout(() => {
       this.telemetryImpression = {
         context: {
           env: this.activatedRoute.snapshot.data.telemetry.env,
-          cdata: telemetryCdata || [],
+          cdata: this.telemetryInteractCdata || [],
           pdata: {
             id: this.userService.appId,
             ver: version,
@@ -607,7 +605,10 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sessionContext = _.assign(this.sessionContext, this.sharedContext);
     this.sessionContext.collection =  collection.identifier;
     this.sessionContext.collectionName = collection.name;
-    this.sessionContext.telemetryPageId = this.configService.telemetryLabels.pageId.contribute.submitNominationTargetCollection;
+    this.sessionContext.telemetryPageDetails = {
+      telemetryPageId : this.configService.telemetryLabels.pageId.contribute.submitNominationTargetCollection,
+      telemetryInteractCdata: [...this.telemetryInteractCdata, { 'id': collection.identifier, 'type': 'linked_collection'}]
+    };
     this.chapterListComponentInput = {
       sessionContext: this.sessionContext,
       collection: collection,
@@ -626,4 +627,9 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       this.toasterService.error(this.resourceService.messages.emsg.nomination.m001);
     }
   }
+
+  getTelemetryInteractCdata(type, id) {
+    return [ ...this.telemetryInteractCdata, { type: type, id: _.toString(id)} ];
+  }
+
 }

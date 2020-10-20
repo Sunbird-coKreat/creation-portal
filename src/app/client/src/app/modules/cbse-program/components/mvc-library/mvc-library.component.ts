@@ -67,10 +67,11 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
       'collectionUnitId': this.collectionUnitId
     };
     this.sessionContext.telemetryPageId = this.getPageId();
-     // tslint:disable-next-line:max-line-length
-     const programCdata = this.programTelemetryService.getTelemetryInteractCdata(this.programId, 'project');
-     // tslint:disable-next-line:max-line-length
-     this.sessionContext.telemetryInteractCdata = [...programCdata, ...this.programTelemetryService.getTelemetryInteractCdata(this.uniqueId, 'content-reuse')];
+     this.sessionContext.telemetryInteractCdata = [
+      {id: this.userService.channel, type: 'sourcing_organization'},
+      {id: this.programId, type: 'project'},
+      {id: this.uniqueId, type: 'content-reuse'},
+      {id: this.collectionId, type: 'linked_collection'}];
      // tslint:disable-next-line:max-line-length
      this.sessionContext.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
   }
@@ -84,7 +85,7 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
       this.telemetryImpression = {
         context: {
           env: this.route.snapshot.data.telemetry.env,
-          cdata: telemetryCdata || [],
+          cdata: this.sessionContext.telemetryInteractCdata || [],
           pdata: {
             id: this.userService.appId,
             ver: version,

@@ -101,6 +101,10 @@ export class TextbookListComponent implements OnInit {
     });
   }
 
+  getTelemetryInteractCdata(id, type) {
+    return [...this.telemetryInteractCdata, {id: _.toString(id), type: type, } ];
+  }
+
   sortCollection(column) {
     this.collections =  this.programsService.sortCollection(this.tempSortCollections, column, this.direction);
     if (this.direction === 'asc' || this.direction === '') {

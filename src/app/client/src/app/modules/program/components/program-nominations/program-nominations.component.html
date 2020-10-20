@@ -666,10 +666,20 @@
     </div>
     <div class="sb-modal-actions">
         <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" [class.sb-btn-disabled]="userRemoveRoleLoader"
-            (click)="removeUserFromProgram()">
+            (click)="removeUserFromProgram()"
+            appTelemetryInteract
+            [telemetryInteractEdata]="getTelemetryInteractEdata('yes', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.submit,telemetryPageId, {key:'dialog_id',value:'confirm_user_role_remove'})"
+            [telemetryInteractObject]="telemetryInteractObject"
+            [telemetryInteractCdata]="telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryInteractPdata">
             {{resourceService?.frmelmnts?.btn?.yes}}
         </button>
         <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary"
-            (click)="cancelRemoveUserFromProgram();"> {{resourceService?.frmelmnts?.btn?.no}} </button>
+            (click)="cancelRemoveUserFromProgram();"
+            appTelemetryInteract
+            [telemetryInteractEdata]="getTelemetryInteractEdata('no', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.cancel,telemetryPageId, {key:'dialog_id',value:'confirm_user_role_remove'})"
+            [telemetryInteractObject]="telemetryInteractObject"
+            [telemetryInteractCdata]="telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService?.frmelmnts?.btn?.no}} </button>
     </div>
 </sui-modal>

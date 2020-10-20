@@ -34,9 +34,9 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
     this.programContext = _.get(this.resourceTemplateComponentInput, 'programContext');
     this.sessionContext = _.get(this.resourceTemplateComponentInput, 'sessionContext');
     this.unitIdentifier  = _.get(this.resourceTemplateComponentInput, 'unitIdentifier');
-    this.telemetryPageId = this.sessionContext.telemetryPageId;
+    this.telemetryPageId = this.sessionContext.telemetryPageDetails.telemetryPageId;
     // tslint:disable-next-line:max-line-length
-    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.sessionContext.programId, 'project');
+    this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
      // tslint:disable-next-line:max-line-length
