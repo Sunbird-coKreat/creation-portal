@@ -145,7 +145,17 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         // tslint:disable-next-line: max-line-length
         const applyFilters = this.getFilterDetails(setfilters, this.userService.slug ? 'contributeAllProgramAppliedFiltersTenantAccess' : 'contributeAllProgramAppliedFilters');
         // tslint:disable-next-line: max-line-length
-        this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], applyFilters); // this method will call with applied req filters data other wise with origional req body
+        const sort = {
+          // tslint:disable-next-line: max-line-length
+          'medium': _.get(this.userService.userProfile, 'userRegData.User.medium') || [],
+          // tslint:disable-next-line: max-line-length
+          'gradeLevel': _.get(this.userService.userProfile, 'userRegData.User.gradeLevel') || [],
+          // tslint:disable-next-line: max-line-length
+          'subject': _.get(this.userService.userProfile, 'userRegData.User.subject') || []
+        };
+
+        // tslint:disable-next-line: max-line-length
+        this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], applyFilters, sort); // this method will call with applied req filters data other wise with origional req body
       } else {
         this.showLoader = false;
       }
@@ -232,12 +242,12 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   /**programContext
    * fetch the list of programs.
    */
-  private getAllProgramsForContrib(type, status, appliedfilters?) {
+  private getAllProgramsForContrib(type, status, appliedfilters?, sort?) {
     let getAppliedFilters: any;
     if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
       getAppliedFilters = this.addFiltersInRequestBody(appliedfilters);
     }
-    this.programsService.getAllProgramsByType(type, status, getAppliedFilters).subscribe(
+    this.programsService.getAllProgramsByType(type, status, getAppliedFilters, sort).subscribe(
       response => {
         const allPrograms = _.get(response, 'result.programs');
         if (allPrograms.length) {
