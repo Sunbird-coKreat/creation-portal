@@ -30,4 +30,5 @@ export interface ISessionContext { // TODO: remove any 'textbook' reference
   collectionStatus?: any;
   currentOrgRole?: string;
   nominationDetails?: any;
+  telemetryPageDetails?: any;
 }

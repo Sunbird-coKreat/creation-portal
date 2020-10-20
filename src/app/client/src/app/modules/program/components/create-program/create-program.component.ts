@@ -15,11 +15,12 @@ import { CbseProgramService } from './../../../cbse-program/services';
 import { UserService } from '@sunbird/core';
 import { programConfigObj } from './programconfig';
 import { HttpClient } from '@angular/common/http';
-import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEventInput } from '@sunbird/telemetry';
+import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEventInput, TelemetryService } from '@sunbird/telemetry';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import * as moment from 'moment';
 import * as alphaNumSort from 'alphanum-sort';
 import { ProgramTelemetryService } from '../../services';
+import { event } from 'jquery';
 
 @Component({
   selector: 'app-create-program',
@@ -124,9 +125,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public disableCreateProgramBtn = false;
   public showLoader = true;
   public btnDoneDisabled = false;
+  public telemetryPageId: string;
+  private pageStartTime: any;
 
   constructor(
     public frameworkService: FrameworkService,
+    private telemetryService: TelemetryService,
     private programsService: ProgramsService,
     private userService: UserService,
     public toasterService: ToasterService,
@@ -138,7 +142,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     private sbFormBuilder: FormBuilder,
     private httpClient: HttpClient,
     private navigationHelperService: NavigationHelperService,
-    private configService: ConfigService,
+    public configService: ConfigService,
     private deviceDetectorService: DeviceDetectorService,
     public programTelemetryService: ProgramTelemetryService,
     public actionService: ActionService) {
@@ -149,7 +153,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.userprofile = this.userService.userProfile;
     this.programScope['purpose'] = this.programsService.contentTypes;
     this.programConfig = _.cloneDeep(programConfigObj);
-    this.telemetryInteractCdata = [];
+    this.telemetryInteractCdata = [{id: this.userService.channel || '', type: 'sourcing_organization'}];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
     this.acceptPdfType = this.getAcceptType(this.assetConfig.pdf.accepted, 'pdf');
@@ -161,11 +165,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     });
 
     if (!_.isEmpty(this.programId)) {
+      this.telemetryInteractCdata = [...this.telemetryInteractCdata, {id: this.programId, type: 'project'}];
       this.getProgramDetails();
     } else {
       this.initializeFormFields();
     }
     this.fetchFrameWorkDetails();
+    this.setTelemetryStartData();
+    this.pageStartTime = Date.now();
   }
 
   initiateDocumentUploadModal() {
@@ -433,8 +440,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     if (!this.editPublished) {
       return this.pickerMinDate;
-    }
-    else {
+    } else {
       return this.createProgramForm.value.nomination_enddate;
     }
   }
@@ -447,7 +453,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.telemetryImpression = {
         context: {
           env: this.activatedRoute.snapshot.data.telemetry.env,
-          cdata: [],
+          cdata: this.telemetryInteractCdata,
           pdata: {
             id: this.userService.appId,
             ver: version,
@@ -457,12 +463,17 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         },
         edata: {
           type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
-          pageid: _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid'),
+          pageid: this.getPageId(),
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
     });
+  }
+
+  getPageId() {
+    this.telemetryPageId = _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid');
+    return this.telemetryPageId;
   }
 
   fetchFrameWorkDetails() {
@@ -805,7 +816,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         (res) => {
           this.programId = res.result.program_id;
           this.programData['program_id'] = this.programId;
-          this.generateTelemetryEvent('START');
           cb(null, res);
         },
         (err) => {
@@ -872,6 +882,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       this.programsService.updateProgram(prgData).subscribe(
         (res) => {
+          this.generateTelemetryEndEvent('update');
           this.toasterService.success(this.resource.messages.smsg.modify.m0001);
           this.router.navigate(['/sourcing']);
         },
@@ -1059,32 +1070,28 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     return config;
   }
 
-  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+  getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: string): IInteractEventEdata {
     return _.omitBy({
       id,
       type,
+      subtype,
       pageid,
       extra
     }, _.isUndefined);
   }
 
-  generateTelemetryEvent(event) {
-    switch (event) {
-      case 'START':
-        const deviceInfo = this.deviceDetectorService.getDeviceInfo();
+  setTelemetryStartData() {
+    const telemetryCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
+    const deviceInfo = this.deviceDetectorService.getDeviceInfo();
+    setTimeout(() => {
         this.telemetryStart = {
           context: {
-            env: this.activatedRoute.snapshot.data.telemetry.env
-          },
-          object: {
-            id: this.programId || '',
-            type: this.activatedRoute.snapshot.data.telemetry.object.type,
-            ver: this.activatedRoute.snapshot.data.telemetry.object.ver
+            env: this.activatedRoute.snapshot.data.telemetry.env,
+            cdata: telemetryCdata
           },
           edata: {
             type: this.activatedRoute.snapshot.data.telemetry.type || '',
             pageid: this.activatedRoute.snapshot.data.telemetry.pageid || '',
-            mode: this.activatedRoute.snapshot.data.telemetry.mode || '',
             uaspec: {
               agent: deviceInfo.browser,
               ver: deviceInfo.browser_version,
@@ -1094,39 +1101,38 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
             }
           }
         };
-        break;
-      case 'END':
-        this.telemetryEnd = {
-          object: {
-            id: this.programId || '',
-            type: this.activatedRoute.snapshot.data.telemetry.object.type,
-            ver: this.activatedRoute.snapshot.data.telemetry.object.ver
-          },
-          context: {
-            env: this.activatedRoute.snapshot.data.telemetry.env
-          },
-          edata: {
-            type: this.activatedRoute.snapshot.data.telemetry.type,
-            pageid: this.activatedRoute.snapshot.data.telemetry.pageid,
-            mode: 'create'
-          }
-        };
-        break;
-      default:
-        break;
-    }
+    });
+  }
+
+  generateTelemetryEndEvent(eventMode) {
+    const telemetryCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
+    this.telemetryEnd = {
+      object: {
+        id: this.programId || '',
+        type: this.activatedRoute.snapshot.data.telemetry.object.type,
+      },
+      context: {
+        env: this.activatedRoute.snapshot.data.telemetry.env,
+        cdata: telemetryCdata
+      },
+      edata: {
+        type: this.configService.telemetryLabels.pageType.workflow,
+        pageid: this.activatedRoute.snapshot.data.telemetry.pageid,
+        mode: eventMode || this.activatedRoute.snapshot.data.telemetry.mode,
+        duration: _.toString((Date.now() - this.pageStartTime) / 1000)
+      }
+    };
+    this.telemetryService.end(this.telemetryEnd);
   }
 
   public chooseChapters(collection) {
     if (!this.textbooks[collection.identifier]) {
       this.getCollectionHierarchy(collection.identifier);
-    }
-    else {
+    } else {
       this.choosedTextBook = this.textbooks[collection.identifier];
       this.initChaptersSelectionForm(this.choosedTextBook);
     }
-
-    this.selectChapter=true;
+    this.selectChapter = true;
   }
 
   initChaptersSelectionForm(chapters) {
@@ -1269,6 +1275,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         ($event.target as HTMLButtonElement).disabled = true;
         const cb = (error, resp) => {
           if (!error && resp) {
+            this.generateTelemetryEndEvent('save');
             this.toasterService.success(
               '<b>' + this.resource.messages.smsg.program.draft.heading + '</b>',
               this.resource.messages.smsg.program.draft.message);
@@ -1355,6 +1362,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
         if (this.isOpenNominations) {
           this.programsService.publishProgram(data).subscribe(res => {
+            this.generateTelemetryEndEvent('publish');
             this.toasterService.success(
               '<b>' + this.resource.messages.smsg.program.published.heading + '</b>',
               this.resource.messages.smsg.program.published.message);
@@ -1385,7 +1393,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         this.toasterService.error(this.resource.messages.emsg.m0005);
       }
     };
-
     this.saveProgram(cb);
   }
 }

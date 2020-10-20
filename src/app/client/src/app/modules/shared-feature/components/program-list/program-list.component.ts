@@ -6,7 +6,7 @@ import { IProgram } from '../../../core/interfaces';
 import * as _ from 'lodash-es';
 import * as moment from 'moment';
 import { DatePipe } from '@angular/common';
-import { IInteractEventEdata } from '@sunbird/telemetry';
+import { IInteractEventEdata, TelemetryService } from '@sunbird/telemetry';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { CacheService } from 'ng2-cache-service';
 import { first } from 'rxjs/operators';
@@ -48,14 +48,17 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   public showFiltersModal = false;
   public filtersAppliedCount: any;
   public telemetryImpression: any;
-  public telemetryPageId = 'programs-list';
+  public telemetryPageId: string;
   public isFrameworkDetailsAvailable = false;
   showDeleteModal = false;
+  public inviewLogs: any = [];
+  public impressionEventTriggered: Boolean = false;
+
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService, public cacheService: CacheService,
     private navigationHelperService: NavigationHelperService, public activeRoute: ActivatedRoute,
-    public frameworkService: FrameworkService) { }
+    private telemetryService: TelemetryService, public frameworkService: FrameworkService) { }
 
   ngOnInit() {
     this.programsService.frameworkInitialize(); // initialize framework details here
@@ -66,7 +69,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     });
     this.checkIfUserIsContributor();
     this.issourcingOrgAdmin = this.userService.isSourcingOrgAdmin();
-    this.telemetryInteractCdata = [];
+    this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
   }
@@ -74,10 +77,12 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+    const telemetryCdata = [{id: this.userService.channel || '', type: 'sourcing_organization'}];
     setTimeout(() => {
       this.telemetryImpression = {
         context: {
           env: this.activeRoute.snapshot.data.telemetry.env,
+          cdata: telemetryCdata,
           pdata: {
             id: this.userService.appId,
             ver: version,
@@ -99,13 +104,8 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
 
   // check the active tab
   getPageId() {
-    if (this.router.url.includes('/contribute/myenrollprograms')) {
-      return 'contribution_my_projects';
-    } else if (this.router.url.includes('/contribute')) {
-      return 'contribution_all_projects';
-    } else if (this.router.url.includes('/sourcing')) {
-      return 'sourcing_my_projects';
-    }
+    this.telemetryPageId = this.userService.isContributingOrgUser() ? this.configService.telemetryLabels.pageId.contribute.myProjects : _.get(this.activeRoute, 'snapshot.data.telemetry.pageid');
+    return this.telemetryPageId;
   }
 
   /**
@@ -303,6 +303,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       }, error => {
         this.showLoader = false;
         this.toasterService.error(_.get(error, 'error.params.errmsg') || this.resourceService.messages.emsg.projects.m0001);
+        this.logTelemetryImpressionEvent();
       }
     );
   }
@@ -313,6 +314,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         return !enrolledPrograms.includes(program.program_id);
       });
       this.programs = this.filterProgramByDate(temp);
+      this.logTelemetryImpressionEvent();
     } else {
       this.programs = this.filterProgramByDate(allPrograms);
     }
@@ -450,11 +452,13 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
             this.sortColumn = 'contributionDate';
             this.direction = 'desc';
             this.sortCollection(this.sortColumn);
+            this.logTelemetryImpressionEvent();
             this.showLoader = false;
           });
         }, (error) => {
           this.showLoader = false;
           console.log(error);
+          this.logTelemetryImpressionEvent();
           this.toasterService.error(this.resourceService.messages.emsg.projects.m0002);
         });
       return;
@@ -577,12 +581,25 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       this.tempSortPrograms = this.programs;
       this.showLoader = false;
       this.fetchProjectFeedDays();
+      this.logTelemetryImpressionEvent();
     }, error => {
       this.showLoader = false;
       console.log(error);
+      this.logTelemetryImpressionEvent();
       // TODO: Add error toaster
     });
   }
+
+  public logTelemetryImpressionEvent() {
+    if (this.impressionEventTriggered) { return false; }
+    this.impressionEventTriggered = true;
+    const telemetryImpression = _.cloneDeep(this.telemetryImpression);
+    telemetryImpression.edata.visits = _.map(this.programs, (program) => {
+      return { objid: program.program_id, objtype: 'project' };
+    });
+    this.telemetryService.impression(telemetryImpression);
+  }
+
 
   getProgramTextbooksCount(program) {
     let count = 0;
@@ -669,10 +686,11 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     }
   }
 
-  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+  getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: any): IInteractEventEdata {
     return _.omitBy({
       id,
       type,
+      subtype,
       pageid,
       extra
     }, _.isUndefined);
@@ -773,5 +791,9 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     } else {
       this.getNotificationData();
     }
+  }
+
+  getTelemetryInteractCdata(id, type) {
+    return [...this.telemetryInteractCdata, { type: type, id: _.toString(id)} ];
   }
 }

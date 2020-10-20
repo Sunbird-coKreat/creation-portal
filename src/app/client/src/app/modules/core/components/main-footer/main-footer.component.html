@@ -28,7 +28,7 @@
             </a>
           </li> -->
           <li class="mb-15">
-            <a appTelemetryInteract [telemetryInteractEdata]="setTelemetryInteractEdata('help-center')"
+            <a appTelemetryInteract [telemetryInteractEdata]="setTelemetryInteractEdata('help_center')"
               [routerLink]="router.url.includes('/contribute') ? '/contribute/help' : '/sourcing/help'" target="_blank"
               *ngIf="router.url.includes('/contribute') || router.url.includes('/sourcing')">
               {{resourceService.frmelmnts?.lnk?.footerHelpCenter}}
@@ -39,7 +39,7 @@
             <label class="d-block mb-0">
               {{resourceService.frmelmnts?.lnk?.footerContact}}
             </label>
-            <a appTelemetryInteract [telemetryInteractEdata]="setTelemetryInteractEdata('fresh-desk')" class="d-block mb-0"
+            <a appTelemetryInteract [telemetryInteractEdata]="setTelemetryInteractEdata('fresh_desk')" class="d-block mb-0"
             href="mailto:vdnsupport@teamdiksha.org">
             vdnsupport@teamdiksha.org
           </a>
@@ -73,7 +73,7 @@
       </div> -->
       <div class="four wide column contantDetails d-flex flex-dc flex-jc-space-between">
         <label class="d-block">
-          <a appTelemetryInteract [telemetryInteractEdata]="setTelemetryInteractEdata('t&c')" target="_blank" href="/terms-of-use.html">
+          <a appTelemetryInteract [telemetryInteractEdata]="setTelemetryInteractEdata('terms_and_policies')" target="_blank" href="/terms-of-use.html">
             {{resourceService.frmelmnts?.lnk?.footerTnC}}
           </a>
           <span>| &copy; {{date | date:'yyyy'}}, DIKSHA</span>

@@ -20,6 +20,7 @@ export class ResourceReorderComponent implements OnInit {
   @Input() prevUnitSelect;
   @Output() moveEvent = new EventEmitter<any>();
   @ViewChild('modal') modal;
+  public telemetryPageId: string;
   public collectionUnitsBreadcrumb: any = [];
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
@@ -33,10 +34,11 @@ export class ResourceReorderComponent implements OnInit {
 
   ngOnInit() {
     // tslint:disable-next-line:max-line-length
-    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.sessionContext.programId, 'Program');
+    this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID);
     this.setCollectionUnitBreadcrumb();
+    this.telemetryPageId = this.sessionContext.telemetryPageDetails.telemetryPageId;
   }
 
   moveResource() {

@@ -1,5 +1,6 @@
 import { Component, OnInit, Output, Input, EventEmitter, OnChanges, ViewChild } from '@angular/core';
 import { ProgramTelemetryService } from '../../../program/services';
+import { ConfigService} from '@sunbird/shared';
 
 @Component({
   selector: 'app-question-creation-header',
@@ -14,6 +15,7 @@ export class QuestionCreationHeaderComponent implements OnInit {
   @Input() telemetryEventsInput: any;
   constructor(
     public programTelemetryService: ProgramTelemetryService,
+    public configService: ConfigService
   ) { }
 
   ngOnInit() {}
