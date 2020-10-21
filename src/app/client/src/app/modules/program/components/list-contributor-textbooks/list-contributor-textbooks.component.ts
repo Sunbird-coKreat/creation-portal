@@ -104,12 +104,13 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
     });
     this.contributor = this.selectedNominationDetails;
-    this.nominatedContentTypes = this.programsService.getContentTypesName(this.contributor.nominationData.content_types);
+    this.nominatedContentTypes = _.join(this.contributor.nominationData.content_types, ', ');
     this.telemetryInteractCdata = [
       {id: this.userService.channel, type: 'sourcing_organization'},
       {id: this.activatedRoute.snapshot.params.programId, type: 'project'},
       {id: this.activatedRoute.snapshot.params.programId, type: 'nomination'}
     ];
+
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
   }

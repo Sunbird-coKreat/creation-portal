@@ -6,16 +6,16 @@
   <div class="sb-modal-content">
     <div class="twelve wide column">
       <div class="ui grid flex-jc-center m-0">
-        <div class="three wide column p-8"  *ngFor="let template of templateList" (click)="showButton=true; templateSelected = template.id" >
-          <div class="ui card text-center common-contribution-card" [ngClass]="{'active': templateSelected === template.id}">
+        <div class="three wide column p-8"  *ngFor="let template of templateList" (click)="showButton=true; templateSelected = template.identifier" >
+          <div class="ui card text-center common-contribution-card" [ngClass]="{'active': templateSelected === template.identifier}">
             <div class="content" appTelemetryInteract 
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('template_'+ template.label, configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.singleSelect,telemetryPageId, {key:'dialog_id',value:'select_to_contribute'})"
             [telemetryInteractObject]="telemetryInteractObject"
             [telemetryInteractCdata]="telemetryInteractCdata"
             [telemetryInteractPdata]="telemetryInteractPdata">
               <i class="check circle icon"></i>
-              <img class="mt-16" src="{{template.metadata.appIcon || 'assets/images/book.png'}}" rel="placeholder">
-              <div class="content-title pt-16 pb-8">{{template.label}}</div>
+              <img class="mt-16" src="{{template?.metadata?.appIcon || 'assets/images/book.png'}}" rel="placeholder">
+              <div class="content-title pt-16 pb-8">{{template.name}}</div>
             </div>
           </div>
         </div>
@@ -32,6 +32,35 @@
             [telemetryInteractCdata]="telemetryInteractCdata"
             [telemetryInteractPdata]="telemetryInteractPdata">
       Continue
+    </button>
+  </div>
+</sui-modal>
+<sui-modal *ngIf="showModeofCreationModal" [mustScroll]="false" [isClosable]="false" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
+  appBodyScroll (dismissed)="showModeofCreationModal=false" #modeofcreationmodal>
+  <div class="sb-modal-header">
+    {{resourceService.frmelmnts.lbl.modeOfCreation}}
+  </div>
+  <div class="sb-modal-content">
+    <div class="py-10">
+      <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+        <input type="radio" id="createNew" name="modeOfCreation" (click)="handleModeOfCreation('createNew')">
+        <label for="radio1">{{resourceService.frmelmnts.lbl.createNewContentUsingEditorTool}}</label>
+        </div>
+        <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+          <input type="radio" id="uploadExist" name="modeOfCreation" (click)="handleModeOfCreation('upload')">
+          <label for="uploadExist">{{resourceService.frmelmnts.lbl.uploadAnExistingFile}}</label>
+          </div>
+    </div>
+  </div>
+  <div class="sb-modal-actions">
+    <button class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': showButton, 'sb-btn-disabled': !showButton}" (click)="handleModeOfCreation()"
+    appTelemetryInteract
+            [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('templateSelection-button', 'click', 'chapter-list')"
+            [telemetryInteractObject]="telemetryInteractObject"
+            [telemetryInteractCdata]="telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryInteractPdata">
+      Continue
+      {{resourceService.frmelmnts.lbl.continue}}
     </button>
   </div>
 </sui-modal>

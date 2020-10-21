@@ -1,0 +1,56 @@
+{
+    "sourcingConfig": {
+        "editor" : [
+            {
+                "mimetype": "application/vnd.ekstep.ecml-archive",
+                "type": "questionSet",
+                "target": "createNew"
+            },
+            {
+                "mimetype": "application/vnd.ekstep.quml-archive",
+                "type": "question",
+                "target": "createNew"
+            },
+            {
+                "mimetype": "application/vnd.ekstep.html-archive",
+                "type": "upload",
+                "target": "uploadExist"
+            },
+            {
+                "mimetype":  "application/vnd.ekstep.h5p-archive",
+                "type": "upload",
+                "target": "uploadExist"
+            },
+            {
+                "mimetype": "video/mp4",
+                "type": "upload",
+                "target": "uploadExist"
+            },
+            {
+                "mimetype": "video/webm",
+                "type": "upload",
+                "target": "uploadExist"
+            },
+            {
+                "mimetype": "application/pdf",
+                "type": "upload",
+                "target": "uploadExist"
+            },
+            {
+                "mimetype": "application/epub",
+                "type": "upload",
+                "target": "uploadExist"
+            }
+        ],
+        "files": {
+            "application/vnd.ekstep.html-archive": "html",
+            "application/vnd.ekstep.h5p-archive": "h5p",
+            "application/pdf": "pdf",
+            "video/mp4": "mp4",
+            "video/webm": "webm",
+            "application/epub": "epub"
+        },
+        "defaultFileSize": 50,
+        "defaultVideoSize": 15000
+    }
+}

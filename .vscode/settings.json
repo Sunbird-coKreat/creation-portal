@@ -3,5 +3,6 @@
         "Injectable",
         "izitoast",
         "uploader"
-    ]
+    ],
+    "workbench.editor.enablePreview": false
 }

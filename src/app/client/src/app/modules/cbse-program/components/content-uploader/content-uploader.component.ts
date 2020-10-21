@@ -618,7 +618,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       };
       this.contentMetaData = res;
       const contentTypeValue = [this.contentMetaData.contentType];
-      this.contentType = this.programsService.getContentTypesName(contentTypeValue);
+      this.contentType = ''//this.programsService.getContentTypesName(contentTypeValue);
       this.editTitle = (this.contentMetaData.name !== 'Untitled') ? this.contentMetaData.name : '' ;
       this.resourceStatus = this.contentMetaData.status;
       if (this.resourceStatus === 'Review') {

@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, OnDestroy, Output, Input, EventEmitter } 
 import * as _ from 'lodash-es';
 import { ISessionContext, IChapterListComponentInput, IResourceTemplateComponentInput } from '../../interfaces';
 import { ProgramTelemetryService } from '../../../program/services';
-import { ConfigService } from '@sunbird/shared';
+import { ConfigService, ResourceService } from '@sunbird/shared';
 import { UserService } from '@sunbird/core';
 
 @Component({
@@ -25,8 +25,10 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
   public sessionContext;
   public unitIdentifier;
   public telemetryPageId;
+  public selectedtemplateDetails;
+  public showModeofCreationModal = false;
   constructor( public programTelemetryService: ProgramTelemetryService, public userService: UserService,
-    public configService: ConfigService ) { }
+    public configService: ConfigService, public resourceService: ResourceService) { }
 
 
   ngOnInit() {
@@ -45,10 +47,32 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
 
 
   handleSubmit() {
-    const templateDetails = _.find(this.templateList, (template) => {
-      return template.id === this.templateSelected;
+    this.selectedtemplateDetails = _.find(this.templateList, (template) => {
+     return template.identifier === this.templateSelected;
     });
-    this.templateSelection.emit({ type: 'next', template: this.templateSelected, templateDetails: templateDetails });
+    const catEditors = [];
+    const catMimeTypes = this.selectedtemplateDetails.metadata.schema.properties.mimeType.enum;
+    let modeOfCreation = _.map(catMimeTypes, (mimetype) => {
+       const editorObj = _.find(this.configService.contentCategoryConfig.sourcingConfig.editor, {"mimetype": mimetype});
+       if (editorObj) {
+        catEditors.push(editorObj);
+          return editorObj.target;
+       }
+    });
+    this.selectedtemplateDetails["editors"] = catEditors;
+
+    modeOfCreation = _.uniq(modeOfCreation);
+    if (modeOfCreation.length > 1) {
+      this.showModeofCreationModal = true;
+    } else {
+      this.selectedtemplateDetails["modeOfCreation"] = modeOfCreation;
+      this.templateSelection.emit({ type: 'next', template: this.templateSelected, templateDetails: this.selectedtemplateDetails });
+    }
+  }
+
+  handleModeOfCreation(mode) {
+    this.selectedtemplateDetails["modeOfCreation"] = mode;
+    this.templateSelection.emit({ type: 'next', template: this.templateSelected, templateDetails: this.selectedtemplateDetails });
   }
 
   ngOnDestroy() {

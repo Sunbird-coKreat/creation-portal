@@ -838,19 +838,26 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
      })
   }
   resourceTemplateInputData() {
-    let contentTypes = _.get(this.chapterListComponentInput.config, 'config.contentTypes.value')
-    || _.get(this.chapterListComponentInput.config, 'config.contentTypes.defaultValue');
-    if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.content_types) {
-       contentTypes = _.filter(contentTypes, (obj) => {
-        return _.includes(this.sessionContext.nominationDetails.content_types, obj.metadata.contentType);
-       });
-    }
-    this.resourceTemplateComponentInput = {
-        templateList: contentTypes,
-        programContext: this.programContext,
-        sessionContext: this.sessionContext,
-        unitIdentifier: this.unitIdentifier
-    };
+    this.programsService.getProgramContentCategories(this.programContext.content_types).then((contentCategories) => {
+      console.log(contentCategories);
+      // Get the content categories objects to be passed to the selection popup
+      // let contentTypes = _.get(this.chapterListComponentInput.config, 'config.contentTypes.value')
+      // || _.get(this.chapterListComponentInput.config, 'config.contentTypes.defaultValue');
+      if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.content_types) {
+        contentCategories = _.filter(contentCategories, (obj) => {
+          if (_.includes(this.sessionContext.nominationDetails.content_types, obj.name)) {
+            obj.metadata = JSON.parse(obj.objectMetadata);
+            return obj;
+          }
+        });
+      }
+      this.resourceTemplateComponentInput = {
+          templateList: contentCategories,
+          programContext: this.programContext,
+          sessionContext: this.sessionContext,
+          unitIdentifier: this.unitIdentifier
+      };
+    });
   }
 
   emitQuestionTypeTopic(type, topic, topicIdentifier, resourceIdentifier, resourceName) {

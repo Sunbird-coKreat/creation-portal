@@ -56,7 +56,7 @@ module.exports = function (app) {
   // Log telemetry for action api's
   app.all('/action/*', telemetryHelper.generateTelemetryForProxy)
 
-
+/*
   // Proxy for content create ,update & review Start
   app.use([
     '/action/content/v3/create',
@@ -93,10 +93,10 @@ module.exports = function (app) {
   }))
 
   app.use(
-    ['/action/itemset/v3/create', 
-    '/action/itemset/v3/update/*', 
-    '/action/itemset/v3/read/*', 
-    '/action/itemset/v3/review/*', 
+    ['/action/itemset/v3/create',
+    '/action/itemset/v3/update/*',
+    '/action/itemset/v3/read/*',
+    '/action/itemset/v3/review/*',
     '/action/itemset/v3/retire/*'],
   proxy(kp_assessment_service_base_url, {
     proxyReqPathResolver: function (req) {
@@ -105,7 +105,7 @@ module.exports = function (app) {
       return require('url').parse(kp_assessment_service_base_url + originalUrl).path
     }
   }))
-
+*/
   // Proxy for content create , update & review END
 
   app.use('/action/content/v3/unlisted/publish/:contentId', permissionsHelper.checkPermission(),

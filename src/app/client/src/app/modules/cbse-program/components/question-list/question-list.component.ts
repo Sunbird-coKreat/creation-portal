@@ -235,7 +235,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     })).subscribe(res => {
       this.resourceDetails = res;
       const contentTypeValue = [this.resourceDetails.contentType];
-      const contentType = this.programsService.getContentTypesName(contentTypeValue);
+      const contentType = '';//this.programsService.getContentTypesName(contentTypeValue);
       this.resourceDetails.contentTypeName = contentType;
       this.sessionContext.contentMetadata = this.resourceDetails;
       this.existingContentVersionKey = res.versionKey;
