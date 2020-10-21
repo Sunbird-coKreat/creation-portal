@@ -117,6 +117,8 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   ngOnInit() {
     this.initialized = true;
     this.overrideMetaData = this.programsService.overrideMetaData;
+    this.telemetryPageId =  this.sessionContext.telemetryPageId;
+    this.telemetryEventsInput.telemetryPageId = this.telemetryPageId;
     this.solutionUUID = UUID.UUID();
     this.initialize();
     if (this.questionMetaData && this.questionMetaData.data) {
@@ -146,7 +148,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
           }
         },
         edata: {
-          type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
+          type: this.configService.telemetryLabels.pageType.view || _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
           pageid: this.telemetryPageId,
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()

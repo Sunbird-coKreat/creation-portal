@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { debounceTime} from 'rxjs/operators';
 import * as _ from 'lodash-es';
-import { ResourceService } from '@sunbird/shared';
+import { ResourceService, ConfigService } from '@sunbird/shared';
 import { ProgramTelemetryService } from '../../../program/services';
 
 @Component({
@@ -19,11 +19,13 @@ export class MvcFilterComponent implements OnInit, OnChanges {
   @Output() filterChangeEvent: EventEmitter<any> = new EventEmitter();
   searchFilterForm: FormGroup;
   public isFilterShow: Boolean = false;
+  public telemetryPageId: string;
 
   constructor( private sbFormBuilder: FormBuilder, public resourceService: ResourceService,
-    public programTelemetryService: ProgramTelemetryService) { }
+    public programTelemetryService: ProgramTelemetryService, public configService: ConfigService) { }
 
   ngOnInit() {
+    this.telemetryPageId = this.sessionContext.telemetryPageId;
     this.initializeForm();
   }
 

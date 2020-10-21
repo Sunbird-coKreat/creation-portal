@@ -1,4 +1,4 @@
-<div class="ui container" [appTelemetryImpression]="telemetryImpression">
+<div class="ui container">
   <div class="mt-24">
       <div class="sb-pageSection-header mb-0 flex-jc-space-between">
           <div class="w-60">
@@ -13,14 +13,14 @@
                   <i class="close icon" *ngIf="searchInput" (click)="getUserDetailsBySearch('clearSearch')"></i>
               </div>
               <button class="sb-btn sb-btn-normal" (click)="getUserDetailsBySearch()" appTelemetryInteract
-            [telemetryInteractEdata]="getTelemetryInteractEdata('users-search', 'click', 'sourcing-org-manage-users-list', {values: {searchInput: searchInput}})"
+            [telemetryInteractEdata]="getTelemetryInteractEdata('search', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit,telemetryPageId, {values: {searchInput: searchInput}})"
             [telemetryInteractObject]="telemetryInteractObject"
             [telemetryInteractCdata]="telemetryInteractCdata"
             [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService?.frmelmnts?.lbl?.search}}</button>
       </div>
         <div>
         <button class="sb-btn sb-btn-outline-primary sb-btn-normal ml-10 " (click)="copyOnLoad()" appTelemetryInteract
-        [telemetryInteractEdata]="getTelemetryInteractEdata('user-link', 'click', 'org-user-list')"
+        [telemetryInteractEdata]="getTelemetryInteractEdata('invite_user', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"><i
             class="plus circle icon" ></i>
@@ -85,27 +85,27 @@
       <div class="sb-pagination">
           <a class="sb-item" [ngClass]="{disabled:pager.currentPage===1 }" (click)="NavigateToPage(1)"
           appTelemetryInteract
-                        [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser-list-fist-page', 'click', 'org-user-list')"
+                        [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser-list-fist-page', configService.telemetryLabels.eventType.click, undefined,telemetryPageId)"
                         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
                         [telemetryInteractPdata]="telemetryInteractPdata">First</a>
           <a [ngClass]="{disabled:pager.currentPage===1 }" class="sb-item" (click)="NavigateToPage(pager.currentPage - 1)" 
           appTelemetryInteract
-                        [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser-list-previous-page', 'click', 'org-user-list', {values: [pager.currentPage - 1]})"
+                        [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser-list-previous-page', configService.telemetryLabels.eventType.click, undefined,telemetryPageId, {values: [pager.currentPage - 1]})"
                         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
                         [telemetryInteractPdata]="telemetryInteractPdata">Previous</a>
           <a *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage===page}" (click)="NavigateToPage(page)" class="sb-item"
           appTelemetryInteract
-                        [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser-list-pagination', 'click', 'org-user-list', {values: [page]})"
+                        [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser-list-pagination', configService.telemetryLabels.eventType.click, undefined,telemetryPageId, {values: [page]})"
                         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
                         [telemetryInteractPdata]="telemetryInteractPdata">{{page}}</a>
           <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="NavigateToPage(pager.currentPage + 1)"  class="sb-item"
           appTelemetryInteract
-                        [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser-list-next-page', 'click', 'org-user-list', {values: [pager.currentPage + 1]})"
+                        [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser-list-next-page', configService.telemetryLabels.eventType.click, undefined,telemetryPageId, {values: [pager.currentPage + 1]})"
                         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
                         [telemetryInteractPdata]="telemetryInteractPdata">Next</a>
           <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="NavigateToPage(pager.totalPages)"  class="sb-item"
           appTelemetryInteract
-                        [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser-list-last-page', 'click', 'org-user-list', {values: [pager.totalPages]})"
+                        [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser-list-last-page', configService.telemetryLabels.eventType.click, undefined, telemetryPageId, {values: [pager.totalPages]})"
                         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
                         [telemetryInteractPdata]="telemetryInteractPdata">Last</a>
       </div>
@@ -129,7 +129,7 @@
       <input readonly="" value="{{orgLink}}" type="text" id="copyLinkData" suiPopup [popupPlacement]="position"
         popupText="{{resourceService?.frmelmnts?.lbl?.linkCopied}}" #popup="suiPopup" popupTrigger="focus">
       <button class="ui basic primary button" (click)="copyLinkToClipboard()" appTelemetryInteract
-        [telemetryInteractEdata]="getTelemetryInteractEdata('copy-link', 'click', 'org-user-list')"
+        [telemetryInteractEdata]="getTelemetryInteractEdata('copy_link', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"> {{ resourceService.frmelmnts.btn.copyLink }}
       </button>

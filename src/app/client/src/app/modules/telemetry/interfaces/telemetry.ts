@@ -3,7 +3,7 @@ import { IUserProfile } from '@sunbird/shared';
 export interface IStartEventData {
   'type': string;
   'pageid': string;
-  'mode': string;
+  'mode'?: string;
   'dspec'?: {};
   'uaspec'?: {};
   'loc'?: string;

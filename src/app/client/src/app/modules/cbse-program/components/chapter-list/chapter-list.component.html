@@ -7,7 +7,7 @@
         <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="handleBack()"
                         type="button"
                         appTelemetryInteract
-                [telemetryInteractEdata]="getTelemetryInteractEdata('chapter-list', 'click', 'chapter-list')"
+                [telemetryInteractEdata]="getTelemetryInteractEdata('back', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata">
@@ -159,7 +159,7 @@
   <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn px-20" (click)="handleBack()"
 						type="button"
 						appTelemetryInteract
-				[telemetryInteractEdata]="getTelemetryInteractEdata('chapter-list', 'click', 'chapter-list')"
+				[telemetryInteractEdata]="getTelemetryInteractEdata('back', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
 				[telemetryInteractObject]="telemetryInteractObject"
 				[telemetryInteractCdata]="telemetryInteractCdata"
 				[telemetryInteractPdata]="telemetryInteractPdata">
@@ -191,16 +191,16 @@
   <div class="sb-modal-actions">
     <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="deleteContent()"
     appTelemetryInteract
-				[telemetryInteractEdata]="getTelemetryInteractEdata('confirm-content-remove', 'click', 'chapter-list')"
-				[telemetryInteractObject]="telemetryInteractObject"
+				[telemetryInteractEdata]="getTelemetryInteractEdata('yes', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit,telemetryPageId,{key:'dialog_id',value:'confirm_delete_content'})"
+				[telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(contentId, 'Content', '1.0', {l1:sessionContext.collection,l2:unitIdentifier})"
 				[telemetryInteractCdata]="telemetryInteractCdata"
 				[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.yes}} </button>
     <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showConfirmationModal = false"
     appTelemetryInteract
-				[telemetryInteractEdata]="getTelemetryInteractEdata('cancel-content-remove', 'click', 'chapter-list')"
-				[telemetryInteractObject]="telemetryInteractObject"
-				[telemetryInteractCdata]="telemetryInteractCdata"
-				[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.no}} </button>
+    [telemetryInteractEdata]="getTelemetryInteractEdata('no', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.camcel,telemetryPageId,{key:'dialog_id',value:'confirm_delete_content'})"
+    [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(contentId, 'Content', '1.0', {l1:sessionContext.collection,l2:unitIdentifier})"
+    [telemetryInteractCdata]="telemetryInteractCdata"
+    [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.no}} </button>
   </div>
 </sui-modal>
 
@@ -219,14 +219,14 @@
   <div class="sb-modal-actions">
     <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="removeMvcContentFromHierarchy()"
     appTelemetryInteract
-				[telemetryInteractEdata]="getTelemetryInteractEdata('confirm-remove-content', 'click', 'chapter-list')"
-				[telemetryInteractObject]="telemetryInteractObject"
+    [telemetryInteractEdata]="getTelemetryInteractEdata('yes', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit,telemetryPageId,{key:'dialog_id',value:'confirm_remove_content'})"
+    [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(contentId, 'Content', '1.0', {l1:sessionContext.collection,l2:unitIdentifier})"
 				[telemetryInteractCdata]="telemetryInteractCdata"
 				[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts?.btn?.yes}}</button>
     <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showRemoveConfirmationModal = false"
     appTelemetryInteract
-				[telemetryInteractEdata]="getTelemetryInteractEdata('cancel-remove-content', 'click', 'chapter-list')"
-				[telemetryInteractObject]="telemetryInteractObject"
+    [telemetryInteractEdata]="getTelemetryInteractEdata('no', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.cancel,telemetryPageId,{key:'dialog_id',value:'confirm_remove_content'})"
+    [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(contentId, 'Content', '1.0', {l1:sessionContext.collection,l2:unitIdentifier})"
 				[telemetryInteractCdata]="telemetryInteractCdata"
 				[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts?.btn?.no}} </button>
   </div>

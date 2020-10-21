@@ -22,7 +22,7 @@ export class MvcPlayerComponent implements OnInit, OnChanges {
   public contentData: any = {};
   public contentId;
   constructor(
-    private playerService: PlayerService, private configService: ConfigService, private actionService: ActionService,
+    private playerService: PlayerService, public configService: ConfigService, private actionService: ActionService,
     private cbseService: CbseProgramService, private cd: ChangeDetectorRef, public resourceService: ResourceService,
     public programTelemetryService: ProgramTelemetryService
   ) { }
