@@ -102,18 +102,18 @@
 		<sui-tabset>
 			<div class="ui pointing secondary menu sb-bg-color-primary-100">
 				<div class="ui container p-0 m-0 d-flex flex-ai-center flex-jc-center">
-					<div class="item active cursor-pointer" suiTabHeader="2"
+					<div class="item active cursor-pointer" suiTabHeader="2" (click)="setTelemetryPageId('textbook')"
 					appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('textbook-tab', 'click', 'list-nominated-textbooks')"
-										[telemetryInteractObject]="telemetryInteractObject"
-										[telemetryInteractCdata]="telemetryInteractCdata"
-										[telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.textbooks }}<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{contributorTextbooks.length || 0}}</span></div>
-					<div class="item cursor-pointer" *ngIf="userService.isContributingOrgAdmin()" suiTabHeader="3"
+					[telemetryInteractEdata]="getTelemetryInteractEdata('textbooks', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, configService.telemetryLabels.pageId.contribute.projectContributions)"
+					[telemetryInteractObject]="telemetryInteractObject"
+					[telemetryInteractCdata]="telemetryInteractCdata"
+					[telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.textbooks }}<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{contributorTextbooks.length || 0}}</span></div>
+					<div class="item cursor-pointer" *ngIf="userService.isContributingOrgAdmin()" suiTabHeader="3" (click)="setTelemetryPageId('user')"
 					appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('assign-role-tab', 'click', 'list-nominated-textbooks')"
-										[telemetryInteractObject]="telemetryInteractObject"
-										[telemetryInteractCdata]="telemetryInteractCdata"
-										[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.assignUsersToProject}} <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ OrgUsersCnt}}</span></div>
+					[telemetryInteractEdata]="getTelemetryInteractEdata('assign_users_to_project', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,configService.telemetryLabels.pageId.contribute.projectAssignUsers)"
+					[telemetryInteractObject]="telemetryInteractObject"
+					[telemetryInteractCdata]="telemetryInteractCdata"
+					[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.assignUsersToProject}} <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ OrgUsersCnt}}</span></div>
 				</div>
 			</div>
 
@@ -131,26 +131,26 @@
 					<div class="twelve wide tablet seven wide computer column text-right">
 						<a class="fs-0-785 text-decor-none font-weight-bold sb-color-primary pt-10" href="{{ programDetails?.guidelines_url }}" target="_blank" *ngIf="programDetails?.guidelines_url" [ngClass]="{'mb-10': !userService.isContributingOrgAdmin()}"
 						appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('view-guideline-document', 'click', 'list-nominated-textbooks')"
-										[telemetryInteractObject]="telemetryInteractObject"
-										[telemetryInteractCdata]="telemetryInteractCdata"
-										[telemetryInteractPdata]="telemetryInteractPdata">
+						[telemetryInteractEdata]="getTelemetryInteractEdata('view_content_guidelines_document', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+						[telemetryInteractObject]="telemetryInteractObject"
+						[telemetryInteractCdata]="telemetryInteractCdata"
+						[telemetryInteractPdata]="telemetryInteractPdata">
 							<i class="file sb-file-icon outline icon pr-10 sb-color-primary"></i>
 							{{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
 						</a>
 						<button *ngIf="userService.isContributingOrgAdmin() || sessionContext?.currentRoles?.includes('REVIEWER')" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" (click)="showTextbookFiltersModal = true"
 						appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('add-filters', 'click', 'list-nominated-textbooks')"
-										[telemetryInteractObject]="telemetryInteractObject"
-										[telemetryInteractCdata]="telemetryInteractCdata"
-										[telemetryInteractPdata]="telemetryInteractPdata"> <i class="filter icon"></i>
+						[telemetryInteractEdata]="getTelemetryInteractEdata(textbookFiltersApplied ? 'modify_filters' : 'filter_textbooks', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+						[telemetryInteractObject]="telemetryInteractObject"
+						[telemetryInteractCdata]="telemetryInteractCdata"
+						[telemetryInteractPdata]="telemetryInteractPdata"> <i class="filter icon"></i>
 							<i [ngClass]="{'sb-dock-circle': textbookFiltersApplied}"></i>
 							<span *ngIf="!textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.addFilters }}</span>
 							<span *ngIf="textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.modifyFilters }}</span>
 						</button>
 					</div>
 				</div>
-					<div class="sb-pageSection pt-5" [appTelemetryImpression]="telemetryImpression">
+					<div class="sb-pageSection pt-5">
 						<div class="sb-bg-color-white pt-15">
 							<div class="sb-table-responsive" *ngIf="!showLoader && contributorTextbooks.length">
 								<table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
@@ -211,23 +211,23 @@
 												<button *ngIf="currentNominationStatus === 'Approved' && sessionContext?.currentRoles?.includes('CONTRIBUTOR') && canUploadContent()"
 												type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary"
 												(click)="viewContribution(contributorTextbook)" appTelemetryInteract
-												[telemetryInteractEdata]="getTelemetryInteractEdata('upload-content', 'click', 'list-nominated-textbooks', {values: [contributorTextbook.identifier]})"
+												[telemetryInteractEdata]="getTelemetryInteractEdata('upload_content', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId, {values: [contributorTextbook.identifier]})"
 												[telemetryInteractObject]="telemetryInteractObject"
-												[telemetryInteractCdata]="telemetryInteractCdata"
+												[telemetryInteractCdata]="getTelemetryInteractCdata(contributorTextbook.identifier,'linked_collection')"
 												[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.uploadContent}}</button>
 
 												<button *ngIf="currentNominationStatus === 'Approved' && !canUploadContent()"
 												type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(contributorTextbook)" appTelemetryInteract
-												[telemetryInteractEdata]="getTelemetryInteractEdata('view-content', 'click', 'list-nominated-textbooks', {values: [contributorTextbook.identifier]})"
+												[telemetryInteractEdata]="getTelemetryInteractEdata('view_content', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch,telemetryPageId, {values: [contributorTextbook.identifier]})"
 												[telemetryInteractObject]="telemetryInteractObject"
-												[telemetryInteractCdata]="telemetryInteractCdata"
+												[telemetryInteractCdata]="getTelemetryInteractCdata(contributorTextbook.identifier,'linked_collection')"
 												[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.viewContent}}</button>
 
 												<button *ngIf="currentNominationStatus === 'Approved' && sessionContext?.currentRoles?.includes('REVIEWER') && !sessionContext?.currentRoles?.includes('CONTRIBUTOR') && canUploadContent()"
 												type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(contributorTextbook)" appTelemetryInteract
-												[telemetryInteractEdata]="getTelemetryInteractEdata('review-content', 'click', 'list-nominated-textbooks', {values: [contributorTextbook.identifier]})"
+												[telemetryInteractEdata]="getTelemetryInteractEdata('review_content', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId, {values: [contributorTextbook.identifier]})"
 												[telemetryInteractObject]="telemetryInteractObject"
-												[telemetryInteractCdata]="telemetryInteractCdata"
+												[telemetryInteractCdata]="getTelemetryInteractCdata(contributorTextbook.identifier,'linked_collection')"
 												[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.reviewContent}}</button>
 										</td>
 										</tr>
@@ -260,7 +260,7 @@
                                 <i class="close icon" *ngIf="searchInput" (click)="getUserDetailsBySearch('clearSearch')"></i>
                             </div>
                             <button class="sb-btn sb-btn-normal" (click)="getUserDetailsBySearch()" appTelemetryInteract
-							[telemetryInteractEdata]="getTelemetryInteractEdata('users-search', 'click', 'Contributor-Org-Admin', {values: {searchInput: searchInput}})"
+							[telemetryInteractEdata]="getTelemetryInteractEdata('search', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryPageId, {values: {searchInput: searchInput}})"
 							[telemetryInteractObject]="telemetryInteractObject"
 							[telemetryInteractCdata]="telemetryInteractCdata"
 							[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService?.frmelmnts?.lbl?.search}}</button>
@@ -355,31 +355,31 @@
 						<div class="sb-pagination">
 							<a class="sb-item" [ngClass]="{disabled:pager.currentPage===1 }" (click)="NavigateToPage(1)"
 							appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrg-list-first-page', 'click', 'list-nominated-textbooks')"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrg_list_first_page', configService.telemetryLabels.eventType.click, undefined, telemetryPageId)"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">First</a>
 							<a [ngClass]="{disabled:pager.currentPage===1 }" class="sb-item" (click)="NavigateToPage(pager.currentPage - 1)" 
 							appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrg-list-previous-page', 'click', 'list-nominated-textbooks', {values: [pager.currentPage - 1]})"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrg_list_previous_page', configService.telemetryLabels.eventType.click, undefined, telemetryPageId, {values: [pager.currentPage - 1]})"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">Previous</a>
 							<a *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage===page}" (click)="NavigateToPage(page)" class="sb-item"
 							appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrg-list-pagination', 'click', 'list-nominated-textbooks', {values: [page]})"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrg_list_pagination', configService.telemetryLabels.eventType.click, undefined, telemetryPageId, {values: [page]})"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">{{page}}</a>
 							<a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="NavigateToPage(pager.currentPage + 1)"  class="sb-item"
 							appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrg-list-next-page', 'click', 'list-nominated-textbooks', {values: [pager.currentPage + 1]})"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrg_list_next_page', configService.telemetryLabels.eventType.click, undefined, telemetryPageId, {values: [pager.currentPage + 1]})"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">Next</a>
 							<a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="NavigateToPage(pager.totalPages)"  class="sb-item"
 							appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrg-list-last-page', 'click', 'list-nominated-textbooks', {values: [pager.totalPages]})"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrg_list_last_page', configService.telemetryLabels.eventType.click, undefined, telemetryPageId, {values: [pager.totalPages]})"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">Last</a>
@@ -416,9 +416,15 @@
 							<sui-multi-select class="selection p-5 b-100"
 							formControlName="medium" #mediums
 							[options]="programDetails.config.medium"
-							[(ngModel)]="setPreferences['medium']">
-								<sui-select-option *ngFor="let medium of mediums.filteredOptions" [value]="medium" appTelemetryInteract
-								[telemetryInteractEdata]="getTelemetryInteractEdata('filters-medium', 'click', 'list-nominated-textbooks', {values: [medium]})"
+							[(ngModel)]="setPreferences['medium']"
+								appTelemetryInteract
+								[telemetryInteractEdata]="getTelemetryInteractEdata('medium', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {key:'dialog_id',value:'filter_textbooks'})"
+								[telemetryInteractObject]="telemetryInteractObject"
+								[telemetryInteractCdata]="telemetryInteractCdata"
+								[telemetryInteractPdata]="telemetryInteractPdata">
+								<sui-select-option *ngFor="let medium of mediums.filteredOptions" [value]="medium" 
+								appTelemetryInteract
+								[telemetryInteractEdata]="getTelemetryInteractEdata('medium', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {values: [medium]})"
 								[telemetryInteractObject]="telemetryInteractObject"
 								[telemetryInteractCdata]="telemetryInteractCdata"
 								[telemetryInteractPdata]="telemetryInteractPdata"> </sui-select-option>
@@ -431,9 +437,14 @@
 							<sui-multi-select class="selection p-5 b-100"
 							formControlName="subject" #subjects
 							[options]="programDetails.config.subject"
-							[(ngModel)]="setPreferences['subject']">
+							[(ngModel)]="setPreferences['subject']"
+							appTelemetryInteract
+								[telemetryInteractEdata]="getTelemetryInteractEdata('subject', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {key:'dialog_id',value:'filter_textbooks'})"
+								[telemetryInteractObject]="telemetryInteractObject"
+								[telemetryInteractCdata]="telemetryInteractCdata"
+								[telemetryInteractPdata]="telemetryInteractPdata">
 								<sui-select-option *ngFor="let subject of subjects.filteredOptions" [value]="subject" appTelemetryInteract
-								[telemetryInteractEdata]="getTelemetryInteractEdata('filters-subject', 'click', 'list-nominated-textbooks', {values: [subject]})"
+								[telemetryInteractEdata]="getTelemetryInteractEdata('subject', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {values: [subject]})"
 								[telemetryInteractObject]="telemetryInteractObject"
 								[telemetryInteractCdata]="telemetryInteractCdata"
 								[telemetryInteractPdata]="telemetryInteractPdata"></sui-select-option>
@@ -446,9 +457,14 @@
 							<sui-multi-select formControlName="gradeLevel"
 							class="selection p-5 b-100" #gradeLevels
 							[options]="programDetails.config.gradeLevel"
-							[(ngModel)]="setPreferences['gradeLevel']">
+							[(ngModel)]="setPreferences['gradeLevel']"
+							appTelemetryInteract
+								[telemetryInteractEdata]="getTelemetryInteractEdata('class', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {key:'dialog_id',value:'filter_textbooks'})"
+								[telemetryInteractObject]="telemetryInteractObject"
+								[telemetryInteractCdata]="telemetryInteractCdata"
+								[telemetryInteractPdata]="telemetryInteractPdata">
 								<sui-select-option *ngFor="let gradeLevel of gradeLevels.filteredOptions" [value]="gradeLevel" appTelemetryInteract
-								[telemetryInteractEdata]="getTelemetryInteractEdata('filters-gradeLevel', 'click', 'list-nominated-textbooks', {values: [gradeLevel]})"
+								[telemetryInteractEdata]="getTelemetryInteractEdata('class', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {values: [gradeLevel]})"
 								[telemetryInteractObject]="telemetryInteractObject"
 								[telemetryInteractCdata]="telemetryInteractCdata"
 								[telemetryInteractPdata]="telemetryInteractPdata"></sui-select-option>
@@ -461,13 +477,13 @@
 	</div>
 	<div class="sb-modal-actions py-20">
 		<button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="applyTextbookFilters();" appTelemetryInteract
-		[telemetryInteractEdata]="getTelemetryInteractEdata('apply-filters', 'click', 'list-nominated-textbooks', {values: [setPreferences]})"
+		[telemetryInteractEdata]="getTelemetryInteractEdata('apply', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,telemetryPageId, {filters: setPreferences,key:'dialog_id',value:'filter_textbooks'})"
 		[telemetryInteractObject]="telemetryInteractObject"
 		[telemetryInteractCdata]="telemetryInteractCdata"
 		[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.apply}} </button>
 		<button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary"
 		(click)="resetTextbookFilters();" appTelemetryInteract
-		[telemetryInteractEdata]="getTelemetryInteractEdata('reset-filters', 'click', 'list-nominated-textbooks')"
+		[telemetryInteractEdata]="getTelemetryInteractEdata('reset', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryPageId,{key:'dialog_id',value:'filter_textbooks'})"
 		[telemetryInteractObject]="telemetryInteractObject"
 		[telemetryInteractCdata]="telemetryInteractCdata"
 		[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.reset}}</button>
@@ -486,9 +502,19 @@
       </div>
   </div>
   <div class="sb-modal-actions">
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" [class.sb-btn-disabled]="userRemoveRoleLoader" (click)="removeUserFromProgram()">
+	<button type="button" class="sb-btn sb-btn-normal sb-btn-primary" [class.sb-btn-disabled]="userRemoveRoleLoader" (click)="removeUserFromProgram()"
+	appTelemetryInteract
+	[telemetryInteractEdata]="getTelemetryInteractEdata('yes', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryPageId,{key:'dialog_id',value:'confirm'})"
+		[telemetryInteractObject]="telemetryInteractObject"
+		[telemetryInteractCdata]="telemetryInteractCdata"
+		[telemetryInteractPdata]="telemetryInteractPdata">
 		{{resourceService?.frmelmnts?.btn?.yes}}
 	</button>
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="cancelRemoveUserFromProgram();"> {{resourceService?.frmelmnts?.btn?.no}} </button>
+	<button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="cancelRemoveUserFromProgram();"
+	appTelemetryInteract
+	[telemetryInteractEdata]="getTelemetryInteractEdata('no', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.cancel, telemetryPageId,{key:'dialog_id',value:'confirm'})"
+		[telemetryInteractObject]="telemetryInteractObject"
+		[telemetryInteractCdata]="telemetryInteractCdata"
+		[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService?.frmelmnts?.btn?.no}} </button>
   </div>
 </sui-modal>

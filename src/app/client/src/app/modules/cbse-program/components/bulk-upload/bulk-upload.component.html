@@ -1,7 +1,12 @@
 <div class="d-flex">
   <button type="button" class="sb-btn sb-btn-normal sb-btn-primary text-inherit" suiPopup
     popupText="{{resourceService?.frmelmnts?.lbl?.bulkUploadContentHint}}" (click)="openBulkUploadModal()"
-    *ngIf="['completed', ''].includes(process?.status)">{{resourceService?.frmelmnts?.lbl?.bulkUploadContent}}</button>
+    *ngIf="['completed', ''].includes(process?.status)"
+    appTelemetryInteract
+    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('bulk_upload_content', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+    [telemetryInteractObject]="telemetryInteractObject"
+    [telemetryInteractCdata]="telemetryInteractCdata"
+    [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService?.frmelmnts?.lbl?.bulkUploadContent}}</button>
   <div class="divider mx-10" *ngIf="process?.status === 'completed'"></div>
   <div class="d-flex flex-dc">
     <div class="sb-color-gray-400" *ngIf="process?.status === 'completed'">{{resourceService?.frmelmnts?.lbl?.lastUploaded}} : {{ process?.updatedon | dateFormat: 'D MMMM YYYY' }}</div>
@@ -10,7 +15,12 @@
       <span class="sb-color-warning fs-1" suiPopup
         popupText="{{resourceService?.frmelmnts?.lbl?.bulkUploadInProgressHint}}">{{resourceService?.frmelmnts?.lbl?.bulkUploadInProgress}}</span>
     </div>
-    <a href="#" class="text-decor-none" *ngIf="['completed', 'processing'].includes(process?.status)" (click)="viewDetails($event)">{{resourceService?.frmelmnts?.lbl?.viewDetails}}</a>
+    <a href="#" class="text-decor-none" *ngIf="['completed', 'processing'].includes(process?.status)" (click)="viewDetails($event)"
+    appTelemetryInteract
+    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('view_details', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+    [telemetryInteractObject]="telemetryInteractObject"
+    [telemetryInteractCdata]="telemetryInteractCdata"
+    [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService?.frmelmnts?.lbl?.viewDetails}}</a>
   </div>
 </div>
 
@@ -49,7 +59,12 @@
           <li class="item">{{resourceService?.frmelmnts?.lbl?.hasNoDuplicateUrlsFilepathColumn}}</li>
         </ul>
         <a [href]="sampleMetadataCsvUrl" target="_blank"
-          class="sb-btn sb-btn-normal sb-btn-success my-20 text-decor-none"><i
+          class="sb-btn sb-btn-normal sb-btn-success my-20 text-decor-none"
+          appTelemetryInteract
+          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download_sample_metadata_csv', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId, {key:'dialog_id',value:'bulk_upload_content'})"
+    [telemetryInteractObject]="telemetryInteractObject"
+    [telemetryInteractCdata]="telemetryInteractCdata"
+    [telemetryInteractPdata]="telemetryInteractPdata"><i
             class="fa fa-download pr-10"></i>{{resourceService?.frmelmnts?.btn?.downloadSampleMetadataCsv}}</a>
       </div>
 
@@ -164,7 +179,12 @@
             <div class="item sb-color-success">{{resourceService?.frmelmnts?.lbl?.uploadSuccessful}} : {{ process?.overall_stats?.upload_success }}</div>
           </div>
         </div>
-        <button type="button" class="sb-btn sb-btn-normal sb-btn-success my-10" (click)="downloadReport()">
+        <button type="button" class="sb-btn sb-btn-normal sb-btn-success my-10" (click)="downloadReport()"
+        appTelemetryInteract
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download_report', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId,{key:'dialog_id',value:'bulk_upload_content'})"
+    [telemetryInteractObject]="telemetryInteractObject"
+    [telemetryInteractCdata]="telemetryInteractCdata"
+    [telemetryInteractPdata]="telemetryInteractPdata">
           <i class="fa fa-download pr-10"></i>{{resourceService?.frmelmnts?.btn?.downloadReport}}
         </button>
       </div>
@@ -172,14 +192,29 @@
   </div>
   <div class="sb-modal-actions">
     <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="updateBulkUploadState('increment')"
-      *ngIf="bulkUploadState === 1">{{resourceService?.frmelmnts?.btn?.next}}</button>
+      *ngIf="bulkUploadState === 1"
+      appTelemetryInteract
+      [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('next', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId,{key:'dialog_id',value:'bulk_upload_content'})"
+    [telemetryInteractObject]="telemetryInteractObject"
+    [telemetryInteractCdata]="telemetryInteractCdata"
+    [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService?.frmelmnts?.btn?.next}}</button>
     <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary"
       (click)="updateBulkUploadState('decrement')"
-      *ngIf="![1,5,6].includes(bulkUploadState)">{{resourceService?.frmelmnts?.btn?.back}}</button>
+      *ngIf="![1,5,6].includes(bulkUploadState)"
+      appTelemetryInteract
+      [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('back', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId,{key:'dialog_id',value:'bulk_upload_content'})"
+    [telemetryInteractObject]="telemetryInteractObject"
+    [telemetryInteractCdata]="telemetryInteractCdata"
+    [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService?.frmelmnts?.btn?.back}}</button>
     <button type="button" class="sb-btn sb-btn-normal"
       [ngClass]="{'sb-btn-outline-primary': bulkUploadState === 5, 'sb-btn-primary': bulkUploadState === 6}"
       (click)="closeBulkUploadModal()"
-      *ngIf="[5,6].includes(bulkUploadState)">{{resourceService?.frmelmnts?.btn?.close}}</button>
+      *ngIf="[5,6].includes(bulkUploadState)"
+      appTelemetryInteract
+      [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('close', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.cancel, telemetryPageId,{key:'dialog_id',value:'bulk_upload_content'})"
+    [telemetryInteractObject]="telemetryInteractObject"
+    [telemetryInteractCdata]="telemetryInteractCdata"
+    [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService?.frmelmnts?.btn?.close}}</button>
     <div class="d-flex flex-jc-space-between w-100" *ngIf="bulkUploadState === 5">
       <div class="sb-color-gray-200 fxsmall line-height-1-3 w-100">
         {{resourceService?.frmelmnts?.lbl?.bulkUploadNoticeLine1}}
