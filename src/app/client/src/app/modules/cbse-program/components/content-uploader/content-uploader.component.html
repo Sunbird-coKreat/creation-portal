@@ -16,14 +16,21 @@
         </button>
         <div class="d-flex">
           <div class="d-flex flex-ai-center flex-jc-space-between practical-header__content w-100">
-            <div #contentTitle class="fs-1" *ngIf="!showTextArea">
-              <div class="d-flex flex-ai-center mb-10"><span class="practical-header__title font-weight-bold" suiPopup popupText="{{editTitle}}">{{editTitle}} </span><span class="fsmall ml-16 sb-color-primary font-weight-normal"><a *ngIf="(visibility && visibility.showEdit) || (editableFields.indexOf('name') > -1)" class="cursor-pointer"
+            <div #contentTitle class="fs-1">
+              <div class="d-flex flex-ai-center mb-10"><div class="practical-header__title font-weight-bold" suiPopup popupText="{{editTitle}}">{{editTitle}} </div>
+                <span class="fsmall ml-16 sb-color-primary font-weight-normal">
+                <i class="comment alternate outline icon sb-color-primary"></i>
+                <a class="cursor-pointer"
                 appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('edit-resourcetitle', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
-                (click)="editContentTitle()">Edit</a></span></div>
+                (click)="showEditform(); requiredAction = 'editForm'">{{(visibility && visibility.showEditMetadata) ? 'edit metadata' : 'view metadata'}}</a></span>
+                <!-- <a class="fsmall ml-16 sb-color-primary font-weight-normal" *ngIf="visibility && visibility.showEditMetadata && sessionContext.topicList">
+                  <span class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="showEditform(); requiredAction = 'editForm'">edit metadata</span>
+                </a> -->
+              </div>
               <div class="mt-8 practice-set__status">
                 <span class="sb-label sb-label-table" [ngClass]="resourceStatusClass">{{ resourceStatusText }}</span>
                 <span class="cursor-pointer fs-0-785 ml-8"
@@ -43,7 +50,7 @@
                 {{resourceService.frmelmnts.btn.viewContentOnDikshaError}}</label>
               </div>
             </div>
-            <div class="sb-field-group textbook-edit ui form" *ngIf="showTextArea">
+            <!-- <div class="sb-field-group textbook-edit ui form" *ngIf="showTextArea">
               <div class="required inline field">
                 <label class="font-weight-bold fsmall">{{resourceService.frmelmnts.lbl.contentName}}:</label>
                 <div class="sb-field relative">
@@ -54,18 +61,8 @@
                 <div class="warning-message" *ngIf="editTitle.length === 0">{{resourceService.frmelmnts.lbl.contentNameRequired}}</div>
                 <div class="warning-message" *ngIf="editTitle.length > titleCharacterLimit">{{resourceService.frmelmnts.lbl.contentNameLength }} {{titleCharacterLimit}}</div>
               </div>
-              <div>
-                <button class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="showEditform()">edit metadata</button>
-              </div>
-            </div>
+            </div> -->
             <div class="practical-sb-buttons mt-20">
-              <button id="saveContent" suiPopup popupText="Save" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSave" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="saveContent()"
-              appTelemetryInteract
-                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('save-resourcemetadata', 'click', 'content-uploader')"
-                [telemetryInteractObject]="telemetryInteractObject"
-                [telemetryInteractCdata]="telemetryInteractCdata"
-                [telemetryInteractPdata]="telemetryInteractPdata"
-              >Save</button>
               <button id="changeContent" suiPopup popupText="Replace File" [popupPlacement]="'top'" *ngIf="visibility && visibility.showChangeFile" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="changeFile()"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('replace-resourcefile', 'click', 'content-uploader')"
@@ -81,14 +78,14 @@
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{resourceService.frmelmnts.btn.requestChanges}}</button>
-              <button id="publishContent" suiPopup popupText="{{resourceService.frmelmnts.btn.accept}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showPublish" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="updateContentBeforePublishing();"
+              <button id="publishContent" suiPopup popupText="{{resourceService.frmelmnts.btn.accept}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showPublish" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="publishContent();"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('publish-resource', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{resourceService.frmelmnts.btn.accept}}</button>
-              <button id="submitContent" suiPopup popupText="{{sessionContext.currentOrgRole === 'individual' ? 'Publish' : 'Send For Review' }}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSubmit" class="sb-btn sb-btn-secondary sb-btn-normal" (click)="saveContent('review')"
+              <button id="submitContent" suiPopup popupText="{{sessionContext.currentOrgRole === 'individual' ? 'Publish' : 'Send For Review' }}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSubmit" class="sb-btn sb-btn-secondary sb-btn-normal" (click)="showEditform(); (isIndividualAndNotSample() ? requiredAction = 'publish' : requiredAction = 'review')"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('submit-resourceforreview', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
@@ -103,7 +100,7 @@
                   [telemetryInteractPdata]="telemetryInteractPdata"
                 >{{resourceService.frmelmnts.btn.sendForCorrections}}</button>
               <button id="acceptContent" suiPopup
-              popupText="{{resourceService.frmelmnts.lbl.contentAcceptMessage}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="updateContentBeforeApproving('accept')"
+              popupText="{{resourceService.frmelmnts.lbl.contentAcceptMessage}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="attachContentToTextbook('accept')"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('accept-content-for-textbook', 'click', 'content-uploader')"
                 [telemetryInteractObject]="telemetryInteractObject"
@@ -308,8 +305,8 @@
 <!--  edit metadata --> 
 
 <sui-modal *ngIf="showEditMetaForm" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
-    class="sb-modal" appBodyScroll (dismissed)="showEditMetaForm= false" #editmodal>
-    <i class="icon close" (click)="showEditMetaForm= false; editmodal.deny('denied')" tabindex="0"></i>
+    class="sb-modal" appBodyScroll (dismissed)="showEditMetaForm= false">
+    <i class="icon close" (click)="showEditMetaForm= false" tabindex="0"></i>
     <!--Header-->
     <div class="sb-modal-header">Edit Details</div>
     <!--/Header-->
@@ -326,7 +323,7 @@
 
     <!--Actions-->
     <div class="sb-modal-actions">
-        <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="showEditMetaForm= false">save</button>
+        <button [disabled]="!editableFields.length" class="sb-btn sb-btn-normal sb-btn-primary" (click)="handleCallback()">{{requiredAction === 'editForm' ? 'Save' : 'Submit' }}</button>
     </div>
     <!--/Actions-->
 </sui-modal>

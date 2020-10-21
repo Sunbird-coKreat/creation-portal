@@ -15,6 +15,7 @@ import { HelperService } from '../../services/helper.service';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { ProgramStageService } from '../../../program/services';
 import { ProgramTelemetryService } from '../../../program/services';
+import { DataFormComponent } from '../../../core/components/data-form/data-form.component';
 
 
 @Component({
@@ -31,6 +32,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('FormControl') FormControl: NgForm;
   @Output() uploadedContentMeta = new EventEmitter<any>();
   @ViewChild('resourceTtlTextarea') resourceTtlTextarea: ElementRef;
+  @ViewChild('formData') formData: DataFormComponent;
 
   public sessionContext: any;
   public programContext: any;
@@ -81,6 +83,11 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedOriginUnitStatus: any;
   public overrideMetaData: any;
   public isMetadataOverridden = false;
+  public formFieldProperties: Array<any>;
+  public editableFields = [];
+  public showEditMetaForm: boolean;
+  public categoryMasterList: Array<any>;
+  public requiredAction: string;
 
   constructor(
     private configService: ConfigService, private userService: UserService,
@@ -196,7 +203,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.sessionContext.questionType = _.lowerCase(questionCategories);
       }
       this.sessionContext.resourceStatus = this.resourceStatus;
-      this.resourceName = this.resourceDetails.name || this.templateDetails.metadata.name;
+      this.resourceName = this.resourceDetails.name || '';
       this.contentRejectComment = this.resourceDetails.rejectComment || '';
       if (!this.resourceDetails.itemSets) {
         this.createDefaultQuestionAndItemset();
@@ -206,10 +213,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           this.itemSetIdentifier = itemSet[0].identifier;
         }
         this.fetchQuestionList();
-        this.resourceName = (this.resourceName !== 'Untitled') ? this.resourceName : '' ;
-        if (this.visibility && this.visibility.showSave && !this.resourceName) {
-          this.showResourceTitleEditor();
-        }
+        // this.resourceName = (this.resourceName !== 'Untitled') ? this.resourceName : '' ;
+        // if (this.visibility && this.visibility.showSave && !this.resourceName) {
+        //   this.showResourceTitleEditor();
+        // }
       }
       this.handleActionButtons();
     });
@@ -289,6 +296,262 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  showEditform() {
+    this.formFieldProperties = [{
+      'code': 'name',
+      'editable': true,
+      'displayProperty': 'Editable',
+      'dataType': 'text',
+      'renderingHints': {
+        'semanticColumnWidth': 'twelve'
+      },
+      'description': 'Name',
+      'index': 1,
+      'label': 'Name',
+      'required': true,
+      'name': 'Name',
+      'inputType': 'text',
+      'placeholder': 'Name'
+    },
+    {
+      'code': 'board',
+      'visible': true,
+      'depends': [
+        'medium',
+        'gradeLevel',
+        'subject'
+      ],
+      'editable': true,
+      'displayProperty': 'Editable',
+      'dataType': 'text',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'description': 'Education Board (Like MP Board, NCERT, etc)',
+      'index': 2,
+      'label': 'Board',
+      'required': false,
+      'name': 'Board',
+      'inputType': 'select',
+      'placeholder': 'Board'
+    },
+    {
+      'code': 'medium',
+      'visible': true,
+      'depends': [
+        'gradeLevel',
+        'subject'
+      ],
+      'editable': true,
+      'displayProperty': 'Editable',
+      'dataType': 'list',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'description': 'Medium of instruction',
+      'index': 3,
+      'label': 'Medium',
+      'required': true,
+      'name': 'Medium',
+      'inputType': 'multiSelect',
+      'placeholder': 'Medium'
+    },
+    {
+      'code': 'gradeLevel',
+      'visible': true,
+      'depends': [
+        'subject'
+      ],
+      'editable': true,
+      'displayProperty': 'Editable',
+      'dataType': 'list',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'description': 'Class',
+      'index': 4,
+      'label': 'Class',
+      'required': true,
+      'name': 'Class',
+      'inputType': 'multiSelect',
+      'placeholder': 'Class'
+    },
+    {
+      'code': 'subject',
+      'visible': true,
+      'editable': true,
+      'displayProperty': 'Editable',
+      'dataType': 'list',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'description': 'Subject of the Content to use to teach',
+      'index': 5,
+      'label': 'Subject',
+      'required': true,
+      'name': 'Subject',
+      'inputType': 'multiSelect',
+      'placeholder': 'Subject'
+    },
+    {
+      'code': 'learningOutcome',
+      'visible': true,
+      'editable': true,
+      'displayProperty': 'Editable',
+      'dataType': 'list',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'description': 'Subject of the Content to use to teach',
+      'index': 6,
+      'label': 'Learning Outcome',
+      'required': true,
+      'name': 'learningOutcome',
+      'inputType': 'select',
+      'placeholder': 'learningOutcome'
+    },
+    {
+      'code': 'attributions',
+      'dataType': 'list',
+      'description': 'Attributions',
+      'editable': true,
+      'index': 7,
+      'inputType': 'text',
+      'label': 'Attributions',
+      'name': 'attribution',
+      'placeholder': '',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'required': false
+    },
+    {
+      'code': 'author',
+      'dataType': 'text',
+      'description': 'Author',
+      'editable': true,
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'index': 8,
+      'inputType': 'text',
+      'label': 'Author',
+      'name': 'Author',
+      'placeholder': 'Author',
+      'required': true
+    },
+    {
+      'code': 'copyright',
+      'dataType': 'text',
+      'description': 'Copyright',
+      'editable': true,
+      'index': 9,
+      'inputType': 'text',
+      'label': 'Copyright',
+      'name': 'Copyright',
+      'placeholder': 'Copyright',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'required': false
+    },
+    {
+      'code': 'contentPolicyCheck',
+      'editable': true,
+      'displayProperty': 'Editable',
+      'dataType': 'text',
+      'renderingHints': {
+        'semanticColumnWidth': 'twelve'
+      },
+      'description': 'Name',
+      'index': 10,
+      'label': 'Content PolicyCheck',
+      'required': true,
+      'name': 'contentPolicyCheck',
+      'inputType': 'checkbox',
+      'placeholder': 'Name'
+    }];
+    if (_.get(this.selectedSharedContext, 'topic')) {
+      // tslint:disable-next-line:max-line-length
+      this.sessionContext.topic = _.isArray(this.sessionContext.topic) ? this.selectedSharedContext.topic : _.split(this.selectedSharedContext.topic, ',');
+    }
+    this.getEditableFields();
+    _.forEach(this.formFieldProperties, field => {
+      if (field.editable && !_.includes(this.editableFields, field.code)) {
+        field['editable'] = false;
+      }
+    });
+    // tslint:disable-next-line:max-line-length
+    [this.categoryMasterList, this.formFieldProperties] = this.helperService.initializeMetadataForm(this.sessionContext, this.formFieldProperties, this.resourceDetails);
+    this.showEditMetaForm = true;
+  }
+
+  getEditableFields() {
+    if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
+      if (this.userService.getUserId() === this.resourceDetails.createdBy && this.resourceStatus === 'Draft') {
+        this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.resourceDetails);
+      } else if (this.canPublishContent()) {
+        this.editableFields = this.helperService.getEditableFields('REVIEWER', this.formFieldProperties, this.resourceDetails);
+      }
+    } else if (this.hasRole('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
+      this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.resourceDetails);
+    } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
+      && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
+      && !this.sourcingReviewStatus
+      && (this.selectedOriginUnitStatus === 'Draft')) {
+      this.editableFields = this.helperService.getEditableFields('REVIEWER', this.formFieldProperties, this.resourceDetails);
+    }
+  }
+
+  handleCallback() {
+    switch (this.requiredAction) {
+      case 'review':
+        this.saveMetadataForm(this.sendForReview);
+        break;
+      case 'publish':
+        this.saveMetadataForm(this.publishContent);
+        break;
+      default:
+        this.saveMetadataForm();
+        break;
+    }
+  }
+
+  saveMetadataForm(cb?) {
+    if (this.helperService.validateForm(this.formFieldProperties, this.formData.formInputData || {})) {
+      console.log(this.formData.formInputData);
+      const request = {
+        'content': {
+          'versionKey': this.resourceDetails.versionKey,
+          ...this.formData.formInputData
+        }
+      };
+
+      if (!_.isArray(_.get(this.formData, 'formInputData.learningOutcome'))) {
+        request.content['learningOutcome'] = _.split(_.get(this.formData, 'formInputData.learningOutcome'), ',');
+      }
+      this.helperService.updateContent(request, this.resourceDetails.identifier).subscribe((res) => {
+        // tslint:disable-next-line:max-line-length
+        this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, res.result.node_id || res.result.identifier)
+        .subscribe((data) => {
+          this.showEditMetaForm = false;
+          if (cb) {
+            cb.call(this);
+          } else {
+            this.getContentMetadata(this.resourceDetails.identifier);
+            this.toasterService.success(this.resourceService.messages.smsg.m0060);
+          }
+        }, (err) => {
+          this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+        });
+      }, err => {
+        this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+      });
+    } else {
+      this.toasterService.error(this.resourceService.messages.fmsg.m0101);
+    }
+  }
+
   hasAccessFor(action) {
     const roles = _.get(this.actions, `${action}.roles`, []);
     return !_.isEmpty(_.intersection(roles, this.sessionContext.currentRoleIds));
@@ -309,7 +572,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     // tslint:disable-next-line:max-line-length
     this.visibility['showSubmit'] = submissionDateFlag && this.canSubmit();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSave'] = submissionDateFlag && this.canSave();
+    this.visibility['showEditMetadata'] = submissionDateFlag && this.canEditMetadata();
      // tslint:disable-next-line:max-line-length
     this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
     // tslint:disable-next-line:max-line-length
@@ -336,9 +599,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     return !!(this.hasAccessFor('showSubmit') && this.resourceStatus === 'Draft' && this.userService.getUserId() === this.resourceDetails.createdBy);
   }
 
-  canSave() {
+  canEditMetadata() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.hasAccessFor('showSave') && this.resourceStatus === 'Draft' && (this.userService.getUserId() === this.resourceDetails.createdBy));
+    return !!(this.resourceStatus === 'Draft' && (this.userService.getUserId() === this.resourceDetails.createdBy));
   }
 
   canPublishContent() {
@@ -402,9 +665,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.handleQuestionTabChange(this.selectedQuestionId);
       this.goToNextQuestionStatus = false;
       this.resourceName = (this.resourceName !== 'Untitled') ? this.resourceName : '' ;
-      if (this.visibility && this.visibility.showSave && !this.resourceName) {
-        this.showResourceTitleEditor();
-      }
+      // if (this.visibility && this.visibility.showSave && !this.resourceName) {
+      //   this.showResourceTitleEditor();
+      // }
     });
   }
 
@@ -781,12 +1044,12 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  public showResourceTitleEditor() {
-    this.showTextArea = true;
-    setTimeout(() => {
-      this.resourceTtlTextarea.nativeElement.focus();
-    }, 500);
-  }
+  // public showResourceTitleEditor() {
+  //   this.showTextArea = true;
+  //   setTimeout(() => {
+  //     this.resourceTtlTextarea.nativeElement.focus();
+  //   }, 500);
+  // }
 
   public onResourceNameChange(event: any) {
     const remainChar = this.resourceTitleLimit - this.resourceName.length;

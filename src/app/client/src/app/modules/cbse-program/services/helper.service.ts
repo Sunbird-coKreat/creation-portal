@@ -319,12 +319,12 @@ export class HelperService {
       case 'REVIEWER':
         if (!contentMetaData.sourceURL) {
           const nameFieldConfig = _.find(this.programsService.overrideMetaData, (item) => item.code === 'name');
-          if (nameFieldConfig.editable === true) {
+          if (nameFieldConfig && nameFieldConfig.editable === true) {
             editableFields.push(nameFieldConfig.code);
           }
           _.forEach(formFields, (field) => {
             const fieldConfig = _.find(this.programsService.overrideMetaData, (item) => item.code === field.code);
-            if (fieldConfig.editable === true) {
+            if (fieldConfig && fieldConfig.editable === true) {
               editableFields.push(fieldConfig.code);
             }
           });
@@ -371,6 +371,73 @@ export class HelperService {
     });
 
     return metaDataModified;
+  }
+
+  initializeMetadataForm(sessionContext, formFieldProperties, contentMetadata) {
+    const categoryMasterList = sessionContext.frameworkData;
+    _.forEach(categoryMasterList, (category) => {
+      _.forEach(formFieldProperties, (formFieldCategory) => {
+        if (category.code === formFieldCategory.code) {
+          formFieldCategory.range = category.terms;
+        }
+        if (formFieldCategory.code === 'learningOutcome') {
+          const topicTerm = _.find(sessionContext.topicList, { name: _.first(sessionContext.topic) });
+          if (topicTerm && topicTerm.associations) {
+            formFieldCategory.range = _.map(topicTerm.associations, (learningOutcome) =>  learningOutcome);
+          }
+        }
+      });
+    });
+
+    // set default values in the form
+    if (contentMetadata) {
+      _.forEach(formFieldProperties, (formFieldCategory) => {
+        const requiredData = _.get(contentMetadata, formFieldCategory.code);
+        if (!_.isEmpty(requiredData) && requiredData !== 'Untitled') {
+          formFieldCategory.defaultValue = requiredData;
+        }
+        if (formFieldCategory.inputType === 'checkbox' && requiredData) {
+          formFieldCategory.defaultValue = requiredData;
+        }
+        if (formFieldCategory.code === 'author' && !requiredData) {
+          let creator = this.userService.userProfile.firstName;
+          if (!_.isEmpty(this.userService.userProfile.lastName)) {
+            creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
+          }
+          formFieldCategory.defaultValue = creator;
+        }
+        if (formFieldCategory.code === 'learningOutcome' && formFieldCategory.inputType === 'select' && _.isArray(requiredData)) {
+          formFieldCategory.defaultValue = _.first(requiredData) || '';
+        }
+      });
+    }
+    // else {
+    //   _.forEach(formFieldProperties, (formFieldCategory) => {
+    //     if (!_.isUndefined(sessionContext[formFieldCategory.code])) {
+    //       formFieldCategory.defaultValue = sessionContext[formFieldCategory.code];
+    //     }
+    //   });
+    // }
+    const sortedFormFields = _.sortBy(_.uniqBy(formFieldProperties, 'code'), 'index');
+    return [categoryMasterList, sortedFormFields];
+  }
+
+  validateForm(formFieldProperties, formInputData) {
+    const requiredFields = _.map(_.filter(formFieldProperties, { 'required': true }), field => field.code );
+    const textFields = _.filter(formFieldProperties, {'inputType': 'text', 'editable': true});
+
+    const validFields = _.map(requiredFields, field => {
+      if (_.find(formFieldProperties, val => val.code === field && val.inputType === 'checkbox') && _.get(formInputData, field)) {
+        return true;
+      // tslint:disable-next-line:max-line-length
+      } else if (_.isEmpty(_.get(formInputData, field)) || (_.find(textFields, data => data.code === field) && _.trim(formInputData[field]).length === 0)) {
+        return false;
+      } else {
+        return true;
+      }
+    });
+
+    return _.includes(validFields, false) ? false : true;
   }
 
   /*getContentMetadata(componentInput: any) {

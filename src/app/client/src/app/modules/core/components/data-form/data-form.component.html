@@ -7,7 +7,7 @@
       </label>
       <span class="sb-color-red" *ngIf="(field.required == true)">*</span>
       <div class="sb-field">
-        <input class="sb-form-control" name={{field.code}} type={{field.inputType}} [(ngModel)]="formInputData[field.code]" placeholder={{field.placeholder}} autofocus>
+        <input class="sb-form-control" name={{field.code}} type={{field.inputType}} [(ngModel)]="formInputData[field.code]" placeholder={{field.placeholder}} [disabled]="!field.editable" autofocus>
       </div>
     </div>
 
@@ -15,7 +15,7 @@
       <label>{{field.label}}</label><span class="sb-color-red" *ngIf="(field.required == true)">*</span>
       <div class="sb-field">
         <sui-select id={{field.code}}  name={{field.code}} class="selection" [(ngModel)]="formInputData[field.code]" (ngModelChange)="updateForm({index:i, field:field, value:formInputData[field.code],formData:formInputData})"
-        [options]="categoryList[field.code]">
+        [isDisabled]="!field.editable">
           <sui-select-option *ngFor="let option of categoryList[field.code]" [value]="option.name"></sui-select-option>
         </sui-select>
       </div>
@@ -24,11 +24,27 @@
       <label>{{field.label}}</label><span class="sb-color-red" *ngIf="(field.required == true)">*</span>
       <div class="sb-field">
         <sui-multi-select id={{field.code}} name={{field.code}} class="selection" [(ngModel)]="formInputData[field.code]" 
-        labelField="name" valueField="name"
+        labelField="name" valueField="name" [isDisabled]="!field.editable"
         (ngModelChange)="updateForm({index:i, field:field, value:formInputData[field.code],formData:formInputData})"
         [options]="categoryList[field.code]" #multiSelect>
           <sui-select-option *ngFor="let option of multiSelect.filteredOptions" [value]="option"> </sui-select-option>
         </sui-multi-select>
+      </div>
+    </div>
+
+    <div *ngIf="field.inputType === 'checkbox' && field.code === 'contentPolicyCheck'" class="width-100 pt-20 pb-30">
+      <div class="sb-checkbox sb-checkbox-primary">
+        <input type="{{field.inputType}}" id="{{field.code}}" name="{{field.code}}" [checked]="formInputData[field.code]" (change)="handleCheckboxData($event, field.code)" [disabled]="!field.editable">
+        <label for="{{field.code}}" class="fs-0-785 sb-color-gray-400 font-italic">
+          <span class="sb-color-red pr-3">*</span>
+          “I agree that by submitting / publishing this Content,
+          I confirm that this Content complies with prescribed guidelines,
+           including the Terms of Use and Content Policy and that I consent
+            to publish it under the <a class="link font-weight-bold"  href="https://creativecommons.org/licenses" target="_blank">
+              Creative Commons Framework in </a>
+            accordance with the  <a class="link font-weight-bold"  href="/terms-of-use.html" target="_blank">
+              Content Policy.</a> I have made sure that I do not violate others’ copyright or privacy rights.”
+        </label>
       </div>
     </div>
   </div>
