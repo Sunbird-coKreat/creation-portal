@@ -10,7 +10,8 @@
     "headerTabsRoles" : {
         "manageProgramsRole": ["ORG_ADMIN","CONTENT_REVIEWER"],
         "manageUserRole": ["ORG_ADMIN"],
-        "orgReportRole": ["ORG_ADMIN"]   
+        "orgReportRole": ["ORG_ADMIN"],
+        "manageContentRole": ["CONTENT_CREATOR","FLAG_REVIEWER","COURSE_MENTOR","BOOK_REVIEWER","CONTENT_CREATION","CONTENT_REVIEWER","CONTENT_REVIEW","BOOK_CREATOR"]   
     },
     "workSpaceRole":{
        "createRole": ["CONTENT_CREATOR","CONTENT_CREATION","CONTENT_REVIEWER","CONTENT_REVIEW","BOOK_CREATOR"], 

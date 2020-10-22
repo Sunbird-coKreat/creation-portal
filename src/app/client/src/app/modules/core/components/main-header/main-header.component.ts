@@ -130,6 +130,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     if (!this.router.url.includes('/sourcing')) {
       this.tenantInfo['logo'] = '/tenant/ntp/logo.png';
     } else {
+      this.checkLandingPageState();
       this.tenantService.tenantData$.subscribe(({tenantData}) => {
         this.tenantInfo.logo = tenantData ? tenantData.logo : undefined;
         this.tenantInfo.titleName = (tenantData && tenantData.titleName) ? tenantData.titleName.toUpperCase() : undefined;
@@ -182,6 +183,20 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       return authroles.url;
     }
   }
+checkLandingPageState() {
+      if (this.permissionService.checkRolesPermissions(this.config.rolesConfig.headerTabsRoles['manageProgramsRole'])) {
+      this.handleActiveTabState('myPrograms');
+      } else if (this.permissionService.checkRolesPermissions(this.config.rolesConfig.headerTabsRoles['manageContentRole'])) {
+        this.router.navigateByUrl(this.navigateToWorkspace());
+        this.handleActiveTabState('manageContents');
+      } else if (this.permissionService.checkRolesPermissions(this.config.rolesConfig.headerTabsRoles['manageUserRole'])) {
+        this.router.navigateByUrl('sourcing/orglist');
+        this.handleActiveTabState('manageUsers');
+      } else {
+        this.router.navigateByUrl('/sourcing/help');
+        this.handleActiveTabState('contributorHelp');
+      }
+}
 
   ngOnDestroy() {
     if (this.notificationSubscription) {
@@ -394,10 +409,14 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
      this.handleActiveTabState('allPrograms');
      } else if (this.location.path() === '/contribute/orglist' || this.location.path() === '/sourcing/orglist') {
        this.handleActiveTabState('manageUsers');
-     } else if (this.location.path() === '/contribute/myenrollprograms' || this.location.path() === '/sourcing') {
-      this.handleActiveTabState('myPrograms');
      } else if (this.location.path() === '/contribute/help' || this.location.path() === '/sourcing/help' ) {
       this.handleActiveTabState('contributorHelp');
+     } else if (this.location.path() === '/contribute/myenrollprograms' || this.location.path() === '/sourcing') {
+      if (this.location.path() === '/sourcing') {
+          this.checkLandingPageState();
+      } else {
+        this.handleActiveTabState('myPrograms');
+      }
     } else if (this.location.path() === '/sourcing/orgreports') {
       this.handleActiveTabState('organisationReports');
     } else if (this.router.url.includes('/workspace')) {
