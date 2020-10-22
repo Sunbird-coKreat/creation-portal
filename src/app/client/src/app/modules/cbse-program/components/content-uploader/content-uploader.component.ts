@@ -108,6 +108,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public categoryMasterList: any;
   public showEditMetaForm = false;
   public requiredAction: string;
+  public contentEditRole: string;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -362,6 +363,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         field['editable'] = false;
       }
     });
+
+    if (this.requiredAction === 'editForm') {
+      this.formFieldProperties = _.filter(this.formFieldProperties, val => val.code !== 'contentPolicyCheck');
+    }
     // tslint:disable-next-line:max-line-length
     [this.categoryMasterList, this.formFieldProperties] = this.helperService.initializeMetadataForm(this.sessionContext, this.formFieldProperties, this.contentMetaData);
     this.showEditMetaForm = true;
@@ -815,16 +820,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.loading = false;
       this.handleActionButtons();
 
-      // if (this.visibility && this.visibility.showEdit && !this.editTitle) {
-      //   this.editContentTitle();
-      // }
-
       // At the end of execution
       if ( _.isUndefined(this.sessionContext.topicList) || _.isUndefined(this.sessionContext.frameworkData)) {
         this.fetchFrameWorkDetails();
       }
       this.getTelemetryData();
-      //  this.manageFormConfiguration();
       this.cd.detectChanges();
     });
   }
@@ -863,76 +863,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
 
-  // manageFormConfiguration() {
-  //   const controller = {};
-  //   this.showForm = true;
-  //   // tslint:disable-next-line:max-line-length
-  //   const compConfiguration = _.find(_.get(this.contentUploadComponentInput, 'programContext.config.components'), {compId: 'uploadContentComponent'});
-  //   this.formConfiguration = compConfiguration.config.formConfiguration;
-  //   this.textFields = _.filter(this.formConfiguration, {'inputType': 'text', 'visible': true});
-  //   this.allFormFields = _.filter(this.formConfiguration, {'visible': true});
-
-  //   _.forEach(this.formConfiguration, (formData) => {
-  //     this.selectOutcomeOption[formData.code] = formData.defaultValue;
-  //   });
-
-  //   this.helperService.getLicences().subscribe((res) => {
-  //     this.selectOutcomeOption['license'] = _.map(res.license, (license) => {
-  //       return license.name;
-  //     });
-  //   });
-  //   if ( _.isArray(this.sessionContext.topic)) {
-  //     this.sessionContext.topic = _.first(this.sessionContext.topic);
-  //   }
-  //   this.sessionContext.topic = _.first(this.selectedSharedContext.topic) || this.sessionContext.topic ;
-  //   if (this.sessionContext.topic) {
-  //     // tslint:disable-next-line:max-line-length
-  //     this.sessionContext.topic = _.isArray(this.sessionContext.topic) ? this.sessionContext.topic : _.split(this.sessionContext.topic, ',');
-  //   }
-  //   const topicTerm = _.find(this.sessionContext.topicList, { name: _.first(this.sessionContext.topic) });
-  //   if (topicTerm && topicTerm.associations) {
-  //      this.selectOutcomeOption['learningOutcome'] = _.map(topicTerm.associations, (learningOutcome) => {
-  //       return learningOutcome.name;
-  //     });
-  //   }
-
-  //   // this.getEditableFields();
-
-  //    _.map(this.allFormFields, (obj) => {
-  //     const code = obj.code;
-  //     const preSavedValues = {};
-  //     if (this.contentMetaData) {
-  //       if (obj.inputType === 'select') {
-  //         // tslint:disable-next-line:max-line-length
-  //         preSavedValues[code] = (this.contentMetaData[code]) ? (_.isArray(this.contentMetaData[code]) ? this.contentMetaData[code][0] : this.contentMetaData[code]) : '';
-  //         // tslint:disable-next-line:max-line-length
-  //         obj.required ? controller[obj.code] = [preSavedValues[code], [Validators.required]] : controller[obj.code] = preSavedValues[code];
-  //       } else if (obj.inputType === 'multiselect') {
-  //         // tslint:disable-next-line:max-line-length
-  //         preSavedValues[code] = (this.contentMetaData[code] && this.contentMetaData[code].length) ? this.contentMetaData[code] : [];
-  //         // tslint:disable-next-line:max-line-length
-  //         obj.required ? controller[obj.code] = [preSavedValues[code], [Validators.required]] : controller[obj.code] = [preSavedValues[code]];
-  //       } else if (obj.inputType === 'text') {
-  //         if (obj.dataType === 'list') {
-  //           const listValue = (this.contentMetaData[code]) ? this.contentMetaData[code] : '';
-  //           preSavedValues[code] = _.isArray(listValue) ? listValue.toString() : '';
-  //         } else {
-  //           preSavedValues[code] = (this.contentMetaData[code]) ? this.contentMetaData[code] : '';
-  //         }
-  //         // tslint:disable-next-line:max-line-length
-  //         obj.required ? controller[obj.code] = [{value: preSavedValues[code], disabled: this.editableFields.indexOf(code) === -1}, [Validators.required]] : controller[obj.code] = preSavedValues[code];
-  //       } else if (obj.inputType === 'checkbox') {
-  //         // tslint:disable-next-line:max-line-length
-  //         preSavedValues[code] = (this.contentMetaData[code]) ? this.contentMetaData[code] : false;
-  //         // tslint:disable-next-line:max-line-length
-  //         obj.required ? controller[obj.code] = [{value: preSavedValues[code], disabled: this.contentMetaData[code]}, [Validators.requiredTrue]] : controller[obj.code] = preSavedValues[code];
-  //       }
-  //     }
-  //   });
-
-  //   this.contentDetailsForm = this.formBuilder.group(controller);
-  // }
-
   fetchFrameWorkDetails() {
     this.frameworkService.initialize(this.sessionContext.framework);
     this.frameworkService.frameworkData$.pipe(filter(data => _.get(data, `frameworkdata.${this.sessionContext.framework}`)),
@@ -946,53 +876,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     });
   }
 
-  // editContentTitle() {
-  //   this.showTextArea = true;
-  //   this.cd.detectChanges();
-  //   this.titleTextAreaa.nativeElement.focus();
-  // }
-
-  // saveTitle() {
-  //  this.editTitle = (_.trim(this.editTitle) !== 'Untitled') ? _.trim(this.editTitle) : '' ;
-
-  //  if (this.editTitle === '' || (this.editTitle.length > this.titleCharacterLimit)) {
-  //   this.editContentTitle();
-  //  } else {
-  //   if (_.trim(this.editTitle) === _.trim(this.contentMetaData.name)) {
-  //     this.showTextArea = true;
-  //     return;
-  //   } else {
-  //  this.editTitle = _.trim(this.editTitle);
-  //  const contentObj = {
-  //    'versionKey': this.contentMetaData.versionKey,
-  //    'name': this.editTitle
-  //   };
-  //   const request = {
-  //   'content': contentObj
-  //   };
-  //  this.helperService.updateContent(request, this.contentMetaData.identifier).subscribe((res) => {
-  //  this.contentMetaData.versionKey = res.result.versionKey;
-  //  this.contentMetaData.name = this.editTitle;
-  //  const contentDetails = {
-  //   contentId: this.contentMetaData.identifier,
-  //   contentData: this.contentMetaData
-  //   };
-  //  this.playerConfig = this.playerService.getConfig(contentDetails);
-  //  // tslint:disable-next-line:max-line-length
-  //  this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
-  //  .subscribe((data) => {
-  //      this.toasterService.success(this.resourceService.messages.smsg.m0060);
-  //    }, (err) => {
-  //      this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-  //    });
-  //   }, (err) => {
-  //   this.editTitle = this.contentMetaData.name;
-  //   this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-  //  });
-  // }
-  //  }
-  // }
-
   changePolicyCheckValue (event) {
     if ( event.target.checked ) {
       this.contentDetailsForm.controls.contentPolicyCheck.setValue(true);
@@ -1004,17 +887,16 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   saveMetadataForm(cb?) {
     if (this.helperService.validateForm(this.formFieldProperties, this.formData.formInputData || {})) {
       console.log(this.formData.formInputData);
+      // tslint:disable-next-line:max-line-length
+      const formattedData = this.helperService.getFormattedData(_.pick(this.formData.formInputData, this.editableFields), this.formFieldProperties);
       const request = {
         'content': {
           'versionKey': this.contentMetaData.versionKey,
-          ...this.formData.formInputData
+          ...formattedData
         }
       };
 
-      if (!_.isArray(_.get(this.formData, 'formInputData.learningOutcome'))) {
-        request.content['learningOutcome'] = _.split(_.get(this.formData, 'formInputData.learningOutcome'), ',');
-      }
-      this.helperService.updateContent(request, this.contentMetaData.identifier).subscribe((res) => {
+      this.helperService.contentMetadataUpdate(this.contentEditRole, request, this.contentMetaData.identifier).subscribe((res) => {
         // tslint:disable-next-line:max-line-length
         this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
         .subscribe((data) => {
@@ -1111,27 +993,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
 
-  // isMetaDataModified() {
-  //   const metaAfterUpdate = this.helperService.getFormattedData(this.contentDetailsForm.value, this.textFields);
-  //   metaAfterUpdate['name'] = _.trim(this.editTitle);
-  //   return this.isMetadataOverridden = this.helperService.isMetaDataModified(this.contentMetaData, metaAfterUpdate);
-  // }
-
-  // updateContentBeforePublishing() {
-  //   if (this.isMetaDataModified()) {
-  //     const cb = (err, res ) => {
-  //       if (!err && res) {
-  //         this.publishContent();
-  //       } else {
-  //         console.log(err);
-  //       }
-  //     };
-  //     this.updateContent(cb);
-  //   } else {
-  //     this.publishContent();
-  //   }
-  // }
-
   publishContent() {
     this.helperService.publishContent(this.contentMetaData.identifier, this.userService.userProfile.userId)
        .subscribe(res => {
@@ -1203,59 +1064,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.fetchFileSizeLimit();
   }
 
-  // updateContent(cb) {
-  //   if (this.contentDetailsForm.valid && this.editTitle && this.editTitle !== '') {
-  //     this.showTextArea = false;
-  //     this.formValues = {};
-  //     let requestBody = {
-  //       'versionKey': this.contentMetaData.versionKey,
-  //       'name': _.trim(this.editTitle)
-  //     };
-  //     requestBody = Object.assign({}, requestBody, this.helperService.getFormattedData(this.contentDetailsForm.value, this.textFields));
-  //     this.helperService.updateContent({'content': requestBody}, this.contentMetaData.identifier).subscribe((res) => {
-  //       cb(null, res);
-  //     }, (err) => {
-  //       cb(err, null);
-  //     });
-  //   } else {
-  //     this.markFormGroupTouched(this.contentDetailsForm);
-  //     this.toasterService.error(this.resourceService.messages.fmsg.m0076);
-  //   }
-  // }
-
-  // updateContentBeforeApproving(action) {
-  //   if (this.isMetaDataModified()) {
-  //     const cb = (err, res) => {
-  //       if (!err && res) {
-  //         this.helperService.publishContent(this.contentMetaData.identifier, this.userService.userProfile.userId)
-  //         .subscribe(res => {
-  //           const me = this;
-  //           setTimeout(() => {
-  //             me.getContentStatus(this.contentMetaData.identifier).subscribe((response: any) => {
-  //               const status = _.get(response, 'content.status');
-  //               if (status === 'Live') {
-  //                 me.attachContentToTextbook(action);
-  //               }
-  //             }, err => {
-  //               me.toasterService.error(this.resourceService.messages.fmsg.m00102);
-  //             });
-  //           }, 2000);
-
-  //         }, err => {
-  //           this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-  //           console.log(err);
-  //         });
-  //       } else if (err) {
-  //         this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-  //         console.log(err);
-  //       }
-  //     };
-  //     this.updateContent(cb);
-  //   } else {
-  //     this.attachContentToTextbook('accept');
-  //   }
-  // }
-
   getContentStatus(contentId) {
     const req = {
       url: `${this.configService.urlConFig.URLS.CONTENT.GET}/${contentId}?mode=edit&fields=status,createdBy`
@@ -1310,9 +1118,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     if (this.azurFileUploaderSubscrition) {
       this.azurFileUploaderSubscrition.unsubscribe();
     }
-    // if (this.editmodal && this.editmodal.deny) {
-    //   this.editmodal.deny();
-    // }
     this.showEditMetaForm = false;
   }
 
@@ -1357,16 +1162,20 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
       if (this.userService.getUserId() === this.contentMetaData.createdBy && this.resourceStatus === 'Draft') {
         this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.contentMetaData);
-      } else if (this.canPublishContent()){
+        this.contentEditRole = 'CONTRIBUTOR';
+      } else if (this.canPublishContent()) {
         this.editableFields = this.helperService.getEditableFields('REVIEWER', this.formFieldProperties, this.contentMetaData);
+        this.contentEditRole = 'REVIEWER';
       }
     } else if (this.hasRole('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
       this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.contentMetaData);
+      this.contentEditRole = 'CONTRIBUTOR';
     } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
       && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
       && !this.sourcingReviewStatus
       && (this.selectedOriginUnitStatus === 'Draft')) {
       this.editableFields = this.helperService.getEditableFields('REVIEWER', this.formFieldProperties, this.contentMetaData);
+      this.contentEditRole = 'REVIEWER';
     }
   }
 

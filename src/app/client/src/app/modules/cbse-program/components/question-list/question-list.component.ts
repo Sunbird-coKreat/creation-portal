@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigService, ToasterService, ResourceService, NavigationHelperService } from '@sunbird/shared';
 import { UserService, ActionService, ContentService, NotificationService, ProgramsService, FrameworkService } from '@sunbird/core';
 import { TelemetryService} from '@sunbird/telemetry';
-import { tap, map, catchError, mergeMap, first } from 'rxjs/operators';
+import { tap, map, catchError, mergeMap, first, filter } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
 import { of, forkJoin, throwError } from 'rxjs';
@@ -88,6 +88,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public showEditMetaForm: boolean;
   public categoryMasterList: Array<any>;
   public requiredAction: string;
+  public contentEditRole: string;
 
   constructor(
     private configService: ConfigService, private userService: UserService,
@@ -162,9 +163,11 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   fetchFrameWorkDetails() {
     this.frameworkService.initialize(this.sessionContext.framework);
-    this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
+    this.frameworkService.frameworkData$.pipe(filter(data => _.get(data, `frameworkdata.${this.sessionContext.framework}`)), 
+    first()).subscribe((frameworkDetails: any) => {
       if (frameworkDetails && !frameworkDetails.err) {
         const frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
+        this.sessionContext.frameworkData = frameworkData;
         this.sessionContext.topicList = _.get(_.find(frameworkData, { code: 'topic' }), 'terms');
       }
     });
@@ -213,10 +216,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           this.itemSetIdentifier = itemSet[0].identifier;
         }
         this.fetchQuestionList();
-        // this.resourceName = (this.resourceName !== 'Untitled') ? this.resourceName : '' ;
-        // if (this.visibility && this.visibility.showSave && !this.resourceName) {
-        //   this.showResourceTitleEditor();
-        // }
       }
       this.handleActionButtons();
     });
@@ -481,6 +480,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         field['editable'] = false;
       }
     });
+    if (this.requiredAction === 'editForm') {
+      this.formFieldProperties = _.filter(this.formFieldProperties, val => val.code !== 'contentPolicyCheck');
+    }
     // tslint:disable-next-line:max-line-length
     [this.categoryMasterList, this.formFieldProperties] = this.helperService.initializeMetadataForm(this.sessionContext, this.formFieldProperties, this.resourceDetails);
     this.showEditMetaForm = true;
@@ -490,47 +492,45 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
       if (this.userService.getUserId() === this.resourceDetails.createdBy && this.resourceStatus === 'Draft') {
         this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.resourceDetails);
+        this.contentEditRole = 'CONTRIBUTOR';
       } else if (this.canPublishContent()) {
         this.editableFields = this.helperService.getEditableFields('REVIEWER', this.formFieldProperties, this.resourceDetails);
+        this.contentEditRole = 'REVIEWER';
       }
     } else if (this.hasRole('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
       this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.resourceDetails);
+      this.contentEditRole = 'CONTRIBUTOR';
     } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
       && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
       && !this.sourcingReviewStatus
       && (this.selectedOriginUnitStatus === 'Draft')) {
       this.editableFields = this.helperService.getEditableFields('REVIEWER', this.formFieldProperties, this.resourceDetails);
+      this.contentEditRole = 'REVIEWER';
     }
   }
 
   handleCallback() {
-    switch (this.requiredAction) {
-      case 'review':
-        this.saveMetadataForm(this.sendForReview);
-        break;
-      case 'publish':
-        this.saveMetadataForm(this.publishContent);
-        break;
-      default:
-        this.saveMetadataForm();
-        break;
+    if (this.requiredAction === 'editForm') {
+      this.saveMetadataForm();
+    } else {
+      this.saveMetadataForm(() => this.questionCreationChild.buttonTypeHandler('review'));
     }
   }
 
   saveMetadataForm(cb?) {
     if (this.helperService.validateForm(this.formFieldProperties, this.formData.formInputData || {})) {
       console.log(this.formData.formInputData);
+      // tslint:disable-next-line:max-line-length
+      const formattedData = this.helperService.getFormattedData(_.pick(this.formData.formInputData, this.editableFields), this.formFieldProperties);
       const request = {
         'content': {
-          'versionKey': this.resourceDetails.versionKey,
-          ...this.formData.formInputData
+          'versionKey': this.existingContentVersionKey,
+          ...formattedData
         }
       };
 
-      if (!_.isArray(_.get(this.formData, 'formInputData.learningOutcome'))) {
-        request.content['learningOutcome'] = _.split(_.get(this.formData, 'formInputData.learningOutcome'), ',');
-      }
-      this.helperService.updateContent(request, this.resourceDetails.identifier).subscribe((res) => {
+      this.helperService.contentMetadataUpdate(this.contentEditRole, request, this.resourceDetails.identifier).subscribe((res) => {
+        this.existingContentVersionKey = _.get(res, 'result.versionKey');
         // tslint:disable-next-line:max-line-length
         this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, res.result.node_id || res.result.identifier)
         .subscribe((data) => {
@@ -571,6 +571,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.visibility['showPublish'] = submissionDateFlag && this.canPublishContent();
     // tslint:disable-next-line:max-line-length
     this.visibility['showSubmit'] = submissionDateFlag && this.canSubmit();
+    this.visibility['showSave'] = submissionDateFlag && this.canSave();
     // tslint:disable-next-line:max-line-length
     this.visibility['showEditMetadata'] = submissionDateFlag && this.canEditMetadata();
      // tslint:disable-next-line:max-line-length
@@ -597,6 +598,11 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   canSubmit() {
     // tslint:disable-next-line:max-line-length
     return !!(this.hasAccessFor('showSubmit') && this.resourceStatus === 'Draft' && this.userService.getUserId() === this.resourceDetails.createdBy);
+  }
+
+  canSave() {
+    // tslint:disable-next-line:max-line-length
+    return !!(this.hasAccessFor('showSave') && this.resourceStatus === 'Draft' && (this.userService.getUserId() === this.resourceDetails.createdBy));
   }
 
   canEditMetadata() {
@@ -664,10 +670,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     .subscribe(() => {
       this.handleQuestionTabChange(this.selectedQuestionId);
       this.goToNextQuestionStatus = false;
-      this.resourceName = (this.resourceName !== 'Untitled') ? this.resourceName : '' ;
-      // if (this.visibility && this.visibility.showSave && !this.resourceName) {
-      //   this.showResourceTitleEditor();
-      // }
     });
   }
 
@@ -853,10 +855,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           // questions: questions,
           body: JSON.stringify(response[0]),
           versionKey: existingContentVersionKey,
-          'author': _.join(_.uniq(_.compact(_.get(selectedQuestionsData, 'author'))), ', '),
-          'attributions': _.uniq(_.compact(_.get(selectedQuestionsData, 'attributions'))),
-          // tslint:disable-next-line:max-line-length
-          name: this.resourceName,
           'programId': this.sessionContext.programId,
           'program': this.sessionContext.program,
           'plugins': [{
@@ -1044,13 +1042,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // public showResourceTitleEditor() {
-  //   this.showTextArea = true;
-  //   setTimeout(() => {
-  //     this.resourceTtlTextarea.nativeElement.focus();
-  //   }, 500);
-  // }
-
   public onResourceNameChange(event: any) {
     const remainChar = this.resourceTitleLimit - this.resourceName.length;
     if (remainChar <= 0 && event.keyCode !== 8) {
@@ -1074,33 +1065,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  public saveResourceName() {
-    this.resourceName = (_.trim(this.resourceName) !== 'Untitled') ? _.trim(this.resourceName) : '' ;
-    if (this.resourceName.length > 0 && this.resourceName.length <= this.resourceTitleLimit) {
-      this.showTextArea = false;
-      const reqBody = {
-        'content': {
-            'versionKey': this.existingContentVersionKey,
-            'name' : this.resourceName
-        }
-      };
-      this.updateContent(reqBody, this.sessionContext.resourceIdentifier)
-      .subscribe((res) => {
-        const contentId = res.result.node_id || res.result.identifier;
-        if (this.sessionContext.collection && this.sessionContext.textBookUnitIdentifier) {
-          this.collectionHierarchyService.addResourceToHierarchy(
-            this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, contentId
-          )
-          .subscribe((data) => {
-            this.toasterService.success(this.resourceService.messages.smsg.m0060);
-            this.sessionContext.contentMetadata.name = this.resourceName;
-          }, (err) => {
-            this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-          });
-        }
-      });
-    }
-  }
 
   public createDefaultAssessmentItem() {
     const request = {

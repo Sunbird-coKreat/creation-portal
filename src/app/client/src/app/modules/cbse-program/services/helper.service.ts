@@ -334,7 +334,7 @@ export class HelperService {
     return editableFields;
   }
 
-  getFormattedData(formValue, textFields) {
+  getFormattedData(formValue, formFields) {
     const trimmedValue = _.mapValues(formValue, (value) => {
       if (_.isString(value)) {
         return _.trim(value);
@@ -342,9 +342,15 @@ export class HelperService {
         return value;
       }
     });
-    _.forEach(textFields, field => {
+    _.forEach(formFields, field => {
       if (field.dataType === 'list') {
-        trimmedValue[field.code] = trimmedValue[field.code] ? trimmedValue[field.code].split(', ') : [];
+        if (_.isString(trimmedValue[field.code])) {
+          trimmedValue[field.code] = _.split(trimmedValue[field.code], ',');
+        }
+      } else if (field.dataType === 'text') {
+        if (_.isArray(trimmedValue[field.code])) {
+          trimmedValue[field.code] = _.join(trimmedValue[field.code]);
+        }
       }
     });
     return _.pickBy(_.assign({}, trimmedValue), _.identity);
@@ -438,6 +444,25 @@ export class HelperService {
     });
 
     return _.includes(validFields, false) ? false : true;
+  }
+
+  contentMetadataUpdate(role, req, contentId): Observable<any> {
+    if (role === 'CONTRIBUTOR') {
+      return this.updateContent(req, contentId);
+    } else if ('REVIEWER') {
+      delete req.content.versionKey;
+      return this.systemUpdateforContent(req, contentId);
+    }
+  }
+
+  systemUpdateforContent(requestBody, contentId) {
+    const option = {
+      url: `system/v3/content/update/${contentId}`,
+      data: {
+        'request': requestBody
+      }
+    };
+    return this.actionService.patch(option);
   }
 
   /*getContentMetadata(componentInput: any) {
