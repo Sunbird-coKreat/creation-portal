@@ -18,6 +18,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IStartEventInput, IEndEventInput, TelemetryService } from '@sunbird/telemetry';
 import { UUID } from 'angular2-uuid';
 import { CacheService } from 'ng2-cache-service';
+import { DataFormComponent } from '../../../core/components/data-form/data-form.component';
 import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
@@ -26,7 +27,9 @@ import { DeviceDetectorService } from 'ngx-device-detector';
   styleUrls: ['./content-uploader.component.scss']
 })
 export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('formData') formData: DataFormComponent;
   @ViewChild('modal') modal;
+  // @ViewChild('editmodal') editmodal;
   @ViewChild('fineUploaderUI') fineUploaderUI: ElementRef;
   @ViewChild('qq-upload-actions') actionButtons: ElementRef;
   @ViewChild('titleTextArea') titleTextAreaa: ElementRef;
@@ -82,7 +85,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public sourcingReviewStatus: string;
   public contentType: string;
   public popupAction: string;
-  //public sourcingOrgReviewComments: string;
+  // public sourcingOrgReviewComments: string;
   public contentComment: string;
   originPreviewUrl = '';
   originPreviewReady = false;
@@ -103,6 +106,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public overrideMetaData: any;
   public editableFields = [];
   public isMetadataOverridden = false;
+  public formFieldProperties: any;
+  public validForm = false;
+  public fromSubmited = false;
+  public categoryMasterList: any;
+  public showEditMetaForm = false;
+  public requiredAction: string;
+  public contentEditRole: string;
   public pageStartTime;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
@@ -224,6 +234,200 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
      });
   }
 
+  showEditform() {
+    this.formFieldProperties = [{
+      'code': 'name',
+      'editable': true,
+      'displayProperty': 'Editable',
+      'dataType': 'text',
+      'renderingHints': {
+        'semanticColumnWidth': 'twelve'
+      },
+      'description': 'Name',
+      'index': 1,
+      'label': 'Name',
+      'required': true,
+      'name': 'Name',
+      'inputType': 'text',
+      'placeholder': 'Name'
+    },
+    {
+      'code': 'board',
+      'visible': true,
+      'depends': [
+        'medium',
+        'gradeLevel',
+        'subject'
+      ],
+      'editable': true,
+      'displayProperty': 'Editable',
+      'dataType': 'text',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'description': 'Education Board (Like MP Board, NCERT, etc)',
+      'index': 2,
+      'label': 'Board',
+      'required': false,
+      'name': 'Board',
+      'inputType': 'select',
+      'placeholder': 'Board'
+    },
+    {
+      'code': 'medium',
+      'visible': true,
+      'depends': [
+        'gradeLevel',
+        'subject'
+      ],
+      'editable': true,
+      'displayProperty': 'Editable',
+      'dataType': 'list',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'description': 'Medium of instruction',
+      'index': 3,
+      'label': 'Medium',
+      'required': true,
+      'name': 'Medium',
+      'inputType': 'multiSelect',
+      'placeholder': 'Medium'
+    },
+    {
+      'code': 'gradeLevel',
+      'visible': true,
+      'depends': [
+        'subject'
+      ],
+      'editable': true,
+      'displayProperty': 'Editable',
+      'dataType': 'list',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'description': 'Class',
+      'index': 4,
+      'label': 'Class',
+      'required': true,
+      'name': 'Class',
+      'inputType': 'multiSelect',
+      'placeholder': 'Class'
+    },
+    {
+      'code': 'subject',
+      'visible': true,
+      'editable': true,
+      'displayProperty': 'Editable',
+      'dataType': 'list',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'description': 'Subject of the Content to use to teach',
+      'index': 5,
+      'label': 'Subject',
+      'required': true,
+      'name': 'Subject',
+      'inputType': 'multiSelect',
+      'placeholder': 'Subject'
+    },
+    {
+      'code': 'learningOutcome',
+      'visible': true,
+      'editable': true,
+      'displayProperty': 'Editable',
+      'dataType': 'list',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'description': 'Subject of the Content to use to teach',
+      'index': 6,
+      'label': 'Learning Outcome',
+      'required': true,
+      'name': 'learningOutcome',
+      'inputType': 'select',
+      'placeholder': 'learningOutcome'
+    },
+    {
+      'code': 'attributions',
+      'dataType': 'list',
+      'description': 'Attributions',
+      'editable': true,
+      'index': 7,
+      'inputType': 'text',
+      'label': 'Attributions',
+      'name': 'attribution',
+      'placeholder': '',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'required': false
+    },
+    {
+      'code': 'author',
+      'dataType': 'text',
+      'description': 'Author',
+      'editable': true,
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'index': 8,
+      'inputType': 'text',
+      'label': 'Author',
+      'name': 'Author',
+      'placeholder': 'Author',
+      'required': true
+    },
+    {
+      'code': 'copyright',
+      'dataType': 'text',
+      'description': 'Copyright',
+      'editable': true,
+      'index': 9,
+      'inputType': 'text',
+      'label': 'Copyright',
+      'name': 'Copyright',
+      'placeholder': 'Copyright',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'required': false
+    },
+    {
+      'code': 'contentPolicyCheck',
+      'editable': true,
+      'displayProperty': 'Editable',
+      'dataType': 'text',
+      'renderingHints': {
+        'semanticColumnWidth': 'twelve'
+      },
+      'description': 'Name',
+      'index': 10,
+      'label': 'Content PolicyCheck',
+      'required': true,
+      'name': 'contentPolicyCheck',
+      'inputType': 'checkbox',
+      'placeholder': 'Name'
+    }];
+    if (_.get(this.selectedSharedContext, 'topic')) {
+      // tslint:disable-next-line:max-line-length
+      this.sessionContext.topic = _.isArray(this.sessionContext.topic) ? this.selectedSharedContext.topic : _.split(this.selectedSharedContext.topic, ',');
+    }
+    this.getEditableFields();
+    _.forEach(this.formFieldProperties, field => {
+      if (field.editable && !_.includes(this.editableFields, field.code)) {
+        field['editable'] = false;
+      }
+    });
+
+    if (this.requiredAction === 'editForm') {
+      this.formFieldProperties = _.filter(this.formFieldProperties, val => val.code !== 'contentPolicyCheck');
+    }
+    // tslint:disable-next-line:max-line-length
+    [this.categoryMasterList, this.formFieldProperties] = this.helperService.initializeMetadataForm(this.sessionContext, this.formFieldProperties, this.contentMetaData);
+    this.showEditMetaForm = true;
+  }
+
   hasAccessFor(action) {
     const roles = _.get(this.actions, `${action}.roles`, []);
     return !_.isEmpty(_.intersection(roles, this.sessionContext.currentRoleIds));
@@ -242,7 +446,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     // tslint:disable-next-line:max-line-length
     this.visibility['showSubmit'] = submissionDateFlag && this.canSubmit();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSave'] = submissionDateFlag && this.canSave();
+    this.visibility['showEditMetadata'] = submissionDateFlag && this.canEditMetadata();
     // tslint:disable-next-line:max-line-length
     this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
     // tslint:disable-next-line:max-line-length
@@ -255,12 +459,18 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   canEdit() {
+    // tslint:disable-next-line:max-line-length
     return !!(this.hasAccessFor('showEdit') && this.resourceStatus === 'Draft' && this.userService.getUserId() === this.contentMetaData.createdBy);
   }
 
   canSave() {
     // tslint:disable-next-line:max-line-length
     return !!(this.hasAccessFor('showSave') && !this.contentMetaData.sampleContent === true && this.resourceStatus === 'Draft' && (this.userService.getUserId() === this.contentMetaData.createdBy));
+  }
+
+  canEditMetadata() {
+    // tslint:disable-next-line:max-line-length
+    return !!(this.resourceStatus === 'Draft' && (this.userService.getUserId() === this.contentMetaData.createdBy));
   }
 
   canSubmit() {
@@ -281,6 +491,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   canPublishContent() {
     // tslint:disable-next-line:max-line-length
     return !!(this.router.url.includes('/contribute') && !this.contentMetaData.sampleContent === true &&
+    // tslint:disable-next-line:max-line-length
     this.hasAccessFor('showPublish') && this.resourceStatus === 'Review' && this.userService.getUserId() !== this.contentMetaData.createdBy);
   }
 
@@ -619,7 +830,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.contentMetaData = res;
       const contentTypeValue = [this.contentMetaData.contentType];
       this.contentType = this.programsService.getContentTypesName(contentTypeValue);
-      this.editTitle = (this.contentMetaData.name !== 'Untitled') ? this.contentMetaData.name : '' ;
+      this.editTitle = this.contentMetaData.name || '' ;
       this.resourceStatus = this.contentMetaData.status;
       if (this.resourceStatus === 'Review') {
         this.resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
@@ -665,16 +876,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.loading = false;
       this.handleActionButtons();
 
-      if (this.visibility && this.visibility.showEdit && !this.editTitle) {
-        this.editContentTitle();
-      }
-
       // At the end of execution
-      if ( _.isUndefined(this.sessionContext.topicList)) {
+      if ( _.isUndefined(this.sessionContext.topicList) || _.isUndefined(this.sessionContext.frameworkData)) {
         this.fetchFrameWorkDetails();
       }
       this.getTelemetryData();
-      this.manageFormConfiguration();
       this.cd.detectChanges();
     });
   }
@@ -713,132 +919,17 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
 
-  manageFormConfiguration() {
-    const controller = {};
-    this.showForm = true;
-    // tslint:disable-next-line:max-line-length
-    const compConfiguration = _.find(_.get(this.contentUploadComponentInput, 'programContext.config.components'), {compId: 'uploadContentComponent'});
-    this.formConfiguration = compConfiguration.config.formConfiguration;
-    this.textFields = _.filter(this.formConfiguration, {'inputType': 'text', 'visible': true});
-    this.allFormFields = _.filter(this.formConfiguration, {'visible': true});
-
-    _.forEach(this.formConfiguration, (formData) => {
-      this.selectOutcomeOption[formData.code] = formData.defaultValue;
-    });
-
-    this.helperService.getLicences().subscribe((res) => {
-      this.selectOutcomeOption['license'] = _.map(res.license, (license) => {
-        return license.name;
-      });
-    });
-    if ( _.isArray(this.sessionContext.topic)) {
-      this.sessionContext.topic = _.first(this.sessionContext.topic);
-    }
-    this.sessionContext.topic = _.first(this.selectedSharedContext.topic) || this.sessionContext.topic ;
-    if (this.sessionContext.topic) {
-      // tslint:disable-next-line:max-line-length
-      this.sessionContext.topic = _.isArray(this.sessionContext.topic) ? this.sessionContext.topic : _.split(this.sessionContext.topic, ',');
-    }
-    const topicTerm = _.find(this.sessionContext.topicList, { name: _.first(this.sessionContext.topic) });
-    if (topicTerm && topicTerm.associations) {
-       this.selectOutcomeOption['learningOutcome'] = _.map(topicTerm.associations, (learningOutcome) => {
-        return learningOutcome.name;
-      });
-    }
-
-    this.getEditableFields();
-
-     _.map(this.allFormFields, (obj) => {
-      const code = obj.code;
-      const preSavedValues = {};
-      if (this.contentMetaData) {
-        if (obj.inputType === 'select') {
-          // tslint:disable-next-line:max-line-length
-          preSavedValues[code] = (this.contentMetaData[code]) ? (_.isArray(this.contentMetaData[code]) ? this.contentMetaData[code][0] : this.contentMetaData[code]) : '';
-          // tslint:disable-next-line:max-line-length
-          obj.required ? controller[obj.code] = [preSavedValues[code], [Validators.required]] : controller[obj.code] = preSavedValues[code];
-        } else if (obj.inputType === 'multiselect') {
-          // tslint:disable-next-line:max-line-length
-          preSavedValues[code] = (this.contentMetaData[code] && this.contentMetaData[code].length) ? this.contentMetaData[code] : [];
-          // tslint:disable-next-line:max-line-length
-          obj.required ? controller[obj.code] = [preSavedValues[code], [Validators.required]] : controller[obj.code] = [preSavedValues[code]];
-        } else if (obj.inputType === 'text') {
-          if (obj.dataType === 'list') {
-            const listValue = (this.contentMetaData[code]) ? this.contentMetaData[code] : '';
-            preSavedValues[code] = _.isArray(listValue) ? listValue.toString() : '';
-          } else {
-            preSavedValues[code] = (this.contentMetaData[code]) ? this.contentMetaData[code] : '';
-          }
-          // tslint:disable-next-line:max-line-length
-          obj.required ? controller[obj.code] = [{value: preSavedValues[code], disabled: this.editableFields.indexOf(code) === -1}, [Validators.required]] : controller[obj.code] = preSavedValues[code];
-        } else if (obj.inputType === 'checkbox') {
-          // tslint:disable-next-line:max-line-length
-          preSavedValues[code] = (this.contentMetaData[code]) ? this.contentMetaData[code] : false;
-          // tslint:disable-next-line:max-line-length
-          obj.required ? controller[obj.code] = [{value: preSavedValues[code], disabled: this.contentMetaData[code]}, [Validators.requiredTrue]] : controller[obj.code] = preSavedValues[code];
-        }
-      }
-    });
-
-    this.contentDetailsForm = this.formBuilder.group(controller);
-  }
-
   fetchFrameWorkDetails() {
     this.frameworkService.initialize(this.sessionContext.framework);
     this.frameworkService.frameworkData$.pipe(filter(data => _.get(data, `frameworkdata.${this.sessionContext.framework}`)),
       first()).subscribe((frameworkDetails: any) => {
       if (frameworkDetails && !frameworkDetails.err) {
         const frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
+        // this.categoryMasterList = _.cloneDeep(frameworkDetails.frameworkdata[this.sessionContext.framework].categories);
+        this.sessionContext.frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
         this.sessionContext.topicList = _.get(_.find(frameworkData, { code: 'topic' }), 'terms');
       }
     });
-  }
-
-  editContentTitle() {
-    this.showTextArea = true;
-    this.cd.detectChanges();
-    this.titleTextAreaa.nativeElement.focus();
-  }
-
-  saveTitle() {
-   this.editTitle = (_.trim(this.editTitle) !== 'Untitled') ? _.trim(this.editTitle) : '' ;
-
-   if (this.editTitle === '' || (this.editTitle.length > this.titleCharacterLimit)) {
-    this.editContentTitle();
-   } else {
-    if (_.trim(this.editTitle) === _.trim(this.contentMetaData.name)) {
-      this.showTextArea = true;
-      return;
-    } else {
-   this.editTitle = _.trim(this.editTitle);
-   const contentObj = {
-     'versionKey': this.contentMetaData.versionKey,
-     'name': this.editTitle
-    };
-    const request = {
-    'content': contentObj
-    };
-   this.helperService.updateContent(request, this.contentMetaData.identifier).subscribe((res) => {
-   this.contentMetaData.versionKey = res.result.versionKey;
-   this.contentMetaData.name = this.editTitle;
-   const contentDetails = {
-    contentId: this.contentMetaData.identifier,
-    contentData: this.contentMetaData
-    };
-   this.playerConfig = this.playerService.getConfig(contentDetails);
-   // tslint:disable-next-line:max-line-length
-   this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
-   .subscribe((data) => {
-       this.toasterService.success(this.resourceService.messages.smsg.m0060);
-     }, (err) => {
-       this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-     });
-    }, (err) => {
-    this.editTitle = this.contentMetaData.name;
-    this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-   });
-  }
-   }
   }
 
   changePolicyCheckValue (event) {
@@ -849,60 +940,51 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
 
-  saveContent(action?) {
-    const requiredTextFields = _.filter(this.textFields, {required: true});
-    const validText = _.map(requiredTextFields, (obj) => {
-       return _.trim(this.contentDetailsForm.value[obj.code]).length !== 0;
-    });
-    // tslint:disable-next-line:max-line-length
-    if (this.contentDetailsForm.valid && this.editTitle && this.editTitle !== '' && !_.includes(validText, false)) {
-      this.showTextArea = false;
-      this.formValues = {};
-      let contentObj = {
-          'versionKey': this.contentMetaData.versionKey,
-          'name': this.editTitle
-      };
-      const trimmedValue = _.mapValues(this.contentDetailsForm.value, (value) => {
-         if (_.isString(value)) {
-           return _.trim(value);
-         } else {
-           return value;
-         }
-      });
-
-      _.forEach(this.textFields, field => {
-        if (field.dataType === 'list') {
-          trimmedValue[field.code] = trimmedValue[field.code] ? trimmedValue[field.code].split(', ') : [];
-        }
-      });
-      contentObj = _.pickBy(_.assign(contentObj, trimmedValue), _.identity);
+  saveMetadataForm(cb?) {
+    if (this.helperService.validateForm(this.formFieldProperties, this.formData.formInputData || {})) {
+      console.log(this.formData.formInputData);
+      // tslint:disable-next-line:max-line-length
+      const formattedData = this.helperService.getFormattedData(_.pick(this.formData.formInputData, this.editableFields), this.formFieldProperties);
       const request = {
-        'content': contentObj
+        'content': {
+          'versionKey': this.contentMetaData.versionKey,
+          ...formattedData
+        }
       };
 
-      this.helperService.updateContent(request, this.contentMetaData.identifier).subscribe((res) => {
-        this.contentMetaData.versionKey = res.result.versionKey;
-        if (action === 'review' && this.isIndividualAndNotSample()) {
-          this.publishContent();
-        } else if (action === 'review') {
-          this.sendForReview();
-        } else if (this.sessionContext.collection && this.unitIdentifier && action !== 'review') {
-          // tslint:disable-next-line:max-line-length
-          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
-          .subscribe((data) => {
+      this.helperService.contentMetadataUpdate(this.contentEditRole, request, this.contentMetaData.identifier).subscribe((res) => {
+        // tslint:disable-next-line:max-line-length
+        this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
+        .subscribe((data) => {
+          this.showEditMetaForm = false;
+          if (cb) {
+            cb.call(this);
+          } else {
+            this.getUploadedContentMeta(this.contentMetaData.identifier);
             this.toasterService.success(this.resourceService.messages.smsg.m0060);
-          }, (err) => {
-            this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-          });
-        } else {
-          this.toasterService.success(this.resourceService.messages.smsg.m0060);
-        }
-      }, (err) => {
+          }
+        }, (err) => {
+          this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+        });
+      }, err => {
         this.toasterService.error(this.resourceService.messages.fmsg.m0098);
       });
     } else {
-      this.markFormGroupTouched(this.contentDetailsForm);
-      this.toasterService.error(this.resourceService.messages.fmsg.m0076);
+      this.toasterService.error(this.resourceService.messages.fmsg.m0101);
+    }
+  }
+
+  handleCallback() {
+    switch (this.requiredAction) {
+      case 'review':
+        this.saveMetadataForm(this.sendForReview);
+        break;
+      case 'publish':
+        this.saveMetadataForm(this.publishContent);
+        break;
+      default:
+        this.saveMetadataForm();
+        break;
     }
   }
 
@@ -964,27 +1046,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       }, (err) => {
         this.toasterService.error(this.resourceService.messages.fmsg.m00106);
       });
-    }
-  }
-
-  isMetaDataModified() {
-    const metaAfterUpdate = this.helperService.getFormattedData(this.contentDetailsForm.value, this.textFields);
-    metaAfterUpdate['name'] = _.trim(this.editTitle);
-    return this.isMetadataOverridden = this.helperService.isMetaDataModified(this.contentMetaData, metaAfterUpdate);
-  }
-
-  updateContentBeforePublishing() {
-    if (this.isMetaDataModified()) {
-      const cb = (err, res ) => {
-        if (!err && res) {
-          this.publishContent();
-        } else {
-          console.log(err);
-        }
-      };
-      this.updateContent(cb);
-    } else {
-      this.publishContent();
     }
   }
 
@@ -1060,59 +1121,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.fetchFileSizeLimit();
   }
 
-  updateContent(cb) {
-    if (this.contentDetailsForm.valid && this.editTitle && this.editTitle !== '') {
-      this.showTextArea = false;
-      this.formValues = {};
-      let requestBody = {
-        'versionKey': this.contentMetaData.versionKey,
-        'name': _.trim(this.editTitle)
-      };
-      requestBody = Object.assign({}, requestBody, this.helperService.getFormattedData(this.contentDetailsForm.value, this.textFields));
-      this.helperService.updateContent({'content': requestBody}, this.contentMetaData.identifier).subscribe((res) => {
-        cb(null, res);
-      }, (err) => {
-        cb(err, null);
-      });
-    } else {
-      this.markFormGroupTouched(this.contentDetailsForm);
-      this.toasterService.error(this.resourceService.messages.fmsg.m0076);
-    }
-  }
-
-  updateContentBeforeApproving(action) {
-    if (this.isMetaDataModified()) {
-      const cb = (err, res) => {
-        if (!err && res) {
-          this.helperService.publishContent(this.contentMetaData.identifier, this.userService.userProfile.userId)
-          .subscribe(res => {
-            const me = this;
-            setTimeout(() => {
-              me.getContentStatus(this.contentMetaData.identifier).subscribe((response: any) => {
-                const status = _.get(response, 'content.status');
-                if (status === 'Live') {
-                  me.attachContentToTextbook(action);
-                }
-              }, err => {
-                me.toasterService.error(this.resourceService.messages.fmsg.m00102);
-              });
-            }, 2000);
-
-          }, err => {
-            this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-            console.log(err);
-          });
-        } else if (err) {
-          this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-          console.log(err);
-        }
-      };
-      this.updateContent(cb);
-    } else {
-      this.attachContentToTextbook('accept');
-    }
-  }
-
   getContentStatus(contentId) {
     const req = {
       url: `${this.configService.urlConFig.URLS.CONTENT.GET}/${contentId}?mode=edit&fields=status,createdBy`
@@ -1167,6 +1175,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     if (this.azurFileUploaderSubscrition) {
       this.azurFileUploaderSubscrition.unsubscribe();
     }
+    this.showEditMetaForm = false;
   }
 
   showCommentAddedAgainstContent() {
@@ -1209,17 +1218,21 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   getEditableFields() {
     if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
       if (this.userService.getUserId() === this.contentMetaData.createdBy && this.resourceStatus === 'Draft') {
-        this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.allFormFields, this.contentMetaData);
-      } else if (this.canPublishContent()){
-        this.editableFields = this.helperService.getEditableFields('REVIEWER', this.allFormFields, this.contentMetaData);
+        this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.contentMetaData);
+        this.contentEditRole = 'CONTRIBUTOR';
+      } else if (this.canPublishContent()) {
+        this.editableFields = this.helperService.getEditableFields('REVIEWER', this.formFieldProperties, this.contentMetaData);
+        this.contentEditRole = 'REVIEWER';
       }
     } else if (this.hasRole('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
-      this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.allFormFields, this.contentMetaData);
+      this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.contentMetaData);
+      this.contentEditRole = 'CONTRIBUTOR';
     } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
       && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
       && !this.sourcingReviewStatus
       && (this.selectedOriginUnitStatus === 'Draft')) {
-      this.editableFields = this.helperService.getEditableFields('REVIEWER', this.allFormFields, this.contentMetaData);
+      this.editableFields = this.helperService.getEditableFields('REVIEWER', this.formFieldProperties, this.contentMetaData);
+      this.contentEditRole = 'REVIEWER';
     }
   }
 
