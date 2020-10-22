@@ -132,7 +132,7 @@
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService?.frmelmnts?.lbl?.managePrograms}}</a>
 
-      <a [class.active]="activeTab['manageContents']" *ngIf="!router.url.includes('/help') && !router.url.includes('/contribute')" (click)="handleActiveTabState('manageContents')"
+      <a [class.active]="activeTab['manageContents']" *ngIf="permissionService.permissionAvailable && !router.url.includes('/help') && !router.url.includes('/contribute')" (click)="handleActiveTabState('manageContents')"
         appTelemetryInteract appPermission
         [permission]='workSpaceRole' [routerLink]="[navigateToWorkspace()]"
         [telemetryInteractEdata]="getTelemetryInteractEdata('manage-contents', 'click', 'main-header')"
@@ -169,8 +169,9 @@
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.manageUsers }}</a>
 
-      <a routerLink="sourcing/orgreports" *ngIf="router.url.includes('/sourcing') && !router.url.includes('/contribute/help') && sourcingOrgAdmin && !router.url.includes('/sourcing/help')" [class.active]="activeTab['organisationReports']" (click)="handleActiveTabState('organisationReports')"
-                    appTelemetryInteract
+      <a routerLink="sourcing/orgreports" *ngIf="permissionService.permissionAvailable && router.url.includes('/sourcing') && !router.url.includes('/contribute/help')  && !router.url.includes('/sourcing/help')" [class.active]="activeTab['organisationReports']" (click)="handleActiveTabState('organisationReports')"
+                    appTelemetryInteract appPermission 
+                    [permission]='orgReportRole'
       [telemetryInteractEdata]="getTelemetryInteractEdata('organisation-reports', 'click', 'main-header')"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
