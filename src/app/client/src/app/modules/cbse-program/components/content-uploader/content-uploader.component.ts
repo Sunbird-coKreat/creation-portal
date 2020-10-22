@@ -15,9 +15,11 @@ import { AzureFileUploaderService } from '../../services';
 import { HelperService } from '../../services/helper.service';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { IStartEventInput, IEndEventInput, TelemetryService } from '@sunbird/telemetry';
 import { UUID } from 'angular2-uuid';
 import { CacheService } from 'ng2-cache-service';
 import { DataFormComponent } from '../../../core/components/data-form/data-form.component';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-content-uploader',
@@ -52,6 +54,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public notify;
   public config: any;
   public resourceStatusClass = '';
+  public telemetryStart: IStartEventInput;
+  public telemetryEnd: IEndEventInput;
   showForm;
   uploader;
   loading;
@@ -76,7 +80,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
-  public telemetryPageId = 'content-uploader';
+  public telemetryPageId: string;
   public sourcingOrgReviewer: boolean;
   public sourcingReviewStatus: string;
   public contentType: string;
@@ -109,6 +113,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public showEditMetaForm = false;
   public requiredAction: string;
   public contentEditRole: string;
+  public pageStartTime;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -120,7 +125,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     private notificationService: NotificationService,
     public activeRoute: ActivatedRoute, public router: Router, private navigationHelperService: NavigationHelperService,
     private programsService: ProgramsService, private azureUploadFileService: AzureFileUploaderService,
-    private contentService: ContentService, private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService) { }
+    private contentService: ContentService, private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService,
+    private deviceDetectorService: DeviceDetectorService, private telemetryService: TelemetryService) { }
 
   ngOnInit() {
     this.config = _.get(this.contentUploadComponentInput, 'config');
@@ -128,6 +134,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.originCollectionData = _.get(this.contentUploadComponentInput, 'originCollectionData');
     this.selectedOriginUnitStatus = _.get(this.contentUploadComponentInput, 'content.originUnitStatus');
     this.sessionContext  = _.get(this.contentUploadComponentInput, 'sessionContext');
+    this.telemetryPageId = _.get(this.sessionContext, 'telemetryPageDetails.telemetryPageId');
     this.templateDetails  = _.get(this.contentUploadComponentInput, 'templateDetails');
     this.unitIdentifier  = _.get(this.contentUploadComponentInput, 'unitIdentifier');
     this.programContext = _.get(this.contentUploadComponentInput, 'programContext');
@@ -148,6 +155,55 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.contentStatusNotify(action);
     });
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
+    this.pageStartTime = Date.now();
+    this.setTelemetryStartData();
+   }
+
+   setTelemetryStartData() {
+    const telemetryCdata = [{id: this.userService.channel, type: 'sourcing_organization'},
+    {id: this.programContext.program_id, type: 'project'}, {id: this.sessionContext.collection, type: 'linked_collection'}];
+    const deviceInfo = this.deviceDetectorService.getDeviceInfo();
+    setTimeout(() => {
+        this.telemetryStart = {
+          context: {
+            env: this.activeRoute.snapshot.data.telemetry.env,
+            cdata: telemetryCdata
+          },
+          edata: {
+            type: this.configService.telemetryLabels.pageType.editor || '',
+            pageid: this.telemetryPageId,
+            uaspec: {
+              agent: deviceInfo.browser,
+              ver: deviceInfo.browser_version,
+              system: deviceInfo.os_version,
+              platform: deviceInfo.os,
+              raw: deviceInfo.userAgent
+            }
+          }
+        };
+    });
+  }
+
+  generateTelemetryEndEvent(eventMode) {
+    const telemetryCdata = [{id: this.userService.channel, type: 'sourcing_organization'},
+    {id: this.programContext.program_id, type: 'project'}, {id: this.sessionContext.collection, type: 'linked_collection'}];
+    this.telemetryEnd = {
+      object: {
+        id: this.contentMetaData.identifier || '',
+        type: 'content',
+      },
+      context: {
+        env: this.activeRoute.snapshot.data.telemetry.env,
+        cdata: telemetryCdata
+      },
+      edata: {
+        type: this.configService.telemetryLabels.pageType.editor || '',
+        pageid: this.telemetryPageId,
+        mode: eventMode || '',
+        duration: _.toString((Date.now() - this.pageStartTime) / 1000)
+      }
+    };
+    this.telemetryService.end(this.telemetryEnd);
   }
 
   ngAfterViewInit() {
@@ -156,12 +212,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-    const telemetryCdata = [{ 'type': 'Program', 'id': this.programContext.program_id }];
-     setTimeout(() => {
+    const telemetryCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
+    setTimeout(() => {
       this.telemetryImpression = {
         context: {
           env: this.activeRoute.snapshot.data.telemetry.env,
-          cdata: telemetryCdata || [],
+          cdata: telemetryCdata,
           pdata: {
             id: this.userService.appId,
             ver: version,
@@ -169,7 +225,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           }
         },
         edata: {
-          type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
+          type: this.configService.telemetryLabels.pageType.view || _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
           pageid: this.telemetryPageId,
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
@@ -752,7 +808,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 //   }
     getTelemetryData() {
       // tslint:disable-next-line:max-line-length
-      this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.contentUploadComponentInput.programContext.program_id, 'Program');
+      this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
       // tslint:disable-next-line:max-line-length
       this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
       // tslint:disable-next-line:max-line-length
@@ -1000,6 +1056,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           // tslint:disable-next-line:max-line-length
           this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier || res.result.content_id)
           .subscribe((data) => {
+            this.generateTelemetryEndEvent('publish');
             this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
             this.programStageService.removeLastStage();
             this.uploadedContentMeta.emit({

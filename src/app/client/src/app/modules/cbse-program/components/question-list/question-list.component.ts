@@ -4,7 +4,7 @@ import { FormGroup, FormArray, FormBuilder, Validators, NgForm, FormControl } fr
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigService, ToasterService, ResourceService, NavigationHelperService } from '@sunbird/shared';
 import { UserService, ActionService, ContentService, NotificationService, ProgramsService, FrameworkService } from '@sunbird/core';
-import { TelemetryService} from '@sunbird/telemetry';
+import { TelemetryService, IStartEventInput, IEndEventInput} from '@sunbird/telemetry';
 import { tap, map, catchError, mergeMap, first, filter } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
@@ -16,6 +16,7 @@ import { CollectionHierarchyService } from '../../services/collection-hierarchy/
 import { ProgramStageService } from '../../../program/services';
 import { ProgramTelemetryService } from '../../../program/services';
 import { DataFormComponent } from '../../../core/components/data-form/data-form.component';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 
 @Component({
@@ -89,10 +90,13 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public categoryMasterList: Array<any>;
   public requiredAction: string;
   public contentEditRole: string;
+  public telemetryStart: IStartEventInput;
+  public telemetryEnd: IEndEventInput;
+  public pageStartTime;
 
   constructor(
-    private configService: ConfigService, private userService: UserService,
-    public actionService: ActionService,
+    public configService: ConfigService, private userService: UserService,
+    public actionService: ActionService, private deviceDetectorService: DeviceDetectorService,
     private cdr: ChangeDetectorRef, public toasterService: ToasterService,
     public telemetryService: TelemetryService, private fb: FormBuilder,
     private notificationService: NotificationService, private cbseService: CbseProgramService, public contentService: ContentService,
@@ -121,6 +125,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.practiceSetConfig = _.get(this.practiceQuestionSetComponentInput, 'config');
     this.sourcingReviewStatus = _.get(this.practiceQuestionSetComponentInput, 'sourcingStatus') || '';
     this.resourceTitleLimit = this.practiceSetConfig.config.resourceTitleLength;
+    this.telemetryPageId = _.get(this.sessionContext, 'telemetryPageDetails.telemetryPageId');
+    this.sessionContext.telemetryPageId = this.telemetryPageId;
     this.sessionContext.practiceSetConfig = this.practiceSetConfig;
     this.sessionContext.topic = _.isEmpty(this.selectedSharedContext.topic) ? this.sessionContext.topic : this.selectedSharedContext.topic;
     this.getContentMetadata(this.sessionContext.resourceIdentifier);
@@ -134,17 +140,65 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     if ( _.isUndefined(this.sessionContext.topicList)) {
       this.fetchFrameWorkDetails();
     }
+    this.pageStartTime = Date.now();
+    this.setTelemetryStartData();
+  }
+
+  setTelemetryStartData() {
+    const telemetryCdata = [{id: this.userService.channel, type: 'sourcing_organization'},
+    {id: this.programContext.program_id, type: 'project'}, {id: this.sessionContext.collection, type: 'linked_collection'}];
+    const deviceInfo = this.deviceDetectorService.getDeviceInfo();
+    setTimeout(() => {
+        this.telemetryStart = {
+          context: {
+            env: this.activeRoute.snapshot.data.telemetry.env,
+            cdata: telemetryCdata || []
+          },
+          edata: {
+            type: this.configService.telemetryLabels.pageType.editor || '',
+            pageid: this.telemetryPageId,
+            uaspec: {
+              agent: deviceInfo.browser,
+              ver: deviceInfo.browser_version,
+              system: deviceInfo.os_version,
+              platform: deviceInfo.os,
+              raw: deviceInfo.userAgent
+            }
+          }
+        };
+    });
+  }
+
+  generateTelemetryEndEvent(eventMode) {
+    const telemetryCdata = [{id: this.userService.channel, type: 'sourcing_organization'},
+    {id: this.programContext.program_id, type: 'project'}, {id: this.sessionContext.collection, type: 'linked_collection'}];
+    this.telemetryEnd = {
+      object: {
+        id: this.sessionContext.resourceIdentifier || '',
+        type: 'content',
+      },
+      context: {
+        env: this.activeRoute.snapshot.data.telemetry.env,
+        cdata: telemetryCdata || []
+      },
+      edata: {
+        type: this.configService.telemetryLabels.pageType.editor || '',
+        pageid: this.telemetryPageId,
+        mode: eventMode || '',
+        duration: _.toString((Date.now() - this.pageStartTime) / 1000)
+      }
+    };
+    this.telemetryService.end(this.telemetryEnd);
   }
 
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-    const telemetryCdata = [{ 'type': 'Program', 'id': this.programContext.program_id }];
      setTimeout(() => {
       this.telemetryImpression = {
         context: {
           env: this.activeRoute.snapshot.data.telemetry.env,
-          cdata: telemetryCdata || [],
+          cdata: this.telemetryEventsInput.telemetryInteractCdata || [],
           pdata: {
             id: this.userService.appId,
             ver: version,
@@ -152,7 +206,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         },
         edata: {
-          type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
+          type: this.configService.telemetryLabels.pageType.view || _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
           pageid: this.telemetryPageId,
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
@@ -175,9 +229,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public preprareTelemetryEvents() {
     // tslint:disable-next-line:max-line-length
-    this.telemetryEventsInput.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.sessionContext.collection, 'Content', '1.0');
-    // tslint:disable-next-line:max-line-length
-    this.telemetryEventsInput.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.sessionContext.programId, 'Program');
+    this.telemetryEventsInput.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.sessionContext.resourceIdentifier, 'Content', '1.0', { l1: this.sessionContext.collection, l2: this.sessionContext.textBookUnitIdentifier});
+    this.telemetryEventsInput.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
     // tslint:disable-next-line:max-line-length
     this.telemetryEventsInput.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
   }
@@ -690,7 +743,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
               'identifier': questionIds,
               'status': ['Live', 'Review', 'Draft']
             },
-            'sort_by': { 'createdOn': 'desc' },
+            'sort_by': { 'createdOn': 'asc' },
             'limit': 20
           }
         }
@@ -922,6 +975,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         // tslint:disable-next-line:max-line-length
         this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, contentId )
         .subscribe((data) => {
+          this.generateTelemetryEndEvent('publish');
           this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
           this.programStageService.removeLastStage();
           this.uploadedContentMeta.emit({

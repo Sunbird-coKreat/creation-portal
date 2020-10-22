@@ -1,5 +1,22 @@
 <div [appTelemetryImpression]="telemetryImpression"></div>
 
+<div class="ui container py-10">
+  <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="handleBack()"
+    type="button"
+    appTelemetryInteract
+    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('go-back', 'click', 'launch', 'content-editor')"
+    [telemetryInteractObject]="telemetryInteractObject"
+    [telemetryInteractCdata]="telemetryInteractCdata"
+    [telemetryInteractPdata]="telemetryInteractPdata">
+    <i class="icon-svg icon-svg--xxs icon-back mr-4">
+        <svg class="icon icon-svg--primary">
+            <use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
+        </svg>
+    </i>
+    Back
+  </button>
+</div>
+
 <div id="contentEditor" *ngIf="!showPreview"></div>
 <sui-dimmer class="page" *ngIf="showLoader" [isDimmed]="showLoader">
   <div class="ui text loader"><h2>Loading...</h2></div>
@@ -18,14 +35,14 @@
     <div class='practical-sb-buttons'>
       <button id="requestChanges" suiPopup popupText="Request Changes" [popupPlacement]="'top'" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true;" *ngIf="visibility && visibility.showRequestChanges"
       appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-resource', 'click', 'content-editor')"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-resource', 'click',undefined,'content-editor')"
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
       >Request Changes</button>
       <button id="publishContent" suiPopup popupText="Publish" [popupPlacement]="'top'" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="publichContent()" *ngIf="visibility && visibility.showRequestChanges"
       appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('publish-resource', 'click', 'content-editor')"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('publish-resource', 'click',undefined, 'content-editor')"
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
@@ -57,7 +74,7 @@
   <div class="sb-modal-actions">
     <button id="submitReview" type="submit" class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid}"   (click)="requestChanges()"
     appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-resourcewithcomments', 'click', 'content-editor')"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-resourcewithcomments', 'click',undefined, 'content-editor')"
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"

@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { ResourceService } from '@sunbird/shared';
+import { ResourceService, ConfigService } from '@sunbird/shared';
 import { ProgramTelemetryService } from '../../../program/services';
 
 @Component({
@@ -15,13 +15,17 @@ export class MvcListComponent implements OnInit, OnDestroy {
   @Input() selectedContentId: any;
   @Output() contentChangeEvent = new EventEmitter<any>();
   @Output() moveEvent = new EventEmitter<any>();
+  public telemetryPageId: string;
   public width: any;
   public height: any;
   public inViewLogs = [];
 
-  constructor(public resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService) { }
+  constructor(public resourceService: ResourceService, public configService: ConfigService,
+    public programTelemetryService: ProgramTelemetryService) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.telemetryPageId = this.sessionContext.telemetryPageId;
+  }
 
   onContentChange(selectedContent: any) {
     this.contentChangeEvent.emit({content: selectedContent});
