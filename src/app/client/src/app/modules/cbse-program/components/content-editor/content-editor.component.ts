@@ -94,12 +94,13 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.contentEditorComponentInput.contentId, 'Content', '1.0', { l1: this.sessionContext.collection, l2: this.contentEditorComponentInput.unitIdentifier});
-    if (
-      this.contentEditorComponentInput.action === 'preview' &&
-      this.contentEditorComponentInput.content.status === 'Review'
-    ) {
-      return this.handlePreview();
-    }
+    if (this.contentEditorComponentInput.action === 'preview' && this.contentEditorComponentInput.content.status === 'Live') {
+      this.handlePreview();
+    } else {
+      this.loadContentEditor();
+   }
+  }
+  loadContentEditor() {
     setTimeout(() => {
       this.getDetails()
       .pipe(
@@ -113,7 +114,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
           this.setWindowConfig();
         }),
         delay(10)
-      ) // wait for iziModal lo load
+      ) // wait for iziModal to load
       .subscribe(
         data => {
           jQuery('#contentEditor').iziModal('open');
@@ -173,6 +174,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
             this.playerConfig.data
           );
          this.contentData = response.result.content;
+         this.contentEditorComponentInput.content = this.contentData;
          this.resourceStatus = this.contentData.status;
       if (this.resourceStatus === 'Review') {
         this.resourceStatusText = 'Review in Progress';
@@ -201,8 +203,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   getDetails() {
-      return combineLatest(this.tenantService.tenantData$, this.getOwnershipType()).
-      pipe(map((data: any) => ({ tenantDetails: data[0].tenantData, ownershipType: data[1] })));
+      return of({'tenantDetails': {'logo': 'xyz.png'}, 'ownershipType': ['createdBy']});
   }
 
   private initEditor() {
@@ -266,6 +267,9 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       environment.enableTelemetryValidation; // telemetry validation
     // window.config.lock = {};
     window.config.videoMaxSize = this.videoMaxSize;
+    window.config.headerConfig = {
+      'managecollaborator': false, 'sendforreview': false, 'limitedsharing': false, 'showPreview': false, 'showEditDetails': false
+    };
   }
   /**
    * Re directed to the TOC of Text-book
@@ -276,8 +280,10 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       document.getElementById('contentEditor').remove();
     }
     // tslint:disable-next-line:max-line-length
-    this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.contentEditorComponentInput.unitIdentifier, this.contentEditorComponentInput.contentId).subscribe(() => {
-      this.programStageService.removeLastStage();
+    this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection,
+       this.contentEditorComponentInput.unitIdentifier, this.contentEditorComponentInput.contentId)
+    .subscribe((res) => {
+      this.handlePreview();
     }, (err) => {
       this.toasterService.error(this.resourceService.messages.fmsg.m0098);
       this.getDetails();
@@ -308,7 +314,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
        .subscribe(res => {
         if (this.sessionContext.collection && this.contentEditorComponentInput.unitIdentifier) {
           // tslint:disable-next-line:max-line-length
-          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.contentEditorComponentInput.unitIdentifier, res.result.identifier)
+          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.contentEditorComponentInput.unitIdentifier, res.result.node_id)
           .subscribe((data) => {
             this.toasterService.success(this.resourceService.messages.smsg.m0063);
             this.programStageService.removeLastStage();
@@ -317,6 +323,10 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       }, (err) => {
         this.toasterService.error(this.resourceService.messages.fmsg.m00101);
       });
+  }
+
+  handleBack() {
+    this.programStageService.removeLastStage();
   }
 
   ngOnDestroy() {
