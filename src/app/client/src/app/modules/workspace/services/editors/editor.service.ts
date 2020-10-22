@@ -16,6 +16,10 @@ export class EditorService {
      */
     baseUrl: string;
     /**
+     * Boolean flag for enabling workspace proxy
+     */
+    dockWorkspaceProxy: any;
+    /**
      * reference of config service.
      */
     public configService: ConfigService;
@@ -37,6 +41,8 @@ export class EditorService {
         this.contentService = contentService;
         this.baseUrl = this.configService.urlConFig.URLS.CONTENT_PREFIX;
         this.publicDataService = publicDataService;
+        const dockWorkspaceProxy = (<HTMLInputElement>document.getElementById('dockWorkspaceProxy'));
+        this.dockWorkspaceProxy = dockWorkspaceProxy ? dockWorkspaceProxy.value : false;
     }
 
     /**
@@ -60,7 +66,7 @@ export class EditorService {
                 'request': req
             }
         };
-        return this.contentService.post(option);
+        return this.contentService.post(option, this.dockWorkspaceProxy);
     }
     /**
      * get content details by id and query param
