@@ -143,6 +143,7 @@ function getLocals(req) {
   locals.offlineDesktopAppSupportedLanguage = envHelper.sunbird_portal_offline_supported_languages,
   locals.offlineDesktopAppDownloadUrl = envHelper.SUNBIRD_PORTAL_BASE_URL
   locals.portalBaseUrl = envHelper.SUNBIRD_PORTAL_BASE_URL
+  locals.dockWorkspaceProxy = envHelper.DOCK_WORKSPACE_PROXY
   locals.logFingerprintDetails = envHelper.LOG_FINGERPRINT_DETAILS,
   locals.deviceId = '';
   locals.deviceProfileApi = envHelper.DEVICE_PROFILE_API;

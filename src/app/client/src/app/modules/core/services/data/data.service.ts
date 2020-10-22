@@ -120,13 +120,16 @@ export class DataService {
    * for making post api calls
    * @param {RequestParam} requestParam interface
   */
-  post(requestParam: RequestParam): Observable<ServerResponse> {
+  post(requestParam: RequestParam, flag?: Boolean): Observable<ServerResponse> {
     const httpOptions: HttpOptions = {
       headers: requestParam.header ? this.getHeader(requestParam.header) : this.getHeader(),
       params: requestParam.param
     };
-
-    return this.http.post(this.baseUrl + requestParam.url, requestParam.data, httpOptions).pipe(
+    let baseUrl = this.baseUrl;
+    if (flag) {
+      baseUrl = `/workspace${baseUrl}`;
+    }
+    return this.http.post(baseUrl + requestParam.url, requestParam.data, httpOptions).pipe(
       mergeMap((data: ServerResponse) => {
         if (data.responseCode !== 'OK') {
           return observableThrowError(data);
