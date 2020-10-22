@@ -33,7 +33,7 @@
       </div>
     </div>
     <div class='practical-sb-buttons'>
-      <button id="requestChanges" suiPopup popupText="Request Changes" [popupPlacement]="'top'" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true;" *ngIf="visibility && visibility.showRequestChanges"
+      <button id="requestChanges" suiPopup popupText="Request Changes" [popupPlacement]="'top'" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="popupAction='requestChanges'; showRequestChangesPopup = true;" *ngIf="visibility && visibility.showRequestChanges"
       appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject-resource', 'click',undefined,'content-editor')"
         [telemetryInteractObject]="telemetryInteractObject"
