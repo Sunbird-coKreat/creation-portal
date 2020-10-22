@@ -470,6 +470,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       'inputType': 'checkbox',
       'placeholder': 'Name'
     }];
+
     if (_.get(this.selectedSharedContext, 'topic')) {
       // tslint:disable-next-line:max-line-length
       this.sessionContext.topic = _.isArray(this.sessionContext.topic) ? this.selectedSharedContext.topic : _.split(this.selectedSharedContext.topic, ',');
