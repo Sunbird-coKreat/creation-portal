@@ -1,12 +1,12 @@
-import { Component, OnInit, AfterViewInit, NgZone, Renderer2, OnDestroy, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, NgZone, Renderer2, OnDestroy, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import * as _ from 'lodash-es';
 import * as iziModal from 'izimodal/js/iziModal';
 import { NavigationHelperService, ResourceService, ConfigService, ToasterService, IUserProfile } from '@sunbird/shared';
-import { UserService, TenantService, FrameworkService, PlayerService } from '@sunbird/core';
+import { UserService, TenantService, FrameworkService, PlayerService, NotificationService, ProgramsService } from '@sunbird/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '@sunbird/environment';
 import { TelemetryService, IInteractEventEdata } from '@sunbird/telemetry';
-import { combineLatest, of, throwError } from 'rxjs';
+import { combineLatest, of, throwError, Subscription } from 'rxjs';
 import { map, mergeMap, tap, delay, first } from 'rxjs/operators';
 import { IContentEditorComponentInput } from '../../interfaces';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
@@ -23,6 +23,7 @@ jQuery.fn.iziModal = iziModal;
 export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() contentEditorComponentInput: IContentEditorComponentInput;
   @ViewChild('FormControl') FormControl: NgForm;
+  @Output() uploadedContentMeta = new EventEmitter<any>();
   private userProfile: IUserProfile;
   private routeParams: any;
   private buildNumber: string;
@@ -48,6 +49,14 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
+  public popupAction: string;
+  public unitIdentifier: string;
+  public notify: Subscription;
+  public programContext: any;
+  public sourcingOrgReviewer: boolean;
+  public originCollectionData: any;
+  public sourcingReviewStatus: string;
+  public selectedOriginUnitStatus: string;
 
   constructor(
     private resourceService: ResourceService,
@@ -65,7 +74,9 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     public collectionHierarchyService: CollectionHierarchyService,
     public helperService: HelperService,
     public activeRoute: ActivatedRoute,
-    public programTelemetryService: ProgramTelemetryService
+    public programTelemetryService: ProgramTelemetryService,
+    private notificationService: NotificationService,
+    private programsService: ProgramsService
   ) {
     const buildNumber = <HTMLInputElement>(
       document.getElementById('buildNumber')
@@ -88,6 +99,12 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     this.userProfile = this.userService.userProfile;
     this.sessionContext = this.contentEditorComponentInput.sessionContext;
     this.actions = _.get(this.contentEditorComponentInput, 'programContext.config.actions');
+    this.unitIdentifier  = _.get(this.contentEditorComponentInput, 'unitIdentifier');
+    this.programContext = _.get(this.contentEditorComponentInput, 'programContext');
+    this.originCollectionData = _.get(this.contentEditorComponentInput, 'originCollectionData');
+    this.selectedOriginUnitStatus = _.get(this.contentEditorComponentInput, 'content.originUnitStatus');
+    this.sourcingReviewStatus = _.get(this.contentEditorComponentInput, 'sourcingStatus') || '';
+    this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.contentEditorComponentInput.programContext.program_id, 'Program');
     // tslint:disable-next-line:max-line-length
@@ -99,6 +116,9 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     } else {
       this.loadContentEditor();
    }
+   this.notify = this.helperService.getNotification().subscribe((action) => {
+    this.contentStatusNotify(action);
+  });
   }
   loadContentEditor() {
     setTimeout(() => {
@@ -151,10 +171,69 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
 
   handleActionButtons() {
     this.visibility = {};
+    const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
+    this.visibility['showRequestChanges'] = submissionDateFlag && this.canReviewContent();
+    this.visibility['showPublish'] = submissionDateFlag && this.canPublishContent();
+    this.visibility['showSubmit'] = submissionDateFlag && this.canSubmit();
+    this.visibility['showEditMetadata'] = submissionDateFlag && this.canEditMetadata();
+    this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
+    this.visibility['showSourcingActionButtons'] = this.canSourcingReviewerPerformActions();
+    this.visibility['showSendForCorrections'] = this.canSendForCorrections();
+  }
+
+  canSendForCorrections() {
+    return !this.contentData.sourceURL;
+  }
+
+  canEdit() {
     // tslint:disable-next-line:max-line-length
-    this.visibility['showRequestChanges'] = (_.includes(this.actions.showRequestChanges.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
+    return !!(this.hasAccessFor('showEdit') && this.resourceStatus === 'Draft' && this.userService.getUserId() === this.contentData.createdBy);
+  }
+
+  canSave() {
     // tslint:disable-next-line:max-line-length
-    this.visibility['showPublish'] = (_.includes(this.actions.showPublish.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
+    return !!(this.hasAccessFor('showSave') && !this.contentData.sampleContent === true && this.resourceStatus === 'Draft' && (this.userService.getUserId() === this.contentData.createdBy));
+  }
+
+  canEditMetadata() {
+    // tslint:disable-next-line:max-line-length
+    return !!(this.resourceStatus === 'Draft' && (this.userService.getUserId() === this.contentData.createdBy));
+  }
+
+  canSubmit() {
+    // tslint:disable-next-line:max-line-length
+    return !!(this.hasAccessFor('showSubmit') && this.resourceStatus === 'Draft' && this.userService.getUserId() === this.contentData.createdBy);
+  }
+
+  canViewContentType() {
+    // tslint:disable-next-line:max-line-length
+    return !!(this.sourcingOrgReviewer || (this.sessionContext.currentRoles.includes('REVIEWER') && this.userService.getUserId() !== this.contentData.createdBy));
+  }
+
+  canPublishContent() {
+    // tslint:disable-next-line:max-line-length
+    return !!(this.router.url.includes('/contribute') && !this.contentData.sampleContent === true &&
+    // tslint:disable-next-line:max-line-length
+    this.hasAccessFor('showPublish') && this.resourceStatus === 'Review' && this.userService.getUserId() !== this.contentData.createdBy);
+  }
+
+  canReviewContent() {
+    // tslint:disable-next-line:max-line-length
+    return !!(this.router.url.includes('/contribute') && !this.contentData.sampleContent === true && this.hasAccessFor('showRequestChanges') && this.resourceStatus === 'Review' && this.userService.getUserId() !== this.contentData.createdBy);
+  }
+
+  canSourcingReviewerPerformActions() {
+    // tslint:disable-next-line:max-line-length
+    return !!(this.router.url.includes('/sourcing')
+    && !this.contentData.sampleContent === true && this.resourceStatus === 'Live'
+    && this.userService.getUserId() !== this.contentData.createdBy
+    && this.resourceStatus === 'Live' && !this.sourcingReviewStatus &&
+    (this.originCollectionData.status === 'Draft' && this.selectedOriginUnitStatus === 'Draft'));
+  }
+
+  hasAccessFor(action) {
+    const roles = _.get(this.actions, `${action}.roles`, []);
+    return !_.isEmpty(_.intersection(roles, this.sessionContext.currentRoleIds));
   }
 
   handlePreview() {
@@ -329,6 +408,86 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     this.programStageService.removeLastStage();
   }
 
+  attachContentToTextbook (action) {
+    const hierarchyObj  = _.get(this.sessionContext.hierarchyObj, 'hierarchy');
+    if (hierarchyObj) {
+      const rootOriginInfo = _.get(_.get(hierarchyObj, this.sessionContext.collection), 'originData');
+      let channel =  rootOriginInfo && rootOriginInfo.channel;
+      if (_.isUndefined(channel)) {
+        const originInfo = _.get(_.get(hierarchyObj, this.unitIdentifier), 'originData');
+        channel = originInfo && originInfo.channel;
+      }
+      const originData = {
+        textbookOriginId: _.get(_.get(hierarchyObj, this.sessionContext.collection), 'origin'),
+        unitOriginId: _.get(_.get(hierarchyObj, this.unitIdentifier), 'origin'),
+        channel: channel
+      };
+      if (originData.textbookOriginId && originData.unitOriginId && originData.channel) {
+        if (action === 'accept') {
+          // tslint:disable-next-line:max-line-length
+          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentData.identifier, originData);
+        } else if (action === 'reject' && this.FormControl.value.rejectComment.length) {
+          // tslint:disable-next-line:max-line-length
+          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentData.identifier, originData, this.FormControl.value.rejectComment);
+        }
+      } else {
+        action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
+        this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+        console.error('origin data missing');
+      }
+    } else {
+      action === 'accept' ? this.toasterService.error(this.resourceService.messages.emsg.approvingFailed) :
+      this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+      console.error('origin data missing');
+    }
+  }
+
+  contentStatusNotify(status) {
+    if (!this.sessionContext.nominationDetails && this.contentData.organisationId && status !== 'Request') {
+      const programDetails = { name: this.programContext.name};
+      this.helperService.prepareNotificationData(status, this.contentData, programDetails);
+    } else {
+      const notificationForContributor = {
+        user_id: this.contentData.createdBy,
+        content: { name: this.contentData.name },
+        org: { name:  _.get(this.sessionContext, 'nominationDetails.orgData.name') || '--'},
+        program: { name: this.programContext.name },
+        status: status
+      };
+      this.notificationService.onAfterContentStatusChange(notificationForContributor)
+      .subscribe((res) => {  });
+      // tslint:disable-next-line:max-line-length
+      if (!_.isEmpty(this.sessionContext.nominationDetails) && !_.isEmpty(this.sessionContext.nominationDetails.user_id) && status !== 'Request') {
+        const notificationForPublisher = {
+          user_id: this.sessionContext.nominationDetails.user_id,
+          content: { name: this.contentData.name },
+          org: { name:  this.sessionContext.nominationDetails.orgData.name},
+          program: { name: this.contentData.name },
+          status: status
+        };
+        this.notificationService.onAfterContentStatusChange(notificationForPublisher)
+        .subscribe((res) => {  });
+      }
+    }
+  }
+
+  requestCorrectionsBySourcing() {
+    if (this.FormControl.value.rejectComment) {
+      this.helperService.updateContentStatus(this.contentData.identifier, 'Draft', this.FormControl.value.rejectComment)
+      .subscribe(res => {
+        this.showRequestChangesPopup = false;
+        this.contentStatusNotify('Reject');
+        this.toasterService.success(this.resourceService.messages.smsg.m0069);
+        this.programStageService.removeLastStage();
+        this.uploadedContentMeta.emit({
+          contentId: res.result.node_id
+        });
+      }, (err) => {
+        this.toasterService.error(this.resourceService.messages.fmsg.m00106);
+      });
+    }
+  }
+
   ngOnDestroy() {
     if (document.getElementById('contentEditor')) {
       document.getElementById('contentEditor').remove();
@@ -336,6 +495,9 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     const removeIzi = document.querySelector('.iziModal-isAttached');
     if (removeIzi) {
       removeIzi.classList.remove('iziModal-isAttached');
+    }
+    if (this.notify) {
+      this.notify.unsubscribe();
     }
   }
 }

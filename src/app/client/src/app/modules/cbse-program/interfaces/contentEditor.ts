@@ -7,4 +7,6 @@ export interface IContentEditorComponentInput {
     sessionContext?: ISessionContext;
     unitIdentifier?: string;
     programContext?: any;
+    originCollectionData: any;
+    sourcingStatus: string;
 }
