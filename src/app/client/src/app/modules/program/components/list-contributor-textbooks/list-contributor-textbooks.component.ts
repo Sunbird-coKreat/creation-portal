@@ -107,8 +107,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     this.nominatedContentTypes = this.programsService.getContentTypesName(this.contributor.nominationData.content_types);
     this.telemetryInteractCdata = [
       {id: this.userService.channel, type: 'sourcing_organization'},
-      {id: this.activatedRoute.snapshot.params.programId, type: 'project'},
-      {id: this.activatedRoute.snapshot.params.programId, type: 'nomination'}
+      {id: this.activatedRoute.snapshot.params.programId, type: 'project'}
     ];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};

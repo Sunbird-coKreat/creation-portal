@@ -46,6 +46,7 @@ export class MvcPlayerComponent implements OnInit, OnChanges {
       this.contentData = config.metadata;
       this.playerConfig = config;
       this.playerConfig.context.pdata.pid = `${this.configService.appConfig.TELEMETRY.PID}`;
+      this.playerConfig.context.cdata = this.sessionContext.telemetryInteractCdata;
       this.cd.detectChanges();
     });
   }

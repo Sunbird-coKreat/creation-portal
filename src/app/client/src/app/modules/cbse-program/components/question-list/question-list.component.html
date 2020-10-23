@@ -159,16 +159,16 @@
           [class.active]="selectedQuestionId === question.identifier"
           (click)="handleQuestionTabChange(question.identifier);" *ngFor="let question of questionList; let i = index;"
           appTelemetryInteract
-          [telemetryInteractEdata]="{id:'question_tab',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.launch,pageid:telemetryPageId,extra: {type:'reference',category:question.category,identifier:question.identifier}}"
-          [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+          [telemetryInteractEdata]="{id:'question_tab',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.launch,pageid:telemetryPageId}"
+          [telemetryInteractObject]="getTelemetryInteractObject(question.identifier, 'Question')"
           [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata">
           <label class="mb-0 mr-auto" for="check1"> Question {{i + 1}}</label>
           <img src="../../../../../assets/images/exclamation-icon.svg" *ngIf="question.rejectComment && question.rejectComment !== '' " class="ml-8" width="20px" height="16px">
           <i class="trash alternate outline icon ml-24" *ngIf="visibility && visibility.showDeleteQuestion"
           appTelemetryInteract
-          [telemetryInteractEdata]="{id:'delete_question',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.submit,pageid:telemetryPageId,extra: {type:'reference',category:question.category,identifier:question.identifier}}"
-          [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+          [telemetryInteractEdata]="{id:'delete_question',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.launch,pageid:telemetryPageId}"
+          [telemetryInteractObject]="getTelemetryInteractObject(question.identifier, 'Question')"
           [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
            (click)="openDeleteQuestionModal($event,question.identifier)"></i>
@@ -239,7 +239,7 @@
     <button type="button" class="sb-btn sb-btn-normal" (click)="deleteQuestion()"
     appTelemetryInteract
     [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('delete', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryPageId,{key:'dialog_id',value:'delete_question'})"
-    [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+    [telemetryInteractObject]="getTelemetryInteractObject(deleteAssessmentItemIdentifier, 'Question')"
     [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
     [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"> Delete </button>
   </div>

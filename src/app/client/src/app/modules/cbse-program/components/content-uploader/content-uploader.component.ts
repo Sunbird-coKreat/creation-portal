@@ -657,6 +657,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
       this.playerConfig = this.playerService.getConfig(contentDetails);
       this.playerConfig.context.pdata.pid = `${this.configService.appConfig.TELEMETRY.PID}`;
+      this.playerConfig.context.cdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
       this.showPreview = this.contentMetaData.artifactUrl ? true : false;
       this.showUploadModal = false;
       if (!this.contentMetaData.artifactUrl) {

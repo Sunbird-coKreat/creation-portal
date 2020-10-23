@@ -623,4 +623,9 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
   getMetaData() {
     return this.helperService.getFormattedData(this.questionMetaForm.value, this.textFields);
   }
+
+  getTelemetryInteractObject(id: string, type: string) {
+    return this.programTelemetryService.getTelemetryInteractObject(id, type, '1.0',
+    { l1: this.sessionContext.collection, l2: this.sessionContext.textBookUnitIdentifier, l3: this.sessionContext.resourceIdentifier});
+  }
 }
