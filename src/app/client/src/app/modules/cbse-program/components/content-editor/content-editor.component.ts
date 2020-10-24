@@ -135,6 +135,16 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   this.helperService.initialize(this.programContext);
   }
   loadContentEditor() {
+    if (!document.getElementById('contentEditor')) {
+      const editorElement = document.createElement('div');
+      const editorComponent = document.getElementsByTagName('app-content-editor');
+      editorElement.id = 'contentEditor';
+      if (_.first(editorComponent)) {
+        editorComponent[0].append(editorElement);
+      } else {
+        return;
+      }
+    }
     setTimeout(() => {
       this.getDetails()
       .pipe(
@@ -293,7 +303,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
 
   handlePreview() {
     // tslint:disable-next-line:max-line-length
-    if (this.contentEditorComponentInput.action === 'preview' && this.canViewContentPreview()) {
+    if (this.contentEditorComponentInput.action === 'preview' && (this.showPreview || this.canViewContentPreview())) {
       this.showPreview = true;
       this.showLoader = false;
     } else {
@@ -486,6 +496,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     if (document.getElementById('contentEditor')) {
       document.getElementById('contentEditor').remove();
     }
+    this.showPreview = true;
     // tslint:disable-next-line:max-line-length
     this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection,
        this.contentEditorComponentInput.unitIdentifier, this.contentEditorComponentInput.contentId)
@@ -687,12 +698,6 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
 
   isIndividualAndNotSample() {
     return !!(this.sessionContext.currentOrgRole === 'individual' && this.sessionContext.sampleContent !== true);
-  }
-
-  openEditor() {
-    this.showPreview = true;
-    this.showLoader = true;
-    this.loadContentEditor();
   }
 
   ngOnDestroy() {

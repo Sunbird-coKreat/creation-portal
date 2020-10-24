@@ -76,7 +76,7 @@
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{resourceService.frmelmnts.btn.accept}}</button>
-              <button id="submitContent" suiPopup popupText="{{'Edit'}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showEdit" class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8" (click)="ngOnInit()"
+              <button id="submitContent" suiPopup popupText="{{'Edit'}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showEdit" class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8" (click)="loadContentEditor()"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('publish', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryPageId)"
                 [telemetryInteractObject]="telemetryInteractObject"
