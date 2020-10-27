@@ -9,4 +9,5 @@ export interface IContentEditorComponentInput {
     programContext?: any;
     originCollectionData: any;
     sourcingStatus: string;
+    selectedSharedContext: any;
 }

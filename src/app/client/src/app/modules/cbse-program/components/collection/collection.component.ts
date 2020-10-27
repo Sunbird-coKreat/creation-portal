@@ -70,6 +70,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedContentTypes = [];
   selectedCollectionIds = [];
   public currentUserID;
+  public uploadSampleClicked = false;
   _slideConfig = {'slidesToShow': 10, 'slidesToScroll': 1, 'variableWidth': true};
   public preSavedContentTypes = [];
   public disableNominate = false;
@@ -116,6 +117,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this.filters = this.getImplicitFilters();
 
+    // tslint:disable-next-line:max-line-length
     const currentRoles = _.filter(this.programContext.config.roles, role => _.get(this.sessionContext, 'currentRoles', []).includes(role.name));
     this.sessionContext.currentRoleIds = !_.isEmpty(currentRoles) ? _.map(currentRoles, role => role.id) : null;
     this.roles.currentRoles = this.sessionContext.currentRoles;
@@ -333,6 +335,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       this.currentStage  = _.last(this.state.stages).stage;
     }
     if (this.sessionContext && this.programContext && this.currentStage === 'collectionComponent') {
+      this.uploadSampleClicked = false;
       this.getNominationStatus();
     }
    }
@@ -348,7 +351,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
             status: this.sessionContext.collectionStatus || ['Draft', 'Live'],
             contentType: this.sessionContext.collectionType || 'Textbook'
           },
-          fields: ["name", "gradeLevel", "mimeType", "medium", "subject", "status", "chapterCount", "chapterCountForContribution"],
+          fields: ['name', 'gradeLevel', 'mimeType', 'medium', 'subject', 'status', 'chapterCount', 'chapterCountForContribution'],
           limit: 1000
         }
       }
@@ -563,6 +566,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   uploadSampleContent(event, collection) {
+    this.uploadSampleClicked = true;
     if (!this.selectedContentTypes.length) {
         this.toasterService.error(this.resourceService.messages.emsg.nomination.m001);
     } else {
