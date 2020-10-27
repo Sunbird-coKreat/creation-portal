@@ -650,7 +650,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       return false;
     }
 
-    return this.programsService.getContentTypesName(program.content_types);
+    return _.join(program.content_types, ', ');
   }
 
   viewDetailsBtnClicked(program) {
