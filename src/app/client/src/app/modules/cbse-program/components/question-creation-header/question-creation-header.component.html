@@ -5,8 +5,8 @@
         <span class="sb-color-error">Question Rejected</span>
         <span class="cursor-pointer fs-0-785 ml-8" (click)="openReviewerCommentModal()"
         appTelemetryInteract 
-        [telemetryInteractEdata]="{id:'view-reviewercomments',type:'click',pageid:'question-creation-header',extra: {type:'reference',category:questionMetaData.data.category,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
-        [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+        [telemetryInteractEdata]="{id:'view_comments',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.launch,pageid:telemetryEventsInput.telemetryPageId}"
+        [telemetryInteractObject]="getTelemetryInteractObject(questionMetaData?.data?.identifier, 'Question')"
         [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
         >
@@ -19,7 +19,7 @@
 
 
 <div class="d-flex flex-ai-center flex-jc-space-between question-header">
-  <div class="d-flex ui blue message py-8 my-0 mr-auto" *ngIf="resourceStatus === 'Draft' ">
+  <div class="d-flex ui blue message py-8 my-0 mr-auto" *ngIf="sessionContext.resourceStatus === 'Draft' ">
   Please only use&nbsp;&nbsp;<b>Add Image</b>(<i class="image outline icon mr-0 py-2"></i>)&nbsp;&nbsp;button to upload images</div>
 </div>
 

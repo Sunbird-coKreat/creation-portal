@@ -632,3 +632,27 @@ xxl calculateRem(180px) 24px 20px;
 .sb-loader-top{
   top: 18% !important;
 }
+
+.sb-workspace-modal{
+  .sb-field-group{
+    &.disabled{
+      sui-select{
+        border: none;
+        .dropdown{
+          &.icon{
+            display: none;
+          }
+        }
+      }
+      sui-multi-select{
+        border: none;
+        padding: 0 !important;
+        .dropdown{
+          &.icon{
+            display: none;
+          }
+        }
+      }
+    }
+  }
+}

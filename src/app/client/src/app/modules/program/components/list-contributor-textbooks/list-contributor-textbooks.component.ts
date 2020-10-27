@@ -64,9 +64,10 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
+  public telemetryPageId: string;
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private userService: UserService, private frameworkService: FrameworkService,
-    private config: ConfigService, private publicDataService: PublicDataService,
+    public config: ConfigService, private publicDataService: PublicDataService,
   private activatedRoute: ActivatedRoute, private router: Router, public programStageService: ProgramStageService,
   private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
   public toasterService: ToasterService, public actionService: ActionService,
@@ -104,7 +105,10 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     });
     this.contributor = this.selectedNominationDetails;
     this.nominatedContentTypes = this.programsService.getContentTypesName(this.contributor.nominationData.content_types);
-    this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program'}];
+    this.telemetryInteractCdata = [
+      {id: this.userService.channel, type: 'sourcing_organization'},
+      {id: this.activatedRoute.snapshot.params.programId, type: 'project'}
+    ];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
   }
@@ -255,12 +259,11 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     const deviceId = <HTMLInputElement>document.getElementById('deviceId');
-    const telemetryCdata = [{type: 'Program', id: this.activatedRoute.snapshot.params.programId}];
      setTimeout(() => {
       this.telemetryImpression = {
         context: {
           env: this.activatedRoute.snapshot.data.telemetry.env,
-          cdata: telemetryCdata || [],
+          cdata: this.telemetryInteractCdata || [],
           pdata: {
             id: this.userService.appId,
             ver: version,
@@ -270,16 +273,27 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
         },
         edata: {
           type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
-          pageid: _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid'),
+          pageid: this.getPageId(),
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
-          duration: this.navigationHelperService.getPageLoadTime()
+          duration: this.navigationHelperService.getPageLoadTime(),
+          visits: []
         }
       };
      });
   }
+
+  getPageId() {
+    this.telemetryPageId = _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid');
+    return this.telemetryPageId;
+  }
+
   viewContribution(collection) {
     this.component = ChapterListComponent;
     this.sessionContext.programId = this.programDetails.program_id;
+    this.sessionContext.telemetryPageDetails = {
+      telemetryPageId : this.config.telemetryLabels.pageId.sourcing.projectNominationTargetCollection,
+      telemetryInteractCdata: [...this.telemetryInteractCdata, { 'id': collection.identifier, 'type': 'linked_collection'}]
+    };
     this.sessionContext.collection =  collection.identifier;
     this.sessionContext.collectionName = collection.name;
     this.sessionContext.currentRoles = ['REVIEWER'] ;
@@ -405,10 +419,11 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   goBack() {
     this.navigationHelperService.navigateToPreviousUrl();
   }
-  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+  getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: string): IInteractEventEdata {
     return _.omitBy({
       id,
       type,
+      subtype,
       pageid,
       extra
     }, _.isUndefined);

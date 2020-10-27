@@ -41,7 +41,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   public classes;
   public board;
   public filters;
-  public telemetryPageId = 'contribution_project_contributions';
+  public telemetryPageId: string;
   public telemetryInteractCdata: any;
   public contentStatusCounts: any = {};
   public telemetryInteractPdata: any;
@@ -70,10 +70,11 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedContentTypes = [];
   selectedCollectionIds = [];
   public currentUserID;
+  public uploadSampleClicked = false;
   _slideConfig = {'slidesToShow': 10, 'slidesToScroll': 1, 'variableWidth': true};
   public preSavedContentTypes = [];
   public disableNominate = false;
-  constructor(private configService: ConfigService, public publicDataService: PublicDataService,
+  constructor(public configService: ConfigService, public publicDataService: PublicDataService,
     public actionService: ActionService,
     private cbseService: CbseProgramService, private collectionHierarchyService: CollectionHierarchyService,
     public programStageService: ProgramStageService, public resourceService: ResourceService,
@@ -116,6 +117,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this.filters = this.getImplicitFilters();
 
+    // tslint:disable-next-line:max-line-length
     const currentRoles = _.filter(this.programContext.config.roles, role => _.get(this.sessionContext, 'currentRoles', []).includes(role.name));
     this.sessionContext.currentRoleIds = !_.isEmpty(currentRoles) ? _.map(currentRoles, role => role.id) : null;
     this.roles.currentRoles = this.sessionContext.currentRoles;
@@ -125,9 +127,9 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mediums = _.find(this.collectionComponentConfig.config.filters.implicit, {'code': 'medium'}).defaultValue;
     this.board = _.find(this.collectionComponentConfig.config.filters.implicit, {'code': 'board'}).defaultValue;
     (_.size(this.mediums) > 1) ? this.isMediumClickable = true : this.isMediumClickable = false;
-
+    this.telemetryPageId = _.get(this.sessionContext, 'telemetryPageDetails.telemetryPageId');
     // tslint:disable-next-line:max-line-length
-    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.collectionComponentInput.programContext.program_id, 'Program');
+    this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
     this.telemetryInteractObject = {};
@@ -141,12 +143,11 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-    const telemetryCdata = [{ 'type': 'Program', 'id': this.programContext.program_id }];
     setTimeout(() => {
       this.telemetryImpression = {
         context: {
           env: this.activatedRoute.snapshot.data.telemetry.env,
-          cdata: telemetryCdata || [],
+          cdata: this.telemetryInteractCdata || [],
           pdata: {
             id: this.userService.appId,
             ver: version,
@@ -154,7 +155,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
           }
         },
         edata: {
-          type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
+          type: this.configService.telemetryLabels.pageType.workflow || _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
           pageid: this.telemetryPageId,
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
@@ -334,6 +335,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       this.currentStage  = _.last(this.state.stages).stage;
     }
     if (this.sessionContext && this.programContext && this.currentStage === 'collectionComponent') {
+      this.uploadSampleClicked = false;
       this.getNominationStatus();
     }
    }
@@ -349,7 +351,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
             status: this.sessionContext.collectionStatus || ['Draft', 'Live'],
             contentType: this.sessionContext.collectionType || 'Textbook'
           },
-          fields: ["name", "gradeLevel", "mimeType", "medium", "subject", "status", "chapterCount", "chapterCountForContribution"],
+          fields: ['name', 'gradeLevel', 'mimeType', 'medium', 'subject', 'status', 'chapterCount', 'chapterCountForContribution'],
           limit: 1000
         }
       }
@@ -564,6 +566,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   uploadSampleContent(event, collection) {
+    this.uploadSampleClicked = true;
     if (!this.selectedContentTypes.length) {
         this.toasterService.error(this.resourceService.messages.emsg.nomination.m001);
     } else {
@@ -606,6 +609,10 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sessionContext = _.assign(this.sessionContext, this.sharedContext);
     this.sessionContext.collection =  collection.identifier;
     this.sessionContext.collectionName = collection.name;
+    this.sessionContext.telemetryPageDetails = {
+      telemetryPageId : this.configService.telemetryLabels.pageId.contribute.submitNominationTargetCollection,
+      telemetryInteractCdata: [...this.telemetryInteractCdata, { 'id': collection.identifier, 'type': 'linked_collection'}]
+    };
     this.chapterListComponentInput = {
       sessionContext: this.sessionContext,
       collection: collection,
@@ -624,4 +631,9 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       this.toasterService.error(this.resourceService.messages.emsg.nomination.m001);
     }
   }
+
+  getTelemetryInteractCdata(type, id) {
+    return [ ...this.telemetryInteractCdata, { type: type, id: _.toString(id)} ];
+  }
+
 }

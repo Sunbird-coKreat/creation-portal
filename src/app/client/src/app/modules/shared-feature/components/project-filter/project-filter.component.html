@@ -16,7 +16,11 @@
               <sui-select class="selection" [options]="currentFilters['rootorg_id']" (selectedOptionChange)="onChangeSourcingOrg()"
                 [(ngModel)]="setPreferences['rootorg_id']" valueField="id" labelField="orgName"
                 placeholder="{{resourceService?.frmelmnts?.lbl?.selectSourcingFilter}}"
-                formControlName="sourcingOrganisations" #sourcingOrganisations>
+                formControlName="sourcingOrganisations" #sourcingOrganisations
+                appTelemetryInteract
+                [telemetryInteractEdata]="getTelemetryInteractEdata('sourcing_organisation', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.singleSelect,telemetryPageId, {key:'dialog_id',value:'apply_filters'})"
+                [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata">
                 <sui-select-option *ngFor="let sourcing of sourcingOrganisations.filteredOptions" [value]="sourcing">
                 </sui-select-option>
               </sui-select>
@@ -28,7 +32,11 @@
                 class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.mediumsFilter}}</label>
               <sui-multi-select class="selection p-5 b-100" [(ngModel)]="setPreferences['medium']" valueField="name"  labelField="name"
               (ngModelChange)="onMediumChange()" [options]="currentFilters['medium']" placeholder="{{resourceService?.messages?.stmsg?.m0127}}"
-                formControlName="medium" #mediums>
+                formControlName="medium" #mediums
+                appTelemetryInteract
+                [telemetryInteractEdata]="getTelemetryInteractEdata('medium', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {key:'dialog_id',value:'apply_filters'})"
+                [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata">
                 <sui-select-option *ngFor="let medium of mediums.filteredOptions" [value]="medium"> </sui-select-option>
               </sui-multi-select>
             </div>
@@ -39,7 +47,11 @@
                 class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.classesFilter}}</label>
               <sui-multi-select formControlName="gradeLevel" [(ngModel)]="setPreferences['gradeLevel']" valueField="name" labelField="name"
               (ngModelChange)="onClassChange()"  [options]="currentFilters['gradeLevel']" placeholder="{{resourceService?.messages?.stmsg?.m0128}}"
-                class="selection p-5 b-100" #gradeLevels>
+                class="selection p-5 b-100" #gradeLevels
+                appTelemetryInteract
+                [telemetryInteractEdata]="getTelemetryInteractEdata('class', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {key:'dialog_id',value:'apply_filters'})"
+                [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata">
                 <sui-select-option *ngFor="let gradeLevel of gradeLevels.filteredOptions" [value]="gradeLevel">
                 </sui-select-option>
               </sui-multi-select>
@@ -52,7 +64,11 @@
               <sui-multi-select class="selection p-5 b-100" [(ngModel)]="setPreferences['subject']"
                 [options]="currentFilters['subject']" valueField="name" labelField="name"
                 placeholder="{{resourceService?.frmelmnts?.lbl?.selectSubjectFilter}}" formControlName="subject"
-                #subjects>
+                #subjects
+                appTelemetryInteract
+                [telemetryInteractEdata]="getTelemetryInteractEdata('subject', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {key:'dialog_id',value:'apply_filters'})"
+                [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata">
                 <sui-select-option *ngFor="let subject of subjects.filteredOptions" [value]="subject">
                 </sui-select-option>
               </sui-multi-select>
@@ -65,7 +81,11 @@
               <sui-multi-select formControlName="content_types" [(ngModel)]="setPreferences['content_types']" 
                 valueField="value" labelField="name" [options]="currentFilters['contentTypes']"
                 placeholder="{{resourceService?.frmelmnts?.lbl?.selectcontentTypesFilter}}" class="selection p-5 b-100"
-                #contentTypes>
+                #contentTypes
+                appTelemetryInteract
+                [telemetryInteractEdata]="getTelemetryInteractEdata('content_type', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {key:'dialog_id',value:'apply_filters'})"
+                [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata">
                 <sui-select-option *ngFor="let contentType of contentTypes.filteredOptions" [value]="contentType">
                 </sui-select-option>
               </sui-multi-select>
@@ -77,7 +97,11 @@
                 class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.nominationDate}}</label>
               <sui-select class="selection" [options]="currentFilters['nominations']" valueField="value"
                 labelField="name" placeholder="{{resourceService?.frmelmnts?.lbl?.Select}}"
-                [(ngModel)]="setPreferences['nomination_date']" formControlName="nominations" #nominations>
+                [(ngModel)]="setPreferences['nomination_date']" formControlName="nominations" #nominations
+                appTelemetryInteract
+                [telemetryInteractEdata]="getTelemetryInteractEdata('nomination_date', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.singleSelect,telemetryPageId, {key:'dialog_id',value:'apply_filters'})"
+                [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata">
                 <sui-select-option *ngFor="let nomination of nominations.filteredOptions" [value]="nomination">
                 </sui-select-option>
               </sui-select>
@@ -89,7 +113,11 @@
                 class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.contributionDate}}</label>
               <sui-select class="selection" [options]="currentFilters['contributions']" valueField="value"
                 labelField="name" placeholder="{{resourceService?.frmelmnts?.lbl?.Select}}"
-                [(ngModel)]="setPreferences['contribution_date']" formControlName="contributions" #contributions>
+                [(ngModel)]="setPreferences['contribution_date']" formControlName="contributions" #contributions
+                appTelemetryInteract
+                [telemetryInteractEdata]="getTelemetryInteractEdata('contribution_date', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.singleSelect,telemetryPageId, {key:'dialog_id',value:'apply_filters'})"
+                [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata">
                 <sui-select-option *ngFor="let contribution of contributions.filteredOptions" [value]="contribution">
                 </sui-select-option>
               </sui-select>
@@ -100,13 +128,14 @@
     </div>
   </div>
   <div class="sb-modal-actions py-20">
-    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary"  [disabled]="!enableApplyBtn" (click)="applyFilter()" appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('apply-filters', 'click', 'program-list', {values: [setPreferences],tenantAccess: userService.slug})"
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary"  [disabled]="!enableApplyBtn" (click)="applyFilter()" 
+      appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('apply', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit,telemetryPageId, {filters: setPreferences,tenantAccess: userService.slug,key:'dialog_id',value:'apply_filters'})"
       [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService?.frmelmnts?.btn?.apply}} </button>
     <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="applyFilter('resetFilter')"
       appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('reset-filters', 'click', 'program-list')"
+      [telemetryInteractEdata]="getTelemetryInteractEdata('reset', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel,telemetryPageId, {key:'dialog_id',value:'apply_filters'})"
       [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService?.frmelmnts?.btn?.reset}}</button>
   </div>

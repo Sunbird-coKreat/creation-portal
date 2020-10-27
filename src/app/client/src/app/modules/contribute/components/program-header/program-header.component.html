@@ -4,7 +4,7 @@
       <!-- <ng-container *ngIf="headerActions.showTabs">
         <ng-container *ngFor="let tab of filterBy('index'); let i = index">
           <a appTelemetryInteract
-            [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('header-tab-'+tab.label, 'click', 'collection')"
+            [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('header-tab-'+tab.label, 'click',undefined, 'collection')"
             [telemetryInteractCdata]="telemetryInteractCdata"
             [telemetryInteractPdata]="telemetryInteractPdata"
             class="practical-appbar__item" *ngIf="tab?.visibility" (click)="handleTabChange(tab.onClick, tab.index)"
@@ -12,7 +12,7 @@
         </ng-container>
       </ng-container> -->
       <button appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('header-back-button', 'click', 'collection')"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('header-back-button', 'click', undefined,'collection')"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
         *ngIf="!headerActions.showTabs" (click)="handleBack()"

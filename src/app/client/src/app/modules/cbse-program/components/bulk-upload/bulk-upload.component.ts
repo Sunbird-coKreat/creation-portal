@@ -1,12 +1,13 @@
 import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
 import { UserService, ProgramsService, ActionService } from '@sunbird/core';
-import { ResourceService, ToasterService } from '@sunbird/shared';
+import { ResourceService, ToasterService, ConfigService } from '@sunbird/shared';
 import { FineUploader } from 'fine-uploader';
 import CSVFileValidator, { CSVFileValidatorResponse } from './csv-helper-util';
 import * as _ from 'lodash-es';
 import { BulkJobService } from '../../services/bulk-job/bulk-job.service';
 import { UUID } from 'angular2-uuid';
 import { HelperService } from '../../services/helper.service';
+import { ProgramTelemetryService } from '../../../program/services';
 
 @Component({
   selector: 'app-bulk-upload',
@@ -21,9 +22,9 @@ export class BulkUploadComponent implements OnInit {
   @ViewChild('fineUploaderUI') fineUploaderUI: ElementRef;
 
   public process: any = {
-    process_id: "",
-    status: "",
-    type: "bulk_upload",
+    process_id: '',
+    status: '',
+    type: 'bulk_upload',
     overall_stats: {
       total: 0,
       upload_failed: 0,
@@ -52,6 +53,7 @@ export class BulkUploadComponent implements OnInit {
   public showBulkUploadModal: boolean = false;
   public bulkUploadState: number = 0;
   public loading: boolean = false;
+  public telemetryPageId: string;
   public assetConfig: any = {
     csv: {
       accepted: 'csv',
@@ -61,13 +63,15 @@ export class BulkUploadComponent implements OnInit {
   uploader;
   public bulkUploadConfig = {
     maxRows: 300,
-    fileFormats: ["pdf", "html", "epub", "h5p", "mp4", "webm"]
+    fileFormats: ['pdf', 'html', 'epub', 'h5p', 'mp4', 'webm']
   };
   public bulkUploadErrorMsgs = [];
   public bulkUploadValidationError = '';
   public levels = [];
   public sampleMetadataCsvUrl: string = (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value.split(',')  + 'bulk-content-upload-format.csv';
-
+  public telemetryInteractCdata: any;
+  public telemetryInteractPdata: any;
+  public telemetryInteractObject: any;
   constructor(
     private userService: UserService,
     private resourceService: ResourceService,
@@ -76,6 +80,7 @@ export class BulkUploadComponent implements OnInit {
     private programsService: ProgramsService,
     private helperService: HelperService,
     public actionService: ActionService,
+    public programTelemetryService: ProgramTelemetryService, public configService: ConfigService
   ) { }
 
   ngOnInit() {
@@ -85,6 +90,12 @@ export class BulkUploadComponent implements OnInit {
     this.getChapters();
     this.setBulkUploadCsvConfig();
     this.stageStatus = this.getContentStatus();
+    this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
+    // tslint:disable-next-line:max-line-length
+    this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
+    // tslint:disable-next-line:max-line-length
+    this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.sessionContext.collection, 'Content', '1.0');
+    this.telemetryPageId = this.sessionContext.telemetryPageDetails.telemetryPageId;
   }
 
   getContentTypes() {
@@ -113,7 +124,7 @@ export class BulkUploadComponent implements OnInit {
     const hierarchy = _.get(this.sessionContext, 'hierarchyObj.hierarchy');
     this.levels = _.filter(hierarchy, (unit, identifier) => {
       unit.identifier = identifier;
-      return (unit.root === false && unit.mimeType === "application/vnd.ekstep.content-collection")
+      return (unit.root === false && unit.mimeType === 'application/vnd.ekstep.content-collection')
     }).map((unit) => {
       return { identifier: unit.identifier, name: unit.name }
     });
@@ -133,7 +144,7 @@ export class BulkUploadComponent implements OnInit {
       filters: {
         program_id: _.get(this.programContext, 'program_id', ''),
         collection_id: _.get(this.sessionContext, 'collection', ''),
-        type: "bulk_upload",
+        type: 'bulk_upload',
         createdby: _.get(this.userService, 'userProfile.userId', '')
       },
       limit: 1
@@ -156,7 +167,7 @@ export class BulkUploadComponent implements OnInit {
   }
 
   searchContentWithProcessId() {
-    this.bulkJobService.searchContentWithProcessId(this.process.process_id, "bulk_upload").subscribe((searchResponse) => {
+    this.bulkJobService.searchContentWithProcessId(this.process.process_id, 'bulk_upload').subscribe((searchResponse) => {
       // console.log('searchResponse res', JSON.stringify(searchResponse));
       this.process.overall_stats.upload_failed = 0;
       this.process.overall_stats.upload_success = 0;
@@ -165,13 +176,13 @@ export class BulkUploadComponent implements OnInit {
       if (_.get(searchResponse, 'result.count', 0) > 0) {
         this.contents = _.get(searchResponse, 'result.content');
         let status = this.stageStatus;
-        if (status === "review") {
+        if (status === 'review') {
           status = 'Review';
-        } else if (status === "publish") {
+        } else if (status === 'publish') {
           status = 'Live';
         }
         _.each(this.contents, (content) => {
-          if (content.status === "Failed") {
+          if (content.status === 'Failed') {
             this.process.overall_stats.upload_failed++;
           } else if (content.status === status) {
             this.process.overall_stats.upload_success++;
@@ -184,7 +195,7 @@ export class BulkUploadComponent implements OnInit {
         (this.process.overall_stats.upload_success + this.process.overall_stats.upload_failed);
 
         if (this.process.overall_stats.upload_pending === 0) {
-          this.process.status = "completed";
+          this.process.status = 'completed';
         }
 
         const req = {
@@ -412,7 +423,7 @@ export class BulkUploadComponent implements OnInit {
       this.setError(`${headerName} contains more than ${maxLength} characters at row: ${rowNumber}`);
     };
     const extraHeaderError = (invalidColumns, expectedColumns, foundColumns) => {
-      this.setError(`Invalid data found in columns: ${invalidColumns.join(",")}`);
+      this.setError(`Invalid data found in columns: ${invalidColumns.join(',')}`);
     };
 
     const contentTypes = _.union(_.concat(this.contentTypes.map((type) => type.name), this.contentTypes.map((type) => type.value)));
@@ -422,7 +433,8 @@ export class BulkUploadComponent implements OnInit {
       { name: 'Name of the Content', inputName: 'name', maxLength: 250, required: true, requiredError, headerError, maxLengthError },
       { name: 'Description of the content', inputName: 'description', maxLength: 500, maxLengthError, headerError },
       { name: 'Keywords', inputName: 'keywords', isArray: true, headerError },
-      { name: 'Audience', inputName: 'audience', required: true, requiredError, headerError, in: ['Learner', 'Instructor'], inError },
+      // tslint:disable-next-line:max-line-length
+      { name: 'Audience', inputName: 'audience', required: true, requiredError, headerError, in: ['Student', 'Teacher', 'Administrator'], inError },
       { name: 'Author', inputName: 'creator', required: true, requiredError, headerError },
       { name: 'Copyright', inputName: 'copyright', required: true, requiredError, headerError },
       { name: 'License', inputName: 'license', in: licenses, inError, isDefault: true, default: '', headerError },
@@ -637,7 +649,7 @@ export class BulkUploadComponent implements OnInit {
     this.process['createdby'] = createdby;
     this.process['program_id'] = program_id;
     this.process['collection_id'] = collection_id;
-    this.process.status = "processing";
+    this.process.status = 'processing';
 
     if (org_id) {
       this.process['data']['org_id'] = org_id;
