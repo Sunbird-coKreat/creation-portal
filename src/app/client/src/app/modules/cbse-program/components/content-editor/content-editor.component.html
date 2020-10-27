@@ -82,7 +82,7 @@
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
-              >Edit</button>
+              >{{resourceService.frmelmnts.lbl.contentEdit}}</button>
               <button id="submitContent" suiPopup popupText="{{sessionContext.currentOrgRole === 'individual' ? 'Publish' : 'Send For Review' }}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSubmit" class="sb-btn sb-btn-secondary sb-btn-normal" (click)="isIndividualAndNotSample() ? showEditform('publish') : showEditform('review');"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('publish', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryPageId)"
