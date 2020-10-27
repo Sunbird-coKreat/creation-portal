@@ -17,18 +17,16 @@
             </button>
   <div class="d-flex">
       <div class="d-flex flex-ai-center practical-header__content w-100">
-        <div class="mr-auto" *ngIf="!showTextArea">
+        <div class="mr-auto">
           <div class="d-flex flex-ai-center mb-10">
             <span class="font-weight-bold fs-1 practical-header__title">{{resourceName}}</span>
-            <a class="cursor-pointer fsmall sb-color-primary ml-16"
+            <a *ngIf="sessionContext.frameworkData" class="cursor-pointer fsmall sb-color-primary ml-16"
               appTelemetryInteract
               [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('edit', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
               [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
               [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
               [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
-              (click)="showResourceTitleEditor()"
-              *ngIf="canEditContentTitle()"
-            >Edit</a>
+              (click)="showEditform(); requiredAction = 'editForm'">{{(visibility && visibility.showEditMetadata) ? 'edit details' : 'view details'}}</a>
           </div>
           <div class="mt-8 practice-set__status">
             <span class="sb-label sb-label-table" [ngClass]="resourceStatusClass">
@@ -55,7 +53,7 @@
             </label>
           </div>
         </div>
-        <div class="sb-field-group textbook-edit mr-auto ui form" *ngIf="showTextArea">
+        <!-- <div class="sb-field-group textbook-edit mr-auto ui form" *ngIf="showTextArea">
           <div class="required inline field">
             <label class="font-weight-bold fsmall">{{resourceService.frmelmnts.lbl.contentName}}:</label>
             <textarea rows="4" name="resourceName" class="sb-form-control fs-1" #resourceTtlTextarea placeholder="Type here..." [(ngModel)]='resourceName' (keydown)="onResourceNameChange($event)" (keyup.enter)="saveResourceName()">{{resourceName}}</textarea>
@@ -63,9 +61,9 @@
             <span class="sb-error-text" *ngIf="resourceName?.length > resourceTitleLimit">{{resourceService.frmelmnts.lbl.contentNameLength }} {{resourceTitleLimit}}</span>
             <span class="sb-error-text" *ngIf="!resourceName?.length">{{resourceService.frmelmnts.lbl.contentNameRequired}}</span>
           </div>
-        </div>
+        </div> -->
         <div class='practical-sb-buttons'>
-          <button id="saveContent" *ngIf="visibility && visibility.showSave" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="saveResourceName();questionCreationChild.buttonTypeHandler('save')"
+          <button id="saveContent" *ngIf="visibility && visibility.showSave" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="questionCreationChild.buttonTypeHandler('save')"
           appTelemetryInteract
           [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('save', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit,telemetryPageId)"
           [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
@@ -102,7 +100,7 @@
           [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
           >{{resourceService.frmelmnts.btn.accept}}</button>
-          <button id="submitContent"  *ngIf="visibility && visibility.showSubmit && resourceStatus === 'Draft'" class="sb-btn sb-btn-secondary sb-btn-normal" (click)="questionCreationChild.buttonTypeHandler('review')"
+          <button id="submitContent"  *ngIf="visibility && visibility.showSubmit && resourceStatus === 'Draft'" class="sb-btn sb-btn-secondary sb-btn-normal" (click)="showEditform(); (isIndividualAndNotSample() ? requiredAction = 'publish' : requiredAction = 'review')"
           appTelemetryInteract
           [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('submit', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,telemetryPageId)"
           [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
@@ -322,4 +320,28 @@
     [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"> Submit Review </button>
   </div>
 </form>
+</sui-modal>
+
+<sui-modal *ngIf="showEditMetaForm" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+    class="sb-modal" appBodyScroll (dismissed)="showEditMetaForm = false">
+    <i class="icon close" (click)="showEditMetaForm= false" tabindex="0"></i>
+    <!--Header-->
+    <div class="sb-modal-header">Edit Details</div>
+    <!--/Header-->
+
+    <!--Content-->
+    <div class="sb-modal-content o-y-visible pb-8" *ngIf="formFieldProperties && categoryMasterList">
+      <app-data-form
+        #formData
+        [formFieldProperties]="formFieldProperties" 
+        [categoryMasterList]="categoryMasterList">
+      </app-data-form>
+    </div>
+    <!--/Content-->
+
+    <!--Actions-->
+    <div class="sb-modal-actions">
+        <button [disabled]="!editableFields.length" class="sb-btn sb-btn-normal sb-btn-primary" (click)="handleCallback();">{{requiredAction === 'editForm' ? 'Save' : 'Submit' }}</button>
+    </div>
+    <!--/Actions-->
 </sui-modal>

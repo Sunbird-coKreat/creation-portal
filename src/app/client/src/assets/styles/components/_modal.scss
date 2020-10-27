@@ -225,11 +225,11 @@ $sb-modal-corner-radius: $base-block-space;
     }
     .six.wide.column:nth-child(even){
         padding: 0;
-        padding-right: 8px;
+        padding-right: calculateRem(8px);
     }
     .six.wide.column:nth-child(odd){
         padding: 0;
-        padding-left: 8px;
+        padding-left: calculateRem(8px);
     }
 }
 //merge account modal bullet list

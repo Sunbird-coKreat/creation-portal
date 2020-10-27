@@ -374,7 +374,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         this.enrollPrograms = this.programs;
         this.tempSortPrograms = this.programs;
         this.count = _.get(response, 'result.count');
-        this.sortColumn = 'contributionDate';
+        this.sortColumn = 'createdon';
         this.direction = 'desc';
         this.sortCollection(this.sortColumn);
         this.showLoader = false;
