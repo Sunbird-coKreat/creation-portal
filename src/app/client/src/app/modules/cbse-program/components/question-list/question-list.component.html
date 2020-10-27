@@ -114,23 +114,23 @@
           <button id="sendForCorrections" suiPopup popupText="Send back for corrections" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" class="sb-btn sb-btn-normal mr-10" (click)="popupAction='sendForCorrections';showRequestChangesPopup = true"
             appTelemetryInteract
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('send_back_for_corrections', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, 'content-uploader')"
-            [telemetryInteractObject]="telemetryInteractObject"
-            [telemetryInteractCdata]="telemetryInteractCdata"
-            [telemetryInteractPdata]="telemetryInteractPdata"
+            [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+            [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
           >{{resourceService.frmelmnts.btn.sendForCorrections}}</button>
           <button id="acceptContent" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentAcceptMessage}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="updateContentBeforeApproving('accept')"
           appTelemetryInteract
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('approve', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryPageId)"
-            [telemetryInteractObject]="telemetryInteractObject"
-            [telemetryInteractCdata]="telemetryInteractCdata"
-            [telemetryInteractPdata]="telemetryInteractPdata"
+            [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+            [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
           >{{resourceService.frmelmnts.btn.approve}}</button>
           <button id="rejectContent" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentRejectMessage}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" class="sb-btn sb-btn-error sb-btn-normal" (click)="popupAction='rejectContent'; showRequestChangesPopup = true"
           appTelemetryInteract
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
-            [telemetryInteractObject]="telemetryInteractObject"
-            [telemetryInteractCdata]="telemetryInteractCdata"
-            [telemetryInteractPdata]="telemetryInteractPdata"
+            [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+            [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
           >{{resourceService.frmelmnts.btn.reject}}</button>
         </div>
       </div>
