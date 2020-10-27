@@ -75,8 +75,9 @@ export class QuestionPreviewComponent implements OnInit, OnChanges {
       }
     });
     const context = {
-      'mode': 'play',
+      'mode': 'edit',
       'partner': [],
+      'cdata': _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
       'pdata': {
         'id': this.userService.appId,
         'ver': version,

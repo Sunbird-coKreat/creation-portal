@@ -236,6 +236,11 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.telemetryEventsInput.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
   }
 
+  getTelemetryInteractObject(id: string, type: string) {
+    return this.programTelemetryService.getTelemetryInteractObject(id, type, '1.0',
+    { l1: this.sessionContext.collection, l2: this.sessionContext.textBookUnitIdentifier, l3: this.sessionContext.resourceIdentifier});
+  }
+
   getContentMetadata(contentId: string) {
     const option = {
       url: `${this.configService.urlConFig.URLS.CONTENT.GET}/${contentId}`,

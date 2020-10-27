@@ -1,5 +1,5 @@
 
-<app-question-creation-header *ngIf="questionMetaData && !showPreview" [telemetryEventsInput]="telemetryEventsInput" [questionMetaData]="questionMetaData" [roles]="roles" [resourceStatus]="sessionContext.resourceStatus"></app-question-creation-header>
+<app-question-creation-header *ngIf="questionMetaData && !showPreview" [telemetryEventsInput]="telemetryEventsInput" [questionMetaData]="questionMetaData" [roles]="roles" [sessionContext]="sessionContext"></app-question-creation-header>
 
 <app-question-preview *ngIf="showPreview" [sessionContext]="sessionContext">
 </app-question-preview>
@@ -33,8 +33,8 @@
               class="sb-btn sb-btn-outline-primary sb-btn-normal sb-left-icon-btn ml-auto"
               (click)="mcqForm.addOptions()"
               appTelemetryInteract
-              [telemetryInteractEdata]="{id:'add_option',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.launch,pageid:telemetryPageId,extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
-              [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+              [telemetryInteractEdata]="{id:'add_option',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.launch,pageid:telemetryPageId}"
+              [telemetryInteractObject]="getTelemetryInteractObject(questionMetaData?.data?.identifier, 'Question')"
               [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
               [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
               ><i class="plus icon"></i>ADD</button>
@@ -56,8 +56,8 @@
                     <div class="sb-checkbox sb-checkbox-primary mr-auto" [class.selected]="mcqForm.answer === i.toString()">
                       <input type="radio" name="example" value={{i}}
                       appTelemetryInteract
-                      [telemetryInteractEdata]="{id:'mark_as_right_anwser',type:configService.telemetryLabels.eventType.click,pageid:telemetryPageId,extra: {answer:i.toString(),type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
-                      [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+                      [telemetryInteractEdata]="{id:'mark_as_right_anwser',type:configService.telemetryLabels.eventType.click,pageid:telemetryPageId,extra: {answer:i.toString()}}"
+                      [telemetryInteractObject]="getTelemetryInteractObject(questionMetaData?.data?.identifier, 'Question')"
                       [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
                       [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
                       [(ngModel)]="mcqForm.answer" [ngModelOptions]="{standalone: true}" [checked]="mcqForm.answer === i.toString()">
@@ -67,8 +67,8 @@
                     <button [disabled]="mcqForm.options.length < 3" (click)="mcqForm.deleteOption(i)"
                       class="sb-btn sb-btn-xs sb-btn-link sb-btn-link-error sb-left-icon-btn"
                       appTelemetryInteract
-                      [telemetryInteractEdata]="{id:'delete_option',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.submit,pageid:telemetryPageId,extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
-                      [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+                      [telemetryInteractEdata]="{id:'delete_option',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.submit,pageid:telemetryPageId}"
+                      [telemetryInteractObject]="getTelemetryInteractObject(questionMetaData?.data?.identifier, 'Question')"
                       [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
                       [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
                       ><i class="trash alternate outline icon"></i>Delete</button>
@@ -94,8 +94,8 @@
                 <div class="ui dropdown sb-btn sb-btn-outline-primary sb-btn-normal sb-right-icon-btn sb-btn-radius ml-auto"
               suiDropdown autoClose="itemClick" *ngIf="showSolutionDropDown"
               appTelemetryInteract
-              [telemetryInteractEdata]="{id:'solution',type:configService.telemetryLabels.eventType.click,pageid:telemetryPageId,extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
-              [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+              [telemetryInteractEdata]="{id:'solution',type:configService.telemetryLabels.eventType.click,pageid:telemetryPageId}"
+              [telemetryInteractObject]="getTelemetryInteractObject(questionMetaData?.data?.identifier, 'Question')"
               [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
               [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
               >
@@ -104,15 +104,15 @@
               <div class="menu" suiDropdownMenu>
                 <div class="item" (click)="selectSolutionType('Text+Image')"
                 appTelemetryInteract
-                [telemetryInteractEdata]="{id:'solution_type',type:configService.telemetryLabels.eventType.select,subtype:configService.telemetryLabels.eventSubtype.singleSelect,pageid:telemetryPageId,extra: {solutionType:'Text+Image',type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
-                [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+                [telemetryInteractEdata]="{id:'solution_type',type:configService.telemetryLabels.eventType.select,subtype:configService.telemetryLabels.eventSubtype.singleSelect,pageid:telemetryPageId,extra: {solutionType:'Text+Image'}}"
+                [telemetryInteractObject]="getTelemetryInteractObject(questionMetaData?.data?.identifier, 'Question')"
                 [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
                 >Text+Image</div>
                 <div class="item" (click)="selectSolutionType('video')"
                 appTelemetryInteract
-                [telemetryInteractEdata]="{id:'solution_type',type:configService.telemetryLabels.eventType.select,subtype:configService.telemetryLabels.eventSubtype.singleSelect,pageid:telemetryPageId,extra: {solutionType:'video',type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
-                [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+                [telemetryInteractEdata]="{id:'solution_type',type:configService.telemetryLabels.eventType.select,subtype:configService.telemetryLabels.eventSubtype.singleSelect,pageid:telemetryPageId,extra: {solutionType:'video'}}"
+                [telemetryInteractObject]="getTelemetryInteractObject(questionMetaData?.data?.identifier, 'Question')"
                 [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
                 >Video</div>
@@ -126,8 +126,8 @@
                     <div class="mcq-checkbox-answer">
                         <button class="sb-btn sb-btn-xs sb-btn-link sb-btn-link-error sb-left-icon-btn ml-auto"
                         appTelemetryInteract
-                        [telemetryInteractEdata]="{id:'delete_solution',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.cancel,pageid:telemetryPageId,extra: {solutionType:'Text+Image',type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
-                        [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+                        [telemetryInteractEdata]="{id:'delete_solution',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.cancel,pageid:telemetryPageId,extra: {solutionType:'Text+Image'}}"
+                        [telemetryInteractObject]="getTelemetryInteractObject(questionMetaData?.data?.identifier, 'Question')"
                         [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
                         [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
                         (click)="deleteSolution()"><i
@@ -148,8 +148,8 @@
                     <div class="mcq-checkbox-answer">
                     <button class="sb-btn sb-btn-xs sb-btn-link sb-btn-link-error sb-left-icon-btn ml-auto"
                     appTelemetryInteract
-                    [telemetryInteractEdata]="{id:'delete_solution',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.cancel,pageid:telemetryPageId,extra: {solutionType:'video',type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
-                    [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+                    [telemetryInteractEdata]="{id:'delete_solution',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.cancel,pageid:telemetryPageId,extra: {solutionType:'video'}}"
+                    [telemetryInteractObject]="getTelemetryInteractObject(questionMetaData?.data?.identifier, 'Question')"
                     [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
                     (click)="deleteSolution()"><i
@@ -235,8 +235,8 @@
     <div class='practical-sb-buttons'>
         <button id="requestChanges" *ngIf="canReviewContent()" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true"
         appTelemetryInteract
-        [telemetryInteractEdata]="{id:'request_changes',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.launch,pageid:telemetryPageId,extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
-        [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+        [telemetryInteractEdata]="{id:rejectComment === '' ? 'request_changes' : 'edit_comments',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.launch,pageid:telemetryPageId}"
+        [telemetryInteractObject]="getTelemetryInteractObject(questionMetaData?.data?.identifier, 'Question')"
         [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
         >
@@ -268,8 +268,8 @@
   <div class="sb-modal-actions">
     <button id="submitReview" type="submit" class="sb-btn sb-btn-normal"
     appTelemetryInteract
-    [telemetryInteractEdata]="{id:'submit_review',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.submit,pageid:telemetryPageId,extra: {key:'dialog_id',value:'add_review_comments',type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
-    [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+    [telemetryInteractEdata]="{id:'submit_review',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.submit,pageid:telemetryPageId,extra: {key:'dialog_id',value:'add_review_comments'}}"
+    [telemetryInteractObject]="getTelemetryInteractObject(questionMetaData?.data?.identifier, 'Question')"
     [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
     [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
     [disabled]="rejectComment.length > commentCharLimit" [ngClass]="{'sb-btn-primary': reuestChangeForm.form.valid, 'sb-btn-disabled': !reuestChangeForm.form.valid || rejectComment.length > commentCharLimit}"   (click)="requestChanges()"> Submit Review </button>
@@ -278,5 +278,5 @@
 </sui-modal>
 
 <app-mcq-template-selection *ngIf='showTemplatePopup' style="z-index: 1000"
-  (templateSelection)="handleTemplateSelection($event)">
+  (templateSelection)="handleTemplateSelection($event)" [telemetryEventsInput]="telemetryEventsInput" [questionMetaData]="questionMetaData"[sessionContext]="sessionContext" >
 </app-mcq-template-selection>
