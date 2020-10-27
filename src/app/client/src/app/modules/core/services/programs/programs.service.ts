@@ -40,6 +40,7 @@ export class ProgramsService extends DataService implements CanActivate {
   public http: HttpClient;
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
   private _contentTypes: any[];
+  private _contentCategories: any[];
   private _overrideMetaData: any[];
   private _sourcingOrgReviewers: Array<any>;
   // private orgUsers: Array<any>;
@@ -69,6 +70,7 @@ export class ProgramsService extends DataService implements CanActivate {
   public initialize() {
     // this.enableContributeMenu().subscribe();
     this.getAllContentTypes().subscribe();
+    this.getAllContentCategories().subscribe();
     this.getOverridableMetaDataConfig().subscribe();
     this.mapSlugstoOrgId();
   }
@@ -875,6 +877,14 @@ export class ProgramsService extends DataService implements CanActivate {
   }
 
   /**
+   * Get all the categories  configured
+   */
+
+  get contentCategories() {
+    return _.cloneDeep(this._contentCategories);
+  }
+
+  /**
    * Get all overridable meta fields configured
    */
   get overrideMetaData() {
@@ -892,6 +902,30 @@ export class ProgramsService extends DataService implements CanActivate {
     ).pipe(
       tap(contentTypes => {
         this._contentTypes = contentTypes;
+      })
+    );
+  }
+
+  private getAllContentCategories(): Observable<any[]> {
+    const req = {
+      url:'composite/v1/search',
+      data: {
+        'request': {
+          "filters": {
+            "objectType":"ObjectCategoryDefinition",
+            "status": [],
+            "targetObjectType":"content"
+        },
+        }
+      }
+    };
+
+    return this.learnerService.post(req).pipe(
+      map(result => _.get(result, 'result.ObjectCategoryDefinition')),
+      catchError(err => of([]))
+    ).pipe(
+      tap(contentCategories => {
+        this._contentCategories = contentCategories;
       })
     );
   }
@@ -966,18 +1000,19 @@ export class ProgramsService extends DataService implements CanActivate {
   }
 
   getCategoryDefinition(categoryName) {
+    const catObj = _.find(this.contentCategories, { name: categoryName });
     const req = {
-      url: 'taxonomy/object/category/definition/v4/read',
+      url: 'object/category/definition/v1/read/' + catObj.identifier,
       data: {
         request: {
           "objectCategoryDefinition": {
-              "objectType": "ObjectCategoryDefinition",
+              "objectType": "Content",
               "name": categoryName
           },
         }
       }
     };
-    return this.post(req);
+    return this.learnerService.get(req);
   }
 
   isNotEmpty(obj, key) {

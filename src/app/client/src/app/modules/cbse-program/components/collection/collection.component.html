@@ -269,12 +269,7 @@
     <div class="mb-10" *ngFor="let contenttype of contentType; index as i">
       <div class="sb-checkbox sb-checkbox-primary">
           <input class="checking" [(ngModel)]="contenttype.isSelected" (change)="toggle(contenttype);" (click)="$event.stopPropagation()" type="checkbox" id="{{i+1}}"
-          appTelemetryInteract
-<<<<<<< HEAD
-          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('contentType-selection', 'click', 'collection-list', {values: [contenttype.value]})"
-=======
-          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('contentType_selection', configService.telemetryLabels.eventType.click,undefined, telemetryPageId, {values: [contenttype.name],key:'dialog_id',value:'select_content_types'})"
->>>>>>> bf83e22e68e137b90141f5fb829d0fe51af0950f
+          appTelemetryInteract [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('contentType_selection', configService.telemetryLabels.eventType.click,undefined, telemetryPageId, {values: [contenttype.name],key:'dialog_id',value:'select_content_types'})"
           [telemetryInteractObject]="telemetryInteractObject"
           [telemetryInteractCdata]="telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryInteractPdata">

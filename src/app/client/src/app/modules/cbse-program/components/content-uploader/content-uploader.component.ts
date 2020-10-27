@@ -464,7 +464,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
               'code': UUID.UUID(),
               'mimeType': this.detectMimeType(this.uploader.getName(0)),
               'createdBy': this.userService.getUserId(),
-              'contentType': this.templateDetails.metadata.contentType,
+              'primaryCategory': this.templateDetails.metadata.primaryCategory,
               'resourceType': this.templateDetails.metadata.resourceType || 'Learn',
               'creator': creator,
               'collectionId': this.sessionContext.collection,
