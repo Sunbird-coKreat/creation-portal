@@ -375,9 +375,11 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         this.enrollPrograms = this.programs;
         this.tempSortPrograms = this.programs;
         this.count = _.get(response, 'result.count');
-        this.sortColumn = 'createdon';
-        this.direction = 'desc';
-        this.sortCollection(this.sortColumn);
+        if (!_.get(req , 'request.sort')) {
+          this.sortColumn = 'createdon';
+          this.direction = 'desc';
+          this.sortCollection(this.sortColumn);
+        }
         this.showLoader = false;
       }, error => {
         console.log(error);
@@ -460,9 +462,11 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
             this.enrollPrograms = this.programs;
             this.tempSortPrograms = this.programs;
             this.count = this.programs.length;
-            this.sortColumn = 'contributionDate';
-            this.direction = 'desc';
-            this.sortCollection(this.sortColumn);
+            if (!sort) {
+              this.sortColumn = 'contributionDate';
+              this.direction = 'desc';
+              this.sortCollection(this.sortColumn);
+            }
             this.logTelemetryImpressionEvent();
             this.showLoader = false;
           });
