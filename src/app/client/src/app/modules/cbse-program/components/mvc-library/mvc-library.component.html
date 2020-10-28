@@ -6,7 +6,7 @@
       <div class="d-flex flex-ai-center">
         <button class="sb-btn sb-btn-primary sb-btn-xs back-btn px-0" (click)="handleBack();"
         appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('go-back', 'click', 'library')"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('back', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
         [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
         [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"
         ><i class="arrow left icon fs-1"></i></button>
@@ -70,7 +70,7 @@
       <h6 class="sb-color-gray-300 font-weight-normal mt-8">{{resourceService.frmelmnts.lbl.changingFilterHelpsYouFindMoreContent}}</h6>
       <button class="sb-btn sb-btn-secondary sb-btn-normal mt-16" (click)="openFilter();" 
         appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('change-filter', 'click', 'library')"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('change_filters', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
         [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
         [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"
       >{{resourceService.frmelmnts.lbl.changeFilters}}</button>

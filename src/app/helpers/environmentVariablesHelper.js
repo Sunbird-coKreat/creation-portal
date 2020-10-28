@@ -44,6 +44,9 @@ let envVariables = {
   SUNBIRD_PORTAL_URL: env.sunbird_portal_url,
   SUNBIRD_LEARNER_URL: env.sunbird_learner_url,
 
+  DOCK_WORKSPACE_PROXY: env.dock_workspace_proxy || true,
+  FORM_URL: env.form_url || 'https://dev.sunbirded.org/api/'
+
 
   // TTL and Intervals
   CONFIG_REFRESH_INTERVAL: env.config_refresh_interval || 10,

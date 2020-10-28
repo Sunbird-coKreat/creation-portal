@@ -11,7 +11,7 @@
         <div class="ui grid padded width-100 relative">
             <div class="six wide column p-0 d-flex">
                 <!--Logo-->	                <!--Logo-->
-                <a class="d-flex logo" tabindex="0" title="DOCK" role="banner">	               
+                <a class="d-flex logo" tabindex="0" title="DOCK" role="banner">
                 <a class="logo pl-10 pr-20 br-1" tabindex="0" title="DOCK" role="banner">
                     <img (click)="navigateToHome()" class="cursor-pointer" alt="DOCK" src="{{tenantInfo.logo}}">
                 </a>	                </a>
@@ -23,7 +23,7 @@
             </div>
             <div class="six wide column p-0 d-flex flex-jc-flex-end flex-ai-center">
                 <app-main-menu class="d-flex computer only ml-auto"></app-main-menu>
-             
+
                 <div class="item flex-jc-flex-end" *ngIf="router.url.includes('/sourcing') && userProfile?.organisationNames?.length">
                     <span> {{ resourceService?.frmelmnts?.lbl?.organisation + ' : ' }} </span>
                     <span class="pl-5 font-weight-bold"> {{ userProfile?.organisationNames?.join(', ') }} </span>
@@ -126,11 +126,10 @@
                 <!-- <a routerLink="contribute/dashboard" *ngIf="this.router.url.includes('/contribute')" [class.active]="this.router.isActive('/contribute/dashboard', true)">{{ resourceService.frmelmnts.lnk.dashboard }}</a> -->
                     <a routerLink="sourcing" *ngIf=" permissionService.permissionAvailable && router.url.includes('/sourcing') && !router.url.includes('/sourcing/help')" [class.active]="activeTab['myPrograms']" (click)="handleActiveTabState('myPrograms')"
                     appTelemetryInteract appPermission
-                    [permission]='manageProgramsRole' 
-      [telemetryInteractEdata]="getTelemetryInteractEdata('manage-programs', 'click', 'main-header')"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService?.frmelmnts?.lbl?.managePrograms}}</a>
+                    [permission]='manageProgramsRole'
+        [telemetryInteractEdata]="getTelemetryInteractEdata('my_project', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch, pageId)"      [telemetryInteractObject]="telemetryInteractObject"
+        [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService?.frmelmnts?.lbl?.managePrograms}}</a>
 
       <a [class.active]="activeTab['manageContents']" *ngIf="permissionService.permissionAvailable && !router.url.includes('/help') && !router.url.includes('/contribute')" (click)="handleActiveTabState('manageContents')"
         appTelemetryInteract appPermission
@@ -143,36 +142,36 @@
                     <ng-container *ngIf="userService.userRegistryData">
                         <a routerLink="contribute" *ngIf="router.url.includes('/contribute') && !router.url.includes('/contribute/help') && programsService.checkforshowAllPrograms()"  [class.active]="activeTab['allPrograms']" (click)="handleActiveTabState('allPrograms')"
                     appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('all-programs', 'click', 'main-header')"
+      [telemetryInteractEdata]="getTelemetryInteractEdata('all-programs', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch, pageId)"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata"><span class="sb-color-white">{{ resourceService?.frmelmnts?.lbl?.allPrograms }}</span></a>
                     </ng-container>
                     <a routerLink="contribute/myenrollprograms" *ngIf="router.url.includes('/contribute') && !router.url.includes('/contribute/help')" [class.active]="activeTab['myPrograms']" (click)="handleActiveTabState('myPrograms')"
                     appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('my-programs', 'click', 'main-header')"
+      [telemetryInteractEdata]="getTelemetryInteractEdata('my-programs', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch ,pageId)"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata"><span class="sb-color-white">{{ resourceService?.frmelmnts?.lbl?.myPrograms }}</span></a>
                     <a routerLink="contribute/orglist" *ngIf="router.url.includes('/contribute') && !router.url.includes('/contribute/help') && userService.userProfile?.userRegData?.User_Org?.roles?.includes('admin')" [class.active]="activeTab['manageUsers']" (click)="handleActiveTabState('manageUsers')"
                     appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('manage-users', 'click', 'main-header')"
+      [telemetryInteractEdata]="getTelemetryInteractEdata('manage-users', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch, pageId)"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.manageUsers }}</a>
 
                     <a routerLink="sourcing/orglist" *ngIf=" permissionService.permissionAvailable && router.url.includes('/sourcing') && !router.url.includes('/contribute/help')" [class.active]="activeTab['manageUsers']" (click)="handleActiveTabState('manageUsers')"
-                    appTelemetryInteract  appPermission 
-                    [permission]='manageUserRole' 
-      [telemetryInteractEdata]="getTelemetryInteractEdata('manage-users', 'click', 'main-header')"
+                    appTelemetryInteract  appPermission
+                    [permission]='manageUserRole'
+      [telemetryInteractEdata]="getTelemetryInteractEdata('manage_users', config.telemetryLabels.eventType.click, config.telemetryLabels.eventSubtype.launch,pageId)"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.manageUsers }}</a>
 
       <a routerLink="sourcing/orgreports" *ngIf="permissionService.permissionAvailable && router.url.includes('/sourcing') && !router.url.includes('/contribute/help')  && !router.url.includes('/sourcing/help')" [class.active]="activeTab['organisationReports']" (click)="handleActiveTabState('organisationReports')"
-                    appTelemetryInteract appPermission 
+                    appTelemetryInteract appPermission
                     [permission]='orgReportRole'
-      [telemetryInteractEdata]="getTelemetryInteractEdata('organisation-reports', 'click', 'main-header')"
+      [telemetryInteractEdata]="getTelemetryInteractEdata('organisation_reports', config.telemetryLabels.eventType.click, config.telemetryLabels.eventSubtype.launch, pageId)"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.organisationReports }}</a>
@@ -181,7 +180,7 @@
                     *ngIf="(router.url.includes('/contribute') && !router.url.includes('/contribute/help')) || (router.url.includes('/sourcing') && !router.url.includes('/sourcing/help'))"
                     [routerLink]="router.url.includes('/contribute') && !router.url.includes('/contribute/help') ? '/contribute/help' : '/sourcing/help'" (click)="handleActiveTabState('contributorHelp')"
                     appTelemetryInteract
-                    [telemetryInteractEdata]="getTelemetryInteractEdata('help', 'click', 'main-header')"
+                    [telemetryInteractEdata]="getTelemetryInteractEdata('help', config.telemetryLabels.eventType.click, config.telemetryLabels.eventSubtype.launch, pageId )"
                     [telemetryInteractObject]="telemetryInteractObject"
                     [telemetryInteractCdata]="telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryInteractPdata"><i class="icon play circle fs-1-16 mr-5"></i>{{resourceService?.frmelmnts?.lbl?.clickHereToGetStarted}}</a>

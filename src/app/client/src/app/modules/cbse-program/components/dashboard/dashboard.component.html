@@ -14,7 +14,7 @@
   <button class="sb-btn sb-btn-xs sb-btn-link sb-btn-link-primary sb-left-icon-btn"
     (click)="refreshReport()"
     appTelemetryInteract 
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('refresh-' + selectedReport, 'click', 'dashboard')"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('refresh-' + selectedReport, 'click', undefined,'dashboard')"
         [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(selectedReport, 'Report', '1.0')"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
@@ -22,7 +22,7 @@
   <button class="sb-btn sb-btn-xs sb-btn-link sb-btn-link-primary sb-left-icon-btn"
     (click)="downloadReport()"
     appTelemetryInteract 
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download-' + selectedReport, 'click', 'dashboard')"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download-' + selectedReport, 'click', undefined,'dashboard')"
         [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(selectedReport, 'Report', '1.0')"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
@@ -37,14 +37,14 @@
         <tr>
           <th id="textbookName"
           appTelemetryInteract 
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('sort-textbookname', 'click', 'dashboard')"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('sort-textbookname', 'click',undefined, 'dashboard')"
         [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(selectedReport, 'Report', '1.0')"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
           > Textbook Name </th>
           <th *ngFor="let label of headers" suiPopup popupHeader="{{label.tip}}"
           appTelemetryInteract 
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('sort-' + label.name, 'click', 'dashboard')"
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('sort-' + label.name, 'click',undefined, 'dashboard')"
         [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(selectedReport, 'Report', '1.0')"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"

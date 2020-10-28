@@ -25,7 +25,7 @@ import { SlickModule } from 'ngx-slick';
 import { SharedFeatureModule } from '../shared-feature';
 import { RouterModule } from '@angular/router';
 import { BulkApprovalComponent } from './components/bulk-approval/bulk-approval.component';
-
+import { CoreModule } from '@sunbird/core';
 import {CbseRoutingModule} from './cbse-routing.module';
 import { MvcLibraryComponent } from './components/mvc-library/mvc-library.component';
 import { MvcListComponent } from './components/mvc-list/mvc-list.component';
@@ -36,13 +36,15 @@ import { NgInviewModule } from 'angular-inport';
 @NgModule({
   declarations: [QuestionListComponent, QuestionCreationComponent,
     ChapterListComponent, McqCreationComponent, CkeditorToolComponent ,
-    McqTemplateSelectionComponent,
-    QuestionPreviewComponent, SanitizeHtmlPipe, QuestionCreationHeaderComponent,
-    DashboardComponent, RecursiveTreeComponent,
-    ContentUploaderComponent,  ResourceTemplateComponent, CollectionComponent, ResourceReorderComponent, ContentEditorComponent,
-     MvcLibraryComponent, MvcListComponent, MvcFilterComponent, MvcPlayerComponent, SkeletonLoaderComponent, BulkApprovalComponent, BulkUploadComponent],
+    McqTemplateSelectionComponent, QuestionPreviewComponent, SanitizeHtmlPipe,
+    QuestionCreationHeaderComponent, DashboardComponent, RecursiveTreeComponent,
+    ContentUploaderComponent,  ResourceTemplateComponent, CollectionComponent,
+    ResourceReorderComponent, ContentEditorComponent, MvcLibraryComponent,
+    MvcListComponent, MvcFilterComponent, MvcPlayerComponent, SkeletonLoaderComponent,
+    BulkApprovalComponent, BulkUploadComponent],
   imports: [
     RouterModule,
+    CoreModule,
     CommonModule,
     SuiTabsModule,
     CommonConsumptionModule,
@@ -55,11 +57,11 @@ import { NgInviewModule } from 'angular-inport';
     SlickModule.forRoot(),
     CbseRoutingModule,
     DynamicModule.withComponents([QuestionListComponent,
-       QuestionCreationComponent, ChapterListComponent, McqCreationComponent, CkeditorToolComponent ,
-      McqTemplateSelectionComponent,
-      QuestionPreviewComponent, QuestionCreationHeaderComponent,
-      DashboardComponent, RecursiveTreeComponent, ContentUploaderComponent, ResourceTemplateComponent, ContentEditorComponent]),
-      NgInviewModule
+      QuestionCreationComponent, ChapterListComponent, McqCreationComponent, CkeditorToolComponent ,
+      McqTemplateSelectionComponent, QuestionPreviewComponent, QuestionCreationHeaderComponent,
+      DashboardComponent, RecursiveTreeComponent, ContentUploaderComponent, ResourceTemplateComponent,
+      ContentEditorComponent]),
+    NgInviewModule
   ],
   providers: [CollectionHierarchyService],
   exports: [ SanitizeHtmlPipe ]

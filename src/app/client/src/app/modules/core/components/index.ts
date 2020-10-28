@@ -8,4 +8,4 @@ export * from './sort-by/sort-by.component';
 export * from './language-dropdown/language-dropdown.component';
 export * from './prominent-filter/prominent-filter.component';
 export * from './topic-picker/topic-picker.component';
-
+export * from './data-form/data-form.component';

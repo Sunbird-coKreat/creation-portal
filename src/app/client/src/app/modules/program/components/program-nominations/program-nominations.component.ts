@@ -1,5 +1,5 @@
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService, PaginationService } from '@sunbird/shared';
-import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
+import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject, TelemetryService } from '@sunbird/telemetry';
 import { ProgramsService, UserService, FrameworkService, RegistryService } from '@sunbird/core';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
@@ -99,12 +99,14 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   pagerUsers: IPagination;
   pageNumberUsers = 1;
   searchInput: any;
+  public telemetryPageId: string;
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
-    public resourceService: ResourceService, private config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
+    public resourceService: ResourceService, public config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
      private activatedRoute: ActivatedRoute, private router: Router,
     private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService,
     public programStageService: ProgramStageService, private datePipe: DatePipe, private paginationService: PaginationService,
-    public programTelemetryService: ProgramTelemetryService, public registryService: RegistryService) {
+    public programTelemetryService: ProgramTelemetryService, public registryService: RegistryService,
+     public telemetryService: TelemetryService) {
     this.userProfile = this.userService.userProfile;
     this.programId = this.activatedRoute.snapshot.params.programId;
   }
@@ -112,7 +114,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   ngOnInit() {
     this.filterApplied = null;
     this.getProgramDetails();
-    this.telemetryInteractCdata = [{id: this.activatedRoute.snapshot.params.programId, type: 'Program'}];
+    this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}, {id: this.programId, type: 'project'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
     this.roles = [{name: 'REVIEWER'}, {name: 'NONE'}];
@@ -133,12 +135,11 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     const deviceId = <HTMLInputElement>document.getElementById('deviceId');
-    const telemetryCdata = [{type: 'Program', id: this.activatedRoute.snapshot.params.programId}];
      setTimeout(() => {
       this.telemetryImpression = {
         context: {
           env: this.activatedRoute.snapshot.data.telemetry.env,
-          cdata: telemetryCdata || [],
+          cdata: this.telemetryInteractCdata || [],
           pdata: {
             id: this.userService.appId,
             ver: version,
@@ -148,12 +149,17 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         },
         edata: {
           type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
-          pageid: _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid'),
+          pageid: this.getPageId(),
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
      });
+  }
+
+  getPageId() {
+    this.telemetryPageId = this.telemetryPageId || _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid');
+    return this.telemetryPageId;
   }
 
   canAssignUsersToProgram() {
@@ -188,7 +194,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   resetStatusFilter(tab) {
     this.router.navigate([], { relativeTo: this.activatedRoute, queryParams: { tab: tab }, queryParamsHandling: 'merge' });
-
+    this.setTelemetryPageId(tab);
     if (tab === 'textbook' && !_.includes(this.visitedTab, 'textbook')) {
       this.visitedTab.push('textbook');
       this.showTextbookLoader = true;
@@ -201,10 +207,12 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
             }
             this.getProgramCollection(preffilter).subscribe((res) => {
               this.showTextbookLoader  =  false;
+              this.logTelemetryImpressionEvent(this.programCollections, 'identifier', 'collection');
             }, (err) => { // TODO: navigate to program list page
               this.showTextbookLoader  =  false;
               const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
               this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+              this.logTelemetryImpressionEvent();
             });
         }, (err) => { // TODO: navigate to program list page
           this.showTextbookLoader  =  false;
@@ -241,8 +249,26 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       } else {
         this.getNominationList();
       }
-
       this.visitedTab.push('contributionDashboard');
+      this.logTelemetryImpressionEvent();
+    }
+
+    if (tab === 'report' && !_.includes(this.visitedTab, 'report')) {
+      this.logTelemetryImpressionEvent();
+    }
+  }
+
+  setTelemetryPageId(tab: string) {
+    if (tab === 'textbook') {
+      this.telemetryPageId = _.get(this.config, 'telemetryLabels.pageId.sourcing.projectContributions');
+    } else if (tab === 'nomination') {
+      this.telemetryPageId = _.get(this.config, 'telemetryLabels.pageId.sourcing.projectNominations');
+    } else if (tab === 'user') {
+      this.telemetryPageId = _.get(this.config, 'telemetryLabels.pageId.sourcing.projectAssignUsers');
+    } else if (tab === 'contributionDashboard') {
+      this.telemetryPageId = _.get(this.config, 'telemetryLabels.pageId.sourcing.projectContributionDashboard');
+    } else if (tab === 'report') {
+      this.telemetryPageId = _.get(this.config, 'telemetryLabels.pageId.sourcing.projectReports');
     }
   }
 
@@ -274,8 +300,25 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
      usersList = _.chunk(this.paginatedSourcingUsers, this.pageLimit);
      this.paginatedSourcingUsers = usersList;
      this.sourcingOrgUser = isUserSearch ? usersList[0] : usersList[this.pageNumber - 1];
+     this.logTelemetryImpressionEvent(this.sourcingOrgUser, 'identifier', 'user');
      this.pagerUsers = this.paginationService.getPager(this.sourcingOrgUserCnt, isUserSearch ? 1 : this.pageNumberUsers, this.pageLimit);
  }
+
+ public logTelemetryImpressionEvent(data?, keyName?, type?) {
+  const telemetryImpression = _.cloneDeep(this.telemetryImpression);
+  if (data && !_.isEmpty(data)) {
+    telemetryImpression.edata.visits = _.map(data, (row) => {
+      return { objid: _.toString(row[keyName]), objtype: type };
+    });
+  }
+  // tslint:disable-next-line:max-line-length
+  if (_.isEqual(this.telemetryPageId, this.config.telemetryLabels.pageId.sourcing.projectContributionDashboard) || _.isEqual(this.telemetryPageId, this.config.telemetryLabels.pageId.sourcing.projectReports)) {
+    telemetryImpression.edata.type = this.config.telemetryLabels.pageType.report;
+  }
+  telemetryImpression.edata.pageid = this.telemetryPageId;
+  this.telemetryService.impression(telemetryImpression);
+}
+
 
   getsourcingOrgReviewers (offset?, iteration?) {
     const userRegData = {};
@@ -288,6 +331,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           this.showUsersLoader = false;
       });
     }, (error1) => {
+      this.logTelemetryImpressionEvent();
      console.log(error1, "No opensaber org for sourcing");
    });
 
@@ -565,7 +609,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.setActiveDate();
       this.collectionsCount = _.get(this.programDetails, 'collection_ids').length;
       this.totalContentTypeCount = _.get(this.programDetails, 'content_types').length;
-      this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
+      this.programContentTypes = _.join(this.programDetails.content_types, ', ');
 
       const currentRoles = _.filter(this.programDetails.config.roles, role => this.sessionContext.currentRoles.includes(role.name));
       this.sessionContext.currentRoleIds = !_.isEmpty(currentRoles) ? _.map(currentRoles, role => role.id) : null;
@@ -630,10 +674,11 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     });
   }
 
-  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+  getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: string): IInteractEventEdata {
     return _.omitBy({
       id,
       type,
+      subtype,
       pageid,
       extra
     }, _.isUndefined);
@@ -645,8 +690,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         this.activeTab = !_.isEmpty(params.get('tab')) ? params.get('tab') : 'textbook';
     });
     this.visitedTab.push(this.activeTab);
+    this.setTelemetryPageId(this.activeTab);
     this.showLoader = false;
-
     if (this.activeTab === 'textbook') {
       this.showTextbookLoader = true;
         this.programsService.getUserPreferencesforProgram(this.userProfile.identifier, this.programId).subscribe(
@@ -658,10 +703,12 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
             }
             this.getProgramCollection(preffilter).subscribe((res) => {
               this.showTextbookLoader  =  false;
+              this.logTelemetryImpressionEvent(this.programCollections, 'identifier', 'collection');
             }, (err) => { // TODO: navigate to program list page
               this.showTextbookLoader  =  false;
               const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
               this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+              this.logTelemetryImpressionEvent();
             });
         }, (err) => { // TODO: navigate to program list page
           this.showTextbookLoader  =  false;
@@ -682,6 +729,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
     if (this.activeTab === 'contributionDashboard') {
       this.showDashboardLoader =  true;
+      this.logTelemetryImpressionEvent();
       this.getProgramCollection().subscribe(
         (res) => { this.getNominationList(); },
         (err) => { // TODO: navigate to program list page
@@ -689,6 +737,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           this.toasterService.warning(errorMes || 'Fetching textbooks failed');
         }
       );
+    }
+
+    if (this.activeTab === 'report') {
+      this.logTelemetryImpressionEvent();
     }
   }
 
@@ -768,12 +820,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
   setTelemetryForonRoleChange(user) {
     const edata =  {
-      id: 'assign-role-by-sourcingOrg',
-      type: 'click',
-      pageid: 'program-nominations',
+      id: 'assign_role_by_sourcingOrg',
+      type: this.config.telemetryLabels.eventType.click,
+      subtype: this.config.telemetryLabels.eventSubtype.submit,
+      pageid: this.telemetryPageId,
       extra : {values: [user.identifier, user.newRole]}
-    }
-     this.registryService.generateUserRoleUpdateTelemetry(this.activatedRoute.snapshot.data.telemetry.env,this.telemetryInteractCdata,this.telemetryInteractPdata, edata )
+    };
+    this.registryService.generateUserRoleUpdateTelemetry(this.activatedRoute.snapshot.data.telemetry.env,this.telemetryInteractCdata,this.telemetryInteractPdata, edata )
   }
 
 showUserRoleOption(roleName, userRole) {
@@ -834,7 +887,10 @@ showUserRoleOption(roleName, userRole) {
     this.sessionContext.programId = this.programDetails.program_id;
     this.sessionContext.collection = collection.identifier;
     this.sessionContext.collectionName = collection.name;
-
+    this.sessionContext.telemetryPageDetails = {
+      telemetryPageId : this.config.telemetryLabels.pageId.sourcing.projectTargetCollection,
+      telemetryInteractCdata: [...this.telemetryInteractCdata, { 'id': collection.identifier, 'type': 'linked_collection'}]
+    };
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});
@@ -966,6 +1022,7 @@ this.programsService.post(req).subscribe((data) => {
               user_id: res.user_id,
               organisation_id: res.organisation_id,
               nominationData: res,
+              id: res.id
             });
           }
         });
@@ -974,8 +1031,10 @@ this.programsService.post(req).subscribe((data) => {
         this.showNominationLoader = false;
       }
       this.tempNominations = _.cloneDeep(this.nominations);
+      this.logTelemetryImpressionEvent(this.nominations, 'id', 'nomination');
   }, error => {
     this.showNominationLoader = false;
+    this.logTelemetryImpressionEvent();
     this.toasterService.error(this.resourceService.messages.emsg.projects.m0003);
   });
 }

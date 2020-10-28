@@ -17,10 +17,11 @@ export class ProgramTelemetryService {
 
   constructor( public userService: UserService, public configService: ConfigService ) { }
 
-  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: Extra): IInteractEventEdata {
+  getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: Extra): IInteractEventEdata {
     return _.omitBy({
       id,
       type,
+      subtype,
       pageid,
       extra
     }, _.isUndefined);
