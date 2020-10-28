@@ -594,6 +594,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       identifier: node.identifier,
       name: node.name,
       contentType: node.contentType,
+      primaryCategory: node.primaryCategory,
+      mimeType: node.mimeType,
+      itemSets: _.has(node, 'itemSets') ? node.itemSets : null,
+      questionCategories: _.has(node, 'questionCategories') ? node.questionCategories : null,
       topic: node.topic,
       origin: node.origin,
       status: node.status,
@@ -715,7 +719,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               'code': UUID.UUID(),
               'mimeType': this.templateDetails.mimeType[0],
               'createdBy': this.userService.userid,
-              'contentType': this.templateDetails.metadata.contentType,
+              'primaryCategory': this.templateDetails.metadata.primaryCategory,
+              //'contentType': this.templateDetails.metadata.contentType,
               'resourceType': this.templateDetails.metadata.resourceType || 'Learn',
               'creator': creator,
               'programId': this.sessionContext.programId,
@@ -754,12 +759,23 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   handlePreview(event) {
-    const templateList = _.get(this.chapterListComponentInput.config, 'config.contentTypes.value')
-      || _.get(this.chapterListComponentInput.config, 'config.contentTypes.defaultValue');
+    // const templateList = _.get(this.chapterListComponentInput.config, 'config.contentTypes.value')
+    //   || _.get(this.chapterListComponentInput.config, 'config.contentTypes.defaultValue');
+    const templateList = this.programsService.contentCategories;
     this.templateDetails = _.find(templateList, (templateData) => {
-      return templateData.metadata.contentType === event.content.contentType;
+      return templateData.name === event.content.primaryCategory;
     });
     if (this.templateDetails) {
+      this.templateDetails.questionCategories = event.content.questionCategories;
+      if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && !_.isEmpty(event.content.itemSets)) {
+        this.templateDetails.onClick = 'questionSetComponent';
+      } else if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && _.isEmpty(event.content.itemSets)) {
+        this.templateDetails.onClick = 'editorComponent';
+      } else if (event.content.mimeType === 'application/vnd.ekstep.quml-archive') {
+        this.templateDetails.onClick = 'questionSetComponent';
+      } else {
+        this.templateDetails.onClick = 'uploadComponent';
+      }
     this.componentLoadHandler('preview',
     this.programComponentsService.getComponentInstance(this.templateDetails.onClick), this.templateDetails.onClick, event);
     }
@@ -841,15 +857,20 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
      })
   }
   resourceTemplateInputData() {
-    let contentTypes = _.get(this.chapterListComponentInput.config, 'config.contentTypes.value')
-    || _.get(this.chapterListComponentInput.config, 'config.contentTypes.defaultValue');
+    let contentCategories = this.programContext.content_types;
+    // Get the content categories objects to be passed to the selection popup
+    // let contentTypes = _.get(this.chapterListComponentInput.config, 'config.contentTypes.value')
+    // || _.get(this.chapterListComponentInput.config, 'config.contentTypes.defaultValue');
     if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.content_types) {
-       contentTypes = _.filter(contentTypes, (obj) => {
-        return _.includes(this.sessionContext.nominationDetails.content_types, obj.metadata.contentType);
-       });
+      contentCategories = _.filter(contentCategories, (catName) => {
+        if (_.includes(this.sessionContext.nominationDetails.content_types, catName)) {
+          //obj.metadata = JSON.parse(obj.objectMetadata);
+          return catName;
+        }
+      });
     }
     this.resourceTemplateComponentInput = {
-        templateList: contentTypes,
+        templateList: contentCategories,
         programContext: this.programContext,
         sessionContext: this.sessionContext,
         unitIdentifier: this.unitIdentifier
