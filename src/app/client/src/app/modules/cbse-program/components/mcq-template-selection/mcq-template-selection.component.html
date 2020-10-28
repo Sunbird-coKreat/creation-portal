@@ -6,7 +6,11 @@
   <div class="sb-modal-content">
     <div class="d-flex flex-jc-space-around flex-w-wrap">
         <div class="sb-card mb-16 template-items p-8 mr-8 relative" 
-        appTelemetryInteract [telemetryInteractEdata]="{id:'template_card',type:'click',pageid:'cardselection',extra:{template:template}}"
+        appTelemetryInteract 
+        [telemetryInteractEdata]="{id:'template_card',type:configService.telemetryLabels.eventType.click,pageid:telemetryEventsInput.telemetryPageId}"
+        [telemetryInteractObject]="getTelemetryInteractObject(questionMetaData?.data?.identifier, 'Question')"
+        [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
         [ngClass]="{'active': templateSelected === template}" *ngFor="let template of mcqTemplateConfig" (click)="showButton=true; templateSelected = template">
           <span *ngIf="templateSelected === template" class="template-item-selection"><i class="check circle icon"></i></span>
             <div class="sb-card-metas flex-jc-center mb-8">
@@ -20,7 +24,12 @@
     </div>
   </div>
   <div class="sb-modal-actions">
-    <button appTelemetryInteract [telemetryInteractEdata]="{id:'submit_btn',type:'click',pageid:'templateselection',extra:{selectedtemplate:templateSelected}}"
+    <button 
+    appTelemetryInteract 
+    [telemetryInteractEdata]="{id:'submit',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.submit,pageid:telemetryEventsInput.telemetryPageId,extra:{selected_template:templateSelected,key:'dialog_id',value:'please_select_a_template_to_proceed'}}"
+    [telemetryInteractObject]="getTelemetryInteractObject(questionMetaData?.data?.identifier, 'Question')"
+    [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
+    [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
     class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="!showButton" (click)="handleSubmit()">
       {{'Submit'}}
     </button>

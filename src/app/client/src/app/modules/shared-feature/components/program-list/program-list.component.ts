@@ -136,14 +136,6 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   getProgramsListByRole(setfilters?) {
     this.showLoader = true; // show loader till getting the data
     if (this.isContributor) {
-      if (this.activeMyProgramsMenu) {
-        // tslint:disable-next-line: max-line-length
-        const applyFilters = this.getFilterDetails(setfilters, this.userService.slug ? 'contributeMyProgramAppliedFiltersTenantAccess' : 'contributeMyProgramAppliedFilters');
-        // tslint:disable-next-line: max-line-length
-        this.getMyProgramsForContrib(['Live', 'Unlisted'], applyFilters); // this method will call with applied req filters data other wise with origional req body
-      } else if (this.activeAllProgramsMenu) {
-        // tslint:disable-next-line: max-line-length
-        const applyFilters = this.getFilterDetails(setfilters, this.userService.slug ? 'contributeAllProgramAppliedFiltersTenantAccess' : 'contributeAllProgramAppliedFilters');
         // tslint:disable-next-line: max-line-length
         const sort = {
           // tslint:disable-next-line: max-line-length
@@ -153,6 +145,15 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
           // tslint:disable-next-line: max-line-length
           'subject': _.get(this.userService.userProfile, 'userRegData.User.subject') || []
         };
+
+      if (this.activeMyProgramsMenu) {
+        // tslint:disable-next-line: max-line-length
+        const applyFilters = this.getFilterDetails(setfilters, this.userService.slug ? 'contributeMyProgramAppliedFiltersTenantAccess' : 'contributeMyProgramAppliedFilters');
+        // tslint:disable-next-line: max-line-length
+        this.getMyProgramsForContrib(['Live', 'Unlisted'], applyFilters, sort); // this method will call with applied req filters data other wise with origional req body
+      } else if (this.activeAllProgramsMenu) {
+        // tslint:disable-next-line: max-line-length
+        const applyFilters = this.getFilterDetails(setfilters, this.userService.slug ? 'contributeAllProgramAppliedFiltersTenantAccess' : 'contributeAllProgramAppliedFilters');
 
         // tslint:disable-next-line: max-line-length
         this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], applyFilters, sort); // this method will call with applied req filters data other wise with origional req body
@@ -374,9 +375,11 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         this.enrollPrograms = this.programs;
         this.tempSortPrograms = this.programs;
         this.count = _.get(response, 'result.count');
-        this.sortColumn = 'contributionDate';
-        this.direction = 'desc';
-        this.sortCollection(this.sortColumn);
+        if (!_.get(req , 'request.sort')) {
+          this.sortColumn = 'createdon';
+          this.direction = 'desc';
+          this.sortCollection(this.sortColumn);
+        }
         this.showLoader = false;
       }, error => {
         console.log(error);
@@ -387,7 +390,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   /**
    * fetch the list of programs.
    */
-  private getMyProgramsForContrib(status, appliedfilters?) {
+  private getMyProgramsForContrib(status, appliedfilters?, sort?) {
     // If user is an individual user
     if (!this.userService.isUserBelongsToOrg()) {
       const req = {
@@ -400,6 +403,11 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
           }
         }
       };
+
+      if (sort) {
+        req.request['sort'] = sort;
+      }
+
       if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
         req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
       }
@@ -427,6 +435,11 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
               }
             }
           };
+
+          if (sort) {
+            req.request['sort'] = sort;
+          }
+
           if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
             req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
           }
@@ -449,9 +462,11 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
             this.enrollPrograms = this.programs;
             this.tempSortPrograms = this.programs;
             this.count = this.programs.length;
-            this.sortColumn = 'contributionDate';
-            this.direction = 'desc';
-            this.sortCollection(this.sortColumn);
+            if (!sort) {
+              this.sortColumn = 'contributionDate';
+              this.direction = 'desc';
+              this.sortCollection(this.sortColumn);
+            }
             this.logTelemetryImpressionEvent();
             this.showLoader = false;
           });
@@ -639,7 +654,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       return false;
     }
 
-    return this.programsService.getContentTypesName(program.content_types);
+    return _.join(program.content_types, ', ');
   }
 
   viewDetailsBtnClicked(program) {

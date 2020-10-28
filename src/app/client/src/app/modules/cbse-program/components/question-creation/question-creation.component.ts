@@ -157,6 +157,11 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
      });
   }
 
+  getTelemetryInteractObject(id: string, type: string) {
+    return this.programTelemetryService.getTelemetryInteractObject(id, type, '1.0',
+    { l1: this.sessionContext.collection, l2: this.sessionContext.textBookUnitIdentifier, l3: this.sessionContext.resourceIdentifier});
+  }
+
   ngOnChanges() {
     this.componentConfiguration =  _.get(this.sessionContext, 'practiceSetConfig');
     if (this.initialized) {
@@ -307,7 +312,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   }
 
   handleSubmit(questionMetaForm) {
-    if (this.questionMetaForm.valid && this.editorState.question !== ''
+    if (this.editorState.question !== ''
       && this.editorState.answer !== '') {
       this.showFormError = false;
       if (this.questionMetaData.mode !== 'create') {
@@ -316,7 +321,6 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
     } else {
       this.showFormError = true;
       this.showPreview = false;
-      this.markFormGroupTouched(this.questionMetaForm);
     }
   }
 
@@ -376,13 +380,6 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
           option.data.request.assessment_item.metadata['solutions'] = [solutionObj];
         }
 
-        _.forEach(this.formConfiguration, field => {
-          if (field.inputType === 'text' && field.dataType === 'list') {
-            // tslint:disable-next-line:max-line-length
-            const dataVal = this.questionMetaForm.value[field.code];
-            this.questionMetaForm.value[field.code] = dataVal ? dataVal.split(', ') : [];
-          }
-        });
         // tslint:disable-next-line:max-line-length
         option.data.request.assessment_item.metadata = _.pickBy(_.assign(option.data.request.assessment_item.metadata, this.questionMetaForm.value), _.identity);
         if (optionalParams) {

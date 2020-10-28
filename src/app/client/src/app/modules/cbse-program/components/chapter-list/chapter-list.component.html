@@ -120,10 +120,10 @@
             <div *ngIf="sourcingOrgReviewer && storedCollectionData && !sessionContext.nominationDetails" class="d-flex">
               <app-bulk-approval [programContext]="programContext" [sessionContext]="sessionContext" [storedCollectionData]="storedCollectionData" [originalCollectionData]="originalCollectionData" (updateToc)="bulkApprovalSuccess($event)"></app-bulk-approval>
             </div>
-            <app-bulk-upload 
+            <app-bulk-upload
               *ngIf="showBulkUploadOption()"
-              [sharedContext]="sharedContext" 
-              [sessionContext]="sessionContext" 
+              [sharedContext]="sharedContext"
+              [sessionContext]="sessionContext"
               [programContext]="programContext"
               [storedCollectionData]="storedCollectionData"
               ></app-bulk-upload>

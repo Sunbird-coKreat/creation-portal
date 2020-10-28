@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { ConfigService, ToasterService, ServerResponse, ResourceService } from '@sunbird/shared';
-import { ContentService, ActionService, PublicDataService, ProgramsService, NotificationService, UserService } from '@sunbird/core';
+import { ContentService, ActionService, PublicDataService, ProgramsService, NotificationService, UserService,
+  FrameworkService } from '@sunbird/core';
 import { throwError, Observable, of, Subject, forkJoin } from 'rxjs';
-import { catchError, map, switchMap, tap, mergeMap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap, mergeMap, filter, first } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 import { ProgramStageService } from '../../program/services';
+import { CacheService } from 'ng2-cache-service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,12 +15,24 @@ export class HelperService {
 
   mvcLibraryFeatureConfiguration: any
   private sendNotification = new Subject<string>();
+  private _availableLicences: Array<any>;
+  private _channelData: any;
 
   constructor(private configService: ConfigService, private contentService: ContentService,
     private toasterService: ToasterService, private publicDataService: PublicDataService,
     private actionService: ActionService, private resourceService: ResourceService,
     public programStageService: ProgramStageService, private programsService: ProgramsService,
-    private notificationService: NotificationService, private userService: UserService) { }
+    private notificationService: NotificationService, private userService: UserService, private cacheService: CacheService,
+    public frameworkService: FrameworkService) { }
+
+  initialize(programDetails) {
+    if (!this.getAvailableLicences()) {
+      this.getLicences().subscribe();
+    }
+    if (programDetails.rootorg_id) {
+      this.fetchChannelData(programDetails.rootorg_id);
+    }
+  }
 
   getLicences(): Observable<any> {
     const req = {
@@ -34,11 +48,28 @@ export class HelperService {
     };
     return this.contentService.post(req).pipe(map((res) => {
       return res.result;
-    }), catchError(err => {
+    }), tap((data: any) => this._availableLicences = _.get(data, 'license')), catchError(err => {
       const errInfo = { errorMsg: 'search failed' };
       return throwError(this.apiErrorHandling(err, errInfo));
     }));
   }
+
+  fetchChannelData(channelId) {
+    this.frameworkService.getChannelData(channelId);
+    // tslint:disable-next-line:max-line-length
+    this.frameworkService.channelData$.pipe(filter(data => channelId === _.get(data, 'channelData.identifier'), first())).subscribe(data => {
+      this._channelData = _.get(data, 'channelData');
+    });
+  }
+
+  getProgramLevelChannelData() {
+    return this._channelData;
+  }
+
+  getAvailableLicences() {
+    return this._availableLicences;
+  }
+
   getNotification(): Observable<any> {
     return this.sendNotification.asObservable();
   }
@@ -319,12 +350,12 @@ export class HelperService {
       case 'REVIEWER':
         if (!contentMetaData.sourceURL) {
           const nameFieldConfig = _.find(this.programsService.overrideMetaData, (item) => item.code === 'name');
-          if (nameFieldConfig.editable === true) {
+          if (nameFieldConfig && nameFieldConfig.editable === true) {
             editableFields.push(nameFieldConfig.code);
           }
           _.forEach(formFields, (field) => {
             const fieldConfig = _.find(this.programsService.overrideMetaData, (item) => item.code === field.code);
-            if (fieldConfig.editable === true) {
+            if (fieldConfig && fieldConfig.editable === true) {
               editableFields.push(fieldConfig.code);
             }
           });
@@ -334,7 +365,7 @@ export class HelperService {
     return editableFields;
   }
 
-  getFormattedData(formValue, textFields) {
+  getFormattedData(formValue, formFields) {
     const trimmedValue = _.mapValues(formValue, (value) => {
       if (_.isString(value)) {
         return _.trim(value);
@@ -342,9 +373,15 @@ export class HelperService {
         return value;
       }
     });
-    _.forEach(textFields, field => {
+    _.forEach(formFields, field => {
       if (field.dataType === 'list') {
-        trimmedValue[field.code] = trimmedValue[field.code] ? trimmedValue[field.code].split(', ') : [];
+        if (_.isString(trimmedValue[field.code])) {
+          trimmedValue[field.code] = _.split(trimmedValue[field.code], ',');
+        }
+      } else if (field.dataType === 'text') {
+        if (_.isArray(trimmedValue[field.code])) {
+          trimmedValue[field.code] = _.join(trimmedValue[field.code]);
+        }
       }
     });
     return _.pickBy(_.assign({}, trimmedValue), _.identity);
@@ -373,6 +410,312 @@ export class HelperService {
     return metaDataModified;
   }
 
+  initializeMetadataForm(sessionContext, formFieldProperties, contentMetadata) {
+    const categoryMasterList = sessionContext.frameworkData;
+    _.forEach(categoryMasterList, (category) => {
+      _.forEach(formFieldProperties, (formFieldCategory) => {
+        if (category.code === formFieldCategory.code) {
+          formFieldCategory.range = category.terms;
+        }
+        if (formFieldCategory.code === 'learningOutcome') {
+          const topicTerm = _.find(sessionContext.topicList, { name: _.first(sessionContext.topic) });
+          if (topicTerm && topicTerm.associations) {
+            formFieldCategory.range = _.map(topicTerm.associations, (learningOutcome) =>  learningOutcome);
+          }
+        }
+        if (formFieldCategory.code === 'additionalCategories') {
+          console.log(this.cacheService.get(this.userService.hashTagId));
+          // tslint:disable-next-line:max-line-length
+          formFieldCategory.range = _.map(_.get(this.getProgramLevelChannelData(), 'contentAdditionalCategories'), data => {
+            return {name: data};
+          });
+        }
+        if (formFieldCategory.code === 'license' && this.getAvailableLicences()) {
+          formFieldCategory.range = this.getAvailableLicences();
+        }
+      });
+    });
+
+    // set default values in the form
+    if (contentMetadata) {
+      _.forEach(formFieldProperties, (formFieldCategory) => {
+        const requiredData = _.get(contentMetadata, formFieldCategory.code);
+        if (!_.isEmpty(requiredData) && requiredData !== 'Untitled') {
+          formFieldCategory.defaultValue = requiredData;
+        }
+        if (formFieldCategory.inputType === 'checkbox' && requiredData) {
+          formFieldCategory.defaultValue = requiredData;
+        }
+        if (formFieldCategory.code === 'author' && !requiredData) {
+          let creator = this.userService.userProfile.firstName;
+          if (!_.isEmpty(this.userService.userProfile.lastName)) {
+            creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
+          }
+          formFieldCategory.defaultValue = creator;
+        }
+        if (formFieldCategory.code === 'learningOutcome' && formFieldCategory.inputType === 'select' && _.isArray(requiredData)) {
+          formFieldCategory.defaultValue = _.first(requiredData) || '';
+        }
+      });
+    }
+    // else {
+    //   _.forEach(formFieldProperties, (formFieldCategory) => {
+    //     if (!_.isUndefined(sessionContext[formFieldCategory.code])) {
+    //       formFieldCategory.defaultValue = sessionContext[formFieldCategory.code];
+    //     }
+    //   });
+    // }
+    const sortedFormFields = _.sortBy(_.uniqBy(formFieldProperties, 'code'), 'index');
+    return [categoryMasterList, sortedFormFields];
+  }
+
+  validateForm(formFieldProperties, formInputData) {
+    const requiredFields = _.map(_.filter(formFieldProperties, { 'required': true }), field => field.code );
+    const textFields = _.filter(formFieldProperties, {'inputType': 'text', 'editable': true});
+
+    const validFields = _.map(requiredFields, field => {
+      if (_.find(formFieldProperties, val => val.code === field && val.inputType === 'checkbox') && _.get(formInputData, field)) {
+        return true;
+      // tslint:disable-next-line:max-line-length
+      } else if (_.isEmpty(_.get(formInputData, field)) || (_.find(textFields, data => data.code === field) && _.trim(formInputData[field]).length === 0)) {
+        return false;
+      } else {
+        return true;
+      }
+    });
+
+    return _.includes(validFields, false) ? false : true;
+  }
+
+  contentMetadataUpdate(role, req, contentId): Observable<any> {
+    if (role === 'CONTRIBUTOR') {
+      return this.updateContent(req, contentId);
+    } else if ('REVIEWER') {
+      delete req.content.versionKey;
+      return this.systemUpdateforContent(req, contentId);
+    }
+  }
+
+  systemUpdateforContent(requestBody, contentId) {
+    const option = {
+      url: `system/v3/content/update/${contentId}`,
+      data: {
+        'request': requestBody
+      }
+    };
+    return this.actionService.patch(option);
+  }
+
+  getFormConfiguration() {
+    return [{
+      'code': 'name',
+      'editable': true,
+      'displayProperty': 'Editable',
+      'dataType': 'text',
+      'renderingHints': {
+        'semanticColumnWidth': 'twelve'
+      },
+      'description': 'Name',
+      'index': 1,
+      'label': 'Name',
+      'required': true,
+      'name': 'Name',
+      'inputType': 'text',
+      'placeholder': 'Name'
+    },
+    // {
+    //   'code': 'board',
+    //   'visible': true,
+    //   'depends': [
+    //     'medium',
+    //     'gradeLevel',
+    //     'subject'
+    //   ],
+    //   'editable': true,
+    //   'displayProperty': 'Editable',
+    //   'dataType': 'text',
+    //   'renderingHints': {
+    //     'semanticColumnWidth': 'six'
+    //   },
+    //   'description': 'Education Board (Like MP Board, NCERT, etc)',
+    //   'index': 2,
+    //   'label': 'Board',
+    //   'required': false,
+    //   'name': 'Board',
+    //   'inputType': 'select',
+    //   'placeholder': 'Board'
+    // },
+    // {
+    //   'code': 'medium',
+    //   'visible': true,
+    //   'depends': [
+    //     'gradeLevel',
+    //     'subject'
+    //   ],
+    //   'editable': true,
+    //   'displayProperty': 'Editable',
+    //   'dataType': 'list',
+    //   'renderingHints': {
+    //     'semanticColumnWidth': 'six'
+    //   },
+    //   'description': 'Medium of instruction',
+    //   'index': 3,
+    //   'label': 'Medium',
+    //   'required': true,
+    //   'name': 'Medium',
+    //   'inputType': 'multiSelect',
+    //   'placeholder': 'Medium'
+    // },
+    // {
+    //   'code': 'gradeLevel',
+    //   'visible': true,
+    //   'depends': [
+    //     'subject'
+    //   ],
+    //   'editable': true,
+    //   'displayProperty': 'Editable',
+    //   'dataType': 'list',
+    //   'renderingHints': {
+    //     'semanticColumnWidth': 'six'
+    //   },
+    //   'description': 'Class',
+    //   'index': 4,
+    //   'label': 'Class',
+    //   'required': true,
+    //   'name': 'Class',
+    //   'inputType': 'multiSelect',
+    //   'placeholder': 'Class'
+    // },
+    // {
+    //   'code': 'subject',
+    //   'visible': true,
+    //   'editable': true,
+    //   'displayProperty': 'Editable',
+    //   'dataType': 'list',
+    //   'renderingHints': {
+    //     'semanticColumnWidth': 'six'
+    //   },
+    //   'description': 'Subject of the Content to use to teach',
+    //   'index': 5,
+    //   'label': 'Subject',
+    //   'required': true,
+    //   'name': 'Subject',
+    //   'inputType': 'multiSelect',
+    //   'placeholder': 'Subject'
+    // },
+    {
+      'code': 'learningOutcome',
+      'visible': true,
+      'editable': true,
+      'displayProperty': 'Editable',
+      'dataType': 'list',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'description': 'Subject of the Content to use to teach',
+      'index': 2,
+      'label': 'Learning Outcome',
+      'required': false,
+      'name': 'learningOutcome',
+      'inputType': 'select',
+      'placeholder': 'learningOutcome'
+    },
+    {
+      'code': 'attributions',
+      'dataType': 'list',
+      'description': 'Attributions',
+      'editable': true,
+      'index': 3,
+      'inputType': 'text',
+      'label': 'Attributions',
+      'name': 'attribution',
+      'placeholder': '',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'required': false
+    },
+    {
+      'code': 'author',
+      'dataType': 'text',
+      'description': 'Author',
+      'editable': true,
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'index': 4,
+      'inputType': 'text',
+      'label': 'Author',
+      'name': 'Author',
+      'placeholder': 'Author',
+      'required': true
+    },
+    {
+      'code': 'copyright',
+      'dataType': 'text',
+      'description': 'Copyright',
+      'editable': true,
+      'index': 5,
+      'inputType': 'text',
+      'label': 'Copyright',
+      'name': 'Copyright',
+      'placeholder': 'Copyright',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'required': false
+    },
+    {
+      'code': 'license',
+      'visible': true,
+      'editable': true,
+      'displayProperty': 'Editable',
+      'dataType': 'text',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'description': 'Subject of the Content to use to teach',
+      'index': 6,
+      'label': 'License',
+      'required': false,
+      'name': 'license',
+      'inputType': 'select',
+      'placeholder': 'license'
+    },
+    {
+      'code': 'additionalCategories',
+      'visible': true,
+      'editable': true,
+      'displayProperty': 'Editable',
+      'dataType': 'list',
+      'renderingHints': {
+        'semanticColumnWidth': 'six'
+      },
+      'description': 'Subject of the Content to use to teach',
+      'index': 7,
+      'label': 'Content Additional Categories',
+      'required': false,
+      'name': 'additionalCategories',
+      'inputType': 'multiSelect',
+      'placeholder': 'Content Additional Categories'
+    },
+    {
+      'code': 'contentPolicyCheck',
+      'editable': true,
+      'displayProperty': 'Editable',
+      'dataType': 'text',
+      'renderingHints': {
+        'semanticColumnWidth': 'twelve'
+      },
+      'description': 'Name',
+      'index': 8,
+      'label': 'Content PolicyCheck',
+      'required': true,
+      'name': 'contentPolicyCheck',
+      'inputType': 'checkbox',
+      'placeholder': 'Name'
+    }];
+  }
   /*getContentMetadata(componentInput: any) {
     const contentId = sessionContext.resourceIdentifier;
     const option = {

@@ -6,16 +6,16 @@
   <div class="sb-modal-content">
     <div class="twelve wide column">
       <div class="ui grid flex-jc-center m-0">
-        <div class="three wide column p-8"  *ngFor="let template of templateList" (click)="showButton=true; templateSelected = template.id" >
-          <div class="ui card text-center common-contribution-card" [ngClass]="{'active': templateSelected === template.id}">
-            <div class="content" appTelemetryInteract 
-            [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('template_'+ template.label, configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.singleSelect,telemetryPageId, {key:'dialog_id',value:'select_to_contribute'})"
+        <div class="three wide column p-8"  *ngFor="let template of templateList" (click)="showButton=true; templateSelected = template" >
+          <div class="ui card text-center common-contribution-card" [ngClass]="{'active': templateSelected === template}">
+            <div class="content" appTelemetryInteract
+            [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata(template.label, configService.telemetryLabels.eventType.click,undefined,telemetryPageId, {key:'dialog_id',value:'select_to_contribute'})"
             [telemetryInteractObject]="telemetryInteractObject"
             [telemetryInteractCdata]="telemetryInteractCdata"
             [telemetryInteractPdata]="telemetryInteractPdata">
               <i class="check circle icon"></i>
-              <img class="mt-16" src="{{template.metadata.appIcon || 'assets/images/book.png'}}" rel="placeholder">
-              <div class="content-title pt-16 pb-8">{{template.label}}</div>
+              <img class="mt-16" src="{{'assets/images/book.png'}}" rel="placeholder">
+              <div class="content-title pt-16 pb-8">{{template}}</div>
             </div>
           </div>
         </div>
@@ -27,11 +27,83 @@
   <div class="sb-modal-actions">
     <button class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': showButton, 'sb-btn-disabled': !showButton}" (click)="handleSubmit()"
     appTelemetryInteract 
-            [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('continue', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryPageId,{key:'dialog_id',value:'select_to_contribute'})"
+            [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('continue', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryPageId,{key:'dialog_id',value:'select_to_contribute','template_id':templateSelected})"
             [telemetryInteractObject]="telemetryInteractObject"
             [telemetryInteractCdata]="telemetryInteractCdata"
             [telemetryInteractPdata]="telemetryInteractPdata">
       Continue
+    </button>
+  </div>
+</sui-modal>
+<sui-modal *ngIf="showModeofCreationModal" [mustScroll]="false" [isClosable]="false" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
+  appBodyScroll (dismissed)="showModeofCreationModal=false" #modeofcreationmodal>
+  <div class="sb-modal-header">
+    {{resourceService.frmelmnts.lbl.modeOfCreation}}
+  </div>
+  <div class="sb-modal-content">
+    <div class="py-10">
+      <div class="sb-radio-btn-checkbox sb-radio-btn-primary" *ngIf="selectedtemplateDetails.editorTypes.includes('ecml')">
+        <input type="radio" id="ecml" name="modeOfCreation" (click)="setModeOfCreation('ecml')">
+        <label for="ecml">{{resourceService.frmelmnts.lbl.createInteractiveContent}}</label>
+      </div>
+      <div class="sb-radio-btn-checkbox sb-radio-btn-primary" *ngIf="selectedtemplateDetails.editorTypes.includes('question')">
+        <input type="radio" id="question" name="modeOfCreation" (click)="setModeOfCreation('question')">
+        <label for="question">{{resourceService.frmelmnts.lbl.createQuestions}}</label>
+      </div>
+      <div class="sb-radio-btn-checkbox sb-radio-btn-primary"  *ngIf="selectedtemplateDetails.editorTypes.includes('upload')">
+        <input type="radio" id="upload" name="modeOfCreation" (click)="setModeOfCreation('upload')">
+        <label for="upload">{{resourceService.frmelmnts.lbl.uploadFile}}</label>
+      </div>
+    </div>
+  </div>
+  <div class="sb-modal-actions">
+    <button class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': showButton, 'sb-btn-disabled': !showButton}" (click)="handleModeOfCreation()"
+    appTelemetryInteract
+            [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('templateSelection-button', 'click', 'chapter-list')"
+            [telemetryInteractObject]="telemetryInteractObject"
+            [telemetryInteractCdata]="telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryInteractPdata">
+      {{resourceService.frmelmnts.lbl.continue}}
+    </button>
+  </div>
+</sui-modal>
+<sui-modal *ngIf="showQuestionTypeModal" [mustScroll]="false" [isClosable]="false" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
+  appBodyScroll (dismissed)="showQuestionTypeModal=false" #questionTypeModal>
+  <div class="sb-modal-header">
+    {{resourceService.frmelmnts.lbl.selectQuestionType}}
+  </div>
+  <div class="sb-modal-content">
+    <div class="py-10">
+      <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+        <input type="radio" id="vsa" name="questionType" (click)="setQuestionType('vsa')">
+        <label for="vsa">VSA - Practice Sets</label>
+      </div>
+      <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+        <input type="radio" id="sa" name="questionType" (click)="setQuestionType('sa')">
+        <label for="sa">SA - Practice Sets</label>
+      </div>
+      <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+        <input type="radio" id="la" name="questionType" (click)="setQuestionType('la')">
+        <label for="la">LA - Practice Sets</label>
+      </div>
+      <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+        <input type="radio" id="mcq" name="questionType" (click)="setQuestionType('mcq')">
+        <label for="mcq">MCQ - Practice Sets</label>
+      </div>
+      <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+        <input type="radio" id="curiosity" name="questionType" (click)="setQuestionType('curiosity')">
+        <label for="curiosity">Curiosity Sets</label>
+      </div>
+    </div>
+  </div>
+  <div class="sb-modal-actions">
+    <button class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': showButton, 'sb-btn-disabled': !showButton}" (click)="submit()"
+    appTelemetryInteract
+            [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('templateSelection-button', 'click', 'chapter-list')"
+            [telemetryInteractObject]="telemetryInteractObject"
+            [telemetryInteractCdata]="telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryInteractPdata">
+      {{resourceService.frmelmnts.lbl.continue}}
     </button>
   </div>
 </sui-modal>

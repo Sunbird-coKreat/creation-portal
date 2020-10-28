@@ -231,7 +231,7 @@
                   <input  type="checkbox" [checked]="data.isSelected || data.totalSampleContent" name="{{data.identifier}}" (click)="nominationChecked(data.identifier); toggleUploadSampleButton(data)">
                   <label></label>
                 </div>
-                <button type="button" *ngIf="(data.isSelected || data.totalSampleContent) && canNominate()" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary px-10" appTelemetryInteract
+                <button type="button" [disabled]="uploadSampleClicked" *ngIf="(data.isSelected || data.totalSampleContent) && canNominate()" (click)="uploadSampleContent($event, data)" class="sb-btn sb-btn-normal sb-btn-outline-primary px-10" appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('upload_sample', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId, {values: [data.identifier]})"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="getTelemetryInteractCdata('linked_collection',data.identifier)"
@@ -268,13 +268,13 @@
     <p class="fs-0-785">{{resourceService.frmelmnts.lbl.contentTypesDescription}}</p>
     <div class="mb-10" *ngFor="let contenttype of contentType; index as i">
       <div class="sb-checkbox sb-checkbox-primary">
-          <input class="checking" [(ngModel)]="contenttype.isSelected" (change)="toggle(contenttype);" (click)="$event.stopPropagation()" type="checkbox" id="{{i+1}}"
+          <input class="checking" [checked]="checkIfSelected(contenttype)" (change)="toggle(contenttype);" (click)="$event.stopPropagation()" type="checkbox" id="{{i+1}}"
           appTelemetryInteract
           [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('contentType_selection', configService.telemetryLabels.eventType.click,undefined, telemetryPageId, {values: [contenttype.name],key:'dialog_id',value:'select_content_types'})"
           [telemetryInteractObject]="telemetryInteractObject"
           [telemetryInteractCdata]="telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryInteractPdata">
-          <label for="{{i+1}}" class="mb-0"> {{contenttype.name}}</label>
+          <label for="{{i+1}}" class="mb-0"> {{contenttype}}</label>
       </div>
       <!-- <sui-checkbox name="{{contenttype.name}}" (click)="toggle($event, contenttype, contenttype.value);">{{contenttype.name}}</sui-checkbox> -->
     </div>

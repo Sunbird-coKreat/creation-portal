@@ -267,10 +267,10 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
   handleSubmit(formControl) {
     const optionValid = _.find(this.mcqForm.options, option =>
       (option.body === undefined || option.body === '' || option.length > this.setCharacterLimit));
-    if (formControl.invalid || optionValid || !this.mcqForm.answer || [undefined, ''].includes(this.mcqForm.question)) {
+    if (optionValid || !this.mcqForm.answer || [undefined, ''].includes(this.mcqForm.question)) {
       this.showFormError = true;
       this.showPreview = false;
-      this.markFormGroupTouched(this.questionMetaForm);
+      // this.markFormGroupTouched(this.questionMetaForm);
       return;
     } else {
       if (this.questionMetaData.mode !== 'create') {
@@ -402,18 +402,6 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
           metadata['solutions'] = [solutionObj];
         }
 
-        _.forEach(this.formConfiguration, field => {
-          if (field.inputType === 'text' && field.dataType === 'list') {
-            // tslint:disable-next-line:max-line-length
-            const dataVal = this.questionMetaForm.value[field.code];
-            if (typeof(dataVal) === 'string') {
-              this.questionMetaForm.value[field.code] = dataVal.split(', ');
-            }
-            else {
-              this.questionMetaForm.value[field.code] = dataVal? dataVal: [];
-            }
-          }
-        });
         metadata = _.pickBy(_.assign(metadata, this.questionMetaForm.value), _.identity);
         const req = {
           url: this.configService.urlConFig.URLS.ASSESSMENT.UPDATE + '/' + this.questionMetaData.data.identifier,
@@ -622,5 +610,10 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
 
   getMetaData() {
     return this.helperService.getFormattedData(this.questionMetaForm.value, this.textFields);
+  }
+
+  getTelemetryInteractObject(id: string, type: string) {
+    return this.programTelemetryService.getTelemetryInteractObject(id, type, '1.0',
+    { l1: this.sessionContext.collection, l2: this.sessionContext.textBookUnitIdentifier, l3: this.sessionContext.resourceIdentifier});
   }
 }
