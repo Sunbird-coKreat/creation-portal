@@ -919,7 +919,7 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
 
-    return this.learnerService.post(req).pipe(
+    return this.post(req).pipe(
       map(result => _.get(result, 'result.ObjectCategoryDefinition')),
       catchError(err => of([]))
     ).pipe(
