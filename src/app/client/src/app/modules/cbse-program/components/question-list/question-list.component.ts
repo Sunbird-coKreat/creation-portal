@@ -250,9 +250,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     })).subscribe(res => {
       this.resourceDetails = res;
-      const contentTypeValue = [this.resourceDetails.contentType];
-      const contentType = '';//this.programsService.getContentTypesName(contentTypeValue);
-      this.resourceDetails.contentTypeName = contentType;
+      /*const contentTypeValue = [this.resourceDetails.contentType];
+      const contentType = this.resourceDetails.contentType;
+      this.resourceDetails.contentTypeName = contentType;*/
       this.sessionContext.contentMetadata = this.resourceDetails;
       this.existingContentVersionKey = res.versionKey;
       this.resourceStatus =  _.get(this.resourceDetails, 'status');
