@@ -100,11 +100,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sharedContext = this.collectionComponentInput.programContext.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});
-
-    this.contentType = _.map(_.get(this.programContext, 'content_types'), (type) => {
-      return {value: type};
-    });
-
+    this.contentType = _.get(this.programContext, 'content_types');
     this.sessionContext = _.assign(this.collectionComponentInput.sessionContext, {
       bloomsLevel: _.get(this.programContext, 'config.scope.bloomsLevel'),
       programId: _.get(this.programContext, 'programId'),
@@ -413,19 +409,20 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   toggle(item: any) {
-    if (_.includes(this.selectedContentTypes, item.value)) {
+    if (_.includes(this.selectedContentTypes, item)) {
       _.remove(this.selectedContentTypes, (data) => {
-        return data === item.value;
+        return data === item;
       });
     } else {
-      this.selectedContentTypes.push(item.value);
+      this.selectedContentTypes.push(item);
     }
-   this.markSelectedContentTypes();
+   //this.markSelectedContentTypes();
   }
 
-  markSelectedContentTypes() {
+  checkIfSelected(contentType) {
+    return (_.includes(this.selectedContentTypes, contentType)) ? true : false;
     this.contentType = _.map(this.contentType, (type) => {
-      if (_.includes(this.selectedContentTypes, type.value)) {
+      if (_.includes(this.selectedContentTypes, type)) {
          type['isSelected'] = true;
       } else {
         type['isSelected'] = false;
@@ -538,7 +535,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       this.currentNominationStatus =  _.get(nominationDetails, 'status');
       this.sessionContext.nominationDetails = nominationDetails;
       this.selectedContentTypes = _.get(nominationDetails, 'content_types', []);
-      this.markSelectedContentTypes();
+      //this.markSelectedContentTypes();
     }
     if (this.userService.isUserBelongsToOrg()) {
       this.sessionContext.currentOrgRole = _.first(this.userService.getUserOrgRole());
@@ -628,7 +625,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
 
   handleCancel(event: boolean) {
     !event ? this.preSavedContentTypes = _.clone(this.selectedContentTypes) : this.selectedContentTypes = this.preSavedContentTypes;
-    this.markSelectedContentTypes();
+    //this.markSelectedContentTypes();
     if (event && !this.selectedContentTypes.length) {
       this.toasterService.error(this.resourceService.messages.emsg.nomination.m001);
     }
