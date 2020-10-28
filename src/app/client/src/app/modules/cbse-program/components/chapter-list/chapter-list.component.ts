@@ -546,6 +546,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         if (data.createdBy === this.currentUserID && data.status === 'Review') {
           this.countData['review'] = this.countData['review'] + 1;
         }
+        
         if (data.createdBy === this.currentUserID && data.status === 'Draft') {
           this.countData['draft'] = this.countData['draft'] + 1;
         }
