@@ -184,18 +184,27 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     }
   }
 checkLandingPageState() {
-      if (this.permissionService.checkRolesPermissions(this.config.rolesConfig.headerTabsRoles['manageProgramsRole'])) {
-      this.handleActiveTabState('myPrograms');
-      } else if (this.permissionService.checkRolesPermissions(this.config.rolesConfig.headerTabsRoles['manageContentRole'])) {
-        this.router.navigateByUrl(this.navigateToWorkspace());
-        this.handleActiveTabState('manageContents');
-      } else if (this.permissionService.checkRolesPermissions(this.config.rolesConfig.headerTabsRoles['manageUserRole'])) {
-        this.router.navigateByUrl('sourcing/orglist');
-        this.handleActiveTabState('manageUsers');
-      } else {
-        this.router.navigateByUrl('/sourcing/help');
-        this.handleActiveTabState('contributorHelp');
+  this.userService.userData$.subscribe(
+    (user: any) => {
+      if (user && !user.err) {
+        if (this.router.url.includes('/sourcing/help')) {
+          this.router.navigateByUrl('/sourcing/help');
+          this.handleActiveTabState('contributorHelp');
+        } else if (this.permissionService.checkRolesPermissions(this.config.rolesConfig.headerTabsRoles['manageProgramsRole'])) {
+          this.handleActiveTabState('myPrograms');
+          } else if (this.permissionService.checkRolesPermissions(this.config.rolesConfig.headerTabsRoles['manageContentRole'])) {
+            this.router.navigateByUrl(this.navigateToWorkspace());
+            this.handleActiveTabState('manageContents');
+          } else if (this.permissionService.checkRolesPermissions(this.config.rolesConfig.headerTabsRoles['manageUserRole'])) {
+            this.router.navigateByUrl('sourcing/orglist');
+            this.handleActiveTabState('manageUsers');
+          } else {
+            this.router.navigateByUrl('/sourcing/help');
+            this.handleActiveTabState('contributorHelp');
+          }
       }
+    }
+  );
 }
 
   ngOnDestroy() {

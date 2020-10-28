@@ -136,7 +136,10 @@ export class PermissionService {
    * @param {Array<string>}  roles roles to validate.
    */
   public checkRolesPermissions(roles: Array<string>): boolean {
-    if ((_.intersection(roles, this.userRoles).length)) {
+    if (!_.isEmpty(this.userRoles) && (_.intersection(roles, this.userRoles).length)) {
+      return true;
+    } else if (this.userService.userProfile && this.userService.userProfile.userRoles &&
+      (_.intersection(roles, this.userService.userProfile.userRoles).length)) {
       return true;
     }
     return false;
