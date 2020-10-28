@@ -249,8 +249,12 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
             (error) => {
               console.log(error);
               this.showLoader = false;
-              const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-              this.toasterService.error(errorMes || 'Fetching textbooks failed. Please try again...');
+              const errInfo = {
+                errorMsg: 'Fetching textbooks failed. Please try again...',
+                telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
+                env : this.activatedRoute.snapshot.data.telemetry.env
+              };
+              this.cbseService.apiErrorHandling(error, errInfo);
             }
           );
         } else {
@@ -357,7 +361,11 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.contentService.post(req)
       .pipe(
         catchError(err => {
-          const errInfo = { errorMsg: 'Question creation failed' };
+          const errInfo = {
+            errorMsg: 'Question creation failed',
+            telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
+            env : this.activatedRoute.snapshot.data.telemetry.env, request: req
+          };
           this.showLoader = false;
           this.showError = true;
         return throwError(this.cbseService.apiErrorHandling(err, errInfo));
@@ -483,7 +491,12 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
           }
       }, (error) => {
         this.disableNominate = false;
-        this.toasterService.error('Nomination submit failed... Please try later');
+        const errInfo = {
+          errorMsg: 'Nomination submit failed... Please try later',
+          telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
+          env : this.activatedRoute.snapshot.data.telemetry.env, request: request
+        };
+        this.cbseService.apiErrorHandling(error, errInfo);
     });
   }
 
@@ -526,7 +539,12 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       this.afterNominationCheck(nomination);
     }, error => {
       this.getCollectionCard();
-      this.toasterService.error('Failed fetching current nomination status');
+      const errInfo = {
+        errorMsg: 'Failed fetching current nomination status',
+        telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
+        env : this.activatedRoute.snapshot.data.telemetry.env, request: req
+      };
+      this.cbseService.apiErrorHandling(error, errInfo);
     });
   }
 
@@ -593,7 +611,12 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
             this.gotoChapterView(collection);
           }
         }, error => {
-          this.toasterService.error('User onboarding failed');
+          const errInfo = {
+            errorMsg: 'User onboarding failed',
+            telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
+            env : this.activatedRoute.snapshot.data.telemetry.env, request: request
+          };
+          this.cbseService.apiErrorHandling(error, errInfo);
         });
     }
   }

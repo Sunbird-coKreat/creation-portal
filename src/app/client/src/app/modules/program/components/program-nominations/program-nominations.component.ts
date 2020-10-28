@@ -16,6 +16,7 @@ import { forkJoin, of } from 'rxjs';
 import { isDefined } from '@angular/compiler/src/util';
 import { isUndefined, isNullOrUndefined } from 'util';
 import {ProgramTelemetryService} from '../../services';
+import { CbseProgramService } from '../../../cbse-program/services';
 
 @Component({
   selector: 'app-program-nominations',
@@ -101,6 +102,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   searchInput: any;
   public telemetryPageId: string;
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
+    private cbseProgramService: CbseProgramService,
     public resourceService: ResourceService, public config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
      private activatedRoute: ActivatedRoute, private router: Router,
     private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService,
@@ -113,6 +115,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   ngOnInit() {
     this.filterApplied = null;
+    this.getPageId();
     this.getProgramDetails();
     this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}, {id: this.programId, type: 'project'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
@@ -333,6 +336,12 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     }, (error1) => {
       this.logTelemetryImpressionEvent();
      console.log(error1, "No opensaber org for sourcing");
+     const errInfo = {
+      telemetryPageId: this.telemetryPageId,
+      telemetryCdata : this.telemetryInteractCdata,
+      env : this.activatedRoute.snapshot.data.telemetry.env,
+    };
+    this.cbseProgramService.apiErrorHandling(error1, errInfo);
    });
 
 
@@ -602,8 +611,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         },
         (error) => {
           this.showLoader = false;
-          const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-          this.toasterService.error(errorMes || 'Fetching textbooks failed. Please try again...');
+          const errInfo = {
+            errorMsg: 'Fetching textbooks failed. Please try again...',
+            telemetryPageId: this.telemetryPageId,
+            telemetryCdata : this.telemetryInteractCdata,
+            env : this.activatedRoute.snapshot.data.telemetry.env,
+          };
+          this.cbseProgramService.apiErrorHandling(error, errInfo);
       });
 
       this.setActiveDate();
@@ -614,9 +628,14 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       const currentRoles = _.filter(this.programDetails.config.roles, role => this.sessionContext.currentRoles.includes(role.name));
       this.sessionContext.currentRoleIds = !_.isEmpty(currentRoles) ? _.map(currentRoles, role => role.id) : null;
     }, error => {
-      // TODO: navigate to program list page
-      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-      this.toasterService.error(errorMes || this.resourceService.messages.emsg.project.m0001);
+      const errInfo = {
+        errorMsg: this.resourceService.messages.emsg.project.m0001,
+        telemetryPageId:this.telemetryPageId,
+        telemetryCdata : this.telemetryInteractCdata,
+        env : this.activatedRoute.snapshot.data.telemetry.env,
+        request: req
+      };
+      this.cbseProgramService.apiErrorHandling(error, errInfo);
     });
   }
 
@@ -706,14 +725,25 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
               this.logTelemetryImpressionEvent(this.programCollections, 'identifier', 'collection');
             }, (err) => { // TODO: navigate to program list page
               this.showTextbookLoader  =  false;
-              const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-              this.toasterService.warning(errorMes || 'Fetching textbooks failed');
               this.logTelemetryImpressionEvent();
+              const errInfo = {
+                errorMsg: 'Fetching textbooks failed',
+                telemetryPageId:this.telemetryPageId,
+                telemetryCdata : this.telemetryInteractCdata,
+                env : this.activatedRoute.snapshot.data.telemetry.env,
+                request: preffilter
+              };
+              this.cbseProgramService.apiErrorHandling(err, errInfo);
             });
         }, (err) => { // TODO: navigate to program list page
           this.showTextbookLoader  =  false;
-          const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-          this.toasterService.warning(errorMes || 'Fetching Preferences  failed');
+          const errInfo = {
+            errorMsg: 'Fetching Preferences  failed',
+            telemetryPageId: this.telemetryPageId,
+            telemetryCdata : this.telemetryInteractCdata,
+            env : this.activatedRoute.snapshot.data.telemetry.env,
+          };
+          this.cbseProgramService.apiErrorHandling(err, errInfo);
       });
     }
 
@@ -733,8 +763,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.getProgramCollection().subscribe(
         (res) => { this.getNominationList(); },
         (err) => { // TODO: navigate to program list page
-          const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-          this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+          const errInfo = {
+            errorMsg: 'Fetching textbooks failed',
+            telemetryPageId: this.telemetryPageId,
+            telemetryCdata : this.telemetryInteractCdata,
+            env : this.activatedRoute.snapshot.data.telemetry.env,
+          };
+          this.cbseProgramService.apiErrorHandling(err, errInfo);
         }
       );
     }
@@ -780,8 +815,14 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       }, error => {
         this.showUserRemoveRoleModal = false;
         this.userRemoveRoleLoader = false;
-        console.log(error);
-        this.toasterService.error(this.resourceService.messages.emsg.roles.m0002);
+        const errInfo = {
+          errorMsg: this.resourceService.messages.emsg.roles.m0002,
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activatedRoute.snapshot.data.telemetry.env,
+          request: request
+        };
+        this.cbseProgramService.apiErrorHandling(error, errInfo);
       });
   }
 
@@ -979,8 +1020,12 @@ showUserRoleOption(roleName, userRole) {
         }
       },
       (error) => {
-        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-        this.toasterService.error(errorMes || 'Unable to download nomination list. Please try later.');
+        const errInfo = {
+          errorMsg: 'Unable to download nomination list. Please try later.',
+          telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
+          env : this.activatedRoute.snapshot.data.telemetry.env,
+        };
+        this.cbseProgramService.apiErrorHandling(error, errInfo);
         this.downloadInProgress = false;
       },
       () => {
@@ -1035,7 +1080,14 @@ this.programsService.post(req).subscribe((data) => {
   }, error => {
     this.showNominationLoader = false;
     this.logTelemetryImpressionEvent();
-    this.toasterService.error(this.resourceService.messages.emsg.projects.m0003);
+    const errInfo = {
+      errorMsg: this.resourceService.messages.emsg.projects.m0003,
+      telemetryPageId: this.telemetryPageId,
+      telemetryCdata : this.telemetryInteractCdata,
+      env : this.activatedRoute.snapshot.data.telemetry.env,
+      request: req
+    };
+    this.cbseProgramService.apiErrorHandling(error, errInfo);
   });
 }
 
@@ -1159,7 +1211,12 @@ downloadReport(report) {
       this.toasterService.error(this.resourceService.messages.emsg.projects.m0005);
     }
   }, (err) => {
-    this.toasterService.error(this.resourceService.messages.emsg.projects.m0005);
+    const errInfo = {
+      errorMsg: this.resourceService.messages.emsg.projects.m0005,
+      telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
+      env : this.activatedRoute.snapshot.data.telemetry.env,
+    };
+    this.cbseProgramService.apiErrorHandling(err, errInfo);
   });
 }
 
