@@ -10,6 +10,7 @@ import { IInteractEventEdata, TelemetryService } from '@sunbird/telemetry';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { CacheService } from 'ng2-cache-service';
 import { first } from 'rxjs/operators';
+import { CbseProgramService } from '../../../cbse-program/services';
 
 @Component({
   selector: 'app-program-list',
@@ -58,9 +59,11 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService, public cacheService: CacheService,
     private navigationHelperService: NavigationHelperService, public activeRoute: ActivatedRoute,
-    private telemetryService: TelemetryService, public frameworkService: FrameworkService) { }
+    private telemetryService: TelemetryService, public frameworkService: FrameworkService,
+    private cbseProgramService: CbseProgramService) { }
 
   ngOnInit() {
+    this.getPageId();
     this.programsService.frameworkInitialize(); // initialize framework details here
     this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
       if (frameworkInfo && !frameworkInfo.err) {
@@ -234,8 +237,14 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         this.showDeleteModal = false;
       },
       (err) => {
-        console.log(err, err)
-        this.toasterService.error(this.resourceService.frmelmnts.lbl.errorMessageTheProjectHasBeenDeleted);
+        const errInfo = {
+          errorMsg: this.resourceService.frmelmnts.lbl.errorMessageTheProjectHasBeenDeleted,
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activeRoute.snapshot.data.telemetry.env,
+          request: programData
+        };
+        this.cbseProgramService.apiErrorHandling(err, errInfo);
         ($event.target as HTMLButtonElement).disabled = false;
       }
     );
@@ -268,7 +277,14 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
                   this.filterOutEnrolledPrograms(allPrograms, enrolledPrograms);
                 }, (error) => {
                   console.log(error);
-                  this.toasterService.error(this.resourceService.messages.emsg.projects.m0002);
+                  const errInfo = {
+                    errorMsg: this.resourceService.messages.emsg.projects.m0002,
+                    telemetryPageId: this.telemetryPageId,
+                    telemetryCdata : this.telemetryInteractCdata,
+                    env : this.activeRoute.snapshot.data.telemetry.env,
+                    request: filters
+                  };
+                  this.cbseProgramService.apiErrorHandling(error, errInfo);
                 });
           } else {
             this.iscontributeOrgAdmin = false;
@@ -293,7 +309,14 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
                 this.filterOutEnrolledPrograms(allPrograms, enrolledPrograms);
               }, error => {
                 this.showLoader = false;
-                this.toasterService.error(_.get(error, 'error.params.errmsg') || this.resourceService.messages.emsg.projects.m0001);
+                const errInfo = {
+                  errorMsg: this.resourceService.messages.emsg.projects.m0001,
+                  telemetryPageId: this.telemetryPageId,
+                  telemetryCdata : this.telemetryInteractCdata,
+                  env : this.activeRoute.snapshot.data.telemetry.env,
+                  request: req
+                };
+                this.cbseProgramService.apiErrorHandling(error, errInfo);
               }
               );
           }
@@ -303,8 +326,15 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         }
       }, error => {
         this.showLoader = false;
-        this.toasterService.error(_.get(error, 'error.params.errmsg') || this.resourceService.messages.emsg.projects.m0001);
         this.logTelemetryImpressionEvent();
+        const errInfo = {
+          errorMsg: this.resourceService.messages.emsg.projects.m0001,
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activeRoute.snapshot.data.telemetry.env,
+          request: getAppliedFilters
+        };
+        this.cbseProgramService.apiErrorHandling(error, errInfo);
       }
     );
   }
@@ -381,6 +411,12 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         this.showLoader = false;
       }, error => {
         console.log(error);
+        const errInfo = {
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activeRoute.snapshot.data.telemetry.env,
+        };
+        this.cbseProgramService.apiErrorHandling(error, errInfo);
         // TODO: Add error toaster
       });
   }
@@ -470,7 +506,13 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
           this.showLoader = false;
           console.log(error);
           this.logTelemetryImpressionEvent();
-          this.toasterService.error(this.resourceService.messages.emsg.projects.m0002);
+          const errInfo = {
+            errorMsg: this.resourceService.messages.emsg.projects.m0002,
+            telemetryPageId: this.telemetryPageId,
+            telemetryCdata : this.telemetryInteractCdata,
+            env : this.activeRoute.snapshot.data.telemetry.env,
+          };
+          this.cbseProgramService.apiErrorHandling(error, errInfo);
         });
       return;
     }
@@ -506,7 +548,13 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       },
       (error) => {
         console.log(error);
-        this.toasterService.error(this.resourceService.messages.emsg.projects.m0002);
+        const errInfo = {
+          errorMsg: this.resourceService.messages.emsg.projects.m0002,
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activeRoute.snapshot.data.telemetry.env,
+        };
+        this.cbseProgramService.apiErrorHandling(error, errInfo);
       });
   }
 
@@ -595,9 +643,14 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       this.logTelemetryImpressionEvent();
     }, error => {
       this.showLoader = false;
-      console.log(error);
+      const errInfo = {
+        telemetryPageId: this.telemetryPageId,
+        telemetryCdata : this.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env,
+        request: filters
+      };
+      this.cbseProgramService.apiErrorHandling(error, errInfo);
       this.logTelemetryImpressionEvent();
-      // TODO: Add error toaster
     });
   }
 
@@ -734,7 +787,14 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
           this.router.navigateByUrl('/contribute/program/' + this.selectedProgramToModify.program_id);
         }
       }, err => {
-        this.toasterService.error(this.resourceService.messages.emsg.bulkApprove.something);
+        const errInfo = {
+          errorMsg: this.resourceService.messages.emsg.bulkApprove.something,
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activeRoute.snapshot.data.telemetry.env,
+          request: req
+        };
+        this.cbseProgramService.apiErrorHandling(err, errInfo);
       });
     } else {
       this.toasterService.error(this.resourceService.messages.emsg.bulkApprove.something);

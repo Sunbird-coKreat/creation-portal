@@ -228,7 +228,10 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
     }
     };
     this.contentService.post(option).pipe(catchError(err => {
-      const errInfo = { errorMsg: 'Fetching content list failed' };
+      const errInfo = {
+        errorMsg: 'Fetching content list failed',
+        telemetryPageId: this.telemetryPageId, telemetryCdata : this.sessionContext.telemetryInteractCdata,
+        env : this.route.snapshot.data.telemetry.env, request: option };
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     }),
       finalize(() => {

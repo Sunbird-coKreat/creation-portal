@@ -115,6 +115,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.actions = _.get(this.chapterListComponentInput, 'programContext.config.actions');
     this.sharedContext = _.get(this.chapterListComponentInput, 'programContext.config.sharedContext');
     this.telemetryPageId = _.get(this.sessionContext, 'telemetryPageDetails.telemetryPageId');
+    this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
+    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
     this.myOrgId = (this.userService.userRegistryData
       && this.userService.userProfile.userRegData
       && this.userService.userProfile.userRegData.User_Org
@@ -153,9 +155,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       };
       this.helperService.getProgramConfiguration(request).subscribe(res => {}, err => {});
     }
-
-    this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
-    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
 
   }
 
@@ -324,7 +323,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     };
      return new Promise((resolve) => {
     this.actionService.get(req).pipe(catchError(err => {
-      const errInfo = { errorMsg: 'Fetching TextBook details failed' }; this.showLoader = false;
+      const errInfo = {
+        errorMsg: 'Fetching TextBook details failed',
+        telemetryPageId: this.telemetryPageId,
+        telemetryCdata : this.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env,
+        request: req
+      };
+      this.showLoader = false;
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     }))
       .subscribe((response) => {
@@ -735,7 +741,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         option.data.request.content.appIcon = this.templateDetails.metadata.appIcon;
       }
       this.actionService.post(option).pipe(map((res: any) => res.result), catchError(err => {
-        const errInfo = { errorMsg: 'Unable to create contentId, Please Try Again' };
+        const errInfo = {
+          errorMsg: 'Unable to create contentId, Please Try Again',
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activeRoute.snapshot.data.telemetry.env,
+          request: option
+        };
         return throwError(this.cbseService.apiErrorHandling(err, errInfo));
       }))
         .subscribe(result => {
@@ -821,7 +833,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
          this.updateTextbookmvcContentCount(this.sessionContext.collection, contentId);
          this.toasterService.success(_.replace(this.resourceService.messages.stmsg.m0147, '{CONTENT_NAME}', this.contentName));
        }, (error) => {
-        this.toasterService.error(_.replace(this.resourceService.messages.emsg.m0078, '{CONTENT_NAME}', this.contentName));
+        const errInfo = {
+          errorMsg: _.replace(this.resourceService.messages.emsg.m0078, '{CONTENT_NAME}', this.contentName),
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activeRoute.snapshot.data.telemetry.env,
+        };
+        this.cbseService.apiErrorHandling(error, errInfo);
        });
   }
   updateTextbookmvcContentCount(textbookId, contentId) {
@@ -836,8 +854,21 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       };
       this.helperService.updateContent(request, textbookId).subscribe((data) => {
       }, err => {
+        const errInfo = {
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activeRoute.snapshot.data.telemetry.env,
+          request: request
+        };
+        this.cbseService.apiErrorHandling(err, errInfo);
       });
-     },(error) => {
+     }, (error) => {
+      const errInfo = {
+        telemetryPageId: this.telemetryPageId,
+        telemetryCdata : this.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env,
+      };
+      this.cbseService.apiErrorHandling(error, errInfo);
      })
   }
   resourceTemplateInputData() {
@@ -929,7 +960,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           }
         },
         (error) => {
-          this.toasterService.error(this.resourceService.messages.fmsg.m00103);
+          const errInfo = {
+            errorMsg: this.resourceService.messages.fmsg.m00103,
+            telemetryPageId: this.telemetryPageId,
+            telemetryCdata : this.telemetryInteractCdata,
+            env : this.activeRoute.snapshot.data.telemetry.env,
+          };
+          this.cbseService.apiErrorHandling(error, errInfo);
         }
       );
   }

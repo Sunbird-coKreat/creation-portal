@@ -6,7 +6,7 @@ import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject, Telem
 import { UserService, RegistryService, ProgramsService } from '@sunbird/core';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'lodash-es';
-
+import { CbseProgramService } from '../../../cbse-program/services';
 @Component({
   selector: 'app-org-user-list',
   templateUrl: './org-user-list.component.html',
@@ -44,7 +44,8 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
     public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService,
-    private paginationService: PaginationService, private telemetryService: TelemetryService ) {
+    private paginationService: PaginationService, private telemetryService: TelemetryService,
+    private cbseProgramService: CbseProgramService ) {
     
     /*if (this.isSourcingOrgAdmin()) {
       this.getSourcingOrgUsers();
@@ -56,6 +57,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   
   ngOnInit() {
     this.position = 'top center';
+    this.getPageId();
     const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
       ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
     this.orgLink = `${baseUrl}/contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
@@ -267,7 +269,14 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
       },
       (error) => {
         console.log(error);
-        this.toasterService.error(this.resourceService.messages.emsg.m0077);
+        const errInfo = {
+          errorMsg: this.resourceService.messages.emsg.m0077,
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activatedRoute.snapshot.data.telemetry.env,
+          request: {osid: osid, role: [role]}
+        };
+        this.cbseProgramService.apiErrorHandling(error, errInfo);
       }
     );
   }

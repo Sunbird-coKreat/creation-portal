@@ -401,7 +401,10 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
         }
 
         this.actionService.patch(option).pipe(catchError(err => {
-          const errInfo = { errorMsg: 'Question updation failed' };
+          const errInfo = {
+            errorMsg: 'Question updation failed',
+            telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+            env : this.activeRoute.snapshot.data.telemetry.env, request: option };
           return throwError(this.cbseService.apiErrorHandling(err, errInfo));
         })).subscribe((apiRes) => {
           if (this.updateStatus === 'Live') {

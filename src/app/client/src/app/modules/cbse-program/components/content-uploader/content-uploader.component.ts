@@ -528,7 +528,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       }
 
       this.actionService.post(option).pipe(map((res: any) => res.result), catchError(err => {
-        const errInfo = { errorMsg: 'Unable to create contentId, Please Try Again' };
+        const errInfo = {
+          errorMsg: 'Unable to create contentId, Please Try Again',
+          telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+          env : this.activeRoute.snapshot.data.telemetry.env, request: option
+         };
         this.programStageService.removeLastStage();
         return throwError(this.cbseService.apiErrorHandling(err, errInfo));
       }))
@@ -559,7 +563,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       }
     };
     this.actionService.post(option).pipe(catchError(err => {
-      const errInfo = { errorMsg: 'Unable to get pre_signed_url and Content Creation Failed, Please Try Again' };
+      const errInfo = {
+        errorMsg: 'Unable to get pre_signed_url and Content Creation Failed, Please Try Again',
+        telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+        env : this.activeRoute.snapshot.data.telemetry.env, request: option
+       };
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     })).subscribe(res => {
       const signedURL = res.result.pre_signed_url;
@@ -570,7 +578,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           this.fileUplaoderProgress.progress = event.percentComplete;
           this.fileUplaoderProgress['remainingTime'] = event.remainingTime;
         }, (error) => {
-          const errInfo = { errorMsg: 'Unable to upload to Blob, Please Try Again' };
+          const errInfo = {
+            errorMsg: 'Unable to upload to Blob, Please Try Again',
+            telemetryPageId: this.telemetryPageId,
+            telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+            env : this.activeRoute.snapshot.data.telemetry.env, request: signedURL
+           };
           this.cbseService.apiErrorHandling(error, errInfo);
           console.error(error);
           this.uploadInprogress = false;
@@ -599,7 +612,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   uploadToBlob(signedURL, config): Observable<any> {
     return this.actionService.http.put(signedURL, this.uploader.getFile(0), config).pipe(catchError(err => {
-      const errInfo = { errorMsg: 'Unable to upload to Blob, Please Try Again' };
+      const errInfo = {
+        errorMsg: 'Unable to upload to Blob, Please Try Again',
+        telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+        env : this.activeRoute.snapshot.data.telemetry.env, request: signedURL };
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
   }), map(data => data));
   }
@@ -620,7 +636,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       param: config
     };
     this.actionService.post(option).pipe(catchError(err => {
-      const errInfo = { errorMsg: 'Unable to update pre_signed_url with Content Id and Content Creation Failed, Please Try Again' };
+      const errInfo = {
+        errorMsg: 'Unable to update pre_signed_url with Content Id and Content Creation Failed, Please Try Again',
+        telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+        env : this.activeRoute.snapshot.data.telemetry.env, request: option
+       };
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
   })).subscribe(res => {
      this.uploadInprogress = false;
@@ -649,7 +669,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       url: 'content/v3/read/' + contentId
     };
     this.actionService.get(option).pipe(map((data: any) => data.result.content), catchError(err => {
-      const errInfo = { errorMsg: 'Unable to read the Content, Please Try Again' };
+      const errInfo = {
+        errorMsg: 'Unable to read the Content, Please Try Again',
+        telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+        env : this.activeRoute.snapshot.data.telemetry.env, request: option
+      };
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
   })).subscribe(res => {
       const contentDetails = {
@@ -794,10 +818,21 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
             this.toasterService.success(this.resourceService.messages.smsg.m0060);
           }
         }, (err) => {
-          this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+          const errInfo = {
+            errorMsg: this.resourceService.messages.fmsg.m0098,
+            telemetryPageId: this.telemetryPageId,
+            telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+            env : this.activeRoute.snapshot.data.telemetry.env
+          };
+          this.cbseService.apiErrorHandling(err, errInfo);
         });
       }, err => {
-        this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+        const errInfo = {
+          errorMsg: this.resourceService.messages.fmsg.m0098,
+          telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+          env : this.activeRoute.snapshot.data.telemetry.env, request: request
+        };
+        this.cbseService.apiErrorHandling(err, errInfo);
       });
     } else {
       this.toasterService.error(this.resourceService.messages.fmsg.m0101);
@@ -825,17 +860,29 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           // tslint:disable-next-line:max-line-length
           this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
           .subscribe((data) => {
+            this.generateTelemetryEndEvent('submit');
             this.toasterService.success(this.resourceService.messages.smsg.m0061);
             this.programStageService.removeLastStage();
             this.uploadedContentMeta.emit({
               contentId: res.result.content_id
             });
           }, (err) => {
-            this.toasterService.error(this.resourceService.messages.fmsg.m0099);
+            const errInfo = {
+              errorMsg: this.resourceService.messages.fmsg.m0099,
+              telemetryPageId: this.telemetryPageId,
+              telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+              env : this.activeRoute.snapshot.data.telemetry.env
+            };
+            this.cbseService.apiErrorHandling(err, errInfo);
           });
         }
        }, (err) => {
-        this.toasterService.error(this.resourceService.messages.fmsg.m0099);
+        const errInfo = {
+          errorMsg: this.resourceService.messages.fmsg.m0099,
+          telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+          env : this.activeRoute.snapshot.data.telemetry.env
+        };
+        this.cbseService.apiErrorHandling(err, errInfo);
        });
   }
 
@@ -857,7 +904,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           });
         }
       }, (err) => {
-        this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+        const errInfo = {
+          errorMsg: this.resourceService.messages.fmsg.m00100,
+          telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+          env : this.activeRoute.snapshot.data.telemetry.env
+        };
+        this.cbseService.apiErrorHandling(err, errInfo);
       });
     }
   }
@@ -874,7 +926,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           contentId: res.result.node_id
         });
       }, (err) => {
-        this.toasterService.error(this.resourceService.messages.fmsg.m00106);
+        const errInfo = {
+          errorMsg: this.resourceService.messages.fmsg.m00106,
+          telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+          env : this.activeRoute.snapshot.data.telemetry.env
+        };
+        this.cbseService.apiErrorHandling(err, errInfo);
       });
     }
   }
@@ -895,7 +952,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           });
         }
       }, (err) => {
-        this.toasterService.error(this.resourceService.messages.fmsg.m00102);
+        const errInfo = {
+          errorMsg: this.resourceService.messages.fmsg.m00102,
+          telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+          env : this.activeRoute.snapshot.data.telemetry.env
+        };
+        this.cbseService.apiErrorHandling(err, errInfo);
       });
   }
 
@@ -942,6 +1004,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   handleBack() {
+    this.generateTelemetryEndEvent('back');
     this.programStageService.removeLastStage();
   }
 

@@ -246,7 +246,11 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       url: `${this.configService.urlConFig.URLS.CONTENT.GET}/${contentId}`,
     };
     this.contentService.get(option).pipe(map((data: any) => data.result.content), catchError(err => {
-      const errInfo = { errorMsg: 'Unable to read the Content, Please Try Again' };
+      const errInfo = {
+        errorMsg: 'Unable to read the Content, Please Try Again',
+        telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env, request: option
+       };
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     })).subscribe(res => {
       this.resourceDetails = res;
@@ -429,10 +433,20 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
             this.toasterService.success(this.resourceService.messages.smsg.m0060);
           }
         }, (err) => {
-          this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+          const errInfo = {
+            errorMsg: this.resourceService.messages.fmsg.m0098,
+            telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+            env : this.activeRoute.snapshot.data.telemetry.env
+           };
+            this.cbseService.apiErrorHandling(err, errInfo);
         });
       }, err => {
-        this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+        const errInfo = {
+          errorMsg: this.resourceService.messages.fmsg.m0098,
+          telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+          env : this.activeRoute.snapshot.data.telemetry.env, request: request
+         };
+          this.cbseService.apiErrorHandling(err, errInfo);
       });
     } else {
       this.toasterService.error(this.resourceService.messages.fmsg.m0101);
@@ -651,7 +665,11 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       return res.result.assessment_item;
     }),
       catchError(err => {
-        const errInfo = { errorMsg: 'Fetching Question details failed' };
+        const errInfo = {
+          errorMsg: 'Fetching Question details failed',
+          telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+          env : this.activeRoute.snapshot.data.telemetry.env, request: req
+        };
         return throwError(this.cbseService.apiErrorHandling(err, errInfo));
       }));
   }
@@ -785,17 +803,28 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         // tslint:disable-next-line:max-line-length
         this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, contentId )
         .subscribe((data) => {
+          this.generateTelemetryEndEvent('submit');
           this.toasterService.success(this.resourceService.messages.smsg.m0061);
           this.programStageService.removeLastStage();
           this.uploadedContentMeta.emit({
             contentId: contentId
           });
         }, (err) => {
-          this.toasterService.error(this.resourceService.messages.fmsg.m0099);
+          const errInfo = {
+            errorMsg: this.resourceService.messages.fmsg.m0099,
+            telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+            env : this.activeRoute.snapshot.data.telemetry.env
+           };
+            this.cbseService.apiErrorHandling(err, errInfo);
         });
       }
     }, (err) => {
-      this.toasterService.error(this.resourceService.messages.fmsg.m0099);
+      const errInfo = {
+        errorMsg: this.resourceService.messages.fmsg.m0099,
+        telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env
+       };
+        this.cbseService.apiErrorHandling(err, errInfo);
      });
   }
 
@@ -817,7 +846,12 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         });
       }
     }, (err) => {
-      this.toasterService.error(this.resourceService.messages.fmsg.m00102);
+      const errInfo = {
+        errorMsg: this.resourceService.messages.fmsg.m00102,
+        telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env
+       };
+        this.cbseService.apiErrorHandling(err, errInfo);
     });
   }
 
@@ -839,11 +873,21 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
               contentId: contentId
             });
           }, (err) => {
-            this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+            const errInfo = {
+              errorMsg: this.resourceService.messages.fmsg.m00100,
+              telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+              env : this.activeRoute.snapshot.data.telemetry.env
+             };
+              this.cbseService.apiErrorHandling(err, errInfo);
           });
         }
       }, (err) => {
-        this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+        const errInfo = {
+          errorMsg: this.resourceService.messages.fmsg.m00100,
+          telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+          env : this.activeRoute.snapshot.data.telemetry.env
+         };
+          this.cbseService.apiErrorHandling(err, errInfo);
       });
     }
   }
@@ -860,7 +904,12 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           contentId: res.result.node_id
         });
       }, (err) => {
-        this.toasterService.error(this.resourceService.messages.fmsg.m00106);
+        const errInfo = {
+          errorMsg: this.resourceService.messages.fmsg.m00106,
+          telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+          env : this.activeRoute.snapshot.data.telemetry.env
+         };
+          this.cbseService.apiErrorHandling(err, errInfo);
       });
     }
   }
@@ -915,7 +964,11 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     };
 
     this.actionService.delete(request).pipe(catchError(err => {
-      const errInfo = { errorMsg: 'Question deletion failed' };
+      const errInfo = {
+        errorMsg: 'Question deletion failed',
+        telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env, request: request
+       };
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     }))
     .subscribe((res) => {
@@ -927,6 +980,11 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }, error => {
       console.log(error);
+      const errInfo = {
+        telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env
+       };
+        this.cbseService.apiErrorHandling(error, errInfo);
     });
   }
 
@@ -966,7 +1024,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }, err => {
       console.log(err);
     }), catchError(err => {
-      const errInfo = { errorMsg: 'Default question creation failed' };
+      const errInfo = {
+         errorMsg: 'Default question creation failed',
+         telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+         env : this.activeRoute.snapshot.data.telemetry.env, request: request};
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     }));
   }
@@ -1079,7 +1140,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }, err => {
       console.log(err);
     }), catchError(err => {
-      const errInfo = { errorMsg: 'Itemsets creation failed' };
+      const errInfo = {
+        errorMsg: 'Itemsets creation failed',
+        telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env, request: reqBody };
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     }));
 
@@ -1092,7 +1156,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }, err => {
       console.log(err);
     }), catchError(err => {
-      const errInfo = { errorMsg: 'Content updation failed' };
+      const errInfo = {
+        errorMsg: 'Content updation failed',
+        telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env, request: reqBody };
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     }));
   }
@@ -1104,7 +1171,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }, err => {
       console.log(err);
     }), catchError(err => {
-      const errInfo = { errorMsg: this.resourceService.messages.fmsg.m0098 };
+      const errInfo = {
+        errorMsg: this.resourceService.messages.fmsg.m0098,
+        telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env, request: reqBody };
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     }));
   }
@@ -1128,6 +1198,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   handleBack() {
+    this.generateTelemetryEndEvent('back');
     this.programStageService.removeLastStage();
   }
 

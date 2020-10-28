@@ -13,6 +13,7 @@ import { CollectionHierarchyService } from '../../../cbse-program/services/colle
 import { tap, filter, first, map } from 'rxjs/operators';
 import { NgForm } from '@angular/forms';
 import * as moment from 'moment';
+import { CbseProgramService } from '../../../cbse-program/services';
 import { throwError, forkJoin } from 'rxjs';
 
 @Component({
@@ -72,20 +73,26 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
   public toasterService: ToasterService, public actionService: ActionService,
   private collectionHierarchyService: CollectionHierarchyService,
-  private notificationService: NotificationService) { }
+  private notificationService: NotificationService, private cbseProgramService: CbseProgramService) { }
 
   ngOnInit() {
     this.programId = this.activatedRoute.snapshot.params.programId;
     this.activatedRoute.fragment.pipe(map(fragment => fragment || 'None')).subscribe((frag) => {
       this.selectedNominationDetails = frag;
     });
+    this.getPageId();
     this.programStageService.initialize();
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
       this.changeView();
     });
     this.programStageService.addStage('listContributorTextbook');
-
+    this.telemetryInteractCdata = [
+      {id: this.userService.channel, type: 'sourcing_organization'},
+      {id: this.activatedRoute.snapshot.params.programId, type: 'project'}
+    ];
+    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
+    this.telemetryInteractObject = {};
     this.currentStage = 'listContributorTextbook';
     this.fetchProgramDetails().subscribe((programDetails) => {
       this.setActiveDate();
@@ -105,12 +112,6 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     });
     this.contributor = this.selectedNominationDetails;
     this.nominatedContentTypes = this.programsService.getContentTypesName(this.contributor.nominationData.content_types);
-    this.telemetryInteractCdata = [
-      {id: this.userService.channel, type: 'sourcing_organization'},
-      {id: this.activatedRoute.snapshot.params.programId, type: 'project'}
-    ];
-    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
-    this.telemetryInteractObject = {};
   }
 
   sortCollection(column) {
@@ -155,8 +156,13 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       });
     }, error => {
       // TODO: navigate to program list page
-      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-      this.toasterService.error(errorMes || this.resourceService.messages.emsg.project.m0001);
+      const errInfo = {
+        errorMsg: this.resourceService.messages.emsg.project.m0001,
+        telemetryPageId: this.telemetryPageId,
+        telemetryCdata : this.telemetryInteractCdata,
+        env : this.activatedRoute.snapshot.data.telemetry.env,
+      };
+      this.cbseProgramService.apiErrorHandling(error, errInfo);
     });
   }
   fetchNominationCounts() {
@@ -199,7 +205,15 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     };
     this.actionService.post(option).subscribe(
       (res) => this.showTexbooklist(res),
-      (err) => console.log(err)
+      (err) => {
+        const errInfo = {
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activatedRoute.snapshot.data.telemetry.env,
+          request: option
+        };
+        this.cbseProgramService.apiErrorHandling(err, errInfo);
+      }
     );
   }
   showTexbooklist (res) {
@@ -245,8 +259,13 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
           (error) => {
             console.log(error);
             this.showLoader = false;
-            const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-            this.toasterService.error(errorMes || 'Fetching textbooks failed. Please try again...');
+            const errInfo = {
+              errorMsg: 'Fetching textbooks failed. Please try again...',
+              telemetryPageId: this.telemetryPageId,
+              telemetryCdata : this.telemetryInteractCdata,
+              env : this.activatedRoute.snapshot.data.telemetry.env,
+            };
+            this.cbseProgramService.apiErrorHandling(error, errInfo);
           }
         );
     } else {
