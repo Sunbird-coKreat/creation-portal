@@ -980,11 +980,9 @@ export class ProgramsService extends DataService implements CanActivate {
       } else {
         const catRequests = [];
         _.forEach(tobeFetched, tempCat => {
-          console.log("122");
           catRequests.push(this.getCategoryDefinition(tempCat));
         });
         forkJoin(catRequests).subscribe(res => {
-          console.log(res);
           const result = _.get(res, 'result.ObjectCategoryDefinition');
           this.cacheService.set('contentCategories', [...(this.cacheService.get('contentCategories')), ...(result)]);
           alreadyFetchedCats = [...(alreadyFetchedCats), ...(result)];
