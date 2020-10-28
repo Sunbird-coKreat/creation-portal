@@ -504,7 +504,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
               'code': UUID.UUID(),
               'mimeType': this.detectMimeType(this.uploader.getName(0)),
               'createdBy': this.userService.getUserId(),
-              'contentType': this.templateDetails.metadata.contentType,
+              'primaryCategory': this.templateDetails.metadata.primaryCategory,
               'resourceType': this.templateDetails.metadata.resourceType || 'Learn',
               'creator': creator,
               'collectionId': this.sessionContext.collection,
@@ -681,8 +681,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         contentData: res
       };
       this.contentMetaData = res;
-      const contentTypeValue = [this.contentMetaData.contentType];
-      this.contentType = this.programsService.getContentTypesName(contentTypeValue);
+      /*const contentTypeValue = [this.contentMetaData.contentType];
+      this.contentType = this.programsService.getContentTypesName(contentTypeValue);*/
       this.editTitle = this.contentMetaData.name || '' ;
       this.resourceStatus = this.contentMetaData.status;
       if (this.resourceStatus === 'Review') {

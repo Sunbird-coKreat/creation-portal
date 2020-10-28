@@ -21,6 +21,7 @@ import * as moment from 'moment';
 import * as alphaNumSort from 'alphanum-sort';
 import { ProgramTelemetryService } from '../../services';
 import { event } from 'jquery';
+import { CacheService } from 'ng2-cache-service';
 
 @Component({
   selector: 'app-create-program',
@@ -145,13 +146,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     public configService: ConfigService,
     private deviceDetectorService: DeviceDetectorService,
     public programTelemetryService: ProgramTelemetryService,
-    public actionService: ActionService) {
+    public actionService: ActionService, public cacheService: CacheService) {
   }
 
   ngOnInit() {
     this.programId = this.activatedRoute.snapshot.params.programId;
     this.userprofile = this.userService.userProfile;
-    this.programScope['purpose'] = this.programsService.contentTypes;
     this.programConfig = _.cloneDeep(programConfigObj);
     this.telemetryInteractCdata = [{id: this.userService.channel || '', type: 'sourcing_organization'}];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
@@ -323,7 +323,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programsService.get(req).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
       this.selectedContentTypes = _.get(this.programDetails, 'content_types');
-      this.programDetails['content_types'] = this.programsService.getContentTypesName(this.programDetails.content_types);
+      this.programDetails['content_types'] = _.join(this.programDetails.content_types, ', ');
       this.initializeFormFields();
 
       if (!_.isEmpty(this.programDetails.guidelines_url)) {
@@ -511,6 +511,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   setFrameworkDataToProgram() {
+    this.programScope['purpose'] = _.get(this.cacheService.get(this.userService.hashTagId), 'contentPrimaryCategories');
     this.programScope['medium'] = [];
     this.programScope['gradeLevel'] = [];
     this.programScope['subject'] = [];
@@ -929,9 +930,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     const requestData = {
       request: {
         filters: {
-          objectType: 'content',
+          objectType: 'collection',
           status: ['Draft'],
-          contentType: 'Textbook',
+          primaryCategory: 'Digital Textbook',
           framework: this.userFramework,
           board: this.userBoard,
           channel: this.userprofile.rootOrgId

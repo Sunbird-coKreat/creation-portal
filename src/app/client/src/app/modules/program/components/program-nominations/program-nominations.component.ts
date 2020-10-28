@@ -623,7 +623,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.setActiveDate();
       this.collectionsCount = _.get(this.programDetails, 'collection_ids').length;
       this.totalContentTypeCount = _.get(this.programDetails, 'content_types').length;
-      this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
+      this.programContentTypes = _.join(this.programDetails.content_types, ', ');
 
       const currentRoles = _.filter(this.programDetails.config.roles, role => this.sessionContext.currentRoles.includes(role.name));
       this.sessionContext.currentRoleIds = !_.isEmpty(currentRoles) ? _.map(currentRoles, role => role.id) : null;

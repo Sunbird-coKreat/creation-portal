@@ -254,9 +254,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     })).subscribe(res => {
       this.resourceDetails = res;
-      const contentTypeValue = [this.resourceDetails.contentType];
-      const contentType = this.programsService.getContentTypesName(contentTypeValue);
-      this.resourceDetails.contentTypeName = contentType;
+      /*const contentTypeValue = [this.resourceDetails.contentType];
+      const contentType = this.resourceDetails.contentType;
+      this.resourceDetails.contentTypeName = contentType;*/
       this.sessionContext.contentMetadata = this.resourceDetails;
       this.existingContentVersionKey = res.versionKey;
       this.resourceStatus =  _.get(this.resourceDetails, 'status');
@@ -401,10 +401,16 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   handleCallback() {
-    if (this.requiredAction === 'editForm') {
-      this.saveMetadataForm();
-    } else {
-      this.saveMetadataForm(() => this.questionCreationChild.buttonTypeHandler('review'));
+    switch (this.requiredAction) {
+      case 'review':
+        this.saveMetadataForm(this.sendForReview);
+        break;
+      case 'publish':
+        this.saveMetadataForm(this.publishContent);
+        break;
+      default:
+        this.saveMetadataForm();
+        break;
     }
   }
 
@@ -781,9 +787,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((res) => {
           if (res.responseCode === 'OK' && (res.result.content_id || res.result.node_id)) {
             if (actionStatus === 'review' && this.isIndividualAndNotSample()) {
-              this.publishContent();
+              this.showEditform('publish');
             } else if (actionStatus === 'review') {
-              this.sendForReview();
+              this.showEditform('review');
             }
           }
         });
@@ -1202,49 +1208,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.programStageService.removeLastStage();
   }
 
-  updateContentBeforeApproving(action) {
-    if (this.isMetaDataModified()) {
-      const cb = (err, res) => {
-        if (!err && res) {
-          this.helperService.publishContent(this.sessionContext.resourceIdentifier, this.userService.userProfile.userId)
-          .subscribe( res => {
-            const me = this;
-            setTimeout(() => {
-              this.getContentStatus(this.sessionContext.resourceIdentifier).subscribe((response: any) => {
-                const status = _.get(response, 'content.status');
-                if (status === 'Live') {
-                  me.attachContentToTextbook(action);
-                }
-              }, err => {
-                this.toasterService.error(this.resourceService.messages.fmsg.m00102);
-              });
-            }, 2000);
-           }, (err) => {
-            this.toasterService.error(this.resourceService.messages.fmsg.m00102);
-          });
-        } else if (err) {
-          this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-          console.log(err);
-        }
-      };
-      this.updateContentMetaData(cb);
-    } else {
-      this.attachContentToTextbook('accept');
-    }
-  }
 
-  updateContentBeforePublishing() {
-    if (this.isMetaDataModified()) {
-      const cb = (err, res ) => {
-        if (!err && res) {
-          this.publishContent();
-        }
-      };
-      this.updateContentMetaData(cb);
-    } else {
-      this.publishContent();
-    }
-  }
 
   attachContentToTextbook(action) {
     const hierarchyObj  = _.get(this.sessionContext.hierarchyObj, 'hierarchy');
