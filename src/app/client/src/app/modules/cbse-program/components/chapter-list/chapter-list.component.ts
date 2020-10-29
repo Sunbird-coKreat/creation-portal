@@ -107,7 +107,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     });
     this.currentStage = 'chapterListComponent';
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
-   
     this.programContext = _.get(this.chapterListComponentInput, 'programContext');
     this.currentUserID = this.userService.userProfile.userId;
     // this.currentUserID = _.get(this.programContext, 'userDetails.userId');
@@ -523,12 +522,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   getContentStatusCount(data) {
     const self = this;
-  
-    if (['admin', 'user'].includes(this.sessionContext.currentOrgRole)  && this.sessionContext.currentRoles.includes('REVIEWER')) {
+    if (['admin', 'user'].includes(this.sessionContext.currentOrgRole)  && (this.sessionContext.currentRoles.includes('REVIEWER') || this.sessionContext.currentRoles.includes('CONTRIBUTOR') )) {
       // tslint:disable-next-line:max-line-length
       if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' && this.myOrgId === data.organisationId)  && (!data.sampleContent || data.sampleContent === undefined)) {
         this.countData['total'] = this.countData['total'] + 1;
-     
         if (data.createdBy === this.currentUserID && data.status === 'Review') {
           this.countData['review'] = this.countData['review'] + 1;
         }
@@ -538,22 +535,31 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         if (data.createdBy === this.currentUserID) {
           this.countData['mycontribution'] = this.countData['mycontribution'] + 1;
         }
-        if (data.status === 'Review') {
-          this.countData['totalreview'] = this.countData['totalreview'] + 1;
-        }
-        if (data.createdBy !== this.currentUserID && data.status === 'Review') {
-          this.countData['awaitingreview'] = this.countData['awaitingreview'] + 1;
+        if(this.sessionContext.currentRoles.includes('REVIEWER')) {
+          if (data.status === 'Review') {
+            this.countData['totalreview'] = this.countData['totalreview'] + 1;
+          }
+          if (data.createdBy !== this.currentUserID && data.status === 'Review') {
+            this.countData['awaitingreview'] = this.countData['awaitingreview'] + 1;
+          }
         }
       }
-    } else{
+    } 
+     else if(['individual'].includes(this.sessionContext.currentOrgRole)  && this.sessionContext.currentRoles.includes('CONTRIBUTOR')) {
+      if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' )  && (!data.sampleContent || data.sampleContent === undefined)) {
+      
+        if (data.createdBy === this.currentUserID) {
+          this.countData['total'] = this.countData['total'] + 1;
+        }
+      }
+     }
+    else {
       // tslint:disable-next-line:max-line-length
-      if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit'  && this.myOrgId === data.organisationId) && (!data.sampleContent || data.sampleContent === undefined)) {
+      if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' )  && (!data.sampleContent || data.sampleContent === undefined)) {
         this.countData['total'] = this.countData['total'] + 1;
-    
         if (data.createdBy === this.currentUserID && data.status === 'Review') {
           this.countData['review'] = this.countData['review'] + 1;
         }
-        
         if (data.createdBy === this.currentUserID && data.status === 'Draft') {
           this.countData['draft'] = this.countData['draft'] + 1;
         }
@@ -578,22 +584,18 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           this.countData['pendingReview'] = this.countData['pendingReview'] + 1;
           this.countData['sourcing_approvalPending'] = this.countData['sourcing_approvalPending'] + 1;
           this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
-       
         }
         if (this.sourcingOrgReviewer && data.status === 'Draft' && data.prevStatus === 'Live' ) {
           this.countData['sourcing_correctionPending'] = this.countData['sourcing_correctionPending'] + 1;
           this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
-         
         }
         if (this.sourcingOrgReviewer && data.status === 'Live' && _.includes([...this.storedCollectionData.acceptedContents || []], data.identifier)) {
           this.countData['sourcing_approved'] = this.countData['sourcing_approved'] + 1;
           this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
-       
         }
         if (this.sourcingOrgReviewer && data.status === 'Live' && _.includes([...this.storedCollectionData.rejectedContents || []], data.identifier)) {
           this.countData['sourcing_rejected'] = this.countData['sourcing_rejected'] + 1;
           this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
-        
         }
       }
     }
@@ -611,10 +613,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       identifier: node.identifier,
       name: node.name,
       contentType: node.contentType,
-      primaryCategory: node.primaryCategory,
-      mimeType: node.mimeType,
-      itemSets: _.has(node, 'itemSets') ? node.itemSets : null,
-      questionCategories: _.has(node, 'questionCategories') ? node.questionCategories : null,
       topic: node.topic,
       origin: node.origin,
       status: node.status,
@@ -736,8 +734,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               'code': UUID.UUID(),
               'mimeType': this.templateDetails.mimeType[0],
               'createdBy': this.userService.userid,
-              'primaryCategory': this.templateDetails.metadata.primaryCategory,
-              //'contentType': this.templateDetails.metadata.contentType,
+              'contentType': this.templateDetails.metadata.contentType,
               'resourceType': this.templateDetails.metadata.resourceType || 'Learn',
               'creator': creator,
               'programId': this.sessionContext.programId,
@@ -776,23 +773,12 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   handlePreview(event) {
-    // const templateList = _.get(this.chapterListComponentInput.config, 'config.contentTypes.value')
-    //   || _.get(this.chapterListComponentInput.config, 'config.contentTypes.defaultValue');
-    const templateList = this.programsService.contentCategories;
+    const templateList = _.get(this.chapterListComponentInput.config, 'config.contentTypes.value')
+      || _.get(this.chapterListComponentInput.config, 'config.contentTypes.defaultValue');
     this.templateDetails = _.find(templateList, (templateData) => {
-      return templateData.name === event.content.primaryCategory;
+      return templateData.metadata.contentType === event.content.contentType;
     });
     if (this.templateDetails) {
-      this.templateDetails.questionCategories = event.content.questionCategories;
-      if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && !_.isEmpty(event.content.itemSets)) {
-        this.templateDetails.onClick = 'questionSetComponent';
-      } else if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && _.isEmpty(event.content.itemSets)) {
-        this.templateDetails.onClick = 'editorComponent';
-      } else if (event.content.mimeType === 'application/vnd.ekstep.quml-archive') {
-        this.templateDetails.onClick = 'questionSetComponent';
-      } else {
-        this.templateDetails.onClick = 'uploadComponent';
-      }
     this.componentLoadHandler('preview',
     this.programComponentsService.getComponentInstance(this.templateDetails.onClick), this.templateDetails.onClick, event);
     }
@@ -874,20 +860,15 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
      })
   }
   resourceTemplateInputData() {
-    let contentCategories = this.programContext.content_types;
-    // Get the content categories objects to be passed to the selection popup
-    // let contentTypes = _.get(this.chapterListComponentInput.config, 'config.contentTypes.value')
-    // || _.get(this.chapterListComponentInput.config, 'config.contentTypes.defaultValue');
+    let contentTypes = _.get(this.chapterListComponentInput.config, 'config.contentTypes.value')
+    || _.get(this.chapterListComponentInput.config, 'config.contentTypes.defaultValue');
     if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.content_types) {
-      contentCategories = _.filter(contentCategories, (catName) => {
-        if (_.includes(this.sessionContext.nominationDetails.content_types, catName)) {
-          //obj.metadata = JSON.parse(obj.objectMetadata);
-          return catName;
-        }
-      });
+       contentTypes = _.filter(contentTypes, (obj) => {
+        return _.includes(this.sessionContext.nominationDetails.content_types, obj.metadata.contentType);
+       });
     }
     this.resourceTemplateComponentInput = {
-        templateList: contentCategories,
+        templateList: contentTypes,
         programContext: this.programContext,
         sessionContext: this.sessionContext,
         unitIdentifier: this.unitIdentifier
