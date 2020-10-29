@@ -6,6 +6,7 @@ import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject, Telem
 import { UserService, RegistryService, ProgramsService } from '@sunbird/core';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'lodash-es';
+import { CbseProgramService } from '../../../cbse-program/services';
 
 @Component({
   selector: 'app-org-user-list',
@@ -45,7 +46,8 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
     public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService,
-    private paginationService: PaginationService ) {
+    private paginationService: PaginationService, private cbseProgramService: CbseProgramService
+    ) {
 
     /*if (this.isSourcingOrgAdmin()) {
       this.getSourcingOrgUsers();
@@ -58,10 +60,15 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     this.registryService.getOpenSaberOrgByOrgId(this.userService.userProfile).subscribe((res1) => {
       this.userRegData['Org'] = (_.get(res1, 'result.Org').length > 0) ? _.first(_.get(res1, 'result.Org')) : {};
       this.orgLink = `${baseUrl}/sourcing/join/${this.userRegData.Org.osid}`;
-
       this.getContributionOrgUsers();
-    }, (error1) => {
-     console.log("No opensaber org for sourcing");
+    }, (error) => {
+     console.log('No opensaber org for sourcing');
+     const errInfo = {
+      telemetryPageId: this.getPageId(),
+      telemetryCdata : [{id: this.userService.channel, type: 'sourcing_organization'}],
+      env : this.activatedRoute.snapshot.data.telemetry.env,
+     };
+     this.cbseProgramService.apiErrorHandling(error, errInfo);
    });
   }
 
@@ -119,11 +126,18 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     this.registryService.getcontributingOrgUsersDetails(this.userRegData, true).then((orgUsers) => {
       this.setOrgUsers(orgUsers);
     }).catch((error) => {
-       console.log('Error while getting all users')
+       console.log('Error while getting all users');
+       const errInfo = {
+        telemetryPageId: this.getPageId(),
+        telemetryCdata : this.telemetryInteractCdata,
+        env : this.activatedRoute.snapshot.data.telemetry.env,
+        request: this.userRegData
+      };
+      this.cbseProgramService.apiErrorHandling(error, errInfo);
     });
   }
   getUserDetailsBySearch(clearInput?) {
-    clearInput ? this.searchInput = '': this.searchInput;
+    clearInput ? this.searchInput = '' : this.searchInput;
     if (this.searchInput) {
       let filteredUser = this.registryService.getSearchedUserList(this.initialSourcingOrgUser, this.searchInput);
       filteredUser.length > this.searchLimitCount ? this.searchLimitMessage = true: this.searchLimitMessage = false;     
@@ -176,7 +190,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   }
   setTelemetryForonRoleChange(user) {
     const edata =  {
-      id: 'assign-role-by-sourcingOrg',
+      id: 'assign_role_by_sourcingOrg',
       type: this.configService.telemetryLabels.eventType.click,
       subtype: this.configService.telemetryLabels.eventSubtype.submit,
       pageid: this.telemetryPageId,
@@ -267,7 +281,14 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
       },
       (error) => {
         console.log(error);
-        this.toasterService.error(this.resourceService.messages.emsg.m0077);
+        const errInfo = {
+          errorMsg: this.resourceService.messages.emsg.m0077,
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activatedRoute.snapshot.data.telemetry.env,
+          request: {'id': osid, role: role}
+        };
+        this.cbseProgramService.apiErrorHandling(error, errInfo);
       }
     );
   }

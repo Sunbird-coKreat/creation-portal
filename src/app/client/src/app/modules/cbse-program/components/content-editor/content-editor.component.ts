@@ -8,7 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '@sunbird/environment';
 import { TelemetryService, IInteractEventEdata } from '@sunbird/telemetry';
 import { combineLatest, of, throwError, Subscription } from 'rxjs';
-import { map, mergeMap, tap, delay, first } from 'rxjs/operators';
+import { map, mergeMap, tap, delay, first, filter } from 'rxjs/operators';
 import { IContentEditorComponentInput } from '../../interfaces';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
@@ -231,7 +231,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
 
   canViewContentPreview() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.sourcingOrgReviewer || (this.sessionContext.currentRoles.includes('REVIEWER') && this.userService.getUserId() !== this.contentData.createdBy));
+    return !!(this.sourcingOrgReviewer || (this.sessionContext.currentRoles.includes('REVIEWER') && this.userService.getUserId() !== this.contentData.createdBy) || (this.resourceStatus !== 'Draft' && this.userService.getUserId() === this.contentData.createdBy));
   }
 
   canPublishContent() {
@@ -290,6 +290,9 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       this.handleActionButtons();
       this.handleContentStatusText();
       this.handlePreview();
+      if ( _.isUndefined(this.sessionContext.topicList) || _.isUndefined(this.sessionContext.frameworkData)) {
+        this.fetchFrameWorkDetails();
+      }
         } else {
           this.toasterService.warning(this.resourceService.messages.imsg.m0027);
         }
@@ -303,12 +306,25 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
 
   handlePreview() {
     // tslint:disable-next-line:max-line-length
-    if (this.contentEditorComponentInput.action === 'preview' && (this.showPreview || this.canViewContentPreview())) {
+    if (this.showPreview || this.canViewContentPreview()) {
       this.showPreview = true;
       this.showLoader = false;
     } else {
       this.loadContentEditor();
    }
+  }
+
+  fetchFrameWorkDetails() {
+    this.frameworkService.initialize(this.sessionContext.framework);
+    this.frameworkService.frameworkData$.pipe(filter(data => _.get(data, `frameworkdata.${this.sessionContext.framework}`)),
+      first()).subscribe((frameworkDetails: any) => {
+      if (frameworkDetails && !frameworkDetails.err) {
+        const frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
+        // this.categoryMasterList = _.cloneDeep(frameworkDetails.frameworkdata[this.sessionContext.framework].categories);
+        this.sessionContext.frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
+        this.sessionContext.topicList = _.get(_.find(frameworkData, { code: 'topic' }), 'terms');
+      }
+    });
   }
 
   handleContentStatusText() {

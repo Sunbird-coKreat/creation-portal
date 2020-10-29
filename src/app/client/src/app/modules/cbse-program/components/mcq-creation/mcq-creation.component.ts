@@ -434,7 +434,10 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
         }
 
         this.actionService.patch(req).pipe(catchError(err => {
-          const errInfo = { errorMsg: 'MCQ Question updation failed' };
+          const errInfo = {
+            errorMsg: 'MCQ Question updation failed',
+            telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+            env : this.activeRoute.snapshot.data.telemetry.env, request: req };
           return throwError(this.cbseService.apiErrorHandling(err, errInfo));
         })).subscribe((apiRes) => {
           if (this.updateStatus === 'Live') {

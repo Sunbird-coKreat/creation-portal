@@ -23,7 +23,7 @@
                 <i class="icon edit sb-color-primary cursor-pointer"></i>
                 <a class="cursor-pointer text-underline text-capitalize"
                 appTelemetryInteract
-                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata((visibility && visibility.showEditMetadata) ? 'Edit details' : 'View details', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata((visibility && visibility.showEditMetadata) ? 'edit_details' : 'view_details', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                 [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
