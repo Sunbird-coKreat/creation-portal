@@ -954,7 +954,7 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * Get primary categories according to the project
    */
-  getProgramContentCategories(programContentCategories) {
+  /*getProgramContentCategories(programContentCategories) {
     let alreadyFetchedCats = [];
     let tobeFetched = [];
     const requests = [];
@@ -995,22 +995,28 @@ export class ProgramsService extends DataService implements CanActivate {
         });
       }
     });
-  }
+  }*/
 
-  getCategoryDefinition(categoryName) {
-    const catObj = _.find(this.contentCategories, { name: categoryName });
+  getCategoryDefinition(categoryName, rootOrgId) {
     const req = {
-      url: 'object/category/definition/v1/read/' + catObj.identifier,
+      url: 'object/category/definition/v1/read?fields=objectMetadata,forms',
       data: {
         request: {
           "objectCategoryDefinition": {
               "objectType": "Content",
-              "name": categoryName
+              "name": categoryName,
+              "channel": rootOrgId
           },
         }
       }
     };
-    return this.learnerService.get(req);
+    return this.publicDataService.post(req).pipe(
+      mergeMap((data: ServerResponse) => {
+        if (data.params.status.toUpperCase() !== 'SUCCESSFUL') {
+          return throwError(data);
+        }
+        return of(data);
+      }));
   }
 
   isNotEmpty(obj, key) {
