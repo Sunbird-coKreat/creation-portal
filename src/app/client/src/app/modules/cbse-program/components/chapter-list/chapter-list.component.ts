@@ -107,6 +107,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     });
     this.currentStage = 'chapterListComponent';
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
+   
     this.programContext = _.get(this.chapterListComponentInput, 'programContext');
     this.currentUserID = this.userService.userProfile.userId;
     // this.currentUserID = _.get(this.programContext, 'userDetails.userId');
@@ -522,10 +523,12 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   getContentStatusCount(data) {
     const self = this;
+  
     if (['admin', 'user'].includes(this.sessionContext.currentOrgRole)  && this.sessionContext.currentRoles.includes('REVIEWER')) {
       // tslint:disable-next-line:max-line-length
       if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' && this.myOrgId === data.organisationId)  && (!data.sampleContent || data.sampleContent === undefined)) {
         this.countData['total'] = this.countData['total'] + 1;
+     
         if (data.createdBy === this.currentUserID && data.status === 'Review') {
           this.countData['review'] = this.countData['review'] + 1;
         }
@@ -542,10 +545,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           this.countData['awaitingreview'] = this.countData['awaitingreview'] + 1;
         }
       }
-    } else {
+    } else{
       // tslint:disable-next-line:max-line-length
-      if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit')  && (!data.sampleContent || data.sampleContent === undefined)) {
+      if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit'  && this.myOrgId === data.organisationId) && (!data.sampleContent || data.sampleContent === undefined)) {
         this.countData['total'] = this.countData['total'] + 1;
+    
         if (data.createdBy === this.currentUserID && data.status === 'Review') {
           this.countData['review'] = this.countData['review'] + 1;
         }
@@ -574,18 +578,22 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           this.countData['pendingReview'] = this.countData['pendingReview'] + 1;
           this.countData['sourcing_approvalPending'] = this.countData['sourcing_approvalPending'] + 1;
           this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
+       
         }
         if (this.sourcingOrgReviewer && data.status === 'Draft' && data.prevStatus === 'Live' ) {
           this.countData['sourcing_correctionPending'] = this.countData['sourcing_correctionPending'] + 1;
           this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
+         
         }
         if (this.sourcingOrgReviewer && data.status === 'Live' && _.includes([...this.storedCollectionData.acceptedContents || []], data.identifier)) {
           this.countData['sourcing_approved'] = this.countData['sourcing_approved'] + 1;
           this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
+       
         }
         if (this.sourcingOrgReviewer && data.status === 'Live' && _.includes([...this.storedCollectionData.rejectedContents || []], data.identifier)) {
           this.countData['sourcing_rejected'] = this.countData['sourcing_rejected'] + 1;
           this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
+        
         }
       }
     }
