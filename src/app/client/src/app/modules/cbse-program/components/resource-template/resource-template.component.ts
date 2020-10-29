@@ -60,6 +60,11 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
     }, (err)=> {
 
     })*/
+    this.programsService.getCategoryDefinition(this.templateSelected, this.programContext.rootorg_id).subscribe((res) => {
+      console.log(res);
+    }, (err) => {
+      console.log(err);
+    });
     this.selectedtemplateDetails = _.find(this.programsService.contentCategories, { 'name': this.templateSelected });
     const catMetaData = JSON.parse(this.selectedtemplateDetails.objectMetadata);
     const supportedMimeTypes = catMetaData.schema.properties.mimeType.enum;
