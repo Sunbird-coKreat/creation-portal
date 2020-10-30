@@ -124,6 +124,7 @@ let envVariables = {
   kp_content_service_base_url: env.sunbird_kp_content_service_base_url || 'http://content-service:9000/',
   kp_learning_service_base_url: env.sunbird_kp_learning_service_base_url,
   kp_assessment_service_base_url: env.sunbird_kp_assessment_service_base_url || 'http://assessment-service:9000/',
+  kp_taxonomy_service_base_url: env.sunbird_kp_taxonomy_service_base_url || 'http://taxonomy-service:9000/',
 
 
   // Health Checks Configuration

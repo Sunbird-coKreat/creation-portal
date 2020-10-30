@@ -8,6 +8,7 @@ const learnerURL = envHelper.LEARNER_URL
 const reqDataLimitOfContentUpload = '50mb'
 const contentServiceBaseUrl = envHelper.CONTENT_URL
 const logger = require('sb_logger_util_v2')
+const kp_taxonomy_service_base_url = envHelper.kp_taxonomy_service_base_url
 
 module.exports = function (app) {
     const proxyReqPathResolverMethod = function (req) {
@@ -68,6 +69,15 @@ module.exports = function (app) {
         }
         })
     )
+
+    app.use(['/api/object/category/*'],
+      proxy(kp_taxonomy_service_base_url, {
+        proxyReqPathResolver: function (req) {
+          var originalUrl = req.originalUrl
+          originalUrl = originalUrl.replace('/api/', '')
+          return require('url').parse(kp_taxonomy_service_base_url + originalUrl).path
+        }
+    }))
     
     app.use('/api/*', permissionsHelper.checkPermission(), proxy(contentProxyUrl, {
         proxyReqPathResolver: proxyReqPathResolverMethod
