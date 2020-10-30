@@ -4,6 +4,7 @@ import { OrgDetailsService } from './../org-details/org-details.service';
 import { FrameworkService } from './../framework/framework.service';
 import { ExtPluginService } from './../ext-plugin/ext-plugin.service';
 import { PublicDataService } from './../public-data/public-data.service';
+import { ActionService } from './../action/action.service';
 import { ConfigService, ServerResponse, ToasterService, ResourceService, HttpOptions, BrowserCacheTtlService } from '@sunbird/shared';
 import { Injectable } from '@angular/core';
 import { UserService } from '../user/user.service';
@@ -57,7 +58,7 @@ export class ProgramsService extends DataService implements CanActivate {
     private contentService: ContentService, private router: Router,
     private toasterService: ToasterService, private resourceService: ResourceService,
     public learnerService: LearnerService, private registryService: RegistryService,
-    public frameworkService: FrameworkService,
+    public frameworkService: FrameworkService, private actionService: ActionService,
     public cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService) {
       super(http);
       this.config = config;
@@ -1010,7 +1011,7 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
-    return this.publicDataService.post(req).pipe(
+    return this.actionService.post(req).pipe(
       mergeMap((data: ServerResponse) => {
         if (data.params.status.toUpperCase() !== 'SUCCESSFUL') {
           return throwError(data);

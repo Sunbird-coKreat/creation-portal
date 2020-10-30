@@ -69,12 +69,6 @@ module.exports = function (app) {
         })
     )
 
-    app.use(['/api/object/category/*'],
-      proxy(contentProxyUrl, {
-        proxyReqOptDecorator: proxyHeaders.decorateRequestHeaders(),
-        proxyReqPathResolver: proxyReqPathResolverMethod
-    }))
-    
     app.use('/api/*', permissionsHelper.checkPermission(), proxy(contentProxyUrl, {
         proxyReqPathResolver: proxyReqPathResolverMethod
     }))
