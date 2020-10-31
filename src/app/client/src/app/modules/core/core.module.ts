@@ -10,8 +10,7 @@ import { FormsModule, ReactiveFormsModule, } from '@angular/forms';
 import { SharedModule } from '@sunbird/shared';
 import { AvatarModule } from 'ngx-avatar';
 import {
-  MainHeaderComponent, MainFooterComponent, MainMenuComponent, SearchComponent,
-  DataDrivenFilterComponent, ErrorPageComponent, SortByComponent, FlagContentComponent,
+  MainHeaderComponent, MainFooterComponent, MainMenuComponent, SearchComponent, ErrorPageComponent, SortByComponent, FlagContentComponent,
   LanguageDropdownComponent, ProminentFilterComponent, TopicPickerComponent, DataFormComponent
 } from './components';
 import { ManageModule } from '../manage/manage.module';
@@ -37,8 +36,8 @@ import { TelemetryModule } from '@sunbird/telemetry';
     BodyScrollDirective, SortByComponent,
     ErrorPageComponent, FlagContentComponent, LanguageDropdownComponent,
     ProminentFilterComponent, TopicPickerComponent, StickyHeaderDirective, DataFormComponent],
-  exports: [MainHeaderComponent, MainFooterComponent, PermissionDirective, BodyScrollDirective,
-    DataDrivenFilterComponent, SortByComponent, FlagContentComponent, DataFormComponent,
+  exports: [MainHeaderComponent, MainFooterComponent, PermissionDirective,
+    BodyScrollDirective, SortByComponent, FlagContentComponent, DataFormComponent,
     TelemetryModule, LanguageDropdownComponent, ProminentFilterComponent, TopicPickerComponent],
   providers: [
     {

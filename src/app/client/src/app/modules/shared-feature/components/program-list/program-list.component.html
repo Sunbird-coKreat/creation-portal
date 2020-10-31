@@ -14,7 +14,7 @@
         <button routerLink="create-program" class="px-10 sb-btn sb-btn-normal sb-btn-outline-primary"
         *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing') && !this.router.url.includes('sourcing/help')"
          appTelemetryInteract
-         [telemetryInteractEdata]="getTelemetryInteractEdata('create_new_project',config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch ,pageId)"
+         [telemetryInteractEdata]="getTelemetryInteractEdata('create_new_project',configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch ,pageId)"
          [telemetryInteractObject]="telemetryInteractObject"
          [telemetryInteractCdata]="telemetryInteractCdata"
          [telemetryInteractPdata]="telemetryInteractPdata">
