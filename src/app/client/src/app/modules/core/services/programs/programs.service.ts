@@ -997,27 +997,27 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     });
   }*/
-
   getCategoryDefinition(categoryName, rootOrgId) {
-    const req = {
-      url: 'object/category/definition/v1/read?fields=objectMetadata,forms',
-      data: {
-        request: {
-          "objectCategoryDefinition": {
-              "objectType": "Content",
-              "name": categoryName,
-              "channel": rootOrgId
-          },
+    const cacheInd = categoryName + ':' + rootOrgId;
+    if (this.cacheService.get(cacheInd)) {
+      return  of(this.cacheService.get(cacheInd));
+    } else {
+      const req = {
+        url: 'object/category/definition/v1/read?fields=objectMetadata,forms',
+        data: {
+          request: {
+            "objectCategoryDefinition": {
+                "objectType": "Content",
+                "name": categoryName,
+                "channel": rootOrgId
+            },
+          }
         }
-      }
-    };
-    return this.actionService.post(req).pipe(
-      mergeMap((data: ServerResponse) => {
-        if (data.params.status.toUpperCase() !== 'SUCCESSFUL') {
-          return throwError(data);
-        }
-        return of(data);
+      };
+      return this.post(req).pipe(tap(data => {
+        this.setSessionCache({name: cacheInd, value: data})
       }));
+    }
   }
 
   isNotEmpty(obj, key) {
