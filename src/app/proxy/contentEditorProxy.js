@@ -106,6 +106,16 @@ module.exports = function (app) {
     }
   }))
 
+  app.use(['/action/object/category/*'],
+    proxy(contentServiceBaseUrl, {
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function(req) {
+          var originalUrl = req.originalUrl
+          originalUrl = originalUrl.replace('/action/', '')
+          return require('url').parse(contentServiceBaseUrl + originalUrl).path
+      }
+  }))
+
   // Proxy for content create , update & review END
 
   app.use('/action/content/v3/unlisted/publish/:contentId', permissionsHelper.checkPermission(),
