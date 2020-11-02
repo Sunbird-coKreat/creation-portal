@@ -874,14 +874,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.registryService.generateUserRoleUpdateTelemetry(this.activatedRoute.snapshot.data.telemetry.env,this.telemetryInteractCdata,this.telemetryInteractPdata, edata )
   }
 
-// showUserRoleOption(roleName, userRole) {
-//   if (!(roleName !== 'NONE' || (roleName === 'NONE' && userRole !== 'Select Role'))) {
-//    return 'Select Role'
-//   } else {
-//     return roleName;
-//   }
-// }
-
   cancelRemoveUserFromProgram() {
     this.showUserRemoveRoleModal = false;
     this.selectedUserToRemoveRole.newRole = this.selectedUserToRemoveRole.selectedRole;
