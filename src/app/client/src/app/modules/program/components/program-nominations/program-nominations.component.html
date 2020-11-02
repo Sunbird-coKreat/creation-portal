@@ -1,4 +1,4 @@
-<div *ngIf="!showLoader && (currentStage === 'programNominations')" [appTelemetryImpression]="telemetryImpression">
+<div *ngIf="!showLoader && (currentStage === 'programNominations')">
     <div class="sb-bg-color-primary-0 practical-header py-16">
             <div class="d-flex  flex-jc-space-between practical-header__content ui container pt-15">
                     <div class="practical-header__title w-20">
@@ -87,37 +87,41 @@
                 <div class="ui container p-0 m-0 d-flex flex-ai-center flex-jc-center">
                     <a class="item" [isActive]="activeTab === 'textbook'"  suiTabHeader="2"  (click)="resetStatusFilter('textbook')"
                     appTelemetryInteract
-                                        [telemetryInteractEdata]="getTelemetryInteractEdata('program-linked-textbooks', 'click', 'program-nominations')"
-                                        [telemetryInteractObject]="telemetryInteractObject"
-                                        [telemetryInteractCdata]="telemetryInteractCdata"
-                                        [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.textbooks || 0  }}
+                    [telemetryInteractEdata]="getTelemetryInteractEdata('textbooks', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,config.telemetryLabels.pageId.sourcing.projectContributions)"
+                    [telemetryInteractObject]="telemetryInteractObject"
+                    [telemetryInteractCdata]="telemetryInteractCdata"
+                    [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.textbooks || 0  }}
                         <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ collectionsCount }}</span>
                     </a>
                     <a class="item" *ngIf="programDetails?.status !== 'Unlisted'" [isActive]="activeTab === 'nomination'"  suiTabHeader="1"  (click)="resetStatusFilter('nomination')"
                     appTelemetryInteract
-                                        [telemetryInteractEdata]="getTelemetryInteractEdata('nominations', 'click', 'program-nominations')"
-                                        [telemetryInteractObject]="telemetryInteractObject"
-                                        [telemetryInteractCdata]="telemetryInteractCdata"
-                                        [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.nominations}}
+                    [telemetryInteractEdata]="getTelemetryInteractEdata('nominations', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,config.telemetryLabels.pageId.sourcing.projectNominations)"
+                    [telemetryInteractObject]="telemetryInteractObject"
+                    [telemetryInteractCdata]="telemetryInteractCdata"
+                    [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.nominations}}
                         <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ totalNominations || 0  }}</span>
                     </a>
-                    <a class="item" *ngIf="isSourcingOrgAdmin()" [isActive]="activeTab === 'user'"  suiTabHeader="3"  (click)="resetStatusFilter('user');" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('users', 'click', 'program-nominations')" [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata" [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.assignUsersToProject}}
+                    <a class="item" *ngIf="isSourcingOrgAdmin()" [isActive]="activeTab === 'user'"  suiTabHeader="3"  (click)="resetStatusFilter('user');" 
+                    appTelemetryInteract 
+                    [telemetryInteractEdata]="getTelemetryInteractEdata('aasign_users_to_project', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,config.telemetryLabels.pageId.sourcing.projectAssignUsers)"
+                    [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata" 
+                    [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.assignUsersToProject}}
                         <!--span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ sourcingOrgUser.length || 0 }}</span-->
                     </a>
                     <a class="item" [isActive]="activeTab === 'contributionDashboard'" suiTabHeader="4" (click)="resetStatusFilter('contributionDashboard')"
                     appTelemetryInteract
-                                        [telemetryInteractEdata]="getTelemetryInteractEdata('contributionDashboard', 'click', 'program-nominations')"
-                                        [telemetryInteractObject]="telemetryInteractObject"
-                                        [telemetryInteractCdata]="telemetryInteractCdata"
-                                        [telemetryInteractPdata]="telemetryInteractPdata">
+                    [telemetryInteractEdata]="getTelemetryInteractEdata('contribution_dashboard', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,config.telemetryLabels.pageId.sourcing.projectContributionDashboard)"
+                    [telemetryInteractObject]="telemetryInteractObject"
+                    [telemetryInteractCdata]="telemetryInteractCdata"
+                    [telemetryInteractPdata]="telemetryInteractPdata">
                         {{resourceService.frmelmnts.lbl.contributionDashboard}}
                     </a>
                     <a class="item" [isActive]="activeTab === 'report'" suiTabHeader="5" (click)="resetStatusFilter('report')"
                     appTelemetryInteract
-                                        [telemetryInteractEdata]="getTelemetryInteractEdata('report-tab', 'click', 'program-nominations')"
-                                        [telemetryInteractObject]="telemetryInteractObject"
-                                        [telemetryInteractCdata]="telemetryInteractCdata"
-                                        [telemetryInteractPdata]="telemetryInteractPdata">
+                    [telemetryInteractEdata]="getTelemetryInteractEdata('reports', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,config.telemetryLabels.pageId.sourcing.projectReports)"
+                    [telemetryInteractObject]="telemetryInteractObject"
+                    [telemetryInteractCdata]="telemetryInteractCdata"
+                    [telemetryInteractPdata]="telemetryInteractPdata">
                         {{resourceService.frmelmnts.lbl.reports}}
                         <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">2</span>
                     </a>
@@ -126,7 +130,7 @@
             <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="2">
                 <app-loader *ngIf='showTextbookLoader'></app-loader>
                 <div *ngIf="!showTextbookLoader && contentAggregationData && !isEmptyObject(programDetails)" class="ui container p-0 m-0">
-                    <app-textbook-list [programDetails]="programDetails" [collectionsInput]="programCollections" [contentAggregationInput]="contentAggregationData" [userPreferences]=userPreferences (selectedCollection)="viewContribution($event)" (applyTextbookPreference)="applyPreferences($event)"></app-textbook-list>
+                    <app-textbook-list [programDetails]="programDetails" [telemetryPageId]="telemetryPageId" [collectionsInput]="programCollections" [contentAggregationInput]="contentAggregationData" [userPreferences]=userPreferences (selectedCollection)="viewContribution($event)" (applyTextbookPreference)="applyPreferences($event)"></app-textbook-list>
                 </div>
             </div>
             <div class="ui segment  p-0 m-0 mt-4 sb-bg-color-white dynamicHeight"  suiTabContent="1">
@@ -138,10 +142,10 @@
                         <div class="sb-color-primary d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{ statusCount.Pending || 0}}</span> {{resourceService.frmelmnts.lbl.pending}}</div>
                         <button type="button" class="pull-right sb-btn sb-btn-normal sb-btn-outline-primary mb-5" *ngIf="!isEmptyObject(programDetails) && this.totalNominations > 0" (click)="downloadNominationList()"
                             appTelemetryInteract
-                                                        [telemetryInteractEdata]="getTelemetryInteractEdata('download-nominationList', 'click', 'program-nominations')"
-                                                        [telemetryInteractObject]="telemetryInteractObject"
-                                                        [telemetryInteractCdata]="telemetryInteractCdata"
-                                                        [telemetryInteractPdata]="telemetryInteractPdata"> <i class="download icon"></i> {{ resourceService?.frmelmnts?.btn?.downloadNominationsList }}</button>
+                            [telemetryInteractEdata]="getTelemetryInteractEdata('download_nominations_list', config.telemetryLabels.eventType.click, config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+                            [telemetryInteractObject]="telemetryInteractObject"
+                            [telemetryInteractCdata]="telemetryInteractCdata"
+                            [telemetryInteractPdata]="telemetryInteractPdata"> <i class="download icon"></i> {{ resourceService?.frmelmnts?.btn?.downloadNominationsList }}</button>
                     </div>
                     <hr class="mt-20 mb-10">
                     <div class="pt-10 text-capitalize fs-0-785 line-height-1-3 sb-color-gray-400 d-flex">
@@ -233,7 +237,7 @@
                                                 <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold"
                                                     (click)="showSelectedContributorProfile(nomination)"
                                                     appTelemetryInteract
-                                                    [telemetryInteractEdata]="getTelemetryInteractEdata('show-nominee', 'click', 'program-nominations')"
+                                                    [telemetryInteractEdata]="getTelemetryInteractEdata('show_nominee', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
                                                     [telemetryInteractObject]="telemetryInteractObject"
                                                     [telemetryInteractCdata]="telemetryInteractCdata"
                                                     [telemetryInteractPdata]="telemetryInteractPdata">
@@ -264,7 +268,7 @@
                                                         *ngIf="nomination?.status === 'Pending'"
                                                         (click)="viewNominationDetails(nomination)"
                                                         appTelemetryInteract
-                                                        [telemetryInteractEdata]="getTelemetryInteractEdata('view-nomination', 'click', 'program-nominations')"
+                                                        [telemetryInteractEdata]="getTelemetryInteractEdata('open', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
                                                         [telemetryInteractObject]="telemetryInteractObject"
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.open }}</button>
@@ -272,7 +276,7 @@
                                                         *ngIf="nomination?.status === 'Approved'"
                                                         (click)="viewNominationDetails(nomination)"
                                                         appTelemetryInteract
-                                                        [telemetryInteractEdata]="getTelemetryInteractEdata('view-contribution', 'click', 'program-nominations')"
+                                                        [telemetryInteractEdata]="getTelemetryInteractEdata('view_contribution', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
                                                         [telemetryInteractObject]="telemetryInteractObject"
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.viewContribution }}</button>
@@ -291,31 +295,31 @@
                                 <div class="sb-pagination">
                                     <a class="sb-item" [ngClass]="{disabled:pager.currentPage===1 }" (click)="NavigateTonominationPage(1)"
                                     appTelemetryInteract
-                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('nomination-list-first-page', 'click', 'program-nominations')"
+                                                        [telemetryInteractEdata]="getTelemetryInteractEdata('nomination_list_first_page', 'click',undefined,telemetryPageId)"
                                                         [telemetryInteractObject]="telemetryInteractObject"
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata">First</a>
                                     <a [ngClass]="{disabled:pager.currentPage===1 }" class="sb-item" (click)="NavigateTonominationPage(pager.currentPage - 1)"
                                     appTelemetryInteract
-                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('nomination-list-previous-page', 'click', 'program-nominations', {values: [pager.currentPage - 1]})"
+                                                        [telemetryInteractEdata]="getTelemetryInteractEdata('nomination_list_previous_page', 'click',undefined,telemetryPageId, {values: [pager.currentPage - 1]})"
                                                         [telemetryInteractObject]="telemetryInteractObject"
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata">Previous</a>
                                     <a *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage===page}" (click)="NavigateTonominationPage(page)" class="sb-item"
                                     appTelemetryInteract
-                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('nomination-list-pagination', 'click', 'program-nominations', {values: [page]})"
+                                                        [telemetryInteractEdata]="getTelemetryInteractEdata('nomination_list_pagination', 'click', undefined,telemetryPageId, {values: [page]})"
                                                         [telemetryInteractObject]="telemetryInteractObject"
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata">{{page}}</a>
                                     <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="NavigateTonominationPage(pager.currentPage + 1)"  class="sb-item"
                                     appTelemetryInteract
-                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('nomination-list-next-page', 'click', 'program-nominations', {values: [pager.currentPage + 1]})"
+                                                        [telemetryInteractEdata]="getTelemetryInteractEdata('nomination_list_next-page', 'click', undefined,telemetryPageId, {values: [pager.currentPage + 1]})"
                                                         [telemetryInteractObject]="telemetryInteractObject"
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata">Next</a>
                                     <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="NavigateTonominationPage(pager.totalPages)"  class="sb-item"
                                     appTelemetryInteract
-                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('nomination-list-last-page', 'click', 'program-nominations', {values: [pager.totalPages]})"
+                                                        [telemetryInteractEdata]="getTelemetryInteractEdata('nomination_list_last_page', 'click', undefined,telemetryPageId, {values: [pager.totalPages]})"
                                                         [telemetryInteractObject]="telemetryInteractObject"
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata">Last</a>
@@ -343,7 +347,7 @@
                                 <i class="close icon" *ngIf="searchInput" (click)="getUserDetailsBySearch('clearSearch')"></i>
                             </div>
                             <button class="sb-btn sb-btn-normal" (click)="getUserDetailsBySearch()" appTelemetryInteract
-							[telemetryInteractEdata]="getTelemetryInteractEdata('users-search', 'click', 'Sourcing-Org-Admin', {values: {searchInput: searchInput}})"
+							[telemetryInteractEdata]="getTelemetryInteractEdata('search', config.telemetryLabels.eventType.click, config.telemetryLabels.eventSubtype.submit,telemetryPageId, {values: {searchInput: searchInput}})"
 							[telemetryInteractObject]="telemetryInteractObject"
 							[telemetryInteractCdata]="telemetryInteractCdata"
 							[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService?.frmelmnts?.lbl?.search}}</button>
@@ -432,31 +436,31 @@
                         <div class="sb-pagination">
                             <a class="sb-item" [ngClass]="{disabled:pagerUsers.currentPage===1 }" (click)="navigateToSourcingPage(1)"
                             appTelemetryInteract
-                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('sourcingOrgUsers-list-first-page', 'click', 'program-nominations')"
+                                                        [telemetryInteractEdata]="getTelemetryInteractEdata('sourcingOrgUsers_list_first_page', config.telemetryLabels.eventType.click, undefined,telemetryPageId)"
                                                         [telemetryInteractObject]="telemetryInteractObject"
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata">First</a>
                             <a [ngClass]="{disabled:pagerUsers.currentPage===1 }" class="sb-item" (click)="navigateToSourcingPage(pagerUsers.currentPage - 1)"
                             appTelemetryInteract
-                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('sourcingOrgUsers-list-previous-page', 'click', 'program-nominations', {values: [pagerUsers.currentPage - 1]})"
+                                                        [telemetryInteractEdata]="getTelemetryInteractEdata('sourcingOrgUsers_list_previous_page', config.telemetryLabels.eventType.click, undefined,telemetryPageId, {values: [pagerUsers.currentPage - 1]})"
                                                         [telemetryInteractObject]="telemetryInteractObject"
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata">Previous</a>
                             <a *ngFor="let page of pagerUsers.pages" [ngClass]="{active:pagerUsers.currentPage===page}" (click)="navigateToSourcingPage(page)" class="sb-item"
                             appTelemetryInteract
-                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('sourcingOrgUsers-list-pagination', 'click', 'program-nominations', {values: [page]})"
+                                                        [telemetryInteractEdata]="getTelemetryInteractEdata('sourcingOrgUsers_list_pagination',config.telemetryLabels.eventType.click, undefined,telemetryPageId, {values: [page]})"
                                                         [telemetryInteractObject]="telemetryInteractObject"
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata">{{page}}</a>
                             <a [ngClass]="{disabled:pagerUsers.currentPage=== pagerUsers.totalPages}" (click)="navigateToSourcingPage(pagerUsers.currentPage + 1)"  class="sb-item"
                             appTelemetryInteract
-                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('sourcingOrgUsers-list-next-page', 'click', 'program-nominations', {values: [pagerUsers.currentPage + 1]})"
+                                                        [telemetryInteractEdata]="getTelemetryInteractEdata('sourcingOrgUsers_list_next_page', config.telemetryLabels.eventType.click, undefined,telemetryPageId, {values: [pagerUsers.currentPage + 1]})"
                                                         [telemetryInteractObject]="telemetryInteractObject"
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata">Next</a>
                             <a [ngClass]="{disabled:pagerUsers.currentPage=== pagerUsers.totalPages}" (click)="navigateToSourcingPage(pagerUsers.totalPages)"  class="sb-item"
                             appTelemetryInteract
-                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('sourcingOrgUsers-list-last-page', 'click', 'program-nominations', {values: [pagerUsers.totalPages]})"
+                                                        [telemetryInteractEdata]="getTelemetryInteractEdata('sourcingOrgUsers_list_last_page', config.telemetryLabels.eventType.click, undefined,telemetryPageId, {values: [pagerUsers.totalPages]})"
                                                         [telemetryInteractObject]="telemetryInteractObject"
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata">Last</a>
@@ -473,7 +477,7 @@
                     <div class="text-capitalize fs-0-785 line-height-1-3">
                         <button type="button" class="pull-right sb-btn sb-btn-normal sb-btn-outline-primary mb-5" (click)="downloadContribDashboardDetails()"
                             appTelemetryInteract
-                            [telemetryInteractEdata]="getTelemetryInteractEdata('download-contribution-dashboard-details', 'click', 'program-nominations')"
+                            [telemetryInteractEdata]="getTelemetryInteractEdata('download_contribution_details', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
                             [telemetryInteractObject]="telemetryInteractObject"
                             [telemetryInteractCdata]="telemetryInteractCdata"[telemetryInteractPdata]="telemetryInteractPdata">
                             <i class="download icon"></i>
@@ -610,20 +614,20 @@
                                     <td>{{resourceService.frmelmnts.lbl.TextbookLevelReportDescription}}</td>
                                     <td class="text-center"><button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('textbookLevelReport')"
                                         appTelemetryInteract
-                                                        [telemetryInteractEdata]="getTelemetryInteractEdata('download-textbookLevelReport', 'click', 'program-nominations')"
-                                                        [telemetryInteractObject]="telemetryInteractObject"
-                                                        [telemetryInteractCdata]="telemetryInteractCdata"
-                                                        [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.download}}</button></td>
+                                    [telemetryInteractEdata]="getTelemetryInteractEdata('textbook_level_content_report',config.telemetryLabels.eventType.click ,config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+                                    [telemetryInteractObject]="telemetryInteractObject"
+                                    [telemetryInteractCdata]="telemetryInteractCdata"
+                                    [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.download}}</button></td>
                                 </tr>
                                 <tr>
                                     <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.ChapterLevelReportName}}</td>
                                     <td>{{resourceService.frmelmnts.lbl.ChapterLevelReportDescription}}</td>
                                     <td class="text-center"><button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('chapterLevelReport')"
                                         appTelemetryInteract
-                                                        [telemetryInteractEdata]="getTelemetryInteractEdata('download-chapterLevelReport', 'click', 'program-nominations')"
-                                                        [telemetryInteractObject]="telemetryInteractObject"
-                                                        [telemetryInteractCdata]="telemetryInteractCdata"
-                                                        [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.download}}</button></td>
+                                        [telemetryInteractEdata]="getTelemetryInteractEdata('chapter_level_content_report', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+                                        [telemetryInteractObject]="telemetryInteractObject"
+                                        [telemetryInteractCdata]="telemetryInteractCdata"
+                                        [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.download}}</button></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -663,10 +667,20 @@
     </div>
     <div class="sb-modal-actions">
         <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" [class.sb-btn-disabled]="userRemoveRoleLoader"
-            (click)="removeUserFromProgram()">
+            (click)="removeUserFromProgram()"
+            appTelemetryInteract
+            [telemetryInteractEdata]="getTelemetryInteractEdata('yes', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.submit,telemetryPageId, {key:'dialog_id',value:'confirm_user_role_remove'})"
+            [telemetryInteractObject]="telemetryInteractObject"
+            [telemetryInteractCdata]="telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryInteractPdata">
             {{resourceService?.frmelmnts?.btn?.yes}}
         </button>
         <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary"
-            (click)="cancelRemoveUserFromProgram();"> {{resourceService?.frmelmnts?.btn?.no}} </button>
+            (click)="cancelRemoveUserFromProgram();"
+            appTelemetryInteract
+            [telemetryInteractEdata]="getTelemetryInteractEdata('no', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.cancel,telemetryPageId, {key:'dialog_id',value:'confirm_user_role_remove'})"
+            [telemetryInteractObject]="telemetryInteractObject"
+            [telemetryInteractCdata]="telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService?.frmelmnts?.btn?.no}} </button>
     </div>
 </sui-modal>

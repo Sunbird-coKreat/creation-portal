@@ -34,6 +34,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
+  public telemetryPageId: string;
   @Input() programContext;
   @Input() sessionContext;
   @Input() storedCollectionData;
@@ -44,19 +45,19 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
     private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService,
     private userService: UserService, private programsService: ProgramsService, private httpClient: HttpClient,
     public toasterService: ToasterService, public publicDataService: PublicDataService, private helperService: HelperService,
-    private actionService: ActionService, public programTelemetryService: ProgramTelemetryService, private configService: ConfigService) { }
+    private actionService: ActionService, public programTelemetryService: ProgramTelemetryService, public configService: ConfigService) { }
 
   ngOnInit() {
     this.checkBulkApproveHistory();
     this.checkOriginFolderStatus([this.originalCollectionData]);
     this.approvalPendingContents([this.storedCollectionData]);
     this.initialized = true;
-    // tslint:disable-next-line:max-line-length
-    this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.programContext.program_id, 'Program');
+    this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.sessionContext.collection, 'Content', '1.0', { l1: this.sessionContext.collection });
+    this.telemetryPageId = this.sessionContext.telemetryPageDetails.telemetryPageId;
   }
 
   ngOnChanges() {

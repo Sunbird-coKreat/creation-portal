@@ -7,7 +7,7 @@
         <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="handleBack()"
                         type="button"
                         appTelemetryInteract
-                [telemetryInteractEdata]="getTelemetryInteractEdata('chapter-list', 'click', 'chapter-list')"
+                [telemetryInteractEdata]="getTelemetryInteractEdata('back', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata">
@@ -36,7 +36,7 @@
         <div *ngIf="!sampleContent && hasAccessFor('showCountPanel')" class="sb-meta-data-container sb-meta-data-column d-flex flex-w-wrap ml-16 width-inherit">
           <label class="d-block width-100" *ngIf="hasAccessFor('showContribution') && ((sessionContext.currentRoles.includes('CONTRIBUTOR') && sessionContext.currentRoles.includes('REVIEWER')) || sessionContext.currentRoles.includes('CONTRIBUTOR'))">Contributions</label>
           <label class="d-block width-100" *ngIf="hasAccessFor('showUpforReview') && sessionContext.currentRoles.includes('REVIEWER') && sessionContext.currentRoles.length === 1">Up for Review</label>
-          <div class="d-flex">
+          <div class="d-flex" *ngIf="sessionContext.currentOrgRole != 'individual'">
             <dl *ngIf="!sourcingOrgReviewer && (hasAccessFor('showTotalContribution') || hasAccessFor('showTotalUnderReview'))"
               class="sb-meta-data">
               <dt>{{countData['total']}}</dt>
@@ -63,6 +63,22 @@
             <dl *ngIf="hasAccessFor('showAawaitingReview')" class="sb-meta-data">
               <dt>{{sourcingOrgReviewer ? countData['pendingReview'] : countData['awaitingreview']}}</dt>
               <dd>Awaiting my review</dd>
+            </dl>
+          </div>
+          <div class="d-flex" *ngIf="sessionContext.currentOrgRole == 'individual'">
+
+            <dl *ngIf="actions.showTotalContribution.roles.includes(sessionContext.currentRoleIds[0])"
+              class="sb-meta-data">
+              <dt>{{countData['total']}}</dt>
+              <dd>{{resourceService.frmelmnts.lbl.total}}</dd>
+            </dl>
+            <dl *ngIf="actions.showUnderReview.roles.includes(sessionContext.currentRoleId)" class="sb-meta-data">
+              <dt>{{countData['draft']}}</dt>
+              <dd>{{resourceService.frmelmnts.lbl.draft}}</dd>
+            </dl>
+            <dl *ngIf="actions.showRejected.roles.includes(sessionContext.currentRoleId)" class="sb-meta-data">
+              <dt>{{countData['live']}}</dt>
+              <dd>{{resourceService.frmelmnts.lbl.published}}</dd>
             </dl>
           </div>
         </div>
@@ -144,7 +160,7 @@
   <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn px-20" (click)="handleBack()"
 						type="button"
 						appTelemetryInteract
-				[telemetryInteractEdata]="getTelemetryInteractEdata('chapter-list', 'click', 'chapter-list')"
+				[telemetryInteractEdata]="getTelemetryInteractEdata('back', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
 				[telemetryInteractObject]="telemetryInteractObject"
 				[telemetryInteractCdata]="telemetryInteractCdata"
 				[telemetryInteractPdata]="telemetryInteractPdata">
@@ -176,16 +192,16 @@
   <div class="sb-modal-actions">
     <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="deleteContent()"
     appTelemetryInteract
-				[telemetryInteractEdata]="getTelemetryInteractEdata('confirm-content-remove', 'click', 'chapter-list')"
-				[telemetryInteractObject]="telemetryInteractObject"
+				[telemetryInteractEdata]="getTelemetryInteractEdata('yes', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit,telemetryPageId,{key:'dialog_id',value:'confirm_delete_content'})"
+				[telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(contentId, 'Content', '1.0', {l1:sessionContext.collection,l2:unitIdentifier})"
 				[telemetryInteractCdata]="telemetryInteractCdata"
 				[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.yes}} </button>
     <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showConfirmationModal = false"
     appTelemetryInteract
-				[telemetryInteractEdata]="getTelemetryInteractEdata('cancel-content-remove', 'click', 'chapter-list')"
-				[telemetryInteractObject]="telemetryInteractObject"
-				[telemetryInteractCdata]="telemetryInteractCdata"
-				[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.no}} </button>
+    [telemetryInteractEdata]="getTelemetryInteractEdata('no', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.camcel,telemetryPageId,{key:'dialog_id',value:'confirm_delete_content'})"
+    [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(contentId, 'Content', '1.0', {l1:sessionContext.collection,l2:unitIdentifier})"
+    [telemetryInteractCdata]="telemetryInteractCdata"
+    [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.no}} </button>
   </div>
 </sui-modal>
 
@@ -204,14 +220,14 @@
   <div class="sb-modal-actions">
     <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="removeMvcContentFromHierarchy()"
     appTelemetryInteract
-				[telemetryInteractEdata]="getTelemetryInteractEdata('confirm-remove-content', 'click', 'chapter-list')"
-				[telemetryInteractObject]="telemetryInteractObject"
+    [telemetryInteractEdata]="getTelemetryInteractEdata('yes', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit,telemetryPageId,{key:'dialog_id',value:'confirm_remove_content'})"
+    [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(contentId, 'Content', '1.0', {l1:sessionContext.collection,l2:unitIdentifier})"
 				[telemetryInteractCdata]="telemetryInteractCdata"
 				[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts?.btn?.yes}}</button>
     <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showRemoveConfirmationModal = false"
     appTelemetryInteract
-				[telemetryInteractEdata]="getTelemetryInteractEdata('cancel-remove-content', 'click', 'chapter-list')"
-				[telemetryInteractObject]="telemetryInteractObject"
+    [telemetryInteractEdata]="getTelemetryInteractEdata('no', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.cancel,telemetryPageId,{key:'dialog_id',value:'confirm_remove_content'})"
+    [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(contentId, 'Content', '1.0', {l1:sessionContext.collection,l2:unitIdentifier})"
 				[telemetryInteractCdata]="telemetryInteractCdata"
 				[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts?.btn?.no}} </button>
   </div>

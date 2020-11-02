@@ -6,7 +6,6 @@
   "required": [
     "categoryId",
     "targetObjectType",
-    "objectMetadata",
     "name"
   ],
   "properties": {
@@ -71,6 +70,9 @@
       "type": "string"
     },
     "versionKey": {
+      "type": "string"
+    },
+    "consumerId": {
       "type": "string"
     }
   },

@@ -4,8 +4,8 @@ import { FormGroup, FormArray, FormBuilder, Validators, NgForm, FormControl } fr
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigService, ToasterService, ResourceService, NavigationHelperService } from '@sunbird/shared';
 import { UserService, ActionService, ContentService, NotificationService, ProgramsService, FrameworkService } from '@sunbird/core';
-import { TelemetryService} from '@sunbird/telemetry';
-import { tap, map, catchError, mergeMap, first } from 'rxjs/operators';
+import { TelemetryService, IStartEventInput, IEndEventInput} from '@sunbird/telemetry';
+import { tap, map, catchError, mergeMap, first, filter } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
 import { of, forkJoin, throwError } from 'rxjs';
@@ -15,6 +15,8 @@ import { HelperService } from '../../services/helper.service';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { ProgramStageService } from '../../../program/services';
 import { ProgramTelemetryService } from '../../../program/services';
+import { DataFormComponent } from '../../../core/components/data-form/data-form.component';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 
 @Component({
@@ -31,6 +33,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('FormControl') FormControl: NgForm;
   @Output() uploadedContentMeta = new EventEmitter<any>();
   @ViewChild('resourceTtlTextarea') resourceTtlTextarea: ElementRef;
+  @ViewChild('formData') formData: DataFormComponent;
 
   public sessionContext: any;
   public programContext: any;
@@ -81,10 +84,19 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedOriginUnitStatus: any;
   public overrideMetaData: any;
   public isMetadataOverridden = false;
+  public formFieldProperties: Array<any>;
+  public editableFields = [];
+  public showEditMetaForm: boolean;
+  public categoryMasterList: Array<any>;
+  public requiredAction: string;
+  public contentEditRole: string;
+  public telemetryStart: IStartEventInput;
+  public telemetryEnd: IEndEventInput;
+  public pageStartTime;
 
   constructor(
-    private configService: ConfigService, private userService: UserService,
-    public actionService: ActionService,
+    public configService: ConfigService, private userService: UserService,
+    public actionService: ActionService, private deviceDetectorService: DeviceDetectorService,
     private cdr: ChangeDetectorRef, public toasterService: ToasterService,
     public telemetryService: TelemetryService, private fb: FormBuilder,
     private notificationService: NotificationService, private cbseService: CbseProgramService, public contentService: ContentService,
@@ -113,6 +125,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.practiceSetConfig = _.get(this.practiceQuestionSetComponentInput, 'config');
     this.sourcingReviewStatus = _.get(this.practiceQuestionSetComponentInput, 'sourcingStatus') || '';
     this.resourceTitleLimit = this.practiceSetConfig.config.resourceTitleLength;
+    this.telemetryPageId = _.get(this.sessionContext, 'telemetryPageDetails.telemetryPageId');
+    this.sessionContext.telemetryPageId = this.telemetryPageId;
     this.sessionContext.practiceSetConfig = this.practiceSetConfig;
     this.sessionContext.topic = _.isEmpty(this.selectedSharedContext.topic) ? this.sessionContext.topic : this.selectedSharedContext.topic;
     this.getContentMetadata(this.sessionContext.resourceIdentifier);
@@ -126,17 +140,66 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     if ( _.isUndefined(this.sessionContext.topicList)) {
       this.fetchFrameWorkDetails();
     }
+    this.pageStartTime = Date.now();
+    this.setTelemetryStartData();
+    this.helperService.initialize(this.programContext);
+  }
+
+  setTelemetryStartData() {
+    const telemetryCdata = [{id: this.userService.channel, type: 'sourcing_organization'},
+    {id: this.programContext.program_id, type: 'project'}, {id: this.sessionContext.collection, type: 'linked_collection'}];
+    const deviceInfo = this.deviceDetectorService.getDeviceInfo();
+    setTimeout(() => {
+        this.telemetryStart = {
+          context: {
+            env: this.activeRoute.snapshot.data.telemetry.env,
+            cdata: telemetryCdata || []
+          },
+          edata: {
+            type: this.configService.telemetryLabels.pageType.editor || '',
+            pageid: this.telemetryPageId,
+            uaspec: {
+              agent: deviceInfo.browser,
+              ver: deviceInfo.browser_version,
+              system: deviceInfo.os_version,
+              platform: deviceInfo.os,
+              raw: deviceInfo.userAgent
+            }
+          }
+        };
+    });
+  }
+
+  generateTelemetryEndEvent(eventMode) {
+    const telemetryCdata = [{id: this.userService.channel, type: 'sourcing_organization'},
+    {id: this.programContext.program_id, type: 'project'}, {id: this.sessionContext.collection, type: 'linked_collection'}];
+    this.telemetryEnd = {
+      object: {
+        id: this.sessionContext.resourceIdentifier || '',
+        type: 'content',
+      },
+      context: {
+        env: this.activeRoute.snapshot.data.telemetry.env,
+        cdata: telemetryCdata || []
+      },
+      edata: {
+        type: this.configService.telemetryLabels.pageType.editor || '',
+        pageid: this.telemetryPageId,
+        mode: eventMode || '',
+        duration: _.toString((Date.now() - this.pageStartTime) / 1000)
+      }
+    };
+    this.telemetryService.end(this.telemetryEnd);
   }
 
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-    const telemetryCdata = [{ 'type': 'Program', 'id': this.programContext.program_id }];
      setTimeout(() => {
       this.telemetryImpression = {
         context: {
           env: this.activeRoute.snapshot.data.telemetry.env,
-          cdata: telemetryCdata || [],
+          cdata: this.telemetryEventsInput.telemetryInteractCdata || [],
           pdata: {
             id: this.userService.appId,
             ver: version,
@@ -144,7 +207,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         },
         edata: {
-          type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
+          type: this.configService.telemetryLabels.pageType.view || _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
           pageid: this.telemetryPageId,
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
@@ -155,9 +218,11 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   fetchFrameWorkDetails() {
     this.frameworkService.initialize(this.sessionContext.framework);
-    this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
+    this.frameworkService.frameworkData$.pipe(filter(data => _.get(data, `frameworkdata.${this.sessionContext.framework}`)), 
+    first()).subscribe((frameworkDetails: any) => {
       if (frameworkDetails && !frameworkDetails.err) {
         const frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
+        this.sessionContext.frameworkData = frameworkData;
         this.sessionContext.topicList = _.get(_.find(frameworkData, { code: 'topic' }), 'terms');
       }
     });
@@ -165,11 +230,15 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public preprareTelemetryEvents() {
     // tslint:disable-next-line:max-line-length
-    this.telemetryEventsInput.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.sessionContext.collection, 'Content', '1.0');
-    // tslint:disable-next-line:max-line-length
-    this.telemetryEventsInput.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.sessionContext.programId, 'Program');
+    this.telemetryEventsInput.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.sessionContext.resourceIdentifier, 'Content', '1.0', { l1: this.sessionContext.collection, l2: this.sessionContext.textBookUnitIdentifier});
+    this.telemetryEventsInput.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
     // tslint:disable-next-line:max-line-length
     this.telemetryEventsInput.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
+  }
+
+  getTelemetryInteractObject(id: string, type: string) {
+    return this.programTelemetryService.getTelemetryInteractObject(id, type, '1.0',
+    { l1: this.sessionContext.collection, l2: this.sessionContext.textBookUnitIdentifier, l3: this.sessionContext.resourceIdentifier});
   }
 
   getContentMetadata(contentId: string) {
@@ -177,13 +246,17 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       url: `${this.configService.urlConFig.URLS.CONTENT.GET}/${contentId}`,
     };
     this.contentService.get(option).pipe(map((data: any) => data.result.content), catchError(err => {
-      const errInfo = { errorMsg: 'Unable to read the Content, Please Try Again' };
+      const errInfo = {
+        errorMsg: 'Unable to read the Content, Please Try Again',
+        telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env, request: option
+       };
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     })).subscribe(res => {
       this.resourceDetails = res;
-      const contentTypeValue = [this.resourceDetails.contentType];
-      const contentType = this.programsService.getContentTypesName(contentTypeValue);
-      this.resourceDetails.contentTypeName = contentType;
+      /*const contentTypeValue = [this.resourceDetails.contentType];
+      const contentType = this.resourceDetails.contentType;
+      this.resourceDetails.contentTypeName = contentType;*/
       this.sessionContext.contentMetadata = this.resourceDetails;
       this.existingContentVersionKey = res.versionKey;
       this.resourceStatus =  _.get(this.resourceDetails, 'status');
@@ -196,7 +269,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.sessionContext.questionType = _.lowerCase(questionCategories);
       }
       this.sessionContext.resourceStatus = this.resourceStatus;
-      this.resourceName = this.resourceDetails.name || this.templateDetails.metadata.name;
+      this.resourceName = this.resourceDetails.name || '';
       this.contentRejectComment = this.resourceDetails.rejectComment || '';
       if (!this.resourceDetails.itemSets) {
         this.createDefaultQuestionAndItemset();
@@ -206,10 +279,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           this.itemSetIdentifier = itemSet[0].identifier;
         }
         this.fetchQuestionList();
-        this.resourceName = (this.resourceName !== 'Untitled') ? this.resourceName : '' ;
-        if (this.visibility && this.visibility.showSave && !this.resourceName) {
-          this.showResourceTitleEditor();
-        }
       }
       this.handleActionButtons();
     });
@@ -289,6 +358,107 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  showEditform(action) {
+    this.formFieldProperties = _.cloneDeep(this.helperService.getFormConfiguration());
+    this.requiredAction = action;
+    if (_.get(this.selectedSharedContext, 'topic')) {
+      // tslint:disable-next-line:max-line-length
+      this.sessionContext.topic = _.isArray(this.sessionContext.topic) ? this.selectedSharedContext.topic : _.split(this.selectedSharedContext.topic, ',');
+    }
+    this.getEditableFields();
+    _.forEach(this.formFieldProperties, field => {
+      if (field.editable && !_.includes(this.editableFields, field.code)) {
+        field['editable'] = false;
+      }
+    });
+    if (this.requiredAction === 'editForm') {
+      this.formFieldProperties = _.filter(this.formFieldProperties, val => val.code !== 'contentPolicyCheck');
+    }
+    // tslint:disable-next-line:max-line-length
+    [this.categoryMasterList, this.formFieldProperties] = this.helperService.initializeMetadataForm(this.sessionContext, this.formFieldProperties, this.resourceDetails);
+    this.showEditMetaForm = true;
+  }
+
+  getEditableFields() {
+    if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
+      if (this.userService.getUserId() === this.resourceDetails.createdBy && this.resourceStatus === 'Draft') {
+        this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.resourceDetails);
+        this.contentEditRole = 'CONTRIBUTOR';
+      } else if (this.canPublishContent()) {
+        this.editableFields = this.helperService.getEditableFields('REVIEWER', this.formFieldProperties, this.resourceDetails);
+        this.contentEditRole = 'REVIEWER';
+      }
+    } else if (this.hasRole('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
+      this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.resourceDetails);
+      this.contentEditRole = 'CONTRIBUTOR';
+    } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
+      && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
+      && !this.sourcingReviewStatus
+      && (this.selectedOriginUnitStatus === 'Draft')) {
+      this.editableFields = this.helperService.getEditableFields('REVIEWER', this.formFieldProperties, this.resourceDetails);
+      this.contentEditRole = 'REVIEWER';
+    }
+  }
+
+  handleCallback() {
+    switch (this.requiredAction) {
+      case 'review':
+        this.saveMetadataForm(this.sendForReview);
+        break;
+      case 'publish':
+        this.saveMetadataForm(this.publishContent);
+        break;
+      default:
+        this.saveMetadataForm();
+        break;
+    }
+  }
+
+  saveMetadataForm(cb?) {
+    if (this.helperService.validateForm(this.formFieldProperties, this.formData.formInputData || {})) {
+      console.log(this.formData.formInputData);
+      // tslint:disable-next-line:max-line-length
+      const formattedData = this.helperService.getFormattedData(_.pick(this.formData.formInputData, this.editableFields), this.formFieldProperties);
+      const request = {
+        'content': {
+          'versionKey': this.existingContentVersionKey,
+          ...formattedData
+        }
+      };
+
+      this.helperService.contentMetadataUpdate(this.contentEditRole, request, this.resourceDetails.identifier).subscribe((res) => {
+        this.existingContentVersionKey = _.get(res, 'result.versionKey');
+        // tslint:disable-next-line:max-line-length
+        this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, res.result.node_id || res.result.identifier)
+        .subscribe((data) => {
+          this.showEditMetaForm = false;
+          if (cb) {
+            cb.call(this);
+          } else {
+            this.getContentMetadata(this.resourceDetails.identifier);
+            this.toasterService.success(this.resourceService.messages.smsg.m0060);
+          }
+        }, (err) => {
+          const errInfo = {
+            errorMsg: this.resourceService.messages.fmsg.m0098,
+            telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+            env : this.activeRoute.snapshot.data.telemetry.env
+           };
+            this.cbseService.apiErrorHandling(err, errInfo);
+        });
+      }, err => {
+        const errInfo = {
+          errorMsg: this.resourceService.messages.fmsg.m0098,
+          telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+          env : this.activeRoute.snapshot.data.telemetry.env, request: request
+         };
+          this.cbseService.apiErrorHandling(err, errInfo);
+      });
+    } else {
+      this.toasterService.error(this.resourceService.messages.fmsg.m0101);
+    }
+  }
+
   hasAccessFor(action) {
     const roles = _.get(this.actions, `${action}.roles`, []);
     return !_.isEmpty(_.intersection(roles, this.sessionContext.currentRoleIds));
@@ -308,8 +478,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.visibility['showPublish'] = submissionDateFlag && this.canPublishContent();
     // tslint:disable-next-line:max-line-length
     this.visibility['showSubmit'] = submissionDateFlag && this.canSubmit();
-    // tslint:disable-next-line:max-line-length
     this.visibility['showSave'] = submissionDateFlag && this.canSave();
+    // tslint:disable-next-line:max-line-length
+    this.visibility['showEditMetadata'] = submissionDateFlag && this.canEditMetadata();
      // tslint:disable-next-line:max-line-length
     this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
     // tslint:disable-next-line:max-line-length
@@ -339,6 +510,11 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   canSave() {
     // tslint:disable-next-line:max-line-length
     return !!(this.hasAccessFor('showSave') && this.resourceStatus === 'Draft' && (this.userService.getUserId() === this.resourceDetails.createdBy));
+  }
+
+  canEditMetadata() {
+    // tslint:disable-next-line:max-line-length
+    return !!(this.resourceStatus === 'Draft' && (this.userService.getUserId() === this.resourceDetails.createdBy));
   }
 
   canPublishContent() {
@@ -401,10 +577,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     .subscribe(() => {
       this.handleQuestionTabChange(this.selectedQuestionId);
       this.goToNextQuestionStatus = false;
-      this.resourceName = (this.resourceName !== 'Untitled') ? this.resourceName : '' ;
-      if (this.visibility && this.visibility.showSave && !this.resourceName) {
-        this.showResourceTitleEditor();
-      }
     });
   }
 
@@ -499,7 +671,11 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       return res.result.assessment_item;
     }),
       catchError(err => {
-        const errInfo = { errorMsg: 'Fetching Question details failed' };
+        const errInfo = {
+          errorMsg: 'Fetching Question details failed',
+          telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+          env : this.activeRoute.snapshot.data.telemetry.env, request: req
+        };
         return throwError(this.cbseService.apiErrorHandling(err, errInfo));
       }));
   }
@@ -590,10 +766,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           // questions: questions,
           body: JSON.stringify(response[0]),
           versionKey: existingContentVersionKey,
-          'author': _.join(_.uniq(_.compact(_.get(selectedQuestionsData, 'author'))), ', '),
-          'attributions': _.uniq(_.compact(_.get(selectedQuestionsData, 'attributions'))),
-          // tslint:disable-next-line:max-line-length
-          name: this.resourceName,
           'programId': this.sessionContext.programId,
           'program': this.sessionContext.program,
           'plugins': [{
@@ -615,9 +787,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((res) => {
           if (res.responseCode === 'OK' && (res.result.content_id || res.result.node_id)) {
             if (actionStatus === 'review' && this.isIndividualAndNotSample()) {
-              this.publishContent();
+              this.showEditform('publish');
             } else if (actionStatus === 'review') {
-              this.sendForReview();
+              this.showEditform('review');
             }
           }
         });
@@ -637,17 +809,28 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         // tslint:disable-next-line:max-line-length
         this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, contentId )
         .subscribe((data) => {
+          this.generateTelemetryEndEvent('submit');
           this.toasterService.success(this.resourceService.messages.smsg.m0061);
           this.programStageService.removeLastStage();
           this.uploadedContentMeta.emit({
             contentId: contentId
           });
         }, (err) => {
-          this.toasterService.error(this.resourceService.messages.fmsg.m0099);
+          const errInfo = {
+            errorMsg: this.resourceService.messages.fmsg.m0099,
+            telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+            env : this.activeRoute.snapshot.data.telemetry.env
+           };
+            this.cbseService.apiErrorHandling(err, errInfo);
         });
       }
     }, (err) => {
-      this.toasterService.error(this.resourceService.messages.fmsg.m0099);
+      const errInfo = {
+        errorMsg: this.resourceService.messages.fmsg.m0099,
+        telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env
+       };
+        this.cbseService.apiErrorHandling(err, errInfo);
      });
   }
 
@@ -660,6 +843,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         // tslint:disable-next-line:max-line-length
         this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, contentId )
         .subscribe((data) => {
+          this.generateTelemetryEndEvent('publish');
           this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
           this.programStageService.removeLastStage();
           this.uploadedContentMeta.emit({
@@ -668,7 +852,12 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         });
       }
     }, (err) => {
-      this.toasterService.error(this.resourceService.messages.fmsg.m00102);
+      const errInfo = {
+        errorMsg: this.resourceService.messages.fmsg.m00102,
+        telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env
+       };
+        this.cbseService.apiErrorHandling(err, errInfo);
     });
   }
 
@@ -690,11 +879,21 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
               contentId: contentId
             });
           }, (err) => {
-            this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+            const errInfo = {
+              errorMsg: this.resourceService.messages.fmsg.m00100,
+              telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+              env : this.activeRoute.snapshot.data.telemetry.env
+             };
+              this.cbseService.apiErrorHandling(err, errInfo);
           });
         }
       }, (err) => {
-        this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+        const errInfo = {
+          errorMsg: this.resourceService.messages.fmsg.m00100,
+          telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+          env : this.activeRoute.snapshot.data.telemetry.env
+         };
+          this.cbseService.apiErrorHandling(err, errInfo);
       });
     }
   }
@@ -711,7 +910,12 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           contentId: res.result.node_id
         });
       }, (err) => {
-        this.toasterService.error(this.resourceService.messages.fmsg.m00106);
+        const errInfo = {
+          errorMsg: this.resourceService.messages.fmsg.m00106,
+          telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+          env : this.activeRoute.snapshot.data.telemetry.env
+         };
+          this.cbseService.apiErrorHandling(err, errInfo);
       });
     }
   }
@@ -766,7 +970,11 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     };
 
     this.actionService.delete(request).pipe(catchError(err => {
-      const errInfo = { errorMsg: 'Question deletion failed' };
+      const errInfo = {
+        errorMsg: 'Question deletion failed',
+        telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env, request: request
+       };
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     }))
     .subscribe((res) => {
@@ -778,14 +986,12 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }, error => {
       console.log(error);
+      const errInfo = {
+        telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env
+       };
+        this.cbseService.apiErrorHandling(error, errInfo);
     });
-  }
-
-  public showResourceTitleEditor() {
-    this.showTextArea = true;
-    setTimeout(() => {
-      this.resourceTtlTextarea.nativeElement.focus();
-    }, 500);
   }
 
   public onResourceNameChange(event: any) {
@@ -811,33 +1017,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  public saveResourceName() {
-    this.resourceName = (_.trim(this.resourceName) !== 'Untitled') ? _.trim(this.resourceName) : '' ;
-    if (this.resourceName.length > 0 && this.resourceName.length <= this.resourceTitleLimit) {
-      this.showTextArea = false;
-      const reqBody = {
-        'content': {
-            'versionKey': this.existingContentVersionKey,
-            'name' : this.resourceName
-        }
-      };
-      this.updateContent(reqBody, this.sessionContext.resourceIdentifier)
-      .subscribe((res) => {
-        const contentId = res.result.node_id || res.result.identifier;
-        if (this.sessionContext.collection && this.sessionContext.textBookUnitIdentifier) {
-          this.collectionHierarchyService.addResourceToHierarchy(
-            this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, contentId
-          )
-          .subscribe((data) => {
-            this.toasterService.success(this.resourceService.messages.smsg.m0060);
-            this.sessionContext.contentMetadata.name = this.resourceName;
-          }, (err) => {
-            this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-          });
-        }
-      });
-    }
-  }
 
   public createDefaultAssessmentItem() {
     const request = {
@@ -851,7 +1030,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }, err => {
       console.log(err);
     }), catchError(err => {
-      const errInfo = { errorMsg: 'Default question creation failed' };
+      const errInfo = {
+         errorMsg: 'Default question creation failed',
+         telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+         env : this.activeRoute.snapshot.data.telemetry.env, request: request};
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     }));
   }
@@ -964,7 +1146,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }, err => {
       console.log(err);
     }), catchError(err => {
-      const errInfo = { errorMsg: 'Itemsets creation failed' };
+      const errInfo = {
+        errorMsg: 'Itemsets creation failed',
+        telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env, request: reqBody };
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     }));
 
@@ -977,7 +1162,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }, err => {
       console.log(err);
     }), catchError(err => {
-      const errInfo = { errorMsg: 'Content updation failed' };
+      const errInfo = {
+        errorMsg: 'Content updation failed',
+        telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env, request: reqBody };
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     }));
   }
@@ -989,7 +1177,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }, err => {
       console.log(err);
     }), catchError(err => {
-      const errInfo = { errorMsg: this.resourceService.messages.fmsg.m0098 };
+      const errInfo = {
+        errorMsg: this.resourceService.messages.fmsg.m0098,
+        telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env, request: reqBody };
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     }));
   }
@@ -1013,52 +1204,11 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   handleBack() {
+    this.generateTelemetryEndEvent('back');
     this.programStageService.removeLastStage();
   }
 
-  updateContentBeforeApproving(action) {
-    if (this.isMetaDataModified()) {
-      const cb = (err, res) => {
-        if (!err && res) {
-          this.helperService.publishContent(this.sessionContext.resourceIdentifier, this.userService.userProfile.userId)
-          .subscribe( res => {
-            const me = this;
-            setTimeout(() => {
-              this.getContentStatus(this.sessionContext.resourceIdentifier).subscribe((response: any) => {
-                const status = _.get(response, 'content.status');
-                if (status === 'Live') {
-                  me.attachContentToTextbook(action);
-                }
-              }, err => {
-                this.toasterService.error(this.resourceService.messages.fmsg.m00102);
-              });
-            }, 2000);
-           }, (err) => {
-            this.toasterService.error(this.resourceService.messages.fmsg.m00102);
-          });
-        } else if (err) {
-          this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-          console.log(err);
-        }
-      };
-      this.updateContentMetaData(cb);
-    } else {
-      this.attachContentToTextbook('accept');
-    }
-  }
 
-  updateContentBeforePublishing() {
-    if (this.isMetaDataModified()) {
-      const cb = (err, res ) => {
-        if (!err && res) {
-          this.publishContent();
-        }
-      };
-      this.updateContentMetaData(cb);
-    } else {
-      this.publishContent();
-    }
-  }
 
   attachContentToTextbook(action) {
     const hierarchyObj  = _.get(this.sessionContext.hierarchyObj, 'hierarchy');

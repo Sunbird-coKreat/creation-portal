@@ -117,6 +117,8 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   ngOnInit() {
     this.initialized = true;
     this.overrideMetaData = this.programsService.overrideMetaData;
+    this.telemetryPageId =  this.sessionContext.telemetryPageId;
+    this.telemetryEventsInput.telemetryPageId = this.telemetryPageId;
     this.solutionUUID = UUID.UUID();
     this.initialize();
     if (this.questionMetaData && this.questionMetaData.data) {
@@ -146,13 +148,18 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
           }
         },
         edata: {
-          type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
+          type: this.configService.telemetryLabels.pageType.view || _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
           pageid: this.telemetryPageId,
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
      });
+  }
+
+  getTelemetryInteractObject(id: string, type: string) {
+    return this.programTelemetryService.getTelemetryInteractObject(id, type, '1.0',
+    { l1: this.sessionContext.collection, l2: this.sessionContext.textBookUnitIdentifier, l3: this.sessionContext.resourceIdentifier});
   }
 
   ngOnChanges() {
@@ -305,7 +312,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   }
 
   handleSubmit(questionMetaForm) {
-    if (this.questionMetaForm.valid && this.editorState.question !== ''
+    if (this.editorState.question !== ''
       && this.editorState.answer !== '') {
       this.showFormError = false;
       if (this.questionMetaData.mode !== 'create') {
@@ -314,7 +321,6 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
     } else {
       this.showFormError = true;
       this.showPreview = false;
-      this.markFormGroupTouched(this.questionMetaForm);
     }
   }
 
@@ -374,13 +380,6 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
           option.data.request.assessment_item.metadata['solutions'] = [solutionObj];
         }
 
-        _.forEach(this.formConfiguration, field => {
-          if (field.inputType === 'text' && field.dataType === 'list') {
-            // tslint:disable-next-line:max-line-length
-            const dataVal = this.questionMetaForm.value[field.code];
-            this.questionMetaForm.value[field.code] = dataVal ? dataVal.split(', ') : [];
-          }
-        });
         // tslint:disable-next-line:max-line-length
         option.data.request.assessment_item.metadata = _.pickBy(_.assign(option.data.request.assessment_item.metadata, this.questionMetaForm.value), _.identity);
         if (optionalParams) {
@@ -402,7 +401,10 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
         }
 
         this.actionService.patch(option).pipe(catchError(err => {
-          const errInfo = { errorMsg: 'Question updation failed' };
+          const errInfo = {
+            errorMsg: 'Question updation failed',
+            telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+            env : this.activeRoute.snapshot.data.telemetry.env, request: option };
           return throwError(this.cbseService.apiErrorHandling(err, errInfo));
         })).subscribe((apiRes) => {
           if (this.updateStatus === 'Live') {

@@ -28,7 +28,7 @@
                     <td class="text-center">
                       <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('TextbookLevel', true);" 
                       appTelemetryInteract
-                      [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download-textbookLevelReport', 'click', 'list-org-reports')"
+                      [telemetryInteractEdata]="getTelemetryInteractEdata('download_textbookLevelReport', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                       [telemetryInteractObject]="telemetryInteractObject"
                       [telemetryInteractCdata]="telemetryInteractCdata"
                       [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.download}}</button></td>
@@ -39,7 +39,7 @@
                     <td class="text-center">
                       <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('ChapterLevel', true);" 
                       appTelemetryInteract
-                      [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download-chapterLevelReport', 'click', 'list-org-reports')"
+                      [telemetryInteractEdata]="getTelemetryInteractEdata('download_chapterLevelReport', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                       [telemetryInteractObject]="telemetryInteractObject"
                       [telemetryInteractCdata]="telemetryInteractCdata"
                       [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.download}}</button></td>
@@ -50,7 +50,7 @@
                   <td class="text-center">
                     <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('vidyadaan_visitor', false);" 
                     appTelemetryInteract
-                    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download-visitorsReport', 'click', 'list-org-reports')"
+                    [telemetryInteractEdata]="getTelemetryInteractEdata('download_visitorReport', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                     [telemetryInteractObject]="telemetryInteractObject"
                     [telemetryInteractCdata]="telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.download}}</button></td>
@@ -61,7 +61,7 @@
                   <td class="text-center">
                     <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('FunnelReport', true);" 
                     appTelemetryInteract
-                    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download-projectLevelFunnelReport', 'click', 'list-org-reports')"
+                    [telemetryInteractEdata]="getTelemetryInteractEdata('download_funnelReport', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                     [telemetryInteractObject]="telemetryInteractObject"
                     [telemetryInteractCdata]="telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.download}}</button></td>

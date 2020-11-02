@@ -15,11 +15,13 @@ import { CbseProgramService } from './../../../cbse-program/services';
 import { UserService } from '@sunbird/core';
 import { programConfigObj } from './programconfig';
 import { HttpClient } from '@angular/common/http';
-import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEventInput } from '@sunbird/telemetry';
+import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEventInput, TelemetryService } from '@sunbird/telemetry';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import * as moment from 'moment';
 import * as alphaNumSort from 'alphanum-sort';
 import { ProgramTelemetryService } from '../../services';
+import { event } from 'jquery';
+import { CacheService } from 'ng2-cache-service';
 
 @Component({
   selector: 'app-create-program',
@@ -124,9 +126,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public disableCreateProgramBtn = false;
   public showLoader = true;
   public btnDoneDisabled = false;
+  public telemetryPageId: string;
+  private pageStartTime: any;
 
   constructor(
     public frameworkService: FrameworkService,
+    private telemetryService: TelemetryService,
     private programsService: ProgramsService,
     private userService: UserService,
     public toasterService: ToasterService,
@@ -138,20 +143,20 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     private sbFormBuilder: FormBuilder,
     private httpClient: HttpClient,
     private navigationHelperService: NavigationHelperService,
-    private configService: ConfigService,
+    public configService: ConfigService,
     private deviceDetectorService: DeviceDetectorService,
     public programTelemetryService: ProgramTelemetryService,
-    public actionService: ActionService) {
+    public actionService: ActionService, public cacheService: CacheService) {
   }
 
   ngOnInit() {
     this.programId = this.activatedRoute.snapshot.params.programId;
     this.userprofile = this.userService.userProfile;
-    this.programScope['purpose'] = this.programsService.contentTypes;
     this.programConfig = _.cloneDeep(programConfigObj);
-    this.telemetryInteractCdata = [];
+    this.telemetryInteractCdata = [{id: this.userService.channel || '', type: 'sourcing_organization'}];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
+    this.getPageId();
     this.acceptPdfType = this.getAcceptType(this.assetConfig.pdf.accepted, 'pdf');
     this.collectionListForm = this.sbFormBuilder.group({
       pcollections: this.sbFormBuilder.array([]),
@@ -161,11 +166,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     });
 
     if (!_.isEmpty(this.programId)) {
+      this.telemetryInteractCdata = [...this.telemetryInteractCdata, {id: this.programId, type: 'project'}];
       this.getProgramDetails();
     } else {
       this.initializeFormFields();
     }
     this.fetchFrameWorkDetails();
+    this.setTelemetryStartData();
+    this.pageStartTime = Date.now();
   }
 
   initiateDocumentUploadModal() {
@@ -241,7 +249,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.cbseService.createMediaAsset(req).pipe(catchError(err => {
         this.loading = false;
         this.isClosable = true;
-        const errInfo = { errorMsg: ' Unable to create an Asset' };
+        const errInfo = {
+          errorMsg: ' Unable to create an Asset',
+          telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
+          env : this.activatedRoute.snapshot.data.telemetry.env, request: req
+         };
         return throwError(this.cbseService.apiErrorHandling(err, errInfo));
       })).subscribe((res) => {
         const contentId = res['result'].node_id;
@@ -251,7 +263,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           }
         };
         this.cbseService.generatePreSignedUrl(request, contentId).pipe(catchError(err => {
-          const errInfo = { errorMsg: 'Unable to get pre_signed_url and Content Creation Failed, Please Try Again' };
+          const errInfo = {
+            errorMsg: 'Unable to get pre_signed_url and Content Creation Failed, Please Try Again',
+            telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
+            env : this.activatedRoute.snapshot.data.telemetry.env, request: request};
           this.loading = false;
           this.isClosable = true;
           return throwError(this.cbseService.apiErrorHandling(err, errInfo));
@@ -288,7 +303,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       param: config
     };
     this.cbseService.uploadMedia(option, contentId).pipe(catchError(err => {
-      const errInfo = { errorMsg: 'Unable to update pre_signed_url with Content Id and Content Creation Failed, Please Try Again' };
+      const errInfo = {
+        errorMsg: 'Unable to update pre_signed_url with Content Id and Content Creation Failed, Please Try Again',
+        telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
+        env : this.activatedRoute.snapshot.data.telemetry.env, request: option };
       this.isClosable = true;
       this.loading = false;
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
@@ -305,7 +323,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programsService.get(req).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
       this.selectedContentTypes = _.get(this.programDetails, 'content_types');
-      this.programDetails['content_types'] = this.programsService.getContentTypesName(this.programDetails.content_types);
+      this.programDetails['content_types'] = _.join(this.programDetails.content_types, ', ');
       this.initializeFormFields();
 
       if (!_.isEmpty(this.programDetails.guidelines_url)) {
@@ -314,8 +332,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     }, error => {
       this.showLoader = false;
-      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-      this.toasterService.error(errorMes || 'Fetching program details failed');
+      const errInfo = {
+        errorMsg:  'Fetching program details failed',
+        telemetryPageId: this.telemetryPageId,
+        telemetryCdata : this.telemetryInteractCdata,
+        env : this.activatedRoute.snapshot.data.telemetry.env,
+        request: req
+      };
+      this.cbseService.apiErrorHandling(error, errInfo);
     });
   }
 
@@ -324,7 +348,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.loading = false;
     this.isClosable = true;
     this.cbseService.getVideo(videoId).pipe(map((data: any) => data.result.content), catchError(err => {
-      const errInfo = { errorMsg: 'Unable to read the Document, Please Try Again' };
+      const errInfo = {
+        errorMsg: 'Unable to read the Document, Please Try Again',
+        telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
+        env : this.activatedRoute.snapshot.data.telemetry.env, request: videoId };
       this.loading = false;
       this.isClosable = true;
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
@@ -357,7 +384,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
   uploadToBlob(signedURL, file, config): Observable<any> {
     return this.programsService.http.put(signedURL, file, config).pipe(catchError(err => {
-      const errInfo = { errorMsg: 'Unable to upload to Blob and Content Creation Failed, Please Try Again' };
+      const errInfo = {
+        errorMsg: 'Unable to upload to Blob and Content Creation Failed, Please Try Again',
+        telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
+        env : this.activatedRoute.snapshot.data.telemetry.env, request: signedURL };
       this.isClosable = true;
       this.loading = false;
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
@@ -433,8 +463,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     if (!this.editPublished) {
       return this.pickerMinDate;
-    }
-    else {
+    } else {
       return this.createProgramForm.value.nomination_enddate;
     }
   }
@@ -447,7 +476,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.telemetryImpression = {
         context: {
           env: this.activatedRoute.snapshot.data.telemetry.env,
-          cdata: [],
+          cdata: this.telemetryInteractCdata,
           pdata: {
             id: this.userService.appId,
             ver: version,
@@ -457,12 +486,17 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         },
         edata: {
           type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
-          pageid: _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid'),
+          pageid: this.getPageId(),
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
     });
+  }
+
+  getPageId() {
+    this.telemetryPageId = _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid');
+    return this.telemetryPageId;
   }
 
   fetchFrameWorkDetails() {
@@ -477,6 +511,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   setFrameworkDataToProgram() {
+    this.programScope['purpose'] = _.get(this.cacheService.get(this.userService.hashTagId), 'contentPrimaryCategories');
     this.programScope['medium'] = [];
     this.programScope['gradeLevel'] = [];
     this.programScope['subject'] = [];
@@ -805,7 +840,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         (res) => {
           this.programId = res.result.program_id;
           this.programData['program_id'] = this.programId;
-          this.generateTelemetryEvent('START');
           cb(null, res);
         },
         (err) => {
@@ -872,6 +906,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       this.programsService.updateProgram(prgData).subscribe(
         (res) => {
+          this.generateTelemetryEndEvent('update');
           this.toasterService.success(this.resource.messages.smsg.modify.m0001);
           this.router.navigate(['/sourcing']);
         },
@@ -895,9 +930,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     const requestData = {
       request: {
         filters: {
-          objectType: 'content',
+          objectType: 'collection',
           status: ['Draft'],
-          contentType: 'Textbook',
+          primaryCategory: 'Digital Textbook',
           framework: this.userFramework,
           board: this.userBoard,
           channel: this.userprofile.rootOrgId
@@ -1059,32 +1094,28 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     return config;
   }
 
-  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+  getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: string): IInteractEventEdata {
     return _.omitBy({
       id,
       type,
+      subtype,
       pageid,
       extra
     }, _.isUndefined);
   }
 
-  generateTelemetryEvent(event) {
-    switch (event) {
-      case 'START':
-        const deviceInfo = this.deviceDetectorService.getDeviceInfo();
+  setTelemetryStartData() {
+    const telemetryCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
+    const deviceInfo = this.deviceDetectorService.getDeviceInfo();
+    setTimeout(() => {
         this.telemetryStart = {
           context: {
-            env: this.activatedRoute.snapshot.data.telemetry.env
-          },
-          object: {
-            id: this.programId || '',
-            type: this.activatedRoute.snapshot.data.telemetry.object.type,
-            ver: this.activatedRoute.snapshot.data.telemetry.object.ver
+            env: this.activatedRoute.snapshot.data.telemetry.env,
+            cdata: telemetryCdata
           },
           edata: {
             type: this.activatedRoute.snapshot.data.telemetry.type || '',
             pageid: this.activatedRoute.snapshot.data.telemetry.pageid || '',
-            mode: this.activatedRoute.snapshot.data.telemetry.mode || '',
             uaspec: {
               agent: deviceInfo.browser,
               ver: deviceInfo.browser_version,
@@ -1094,39 +1125,38 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
             }
           }
         };
-        break;
-      case 'END':
-        this.telemetryEnd = {
-          object: {
-            id: this.programId || '',
-            type: this.activatedRoute.snapshot.data.telemetry.object.type,
-            ver: this.activatedRoute.snapshot.data.telemetry.object.ver
-          },
-          context: {
-            env: this.activatedRoute.snapshot.data.telemetry.env
-          },
-          edata: {
-            type: this.activatedRoute.snapshot.data.telemetry.type,
-            pageid: this.activatedRoute.snapshot.data.telemetry.pageid,
-            mode: 'create'
-          }
-        };
-        break;
-      default:
-        break;
-    }
+    });
+  }
+
+  generateTelemetryEndEvent(eventMode) {
+    const telemetryCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
+    this.telemetryEnd = {
+      object: {
+        id: this.programId || '',
+        type: this.activatedRoute.snapshot.data.telemetry.object.type,
+      },
+      context: {
+        env: this.activatedRoute.snapshot.data.telemetry.env,
+        cdata: telemetryCdata
+      },
+      edata: {
+        type: this.configService.telemetryLabels.pageType.workflow,
+        pageid: this.activatedRoute.snapshot.data.telemetry.pageid,
+        mode: eventMode || this.activatedRoute.snapshot.data.telemetry.mode,
+        duration: _.toString((Date.now() - this.pageStartTime) / 1000)
+      }
+    };
+    this.telemetryService.end(this.telemetryEnd);
   }
 
   public chooseChapters(collection) {
     if (!this.textbooks[collection.identifier]) {
       this.getCollectionHierarchy(collection.identifier);
-    }
-    else {
+    } else {
       this.choosedTextBook = this.textbooks[collection.identifier];
       this.initChaptersSelectionForm(this.choosedTextBook);
     }
-
-    this.selectChapter=true;
+    this.selectChapter = true;
   }
 
   initChaptersSelectionForm(chapters) {
@@ -1269,12 +1299,19 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         ($event.target as HTMLButtonElement).disabled = true;
         const cb = (error, resp) => {
           if (!error && resp) {
+            this.generateTelemetryEndEvent('save');
             this.toasterService.success(
               '<b>' + this.resource.messages.smsg.program.draft.heading + '</b>',
               this.resource.messages.smsg.program.draft.message);
             this.router.navigate(['/sourcing']);
           } else {
-            this.toasterService.error(this.resource.messages.emsg.m0005);
+            const errInfo = {
+              errorMsg: this.resource.messages.emsg.m0005,
+              telemetryPageId: this.telemetryPageId,
+              telemetryCdata : this.telemetryInteractCdata,
+              env : this.activatedRoute.snapshot.data.telemetry.env,
+            };
+            this.cbseService.apiErrorHandling(error, errInfo);
             ($event.target as HTMLButtonElement).disabled = false;
           }
         };
@@ -1355,6 +1392,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
         if (this.isOpenNominations) {
           this.programsService.publishProgram(data).subscribe(res => {
+            this.generateTelemetryEndEvent('publish');
             this.toasterService.success(
               '<b>' + this.resource.messages.smsg.program.published.heading + '</b>',
               this.resource.messages.smsg.program.published.message);
@@ -1362,7 +1400,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           },
           err => {
             this.disableCreateProgramBtn = false;
-            this.toasterService.error(this.resource.messages.emsg.m0005);
+            const errInfo = {
+              errorMsg: this.resource.messages.emsg.m0005,
+              telemetryPageId: this.telemetryPageId,
+              telemetryCdata : this.telemetryInteractCdata,
+              env : this.activatedRoute.snapshot.data.telemetry.env,
+              request: data
+            };
+            this.cbseService.apiErrorHandling(error, errInfo);
             console.log(err);
           });
         } else {
@@ -1383,9 +1428,15 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         this.disableCreateProgramBtn = false;
         ($event.target as HTMLButtonElement).disabled = false;
         this.toasterService.error(this.resource.messages.emsg.m0005);
+        const errInfo = {
+          errorMsg: this.resource.messages.emsg.m0005,
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activatedRoute.snapshot.data.telemetry.env,
+        };
+        this.cbseService.apiErrorHandling(error, errInfo);
       }
     };
-
     this.saveProgram(cb);
   }
 }

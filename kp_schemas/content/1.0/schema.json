@@ -12,7 +12,8 @@
         "code",
         "contentEncoding",
         "contentDisposition",
-        "mediaType"
+        "mediaType",
+        "primaryCategory"
     ],
     "properties": {
         "name": {
@@ -90,10 +91,7 @@
         },
         "osId": {
             "type": "string",
-            "enum": [
-                "org.ekstep.quiz.app"
-            ],
-            "default": "org.ekstep.quiz.app"
+            "default": "org.ekstep.launcher"
         },
         "contentEncoding": {
             "type": "string",
@@ -455,12 +453,14 @@
                 "SelfAssess",
                 "PracticeResource",
                 "eTextBook",
-                "ClassroomTeachingVideo",
+                "OnboardingResource",
                 "ExplanationVideo",
+                "ClassroomTeachingVideo",
                 "ExplanationReadingMaterial",
                 "LearningActivity",
                 "PreviousBoardExamPapers",
-                "LessonPlanResource"        
+                "LessonPlanResource",
+                "TVLesson"
             ]
         },
         "resourceType": {
@@ -979,9 +979,6 @@
         "totalCompressedSize": {
             "type": "number"
         },
-        "programId": {
-            "type": "string"
-        },
         "leafNodes": {
             "type": "array"
         },
@@ -1024,14 +1021,23 @@
         "board" : {
             "type": "string"
         },
-        "sampleContent": {
-            "type": "boolean"
-        },
-        "collectionId" : {
+        "licenseterms" : {
             "type": "string"
+        },
+        "copyrightYear" : {
+            "type": "number"
         },
         "organisationId" : {
             "type": "string"
+        },
+        "programId": {
+            "type": "string"
+        },
+        "itemSetPreviewUrl": {
+            "type": "string"
+        }, 
+        "sampleContent": {
+            "type": "boolean"
         },
         "contentPolicyCheck" : {
             "type": "boolean"
@@ -1061,21 +1067,6 @@
             "type": "string"
         },
         "label" : {
-            "type": "string"
-        },
-        "plugins": {
-            "type": "array",
-            "items": {
-                "type": "object"
-            }
-        },
-        "licenseterms" : {
-            "type": "string"
-        },
-        "copyrightYear" : {
-            "type": "number"
-        },
-        "itemSetPreviewUrl": {
             "type": "string"
         },
         "me_totalTimeSpentInSec": {
@@ -1197,14 +1188,26 @@
         "year": {
             "type": "string"
         },
+        "plugins": {
+            "type": "array",
+            "items": {
+                "type": "object"
+            }
+        },
         "showNotification": {
             "type": "boolean"
+        },
+        "collectionId" : {
+            "type": "string"
         },
         "learningOutcome": {
             "type": "array",
             "items": {
                 "type": "string"
             }
+        },
+        "program": {
+            "type": "string"
         }
     }
 }

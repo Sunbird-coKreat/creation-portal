@@ -15,6 +15,7 @@ import { ProgramComponentsService } from '../../services/program-components/prog
 import { IImpressionEventInput, IInteractEventEdata, TelemetryService } from '@sunbird/telemetry';
 import { isUndefined, isNullOrUndefined } from 'util';
 import * as moment from 'moment';
+import { CbseProgramService } from '../../../cbse-program/services';
 
 interface IDynamicInput {
   collectionComponentInput?: ICollectionComponentInput;
@@ -90,6 +91,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   searchLimitCount: any;
   // userRoles = [{'id': 1, 'name': 'CONTRIBUTOR', 'defaultTab': 1, 'tabs': [1]}, {'id': 2, 'name': 'REVIEWER', 'defaultTab': 2, 'tabs': [2]}, {'id': 3, 'name': 'BOTH', 'defaultTab': 3, 'tabs': [3]}]
   userRoles : any;
+
   visitedTab = [];
   @ViewChild('userRemoveRoleModal') userRemoveRoleModal;
   public userRemoveRoleLoader = false;
@@ -106,7 +108,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     private navigationHelperService: NavigationHelperService, public registryService: RegistryService,
     private paginationService: PaginationService, public actionService: ActionService,
     private collectionHierarchyService: CollectionHierarchyService, private telemetryService: TelemetryService,
-    private sbFormBuilder: FormBuilder) {
+    private sbFormBuilder: FormBuilder, private cbseProgramService: CbseProgramService) {
     this.programId = this.activatedRoute.snapshot.params.programId;
     localStorage.setItem('programId', this.programId);
   }
@@ -115,6 +117,12 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     if (['null', null, undefined, 'undefined'].includes(this.programId)) {
       this.toasterService.error(this.resourceService.messages.emsg.project.m0001);
     }
+    this.getPageId();
+    this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}, {id: this.programId, type: 'project'}];
+    this.telemetryInteractPdata = {
+      id: this.userService.appId,
+      pid: this.configService.appConfig.TELEMETRY.PID
+    };
     this.getProgramDetails();
     this.programStageService.initialize();
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
@@ -123,11 +131,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.programStageService.addStage('programComponent');
     this.currentStage = 'programComponent';
-    this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}, {id: this.programId, type: 'project'}];
-    this.telemetryInteractPdata = {
-      id: this.userService.appId,
-      pid: this.configService.appConfig.TELEMETRY.PID
-    };
     this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit 
     this.pageLimit = this.registryService.programUserPageLimit;
   }
@@ -183,8 +186,14 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.programDetails.config.defaultContributeOrgReview === false) ;
     }, error => {
       // TODO: navigate to program list page
-      const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-      this.toasterService.error(errorMes || this.resourceService.messages.emsg.project.m0001);
+      const errInfo = {
+        errorMsg: this.resourceService.messages.emsg.project.m0001,
+        telemetryPageId: this.telemetryPageId,
+        telemetryCdata : this.telemetryInteractCdata,
+        env : this.activatedRoute.snapshot.data.telemetry.env,
+        request: req
+      };
+      this.cbseProgramService.apiErrorHandling(error, errInfo);
     });
   }
 
@@ -199,6 +208,13 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       }, error => {
         const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
         this.toasterService.error(errorMes || 'Fetching framework details failed');
+        const errInfo = {
+          errorMsg: 'Fetching framework details failed',
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activatedRoute.snapshot.data.telemetry.env,
+        };
+        this.cbseProgramService.apiErrorHandling(error, errInfo);
       });
     }
   }
@@ -308,15 +324,26 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
               this.getProgramTextbooks(preffilter);
           }, (err) => { // TODO: navigate to program list page
             this.getProgramTextbooks();
-            const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-            this.toasterService.warning(errorMes || 'Fetching Preferences  failed');
+            const errInfo = {
+              errorMsg: 'Fetching Preferences  failed',
+              telemetryPageId: this.telemetryPageId,
+              telemetryCdata : this.telemetryInteractCdata,
+              env : this.activatedRoute.snapshot.data.telemetry.env,
+            };
+            this.cbseProgramService.apiErrorHandling(err, errInfo);
           });
         } else {
           this.getProgramTextbooks();
         }
       }
     }, error => {
-      this.toasterService.error('Failed fetching current nomination status');
+      const errInfo = {
+        errorMsg: 'Failed fetching current nomination status',
+        telemetryPageId: this.telemetryPageId,
+        telemetryCdata : this.telemetryInteractCdata,
+        env : this.activatedRoute.snapshot.data.telemetry.env,
+      };
+      this.cbseProgramService.apiErrorHandling(error, errInfo);
     });
   }
 
@@ -530,7 +557,14 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.showUserRemoveRoleModal = false;
       this.userRemoveRoleLoader = false;
       console.log(error);
-      this.toasterService.error(this.resourceService.messages.emsg.roles.m0002);
+      const errInfo = {
+        errorMsg: this.resourceService.messages.emsg.roles.m0002,
+        telemetryPageId: this.telemetryPageId,
+        telemetryCdata : this.telemetryInteractCdata,
+        env : this.activatedRoute.snapshot.data.telemetry.env,
+        request: req
+      };
+      this.cbseProgramService.apiErrorHandling(error, errInfo);
     });
   }
 
@@ -585,7 +619,14 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           this.showTexbooklist(res);
         }
       },
-      (err) => console.log(err)
+      (err) => {
+        const errInfo = {
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activatedRoute.snapshot.data.telemetry.env,
+        };
+        this.cbseProgramService.apiErrorHandling(err, errInfo);
+      }
     );
   }
 
@@ -620,9 +661,14 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         (error) => {
           console.log(error);
           this.showLoader = false;
-          const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-          this.toasterService.error(errorMes || 'Fetching textbooks failed. Please try again...');
           this.logTelemetryImpressionEvent(contributorTextbooks, 'collection');
+          const errInfo = {
+            errorMsg: 'Fetching textbooks failed. Please try again...',
+            telemetryPageId: this.telemetryPageId,
+            telemetryCdata : this.telemetryInteractCdata,
+            env : this.activatedRoute.snapshot.data.telemetry.env,
+          };
+          this.cbseProgramService.apiErrorHandling(error, errInfo);
         }
       );
     } else {
@@ -734,8 +780,14 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       },
       (error) => {
-        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-        this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+        const errInfo = {
+          errorMsg: 'Fetching textbooks failed',
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activatedRoute.snapshot.data.telemetry.env,
+          request: preferences
+        };
+        this.cbseProgramService.apiErrorHandling(error, errInfo);
     });
     this.getProgramTextbooks(preferences);
   }

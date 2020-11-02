@@ -133,6 +133,8 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
 
   ngOnInit() {
     const config: any = _.get(this.sessionContext.practiceSetConfig, 'config');
+    this.telemetryPageId = this.sessionContext.telemetryPageId;
+    this.telemetryEventsInput.telemetryPageId = this.telemetryPageId;
     this.editorConfig = {
       config,
       channel: this.sessionContext.channel
@@ -158,7 +160,7 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
           }
         },
         edata: {
-          type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
+          type: this.configService.telemetryLabels.pageType.view || _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
           pageid: this.telemetryPageId,
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
@@ -265,10 +267,10 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
   handleSubmit(formControl) {
     const optionValid = _.find(this.mcqForm.options, option =>
       (option.body === undefined || option.body === '' || option.length > this.setCharacterLimit));
-    if (formControl.invalid || optionValid || !this.mcqForm.answer || [undefined, ''].includes(this.mcqForm.question)) {
+    if (optionValid || !this.mcqForm.answer || [undefined, ''].includes(this.mcqForm.question)) {
       this.showFormError = true;
       this.showPreview = false;
-      this.markFormGroupTouched(this.questionMetaForm);
+      // this.markFormGroupTouched(this.questionMetaForm);
       return;
     } else {
       if (this.questionMetaData.mode !== 'create') {
@@ -400,18 +402,6 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
           metadata['solutions'] = [solutionObj];
         }
 
-        _.forEach(this.formConfiguration, field => {
-          if (field.inputType === 'text' && field.dataType === 'list') {
-            // tslint:disable-next-line:max-line-length
-            const dataVal = this.questionMetaForm.value[field.code];
-            if (typeof(dataVal) === 'string') {
-              this.questionMetaForm.value[field.code] = dataVal.split(', ');
-            }
-            else {
-              this.questionMetaForm.value[field.code] = dataVal? dataVal: [];
-            }
-          }
-        });
         metadata = _.pickBy(_.assign(metadata, this.questionMetaForm.value), _.identity);
         const req = {
           url: this.configService.urlConFig.URLS.ASSESSMENT.UPDATE + '/' + this.questionMetaData.data.identifier,
@@ -444,7 +434,10 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
         }
 
         this.actionService.patch(req).pipe(catchError(err => {
-          const errInfo = { errorMsg: 'MCQ Question updation failed' };
+          const errInfo = {
+            errorMsg: 'MCQ Question updation failed',
+            telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+            env : this.activeRoute.snapshot.data.telemetry.env, request: req };
           return throwError(this.cbseService.apiErrorHandling(err, errInfo));
         })).subscribe((apiRes) => {
           if (this.updateStatus === 'Live') {
@@ -620,5 +613,10 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
 
   getMetaData() {
     return this.helperService.getFormattedData(this.questionMetaForm.value, this.textFields);
+  }
+
+  getTelemetryInteractObject(id: string, type: string) {
+    return this.programTelemetryService.getTelemetryInteractObject(id, type, '1.0',
+    { l1: this.sessionContext.collection, l2: this.sessionContext.textBookUnitIdentifier, l3: this.sessionContext.resourceIdentifier});
   }
 }

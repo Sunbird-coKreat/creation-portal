@@ -1,17 +1,19 @@
-import { Component, OnInit, AfterViewInit, NgZone, Renderer2, OnDestroy, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, NgZone, Renderer2, OnDestroy, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import * as _ from 'lodash-es';
 import * as iziModal from 'izimodal/js/iziModal';
 import { NavigationHelperService, ResourceService, ConfigService, ToasterService, IUserProfile } from '@sunbird/shared';
-import { UserService, TenantService, FrameworkService, PlayerService } from '@sunbird/core';
+import { UserService, TenantService, FrameworkService, PlayerService, NotificationService, ProgramsService, 
+  ActionService } from '@sunbird/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '@sunbird/environment';
 import { TelemetryService, IInteractEventEdata } from '@sunbird/telemetry';
-import { combineLatest, of, throwError } from 'rxjs';
-import { map, mergeMap, tap, delay, first } from 'rxjs/operators';
+import { combineLatest, of, throwError, Subscription } from 'rxjs';
+import { map, mergeMap, tap, delay, first, filter } from 'rxjs/operators';
 import { IContentEditorComponentInput } from '../../interfaces';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { HelperService } from '../../services/helper.service';
+import { DataFormComponent } from '../../../core/components/data-form/data-form.component';
 import { NgForm } from '@angular/forms';
 jQuery.fn.iziModal = iziModal;
 
@@ -22,7 +24,9 @@ jQuery.fn.iziModal = iziModal;
 })
 export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() contentEditorComponentInput: IContentEditorComponentInput;
+  @ViewChild('formData') formData: DataFormComponent;
   @ViewChild('FormControl') FormControl: NgForm;
+  @Output() uploadedContentMeta = new EventEmitter<any>();
   private userProfile: IUserProfile;
   private routeParams: any;
   private buildNumber: string;
@@ -48,6 +52,26 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
+  public popupAction: string;
+  public unitIdentifier: string;
+  public notify: Subscription;
+  public programContext: any;
+  public sourcingOrgReviewer: boolean;
+  public originCollectionData: any;
+  public sourcingReviewStatus: string;
+  public selectedOriginUnitStatus: string;
+  public showEditMetaForm = false;
+  public requiredAction: string;
+  public formFieldProperties: Array<any>;
+  public selectedSharedContext: any;
+  public editableFields = [];
+  public contentEditRole: string;
+  public categoryMasterList: Array<any>;
+  public resourceStatusClass = '';
+  public originPreviewUrl: string;
+  public originPreviewReady: boolean;
+  public contentComment: string;
+  public showReviewModal: boolean;
 
   constructor(
     private resourceService: ResourceService,
@@ -65,7 +89,10 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     public collectionHierarchyService: CollectionHierarchyService,
     public helperService: HelperService,
     public activeRoute: ActivatedRoute,
-    public programTelemetryService: ProgramTelemetryService
+    public programTelemetryService: ProgramTelemetryService,
+    private notificationService: NotificationService,
+    private programsService: ProgramsService,
+    public actionService: ActionService
   ) {
     const buildNumber = <HTMLInputElement>(
       document.getElementById('buildNumber')
@@ -88,17 +115,35 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     this.userProfile = this.userService.userProfile;
     this.sessionContext = this.contentEditorComponentInput.sessionContext;
     this.actions = _.get(this.contentEditorComponentInput, 'programContext.config.actions');
+    this.unitIdentifier  = _.get(this.contentEditorComponentInput, 'unitIdentifier');
+    this.programContext = _.get(this.contentEditorComponentInput, 'programContext');
+    this.originCollectionData = _.get(this.contentEditorComponentInput, 'originCollectionData');
+    this.selectedOriginUnitStatus = _.get(this.contentEditorComponentInput, 'content.originUnitStatus');
+    this.selectedSharedContext = _.get(this.contentEditorComponentInput, 'selectedSharedContext');
+    this.sourcingReviewStatus = _.get(this.contentEditorComponentInput, 'sourcingStatus') || '';
+    this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractCdata = this.programTelemetryService.getTelemetryInteractCdata(this.contentEditorComponentInput.programContext.program_id, 'Program');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.contentEditorComponentInput.contentId, 'Content', '1.0', { l1: this.sessionContext.collection, l2: this.contentEditorComponentInput.unitIdentifier});
-    if (
-      this.contentEditorComponentInput.action === 'preview' &&
-      this.contentEditorComponentInput.content.status === 'Review'
-    ) {
-      return this.handlePreview();
+    this.getContentMetadata();
+    this.notify = this.helperService.getNotification().subscribe((action) => {
+    this.contentStatusNotify(action);
+  });
+  this.helperService.initialize(this.programContext);
+  }
+  loadContentEditor() {
+    if (!document.getElementById('contentEditor')) {
+      const editorElement = document.createElement('div');
+      const editorComponent = document.getElementsByTagName('app-content-editor');
+      editorElement.id = 'contentEditor';
+      if (_.first(editorComponent)) {
+        editorComponent[0].append(editorElement);
+      } else {
+        return;
+      }
     }
     setTimeout(() => {
       this.getDetails()
@@ -113,7 +158,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
           this.setWindowConfig();
         }),
         delay(10)
-      ) // wait for iziModal lo load
+      ) // wait for iziModal to load
       .subscribe(
         data => {
           jQuery('#contentEditor').iziModal('open');
@@ -150,18 +195,76 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
 
   handleActionButtons() {
     this.visibility = {};
-    // tslint:disable-next-line:max-line-length
-    this.visibility['showRequestChanges'] = (_.includes(this.actions.showRequestChanges.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
-    // tslint:disable-next-line:max-line-length
-    this.visibility['showPublish'] = (_.includes(this.actions.showPublish.roles, this.sessionContext.currentRoleId) && this.resourceStatus === 'Review');
+    const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
+    this.visibility['showRequestChanges'] = submissionDateFlag && this.canReviewContent();
+    this.visibility['showPublish'] = submissionDateFlag && this.canPublishContent();
+    this.visibility['showSubmit'] = submissionDateFlag && this.canSubmit();
+    this.visibility['showEditMetadata'] = submissionDateFlag && this.canEditMetadata();
+    this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
+    this.visibility['showSourcingActionButtons'] = this.canSourcingReviewerPerformActions();
+    this.visibility['showSendForCorrections'] = this.canSendForCorrections();
   }
 
-  handlePreview() {
-    this.showPreview = true;
+  canSendForCorrections() {
+    return !this.contentData.sourceURL;
+  }
+
+  canEdit() {
+    // tslint:disable-next-line:max-line-length
+    return !!(this.resourceStatus === 'Draft' && this.userService.getUserId() === this.contentData.createdBy);
+  }
+
+  canSave() {
+    // tslint:disable-next-line:max-line-length
+    return !!(this.hasAccessFor('showSave') && !this.contentData.sampleContent === true && this.resourceStatus === 'Draft' && (this.userService.getUserId() === this.contentData.createdBy));
+  }
+
+  canEditMetadata() {
+    // tslint:disable-next-line:max-line-length
+    return !!(this.resourceStatus === 'Draft' && (this.userService.getUserId() === this.contentData.createdBy));
+  }
+
+  canSubmit() {
+    // tslint:disable-next-line:max-line-length
+    return !!(this.hasAccessFor('showSubmit') && this.resourceStatus === 'Draft' && this.userService.getUserId() === this.contentData.createdBy);
+  }
+
+  canViewContentPreview() {
+    // tslint:disable-next-line:max-line-length
+    return !!(this.sourcingOrgReviewer || (this.sessionContext.currentRoles.includes('REVIEWER') && this.userService.getUserId() !== this.contentData.createdBy) || (this.resourceStatus !== 'Draft' && this.userService.getUserId() === this.contentData.createdBy));
+  }
+
+  canPublishContent() {
+    // tslint:disable-next-line:max-line-length
+    return !!(this.router.url.includes('/contribute') && !this.contentData.sampleContent === true &&
+    // tslint:disable-next-line:max-line-length
+    this.hasAccessFor('showPublish') && this.resourceStatus === 'Review' && this.userService.getUserId() !== this.contentData.createdBy);
+  }
+
+  canReviewContent() {
+    // tslint:disable-next-line:max-line-length
+    return !!(this.router.url.includes('/contribute') && !this.contentData.sampleContent === true && this.hasAccessFor('showRequestChanges') && this.resourceStatus === 'Review' && this.userService.getUserId() !== this.contentData.createdBy);
+  }
+
+  canSourcingReviewerPerformActions() {
+    // tslint:disable-next-line:max-line-length
+    return !!(this.router.url.includes('/sourcing')
+    && !this.contentData.sampleContent === true && this.resourceStatus === 'Live'
+    && this.userService.getUserId() !== this.contentData.createdBy
+    && this.resourceStatus === 'Live' && !this.sourcingReviewStatus &&
+    (this.originCollectionData.status === 'Draft' && this.selectedOriginUnitStatus === 'Draft'));
+  }
+
+  hasAccessFor(action) {
+    const roles = _.get(this.actions, `${action}.roles`, []);
+    return !_.isEmpty(_.intersection(roles, this.sessionContext.currentRoleIds));
+  }
+
+  getContentMetadata() {
     const option = {
-      params: { mode: 'edit' }
+      url: 'content/v3/read/' + this.contentEditorComponentInput.contentId
     };
-    this.playerService.getContent(this.contentEditorComponentInput.contentId, option).subscribe(
+    this.actionService.get(option).subscribe(
       response => {
         if (response.result.content) {
           const contentDetails = {
@@ -173,6 +276,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
             this.playerConfig.data
           );
          this.contentData = response.result.content;
+         this.contentEditorComponentInput.content = this.contentData;
          this.resourceStatus = this.contentData.status;
       if (this.resourceStatus === 'Review') {
         this.resourceStatusText = 'Review in Progress';
@@ -184,7 +288,11 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
         this.resourceStatusText = this.resourceStatus;
       }
       this.handleActionButtons();
-      this.showLoader = false;
+      this.handleContentStatusText();
+      this.handlePreview();
+      if ( _.isUndefined(this.sessionContext.topicList) || _.isUndefined(this.sessionContext.frameworkData)) {
+        this.fetchFrameWorkDetails();
+      }
         } else {
           this.toasterService.warning(this.resourceService.messages.imsg.m0027);
         }
@@ -196,13 +304,139 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     );
   }
 
+  handlePreview() {
+    // tslint:disable-next-line:max-line-length
+    if (this.showPreview || this.canViewContentPreview()) {
+      this.showPreview = true;
+      this.showLoader = false;
+    } else {
+      this.loadContentEditor();
+   }
+  }
+
+  fetchFrameWorkDetails() {
+    this.frameworkService.initialize(this.sessionContext.framework);
+    this.frameworkService.frameworkData$.pipe(filter(data => _.get(data, `frameworkdata.${this.sessionContext.framework}`)),
+      first()).subscribe((frameworkDetails: any) => {
+      if (frameworkDetails && !frameworkDetails.err) {
+        const frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
+        // this.categoryMasterList = _.cloneDeep(frameworkDetails.frameworkdata[this.sessionContext.framework].categories);
+        this.sessionContext.frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
+        this.sessionContext.topicList = _.get(_.find(frameworkData, { code: 'topic' }), 'terms');
+      }
+    });
+  }
+
+  handleContentStatusText() {
+    if (this.resourceStatus === 'Review') {
+      this.resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
+      this.resourceStatusClass = 'sb-color-primary';
+    } else if (this.resourceStatus === 'Draft' && this.contentData.prevStatus === 'Review') {
+      this.resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
+      this.resourceStatusClass = 'sb-color-error';
+    } else if (this.resourceStatus === 'Draft' && this.contentData.prevStatus === 'Live') {
+      this.resourceStatusText = this.resourceService.frmelmnts.lbl.correctionsPending;
+      this.resourceStatusClass = 'sb-color-error';
+    } else if (this.resourceStatus === 'Live' && _.isEmpty(this.sourcingReviewStatus)) {
+      this.resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
+      this.resourceStatusClass = 'sb-color-warning';
+    } else if (this.sourcingReviewStatus === 'Rejected') {
+      this.resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
+      this.resourceStatusClass = 'sb-color-error';
+    } else if (this.sourcingReviewStatus === 'Approved') {
+      this.resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
+      this.resourceStatusClass = 'sb-color-success';
+      // get the origin preview url
+      if (!_.isEmpty(this.sessionContext.contentOrigins) && !_.isEmpty(this.sessionContext.contentOrigins[this.contentData.identifier])) {
+        // tslint:disable-next-line:max-line-length
+        this.originPreviewUrl =  this.helperService.getContentOriginUrl(this.sessionContext.contentOrigins[this.contentData.identifier].identifier);
+      }
+      this.originPreviewReady = true;
+    } else if (this.resourceStatus === 'Failed') {
+      this.resourceStatusText = this.resourceService.frmelmnts.lbl.failed;
+      this.resourceStatusClass = 'sb-color-error';
+    } else if (this.resourceStatus === 'Processing') {
+      this.resourceStatusText = this.resourceService.frmelmnts.lbl.processing;
+      this.resourceStatusClass = '';
+    } else {
+      this.resourceStatusText = this.resourceStatus;
+      this.resourceStatusClass = 'sb-color-gray-300';
+    }
+  }
+
+  showEditform(action) {
+    this.formFieldProperties = _.cloneDeep(this.helperService.getFormConfiguration());
+    this.requiredAction = action;
+    if (_.get(this.selectedSharedContext, 'topic')) {
+      // tslint:disable-next-line:max-line-length
+      this.sessionContext.topic = _.isArray(this.sessionContext.topic) ? this.selectedSharedContext.topic : _.split(this.selectedSharedContext.topic, ',');
+    }
+    this.getEditableFields();
+    _.forEach(this.formFieldProperties, field => {
+      if (field.editable && !_.includes(this.editableFields, field.code)) {
+        field['editable'] = false;
+      }
+    });
+
+    if (this.requiredAction === 'editForm') {
+      this.formFieldProperties = _.filter(this.formFieldProperties, val => val.code !== 'contentPolicyCheck');
+    }
+    // tslint:disable-next-line:max-line-length
+    [this.categoryMasterList, this.formFieldProperties] = this.helperService.initializeMetadataForm(this.sessionContext, this.formFieldProperties, this.contentData);
+    this.showEditMetaForm = true;
+  }
+
+  getEditableFields() {
+    if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
+      if (this.userService.getUserId() === this.contentData.createdBy && this.resourceStatus === 'Draft') {
+        this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.contentData);
+        this.contentEditRole = 'CONTRIBUTOR';
+      } else if (this.canPublishContent()) {
+        this.editableFields = this.helperService.getEditableFields('REVIEWER', this.formFieldProperties, this.contentData);
+        this.contentEditRole = 'REVIEWER';
+      }
+    } else if (this.hasRole('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
+      this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.contentData);
+      this.contentEditRole = 'CONTRIBUTOR';
+    } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
+      && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
+      && !this.sourcingReviewStatus
+      && (this.selectedOriginUnitStatus === 'Draft')) {
+      this.editableFields = this.helperService.getEditableFields('REVIEWER', this.formFieldProperties, this.contentData);
+      this.contentEditRole = 'REVIEWER';
+    }
+  }
+
+  hasRole(role) {
+    return this.sessionContext.currentRoles.includes(role);
+  }
+
   getOwnershipType() {
     return of(['createdBy']);
   }
 
   getDetails() {
-      return combineLatest(this.tenantService.tenantData$, this.getOwnershipType()).
-      pipe(map((data: any) => ({ tenantDetails: data[0].tenantData, ownershipType: data[1] })));
+      return of({'tenantDetails': {'logo': 'xyz.png'}, 'ownershipType': ['createdBy']});
+  }
+
+  showCommentAddedAgainstContent() {
+    const id = _.get(this.contentData, 'identifier');
+    const sourcingRejectedComments = _.get(this.sessionContext, 'hierarchyObj.sourcingRejectedComments');
+    if (id && this.contentData.status === 'Draft' && this.contentData.prevStatus  === 'Review') {
+      // if the contributing org reviewer has requested for changes
+      this.contentComment = _.get(this.contentData, 'rejectComment');
+      return true;
+    } else if (id && !_.isEmpty(_.get(this.contentData, 'requestChanges')) &&
+    ((this.contentData.status === 'Draft' && this.contentData.prevStatus === 'Live') ||
+    this.contentData.status === 'Live')) {
+      // if the souring org reviewer has requested for changes
+      this.contentComment = _.get(this.contentData, 'requestChanges');
+      return true;
+    } else  if (id && this.contentData.status === 'Live' && !_.isEmpty(_.get(sourcingRejectedComments, id))) {
+        this.contentComment = _.get(sourcingRejectedComments, id);
+        return true;
+    }
+    return false;
   }
 
   private initEditor() {
@@ -266,22 +500,97 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       environment.enableTelemetryValidation; // telemetry validation
     // window.config.lock = {};
     window.config.videoMaxSize = this.videoMaxSize;
+    window.config.headerConfig = {
+      'managecollaborator': false, 'sendforreview': false, 'limitedsharing': false, 'showPreview': false, 'showEditDetails': false
+    };
   }
   /**
-   * Re directed to the TOC of Text-book
+   * Re directed to the preview mode
    */
   closeModal() {
     this.showLoader = true;
     if (document.getElementById('contentEditor')) {
       document.getElementById('contentEditor').remove();
     }
+    this.showPreview = true;
     // tslint:disable-next-line:max-line-length
-    this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.contentEditorComponentInput.unitIdentifier, this.contentEditorComponentInput.contentId).subscribe(() => {
-      this.programStageService.removeLastStage();
+    this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection,
+       this.contentEditorComponentInput.unitIdentifier, this.contentEditorComponentInput.contentId)
+    .subscribe((res) => {
+      this.getContentMetadata();
     }, (err) => {
       this.toasterService.error(this.resourceService.messages.fmsg.m0098);
       this.getDetails();
     });
+  }
+
+  saveMetadataForm(cb?) {
+    if (this.helperService.validateForm(this.formFieldProperties, this.formData.formInputData || {})) {
+      console.log(this.formData.formInputData);
+      // tslint:disable-next-line:max-line-length
+      const formattedData = this.helperService.getFormattedData(_.pick(this.formData.formInputData, this.editableFields), this.formFieldProperties);
+      const request = {
+        'content': {
+          'versionKey': this.contentData.versionKey,
+          ...formattedData
+        }
+      };
+
+      this.helperService.contentMetadataUpdate(this.contentEditRole, request, this.contentData.identifier).subscribe((res) => {
+        // tslint:disable-next-line:max-line-length
+        this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
+        .subscribe((data) => {
+          this.showEditMetaForm = false;
+          if (cb) {
+            cb.call(this);
+          } else {
+            this.getContentMetadata();
+            this.toasterService.success(this.resourceService.messages.smsg.m0060);
+          }
+        }, (err) => {
+          this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+        });
+      }, err => {
+        this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+      });
+    } else {
+      this.toasterService.error(this.resourceService.messages.fmsg.m0101);
+    }
+  }
+
+  handleCallback() {
+    switch (this.requiredAction) {
+      case 'review':
+        this.saveMetadataForm(this.sendForReview);
+        break;
+      case 'publish':
+        this.saveMetadataForm(this.publishContent);
+        break;
+      default:
+        this.saveMetadataForm();
+        break;
+    }
+  }
+
+  sendForReview() {
+    this.helperService.reviewContent(this.contentData.identifier)
+       .subscribe((res) => {
+        if (this.sessionContext.collection && this.unitIdentifier) {
+          // tslint:disable-next-line:max-line-length
+          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
+          .subscribe((data) => {
+            this.toasterService.success(this.resourceService.messages.smsg.m0061);
+            this.programStageService.removeLastStage();
+            this.uploadedContentMeta.emit({
+              contentId: res.result.content_id
+            });
+          }, (err) => {
+            this.toasterService.error(this.resourceService.messages.fmsg.m0099);
+          });
+        }
+       }, (err) => {
+        this.toasterService.error(this.resourceService.messages.fmsg.m0099);
+       });
   }
 
   requestChanges() {
@@ -303,12 +612,12 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     }
   }
 
-  publichContent() {
+  publishContent() {
     this.helperService.publishContent(this.contentEditorComponentInput.contentId, this.userService.userProfile.userId)
        .subscribe(res => {
         if (this.sessionContext.collection && this.contentEditorComponentInput.unitIdentifier) {
           // tslint:disable-next-line:max-line-length
-          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.contentEditorComponentInput.unitIdentifier, res.result.identifier)
+          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.contentEditorComponentInput.unitIdentifier, res.result.node_id)
           .subscribe((data) => {
             this.toasterService.success(this.resourceService.messages.smsg.m0063);
             this.programStageService.removeLastStage();
@@ -319,6 +628,94 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       });
   }
 
+  handleBack() {
+    this.programStageService.removeLastStage();
+  }
+
+  attachContentToTextbook (action) {
+    const hierarchyObj  = _.get(this.sessionContext.hierarchyObj, 'hierarchy');
+    if (hierarchyObj) {
+      const rootOriginInfo = _.get(_.get(hierarchyObj, this.sessionContext.collection), 'originData');
+      let channel =  rootOriginInfo && rootOriginInfo.channel;
+      if (_.isUndefined(channel)) {
+        const originInfo = _.get(_.get(hierarchyObj, this.unitIdentifier), 'originData');
+        channel = originInfo && originInfo.channel;
+      }
+      const originData = {
+        textbookOriginId: _.get(_.get(hierarchyObj, this.sessionContext.collection), 'origin'),
+        unitOriginId: _.get(_.get(hierarchyObj, this.unitIdentifier), 'origin'),
+        channel: channel
+      };
+      if (originData.textbookOriginId && originData.unitOriginId && originData.channel) {
+        if (action === 'accept') {
+          // tslint:disable-next-line:max-line-length
+          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentData.identifier, originData);
+        } else if (action === 'reject' && this.FormControl.value.rejectComment.length) {
+          // tslint:disable-next-line:max-line-length
+          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentData.identifier, originData, this.FormControl.value.rejectComment);
+        }
+      } else {
+        action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
+        this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+        console.error('origin data missing');
+      }
+    } else {
+      action === 'accept' ? this.toasterService.error(this.resourceService.messages.emsg.approvingFailed) :
+      this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+      console.error('origin data missing');
+    }
+  }
+
+  contentStatusNotify(status) {
+    if (!this.sessionContext.nominationDetails && this.contentData.organisationId && status !== 'Request') {
+      const programDetails = { name: this.programContext.name};
+      this.helperService.prepareNotificationData(status, this.contentData, programDetails);
+    } else {
+      const notificationForContributor = {
+        user_id: this.contentData.createdBy,
+        content: { name: this.contentData.name },
+        org: { name:  _.get(this.sessionContext, 'nominationDetails.orgData.name') || '--'},
+        program: { name: this.programContext.name },
+        status: status
+      };
+      this.notificationService.onAfterContentStatusChange(notificationForContributor)
+      .subscribe((res) => {  });
+      // tslint:disable-next-line:max-line-length
+      if (!_.isEmpty(this.sessionContext.nominationDetails) && !_.isEmpty(this.sessionContext.nominationDetails.user_id) && status !== 'Request') {
+        const notificationForPublisher = {
+          user_id: this.sessionContext.nominationDetails.user_id,
+          content: { name: this.contentData.name },
+          org: { name:  this.sessionContext.nominationDetails.orgData.name},
+          program: { name: this.contentData.name },
+          status: status
+        };
+        this.notificationService.onAfterContentStatusChange(notificationForPublisher)
+        .subscribe((res) => {  });
+      }
+    }
+  }
+
+  requestCorrectionsBySourcing() {
+    if (this.FormControl.value.rejectComment) {
+      this.helperService.updateContentStatus(this.contentData.identifier, 'Draft', this.FormControl.value.rejectComment)
+      .subscribe(res => {
+        this.showRequestChangesPopup = false;
+        this.contentStatusNotify('Reject');
+        this.toasterService.success(this.resourceService.messages.smsg.m0069);
+        this.programStageService.removeLastStage();
+        this.uploadedContentMeta.emit({
+          contentId: res.result.node_id
+        });
+      }, (err) => {
+        this.toasterService.error(this.resourceService.messages.fmsg.m00106);
+      });
+    }
+  }
+
+  isIndividualAndNotSample() {
+    return !!(this.sessionContext.currentOrgRole === 'individual' && this.sessionContext.sampleContent !== true);
+  }
+
   ngOnDestroy() {
     if (document.getElementById('contentEditor')) {
       document.getElementById('contentEditor').remove();
@@ -326,6 +723,9 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     const removeIzi = document.querySelector('.iziModal-isAttached');
     if (removeIzi) {
       removeIzi.classList.remove('iziModal-isAttached');
+    }
+    if (this.notify) {
+      this.notify.unsubscribe();
     }
   }
 }

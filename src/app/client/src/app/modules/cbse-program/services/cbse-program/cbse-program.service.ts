@@ -133,17 +133,26 @@ export class CbseProgramService {
   }
 
   apiErrorHandling(err, errorInfo) {
-    this.toasterService.error(_.get(err, 'error.params.errmsg') || errorInfo.errorMsg);
+    if (_.get(err, 'error.params.errmsg') || errorInfo.errorMsg) {
+      this.toasterService.error(_.get(err, 'error.params.errmsg') || errorInfo.errorMsg);
+    }
     const telemetryErrorData = {
       context: {
-        env: 'cbse_program'
+        env: _.get(errorInfo, 'env') || 'cbse_program',
+        cdata: _.get(errorInfo, 'telemetryCdata') || [],
       },
       edata: {
         err: _.toString(err.status),
         errtype: 'SYSTEM',
-        stacktrace: _.get(err, 'error.params.errmsg') || errorInfo.errorMsg
+        stacktrace: JSON.stringify({response: _.pick(err, ['error', 'url']), request: _.get(errorInfo, 'request')}) || errorInfo.errorMsg
       }
     };
+    if (errorInfo && errorInfo.telemetryPageId) {
+      telemetryErrorData.edata['pageid'] = _.get(errorInfo, 'telemetryPageId');
+    }
+    if (errorInfo && errorInfo.telemetryObject) {
+      telemetryErrorData['object'] = _.get(errorInfo, 'telemetryObject');
+    }
     this.telemetryService.error(telemetryErrorData);
   }
 

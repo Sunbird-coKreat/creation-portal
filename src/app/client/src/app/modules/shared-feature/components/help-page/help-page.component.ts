@@ -42,7 +42,7 @@ export class HelpPageComponent implements OnInit, AfterViewInit {
         },
         edata: {
           type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
-          pageid: 'vidyadaan-help-page',
+          pageid: _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid'),
           uri: this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }

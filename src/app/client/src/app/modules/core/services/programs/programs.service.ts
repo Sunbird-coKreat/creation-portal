@@ -4,6 +4,7 @@ import { OrgDetailsService } from './../org-details/org-details.service';
 import { FrameworkService } from './../framework/framework.service';
 import { ExtPluginService } from './../ext-plugin/ext-plugin.service';
 import { PublicDataService } from './../public-data/public-data.service';
+import { ActionService } from './../action/action.service';
 import { ConfigService, ServerResponse, ToasterService, ResourceService, HttpOptions, BrowserCacheTtlService } from '@sunbird/shared';
 import { Injectable } from '@angular/core';
 import { UserService } from '../user/user.service';
@@ -40,6 +41,7 @@ export class ProgramsService extends DataService implements CanActivate {
   public http: HttpClient;
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
   private _contentTypes: any[];
+  private _contentCategories: any[];
   private _overrideMetaData: any[];
   private _sourcingOrgReviewers: Array<any>;
   // private orgUsers: Array<any>;
@@ -56,7 +58,7 @@ export class ProgramsService extends DataService implements CanActivate {
     private contentService: ContentService, private router: Router,
     private toasterService: ToasterService, private resourceService: ResourceService,
     public learnerService: LearnerService, private registryService: RegistryService,
-    public frameworkService: FrameworkService,
+    public frameworkService: FrameworkService, private actionService: ActionService,
     public cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService) {
       super(http);
       this.config = config;
@@ -69,6 +71,7 @@ export class ProgramsService extends DataService implements CanActivate {
   public initialize() {
     // this.enableContributeMenu().subscribe();
     this.getAllContentTypes().subscribe();
+    this.getAllContentCategories().subscribe();
     this.getOverridableMetaDataConfig().subscribe();
     this.mapSlugstoOrgId();
   }
@@ -875,6 +878,14 @@ export class ProgramsService extends DataService implements CanActivate {
   }
 
   /**
+   * Get all the categories  configured
+   */
+
+  get contentCategories() {
+    return _.cloneDeep(this._contentCategories);
+  }
+
+  /**
    * Get all overridable meta fields configured
    */
   get overrideMetaData() {
@@ -892,6 +903,30 @@ export class ProgramsService extends DataService implements CanActivate {
     ).pipe(
       tap(contentTypes => {
         this._contentTypes = contentTypes;
+      })
+    );
+  }
+
+  private getAllContentCategories(): Observable<any[]> {
+    const req = {
+      url:'composite/v1/search',
+      data: {
+        'request': {
+          "filters": {
+            "objectType":"ObjectCategoryDefinition",
+            "status": [],
+            "targetObjectType":"content"
+        },
+        }
+      }
+    };
+
+    return this.post(req).pipe(
+      map(result => _.get(result, 'result.ObjectCategoryDefinition')),
+      catchError(err => of([]))
+    ).pipe(
+      tap(contentCategories => {
+        this._contentCategories = contentCategories;
       })
     );
   }
@@ -918,19 +953,71 @@ export class ProgramsService extends DataService implements CanActivate {
   }
 
   /**
-   * Get program content types
+   * Get primary categories according to the project
    */
-  getContentTypesName(programContentType) {
-    const selectedContentTypes = [];
-    _.forEach(programContentType, (contentType) => {
-      const found = _.find(this._contentTypes, (contentTypeObj) => {
-        return contentTypeObj.value === contentType;
-      });
-      if (found) {
-        selectedContentTypes.push(found.name);
+  /*getProgramContentCategories(programContentCategories) {
+    let alreadyFetchedCats = [];
+    let tobeFetched = [];
+    const requests = [];
+    return new Promise((resolve, reject) => {
+      if (this.cacheService.get('contentCategories')) {
+        _.forEach(programContentCategories, (cat) => {
+          const found = _.find(this.cacheService.get('contentCategories'), (cacheCat) => {
+            return cacheCat.name === cat;
+          });
+          if (found) {
+            alreadyFetchedCats.push(found);
+          }
+          else {
+            tobeFetched.push(cat);
+          }
+        });
+      } else {
+        tobeFetched = programContentCategories;
+        this.cacheService.set('contentCategories', [])
+      }
+
+      if (!tobeFetched.length) {
+        return resolve(alreadyFetchedCats);
+      } else {
+        const catRequests = [];
+        _.forEach(tobeFetched, tempCat => {
+          catRequests.push(this.getCategoryDefinition(tempCat));
+        });
+        forkJoin(catRequests).subscribe(res => {
+          const result = _.get(res, 'result.ObjectCategoryDefinition');
+          this.cacheService.set('contentCategories', [...(this.cacheService.get('contentCategories')), ...(result)]);
+          alreadyFetchedCats = [...(alreadyFetchedCats), ...(result)];
+          return resolve(alreadyFetchedCats);
+        },
+        err => {
+          console.log(err);
+          return reject(alreadyFetchedCats);
+        });
       }
     });
-    return selectedContentTypes.length ? _.join(selectedContentTypes, ', ') : '-';
+  }*/
+  getCategoryDefinition(categoryName, rootOrgId) {
+    const cacheInd = categoryName + ':' + rootOrgId;
+    if (this.cacheService.get(cacheInd)) {
+      return  of(this.cacheService.get(cacheInd));
+    } else {
+      const req = {
+        url: 'object/category/definition/v1/read?fields=objectMetadata,forms',
+        data: {
+          request: {
+            "objectCategoryDefinition": {
+                "objectType": "Content",
+                "name": categoryName,
+                "channel": rootOrgId
+            },
+          }
+        }
+      };
+      return this.post(req).pipe(tap(data => {
+        this.setSessionCache({name: cacheInd, value: data})
+      }));
+    }
   }
 
   isNotEmpty(obj, key) {

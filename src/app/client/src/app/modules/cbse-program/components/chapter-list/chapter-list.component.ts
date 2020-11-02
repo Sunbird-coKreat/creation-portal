@@ -18,6 +18,7 @@ import { InitialState } from '../../interfaces';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { HelperService } from '../../services/helper.service';
 import { HttpClient } from '@angular/common/http';
+import { ProgramTelemetryService } from '../../../program/services';
 
 interface IDynamicInput {
   contentUploadComponentInput?: IContentUploadComponentInput;
@@ -79,13 +80,16 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   contentName: string;
   public userProfile: any;
   public sampleContent = false;
-  public telemetryPageId = 'chapter-list';
+  public telemetryPageId: string;
   public storedCollectionData: any;
   public sourcingOrgReviewer: boolean;
   public originalCollectionData: any;
   public textbookStatusMessage: string;
   public textbookFirstChildStatusMessage: string;
-  constructor(public publicDataService: PublicDataService, private configService: ConfigService,
+  public telemetryInteractCdata: any;
+  public telemetryInteractPdata: any;
+  public telemetryInteractObject: any;
+  constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private cbseService: CbseProgramService,
     public toasterService: ToasterService, public router: Router, public frameworkService: FrameworkService,
@@ -93,7 +97,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     public activeRoute: ActivatedRoute, private ref: ChangeDetectorRef, private httpClient: HttpClient,
     private collectionHierarchyService: CollectionHierarchyService, private resourceService: ResourceService,
     private navigationHelperService: NavigationHelperService, private helperService: HelperService,
-    private programsService: ProgramsService) {
+    private programsService: ProgramsService, public programTelemetryService: ProgramTelemetryService) {
   }
 
   ngOnInit() {
@@ -110,6 +114,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.collection = _.get(this.chapterListComponentInput, 'collection');
     this.actions = _.get(this.chapterListComponentInput, 'programContext.config.actions');
     this.sharedContext = _.get(this.chapterListComponentInput, 'programContext.config.sharedContext');
+    this.telemetryPageId = _.get(this.sessionContext, 'telemetryPageDetails.telemetryPageId');
+    this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
+    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
     this.myOrgId = (this.userService.userRegistryData
       && this.userService.userProfile.userRegData
       && this.userService.userProfile.userRegData.User_Org
@@ -143,13 +150,16 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
     if (this.programContext['status'] === 'Unlisted') {
       const request = {
-        "key": "mvcLibraryFeature",
-        "status": "active"
-      }
-      this.helperService.getProgramConfiguration(request).subscribe(res => {}, err => {});}
+        'key': 'mvcLibraryFeature',
+        'status': 'active'
+      };
+      this.helperService.getProgramConfiguration(request).subscribe(res => {}, err => {});
+    }
+
   }
 
   showBulkUploadOption() {
+    // tslint:disable-next-line:max-line-length
     return !!(this.programsService.checkForContentSubmissionDate(this.programContext) && !this.isNominationPendingOrInitiated() && _.get(this.sessionContext, 'currentRoles', []).includes('CONTRIBUTOR'));
   }
 
@@ -161,12 +171,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-    const telemetryCdata = [{ 'type': 'Program', 'id': this.programContext.program_id }];
     setTimeout(() => {
       this.telemetryImpression = {
         context: {
           env: this.activeRoute.snapshot.data.telemetry.env,
-          cdata: telemetryCdata || [],
+          cdata: this.telemetryInteractCdata || [],
           pdata: {
             id: this.userService.appId,
             ver: version,
@@ -174,7 +183,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           }
         },
         edata: {
-          type: _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
+          type: this.configService.telemetryLabels.pageType.detail || _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
           pageid: this.telemetryPageId,
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
@@ -230,8 +239,21 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     });
   }
 
+  getTelemetryPageIdForContentDetailsPage() {
+    if (this.telemetryPageId === this.configService.telemetryLabels.pageId.sourcing.projectNominationTargetCollection) {
+      return this.configService.telemetryLabels.pageId.sourcing.projectNominationContributionDetails;
+    } else if (this.telemetryPageId === this.configService.telemetryLabels.pageId.sourcing.projectTargetCollection) {
+      return this.configService.telemetryLabels.pageId.sourcing.projectContributionDetails;
+    } else if (this.telemetryPageId === this.configService.telemetryLabels.pageId.contribute.projectTargetCollection) {
+      return this.configService.telemetryLabels.pageId.contribute.projectContributionDetails;
+    } else if (this.telemetryPageId === this.configService.telemetryLabels.pageId.contribute.submitNominationTargetCollection) {
+      return this.configService.telemetryLabels.pageId.contribute.submitNominationSampleDetails;
+    }
+  }
+
   public initiateInputs(action?, content?) {
     const sourcingStatus = !_.isUndefined(content) ? content.sourcingStatus : null;
+    this.sessionContext.telemetryPageDetails.telemetryPageId = this.getTelemetryPageIdForContentDetailsPage();
     this.dynamicInputs = {
       contentUploadComponentInput: {
         config: _.find(this.programContext.config.components, {'id': 'ng.sunbird.uploadComponent'}),
@@ -266,7 +288,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         content: content,
         sessionContext: this.sessionContext,
         unitIdentifier: this.unitIdentifier,
-        programContext: _.get(this.chapterListComponentInput, 'programContext')
+        programContext: _.get(this.chapterListComponentInput, 'programContext'),
+        originCollectionData: this.originalCollectionData,
+        sourcingStatus: sourcingStatus,
+        selectedSharedContext: this.selectedSharedContext
       }
     };
   }
@@ -298,7 +323,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     };
      return new Promise((resolve) => {
     this.actionService.get(req).pipe(catchError(err => {
-      const errInfo = { errorMsg: 'Fetching TextBook details failed' }; this.showLoader = false;
+      const errInfo = {
+        errorMsg: 'Fetching TextBook details failed',
+        telemetryPageId: this.telemetryPageId,
+        telemetryCdata : this.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env,
+        request: req
+      };
+      this.showLoader = false;
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
     }))
       .subscribe((response) => {
@@ -317,6 +349,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         instance.countData['total'] = 0;
         instance.countData['review'] = 0;
         instance.countData['reject'] = 0;
+        instance.countData['live'] = 0;
+        instance.countData['draft'] = 0;
         instance.countData['mycontribution'] = 0;
         instance.countData['totalreview'] = 0;
         instance.countData['awaitingreview'] = 0;
@@ -494,7 +528,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   getContentStatusCount(data) {
     const self = this;
-    if (['admin', 'user'].includes(this.sessionContext.currentOrgRole)  && this.sessionContext.currentRoles.includes('REVIEWER')) {
+    if (['admin', 'user'].includes(this.sessionContext.currentOrgRole)  && (this.sessionContext.currentRoles.includes('REVIEWER') || this.sessionContext.currentRoles.includes('CONTRIBUTOR') )) {
       // tslint:disable-next-line:max-line-length
       if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' && this.myOrgId === data.organisationId)  && (!data.sampleContent || data.sampleContent === undefined)) {
         this.countData['total'] = this.countData['total'] + 1;
@@ -507,19 +541,36 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         if (data.createdBy === this.currentUserID) {
           this.countData['mycontribution'] = this.countData['mycontribution'] + 1;
         }
-        if (data.status === 'Review') {
-          this.countData['totalreview'] = this.countData['totalreview'] + 1;
-        }
-        if (data.createdBy !== this.currentUserID && data.status === 'Review') {
-          this.countData['awaitingreview'] = this.countData['awaitingreview'] + 1;
+        if(this.sessionContext.currentRoles.includes('REVIEWER')) {
+          if (data.status === 'Review') {
+            this.countData['totalreview'] = this.countData['totalreview'] + 1;
+          }
+          if (data.createdBy !== this.currentUserID && data.status === 'Review') {
+            this.countData['awaitingreview'] = this.countData['awaitingreview'] + 1;
+          }
         }
       }
-    } else {
+    } 
+     else if(['individual'].includes(this.sessionContext.currentOrgRole)  && this.sessionContext.currentRoles.includes('CONTRIBUTOR')) {
+      if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' )  && (!data.sampleContent || data.sampleContent === undefined)) {
+      
+        if (data.createdBy === this.currentUserID) {
+          this.countData['total'] = this.countData['total'] + 1;
+        }
+      }
+     }
+    else {
       // tslint:disable-next-line:max-line-length
-      if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit')  && (!data.sampleContent || data.sampleContent === undefined)) {
+      if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' )  && (!data.sampleContent || data.sampleContent === undefined)) {
         this.countData['total'] = this.countData['total'] + 1;
         if (data.createdBy === this.currentUserID && data.status === 'Review') {
           this.countData['review'] = this.countData['review'] + 1;
+        }
+        if (data.createdBy === this.currentUserID && data.status === 'Draft') {
+          this.countData['draft'] = this.countData['draft'] + 1;
+        }
+        if (data.createdBy === this.currentUserID && data.status === 'Live') {
+          this.countData['live'] = this.countData['live'] + 1;
         }
         if (data.createdBy === this.currentUserID && data.status === 'Draft' && data.prevStatus === 'Review') {
           this.countData['reject'] = this.countData['reject'] + 1;
@@ -568,6 +619,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       identifier: node.identifier,
       name: node.name,
       contentType: node.contentType,
+      primaryCategory: node.primaryCategory,
+      mimeType: node.mimeType,
+      itemSets: _.has(node, 'itemSets') ? node.itemSets : null,
+      questionCategories: _.has(node, 'questionCategories') ? node.questionCategories : null,
       topic: node.topic,
       origin: node.origin,
       status: node.status,
@@ -604,7 +659,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       } else if (this.storedCollectionData.rejectedContents  &&
               _.includes(this.storedCollectionData.rejectedContents || [], content.identifier)) {
             return 'Rejected';
-      } else if (content.status === "Draft" && content.prevStatus === "Live") {
+      } else if (content.status === 'Draft' && content.prevStatus === 'Live') {
             return 'PendingForCorrections';
       } else {
         return null;
@@ -689,7 +744,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               'code': UUID.UUID(),
               'mimeType': this.templateDetails.mimeType[0],
               'createdBy': this.userService.userid,
-              'contentType': this.templateDetails.metadata.contentType,
+              'primaryCategory': this.templateDetails.metadata.primaryCategory,
               'resourceType': this.templateDetails.metadata.resourceType || 'Learn',
               'creator': creator,
               'programId': this.sessionContext.programId,
@@ -709,7 +764,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         option.data.request.content.appIcon = this.templateDetails.metadata.appIcon;
       }
       this.actionService.post(option).pipe(map((res: any) => res.result), catchError(err => {
-        const errInfo = { errorMsg: 'Unable to create contentId, Please Try Again' };
+        const errInfo = {
+          errorMsg: 'Unable to create contentId, Please Try Again',
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activeRoute.snapshot.data.telemetry.env,
+          request: option
+        };
         return throwError(this.cbseService.apiErrorHandling(err, errInfo));
       }))
         .subscribe(result => {
@@ -728,12 +789,21 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   handlePreview(event) {
-    const templateList = _.get(this.chapterListComponentInput.config, 'config.contentTypes.value')
-      || _.get(this.chapterListComponentInput.config, 'config.contentTypes.defaultValue');
+    const templateList = this.programsService.contentCategories;
     this.templateDetails = _.find(templateList, (templateData) => {
-      return templateData.metadata.contentType === event.content.contentType;
+      return templateData.name === event.content.primaryCategory;
     });
     if (this.templateDetails) {
+      this.templateDetails.questionCategories = event.content.questionCategories;
+      if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && !_.isEmpty(event.content.itemSets)) {
+        this.templateDetails.onClick = 'questionSetComponent';
+      } else if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && _.isEmpty(event.content.itemSets)) {
+        this.templateDetails.onClick = 'editorComponent';
+      } else if (event.content.mimeType === 'application/vnd.ekstep.quml-archive') {
+        this.templateDetails.onClick = 'questionSetComponent';
+      } else {
+        this.templateDetails.onClick = 'uploadComponent';
+      }
     this.componentLoadHandler('preview',
     this.programComponentsService.getComponentInstance(this.templateDetails.onClick), this.templateDetails.onClick, event);
     }
@@ -784,6 +854,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
     this.resourceTemplateInputData();
   }
+
   removeMvcContentFromHierarchy() {
     const contentId = this.contentId;
     this.collectionHierarchyService.removeResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, this.contentId)
@@ -794,7 +865,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
          this.updateTextbookmvcContentCount(this.sessionContext.collection, contentId);
          this.toasterService.success(_.replace(this.resourceService.messages.stmsg.m0147, '{CONTENT_NAME}', this.contentName));
        }, (error) => {
-        this.toasterService.error(_.replace(this.resourceService.messages.emsg.m0078, '{CONTENT_NAME}', this.contentName));
+        const errInfo = {
+          errorMsg: _.replace(this.resourceService.messages.emsg.m0078, '{CONTENT_NAME}', this.contentName),
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activeRoute.snapshot.data.telemetry.env,
+        };
+        this.cbseService.apiErrorHandling(error, errInfo);
        });
   }
   updateTextbookmvcContentCount(textbookId, contentId) {
@@ -809,20 +886,35 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       };
       this.helperService.updateContent(request, textbookId).subscribe((data) => {
       }, err => {
+        const errInfo = {
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activeRoute.snapshot.data.telemetry.env,
+          request: request
+        };
+        this.cbseService.apiErrorHandling(err, errInfo);
       });
-     },(error) => {
+     }, (error) => {
+      const errInfo = {
+        telemetryPageId: this.telemetryPageId,
+        telemetryCdata : this.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env,
+      };
+      this.cbseService.apiErrorHandling(error, errInfo);
      })
   }
   resourceTemplateInputData() {
-    let contentTypes = _.get(this.chapterListComponentInput.config, 'config.contentTypes.value')
-    || _.get(this.chapterListComponentInput.config, 'config.contentTypes.defaultValue');
+    let contentCategories = this.programContext.content_types;
     if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.content_types) {
-       contentTypes = _.filter(contentTypes, (obj) => {
-        return _.includes(this.sessionContext.nominationDetails.content_types, obj.metadata.contentType);
-       });
+      contentCategories = _.filter(contentCategories, (catName) => {
+        if (_.includes(this.sessionContext.nominationDetails.content_types, catName)) {
+          //obj.metadata = JSON.parse(obj.objectMetadata);
+          return catName;
+        }
+      });
     }
     this.resourceTemplateComponentInput = {
-        templateList: contentTypes,
+      templateList: contentCategories,
         programContext: this.programContext,
         sessionContext: this.sessionContext,
         unitIdentifier: this.unitIdentifier
@@ -902,7 +994,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           }
         },
         (error) => {
-          this.toasterService.error(this.resourceService.messages.fmsg.m00103);
+          const errInfo = {
+            errorMsg: this.resourceService.messages.fmsg.m00103,
+            telemetryPageId: this.telemetryPageId,
+            telemetryCdata : this.telemetryInteractCdata,
+            env : this.activeRoute.snapshot.data.telemetry.env,
+          };
+          this.cbseService.apiErrorHandling(error, errInfo);
         }
       );
   }
@@ -915,10 +1013,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.stageSubscription.unsubscribe();
   }
 
-  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: string): IInteractEventEdata {
+  getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: string): IInteractEventEdata {
     return _.omitBy({
       id,
       type,
+      subtype,
       pageid,
       extra
     }, _.isUndefined);

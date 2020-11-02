@@ -2,7 +2,7 @@
     <button type="button" [ngClass]="{'active':enableBtn === 'edit' }" (click)="showPreview= false; btnClick($event, 'edit'); initializeDropdown()" class="sb-btn sb-btn-normal sb-btn-outline-primary">Edit</button>
     <button type="button" [ngClass]="{'active': enableBtn === 'preview' }" (click)="showPreview= true; btnClick($event, 'preview'); generatePreview()" class="sb-btn sb-btn-normal sb-btn-outline-primary">Preview</button>
 </div> -->
-<app-question-creation-header *ngIf="questionMetaData && !showPreview" [telemetryEventsInput]="telemetryEventsInput" [questionMetaData]="questionMetaData" [roles]="roles" [resourceStatus]="sessionContext.resourceStatus"></app-question-creation-header>
+<app-question-creation-header *ngIf="questionMetaData && !showPreview" [telemetryEventsInput]="telemetryEventsInput" [questionMetaData]="questionMetaData" [roles]="roles" [sessionContext]="sessionContext"></app-question-creation-header>
 
 <app-question-preview *ngIf="showPreview" [sessionContext]="sessionContext">
 </app-question-preview>
@@ -37,8 +37,8 @@
                 <div class="ui dropdown sb-btn sb-btn-outline-primary sb-btn-normal sb-right-icon-btn sb-btn-radius ml-auto"
               suiDropdown autoClose="itemClick" *ngIf="showSolutionDropDown"
               appTelemetryInteract
-              [telemetryInteractEdata]="{id:'choose-solution',type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
-              [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+              [telemetryInteractEdata]="{id:'solution',type:configService.telemetryLabels.eventType.select,subtype:configService.telemetryLabels.eventSubtype.singleSelect,pageid:telemetryPageId}"
+              [telemetryInteractObject]="getTelemetryInteractObject(questionMetaData?.data?.identifier, 'Question')"
               [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
               [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
               >
@@ -47,15 +47,15 @@
               <div class="menu" suiDropdownMenu>
                 <div class="item" (click)="selectSolutionType('Text+Image')"
                 appTelemetryInteract
-                [telemetryInteractEdata]="{id:'solution-type',type:'click',pageid:'question-list',extra: {solutionType:'Text+Image',type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
-                [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+                [telemetryInteractEdata]="{id:'solution_type',type:configService.telemetryLabels.eventType.select,subtype:configService.telemetryLabels.eventSubtype.singleSelect,pageid:telemetryPageId,extra: {solutionType:'Text+Image'}}"
+                [telemetryInteractObject]="getTelemetryInteractObject(questionMetaData?.data?.identifier, 'Question')"
                 [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
                 >Text+Image</div>
                 <div class="item" (click)="selectSolutionType('video')"
                 appTelemetryInteract
-                [telemetryInteractEdata]="{id:'solution-type',type:'click',pageid:'question-list',extra: {solutionType:'video',type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
-                [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+                [telemetryInteractEdata]="{id:'solution_type',type:configService.telemetryLabels.eventType.select,subtype:configService.telemetryLabels.eventSubtype.singleSelect,pageid:telemetryPageId,extra: {solutionType:'video'}}"
+                [telemetryInteractObject]="getTelemetryInteractObject(questionMetaData?.data?.identifier, 'Question')"
                 [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
                 >Video</div>
@@ -68,8 +68,8 @@
                     <div class="mcq-checkbox-answer">
                         <button class="sb-btn sb-btn-xs sb-btn-link sb-btn-link-error sb-left-icon-btn ml-auto"
                         appTelemetryInteract
-                        [telemetryInteractEdata]="{id:'delete-solution',type:'click',pageid:'question-list',extra: {solutionType:'Text+Image',type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
-                        [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+                        [telemetryInteractEdata]="{id:'delete_solution',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.cancel,pageid:telemetryPageId,extra: {solutionType:'Text+Image'}}"
+                        [telemetryInteractObject]="getTelemetryInteractObject(questionMetaData?.data?.identifier, 'Question')"
                         [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
                         [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
                         (click)="deleteSolution()"><i
@@ -90,8 +90,8 @@
                     <div class="mcq-checkbox-answer">
                     <button class="sb-btn sb-btn-xs sb-btn-link sb-btn-link-error sb-left-icon-btn ml-auto"
                     appTelemetryInteract
-                    [telemetryInteractEdata]="{id:'delete-solution',type:'click',pageid:'question-list',extra: {solutionType:'video',type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
-                    [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+                    [telemetryInteractEdata]="{id:'delete_solution',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.cancel,pageid:telemetryPageId,extra: {solutionType:'video'}}"
+                    [telemetryInteractObject]="getTelemetryInteractObject(questionMetaData?.data?.identifier, 'Question')"
                     [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
                     (click)="deleteSolution()"><i
@@ -157,107 +157,11 @@
 
     </div>
 
-    <!-- Learning Outcome learning level author license Editor HTML -->
-    <div class='licence-form__content'>
-        <div class="ui stackable grid licence-form__content__fields my-0">
-            <div class="row">
-                <div class="sb-field mb-16 six wide column" *ngIf="canViewContentType()">
-                    <div class="width-100">
-                        <label class="font-weight-bold fsmall">{{resourceService.frmelmnts.lbl.contentType}}:</label><i class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentType}}"></i>
-                        <div><span class="sb-color-gray-200 fs-0-785">{{sessionContext.contentMetadata.contentTypeName}}</span></div>
-                    </div>
-                </div>
-                <div *ngFor = "let field of allFormFields; let i = index " class="sb-field mb-16" [ngClass]="{'six wide column':field.code !== 'contentPolicyCheck' }" [ngClass]="{'wide column':field.code === 'contentPolicyCheck' }">
-                    <div *ngIf="field.inputType === 'select'" class="width-100">
-                      <div>
-                        <label class="font-weight-bold fsmall">{{field.label}}:</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span><i *ngIf="field.helpText" class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{field.helpText}}"></i>
-                        <sui-select *ngIf="editableFields.indexOf(field?.code) > -1" formControlName="{{field.code}}" class="selection" [isDisabled]="editableFields.indexOf(field?.code) == -1" placeholder="{{field.placeholder}}"
-                        appTelemetryInteract
-                        [telemetryInteractEdata]="{id:'select-' + field.code,type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
-                        [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
-                        [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
-                        [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
-                        >
-                          <sui-select-option *ngFor="let option of selectOutcomeOption[field.code]" [value]="option"
-                           appTelemetryInteract
-                           [telemetryInteractEdata]="{id:'selectoption-' + option,type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
-                           [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
-                           [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
-                           [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
-                          >
-                          </sui-select-option>
-                        </sui-select>
-                        <div *ngIf="editableFields.indexOf(field?.code) == -1"><span class="sb-color-gray-200 fs-0-785">{{questionMetaData.data[field.code]}}</span></div>
-                        <label class="sb-color-error mb-0 font-weight-normal" *ngIf="((questionMetaForm.get(field.code).touched) && (questionMetaForm.get(field.code).errors?.required))">* This field is mandatory</label>
-                      </div>
-                    </div>
-
-                    <div *ngIf="field.inputType === 'multiselect'" class="width-100">
-                        <div>
-                            <label class="font-weight-bold fsmall">{{field.label}}:</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span><i *ngIf="field.helpText" class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{field.helpText}}"></i>
-                            <sui-multi-select *ngIf="editableFields.indexOf(field?.code) > -1" formControlName="{{field.code}}" class="selection" [isDisabled]="editableFields.indexOf(field?.code) == -1" placeholder="{{field.placeholder}}"
-                            appTelemetryInteract
-                            [telemetryInteractEdata]="{id:'multiselect-' + field.code,type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
-                            [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
-                            [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
-                            [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
-                            >
-                              <sui-select-option *ngFor="let option of selectOutcomeOption[field.code]" [value]="option"
-                              appTelemetryInteract
-                              [telemetryInteractEdata]="{id:'selectoption-' + option,type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
-                              [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
-                              [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
-                              [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
-                              >
-                              </sui-select-option>
-                            </sui-multi-select>
-                            <div *ngIf="editableFields.indexOf(field?.code) == -1"><span class="sb-color-gray-200 fs-0-785">{{questionMetaData.data[field.code]}}</span></div>
-                            <label class="sb-color-error mb-0 font-weight-normal" *ngIf="((questionMetaForm.get(field.code).touched) && (questionMetaForm.get(field.code).errors?.required))">* This field is mandatory</label>
-                        </div>
-                    </div>
-
-                    <div *ngIf="field.inputType === 'text'" class="width-100">
-                      <div>
-                        <label class="font-weight-bold fsmall">{{field.label}}:</label><span class="sb-color-red pl-4 pr-4" *ngIf="field.required">*</span><i *ngIf="field.helpText" class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{field.helpText}}"></i>
-                          <input *ngIf="editableFields.indexOf(field?.code) > -1" formControlName="{{field.code}}" type="{{field.inputType}}" name="{{field.code}}" class="sb-form-control" placeholder="{{field.placeholder}}"
-                          appTelemetryInteract
-                          [telemetryInteractEdata]="{id:'input-' + field.code,type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
-                          [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
-                          [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
-                          [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
-                          >
-                          <div *ngIf="editableFields.indexOf(field?.code) == -1"><span class="sb-color-gray-200 fs-0-785">{{questionMetaData.data[field.code]}}</span></div>
-                        <label class="sb-color-error mb-0 font-weight-normal" *ngIf="((questionMetaForm.get(field.code).touched) && (questionMetaForm.get(field.code).errors?.required))">* This field is mandatory</label>
-
-                      </div>
-                    </div>
-
-                    <div *ngIf="field.inputType === 'checkbox' && field.code === 'contentPolicyCheck'" class="width-100 pt-20 pb-30">
-                        <div class="sb-checkbox sb-checkbox-primary">
-                          <input type="{{field.inputType}}" id="{{field.code}}" name="{{field.code}}" [checked]='questionMetaData.data[field.code]' formControlName="{{field.code}}" (change)="changePolicyCheckValue($event)">
-                          <label for="{{field.code}}" class="fs-0-785 sb-color-gray-400 font-italic">
-                            <span class="sb-color-red pr-3">*</span>
-                            “I agree that by submitting / publishing this Content,
-                            I confirm that this Content complies with prescribed guidelines,
-                             including the Terms of Use and Content Policy and that I consent
-                              to publish it under the <a class="link font-weight-bold"  href="https://creativecommons.org/licenses" target="_blank">
-                                Creative Commons Framework in </a>
-                              accordance with the  <a class="link font-weight-bold"  href="/terms-of-use.html" target="_blank">
-                                Content Policy.</a> I have made sure that I do not violate others’ copyright or privacy rights.”
-                          </label>
-                        </div>
-                        <label class="sb-color-error mb-0 font-weight-normal" *ngIf="((questionMetaForm.get(field.code).touched) && (questionMetaForm.get(field.code).errors?.required))">{{resourceService.frmelmnts.lbl.mandatoryField}}</label>
-                      </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class='practical-sb-buttons'>
         <button id="requestChanges" *ngIf="canReviewContent()" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true"
         appTelemetryInteract
-        [telemetryInteractEdata]="{id:'reject-question',type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
-        [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+        [telemetryInteractEdata]="{id:rejectComment === '' ? 'request_changes' : 'edit_comments',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.launch,pageid:telemetryPageId}"
+        [telemetryInteractObject]="getTelemetryInteractObject(questionMetaData?.data?.identifier, 'Question')"
         [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
         >
@@ -288,10 +192,20 @@
     </div>
     <div class="sb-modal-actions">
         <div class="ui left floated buttons">
-            <button (click)="initiateImageUploadModal();" class="ui primary button">Upload and use</button>
+            <button (click)="initiateImageUploadModal();" class="ui primary button"
+            appTelemetryInteract
+        [telemetryInteractEdata]="{id:'upload_and_use',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.submit,pageid:telemetryPageId,extra: {key:'dialog_id',value:'select_image'}}"
+        [telemetryInteractObject]="getTelemetryInteractObject(questionMetaData?.data?.identifier, 'Question')"
+        [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata">Upload and use</button>
         </div>
         <div class="ui buttons">
-            <button (click)="dismissImagePicker();" class="ui button">Cancel</button>
+        <button (click)="dismissImagePicker();" class="ui button"
+        appTelemetryInteract
+        [telemetryInteractEdata]="{id:'cancel',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.cancel,pageid:telemetryPageId,extra: {key:'dialog_id',value:'select_image'}}"
+        [telemetryInteractObject]="getTelemetryInteractObject(questionMetaData?.data?.identifier, 'Question')"
+        [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata">Cancel</button>
             <!-- <div class="or"></div>
       <button (click)="dismissImagePicker();" class="ui primary button">Save</button> -->
         </div>
@@ -352,8 +266,8 @@
   <div class="sb-modal-actions">
     <button id="submitReview" type="submit" class="sb-btn sb-btn-normal"
     appTelemetryInteract
-    [telemetryInteractEdata]="{id:'submit-reviewercomments',type:'click',pageid:'question-list',extra: {type:'reference',category:sessionContext.questionType,identifier:questionMetaData ? questionMetaData.data.identifier : ''}}"
-    [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+    [telemetryInteractEdata]="{id:'submit_review',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.submit,pageid:telemetryPageId,extra: {key:'dialog_id',value:'add_review_comments'}}"
+    [telemetryInteractObject]="getTelemetryInteractObject(questionMetaData?.data?.identifier, 'Question')"
     [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
     [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
     [disabled]="rejectComment.length > commentCharLimit" [ngClass]="{'sb-btn-primary': reuestChangeForm.form.valid, 'sb-btn-disabled': !reuestChangeForm.form.valid || rejectComment.length > commentCharLimit}"   (click)="requestChanges()"> Submit Review </button>

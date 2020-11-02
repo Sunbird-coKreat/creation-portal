@@ -6,6 +6,7 @@ import { PlayerService, ActionService } from '@sunbird/core';
 import { ConfigService, ResourceService } from '@sunbird/shared';
 import { CbseProgramService } from '../../services/cbse-program/cbse-program.service';
 import { ProgramTelemetryService } from '../../../program/services';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-mvc-player',
@@ -22,9 +23,9 @@ export class MvcPlayerComponent implements OnInit, OnChanges {
   public contentData: any = {};
   public contentId;
   constructor(
-    private playerService: PlayerService, private configService: ConfigService, private actionService: ActionService,
+    private playerService: PlayerService, public configService: ConfigService, private actionService: ActionService,
     private cbseService: CbseProgramService, private cd: ChangeDetectorRef, public resourceService: ResourceService,
-    public programTelemetryService: ProgramTelemetryService
+    public programTelemetryService: ProgramTelemetryService, private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
@@ -39,13 +40,17 @@ export class MvcPlayerComponent implements OnInit, OnChanges {
   }
 
   getConfigByContent(contentId: string) {
-    this.playerService.getConfigByContent(contentId).pipe(catchError(err => {
-      const errInfo = { errorMsg: 'Unable to read the Content, Please Try Again' };
+    this.playerService.getConfigByContent('contentId').pipe(catchError(err => {
+      const errInfo = {
+        errorMsg: 'Unable to read the Content, Please Try Again',
+        telemetryPageId: this.sessionContext.telemetryPageId, telemetryCdata : this.sessionContext.telemetryInteractCdata,
+        env : this.route.snapshot.data.telemetry.env};
       return throwError(this.cbseService.apiErrorHandling(err, errInfo));
   })).subscribe(config => {
       this.contentData = config.metadata;
       this.playerConfig = config;
       this.playerConfig.context.pdata.pid = `${this.configService.appConfig.TELEMETRY.PID}`;
+      this.playerConfig.context.cdata = this.sessionContext.telemetryInteractCdata;
       this.cd.detectChanges();
     });
   }
