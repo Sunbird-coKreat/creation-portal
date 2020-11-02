@@ -147,7 +147,6 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
         break;
     }
     this.selectedtemplateDetails['metadata'] = {};
-    this.selectedtemplateDetails.metadata['contentType'] = this.templateSelected;
     this.selectedtemplateDetails.metadata['primaryCategory'] = this.templateSelected;
 
     let appEditorConfig = this.configService.contentCategoryConfig.sourcingConfig.files;
