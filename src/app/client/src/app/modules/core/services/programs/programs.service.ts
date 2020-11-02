@@ -1003,7 +1003,7 @@ export class ProgramsService extends DataService implements CanActivate {
       return  of(this.cacheService.get(cacheInd));
     } else {
       const req = {
-        url: 'object/category/definition/v1/read?fields=objectMetadata,forms',
+        url: 'object/category/definition/v1/read?fields=objectMetadata,forms,name',
         data: {
           request: {
             "objectCategoryDefinition": {
