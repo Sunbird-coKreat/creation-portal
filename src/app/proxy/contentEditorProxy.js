@@ -142,12 +142,21 @@ module.exports = function (app) {
   }))
 
 
-  app.use('/action/data/v1/form/read', proxy(contentServiceBaseUrl, {
-    proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+  app.use('/action/data/v1/form/read', proxy(learnerURL, {
+    proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
     proxyReqPathResolver: function (req) {
       var originalUrl = req.originalUrl
       originalUrl = originalUrl.replace('/action/', '')
-      return require('url').parse(contentServiceBaseUrl + originalUrl).path
+      return require('url').parse(learnerURL + originalUrl).path
+    }
+  }))
+
+  app.use('/action/framework/v3/read/*', proxy(learnerURL, {
+    proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
+    proxyReqPathResolver: function (req) {
+      var originalUrl = req.originalUrl
+      originalUrl = originalUrl.replace('/action/framework/v3/', 'framework/v1/')
+      return require('url').parse(learnerURL + originalUrl).path
     }
   }))
 

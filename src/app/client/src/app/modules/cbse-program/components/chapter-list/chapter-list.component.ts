@@ -790,9 +790,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   handlePreview(event) {
     const templateList = this.programsService.contentCategories;
+    const appEditorConfig = this.configService.contentCategoryConfig.sourcingConfig.files;
+    const acceptedFile = appEditorConfig[event.content.mimeType];
     this.templateDetails = _.find(templateList, (templateData) => {
       return templateData.name === event.content.primaryCategory;
     });
+    this.templateDetails['filesConfig'] = {};
+    this.templateDetails.filesConfig['accepted'] = acceptedFile || '';
+    this.templateDetails.filesConfig['size'] = this.configService.contentCategoryConfig.sourcingConfig.defaultfileSize;
     if (this.templateDetails) {
       this.templateDetails.questionCategories = event.content.questionCategories;
       if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && !_.isEmpty(event.content.itemSets)) {
