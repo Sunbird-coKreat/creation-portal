@@ -32,6 +32,7 @@ export class RecursiveTreeComponent implements OnInit {
   public sourcingOrgReviewer: boolean;
   public nodeStatusMessage: string;
   public telemetryPageId: string;
+  showAddFromMyContentModal = false;
   constructor(public userService: UserService, public configService: ConfigService, private programsService: ProgramsService,
     private helperService: HelperService, public programTelemetryService: ProgramTelemetryService, public resourceService: ResourceService, public router: Router) { }
 

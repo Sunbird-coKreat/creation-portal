@@ -656,3 +656,16 @@ xxl calculateRem(180px) 24px 20px;
     }
   }
 }
+.sb-dropdown-menu{
+  padding: 0.38rem;
+  border-radius: 1rem;
+  background-color: transparent;
+  border: solid 1px var(--primary-color);
+}
+.sb-bg-primary-300{
+  background: #F3F8FF;
+}
+.sb-btn-none{
+  background: none;
+  border:none;
+}

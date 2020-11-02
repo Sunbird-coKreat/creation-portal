@@ -92,17 +92,28 @@
         [telemetryInteractPdata]="telemetryInteractPdata"
         popupText="{{resourceService.frmelmnts.lbl.searchExistingContentFromLibrary}}"  suiPopup  *ngIf="visibility && visibility['showAddresource'] && programContext?.status === 'Unlisted' && mvcLibraryFeatureConfiguration === 'enable'">
           <i class="add icon mr-4"></i>{{resourceService.frmelmnts.btn.addFromLibrary}}</button>
-
-      <button class="sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius text-inherit"
-        *ngIf="visibility && visibility['showAddresource']"
-        popupText="{{resourceService.frmelmnts.lbl.uploadFileOrCreateNew}}"  suiPopup appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('create_new', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
-        [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(collection.identifier, 'Content', '1.0', {l1: sessionContext.collection})"
-        [telemetryInteractCdata]="telemetryInteractCdata"
-        [telemetryInteractPdata]="telemetryInteractPdata"
-        (click)="showModal = false; createResource($event, collection)">
-          <i class="add icon mr-4"></i>Create new
-      </button>
+      <div class="sb-dropdown-menu">
+        <div class="ui simple dropdown item">
+         {{resourceService.frmelmnts.lbl.addConten}}
+          <i class="chevron up icon"></i>
+          <div class="menu">
+            <div class="item"> 
+                <button class="text-inherit sb-btn-none"
+                *ngIf="visibility && visibility['showAddresource']"
+                popupText="{{resourceService.frmelmnts.lbl.uploadFileOrCreateNew}}"  suiPopup appTelemetryInteract
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('create_new', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(collection.identifier, 'Content', '1.0', {l1: sessionContext.collection})"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata"
+                (click)="showModal = false; createResource($event, collection)">{{resourceService.frmelmnts.btn.createNew}}
+              </button>
+            </div>
+            <div  class="item">
+            <button class="text-inherit sb-btn-none" (click)="showAddFromMyContentModal = true">{{resourceService.frmelmnts.btn.addFromMyContent}}</button>
+          </div>
+          </div>
+        </div>
+      </div>
       <!-- Gray color button -->
       <!-- <button class="sb-btn sb-btn-gray sb-btn-xs sb-left-icon-btn" *ngIf="visibility && visibility['showAddresource']"
       (click)="showModal = false; createResource($event, collection)"><i class="add icon mr-4"></i>ADD</button> -->
@@ -220,3 +231,115 @@
     </div>
   </sui-accordion-panel>
 </div>
+
+  <sui-modal *ngIf="showAddFromMyContentModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+  class="sb-modal" appBodyScroll (dismissed)="showAddFromMyContentModal= false">
+  <div class="sb-modal-header">
+   {{resourceService.frmelmnts.lbl.addFromMyConten}}
+  </div>
+  <div class="sb-modal-content">
+   <div class="ui grid sb-bg-primary-300 pt-10 mb-30">
+      <div class="four wide column py-10">
+        <div class="field">
+          <label
+            class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.boards}}</label>
+          <sui-multi-select class="selection p-5 b-100" >
+            <sui-select-option>jjj </sui-select-option>
+          </sui-multi-select>
+        </div>
+      </div>
+      <div class="four wide column py-10">
+        <div class="field">
+          <label
+            class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.mediumsFilter}}</label>
+          <sui-multi-select class="selection p-5 b-100" >
+            <sui-select-option>jjj </sui-select-option>
+          </sui-multi-select>
+        </div>
+      </div>
+      <div class="four wide column py-10">
+        <div class="field">
+          <label
+            class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.classesFilter}}</label>
+          <sui-multi-select class="selection p-5 b-100" >
+            <sui-select-option>jjj </sui-select-option>
+          </sui-multi-select>
+        </div>
+      </div>
+      <div class="four wide column py-10">
+        <div class="field">
+          <label
+            class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.subjectsFilter}}</label>
+          <sui-multi-select class="selection p-5 b-100" >
+            <sui-select-option>jjj </sui-select-option>
+          </sui-multi-select>
+        </div>
+      </div>
+      <div class="four wide column py-10">
+        <div class="field">
+          <label
+            class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.contentsFilter}}</label>
+          <sui-multi-select class="selection p-5 b-100" >
+            <sui-select-option>jjj </sui-select-option>
+          </sui-multi-select>
+        </div>
+      </div>
+      <div class="four wide column py-10">
+        <button type="button" class="sb-btn sb-btn-normal sb-btn-primary-outline">{{resourceService.frmelmnts.btn.reset}}</button>
+        <button type="button" class="sb-btn sb-btn-normal sb-btn-primary">{{resourceService.frmelmnts.btn.apply }}</button>
+      </div>
+    </div> 
+    
+    <div class="sb-table-responsive my-30">
+      <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
+      <thead class="sb-table-header sb-table-thead-gray">
+        <tr>
+          <th>
+             {{resourceService.frmelmnts.lbl.contenttype}}                 
+             <i class="fa fa-sort" aria-hidden="true"></i>
+          </th>
+          <th> {{resourceService.frmelmnts.lbl.usageDetails}}</th>
+          <t> {{resourceService.frmelmnts.lbl.status}}</th>
+        </tr>
+      </thead>
+      <tbody class="sb-table-body">
+        <tr>
+         <td>
+          <div class="sb-checkbox sb-checkbox-primary">
+            <input type="checkbox" id="check1" name="example">
+            <label for="check1">Sample</label>
+            </div>
+          </td>
+         <td><i class="icon eye sb-color-gray-300"></i>2876 <i class="icon star sb-color-warning"></i>4.7</td>
+         <td class="sb-color-success">Published</td>
+        </tr>
+        <tr>
+          <td>
+           <div class="sb-checkbox sb-checkbox-primary">
+             <input type="checkbox" id="check1" name="example">
+             <label for="check1">Upload</label>
+             </div>
+           </td>
+          <td><i class="icon eye sb-color-gray-300"></i>2876 <i class="icon star sb-color-warning"></i>4.7</td>
+          <td class="sb-color-error">Not Published</td>
+         </tr>
+         <tr>
+          <td>
+           <div class="sb-checkbox sb-checkbox-primary">
+             <input type="checkbox" id="check1" name="example">
+             <label for="check1">Sample</label>
+             </div>
+           </td>
+          <td><i class="icon eye sb-color-gray-300"></i>2876 <i class="icon star sb-color-warning"></i>4.7</td>
+          <td class="sb-color-success">Published</td>
+         </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="sb-modal-actions">
+    <button class="sb-btn sb-btn-normal sb-btn-primary">
+      {{resourceService.frmelmnts.btn.addContent}}
+    </button>
+  </div>
+</sui-modal>
