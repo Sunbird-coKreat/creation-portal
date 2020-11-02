@@ -734,6 +734,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       if ( _.isUndefined(this.sessionContext.topicList) || _.isUndefined(this.sessionContext.frameworkData)) {
         this.fetchFrameWorkDetails();
       }
+      this.helperService.getCategoryMetaData(this.contentMetaData.primaryCategory, _.get(this.programContext, 'rootorg_id'));
       this.getTelemetryData();
       this.cd.detectChanges();
     });
