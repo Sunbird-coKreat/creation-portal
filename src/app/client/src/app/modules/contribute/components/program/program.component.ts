@@ -12,7 +12,7 @@ import { ICollectionComponentInput, IDashboardComponentInput,
 import { InitialState, ISessionContext, IUserParticipantDetails } from '../../interfaces';
 import { ProgramStageService } from '../../../program/services/program-stage/program-stage.service';
 import { ProgramComponentsService } from '../../services/program-components/program-components.service';
-import { IImpressionEventInput, IInteractEventEdata } from '@sunbird/telemetry';
+import { IImpressionEventInput, IInteractEventEdata, TelemetryService } from '@sunbird/telemetry';
 import { isUndefined, isNullOrUndefined } from 'util';
 import * as moment from 'moment';
 
@@ -88,12 +88,14 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   initialSourcingOrgUser = [];
   searchLimitMessage: any;
   searchLimitCount: any;
-  userRoles = [{'id': 1, 'name': 'CONTRIBUTOR', 'defaultTab': 1, 'tabs': [1]}, {'id': 2, 'name': 'REVIEWER', 'defaultTab': 2, 'tabs': [2]}, {'id': 3, 'name': 'BOTH', 'defaultTab': 3, 'tabs': [3]}]
+  // userRoles = [{'id': 1, 'name': 'CONTRIBUTOR', 'defaultTab': 1, 'tabs': [1]}, {'id': 2, 'name': 'REVIEWER', 'defaultTab': 2, 'tabs': [2]}, {'id': 3, 'name': 'BOTH', 'defaultTab': 3, 'tabs': [3]}]
+  userRoles : any;
+  visitedTab = [];
   @ViewChild('userRemoveRoleModal') userRemoveRoleModal;
   public userRemoveRoleLoader = false;
   public showUserRemoveRoleModal = false;
   public selectedUserToRemoveRole: any;
-  public telemetryPageId = 'contribution_project_contributions';
+  public telemetryPageId: string;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
@@ -103,7 +105,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     public programComponentsService: ProgramComponentsService, public programsService: ProgramsService,
     private navigationHelperService: NavigationHelperService, public registryService: RegistryService,
     private paginationService: PaginationService, public actionService: ActionService,
-    private collectionHierarchyService: CollectionHierarchyService,
+    private collectionHierarchyService: CollectionHierarchyService, private telemetryService: TelemetryService,
     private sbFormBuilder: FormBuilder) {
     this.programId = this.activatedRoute.snapshot.params.programId;
     localStorage.setItem('programId', this.programId);
@@ -121,10 +123,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.programStageService.addStage('programComponent');
     this.currentStage = 'programComponent';
-    this.telemetryInteractCdata = [{
-      id: this.activatedRoute.snapshot.params.programId,
-      type: 'Program'
-    }];
+    this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}, {id: this.programId, type: 'project'}];
     this.telemetryInteractPdata = {
       id: this.userService.appId,
       pid: this.configService.appConfig.TELEMETRY.PID
@@ -136,12 +135,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-    const telemetryCdata = [{ 'type': 'Program', 'id': this.programId }];
     setTimeout(() => {
       this.telemetryImpression = {
         context: {
           env: this.activatedRoute.snapshot.data.telemetry.env,
-          cdata: telemetryCdata || [],
+          cdata: this.telemetryInteractCdata || [],
           pdata: {
             id: this.userService.appId,
             ver: version,
@@ -150,13 +148,18 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         },
         edata: {
           type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
-          pageid: this.telemetryPageId,
+          pageid: this.getPageId(),
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           subtype: _.get(this.activatedRoute, 'snapshot.data.telemetry.subtype'),
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
     });
+  }
+
+  getPageId() {
+    this.telemetryPageId = _.get(this.activatedRoute,'snapshot.data.telemetry.pageid');
+    return this.telemetryPageId;
   }
 
   getProgramDetails() {
@@ -168,7 +171,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.programDetails.config.medium = _.compact(this.programDetails.config.medium);
       this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
       this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
-      this.programContentTypes = this.programsService.getContentTypesName(this.programDetails.content_types);
+      this.programContentTypes = _.join(this.programDetails.content_types, ', ');
       this.roles =_.get(this.programDetails, 'config.roles');
       this.roles.push({'id': 3, 'name': 'BOTH', 'defaultTab': 3, 'tabs': [3]});
       this.roles.push({'id': 4, 'name': 'NONE', 'tabs': [4], 'default': true, 'defaultTab': 4});
@@ -203,6 +206,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   initiateInputs() {
     this.showLoader = false;
     this.sessionContext.programId = this.programDetails.program_id;
+    this.sessionContext.telemetryPageDetails = {
+      telemetryPageId : this.configService.telemetryLabels.pageId.contribute.submitNomination,
+      telemetryInteractCdata: this.telemetryInteractCdata
+    };
     this.dynamicInputs = {
       collectionComponentInput: {
         sessionContext: this.sessionContext,
@@ -352,6 +359,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
      usersList = _.chunk(this.allContributorOrgUsers, this.pageLimit);
      this.paginatedContributorOrgUsers = usersList;
      this.contributorOrgUser = isUserSearch ? usersList[0] : usersList[this.pageNumber - 1];
+   
+     
      this.pager = this.paginationService.getPager(this.OrgUsersCnt, isUserSearch ? 1 : this.pageNumber, this.pageLimit);
   }
 
@@ -360,6 +369,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.showUsersLoader = false;
       return false;
     }
+    this.userRoles = this.roles
+  
     this.allContributorOrgUsers = [];
     // Get only the users and skip admins
     orgUsers = _.filter(orgUsers, { "selectedRole": "user" });
@@ -383,7 +394,17 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.OrgUsersCnt = this.allContributorOrgUsers.length;
     this.sortOrgUsers('projectselectedRole');
     this.showUsersLoader = false;
+    // tslint:disable-next-line:max-line-length
+    this.logTelemetryImpressionEvent(this.allContributorOrgUsers, 'user', this.configService.telemetryLabels.pageId.contribute.projectAssignUsers);
     return true;
+  }
+
+  setTelemetryPageId(tabName) {
+    if (tabName === 'textbook') {
+      this.telemetryPageId = this.configService.telemetryLabels.pageId.contribute.projectContributions;
+    } else if (tabName === 'user') {
+      this.telemetryPageId = this.configService.telemetryLabels.pageId.contribute.projectAssignUsers;
+    }
   }
 
   NavigateToPage(page: number): undefined | void {
@@ -395,13 +416,13 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.pager = this.paginationService.getPager(this.OrgUsersCnt, this.pageNumber, this.pageLimit);
   }
 
-  // showUserRoleOption(roleName, userRole) {
-  //   if (!(roleName !== 'NONE' || (roleName === 'NONE' && userRole !== 'Select Role'))) {
-  //    return 'Select Role'
-  //   } else {
-  //     return roleName;
-  //   }
-  // }
+  showUserRoleOption(roleName, userRole) {
+    if (!(roleName !== 'NONE' || (roleName === 'NONE' && userRole !== 'Select Role'))) {
+     return 'Select Role'
+    } else {
+      return roleName;
+    }
+  }
 
   removeUserFromProgram() {
     if (this.userRemoveRoleLoader) {
@@ -418,6 +439,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
 
   getProgramRoleMapping(user) {
     const newRole = user.newRole;
+  
     let progRoleMapping = this.nominationDetails.rolemapping;
     if (isNullOrUndefined(progRoleMapping) && newRole !== 'NONE') {
       progRoleMapping = {};
@@ -456,15 +478,17 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   setTelemetryForonRoleChange(user) {
      const edata =  {
-        id: 'assign-users-to-program',
-        type: 'click',
-        pageid: 'list-nominated-textbooks',
+        id: 'assign_users_to_program',
+        type: this.configService.telemetryLabels.eventType.click,
+        subtype: this.configService.telemetryLabels.eventSubtype.submit,
+        pageid: this.telemetryPageId,
         extra : {values: [user.identifier, user.newRole]}
       }
     this.registryService.generateUserRoleUpdateTelemetry(this.activatedRoute.snapshot.data.telemetry.env,this.telemetryInteractCdata,this.telemetryInteractPdata, edata )
  }
   onRoleChange(user) {
     this.setTelemetryForonRoleChange(user);
+  
     const newRole = user.newRole;
     if (!_.includes(this.roleNames, newRole)) {
       this.toasterService.error(this.resourceService.messages.emsg.roles.m0003);
@@ -480,6 +504,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   updateUserRoleMapping(progRoleMapping, user) {
+  
     const req = {
       'request': {
         'program_id': this.activatedRoute.snapshot.params.programId,
@@ -493,8 +518,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       if (user.newRole === "NONE") {
         user.newRole = 'Select Role';
         user.roles = this.userRoles;
+     
       } else {
         user.roles = this.roles;
+      
       }
       user.projectselectedRole = user.newRole;
       this.nominationDetails.rolemapping = progRoleMapping;
@@ -585,6 +612,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           this.tempSortTextbooks = this.contributorTextbooks;
           this.showLoader = false;
           const mvcStageData = this.programsService.getMvcStageData();
+          this.logTelemetryImpressionEvent(this.contributorTextbooks, 'collection');
           if (!_.isEmpty(mvcStageData)) {
             this.viewContribution(mvcStageData.collection);
           }
@@ -594,13 +622,30 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           this.showLoader = false;
           const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
           this.toasterService.error(errorMes || 'Fetching textbooks failed. Please try again...');
+          this.logTelemetryImpressionEvent(contributorTextbooks, 'collection');
         }
       );
     } else {
       this.contributorTextbooks = contributorTextbooks;
       this.tempSortTextbooks = this.contributorTextbooks;
       this.showLoader = false;
+      this.logTelemetryImpressionEvent(this.contributorTextbooks, 'collection');
     }
+  }
+
+  public logTelemetryImpressionEvent(data, type, pageId?) {
+    if (_.includes(this.visitedTab, type)) { return false; }
+    this.visitedTab.push(type);
+    const telemetryImpression = _.cloneDeep(this.telemetryImpression);
+    if (data && !_.isEmpty(data)) {
+      telemetryImpression.edata.visits = _.map(data, (row) => {
+        return { objid: _.toString(row['identifier']), objtype: type };
+      });
+    } else {
+      telemetryImpression.edata.visits = [];
+    }
+    telemetryImpression.edata.pageid = pageId ? pageId : this.telemetryPageId;
+    this.telemetryService.impression(telemetryImpression);
   }
 
   viewContribution(collection) {
@@ -608,6 +653,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sessionContext.programId = this.programDetails.program_id;
     this.sessionContext.collection = collection.identifier;
     this.sessionContext.collectionName = collection.name;
+    this.sessionContext.telemetryPageDetails = {
+      telemetryPageId : this.configService.telemetryLabels.pageId.contribute.projectTargetCollection,
+      telemetryInteractCdata: this.getTelemetryInteractCdata(collection.identifier, 'linked_collection')
+    };
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});
@@ -718,13 +767,18 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.component = this.programComponentsService.getComponentInstance(e);
   }
 
-  getTelemetryInteractEdata(id: string, type: string, pageid: string, extra?: any): IInteractEventEdata {
+  getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: any): IInteractEventEdata {
     return _.omitBy({
       id,
       type,
+      subtype,
       pageid,
       extra
     }, _.isUndefined);
+  }
+
+  getTelemetryInteractCdata(id, type) {
+    return [ ...this.telemetryInteractCdata, {id: _.toString(id), type: type } ];
   }
 
   ngOnDestroy() {
