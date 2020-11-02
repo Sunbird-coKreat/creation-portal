@@ -111,11 +111,11 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
   }
 
   setModeOfCreation(mode) {
-    this.selectedtemplateDetails["selectedModeOfCreation"] = mode;
+    this.selectedtemplateDetails["modeOfCreation"] = mode;
   }
 
   handleModeOfCreation() {
-    if (this.selectedtemplateDetails["selectedModeOfCreation"] === 'question') {
+    if (this.selectedtemplateDetails["modeOfCreation"] === 'question') {
       this.showModeofCreationModal = false;
       this.showQuestionTypeModal = true;
     } else {
@@ -130,7 +130,7 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
   submit() {
     this.showModeofCreationModal = false;
     this.showQuestionTypeModal = false;
-    switch (this.selectedtemplateDetails['selectedModeOfCreation']) {
+    switch (this.selectedtemplateDetails['modeOfCreation']) {
       case 'question':
         this.selectedtemplateDetails.onClick = 'questionSetComponent';
         const temp = _.find(this.selectedtemplateDetails.editors, {'type': 'question'});
