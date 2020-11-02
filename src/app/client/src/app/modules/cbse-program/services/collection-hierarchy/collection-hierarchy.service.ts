@@ -103,9 +103,9 @@ export class CollectionHierarchyService {
         request: {
           filters: {
             programId: programId,
-            objectType: 'content',
+            objectType: 'collection',
             status: ['Draft'],
-            contentType: 'Textbook'
+            primaryCategory: 'Digital Textbook',
           }
         }
       }

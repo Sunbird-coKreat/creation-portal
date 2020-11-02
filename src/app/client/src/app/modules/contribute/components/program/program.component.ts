@@ -578,10 +578,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       data: {
         request: {
           filters: {
-            objectType: 'content',
+            objectType: 'collection',
             programId: this.activatedRoute.snapshot.params.programId,
             status: ['Draft', 'Live'],
-            contentType: 'Textbook'
+            primaryCategory: 'Digital Textbook',
           }
         }
       }
