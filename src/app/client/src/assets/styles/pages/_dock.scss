@@ -669,6 +669,9 @@ xxl calculateRem(180px) 24px 20px;
   background: #F3F8FF;
 }
 .sb-btn-none{
-  background: $white;
   border:none;
+  cursor: pointer;
+  &:hover{
+    border: none;
+  }
 }
