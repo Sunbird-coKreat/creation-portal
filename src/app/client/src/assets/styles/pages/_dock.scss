@@ -657,15 +657,18 @@ xxl calculateRem(180px) 24px 20px;
   }
 }
 .sb-dropdown-menu{
-  padding: 0.38rem;
+  padding: 0.15rem;
   border-radius: 1rem;
-  background-color: transparent;
+  background-color: $white;
   border: solid 1px var(--primary-color);
+  .ui.dropdown .menu>.item{
+      padding: 0.5em 0.9em !important;
+  }
 }
 .sb-bg-primary-300{
   background: #F3F8FF;
 }
 .sb-btn-none{
-  background: none;
+  background: $white;
   border:none;
 }
