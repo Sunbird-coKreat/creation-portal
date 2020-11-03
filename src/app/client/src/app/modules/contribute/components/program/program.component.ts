@@ -89,7 +89,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   initialSourcingOrgUser = [];
   searchLimitMessage: any;
   searchLimitCount: any;
-  // userRoles = [{'id': 1, 'name': 'CONTRIBUTOR', 'defaultTab': 1, 'tabs': [1]}, {'id': 2, 'name': 'REVIEWER', 'defaultTab': 2, 'tabs': [2]}, {'id': 3, 'name': 'BOTH', 'defaultTab': 3, 'tabs': [3]}]
   userRoles : any;
 
   visitedTab = [];
@@ -281,9 +280,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         }
 
         const roles = _.filter(this.roles, role => this.sessionContext.currentRoles.includes(role.name));
-
         this.sessionContext.currentRoleIds = !_.isEmpty(roles) ? _.map(roles, role => role.id) : null;
-
         if (this.userService.isUserBelongsToOrg()) {
           this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
             this.setOrgUsers(orgUsers);
@@ -386,8 +383,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
      usersList = _.chunk(this.allContributorOrgUsers, this.pageLimit);
      this.paginatedContributorOrgUsers = usersList;
      this.contributorOrgUser = isUserSearch ? usersList[0] : usersList[this.pageNumber - 1];
-   
-     
      this.pager = this.paginationService.getPager(this.OrgUsersCnt, isUserSearch ? 1 : this.pageNumber, this.pageLimit);
   }
 
@@ -396,8 +391,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.showUsersLoader = false;
       return false;
     }
-    this.userRoles = this.roles
-  
+    this.userRoles = this.roles;
     this.allContributorOrgUsers = [];
     // Get only the users and skip admins
     orgUsers = _.filter(orgUsers, { "selectedRole": "user" });
@@ -466,7 +460,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
 
   getProgramRoleMapping(user) {
     const newRole = user.newRole;
-  
     let progRoleMapping = this.nominationDetails.rolemapping;
     if (isNullOrUndefined(progRoleMapping) && newRole !== 'NONE') {
       progRoleMapping = {};
@@ -515,7 +508,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
  }
   onRoleChange(user) {
     this.setTelemetryForonRoleChange(user);
-  
     const newRole = user.newRole;
     if (!_.includes(this.roleNames, newRole)) {
       this.toasterService.error(this.resourceService.messages.emsg.roles.m0003);
@@ -548,7 +540,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
      
       } else {
         user.roles = this.roles;
-      
       }
       user.projectselectedRole = user.newRole;
       this.nominationDetails.rolemapping = progRoleMapping;
