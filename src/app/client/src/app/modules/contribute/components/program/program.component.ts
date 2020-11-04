@@ -62,6 +62,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public programContentTypes: string;
   public roles;
   public roleNames;
+  public selectRole;
   public currentNominationStatus: any;
   public nominationDetails: any = {};
   public nominated = false;
@@ -438,8 +439,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   showUserRoleOption(roleName, userRole) {
-    if (!(roleName !== 'NONE' || (roleName === 'NONE' && userRole !== 'Select Role'))) {
-     return 'Select Role'
+    this.selectRole=this.roles;
+     if (!(roleName !== 'NONE' || (roleName === 'NONE' && userRole !== 'Select Role'))) {
+       this.selectRole.splice(3);
+       return roleName;
     } else {
       return roleName;
     }
