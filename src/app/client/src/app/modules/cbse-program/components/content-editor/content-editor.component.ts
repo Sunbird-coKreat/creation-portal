@@ -129,7 +129,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.contentEditorComponentInput.contentId, 'Content', '1.0', { l1: this.sessionContext.collection, l2: this.contentEditorComponentInput.unitIdentifier});
     this.getContentMetadata();
-    this.helperService.getNotification().pipe().subscribe((action) => {
+    this.helperService.getNotification().pipe(takeUntil(this.onComponentDestroy$)).subscribe((action) => {
       this.contentStatusNotify(action);
     });
     this.helperService.initialize(this.programContext);

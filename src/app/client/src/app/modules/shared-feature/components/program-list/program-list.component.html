@@ -272,4 +272,4 @@
 </sui-modal>
 
 <app-project-filter *ngIf="showFiltersModal"  (dismiss)="showFiltersModal = false" (applyFilters)="getProgramsListByRole($event)"
- [programs]="programs" [filtersAppliedCount]="filtersAppliedCount"> </app-project-filter>
+[programs]="programs" [telemetryPageId]="telemetryPageId" [filtersAppliedCount]="filtersAppliedCount"> </app-project-filter>
