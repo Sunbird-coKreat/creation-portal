@@ -92,7 +92,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   showDashboardLoader = false;
   userPreferences = '';
   sharedContext;
-
+  userRoles = [{name: 'REVIEWER'}];
   pager: IPagination;
   pageNumber = 1;
   pageLimit: any;
@@ -793,6 +793,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           }
         });
       }
+      r.selectedRole !== 'Select Role' ? r.roles = this.roles : r.roles = this.userRoles;
       r.newRole = r.selectedRole;
     });
   }
@@ -808,6 +809,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         this.userRemoveRoleLoader = false;
         if (user.newRole === "NONE") {
           user.newRole = 'Select Role';
+          user.roles = this.userRoles;
+        } else {
+          user.roles  = this.roles;
         }
         user.selectedRole = user.newRole;
         this.programDetails.rolemapping = progRoleMapping;
@@ -869,14 +873,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     };
     this.registryService.generateUserRoleUpdateTelemetry(this.activatedRoute.snapshot.data.telemetry.env,this.telemetryInteractCdata,this.telemetryInteractPdata, edata )
   }
-
-showUserRoleOption(roleName, userRole) {
-  if (!(roleName !== 'NONE' || (roleName === 'NONE' && userRole !== 'Select Role'))) {
-   return 'Select Role'
-  } else {
-    return roleName;
-  }
-}
 
   cancelRemoveUserFromProgram() {
     this.showUserRemoveRoleModal = false;
