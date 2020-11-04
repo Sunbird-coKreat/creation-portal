@@ -505,7 +505,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
               'mimeType': this.detectMimeType(this.uploader.getName(0)),
               'createdBy': this.userService.getUserId(),
               'primaryCategory': this.templateDetails.metadata.primaryCategory,
-              'resourceType': this.templateDetails.metadata.resourceType || 'Learn',
               'creator': creator,
               'collectionId': this.sessionContext.collection,
               ...(this.sessionContext.nominationDetails &&
@@ -514,8 +513,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
               'programId': this.sessionContext.programId,
               'unitIdentifiers': [this.unitIdentifier],
               ...(_.pickBy(reqBody, _.identity))
-              // 'framework': this.sessionContext.framework,
-              // 'organisation': this.sessionContext.onBoardSchool ? [this.sessionContext.onBoardSchool] : [],
             }
           }
         }
