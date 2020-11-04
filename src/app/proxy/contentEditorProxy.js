@@ -68,6 +68,7 @@ module.exports = function (app) {
     '/action/content/v3/import'
   ],
   proxy(kp_content_service_base_url, {
+    proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
     proxyReqPathResolver: function (req) {
       var originalUrl = req.originalUrl
       originalUrl = originalUrl.replace('/action/', '')
@@ -85,6 +86,7 @@ module.exports = function (app) {
     '/action/system/v3/content/update/*'
   ],
     proxy(kp_learning_service_base_url, {
+    proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
     proxyReqPathResolver: function (req) {
       var originalUrl = req.originalUrl
       originalUrl = originalUrl.replace('/action/', '')
@@ -99,6 +101,7 @@ module.exports = function (app) {
     '/action/itemset/v3/review/*', 
     '/action/itemset/v3/retire/*'],
   proxy(kp_assessment_service_base_url, {
+    proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
     proxyReqPathResolver: function (req) {
       var originalUrl = req.originalUrl
       originalUrl = originalUrl.replace('/action/', '')
