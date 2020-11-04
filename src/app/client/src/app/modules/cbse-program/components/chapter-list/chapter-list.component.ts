@@ -744,8 +744,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               'code': UUID.UUID(),
               'mimeType': this.templateDetails.mimeType[0],
               'createdBy': this.userService.userid,
-              'primaryCategory': this.templateDetails.metadata.primaryCategory,
-              'resourceType': this.templateDetails.metadata.resourceType || 'Learn',
+              'primaryCategory': this.templateDetails.name,
               'creator': creator,
               'programId': this.sessionContext.programId,
               'collectionId': this.sessionContext.collection,
@@ -760,8 +759,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       if (this.sampleContent) {
         option.data.request.content.sampleContent = this.sampleContent;
       }
-      if (this.templateDetails.metadata.appIcon) {
-        option.data.request.content.appIcon = this.templateDetails.metadata.appIcon;
+      if (_.get(this.templateDetails, 'modeOfCreation') === 'question') {
+        option.data.request.content.questionCategories =  [this.templateDetails.questionCategory];
+      }
+      if (_.get(this.templateDetails, 'appIcon')) {
+        option.data.request.content.appIcon = _.get(this.templateDetails, 'appIcon');
       }
       this.actionService.post(option).pipe(map((res: any) => res.result), catchError(err => {
         const errInfo = {
@@ -795,9 +797,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     });
     if (this.templateDetails) {
       this.templateDetails.questionCategories = event.content.questionCategories;
-      if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && !_.isEmpty(event.content.itemSets)) {
+      if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && !_.isEmpty(event.content.questionCategories)) {
         this.templateDetails.onClick = 'questionSetComponent';
-      } else if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && _.isEmpty(event.content.itemSets)) {
+      } else if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && _.isEmpty(event.content.questionCategories)) {
         this.templateDetails.onClick = 'editorComponent';
       } else if (event.content.mimeType === 'application/vnd.ekstep.quml-archive') {
         this.templateDetails.onClick = 'questionSetComponent';

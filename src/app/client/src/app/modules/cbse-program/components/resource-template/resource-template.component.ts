@@ -124,7 +124,7 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
   }
 
   setQuestionType(questionType) {
-    this.selectedtemplateDetails['questionCategories'] = [questionType];
+    this.selectedtemplateDetails['questionCategory'] = questionType;
   }
 
   submit() {
@@ -146,9 +146,9 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
         this.selectedtemplateDetails.mimeType = _.map(this.selectedtemplateDetails.editors, 'mimetype');
         break;
     }
-    this.selectedtemplateDetails['metadata'] = {};
-    this.selectedtemplateDetails.metadata['contentType'] = this.selectedtemplateDetails.name;
-    this.selectedtemplateDetails.metadata['primaryCategory'] = this.selectedtemplateDetails.name;
+
+    /*this.selectedtemplateDetails['metadata'] = {};
+    this.selectedtemplateDetails.metadata['primaryCategory'] = this.selectedtemplateDetails.name;*/
 
     let appEditorConfig = this.configService.contentCategoryConfig.sourcingConfig.files;
     let filesConfig =  _.map(this.selectedtemplateDetails.mimeType, (mimetype) => {
