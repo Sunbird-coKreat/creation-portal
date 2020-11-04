@@ -429,7 +429,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   getDetails() {
-      return of({'tenantDetails': {'logo': 'xyz.png'}, 'ownershipType': ['createdBy']});
+      return of({'tenantDetails': {'logo': '/tenant/ntp/logo.png' }, 'ownershipType': ['createdBy']});
   }
 
   showCommentAddedAgainstContent() {
