@@ -293,6 +293,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       if ( _.isUndefined(this.sessionContext.topicList) || _.isUndefined(this.sessionContext.frameworkData)) {
         this.fetchFrameWorkDetails();
       }
+      this.helperService.getCategoryMetaData(this.contentData.primaryCategory, _.get(this.programContext, 'rootorg_id'));
         } else {
           this.toasterService.warning(this.resourceService.messages.imsg.m0027);
         }
@@ -501,7 +502,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     // window.config.lock = {};
     window.config.videoMaxSize = this.videoMaxSize;
     window.config.headerConfig = {
-      'managecollaborator': false, 'sendforreview': false, 'limitedsharing': false, 'showPreview': false, 'showEditDetails': false
+      'managecollaborator': false, 'sendforreview': false, 'limitedsharing': false, 'showEditDetails': false
     };
   }
   /**

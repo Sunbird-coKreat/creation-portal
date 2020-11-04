@@ -89,6 +89,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   initialSourcingOrgUser = [];
   searchLimitMessage: any;
   searchLimitCount: any;
+  userRoles : any;
+
   visitedTab = [];
   @ViewChild('userRemoveRoleModal') userRemoveRoleModal;
   public userRemoveRoleLoader = false;
@@ -278,9 +280,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         }
 
         const roles = _.filter(this.roles, role => this.sessionContext.currentRoles.includes(role.name));
-
         this.sessionContext.currentRoleIds = !_.isEmpty(roles) ? _.map(roles, role => role.id) : null;
-
         if (this.userService.isUserBelongsToOrg()) {
           this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
             this.setOrgUsers(orgUsers);
@@ -391,6 +391,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.showUsersLoader = false;
       return false;
     }
+    this.userRoles = this.roles;
     this.allContributorOrgUsers = [];
     // Get only the users and skip admins
     orgUsers = _.filter(orgUsers, { "selectedRole": "user" });
@@ -406,6 +407,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           r.projectselectedRole = "REVIEWER";
         }
       }
+      r.projectselectedRole !=='Select Role' ? r.roles = this.roles : r.roles = this.userRoles
       r.newRole = r.projectselectedRole;
       this.allContributorOrgUsers.push(r);
     });
@@ -521,6 +523,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   updateUserRoleMapping(progRoleMapping, user) {
+  
     const req = {
       'request': {
         'program_id': this.activatedRoute.snapshot.params.programId,
@@ -533,6 +536,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.userRemoveRoleLoader = false;
       if (user.newRole === "NONE") {
         user.newRole = 'Select Role';
+        user.roles = this.userRoles;
+     
+      } else {
+        user.roles = this.roles;
       }
       user.projectselectedRole = user.newRole;
       this.nominationDetails.rolemapping = progRoleMapping;

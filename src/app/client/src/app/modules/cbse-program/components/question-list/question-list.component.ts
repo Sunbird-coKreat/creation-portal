@@ -280,6 +280,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.fetchQuestionList();
       }
+      this.helperService.getCategoryMetaData(this.resourceDetails.primaryCategory, _.get(this.programContext, 'rootorg_id'));
       this.handleActionButtons();
     });
   }

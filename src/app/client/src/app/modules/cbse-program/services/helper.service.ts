@@ -17,6 +17,7 @@ export class HelperService {
   private sendNotification = new Subject<string>();
   private _availableLicences: Array<any>;
   private _channelData: any;
+  private _categoryMetaData: any;
 
   constructor(private configService: ConfigService, private contentService: ContentService,
     private toasterService: ToasterService, private publicDataService: PublicDataService,
@@ -32,6 +33,20 @@ export class HelperService {
     if (programDetails.rootorg_id) {
       this.fetchChannelData(programDetails.rootorg_id);
     }
+  }
+
+  getCategoryMetaData(category, channelId) {
+    this.programsService.getCategoryDefinition(category, channelId).subscribe(data => {
+      this.selectedCategoryMetaData = data;
+    });
+  }
+
+  set selectedCategoryMetaData(data) {
+    this._categoryMetaData = data;
+  }
+
+  get selectedCategoryMetaData() {
+    return this._categoryMetaData;
   }
 
   getLicences(): Observable<any> {
@@ -414,7 +429,7 @@ export class HelperService {
     const categoryMasterList = sessionContext.frameworkData;
     _.forEach(categoryMasterList, (category) => {
       _.forEach(formFieldProperties, (formFieldCategory) => {
-        if (category.code === formFieldCategory.code) {
+        if (category.code === formFieldCategory.code && category.code !== 'learningOutcome') {
           formFieldCategory.range = category.terms;
         }
         if (formFieldCategory.code === 'learningOutcome') {
@@ -507,199 +522,8 @@ export class HelperService {
   }
 
   getFormConfiguration() {
-    return [{
-      'code': 'name',
-      'editable': true,
-      'displayProperty': 'Editable',
-      'dataType': 'text',
-      'renderingHints': {
-        'semanticColumnWidth': 'twelve'
-      },
-      'description': 'Name',
-      'index': 1,
-      'label': 'Name',
-      'required': true,
-      'name': 'Name',
-      'inputType': 'text',
-      'placeholder': 'Name'
-    },
-    // {
-    //   'code': 'board',
-    //   'visible': true,
-    //   'depends': [
-    //     'medium',
-    //     'gradeLevel',
-    //     'subject'
-    //   ],
-    //   'editable': true,
-    //   'displayProperty': 'Editable',
-    //   'dataType': 'text',
-    //   'renderingHints': {
-    //     'semanticColumnWidth': 'six'
-    //   },
-    //   'description': 'Education Board (Like MP Board, NCERT, etc)',
-    //   'index': 2,
-    //   'label': 'Board',
-    //   'required': false,
-    //   'name': 'Board',
-    //   'inputType': 'select',
-    //   'placeholder': 'Board'
-    // },
-    // {
-    //   'code': 'medium',
-    //   'visible': true,
-    //   'depends': [
-    //     'gradeLevel',
-    //     'subject'
-    //   ],
-    //   'editable': true,
-    //   'displayProperty': 'Editable',
-    //   'dataType': 'list',
-    //   'renderingHints': {
-    //     'semanticColumnWidth': 'six'
-    //   },
-    //   'description': 'Medium of instruction',
-    //   'index': 3,
-    //   'label': 'Medium',
-    //   'required': true,
-    //   'name': 'Medium',
-    //   'inputType': 'multiSelect',
-    //   'placeholder': 'Medium'
-    // },
-    // {
-    //   'code': 'gradeLevel',
-    //   'visible': true,
-    //   'depends': [
-    //     'subject'
-    //   ],
-    //   'editable': true,
-    //   'displayProperty': 'Editable',
-    //   'dataType': 'list',
-    //   'renderingHints': {
-    //     'semanticColumnWidth': 'six'
-    //   },
-    //   'description': 'Class',
-    //   'index': 4,
-    //   'label': 'Class',
-    //   'required': true,
-    //   'name': 'Class',
-    //   'inputType': 'multiSelect',
-    //   'placeholder': 'Class'
-    // },
-    // {
-    //   'code': 'subject',
-    //   'visible': true,
-    //   'editable': true,
-    //   'displayProperty': 'Editable',
-    //   'dataType': 'list',
-    //   'renderingHints': {
-    //     'semanticColumnWidth': 'six'
-    //   },
-    //   'description': 'Subject of the Content to use to teach',
-    //   'index': 5,
-    //   'label': 'Subject',
-    //   'required': true,
-    //   'name': 'Subject',
-    //   'inputType': 'multiSelect',
-    //   'placeholder': 'Subject'
-    // },
-    {
-      'code': 'learningOutcome',
-      'visible': true,
-      'editable': true,
-      'displayProperty': 'Editable',
-      'dataType': 'list',
-      'renderingHints': {
-        'semanticColumnWidth': 'six'
-      },
-      'description': 'Subject of the Content to use to teach',
-      'index': 2,
-      'label': 'Learning Outcome',
-      'required': false,
-      'name': 'learningOutcome',
-      'inputType': 'select',
-      'placeholder': 'learningOutcome'
-    },
-    {
-      'code': 'attributions',
-      'dataType': 'list',
-      'description': 'Attributions',
-      'editable': true,
-      'index': 3,
-      'inputType': 'text',
-      'label': 'Attributions',
-      'name': 'attribution',
-      'placeholder': '',
-      'renderingHints': {
-        'semanticColumnWidth': 'six'
-      },
-      'required': false
-    },
-    {
-      'code': 'author',
-      'dataType': 'text',
-      'description': 'Author',
-      'editable': true,
-      'renderingHints': {
-        'semanticColumnWidth': 'six'
-      },
-      'index': 4,
-      'inputType': 'text',
-      'label': 'Author',
-      'name': 'Author',
-      'placeholder': 'Author',
-      'required': true
-    },
-    {
-      'code': 'copyright',
-      'dataType': 'text',
-      'description': 'Copyright',
-      'editable': true,
-      'index': 5,
-      'inputType': 'text',
-      'label': 'Copyright',
-      'name': 'Copyright',
-      'placeholder': 'Copyright',
-      'renderingHints': {
-        'semanticColumnWidth': 'six'
-      },
-      'required': false
-    },
-    {
-      'code': 'license',
-      'visible': true,
-      'editable': true,
-      'displayProperty': 'Editable',
-      'dataType': 'text',
-      'renderingHints': {
-        'semanticColumnWidth': 'six'
-      },
-      'description': 'Subject of the Content to use to teach',
-      'index': 6,
-      'label': 'License',
-      'required': false,
-      'name': 'license',
-      'inputType': 'select',
-      'placeholder': 'license'
-    },
-    {
-      'code': 'additionalCategories',
-      'visible': true,
-      'editable': true,
-      'displayProperty': 'Editable',
-      'dataType': 'list',
-      'renderingHints': {
-        'semanticColumnWidth': 'six'
-      },
-      'description': 'Subject of the Content to use to teach',
-      'index': 7,
-      'label': 'Content Additional Categories',
-      'required': false,
-      'name': 'additionalCategories',
-      'inputType': 'multiSelect',
-      'placeholder': 'Content Additional Categories'
-    },
-    {
+    const formFields = _.get(this.selectedCategoryMetaData, 'result.objectCategoryDefinition.forms.update.properties');
+    const contentPolicyCheck = [{
       'code': 'contentPolicyCheck',
       'editable': true,
       'displayProperty': 'Editable',
@@ -708,13 +532,14 @@ export class HelperService {
         'semanticColumnWidth': 'twelve'
       },
       'description': 'Name',
-      'index': 8,
+      'index': formFields ? (formFields.length + 1) : 20,
       'label': 'Content PolicyCheck',
       'required': true,
       'name': 'contentPolicyCheck',
       'inputType': 'checkbox',
       'placeholder': 'Name'
     }];
+    return formFields && formFields.length ? [...formFields, ...contentPolicyCheck] : [];
   }
   /*getContentMetadata(componentInput: any) {
     const contentId = sessionContext.resourceIdentifier;

@@ -9,7 +9,6 @@ import * as _ from 'lodash-es';
 export class DataFormComponent implements OnInit {
   @Input() formFieldProperties: any;
   @Input() categoryMasterList: any;
-  boardd;
 
   /**
    * formInputData is to take input data's from form
@@ -22,7 +21,6 @@ export class DataFormComponent implements OnInit {
 
   constructor() {
     this.categoryList = {};
-    this.boardd = 'CBSEeeee';
   }
 
   setFormConfig() {
