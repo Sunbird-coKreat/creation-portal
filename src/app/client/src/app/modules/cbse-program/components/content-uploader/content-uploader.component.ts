@@ -6,8 +6,8 @@ import { PublicDataService, UserService, ActionService, PlayerService, Framework
   ProgramsService, ContentService} from '@sunbird/core';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import * as _ from 'lodash-es';
-import { catchError, map, first, filter } from 'rxjs/operators';
-import { throwError, Observable, Subscription } from 'rxjs';
+import { catchError, map, filter, take, takeUntil } from 'rxjs/operators';
+import { throwError, Observable, Subject } from 'rxjs';
 import { IContentUploadComponentInput} from '../../interfaces';
 import { FormGroup, FormArray, FormBuilder, Validators, NgForm } from '@angular/forms';
 import { CbseProgramService } from '../../services/cbse-program/cbse-program.service';
@@ -51,7 +51,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public showPreview = false;
   public resourceStatus;
   public resourceStatusText = '';
-  public notify;
   public config: any;
   public resourceStatusClass = '';
   public telemetryStart: IStartEventInput;
@@ -89,7 +88,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public contentComment: string;
   originPreviewUrl = '';
   originPreviewReady = false;
-  public azurFileUploaderSubscrition: Subscription;
   public fileUplaoderProgress = {
            progress: 0
          };
@@ -114,6 +112,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public requiredAction: string;
   public contentEditRole: string;
   public pageStartTime;
+  private onComponentDestroy$ = new Subject<any>();
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -151,7 +150,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.getUploadedContentMeta(_.get(this.contentUploadComponentInput, 'contentId'));
     }
     this.segregateFileTypes();
-    this.notify = this.helperService.getNotification().subscribe((action) => {
+    this.helperService.getNotification().pipe(takeUntil(this.onComponentDestroy$)).subscribe((action) => {
       this.contentStatusNotify(action);
     });
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
@@ -235,19 +234,23 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
      });
   }
 
-  showEditform(action) {
+  fetchFormconfiguration() {
     this.formFieldProperties = _.cloneDeep(this.helperService.getFormConfiguration());
-    this.requiredAction = action;
-    if (_.get(this.selectedSharedContext, 'topic')) {
-      // tslint:disable-next-line:max-line-length
-      this.sessionContext.topic = _.isArray(this.sessionContext.topic) ? this.selectedSharedContext.topic : _.split(this.selectedSharedContext.topic, ',');
-    }
     this.getEditableFields();
     _.forEach(this.formFieldProperties, field => {
       if (field.editable && !_.includes(this.editableFields, field.code)) {
         field['editable'] = false;
       }
     });
+  }
+
+  showEditform(action) {
+    this.fetchFormconfiguration();
+    this.requiredAction = action;
+    if (_.get(this.selectedSharedContext, 'topic')) {
+      // tslint:disable-next-line:max-line-length
+      this.sessionContext.topic = _.isArray(this.sessionContext.topic) ? this.selectedSharedContext.topic : _.split(this.selectedSharedContext.topic, ',');
+    }
 
     if (this.requiredAction === 'editForm') {
       this.formFieldProperties = _.filter(this.formFieldProperties, val => val.code !== 'contentPolicyCheck');
@@ -299,7 +302,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   canEditMetadata() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.resourceStatus === 'Draft' && (this.userService.getUserId() === this.contentMetaData.createdBy));
+    return !!(_.find(this.formFieldProperties, field => field.editable === true));
   }
 
   canSubmit() {
@@ -571,7 +574,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.uploadInprogress = true;
       if (this.videoFileFormat) {
         // tslint:disable-next-line:max-line-length
-        this.azurFileUploaderSubscrition = this.azureUploadFileService.uploadToBlob(signedURL, this.uploader.getFile(0)).subscribe((event: any) => {
+        this.azureUploadFileService.uploadToBlob(signedURL, this.uploader.getFile(0)).pipe(takeUntil(this.onComponentDestroy$)).subscribe((event: any) => {
           this.fileUplaoderProgress.progress = event.percentComplete;
           this.fileUplaoderProgress['remainingTime'] = event.remainingTime;
         }, (error) => {
@@ -731,7 +734,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       if ( _.isUndefined(this.sessionContext.topicList) || _.isUndefined(this.sessionContext.frameworkData)) {
         this.fetchFrameWorkDetails();
       }
-      this.helperService.getCategoryMetaData(this.contentMetaData.primaryCategory, _.get(this.programContext, 'rootorg_id'));
+      this.fetchCategoryDetails();
       this.getTelemetryData();
       this.cd.detectChanges();
     });
@@ -773,8 +776,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   fetchFrameWorkDetails() {
     this.frameworkService.initialize(this.sessionContext.framework);
-    this.frameworkService.frameworkData$.pipe(filter(data => _.get(data, `frameworkdata.${this.sessionContext.framework}`)),
-      first()).subscribe((frameworkDetails: any) => {
+    this.frameworkService.frameworkData$.pipe(takeUntil(this.onComponentDestroy$),
+      filter(data => _.get(data, `frameworkdata.${this.sessionContext.framework}`)), take(1)).subscribe((frameworkDetails: any) => {
       if (frameworkDetails && !frameworkDetails.err) {
         const frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
         // this.categoryMasterList = _.cloneDeep(frameworkDetails.frameworkdata[this.sessionContext.framework].categories);
@@ -782,6 +785,14 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         this.sessionContext.topicList = _.get(_.find(frameworkData, { code: 'topic' }), 'terms');
       }
     });
+  }
+
+  fetchCategoryDetails() {
+    this.helperService.categoryMetaData$.pipe(take(1), takeUntil(this.onComponentDestroy$)).subscribe(data => {
+      this.fetchFormconfiguration();
+      this.handleActionButtons();
+    });
+    this.helperService.getCategoryMetaData(this.contentMetaData.primaryCategory, _.get(this.programContext, 'rootorg_id'));
   }
 
   changePolicyCheckValue (event) {
@@ -1062,11 +1073,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   ngOnDestroy() {
-    this.notify.unsubscribe();
-    if (this.azurFileUploaderSubscrition) {
-      this.azurFileUploaderSubscrition.unsubscribe();
-    }
     this.showEditMetaForm = false;
+    this.onComponentDestroy$.next();
+    this.onComponentDestroy$.complete();
   }
 
   showCommentAddedAgainstContent() {

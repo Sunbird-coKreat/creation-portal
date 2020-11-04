@@ -28,8 +28,8 @@
     <div #contentTitle class="font-weight-bold fs-1">
       <div class="d-flex flex-ai-center"><div class="practical-header__title font-weight-bold" suiPopup popupText="{{contentData ? contentData.name : contentEditorComponentInput.content.name}}">
         {{contentData ? contentData.name : contentEditorComponentInput.content.name}} </div>
-              <span class="sb-color-primary font-weight-normal fs-0-785 ml-20">
-                <i class="icon edit sb-color-primary cursor-pointer"></i>
+              <span class="sb-color-primary font-weight-normal fs-0-785 ml-20" *ngIf="formFieldProperties && formFieldProperties.length">
+                <i [ngClass]="{'edit': visibility && visibility.showEditMetadata, 'eye': visibility && !(visibility.showEditMetadata)}" class="icon sb-color-primary cursor-pointer"></i>
                 <a class="cursor-pointer text-underline text-capitalize"
                 appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata((visibility && visibility.showEditMetadata) ? 'Edit details' : 'View details', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
