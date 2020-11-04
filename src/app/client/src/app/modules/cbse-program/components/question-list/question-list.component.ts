@@ -120,7 +120,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.actions = _.get(this.programContext, 'config.actions');
     this.sharedContext = _.get(this.programContext, 'config.sharedContext');
     this.sessionContext.resourceIdentifier = _.get(this.practiceQuestionSetComponentInput, 'contentIdentifier');
-    this.sessionContext.questionType = this.templateDetails.questionCategories[0];
+    //this.sessionContext.questionType = _.lowerCase(_.nth(this.templateDetails.questionCategories, 0));
     this.sessionContext.textBookUnitIdentifier = _.get(this.practiceQuestionSetComponentInput, 'unitIdentifier');
     this.practiceSetConfig = _.get(this.practiceQuestionSetComponentInput, 'config');
     this.sourcingReviewStatus = _.get(this.practiceQuestionSetComponentInput, 'sourcingStatus') || '';

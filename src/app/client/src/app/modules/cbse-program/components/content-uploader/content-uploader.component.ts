@@ -514,8 +514,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
               'code': UUID.UUID(),
               'mimeType': this.detectMimeType(this.uploader.getName(0)),
               'createdBy': this.userService.getUserId(),
-              'primaryCategory': this.templateDetails.metadata.primaryCategory,
-              'resourceType': this.templateDetails.metadata.resourceType || 'Learn',
+              'primaryCategory': this.templateDetails.name,
               'creator': creator,
               'collectionId': this.sessionContext.collection,
               ...(this.sessionContext.nominationDetails &&
@@ -524,8 +523,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
               'programId': this.sessionContext.programId,
               'unitIdentifiers': [this.unitIdentifier],
               ...(_.pickBy(reqBody, _.identity))
-              // 'framework': this.sessionContext.framework,
-              // 'organisation': this.sessionContext.onBoardSchool ? [this.sessionContext.onBoardSchool] : [],
             }
           }
         }
@@ -533,8 +530,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       if (this.sessionContext.sampleContent) {
         option.data.request.content.sampleContent = this.sessionContext.sampleContent;
       }
-      if (this.templateDetails.metadata.appIcon) {
-        option.data.request.content.appIcon = this.templateDetails.metadata.appIcon;
+      if (_.get(this.templateDetails, 'appIcon')) {
+        option.data.request.content.appIcon = _.get(this.templateDetails, 'appIcon');
       }
 
       this.actionService.post(option).pipe(map((res: any) => res.result), catchError(err => {
