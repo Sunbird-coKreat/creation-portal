@@ -410,9 +410,11 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
           this.direction = 'desc';
           this.sortCollection(this.sortColumn);
         }
+        this.logTelemetryImpressionEvent();
         this.showLoader = false;
       }, error => {
         console.log(error);
+        this.logTelemetryImpressionEvent();
         const errInfo = {
           telemetryPageId: this.telemetryPageId,
           telemetryCdata : this.telemetryInteractCdata,
