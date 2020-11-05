@@ -207,13 +207,23 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         },
         edata: {
-          type: this.configService.telemetryLabels.pageType.view || _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
+          type: this.getTelemetryPageType(),
           pageid: this.telemetryPageId,
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
      });
+  }
+
+  getTelemetryPageType() {
+    if (this.router.url.includes('/contribute')) {
+      return this.configService.telemetryLabels.pageType.edit;
+    } else if (this.router.url.includes('/sourcing')) {
+      return this.configService.telemetryLabels.pageType.view;
+    } else {
+      return _.get(this.activeRoute, 'snapshot.data.telemetry.type');
+    }
   }
 
   fetchFrameWorkDetails() {
