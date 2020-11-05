@@ -99,9 +99,10 @@ export class BulkUploadComponent implements OnInit {
   }
 
   getContentTypes() {
-    this.contentTypes = _.filter(this.programsService.contentTypes, (type) => {
+    this.contentTypes = _.get(this.programContext, 'content_types');
+    /* _.filter(this.programsService.contentTypes, (type) => {
       return _.includes(_.get(this.programContext, 'content_types'), type.value);
-    });
+    });*/
   }
 
   getLicences() {
@@ -426,7 +427,7 @@ export class BulkUploadComponent implements OnInit {
       this.setError(`Invalid data found in columns: ${invalidColumns.join(',')}`);
     };
 
-    const contentTypes = _.union(_.concat(this.contentTypes.map((type) => type.name), this.contentTypes.map((type) => type.value)));
+    const contentTypes = this.contentTypes;//_.union(_.concat(this.contentTypes.map((type) => type.name), this.contentTypes.map((type) => type.value)));
     const licenses = this.licenses.map((license) => license.name);
 
     const headers = [
@@ -496,16 +497,15 @@ export class BulkUploadComponent implements OnInit {
       // Validate the content types
       row.contentType = _.toLower(row.contentType);
       let contentType = _.find(this.contentTypes, (content_type) => {
-        return (_.toLower(content_type.name) === row.contentType || _.toLower(content_type.value) === row.contentType);
+        return (_.toLower(content_type));
       });
-
-      if (_.isEmpty(_.get(contentType, 'value'))) {
+      if (_.isEmpty(contentType)) {
         this.setError(`Content Type has invalid value at row: ${rowIndex}`);
         this.bulkUploadState = 4;
         return;
       }
 
-      row.contentType = _.get(contentType, 'value');
+      row.contentType = contentType;
     };
     const maxRowsError = (maxRows, actualRows) => {
       this.setError(`Expected max ${maxRows} rows but found ${actualRows} rows in the file`);
@@ -599,10 +599,9 @@ export class BulkUploadComponent implements OnInit {
         audience: [_.upperFirst(_.toLower(row.audience))],
         code: UUID.UUID(),
         mimeType: this.mimeTypes[_.toLower(row.fileFormat)],
-        contentType: row.contentType,
+        primaryCategory: row.contentType,
         lastPublishedBy: userId,
         createdBy: userId,
-        resourceType: 'Learn',
         collectionId: collectionId,
         programId: _.get(this.sessionContext, 'programId', ''),
         unitIdentifiers: [unitId],
