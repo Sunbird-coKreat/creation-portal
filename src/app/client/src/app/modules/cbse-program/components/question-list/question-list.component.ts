@@ -137,7 +137,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.contentStatusNotify(action);
     });
 
-    if ( _.isUndefined(this.sessionContext.topicList)) {
+    if ( _.isUndefined(this.sessionContext.topicList) || _.isUndefined(this.sessionContext.frameworkData)) {
       this.fetchFrameWorkDetails();
     }
     this.pageStartTime = Date.now();
