@@ -283,11 +283,16 @@
 									<sui-multi-select placeholder="{{resource?.frmelmnts?.lbl?.selectMedium}}"
 										class="selection p-5" formControlName="medium"
 										[options]="programScope['medium']" [isDisabled]="!programScope['medium']"
-										(ngModelChange)="onMediumChange()" labelField="name" #mediums>
+										(ngModelChange)="onMediumChange()" labelField="name" #mediums
+										appTelemetryInteract
+										[telemetryInteractEdata]="getTelemetryInteractEdata('medium', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">
 										<sui-select-option *ngFor="let medium of mediums.filteredOptions"
 											[value]="medium"
 											appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('medium', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {values: [medium.name]})"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('medium', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements, {values: [medium.name]})"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata"> </sui-select-option>
@@ -308,11 +313,16 @@
 									<sui-multi-select placeholder="{{resource?.frmelmnts?.lbl?.selectGrade}}"
 										class="selection p-5" formControlName="gradeLevel" labelField="name"
 										(ngModelChange)="onClassChange()" [options]="programScope['gradeLevel']"
-										#graveLevels>
+										#graveLevels
+										appTelemetryInteract
+										[telemetryInteractEdata]="getTelemetryInteractEdata('grade', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">
 										<sui-select-option *ngFor="let gradeLevel of graveLevels.filteredOptions"
 											[value]="gradeLevel"
 											appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('grade', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {values: [gradeLevel.name]})"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('grade', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements, {values: [gradeLevel.name]})"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">
@@ -333,11 +343,16 @@
 									<sui-multi-select placeholder="{{resource?.frmelmnts?.lbl?.selectSubject}}"
 										class="selection p-5" formControlName="subject" labelField="name"
 										[hasLabels]="true" [options]="programScope['subject']" valueField="name"
-										#subjects>
+										#subjects
+										appTelemetryInteract
+										[telemetryInteractEdata]="getTelemetryInteractEdata('subject', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">
 										<sui-select-option *ngFor="let subject of subjects.filteredOptions"
 											[value]="subject"
 											appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('subject', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {values: [subject.name]})"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('subject', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements, {values: [subject.name]})"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">
@@ -354,7 +369,7 @@
 									<button class="sb-btn sb-btn-normal sb-btn-outline-primary"
 										(click)="resetFilters()"
 										appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('reset', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel,telemetryPageId)"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('reset', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">
@@ -362,7 +377,7 @@
 									</button>
 									<button class="sb-btn sb-btn-normal sb-btn-primary ml-8" (click)="showTexbooklist()"
 										appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('apply', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,telemetryPageId)"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('apply', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">
@@ -444,7 +459,7 @@
 														[checked]="collectionListForm.value.pcollections.indexOf(data.identifier) != -1"
 														name="checkitem"
 														appTelemetryInteract
-														[telemetryInteractEdata]="getTelemetryInteractEdata('textbook_selection_checkbox', configService.telemetryLabels.eventType.click, undefined, telemetryPageId, {values: [data.identifier]})"
+														[telemetryInteractEdata]="getTelemetryInteractEdata('textbook_selection_checkbox', configService.telemetryLabels.eventType.click, undefined, configService.telemetryLabels.pageId.sourcing.createProjectRequirements, {values: [data.identifier]})"
 														[telemetryInteractObject]="telemetryInteractObject"
 														[telemetryInteractCdata]="telemetryInteractCdata"
 														[telemetryInteractPdata]="telemetryInteractPdata">
@@ -516,7 +531,7 @@
 											</div>
 											<div class="two wide column text-right cursor-pointer"
 												(click)="onCollectionCheck(tempCollection, false)" appTelemetryInteract
-												[telemetryInteractEdata]="getTelemetryInteractEdata('collection_check', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel, telemetryPageId)"
+												[telemetryInteractEdata]="getTelemetryInteractEdata('collection_check', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel, configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
 												[telemetryInteractObject]="telemetryInteractObject"
 												[telemetryInteractCdata]="telemetryInteractCdata"
 												[telemetryInteractPdata]="telemetryInteractPdata">
