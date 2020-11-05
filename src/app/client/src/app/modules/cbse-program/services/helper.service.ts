@@ -7,6 +7,7 @@ import { catchError, map, switchMap, tap, mergeMap, filter, first, skipWhile } f
 import * as _ from 'lodash-es';
 import { ProgramStageService } from '../../program/services';
 import { CacheService } from 'ng2-cache-service';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +28,7 @@ export class HelperService {
     private actionService: ActionService, private resourceService: ResourceService,
     public programStageService: ProgramStageService, private programsService: ProgramsService,
     private notificationService: NotificationService, private userService: UserService, private cacheService: CacheService,
-    public frameworkService: FrameworkService) { }
+    public frameworkService: FrameworkService, private httpClient: HttpClient) { }
 
   initialize(programDetails) {
     if (!this.getAvailableLicences()) {
@@ -184,7 +185,7 @@ export class HelperService {
   }
 
 
-  publishContentToDiksha(action, collectionId, contentId, originData, rejectedComments?) {
+  publishContentToDiksha(action, collectionId, contentId, originData, contentMetaData, rejectedComments?) {
     const option = {
       url: 'content/v3/read/' + collectionId,
       param: { 'mode': 'edit', 'fields': 'acceptedContents,rejectedContents,versionKey,sourcingRejectedComments' }
@@ -195,25 +196,34 @@ export class HelperService {
     this.actionService.get(option).pipe(map((res: any) => res.result.content)).subscribe((data) => {
       if (this.checkIfContentPublishedOrRejected(data, action, contentId)) { return; }
       if (action === 'accept' || action === 'acceptWithChanges') {
-        const req = {
-          url: `program/v1/content/publish`,
-          data: {
-            'request': {
-              'content_id': contentId,
-              'origin': {
-                'channel': _.get(originData, 'channel'),
-                'textbook_id': _.get(originData, 'textbookOriginId'),
-                'units': [_.get(originData, 'unitOriginId')],
-                'lastPublishedBy': this.userService.userProfile.userId
-              }
+        // tslint:disable-next-line:max-line-length
+        const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
+        ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : window.location.origin;
+
+        const reqFormat = {
+          source: `${baseUrl}/api/content/v1/read/${contentMetaData.identifier}`,
+          metadata: _.pick(contentMetaData, ['name', 'code', 'mimeType', 'framework', 'contentType']),
+          collection: [
+            {
+              identifier: originData.textbookOriginId,
+              unitId: originData.unitOriginId,
             }
+          ]
+        };
+        const contentData = {
+          request: {
+            content: [
+              reqFormat
+            ]
           }
         };
-        this.programsService.post(req).subscribe((response) => {
-          const me = this;
-          setTimeout(() => {
-            me.attachContentToTextbook(action, collectionId, contentId, data);
-          }, 1000);
+        this.httpClient.post('learner/content/v1/import', contentData).subscribe((res: any) => {
+          if (res && res.result) {
+            const me = this;
+            setTimeout(() => {
+              me.attachContentToTextbook(action, collectionId, contentId, data);
+            }, 1000);
+          }
         }, err => {
           this.acceptContent_errMsg(action);
         });
