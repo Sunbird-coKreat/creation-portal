@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { ConfigService, ToasterService, ServerResponse, ResourceService } from '@sunbird/shared';
 import { ContentService, ActionService, PublicDataService, ProgramsService, NotificationService, UserService,
-  FrameworkService } from '@sunbird/core';
+  FrameworkService, LearnerService } from '@sunbird/core';
 import { throwError, Observable, of, Subject, forkJoin } from 'rxjs';
 import { catchError, map, switchMap, tap, mergeMap, filter, first, skipWhile } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 import { ProgramStageService } from '../../program/services';
 import { CacheService } from 'ng2-cache-service';
-import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +27,7 @@ export class HelperService {
     private actionService: ActionService, private resourceService: ResourceService,
     public programStageService: ProgramStageService, private programsService: ProgramsService,
     private notificationService: NotificationService, private userService: UserService, private cacheService: CacheService,
-    public frameworkService: FrameworkService, private httpClient: HttpClient) { }
+    public frameworkService: FrameworkService, public learnerService: LearnerService) { }
 
   initialize(programDetails) {
     if (!this.getAvailableLicences()) {
@@ -210,14 +209,17 @@ export class HelperService {
             }
           ]
         };
-        const contentData = {
-          request: {
-            content: [
-              reqFormat
-            ]
+        const option = {
+          url: this.configService.urlConFig.URLS.BULKJOB.DOCK_IMPORT_V1,
+          data: {
+            request: {
+              content: [
+                reqFormat
+              ]
+            }
           }
         };
-        this.httpClient.post('learner/content/v1/import', contentData).subscribe((res: any) => {
+        this.learnerService.post(option).subscribe((res: any) => {
           if (res && res.result) {
             const me = this;
             setTimeout(() => {
