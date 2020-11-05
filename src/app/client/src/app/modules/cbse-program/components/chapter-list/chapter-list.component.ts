@@ -791,29 +791,32 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   handlePreview(event) {
-    const templateList = this.programsService.contentCategories;
-    const appEditorConfig = this.configService.contentCategoryConfig.sourcingConfig.files;
-    const acceptedFile = appEditorConfig[event.content.mimeType];
-    this.templateDetails = _.find(templateList, (templateData) => {
-      return templateData.name === event.content.primaryCategory;
-    });
-    this.templateDetails['filesConfig'] = {};
-    this.templateDetails.filesConfig['accepted'] = acceptedFile || '';
-    this.templateDetails.filesConfig['size'] = this.configService.contentCategoryConfig.sourcingConfig.defaultfileSize;
-    if (this.templateDetails) {
-      this.templateDetails.questionCategories = event.content.questionCategories;
-      if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && !_.isEmpty(event.content.questionCategories)) {
-        this.templateDetails.onClick = 'questionSetComponent';
-      } else if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && _.isEmpty(event.content.questionCategories)) {
-        this.templateDetails.onClick = 'editorComponent';
-      } else if (event.content.mimeType === 'application/vnd.ekstep.quml-archive') {
-        this.templateDetails.onClick = 'questionSetComponent';
-      } else {
-        this.templateDetails.onClick = 'uploadComponent';
+    //const templateList = this.programsService.contentCategories;
+    this.programsService.getCategoryDefinition(event.content.primaryCategory, this.programContext.rootorg_id).subscribe((res)=>{
+      this.templateDetails = res.result.objectCategoryDefinition;
+      if (this.templateDetails) {
+        const appEditorConfig = this.configService.contentCategoryConfig.sourcingConfig.files;
+        const acceptedFile = appEditorConfig[event.content.mimeType];
+        this.templateDetails['filesConfig'] = {};
+        this.templateDetails.filesConfig['accepted'] = acceptedFile || '';
+        this.templateDetails.filesConfig['size'] = this.configService.contentCategoryConfig.sourcingConfig.defaultfileSize;
+        this.templateDetails.questionCategories = event.content.questionCategories;
+        if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && !_.isEmpty(event.content.questionCategories)) {
+          this.templateDetails.onClick = 'questionSetComponent';
+        } else if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && _.isEmpty(event.content.questionCategories)) {
+          this.templateDetails.onClick = 'editorComponent';
+        } else if (event.content.mimeType === 'application/vnd.ekstep.quml-archive') {
+          this.templateDetails.onClick = 'questionSetComponent';
+        } else {
+          this.templateDetails.onClick = 'uploadComponent';
+        }
+        this.componentLoadHandler('preview',
+        this.programComponentsService.getComponentInstance(this.templateDetails.onClick), this.templateDetails.onClick, event);
       }
-    this.componentLoadHandler('preview',
-    this.programComponentsService.getComponentInstance(this.templateDetails.onClick), this.templateDetails.onClick, event);
-    }
+    }, (error)=> {
+      this.toasterService.error(this.resourceService.messages.emsg.m0027);
+      return false;
+    });
   }
 
   componentLoadHandler(action, component, componentName, event?) {
