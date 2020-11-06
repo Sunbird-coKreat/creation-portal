@@ -72,6 +72,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   public contentComment: string;
   public showReviewModal: boolean;
   private onComponentDestroy$ = new Subject<any>();
+  public showPlayer: boolean;
 
   constructor(
     private resourceService: ResourceService,
@@ -153,6 +154,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
           this.logo = data.tenantDetails.logo;
           this.ownershipType = data.ownershipType;
           this.showLoader = false;
+          this.showPlayer = false;
           this.initEditor();
           this.setWindowContext();
           this.setWindowConfig();
@@ -309,6 +311,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     // tslint:disable-next-line:max-line-length
     if (this.showPreview || this.canViewContentPreview()) {
       this.showPreview = true;
+      this.showPlayer = true;
       this.showLoader = false;
     } else {
       this.loadContentEditor();
