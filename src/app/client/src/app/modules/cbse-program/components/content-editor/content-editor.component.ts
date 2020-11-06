@@ -557,6 +557,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
         this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
         .subscribe((data) => {
           this.showEditMetaForm = false;
+          this.showPlayer = false; // Load the Player again after content save
           if (cb) {
             cb.call(this);
           } else {
