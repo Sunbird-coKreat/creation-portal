@@ -57,7 +57,7 @@
     </div>
   </div>
   <div class="sb-modal-actions">
-    <button class="sb-btn sb-btn-normal" [disabled]="!showmodeButton" [ngClass]="{'sb-btn-primary': showmodeButton, 'sb-btn-disabled': !showmodeButton}" (click)="handleModeOfCreation()"
+    <button class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': showButton, 'sb-btn-disabled': !showButton}" (click)="handleModeOfCreation()"
     appTelemetryInteract
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('templateSelection-button', 'click', 'chapter-list')"
             [telemetryInteractObject]="telemetryInteractObject"
@@ -97,7 +97,7 @@
     </div>
   </div>
   <div class="sb-modal-actions">
-    <button class="sb-btn sb-btn-normal"[disabled]="!showtempButton" [ngClass]="{'sb-btn-primary': showtempButton, 'sb-btn-disabled': !showtempButton}" (click)="submit()"
+    <button class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': showButton, 'sb-btn-disabled': !showButton}" (click)="submit()"
     appTelemetryInteract
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('templateSelection-button', 'click', 'chapter-list')"
             [telemetryInteractObject]="telemetryInteractObject"

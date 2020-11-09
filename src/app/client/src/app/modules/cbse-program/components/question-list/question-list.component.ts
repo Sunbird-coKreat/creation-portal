@@ -766,7 +766,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   saveContent(actionStatus: string) {
-    this.toasterService.success("Content saved Successfully");
     const selectedQuestionsData = _.reduce(this.questionList, (final, question) => {
       final.ids.push(_.get(question, 'identifier'));
       final.author.push(_.get(question, 'author'));
