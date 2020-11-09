@@ -109,7 +109,7 @@
         <input (change)="uploadImage($event)" type="file" [accept]="acceptImageType" name="assetfile">
       </button>
       <!-- <p class="fsmall my-">Drag and Drop files here</p> -->
-      <span class="fsmall mt-16">Upload {{assetConfig.image.accepted}} (Max File size: {{assetConfig.image.size}}MB)</span>
+      <span class="fsmall mt-16">Upload {{assetConfig.imageFiles}} (Max File size: {{assetConfig.defaultfileSize}}MB)</span>
       <div *ngIf="showErrorMsg" class="sb-color-error fsmall mt-8">
         <p>{{errorMsg}}</p>
       </div>
@@ -203,7 +203,7 @@
                 <div class="qq-upload-button-selector qq-upload-button sb-btn sb-btn-normal sb-btn-success">
                   <div>Select Files</div>
                 </div>
-                <p class="mt-8">Upload {{assetConfig.video.accepted}} files ( Max size {{assetConfig.video.size}} MB )</p>
+                <p class="mt-8">Upload {{assetConfig.videoFiles}} files ( Max size {{assetConfig.defaultfileSize}} MB )</p>
               </div>
               <dialog class="qq-confirm-dialog-selector">
                 <div class="qq-dialog-message-selector"></div>
@@ -310,7 +310,7 @@
         </div>
         <div class="ui info message">
           <p>Allowed file types are: jpeg, jpg, png</p>
-          <p>Maximum allowed file size: {{assetConfig.image.size}} MB</p>
+          <p>Maximum allowed file size: {{assetConfig.defaultfileSize}} MB</p>
         </div>
         <div *ngIf="showErrorMsg" class="ui error message">
           <p>{{errorMsg}}</p>

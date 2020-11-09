@@ -5,10 +5,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigService, ToasterService, ResourceService, NavigationHelperService } from '@sunbird/shared';
 import { UserService, ActionService, ContentService, NotificationService, ProgramsService, FrameworkService } from '@sunbird/core';
 import { TelemetryService, IStartEventInput, IEndEventInput} from '@sunbird/telemetry';
-import { tap, map, catchError, mergeMap, first, filter } from 'rxjs/operators';
+import { tap, map, catchError, mergeMap, first, filter, takeUntil, take } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
-import { of, forkJoin, throwError } from 'rxjs';
+import { of, forkJoin, throwError, Subject } from 'rxjs';
 import { CbseProgramService } from '../../services';
 import { ItemsetService } from '../../services/itemset/itemset.service';
 import { HelperService } from '../../services/helper.service';
@@ -42,7 +42,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public roles: any;
   public templateDetails: any;
   public actions: any;
-  public notify;
   public questionList: Array<any> = [];
   public selectedQuestionId: any;
   public questionReadApiDetails: any = {};
@@ -93,6 +92,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public telemetryStart: IStartEventInput;
   public telemetryEnd: IEndEventInput;
   public pageStartTime;
+  private onComponentDestroy$ = new Subject<any>();
 
   constructor(
     public configService: ConfigService, private userService: UserService,
@@ -120,7 +120,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.actions = _.get(this.programContext, 'config.actions');
     this.sharedContext = _.get(this.programContext, 'config.sharedContext');
     this.sessionContext.resourceIdentifier = _.get(this.practiceQuestionSetComponentInput, 'contentIdentifier');
-    this.sessionContext.questionType = this.templateDetails.questionCategories[0];
+    //this.sessionContext.questionType = _.lowerCase(_.nth(this.templateDetails.questionCategories, 0));
     this.sessionContext.textBookUnitIdentifier = _.get(this.practiceQuestionSetComponentInput, 'unitIdentifier');
     this.practiceSetConfig = _.get(this.practiceQuestionSetComponentInput, 'config');
     this.sourcingReviewStatus = _.get(this.practiceQuestionSetComponentInput, 'sourcingStatus') || '';
@@ -133,11 +133,11 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getLicences();
     this.preprareTelemetryEvents();
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
-    this.notify = this.helperService.getNotification().subscribe((action) => {
+    this.helperService.getNotification().pipe(takeUntil(this.onComponentDestroy$)).subscribe((action) => {
       this.contentStatusNotify(action);
     });
 
-    if ( _.isUndefined(this.sessionContext.topicList)) {
+    if ( _.isUndefined(this.sessionContext.topicList) || _.isUndefined(this.sessionContext.frameworkData)) {
       this.fetchFrameWorkDetails();
     }
     this.pageStartTime = Date.now();
@@ -207,7 +207,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         },
         edata: {
-          type: this.configService.telemetryLabels.pageType.view || _.get(this.activeRoute, 'snapshot.data.telemetry.type'),
+          type: this.getTelemetryPageType(),
           pageid: this.telemetryPageId,
           uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
@@ -216,16 +216,34 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
      });
   }
 
+  getTelemetryPageType() {
+    if (this.router.url.includes('/contribute')) {
+      return this.configService.telemetryLabels.pageType.edit;
+    } else if (this.router.url.includes('/sourcing')) {
+      return this.configService.telemetryLabels.pageType.view;
+    } else {
+      return _.get(this.activeRoute, 'snapshot.data.telemetry.type');
+    }
+  }
+
   fetchFrameWorkDetails() {
     this.frameworkService.initialize(this.sessionContext.framework);
-    this.frameworkService.frameworkData$.pipe(filter(data => _.get(data, `frameworkdata.${this.sessionContext.framework}`)), 
-    first()).subscribe((frameworkDetails: any) => {
+    this.frameworkService.frameworkData$.pipe(takeUntil(this.onComponentDestroy$),
+    filter(data => _.get(data, `frameworkdata.${this.sessionContext.framework}`)), take(1)).subscribe((frameworkDetails: any) => {
       if (frameworkDetails && !frameworkDetails.err) {
         const frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
         this.sessionContext.frameworkData = frameworkData;
         this.sessionContext.topicList = _.get(_.find(frameworkData, { code: 'topic' }), 'terms');
       }
     });
+  }
+
+  fetchCategoryDetails() {
+    this.helperService.categoryMetaData$.pipe(take(1), takeUntil(this.onComponentDestroy$)).subscribe(data => {
+      this.fetchFormconfiguration();
+      this.handleActionButtons();
+    });
+    this.helperService.getCategoryMetaData(this.resourceDetails.primaryCategory, _.get(this.programContext, 'rootorg_id'));
   }
 
   public preprareTelemetryEvents() {
@@ -280,8 +298,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.fetchQuestionList();
       }
-      this.helperService.getCategoryMetaData(this.resourceDetails.primaryCategory, _.get(this.programContext, 'rootorg_id'));
       this.handleActionButtons();
+      this.fetchCategoryDetails();
     });
   }
 
@@ -359,19 +377,24 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  showEditform(action) {
+  fetchFormconfiguration() {
     this.formFieldProperties = _.cloneDeep(this.helperService.getFormConfiguration());
-    this.requiredAction = action;
-    if (_.get(this.selectedSharedContext, 'topic')) {
-      // tslint:disable-next-line:max-line-length
-      this.sessionContext.topic = _.isArray(this.sessionContext.topic) ? this.selectedSharedContext.topic : _.split(this.selectedSharedContext.topic, ',');
-    }
     this.getEditableFields();
     _.forEach(this.formFieldProperties, field => {
       if (field.editable && !_.includes(this.editableFields, field.code)) {
         field['editable'] = false;
       }
     });
+  }
+
+  showEditform(action) {
+    this.fetchFormconfiguration();
+    this.requiredAction = action;
+    if (_.get(this.selectedSharedContext, 'topic')) {
+      // tslint:disable-next-line:max-line-length
+      this.sessionContext.topic = _.isArray(this.sessionContext.topic) ? this.selectedSharedContext.topic : _.split(this.selectedSharedContext.topic, ',');
+    }
+
     if (this.requiredAction === 'editForm') {
       this.formFieldProperties = _.filter(this.formFieldProperties, val => val.code !== 'contentPolicyCheck');
     }
@@ -515,7 +538,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   canEditMetadata() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.resourceStatus === 'Draft' && (this.userService.getUserId() === this.resourceDetails.createdBy));
+    return !!(_.find(this.formFieldProperties, field => field.editable === true));
   }
 
   canPublishContent() {
@@ -1201,7 +1224,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.sessionContext.questionList = [];
-    this.notify.unsubscribe();
+    this.onComponentDestroy$.next();
+    this.onComponentDestroy$.complete();
   }
 
   handleBack() {

@@ -62,6 +62,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public programContentTypes: string;
   public roles;
   public roleNames;
+  public selectRole;
   public currentNominationStatus: any;
   public nominationDetails: any = {};
   public nominated = false;
@@ -264,11 +265,12 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       if (!_.isEmpty(nominationDetails) && this.nominationDetails.status !== 'Initiated') {
         this.nominated = true;
         this.sessionContext.nominationDetails = nominationDetails;
+        
         this.currentNominationStatus = _.get(nominationDetails, 'status');
         if (this.userService.isUserBelongsToOrg()) {
           this.sessionContext.currentOrgRole = _.first(this.userService.getUserOrgRole());
           if (this.sessionContext.currentOrgRole === 'admin') {
-            this.sessionContext.currentRoles = (['Approved', 'Rejected'].includes(this.currentNominationStatus)) ? ['REVIEWER'] : ['CONTRIBUTOR'];
+            this.sessionContext.currentRoles = (['Approved','Rejected'].includes(this.currentNominationStatus)) ? ['REVIEWER'] : ['CONTRIBUTOR'];
           } else if (this.sessionContext.nominationDetails.rolemapping) {
             this.sessionContext.currentRoles = this.userService.getMyRoleForProgram(this.nominationDetails);
           } else {
@@ -438,8 +440,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   showUserRoleOption(roleName, userRole) {
-    if (!(roleName !== 'NONE' || (roleName === 'NONE' && userRole !== 'Select Role'))) {
-     return 'Select Role'
+    this.selectRole=this.roles;
+     if (!(roleName !== 'NONE' || (roleName === 'NONE' && userRole !== 'Select Role'))) {
+       this.selectRole.splice(3);
+       return roleName;
     } else {
       return roleName;
     }

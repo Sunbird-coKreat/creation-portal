@@ -744,8 +744,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               'code': UUID.UUID(),
               'mimeType': this.templateDetails.mimeType[0],
               'createdBy': this.userService.userid,
-              'primaryCategory': this.templateDetails.metadata.primaryCategory,
-              'resourceType': this.templateDetails.metadata.resourceType || 'Learn',
+              'primaryCategory': this.templateDetails.name,
               'creator': creator,
               'programId': this.sessionContext.programId,
               'collectionId': this.sessionContext.collection,
@@ -760,8 +759,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       if (this.sampleContent) {
         option.data.request.content.sampleContent = this.sampleContent;
       }
-      if (this.templateDetails.metadata.appIcon) {
-        option.data.request.content.appIcon = this.templateDetails.metadata.appIcon;
+      if (_.get(this.templateDetails, 'modeOfCreation') === 'question') {
+        option.data.request.content.questionCategories =  [this.templateDetails.questionCategory];
+      }
+      if (_.get(this.templateDetails, 'appIcon')) {
+        option.data.request.content.appIcon = _.get(this.templateDetails, 'appIcon');
       }
       this.actionService.post(option).pipe(map((res: any) => res.result), catchError(err => {
         const errInfo = {
@@ -789,29 +791,32 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   handlePreview(event) {
-    const templateList = this.programsService.contentCategories;
-    const appEditorConfig = this.configService.contentCategoryConfig.sourcingConfig.files;
-    const acceptedFile = appEditorConfig[event.content.mimeType];
-    this.templateDetails = _.find(templateList, (templateData) => {
-      return templateData.name === event.content.primaryCategory;
-    });
-    this.templateDetails['filesConfig'] = {};
-    this.templateDetails.filesConfig['accepted'] = acceptedFile || '';
-    this.templateDetails.filesConfig['size'] = this.configService.contentCategoryConfig.sourcingConfig.defaultfileSize;
-    if (this.templateDetails) {
-      this.templateDetails.questionCategories = event.content.questionCategories;
-      if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && !_.isEmpty(event.content.itemSets)) {
-        this.templateDetails.onClick = 'questionSetComponent';
-      } else if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && _.isEmpty(event.content.itemSets)) {
-        this.templateDetails.onClick = 'editorComponent';
-      } else if (event.content.mimeType === 'application/vnd.ekstep.quml-archive') {
-        this.templateDetails.onClick = 'questionSetComponent';
-      } else {
-        this.templateDetails.onClick = 'uploadComponent';
+    //const templateList = this.programsService.contentCategories;
+    this.programsService.getCategoryDefinition(event.content.primaryCategory, this.programContext.rootorg_id).subscribe((res)=>{
+      this.templateDetails = res.result.objectCategoryDefinition;
+      if (this.templateDetails) {
+        const appEditorConfig = this.configService.contentCategoryConfig.sourcingConfig.files;
+        const acceptedFile = appEditorConfig[event.content.mimeType];
+        this.templateDetails['filesConfig'] = {};
+        this.templateDetails.filesConfig['accepted'] = acceptedFile || '';
+        this.templateDetails.filesConfig['size'] = this.configService.contentCategoryConfig.sourcingConfig.defaultfileSize;
+        this.templateDetails.questionCategories = event.content.questionCategories;
+        if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && !_.isEmpty(event.content.questionCategories)) {
+          this.templateDetails.onClick = 'questionSetComponent';
+        } else if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && _.isEmpty(event.content.questionCategories)) {
+          this.templateDetails.onClick = 'editorComponent';
+        } else if (event.content.mimeType === 'application/vnd.ekstep.quml-archive') {
+          this.templateDetails.onClick = 'questionSetComponent';
+        } else {
+          this.templateDetails.onClick = 'uploadComponent';
+        }
+        this.componentLoadHandler('preview',
+        this.programComponentsService.getComponentInstance(this.templateDetails.onClick), this.templateDetails.onClick, event);
       }
-    this.componentLoadHandler('preview',
-    this.programComponentsService.getComponentInstance(this.templateDetails.onClick), this.templateDetails.onClick, event);
-    }
+    }, (error)=> {
+      this.toasterService.error(this.resourceService.messages.emsg.m0027);
+      return false;
+    });
   }
 
   componentLoadHandler(action, component, componentName, event?) {

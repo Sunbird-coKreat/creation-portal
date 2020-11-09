@@ -3,7 +3,7 @@ import { ConfigService, ToasterService, ServerResponse, ResourceService } from '
 import { ContentService, ActionService, PublicDataService, ProgramsService, NotificationService, UserService,
   FrameworkService } from '@sunbird/core';
 import { throwError, Observable, of, Subject, forkJoin } from 'rxjs';
-import { catchError, map, switchMap, tap, mergeMap, filter, first } from 'rxjs/operators';
+import { catchError, map, switchMap, tap, mergeMap, filter, first, skipWhile } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 import { ProgramStageService } from '../../program/services';
 import { CacheService } from 'ng2-cache-service';
@@ -18,6 +18,9 @@ export class HelperService {
   private _availableLicences: Array<any>;
   private _channelData: any;
   private _categoryMetaData: any;
+  private _categoryMetaData$ = new Subject<any>();
+  public readonly categoryMetaData$: Observable<any> = this._categoryMetaData$
+    .asObservable().pipe(skipWhile(data => data === undefined || data === null));
 
   constructor(private configService: ConfigService, private contentService: ContentService,
     private toasterService: ToasterService, private publicDataService: PublicDataService,
@@ -38,6 +41,7 @@ export class HelperService {
   getCategoryMetaData(category, channelId) {
     this.programsService.getCategoryDefinition(category, channelId).subscribe(data => {
       this.selectedCategoryMetaData = data;
+      this._categoryMetaData$.next(data);
     });
   }
 

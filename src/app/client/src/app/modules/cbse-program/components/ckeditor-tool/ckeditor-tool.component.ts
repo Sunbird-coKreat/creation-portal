@@ -59,16 +59,7 @@ export class CkeditorToolComponent implements OnInit, AfterViewInit, OnChanges {
     this.toasterService = toasterService;
     this.resourceService = resourceService;
   }
-  assetConfig: any = {
-    'image': {
-      'size': '50',
-      'accepted': 'png, jpeg'
-    },
-    'video': {
-      'size': '50',
-      'accepted': 'mp4, webm'
-    }
-  };
+  assetConfig: any = this.configService.contentCategoryConfig.sourcingConfig.asset;
   myAssets = [];
   allImages = [];
   allVideos = [];
@@ -121,9 +112,8 @@ export class CkeditorToolComponent implements OnInit, AfterViewInit, OnChanges {
       removePlugins: ['ImageCaption', 'mathtype', 'ChemType']
     }, this.editorConfig);
 
-    this.assetConfig = this.editorConfig.config.assetConfig || this.assetConfig;
-    this.acceptVideoType = this.getAcceptType(this.assetConfig.video.accepted, 'video');
-    this.acceptImageType = this.getAcceptType(this.assetConfig.image.accepted, 'image');
+    this.acceptVideoType = this.getAcceptType(this.assetConfig.videoFiles, 'video');
+    this.acceptImageType = this.getAcceptType(this.assetConfig.imageFiles, 'image');
   }
   ngOnChanges() {
     if (this.videoShow) {
@@ -149,14 +139,14 @@ export class CkeditorToolComponent implements OnInit, AfterViewInit, OnChanges {
         endpoint: '/assets/uploads'
       },
       validation: {
-        allowedExtensions: this.assetConfig.video.accepted.split(', '),
+        allowedExtensions: this.assetConfig.videoFiles.split(', '),
         acceptFiles: this.acceptVideoType,
         itemLimit: 1,
-        sizeLimit: _.toNumber(this.assetConfig.video.size) * 1024 * 1024  // 52428800  = 50 MB = 50 * 1024 * 1024 bytes
+        sizeLimit: _.toNumber(this.assetConfig.defaultfileSize) * 1024 * 1024  // 52428800  = 50 MB = 50 * 1024 * 1024 bytes
       },
       messages: {
-        sizeError: `{file} is too large, maximum file size is ${this.assetConfig.video.size} MB.`,
-        typeError: `Invalid content type (supported type: ${this.assetConfig.video.accepted})`
+        sizeError: `{file} is too large, maximum file size is ${this.assetConfig.defaultfileSize} MB.`,
+        typeError: `Invalid content type (supported type: ${this.assetConfig.videoFiles})`
       },
       callbacks: {
         onStatusChange: () => {
@@ -503,9 +493,9 @@ getAllVideos(offset, query) {
     const fileSize = file.size / 1024 / 1024;
     if (fileType.split('/')[0] === 'image') {
       this.showErrorMsg = false;
-      if (fileSize > this.assetConfig.image.size) {
+      if (fileSize > this.assetConfig.defaultfileSize) {
         this.showErrorMsg = true;
-        this.errorMsg = 'Max size allowed is ' + this.assetConfig.image.size + 'MB';
+        this.errorMsg = 'Max size allowed is ' + this.assetConfig.defaultfileSize + 'MB';
       } else {
         this.errorMsg = '';
         this.showErrorMsg = false;

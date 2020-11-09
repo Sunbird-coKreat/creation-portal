@@ -124,7 +124,7 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
   }
 
   setQuestionType(questionType) {
-    this.selectedtemplateDetails['questionCategories'] = [questionType];
+    this.selectedtemplateDetails['questionCategory'] = questionType;
   }
 
   submit() {
@@ -146,8 +146,6 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
         this.selectedtemplateDetails.mimeType = _.map(this.selectedtemplateDetails.editors, 'mimetype');
         break;
     }
-    this.selectedtemplateDetails['metadata'] = {};
-    this.selectedtemplateDetails.metadata['primaryCategory'] = this.templateSelected;
 
     let appEditorConfig = this.configService.contentCategoryConfig.sourcingConfig.files;
     let filesConfig =  _.map(this.selectedtemplateDetails.mimeType, (mimetype) => {
