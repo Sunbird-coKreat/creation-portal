@@ -41,7 +41,7 @@ export class ProgramsService extends DataService implements CanActivate {
   public http: HttpClient;
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
   private _contentTypes: any[];
-  private _contentCategories: any[];
+  //private _contentCategories: any[];
   private _overrideMetaData: any[];
   private _sourcingOrgReviewers: Array<any>;
   // private orgUsers: Array<any>;
@@ -71,7 +71,7 @@ export class ProgramsService extends DataService implements CanActivate {
   public initialize() {
     // this.enableContributeMenu().subscribe();
     this.getAllContentTypes().subscribe();
-    this.getAllContentCategories().subscribe();
+    //this.getAllContentCategories().subscribe();
     this.getOverridableMetaDataConfig().subscribe();
     this.mapSlugstoOrgId();
   }
@@ -881,9 +881,9 @@ export class ProgramsService extends DataService implements CanActivate {
    * Get all the categories  configured
    */
 
-  get contentCategories() {
+  /*get contentCategories() {
     return _.cloneDeep(this._contentCategories);
-  }
+  }*/
 
   /**
    * Get all overridable meta fields configured
@@ -907,7 +907,7 @@ export class ProgramsService extends DataService implements CanActivate {
     );
   }
 
-  private getAllContentCategories(): Observable<any[]> {
+  /*private getAllContentCategories(): Observable<any[]> {
     const req = {
       url:'composite/v1/search',
       data: {
@@ -929,7 +929,7 @@ export class ProgramsService extends DataService implements CanActivate {
         this._contentCategories = contentCategories;
       })
     );
-  }
+  }*/
 
   getOverridableMetaDataConfig(): Observable<any[]> {
     const option = {
