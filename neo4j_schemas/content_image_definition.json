@@ -3189,21 +3189,6 @@
           "description": "Additional Categories",
           "category": "General",
           "displayProperty": "Editable",
-          "range": [
-            "Textbook",
-            "TV Lesson",
-            "Previous Board Exam Papers",
-            "Pedagogy Flow",
-            "Marking Scheme Rubric",
-            "Lesson Plan",
-            "Learning Outcome Definition",
-            "Focus Spot",
-            "Explanation Video",
-            "Experiential Resource",
-            "Curiosity Question Set",
-            "Concept Map",
-            "Classroom Teaching Video"
-          ],
           "defaultValue": "",
           "renderingHints": "{ 'inputType': 'multiselect',  'order': 14 }",
           "indexed": true
