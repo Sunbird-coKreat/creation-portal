@@ -111,7 +111,7 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
   }
 
   setModeOfCreation(mode) {
-     this.selectedtemplateDetails["modeOfCreation"] = mode;
+    this.selectedtemplateDetails["modeOfCreation"] = mode;
   }
 
   handleModeOfCreation() {
@@ -124,7 +124,7 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
   }
 
   setQuestionType(questionType) {
-   this.selectedtemplateDetails['questionCategory'] = questionType;
+    this.selectedtemplateDetails['questionCategory'] = questionType;
   }
 
   submit() {

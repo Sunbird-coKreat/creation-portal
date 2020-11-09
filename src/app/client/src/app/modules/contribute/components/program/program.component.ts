@@ -265,7 +265,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       if (!_.isEmpty(nominationDetails) && this.nominationDetails.status !== 'Initiated') {
         this.nominated = true;
         this.sessionContext.nominationDetails = nominationDetails;
-        
         this.currentNominationStatus = _.get(nominationDetails, 'status');
         if (this.userService.isUserBelongsToOrg()) {
           this.sessionContext.currentOrgRole = _.first(this.userService.getUserOrgRole());
