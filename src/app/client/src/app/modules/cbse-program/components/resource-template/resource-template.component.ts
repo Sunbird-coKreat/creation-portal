@@ -118,6 +118,7 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
   }
 
   handleModeOfCreation() {
+    this.showmodeButton = false;
     if (this.selectedtemplateDetails["modeOfCreation"] === 'question') {
       this.showModeofCreationModal = false;
       this.showQuestionTypeModal = true;
