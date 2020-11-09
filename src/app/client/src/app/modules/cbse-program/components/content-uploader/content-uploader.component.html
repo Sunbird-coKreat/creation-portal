@@ -183,8 +183,8 @@
           <li>Max file size - {{templateDetails.filesConfig.size}} Mb</li> -->
           <li *ngIf="templateDetails.filesConfig.accepted.toLowerCase().includes('mp4')"><a target="_blank" title="How to compress MP4 video files" href="https://diksha.gov.in/help/contributor/index.html">How to compress MP4 video files</a></li>
           <li *ngIf="templateDetails.filesConfig.accepted.toLowerCase().includes('mp4')"><a target="_blank" title="How to convert video to MP4" href="https://diksha.gov.in/help/contributor/video-mp4.html">How to convert video to MP4</a></li>
-          <li *ngIf="templateDetails.filesConfig.accepted.toLowerCase().includes('pdf')"><a target="_blank" title="How to convert MS word to PDF" href="https://diksha.gov.in/help/contributor/word-to-pdf.html">How to convert MS word to PDF</a></li>
-        </ul>
+          <li *ngIf="templateDetails.filesConfig.accepted.toLowerCase().includes('pdf') || templateDetails.filesConfig.accepted.toLowerCase().includes('epub')"><a target="_blank" title="How to convert MS word to PDF" href="https://diksha.gov.in/help/contributor/word-to-pdf.html">How to convert MS word to PDF</a></li>
+          </ul>
       </div>
       <div *ngIf='loading' class="uploading-files text-center">
         <div class='d-flex flex-dc flex-ai-center icon'>
