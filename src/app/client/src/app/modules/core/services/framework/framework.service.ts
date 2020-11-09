@@ -58,7 +58,7 @@ export class FrameworkService {
           });
       } else if (!_.get(this._frameworkData, 'defaultFramework')) {
           this.getDefaultFrameWork(hashTagId ? hashTagId : this.userService.hashTagId)
-            .pipe(mergeMap(data => {
+            .pipe(mergeMap((data: any) => {
               this.setChannelData(hashTagId ? hashTagId : this.userService.hashTagId, data);
               this._channelData = data.result.channel;
               this._channelData$.next({ err: null, channelData: this._channelData });
@@ -86,7 +86,7 @@ export class FrameworkService {
     });
   }
 
-  private getDefaultFrameWork(hashTagId) {
+  private getDefaultFrameWork(hashTagId): Observable<any> {
     const channelData = this.cacheService.get(hashTagId);
     if (channelData) {
       return of({result: {channel: channelData}});
