@@ -46,6 +46,11 @@
           "video/webm": "webm",
           "application/epub": "epub"
         },
+        "asset":{
+            "imageFiles": "jpeg, png, jpg",
+            "videoFiles": "mp4, webm",
+            "defaultfileSize": 50
+        },
         "defaultfileSize": 50,
         "defaultVideoSize": 15000
     }
