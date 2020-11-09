@@ -20,7 +20,7 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 import * as moment from 'moment';
 import * as alphaNumSort from 'alphanum-sort';
 import { ProgramTelemetryService } from '../../services';
-// import { event } from 'jquery';
+import { event } from 'jquery';
 import { CacheService } from 'ng2-cache-service';
 
 @Component({
