@@ -477,13 +477,6 @@ export class HelperService {
         }
       });
     }
-    // else {
-    //   _.forEach(formFieldProperties, (formFieldCategory) => {
-    //     if (!_.isUndefined(sessionContext[formFieldCategory.code])) {
-    //       formFieldCategory.defaultValue = sessionContext[formFieldCategory.code];
-    //     }
-    //   });
-    // }
     const sortedFormFields = _.sortBy(_.uniqBy(formFieldProperties, 'code'), 'index');
     return [categoryMasterList, sortedFormFields];
   }
@@ -545,64 +538,36 @@ export class HelperService {
     }];
     return formFields && formFields.length ? [...formFields, ...contentPolicyCheck] : [];
   }
-  /*getContentMetadata(componentInput: any) {
-    const contentId = sessionContext.resourceIdentifier;
-    const option = {
-      url: `${this.configService.urlConFig.URLS.CONTENT.GET}/${contentId}`,
-    };
-    this.contentService.get(option).pipe(map((data: any) => data.result.content), catchError(err => {
-      const errInfo = { errorMsg: 'Unable to read the Content, Please Try Again' };
-      return throwError(this.cbseService.apiErrorHandling(err, errInfo));
-    })).subscribe(resourceDetails => {
-      //this.resourceDetails = res;
-      //this.sessionContext.contentMetadata = resourceDetails;
-      const contentTypeValue = [resourceDetails.contentType];
-      const contentType = this.programsService.getContentTypesName(contentTypeValue);
-      resourceDetails.contentTypeName = contentType;
-      this.sessionContext.contentMetadata = resourceDetails;
-      this.sessionContext.resourceStatus = _.get(this.resourceDetails, 'status');;
 
-      //this.existingContentVersionKey = resourceDetails.versionKey;
-      //this.resourceStatus =  _.get(this.resourceDetails, 'status');
-      this.setResourceStatus(resourceDetails);
-      if (this.resourceDetails.questionCategories) {
-        this.sessionContext.questionType = _.lowerCase(_.nth(this.resourceDetails.questionCategories, 0));
-      }
-      this.sessionContext.resourceStatus = this.resourceStatus;
-      this.resourceName = this.resourceDetails.name || this.templateDetails.metadata.name;
-      this.contentRejectComment = this.resourceDetails.rejectComment || '';
-      if (!this.resourceDetails.itemSets) {
-        this.createDefaultQuestionAndItemset();
+  mapContentTypesToCategories(nomContentTypes) {
+      const mapping = {
+              "TeachingMethod" : "Teacher Resource",
+              "PedagogyFlow" : "Teacher Resource",
+              "FocusSpot" : "Teacher Resource",
+              "LearningOutcomeDefinition" : "Teacher Resource",
+              "PracticeQuestionSet" : "Practice Question Set",
+              "CuriosityQuestionSet": "Practice Question Set",
+              "MarkingSchemeRubric" : "Teacher Resource",
+              "ExplanationResource" : "Explanation Content",
+              "ExperientialResource" : "Learning Resource",
+              "ConceptMap" : "Learning Resource",
+              "SelfAssess" : "Course Assessment",
+              "ExplanationVideo" : "Explanation Content",
+              "ClassroomTeachingVideo" : "Explanation Content",
+              "ExplanationReadingMaterial" : "Learning Resource",
+              "PreviousBoardExamPapers" : "Learning Resource",
+              "LessonPlanResource" : "Teacher Resource",
+              "LearningActivity" : "Learning Resource",
+              };
+      const oldContentTypes = _.keys(mapping);
+      if (!_.isEmpty(nomContentTypes) && _.includes(oldContentTypes,  _.nth(nomContentTypes, 0))) {
+        // means the nomination is has old contnet types and not the content categories
+        let nomContentCategories = _.map(nomContentTypes, (contentType) => {
+            return mapping[contentType];
+        });
+        return _.uniq(nomContentCategories);
       } else {
-        const itemSet = this.resourceDetails.itemSets;
-        if (itemSet[0].identifier) {
-          this.itemSetIdentifier = itemSet[0].identifier;
-        }
-        this.fetchQuestionList();
-        this.resourceName = (this.resourceName !== 'Untitled') ? this.resourceName : '' ;
-        if (this.visibility && this.visibility.showSave && !this.resourceName) {
-          this.showResourceTitleEditor();
-        }
+        return nomContentTypes;
       }
-      this.handleActionButtons();
-    });
   }
-
-  setResourceStatus(resourceDetails) {
-    const resourceStatus = this.sessionContext.resourceStatus
-
-    if (resourceStatus === 'Review') {
-      this.sessionContext.resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
-    } else if (resourceStatus === 'Draft' && resourceDetails.rejectComment && resourceDetails.rejectComment !== '') {
-      this.sessionContext.resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
-    } else if (resourceStatus === 'Live' && _.isEmpty(this.sourcingReviewStatus)) {
-      this.sessionContext.resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
-    } else if (this.sourcingReviewStatus === 'Rejected') {
-      this.sessionContext.resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
-    } else if (this.sourcingReviewStatus === 'Approved') {
-      this.sessionContext.resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
-    } else {
-      this.sessionContext.resourceStatusText = resourceStatus;
-    }
-  }*/
 }
