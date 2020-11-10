@@ -261,11 +261,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.programsService.post(req).subscribe((data) => {
       const nominationDetails = _.first(_.get(data, 'result', []));
 
-      if (!_.isEmpty(nominationDetails.content_types)) {
-        nominationDetails.content_types = this.helperService.mapContentTypesToCategories(nominationDetails.content_types);
-      }
-
       if (!_.isEmpty(nominationDetails)) {
+        if (!_.isEmpty(nominationDetails.content_types)) {
+          nominationDetails.content_types = this.helperService.mapContentTypesToCategories(nominationDetails.content_types);
+        }
+
         this.nominationDetails = nominationDetails;
       }
       if (!_.isEmpty(nominationDetails) && this.nominationDetails.status !== 'Initiated') {
