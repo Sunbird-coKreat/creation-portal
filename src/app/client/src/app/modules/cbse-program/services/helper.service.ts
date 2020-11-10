@@ -475,15 +475,13 @@ export class HelperService {
         if (formFieldCategory.code === 'learningOutcome' && formFieldCategory.inputType === 'select' && _.isArray(requiredData)) {
           formFieldCategory.defaultValue = _.first(requiredData) || '';
         }
+        // tslint:disable-next-line:max-line-length
+        if (formFieldCategory.code === 'additionalCategories' && formFieldCategory.inputType === 'multiSelect' && contentMetadata.primaryCategory === 'eTextbook' &&
+            contentMetadata.status === 'Draft' && _.isEmpty(contentMetadata.additionalCategories)) {
+          formFieldCategory.defaultValue = ['Textbook'];
+        }
       });
     }
-    // else {
-    //   _.forEach(formFieldProperties, (formFieldCategory) => {
-    //     if (!_.isUndefined(sessionContext[formFieldCategory.code])) {
-    //       formFieldCategory.defaultValue = sessionContext[formFieldCategory.code];
-    //     }
-    //   });
-    // }
     const sortedFormFields = _.sortBy(_.uniqBy(formFieldProperties, 'code'), 'index');
     return [categoryMasterList, sortedFormFields];
   }
