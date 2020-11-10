@@ -9,7 +9,7 @@ let envVariables = {
   APPID: process.env.sunbird_environment + '.' + process.env.sunbird_instance + '.portal',
   sunbird_instance_name: env.sunbird_instance || 'Sunbird',
   DEFAULT_CHANNEL: env.sunbird_default_channel,
-  
+  SUNBIRD_ENV: env.sunbird_env || 'https://staging.open-sunbird.org',
 
   // Application Start-up - Hosts and PORT Configuration
   PORTAL_PORT: env.sunbird_port || 3000,
@@ -140,7 +140,7 @@ let envVariables = {
   sunbird_portal_offline_app_version: env.sunbird_portal_offline_app_version,
   sunbird_portal_offline_app_download_url: env.sunbird_portal_offline_app_download_url,
   DESKTOP_APP_STORAGE_URL: env.desktop_app_storage_url,
- 
+
 
   // CDN Configuration
   PORTAL_CDN_URL: env.sunbird_portal_cdn_url || '',
