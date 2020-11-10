@@ -16,6 +16,7 @@ import { IImpressionEventInput, IInteractEventEdata, TelemetryService } from '@s
 import { isUndefined, isNullOrUndefined } from 'util';
 import * as moment from 'moment';
 import { CbseProgramService } from '../../../cbse-program/services';
+import { HelperService } from '../../../cbse-program/services/helper.service';
 
 interface IDynamicInput {
   collectionComponentInput?: ICollectionComponentInput;
@@ -108,7 +109,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     private navigationHelperService: NavigationHelperService, public registryService: RegistryService,
     private paginationService: PaginationService, public actionService: ActionService,
     private collectionHierarchyService: CollectionHierarchyService, private telemetryService: TelemetryService,
-    private sbFormBuilder: FormBuilder, private cbseProgramService: CbseProgramService) {
+    private sbFormBuilder: FormBuilder, private cbseProgramService: CbseProgramService, private helperService: HelperService) {
     this.programId = this.activatedRoute.snapshot.params.programId;
     localStorage.setItem('programId', this.programId);
   }
@@ -131,7 +132,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.programStageService.addStage('programComponent');
     this.currentStage = 'programComponent';
-    this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit 
+    this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
     this.pageLimit = this.registryService.programUserPageLimit;
   }
 
@@ -259,6 +260,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this.programsService.post(req).subscribe((data) => {
       const nominationDetails = _.first(_.get(data, 'result', []));
+
+      if (!_.isEmpty(nominationDetails.content_types)) {
+        nominationDetails.content_types = this.helperService.mapContentTypesToCategories(nominationDetails.content_types);
+      }
+
       if (!_.isEmpty(nominationDetails)) {
         this.nominationDetails = nominationDetails;
       }
