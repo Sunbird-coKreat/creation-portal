@@ -810,6 +810,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.updateContent(requestBody, this.sessionContext.resourceIdentifier)
       .subscribe((res) => {
           if (res.responseCode === 'OK' && (res.result.content_id || res.result.node_id)) {
+            this.toasterService.success(this.resourceService.messages.smsg.m0068);
             if (actionStatus === 'review' && this.isIndividualAndNotSample()) {
               this.showEditform('publish');
             } else if (actionStatus === 'review') {
