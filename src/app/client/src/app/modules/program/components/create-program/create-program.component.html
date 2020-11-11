@@ -189,6 +189,13 @@
 									</div>
 								</div>
 							</div>
+							
+						</div>
+					</form>
+				</div>
+				<div class="ui segment mt-5" *ngIf="!editPublished" suiTabContent="2" [ngClass]="{'active' : showTextBookSelector}">
+					<form class="ui form" [formGroup]="collectionListForm">
+						<div class="ui grid">
 							<div class="six wide column">
 								<div class="required field">
 									<label class="d-block">{{resource?.frmelmnts?.lbl?.contentType}}
@@ -252,7 +259,7 @@
 									</ng-template>
 								</div>
 							</div>
-							<div class="twelve wide column">
+							<div class="six wide column">
 								<div class="field">
 									<label class="d-block">{{resource?.frmelmnts?.lbl?.recongnitionToContributors}}
 										<i class="pull-right question circle link icon pull-right" suiPopup
@@ -267,12 +274,20 @@
 									</div>
 								</div>
 							</div>
-						</div>
-					</form>
-				</div>
-				<div class="ui segment mt-5" *ngIf="!editPublished" suiTabContent="2" [ngClass]="{'active' : showTextBookSelector}">
-					<form class="ui form" [formGroup]="collectionListForm">
-						<div class="ui grid">
+
+							<div class="six wide column">
+								<div class="field">
+									<label class="d-block">Select target
+										<i class="pull-right question circle link icon pull-right" suiPopup
+											popupDelay="500" [popupPlacement]="'left'"
+											popupText=""></i>
+									</label>
+									<sui-multi-select class="w-100" placeholder="">
+										<sui-select-option> option1</sui-select-option>
+									</sui-multi-select>
+								</div>
+							</div>
+							<hr class="w-100">
 							<div class="three wide column">
 								<div class="field">
 									<label class="d-block">{{resource?.frmelmnts?.lbl?.medium}}
