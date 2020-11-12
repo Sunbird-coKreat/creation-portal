@@ -17,13 +17,14 @@ import { CollectionComponent, DashboardComponent } from '../cbse-program';
 import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
 import { OrgUserListComponent } from './components/org-user-list/org-user-list.component';
 import { SharedFeatureModule } from '../shared-feature/shared-feature.module';
-
+import {RoleFilterPipe } from '../shared/pipes/role-filter/role-filter-pipe';
 @NgModule({
   declarations: [
     ProgramComponent,
     OnboardPopupComponent,
     ProgramHeaderComponent,
-    OrgUserListComponent],
+    OrgUserListComponent,
+    RoleFilterPipe],
   imports: [
     SuiModule,
     CommonModule,
