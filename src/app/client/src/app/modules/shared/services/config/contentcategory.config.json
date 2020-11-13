@@ -39,7 +39,7 @@
             }
         ],
         "files": {
-          "application/vnd.ekstep.html-archive": "html",
+          "application/vnd.ekstep.html-archive": "zip",
           "application/vnd.ekstep.h5p-archive": "h5p",
           "application/pdf": "pdf",
           "video/mp4": "mp4",

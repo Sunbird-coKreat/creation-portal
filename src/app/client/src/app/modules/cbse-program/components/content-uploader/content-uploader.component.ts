@@ -96,7 +96,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public docExtns: string;
   public vidEtns: string;
   public allAvailableVidExtns = ['mp4', 'webm'];
-  public allAvailableDocExtns = ['pdf', 'epub', 'h5p'];
+  public allAvailableDocExtns = ['pdf', 'epub', 'h5p', 'zip'];
   public videoSizeLimit: string;
   public originCollectionData: any;
   selectedOriginUnitStatus: any;
@@ -397,6 +397,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           return '.epub';
         } else if (mimeType === 'application/vnd.ekstep.h5p-archive') {
           return '.h5p';
+        } else if (mimeType === 'application/vnd.ekstep.html-archive') {
+          return '.zip';
         } else {
           return mimeType;
         }
