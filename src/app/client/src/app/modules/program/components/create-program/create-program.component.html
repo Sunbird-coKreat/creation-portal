@@ -12,7 +12,7 @@
 					</div>
 					<div class="item" suiTabHeader="2" *ngIf="!editPublished" [isDisabled]="!showTextBookSelector"
 						[ngClass]="{'active' : showTextBookSelector}">
-						{{resource?.frmelmnts?.lbl?.selectTextbooks}}
+						{{resource.frmelmnts.lbl.projectScope}}
 					</div>
 				</div>
 				<div class="ui segment mt-5" suiTabContent="1" [ngClass]="{'active' : !showTextBookSelector}">
@@ -189,14 +189,28 @@
 									</div>
 								</div>
 							</div>
-							
+							<div class="twelve wide column">
+								<div class="field">
+									<label class="d-block">{{resource?.frmelmnts?.lbl?.recongnitionToContributors}}
+										<i class="pull-right question circle link icon pull-right" suiPopup
+											popupDelay="500" [popupPlacement]="'left'"
+											popupText="{{resource?.frmelmnts?.lbl?.recongnitionToContributors}}"></i>
+									</label>
+									<div class="sb-field relative">
+										<textarea type="text" formControlName="rewards"
+											class="wmd-input width-100 sb-form-control"
+											placeholder="{{resource?.frmelmnts?.lbl?.programRecognitionHint}}"
+											name=""></textarea>
+									</div>
+								</div>
+							</div>
 						</div>
 					</form>
 				</div>
 				<div class="ui segment mt-5" *ngIf="!editPublished" suiTabContent="2" [ngClass]="{'active' : showTextBookSelector}">
 					<div>
 							<div class="ui grid">
-								<div class="twelve wide column">
+								<div class="six wide column">
 									<div class="required field w-100">
 										<label class="d-block">{{resource?.frmelmnts?.lbl?.contentType}}
 											<i class="pull-right question circle link icon pull-right" suiPopup
@@ -225,22 +239,74 @@
 										</div>
 									</div>
 								</div>
-								
-							</div>
-							<div class="ui grid">
-								<div class="three wide column">
+								<div class="six wide column">
 									<div class="field">
-										<label class="d-block">Select target
+										<label [ngClass]="(disableUpload) ? 'disabled field':''" class="d-block">{{resource?.frmelmnts?.lbl?.uploadGuideline}}
+										</label>
+										<button
+											[ngClass]="(disableUpload) ? 'disabled field':''"
+											class="sb-btn sb-btn-primary sb-btn-normal"
+											(click)="initiateDocumentUploadModal()"
+											[disabled]="disableUpload"
+											appTelemetryInteract
+											[telemetryInteractEdata]="getTelemetryInteractEdata('guidelines_document', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+											[telemetryInteractObject]="telemetryInteractObject"
+											[telemetryInteractCdata]="telemetryInteractCdata"
+											[telemetryInteractPdata]="telemetryInteractPdata">
+											<i class="upload icon"></i>{{resource?.frmelmnts?.btn?.upload}}
+										</button>
+										<span *ngIf="uploadedDocument; else elseGuideBlock" class="sb-url">
+											<a href="{{uploadedDocument.artifactUrl}}" class="max-w-90 pull-left text-decor-none sb__ellipsis sb__ellipsis--breakAll" target="_blank">
+												{{uploadedDocument.name}}
+												<span class="blue-text-color-sunbird" *ngIf="uploadedDocument.name && uploadedDocument.name.length > 70">...</span>
+											</a>
+											<i class="icon remove sb-color-error va-top cursor-pointer" (click)="removeUploadedDocument();" ></i>
+										</span>
+										<!-- Add Else condition-->
+										<ng-template #elseGuideBlock>
+											<span *ngIf="guidLinefileName" class="sb-url">
+												<a href="{{programDetails.guidelines_url}}" class="max-w-90 pull-left text-decor-none sb__ellipsis sb__ellipsis--breakAll" target="_blank">
+													{{guidLinefileName}}
+												</a>
+												<i *ngIf="!editPublished" class="icon remove sb-color-error va-top cursor-pointer" (click)="removeUploadedDocument();" ></i>
+											</span>
+										</ng-template>
+									</div>
+								</div>
+								<div class="twelve wide column sb-field-group pt-0">
+									<div class="sb-field-group mb-8">
+										<label class="fs-0-92">{{resource.frmelmnts.lbl.is.This.Content.Fora.Target.Collection}}
+											<i class="pull-right question circle link icon pull-right ml-10" suiPopup
+											popupDelay="500" [popupPlacement]="'right'"
+											popupText="{{resource.frmelmnts.lbl.is.This.Content.Fora.Target.Collection}}"></i>
+										</label>
+										<div class="sb-field mt-4 d-flex">
+											<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+												<input id="yes"  type="radio" name="openNominations" checked>
+												<label for="yes">{{resource?.frmelmnts?.btn?.yes}}</label>
+											</div>
+											<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+												<input id="no" [disabled]="editPublished" type="radio">
+												<label for="no">{{resource?.frmelmnts?.btn?.no}}</label>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="twelve wide column">
+									<div class="field">
+										<label class="d-block">{{resource.frmelmnts.lbl.select.Target.Collection}}
 											<i class="pull-right question circle link icon pull-right" suiPopup
 												popupDelay="500" [popupPlacement]="'left'"
-												popupText=""></i>
+												popupText="{{resource.frmelmnts.lbl.select.Target.Collection}}"></i>
 										</label>
 										<select class="ui fluid dropdown">
 											<option value="">State</option>
 										</select>
 									</div>
 								</div>
-								<div class="nine wide column">
+							</div>
+							<div class="ui grid">
+								<div class="twelve wide column">
 									<form class="ui form" [formGroup]="collectionListForm">	
 										<div class="ui grid">
 										<div class="four wide column">
@@ -471,7 +537,7 @@
 										<div class="five wide column">
 											<div class="sb-bg-white b-1-100 br-4 o-y-auto">
 												<h5 class="py-15 px-20 font-weight-bold fs-0-92 text-capitalize">
-													{{tempCollections.length + ' ' + resource?.frmelmnts?.lbl?.textbooksAdded}}
+													{{tempCollections.length + ' ' + resource.frmelmnts.lbl.number.Of.Collections.Added}}
 												</h5>
 												<hr class="mt-0">
 												<div class="o-y-auto maxmin-h-375 fs-0-92 text-capitalize">
@@ -519,58 +585,6 @@
 								</div>
 							</div>
 						</div>
-					<div class="ui grid">
-						<hr class="w-100 mx-10">
-						<div class="six wide column">
-							<div class="field">
-								<label [ngClass]="(disableUpload) ? 'disabled field':''" class="d-block">{{resource?.frmelmnts?.lbl?.uploadGuideline}}
-								</label>
-								<button
-									[ngClass]="(disableUpload) ? 'disabled field':''"
-									class="sb-btn sb-btn-primary sb-btn-normal"
-									(click)="initiateDocumentUploadModal()"
-									[disabled]="disableUpload"
-									appTelemetryInteract
-									[telemetryInteractEdata]="getTelemetryInteractEdata('guidelines_document', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
-									[telemetryInteractObject]="telemetryInteractObject"
-									[telemetryInteractCdata]="telemetryInteractCdata"
-									[telemetryInteractPdata]="telemetryInteractPdata">
-									<i class="upload icon"></i>{{resource?.frmelmnts?.btn?.upload}}
-								</button>
-								<span *ngIf="uploadedDocument; else elseGuideBlock" class="sb-url">
-									<a href="{{uploadedDocument.artifactUrl}}" class="max-w-90 pull-left text-decor-none sb__ellipsis sb__ellipsis--breakAll" target="_blank">
-										{{uploadedDocument.name}}
-										<span class="blue-text-color-sunbird" *ngIf="uploadedDocument.name && uploadedDocument.name.length > 70">...</span>
-									</a>
-									<i class="icon remove sb-color-error va-top cursor-pointer" (click)="removeUploadedDocument();" ></i>
-								</span>
-								<!-- Add Else condition-->
-								<ng-template #elseGuideBlock>
-									<span *ngIf="guidLinefileName" class="sb-url">
-										<a href="{{programDetails.guidelines_url}}" class="max-w-90 pull-left text-decor-none sb__ellipsis sb__ellipsis--breakAll" target="_blank">
-											{{guidLinefileName}}
-										</a>
-										<i *ngIf="!editPublished" class="icon remove sb-color-error va-top cursor-pointer" (click)="removeUploadedDocument();" ></i>
-									</span>
-								</ng-template>
-							</div>
-						</div>
-						<div class="six wide column">
-							<div class="field">
-								<label class="d-block">{{resource?.frmelmnts?.lbl?.recongnitionToContributors}}
-									<i class="pull-right question circle link icon pull-right" suiPopup
-										popupDelay="500" [popupPlacement]="'left'"
-										popupText="{{resource?.frmelmnts?.lbl?.recongnitionToContributors}}"></i>
-								</label>
-								<div class="sb-field relative">
-									<textarea type="text" formControlName="rewards"
-										class="wmd-input width-100 sb-form-control"
-										placeholder="{{resource?.frmelmnts?.lbl?.programRecognitionHint}}"
-										name=""></textarea>
-								</div>
-							</div>
-						</div>
-					</div>
 				</div>
 			</sui-tabset>
 		</div>
