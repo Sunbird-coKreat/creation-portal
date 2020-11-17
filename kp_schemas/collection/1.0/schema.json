@@ -1085,7 +1085,11 @@
     "additionalCategories": {
       "type": "array",
       "items": {
-        "type": "string"
+        "type": "string",
+        "enum": [
+          "Textbook",
+          "Lesson Plan"
+        ]
       }
     },
     "prevStatus": {
@@ -1114,9 +1118,6 @@
     },
     "courseId": {
       "type": "string"
-    },
-    "me_totalRatingsCount": {
-            "type": "number"
     }
   }
 }

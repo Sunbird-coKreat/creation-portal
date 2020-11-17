@@ -331,9 +331,15 @@
 									{{orgUser?.contentTypes?.join(', ')}}
 								</div>
 							</td>
+<<<<<<< HEAD
 							<td class="text-center"> 
 								<div *ngIf="nominationDetails?.status === 'Rejected'; else elseBlock"> 
 									{{ orgUser?.projectselectedRole !== 'Select Role' ? orgUser.projectselectedRole : '-' }}
+=======
+							<td class="text-center">
+								<div *ngIf="nominationDetails?.status === 'Rejected'; else elseBlock">
+									{{ (orgUser?.projectselectedRole) ? orgUser.projectselectedRole : '-' }}
+>>>>>>> upstream/sprint-18
 								</div>
 								<ng-template #elseBlock>
 									<div class="custom-selectbx">

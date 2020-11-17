@@ -5,8 +5,8 @@ import {
 import { FineUploader } from 'fine-uploader';
 import { ProgramsService, DataService, FrameworkService, ActionService } from '@sunbird/core';
 import { Subscription, Subject, throwError, Observable } from 'rxjs';
-import { tap, first, map, takeUntil, catchError, count, take } from 'rxjs/operators';
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges, OnDestroy } from '@angular/core';
+import { tap, first, map, takeUntil, catchError, count } from 'rxjs/operators';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges } from '@angular/core';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormBuilder, Validators, FormGroup, FormArray, FormGroupName } from '@angular/forms';
@@ -29,7 +29,7 @@ import { CacheService } from 'ng2-cache-service';
   styleUrls: ['./create-program.component.scss', './../../../cbse-program/components/ckeditor-tool/ckeditor-tool.component.scss']
 })
 
-export class CreateProgramComponent implements OnInit, AfterViewInit, OnDestroy {
+export class CreateProgramComponent implements OnInit, AfterViewInit {
   @ViewChild('fineUploaderUI') fineUploaderUI: ElementRef;
   public unsubscribe = new Subject<void>();
   public programId: string;
@@ -128,7 +128,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit, OnDestroy 
   public btnDoneDisabled = false;
   public telemetryPageId: string;
   private pageStartTime: any;
-  private onComponentDestroy$ = new Subject<any>();
 
   constructor(
     public frameworkService: FrameworkService,
@@ -172,7 +171,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit, OnDestroy 
     } else {
       this.initializeFormFields();
     }
-    this.fetchChannelDetails();
+    this.fetchFrameWorkDetails();
     this.setTelemetryStartData();
     this.pageStartTime = Date.now();
   }
@@ -500,14 +499,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit, OnDestroy 
     return this.telemetryPageId;
   }
 
-  fetchChannelDetails() {
-    this.frameworkService.getChannelData(this.userService.hashTagId);
-    this.frameworkService.channelData$.pipe(takeUntil(this.onComponentDestroy$), take(1)).subscribe(data => {
-      this.programScope['purpose'] = _.get(data, 'channelData.contentPrimaryCategories');
-      setTimeout(() => this.fetchFrameWorkDetails(), 0);
-    });
-  }
-
   fetchFrameWorkDetails() {
     this.frameworkService.initialize();
     this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
@@ -520,6 +511,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   setFrameworkDataToProgram() {
+    this.programScope['purpose'] = _.get(this.cacheService.get(this.userService.hashTagId), 'contentPrimaryCategories');
     this.programScope['medium'] = [];
     this.programScope['gradeLevel'] = [];
     this.programScope['subject'] = [];
@@ -1447,10 +1439,4 @@ export class CreateProgramComponent implements OnInit, AfterViewInit, OnDestroy 
     };
     this.saveProgram(cb);
   }
-
-  ngOnDestroy() {
-    this.onComponentDestroy$.next();
-    this.onComponentDestroy$.complete();
-  }
-
 }

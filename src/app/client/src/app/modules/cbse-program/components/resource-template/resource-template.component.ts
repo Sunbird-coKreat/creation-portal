@@ -20,8 +20,6 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
   @Input() resourceTemplateComponentInput: IResourceTemplateComponentInput = {};
   @Output() templateSelection = new EventEmitter<any>();
   showButton = false;
-  showmodeButton = false;
-  showQTypeButton = false;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
@@ -113,12 +111,10 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
   }
 
   setModeOfCreation(mode) {
-    this.showmodeButton = true;
     this.selectedtemplateDetails["modeOfCreation"] = mode;
   }
 
   handleModeOfCreation() {
-    this.showmodeButton = false;
     if (this.selectedtemplateDetails["modeOfCreation"] === 'question') {
       this.showModeofCreationModal = false;
       this.showQuestionTypeModal = true;
@@ -128,7 +124,6 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
   }
 
   setQuestionType(questionType) {
-    this.showQTypeButton = true;
     this.selectedtemplateDetails['questionCategory'] = questionType;
   }
 
