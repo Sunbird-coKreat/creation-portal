@@ -617,7 +617,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
         this.showRequestChangesPopup = false;
         if (this.sessionContext.collection && this.contentEditorComponentInput.unitIdentifier) {
           // tslint:disable-next-line:max-line-length
-          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.contentEditorComponentInput.unitIdentifier, res.result.identifier)
+          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.contentEditorComponentInput.unitIdentifier, res.result.node_id || this.contentEditorComponentInput.contentId)
           .subscribe((data) => {
             this.toasterService.success(this.resourceService.messages.smsg.m0062);
             this.programStageService.removeLastStage();
