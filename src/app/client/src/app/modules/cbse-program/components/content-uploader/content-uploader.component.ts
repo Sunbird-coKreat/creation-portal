@@ -95,8 +95,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public uploadInprogress: boolean;
   public docExtns: string;
   public vidEtns: string;
+  public audioExtns: string;
   public allAvailableVidExtns = ['mp4', 'webm'];
-  public allAvailableDocExtns = ['pdf', 'epub', 'h5p', 'zip'];
+  // public allAvailableAudioExtns = ['mp3', 'wav', 'mpeg', 'ogg', 'x-wav'];
+  public allAvailableDocExtns = ['pdf', 'epub', 'h5p', 'zip', 'mp3', 'wav', 'mpeg', 'ogg', 'x-wav'];
   public videoSizeLimit: string;
   public originCollectionData: any;
   selectedOriginUnitStatus: any;
@@ -438,6 +440,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.templateDetails.filesConfig.accepted.split(' ') : this.templateDetails.filesConfig.accepted.split(', ');
     this.vidEtns =  _.join(_.intersection(extns, this.allAvailableVidExtns), ', ');
     this.docExtns = _.join(_.intersection(extns, this.allAvailableDocExtns), ', ');
+    // this.audioExtns = _.join(_.intersection(extns, this.allAvailableAudioExtns), ', ');
   }
 
   checkFileSizeLimit(fileUpload, mimeType) {

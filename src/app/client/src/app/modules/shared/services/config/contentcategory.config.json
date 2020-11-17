@@ -44,7 +44,12 @@
           "application/pdf": "pdf",
           "video/mp4": "mp4",
           "video/webm": "webm",
-          "application/epub": "epub"
+          "application/epub": "epub",
+          "audio/mp3": "mp3",
+          "audio/mpeg": "mpeg",
+          "audio/ogg": "ogg",
+          "audio/x-wav": "x-wav",
+          "audio/wav": "wav"
         },
         "asset":{
             "imageFiles": "jpeg, png, jpg",
