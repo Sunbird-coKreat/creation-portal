@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService } from '@sunbird/shared';
 import * as _ from 'lodash-es';
 import { tap, first } from 'rxjs/operators';
-import { ICollectionComponentInput, IDashboardComponentInput } from '../../../cbse-program/interfaces';
+import { ICollectionComponentInput, IDashboardComponentInput } from '../../../sourcing/interfaces';
 import { InitialState, ISessionContext, IUserParticipantDetails } from '../../interfaces';
 import { ProgramStageService } from '../../services/';
 import { ProgramComponentsService} from '../../services/program-components/program-components.service';
@@ -194,7 +194,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     if (status === 'success') {
       this.headerComponentInput = {
         roles: _.get(this.programDetails.config, 'roles'),
-        actions: _.get(this.programDetails.config, 'actions'),
         header: _.get(this.programDetails.config, 'header'),
         userDetails: _.get(this.programDetails, 'userDetails'),
         showTabs: this.showTabs
