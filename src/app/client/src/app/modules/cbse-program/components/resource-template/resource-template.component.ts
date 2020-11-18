@@ -147,13 +147,13 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
         break;
     }
 
-    let appEditorConfig = this.configService.contentCategoryConfig.sourcingConfig.files;
-    let filesConfig =  _.map(this.selectedtemplateDetails.mimeType, (mimetype) => {
+    const appEditorConfig = this.configService.contentCategoryConfig.sourcingConfig.files;
+    const filesConfig =  _.map(this.selectedtemplateDetails.mimeType, (mimetype) => {
         return appEditorConfig[mimetype];
     });
 
     this.selectedtemplateDetails['filesConfig'] = {};
-    this.selectedtemplateDetails.filesConfig['accepted'] = (!_.isEmpty(filesConfig)) ? _.join(filesConfig, ', ') : '';
+    this.selectedtemplateDetails.filesConfig['accepted'] = (!_.isEmpty(filesConfig)) ? _.join(_.compact(filesConfig), ', ') : '';
     this.selectedtemplateDetails.filesConfig['size'] = this.configService.contentCategoryConfig.sourcingConfig.defaultfileSize;
     this.templateSelection.emit({ type: 'next', template: this.templateSelected, templateDetails: this.selectedtemplateDetails });
   }
