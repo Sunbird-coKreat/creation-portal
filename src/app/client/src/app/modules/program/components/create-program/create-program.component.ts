@@ -1276,7 +1276,7 @@ onChangeTargetCollection() {
     _.each(collection.children, child => {
       if (contentStatus.indexOf(child.status) !== -1) {
         ++totalLeaf;
-        contentTypes.push(child.contentType);
+        contentTypes.push(child.primaryCategory);
       }
 
       self.getContentCountPerFolder(child, contentStatus, onlySample, organisationId, createdBy, visibility, totalLeaf, contentTypes);
