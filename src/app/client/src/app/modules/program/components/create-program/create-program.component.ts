@@ -89,6 +89,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   subjectsOption = [];
   mediumOption = [];
   gradeLevelOption = [];
+  boardOption = [];
+  frameworkOption = [];
   pickerMinDate = new Date(new Date().setHours(0, 0, 0, 0));
   pickerMinDateForEndDate = new Date(new Date().setHours(0, 0, 0, 0));
   public telemetryImpression: IImpressionEventInput;
@@ -856,6 +858,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           this.programConfig['gradeLevel'] = config.gradeLevel;
           this.programConfig['medium'] = config.medium;
           this.programConfig['subject'] = config.subject;
+          this.programConfig['framework'] = config.framework;
           this.programConfig['collections'] = this.getCollections();
           _.forEach(this.collectionListForm.value.pcollections, item => {
             this.programData['collection_ids'].push(item.id);
@@ -1052,7 +1055,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       'board': null,
       'gradeLevel': null,
       'medium': null,
-      'subject': null
+      'subject': null,
+      'framework': null
     };
 
     _.forEach(this.tempCollections, (collection) => {
@@ -1084,13 +1088,26 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           this.gradeLevelOption.push(single);
         }
       });
+
+      if(_.isString(collection.board)) {
+        if (this.boardOption.indexOf(collection.board) === -1) {
+          this.boardOption.push(collection.board);
+        }
+      }
+
+      if(_.isString(collection.framework)) {
+        if (this.frameworkOption.indexOf(collection.framework) === -1) {
+          this.frameworkOption.push(collection.framework);
+        }
+      }
     });
 
-    config.board = this.userBoard;
+    config.board = this.boardOption;
     // tslint:disable-next-line:max-line-length
     config.gradeLevel = this.gradeLevelOption;
     config.medium = this.mediumOption;
     config.subject = this.subjectsOption;
+    config.framework = this.frameworkOption;
     return config;
   }
 
