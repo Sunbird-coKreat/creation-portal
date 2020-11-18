@@ -913,6 +913,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       this.cbseService.apiErrorHandling(error, errInfo);
      })
   }
+
   resourceTemplateInputData() {
     let contentCategories = this.programContext.content_types;
     if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.content_types) {
@@ -925,9 +926,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
     this.resourceTemplateComponentInput = {
       templateList: contentCategories,
-        programContext: this.programContext,
-        sessionContext: this.sessionContext,
-        unitIdentifier: this.unitIdentifier
+      programContext: this.programContext,
+      sessionContext: this.sessionContext,
+      unitIdentifier: this.unitIdentifier
     };
   }
 

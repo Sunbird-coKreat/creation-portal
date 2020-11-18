@@ -40,7 +40,7 @@ export class MvcPlayerComponent implements OnInit, OnChanges {
   }
 
   getConfigByContent(contentId: string) {
-    this.playerService.getConfigByContent('contentId').pipe(catchError(err => {
+    this.playerService.getConfigByContent(contentId).pipe(catchError(err => {
       const errInfo = {
         errorMsg: 'Unable to read the Content, Please Try Again',
         telemetryPageId: this.sessionContext.telemetryPageId, telemetryCdata : this.sessionContext.telemetryInteractCdata,
