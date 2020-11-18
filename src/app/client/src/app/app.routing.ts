@@ -36,6 +36,9 @@ const appRoutes: Routes = [
     path: 'contribute/join/:orgId', loadChildren: 'app/modules/contribute/contribute.module#ContributeModule'
   },
   {
+    path: 'create', loadChildren: 'app/modules/editor/editor.module#EditorModule'
+  },
+  {
     path: '', loadChildren: 'app/modules/public/public.module#PublicModule'
   },
   {
