@@ -240,7 +240,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     // tslint:disable-next-line:max-line-length
     return !!(this.router.url.includes('/contribute') && !this.contentData.sampleContent === true &&
     // tslint:disable-next-line:max-line-length
-    this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Review' && this.userService.getUserId() !== this.contentData.createdBy);
+    this.hasAccessFor(['REVIEWER']) && this.resourceStatus === 'Review' && this.userService.getUserId() !== this.contentData.createdBy);
   }
 
   canReviewContent() {
