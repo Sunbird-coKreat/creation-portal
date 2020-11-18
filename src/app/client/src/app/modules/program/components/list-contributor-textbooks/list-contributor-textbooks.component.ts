@@ -14,6 +14,7 @@ import { tap, filter, first, map } from 'rxjs/operators';
 import { NgForm } from '@angular/forms';
 import * as moment from 'moment';
 import { SourcingService } from '../../../sourcing/services';
+import { HelperService } from '../../../sourcing/services/helper.service';
 import { throwError, forkJoin } from 'rxjs';
 
 @Component({
@@ -73,7 +74,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
   public toasterService: ToasterService, public actionService: ActionService,
   private collectionHierarchyService: CollectionHierarchyService,
-  private notificationService: NotificationService, private sourcingService: SourcingService) { }
+  private notificationService: NotificationService, private sourcingService: SourcingService, private helperService: HelperService) { }
 
   ngOnInit() {
     this.programId = this.activatedRoute.snapshot.params.programId;
@@ -111,7 +112,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
     });
     this.contributor = this.selectedNominationDetails;
-    this.nominatedContentTypes = _.join(this.contributor.nominationData.content_types, ', ');
+    this.nominatedContentTypes = _.join(this.helperService.mapContentTypesToCategories(this.contributor.nominationData.content_types), ', ');
   }
 
   sortCollection(column) {

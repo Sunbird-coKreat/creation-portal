@@ -496,8 +496,8 @@ export class BulkUploadComponent implements OnInit {
 
       // Validate the content types
       row.contentType = _.toLower(row.contentType);
-      let contentType = _.find(this.contentTypes, (content_type) => {
-        return (_.toLower(content_type));
+      const contentType = _.find(this.contentTypes, (content_type) => {
+        return (_.toLower(content_type) === row.contentType);
       });
       if (_.isEmpty(contentType)) {
         this.setError(`Content Type has invalid value at row: ${rowIndex}`);

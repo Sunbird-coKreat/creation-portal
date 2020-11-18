@@ -39,12 +39,17 @@
             }
         ],
         "files": {
-          "application/vnd.ekstep.html-archive": "html",
+          "application/vnd.ekstep.html-archive": "zip",
           "application/vnd.ekstep.h5p-archive": "h5p",
           "application/pdf": "pdf",
           "video/mp4": "mp4",
           "video/webm": "webm",
-          "application/epub": "epub"
+          "application/epub": "epub",
+          "audio/mp3": "mp3",
+          "audio/mpeg": "mpeg",
+          "audio/ogg": "ogg",
+          "audio/x-wav": "x-wav",
+          "audio/wav": "wav"
         },
         "defaultfileSize": 50,
         "defaultVideoSize": 15000
