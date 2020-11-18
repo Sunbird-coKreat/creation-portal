@@ -108,3 +108,15 @@ suiPopup:after {
 .max-w-90{
     max-width: 90%;
 }
+.selection.dropdown.multiple{
+    width: 100%;
+}
+.ui.fluid.dropdown{
+    background: #fff !important;
+} 	
+sui-select{
+    width: 100%;
+    border: 1px solid rgba(34, 36, 38, 0.15);
+    font-size: 0.8rem;
+    padding:0.4rem 0.2rem;
+}

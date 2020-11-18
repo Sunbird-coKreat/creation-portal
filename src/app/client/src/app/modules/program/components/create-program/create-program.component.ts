@@ -67,6 +67,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   */
   collections;
   tempCollections = [];
+  targetCollection = [];
+  showTargetCollection: any;
   textbooks: any = {};
 
   /**
@@ -163,6 +165,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       medium: [],
       gradeLevel: [],
       subject: [],
+      content_types: [null, Validators.required],
+      rewards: [],
+      target_collection: [null, Validators.required],
     });
 
     if (!_.isEmpty(this.programId)) {
@@ -653,7 +658,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       this.createProgramForm = this.sbFormBuilder.group(obj);
       this.defaultContributeOrgReviewChecked = _.get(this.programDetails, 'config.defaultContributeOrgReview') ? false : true;
-      this.showTexbooklist(false);
+      // this.showTexbooklist(false);
     } else {
       this.createProgramForm = this.sbFormBuilder.group({
         name: ['', [Validators.required, Validators.maxLength(100)]],
@@ -742,7 +747,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   handleContentTypes() {
-    const contentTypes = this.createProgramForm.value.content_types;
+    const contentTypes = this.collectionListForm.value.content_types;
     let configContentTypes = _.get(_.find(programConfigObj.components, { id: 'ng.sunbird.chapterList' }), 'config.contentTypes.value');
     configContentTypes = _.filter(configContentTypes, (type) => {
       return _.includes(contentTypes, type.metadata.contentType);
@@ -763,8 +768,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.createProgramForm.controls['program_end_date'].updateValueAndValidity();
     this.createProgramForm.controls['content_submission_enddate'].setValidators(Validators.required);
     this.createProgramForm.controls['content_submission_enddate'].updateValueAndValidity();
-    this.createProgramForm.controls['content_types'].setValidators(Validators.required);
-    this.createProgramForm.controls['content_types'].updateValueAndValidity();
+    // this.createProgramForm.controls['content_types'].setValidators(Validators.required);
+    // this.createProgramForm.controls['content_types'].updateValueAndValidity();
   }
 
   clearValidations() {
@@ -922,19 +927,20 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
     this.validateDates();
   }
-
-  showTexbooklist(showTextBookSelector = true) {
+onChangeTargetCollection() {
+  this.showTexbooklist(true , this.collectionListForm.value.target_collection);
+  this.collectionListForm.value.pcollections = [];
+}
+  showTexbooklist(showTextBookSelector = true, primaryCategory?) {
     // for scrolling window to top after Next button navigation
     window.scrollTo(0,0);
-    
+    this.tempCollections = [];
     const requestData = {
       request: {
         filters: {
-          objectType: 'collection',
+          objectType: 'Collection',
           status: ['Draft'],
-          primaryCategory: 'Digital Textbook',
-          framework: this.userFramework,
-          board: this.userBoard,
+          primaryCategory: primaryCategory,
           channel: this.userprofile.rootOrgId
         },
         limit: 1000,
@@ -968,6 +974,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         this.showTextBookSelector = showTextBookSelector;
         if (res.result.count) {
           this.collections = res.result.content;
+          this.showTargetCollection = true;
           this.tempSortCollections = this.collections;
           if (!this.filterApplied) {
             this.sortCollection(this.sortColumn);
@@ -1324,6 +1331,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   saveAsDraftAndNext ($event) {
+    this.targetCollection = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories');
     this.clearValidations();
 
     if ((this.createProgramForm.dirty
@@ -1333,7 +1341,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
         const cb = (error, resp) => {
           if (!error && resp) {
-            this.showTexbooklist();
+            this.showTextBookSelector = true;
             ($event.target as HTMLButtonElement).disabled = false;
           } else {
             this.toasterService.error(this.resource.messages.emsg.m0005);
@@ -1343,7 +1351,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
         this.saveProgram(cb);
       } else if (this.createProgramForm.valid) {
-        this.showTexbooklist();
+        this.showTextBookSelector = true;
       } else {
         this.formIsInvalid = true;
         this.validateAllFormFields(this.createProgramForm);
