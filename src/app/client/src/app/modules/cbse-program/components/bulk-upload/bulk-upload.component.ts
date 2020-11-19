@@ -63,7 +63,7 @@ export class BulkUploadComponent implements OnInit {
   uploader;
   public bulkUploadConfig = {
     maxRows: 300,
-    fileFormats: ['pdf', 'html', 'epub', 'h5p', 'mp4', 'webm']
+    fileFormats: ['pdf', 'html', 'epub', 'h5p', 'mp4', 'webm', 'mp3']
   };
   public bulkUploadErrorMsgs = [];
   public bulkUploadValidationError = '';
