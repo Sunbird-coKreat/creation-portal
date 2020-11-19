@@ -8,13 +8,15 @@ import { ReferenceQuestionComponent } from './components/reference-question/refe
 import { MultiplechoiceQuestionComponent } from './components/multiplechoice-question/multiplechoice-question.component';
 import { QuestionSetComponent } from './components/question-set/question-set.component';
 import { EditorBaseComponent } from './components/editor-base/editor-base.component';
+import { PlayerHelperModule } from '@sunbird/player-helper';
 
 @NgModule({
   declarations: [CollectionTreeComponent, EditorHeaderComponent, ReferenceQuestionComponent,
     MultiplechoiceQuestionComponent, QuestionSetComponent, EditorBaseComponent],
   imports: [
     CommonModule,
-    EditorRoutingModule
+    EditorRoutingModule,
+    PlayerHelperModule
   ]
 })
 export class EditorModule { }

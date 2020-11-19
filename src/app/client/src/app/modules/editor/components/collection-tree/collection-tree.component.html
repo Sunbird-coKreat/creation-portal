@@ -1,3 +1,8 @@
-<p>
-  collection-tree works!
-</p>
+<app-fancy-tree 
+          (itemSelect)="onItemSelect($event)" 
+          [nodes]="rootChildrens" 
+          [rootNode]="rootNode"
+          [options]="{ showConnectors: true }"
+          class="sb-collectionTree-fancyTree"
+        >
+</app-fancy-tree>
