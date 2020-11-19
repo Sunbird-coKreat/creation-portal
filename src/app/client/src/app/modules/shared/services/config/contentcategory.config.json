@@ -36,6 +36,26 @@
             {
                 "mimetype": "application/epub",
                 "type": "upload"
+            },
+            {
+                "mimetype": "audio/mp3",
+                "type": "upload"
+            },
+            {
+                "mimetype": "audio/mpeg",
+                "type": "upload"
+            },
+            {
+                "mimetype": "audio/ogg",
+                "type": "upload"
+            },
+            {
+                "mimetype": "audio/wav",
+                "type": "upload"
+            },
+            {
+                "mimetype": "audio/x-wav",
+                "type": "upload"
             }
         ],
         "files": {
