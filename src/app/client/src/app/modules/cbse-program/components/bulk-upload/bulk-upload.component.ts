@@ -269,7 +269,7 @@ export class BulkUploadComponent implements OnInit {
         result['appIcon'] = _.get(content, 'appIcon', '');
         result['fileFormat'] = this.getFileFormat(_.get(content, 'mimeType', ''));
         result['source'] = _.get(content, 'source', '');
-        result['contentType'] = this.getContentTypeDetails('value', _.get(content, 'contentType')).name;
+        result['contentType'] = _.get(content, 'primaryCategory');
 
         const folderStructure = this.unitsInLevel[i];
         this.unitGroup = [];

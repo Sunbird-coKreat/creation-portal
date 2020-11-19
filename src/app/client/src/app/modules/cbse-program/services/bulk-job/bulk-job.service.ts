@@ -59,7 +59,8 @@ export class BulkJobService {
                   'prevStatus',
                   'contentType',
                   'origin',
-                  'name'
+                  'name',
+                  'primaryCategory'
           ],
           limit: 10000
         }
