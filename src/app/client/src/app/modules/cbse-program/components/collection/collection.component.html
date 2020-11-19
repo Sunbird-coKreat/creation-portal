@@ -149,7 +149,7 @@
       <div class="sb-pageSection-document" *ngIf="programContext?.guidelines_url">
         <a class="fs-0-785 text-decor-none font-weight-bold" href="{{ programContext?.guidelines_url }}" target="_blank"
         appTelemetryInteract
-						[telemetryInteractEdata]="getTelemetryInteractEdata('view_content_guidelines_document', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+						[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('view_content_guidelines_document', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
 						[telemetryInteractObject]="telemetryInteractObject"
 						[telemetryInteractCdata]="telemetryInteractCdata"
 						[telemetryInteractPdata]="telemetryInteractPdata">
