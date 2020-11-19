@@ -287,7 +287,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
        'identifier', 'name', 'contentType', 'Level 1 Textbook Unit', 'Level 2 Textbook Unit', 'Level 3 Textbook Unit', 'Level 4 Textbook Unit'
       ];
       const tableData = _.map(failedContent, (con, i) => {
-        const result = _.pick(con, ['identifier', 'name', 'contentType']);
+        const result = _.pick(con, ['identifier', 'name', 'primaryCategory']);
         const folderStructure = this.unitsInLevel[i];
         this.unitGroup = [];
         this.tree(folderStructure);
