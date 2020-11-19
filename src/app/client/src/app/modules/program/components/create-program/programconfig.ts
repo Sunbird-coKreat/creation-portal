@@ -3,8 +3,8 @@ var programConfig = {
     'defaultContributeOrgReview' : true,
     '_comments': '',
     'loginReqired': true,
-    'framework': 'NCF',
-    'board':'',
+    'framework':[],
+    'board':[],
     'gradeLevel':[],
     'medium':[],
     'subject':[],
@@ -69,12 +69,12 @@ var programConfig = {
             'implicit': [
               {
                 'code': 'framework',
-                'defaultValue': 'NCFCOPY',
+                'defaultValue': ['NCFCOPY'],
                 'label': 'Framework'
               },
               {
                 'code': 'board',
-                'defaultValue': 'NCERT',
+                'defaultValue': ['NCERT'],
                 'label': 'Board'
               },
               {
