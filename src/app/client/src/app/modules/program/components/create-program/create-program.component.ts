@@ -786,9 +786,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   saveProgram(cb) {
-    this.handleContentTypes();
-    const contentTypes = this.createProgramForm.value.content_types;
-    this.createProgramForm.value.content_types = _.isEmpty(contentTypes) ? [] : contentTypes;
+    // this.handleContentTypes();
+    // const contentTypes = this.createProgramForm.value.content_types;
+    // this.createProgramForm.value.content_types = _.isEmpty(contentTypes) ? [] : contentTypes;
     this.programData = {
       ...this.createProgramForm.value
     };
@@ -798,7 +798,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       // tslint:disable-next-line:max-line-length
       _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'framework' }).defaultValue = this.userFramework;
     }
-
+    const contentTypes = this.collectionListForm.value.content_types;
+    this.programData['content_types']  = _.isEmpty(contentTypes) ? [] : contentTypes;
     // tslint:disable-next-line: max-line-length
     _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'board' }).defaultValue = this.userBoard;
 
@@ -1377,7 +1378,7 @@ onChangeTargetCollection() {
 
     if (_.isEmpty(this.collectionListForm.value.pcollections)) {
       this.disableCreateProgramBtn = false;
-      this.toasterService.warning('Please select at least a one textbook');
+      this.toasterService.warning('Please select at least a one target collection');
       return false;
     }
 
