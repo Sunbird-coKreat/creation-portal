@@ -105,8 +105,16 @@ footerAlign() {
       id: type,
       type: this.configService.telemetryLabels.eventType.click,
       subtype: this.configService.telemetryLabels.eventSubtype.launch,
-      pageid: _.get(this.activatedRoute, 'root.firstChild.snapshot.data.telemetry.pageid')
+      pageid: this.getTelemetryPageId()
     };
+  }
+
+  getTelemetryPageId() {
+    if (this.router.url.includes('/contribute')) {
+      return this.configService.telemetryLabels.pageId.contribute.help;
+    } else if (this.router.url.includes('/sourcing')) {
+      return this.configService.telemetryLabels.pageId.sourcing.help;
+    }
   }
 
 }

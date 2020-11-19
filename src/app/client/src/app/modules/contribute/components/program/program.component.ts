@@ -16,6 +16,7 @@ import { IImpressionEventInput, IInteractEventEdata, TelemetryService } from '@s
 import { isUndefined, isNullOrUndefined } from 'util';
 import * as moment from 'moment';
 import { CbseProgramService } from '../../../cbse-program/services';
+import { HelperService } from '../../../cbse-program/services/helper.service';
 
 interface IDynamicInput {
   collectionComponentInput?: ICollectionComponentInput;
@@ -62,6 +63,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public programContentTypes: string;
   public roles;
   public roleNames;
+  public selectRole;
   public currentNominationStatus: any;
   public nominationDetails: any = {};
   public nominated = false;
@@ -89,6 +91,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   initialSourcingOrgUser = [];
   searchLimitMessage: any;
   searchLimitCount: any;
+  userRoles : any;
+
   visitedTab = [];
   @ViewChild('userRemoveRoleModal') userRemoveRoleModal;
   public userRemoveRoleLoader = false;
@@ -105,7 +109,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     private navigationHelperService: NavigationHelperService, public registryService: RegistryService,
     private paginationService: PaginationService, public actionService: ActionService,
     private collectionHierarchyService: CollectionHierarchyService, private telemetryService: TelemetryService,
-    private sbFormBuilder: FormBuilder, private cbseProgramService: CbseProgramService) {
+    private sbFormBuilder: FormBuilder, private cbseProgramService: CbseProgramService, private helperService: HelperService) {
     this.programId = this.activatedRoute.snapshot.params.programId;
     localStorage.setItem('programId', this.programId);
   }
@@ -128,7 +132,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.programStageService.addStage('programComponent');
     this.currentStage = 'programComponent';
-    this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit 
+    this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
     this.pageLimit = this.registryService.programUserPageLimit;
   }
 
@@ -256,7 +260,12 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this.programsService.post(req).subscribe((data) => {
       const nominationDetails = _.first(_.get(data, 'result', []));
+
       if (!_.isEmpty(nominationDetails)) {
+        if (!_.isEmpty(nominationDetails.content_types)) {
+          nominationDetails.content_types = this.helperService.mapContentTypesToCategories(nominationDetails.content_types);
+        }
+
         this.nominationDetails = nominationDetails;
       }
       if (!_.isEmpty(nominationDetails) && this.nominationDetails.status !== 'Initiated') {
@@ -278,9 +287,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         }
 
         const roles = _.filter(this.roles, role => this.sessionContext.currentRoles.includes(role.name));
-
         this.sessionContext.currentRoleIds = !_.isEmpty(roles) ? _.map(roles, role => role.id) : null;
-
         if (this.userService.isUserBelongsToOrg()) {
           this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
             this.setOrgUsers(orgUsers);
@@ -391,6 +398,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.showUsersLoader = false;
       return false;
     }
+    this.userRoles = this.roles;
     this.allContributorOrgUsers = [];
     // Get only the users and skip admins
     orgUsers = _.filter(orgUsers, { "selectedRole": "user" });
@@ -406,6 +414,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           r.projectselectedRole = "REVIEWER";
         }
       }
+      r.projectselectedRole !=='Select Role' ? r.roles = this.roles : r.roles = this.userRoles
       r.newRole = r.projectselectedRole;
       this.allContributorOrgUsers.push(r);
     });
@@ -436,8 +445,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   showUserRoleOption(roleName, userRole) {
-    if (!(roleName !== 'NONE' || (roleName === 'NONE' && userRole !== 'Select Role'))) {
-     return 'Select Role'
+    this.selectRole=this.roles;
+     if (!(roleName !== 'NONE' || (roleName === 'NONE' && userRole !== 'Select Role'))) {
+       this.selectRole.splice(3);
+       return roleName;
     } else {
       return roleName;
     }
@@ -521,6 +532,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   updateUserRoleMapping(progRoleMapping, user) {
+  
     const req = {
       'request': {
         'program_id': this.activatedRoute.snapshot.params.programId,
@@ -533,6 +545,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.userRemoveRoleLoader = false;
       if (user.newRole === "NONE") {
         user.newRole = 'Select Role';
+        user.roles = this.userRoles;
+     
+      } else {
+        user.roles = this.roles;
       }
       user.projectselectedRole = user.newRole;
       this.nominationDetails.rolemapping = progRoleMapping;
@@ -578,10 +594,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       data: {
         request: {
           filters: {
-            objectType: 'content',
+            objectType: 'collection',
             programId: this.activatedRoute.snapshot.params.programId,
             status: ['Draft', 'Live'],
-            contentType: 'Textbook'
+            primaryCategory: 'Digital Textbook',
           }
         }
       }

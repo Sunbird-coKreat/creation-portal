@@ -7,8 +7,8 @@ import { UserService, TenantService, FrameworkService, PlayerService, Notificati
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '@sunbird/environment';
 import { TelemetryService, IInteractEventEdata } from '@sunbird/telemetry';
-import { combineLatest, of, throwError, Subscription } from 'rxjs';
-import { map, mergeMap, tap, delay, first, filter } from 'rxjs/operators';
+import { combineLatest, of, throwError, Subscription, Subject } from 'rxjs';
+import { map, mergeMap, tap, delay, first, filter, takeUntil, take } from 'rxjs/operators';
 import { IContentEditorComponentInput } from '../../interfaces';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
@@ -54,7 +54,6 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   public telemetryInteractObject: any;
   public popupAction: string;
   public unitIdentifier: string;
-  public notify: Subscription;
   public programContext: any;
   public sourcingOrgReviewer: boolean;
   public originCollectionData: any;
@@ -72,6 +71,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   public originPreviewReady: boolean;
   public contentComment: string;
   public showReviewModal: boolean;
+  private onComponentDestroy$ = new Subject<any>();
 
   constructor(
     private resourceService: ResourceService,
@@ -129,10 +129,10 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.contentEditorComponentInput.contentId, 'Content', '1.0', { l1: this.sessionContext.collection, l2: this.contentEditorComponentInput.unitIdentifier});
     this.getContentMetadata();
-    this.notify = this.helperService.getNotification().subscribe((action) => {
-    this.contentStatusNotify(action);
-  });
-  this.helperService.initialize(this.programContext);
+    this.helperService.getNotification().pipe(takeUntil(this.onComponentDestroy$)).subscribe((action) => {
+      this.contentStatusNotify(action);
+    });
+    this.helperService.initialize(this.programContext);
   }
   loadContentEditor() {
     if (!document.getElementById('contentEditor')) {
@@ -221,7 +221,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
 
   canEditMetadata() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.resourceStatus === 'Draft' && (this.userService.getUserId() === this.contentData.createdBy));
+    return !!(_.find(this.formFieldProperties, field => field.editable === true));
   }
 
   canSubmit() {
@@ -293,6 +293,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       if ( _.isUndefined(this.sessionContext.topicList) || _.isUndefined(this.sessionContext.frameworkData)) {
         this.fetchFrameWorkDetails();
       }
+      this.fetchCategoryDetails();
         } else {
           this.toasterService.warning(this.resourceService.messages.imsg.m0027);
         }
@@ -316,8 +317,8 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
 
   fetchFrameWorkDetails() {
     this.frameworkService.initialize(this.sessionContext.framework);
-    this.frameworkService.frameworkData$.pipe(filter(data => _.get(data, `frameworkdata.${this.sessionContext.framework}`)),
-      first()).subscribe((frameworkDetails: any) => {
+    this.frameworkService.frameworkData$.pipe(takeUntil(this.onComponentDestroy$),
+    filter(data => _.get(data, `frameworkdata.${this.sessionContext.framework}`)), take(1)).subscribe((frameworkDetails: any) => {
       if (frameworkDetails && !frameworkDetails.err) {
         const frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
         // this.categoryMasterList = _.cloneDeep(frameworkDetails.frameworkdata[this.sessionContext.framework].categories);
@@ -325,6 +326,14 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
         this.sessionContext.topicList = _.get(_.find(frameworkData, { code: 'topic' }), 'terms');
       }
     });
+  }
+
+  fetchCategoryDetails() {
+    this.helperService.categoryMetaData$.pipe(take(1), takeUntil(this.onComponentDestroy$)).subscribe(data => {
+      this.fetchFormconfiguration();
+     this.handleActionButtons();
+    });
+    this.helperService.getCategoryMetaData(this.contentData.primaryCategory, _.get(this.programContext, 'rootorg_id'));
   }
 
   handleContentStatusText() {
@@ -364,19 +373,23 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     }
   }
 
-  showEditform(action) {
+  fetchFormconfiguration() {
     this.formFieldProperties = _.cloneDeep(this.helperService.getFormConfiguration());
-    this.requiredAction = action;
-    if (_.get(this.selectedSharedContext, 'topic')) {
-      // tslint:disable-next-line:max-line-length
-      this.sessionContext.topic = _.isArray(this.sessionContext.topic) ? this.selectedSharedContext.topic : _.split(this.selectedSharedContext.topic, ',');
-    }
     this.getEditableFields();
     _.forEach(this.formFieldProperties, field => {
       if (field.editable && !_.includes(this.editableFields, field.code)) {
         field['editable'] = false;
       }
     });
+  }
+
+  showEditform(action) {
+    this.fetchFormconfiguration();
+    this.requiredAction = action;
+    if (_.get(this.selectedSharedContext, 'topic')) {
+      // tslint:disable-next-line:max-line-length
+      this.sessionContext.topic = _.isArray(this.sessionContext.topic) ? this.selectedSharedContext.topic : _.split(this.selectedSharedContext.topic, ',');
+    }
 
     if (this.requiredAction === 'editForm') {
       this.formFieldProperties = _.filter(this.formFieldProperties, val => val.code !== 'contentPolicyCheck');
@@ -416,7 +429,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   getDetails() {
-      return of({'tenantDetails': {'logo': 'xyz.png'}, 'ownershipType': ['createdBy']});
+      return of({'tenantDetails': {'logo': '/tenant/ntp/logo.png' }, 'ownershipType': ['createdBy']});
   }
 
   showCommentAddedAgainstContent() {
@@ -501,7 +514,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     // window.config.lock = {};
     window.config.videoMaxSize = this.videoMaxSize;
     window.config.headerConfig = {
-      'managecollaborator': false, 'sendforreview': false, 'limitedsharing': false, 'showPreview': false, 'showEditDetails': false
+      'managecollaborator': false, 'sendforreview': false, 'limitedsharing': false, 'showEditDetails': false
     };
   }
   /**
@@ -600,7 +613,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
         this.showRequestChangesPopup = false;
         if (this.sessionContext.collection && this.contentEditorComponentInput.unitIdentifier) {
           // tslint:disable-next-line:max-line-length
-          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.contentEditorComponentInput.unitIdentifier, res.result.identifier)
+          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.contentEditorComponentInput.unitIdentifier, res.result.node_id || this.contentEditorComponentInput.contentId)
           .subscribe((data) => {
             this.toasterService.success(this.resourceService.messages.smsg.m0062);
             this.programStageService.removeLastStage();
@@ -724,8 +737,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     if (removeIzi) {
       removeIzi.classList.remove('iziModal-isAttached');
     }
-    if (this.notify) {
-      this.notify.unsubscribe();
-    }
+    this.onComponentDestroy$.next();
+    this.onComponentDestroy$.complete();
   }
 }

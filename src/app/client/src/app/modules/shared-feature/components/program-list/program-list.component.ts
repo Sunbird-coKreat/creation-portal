@@ -404,15 +404,17 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         });
         this.enrollPrograms = this.programs;
         this.tempSortPrograms = this.programs;
-        this.count = _.get(response, 'result.count');
+        this.count = this.programs.length;
         if (!_.get(req , 'request.sort')) {
           this.sortColumn = 'createdon';
           this.direction = 'desc';
           this.sortCollection(this.sortColumn);
         }
+        this.logTelemetryImpressionEvent();
         this.showLoader = false;
       }, error => {
         console.log(error);
+        this.logTelemetryImpressionEvent();
         const errInfo = {
           telemetryPageId: this.telemetryPageId,
           telemetryCdata : this.telemetryInteractCdata,

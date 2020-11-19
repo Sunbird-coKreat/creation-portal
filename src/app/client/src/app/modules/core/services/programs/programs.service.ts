@@ -4,6 +4,7 @@ import { OrgDetailsService } from './../org-details/org-details.service';
 import { FrameworkService } from './../framework/framework.service';
 import { ExtPluginService } from './../ext-plugin/ext-plugin.service';
 import { PublicDataService } from './../public-data/public-data.service';
+import { ActionService } from './../action/action.service';
 import { ConfigService, ServerResponse, ToasterService, ResourceService, HttpOptions, BrowserCacheTtlService } from '@sunbird/shared';
 import { Injectable } from '@angular/core';
 import { UserService } from '../user/user.service';
@@ -40,7 +41,7 @@ export class ProgramsService extends DataService implements CanActivate {
   public http: HttpClient;
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
   private _contentTypes: any[];
-  private _contentCategories: any[];
+  //private _contentCategories: any[];
   private _overrideMetaData: any[];
   private _sourcingOrgReviewers: Array<any>;
   // private orgUsers: Array<any>;
@@ -57,7 +58,7 @@ export class ProgramsService extends DataService implements CanActivate {
     private contentService: ContentService, private router: Router,
     private toasterService: ToasterService, private resourceService: ResourceService,
     public learnerService: LearnerService, private registryService: RegistryService,
-    public frameworkService: FrameworkService,
+    public frameworkService: FrameworkService, private actionService: ActionService,
     public cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService) {
       super(http);
       this.config = config;
@@ -70,7 +71,7 @@ export class ProgramsService extends DataService implements CanActivate {
   public initialize() {
     // this.enableContributeMenu().subscribe();
     this.getAllContentTypes().subscribe();
-    this.getAllContentCategories().subscribe();
+    //this.getAllContentCategories().subscribe();
     this.getOverridableMetaDataConfig().subscribe();
     this.mapSlugstoOrgId();
   }
@@ -880,9 +881,9 @@ export class ProgramsService extends DataService implements CanActivate {
    * Get all the categories  configured
    */
 
-  get contentCategories() {
+  /*get contentCategories() {
     return _.cloneDeep(this._contentCategories);
-  }
+  }*/
 
   /**
    * Get all overridable meta fields configured
@@ -906,7 +907,7 @@ export class ProgramsService extends DataService implements CanActivate {
     );
   }
 
-  private getAllContentCategories(): Observable<any[]> {
+  /*private getAllContentCategories(): Observable<any[]> {
     const req = {
       url:'composite/v1/search',
       data: {
@@ -928,7 +929,7 @@ export class ProgramsService extends DataService implements CanActivate {
         this._contentCategories = contentCategories;
       })
     );
-  }
+  }*/
 
   getOverridableMetaDataConfig(): Observable<any[]> {
     const option = {
@@ -951,66 +952,27 @@ export class ProgramsService extends DataService implements CanActivate {
     );
   }
 
-  /**
-   * Get primary categories according to the project
-   */
-  getProgramContentCategories(programContentCategories) {
-    let alreadyFetchedCats = [];
-    let tobeFetched = [];
-    const requests = [];
-    return new Promise((resolve, reject) => {
-      if (this.cacheService.get('contentCategories')) {
-        _.forEach(programContentCategories, (cat) => {
-          const found = _.find(this.cacheService.get('contentCategories'), (cacheCat) => {
-            return cacheCat.name === cat;
-          });
-          if (found) {
-            alreadyFetchedCats.push(found);
+  getCategoryDefinition(categoryName, rootOrgId) {
+    const cacheInd = categoryName + ':' + rootOrgId;
+    if (this.cacheService.get(cacheInd)) {
+      return  of(this.cacheService.get(cacheInd));
+    } else {
+      const req = {
+        url: 'object/category/definition/v1/read?fields=objectMetadata,forms,name',
+        data: {
+          request: {
+            "objectCategoryDefinition": {
+                "objectType": "Content",
+                "name": categoryName,
+                "channel": rootOrgId
+            },
           }
-          else {
-            tobeFetched.push(cat);
-          }
-        });
-      } else {
-        tobeFetched = programContentCategories;
-        this.cacheService.set('contentCategories', [])
-      }
-
-      if (!tobeFetched.length) {
-        return resolve(alreadyFetchedCats);
-      } else {
-        const catRequests = [];
-        _.forEach(tobeFetched, tempCat => {
-          catRequests.push(this.getCategoryDefinition(tempCat));
-        });
-        forkJoin(catRequests).subscribe(res => {
-          const result = _.get(res, 'result.ObjectCategoryDefinition');
-          this.cacheService.set('contentCategories', [...(this.cacheService.get('contentCategories')), ...(result)]);
-          alreadyFetchedCats = [...(alreadyFetchedCats), ...(result)];
-          return resolve(alreadyFetchedCats);
-        },
-        err => {
-          console.log(err);
-          return reject(alreadyFetchedCats);
-        });
-      }
-    });
-  }
-
-  getCategoryDefinition(categoryName) {
-    const catObj = _.find(this.contentCategories, { name: categoryName });
-    const req = {
-      url: 'object/category/definition/v1/read/' + catObj.identifier,
-      data: {
-        request: {
-          "objectCategoryDefinition": {
-              "objectType": "Content",
-              "name": categoryName
-          },
         }
-      }
-    };
-    return this.learnerService.get(req);
+      };
+      return this.post(req).pipe(tap(data => {
+        this.setSessionCache({name: cacheInd, value: data})
+      }));
+    }
   }
 
   isNotEmpty(obj, key) {
@@ -1284,105 +1246,6 @@ export class ProgramsService extends DataService implements CanActivate {
        values.length ? count++ : 0;
         });
     }
-  return count;
-}
-  /*getSourcingOrgUserList(sourcingOrgId, roles, limit?) {
-    return new Promise((resolve, reject) => {
-      // Get all diskha users
-      return this.getAllSourcingOrgUsers(sourcingOrgId, roles, limit)
-      .then((sourcingOrgUsers) => {
-        // Remove currently logged in user
-        sourcingOrgUsers = _.filter(sourcingOrgUsers, user => {
-          return user.identifier !== this.userService.userProfile.identifier;
-        });
-
-        if (_.isEmpty(sourcingOrgUsers)) {
-          return resolve([]);
-        }
-
-        // Get the open saber users for org
-        const storedOrglist = this.cacheService.get('orgUsersDetails');
-        const orgId = _.get(this.userService, 'userProfile.userRegData.Org.osid');
-
-        return this.registryService.getAllContributionOrgUsers(orgId)
-        .then((allOrgUsers) => {
-          // Get the open saber user details
-          const userList = _.map(allOrgUsers, u => u.userId);
-          const osUsersReq = this.registryService.getUserdetailsByOsIds(userList);
-
-          if (userList && storedOrglist && userList.length === storedOrglist.length) {
-            return resolve(this.cacheService.get('orgUsersDetails'));
-          }
-
-          return forkJoin(osUsersReq).subscribe(res => {
-            const users = _.get(_.first(res), 'result.User');
-            let orgUsersDetails = _.map(sourcingOrgUsers, u => {
-              const osUser = _.first(_.filter(users, u1 => {
-                return u1.userId === u.identifier;
-              }));
-
-              const osUserOrg = _.first(_.filter(allOrgUsers, u1 => {
-                return u1.userId === _.get(osUser, 'osid');
-              }));
-
-              return {
-                ...u,
-                name: `${u.firstName} ${u.lastName || ''}`,
-                User: osUser,
-                User_Org: osUserOrg,
-                selectedRole: !_.isUndefined(osUserOrg) ? _.first(osUserOrg.roles) : 'user'
-              };
-            });
-            orgUsersDetails = _.compact(orgUsersDetails);
-            this.cacheService.set('orgUsersDetails', orgUsersDetails);
-
-            return resolve(orgUsersDetails);
-          }, (err) => {
-            console.log('Error:', err);
-            return resolve([]);
-          });
-        });
-      }, (err) => {
-        console.log('Error:', err);
-        return resolve([]);
-      });
-    });
+    return count;
   }
-
-  getAllSourcingOrgUsers(orgId, roles, limit?, offset?) {
-    // Get the diskha users for org
-    const filters = {
-      'organisations.organisationId': orgId,
-      'organisations.roles': roles
-    };
-
-    offset = (!_.isUndefined(offset)) ? offset : 0;
-    limit = (!_.isUndefined(limit)) ? limit : 100;
-
-    if (offset === 0) {
-      this.orgUsers = [];
-    }
-
-    return new Promise((resolve, reject) => {
-      this.getSourcingOrgUsers(filters, offset, limit).subscribe(
-        (res) => {
-          const sourcingOrgUsers =  _.get(res, 'result.response.content', []);
-          const totalCount =  _.get(res, 'result.response.count');
-
-          if (sourcingOrgUsers.length > 0) {
-            this.orgUsers = _.compact(_.concat(this.orgUsers, sourcingOrgUsers));
-            offset = offset + limit;
-          }
-
-          if (totalCount > this.orgUsers.length){
-            return resolve(this.getAllSourcingOrgUsers(orgId, roles, limit, offset));
-          }
-          return resolve(this.orgUsers);
-        },
-        (error) => {
-          return reject([]);
-        }
-      );
-    });
-  } */
 }

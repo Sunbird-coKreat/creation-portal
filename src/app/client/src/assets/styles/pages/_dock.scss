@@ -656,3 +656,6 @@ xxl calculateRem(180px) 24px 20px;
     }
   }
 }
+.iziModal-isAttached body {
+  overflow: inherit !important; 
+} 

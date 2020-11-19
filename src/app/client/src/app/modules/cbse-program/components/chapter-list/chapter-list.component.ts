@@ -349,6 +349,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         instance.countData['total'] = 0;
         instance.countData['review'] = 0;
         instance.countData['reject'] = 0;
+        instance.countData['live'] = 0;
+        instance.countData['draft'] = 0;
         instance.countData['mycontribution'] = 0;
         instance.countData['totalreview'] = 0;
         instance.countData['awaitingreview'] = 0;
@@ -526,7 +528,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   getContentStatusCount(data) {
     const self = this;
-    if (['admin', 'user'].includes(this.sessionContext.currentOrgRole)  && this.sessionContext.currentRoles.includes('REVIEWER')) {
+    if (['admin', 'user'].includes(this.sessionContext.currentOrgRole)  && (this.sessionContext.currentRoles.includes('REVIEWER') || this.sessionContext.currentRoles.includes('CONTRIBUTOR') )) {
       // tslint:disable-next-line:max-line-length
       if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' && this.myOrgId === data.organisationId)  && (!data.sampleContent || data.sampleContent === undefined)) {
         this.countData['total'] = this.countData['total'] + 1;
@@ -539,19 +541,36 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         if (data.createdBy === this.currentUserID) {
           this.countData['mycontribution'] = this.countData['mycontribution'] + 1;
         }
-        if (data.status === 'Review') {
-          this.countData['totalreview'] = this.countData['totalreview'] + 1;
-        }
-        if (data.createdBy !== this.currentUserID && data.status === 'Review') {
-          this.countData['awaitingreview'] = this.countData['awaitingreview'] + 1;
+        if(this.sessionContext.currentRoles.includes('REVIEWER')) {
+          if (data.status === 'Review') {
+            this.countData['totalreview'] = this.countData['totalreview'] + 1;
+          }
+          if (data.createdBy !== this.currentUserID && data.status === 'Review') {
+            this.countData['awaitingreview'] = this.countData['awaitingreview'] + 1;
+          }
         }
       }
-    } else {
+    } 
+     else if(['individual'].includes(this.sessionContext.currentOrgRole)  && this.sessionContext.currentRoles.includes('CONTRIBUTOR')) {
+      if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' )  && (!data.sampleContent || data.sampleContent === undefined)) {
+      
+        if (data.createdBy === this.currentUserID) {
+          this.countData['total'] = this.countData['total'] + 1;
+        }
+      }
+     }
+    else {
       // tslint:disable-next-line:max-line-length
-      if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit')  && (!data.sampleContent || data.sampleContent === undefined)) {
+      if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' )  && (!data.sampleContent || data.sampleContent === undefined)) {
         this.countData['total'] = this.countData['total'] + 1;
         if (data.createdBy === this.currentUserID && data.status === 'Review') {
           this.countData['review'] = this.countData['review'] + 1;
+        }
+        if (data.createdBy === this.currentUserID && data.status === 'Draft') {
+          this.countData['draft'] = this.countData['draft'] + 1;
+        }
+        if (data.createdBy === this.currentUserID && data.status === 'Live') {
+          this.countData['live'] = this.countData['live'] + 1;
         }
         if (data.createdBy === this.currentUserID && data.status === 'Draft' && data.prevStatus === 'Review') {
           this.countData['reject'] = this.countData['reject'] + 1;
@@ -725,9 +744,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               'code': UUID.UUID(),
               'mimeType': this.templateDetails.mimeType[0],
               'createdBy': this.userService.userid,
-              'primaryCategory': this.templateDetails.metadata.primaryCategory,
-              //'contentType': this.templateDetails.metadata.contentType,
-              'resourceType': this.templateDetails.metadata.resourceType || 'Learn',
+              'primaryCategory': this.templateDetails.name,
               'creator': creator,
               'programId': this.sessionContext.programId,
               'collectionId': this.sessionContext.collection,
@@ -742,8 +759,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       if (this.sampleContent) {
         option.data.request.content.sampleContent = this.sampleContent;
       }
-      if (this.templateDetails.metadata.appIcon) {
-        option.data.request.content.appIcon = this.templateDetails.metadata.appIcon;
+      if (_.get(this.templateDetails, 'modeOfCreation') === 'question') {
+        option.data.request.content.questionCategories =  [this.templateDetails.questionCategory];
+      }
+      if (_.get(this.templateDetails, 'appIcon')) {
+        option.data.request.content.appIcon = _.get(this.templateDetails, 'appIcon');
       }
       this.actionService.post(option).pipe(map((res: any) => res.result), catchError(err => {
         const errInfo = {
@@ -771,26 +791,32 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   handlePreview(event) {
-    // const templateList = _.get(this.chapterListComponentInput.config, 'config.contentTypes.value')
-    //   || _.get(this.chapterListComponentInput.config, 'config.contentTypes.defaultValue');
-    const templateList = this.programsService.contentCategories;
-    this.templateDetails = _.find(templateList, (templateData) => {
-      return templateData.name === event.content.primaryCategory;
-    });
-    if (this.templateDetails) {
-      this.templateDetails.questionCategories = event.content.questionCategories;
-      if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && !_.isEmpty(event.content.itemSets)) {
-        this.templateDetails.onClick = 'questionSetComponent';
-      } else if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && _.isEmpty(event.content.itemSets)) {
-        this.templateDetails.onClick = 'editorComponent';
-      } else if (event.content.mimeType === 'application/vnd.ekstep.quml-archive') {
-        this.templateDetails.onClick = 'questionSetComponent';
-      } else {
-        this.templateDetails.onClick = 'uploadComponent';
+    //const templateList = this.programsService.contentCategories;
+    this.programsService.getCategoryDefinition(event.content.primaryCategory, this.programContext.rootorg_id).subscribe((res)=>{
+      this.templateDetails = res.result.objectCategoryDefinition;
+      if (this.templateDetails) {
+        const appEditorConfig = this.configService.contentCategoryConfig.sourcingConfig.files;
+        const acceptedFile = appEditorConfig[event.content.mimeType];
+        this.templateDetails['filesConfig'] = {};
+        this.templateDetails.filesConfig['accepted'] = acceptedFile || '';
+        this.templateDetails.filesConfig['size'] = this.configService.contentCategoryConfig.sourcingConfig.defaultfileSize;
+        this.templateDetails.questionCategories = event.content.questionCategories;
+        if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && !_.isEmpty(event.content.questionCategories)) {
+          this.templateDetails.onClick = 'questionSetComponent';
+        } else if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && _.isEmpty(event.content.questionCategories)) {
+          this.templateDetails.onClick = 'editorComponent';
+        } else if (event.content.mimeType === 'application/vnd.ekstep.quml-archive') {
+          this.templateDetails.onClick = 'questionSetComponent';
+        } else {
+          this.templateDetails.onClick = 'uploadComponent';
+        }
+        this.componentLoadHandler('preview',
+        this.programComponentsService.getComponentInstance(this.templateDetails.onClick), this.templateDetails.onClick, event);
       }
-    this.componentLoadHandler('preview',
-    this.programComponentsService.getComponentInstance(this.templateDetails.onClick), this.templateDetails.onClick, event);
-    }
+    }, (error)=> {
+      this.toasterService.error(this.resourceService.messages.emsg.m0027);
+      return false;
+    });
   }
 
   componentLoadHandler(action, component, componentName, event?) {
@@ -887,11 +913,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       this.cbseService.apiErrorHandling(error, errInfo);
      })
   }
+
   resourceTemplateInputData() {
     let contentCategories = this.programContext.content_types;
-    // Get the content categories objects to be passed to the selection popup
-    // let contentTypes = _.get(this.chapterListComponentInput.config, 'config.contentTypes.value')
-    // || _.get(this.chapterListComponentInput.config, 'config.contentTypes.defaultValue');
     if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.content_types) {
       contentCategories = _.filter(contentCategories, (catName) => {
         if (_.includes(this.sessionContext.nominationDetails.content_types, catName)) {
@@ -901,10 +925,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       });
     }
     this.resourceTemplateComponentInput = {
-        templateList: contentCategories,
-        programContext: this.programContext,
-        sessionContext: this.sessionContext,
-        unitIdentifier: this.unitIdentifier
+      templateList: contentCategories,
+      programContext: this.programContext,
+      sessionContext: this.sessionContext,
+      unitIdentifier: this.unitIdentifier
     };
   }
 

@@ -3,7 +3,7 @@ import { ConfigService, ToasterService, ServerResponse, ResourceService } from '
 import { ContentService, ActionService, PublicDataService, ProgramsService, NotificationService, UserService,
   FrameworkService } from '@sunbird/core';
 import { throwError, Observable, of, Subject, forkJoin } from 'rxjs';
-import { catchError, map, switchMap, tap, mergeMap, filter, first } from 'rxjs/operators';
+import { catchError, map, switchMap, tap, mergeMap, filter, first, skipWhile } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 import { ProgramStageService } from '../../program/services';
 import { CacheService } from 'ng2-cache-service';
@@ -17,6 +17,10 @@ export class HelperService {
   private sendNotification = new Subject<string>();
   private _availableLicences: Array<any>;
   private _channelData: any;
+  private _categoryMetaData: any;
+  private _categoryMetaData$ = new Subject<any>();
+  public readonly categoryMetaData$: Observable<any> = this._categoryMetaData$
+    .asObservable().pipe(skipWhile(data => data === undefined || data === null));
 
   constructor(private configService: ConfigService, private contentService: ContentService,
     private toasterService: ToasterService, private publicDataService: PublicDataService,
@@ -32,6 +36,21 @@ export class HelperService {
     if (programDetails.rootorg_id) {
       this.fetchChannelData(programDetails.rootorg_id);
     }
+  }
+
+  getCategoryMetaData(category, channelId) {
+    this.programsService.getCategoryDefinition(category, channelId).subscribe(data => {
+      this.selectedCategoryMetaData = data;
+      this._categoryMetaData$.next(data);
+    });
+  }
+
+  set selectedCategoryMetaData(data) {
+    this._categoryMetaData = data;
+  }
+
+  get selectedCategoryMetaData() {
+    return this._categoryMetaData;
   }
 
   getLicences(): Observable<any> {
@@ -414,7 +433,7 @@ export class HelperService {
     const categoryMasterList = sessionContext.frameworkData;
     _.forEach(categoryMasterList, (category) => {
       _.forEach(formFieldProperties, (formFieldCategory) => {
-        if (category.code === formFieldCategory.code) {
+        if (category.code === formFieldCategory.code && category.code !== 'learningOutcome') {
           formFieldCategory.range = category.terms;
         }
         if (formFieldCategory.code === 'learningOutcome') {
@@ -456,15 +475,13 @@ export class HelperService {
         if (formFieldCategory.code === 'learningOutcome' && formFieldCategory.inputType === 'select' && _.isArray(requiredData)) {
           formFieldCategory.defaultValue = _.first(requiredData) || '';
         }
+        // tslint:disable-next-line:max-line-length
+        if (formFieldCategory.code === 'additionalCategories' && formFieldCategory.inputType === 'multiSelect' && contentMetadata.primaryCategory === 'eTextbook' &&
+            contentMetadata.status === 'Draft' && _.isEmpty(contentMetadata.additionalCategories)) {
+          formFieldCategory.defaultValue = ['Textbook'];
+        }
       });
     }
-    // else {
-    //   _.forEach(formFieldProperties, (formFieldCategory) => {
-    //     if (!_.isUndefined(sessionContext[formFieldCategory.code])) {
-    //       formFieldCategory.defaultValue = sessionContext[formFieldCategory.code];
-    //     }
-    //   });
-    // }
     const sortedFormFields = _.sortBy(_.uniqBy(formFieldProperties, 'code'), 'index');
     return [categoryMasterList, sortedFormFields];
   }
@@ -507,199 +524,8 @@ export class HelperService {
   }
 
   getFormConfiguration() {
-    return [{
-      'code': 'name',
-      'editable': true,
-      'displayProperty': 'Editable',
-      'dataType': 'text',
-      'renderingHints': {
-        'semanticColumnWidth': 'twelve'
-      },
-      'description': 'Name',
-      'index': 1,
-      'label': 'Name',
-      'required': true,
-      'name': 'Name',
-      'inputType': 'text',
-      'placeholder': 'Name'
-    },
-    // {
-    //   'code': 'board',
-    //   'visible': true,
-    //   'depends': [
-    //     'medium',
-    //     'gradeLevel',
-    //     'subject'
-    //   ],
-    //   'editable': true,
-    //   'displayProperty': 'Editable',
-    //   'dataType': 'text',
-    //   'renderingHints': {
-    //     'semanticColumnWidth': 'six'
-    //   },
-    //   'description': 'Education Board (Like MP Board, NCERT, etc)',
-    //   'index': 2,
-    //   'label': 'Board',
-    //   'required': false,
-    //   'name': 'Board',
-    //   'inputType': 'select',
-    //   'placeholder': 'Board'
-    // },
-    // {
-    //   'code': 'medium',
-    //   'visible': true,
-    //   'depends': [
-    //     'gradeLevel',
-    //     'subject'
-    //   ],
-    //   'editable': true,
-    //   'displayProperty': 'Editable',
-    //   'dataType': 'list',
-    //   'renderingHints': {
-    //     'semanticColumnWidth': 'six'
-    //   },
-    //   'description': 'Medium of instruction',
-    //   'index': 3,
-    //   'label': 'Medium',
-    //   'required': true,
-    //   'name': 'Medium',
-    //   'inputType': 'multiSelect',
-    //   'placeholder': 'Medium'
-    // },
-    // {
-    //   'code': 'gradeLevel',
-    //   'visible': true,
-    //   'depends': [
-    //     'subject'
-    //   ],
-    //   'editable': true,
-    //   'displayProperty': 'Editable',
-    //   'dataType': 'list',
-    //   'renderingHints': {
-    //     'semanticColumnWidth': 'six'
-    //   },
-    //   'description': 'Class',
-    //   'index': 4,
-    //   'label': 'Class',
-    //   'required': true,
-    //   'name': 'Class',
-    //   'inputType': 'multiSelect',
-    //   'placeholder': 'Class'
-    // },
-    // {
-    //   'code': 'subject',
-    //   'visible': true,
-    //   'editable': true,
-    //   'displayProperty': 'Editable',
-    //   'dataType': 'list',
-    //   'renderingHints': {
-    //     'semanticColumnWidth': 'six'
-    //   },
-    //   'description': 'Subject of the Content to use to teach',
-    //   'index': 5,
-    //   'label': 'Subject',
-    //   'required': true,
-    //   'name': 'Subject',
-    //   'inputType': 'multiSelect',
-    //   'placeholder': 'Subject'
-    // },
-    {
-      'code': 'learningOutcome',
-      'visible': true,
-      'editable': true,
-      'displayProperty': 'Editable',
-      'dataType': 'list',
-      'renderingHints': {
-        'semanticColumnWidth': 'six'
-      },
-      'description': 'Subject of the Content to use to teach',
-      'index': 2,
-      'label': 'Learning Outcome',
-      'required': false,
-      'name': 'learningOutcome',
-      'inputType': 'select',
-      'placeholder': 'learningOutcome'
-    },
-    {
-      'code': 'attributions',
-      'dataType': 'list',
-      'description': 'Attributions',
-      'editable': true,
-      'index': 3,
-      'inputType': 'text',
-      'label': 'Attributions',
-      'name': 'attribution',
-      'placeholder': '',
-      'renderingHints': {
-        'semanticColumnWidth': 'six'
-      },
-      'required': false
-    },
-    {
-      'code': 'author',
-      'dataType': 'text',
-      'description': 'Author',
-      'editable': true,
-      'renderingHints': {
-        'semanticColumnWidth': 'six'
-      },
-      'index': 4,
-      'inputType': 'text',
-      'label': 'Author',
-      'name': 'Author',
-      'placeholder': 'Author',
-      'required': true
-    },
-    {
-      'code': 'copyright',
-      'dataType': 'text',
-      'description': 'Copyright',
-      'editable': true,
-      'index': 5,
-      'inputType': 'text',
-      'label': 'Copyright',
-      'name': 'Copyright',
-      'placeholder': 'Copyright',
-      'renderingHints': {
-        'semanticColumnWidth': 'six'
-      },
-      'required': false
-    },
-    {
-      'code': 'license',
-      'visible': true,
-      'editable': true,
-      'displayProperty': 'Editable',
-      'dataType': 'text',
-      'renderingHints': {
-        'semanticColumnWidth': 'six'
-      },
-      'description': 'Subject of the Content to use to teach',
-      'index': 6,
-      'label': 'License',
-      'required': false,
-      'name': 'license',
-      'inputType': 'select',
-      'placeholder': 'license'
-    },
-    {
-      'code': 'additionalCategories',
-      'visible': true,
-      'editable': true,
-      'displayProperty': 'Editable',
-      'dataType': 'list',
-      'renderingHints': {
-        'semanticColumnWidth': 'six'
-      },
-      'description': 'Subject of the Content to use to teach',
-      'index': 7,
-      'label': 'Content Additional Categories',
-      'required': false,
-      'name': 'additionalCategories',
-      'inputType': 'multiSelect',
-      'placeholder': 'Content Additional Categories'
-    },
-    {
+    const formFields = _.get(this.selectedCategoryMetaData, 'result.objectCategoryDefinition.forms.update.properties');
+    const contentPolicyCheck = [{
       'code': 'contentPolicyCheck',
       'editable': true,
       'displayProperty': 'Editable',
@@ -708,72 +534,45 @@ export class HelperService {
         'semanticColumnWidth': 'twelve'
       },
       'description': 'Name',
-      'index': 8,
+      'index': formFields ? (formFields.length + 1) : 20,
       'label': 'Content PolicyCheck',
       'required': true,
       'name': 'contentPolicyCheck',
       'inputType': 'checkbox',
       'placeholder': 'Name'
     }];
+    return formFields && formFields.length ? [...formFields, ...contentPolicyCheck] : [];
   }
-  /*getContentMetadata(componentInput: any) {
-    const contentId = sessionContext.resourceIdentifier;
-    const option = {
-      url: `${this.configService.urlConFig.URLS.CONTENT.GET}/${contentId}`,
-    };
-    this.contentService.get(option).pipe(map((data: any) => data.result.content), catchError(err => {
-      const errInfo = { errorMsg: 'Unable to read the Content, Please Try Again' };
-      return throwError(this.cbseService.apiErrorHandling(err, errInfo));
-    })).subscribe(resourceDetails => {
-      //this.resourceDetails = res;
-      //this.sessionContext.contentMetadata = resourceDetails;
-      const contentTypeValue = [resourceDetails.contentType];
-      const contentType = this.programsService.getContentTypesName(contentTypeValue);
-      resourceDetails.contentTypeName = contentType;
-      this.sessionContext.contentMetadata = resourceDetails;
-      this.sessionContext.resourceStatus = _.get(this.resourceDetails, 'status');;
 
-      //this.existingContentVersionKey = resourceDetails.versionKey;
-      //this.resourceStatus =  _.get(this.resourceDetails, 'status');
-      this.setResourceStatus(resourceDetails);
-      if (this.resourceDetails.questionCategories) {
-        this.sessionContext.questionType = _.lowerCase(_.nth(this.resourceDetails.questionCategories, 0));
-      }
-      this.sessionContext.resourceStatus = this.resourceStatus;
-      this.resourceName = this.resourceDetails.name || this.templateDetails.metadata.name;
-      this.contentRejectComment = this.resourceDetails.rejectComment || '';
-      if (!this.resourceDetails.itemSets) {
-        this.createDefaultQuestionAndItemset();
+  mapContentTypesToCategories(nomContentTypes) {
+      const mapping = {
+              "TeachingMethod" : "Teacher Resource",
+              "PedagogyFlow" : "Teacher Resource",
+              "FocusSpot" : "Teacher Resource",
+              "LearningOutcomeDefinition" : "Teacher Resource",
+              "PracticeQuestionSet" : "Practice Question Set",
+              "CuriosityQuestionSet": "Practice Question Set",
+              "MarkingSchemeRubric" : "Teacher Resource",
+              "ExplanationResource" : "Explanation Content",
+              "ExperientialResource" : "Learning Resource",
+              "ConceptMap" : "Learning Resource",
+              "SelfAssess" : "Course Assessment",
+              "ExplanationVideo" : "Explanation Content",
+              "ClassroomTeachingVideo" : "Explanation Content",
+              "ExplanationReadingMaterial" : "Learning Resource",
+              "PreviousBoardExamPapers" : "Learning Resource",
+              "LessonPlanResource" : "Teacher Resource",
+              "LearningActivity" : "Learning Resource",
+              };
+      const oldContentTypes = _.keys(mapping);
+      if (!_.isEmpty(nomContentTypes) && _.includes(oldContentTypes,  _.nth(nomContentTypes, 0))) {
+        // means the nomination is has old contnet types and not the content categories
+        let nomContentCategories = _.map(nomContentTypes, (contentType) => {
+            return mapping[contentType];
+        });
+        return _.uniq(nomContentCategories);
       } else {
-        const itemSet = this.resourceDetails.itemSets;
-        if (itemSet[0].identifier) {
-          this.itemSetIdentifier = itemSet[0].identifier;
-        }
-        this.fetchQuestionList();
-        this.resourceName = (this.resourceName !== 'Untitled') ? this.resourceName : '' ;
-        if (this.visibility && this.visibility.showSave && !this.resourceName) {
-          this.showResourceTitleEditor();
-        }
+        return nomContentTypes;
       }
-      this.handleActionButtons();
-    });
   }
-
-  setResourceStatus(resourceDetails) {
-    const resourceStatus = this.sessionContext.resourceStatus
-
-    if (resourceStatus === 'Review') {
-      this.sessionContext.resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
-    } else if (resourceStatus === 'Draft' && resourceDetails.rejectComment && resourceDetails.rejectComment !== '') {
-      this.sessionContext.resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
-    } else if (resourceStatus === 'Live' && _.isEmpty(this.sourcingReviewStatus)) {
-      this.sessionContext.resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
-    } else if (this.sourcingReviewStatus === 'Rejected') {
-      this.sessionContext.resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
-    } else if (this.sourcingReviewStatus === 'Approved') {
-      this.sessionContext.resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
-    } else {
-      this.sessionContext.resourceStatusText = resourceStatus;
-    }
-  }*/
 }

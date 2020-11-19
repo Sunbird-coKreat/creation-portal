@@ -71,6 +71,9 @@
     },
     "versionKey": {
       "type": "string"
+    },
+    "consumerId": {
+      "type": "string"
     }
   },
   "additionalProperties": false
