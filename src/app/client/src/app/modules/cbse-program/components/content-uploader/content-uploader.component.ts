@@ -440,6 +440,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.templateDetails.filesConfig.accepted.split(' ') : this.templateDetails.filesConfig.accepted.split(', ');
     this.vidEtns =  _.join(_.intersection(extns, this.allAvailableVidExtns), ', ');
     this.docExtns = _.join(_.intersection(extns, this.allAvailableDocExtns), ', ');
+    this.docExtns = _.replace(this.docExtns, 'zip', 'html zip');
     // this.audioExtns = _.join(_.intersection(extns, this.allAvailableAudioExtns), ', ');
   }
 
