@@ -1332,7 +1332,8 @@ onChangeTargetCollection() {
   }
 
   saveAsDraftAndNext ($event) {
-    this.targetCollection = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories');
+    // tslint:disable-next-line: max-line-length
+    this.targetCollection = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories'); // get target collection in dropdown
     this.clearValidations();
 
     if ((this.createProgramForm.dirty
