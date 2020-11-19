@@ -36,10 +36,10 @@ export class BulkUploadComponent implements OnInit {
     'pdf': 'application/pdf',
     'mp4': 'video/mp4',
     'webm': 'video/webm',
-    'html': 'text/html',
+    'html': 'application/vnd.ekstep.html-archive',
     'epub': 'application/epub',
     'h5p': 'application/vnd.ekstep.h5p-archive',
-    'zip': 'application/vnd.ekstep.html-archive',
+    'mp3': 'audio/mp3'
   };
   public oldProcessStatus = '';
   public stageStatus = '';
