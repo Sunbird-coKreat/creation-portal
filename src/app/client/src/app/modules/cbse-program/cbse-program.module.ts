@@ -64,6 +64,6 @@ import { NgInviewModule } from 'angular-inport';
     NgInviewModule
   ],
   providers: [CollectionHierarchyService],
-  exports: [ SanitizeHtmlPipe ]
+  exports: [ SanitizeHtmlPipe, CkeditorToolComponent]
 })
 export class CbseProgramModule { }
