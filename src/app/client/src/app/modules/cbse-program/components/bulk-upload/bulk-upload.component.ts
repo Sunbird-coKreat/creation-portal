@@ -127,7 +127,7 @@ export class BulkUploadComponent implements OnInit {
       unit.identifier = identifier;
       return (unit.root === false && unit.mimeType === 'application/vnd.ekstep.content-collection')
     }).map((unit) => {
-      return { identifier: unit.identifier, name: unit.name }
+      return { identifier: unit.identifier, name: unit.name, parent: unit.parent }
     });
   }
 
@@ -529,6 +529,32 @@ export class BulkUploadComponent implements OnInit {
     return _.get(unit, 'identifier', '');
   }
 
+  getUnitIdFromName(row) {
+    const level1 = row.level1;
+    const level1unitId = this.getTextbookUnitIdFromName(level1);
+    if (row.level2) {
+      const level2Details = this.getNodebyDeatils(level1unitId, row.level2);
+      if (row.level3) {
+        const level3Details = this.getNodebyDeatils(level2Details.identifier, row.level3);
+        if (row.level4) {
+          const level4Details = this.getNodebyDeatils(level3Details.identifier, row.level4);
+          return level4Details.identifier;
+        }
+        return level3Details.identifier;
+      }
+      return level2Details.identifier;
+    }
+    return level1unitId;
+  }
+
+
+  getNodebyDeatils(unitId, name) {
+    const groupedData = _.mapValues(_.groupBy(this.levels, 'parent'), clist => clist.map(level => _.omit(level, 'parent')));
+    const selectedData = _.get(groupedData, unitId);
+    const unit = _.find(selectedData, { name: name });
+    return unit;
+  }
+
   viewDetails($event) {
     $event.preventDefault();
     this.showBulkUploadModal = true;
@@ -576,7 +602,7 @@ export class BulkUploadComponent implements OnInit {
 
   getContentObject(row) {
     const unitName = row.level4 || row.level3 || row.level2 || row.level1;
-    const unitId = this.getTextbookUnitIdFromName(unitName);
+    const unitId = this.getUnitIdFromName(row);
     const userId = _.get(this.userService, 'userProfile.userId');
     const collectionId = _.get(this.sessionContext, 'collection', '');
     const source = this.getDownloadableLink(row.source);
