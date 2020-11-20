@@ -436,14 +436,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   segregateFileTypes() {
-    const extns = (!_.includes(this.templateDetails.filesConfig.accepted, ',')) ?
-    this.templateDetails.filesConfig.accepted.split(' ') : this.templateDetails.filesConfig.accepted.split(', ');
+    const extns = (!_.includes(this.config.config.filesConfig.accepted, ',')) ?
+    this.config.config.filesConfig.accepted.split(' ') : this.config.config.filesConfig.accepted.split(', ');
     this.vidEtns =  _.join(_.intersection(extns, this.allAvailableVidExtns), ', ');
     this.docExtns = _.join(_.intersection(extns, this.allAvailableDocExtns), ', ');
-    this.docExtns = _.replace(this.docExtns, 'zip', 'html zip');
     // this.audioExtns = _.join(_.intersection(extns, this.allAvailableAudioExtns), ', ');
   }
-
+  
   checkFileSizeLimit(fileUpload, mimeType) {
     if (this.videoFileFormat) {
       if (this.cacheService.get('contentVideoSize')) {
