@@ -4,3 +4,4 @@ export * from './multiplechoice-question/multiplechoice-question.component';
 export * from './question-set/question-set.component';
 export * from './reference-question/reference-question.component';
 export * from './editor-base/editor-base.component';
+export * from './fancy-tree/fancy-tree.component';
