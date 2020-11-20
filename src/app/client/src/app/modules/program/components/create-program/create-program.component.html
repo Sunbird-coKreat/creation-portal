@@ -226,7 +226,7 @@
 					[ngClass]="{'active' : showTextBookSelector}">
 					<div>
 						<form class="ui form" [formGroup]="collectionListForm">	
-						<div class="ui grid">
+						<div class="ui grid form">
 							<div class="six wide column">
 								<div class="required field w-100">
 									<label class="d-block">{{resource?.frmelmnts?.lbl?.contentType}}
@@ -319,16 +319,18 @@
 								</div>
 							</div>
 							<div class="six wide column">
-								<label class="d-block">{{resource.frmelmnts.lbl.select.Target.Collection}}
+								<div class="required field">
+									<label class="d-block">{{resource.frmelmnts.lbl.select.Target.Collection}}
 									<i class="pull-right question circle link icon pull-right" suiPopup
 										popupDelay="500" [popupPlacement]="'left'"
 										popupText="{{resource.frmelmnts.lbl.select.Target.Collection}}"></i>
 								</label>
-								<sui-select formControlName="target_collection" class="selecttarget" 
-								 (ngModelChange)="onChangeTargetCollection()" [options]="targetCollection"  #targetCollections>
+								<sui-select formControlName="target_collection" class="selecttarget"  placeholder="{{resource?.frmelmnts?.lbl?.Select}}"
+								(ngModelChange)="onChangeTargetCollection()"  [options]="targetCollection"  #targetCollections>
 									<sui-select-option  *ngFor="let option of targetCollections.filteredOptions;" [value]="option">
 									</sui-select-option>
 								</sui-select>
+								</div>
 							</div>
 						</div>
 						<div class="ui grid">
