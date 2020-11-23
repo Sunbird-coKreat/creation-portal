@@ -44,22 +44,26 @@ export class BulkJobService {
 
   searchContentWithProcessId(processId, type) {
     const reqData = {
-      request: {
-        filters: {
-          objectType: 'content',
-          processId: processId,
-          status: []
-        },
-        fields: [
-                'identifier',
-                'status',
-                'collectionId',
-                'prevStatus',
-                'contentType',
-                'origin',
-                'name'
-        ],
-        limit: 10000
+      url: 'composite/v1/search',
+      data: {
+        request: {
+          filters: {
+            objectType: 'content',
+            processId: processId,
+            status: []
+          },
+          fields: [
+                  'identifier',
+                  'status',
+                  'collectionId',
+                  'prevStatus',
+                  'contentType',
+                  'origin',
+                  'name',
+                  'primaryCategory'
+          ],
+          limit: 10000
+        }
       }
     };
 
