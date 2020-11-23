@@ -12,8 +12,8 @@ import { ProgramHeaderComponent } from './components/program-header/program-head
 import { NgInviewModule } from 'angular-inport';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { DynamicModule } from 'ng-dynamic-component';
-import { CbseProgramModule } from '../../modules/cbse-program/cbse-program.module';
-import { CollectionComponent, DashboardComponent } from '../cbse-program';
+import { SourcingModule } from '../sourcing/sourcing.module';
+import { CollectionComponent, DashboardComponent } from '../sourcing';
 import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
 import { OrgUserListComponent } from './components/org-user-list/org-user-list.component';
 import { SharedFeatureModule } from '../shared-feature/shared-feature.module';
@@ -36,7 +36,7 @@ import { SharedFeatureModule } from '../shared-feature/shared-feature.module';
     CoreModule,
     NgInviewModule,
     TelemetryModule,
-    CbseProgramModule,
+    SourcingModule,
     SharedFeatureModule,
     DynamicModule.withComponents([CollectionComponent, DashboardComponent])
   ],

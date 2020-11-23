@@ -18,8 +18,8 @@ import { OrgUserListComponent } from './components/org-user-list/org-user-list.c
 import { NgInviewModule } from 'angular-inport';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { DynamicModule } from 'ng-dynamic-component';
-import { CbseProgramModule } from '../../modules/cbse-program/cbse-program.module';
-import { CollectionComponent, DashboardComponent, ChapterListComponent } from '../cbse-program';
+import { SourcingModule } from '../sourcing/sourcing.module';
+import { CollectionComponent, DashboardComponent, ChapterListComponent } from '../sourcing';
 import { CommonConsumptionModule} from '@project-sunbird/common-consumption';
 import { OrgReportsComponent } from './components/org-reports/org-reports.component';
 
@@ -42,7 +42,7 @@ import { OrgReportsComponent } from './components/org-reports/org-reports.compon
     CoreModule,
     NgInviewModule,
     TelemetryModule,
-    CbseProgramModule,
+    SourcingModule,
     SharedFeatureModule,
     DynamicModule.withComponents([CollectionComponent, DashboardComponent, ChapterListComponent])
   ],
