@@ -165,7 +165,7 @@
                                     <p class="my-0 fs-0-785">{{programContentTypes}} </p>
                             </ng-template>
                             <span suiPopup [popupTemplate]="contentTypeTemplate" popupDelay="1000" class="cursor-pointer">
-                               <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ nominatedContentTypeCount || 0}}</span> {{resourceService.frmelmnts.lbl.nominated}}
+                               <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ totalContentTypeCount || 0}}</span> {{resourceService.frmelmnts.lbl.nominated}}
                             </span>
                             <ng-template #contentTypeTemplate>
                                 <p class="my-0 fs-0-785">{{programContentTypes}} </p>
@@ -420,7 +420,7 @@
                                 <div class="custom-selectbx">
                                     <label>
                                         <select [(ngModel)]="orgUser.newRole" labelField="name"  valueField="name" (change)="onRoleChange(orgUser)" >
-                                            <option *ngIf="orgUser.newRole === 'Select Role'" disabled> Select Role </option>
+                                            <option *ngIf="orgUser.newRole === 'Select Role'" hidden> Select Role </option>
                                             <option *ngFor="let option of orgUser.roles;" >
                                                 {{option?.name}}
                                             </option>

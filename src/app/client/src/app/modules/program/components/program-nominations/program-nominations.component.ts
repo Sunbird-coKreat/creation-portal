@@ -3,20 +3,20 @@ import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject, Telem
 import { ProgramsService, UserService, FrameworkService, RegistryService } from '@sunbird/core';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
-import { ISessionContext, InitialState, IPagination} from '../../../cbse-program/interfaces';
-import { CollectionHierarchyService } from '../../../cbse-program/services/collection-hierarchy/collection-hierarchy.service';
+import { ISessionContext, InitialState, IPagination} from '../../../sourcing/interfaces';
+import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
 import * as _ from 'lodash-es';
 import { tap, first, catchError, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import * as moment from 'moment';
 import { ProgramStageService } from '../../services/program-stage/program-stage.service';
-import { ChapterListComponent } from '../../../cbse-program/components/chapter-list/chapter-list.component';
+import { ChapterListComponent } from '../../../sourcing/components/chapter-list/chapter-list.component';
 import { DatePipe } from '@angular/common';
 import { forkJoin, of } from 'rxjs';
 import { isDefined } from '@angular/compiler/src/util';
 import { isUndefined, isNullOrUndefined } from 'util';
 import {ProgramTelemetryService} from '../../services';
-import { CbseProgramService } from '../../../cbse-program/services';
+import { SourcingService } from '../../../sourcing/services';
 
 @Component({
   selector: 'app-program-nominations',
@@ -102,7 +102,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   searchInput: any;
   public telemetryPageId: string;
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
-    private cbseProgramService: CbseProgramService,
+    private sourcingService: SourcingService,
     public resourceService: ResourceService, public config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
      private activatedRoute: ActivatedRoute, private router: Router,
     private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService,
@@ -341,7 +341,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       telemetryCdata : this.telemetryInteractCdata,
       env : this.activatedRoute.snapshot.data.telemetry.env,
     };
-    this.cbseProgramService.apiErrorHandling(error1, errInfo);
+    this.sourcingService.apiErrorHandling(error1, errInfo);
    });
 
 
@@ -617,7 +617,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
             telemetryCdata : this.telemetryInteractCdata,
             env : this.activatedRoute.snapshot.data.telemetry.env,
           };
-          this.cbseProgramService.apiErrorHandling(error, errInfo);
+          this.sourcingService.apiErrorHandling(error, errInfo);
       });
 
       this.setActiveDate();
@@ -635,7 +635,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         env : this.activatedRoute.snapshot.data.telemetry.env,
         request: req
       };
-      this.cbseProgramService.apiErrorHandling(error, errInfo);
+      this.sourcingService.apiErrorHandling(error, errInfo);
     });
   }
 
@@ -733,7 +733,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
                 env : this.activatedRoute.snapshot.data.telemetry.env,
                 request: preffilter
               };
-              this.cbseProgramService.apiErrorHandling(err, errInfo);
+              this.sourcingService.apiErrorHandling(err, errInfo);
             });
         }, (err) => { // TODO: navigate to program list page
           this.showTextbookLoader  =  false;
@@ -743,7 +743,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
             telemetryCdata : this.telemetryInteractCdata,
             env : this.activatedRoute.snapshot.data.telemetry.env,
           };
-          this.cbseProgramService.apiErrorHandling(err, errInfo);
+          this.sourcingService.apiErrorHandling(err, errInfo);
       });
     }
 
@@ -769,7 +769,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
             telemetryCdata : this.telemetryInteractCdata,
             env : this.activatedRoute.snapshot.data.telemetry.env,
           };
-          this.cbseProgramService.apiErrorHandling(err, errInfo);
+          this.sourcingService.apiErrorHandling(err, errInfo);
         }
       );
     }
@@ -826,7 +826,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           env : this.activatedRoute.snapshot.data.telemetry.env,
           request: request
         };
-        this.cbseProgramService.apiErrorHandling(error, errInfo);
+        this.sourcingService.apiErrorHandling(error, errInfo);
       });
   }
 
@@ -1021,7 +1021,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
           env : this.activatedRoute.snapshot.data.telemetry.env,
         };
-        this.cbseProgramService.apiErrorHandling(error, errInfo);
+        this.sourcingService.apiErrorHandling(error, errInfo);
         this.downloadInProgress = false;
       },
       () => {
@@ -1083,7 +1083,7 @@ this.programsService.post(req).subscribe((data) => {
       env : this.activatedRoute.snapshot.data.telemetry.env,
       request: req
     };
-    this.cbseProgramService.apiErrorHandling(error, errInfo);
+    this.sourcingService.apiErrorHandling(error, errInfo);
   });
 }
 
@@ -1212,7 +1212,7 @@ downloadReport(report) {
       telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
       env : this.activatedRoute.snapshot.data.telemetry.env,
     };
-    this.cbseProgramService.apiErrorHandling(err, errInfo);
+    this.sourcingService.apiErrorHandling(err, errInfo);
   });
 }
 

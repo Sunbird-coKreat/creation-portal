@@ -9,7 +9,7 @@ import {  throwError , of } from 'rxjs';
 // tslint:disable-next-line:max-line-length
 import { addParticipentResponseSample, userProfile,  frameWorkData, programDetailsWithOutUserDetails,
   programDetailsWithOutUserAndForm, extFrameWorkPostData, programDetailsWithUserDetails } from './program.component.spec.data';
-import { CollectionComponent } from '../../../cbse-program/components/collection/collection.component';
+import { CollectionComponent } from '../../../sourcing/components/collection/collection.component';
 import { ProgramHeaderComponent } from '../program-header/program-header.component';
 import { OnboardPopupComponent } from '../onboard-popup/onboard-popup.component';
 // tslint:disable-next-line:prefer-const

@@ -5,18 +5,18 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService, PaginationService } from '@sunbird/shared';
 import * as _ from 'lodash-es';
 import { tap, first } from 'rxjs/operators';
-import { CollectionHierarchyService } from '../../../cbse-program/services/collection-hierarchy/collection-hierarchy.service';
-import { ChapterListComponent } from '../../../cbse-program/components/chapter-list/chapter-list.component';
+import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
+import { ChapterListComponent } from '../../../sourcing/components/chapter-list/chapter-list.component';
 import { ICollectionComponentInput, IDashboardComponentInput,
-  IPagination, IChapterListComponentInput} from '../../../cbse-program/interfaces';
+  IPagination, IChapterListComponentInput} from '../../../sourcing/interfaces';
 import { InitialState, ISessionContext, IUserParticipantDetails } from '../../interfaces';
 import { ProgramStageService } from '../../../program/services/program-stage/program-stage.service';
 import { ProgramComponentsService } from '../../services/program-components/program-components.service';
 import { IImpressionEventInput, IInteractEventEdata, TelemetryService } from '@sunbird/telemetry';
 import { isUndefined, isNullOrUndefined } from 'util';
 import * as moment from 'moment';
-import { CbseProgramService } from '../../../cbse-program/services';
-import { HelperService } from '../../../cbse-program/services/helper.service';
+import { SourcingService } from '../../../sourcing/services';
+import { HelperService } from '../../../sourcing/services/helper.service';
 
 interface IDynamicInput {
   collectionComponentInput?: ICollectionComponentInput;
@@ -62,8 +62,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public activeDate = '';
   public programContentTypes: string;
   public roles;
+  public rolesWithNone;
   public roleNames;
-  public selectRole;
   public currentNominationStatus: any;
   public nominationDetails: any = {};
   public nominated = false;
@@ -91,7 +91,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   initialSourcingOrgUser = [];
   searchLimitMessage: any;
   searchLimitCount: any;
-  userRoles : any;
 
   visitedTab = [];
   @ViewChild('userRemoveRoleModal') userRemoveRoleModal;
@@ -109,7 +108,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     private navigationHelperService: NavigationHelperService, public registryService: RegistryService,
     private paginationService: PaginationService, public actionService: ActionService,
     private collectionHierarchyService: CollectionHierarchyService, private telemetryService: TelemetryService,
-    private sbFormBuilder: FormBuilder, private cbseProgramService: CbseProgramService, private helperService: HelperService) {
+    private sbFormBuilder: FormBuilder, private sourcingService: SourcingService, private helperService: HelperService) {
     this.programId = this.activatedRoute.snapshot.params.programId;
     localStorage.setItem('programId', this.programId);
   }
@@ -178,8 +177,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.programContentTypes = _.join(this.programDetails.content_types, ', ');
       this.roles =_.get(this.programDetails, 'config.roles');
       this.roles.push({'id': 3, 'name': 'BOTH', 'defaultTab': 3, 'tabs': [3]});
-      this.roles.push({'id': 4, 'name': 'NONE', 'tabs': [4], 'default': true, 'defaultTab': 4});
-      this.roleNames = _.map(this.roles, 'name');
+      this.rolesWithNone = _.cloneDeep(this.roles);
+      this.rolesWithNone.push({'id': 4, 'name': 'NONE', 'defaultTab': 4, 'tabs': [4]});
+      this.roleNames = _.map(this.rolesWithNone, 'name');
       this.fetchFrameWorkDetails();
       this.getNominationStatus();
       this.setActiveDate();
@@ -194,7 +194,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         env : this.activatedRoute.snapshot.data.telemetry.env,
         request: req
       };
-      this.cbseProgramService.apiErrorHandling(error, errInfo);
+      this.sourcingService.apiErrorHandling(error, errInfo);
     });
   }
 
@@ -215,7 +215,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           telemetryCdata : this.telemetryInteractCdata,
           env : this.activatedRoute.snapshot.data.telemetry.env,
         };
-        this.cbseProgramService.apiErrorHandling(error, errInfo);
+        this.sourcingService.apiErrorHandling(error, errInfo);
       });
     }
   }
@@ -334,7 +334,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
               telemetryCdata : this.telemetryInteractCdata,
               env : this.activatedRoute.snapshot.data.telemetry.env,
             };
-            this.cbseProgramService.apiErrorHandling(err, errInfo);
+            this.sourcingService.apiErrorHandling(err, errInfo);
           });
         } else {
           this.getProgramTextbooks();
@@ -347,7 +347,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         telemetryCdata : this.telemetryInteractCdata,
         env : this.activatedRoute.snapshot.data.telemetry.env,
       };
-      this.cbseProgramService.apiErrorHandling(error, errInfo);
+      this.sourcingService.apiErrorHandling(error, errInfo);
     });
   }
 
@@ -372,7 +372,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     clearInput ? this.searchInput = '': this.searchInput;
     if (this.searchInput) {
       let filteredUser = this.registryService.getSearchedUserList(this.initialSourcingOrgUser, this.searchInput);
-       filteredUser.length > this.searchLimitCount ? this.searchLimitMessage = true: this.searchLimitMessage = false;   
+       filteredUser.length > this.searchLimitCount ? this.searchLimitMessage = true: this.searchLimitMessage = false;
       this.sortUsersList(filteredUser, true);
     } else {
       this.searchLimitMessage = false;
@@ -382,11 +382,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   sortUsersList(usersList, isUserSearch?) {
      this.OrgUsersCnt = usersList.length;
-     this.allContributorOrgUsers = this.programsService.sortCollection(usersList, this.sortColumnOrgUsers, this.directionOrgUsers); 
+     this.allContributorOrgUsers = this.programsService.sortCollection(usersList, this.sortColumnOrgUsers, this.directionOrgUsers);
     if (this.isInitialSourcingOrgUser) {
       this.initialSourcingOrgUser = this.allContributorOrgUsers;
       this.isInitialSourcingOrgUser = false;
-    } 
+    }
      usersList = _.chunk(this.allContributorOrgUsers, this.pageLimit);
      this.paginatedContributorOrgUsers = usersList;
      this.contributorOrgUser = isUserSearch ? usersList[0] : usersList[this.pageNumber - 1];
@@ -398,12 +398,12 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.showUsersLoader = false;
       return false;
     }
-    this.userRoles = this.roles;
+
     this.allContributorOrgUsers = [];
     // Get only the users and skip admins
     orgUsers = _.filter(orgUsers, { "selectedRole": "user" });
     _.forEach(orgUsers, r => {
-      r.projectselectedRole = 'Select Role';
+      r.projectselectedRole = '';
       if (this.nominationDetails.rolemapping) {
         const userRoles = this.userService.getMyRoleForProgram(this.nominationDetails, r.identifier);
         if (userRoles.includes("CONTRIBUTOR") && userRoles.includes("REVIEWER")) {
@@ -414,7 +414,14 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           r.projectselectedRole = "REVIEWER";
         }
       }
-      r.projectselectedRole !=='Select Role' ? r.roles = this.roles : r.roles = this.userRoles
+
+      if (r.projectselectedRole) {
+        r.roles = this.rolesWithNone;
+      } else {
+        r.projectselectedRole = 'Select Role';
+        r.roles = this.roles;
+      }
+
       r.newRole = r.projectselectedRole;
       this.allContributorOrgUsers.push(r);
     });
@@ -444,15 +451,15 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.pager = this.paginationService.getPager(this.OrgUsersCnt, this.pageNumber, this.pageLimit);
   }
 
-  showUserRoleOption(roleName, userRole) {
-    this.selectRole=this.roles;
+  /*showUserRoleOption(roleName, userRole) {
+    this.selectRole = _.cloneDeep(this.roles);
      if (!(roleName !== 'NONE' || (roleName === 'NONE' && userRole !== 'Select Role'))) {
        this.selectRole.splice(3);
        return roleName;
     } else {
       return roleName;
     }
-  }
+  }*/
 
   removeUserFromProgram() {
     if (this.userRemoveRoleLoader) {
@@ -468,7 +475,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getProgramRoleMapping(user) {
-    const newRole = user.newRole;
+    const newRole = user.projectselectedRole;
     let progRoleMapping = this.nominationDetails.rolemapping;
     if (isNullOrUndefined(progRoleMapping) && newRole !== 'NONE') {
       progRoleMapping = {};
@@ -517,7 +524,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
  }
   onRoleChange(user) {
     this.setTelemetryForonRoleChange(user);
-    const newRole = user.newRole;
+    const newRole = user.projectselectedRole;
     if (!_.includes(this.roleNames, newRole)) {
       this.toasterService.error(this.resourceService.messages.emsg.roles.m0003);
       return false;
@@ -532,7 +539,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   updateUserRoleMapping(progRoleMapping, user) {
-  
     const req = {
       'request': {
         'program_id': this.activatedRoute.snapshot.params.programId,
@@ -540,17 +546,16 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         'rolemapping': progRoleMapping
       }
     };
-    return this.programsService.updateNomination(req).subscribe(response => {
+    this.programsService.updateNomination(req).subscribe(response => {
       this.showUserRemoveRoleModal = false;
       this.userRemoveRoleLoader = false;
-      if (user.newRole === "NONE") {
-        user.newRole = 'Select Role';
-        user.roles = this.userRoles;
-     
+
+      if (user.projectselectedRole !== "NONE") {
+        user.roles = this.rolesWithNone;
       } else {
         user.roles = this.roles;
+        user.projectselectedRole = "Select Role"
       }
-      user.projectselectedRole = user.newRole;
       this.nominationDetails.rolemapping = progRoleMapping;
       this.toasterService.success(this.resourceService.messages.smsg.roles.m0001);
     }, error => {
@@ -564,7 +569,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         env : this.activatedRoute.snapshot.data.telemetry.env,
         request: req
       };
-      this.cbseProgramService.apiErrorHandling(error, errInfo);
+      this.sourcingService.apiErrorHandling(error, errInfo);
     });
   }
 
@@ -625,7 +630,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           telemetryCdata : this.telemetryInteractCdata,
           env : this.activatedRoute.snapshot.data.telemetry.env,
         };
-        this.cbseProgramService.apiErrorHandling(err, errInfo);
+        this.sourcingService.apiErrorHandling(err, errInfo);
       }
     );
   }
@@ -668,7 +673,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
             telemetryCdata : this.telemetryInteractCdata,
             env : this.activatedRoute.snapshot.data.telemetry.env,
           };
-          this.cbseProgramService.apiErrorHandling(error, errInfo);
+          this.sourcingService.apiErrorHandling(error, errInfo);
         }
       );
     } else {
@@ -787,7 +792,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           env : this.activatedRoute.snapshot.data.telemetry.env,
           request: preferences
         };
-        this.cbseProgramService.apiErrorHandling(error, errInfo);
+        this.sourcingService.apiErrorHandling(error, errInfo);
     });
     this.getProgramTextbooks(preferences);
   }

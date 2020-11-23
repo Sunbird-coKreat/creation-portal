@@ -36,6 +36,30 @@
             {
                 "mimetype": "application/epub",
                 "type": "upload"
+            },
+            {
+                "mimetype": "audio/mp3",
+                "type": "upload"
+            },
+            {
+                "mimetype": "audio/mpeg",
+                "type": "upload"
+            },
+            {
+                "mimetype": "audio/ogg",
+                "type": "upload"
+            },
+            {
+                "mimetype": "audio/wav",
+                "type": "upload"
+            },
+            {
+                "mimetype": "audio/x-wav",
+                "type": "upload"
+            },
+            {
+                "mimetype": "video/mp4",
+                "type": "upload"
             }
         ],
         "files": {
@@ -49,7 +73,8 @@
           "audio/mpeg": "mpeg",
           "audio/ogg": "ogg",
           "audio/x-wav": "x-wav",
-          "audio/wav": "wav"
+          "audio/wav": "wav",
+          "video/mp3": "mp3"
         },
         "defaultfileSize": 50,
         "defaultVideoSize": 15000

@@ -1,12 +1,12 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ToasterService, ResourceService, NavigationHelperService, ConfigService, PaginationService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IPagination} from '../../../cbse-program/interfaces';
+import { IPagination} from '../../../sourcing/interfaces';
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject, TelemetryService } from '@sunbird/telemetry';
 import { UserService, RegistryService, ProgramsService } from '@sunbird/core';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'lodash-es';
-import { CbseProgramService } from '../../../cbse-program/services';
+import { SourcingService } from '../../../sourcing/services';
 
 @Component({
   selector: 'app-org-user-list',
@@ -46,7 +46,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
     public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService,
-    private paginationService: PaginationService, private cbseProgramService: CbseProgramService
+    private paginationService: PaginationService, private sourcingService: SourcingService
     ) {
 
     /*if (this.isSourcingOrgAdmin()) {
@@ -68,7 +68,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
       telemetryCdata : [{id: this.userService.channel, type: 'sourcing_organization'}],
       env : this.activatedRoute.snapshot.data.telemetry.env,
      };
-     this.cbseProgramService.apiErrorHandling(error, errInfo);
+     this.sourcingService.apiErrorHandling(error, errInfo);
    });
   }
 
@@ -133,7 +133,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
         env : this.activatedRoute.snapshot.data.telemetry.env,
         request: this.userRegData
       };
-      this.cbseProgramService.apiErrorHandling(error, errInfo);
+      this.sourcingService.apiErrorHandling(error, errInfo);
     });
   }
   getUserDetailsBySearch(clearInput?) {
@@ -288,7 +288,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
           env : this.activatedRoute.snapshot.data.telemetry.env,
           request: {'id': osid, role: role}
         };
-        this.cbseProgramService.apiErrorHandling(error, errInfo);
+        this.sourcingService.apiErrorHandling(error, errInfo);
       }
     );
   }

@@ -16,7 +16,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DaysToGoPipe, TextbookListComponent } from '../../../shared-feature';
 import { DatePipe } from '@angular/common';
-import { CollectionHierarchyService } from '../../../cbse-program';
+import { CollectionHierarchyService } from '../../../sourcing';
 import { ContributorProfilePopupComponent } from '../contributor-profile-popup/contributor-profile-popup.component';
 import { convertToParamMap } from '@angular/router';
 
