@@ -1,3 +1,11 @@
-<p>
-  editor-header works!
-</p>
+
+<ul class="d-flex flex-jc-flex-end">
+  <li *ngFor="let button of toolbarConfig" class="mr-5">
+    <button class="{{button.style}}" (click)="buttonEmitter($event, button)">
+      {{button.name}}
+    </button>
+  </li>
+</ul>
+
+
+

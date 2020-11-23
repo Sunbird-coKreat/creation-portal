@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-editor-header',
@@ -7,9 +7,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class EditorHeaderComponent implements OnInit {
 
+  @Input() toolbarConfig: any;
+  @Output() toolbarEmitter = new EventEmitter<any>();
   constructor() { }
 
   ngOnInit() {
+
+  }
+
+  buttonEmitter(event, button) {
+    this.toolbarEmitter.emit({event, button});
   }
 
 }

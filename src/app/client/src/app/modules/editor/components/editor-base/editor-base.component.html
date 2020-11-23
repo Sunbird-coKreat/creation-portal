@@ -9,26 +9,26 @@
         </div>
       </div>
     </div>
-    
-    <app-editor-header></app-editor-header>
-    
+
+    <app-editor-header [toolbarConfig]="toolbarConfig" (toolbarEmitter)="toolbarEventListener($event)"></app-editor-header>
+
     <div class="ui container min-h-500" >
       <!-- Player Section -->
       <div class="sb-g add-to-library__toc-player">
         <!-- Left Sidebar for cards -->
         <section class="sb-g-col-xs-12 sb-g-col-md-4 sb-g-col-lg-4">
             <app-collection-tree-new
-            [nodes]="collectionTreeNodes" 
+            [nodes]="collectionTreeNodes"
             [options]="collectionTreeOptions" (questionSelect)="OnQuestionSelect($event)" ></app-collection-tree-new>
-            
+
         </section>
-  
+
         <!-- Right Player Sections -->
         <section class="sb-g-col-xs-12 sb-g-col-md-8 sb-g-col-lg-8 relative position ml-24">
             <app-reference-question [question]="editorState" ></app-reference-question>
         </section>
       </div>
     </div>
-  
-  
+
+
   </div>
