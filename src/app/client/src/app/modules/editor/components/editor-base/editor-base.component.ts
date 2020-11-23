@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ConfigService, ICollectionTreeOptions } from '@sunbird/shared';
+import { TreeService, EditorService } from '../../services'
 @Component({
   selector: 'app-editor-base',
   templateUrl: './editor-base.component.html',
@@ -10,8 +11,24 @@ export class EditorBaseComponent implements OnInit {
   public collectionTreeNodes: any;
   collectionTreeOptions: ICollectionTreeOptions;
   editorState: any = {};
+  toolbarConfig = [{
+    name: 'Submit',
+    type: 'submitContent',
+    buttonType: 'icon',
+    style: 'sb-btn sb-btn-normal sb-btn-outline-primary sb-right-icon-btn',
+    slot: `<i class="trash alternate outline icon"></i>`
+  },
+  {
+    name: 'Save',
+    type: 'saveContent',
+    buttonType: 'button',
+    style: 'sb-btn sb-btn-normal sb-btn-outline-primary sb-right-icon-btn',
+    slot: `<i class="trash alternate outline icon"></i>`
+  }
+ ];
 
-  constructor(private configService: ConfigService) {
+  constructor(private configService: ConfigService, public treeService: TreeService,
+    public editorService: EditorService) {
     this.collectionTreeOptions = this.configService.appConfig.collectionTreeOptions;
    }
 
@@ -4606,11 +4623,34 @@ export class EditorBaseComponent implements OnInit {
         "userConsent": "Yes",
         "resourceType": "Course"
       }
+    }
   }
+
+  toolbarEventListener(event) {
+    switch (event.button.type) {
+      case 'saveContent':
+        this.saveContent();
+        break;
+      default:
+        break;
+    }
+  }
+
+  saveContent() {
+    const tree = this.treeService.getTreeObject();
+    console.log(tree);
+    console.log(this.treeService.getActiveNode())
+    this.editorService.save();
+
+    console.log(this.editorService.getCollectionHierarchy());
   }
 
   OnQuestionSelect(event: any) {
     this.editorState = event;
   }
+
+
+
+
 
 }
