@@ -73,8 +73,9 @@ export class BulkJobService {
       return this.programsService.http.post(url, reqData);
     } else if (type === 'bulk_upload') {
       // Get the extra fields that are needed in bulk upload download report
-      const extraFields =  ["copyright", "keywords", "mimeType", "source", "appIcon", "gradeLevel", "artifactUrl", "audience", "license", "attributions", "description", "creator", "importError", "publishError"];
-      reqData.request.fields = _.concat(reqData.request.fields, extraFields);
+      // tslint:disable-next-line:max-line-length
+      const extraFields =  ['copyright', 'keywords', 'mimeType', 'source', 'appIcon', 'gradeLevel', 'artifactUrl', 'audience', 'license', 'attributions', 'description', 'creator', 'importError', 'publishError'];
+      reqData.data.request.fields = _.concat(reqData.data.request.fields, extraFields);
       const req = {
         url: `${this.configService.urlConFig.URLS.COMPOSITE.SEARCH}`,
         data: reqData
