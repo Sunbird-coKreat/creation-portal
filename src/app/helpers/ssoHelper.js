@@ -47,6 +47,33 @@ const verifySignature = async (token) => {
   }
   return true
 }
+
+const getAccessTokenFromId = async (id) => {
+  const tokenUrl = `${envHelper.SUNBIRD_ENV}/v1/sso/create/session?id=${id}`;
+  const options = {
+    method: 'GET',
+    url: tokenUrl,
+    headers: {
+      'x-msgid': uuid(),
+      'ts': dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
+      'content-type': 'application/json',
+      'accept': 'application/json',
+    }
+  }
+  return request(options);
+};
+
+const getUserInfo = async (accessToken) => {
+  const options = {
+    method: 'GET',
+    url: `${envHelper.PORTAL_AUTH_SERVER_URL}/realms/sunbird/protocol/openid-connect/userinfo`,
+    headers: {
+      'Authorization': 'Bearer ' + accessToken
+    }
+  }
+  return request(options);
+};
+
 const verifyToken = (token) => {
   let timeInSeconds = Date.now();
   let date1 = new Date(0);
@@ -421,6 +448,8 @@ const getIdentifier = (identifier) => {
 
 module.exports = {
   verifySignature,
+  getAccessTokenFromId,
+  getUserInfo,
   verifyToken,
   fetchUserWithExternalId,
   createUser,
