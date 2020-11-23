@@ -1,13 +1,14 @@
 <div class="add-to-library mb-30">
 
     <!-- Blue Header -->
-    <div class="sb-bg-color-primary add-to-library__header">
-      <div class="ui container relative position">
+    <div class="sb-bg-color-primary">
+      <div class="ui container py-10">
         <div class="d-flex flex-ai-center">
           <button class="sb-btn sb-btn-primary sb-btn-xs back-btn px-0" (click)="handleBack();"
           ><i class="arrow left icon fs-1"></i></button>
         </div>
-      </div>
+        
+    </div>
     </div>
 
     <app-editor-header [toolbarConfig]="toolbarConfig" (toolbarEmitter)="toolbarEventListener($event)"></app-editor-header>

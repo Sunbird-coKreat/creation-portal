@@ -1,8 +1,11 @@
 
-<ul class="d-flex flex-jc-flex-end">
+<ul class="d-flex flex-jc-flex-end py-10">
   <li *ngFor="let button of toolbarConfig" class="mr-5">
     <button class="{{button.style}}" (click)="buttonEmitter($event, button)">
       {{button.name}}
+    </button>
+    <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="buttonEmitter($event, button)">
+      Submit
     </button>
   </li>
 </ul>
