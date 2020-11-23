@@ -4,7 +4,8 @@ const envHelper = require('../helpers/environmentVariablesHelper');
 const {encrypt, decrypt} = require('../helpers/crypto');
 const {
   verifySignature, verifyIdentifier, verifyToken, fetchUserWithExternalId, createUser, fetchUserDetails,
-  createSession, updateContact, updateRoles, sendSsoKafkaMessage, migrateUser, freeUpUser, getIdentifier
+  createSession, updateContact, updateRoles, sendSsoKafkaMessage, migrateUser, freeUpUser, getIdentifier,
+  getAccessTokenFromId, getUserInfo
 } = require('./../helpers/ssoHelper');
 const telemetryHelper = require('../helpers/telemetryHelper');
 const {generateAuthToken, getGrantFromCode} = require('../helpers/keyCloakHelperService');
@@ -20,6 +21,59 @@ const url = require('url');
 const {acceptTncAndGenerateToken} = require('../helpers/userService');
 
 module.exports = (app) => {
+
+  app.get('/v1/sso/login', async (req, res) => {
+    logger.info({msg: '/v1/sso/login called'});
+    let redirectUrl, errType;
+    try {
+      errType = 'SSO_LOGIN';
+      var response = await getAccessTokenFromId(req.query.id);
+      var json = JSON.parse(response);
+
+      if (json.access_token) {
+        const userInfo = await getUserInfo(json.access_token);
+        const profile = JSON.parse(userInfo);
+        console.log(userInfo);
+
+        // username must be present
+        if (!profile.name || profile.name == '') {
+          throw 'Username was missing from the user';
+        }
+
+        await createSession(profile.name, 'portal', req, res);
+        let redirectURI = req.query.returnTo || `/sourcing`;
+        if (redirectURI) {
+          const parsedRedirectURI = url.parse(decodeURI(redirectURI), true);
+          delete parsedRedirectURI.query.auth_callback;
+          delete parsedRedirectURI.search;
+          redirectUrl = url.format(parsedRedirectURI);
+        }
+        logger.info({
+          msg: 'sso sign-in success callback, session created',
+          additionalInfo: {
+            query: req.query,
+            redirectUrl: redirectUrl,
+            errType: errType
+          }
+        })
+      }
+    } catch (error) {
+      console.log(error);
+      redirectUrl = `${errorUrl}?error_message=` + getErrorMessage(error, errType);
+      logger.error({
+        msg: '/v1/sso/login faied',
+        error,
+        additionalInfo: {
+          errorType: errType,
+          query: req.query,
+          redirectUrl: redirectUrl
+        }
+      })
+      logErrorEvent(req, errType, error);
+    } finally {
+      res.redirect(redirectUrl || errorUrl);
+    }
+  });
 
   app.get('/v2/user/session/create', async (req, res) => { // updating api version to 2
     logger.info({msg: '/v2/user/session/create called'});
