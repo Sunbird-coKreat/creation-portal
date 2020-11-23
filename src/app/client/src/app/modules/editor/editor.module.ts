@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EditorRoutingModule } from './editor-routing.module';
 import { CollectionTreeComponent,  FancyTreeComponent } from './components';
 import { EditorHeaderComponent } from './components/editor-header/editor-header.component';
@@ -17,6 +17,8 @@ import {CbseProgramModule} from '../cbse-program';
     MultiplechoiceQuestionComponent, QuestionSetComponent, EditorBaseComponent, FancyTreeComponent],
   imports: [
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
     EditorRoutingModule,
     // PlayerHelperModule
     CbseProgramModule

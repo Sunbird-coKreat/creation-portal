@@ -13,7 +13,7 @@ export class CollectionTreeComponent implements OnInit {
   @Input() public nodes: ICollectionTreeNodes;
   @Input() public options: ICollectionTreeOptions;
   @Input() contentStatus: any;
-  @Output() public questionSelect: EventEmitter<any> = new EventEmitter();
+  @Output() public itemSelect: EventEmitter<any> = new EventEmitter();
   private rootNode: any;
   public rootChildrens: any;
   private iconColor = {
@@ -77,9 +77,7 @@ export class CollectionTreeComponent implements OnInit {
 
   public onItemSelect(item: any) {
     console.log(item);
-    if (!item.folder) {
-      this.questionSelect.emit(item);
-    }
+    this.itemSelect.emit(item);
   }
 
 }
