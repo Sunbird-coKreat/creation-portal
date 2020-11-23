@@ -9,9 +9,9 @@
         </div>
       </div>
     </div>
-    
-    <app-editor-header></app-editor-header>
-    
+
+    <app-editor-header [toolbarConfig]="toolbarConfig" (toolbarEmitter)="toolbarEventListener($event)"></app-editor-header>
+
     <div class="ui container min-h-500" >
       <!-- Player Section -->
       <div class="sb-g add-to-library__toc-player">
@@ -22,7 +22,7 @@
             [options]="collectionTreeOptions" (itemSelect)="onNodeSelect($event)" ></app-collection-tree-new>
             
         </section>
-  
+
         <!-- Right Player Sections -->
         <section class="sb-g-col-xs-12 sb-g-col-md-8 sb-g-col-lg-8 relative position ml-24" *ngIf="refresh">
           <ng-container *ngIf="selectedQuestionData?.data?.model?.type === 'reference'">
@@ -37,6 +37,6 @@
         </section>
       </div>
     </div>
-  
-  
+
+
   </div>

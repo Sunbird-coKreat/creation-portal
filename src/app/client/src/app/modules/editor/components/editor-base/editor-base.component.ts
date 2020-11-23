@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ConfigService, ICollectionTreeOptions } from '@sunbird/shared';
+import { TreeService, EditorService } from '../../services'
 @Component({
   selector: 'app-editor-base',
   templateUrl: './editor-base.component.html',
@@ -8,13 +9,29 @@ import { ConfigService, ICollectionTreeOptions } from '@sunbird/shared';
 export class EditorBaseComponent implements OnInit {
 
   public collectionTreeNodes: any;
-  public collectionTreeOptions: ICollectionTreeOptions;
+  collectionTreeOptions: ICollectionTreeOptions;
   public selectedQuestionData: any = {};
-  public refresh: Boolean = true;
+  editorState: any = {};
+  toolbarConfig = [{
+    name: 'Submit',
+    type: 'submitContent',
+    buttonType: 'icon',
+    style: 'sb-btn sb-btn-normal sb-btn-outline-primary sb-right-icon-btn',
+    slot: `<i class="trash alternate outline icon"></i>`
+  },
+  {
+    name: 'Save',
+    type: 'saveContent',
+    buttonType: 'button',
+    style: 'sb-btn sb-btn-normal sb-btn-outline-primary sb-right-icon-btn',
+    slot: `<i class="trash alternate outline icon"></i>`
+  }
+  ];
 
-  constructor(private configService: ConfigService, private cdr: ChangeDetectorRef) {
+  constructor(private configService: ConfigService, public treeService: TreeService,
+    public editorService: EditorService) {
     this.collectionTreeOptions = this.configService.appConfig.collectionTreeOptions;
-   }
+  }
 
   ngOnInit() {
     this.collectionTreeNodes = {
@@ -227,7 +244,7 @@ export class EditorBaseComponent implements OnInit {
                   'responseValue': {
                     'cardinality': 'single',
                     'type': 'integer',
-                    'correct_response': {'value': '0'}
+                    'correct_response': { 'value': '0' }
                   }
                 },
                 'type': 'mcq',
@@ -280,7 +297,7 @@ export class EditorBaseComponent implements OnInit {
                     }
                   ]
                 },
-                'body': '<div class=\'mcq-vertical cheveron-helper\'><div class=\'mcq-title\'><p><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">If f(x</span><sub>1</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">) = f (x</span><sub>2</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">) ⇒ x</span><sub>1</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);"> = x</span><sub>2</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);"> ∀ x</span><sub>1</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);"> x</span><sub>2</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);"> ∈ A then the function f: A → B is</span></p></div><i class=\'chevron down icon\'></i><div class=\'mcq-options\'><div data-simple-choice-interaction data-response-variable=\'responseValue\' value=0 class=\'mcq-option\'><p><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">one-one</span>&nbsp;</p></div><div data-simple-choice-interaction data-response-variable=\'responseValue\' value=1 class=\'mcq-option\'><p><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">one-one onto</span></p></div><div data-simple-choice-interaction data-response-variable=\'responseValue\' value=2 class=\'mcq-option\'><p><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">onto</span></p></div><div data-simple-choice-interaction data-response-variable=\'responseValue\' value=3 class=\'mcq-option\'><p><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">many one</span></p></div></div></div>',      
+                'body': '<div class=\'mcq-vertical cheveron-helper\'><div class=\'mcq-title\'><p><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">If f(x</span><sub>1</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">) = f (x</span><sub>2</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">) ⇒ x</span><sub>1</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);"> = x</span><sub>2</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);"> ∀ x</span><sub>1</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);"> x</span><sub>2</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);"> ∈ A then the function f: A → B is</span></p></div><i class=\'chevron down icon\'></i><div class=\'mcq-options\'><div data-simple-choice-interaction data-response-variable=\'responseValue\' value=0 class=\'mcq-option\'><p><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">one-one</span>&nbsp;</p></div><div data-simple-choice-interaction data-response-variable=\'responseValue\' value=1 class=\'mcq-option\'><p><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">one-one onto</span></p></div><div data-simple-choice-interaction data-response-variable=\'responseValue\' value=2 class=\'mcq-option\'><p><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">onto</span></p></div><div data-simple-choice-interaction data-response-variable=\'responseValue\' value=3 class=\'mcq-option\'><p><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">many one</span></p></div></div></div>',
                 'options': [
                   {
                     'answer': true,
@@ -4705,8 +4722,27 @@ export class EditorBaseComponent implements OnInit {
     };
   }
 
+  toolbarEventListener(event) {
+    switch (event.button.type) {
+      case 'saveContent':
+        this.saveContent();
+        break;
+      default:
+        break;
+    }
+  }
+
+  saveContent() {
+    const tree = this.treeService.getTreeObject();
+    console.log(tree);
+    console.log(this.treeService.getActiveNode())
+    this.editorService.save();
+
+    console.log(this.editorService.getCollectionHierarchy());
+  }
+
   onNodeSelect(event: any) {
     this.selectedQuestionData = event;
   }
-
+  
 }
