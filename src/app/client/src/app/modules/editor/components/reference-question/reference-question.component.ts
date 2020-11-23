@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import * as _ from 'lodash-es';
 @Component({
   selector: 'app-reference-question',
@@ -7,7 +7,11 @@ import * as _ from 'lodash-es';
 })
 export class ReferenceQuestionComponent implements OnInit, OnChanges {
   @Input() question: any;
-  editorConfig: any = {
+  public editorState: any = {};
+  public mediaArr: any = [];
+  public videoShow = false;
+  private initialized = false;
+  public editorConfig: any = {
     'config': {
       'tenantName': '',
       'assetConfig': {
@@ -111,15 +115,12 @@ export class ReferenceQuestionComponent implements OnInit, OnChanges {
     },
     'channel': 'sunbird'
   };
-  editorState: any = {};
-  mediaArr: any = [];
-  videoShow = false;
-  initialized = false;
-  refresh = true;
-  constructor(private cdr: ChangeDetectorRef) { }
+
+  constructor() { }
 
   ngOnInit() {
     this.initialized = true;
+    this.initialize();
   }
 
   ngOnChanges() {
@@ -144,13 +145,6 @@ export class ReferenceQuestionComponent implements OnInit, OnChanges {
         this.editorState.solutions = '';
       }
     }
-    this.refreshEditor();
-  }
-
-  refreshEditor() {
-      this.refresh = false;
-      this.cdr.detectChanges();
-      this.refresh = true;
   }
 
   editorDataHandler(event, type) {
@@ -171,7 +165,6 @@ export class ReferenceQuestionComponent implements OnInit, OnChanges {
         this.mediaArr.push(event.mediaobj);
       }
     }
-    console.log(this.editorState);
   }
 
 }

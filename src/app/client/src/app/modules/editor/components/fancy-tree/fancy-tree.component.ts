@@ -14,7 +14,7 @@ export class FancyTreeComponent implements AfterViewInit {
   @Input() public nodes: any;
   @Input() public options: any;
   @Input() public rootNode;
-  @Output() public itemSelect: EventEmitter<Fancytree.FancytreeNode> = new EventEmitter();
+  @Output() public treeEventEmitter: EventEmitter<any> = new EventEmitter();
   config: any = {
     'baseURL': '',
     'corePluginsPackaged': true,
@@ -438,12 +438,12 @@ export class FancyTreeComponent implements AfterViewInit {
       click: (event, data): boolean => {
         this.tree.nativeElement.click();
         const node = data.node;
-        this.itemSelect.emit(node);
+        this.treeEventEmitter.emit({'type': 'nodeSelect', 'data' : node});
         return true;
       },
       activate:  (event, data) => {
         setTimeout(() => {
-          this.itemSelect.emit(data.node);
+          this.treeEventEmitter.emit({'type': 'nodeSelect', 'data' : data.node});
         }, 0);
       }
     };
@@ -472,16 +472,17 @@ export class FancyTreeComponent implements AfterViewInit {
   }
 
   addChild() {
-    const tree = $(this.tree.nativeElement).fancytree('getTree');
-    const rootNode = $(this.tree.nativeElement).fancytree('getRootNode').getFirstChild();
+    // const tree = $(this.tree.nativeElement).fancytree('getTree');
+    // const rootNode = $(this.tree.nativeElement).fancytree('getRootNode').getFirstChild();
 
-    const node = tree.getActiveNode();
-    if (this.getObjectType(node.data.objectType).editable) {
-      const childrenTypes = this.getObjectType(rootNode.data.objectType).childrenTypes;
-      this.treeService.addNode(this.getObjectType(childrenTypes[0]), {}, 'child');
-    } else {
-      alert('Sorry, this operation is not allowed.');
-    }
+    // const node = tree.getActiveNode();
+    // if (this.getObjectType(node.data.objectType).editable) {
+    //   const childrenTypes = this.getObjectType(rootNode.data.objectType).childrenTypes;
+    //   this.treeService.addNode(this.getObjectType(childrenTypes[0]), {}, 'child');
+    // } else {
+    //   alert('Sorry, this operation is not allowed.');
+    // }
+    this.treeEventEmitter.emit({'type': 'addChild', 'data' : {}});
   }
 
   addSibling() {

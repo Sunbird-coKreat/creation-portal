@@ -1,5 +1,5 @@
 <app-fancy-tree 
-          (itemSelect)="onItemSelect($event)" 
+          (treeEventEmitter)="treeEventListener($event)" 
           [nodes]="rootChildrens" 
           [rootNode]="rootNode"
           [options]="{ showConnectors: true }"
