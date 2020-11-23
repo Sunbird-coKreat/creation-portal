@@ -26,7 +26,7 @@
 
   <div class="sb-modal-actions">
     <button class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': showButton, 'sb-btn-disabled': !showButton}" (click)="handleSubmit()"
-    appTelemetryInteract
+    appTelemetryInteract 
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('continue', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryPageId,{key:'dialog_id',value:'select_to_contribute','template_id':templateSelected})"
             [telemetryInteractObject]="telemetryInteractObject"
             [telemetryInteractCdata]="telemetryInteractCdata"
@@ -35,8 +35,8 @@
     </button>
   </div>
 </sui-modal>
-<sui-modal *ngIf="showModeofCreationModal" [mustScroll]="false" [isClosable]="true" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
-  appBodyScroll (dismissed)="showmodeButton=false;showModeofCreationModal=false;" #modeofcreationmodal>
+<sui-modal *ngIf="showModeofCreationModal" [mustScroll]="false" [isClosable]="false" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
+  appBodyScroll (dismissed)="showModeofCreationModal=false" #modeofcreationmodal>
   <div class="sb-modal-header">
     {{resourceService.frmelmnts.lbl.modeOfCreation}}
   </div>
@@ -57,7 +57,7 @@
     </div>
   </div>
   <div class="sb-modal-actions">
-    <button class="sb-btn sb-btn-normal" [disabled]="!showmodeButton" [ngClass]="{'sb-btn-primary': showmodeButton, 'sb-btn-disabled': !showmodeButton}" (click)="handleModeOfCreation()"
+    <button class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': showButton, 'sb-btn-disabled': !showButton}" (click)="handleModeOfCreation()"
     appTelemetryInteract
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('templateSelection-button', 'click', 'chapter-list')"
             [telemetryInteractObject]="telemetryInteractObject"
@@ -67,8 +67,8 @@
     </button>
   </div>
 </sui-modal>
-<sui-modal *ngIf="showQuestionTypeModal" [mustScroll]="false" [isClosable]="true" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
-  appBodyScroll (dismissed)="showQTypeButton=false;showQuestionTypeModal=false;" #questionTypeModal>
+<sui-modal *ngIf="showQuestionTypeModal" [mustScroll]="false" [isClosable]="false" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
+  appBodyScroll (dismissed)="showQuestionTypeModal=false" #questionTypeModal>
   <div class="sb-modal-header">
     {{resourceService.frmelmnts.lbl.selectQuestionType}}
   </div>
@@ -97,7 +97,7 @@
     </div>
   </div>
   <div class="sb-modal-actions">
-    <button class="sb-btn sb-btn-normal" [disabled]="!showQTypeButton" [ngClass]="{'sb-btn-primary': showQTypeButton, 'sb-btn-disabled': !showQTypeButton}" (click)="submit()"
+    <button class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': showButton, 'sb-btn-disabled': !showButton}" (click)="submit()"
     appTelemetryInteract
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('templateSelection-button', 'click', 'chapter-list')"
             [telemetryInteractObject]="telemetryInteractObject"

@@ -5,7 +5,7 @@ import {
   ConfigService, ToasterService, ResourceService, ServerResponse, Framework, FrameworkData,
   BrowserCacheTtlService
 } from '@sunbird/shared';
-import { Observable, BehaviorSubject, of } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { skipWhile, mergeMap } from 'rxjs/operators';
 import { PublicDataService } from './../public-data/public-data.service';
 import * as _ from 'lodash-es';
@@ -58,7 +58,7 @@ export class FrameworkService {
           });
       } else if (!_.get(this._frameworkData, 'defaultFramework')) {
           this.getDefaultFrameWork(hashTagId ? hashTagId : this.userService.hashTagId)
-            .pipe(mergeMap((data: any) => {
+            .pipe(mergeMap(data => {
               this.setChannelData(hashTagId ? hashTagId : this.userService.hashTagId, data);
               this._channelData = data.result.channel;
               this._channelData$.next({ err: null, channelData: this._channelData });
@@ -80,24 +80,23 @@ export class FrameworkService {
   }
 
   public getChannelData(channelId) {
-    this.getDefaultFrameWork(channelId).subscribe(data => {
-      this._channelData$.next({ err: null, channelData: _.get(data, 'result.channel') });
-      this.setChannelData(channelId, data);
-    });
-  }
-
-  private getDefaultFrameWork(hashTagId): Observable<any> {
-    const channelData = this.cacheService.get(hashTagId);
-    if (channelData) {
-      return of({result: {channel: channelData}});
+    const channelData = this.cacheService.get(channelId);
+    if (!channelData) {
+      this.getDefaultFrameWork(channelId).subscribe(data => {
+        this._channelData$.next({ err: null, channelData: _.get(data, 'result.channel') });
+        this.setChannelData(channelId, data);
+      });
     } else {
-      const channelOptions = {
-        url: this.configService.urlConFig.URLS.CHANNEL.READ + '/' + hashTagId
-      };
-      return this.learnerService.get(channelOptions);
+      this._channelData$.next({ err: null, channelData: channelData });
     }
   }
 
+  private getDefaultFrameWork(hashTagId) {
+    const channelOptions = {
+      url: this.configService.urlConFig.URLS.CHANNEL.READ + '/' + hashTagId
+    };
+    return this.learnerService.get(channelOptions);
+  }
   public getFrameworkCategories(framework: string) {
     const frameworkOptions = {
       url: this.configService.urlConFig.URLS.FRAMEWORK.READ + '/' + framework

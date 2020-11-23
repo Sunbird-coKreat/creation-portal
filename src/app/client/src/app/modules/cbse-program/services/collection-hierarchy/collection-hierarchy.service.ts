@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { map, catchError, isEmpty } from 'rxjs/operators';
 import { throwError, Observable } from 'rxjs';
-import { ActionService, UserService, ProgramsService, LearnerService} from '@sunbird/core';
+import { ActionService, UserService, ProgramsService} from '@sunbird/core';
 import { HttpClient } from '@angular/common/http';
 import { HttpOptions, ConfigService, ToasterService } from '@sunbird/shared';
 import { TelemetryService } from '@sunbird/telemetry';
@@ -19,7 +19,7 @@ export class CollectionHierarchyService {
   constructor(private actionService: ActionService, private configService: ConfigService,
     public toasterService: ToasterService, public userService: UserService,
     public telemetryService: TelemetryService, private httpClient: HttpClient,
-    private programsService: ProgramsService, public learnerService: LearnerService) {
+    private programsService: ProgramsService) {
       this.currentUserID = this.userService.userProfile.userId;
      }
 
@@ -468,21 +468,20 @@ export class CollectionHierarchyService {
   }
 
   getOriginForApprovedContents(contentIds) {
-    const req = {
-      url: 'composite/v1/search',
-      data: {
-        request: {
-          filters: {
-            objectType: 'content',
-            origin: contentIds
-          },
-          exists: ["originData"],
-          fields: ["status", "origin"],
-          limit: 1000
-        }
+    const originUrl = this.programsService.getContentOriginEnvironment();
+    const url =  originUrl + '/action/composite/v3/search';
+    const data = {
+      request: {
+        filters: {
+          objectType: 'content',
+          origin: contentIds
+        },
+        exists: ["originData"],
+        fields: ["status", "origin"],
+        limit: 1000
       }
     };
-    return this.learnerService.post(req);
+    return this.httpClient.post(url, data);
   }
 }
 

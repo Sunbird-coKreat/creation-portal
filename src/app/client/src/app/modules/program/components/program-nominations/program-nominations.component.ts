@@ -1229,7 +1229,7 @@ textbookLevelReportHeaders() {
     this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn7,
     this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn8,
     this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn9,
-    ..._.map(this.programDetails.content_types, type => `${this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn10} ${type}` )
+    ..._.map(this.programContentTypes.split(', '), type => `${this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn10} ${type}` )
   ];
   return headers;
 }
@@ -1245,7 +1245,7 @@ chapterLevelReportHeaders() {
     this.resourceService.frmelmnts.lbl.contentsContributed,
     this.resourceService.frmelmnts.lbl.contentsReviewed,
     this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn7,
-    ..._.map(this.programDetails.content_types, type => `${this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn8} ${type}` )
+    ..._.map(this.programContentTypes.split(', '), type => `${this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn8} ${type}` )
   ];
   return headers;
 }
