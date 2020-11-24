@@ -2,7 +2,7 @@ import { ResourceService, ToasterService, ConfigService  } from '@sunbird/shared
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { ProgramsService, ActionService, UserService } from '@sunbird/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CollectionHierarchyService } from '../../../cbse-program/services/collection-hierarchy/collection-hierarchy.service';
+import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
 import { HttpClient } from '@angular/common/http';
 import { FormControl, FormBuilder, Validators, FormGroup, FormArray } from '@angular/forms';
 import * as _ from 'lodash-es';

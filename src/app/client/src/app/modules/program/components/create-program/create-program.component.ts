@@ -11,7 +11,7 @@ import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormBuilder, Validators, FormGroup, FormArray, FormGroupName } from '@angular/forms';
 import { IProgram } from './../../../core/interfaces';
-import { CbseProgramService } from './../../../cbse-program/services';
+import { SourcingService } from './../../../sourcing/services';
 import { UserService } from '@sunbird/core';
 import { programConfigObj } from './programconfig';
 import { HttpClient } from '@angular/common/http';
@@ -26,7 +26,7 @@ import { CacheService } from 'ng2-cache-service';
 @Component({
   selector: 'app-create-program',
   templateUrl: './create-program.component.html',
-  styleUrls: ['./create-program.component.scss', './../../../cbse-program/components/ckeditor-tool/ckeditor-tool.component.scss']
+  styleUrls: ['./create-program.component.scss', './../../../sourcing/components/ckeditor-tool/ckeditor-tool.component.scss']
 })
 
 export class CreateProgramComponent implements OnInit, AfterViewInit {
@@ -142,7 +142,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     private config: ConfigService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private cbseService: CbseProgramService,
+    private sourcingService: SourcingService,
     private sbFormBuilder: FormBuilder,
     private httpClient: HttpClient,
     private navigationHelperService: NavigationHelperService,
@@ -251,7 +251,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.showErrorMsg = false;
     if (!this.showErrorMsg) {
       const req = this.generateAssetCreateRequest(this.uploader.getName(0), this.uploader.getFile(0).type, 'pdf');
-      this.cbseService.createMediaAsset(req).pipe(catchError(err => {
+      this.sourcingService.createMediaAsset(req).pipe(catchError(err => {
         this.loading = false;
         this.isClosable = true;
         const errInfo = {
@@ -259,7 +259,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
           env : this.activatedRoute.snapshot.data.telemetry.env, request: req
          };
-        return throwError(this.cbseService.apiErrorHandling(err, errInfo));
+        return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
       })).subscribe((res) => {
         const contentId = res['result'].node_id;
         const request = {
@@ -267,14 +267,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
             fileName: this.uploader.getName(0)
           }
         };
-        this.cbseService.generatePreSignedUrl(request, contentId).pipe(catchError(err => {
+        this.sourcingService.generatePreSignedUrl(request, contentId).pipe(catchError(err => {
           const errInfo = {
             errorMsg: 'Unable to get pre_signed_url and Content Creation Failed, Please Try Again',
             telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
             env : this.activatedRoute.snapshot.data.telemetry.env, request: request};
           this.loading = false;
           this.isClosable = true;
-          return throwError(this.cbseService.apiErrorHandling(err, errInfo));
+          return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
         })).subscribe((response) => {
           const signedURL = response.result.pre_signed_url;
           const config = {
@@ -307,14 +307,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       data: data,
       param: config
     };
-    this.cbseService.uploadMedia(option, contentId).pipe(catchError(err => {
+    this.sourcingService.uploadMedia(option, contentId).pipe(catchError(err => {
       const errInfo = {
         errorMsg: 'Unable to update pre_signed_url with Content Id and Content Creation Failed, Please Try Again',
         telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
         env : this.activatedRoute.snapshot.data.telemetry.env, request: option };
       this.isClosable = true;
       this.loading = false;
-      return throwError(this.cbseService.apiErrorHandling(err, errInfo));
+      return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
     })).subscribe(res => {
       // Read upload video data
       this.getUploadVideo(res.result.node_id);
@@ -345,7 +345,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         env : this.activatedRoute.snapshot.data.telemetry.env,
         request: req
       };
-      this.cbseService.apiErrorHandling(error, errInfo);
+      this.sourcingService.apiErrorHandling(error, errInfo);
     });
   }
 
@@ -353,14 +353,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   getUploadVideo(videoId) {
     this.loading = false;
     this.isClosable = true;
-    this.cbseService.getVideo(videoId).pipe(map((data: any) => data.result.content), catchError(err => {
+    this.sourcingService.getVideo(videoId).pipe(map((data: any) => data.result.content), catchError(err => {
       const errInfo = {
         errorMsg: 'Unable to read the Document, Please Try Again',
         telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
         env : this.activatedRoute.snapshot.data.telemetry.env, request: videoId };
       this.loading = false;
       this.isClosable = true;
-      return throwError(this.cbseService.apiErrorHandling(err, errInfo));
+      return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
     })).subscribe(res => {
       this.toasterService.success('Document Successfully Uploaded...');
       this.showAddButton = true;
@@ -396,7 +396,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         env : this.activatedRoute.snapshot.data.telemetry.env, request: signedURL };
       this.isClosable = true;
       this.loading = false;
-      return throwError(this.cbseService.apiErrorHandling(err, errInfo));
+      return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
     }), map(data => data));
   }
 
@@ -1319,7 +1319,7 @@ onChangeTargetCollection() {
               telemetryCdata : this.telemetryInteractCdata,
               env : this.activatedRoute.snapshot.data.telemetry.env,
             };
-            this.cbseService.apiErrorHandling(error, errInfo);
+            this.sourcingService.apiErrorHandling(error, errInfo);
             ($event.target as HTMLButtonElement).disabled = false;
           }
         };
@@ -1417,7 +1417,7 @@ onChangeTargetCollection() {
               env : this.activatedRoute.snapshot.data.telemetry.env,
               request: data
             };
-            this.cbseService.apiErrorHandling(error, errInfo);
+            this.sourcingService.apiErrorHandling(error, errInfo);
             console.log(err);
           });
         } else {
@@ -1444,7 +1444,7 @@ onChangeTargetCollection() {
           telemetryCdata : this.telemetryInteractCdata,
           env : this.activatedRoute.snapshot.data.telemetry.env,
         };
-        this.cbseService.apiErrorHandling(error, errInfo);
+        this.sourcingService.apiErrorHandling(error, errInfo);
       }
     };
     this.saveProgram(cb);

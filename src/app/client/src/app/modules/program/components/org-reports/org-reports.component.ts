@@ -7,7 +7,7 @@ import { IImpressionEventInput} from '@sunbird/telemetry';
 import { IInteractEventEdata } from '@sunbird/telemetry';
 import { ProgramTelemetryService } from '../../../program/services';
 import * as _ from 'lodash-es';
-import { CbseProgramService } from '../../../cbse-program/services';
+import { SourcingService } from '../../../sourcing/services';
 
 @Component({
   selector: 'app-org-reports',
@@ -29,7 +29,7 @@ export class OrgReportsComponent implements OnInit, AfterViewInit {
   constructor( public resourceService: ResourceService, private userService: UserService, public configService: ConfigService,
     private usageService: UsageService, private toasterService: ToasterService, private activatedRoute: ActivatedRoute,
     private router: Router, private navigationHelperService: NavigationHelperService,
-    public programTelemetryService: ProgramTelemetryService, private cbseProgramService: CbseProgramService) {}
+    public programTelemetryService: ProgramTelemetryService, private sourcingService: SourcingService) {}
 
   ngOnInit() {
     this.reportsLocation = (<HTMLInputElement>document.getElementById('reportsLocation')).value;
@@ -92,7 +92,7 @@ export class OrgReportsComponent implements OnInit, AfterViewInit {
         telemetryCdata : this.telemetryInteractCdata,
         env : this.activatedRoute.snapshot.data.telemetry.env
       };
-      this.cbseProgramService.apiErrorHandling(err, errInfo);
+      this.sourcingService.apiErrorHandling(err, errInfo);
     });
   }
 

@@ -5,18 +5,18 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService, PaginationService } from '@sunbird/shared';
 import * as _ from 'lodash-es';
 import { tap, first } from 'rxjs/operators';
-import { CollectionHierarchyService } from '../../../cbse-program/services/collection-hierarchy/collection-hierarchy.service';
-import { ChapterListComponent } from '../../../cbse-program/components/chapter-list/chapter-list.component';
+import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
+import { ChapterListComponent } from '../../../sourcing/components/chapter-list/chapter-list.component';
 import { ICollectionComponentInput, IDashboardComponentInput,
-  IPagination, IChapterListComponentInput} from '../../../cbse-program/interfaces';
+  IPagination, IChapterListComponentInput} from '../../../sourcing/interfaces';
 import { InitialState, ISessionContext, IUserParticipantDetails } from '../../interfaces';
 import { ProgramStageService } from '../../../program/services/program-stage/program-stage.service';
 import { ProgramComponentsService } from '../../services/program-components/program-components.service';
 import { IImpressionEventInput, IInteractEventEdata, TelemetryService } from '@sunbird/telemetry';
 import { isUndefined, isNullOrUndefined } from 'util';
 import * as moment from 'moment';
-import { CbseProgramService } from '../../../cbse-program/services';
-import { HelperService } from '../../../cbse-program/services/helper.service';
+import { SourcingService } from '../../../sourcing/services';
+import { HelperService } from '../../../sourcing/services/helper.service';
 
 interface IDynamicInput {
   collectionComponentInput?: ICollectionComponentInput;
@@ -108,7 +108,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     private navigationHelperService: NavigationHelperService, public registryService: RegistryService,
     private paginationService: PaginationService, public actionService: ActionService,
     private collectionHierarchyService: CollectionHierarchyService, private telemetryService: TelemetryService,
-    private sbFormBuilder: FormBuilder, private cbseProgramService: CbseProgramService, private helperService: HelperService) {
+    private sbFormBuilder: FormBuilder, private sourcingService: SourcingService, private helperService: HelperService) {
     this.programId = this.activatedRoute.snapshot.params.programId;
     localStorage.setItem('programId', this.programId);
   }
@@ -194,7 +194,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         env : this.activatedRoute.snapshot.data.telemetry.env,
         request: req
       };
-      this.cbseProgramService.apiErrorHandling(error, errInfo);
+      this.sourcingService.apiErrorHandling(error, errInfo);
     });
   }
 
@@ -215,7 +215,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           telemetryCdata : this.telemetryInteractCdata,
           env : this.activatedRoute.snapshot.data.telemetry.env,
         };
-        this.cbseProgramService.apiErrorHandling(error, errInfo);
+        this.sourcingService.apiErrorHandling(error, errInfo);
       });
     }
   }
@@ -334,7 +334,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
               telemetryCdata : this.telemetryInteractCdata,
               env : this.activatedRoute.snapshot.data.telemetry.env,
             };
-            this.cbseProgramService.apiErrorHandling(err, errInfo);
+            this.sourcingService.apiErrorHandling(err, errInfo);
           });
         } else {
           this.getProgramTextbooks();
@@ -347,7 +347,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         telemetryCdata : this.telemetryInteractCdata,
         env : this.activatedRoute.snapshot.data.telemetry.env,
       };
-      this.cbseProgramService.apiErrorHandling(error, errInfo);
+      this.sourcingService.apiErrorHandling(error, errInfo);
     });
   }
 
@@ -569,7 +569,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         env : this.activatedRoute.snapshot.data.telemetry.env,
         request: req
       };
-      this.cbseProgramService.apiErrorHandling(error, errInfo);
+      this.sourcingService.apiErrorHandling(error, errInfo);
     });
   }
 
@@ -630,7 +630,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           telemetryCdata : this.telemetryInteractCdata,
           env : this.activatedRoute.snapshot.data.telemetry.env,
         };
-        this.cbseProgramService.apiErrorHandling(err, errInfo);
+        this.sourcingService.apiErrorHandling(err, errInfo);
       }
     );
   }
@@ -673,7 +673,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
             telemetryCdata : this.telemetryInteractCdata,
             env : this.activatedRoute.snapshot.data.telemetry.env,
           };
-          this.cbseProgramService.apiErrorHandling(error, errInfo);
+          this.sourcingService.apiErrorHandling(error, errInfo);
         }
       );
     } else {
@@ -792,7 +792,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           env : this.activatedRoute.snapshot.data.telemetry.env,
           request: preferences
         };
-        this.cbseProgramService.apiErrorHandling(error, errInfo);
+        this.sourcingService.apiErrorHandling(error, errInfo);
     });
     this.getProgramTextbooks(preferences);
   }
