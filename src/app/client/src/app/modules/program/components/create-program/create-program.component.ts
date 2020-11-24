@@ -1375,7 +1375,11 @@ onChangeTargetCollection() {
       this.validateAllFormFields(this.createProgramForm);
       return false;
     }
-
+    if (!this.collectionListForm.valid) {
+      this.formIsInvalid = true;
+      this.validateAllFormFields(this.collectionListForm);
+      return false;
+    }
     if (this.validateDates() === true) {
       this.navigateTo(1);
       this.formIsInvalid = true;

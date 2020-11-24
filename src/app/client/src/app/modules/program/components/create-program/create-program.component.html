@@ -331,7 +331,7 @@
 									</sui-select-option>
 								</sui-select>
 								<div class="ui pointing red basic label below"
-								*ngIf="collectionListForm.controls['target_collection'].errors && collectionListForm.controls['target_collection'].errors.maxlength && (!collectionListForm.controls['target_collection'].pristine || formIsInvalid)">
+								*ngIf="collectionListForm.controls['target_collection'].errors  && (!collectionListForm.controls['target_collection'].pristine || formIsInvalid)">
 								{{resource?.frmelmnts?.lbl?.targetCollectionRequired}}
 							</div>
 								</div>
