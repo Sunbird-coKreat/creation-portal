@@ -1,0 +1,326 @@
+<div class="sb-bg-color-gray-0" [appTelemetryImpression]="telemetryImpression" [appTelemetryStart]="telemetryStart">
+  <div class="ui container py-10">
+  <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="handleBack()"
+  type="button"
+  appTelemetryInteract
+[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('back', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+[telemetryInteractObject]="telemetryInteractObject"
+[telemetryInteractCdata]="telemetryInteractCdata"
+[telemetryInteractPdata]="telemetryInteractPdata">
+            <i class="icon-svg icon-svg--xxs icon-back mr-4">
+                <svg class="icon icon-svg--primary">
+                    <use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
+                </svg>
+            </i>
+            Back
+        </button>
+        <div class="d-flex">
+          <div class="d-flex flex-ai-center flex-jc-space-between practical-header__content w-100">
+            <div #contentTitle class="fs-1">
+              <div class="d-flex flex-ai-center"><div class="practical-header__title font-weight-bold" suiPopup popupText="{{editTitle}}">{{editTitle}} </div>
+              <span class="sb-color-primary font-weight-normal fs-0-785 ml-20" *ngIf="formFieldProperties && formFieldProperties.length">
+                <i [ngClass]="{'edit': visibility && visibility.showEditMetadata, 'eye': visibility && !(visibility.showEditMetadata)}" class="icon sb-color-primary cursor-pointer"></i>
+                <a class="cursor-pointer text-underline text-capitalize"
+                appTelemetryInteract
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata((visibility && visibility.showEditMetadata) ? 'Edit details' : 'View details', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                [telemetryInteractObject]="telemetryInteractObject"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata"
+                (click)="showEditform('editForm');">{{(visibility && visibility.showEditMetadata) ? 'Edit details' : 'View details'}}</a></span>
+                <!-- <a class="fsmall ml-16 sb-color-primary font-weight-normal" *ngIf="visibility && visibility.showEditMetadata && sessionContext.topicList">
+                  <span class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="showEditform(); requiredAction = 'editForm'">edit metadata</span>
+                </a> -->
+              </div>
+              <div class="mt-8 practice-set__status">
+                <span class="sb-label sb-label-table" [ngClass]="resourceStatusClass">{{ resourceStatusText }}</span>
+                <span class="cursor-pointer fs-0-785 ml-8"
+                  *ngIf="contentMetaData && showCommentAddedAgainstContent()">
+                  <i class="comment alternate outline icon sb-color-primary"></i>
+                  <a (click)="showReviewModal=!showReviewModal"
+                  appTelemetryInteract
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('view_comments', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+                [telemetryInteractObject]="telemetryInteractObject"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata"
+                  >View Comments</a>
+                </span>
+                <a id="viewContentOnDiksha" *ngIf="sourcingReviewStatus === 'Approved' && originPreviewUrl && originPreviewReady" class="sb-color-primary mr-8 pl-10 fs-0-785 font-weight-bold"
+                href="{{originPreviewUrl}}" target="_blank">{{resourceService.frmelmnts.btn.viewContentOnDiksha}}</a>
+                <label *ngIf="sourcingReviewStatus === 'Approved' && !originPreviewUrl && originPreviewReady" class="sb-color-error mr-8 pl-10 fs-0-785 font-weight-bold">
+                {{resourceService.frmelmnts.btn.viewContentOnDikshaError}}</label>
+              </div>
+            </div>
+            <div class="practical-sb-buttons mt-30">
+              <button id="changeContent" suiPopup popupText="Replace File" [popupPlacement]="'top'" *ngIf="visibility && visibility.showChangeFile" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="changeFile()"
+              appTelemetryInteract
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('replace_file', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.cancel, telemetryPageId)"
+                [telemetryInteractObject]="telemetryInteractObject"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata"
+              >Replace
+                File</button>
+              <button id="requestChanges" suiPopup popupText="{{resourceService.frmelmnts.btn.requestChanges}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showRequestChanges" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="popupAction='requestChanges';showRequestChangesPopup = true;"
+              appTelemetryInteract
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('request_changes', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                [telemetryInteractObject]="telemetryInteractObject"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata"
+              >{{resourceService.frmelmnts.btn.requestChanges}}</button>
+              <button id="publishContent" suiPopup popupText="{{resourceService.frmelmnts.btn.accept}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showPublish" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="publishContent();"
+              appTelemetryInteract
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('accept', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryPageId)"
+                [telemetryInteractObject]="telemetryInteractObject"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata"
+              >{{resourceService.frmelmnts.btn.accept}}</button>
+              <button id="submitContent" suiPopup popupText="{{sessionContext.currentOrgRole === 'individual' ? 'Publish' : 'Send For Review' }}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSubmit" class="sb-btn sb-btn-secondary sb-btn-normal" (click)="isIndividualAndNotSample() ? showEditform('publish') : showEditform('review');"
+              appTelemetryInteract
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('publish', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryPageId)"
+                [telemetryInteractObject]="telemetryInteractObject"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata"
+              >{{isIndividualAndNotSample() ? 'Publish' : 'Submit' }}</button>
+              <button id="sendForCorrections" suiPopup popupText="Send back for corrections" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons && visibility.showSendForCorrections" class="sb-btn sb-btn-normal sb-btn-outline-primary mr-10" (click)="popupAction='sendForCorrections';showRequestChangesPopup = true"
+                appTelemetryInteract
+                  [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('send_back_for_corrections', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                  [telemetryInteractObject]="telemetryInteractObject"
+                  [telemetryInteractCdata]="telemetryInteractCdata"
+                  [telemetryInteractPdata]="telemetryInteractPdata"
+                >{{resourceService.frmelmnts.btn.sendForCorrections}}</button>
+              <button id="acceptContent" suiPopup
+              popupText="{{resourceService.frmelmnts.lbl.contentAcceptMessage}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="attachContentToTextbook('accept')"
+              appTelemetryInteract
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('approve', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,telemetryPageId)"
+                [telemetryInteractObject]="telemetryInteractObject"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata"
+              >{{resourceService.frmelmnts.btn.approve}}</button>
+              <button id="rejectContent" suiPopup popupText="{{resourceService.frmelmnts.lbl.contentRejectMessage}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="popupAction='rejectContent'; showRequestChangesPopup = true"
+              appTelemetryInteract
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                [telemetryInteractObject]="telemetryInteractObject"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata"
+              >{{resourceService.frmelmnts.btn.reject}}</button>
+              </div>
+          </div>
+        </div>
+  </div>
+</div>
+<div class="middle-section-set" *ngIf="showPreview">
+    <div class="ui container msg-box">
+      <div class="msg-box__content">
+        <div class="container msg-box__content__blank-box">
+            <app-player class="content-player" [playerConfig]="playerConfig"></app-player>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- <div> -->
+<sui-modal *ngIf="showUploadModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+    class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModal()" #modal >
+    <div type="text/template" id="qq-template-validation" #fineUploaderUI>
+      <div class="qq-uploader-selector qq-uploader custom-qq-uploader">
+        <div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
+          <span class="qq-upload-drop-area-text-selector"></span>
+        </div>
+        <span class="qq-drop-processing-selector qq-drop-processing">
+          <span>Processing dropped files...</span>
+          <span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
+        </span>
+        <ul class="qq-upload-list-selector qq-upload-list custom-qq-upload-list" aria-live="polite"
+          aria-relevant="additions removals">
+          <li>
+            <div class="qq-progress-bar-container-selector">
+              <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+                class="qq-progress-bar-selector qq-progress-bar"></div>
+            </div>
+            <!-- <span class="qq-upload-spinner-selector qq-upload-spinner"></span> -->
+            <img class="qq-thumbnail-selector" qq-max-size="100" qq-server-scale>
+            <!-- <span class="qq-upload-file-selector qq-upload-file custom-qq-upload-file"></span> -->
+            <span class="qq-upload-size-selector qq-upload-size"></span>
+            <button type="button" class="qq-btn qq-upload-retry-selector qq-upload-retry">Retry</button>
+            <button type="button" class="qq-btn qq-upload-delete-selector qq-upload-delete">Delete</button>
+            <span role="status" class="qq-upload-status-text-selector qq-upload-status-text"></span>
+          </li>
+        </ul>
+        <div id="qq-upload-actions" class="upload-file-description d-flex flex-ai-center flex-dc">
+          <h5 class="mb-8">Drag and Drop Files here</h5>
+          <span class="fs-0-92 mb-8">Or</span>
+          <div class="qq-upload-button-selector qq-upload-button sb-btn sb-btn-normal sb-btn-success">
+            <div>Select Files</div>
+          </div>
+          <p class="mt-8">Upload {{docExtns}} {{docExtns ? '( Max size ' + templateDetails.filesConfig.size + ' MB )' : ''}} {{vidEtns}} {{vidEtns ? '( Max size ' + videoSizeLimit + ' )' : ''}}</p>
+        </div>
+        <dialog class="qq-confirm-dialog-selector">
+          <div class="qq-dialog-message-selector"></div>
+          <div class="qq-dialog-buttons">
+            <button type="button" class="qq-cancel-button-selector">No</button>
+            <button type="button" class="qq-ok-button-selector">Yes</button>
+          </div>
+        </dialog>
+        <dialog class="qq-prompt-dialog-selector">
+          <div class="qq-dialog-message-selector"></div>
+          <input type="text">
+          <div class="qq-dialog-buttons">
+            <button type="button" class="qq-cancel-button-selector">Cancel</button>
+            <button type="button" class="qq-ok-button-selector">Ok</button>
+          </div>
+        </dialog>
+      </div>
+    </div>
+    <div class="sb-modal-header">Upload Files</div>
+    <div class="sb-modal-content">
+    <div *ngIf="!loading">
+      <div  id="upload-content-div" class="upload-file-section"></div>
+    </div>
+      <div *ngIf='!loading' class="upload-file-description pt-16">
+        <p class="mb-8 fsmall">Related information:</p>
+
+        <ul class="pl-16">
+          <!-- <li>File accepted - {{templateDetails.filesConfig.accepted}}</li>
+          <li>Max file size - {{templateDetails.filesConfig.size}} Mb</li> -->
+          <li *ngIf="templateDetails.filesConfig.accepted.toLowerCase().includes('mp4')"><a target="_blank" title="How to compress MP4 video files" href="https://diksha.gov.in/help/contributor/index.html">How to compress MP4 video files</a></li>
+          <li *ngIf="templateDetails.filesConfig.accepted.toLowerCase().includes('mp4')"><a target="_blank" title="How to convert video to MP4" href="https://diksha.gov.in/help/contributor/video-mp4.html">How to convert video to MP4</a></li>
+          <li *ngIf="templateDetails.filesConfig.accepted.toLowerCase().includes('pdf') || templateDetails.filesConfig.accepted.toLowerCase().includes('epub')"><a target="_blank" title="How to convert MS word to PDF" href="https://diksha.gov.in/help/contributor/word-to-pdf.html">How to convert MS word to PDF</a></li>
+        </ul>
+      </div>
+      <div *ngIf='loading' class="uploading-files text-center">
+        <div class='d-flex flex-dc flex-ai-center icon'>
+          <img src="assets/images/loader.gif" width="64" class='process-icon'>
+          <label class="fs-0-785 pt-16">{{uploader.getName(0)}} </label>
+          <div *ngIf="videoFileFormat">
+            <div class="fs-0-785 pt-16">{{fileUplaoderProgress?.size}} Uploading Files ({{fileUplaoderProgress.progress}}%)
+            </div>
+            <sui-progress [value]="fileUplaoderProgress.progress" [maximum]="100" class="mb-0 mr-0"></sui-progress>
+            <div class="fs-0-785 pt-16">{{fileUplaoderProgress.remainingTime ? 'Remaining time '+ fileUplaoderProgress.remainingTime : ''}}
+            </div>
+          </div>
+          <div class="sb-color-error fs-0-785 pt-10">Please do not close this window until the upload is complete</div>
+        </div>
+        <div class="text-center fs-0-785">
+          <!-- <span class="sb-color-gray-800">Disclaimer:</span>
+          By submitting this Content, you confirm that you have followed prescribed guidelines, including the Content Policy and that you consent to publish it in accordance with the <a href="#" target="_blank">Content Policy.</a>
+          Please choose the applicable <a href="https://creativecommons.org/licenses" target="_blank">Creative Commons license</a> you wish to apply to your content. -->
+        </div>
+      </div>
+    </div>
+    <div class="sb-modal-actions">
+      <button id="uploadContent" class="sb-btn sb-btn-normal ml-8" [ngClass]="{'sb-btn-primary': uploadButton, 'sb-btn-disabled': !uploadButton}" (click)="uploadContent()"
+      appTelemetryInteract
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('upload', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,telemetryPageId, {key:'dialog_id',value:'upload_files'})"
+        [telemetryInteractObject]="telemetryInteractObject"
+        [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata"
+      >Upload</button>
+      <button (click)="closeUploadModal()" class="sb-btn sb-btn-normal" [disabled]="uploadButton" [ngClass]="{'sb-btn-outline-primary': !uploadButton, 'sb-btn-disabled': uploadButton}"
+      appTelemetryInteract
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('cancel', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.cancel, telemetryPageId,{key:'dialog_id',value:'upload_files'})"
+        [telemetryInteractObject]="telemetryInteractObject"
+        [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata"
+      >Cancel</button>
+    </div>
+  </sui-modal>
+<!-- </div> -->
+
+<sui-modal *ngIf="showRequestChangesPopup" [mustScroll]="true" [isClosable]="false" [transitionDuration]="0"
+  [size]="'normal'" class="sb-modal" appBodyScroll #modal (dismissed)="showRequestChangesPopup = false;">
+  <div class="sb-modal-header">
+      Add Review Comments
+  </div>
+  <form #FormControl="ngForm" class="ui form">
+  <div class="sb-modal-content">
+      <div class="sb-field-group">
+          <label>Enter your comments</label>
+          <div class="sb-field relative">
+
+              <textarea type="text" class="wmd-input width-100 sb-form-control" id="wmd-input" [(ngModel)]="rejectComment" placeholder="Add comment" name="rejectComment" required></textarea>
+              <label class="ui basic red error label pt-1 mt-5 width-100"
+                  *ngIf="FormControl.form.controls.rejectComment?.touched && !FormControl.form.valid">Fill comments </label>
+
+              <!-- <textarea rows="4" name="moretext" class="sb-form-control" placeholder="Type here..."></textarea>
+              <span class="characters-left">1000 Characters left</span> -->
+          </div>
+      </div>
+  </div>
+  <div class="sb-modal-actions">
+    <button id="submitReview" type="submit" class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid}" *ngIf="popupAction=='requestChanges'" (click)="requestChanges(); showRequestChangesPopup = false;"
+    appTelemetryInteract
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('submit_review', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,telemetryPageId,{key:'dialog_id',value:'add_review_comments'})"
+        [telemetryInteractObject]="telemetryInteractObject"
+        [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata"
+    > Submit Review </button>
+    <button id="submitReview" type="submit" class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid}" *ngIf="popupAction=='rejectContent'"  (click)="attachContentToTextbook('reject');showRequestChangesPopup = false;"
+    appTelemetryInteract
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('submit_review', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryPageId,{key:'dialog_id',value:'add_review_comments'})"
+        [telemetryInteractObject]="telemetryInteractObject"
+        [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata"
+    > Submit Review </button>
+    <button id="submitReview" type="submit" class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid}" *ngIf="popupAction=='sendForCorrections'" (click)="requestCorrectionsBySourcing(); showRequestChangesPopup = false;"
+    appTelemetryInteract
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('submit_review', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryPageId,{key:'dialog_id',value:'add_review_comments'})"
+        [telemetryInteractObject]="telemetryInteractObject"
+        [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata"
+    > Submit Review </button>
+    <button class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="modal.deny('denied')">{{ resourceService.frmelmnts.btn.cancel }}</button>
+  </div>
+</form>
+</sui-modal>
+
+<sui-modal *ngIf="showReviewModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
+  [size]="'normal'" class="sb-modal" appBodyScroll
+  (dismissed)="showReviewModal = !showReviewModal" #modal>
+  <div class="sb-modal-header">
+      Review Comments
+  </div>
+  <div class="sb-modal-content">
+      <div class="sb-publish-content">
+        <div class="review-modal-list">
+          {{ contentComment }}
+      </div>
+      </div>
+  </div>
+  <!-- <div class="sb-modal-actions">
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary"> Continue </button>
+  </div> -->
+</sui-modal>
+
+<!--  edit metadata --> 
+
+<sui-modal *ngIf="showEditMetaForm" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+    class="sb-modal" appBodyScroll (dismissed)="showEditMetaForm= false">
+    <i class="icon close" (click)="showEditMetaForm= false" tabindex="0"></i>
+    <!--Header-->
+    <div class="sb-modal-header">{{(visibility && visibility.showEditMetadata) ? 'Edit details' : 'View details'}}</div>
+    <!--/Header-->
+
+    <!--Content-->
+    <div class="sb-modal-content o-y-visible pb-8" *ngIf="formFieldProperties && categoryMasterList">
+      <app-data-form
+        #formData
+        [formFieldProperties]="formFieldProperties" 
+        [categoryMasterList]="categoryMasterList">
+      </app-data-form>
+    </div>
+    <!--/Content-->
+
+    <!--Actions-->
+    <div class="sb-modal-actions">
+        <button [disabled]="!editableFields.length" class="sb-btn sb-btn-normal sb-btn-primary" (click)="handleCallback()">{{requiredAction === 'editForm' ? 'Save' : 'Submit' }}</button>
+    </div>
+    <!--/Actions-->
+</sui-modal>
+
+
+
+
+
+
+
+
+

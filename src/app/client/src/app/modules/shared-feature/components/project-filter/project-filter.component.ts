@@ -49,7 +49,6 @@ export class ProjectFilterComponent implements OnInit {
     this.activeMyProgramsMenu = this.router.isActive('/contribute/myenrollprograms', true);
     this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
-    console.log('userService', this.userService);
     this.telemetryInteractObject = {};
     this.createFilterForm(); // creating the filter form
     this.currentFilters = { // setting up initial values
@@ -62,10 +61,19 @@ export class ProjectFilterComponent implements OnInit {
       'contributions': this.nominationContributionStatus // adding default values for open, close and any
     };
     this.checkFilterShowCondition();
-     // getting global content types all the time
-    this.currentFilters['contentTypes'] = _.sortBy(this.programsService.contentTypes, ['name']);
+     // getting content types as the content categories againts the project
+    this.getContentCategories();
   }
 
+  getContentCategories() {
+    let programs = this.programs;
+
+    _.map(programs, (program) => {
+      this.currentFilters['contentTypes'] = _.flattenDeep(_.compact(_.uniq(_.concat(this.currentFilters['contentTypes'],
+        program.content_types ))));
+    });
+    this.currentFilters['contentTypes'] = this.sortFilters(this.currentFilters['contentTypes']);
+  }
   createFilterForm() {
     this.filterForm = this.sbFormBuilder.group({
       sourcingOrganisations: [],

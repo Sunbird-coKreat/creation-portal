@@ -10,7 +10,7 @@ import { IInteractEventEdata, TelemetryService } from '@sunbird/telemetry';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { CacheService } from 'ng2-cache-service';
 import { first } from 'rxjs/operators';
-import { CbseProgramService } from '../../../cbse-program/services';
+import { SourcingService } from '../../../sourcing/services';
 
 @Component({
   selector: 'app-program-list',
@@ -60,7 +60,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     public router: Router, private datePipe: DatePipe, public configService: ConfigService, public cacheService: CacheService,
     private navigationHelperService: NavigationHelperService, public activeRoute: ActivatedRoute,
     private telemetryService: TelemetryService, public frameworkService: FrameworkService,
-    private cbseProgramService: CbseProgramService) { }
+    private sourcingService: SourcingService) { }
 
   ngOnInit() {
     this.getPageId();
@@ -244,7 +244,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
           env : this.activeRoute.snapshot.data.telemetry.env,
           request: programData
         };
-        this.cbseProgramService.apiErrorHandling(err, errInfo);
+        this.sourcingService.apiErrorHandling(err, errInfo);
         ($event.target as HTMLButtonElement).disabled = false;
       }
     );
@@ -284,7 +284,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
                     env : this.activeRoute.snapshot.data.telemetry.env,
                     request: filters
                   };
-                  this.cbseProgramService.apiErrorHandling(error, errInfo);
+                  this.sourcingService.apiErrorHandling(error, errInfo);
                 });
           } else {
             this.iscontributeOrgAdmin = false;
@@ -316,7 +316,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
                   env : this.activeRoute.snapshot.data.telemetry.env,
                   request: req
                 };
-                this.cbseProgramService.apiErrorHandling(error, errInfo);
+                this.sourcingService.apiErrorHandling(error, errInfo);
               }
               );
           }
@@ -334,7 +334,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
           env : this.activeRoute.snapshot.data.telemetry.env,
           request: getAppliedFilters
         };
-        this.cbseProgramService.apiErrorHandling(error, errInfo);
+        this.sourcingService.apiErrorHandling(error, errInfo);
       }
     );
   }
@@ -404,7 +404,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         });
         this.enrollPrograms = this.programs;
         this.tempSortPrograms = this.programs;
-        this.count = _.get(response, 'result.count');
+        this.count = this.programs.length;
         if (!_.get(req , 'request.sort')) {
           this.sortColumn = 'createdon';
           this.direction = 'desc';
@@ -420,7 +420,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
           telemetryCdata : this.telemetryInteractCdata,
           env : this.activeRoute.snapshot.data.telemetry.env,
         };
-        this.cbseProgramService.apiErrorHandling(error, errInfo);
+        this.sourcingService.apiErrorHandling(error, errInfo);
         // TODO: Add error toaster
       });
   }
@@ -518,7 +518,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
             telemetryCdata : this.telemetryInteractCdata,
             env : this.activeRoute.snapshot.data.telemetry.env,
           };
-          this.cbseProgramService.apiErrorHandling(error, errInfo);
+          this.sourcingService.apiErrorHandling(error, errInfo);
         });
       return;
     }
@@ -560,7 +560,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
           telemetryCdata : this.telemetryInteractCdata,
           env : this.activeRoute.snapshot.data.telemetry.env,
         };
-        this.cbseProgramService.apiErrorHandling(error, errInfo);
+        this.sourcingService.apiErrorHandling(error, errInfo);
       });
   }
 
@@ -655,7 +655,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         env : this.activeRoute.snapshot.data.telemetry.env,
         request: filters
       };
-      this.cbseProgramService.apiErrorHandling(error, errInfo);
+      this.sourcingService.apiErrorHandling(error, errInfo);
       this.logTelemetryImpressionEvent();
     });
   }
@@ -800,7 +800,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
           env : this.activeRoute.snapshot.data.telemetry.env,
           request: req
         };
-        this.cbseProgramService.apiErrorHandling(err, errInfo);
+        this.sourcingService.apiErrorHandling(err, errInfo);
       });
     } else {
       this.toasterService.error(this.resourceService.messages.emsg.bulkApprove.something);

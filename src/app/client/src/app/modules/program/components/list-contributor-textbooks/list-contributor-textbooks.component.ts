@@ -5,15 +5,16 @@ import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { IChapterListComponentInput } from '../../../cbse-program/interfaces';
+import { IChapterListComponentInput } from '../../../sourcing/interfaces';
 import { InitialState, ISessionContext, IUserParticipantDetails } from '../../interfaces';
 import { ProgramStageService } from '../../services/';
-import { ChapterListComponent } from '../../../cbse-program/components/chapter-list/chapter-list.component';
-import { CollectionHierarchyService } from '../../../cbse-program/services/collection-hierarchy/collection-hierarchy.service';
+import { ChapterListComponent } from '../../../sourcing/components/chapter-list/chapter-list.component';
+import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
 import { tap, filter, first, map } from 'rxjs/operators';
 import { NgForm } from '@angular/forms';
 import * as moment from 'moment';
-import { CbseProgramService } from '../../../cbse-program/services';
+import { SourcingService } from '../../../sourcing/services';
+import { HelperService } from '../../../sourcing/services/helper.service';
 import { throwError, forkJoin } from 'rxjs';
 
 @Component({
@@ -73,7 +74,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
   public toasterService: ToasterService, public actionService: ActionService,
   private collectionHierarchyService: CollectionHierarchyService,
-  private notificationService: NotificationService, private cbseProgramService: CbseProgramService) { }
+  private notificationService: NotificationService, private sourcingService: SourcingService, private helperService: HelperService) { }
 
   ngOnInit() {
     this.programId = this.activatedRoute.snapshot.params.programId;
@@ -111,7 +112,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
     });
     this.contributor = this.selectedNominationDetails;
-    this.nominatedContentTypes = _.join(this.contributor.nominationData.content_types, ', ');
+    this.nominatedContentTypes = _.join(this.helperService.mapContentTypesToCategories(this.contributor.nominationData.content_types), ', ');
   }
 
   sortCollection(column) {
@@ -162,7 +163,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
         telemetryCdata : this.telemetryInteractCdata,
         env : this.activatedRoute.snapshot.data.telemetry.env,
       };
-      this.cbseProgramService.apiErrorHandling(error, errInfo);
+      this.sourcingService.apiErrorHandling(error, errInfo);
     });
   }
   fetchNominationCounts() {
@@ -212,7 +213,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
           env : this.activatedRoute.snapshot.data.telemetry.env,
           request: option
         };
-        this.cbseProgramService.apiErrorHandling(err, errInfo);
+        this.sourcingService.apiErrorHandling(err, errInfo);
       }
     );
   }
@@ -265,7 +266,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
               telemetryCdata : this.telemetryInteractCdata,
               env : this.activatedRoute.snapshot.data.telemetry.env,
             };
-            this.cbseProgramService.apiErrorHandling(error, errInfo);
+            this.sourcingService.apiErrorHandling(error, errInfo);
           }
         );
     } else {
