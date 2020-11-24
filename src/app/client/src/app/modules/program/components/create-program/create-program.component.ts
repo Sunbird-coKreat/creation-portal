@@ -518,7 +518,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
   setFrameworkDataToProgram() {
     this.programScope['purpose'] = _.get(this.cacheService.get(this.userService.hashTagId), 'contentPrimaryCategories');
-    console.log( this.programScope['purpose'], 'purpose');
     this.programScope['medium'] = [];
     this.programScope['gradeLevel'] = [];
     this.programScope['subject'] = [];
@@ -1340,7 +1339,6 @@ onChangeTargetCollection() {
   saveAsDraftAndNext ($event) {
     // tslint:disable-next-line: max-line-length
     this.targetCollection = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories'); // get target collection in dropdown
-   console.log(this.targetCollection, 'targetCollection');
     this.clearValidations();
 
     if ((this.createProgramForm.dirty
