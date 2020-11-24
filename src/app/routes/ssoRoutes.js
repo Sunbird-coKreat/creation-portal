@@ -26,6 +26,10 @@ module.exports = (app) => {
     logger.info({msg: '/v1/sso/login called'});
     let redirectUrl, errType;
     try {
+      if (!req.query.id) {
+        errType = 'MISSING_QUERY_PARAMS';
+        throw 'some of the query params are missing';
+      }
       errType = 'SSO_LOGIN';
       var response = await getAccessTokenFromId(req.query.id);
       var json = JSON.parse(response);
