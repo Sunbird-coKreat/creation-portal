@@ -348,10 +348,10 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       data: {
         request: {
           filters: {
-            objectType: 'content',
+            objectType: 'collection',
             programId: this.sessionContext.programId || this.programContext.program_id,
             status: this.sessionContext.collectionStatus || ['Draft', 'Live'],
-            contentType: this.sessionContext.collectionType || 'Textbook'
+            primaryCategory: this.programContext.target_collection_category
           },
           fields: ['name', 'gradeLevel', 'mimeType', 'medium', 'subject', 'status', 'chapterCount', 'chapterCountForContribution'],
           limit: 1000
