@@ -69,7 +69,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   collections;
   tempCollections = [];
   targetCollection = [];
-  showTargetCollection: any;
+  showProgramScope: any;
+  callTargetCollection: any;
   textbooks: any = {};
 
   /**
@@ -328,7 +329,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programsService.get(req).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
       this.selectedContentTypes = _.get(this.programDetails, 'content_types');
-      this.selectedTargetCollection = _.get(this.programDetails, 'primaryCategory') ? _.get(this.programDetails, 'primaryCategory') : null;
+      // tslint:disable-next-line: max-line-length
+      this.selectedTargetCollection = _.get(this.programDetails, 'target_collection_category') ? _.get(this.programDetails, 'target_collection_category')[0] : '';
+      this.collectionListForm.controls['target_collection_category'].setValue(this.selectedTargetCollection);
       this.programDetails['content_types'] = _.join(this.programDetails.content_types, ', ');
       this.initializeFormFields();
 
@@ -658,7 +661,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       this.createProgramForm = this.sbFormBuilder.group(obj);
       this.defaultContributeOrgReviewChecked = _.get(this.programDetails, 'config.defaultContributeOrgReview') ? false : true;
-      // this.showTexbooklist(false);
+    // tslint:disable-next-line: max-line-length
+      this.targetCollection = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories'); // get target collection in dropdown
+      this.showProgramScope = false;
+      this.showTextBookSelector = false;
     } else {
       this.createProgramForm = this.sbFormBuilder.group({
         name: ['', [Validators.required, Validators.maxLength(100)]],
@@ -933,8 +939,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.validateDates();
   }
 onChangeTargetCollection() {
-  this.showTexbooklist(true , this.collectionListForm.value.target_collection_category);
-  this.collectionListForm.value.pcollections = [];
+   if (this.callTargetCollection) {
+    this.showTexbooklist(true , this.collectionListForm.value.target_collection_category);
+    this.collectionListForm.value.pcollections = [];
+   }
 }
   showTexbooklist(showTextBookSelector = true, primaryCategory) {
     // for scrolling window to top after Next button navigation
@@ -979,7 +987,7 @@ onChangeTargetCollection() {
         this.showTextBookSelector = showTextBookSelector;
         if (res.result.count) {
           this.collections = res.result.content;
-          this.showTargetCollection = true;
+          this.showProgramScope = true;
           this.tempSortCollections = this.collections;
           if (!this.filterApplied) {
             this.sortCollection(this.sortColumn);
@@ -997,7 +1005,7 @@ onChangeTargetCollection() {
             });
           }
         } else {
-          this.showTargetCollection = false;
+          this.showProgramScope = false;
           this.collections = [];
           this.tempSortCollections = [];
         }
@@ -1337,8 +1345,10 @@ onChangeTargetCollection() {
   }
 
   saveAsDraftAndNext ($event) {
-    // tslint:disable-next-line: max-line-length
-    this.targetCollection = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories'); // get target collection in dropdown
+    this.callTargetCollection = true;
+    if (this.collectionListForm.value.target_collection_category) {
+      this.onChangeTargetCollection();
+    }
     this.clearValidations();
 
     if ((this.createProgramForm.dirty
