@@ -325,13 +325,13 @@
 										popupDelay="500" [popupPlacement]="'left'"
 										popupText="{{resource.frmelmnts.lbl.select.Target.Collection}}"></i>
 								</label>
-								<sui-select formControlName="target_collection" class="selecttarget"  placeholder="{{resource?.frmelmnts?.lbl?.Select}}"
+								<sui-select formControlName="target_collection_category" class="selecttarget"  placeholder="{{resource?.frmelmnts?.lbl?.Select}}"
 								(ngModelChange)="onChangeTargetCollection()"  [options]="targetCollection"  #targetCollections>
 									<sui-select-option  *ngFor="let option of targetCollections.filteredOptions;" [value]="option">
 									</sui-select-option>
 								</sui-select>
 								<div class="ui pointing red basic label below"
-								*ngIf="collectionListForm.controls['target_collection'].errors  && (!collectionListForm.controls['target_collection'].pristine || formIsInvalid)">
+								*ngIf="collectionListForm.controls['target_collection_category'].errors  && (!collectionListForm.controls['target_collection_category'].pristine || formIsInvalid)">
 								{{resource?.frmelmnts?.lbl?.targetCollectionRequired}}
 							</div>
 								</div>
