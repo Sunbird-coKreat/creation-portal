@@ -518,6 +518,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
   setFrameworkDataToProgram() {
     this.programScope['purpose'] = _.get(this.cacheService.get(this.userService.hashTagId), 'contentPrimaryCategories');
+    console.log( this.programScope['purpose'], 'purpose');
     this.programScope['medium'] = [];
     this.programScope['gradeLevel'] = [];
     this.programScope['subject'] = [];
@@ -769,6 +770,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.createProgramForm.controls['content_submission_enddate'].updateValueAndValidity();
     this.collectionListForm.controls['content_types'].setValidators(Validators.required);
     this.collectionListForm.controls['content_types'].updateValueAndValidity();
+    this.collectionListForm.controls['target_collection'].setValidators(Validators.required);
+    this.collectionListForm.controls['target_collection'].updateValueAndValidity();
   }
 
   clearValidations() {
@@ -782,6 +785,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.createProgramForm.controls['content_submission_enddate'].updateValueAndValidity();
     this.collectionListForm.controls['content_types'].clearValidators();
     this.collectionListForm.controls['content_types'].updateValueAndValidity();
+    this.collectionListForm.controls['target_collection'].clearValidators();
+    this.collectionListForm.controls['target_collection'].updateValueAndValidity();
   }
 
   saveProgram(cb) {
@@ -799,6 +804,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
     const contentTypes = this.collectionListForm.value.content_types;
     this.programData['content_types']  = _.isEmpty(contentTypes) ? [] : contentTypes;
+    this.programData['target_collection'] = this.collectionListForm.value.target_collection;
     // tslint:disable-next-line: max-line-length
     _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'board' }).defaultValue = this.userBoard;
 
@@ -1334,6 +1340,7 @@ onChangeTargetCollection() {
   saveAsDraftAndNext ($event) {
     // tslint:disable-next-line: max-line-length
     this.targetCollection = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories'); // get target collection in dropdown
+   console.log(this.targetCollection, 'targetCollection');
     this.clearValidations();
 
     if ((this.createProgramForm.dirty
