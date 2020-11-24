@@ -27,6 +27,11 @@ module.exports = (app) => {
     let redirectUrl, errType;
     try {
       errType = 'SSO_LOGIN';
+
+      if (!req.query.id) {
+        throw 'Session id missing in request';
+      }
+
       var response = await getAccessTokenFromId(req.query.id);
       var json = JSON.parse(response);
 
