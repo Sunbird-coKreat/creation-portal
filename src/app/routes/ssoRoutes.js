@@ -39,7 +39,7 @@ module.exports = (app) => {
         const profile = JSON.parse(userInfo);
         console.log(userInfo);
 
-        // username must be present
+        // Changed to name as preferred_username is not working
         if (!profile.name || profile.name == '') {
           throw 'Username was missing from the user';
         }
