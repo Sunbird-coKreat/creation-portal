@@ -803,7 +803,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
     const contentTypes = this.collectionListForm.value.content_types;
     this.programData['content_types']  = _.isEmpty(contentTypes) ? [] : contentTypes;
-    this.programData['target_collection_category'] = this.collectionListForm.value.target_collection_category;
+    this.programData['target_collection_category'] = [this.collectionListForm.value.target_collection_category];
     // tslint:disable-next-line: max-line-length
     _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'board' }).defaultValue = this.userBoard;
 
