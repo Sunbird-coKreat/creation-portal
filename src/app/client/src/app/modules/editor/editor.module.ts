@@ -1,5 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CoreModule } from '@sunbird/core';
+import { SuiModule } from 'ng2-semantic-ui';
+
 
 import { EditorRoutingModule } from './editor-routing.module';
 import { CollectionTreeComponent,  FancyTreeComponent } from './components';
@@ -17,6 +20,8 @@ import {CbseProgramModule} from '../cbse-program';
     MultiplechoiceQuestionComponent, QuestionSetComponent, EditorBaseComponent, FancyTreeComponent],
   imports: [
     CommonModule,
+    CoreModule,
+    SuiModule,
     EditorRoutingModule,
     // PlayerHelperModule
     CbseProgramModule
