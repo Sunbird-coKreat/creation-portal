@@ -113,7 +113,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     localStorage.setItem('programId', this.programId);
   }
   ngOnInit() {
-
     if (['null', null, undefined, 'undefined'].includes(this.programId)) {
       this.toasterService.error(this.resourceService.messages.emsg.project.m0001);
     }
@@ -602,7 +601,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
             objectType: 'collection',
             programId: this.activatedRoute.snapshot.params.programId,
             status: ['Draft', 'Live'],
-            primaryCategory: 'Digital Textbook',
+            primaryCategory: !_.isNull(this.programDetails.target_collection_category) ? this.programDetails.target_collection_category : 'Digital Textbook'
           }
         }
       }
