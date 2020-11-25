@@ -1,7 +1,6 @@
 <app-fancy-tree 
-          (itemSelect)="onItemSelect($event)" 
-          [nodes]="rootChildrens" 
-          [rootNode]="rootNode"
+          (treeEventEmitter)="treeEventListener($event)" 
+          [nodes]="rootNode"
           [options]="{ showConnectors: true }"
           class="sb-collectionTree-fancyTree"
         >

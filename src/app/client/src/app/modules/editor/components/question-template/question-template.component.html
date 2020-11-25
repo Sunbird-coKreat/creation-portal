@@ -1,0 +1,19 @@
+<div class="twelve wide column">
+  <div class="ui grid flex-jc-center m-0">
+    <div class="three wide column p-8"  *ngFor="let template of templateList" (click)="showButton=true; templateSelected = template" >
+      <div class="ui card text-center common-contribution-card" [ngClass]="{'active': templateSelected?.questionCategory === template.questionCategory}">
+        <div class="content">
+          <i class="check circle icon"></i>
+          <img class="mt-16" src="{{'assets/images/book.png'}}" rel="placeholder">
+          <div class="content-title pt-16 pb-8">{{template.questionCategory}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sb-modal-actions">
+  <button class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': showButton, 'sb-btn-disabled': !showButton}" (click)="handleSubmit()">
+    Continue
+  </button>
+</div>
