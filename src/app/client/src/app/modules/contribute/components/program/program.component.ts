@@ -601,7 +601,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
             objectType: 'collection',
             programId: this.activatedRoute.snapshot.params.programId,
             status: ['Draft', 'Live'],
-            primaryCategory: this.programDetails.target_collection_category,
+            primaryCategory: !_.isNull(this.programDetails.target_collection_category) ? this.programDetails.target_collection_category : 'Digital Textbook'
           }
         }
       }

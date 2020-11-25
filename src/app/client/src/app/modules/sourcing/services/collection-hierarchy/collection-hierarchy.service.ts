@@ -105,7 +105,7 @@ export class CollectionHierarchyService {
             programId: programId,
             objectType: 'collection',
             status: ['Draft'],
-            primaryCategory: primaryCategory,
+            primaryCategory: !_.isNull(primaryCategory) ? primaryCategory : 'Digital Textbook'
           }
         }
       }
