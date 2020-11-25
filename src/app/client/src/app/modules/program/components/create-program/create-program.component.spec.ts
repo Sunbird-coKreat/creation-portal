@@ -147,7 +147,7 @@ describe('CreateProgramComponent', () => {
     component.collectionListForm.value.pcollections = [];
     const toasterService = TestBed.get(ToasterService);
     component.validateFormBeforePublish();
-    expect(toasterService.warning).toHaveBeenCalledWith('Please select at least a one target collection');
+    expect(toasterService.warning).toHaveBeenCalledWith('Please select at least a one collection');
     expect(component.disableCreateProgramBtn).toBeFalsy();
   });
 });
