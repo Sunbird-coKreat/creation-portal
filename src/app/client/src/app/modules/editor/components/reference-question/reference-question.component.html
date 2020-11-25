@@ -5,7 +5,7 @@
   <i class="icon close sb-color-white"></i>
 </div>
 <div class="b-1-100">
-       <div class="text-right sb-bg-color-white py-10">
+       <div class="text-right sb-bg-color-white py-5">
         <a><i class="icon trash sb-color-primary pr-30"></i></a>
        </div>
         <hr class="my-0">
@@ -16,21 +16,34 @@
               <input class="sb-form-control required" required placeholder="Add question here">
           </div>
         </div>
-      <div class="py-10 fs-0-92">
-        Options <i class="icon info"></i>
-        <span class="divider"></span>
-        <i class="icon ellipsis vertical"></i>
-        <a class="profile-avtar computer only p-0 ml-15" 
-        tabindex="0">jj
-        <div suiDropdown class="ui dropdown right top pointing" id="dropdown-menu-list-header">
-            
-            <div class="menu" suiDropdownMenu>
-                <div class="item headerDropdownProfile">
-                  dd
-                </div>
-            </div>
+        <div class="sb-field-group">
+          <label>Answers</label>
+          <div class="sb-field">
+            <div class="ckeditor-tool-container ">
+              <app-ckeditor-tool class="w-100" [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'question')"
+                [editorDataInput]="editorState.question" [editorId]="'question_editor'"></app-ckeditor-tool>
+            </div>          
+          </div>
         </div>
-    </a>
+      <div class="py-10 fs-0-92">
+        Options 
+        <i class="icon info"></i>
+        <span class="divider"></span>
+        <i class="icon th large"></i>
+        <i class="icon image"></i>
+        <i class="icon align left"></i>
+        <i class="icon align right"></i>
+        <i class="icon align center"></i>
+      </div>
+      <div class="sb-field-group my-10">
+        <div class="sb-field">
+            <input class="sb-form-control required" required placeholder="Add option 1">
+        </div>
+      </div>
+      <div class="sb-field-group my-20">
+        <div class="sb-field">
+            <input class="sb-form-control required" required placeholder="Add option 2">
+        </div>
       </div>
       <!-- <div class="d-flex py-10">
         <div class="ckeditor-tool-container pr-10">
@@ -120,10 +133,11 @@
       </div>
     
     <div class="d-flex flex-ai-center ckeditor-tool__solution__header py-10 px-10 my-15 sb-bg-color-white">
-      <label class="fs-0-92 mb-0 ckeditor-tool__label fs-0-785"><span class="sb-color-primary">Solution</span>
-         (Optional) 
+      <label class="fs-0-92 mb-0 ckeditor-tool__label">
+        <span class="sb-color-primary fs-0-785">Solution</span>
+         <span class="fs-0-785">(Optional) </span>
           </label>
-      <div class="ui dropdown sb-btn sb-btn-outline-primary sb-btn-normal sb-right-icon-btn sb-btn-radius ml-auto"
+      <div class="ui dropdown sb-btn sb-btn-outline-primary sb-btn-normal sb-right-icon-btn sb-btn-radius ml-auto fxsmall"
     suiDropdown autoClose="itemClick">
           <div class="text">Choose type</div>
           <i class="dropdown icon mx-8"></i>
@@ -133,7 +147,7 @@
           </div>
       </div>
   </div>
-  <span class="sb-color-primary fs-0-785 my-10"><i class="icon plus circle"></i>Add hint</span>
+  <div class="sb-color-primary fs-0-785 my-10"><i class="icon plus circle"></i>Add hint</div>
   <hr class="my-0">
   <div class="ui grid my-10 form mx-0">
     <div class="three wide column pl-0">
