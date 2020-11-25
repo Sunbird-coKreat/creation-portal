@@ -1,6 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CoreModule } from '@sunbird/core';
+import { SuiModule } from 'ng2-semantic-ui';
+
 import { EditorRoutingModule } from './editor-routing.module';
 import { CollectionTreeComponent,  FancyTreeComponent, QuestionTemplateComponent } from './components';
 import { EditorHeaderComponent } from './components/editor-header/editor-header.component';
@@ -18,6 +21,8 @@ import {CbseProgramModule} from '../cbse-program';
   imports: [
     CommonModule,
     FormsModule,
+    CoreModule,
+    SuiModule,
     ReactiveFormsModule,
     EditorRoutingModule,
     // PlayerHelperModule

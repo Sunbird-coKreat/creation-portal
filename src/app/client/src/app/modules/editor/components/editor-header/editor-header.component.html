@@ -1,4 +1,6 @@
 
+<!--
+      [categoryMasterList]="categoryMasterList" -->
 <ul class="d-flex flex-jc-flex-end">
   <li *ngFor="let button of toolbarConfig" class="mr-5">
     <button class="{{button.style}}" (click)="buttonEmitter($event, button)">
@@ -7,5 +9,7 @@
   </li>
 </ul>
 
-
-
+<!-- <sui-modal [isClosable]="true" [transitionDuration]="0" [size]="'normal'" class="sb-modal" appBodyScroll>
+  <app-data-form [formFieldProperties]="formFieldProperties" #formData>
+  </app-data-form>
+</sui-modal> -->
