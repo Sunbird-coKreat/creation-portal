@@ -8,7 +8,8 @@
       {{button.name}}
     </button> -->
     <div class="d-flex flex-ai-center">
-      <a class="sb-color-gray-300 fs-0-785 mr-10 font-weight-bold">Edit Details</a>
+      <a class="sb-color-gray-300 fs-0-785 mr-10 font-weight-bold" (click)="showNormalModal = true"
+      >Edit Details</a>
       <button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-10">
         <i class="icon eye"></i>Preview
       </button>
@@ -21,5 +22,151 @@
     </div>
   </div>
 
+  <sui-modal *ngIf="showNormalModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+  class="sb-modal" appBodyScroll (dismissed)="showNormalModal = !showNormalModal" #modal>
+  <div class="sb-modal-header">
+    Edit Details  </div>
+  <div class="sb-modal-content">
+    <div class="ui grid">
+      <div class="six wide column ">
+        <div class="sb-field-group">
+          <label>Name</label>
+          <div class="sb-field">
+            <sui-select formControlName="" class="selecttarget">
+              <sui-select-option value="radio" ></sui-select-option>
+              <sui-select-option value="checkbox"></sui-select-option>
+               <sui-select-option value="input"></sui-select-option>
+               <sui-select-option value="date">Date</sui-select-option>
+          </sui-select>
+          </div>
+        </div>
+      </div>
+      <div class="six wide column ">
+        <div class="sb-field-group">
+          <label>Board</label>
+          <div class="sb-field">
+              <input class="sb-form-control disabled" required placeholder="CBSE">
+          </div>
+        </div>
+      </div>
+      <div class="six wide column ">
+        <div class="sb-field-group">
+          <label>Attributions</label>
+          <div class="sb-field">
+              <input class="sb-form-control required" required placeholder="">
+          </div>
+        </div>
+      </div>
+      <div class="six wide column ">
+        <div class="sb-field-group">
+          <label>Class</label>
+          <div class="sb-field">
+              <input class="sb-form-control disabled" required placeholder="Grade 4">
+          </div>
+        </div>
+      </div>
+      <div class="six wide column ">
+        <div class="sb-field-group">
+          <label>License</label>
+          <div class="sb-field">
+              <sui-select formControlName="" class="selecttarget">
+                <sui-select-option value="radio" ></sui-select-option>
+                <sui-select-option value="checkbox"></sui-select-option>
+                <sui-select-option value="input"></sui-select-option>
+                <sui-select-option value="date">Date</sui-select-option>
+            </sui-select>          
+          </div>
+        </div>
+      </div>
+      <div class="six wide column ">
+        <div class="sb-field-group">
+          <label>Medium</label>
+          <div class="sb-field">
+              <input class="sb-form-control disabled" required placeholder="English">
+          </div>
+        </div>
+      </div>
+      <div class="six wide column ">
+        <div class="sb-field-group">
+          <label>Author</label>
+          <div class="sb-field">
+              <input class="sb-form-control required" required placeholder="">
+          </div>
+        </div>
+      </div>
+      <div class="six wide column ">
+        <div class="sb-field-group">
+          <label>Subject</label>
+          <div class="sb-field">
+              <input class="sb-form-control disabled" required placeholder="Maths">
+          </div>
+        </div>
+      </div>
+      <div class="six wide column ">
+        <div class="sb-field-group">
+          <label>Topic(s)</label>
+          <div class="sb-field">
+            <sui-multi-select class="selection">
+            <sui-select-option value="">
+            </sui-select-option>
+          </sui-multi-select>          
+        </div>
+        </div>
+      </div>
+      <div class="six wide column ">
+        <div class="sb-field-group">
+          <label>Time limit</label>
+                <div class="sb-field">
+                  <sui-select formControlName="" class="selecttarget">
+                    <sui-select-option value="radio" ></sui-select-option>
+                    <sui-select-option value="checkbox"></sui-select-option>
+                    <sui-select-option value="input"></sui-select-option>
+                    <sui-select-option value="date">Date</sui-select-option>
+                </sui-select>  
+                <div>Hours</div>        
+            </div>
+            <div class="sb-field">
+              <sui-select formControlName="" class="selecttarget">
+                <sui-select-option value="radio" ></sui-select-option>
+                <sui-select-option value="checkbox"></sui-select-option>
+                <sui-select-option value="input"></sui-select-option>
+                <sui-select-option value="date">Date</sui-select-option>
+            </sui-select>  
+            <div>Mins</div>        
+        </div>
+        </div>
+      </div>
+      <div class="six wide column ">
+        <div class="sb-field-group">
+          <label>Target Framework</label>
+          <div class="sb-field">
+              <input class="sb-form-control required" required placeholder="Maths">
+          </div>
+        </div>
+      </div>
+      <div class="six wide column ">
+        <div class="sb-field-group">
+          <label>Warning time</label>
+          <div class="sb-field">
+              <input class="sb-form-control required" required placeholder="Maths">
+          </div>
+        </div>
+      </div>
+      <div class="six wide column ">
+        <div class="sb-field-group">
+          <label>Audience</label>
+          <div class="sb-field">
+              <input class="sb-form-control required" required placeholder="Maths">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="sb-modal-actions">
+    <button class="sb-btn sb-btn-normal sb-btn-primary">
+      Save
+    </button>
+  </div>
+</sui-modal>
 
 

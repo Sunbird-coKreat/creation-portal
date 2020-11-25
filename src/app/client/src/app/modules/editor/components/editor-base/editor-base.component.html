@@ -30,6 +30,33 @@
               <app-reference-question [question]="editorState" ></app-reference-question>
           </section>
         </div>
+      <div class="sb-g add-to-library__toc-player">
+        <!-- Left Sidebar for cards -->
+        <section class="sb-g-col-xs-12 sb-g-col-md-4 sb-g-col-lg-4">
+            <app-collection-tree-new
+            [nodes]="collectionTreeNodes" 
+            [options]="collectionTreeOptions" (treeEventEmitter)="treeEventListener($event)" ></app-collection-tree-new>
+            
+        </section>
+
+        <!-- Right Player Sections -->
+        <section class="sb-g-col-xs-12 sb-g-col-md-8 sb-g-col-lg-8 relative position ml-24">
+          {{selectedQuestionData?.data?.model?.type}}
+          <ng-container *ngIf="selectedQuestionData?.data?.model?.type === 'reference'">
+            <!-- <app-reference-question [question]="selectedQuestionData"></app-reference-question> -->
+          </ng-container>
+          <ng-container *ngIf="selectedQuestionData?.data?.model?.type === 'mcq'">
+            <app-multiplechoice-question [question]="selectedQuestionData"></app-multiplechoice-question>
+          </ng-container>
+          <ng-container *ngIf="selectedQuestionData?.folder === true">
+            <app-question-set></app-question-set>
+          </ng-container>
+          <app-question-template *ngIf='showQuestionTemplate'
+          [templateList]="templateListInput"
+          (templateSelection)="handleTemplateSelection($event)">
+        </app-question-template>
+        </section>
       </div>
     </div>
   </div>
+

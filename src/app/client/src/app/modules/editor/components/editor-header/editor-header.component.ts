@@ -9,6 +9,8 @@ export class EditorHeaderComponent implements OnInit {
 
   @Input() toolbarConfig: any;
   @Output() toolbarEmitter = new EventEmitter<any>();
+  showNormalModal = false;
+
   constructor() { }
 
   ngOnInit() {

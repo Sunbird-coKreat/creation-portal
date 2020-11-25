@@ -1,3 +1,11 @@
-<p>
-  question-set works!
-</p>
+<div class="ckeditor-tool width-100">
+  <div class="ckeditor-tool__question mb-24">
+    <div class="sb-field mcq-title mb-16">
+      <label class="px-16 py-8 mb-0 ckeditor-tool__label width-100">Instructions</label>
+      <div class="ckeditor-tool-container">
+        <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event)"
+          [editorDataInput]="instructions" [editorId]="'instructions_editor'"></app-ckeditor-tool>
+      </div>
+    </div>
+  </div>
+</div>  

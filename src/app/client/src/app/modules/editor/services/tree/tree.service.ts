@@ -446,7 +446,7 @@ export class TreeService {
     node.root = false;
     node.folder = (data.visibility && data.visibility === 'Default') ? false : (objectType.childrenTypes.length > 0);
     node.icon = (data.visibility && data.visibility === 'Default') ? 'fa fa-file-o' : objectType.iconClass;
-    node.metadata = data;
+    node.model = data;
     if (node.folder) {
       // to check child node should not be created more than the set configlevel
       if ((selectedNode.getLevel() >= this.config.editorConfig.rules.levels - 1) && createType === 'child') {
@@ -455,11 +455,12 @@ export class TreeService {
       }
       newNode = (createType === 'sibling') ? selectedNode.appendSibling(node) : selectedNode.addChildren(node);
       // tslint:disable-next-line:max-line-length
-      this.treeCache.nodesModified[node.id] = { isNew: true, root: false, metadata: { mimeType: 'application/vnd.ekstep.content-collection' } };
+      this.treeCache.nodesModified[node.id] = { isNew: true, root: false, model: { mimeType: 'application/vnd.ekstep.content-collection' } };
       newNode.setActive();
     } else {
       newNode = (createType === 'sibling') ? selectedNode.appendSibling(node) : selectedNode.addChildren(node);
     }
+    newNode.setActive();
     // selectedNode.sortChildren(null, true);
     selectedNode.setExpanded();
     $('span.fancytree-title').attr('style', 'width:11em;text-overflow:ellipsis;white-space:nowrap;overflow:hidden');
