@@ -1,5 +1,5 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { SharedModule, ResourceService, ConfigService } from '@sunbird/shared';
+import { SharedModule, ResourceService, ConfigService , ToasterService} from '@sunbird/shared';
 import { RouterTestingModule } from '@angular/router/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { CoreModule } from '@sunbird/core';
@@ -48,7 +48,7 @@ describe('CreateProgramComponent', () => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, SharedModule.forRoot(), HttpClientTestingModule, CoreModule, TelemetryModule],
       declarations: [CreateProgramComponent],
-      providers: [ResourceService, CacheService, ConfigService, DatePipe,
+      providers: [ResourceService, ToasterService, CacheService, ConfigService, DatePipe,
         ProgramsService, DataService, FrameworkService, ActionService,
         first, map, takeUntil, catchError, count,
         Component, ViewChild, ElementRef,
@@ -130,5 +130,24 @@ describe('CreateProgramComponent', () => {
     spyOn(component, 'initializeFormFields');
     component.initializeFormFields();
     expect(component.initializeFormFields).toHaveBeenCalled();
+  });
+  it('Should call the onChangeTargetCollection method', () => {
+    component.callTargetCollection = true;
+    component.onChangeTargetCollection();
+    expect(component.showTexbooklist).toHaveBeenCalled();
+    expect(component.collectionListForm.value.pcollections).toBeDefined([]);
+  });
+  it('Should call the saveAsDraftAndNext method', () => {
+    spyOn(component, 'saveAsDraftAndNext');
+    component.callTargetCollection = true;
+    component.collectionListForm.value.target_collection_category = 'Digital Textbook';
+    expect(component.onChangeTargetCollection).toHaveBeenCalled();
+  });
+  it('Should call the validateFormBeforePublish method', () => {
+    component.collectionListForm.value.pcollections = [];
+    const toasterService = TestBed.get(ToasterService);
+    component.validateFormBeforePublish();
+    expect(toasterService.warning).toHaveBeenCalledWith('Please select at least a one target collection');
+    expect(component.disableCreateProgramBtn).toBeFalsy();
   });
 });

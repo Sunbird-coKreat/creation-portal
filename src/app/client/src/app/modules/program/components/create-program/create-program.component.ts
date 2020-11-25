@@ -633,6 +633,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         this.editPublished = true;
       } else if (_.get(this.programDetails, 'status') === 'Draft') {
         // this.editDraft = true;
+        if (_.isNull(this.selectedTargetCollection)) {
+          this.collectionListForm.controls['target_collection_category'].setValue('Digital Textbook');
+        }
       }
 
       const obj = {
@@ -1008,6 +1011,7 @@ onChangeTargetCollection() {
           this.showProgramScope = false;
           this.collections = [];
           this.tempSortCollections = [];
+        this.toasterService.warning('Please select different target collection');
         }
       },
       (err) => {
@@ -1398,7 +1402,7 @@ onChangeTargetCollection() {
 
     if (_.isEmpty(this.collectionListForm.value.pcollections)) {
       this.disableCreateProgramBtn = false;
-      this.toasterService.warning('Please select at least a one target collection');
+      this.toasterService.warning('Please select at least a one collection');
       return false;
     }
 
