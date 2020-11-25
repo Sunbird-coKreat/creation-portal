@@ -23,29 +23,22 @@
         </section>
 
         <!-- Right Player Sections -->
-        <ng-container *ngIf="!isNewQuestionSet">
-          <section class="sb-g-col-xs-12 sb-g-col-md-8 sb-g-col-lg-8 relative position ml-24" *ngIf='!showQuestionTemplate'>
-            <ng-container *ngIf="selectedQuestionData?.data?.metadata?.type === 'reference'">
-              <app-reference-question [question]="selectedQuestionData"></app-reference-question>
-            </ng-container>
-            <ng-container *ngIf="selectedQuestionData?.data?.metadata?.type === 'mcq'">
-              <app-multiplechoice-question [question]="selectedQuestionData"></app-multiplechoice-question>
-            </ng-container>
-            <ng-container *ngIf="selectedQuestionData?.folder === true">
-              <app-question-set></app-question-set>
-            </ng-container>         
-          </section>
-          <section class="sb-g-col-xs-12 sb-g-col-md-8 sb-g-col-lg-8 relative position ml-24">
-              <app-question-template *ngIf='showQuestionTemplate'
-              [templateList]="templateListInput"
-              (templateSelection)="handleTemplateSelection($event)">
-            </app-question-template>
-          </section>
-        </ng-container>
-
-        <section class="sb-g-col-xs-12 sb-g-col-md-8 sb-g-col-lg-8 relative position ml-24" *ngIf='isNewQuestionSet'>
-          <p>There is no question created for this questionSet.</p>
-          <p>Please click on new  to add a question</p>
+        <section class="sb-g-col-xs-12 sb-g-col-md-8 sb-g-col-lg-8 relative position ml-24" *ngIf='!showQuestionTemplate'>
+          <ng-container *ngIf="selectedQuestionData?.data?.metadata?.type === 'reference'">
+            <app-reference-question [question]="selectedQuestionData"></app-reference-question>
+          </ng-container>
+          <ng-container *ngIf="selectedQuestionData?.data?.metadata?.type === 'mcq'">
+            <app-multiplechoice-question [question]="selectedQuestionData"></app-multiplechoice-question>
+          </ng-container>
+          <ng-container *ngIf="selectedQuestionData?.folder === true">
+            <app-question-set></app-question-set>
+          </ng-container>         
+        </section>
+        <section class="sb-g-col-xs-12 sb-g-col-md-8 sb-g-col-lg-8 relative position ml-24">
+            <app-question-template *ngIf='showQuestionTemplate'
+            [templateList]="templateListInput"
+            (templateSelection)="handleTemplateSelection($event)">
+          </app-question-template>
         </section>
 
       </div>
