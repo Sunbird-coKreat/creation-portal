@@ -16,9 +16,9 @@
     <div class="min-h-500 sb-bg-white py-20">
       <!-- Player Section -->
       <div class="ui container">
-        <div class="sb-g add-to-library__toc-player">
+        <div class="d-flex">
           <!-- Left Sidebar for cards -->
-          <section class="sb-g-col-xs-12 sb-g-col-md-4 sb-g-col-lg-3">
+          <section>
               <app-collection-tree-new
               [nodes]="collectionTreeNodes"
               [options]="collectionTreeOptions" (questionSelect)="OnQuestionSelect($event)" ></app-collection-tree-new>
@@ -26,13 +26,13 @@
           </section>
 
           <!-- Right Player Sections -->
-          <section class="sb-g-col-xs-12 sb-g-col-md-8 sb-g-col-lg-9 relative position ml-24">
+          <section class="ml-24">
               <app-reference-question [question]="editorState" ></app-reference-question>
           </section>
         </div>
-      <div class="sb-g add-to-library__toc-player">
+      <div>
         <!-- Left Sidebar for cards -->
-        <section class="sb-g-col-xs-12 sb-g-col-md-4 sb-g-col-lg-4">
+        <section class="pl-20">
             <app-collection-tree-new
             [nodes]="collectionTreeNodes" 
             [options]="collectionTreeOptions" (treeEventEmitter)="treeEventListener($event)" ></app-collection-tree-new>

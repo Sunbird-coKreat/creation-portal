@@ -671,3 +671,23 @@ xxl calculateRem(180px) 24px 20px;
     width: 100%;
   }
 }
+.sb-collectionTree-fancyTreeNew{
+  .ui-fancytree{
+      &:before{
+          background: none !important;
+      }
+      ul{
+        &::before{
+          background: none !important;
+      }
+      }
+      li{
+          &::before{
+              background: none !important;
+          }
+          .sb-fancyTree-icon{
+              color: var(--gray-300) !important;
+          }
+      }
+  }
+}
