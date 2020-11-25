@@ -16,7 +16,7 @@ import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormBuilder, Validators, FormGroup, FormArray, FormGroupName } from '@angular/forms';
 import { IProgram } from './../../../core/interfaces';
-import { CbseProgramService } from './../../../cbse-program/services';
+import { SourcingService } from './../../../sourcing/services';
 import { UserService } from '@sunbird/core';
 import { programConfigObj } from './programconfig';
 import { HttpClient } from '@angular/common/http';
@@ -53,7 +53,7 @@ describe('CreateProgramComponent', () => {
         first, map, takeUntil, catchError, count,
         Component, ViewChild, ElementRef,
         FormControl, FormBuilder, Validators, FormGroup, FormArray, FormGroupName,
-        CbseProgramService, programConfigObj, UserService,
+        SourcingService, programConfigObj, UserService,
         DeviceDetectorService,
         Subscription, Subject, throwError, Observable,
 
