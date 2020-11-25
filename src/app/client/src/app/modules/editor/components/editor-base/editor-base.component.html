@@ -2,34 +2,34 @@
 
     <!-- Blue Header -->
     <div class="sb-bg-color-primary">
-      <div class="ui container py-10">
-        <div class="d-flex flex-ai-center">
-          <button class="sb-btn sb-btn-primary sb-btn-xs back-btn px-0" (click)="handleBack();"
-          ><i class="arrow left icon fs-1"></i></button>
+      <div class="ui container py-15">
+        <div class="d-flex flex-ai-center sb-color-white">
+          <button class="sb-btn sb-btn-primary sb-btn-xs back-btn px-0 fs-0-92 font-weight-bold" (click)="handleBack();"
+          ><i class="arrow left icon"></i>Create Question Set</button>
         </div>
-        
-    </div>
-    </div>
-
-    <app-editor-header [toolbarConfig]="toolbarConfig" (toolbarEmitter)="toolbarEventListener($event)"></app-editor-header>
-
-    <div class="ui container min-h-500" >
-      <!-- Player Section -->
-      <div class="sb-g add-to-library__toc-player">
-        <!-- Left Sidebar for cards -->
-        <section class="sb-g-col-xs-12 sb-g-col-md-4 sb-g-col-lg-4">
-            <app-collection-tree-new
-            [nodes]="collectionTreeNodes"
-            [options]="collectionTreeOptions" (questionSelect)="OnQuestionSelect($event)" ></app-collection-tree-new>
-
-        </section>
-
-        <!-- Right Player Sections -->
-        <section class="sb-g-col-xs-12 sb-g-col-md-8 sb-g-col-lg-8 relative position ml-24">
-            <app-reference-question [question]="editorState" ></app-reference-question>
-        </section>
       </div>
     </div>
 
 
+    <app-editor-header [toolbarConfig]="toolbarConfig" (toolbarEmitter)="toolbarEventListener($event)"></app-editor-header>
+
+    <div class="min-h-500 sb-bg-white py-20">
+      <!-- Player Section -->
+      <div class="ui container">
+        <div class="sb-g add-to-library__toc-player">
+          <!-- Left Sidebar for cards -->
+          <section class="sb-g-col-xs-12 sb-g-col-md-4 sb-g-col-lg-3">
+              <app-collection-tree-new
+              [nodes]="collectionTreeNodes"
+              [options]="collectionTreeOptions" (questionSelect)="OnQuestionSelect($event)" ></app-collection-tree-new>
+
+          </section>
+
+          <!-- Right Player Sections -->
+          <section class="sb-g-col-xs-12 sb-g-col-md-8 sb-g-col-lg-9 relative position ml-24">
+              <app-reference-question [question]="editorState" ></app-reference-question>
+          </section>
+        </div>
+      </div>
+    </div>
   </div>

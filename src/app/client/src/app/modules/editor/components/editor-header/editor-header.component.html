@@ -1,14 +1,25 @@
 
-<ul class="d-flex flex-jc-flex-end py-10">
-  <li *ngFor="let button of toolbarConfig" class="mr-5">
-    <button class="{{button.style}}" (click)="buttonEmitter($event, button)">
+<div class="d-flex flex-jc-space-between flex-ai-center py-20 ui container">
+    <div class="practical-header__title font-weight-bold">Question set
+      <i class="icon edit outline sb-color-primary pl-10"></i>
+    </div>
+  <!-- <li *ngFor="let button of toolbarConfig" class="mr-5"> -->
+    <!-- <button class="{{button.style}}" (click)="buttonEmitter($event, button)">
       {{button.name}}
-    </button>
-    <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="buttonEmitter($event, button)">
-      Submit
-    </button>
-  </li>
-</ul>
+    </button> -->
+    <div class="d-flex flex-ai-center">
+      <a class="sb-color-gray-300 fs-0-785 mr-10 font-weight-bold">Edit Details</a>
+      <button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-10">
+        <i class="icon eye"></i>Preview
+      </button>
+      <button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-10">
+        Save as draft
+      </button>
+        <button class="sb-btn sb-btn-normal sb-btn-primary">
+        Submit
+      </button>
+    </div>
+  </div>
 
 
 

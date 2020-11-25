@@ -9,6 +9,8 @@ import { MultiplechoiceQuestionComponent } from './components/multiplechoice-que
 import { QuestionSetComponent } from './components/question-set/question-set.component';
 import { EditorBaseComponent } from './components/editor-base/editor-base.component';
 import {CbseProgramModule} from '../cbse-program';
+import { SuiModule } from 'ng2-semantic-ui';
+
 
 // import { PlayerHelperModule } from '@sunbird/player-helper';
 
@@ -19,7 +21,8 @@ import {CbseProgramModule} from '../cbse-program';
     CommonModule,
     EditorRoutingModule,
     // PlayerHelperModule
-    CbseProgramModule
+    CbseProgramModule,
+    SuiModule
   ]
 })
 export class EditorModule { }
