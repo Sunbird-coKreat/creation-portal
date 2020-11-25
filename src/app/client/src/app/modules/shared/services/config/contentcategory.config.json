@@ -56,6 +56,10 @@
             {
                 "mimetype": "audio/x-wav",
                 "type": "upload"
+            },
+            {
+                "mimetype": "video/mp4",
+                "type": "upload"
             }
         ],
         "files": {
@@ -70,11 +74,6 @@
           "audio/ogg": "ogg",
           "audio/x-wav": "x-wav",
           "audio/wav": "wav"
-        },
-        "asset":{
-            "imageFiles": "jpeg, png, jpg",
-            "videoFiles": "mp4, webm",
-            "defaultfileSize": 50
         },
         "defaultfileSize": 50,
         "defaultVideoSize": 15000

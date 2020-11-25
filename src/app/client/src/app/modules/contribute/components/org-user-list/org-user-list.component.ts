@@ -1,12 +1,12 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ToasterService, ResourceService, NavigationHelperService, ConfigService, PaginationService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IPagination} from '../../../cbse-program/interfaces';
+import { IPagination} from '../../../sourcing/interfaces';
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject, TelemetryService } from '@sunbird/telemetry';
 import { UserService, RegistryService, ProgramsService } from '@sunbird/core';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'lodash-es';
-import { CbseProgramService } from '../../../cbse-program/services';
+import { SourcingService } from '../../../sourcing/services';
 @Component({
   selector: 'app-org-user-list',
   templateUrl: './org-user-list.component.html',
@@ -45,7 +45,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
     public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService,
     private paginationService: PaginationService, private telemetryService: TelemetryService,
-    private cbseProgramService: CbseProgramService ) {
+    private sourcingService: SourcingService ) {
     
     /*if (this.isSourcingOrgAdmin()) {
       this.getSourcingOrgUsers();
@@ -276,7 +276,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
           env : this.activatedRoute.snapshot.data.telemetry.env,
           request: {osid: osid, role: [role]}
         };
-        this.cbseProgramService.apiErrorHandling(error, errInfo);
+        this.sourcingService.apiErrorHandling(error, errInfo);
       }
     );
   }

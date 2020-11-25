@@ -80,6 +80,7 @@
                 "video/mp4",
                 "video/ogg",
                 "video/webm",
+                "video/mp3",
                 "audio/mp3",
                 "audio/mp4",
                 "audio/mpeg",
@@ -1155,7 +1156,22 @@
         "additionalCategories": {
             "type": "array",
             "items": {
-                "type": "string"
+                "type": "string",
+                "enum": [
+                    "Textbook",
+                    "TV Lesson",
+                    "Previous Board Exam Papers",
+                    "Pedagogy Flow",
+                    "Marking Scheme Rubric",
+                    "Lesson Plan",
+                    "Learning Outcome Definition",
+                    "Focus Spot",
+                    "Explanation Video",
+                    "Experiential Resource",
+                    "Curiosity Question Set",
+                    "Concept Map",
+                    "Classroom Teaching Video"
+                ]
             }
         },
         "prevStatus": {
