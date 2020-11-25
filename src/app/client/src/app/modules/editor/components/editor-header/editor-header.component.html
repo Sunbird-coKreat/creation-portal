@@ -8,10 +8,13 @@
       {{button.name}}
     </button> -->
     <div class="d-flex flex-ai-center">
-      <a class="sb-color-gray-300 fs-0-785 mr-10 font-weight-bold" (click)="showNormalModal = true"
+      <a class="sb-color-gray-300 fs-0-785 mr-10 font-weight-bold cursor-pointer" (click)="showNormalModal = true"
       >Edit Details</a>
       <button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-10">
         <i class="icon eye"></i>Preview
+      </button>
+      <button class="sb-btn sb-btn-normal sb-btn sb-btn-normal sb-color-secondary-400  sb-bg-white mr-10">
+        <i class="icon edit outline sb-color-secondary-400"></i>Switch to Edit
       </button>
       <button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-10">
         Save as draft
@@ -28,7 +31,7 @@
     Edit Details  </div>
   <div class="sb-modal-content">
     <div class="ui grid">
-      <div class="six wide column ">
+      <div class="six wide column">
         <div class="sb-field-group">
           <label>Name</label>
           <div class="sb-field">
@@ -41,15 +44,15 @@
           </div>
         </div>
       </div>
-      <div class="six wide column ">
-        <div class="sb-field-group">
+      <div class="six wide column">
+        <div class="sb-field-group disabled">
           <label>Board</label>
           <div class="sb-field">
-              <input class="sb-form-control disabled" required placeholder="CBSE">
+              <input class="sb-form-control" required placeholder="CBSE">
           </div>
         </div>
       </div>
-      <div class="six wide column ">
+      <div class="six wide column pt-0 ">
         <div class="sb-field-group">
           <label>Attributions</label>
           <div class="sb-field">
@@ -57,15 +60,15 @@
           </div>
         </div>
       </div>
-      <div class="six wide column ">
-        <div class="sb-field-group">
+      <div class="six wide column pt-0 ">
+        <div class="sb-field-group disabled">
           <label>Class</label>
           <div class="sb-field">
-              <input class="sb-form-control disabled" required placeholder="Grade 4">
+              <input class="sb-form-control" required placeholder="Grade 4">
           </div>
         </div>
       </div>
-      <div class="six wide column ">
+      <div class="six wide column pt-0 ">
         <div class="sb-field-group">
           <label>License</label>
           <div class="sb-field">
@@ -78,15 +81,15 @@
           </div>
         </div>
       </div>
-      <div class="six wide column ">
-        <div class="sb-field-group">
+      <div class="six wide column pt-0 ">
+        <div class="sb-field-group disabled">
           <label>Medium</label>
           <div class="sb-field">
-              <input class="sb-form-control disabled" required placeholder="English">
+              <input class="sb-form-control" required placeholder="English">
           </div>
         </div>
       </div>
-      <div class="six wide column ">
+      <div class="six wide column pt-0 ">
         <div class="sb-field-group">
           <label>Author</label>
           <div class="sb-field">
@@ -94,71 +97,139 @@
           </div>
         </div>
       </div>
-      <div class="six wide column ">
-        <div class="sb-field-group">
+      <div class="six wide column pt-0">
+        <div class="sb-field-group disabled">
           <label>Subject</label>
           <div class="sb-field">
-              <input class="sb-form-control disabled" required placeholder="Maths">
+              <input class="sb-form-control" required placeholder="Maths">
           </div>
         </div>
       </div>
-      <div class="six wide column ">
+      <div class="six wide column pt-0">
         <div class="sb-field-group">
           <label>Topic(s)</label>
-          <div class="sb-field">
-            <sui-multi-select class="selection">
-            <sui-select-option value="">
-            </sui-select-option>
-          </sui-multi-select>          
-        </div>
+            <div class="sb-field">
+              <sui-multi-select class="selection">
+              <sui-select-option value="yes"></sui-select-option>
+              <sui-select-option value="no"></sui-select-option>
+            </sui-multi-select>          
+          </div>
         </div>
       </div>
-      <div class="six wide column ">
+      <div class="six wide column pt-0">
         <div class="sb-field-group">
           <label>Time limit</label>
-                <div class="sb-field">
+          <div class="ui grid">
+            <div class="six wide column">
+              <div class="sb-field d-flex flex-ai-center">
                   <sui-select formControlName="" class="selecttarget">
                     <sui-select-option value="radio" ></sui-select-option>
                     <sui-select-option value="checkbox"></sui-select-option>
                     <sui-select-option value="input"></sui-select-option>
                     <sui-select-option value="date">Date</sui-select-option>
                 </sui-select>  
-                <div>Hours</div>        
+                <div class="pl-5 fs-0-785">Hours</div>        
+              </div>
             </div>
-            <div class="sb-field">
-              <sui-select formControlName="" class="selecttarget">
-                <sui-select-option value="radio" ></sui-select-option>
-                <sui-select-option value="checkbox"></sui-select-option>
-                <sui-select-option value="input"></sui-select-option>
-                <sui-select-option value="date">Date</sui-select-option>
-            </sui-select>  
-            <div>Mins</div>        
-        </div>
+            <div class="six wide column">
+              <div class="sb-field d-flex flex-ai-center">
+                  <sui-select formControlName="" class="selecttarget">
+                    <sui-select-option value="radio" ></sui-select-option>
+                    <sui-select-option value="checkbox"></sui-select-option>
+                    <sui-select-option value="input"></sui-select-option>
+                    <sui-select-option value="date">Date</sui-select-option>
+                </sui-select>  
+                <div class="pl-5 fs-0-785">Mins</div>        
+              </div>
+            </div>
+          </div>  
         </div>
       </div>
-      <div class="six wide column ">
+      <div class="six wide column pt-0">
         <div class="sb-field-group">
           <label>Target Framework</label>
           <div class="sb-field">
-              <input class="sb-form-control required" required placeholder="Maths">
-          </div>
+            <sui-multi-select class="selection">
+              <sui-select-option value="yes"></sui-select-option>
+              <sui-select-option value="no"></sui-select-option>
+            </sui-multi-select>         
         </div>
       </div>
-      <div class="six wide column ">
+      </div>
+      <div class="six wide column pt-0">
         <div class="sb-field-group">
-          <label>Warning time</label>
-          <div class="sb-field">
-              <input class="sb-form-control required" required placeholder="Maths">
-          </div>
+          <label>Warning Time</label>
+          <div class="ui grid">
+            <div class="six wide column">
+              <div class="sb-field d-flex flex-ai-center">
+                  <sui-select formControlName="" class="selecttarget">
+                    <sui-select-option value="radio" ></sui-select-option>
+                    <sui-select-option value="checkbox"></sui-select-option>
+                    <sui-select-option value="input"></sui-select-option>
+                    <sui-select-option value="date">Date</sui-select-option>
+                </sui-select>  
+                <div class="pl-5 fs-0-785">Hours</div>        
+              </div>
+            </div>
+            <div class="six wide column">
+              <div class="sb-field d-flex flex-ai-center">
+                  <sui-select formControlName="" class="selecttarget">
+                    <sui-select-option value="radio" ></sui-select-option>
+                    <sui-select-option value="checkbox"></sui-select-option>
+                    <sui-select-option value="input"></sui-select-option>
+                    <sui-select-option value="date">Date</sui-select-option>
+                </sui-select>  
+                <div class="pl-5 fs-0-785">Mins</div>        
+              </div>
+            </div>
+          </div>  
         </div>
       </div>
-      <div class="six wide column ">
+      <div class="six wide column pt-0 ">
         <div class="sb-field-group">
           <label>Audience</label>
           <div class="sb-field">
-              <input class="sb-form-control required" required placeholder="Maths">
+            <sui-multi-select class="selection">
+              <sui-select-option value="yes"></sui-select-option>
+              <sui-select-option value="no"></sui-select-option>
+            </sui-multi-select>          
           </div>
         </div>
+      </div>
+      <div class="twelve wide column pt-0">
+        <hr>
+      </div>
+      <div class="six wide column pt-0">
+        <div class="sb-checkbox sb-checkbox-primary">
+            <input type="checkbox" id="check1" name="example" checked>
+            <label for="check1">Shuffle questions</label>
+          </div>
+          <div class="d-flex flex-ai-center">
+            <div class="pl-5 fs-0-785">Show questions </div>        
+            <div class="sb-field w-40 px-10">
+              <sui-select formControlName="" class="selecttarget pr-10">
+                <sui-select-option value="radio" ></sui-select-option>
+                <sui-select-option value="checkbox"></sui-select-option>
+                 <sui-select-option value="input"></sui-select-option>
+                 <sui-select-option value="date">Date</sui-select-option>
+            </sui-select>
+            </div> 
+            <div class="pl-5 fs-0-785">/10</div>        
+          </div>
+      </div>
+      <div class="six wide column pt-0">
+        <div class="sb-checkbox sb-checkbox-primary">
+          <input type="checkbox" id="check1" name="example" checked>
+          <label for="check1">Enable Feedback</label>
+          </div>
+          <div class="sb-checkbox sb-checkbox-primary">
+          <input type="checkbox" id="check2" name="example" checked>
+          <label for="check2">Enable Solutions</label>
+          </div>
+          <div class="sb-checkbox sb-checkbox-primary">
+          <input type="checkbox" id="check3" name="example" checked>
+          <label for="check3">Enable Hints</label>
+          </div>
       </div>
     </div>
   </div>
