@@ -91,7 +91,7 @@ export class CollectionHierarchyService {
     return forkJoin(hierarchyRequest);
   }
 
-  getCollectionWithProgramId(programId, preferencefilters?) {
+  getCollectionWithProgramId(programId, primaryCategory, preferencefilters?) {
     const httpOptions: HttpOptions = {
       headers: {
         'content-type': 'application/json',
@@ -105,7 +105,7 @@ export class CollectionHierarchyService {
             programId: programId,
             objectType: 'collection',
             status: ['Draft'],
-            primaryCategory: 'Digital Textbook',
+            primaryCategory: !_.isNull(primaryCategory) ? primaryCategory : 'Digital Textbook'
           }
         }
       }

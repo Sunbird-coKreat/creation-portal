@@ -398,6 +398,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           return '.h5p';
         } else if (mimeType === 'application/vnd.ekstep.html-archive') {
           return '.zip';
+        } else if (mimeType === 'audio/mp3') {
+          return '.mp3';
         } else {
           return mimeType;
         }
@@ -782,6 +784,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         return 'application/epub';
       case 'webm':
         return 'video/webm';
+      case 'mp3':
+        return 'audio/mp3';
       default:
         // return this.validateUploadURL(fileName);
     }

@@ -73,8 +73,7 @@
           "audio/mpeg": "mpeg",
           "audio/ogg": "ogg",
           "audio/x-wav": "x-wav",
-          "audio/wav": "wav",
-          "video/mp3": "mp3"
+          "audio/wav": "wav"
         },
         "defaultfileSize": 50,
         "defaultVideoSize": 15000
