@@ -1,6 +1,215 @@
+<div class="ui grid">
+  <div class="four wide column">
+    <div class="sb-field-group">
+      <label>Name</label>
+      <div class="sb-field">
+        <sui-select formControlName="" class="selecttarget">
+          <sui-select-option value="radio" ></sui-select-option>
+          <sui-select-option value="checkbox"></sui-select-option>
+           <sui-select-option value="input"></sui-select-option>
+           <sui-select-option value="date">Date</sui-select-option>
+      </sui-select>
+      </div>
+    </div>
+  </div>
+  <div class="four wide column  ">
+    <div class="sb-field-group">
+      <label>Attributions</label>
+      <div class="sb-field">
+          <input class="sb-form-control required" required placeholder="">
+      </div>
+    </div>
+  </div>
+  <div class="four wide column  ">
+    <div class="sb-field-group">
+      <label>License</label>
+      <div class="sb-field">
+          <sui-select formControlName="" class="selecttarget">
+            <sui-select-option value="radio" ></sui-select-option>
+            <sui-select-option value="checkbox"></sui-select-option>
+            <sui-select-option value="input"></sui-select-option>
+            <sui-select-option value="date">Date</sui-select-option>
+        </sui-select>          
+      </div>
+    </div>
+  </div>
+  <div class="four wide column  ">
+    <div class="sb-field-group">
+      <label>Author</label>
+      <div class="sb-field">
+          <input class="sb-form-control required" required placeholder="">
+      </div>
+    </div>
+  </div>
+  <div class="four wide column">
+    <div class="sb-field-group disabled">
+      <label>Board</label>
+      <div class="sb-field">
+          <input class="sb-form-control" required placeholder="CBSE">
+      </div>
+    </div>
+  </div>
+  
+  <div class="four wide column  ">
+    <div class="sb-field-group disabled">
+      <label>Class</label>
+      <div class="sb-field">
+          <input class="sb-form-control" required placeholder="Grade 4">
+      </div>
+    </div>
+  </div>
+  
+  <div class="four wide column  ">
+    <div class="sb-field-group disabled">
+      <label>Medium</label>
+      <div class="sb-field">
+          <input class="sb-form-control" required placeholder="English">
+      </div>
+    </div>
+  </div>
+  
+  <div class="four wide column ">
+    <div class="sb-field-group disabled">
+      <label>Subject</label>
+      <div class="sb-field">
+          <input class="sb-form-control" required placeholder="Maths">
+      </div>
+    </div>
+  </div>
+  <div class="four wide column ">
+    <div class="sb-field-group">
+      <label>Topic(s)</label>
+        <div class="sb-field">
+          <sui-multi-select class="selection">
+          <sui-select-option value="yes"></sui-select-option>
+          <sui-select-option value="no"></sui-select-option>
+        </sui-multi-select>          
+      </div>
+    </div>
+  </div>
+  <div class="four wide column ">
+    <div class="sb-field-group">
+      <label>Time limit</label>
+      <div class="ui grid">
+        <div class="six wide column pr-0">
+          <div class="sb-field d-flex flex-ai-center">
+              <sui-select formControlName="" class="selecttarget w-60">
+                <sui-select-option value="radio" ></sui-select-option>
+                <sui-select-option value="checkbox"></sui-select-option>
+                <sui-select-option value="input"></sui-select-option>
+                <sui-select-option value="date">Date</sui-select-option>
+            </sui-select>  
+            <div class="pl-5 fs-0-785">Hours</div>        
+          </div>
+        </div>
+        <div class="six wide column pl-0">
+          <div class="sb-field d-flex flex-ai-center">
+              <sui-select formControlName="" class="selecttarget w-60">
+                <sui-select-option value="radio" ></sui-select-option>
+                <sui-select-option value="checkbox"></sui-select-option>
+                <sui-select-option value="input"></sui-select-option>
+                <sui-select-option value="date">Date</sui-select-option>
+            </sui-select>  
+            <div class="pl-5 fs-0-785">Mins</div>        
+          </div>
+        </div>
+      </div>  
+    </div>
+  </div>
+  <div class="four wide column ">
+    <div class="sb-field-group">
+      <label>Target Framework</label>
+      <div class="sb-field">
+        <sui-multi-select class="selection">
+          <sui-select-option value="yes"></sui-select-option>
+          <sui-select-option value="no"></sui-select-option>
+        </sui-multi-select>         
+    </div>
+  </div>
+  </div>
+  <div class="four wide column  ">
+    <div class="sb-field-group">
+      <label>Audience</label>
+      <div class="sb-field">
+        <sui-multi-select class="selection">
+          <sui-select-option value="yes"></sui-select-option>
+          <sui-select-option value="no"></sui-select-option>
+        </sui-multi-select>          
+      </div>
+    </div>
+  </div>
+  <div class="four wide column ">
+    <div class="sb-field-group">
+      <label>Warning Time</label>
+      <div class="ui grid">
+        <div class="six wide column pr-0">
+          <div class="sb-field d-flex flex-ai-center">
+              <sui-select formControlName="" class="selecttarget w-60">
+                <sui-select-option value="radio" ></sui-select-option>
+                <sui-select-option value="checkbox"></sui-select-option>
+                <sui-select-option value="input"></sui-select-option>
+                <sui-select-option value="date">Date</sui-select-option>
+            </sui-select>  
+            <div class="pl-5 fs-0-785">Hours</div>        
+          </div>
+        </div>
+        <div class="six wide column pl-0">
+          <div class="sb-field d-flex flex-ai-center">
+              <sui-select formControlName="" class="selecttarget w-60">
+                <sui-select-option value="radio" ></sui-select-option>
+                <sui-select-option value="checkbox"></sui-select-option>
+                <sui-select-option value="input"></sui-select-option>
+                <sui-select-option value="date">Date</sui-select-option>
+            </sui-select>  
+            <div class="pl-5 fs-0-785">Mins</div>        
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+        <div class="four wide column ">
+          <div class="sb-checkbox sb-checkbox-primary">
+              <input type="checkbox" id="check1" name="example" checked>
+              <label for="check1">Shuffle questions</label>
+            </div>
+            <div class="d-flex flex-ai-center">
+              <div class="pl-5 fs-0-785">Show questions </div>        
+              <div class="sb-field w-50 px-10">
+                <sui-select formControlName="" class="selecttarget pr-10">
+                  <sui-select-option value="radio" ></sui-select-option>
+                  <sui-select-option value="checkbox"></sui-select-option>
+                   <sui-select-option value="input"></sui-select-option>
+                   <sui-select-option value="date">Date</sui-select-option>
+              </sui-select>
+              </div> 
+              <div class="pl-5 fs-0-785">/10</div>        
+            </div>
+        </div>
+        <div class="four wide column ">
+          <div class="sb-checkbox sb-checkbox-primary">
+            <input type="checkbox" id="check1" name="example" checked>
+            <label for="check1">Enable Feedback</label>
+            </div>
+            <div class="sb-checkbox sb-checkbox-primary">
+            <input type="checkbox" id="check2" name="example" checked>
+            <label for="check2">Enable Solutions</label>
+            </div>
+            <div class="sb-checkbox sb-checkbox-primary">
+            <input type="checkbox" id="check3" name="example" checked>
+            <label for="check3">Enable Hints</label>
+            </div>
+        </div>
+  </div> 
+<hr class="my-20">
+  <button type="button" class="sb-btn sb-btn-normal sb-btn-primary">
+    <i class="icon plus"></i> Add Question
+  </button> 
+  <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-15">
+    <i class="icon plus"></i> Add from library
+  </button>
 <!-- reference-question works!
 <h3>Title : {{question.title}}</h3> -->
-<div>
+<!-- <div>
   <div class="mb-16">
     <label>Select a template to get started</label>
   </div>
@@ -25,8 +234,8 @@
         </div>
       </div>
     </div>
-  
-<div class="d-flex sb-bg-color-secondary-400 flex-jc-space-between py-5 px-15 my-10 fs-0-785 bradius-2">
+   -->
+<!-- <div class="d-flex sb-bg-color-secondary-400 flex-jc-space-between py-5 px-15 my-10 fs-0-785 bradius-2">
  <span class="sb-color-white"> Preview mode</span>
   <i class="icon close sb-color-white"></i>
 </div>
@@ -123,7 +332,7 @@
             </div>
         </div>
       </div> -->
-      <div class="ui grid">
+      <!-- <div class="ui grid">
         <div class="ckeditor-tool-container twelve wide column">
           <app-ckeditor-tool class="w-85" [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'question')"
             [editorDataInput]="editorState.question" [editorId]="'question_editor'"></app-ckeditor-tool>
@@ -266,7 +475,7 @@
 </div>
 <div class="sb-color-primary fs-0-785 my-20 pl-10">
   <i class="icon plus"></i>Add new
-</div>
+</div>  -->
 <!-- <div *ngIf="refresh">
 reference-question works!
 <h3>Title : {{question.title}}</h3>

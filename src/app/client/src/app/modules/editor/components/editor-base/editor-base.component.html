@@ -13,7 +13,7 @@
 
     <app-editor-header [toolbarConfig]="toolbarConfig" (toolbarEmitter)="toolbarEventListener($event)"></app-editor-header>
 
-    <div class="min-h-500 sb-bg-white py-20">
+    <div class="min-h-500 sb-bg-white">
       <!-- Player Section -->
       <div class="ui container">
         <div class="d-flex">
@@ -26,7 +26,7 @@
           </section>
 
           <!-- Right Player Sections -->
-          <section class="ml-24">
+          <section class="ml-24 mt-20">
               <app-reference-question [question]="editorState" ></app-reference-question>
           </section>
         </div>

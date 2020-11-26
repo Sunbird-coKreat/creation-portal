@@ -677,17 +677,45 @@ xxl calculateRem(180px) 24px 20px;
           background: none !important;
       }
       ul{
+        padding-left: 0;
         &::before{
           background: none !important;
       }
       }
       li{
+        padding-left: 0;
           &::before{
               background: none !important;
           }
           .sb-fancyTree-icon{
               color: var(--gray-300) !important;
           }
+          .fancytree-icon{
+            &::before{
+              content: url("assets/images/book2.png") !important;
+            }
+          }
+          .sb-icon-doc{
+            &::before{
+              content: url("assets/images/writing.png");
+            }
+          }
       }
+      .fancytree-title{
+        font-size: 0.8rem !important;
+      }
+      .fa{
+        padding-right: 0.4rem;
+      }
+      .fa-caret-down{
+        display: block;
+      }
+      .fa-caret-right{
+        display: block;
+      }
+  }
+  .ui-fancytree{
+    border-right: solid 1px var(--gray-100);
+    padding-right: 0.785rem;
   }
 }
