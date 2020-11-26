@@ -1,11 +1,12 @@
-<div class="ckeditor-tool width-100">
-  <div class="ckeditor-tool__question mb-24">
-    <div class="sb-field mcq-title mb-16">
-      <label class="px-16 py-8 mb-0 ckeditor-tool__label width-100">Instructions</label>
-      <div class="ckeditor-tool-container">
-        <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event)"
-          [editorDataInput]="instructions" [editorId]="'instructions_editor'"></app-ckeditor-tool>
-      </div>
-    </div>
-  </div>
-</div>  
+<app-data-form [formFieldProperties]="formFieldProperties" #formData>
+</app-data-form>
+<div class="d-flex flex-ai-center">
+  <button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-10">
+    <i class="icon delete outline"></i>
+    Delete
+  </button>
+    <button class="sb-btn sb-btn-normal sb-btn-primary">
+      <i class="icon edit outline"></i>
+    Edit Question
+    </button>
+</div>

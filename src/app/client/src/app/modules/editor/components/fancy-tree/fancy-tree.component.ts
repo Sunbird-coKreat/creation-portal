@@ -41,7 +41,7 @@ export class FancyTreeComponent implements AfterViewInit {
       },
       renderNode: (event, data) => {
         if (data.node.data.root) {
-          data.node.span.style.display = 'none';
+          // data.node.span.style.display = 'none';
         }
       }
     };
@@ -75,9 +75,8 @@ export class FancyTreeComponent implements AfterViewInit {
     const node = tree.getActiveNode();
     if (this.getObjectType(node.data.objectType).editable) {
       const childrenTypes = this.getObjectType(rootNode.data.objectType).childrenTypes;
-      // this.treeService.addNode(this.getObjectType(childrenTypes[0]), {}, 'child');
-      console.log((rootNode.children ? 'sibling' : 'child'));
-      this.treeEventEmitter.emit({'type': 'addChild', 'data' : (rootNode.children ? 'sibling' : 'child')});
+      this.treeService.addNode(this.getObjectType(childrenTypes[0]), {}, 'child');
+      // this.treeEventEmitter.emit({'type': 'addChild', 'data' : (rootNode.data.root ? 'child' : 'sibling')});
     } else {
       alert('Sorry, this operation is not allowed.');
     }

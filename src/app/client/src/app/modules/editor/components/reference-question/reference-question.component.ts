@@ -33,11 +33,11 @@ export class ReferenceQuestionComponent implements OnInit, OnChanges {
       answer: '',
       solutions: ''
     };
-    if (this.question && this.question.data) {
-      this.editorState.question = this.question.data.metadata.editorState.question;
-      this.editorState.answer = this.question.data.metadata.editorState.answer;
-      if (!_.isEmpty(this.question.data.metadata.editorState.solutions)) {
-        const editor_state = this.question.data.metadata.editorState;
+    if (this.question) {
+      this.editorState.question = this.question.editorState.question;
+      this.editorState.answer = this.question.editorState.answer;
+      if (!_.isEmpty(this.question.editorState.solutions)) {
+        const editor_state = this.question.editorState;
         this.editorState.solutions = editor_state.solutions[0].value;
       } else {
         this.editorState.solutions = '';

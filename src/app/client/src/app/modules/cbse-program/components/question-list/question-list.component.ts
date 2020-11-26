@@ -385,6 +385,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         field['editable'] = false;
       }
     });
+    console.log(this.formFieldProperties);
   }
 
   showEditform(action) {
@@ -401,6 +402,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     // tslint:disable-next-line:max-line-length
     [this.categoryMasterList, this.formFieldProperties] = this.helperService.initializeMetadataForm(this.sessionContext, this.formFieldProperties, this.resourceDetails);
     this.showEditMetaForm = true;
+    console.log(this.categoryMasterList, this.formFieldProperties);
   }
 
   getEditableFields() {
