@@ -11,11 +11,8 @@ export class EditorBaseComponent implements OnInit {
 
   public collectionTreeNodes: any;
   public selectedQuestionData: any = {};
-  editorState: any = {};
   toolbarConfig = toolbarConfig;
-  templateListInput: any = templateList;
   public showQuestionTemplate: Boolean = false;
-  private nodeCreateType = 'child';
 
   constructor(private configService: ConfigService, public treeService: TreeService,
     public editorService: EditorService) {

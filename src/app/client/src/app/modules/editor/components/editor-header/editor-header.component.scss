@@ -1,0 +1,9 @@
+.disabled{
+    background: var(--gray-0);
+    border: .0625rem solid var(--gray-0);
+    opacity: .45;
+    pointer-events: none;
+}
+.selecttarget{
+    border: 0.0625rem solid #999;
+} 
