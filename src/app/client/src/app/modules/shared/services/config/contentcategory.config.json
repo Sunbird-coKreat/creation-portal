@@ -75,6 +75,12 @@
           "audio/x-wav": "x-wav",
           "audio/wav": "wav"
         },
+        "asset":{
+            "imageFiles": "jpeg, png, jpg",
+            "videoFiles": "mp4, webm",
+            "pdfFiles": "pdf",
+            "defaultfileSize": 50
+        },
         "defaultfileSize": 50,
         "defaultVideoSize": 15000
     }

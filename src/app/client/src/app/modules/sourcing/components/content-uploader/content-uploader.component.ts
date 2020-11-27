@@ -771,24 +771,16 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   detectMimeType(fileName) {
     const extn = fileName.split('.').pop();
-    switch (extn) {
-      case 'pdf':
-        return 'application/pdf';
-      case 'mp4':
-        return 'video/mp4';
-      case 'h5p':
-        return 'application/vnd.ekstep.h5p-archive';
-      case 'zip':
-        return 'application/vnd.ekstep.html-archive';
-      case 'epub':
-        return 'application/epub';
-      case 'webm':
-        return 'video/webm';
-      case 'mp3':
-        return 'audio/mp3';
-      default:
-        // return this.validateUploadURL(fileName);
-    }
+    const appFilesConfig = this.configService.contentCategoryConfig.sourcingConfig.files;
+    let thisFileMimetype = '';
+
+    _.forEach(appFilesConfig, (item, key) => {
+      if (item === extn) {
+        thisFileMimetype = key;
+      }
+    });
+
+    return thisFileMimetype;
   }
 
   fetchFrameWorkDetails() {

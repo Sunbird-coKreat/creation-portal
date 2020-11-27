@@ -225,7 +225,7 @@
 				<div class="ui segment mt-5" *ngIf="!editPublished" suiTabContent="2"
 					[ngClass]="{'active' : showTextBookSelector}">
 					<div>
-						<form class="ui form" [formGroup]="collectionListForm">	
+						<form class="ui form" [formGroup]="collectionListForm" *ngIf="isFormValueSet">
 						<div class="ui grid form">
 							<div class="six wide column">
 								<div class="required field w-100">
@@ -298,7 +298,7 @@
 									</ng-template>
 								</div>
 							</div>
-							<div class="twelve wide column sb-field-group">
+							<!--div class="twelve wide column sb-field-group">
 								<div class="sb-field-group mb-8">
 									<label
 										class="fs-0-92">{{resource.frmelmnts.lbl.foraTargetCollection}}
@@ -317,7 +317,7 @@
 										</div>
 									</div>
 								</div>
-							</div>
+							</div-->
 							<div class="six wide column">
 								<div class="required field">
 									<label class="d-block">{{resource.frmelmnts.lbl.select.Target.Collection}}
@@ -326,7 +326,7 @@
 										popupText="{{resource.frmelmnts.lbl.select.Target.Collection}}"></i>
 								</label>
 								<sui-select formControlName="target_collection_category" class="selecttarget"  placeholder="{{resource?.frmelmnts?.lbl?.Select}}"
-								(ngModelChange)="onChangeTargetCollection()" [(ngModel)]="selectedTargetCollection" [options]="targetCollection"  #targetCollections>
+								(ngModelChange)="onChangeTargetCollection()" [(ngModel)]="selectedTargetCollection" [options]="collectionCategories"  #targetCollections>
 									<sui-select-option  *ngFor="let option of targetCollections.filteredOptions;" [value]="option">
 									</sui-select-option>
 								</sui-select>

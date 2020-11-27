@@ -40,7 +40,7 @@ export class ProgramsService extends DataService implements CanActivate {
   baseUrl: string;
   public http: HttpClient;
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
-  private _contentTypes: any[];
+  ///private _contentTypes: any[];
   //private _contentCategories: any[];
   private _overrideMetaData: any[];
   private _sourcingOrgReviewers: Array<any>;
@@ -70,7 +70,7 @@ export class ProgramsService extends DataService implements CanActivate {
    */
   public initialize() {
     // this.enableContributeMenu().subscribe();
-    this.getAllContentTypes().subscribe();
+    //this.getAllContentTypes().subscribe();
     //this.getAllContentCategories().subscribe();
     this.getOverridableMetaDataConfig().subscribe();
     this.mapSlugstoOrgId();
@@ -873,9 +873,9 @@ export class ProgramsService extends DataService implements CanActivate {
    * Get all the content types configured
    */
 
-  get contentTypes() {
+  /*get contentTypes() {
     return _.cloneDeep(this._contentTypes);
-  }
+  }*/
 
   /**
    * Get all the categories  configured
@@ -892,7 +892,7 @@ export class ProgramsService extends DataService implements CanActivate {
     return _.cloneDeep(this._overrideMetaData);
   }
 
-  private getAllContentTypes(): Observable<any[]> {
+  /*private getAllContentTypes(): Observable<any[]> {
     const option = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.CONTENTTYPE_LIST}`,
     };
@@ -905,7 +905,7 @@ export class ProgramsService extends DataService implements CanActivate {
         this._contentTypes = contentTypes;
       })
     );
-  }
+  }*/
 
   /*private getAllContentCategories(): Observable<any[]> {
     const req = {
