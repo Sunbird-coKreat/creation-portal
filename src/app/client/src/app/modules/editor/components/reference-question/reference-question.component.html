@@ -3,27 +3,39 @@
     <div class="sb-field-group">
       <label>Question</label>
       <div class="sb-field">
-        <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'question')"
-          [editorDataInput]="" [editorId]="'question_editor'"></app-ckeditor-tool>
+        <app-ckeditor-tool
+          [editorConfig]="editorConfig"
+          (editorDataOutput)="editorDataHandler($event, 'question')"
+          [editorDataInput]=""
+          [editorId]="'question_editor'"
+        ></app-ckeditor-tool>
       </div>
       <div class="sb-field-group">
         <label>Answers</label>
         <div class="sb-field">
           <div class="ckeditor-tool-container">
-            <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'answer')"
-              [editorDataInput]="" [editorId]="'answer_editor'"></app-ckeditor-tool>
+            <app-ckeditor-tool
+              [editorConfig]="editorConfig"
+              (editorDataOutput)="editorDataHandler($event, 'answer')"
+              [editorDataInput]=""
+              [editorId]="'answer_editor'"
+            ></app-ckeditor-tool>
           </div>
         </div>
       </div>
 
-      <div class="d-flex flex-ai-center ckeditor-tool__solution__header py-10 px-10 my-15 sb-bg-color-white">
+      <div
+        class="d-flex flex-ai-center ckeditor-tool__solution__header py-10 px-10 my-15 sb-bg-color-white"
+      >
         <label class="fs-0-92 mb-0 ckeditor-tool__label">
           <span class="sb-color-primary fs-0-785">Solution</span>
           <span class="fs-0-785">(Optional) </span>
         </label>
         <div
           class="ui dropdown sb-btn sb-btn-outline-primary sb-btn-normal sb-right-icon-btn sb-btn-radius ml-auto fxsmall"
-          suiDropdown autoClose="itemClick">
+          suiDropdown
+          autoClose="itemClick"
+        >
           <div class="text">Choose type</div>
           <i class="dropdown icon mx-8"></i>
           <div class="menu" suiDropdownMenu>
@@ -32,130 +44,6 @@
           </div>
         </div>
       </div>
-      <div class="sb-color-primary fs-0-785 my-10">
-        <i class="icon plus circle"></i>Add hint
-      </div>
-      <hr class="my-0" />
-      <div class="ui grid my-10 form mx-0">
-        <div class="three wide column pl-0">
-          <div class="field required">
-            <label class="d-block fs-0-785 pb-5">Weightage
-              <i class="pull-right question circle link icon pull-right" suiPopup popupDelay="500" popupText=""></i>
-            </label>
-            <sui-select  class="selecttarget">
-              <sui-select-option value="radio"></sui-select-option>
-              <sui-select-option value="checkbox"></sui-select-option>
-              <sui-select-option value="input"></sui-select-option>
-              <sui-select-option value="date">Date</sui-select-option>
-            </sui-select>
-          </div>
-        </div>
-        <div class="three wide column pl-0">
-          <div class="field required">
-            <label class="d-block fs-0-785 pb-5">Difficulty Level
-              <i class="pull-right question circle link icon pull-right" suiPopup popupDelay="500" popupText=""></i>
-            </label>
-            <sui-select  class="selecttarget">
-              <sui-select-option value="radio"></sui-select-option>
-              <sui-select-option value="checkbox"></sui-select-option>
-              <sui-select-option value="input"></sui-select-option>
-              <sui-select-option value="date">Date</sui-select-option>
-            </sui-select>
-          </div>
-        </div>
-        <div class="three wide column pl-0">
-          <div class="field required">
-            <label class="d-block fs-0-785 pb-5">Learning Level
-              <i class="pull-right question circle link icon pull-right" suiPopup popupDelay="500" popupText=""></i>
-            </label>
-            <sui-select  class="selecttarget">
-              <sui-select-option value="radio"></sui-select-option>
-              <sui-select-option value="checkbox"></sui-select-option>
-              <sui-select-option value="input"></sui-select-option>
-              <sui-select-option value="date">Date</sui-select-option>
-            </sui-select>
-          </div>
-        </div>
-        <div class="three wide column pl-0">
-          <div class="field required">
-            <label class="d-block fs-0-785 pb-5 mr-0">Scoring mode
-              <i class="pull-right question circle link icon pull-right" suiPopup popupDelay="500" popupText=""></i>
-            </label>
-            <sui-select  class="selecttarget">
-              <sui-select-option value="radio"></sui-select-option>
-              <sui-select-option value="checkbox"></sui-select-option>
-              <sui-select-option value="input"></sui-select-option>
-              <sui-select-option value="date">Date</sui-select-option>
-            </sui-select>
-          </div>
-        </div>
-        <div class="d-flex flex-w-wrap pl-0">
-          <div class="sb-checkbox sb-checkbox-primary">
-            <input type="checkbox" id="check1" name="" checked />
-            <label for="check1">Marked as Mandatory</label>
-          </div>
-          <div class="sb-checkbox sb-checkbox-primary">
-            <input type="checkbox" id="check2" name="" />
-            <label for="check2">Partial Scoring</label>
-          </div>
-        </div>
-        <div class="twelve wide column mt-10 pl-0">
-          <div class="field required">
-            <label class="d-block fs-0-785 pb-5">Learning Outcome
-              <i class="pull-right question circle link icon pull-right" suiPopup popupDelay="500" popupText=""></i>
-            </label>
-            <sui-select  class="selecttarget">
-              <sui-select-option value="radio"></sui-select-option>
-              <sui-select-option value="checkbox"></sui-select-option>
-              <sui-select-option value="input"></sui-select-option>
-              <sui-select-option value="date">Date</sui-select-option>
-            </sui-select>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
-  <div class="sb-color-primary fs-0-785 my-20 pl-10">
-    <i class="icon plus"></i>Add new
-  </div>
-  <!-- <div *ngIf="refresh">
-reference-question works!
-<h3>Title : {{question.title}}</h3>
-
-<div>
-  <div class="ckeditor-tool width-100">
-    <div class="ckeditor-tool__question mb-24">
-      <div class="sb-field mcq-title mb-16">
-        <label class="px-16 py-8 mb-0 ckeditor-tool__label width-100">Question</label>
-        <div class="ckeditor-tool-container">
-          <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'question')"
-            [editorDataInput]="editorState.question" [editorId]="'question_editor'"></app-ckeditor-tool>
-        </div>
-      </div>
-    </div>
-  
-    <div class="ckeditor-tool__question mb-24">
-      <div class="sb-field mcq-title mb-16">
-        <label class="px-16 py-8 mb-0 ckeditor-tool__label width-100">Answer</label>
-        <div class="ckeditor-tool-container">
-          <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'answer')"
-            [editorDataInput]="editorState.answer" [editorId]="'answer_editor'"></app-ckeditor-tool>
-        </div>
-      </div>
-    </div>
-    <div class="my-16 ckeditor-tool__solution width-100">
-      <div class="d-flex flex-ai-center ckeditor-tool__solution__header px-16 py-8">
-        <label class="mb-0 ckeditor-tool__label">Solution (Optional) <a href="javascript:void(0)"
-            title="title comes here"><img width="16" alt="" class="ml-4" src="assets/images/Info.svg"></a></label>
-  
-      </div>
-    </div>
-  </div>
-  <div class="solution_html">
-    <div class="ckeditor-tool-container">
-      <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'solution')"
-        [editorDataInput]="editorState.solutions" [editorId]="'solution_editor'"></app-ckeditor-tool>
-    </div>
-  </div>
-</div> -->
 </div>

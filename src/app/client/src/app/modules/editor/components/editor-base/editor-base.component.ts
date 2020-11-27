@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ConfigService, ICollectionTreeOptions } from '@sunbird/shared';
 import { TreeService, EditorService } from '../../services';
-import {toolbarConfig, templateList, collectionTreeNodes} from '../../editor.config';
+import {toolbarConfig, collectionTreeNodes} from '../../editor.config';
 @Component({
   selector: 'app-editor-base',
   templateUrl: './editor-base.component.html',

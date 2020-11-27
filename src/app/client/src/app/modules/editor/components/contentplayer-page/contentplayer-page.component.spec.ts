@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CollectionTreeComponent } from './collection-tree.component';
+import { ContentplayerPageComponent } from './contentplayer-page.component';
 
-describe('CollectionTreeComponent', () => {
-  let component: CollectionTreeComponent;
-  let fixture: ComponentFixture<CollectionTreeComponent>;
+describe('ContentplayerPageComponent', () => {
+  let component: ContentplayerPageComponent;
+  let fixture: ComponentFixture<ContentplayerPageComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CollectionTreeComponent ]
+      declarations: [ ContentplayerPageComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CollectionTreeComponent);
+    fixture = TestBed.createComponent(ContentplayerPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
