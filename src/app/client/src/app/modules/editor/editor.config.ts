@@ -1,18 +1,46 @@
-export const toolbarConfig = [{
+export const toolbarConfig = {
+  headerName: 'Create Question Set',
+  title: 'Question Collection',
+  buttons: [{
+    name: 'Save as draft',
+    type: 'saveContent',
+    buttonType: 'button',
+    style: 'sb-btn sb-btn-normal sb-btn-outline-primary mr-10',
+  },
+  {
     name: 'Submit',
     type: 'submitContent',
-    buttonType: 'icon',
-    style: 'sb-btn sb-btn-normal sb-btn-outline-primary sb-right-icon-btn',
+    buttonType: 'button',
+    style: 'sb-btn sb-btn-normal sb-btn-primary',
     slot: `<i class="trash alternate outline icon"></i>`
+  }
+  ]
+};
+
+export const questionToolbarConfig = {
+  headerName: 'Edit Question',
+  title: 'Q1 | MCQ',
+  buttons: [{
+    name: 'Preview',
+    type: 'previewContent',
+    buttonType: 'button',
+    style: 'sb-btn sb-btn-normal sb-btn-outline-primary mr-10',
+    slot: `icon eye`
+  }, {
+    name: 'Cancel',
+    type: 'cancelContent',
+    buttonType: 'button',
+    style: 'sb-btn sb-btn-normal sb-btn-outline-primary mr-10',
   },
   {
     name: 'Save',
     type: 'saveContent',
     buttonType: 'button',
-    style: 'sb-btn sb-btn-normal sb-btn-outline-primary sb-right-icon-btn',
-    slot: `<i class="trash alternate outline icon"></i>`
+    style: 'sb-btn sb-btn-normal sb-btn-primary'
   }
-];
+  ]
+};
+
 
 export const templateList = [
     { questionCategory : 'VSA', type: 'reference' },

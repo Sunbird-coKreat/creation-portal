@@ -32,8 +32,8 @@ export class MultiplechoiceQuestionComponent implements OnInit, OnChanges {
   }
 
   initialize() {
-    if (this.question && this.question.data) {
-      const { responseDeclaration, templateId, editorState } = this.question.data.metadata;
+    if (this.question) {
+      const { responseDeclaration, templateId, editorState } = this.question;
       const numberOfOptions = _.get(this.editorConfig.config, 'No of options');
       const options = _.map(editorState.options, option => ({ body: option.value.body }));
       const question = editorState.question;
@@ -57,6 +57,10 @@ export class MultiplechoiceQuestionComponent implements OnInit, OnChanges {
         this.mediaArr.push(media);
       }
     }
+  }
+
+  handleEditorError(event: any) {
+
   }
 
 }

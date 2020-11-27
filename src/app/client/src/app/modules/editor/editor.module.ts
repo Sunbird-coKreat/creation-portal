@@ -5,7 +5,8 @@ import { CoreModule } from '@sunbird/core';
 import { SuiModule } from 'ng2-semantic-ui';
 
 import { EditorRoutingModule } from './editor-routing.module';
-import { CollectionTreeComponent,  FancyTreeComponent, QuestionTemplateComponent, QuestionBaseComponent } from './components';
+import { CollectionTreeComponent,  FancyTreeComponent, QuestionTemplateComponent, QuestionBaseComponent,
+ContentplayerPageComponent } from './components';
 import { EditorHeaderComponent } from './components/editor-header/editor-header.component';
 import { ReferenceQuestionComponent } from './components/reference-question/reference-question.component';
 import { MultiplechoiceQuestionComponent } from './components/multiplechoice-question/multiplechoice-question.component';
@@ -18,7 +19,7 @@ import {CbseProgramModule} from '../cbse-program';
 @NgModule({
   declarations: [CollectionTreeComponent, EditorHeaderComponent, ReferenceQuestionComponent,
     MultiplechoiceQuestionComponent, QuestionSetComponent, EditorBaseComponent, FancyTreeComponent, QuestionTemplateComponent, 
-    QuestionBaseComponent],
+    QuestionBaseComponent, ContentplayerPageComponent],
   imports: [
     CommonModule,
     FormsModule,

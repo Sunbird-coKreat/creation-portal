@@ -5,11 +5,11 @@
   >
   </app-editor-header>
 
-  <div class="min-h-500 sb-bg-white py-20">
+  <div class="min-h-500 sb-bg-white">
     <div class="ui container">
       <div class="d-flex">
         <!-- Left Sidebar for cards -->
-        <section class="pl-20">
+        <section class="w-70 h-100vh">
           <app-collection-tree-new
             [nodes]="collectionTreeNodes"
             (treeEventEmitter)="treeEventListener($event)"
@@ -18,9 +18,13 @@
         </section>
 
         <!-- Right Player Sections -->
-        <section class="ml-24">
+        <section class="ml-24 pt-20">
+          
           <ng-container *ngIf="selectedQuestionData?.folder === true">
             <app-question-set></app-question-set>
+          </ng-container>
+          <ng-container *ngIf="selectedQuestionData?.folder === false">
+            <app-contentplayer-page></app-contentplayer-page>
           </ng-container>
         </section>
       </div>
