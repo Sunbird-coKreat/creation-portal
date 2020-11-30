@@ -90,7 +90,7 @@
                     [telemetryInteractEdata]="getTelemetryInteractEdata('textbooks', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,config.telemetryLabels.pageId.sourcing.projectContributions)"
                     [telemetryInteractObject]="telemetryInteractObject"
                     [telemetryInteractCdata]="telemetryInteractCdata"
-                    [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.textbooks || 0  }}
+                    [telemetryInteractPdata]="telemetryInteractPdata">{{programsService.setTargetCollectionName(programDetails, 'plural')}}
                         <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ collectionsCount }}</span>
                     </a>
                     <a class="item" *ngIf="programDetails?.status !== 'Unlisted'" [isActive]="activeTab === 'nomination'"  suiTabHeader="1"  (click)="resetStatusFilter('nomination')"
