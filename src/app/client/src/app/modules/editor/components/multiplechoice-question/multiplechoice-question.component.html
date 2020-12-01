@@ -1,10 +1,12 @@
 <div class="b-1-100">
   <div class="py-10 px-15 sb-bg-color-primary-0">
     <div class="sb-field-group">
+      <label *ngIf="showFormError && [undefined, ''].includes(mcqForm.question)" class="sb-label sb-label-table sb-label-error-0">Fill Question</label>
       <label>Question</label>
       <div class="sb-field">
         <app-ckeditor-tool (editorDataOutput)="mcqForm.question = $event.body; getMedia($event.mediaobj);"
-          [editorConfig]="editorConfig" [editorDataInput]="mcqForm.question"></app-ckeditor-tool>
+          [editorConfig]="editorConfig" [editorDataInput]="mcqForm.question" (videoDataOutput)="videoDataOutput($event)"
+          [videoShow]="videoShow"></app-ckeditor-tool>
       </div>
     </div>
     <div class="py-10 fs-0-92">
@@ -17,29 +19,30 @@
       <i class="icon align right"></i>
       <i class="icon align center"></i>
     </div>
+    <label *ngIf="showFormError && !mcqForm.answer" class="ui basic red error label pt-1">Select one correct
+      answer</label>
     <div class="d-flex py-10 flex-dc">
       <div class="ckeditor-tool-container d-flex" *ngFor="let option of mcqForm.options; let i=index">
+        <label *ngIf="showFormError && (option.body === undefined || option.body === '')" class="sb-label sb-label-table sb-label-error-0 pt-1">Fill this option</label>
         <app-ckeditor-tool (hasError)="handleEditorError($event)"
           (editorDataOutput)="option.body = $event.body; option.length = $event.length; getMedia($event.mediaobj);"
           [editorConfig]="editorConfig" [editorDataInput]="option.body" [setCharacterLimit]="setCharacterLimit"
           [setImageLimit]="setImageLimit"></app-ckeditor-tool>
         <div class="sb-checkbox sb-checkbox-primary pl-10" [class.selected]="mcqForm.answer === i.toString()">
-          <input type="radio" name="example" value={{i}}
-            [(ngModel)]="mcqForm.answer" [ngModelOptions]="{standalone: true}" [checked]="mcqForm.answer === i.toString()">
+          <input type="radio" name="example" value={{i}} [(ngModel)]="mcqForm.answer"
+            [ngModelOptions]="{standalone: true}" [checked]="mcqForm.answer === i.toString()">
           <label for="check1" class="mr-0 fs-0-785">Correct answer</label>
         </div>
         <button [disabled]="mcqForm.options.length < 3" (click)="mcqForm.deleteOption(i)"
-                      class="sb-btn sb-btn-xs sb-btn-link sb-btn-link-error sb-left-icon-btn"
-                      ><i class="trash alternate outline icon"></i>Delete</button>
-                      <label *ngIf="option.length > 160" class="ui basic red error label pt-1">please reduce
-                        the
-                        size</label>
+          class="sb-btn sb-btn-xs sb-btn-link sb-btn-link-error sb-left-icon-btn"><i
+            class="trash alternate outline icon"></i>Delete</button>
+        <label *ngIf="option.length > 160" class="ui basic red error label pt-1">please reduce
+          the
+          size</label>
       </div>
-      <button
-              *ngIf='mcqForm.options.length < 4'
-              class="sb-btn sb-btn-outline-primary sb-btn-normal sb-left-icon-btn ml-auto"
-              (click)="mcqForm.addOptions()"
-              ><i class="plus icon"></i>ADD</button>
+      <button *ngIf='mcqForm.options.length < 4'
+        class="sb-btn sb-btn-outline-primary sb-btn-normal sb-left-icon-btn ml-auto" (click)="mcqForm.addOptions()"><i
+          class="plus icon"></i>ADD</button>
     </div>
 
     <div class="d-flex flex-ai-center ckeditor-tool__solution__header py-10 px-10 my-15 sb-bg-color-white">
@@ -49,91 +52,42 @@
       </label>
       <div
         class="ui dropdown sb-btn sb-btn-outline-primary sb-btn-normal sb-right-icon-btn sb-btn-radius ml-auto fxsmall"
-        suiDropdown autoClose="itemClick">
+        suiDropdown autoClose="itemClick" *ngIf="showSolutionDropDown">
         <div class="text">Choose type</div>
         <i class="dropdown icon mx-8"></i>
         <div class="menu" suiDropdownMenu>
-          <div class="item">Text+Image</div>
-          <div class="item">Video</div>
+          <div class="item" (click)="selectSolutionType('Text+Image')">Text+Image</div>
+          <div class="item" (click)="selectSolutionType('video')">Video</div>
+        </div>
+      </div>
+    </div>
+    <div class="solution_html" *ngIf="selectedSolutionType == 'html'">
+      <div class="ckeditor-tool-container">
+        <app-ckeditor-tool (editorDataOutput)="solutionValue = $event.body; getMedia($event.mediaobj);"
+              [editorConfig]="editorConfig" [editorDataInput]="solutionValue"></app-ckeditor-tool>
+        <div class="mcq-checkbox-answer">
+          <button class="sb-btn sb-btn-xs sb-btn-link sb-btn-link-error sb-left-icon-btn ml-auto" (click)="deleteSolution()"><i
+              class="trash alternate outline icon"></i>Delete</button>
+        </div>
+      </div>
+    </div>
+    <div class="solution_video" *ngIf="selectedSolutionType == 'video' && showSolution">
+      <div class="ckeditor-tool__solution__body">
+        <div class="solution-media p-16 d-flex flex-ai-center">
+          <div class="solution-media__video relative position">
+            <div class="overlay-image"
+              [ngStyle]="videoThumbnail ?  {'background' : 'url(' + videoThumbnail + ')' }  : {'background': 'rgba(0,0,0,0.3)'}">
+              <i class="play circle icon"></i></div>
+          </div>
+          <div class="solution-media__desc ml-16">
+            {{videoSolutionName}}
+          </div>
+        </div>
+        <div class="mcq-checkbox-answer">
+          <button class="sb-btn sb-btn-xs sb-btn-link sb-btn-link-error sb-left-icon-btn ml-auto" (click)="deleteSolution()"><i
+              class="trash alternate outline icon"></i>Delete</button>
         </div>
       </div>
     </div>
   </div>
 </div>
-
-<!-- Existing code -->
-<!-- 
-<div>
-  <form  class="ui form mcq-vertical mt-8 licence-form">
-    <div class="ckeditor-tool width-100">
-      <div class="ckeditor-tool__question mb-24">
-        <div class="sb-field mcq-title mb-16">
-          <label class="px-16 py-8 fs-0-92 mb-0 ckeditor-tool__label width-100">Question</label>
-          <div class="ckeditor-tool-container">
-            <app-ckeditor-tool (editorDataOutput)="mcqForm.question = $event.body; getMedia($event.mediaobj);"
-              [editorConfig]="editorConfig" [editorDataInput]="mcqForm.question" ></app-ckeditor-tool>
-          </div>
-        </div>
-      </div>
-
-      <div class="mcq-options">
-        <div class="sb-mcq-options-answer width-100">
-          <div class="d-flex flex-ai-center ckeditor-tool__answer my-16">
-            <label class="fs-0-92 mb-0">Answers</label>
-            <button
-              *ngIf='mcqForm.options.length < 4'
-              class="sb-btn sb-btn-outline-primary sb-btn-normal sb-left-icon-btn ml-auto"
-              (click)="mcqForm.addOptions()"
-              ><i class="plus icon"></i>ADD</button>
-
-          </div>
-
-          <div *ngFor="let option of mcqForm.options; let i=index">
-            <div class="mcq-option ckeditor-tool__option mb-8">
-              <div class="sb-field mb-0">
-                <label class="px-16 py-8 mb-0 ckeditor-tool__label fs-0-92 width-100">Option {{i + 1}} </label>
-                <div class="ckeditor-tool-container">
-                  <app-ckeditor-tool (hasError)="handleEditorError($event)"
-                    (editorDataOutput)="option.body = $event.body; option.length = $event.length; getMedia($event.mediaobj);"
-                    [editorConfig]="editorConfig" [editorDataInput]="option.body"
-                    [setCharacterLimit]="setCharacterLimit" [setImageLimit]="setImageLimit"></app-ckeditor-tool>
-                  <div class="mcq-checkbox-answer">
-                    <div class="sb-checkbox sb-checkbox-primary mr-auto" [class.selected]="mcqForm.answer === i.toString()">
-                      <input type="radio" name="example" value={{i}}
-                      [(ngModel)]="mcqForm.answer" [ngModelOptions]="{standalone: true}" [checked]="mcqForm.answer === i.toString()">
-                      <label for="check1">Mark as right answer</label>
-                    </div>
-
-                    <button [disabled]="mcqForm.options.length < 3" (click)="mcqForm.deleteOption(i)"
-                      class="sb-btn sb-btn-xs sb-btn-link sb-btn-link-error sb-left-icon-btn"
-                      ><i class="trash alternate outline icon"></i>Delete</button>
-                  </div>
-                </div>
-                <label *ngIf="option.length > 160" class="ui basic red error label pt-1">please reduce
-                  the
-                  size</label>
-              </div>
-            </div>
-          </div>
-
-
-
-        </div>
-        <div class="my-16 ckeditor-tool__solution width-100">
-            <div class="d-flex flex-ai-center ckeditor-tool__solution__header px-16 py-8">
-                <label class="fs-0-92 mb-0 ckeditor-tool__label">Solution (Optional) <a
-                    href="javascript:void(0)" title="title comes here"><img width="16" alt="" class="ml-4"
-                        src="assets/images/Info.svg"></a></label>
-            </div>
-            <div class="solution_html">
-                <div class="ckeditor-tool-container">
-                    <app-ckeditor-tool (editorDataOutput)="solutionValue = $event.body; getMedia($event.mediaobj);"
-              [editorConfig]="editorConfig" [editorDataInput]="solutionValue"></app-ckeditor-tool>
-                </div>
-            </div>
-        </div>
-      </div>
-    </div>
-
-  </form>
-</div> -->

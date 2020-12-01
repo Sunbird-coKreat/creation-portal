@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-
 @Component({
   selector: 'app-editor-header',
   templateUrl: './editor-header.component.html',
@@ -12,9 +11,7 @@ export class EditorHeaderComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
-
-  }
+  ngOnInit() {}
 
   buttonEmitter(event, button) {
     this.toolbarEmitter.emit({event, button});

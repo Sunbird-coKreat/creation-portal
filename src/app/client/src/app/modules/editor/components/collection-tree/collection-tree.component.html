@@ -1,6 +1,3 @@
-<app-fancy-tree 
-          (treeEventEmitter)="treeEventListener($event)" 
-          [nodes]="rootNode"
-          [options]="{ showConnectors: true }"
-          class="sb-collectionTree-fancyTree sb-collectionTree-fancyTreeNew">
+<app-fancy-tree (treeEventEmitter)="treeEventListener($event)" [nodes]="rootNode" [options]="{ showConnectors: true}"
+    class="sb-collectionTree-fancyTree sb-collectionTree-fancyTreeNew">
 </app-fancy-tree>

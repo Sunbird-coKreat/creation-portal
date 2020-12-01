@@ -1,7 +1,6 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { ConfigService, ICollectionTreeOptions } from '@sunbird/shared';
+import { Component, OnInit } from '@angular/core';
 import { TreeService, EditorService } from '../../services';
-import {toolbarConfig, collectionTreeNodes} from '../../editor.config';
+import { toolbarConfig, collectionTreeNodes } from '../../editor.config';
 @Component({
   selector: 'app-editor-base',
   templateUrl: './editor-base.component.html',
@@ -14,8 +13,7 @@ export class EditorBaseComponent implements OnInit {
   toolbarConfig = toolbarConfig;
   public showQuestionTemplate: Boolean = false;
 
-  constructor(private configService: ConfigService, public treeService: TreeService,
-    public editorService: EditorService) {
+  constructor(public treeService: TreeService, private editorService: EditorService) {
   }
 
   ngOnInit() {
@@ -37,7 +35,6 @@ export class EditorBaseComponent implements OnInit {
     console.log(tree);
     console.log(this.treeService.getActiveNode());
     this.editorService.save();
-
     console.log(this.editorService.getCollectionHierarchy());
   }
 
@@ -50,6 +47,5 @@ export class EditorBaseComponent implements OnInit {
       default:
         break;
     }
-
   }
 }

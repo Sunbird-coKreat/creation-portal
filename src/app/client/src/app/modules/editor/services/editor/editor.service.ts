@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { TreeService } from '../tree/tree.service';
 
 import * as _ from 'lodash-es';
@@ -9,11 +9,19 @@ import * as _ from 'lodash-es';
 })
 export class EditorService {
   data: any;
-
+  public questionStream$ = new Subject<any>();
   constructor(public treeService: TreeService) { }
 
   save() {
 
+  }
+
+  public getQuestionStream$() {
+    return this.questionStream$;
+  }
+
+  public publish(value: any) {
+    this.questionStream$.next(value);
   }
 
   getCollectionHierarchy() {

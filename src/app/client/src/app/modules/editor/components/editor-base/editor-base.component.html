@@ -1,8 +1,5 @@
 <div class="add-to-library mb-30">
-  <app-editor-header
-    [toolbarConfig]="toolbarConfig"
-    (toolbarEmitter)="toolbarEventListener($event)"
-  >
+  <app-editor-header [toolbarConfig]="toolbarConfig" (toolbarEmitter)="toolbarEventListener($event)">
   </app-editor-header>
 
   <div class="min-h-500 sb-bg-white">
@@ -10,16 +7,12 @@
       <div class="d-flex">
         <!-- Left Sidebar for cards -->
         <section class="w-70 h-100vh">
-          <app-collection-tree-new
-            [nodes]="collectionTreeNodes"
-            (treeEventEmitter)="treeEventListener($event)"
-          >
+          <app-collection-tree-new [nodes]="collectionTreeNodes" (treeEventEmitter)="treeEventListener($event)">
           </app-collection-tree-new>
         </section>
 
         <!-- Right Player Sections -->
         <section class="ml-24 pt-20">
-          
           <ng-container *ngIf="selectedQuestionData?.folder === true">
             <app-question-set></app-question-set>
           </ng-container>
@@ -28,7 +21,6 @@
           </ng-container>
         </section>
       </div>
-      <div></div>
     </div>
   </div>
 </div>
