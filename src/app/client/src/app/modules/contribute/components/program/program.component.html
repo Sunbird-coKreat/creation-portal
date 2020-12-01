@@ -145,7 +145,7 @@
 						[telemetryInteractCdata]="telemetryInteractCdata"
 						[telemetryInteractPdata]="telemetryInteractPdata"> <i class="filter icon"></i>
 							<i [ngClass]="{'sb-dock-circle': textbookFiltersApplied}"></i>
-							<span *ngIf="!textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.addFilters }}</span>
+							<span *ngIf="!textbookFiltersApplied">{{resourceService.frmelmnts.lbl.addFilters | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName(programDetails, 'plural') }}</span>
 							<span *ngIf="textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.modifyFilters }}</span>
 						</button>
 					</div>
@@ -404,7 +404,7 @@
 
 <sui-modal *ngIf="showTextbookFiltersModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'" class="sb-modal" appBodyScroll (dismissed)="showTextbookFiltersModal = false" #prefModal>
 	<div class="sb-modal-header">
-		{{resourceService.frmelmnts.lbl.addFilters}}
+		{{resourceService.frmelmnts.lbl.addFilters | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName(programDetails, 'plural')}}
 	</div>
 	<div class="sb-modal-content desktop-o-x-unset">
 		<p>{{resourceService.frmelmnts.lbl.pleaseSelectFiltersYouWishToAdd}}</p>

@@ -682,10 +682,10 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     }
 
     if (count < 2) {
-      return count + ' ' + this.resourceService.frmelmnts.lbl.textbook;
+      return count + ' ' + this.programsService.setTargetCollectionName(program);
     }
 
-    return count + ' ' + this.resourceService.frmelmnts.lbl.textbooks;
+    return count + ' ' + this.programsService.setTargetCollectionName(program, 'plural') ;
   }
 
   getProgramInfo(program, type) {

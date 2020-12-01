@@ -18,7 +18,7 @@
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata"> <i class="filter icon"></i>
 			<i [ngClass]="{'sb-dock-circle': textbookFiltersApplied}"></i>
-			<span *ngIf="!textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.addFilters }}</span>
+			<span *ngIf="!textbookFiltersApplied">{{resourceService.frmelmnts.lbl.addFilters | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName(programDetails, 'plural')}}</span>
 			<span *ngIf="textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.modifyFilters }}</span>
 		</button>
 		<button *ngIf="sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary ml-10" (click)="downloadCSV()"
@@ -26,7 +26,7 @@
                                                         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download_textbook_details', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                                                         [telemetryInteractObject]="telemetryInteractObject"
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
-                                                        [telemetryInteractPdata]="telemetryInteractPdata"> <i class="download icon"></i> {{resourceService.frmelmnts.lbl.downloadProjectDetails}}</button>
+                                                        [telemetryInteractPdata]="telemetryInteractPdata"> <i class="download icon"></i> {{resourceService.frmelmnts.lbl.downloadProjectDetails | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName(programDetails)}}</button>
 	</div>
 </div>
 <div class="sb-pageSection">
@@ -113,7 +113,7 @@
 </div>
 <sui-modal *ngIf="showTextbookFiltersModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'" class="sb-modal" appBodyScroll (dismissed)="showTextbookFiltersModal = false" #prefModal>
 	<div class="sb-modal-header">
-		{{resourceService.frmelmnts.lbl.addFilters}}
+		{{resourceService.frmelmnts.lbl.addFilters | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName(programDetails, 'plural')}}
 	</div>
 	<div class="sb-modal-content desktop-o-x-unset">
 		<p>{{resourceService.frmelmnts.lbl.pleaseSelectFiltersYouWishToAdd}}</p>

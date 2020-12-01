@@ -205,7 +205,7 @@
 			<div class="sb-pageSection-content" *ngIf="!showLoader">
 				<div class="d-flex flex-ai-center flex-jc-space-between">
 					<div class="sb-pageSection-header pt-16">
-						<h4 class="sb-pageSection-title">{{resourceService.frmelmnts.lbl.listOfTextbooks}} </h4>
+						<h4 class="sb-pageSection-title">{{resourceService.frmelmnts.lbl.listOfTextbooks | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName(programDetails, 'plural')}} </h4>
 						<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{ contributorTextbooks?.length || 0 }}</span>
 					</div>
 					<div class="">
