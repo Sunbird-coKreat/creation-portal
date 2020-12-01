@@ -194,7 +194,7 @@
                                                     <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                                 </span>
                                             </th>
-                                            <th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('textbooks', nominations)">{{programsService.setTargetCollectionName(programDetails, 'plural')}} &nbsp;&nbsp;
+                                            <th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('textbooks', nominations)">{{ programsService.setTargetCollectionName(programDetails, 'plural')}} &nbsp;&nbsp;
                                                 <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'textbooks' "></i>
                                                 <span  *ngIf="sortColumn == 'textbooks'" class="d-inline-block">
                                                     <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
