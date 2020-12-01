@@ -41,11 +41,11 @@ module.exports = (app) => {
         console.log(userInfo);
 
         // username must be present
-        if (!profile.name || profile.name == '') {
+        if (!profile.preferred_username || profile.preferred_username == '') {
           throw 'Username was missing from the user';
         }
 
-        await createSession(profile.name, 'portal', req, res);
+        await createSession(profile.preferred_username, 'portal', req, res);
         let redirectURI = req.query.returnTo || `/sourcing`;
         if (redirectURI) {
           const parsedRedirectURI = url.parse(decodeURI(redirectURI), true);
