@@ -671,41 +671,67 @@ xxl calculateRem(180px) 24px 20px;
     width: 100%;
   }
 }
-.sb-collectionTree-fancyTreeNew{
+
+.sb-collectionTree-fancyTreelist{
   .ui-fancytree{
       &:before{
           background: none !important;
       }
       ul{
-        padding-left: 0;
         &::before{
           background: none !important;
+        }
       }
+      .fancytree-folder{
+        .fancytree-title{
+          color: var(--primary-color) !important;
+          font-size: 0.9286rem !important;
+          font-weight: $font-weight-bold !important;
+        }
       }
       li{
-        padding-left: 0;
+        padding: 0;
+        margin-bottom: 8px;
+        &:last-child{
+          &:after{
+            display: none;
+          }
+        }
+        ul{
+          li{
+            .fancytree-custom-icon{
+              &::before{ 
+                content: url("assets/images/writing.png");
+              }
+              &:last-child{
+                  &:after{
+                    display: none;
+                  }
+              }
+            }
+            .fancytree-node{
+                padding: 8px 16px;
+                margin-left: 8px;
+                &.fancytree-active,
+                &.fancytree-focused{
+                  border: 1px solid var(--primary-200);
+                  background-color: #f3f8ff;
+                }
+            }
+          }
+        }
+        &::before{
+            background: none !important;
+        }
+        .sb-fancyTree-icon{
+            color: var(--gray-300) !important;
+        }
+        .fancytree-custom-icon{
           &::before{
-              background: none !important;
+            content: url("assets/images/book2.png");
+            margin-left: 5px;
           }
-          .sb-fancyTree-icon{
-              color: var(--gray-300) !important;
-          }
-          .fancytree-custom-icon{
-            &::before{
-              content: url("assets/images/book2.png") !important;
-            }
-          }
-          .fancytree-custom-icon{
-            &::before{
-              content: url("assets/images/writing.png");
-            }
-          }
-      }
-      .fancytree-title{
-        font-size: 0.8rem !important;
-      }
-      .fa{
-        padding-right: 0.4rem;
+        }
       }
       .fa-caret-down{
         display: block;
@@ -718,10 +744,21 @@ xxl calculateRem(180px) 24px 20px;
     border-right: solid 1px var(--gray-100);
     padding-right: 0.785rem;
     height: 100vh;
+    padding: 20px 0;
+    margin: 0;
   }
 }
+
 .hover-none{
   &:hover{
     background: none !important;
+  }
+}
+
+.sb-checkbox-tnc{
+  .sb-required{
+    position: absolute;
+    padding-left: 0;
+    left: 18px;
   }
 }

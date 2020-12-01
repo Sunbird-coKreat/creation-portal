@@ -268,3 +268,10 @@ a {
 .sb-maxw-5{
   max-width: 5rem;
 }
+
+.sb-required{
+  color: var(--red);
+  padding-left: 2px;
+  position: relative;
+  top: -5px;
+} 

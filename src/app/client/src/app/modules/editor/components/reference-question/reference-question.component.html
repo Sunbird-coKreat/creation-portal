@@ -1,46 +1,65 @@
 <div class="b-1-100">
   <div class="py-10 px-15 sb-bg-color-primary-0">
     <div class="sb-field-group">
+      <label *ngIf="showFormError && [undefined, ''].includes(editorState.question)" class="sb-label sb-label-table sb-label-error-0">Fill Question</label>
       <label>Question</label>
       <div class="sb-field">
-        <app-ckeditor-tool
-          [editorConfig]="editorConfig"
-          (editorDataOutput)="editorDataHandler($event, 'question')"
-          [editorDataInput]=""
-          [editorId]="'question_editor'"
-        ></app-ckeditor-tool>
+        <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'question')"
+          [editorDataInput]="editorState.question" [editorId]="'question_editor'"
+          (videoDataOutput)="videoDataOutput($event)" [videoShow]="videoShow"></app-ckeditor-tool>
       </div>
       <div class="sb-field-group">
+        <label *ngIf="showFormError && [undefined, ''].includes(editorState.answer)" class="sb-label sb-label-table sb-label-error-0">Fill Answer</label>
         <label>Answers</label>
         <div class="sb-field">
           <div class="ckeditor-tool-container">
-            <app-ckeditor-tool
-              [editorConfig]="editorConfig"
-              (editorDataOutput)="editorDataHandler($event, 'answer')"
-              [editorDataInput]=""
-              [editorId]="'answer_editor'"
-            ></app-ckeditor-tool>
+            <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'answer')"
+              [editorDataInput]="editorState.answer" [editorId]="'answer_editor'"></app-ckeditor-tool>
           </div>
         </div>
       </div>
 
-      <div
-        class="d-flex flex-ai-center ckeditor-tool__solution__header py-10 px-10 my-15 sb-bg-color-white"
-      >
+      <div class="d-flex flex-ai-center ckeditor-tool__solution__header py-10 px-10 my-15 sb-bg-color-white">
         <label class="fs-0-92 mb-0 ckeditor-tool__label">
           <span class="sb-color-primary fs-0-785">Solution</span>
           <span class="fs-0-785">(Optional) </span>
         </label>
         <div
           class="ui dropdown sb-btn sb-btn-outline-primary sb-btn-normal sb-right-icon-btn sb-btn-radius ml-auto fxsmall"
-          suiDropdown
-          autoClose="itemClick"
-        >
+          suiDropdown autoClose="itemClick" *ngIf="showSolutionDropDown">
           <div class="text">Choose type</div>
           <i class="dropdown icon mx-8"></i>
           <div class="menu" suiDropdownMenu>
-            <div class="item">Text+Image</div>
-            <div class="item">Video</div>
+            <div class="item" (click)="selectSolutionType('Text+Image')">Text+Image</div>
+            <div class="item" (click)="selectSolutionType('video')">Video</div>
+          </div>
+        </div>
+      </div>
+      <div class="solution_html" *ngIf="selectedSolutionType == 'html'">
+        <div class="ckeditor-tool-container">
+          <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'solution')"
+            [editorDataInput]="editorState.solutions" [editorId]="'solution_editor'"></app-ckeditor-tool>
+          <div class="mcq-checkbox-answer">
+            <button class="sb-btn sb-btn-xs sb-btn-link sb-btn-link-error sb-left-icon-btn ml-auto"
+              (click)="deleteSolution()"><i class="trash alternate outline icon"></i>Delete</button>
+          </div>
+        </div>
+      </div>
+      <div class="solution_video" *ngIf="selectedSolutionType == 'video' && showSolution">
+        <div class="ckeditor-tool__solution__body">
+          <div class="solution-media p-16 d-flex flex-ai-center">
+            <div class="solution-media__video relative position">
+              <div class="overlay-image"
+                [ngStyle]="videoThumbnail ?  {'background' : 'url(' + videoThumbnail + ')' }  : {'background': 'rgba(0,0,0,0.3)'}">
+                <i class="play circle icon"></i></div>
+            </div>
+            <div class="solution-media__desc ml-16">
+              {{videoSolutionName}}
+            </div>
+          </div>
+          <div class="mcq-checkbox-answer">
+            <button class="sb-btn sb-btn-xs sb-btn-link sb-btn-link-error sb-left-icon-btn ml-auto"
+              (click)="deleteSolution()"><i class="trash alternate outline icon"></i>Delete</button>
           </div>
         </div>
       </div>

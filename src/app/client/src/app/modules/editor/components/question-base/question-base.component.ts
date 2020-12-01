@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { collectionTreeNodes, questionToolbarConfig } from '../../editor.config';
+import {EditorService} from '../../services';
 
 
 @Component({
@@ -11,7 +12,7 @@ export class QuestionBaseComponent implements OnInit {
   public selectedQuestionData: any = collectionTreeNodes.data.children[0];
   public selectedQuestionData1: any = collectionTreeNodes.data.children[1];
   toolbarConfig = questionToolbarConfig;
-  constructor() { }
+  constructor(private editorService: EditorService) { }
 
   ngOnInit() {
   }
@@ -19,14 +20,15 @@ export class QuestionBaseComponent implements OnInit {
   toolbarEventListener(event) {
     switch (event.button.type) {
       case 'saveContent':
-        this.saveContent();
+        this.saveContent(event.button.type);
         break;
       default:
         break;
     }
   }
 
-  saveContent() {
+  saveContent(action) {
+    this.editorService.publish(action);
   }
 
 }
