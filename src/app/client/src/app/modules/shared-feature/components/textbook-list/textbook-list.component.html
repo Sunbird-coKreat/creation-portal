@@ -18,7 +18,7 @@
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata"> <i class="filter icon"></i>
 			<i [ngClass]="{'sb-dock-circle': textbookFiltersApplied}"></i>
-			<span *ngIf="!textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.addFilters | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName(programDetails, 'plural')}}</span>
+			<span *ngIf="!textbookFiltersApplied">{{resourceService.frmelmnts.lbl.addFilters | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName(programDetails, 'plural')}}</span>
 			<span *ngIf="textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.modifyFilters }}</span>
 		</button>
 		<button *ngIf="sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary ml-10" (click)="downloadCSV()"
