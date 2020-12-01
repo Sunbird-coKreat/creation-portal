@@ -58,7 +58,7 @@ export class MultiplechoiceQuestionComponent implements OnInit, OnChanges, OnDes
   }
 
   initialize() {
-    if (!this.questionMetaData) {
+    if (this.questionMetaData) {
       const { responseDeclaration, templateId, editorState } = this.questionMetaData;
       const numberOfOptions = _.get(this.editorConfig.config, 'No of options');
       const options = _.map(editorState.options, option => ({ body: option.value.body }));

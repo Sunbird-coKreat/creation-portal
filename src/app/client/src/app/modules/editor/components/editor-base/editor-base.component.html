@@ -1,25 +1,29 @@
 <div class="add-to-library mb-30">
-  <app-editor-header [toolbarConfig]="toolbarConfig" (toolbarEmitter)="toolbarEventListener($event)">
+  <app-editor-header
+    [toolbarConfig]="toolbarConfig"
+    (toolbarEmitter)="toolbarEventListener($event)"
+  >
   </app-editor-header>
-
   <div class="min-h-500 sb-bg-white">
-    <div class="ui container">
-      <div class="d-flex">
+    <div class="ui">
+      <div class="ui twelve column grid m-0">
         <!-- Left Sidebar for cards -->
-        <section class="w-70 h-100vh">
-          <app-collection-tree-new [nodes]="collectionTreeNodes" (treeEventEmitter)="treeEventListener($event)">
+        <div class="three wide column p-0 h-100vh">
+          <app-collection-tree-new
+            [nodes]="collectionTreeNodes"
+            (treeEventEmitter)="treeEventListener($event)"
+          >
           </app-collection-tree-new>
-        </section>
-
+        </div>
         <!-- Right Player Sections -->
-        <section class="ml-24 pt-20">
+        <div class="eight wide column bg-white pl-40">
           <ng-container *ngIf="selectedQuestionData?.folder === true">
             <app-question-set></app-question-set>
           </ng-container>
           <ng-container *ngIf="selectedQuestionData?.folder === false">
             <app-contentplayer-page></app-contentplayer-page>
           </ng-container>
-        </section>
+        </div>
       </div>
     </div>
   </div>
