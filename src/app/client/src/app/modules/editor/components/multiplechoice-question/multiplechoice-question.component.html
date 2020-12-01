@@ -1,14 +1,14 @@
 <div class="b-1-100">
-  <div class="py-10 px-15 sb-bg-color-primary-0">
+  <div class="py-10 px-15 sb-bg-color-primary-0 br-5">
     <div class="sb-field-group">
-      <label>Question</label>
-      <div class="sb-field">
+      <label>Question</label><span class="sb-color-red">*</span>
+      <div class="ckeditor-tool__question mb-24">
         <app-ckeditor-tool (editorDataOutput)="mcqForm.question = $event.body; getMedia($event.mediaobj);"
-          [editorConfig]="editorConfig" [editorDataInput]="mcqForm.question"></app-ckeditor-tool>
+          [editorConfig]="editorConfig" [editorDataInput]="mcqForm.question" class=""></app-ckeditor-tool>
       </div>
     </div>
     <div class="py-10 fs-0-92">
-      Options
+      Options<span class="sb-color-red">*</span>
       <i class="icon info"></i>
       <span class="divider"></span>
       <i class="icon th large"></i>
@@ -18,11 +18,11 @@
       <i class="icon align center"></i>
     </div>
     <div class="d-flex py-10 flex-dc">
-      <div class="ckeditor-tool-container d-flex" *ngFor="let option of mcqForm.options; let i=index">
+      <div class="d-flex" *ngFor="let option of mcqForm.options; let i=index">
         <app-ckeditor-tool (hasError)="handleEditorError($event)"
           (editorDataOutput)="option.body = $event.body; option.length = $event.length; getMedia($event.mediaobj);"
           [editorConfig]="editorConfig" [editorDataInput]="option.body" [setCharacterLimit]="setCharacterLimit"
-          [setImageLimit]="setImageLimit"></app-ckeditor-tool>
+          [setImageLimit]="setImageLimit" class="ckeditor-tool__option mb-24"></app-ckeditor-tool>
         <div class="sb-checkbox sb-checkbox-primary pl-10" [class.selected]="mcqForm.answer === i.toString()">
           <input type="radio" name="example" value={{i}}
             [(ngModel)]="mcqForm.answer" [ngModelOptions]="{standalone: true}" [checked]="mcqForm.answer === i.toString()">
@@ -60,7 +60,6 @@
     </div>
   </div>
 </div>
-
 <!-- Existing code -->
 <!-- 
 <div>
