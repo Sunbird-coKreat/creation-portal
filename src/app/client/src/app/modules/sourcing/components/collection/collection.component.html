@@ -134,7 +134,7 @@
             </div>
           </div>
         </div>
-      <div class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-20 va-top pl-20">{{resourceService.frmelmnts.lbl.nominationMessage}}</div>
+      <div class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-20 va-top pl-20">{{resourceService.frmelmnts.lbl.nominationMessage.replace('{TARGET_NAME}', programsService.setTargetCollectionName(programContext, 'plural') | lowercase)}}</div>
   </div>
 </div>
 </div>
