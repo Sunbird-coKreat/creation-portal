@@ -521,6 +521,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       'root': this.checkIfMainCollection(data) ? true : false,
       'origin': data.origin,
       'originData': data.originData,
+      'framework': data.framework,
+      'channel': data.channel,
       'parent': data.parent || ''
     };
     const childData = data.children;
@@ -771,7 +773,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       if (!_.isEmpty(this.userService.userProfile.lastName)) {
         creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
       }
-      const sharedMetaData = this.attacthRootMetaData();
+      const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.sessionContext, this.selectedSharedContext);
       const option = {
         url: `content/v3/create`,
         data: {
@@ -825,13 +827,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       // tslint:disable-next-line:max-line-length
       this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
     }
-  }
-
-  attacthRootMetaData() {
-    // Only topic is fetched from unitLevel meta
-    return this.sharedContext.reduce((obj, context) => {
-              return { ...obj, [context]: context !== 'topic' ? this.sessionContext[context] : this.selectedSharedContext[context] };
-            }, {});
   }
 
   handlePreview(event) {

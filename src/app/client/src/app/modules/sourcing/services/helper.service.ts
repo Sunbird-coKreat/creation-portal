@@ -587,4 +587,21 @@ export class HelperService {
         return nomContentTypes;
       }
   }
+
+  fetchRootMetaData(sharedContext, sessionContext, selectedSharedContext) {
+    return sharedContext.reduce((obj, context) => {
+              return { ...obj, ...(this.getContextObj(context, sessionContext, selectedSharedContext)) };
+            }, {});
+  }
+
+  getContextObj(context, sessionContext, selectedSharedContext) {
+    if (['framework', 'channel'].includes(context)) {
+      const data = _.get(sessionContext, `hierarchyObj.hierarchy.${sessionContext.collection}`);
+      return {[context]: _.get(data, context)};
+    } else if (context === 'topic') { // Here topic is fetched from unitLevel meta
+      return {[context]: selectedSharedContext[context]};
+    } else {
+      return {[context]: sessionContext[context]};
+    }
+  }
 }
