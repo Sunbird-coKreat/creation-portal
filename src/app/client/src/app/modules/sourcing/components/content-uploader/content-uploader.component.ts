@@ -510,9 +510,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       if (!_.isEmpty(this.userService.userProfile.lastName)) {
         creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
       }
-      const reqBody = this.sharedContext.reduce((obj, context) => {
-        return { ...obj, [context]: this.selectedSharedContext[context] || this.sessionContext[context] };
-      }, {});
+      const sharedMetaData = this.attacthRootMetaData();
       const option = {
         url: `content/v3/create`,
         data: {
@@ -530,7 +528,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
                 {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
               'programId': this.sessionContext.programId,
               'unitIdentifiers': [this.unitIdentifier],
-              ...(_.pickBy(reqBody, _.identity))
+              ...(_.pickBy(sharedMetaData, _.identity))
             }
           }
         }
@@ -562,6 +560,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     } else if (!this.uploadInprogress) {
       this.uploadFile(mimeType, this.contentMetaData ? this.contentMetaData.identifier : this.contentUploadComponentInput.contentId);
     }
+  }
+
+  attacthRootMetaData() {
+    // Only topic is fetched from unitLevel meta
+    return this.sharedContext.reduce((obj, context) => {
+              return { ...obj, [context]: context !== 'topic' ? this.sessionContext[context] : this.selectedSharedContext[context] };
+            }, {});
   }
 
   uploadFile(mimeType, contentId) {
