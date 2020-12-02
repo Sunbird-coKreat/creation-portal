@@ -199,8 +199,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
           objectType: 'collection',
           programId: this.programId,
           status: ['Draft', 'Live'],
-          // tslint:disable-next-line: max-line-length
-          primaryCategory: !_.isNull(this.programDetails['target_collection_category']) ? this.programDetails['target_collection_category'] : 'Digital Textbook'
+          primaryCategory: !_.isNull(this.programDetails.target_collection_category) ? this.programDetails.target_collection_category : 'Digital Textbook'
         }
       }
       }
