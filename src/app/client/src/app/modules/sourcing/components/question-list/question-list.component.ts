@@ -1253,10 +1253,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       if (originData.textbookOriginId && originData.unitOriginId && originData.channel) {
         if (action === 'accept') {
           action = this.isMetadataOverridden ? 'acceptWithChanges' : 'accept';
-          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.resourceDetails.identifier, originData);
+          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.resourceDetails.identifier, originData, this.resourceDetails);
         } else if (action === 'reject' && this.FormControl.value.contentRejectComment.length) {
           // tslint:disable-next-line:max-line-length
-          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.resourceDetails.identifier, originData, this.FormControl.value.contentRejectComment);
+          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.resourceDetails.identifier, originData, this.resourceDetails, this.FormControl.value.contentRejectComment);
         }
       } else {
         action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
