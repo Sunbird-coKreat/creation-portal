@@ -11,6 +11,7 @@
 			<i class="file sb-file-icon outline icon pr-10 sb-color-primary"></i>
 			{{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
 		</a>
+		<ng-container *ngTemplateOutlet="collectionManagementTemplate"></ng-container>
 		<button *ngIf="sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary my-10" (click)="showTextbookFiltersModal = true"
 		appTelemetryInteract
                                                         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filter_textbooks', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"

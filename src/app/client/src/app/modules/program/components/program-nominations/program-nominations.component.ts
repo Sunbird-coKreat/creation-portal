@@ -3,7 +3,7 @@ import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject, Telem
 import { ProgramsService, UserService, FrameworkService, RegistryService } from '@sunbird/core';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
-import { ISessionContext, InitialState, IPagination} from '../../../sourcing/interfaces';
+import { ISessionContext, InitialState, IPagination, ICollectionManagementInput} from '../../../sourcing/interfaces';
 import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
 import * as _ from 'lodash-es';
 import { tap, first, catchError, takeUntil } from 'rxjs/operators';
@@ -92,7 +92,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   showDashboardLoader = false;
   userPreferences = '';
   sharedContext;
-  userRoles = [{name: 'REVIEWER'}];
+  userRoles;
   pager: IPagination;
   pageNumber = 1;
   pageLimit: any;
@@ -100,6 +100,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   pagerUsers: IPagination;
   pageNumberUsers = 1;
   searchInput: any;
+  collectionManagementInput: ICollectionManagementInput;
   public telemetryPageId: string;
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     private sourcingService: SourcingService,
@@ -120,9 +121,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}, {id: this.programId, type: 'project'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
-    this.roles = [{name: 'REVIEWER'}, {name: 'NONE'}];
+    this.roles = [{name: 'CREATOR'}, {name: 'REVIEWER'}, {name: 'NONE'}];
+    this.userRoles = [{name: 'CREATOR'}, {name: 'REVIEWER'}];
     this.roleNames = _.map(this.roles, 'name');
-    this.sessionContext.currentRoles = ['REVIEWER'];
     this.programStageService.initialize();
     this.programStageService.addStage('programNominations');
     this.currentStage = 'programNominations';
@@ -604,6 +605,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
 
       this.fetchFrameWorkDetails();
+      this.checkForSourcingRole();
+      this.collectionManagementProgram();
 
       forkJoin(this.getAggregatedNominationsCount(), this.getcontentAggregationData()).subscribe(
         (response) => {
@@ -624,9 +627,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.collectionsCount = _.get(this.programDetails, 'collection_ids').length;
       this.totalContentTypeCount = _.get(this.programDetails, 'content_types').length;
       this.programContentTypes = _.join(this.programDetails.content_types, ', ');
-
-      const currentRoles = _.filter(this.programDetails.config.roles, role => this.sessionContext.currentRoles.includes(role.name));
-      this.sessionContext.currentRoleIds = !_.isEmpty(currentRoles) ? _.map(currentRoles, role => role.id) : null;
     }, error => {
       const errInfo = {
         errorMsg: this.resourceService.messages.emsg.project.m0001,
@@ -1248,5 +1248,27 @@ chapterLevelReportHeaders() {
     ..._.map(this.programContentTypes.split(', '), type => `${this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn8} ${type}` )
   ];
   return headers;
+}
+
+checkForSourcingRole() {
+  if (this.userService.isSourcingOrgReviewer(this.programDetails)) {
+    this.sessionContext.currentRoles = ['REVIEWER'];
+  } else if (this.userService.isSourcingOrgCreator(this.programDetails)) {
+    this.sessionContext.currentRoles = ['CONTRIBUTOR'];
+  }
+  const availableRoles = _.filter(this.programDetails.config.roles, role => this.sessionContext.currentRoles.includes(role.name));
+    this.sessionContext.currentRoleIds = !_.isEmpty(availableRoles) ? _.map(availableRoles, role => role.id) : null;
+}
+
+collectionManagementProgram() {
+  this.collectionManagementInput = {
+    sessionContext: this.sessionContext,
+    programContext: this.programDetails,
+    viewElements: ['CREATE']
+  };
+}
+
+showCollectionManagement() {
+  return !!(_.intersection(_.get(this.programDetails, 'content_types'), ['Digital Textbook', 'Course']));
 }
 }

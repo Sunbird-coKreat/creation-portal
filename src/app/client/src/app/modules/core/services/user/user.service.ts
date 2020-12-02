@@ -491,6 +491,13 @@ export class UserService {
     return !!(userRoles.includes('ORG_ADMIN') || reviewers.includes(userId));
   }
 
+  isSourcingOrgCreator(program) {
+    const userId = _.get(this, 'userProfile.userId');
+    const creators = _.get(program, 'rolemapping.CREATOR', []);
+
+    return !!(creators.includes(userId));
+  }
+
   isContributingOrgAdmin() {
     const roles = _.get(this, 'userProfile.userRegData.User_Org.roles', []);
     return !_.isEmpty(roles) && _.includes(roles, 'admin');

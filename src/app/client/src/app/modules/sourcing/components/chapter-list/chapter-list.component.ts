@@ -10,7 +10,7 @@ import { throwError, Observable } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   IChapterListComponentInput, ISessionContext,
-  IContentUploadComponentInput, IResourceTemplateComponentInput, IContentEditorComponentInput
+  IContentUploadComponentInput, IResourceTemplateComponentInput, IContentEditorComponentInput, ICollectionManagementInput
 } from '../../interfaces';
 import { ProgramStageService } from '../../../program/services';
 import { ProgramComponentsService } from '../../../program/services/program-components/program-components.service';
@@ -81,13 +81,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public sampleContent = false;
   public telemetryPageId: string;
   public storedCollectionData: any;
-  public sourcingOrgReviewer: boolean;
+  public sourcingEnvironment: boolean;
   public originalCollectionData: any;
   public textbookStatusMessage: string;
   public textbookFirstChildStatusMessage: string;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
+  collectionManagementInput: ICollectionManagementInput;
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private sourcingService: SourcingService,
@@ -145,7 +146,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         this.uploadHandler(contentMeta);
       }
     };
-    this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
+    this.sourcingEnvironment = this.router.url.includes('/sourcing') ? true : false;
     if (this.programContext['status'] === 'Unlisted') {
       const request = {
         'key': 'mvcLibraryFeature',
@@ -153,7 +154,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       };
       this.helperService.getProgramConfiguration(request).subscribe(res => {}, err => {});
     }
-
+    this.helperService.fetchChannelData(this.programContext.rootorg_id);
   }
 
   showBulkUploadOption() {
@@ -362,6 +363,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         instance.countData['sourcing_approved'] = 0;
         instance.countData['sourcing_rejected'] = 0;
 
+        this.collectionManagementProgram();
         const hierarchyUrl1 = '/action/content/v3/hierarchy/' + this.collectionData.origin + '?mode=edit';
         const originUrl = this.programsService.getContentOriginEnvironment();
         const url =  originUrl + hierarchyUrl1 ;
@@ -384,7 +386,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   setTreeLeafStatusMessage(identifier, instance) {
     this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
-    if (this.originalCollectionData && this.originalCollectionData.status !== 'Draft' && this.sourcingOrgReviewer) {
+    if (this.originalCollectionData && this.originalCollectionData.status !== 'Draft' && this.sourcingEnvironment) {
       this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage;
     }
     this.getFolderLevelCount(this.collectionHierarchy);
@@ -403,7 +405,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     let prevStatus;
     let createdBy, visibility;
     if (this.sampleContent === false && this.isSourcingOrgReviewer()) {
-      if (this.sourcingOrgReviewer) {
+      if (this.sourcingEnvironment) {
         status = ['Live', 'Draft'];
         prevStatus = 'Live';
       }
@@ -583,22 +585,22 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         if (data.createdBy !== this.currentUserID && data.status === 'Review') {
           this.countData['awaitingreview'] = this.countData['awaitingreview'] + 1;
         }
-        if (this.sourcingOrgReviewer && data.status === 'Live' &&
+        if (this.sourcingEnvironment && data.status === 'Live' &&
         // tslint:disable-next-line:max-line-length
         !_.includes([...this.storedCollectionData.acceptedContents || [], ...this.storedCollectionData.rejectedContents || []], data.identifier)) {
           this.countData['pendingReview'] = this.countData['pendingReview'] + 1;
           this.countData['sourcing_approvalPending'] = this.countData['sourcing_approvalPending'] + 1;
           this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
         }
-        if (this.sourcingOrgReviewer && data.status === 'Draft' && data.prevStatus === 'Live' ) {
+        if (this.sourcingEnvironment && data.status === 'Draft' && data.prevStatus === 'Live' ) {
           this.countData['sourcing_correctionPending'] = this.countData['sourcing_correctionPending'] + 1;
           this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
         }
-        if (this.sourcingOrgReviewer && data.status === 'Live' && _.includes([...this.storedCollectionData.acceptedContents || []], data.identifier)) {
+        if (this.sourcingEnvironment && data.status === 'Live' && _.includes([...this.storedCollectionData.acceptedContents || []], data.identifier)) {
           this.countData['sourcing_approved'] = this.countData['sourcing_approved'] + 1;
           this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
         }
-        if (this.sourcingOrgReviewer && data.status === 'Live' && _.includes([...this.storedCollectionData.rejectedContents || []], data.identifier)) {
+        if (this.sourcingEnvironment && data.status === 'Live' && _.includes([...this.storedCollectionData.rejectedContents || []], data.identifier)) {
           this.countData['sourcing_rejected'] = this.countData['sourcing_rejected'] + 1;
           this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
         }
@@ -674,7 +676,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     const reviewerViewRole = this.hasAccessFor(['REVIEWER']);
     const creatorAndReviewerRole = creatorViewRole && reviewerViewRole;
     const contributingOrgAdmin = this.userService.isContributingOrgAdmin();
-    if (this.isSourcingOrgReviewer() && this.sourcingOrgReviewer) {
+    if (this.isSourcingOrgReviewer() && this.sourcingEnvironment) {
       if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.status === 'Pending') {
         if ( reviewerViewRole && content.sampleContent === true
           && this.getNominatedUserId() === content.createdBy) {
@@ -691,8 +693,15 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       } else if (reviewerViewRole && (content.status === 'Live'|| (content.prevStatus === 'Live' && content.status === 'Draft' ))) {
           return true;
       }
+    } else if (this.isSourcingOrgCreator() && this.sourcingEnvironment) {
+      if ( creatorViewRole && this.currentUserID === content.createdBy) {
+            return true;
+        } else {
+          return false;
+        }
     } else {
-      if ((this.sessionContext.nominationDetails.status === 'Approved' || this.sessionContext.nominationDetails.status === 'Rejected')
+      // tslint:disable-next-line:max-line-length
+      if ((this.sessionContext.nominationDetails && (this.sessionContext.nominationDetails.status === 'Approved' || this.sessionContext.nominationDetails.status === 'Rejected'))
        && content.sampleContent === true) {
         return false;
       // tslint:disable-next-line:max-line-length
@@ -921,6 +930,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           return catName;
         }
       });
+    }
+    console.log(this.showCollectionManagement(), '--------->');
+    if (this.showCollectionManagement() && this.isSourcingOrgCreator()) {
+      contentCategories = _.get(this.helperService.getProgramLevelChannelData(), 'contentPrimaryCategories');
     }
     this.resourceTemplateComponentInput = {
       templateList: contentCategories,
@@ -1270,6 +1283,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     return this.userService.isSourcingOrgReviewer(this.programContext);
   }
 
+  isSourcingOrgCreator() {
+    return this.userService.isSourcingOrgCreator(this.programContext);
+  }
+
   isNominationPendingOrInitiated() {
     return _.includes(['Pending', 'Initiated'], _.get(this.sessionContext, 'nominationDetails.status', ''));
   }
@@ -1294,5 +1311,18 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   bulkApprovalSuccess(e) {
     this.updateAccordianView();
+  }
+
+  collectionManagementProgram() {
+    this.collectionManagementInput = {
+      sessionContext: this.sessionContext,
+      programContext: this.programContext,
+      collectionMetadata: _.omit(this.storedCollectionData, ['children', 'childNodes', ]),
+      viewElements: ['EDITCOLLECTIONMETADATA', 'EDITCOLLECTIONHIERARCHY', 'SAVECOLLECTION', 'SUBMITCOLLECTION']
+    };
+  }
+
+  showCollectionManagement() {
+    return !!(_.intersection(_.get(this.programContext, 'content_types'), ['Digital Textbook', 'Course']));
   }
 }

@@ -63,6 +63,7 @@ export class RecursiveTreeComponent implements OnInit {
   }
 
   hasAccessFor(roles: Array<string>) {
+    // tslint:disable-next-line:max-line-length
     return !_.isEmpty(_.intersection(roles, this.sessionContext.currentRoles || []));
   }
 

@@ -1,5 +1,5 @@
 import { ResourceService, ToasterService, ConfigService  } from '@sunbird/shared';
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, TemplateRef } from '@angular/core';
 import { ProgramsService, ActionService, UserService } from '@sunbird/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
@@ -20,6 +20,7 @@ export class TextbookListComponent implements OnInit {
   @Input() contentAggregationInput: Array<any> = [];
   @Input() userPreferences: any = {};
   @Input() telemetryPageId;
+  @Input() collectionManagementTemplate: TemplateRef<any>;
   public programId: string;
   public config: any;
   public collections: Array<any> = [];

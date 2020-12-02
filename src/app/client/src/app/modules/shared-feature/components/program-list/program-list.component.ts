@@ -630,7 +630,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       filters['status'] = ['Live', 'Unlisted', 'Draft'];
     } else {
       filters['status'] = ['Live', 'Unlisted'];
-      filters['role'] = ['REVIEWER'];
+      filters['role'] = ['REVIEWER', 'CREATOR'];
       filters['user_id'] = this.userService.userProfile.userId;
     }
     if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length

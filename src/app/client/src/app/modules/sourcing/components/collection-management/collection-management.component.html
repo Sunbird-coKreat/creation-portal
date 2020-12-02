@@ -1,0 +1,43 @@
+<button id="createCollection" *ngIf="visibility && visibility.showCreateCollection" class="sb-btn sb-btn-secondary sb-btn-normal mr-8"
+              >{{resourceService.frmelmnts.btn.createCollection}}</button>
+
+<button id="editCollectionMetadata" *ngIf="visibility && visibility.showEditCollectionMetadata" class="sb-btn sb-btn-secondary sb-btn-normal mr-8"
+              (click)="showEditform('editForm')"
+              >{{resourceService.frmelmnts.btn.editCollectionMetadata}}</button>
+
+<button id="editCollectionHierarchy" *ngIf="visibility && visibility.showEditCollectionHierarchy" class="sb-btn sb-btn-secondary sb-btn-normal mr-8"
+              
+              >{{resourceService.frmelmnts.btn.editCollectionHierarchy}}</button>
+
+<!-- <button id="saveCollection" *ngIf="visibility && visibility.showCollectionSave" class="sb-btn sb-btn-secondary sb-btn-normal mr-8"
+              
+              >{{resourceService.frmelmnts.btn.saveCollection}}</button> -->
+
+<button id="submitCollection" *ngIf="visibility && visibility.showCollectionSubmit" class="sb-btn sb-btn-secondary sb-btn-normal mr-8"
+              
+              >{{resourceService.frmelmnts.btn.submitCollection}}</button>
+
+
+<sui-modal *ngIf="showEditMetaForm" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+    class="sb-modal" appBodyScroll (dismissed)="showEditMetaForm= false">
+    <i class="icon close" (click)="showEditMetaForm= false" tabindex="0"></i>
+    <!--Header-->
+    <div class="sb-modal-header">Edit details</div>
+    <!--/Header-->
+
+    <!--Content-->
+    <div class="sb-modal-content o-y-visible pb-8" *ngIf="formFieldProperties && categoryMasterList">
+      <app-data-form
+        #formData
+        [formFieldProperties]="formFieldProperties" 
+        [categoryMasterList]="categoryMasterList">
+      </app-data-form>
+    </div>
+    <!--/Content-->
+
+    <!--Actions-->
+    <div class="sb-modal-actions">
+        <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="showEditMetaForm= false">Save</button>
+    </div>
+    <!--/Actions-->
+</sui-modal>

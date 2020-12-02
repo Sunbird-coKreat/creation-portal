@@ -952,7 +952,7 @@ export class ProgramsService extends DataService implements CanActivate {
     );
   }
 
-  getCategoryDefinition(categoryName, rootOrgId) {
+  getCategoryDefinition(categoryName, rootOrgId, objectType?) {
     const cacheInd = categoryName + ':' + rootOrgId;
     if (this.cacheService.get(cacheInd)) {
       return  of(this.cacheService.get(cacheInd));
@@ -961,10 +961,10 @@ export class ProgramsService extends DataService implements CanActivate {
         url: 'object/category/definition/v1/read?fields=objectMetadata,forms,name',
         data: {
           request: {
-            "objectCategoryDefinition": {
-                "objectType": "Content",
-                "name": categoryName,
-                "channel": rootOrgId
+            'objectCategoryDefinition': {
+                'objectType': objectType || 'Content',
+                'name': categoryName,
+                'channel': rootOrgId
             },
           }
         }
