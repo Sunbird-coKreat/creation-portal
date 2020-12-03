@@ -343,6 +343,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         response.result.content.children = children;
         this.collectionData = response.result.content;
         this.storedCollectionData = unitIdentifier ?  this.storedCollectionData : _.cloneDeep(this.collectionData);
+        this.helperService.selectedCollectionMetaData = _.omit(this.storedCollectionData, ['children', 'childNodes']);
         const textBookMetaData = [];
         instance.countData['total'] = 0;
         instance.countData['review'] = 0;
@@ -775,9 +776,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       if (!_.isEmpty(this.userService.userProfile.lastName)) {
         creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
       }
-      const reqBody = this.sharedContext.reduce((obj, context) => {
-        return { ...obj, [context]: this.selectedSharedContext[context] || this.sessionContext[context] };
-      }, {});
+      const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
       const option = {
         url: `content/v3/create`,
         data: {
@@ -794,7 +793,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               ...(this.sessionContext.nominationDetails &&
                 this.sessionContext.nominationDetails.organisation_id &&
                 {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
-              ...(_.pickBy(reqBody, _.identity))
+              ...(_.pickBy(sharedMetaData, _.identity))
             }
           }
         }
