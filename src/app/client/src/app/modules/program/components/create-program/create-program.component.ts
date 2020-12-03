@@ -1332,6 +1332,7 @@ onChangeTargetCollection() {
         const cb = (error, resp) => {
           if (!error && resp) {
             this.showTextBookSelector = true;
+            window.scrollTo(0,0);
             ($event.target as HTMLButtonElement).disabled = false;
           } else {
             this.toasterService.error(this.resource.messages.emsg.m0005);
@@ -1342,6 +1343,7 @@ onChangeTargetCollection() {
         this.saveProgram(cb);
       } else if (this.createProgramForm.valid) {
         this.showTextBookSelector = true;
+        window.scrollTo(0,0);
       } else {
         this.formIsInvalid = true;
         this.validateAllFormFields(this.createProgramForm);
