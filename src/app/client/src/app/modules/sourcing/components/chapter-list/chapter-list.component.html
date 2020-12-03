@@ -118,7 +118,7 @@
         <div class="ui container sb-textbook-details-container mb-24">
           <div class="d-flex flex-jc-space-between fs-0-785 sb-color-gray-300 mb-15">
             <span *ngIf="textbookStatusMessage" class="sb-color-error mr-8 pl-10 fs-0-785 font-weight-bold font-italic">{{textbookStatusMessage}}</span>
-            <span class="w-30 font-italic">{{resourceService.frmelmnts.lbl.partialTextbookSelectionNote}}</span>
+            <span class="w-30 font-italic">{{resourceService.frmelmnts.lbl.partialTextbookSelectionNote | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName(programContext, 'plural') | lowercase}} </span>
             <div *ngIf="isSourcingOrgReviewer() && sourcingEnvironment && storedCollectionData && !sessionContext.nominationDetails" class="d-flex">
               <app-bulk-approval [programContext]="programContext" [sessionContext]="sessionContext" [storedCollectionData]="storedCollectionData" [originalCollectionData]="originalCollectionData" (updateToc)="bulkApprovalSuccess($event)"></app-bulk-approval>
             </div>

@@ -442,16 +442,16 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       this.sessionContext['sampleContent'] = false;
       this.getContentStatusCount(data);
     }
-    if (data.contentType !== 'TextBook') {
+    if (!this.checkIfMainCollection(data)) {
       const rootMeta = _.pick(data, this.sharedContext);
       const rootTree = this.generateNodeMeta(data, rootMeta);
       const isFolderExist = _.find(data.children, (child) => {
-        return child.contentType === 'TextBookUnit';
+        return (this.checkIfCollectionFolder(child));
       });
       if (isFolderExist) {
         const children = this.getUnitWithChildren(data, identifier);
-        const treeChildren = children && children.filter(item => item.contentType === 'TextBookUnit');
-        const treeLeaf = children && children.filter(item => item.contentType !== 'TextBookUnit');
+        const treeChildren = this.getTreeChildren(children);
+        const treeLeaf = this.getTreeLeaf(children);
         rootTree['children'] = treeChildren || null;
         rootTree['leaf'] = this.getContentVisibility(treeLeaf) || null;
         return rootTree ? [rootTree] : [];
@@ -470,6 +470,47 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
   }
 
+  checkIfCollectionFolder(data) {
+    if (data.primaryCategory === "Textbook Unit" || data.primaryCategory === "Course Unit") {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  checkIfMainCollection (data) {
+      if (data.primaryCategory === "Digital Textbook" || data.primaryCategory === "Course") {
+        return true;
+      } else {
+        return false;
+      }
+  }
+
+  getTreeChildren(children) {
+    if (this.collectionData.primaryCategory === "Digital Textbook") {
+      return children && children.filter(item => item.primaryCategory === 'Textbook Unit');
+    } else if (this.collectionData.primaryCategory === "Course") {
+      return children && children.filter(item => item.primaryCategory === 'Course Unit');
+    }
+  }
+
+  getTreeLeaf(children) {
+    if (this.collectionData.primaryCategory === "Digital Textbook") {
+      return children && children.filter(item => item.primaryCategory !== 'Textbook Unit');
+    } else if (this.collectionData.primaryCategory === "Course") {
+      return children && children.filter(item => item.primaryCategory !== 'Course Unit');
+    }
+  }
+
+  checkifContent (content) {
+    const tempCats = ["Digital Textbook", "Course", "Content Playlist", "Textbook Unit", "Course Unit"];
+    if (!_.includes(tempCats, content.primaryCategory))  {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   getUnitWithChildren(data, collectionId) {
     const self = this;
     this.hierarchyObj[data.identifier] = {
@@ -479,7 +520,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       'children': _.map(data.children, (child) => {
         return child.identifier;
       }),
-      'root': data.contentType === 'TextBook' ? true : false,
+      'root': this.checkIfMainCollection(data) ? true : false,
       'origin': data.origin,
       'originData': data.originData,
       'parent': data.parent || ''
@@ -496,8 +537,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         }
         const treeItem = this.generateNodeMeta(child, meta);
         const treeUnit = self.getUnitWithChildren(child, collectionId);
-        const treeChildren = treeUnit && treeUnit.filter(item => item.contentType === 'TextBookUnit');
-        const treeLeaf = treeUnit && treeUnit.filter(item => item.contentType !== 'TextBookUnit');
+        const treeChildren = this.getTreeChildren(treeUnit);
+        const treeLeaf = this.getTreeLeaf(treeUnit);
         treeItem['children'] = (treeChildren && treeChildren.length > 0) ? treeChildren : null;
         if (treeLeaf && treeLeaf.length > 0) {
           treeItem['leaf'] = this.getContentVisibility(treeLeaf);
@@ -510,7 +551,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   getSampleContentStatusCount(data) {
     const self = this;
-    if (data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' && data.sampleContent) {
+    if (this.checkifContent(data) && data.sampleContent) {
       this.countData['sampleContenttotal'] = this.countData['sampleContenttotal'] + 1;
       if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.user_id === data.createdBy) {
         this.countData['nominatedUserSample'] += 1;
@@ -531,7 +572,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     const self = this;
     if (['admin', 'user'].includes(this.sessionContext.currentOrgRole)  && (this.sessionContext.currentRoles.includes('REVIEWER') || this.sessionContext.currentRoles.includes('CONTRIBUTOR') )) {
       // tslint:disable-next-line:max-line-length
-      if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' && this.myOrgId === data.organisationId)  && (!data.sampleContent || data.sampleContent === undefined)) {
+      if ((this.checkifContent(data) && this.myOrgId === data.organisationId)  && (!data.sampleContent || data.sampleContent === undefined)) {
         this.countData['total'] = this.countData['total'] + 1;
         if (data.createdBy === this.currentUserID && data.status === 'Review') {
           this.countData['review'] = this.countData['review'] + 1;
@@ -551,10 +592,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           }
         }
       }
-    } 
+    }
      else if(['individual'].includes(this.sessionContext.currentOrgRole)  && this.sessionContext.currentRoles.includes('CONTRIBUTOR')) {
       if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' )  && (!data.sampleContent || data.sampleContent === undefined)) {
-      
+
         if (data.createdBy === this.currentUserID) {
           this.countData['total'] = this.countData['total'] + 1;
         }
@@ -562,7 +603,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
      }
     else {
       // tslint:disable-next-line:max-line-length
-      if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' )  && (!data.sampleContent || data.sampleContent === undefined)) {
+      if (this.checkifContent(data) && (!data.sampleContent || data.sampleContent === undefined)) {
         this.countData['total'] = this.countData['total'] + 1;
         if (data.createdBy === this.currentUserID && data.status === 'Review') {
           this.countData['review'] = this.countData['review'] + 1;

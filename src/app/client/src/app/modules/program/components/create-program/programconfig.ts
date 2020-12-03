@@ -3,11 +3,11 @@ var programConfig = {
     'defaultContributeOrgReview' : true,
     '_comments': '',
     'loginReqired': true,
-    'framework': 'NCF',
-    'board':'',
-    'gradeLevel':[],
-    'medium':[],
-    'subject':[],
+    'framework': [],
+    'board': [],
+    'gradeLevel': [],
+    'medium': [],
+    'subject': [],
     'roles': [
       {
         'id': 1,

@@ -196,10 +196,10 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
        data: {
       request: {
          filters: {
-          objectType: 'content',
+          objectType: 'collection',
           programId: this.programId,
           status: ['Draft', 'Live'],
-          contentType: 'Textbook'
+          primaryCategory: !_.isNull(this.programDetails.target_collection_category) ? this.programDetails.target_collection_category : 'Digital Textbook'
         }
       }
       }
