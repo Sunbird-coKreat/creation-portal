@@ -469,7 +469,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   checkIfCollectionFolder(data) {
-    if (data.primaryCategory === "Textbook Unit" || data.primaryCategory === "Course Unit") {
+    if (data.primaryCategory === "Textbook Unit" || data.primaryCategory === "Course Unit" || (data.primaryCategory === "Content Playlist" && data.visibility === "Parent")) {
       return true;
     } else {
       return false;
@@ -477,7 +477,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   checkIfMainCollection (data) {
-      if (data.primaryCategory === "Digital Textbook" || data.primaryCategory === "Course") {
+      if (data.primaryCategory === "Digital Textbook" || data.primaryCategory === "Course" || (data.primaryCategory === "Content Playlist" && data.visibility === "Default")) {
         return true;
       } else {
         return false;
@@ -489,6 +489,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       return children && children.filter(item => item.primaryCategory === 'Textbook Unit');
     } else if (this.collectionData.primaryCategory === "Course") {
       return children && children.filter(item => item.primaryCategory === 'Course Unit');
+    } else if (this.collectionData.primaryCategory === "Content Playlist") {
+      return children && children.filter(item => item.primaryCategory === 'Content Playlist');
     }
   }
 
@@ -497,6 +499,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       return children && children.filter(item => item.primaryCategory !== 'Textbook Unit');
     } else if (this.collectionData.primaryCategory === "Course") {
       return children && children.filter(item => item.primaryCategory !== 'Course Unit');
+    } else if (this.collectionData.primaryCategory === "Content Playlist") {
+      return children && children.filter(item => item.primaryCategory !== 'Content Playlist');
     }
   }
 
