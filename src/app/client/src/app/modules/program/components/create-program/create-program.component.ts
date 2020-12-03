@@ -708,17 +708,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.collectionListForm.controls['medium'].setValue('');
     this.collectionListForm.controls['gradeLevel'].setValue('');
     this.collectionListForm.controls['subject'].setValue('');
-    this.showTexbooklist(true , this.collectionListForm.value.target_collection_category);
+    this.showTexbooklist(true);
   }
-
-  /*handleContentTypes() {
-    const contentTypes = this.collectionListForm.value.content_types;
-    let configContentTypes = _.get(_.find(programConfigObj.components, { id: 'ng.sunbird.chapterList' }), 'config.contentTypes.value');
-    configContentTypes = _.filter(configContentTypes, (type) => {
-      return _.includes(contentTypes, type.metadata.contentType);
-    });
-    _.find(this.programConfig.components, { id: 'ng.sunbird.chapterList' }).config.contentTypes.value = configContentTypes;
-  }*/
 
   defaultContributeOrgReviewChanged($event) {
     this.createProgramForm.value.defaultContributeOrgReview = !$event.target.checked;
@@ -898,14 +889,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 onChangeTargetCollection() {
    if (this.callTargetCollection) {
-    this.showTexbooklist(true , this.collectionListForm.value.target_collection_category);
+    this.showTexbooklist(true);
     this.collectionListForm.value.pcollections = [];
+    this.tempCollections = [];
    }
 }
-  showTexbooklist(showTextBookSelector = true, primaryCategory) {
+  showTexbooklist(showTextBookSelector = true) {
+    const primaryCategory = this.collectionListForm.value.target_collection_category;
     // for scrolling window to top after Next button navigation
-    window.scrollTo(0,0);
-    this.tempCollections = [];
     const requestData = {
       request: {
         filters: {
@@ -963,10 +954,12 @@ onChangeTargetCollection() {
             });
           }
         } else {
-          this.showProgramScope = false;
+          this.showProgramScope = (!this.filterApplied) ? false : true;
           this.collections = [];
           this.tempSortCollections = [];
-        this.toasterService.warning('Please select different target collection');
+          if (!this.filterApplied) {
+           this.toasterService.warning('Please select different target collection');
+          }
         }
       },
       (err) => {
