@@ -246,12 +246,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   fetchFormconfiguration() {
     this.formFieldProperties = _.cloneDeep(this.helperService.getFormConfiguration());
-    // this.getEditableFields();
-    // _.forEach(this.formFieldProperties, field => {
-    //   if (field.editable && !_.includes(this.editableFields, field.code)) {
-    //     field['editable'] = false;
-    //   }
-    // });
+    this.getEditableFields();
+    _.forEach(this.formFieldProperties, field => {
+      if (field.editable && !_.includes(this.editableFields, field.code)) {
+        field['editable'] = false;
+      }
+    });
   }
 
   showEditform(action) {
@@ -820,7 +820,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     if (this.helperService.validateForm(this.formFieldProperties, this.formData.formInputData || {})) {
       console.log(this.formData.formInputData);
       // tslint:disable-next-line:max-line-length
-      const formattedData = this.helperService.getFormattedData(this.formData.formInputData, this.formFieldProperties);
+      const formattedData = this.helperService.getFormattedData(_.pick(this.formData.formInputData, this.editableFields), this.formFieldProperties);
       const request = {
         'content': {
           'versionKey': this.contentMetaData.versionKey,
