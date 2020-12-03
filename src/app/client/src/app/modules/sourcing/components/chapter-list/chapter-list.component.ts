@@ -343,6 +343,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         response.result.content.children = children;
         this.collectionData = response.result.content;
         this.storedCollectionData = unitIdentifier ?  this.storedCollectionData : _.cloneDeep(this.collectionData);
+        this.helperService.selectedCollectionMetaData = _.omit(this.storedCollectionData, ['children', 'childNodes']);
         const textBookMetaData = [];
         instance.countData['total'] = 0;
         instance.countData['review'] = 0;
@@ -521,8 +522,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       'root': this.checkIfMainCollection(data) ? true : false,
       'origin': data.origin,
       'originData': data.originData,
-      'framework': data.framework,
-      'channel': data.channel,
       'parent': data.parent || ''
     };
     const childData = data.children;
@@ -773,7 +772,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       if (!_.isEmpty(this.userService.userProfile.lastName)) {
         creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
       }
-      const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.sessionContext, this.selectedSharedContext);
+      const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
       const option = {
         url: `content/v3/create`,
         data: {

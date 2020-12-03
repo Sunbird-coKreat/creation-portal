@@ -21,6 +21,7 @@ export class HelperService {
   private _categoryMetaData$ = new Subject<any>();
   public readonly categoryMetaData$: Observable<any> = this._categoryMetaData$
     .asObservable().pipe(skipWhile(data => data === undefined || data === null));
+  private _selectedCollectionMetaData: any;
 
   constructor(private configService: ConfigService, private contentService: ContentService,
     private toasterService: ToasterService, private publicDataService: PublicDataService,
@@ -51,6 +52,14 @@ export class HelperService {
 
   get selectedCategoryMetaData() {
     return this._categoryMetaData;
+  }
+
+  set selectedCollectionMetaData(data) {
+    this._selectedCollectionMetaData = data;
+  }
+
+  get selectedCollectionMetaData() {
+    return this._selectedCollectionMetaData;
   }
 
   getLicences(): Observable<any> {
@@ -588,20 +597,17 @@ export class HelperService {
       }
   }
 
-  fetchRootMetaData(sharedContext, sessionContext, selectedSharedContext) {
+  fetchRootMetaData(sharedContext, selectedSharedContext) {
     return sharedContext.reduce((obj, context) => {
-              return { ...obj, ...(this.getContextObj(context, sessionContext, selectedSharedContext)) };
+              return { ...obj, ...(this.getContextObj(context, selectedSharedContext)) };
             }, {});
   }
 
-  getContextObj(context, sessionContext, selectedSharedContext) {
-    if (['framework', 'channel'].includes(context)) {
-      const data = _.get(sessionContext, `hierarchyObj.hierarchy.${sessionContext.collection}`);
-      return {[context]: _.get(data, context)};
-    } else if (context === 'topic') { // Here topic is fetched from unitLevel meta
+  getContextObj(context, selectedSharedContext) {
+    if (context === 'topic') { // Here topic is fetched from unitLevel meta
       return {[context]: selectedSharedContext[context]};
     } else {
-      return {[context]: sessionContext[context]};
+      return {[context]: this._selectedCollectionMetaData[context]};
     }
   }
 }
