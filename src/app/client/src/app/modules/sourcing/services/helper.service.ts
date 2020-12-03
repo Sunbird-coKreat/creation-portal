@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ConfigService, ToasterService, ServerResponse, ResourceService } from '@sunbird/shared';
 import { ContentService, ActionService, PublicDataService, ProgramsService, NotificationService, UserService,
-  FrameworkService } from '@sunbird/core';
+  FrameworkService, LearnerService } from '@sunbird/core';
 import { throwError, Observable, of, Subject, forkJoin } from 'rxjs';
 import { catchError, map, switchMap, tap, mergeMap, filter, first, skipWhile } from 'rxjs/operators';
 import * as _ from 'lodash-es';
@@ -27,7 +27,7 @@ export class HelperService {
     private actionService: ActionService, private resourceService: ResourceService,
     public programStageService: ProgramStageService, private programsService: ProgramsService,
     private notificationService: NotificationService, private userService: UserService, private cacheService: CacheService,
-    public frameworkService: FrameworkService) { }
+    public frameworkService: FrameworkService, public learnerService: LearnerService) { }
 
   initialize(programDetails) {
     if (!this.getAvailableLicences()) {
@@ -184,7 +184,7 @@ export class HelperService {
   }
 
 
-  publishContentToDiksha(action, collectionId, contentId, originData, rejectedComments?) {
+  publishContentToDiksha(action, collectionId, contentId, originData, contentMetaData, rejectedComments?) {
     const option = {
       url: 'content/v3/read/' + collectionId,
       param: { 'mode': 'edit', 'fields': 'acceptedContents,rejectedContents,versionKey,sourcingRejectedComments' }
@@ -195,25 +195,37 @@ export class HelperService {
     this.actionService.get(option).pipe(map((res: any) => res.result.content)).subscribe((data) => {
       if (this.checkIfContentPublishedOrRejected(data, action, contentId)) { return; }
       if (action === 'accept' || action === 'acceptWithChanges') {
-        const req = {
-          url: `program/v1/content/publish`,
+        // tslint:disable-next-line:max-line-length
+        const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
+        ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : window.location.origin;
+
+        const reqFormat = {
+          source: `${baseUrl}/api/content/v1/read/${contentMetaData.identifier}`,
+          metadata: _.pick(contentMetaData, ['name', 'code', 'mimeType', 'framework', 'contentType']),
+          collection: [
+            {
+              identifier: originData.textbookOriginId,
+              unitId: originData.unitOriginId,
+            }
+          ]
+        };
+        const option = {
+          url: this.configService.urlConFig.URLS.BULKJOB.DOCK_IMPORT_V1,
           data: {
-            'request': {
-              'content_id': contentId,
-              'origin': {
-                'channel': _.get(originData, 'channel'),
-                'textbook_id': _.get(originData, 'textbookOriginId'),
-                'units': [_.get(originData, 'unitOriginId')],
-                'lastPublishedBy': this.userService.userProfile.userId
-              }
+            request: {
+              content: [
+                reqFormat
+              ]
             }
           }
         };
-        this.programsService.post(req).subscribe((response) => {
-          const me = this;
-          setTimeout(() => {
-            me.attachContentToTextbook(action, collectionId, contentId, data);
-          }, 1000);
+        this.learnerService.post(option).subscribe((res: any) => {
+          if (res && res.result) {
+            const me = this;
+            setTimeout(() => {
+              me.attachContentToTextbook(action, collectionId, contentId, data);
+            }, 1000);
+          }
         }, err => {
           this.acceptContent_errMsg(action);
         });

@@ -1064,10 +1064,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         if (action === 'accept') {
           action = this.isMetadataOverridden ? 'acceptWithChanges' : 'accept';
           // tslint:disable-next-line:max-line-length
-          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentMetaData.identifier, originData);
+          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentMetaData.identifier, originData, this.contentMetaData);
         } else if (action === 'reject' && this.FormControl.value.rejectComment.length) {
           // tslint:disable-next-line:max-line-length
-          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentMetaData.identifier, originData, this.FormControl.value.rejectComment);
+          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentMetaData.identifier, originData, this.contentMetaData, this.FormControl.value.rejectComment);
         }
       } else {
         action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
