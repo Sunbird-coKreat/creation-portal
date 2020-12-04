@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { TreeService, EditorService } from '../../services';
 import { toolbarConfig, collectionTreeNodes } from '../../editor.config';
 import { ActivatedRoute } from '@angular/router';
+import * as _ from 'lodash-es';
 
 interface IeditorParams {
   collectionId: string;
@@ -22,14 +23,17 @@ export class EditorBaseComponent implements OnInit {
 
   constructor(public treeService: TreeService, private editorService: EditorService, private activatedRoute: ActivatedRoute) {
     this.editorParams = {
-      collectionId: this.activatedRoute.snapshot.params.collectionId,
-      type: this.activatedRoute.snapshot.params.type
+      collectionId: _.get(this.activatedRoute, 'snapshot.params.collectionId'),
+      type: _.get(this.activatedRoute, 'snapshot.params.type')
     };
   }
 
   ngOnInit() {
-    // tslint:disable-next-line:max-line-length
+    if (this.editorParams.collectionId) {
+      // tslint:disable-next-line:max-line-length
     this.editorService.fetchCollectionHierarchy(this.editorParams).subscribe(response => this.collectionTreeNodes = response && {data: response});
+    }
+    this.collectionTreeNodes = collectionTreeNodes;
   }
 
   toolbarEventListener(event) {
