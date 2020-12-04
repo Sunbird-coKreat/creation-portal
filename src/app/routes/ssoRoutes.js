@@ -37,11 +37,12 @@ module.exports = (app) => {
       if (json.access_token) {
         const uuid = _.last(jwt.decode(json.access_token).sub.split(":"));
         const userInfo  = await getUserDetails(uuid, json.access_token);
-        if (!_.get(userInfo, 'userName') || _.get(userInfo, 'userName') == '') {
+        const userName= _.get(userInfo, 'userName');
+        if (!userName || userName == '') {
           throw 'Username was missing from the user';
         }
 
-        await createSession(_.get(userInfo, 'userName'), 'portal', req, res);
+        await createSession(userName, 'portal', req, res);
         let redirectURI = req.query.returnTo || `/sourcing`;
         if (redirectURI) {
           const parsedRedirectURI = url.parse(decodeURI(redirectURI), true);
