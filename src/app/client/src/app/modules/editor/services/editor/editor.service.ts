@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, Subject } from 'rxjs';
 import { TreeService } from '../tree/tree.service';
+import { PublicDataService, UserService, ActionService, FrameworkService, ProgramsService } from '@sunbird/core';
 
 import * as _ from 'lodash-es';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +12,16 @@ import * as _ from 'lodash-es';
 export class EditorService {
   data: any;
   public questionStream$ = new Subject<any>();
-  constructor(public treeService: TreeService) { }
+  constructor(public treeService: TreeService, public actionService: ActionService) { }
+
+  fetchCollectionHierarchy(data): Observable<any> {
+    const hierarchyUrl = 'content/v3/hierarchy/' + data.collectionId;
+    const req = {
+      url: hierarchyUrl,
+      param: { 'mode': 'edit' }
+    };
+    return this.actionService.get(req).pipe(map((res: any) => _.get(res, 'result.content')));
+  }
 
   save() {
 

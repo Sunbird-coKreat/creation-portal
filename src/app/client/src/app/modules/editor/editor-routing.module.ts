@@ -5,7 +5,7 @@ import { EditorBaseComponent, QuestionBaseComponent } from './components';
 
 const routes: Routes = [
   {
-    path: 'edit/collection/:collectionId/:type', component: EditorBaseComponent, pathMatch: 'full',
+    path: 'collection/:collectionId/:type', component: EditorBaseComponent, pathMatch: 'full',
     data: {
       hideHeaderNFooter: 'true'
     },

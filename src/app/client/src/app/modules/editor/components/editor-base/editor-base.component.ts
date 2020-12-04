@@ -28,7 +28,8 @@ export class EditorBaseComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.collectionTreeNodes = collectionTreeNodes;
+    // tslint:disable-next-line:max-line-length
+    this.editorService.fetchCollectionHierarchy(this.editorParams).subscribe(response => this.collectionTreeNodes = response && {data: response});
   }
 
   toolbarEventListener(event) {
