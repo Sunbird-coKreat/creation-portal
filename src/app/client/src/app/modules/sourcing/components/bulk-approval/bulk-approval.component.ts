@@ -74,14 +74,14 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
 
   approvalPendingContents(hierarchy) {
     _.forEach(hierarchy, obj => {
-      if (obj.contentType === 'TextBook' || obj.contentType === 'TextBookUnit') {
+      if (this.helperService.checkIfMainCollection(obj) || this.helperService.checkIfCollectionFolder(obj)) {
         const unit = _.pick(obj, ['identifier', 'origin']);
         const originUnit = _.find(this.originFolderData, o => o.identifier === unit.origin && o.status === 'Draft');
         if (originUnit) {
           this.folderData.push({identifier: obj.identifier, origin: obj.origin});
         }
       }
-      if (obj.contentType && obj.contentType !== 'TextBook' && obj.contentType !== 'TextBookUnit' &&
+      if (!this.helperService.checkIfMainCollection(obj) && !this.helperService.checkIfCollectionFolder(obj) &&
         obj.status === 'Live' && this.checkApprovalPending(obj)) {
           const content = _.pick(obj, ['name', 'code', 'mimeType', 'framework', 'contentType', 'identifier', 'parent']);
           const unitData = _.find(this.folderData, data => data.identifier === content.parent);
@@ -111,7 +111,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
 
   checkOriginFolderStatus(hierarchy) {
     _.forEach(hierarchy, obj => {
-      if (obj.contentType === 'TextBook' || obj.contentType === 'TextBookUnit') {
+      if (this.helperService.checkIfMainCollection(obj) || this.helperService.checkIfCollectionFolder(obj)) {
         this.originFolderData.push({identifier: obj.identifier, status: obj.status});
       }
       if (obj.children && obj.children.length) {
@@ -131,7 +131,8 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
       if (contnet.originUnitId) {
         const reqFormat = {
           source: `${baseUrl}/api/content/v1/read/${contnet.identifier}`,
-          metadata: _.pick(contnet, ['name', 'code', 'mimeType', 'framework', 'contentType']),
+          metadata: {..._.pick(this.storedCollectionData, ['framework', 'channel']),
+              ..._.pick(contnet, ['name', 'code', 'mimeType', 'contentType'])},
           collection: [
             {
               identifier: this.storedCollectionData.origin,
@@ -266,7 +267,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
 
   tree(ob) {
     _.forEach(ob.chi, bb => {
-      if (bb.contentType === 'TextBookUnit') {
+      if (this.helperService.checkIfCollectionFolder(bb)) {
         this.unitGroup.push({name: bb.name, identifier: bb.identifier});
       }
       if (bb.chi) {
