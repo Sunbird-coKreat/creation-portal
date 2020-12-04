@@ -470,19 +470,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   checkIfCollectionFolder(data) {
-    if (data.primaryCategory === "Textbook Unit" || data.primaryCategory === "Course Unit" || (data.primaryCategory === "Content Playlist" && data.visibility === "Parent")) {
-      return true;
-    } else {
-      return false;
-    }
+    return this.helperService.checkIfCollectionFolder(data);
   }
 
   checkIfMainCollection (data) {
-      if (data.primaryCategory === "Digital Textbook" || data.primaryCategory === "Course" || (data.primaryCategory === "Content Playlist" && data.visibility === "Default")) {
-        return true;
-      } else {
-        return false;
-      }
+      return this.helperService.checkIfMainCollection(data);
   }
 
   getTreeChildren(children) {

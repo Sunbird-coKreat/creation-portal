@@ -62,6 +62,24 @@ export class HelperService {
     return this._selectedCollectionMetaData;
   }
 
+  checkIfCollectionFolder(data) {
+    // tslint:disable-next-line:max-line-length
+    if (data.primaryCategory === 'Textbook Unit' || data.primaryCategory === 'Course Unit' || (data.primaryCategory === 'Content Playlist' && data.visibility === 'Parent')) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  checkIfMainCollection (data) {
+    // tslint:disable-next-line:max-line-length
+    if (data.primaryCategory === 'Digital Textbook' || data.primaryCategory === 'Course' || (data.primaryCategory === 'Content Playlist' && data.visibility === 'Default')) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   getLicences(): Observable<any> {
     const req = {
       url: `${this.configService.urlConFig.URLS.COMPOSITE.SEARCH}`,
@@ -210,7 +228,8 @@ export class HelperService {
 
         const reqFormat = {
           source: `${baseUrl}/api/content/v1/read/${contentMetaData.identifier}`,
-          metadata: _.pick(contentMetaData, ['name', 'code', 'mimeType', 'framework', 'contentType']),
+          metadata: {..._.pick(this._selectedCollectionMetaData, ['framework', 'channel']),
+               ..._.pick(contentMetaData, ['name', 'code', 'mimeType', 'contentType'])},
           collection: [
             {
               identifier: originData.textbookOriginId,
@@ -567,23 +586,23 @@ export class HelperService {
 
   mapContentTypesToCategories(nomContentTypes) {
       const mapping = {
-              "TeachingMethod" : "Teacher Resource",
-              "PedagogyFlow" : "Teacher Resource",
-              "FocusSpot" : "Teacher Resource",
-              "LearningOutcomeDefinition" : "Teacher Resource",
-              "PracticeQuestionSet" : "Practice Question Set",
-              "CuriosityQuestionSet": "Practice Question Set",
-              "MarkingSchemeRubric" : "Teacher Resource",
-              "ExplanationResource" : "Explanation Content",
-              "ExperientialResource" : "Learning Resource",
-              "ConceptMap" : "Learning Resource",
-              "SelfAssess" : "Course Assessment",
-              "ExplanationVideo" : "Explanation Content",
-              "ClassroomTeachingVideo" : "Explanation Content",
-              "ExplanationReadingMaterial" : "Learning Resource",
-              "PreviousBoardExamPapers" : "Learning Resource",
-              "LessonPlanResource" : "Teacher Resource",
-              "LearningActivity" : "Learning Resource",
+              'TeachingMethod' : 'Teacher Resource',
+              'PedagogyFlow' : 'Teacher Resource',
+              'FocusSpot' : 'Teacher Resource',
+              'LearningOutcomeDefinition' : 'Teacher Resource',
+              'PracticeQuestionSet' : 'Practice Question Set',
+              'CuriosityQuestionSet': 'Practice Question Set',
+              'MarkingSchemeRubric' : 'Teacher Resource',
+              'ExplanationResource' : 'Explanation Content',
+              'ExperientialResource' : 'Learning Resource',
+              'ConceptMap' : 'Learning Resource',
+              'SelfAssess' : 'Course Assessment',
+              'ExplanationVideo' : 'Explanation Content',
+              'ClassroomTeachingVideo' : 'Explanation Content',
+              'ExplanationReadingMaterial' : 'Learning Resource',
+              'PreviousBoardExamPapers' : 'Learning Resource',
+              'LessonPlanResource' : 'Teacher Resource',
+              'LearningActivity' : 'Learning Resource',
               };
       const oldContentTypes = _.keys(mapping);
       if (!_.isEmpty(nomContentTypes) && _.includes(oldContentTypes,  _.nth(nomContentTypes, 0))) {
