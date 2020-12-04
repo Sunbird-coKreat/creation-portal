@@ -7,6 +7,7 @@ const {
   createSession, updateContact, updateRoles, sendSsoKafkaMessage, migrateUser, freeUpUser, getIdentifier,
   getAccessTokenFromId, getUserInfo
 } = require('./../helpers/ssoHelper');
+const { getUserDetails} = require('./../helpers/userHelper');
 const telemetryHelper = require('../helpers/telemetryHelper');
 const {generateAuthToken, getGrantFromCode} = require('../helpers/keyCloakHelperService');
 const {parseJson} = require('../helpers/utilityService');
@@ -33,18 +34,14 @@ module.exports = (app) => {
       errType = 'SSO_LOGIN';
       var response = await getAccessTokenFromId(req.query.id);
       var json = JSON.parse(response);
-
       if (json.access_token) {
-        const userInfo = await getUserInfo(json.access_token);
-        const profile = JSON.parse(userInfo);
-        console.log(userInfo);
-
-        // Changed to name as preferred_username is not working
-        if (!profile.preferred_username || profile.preferred_username == '') {
+        const uuid = _.last(jwt.decode(json.access_token).sub.split(":"));
+        const userInfo  = await getUserDetails(uuid, json.access_token);
+        if (!_.get(userInfo, 'userName') || _.get(userInfo, 'userName') == '') {
           throw 'Username was missing from the user';
         }
 
-        await createSession(profile.preferred_username, 'portal', req, res);
+        await createSession(_.get(userInfo, 'userName'), 'portal', req, res);
         let redirectURI = req.query.returnTo || `/sourcing`;
         if (redirectURI) {
           const parsedRedirectURI = url.parse(decodeURI(redirectURI), true);
