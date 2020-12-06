@@ -9,7 +9,7 @@
       <div class="ui twelve column grid m-0">
         <!-- Left Sidebar for cards -->
         <div class="three wide column p-0 h-100vh">
-          <app-collection-tree-new
+          <app-collection-tree-new *ngIf="collectionTreeNodes"
             [nodes]="collectionTreeNodes"
             (treeEventEmitter)="treeEventListener($event)"
           >

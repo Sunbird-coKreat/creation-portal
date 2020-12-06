@@ -78,6 +78,128 @@ export const editorConfig = {
             'childrenTypes': [],
             'addType': 'Editor',
             'iconClass': 'fa fa-file-o'
+          },
+          {
+            'type': 'Course',
+            'label': 'Course',
+            'isRoot': true,
+            'editable': true,
+            'childrenTypes': [
+                'CourseUnit'
+            ],
+            'addType': 'Editor',
+            'iconClass': 'fa fa-book'
+          },
+          {
+              'type': 'CourseUnit',
+              'label': 'Course Unit',
+              'isRoot': false,
+              'editable': true,
+              'childrenTypes': [
+                  'CourseUnit',
+                  'Collection',
+                  'Resource',
+                  'SelfAssess',
+                  'FocusSpot',
+                  'LearningOutcomeDefinition',
+                  'PracticeQuestionSet',
+                  'CuriosityQuestions',
+                  'MarkingSchemeRubric',
+                  'ExplanationResource',
+                  'ExperientialResource'
+              ],
+              'addType': 'Editor',
+              'iconClass': 'fa fa-folder-o'
+          },
+          {
+              'type': 'Collection',
+              'label': 'Collection',
+              'isRoot': false,
+              'editable': false,
+              'childrenTypes': [],
+              'addType': 'Browser',
+              'iconClass': 'fa fa-file-o'
+          },
+          {
+              'type': 'Resource',
+              'label': 'Resource',
+              'isRoot': false,
+              'editable': false,
+              'childrenTypes': [],
+              'addType': 'Browser',
+              'iconClass': 'fa fa-file-o'
+          },
+          {
+              'type': 'SelfAssess',
+              'label': 'SelfAssess',
+              'isRoot': false,
+              'editable': false,
+              'childrenTypes': [],
+              'addType': 'Browser',
+              'iconClass': 'fa fa-file-o'
+          },
+          {
+              'type': 'FocusSpot',
+              'label': 'FocusSpot',
+              'isRoot': false,
+              'editable': false,
+              'childrenTypes': [],
+              'addType': 'Browser',
+              'iconClass': 'fa fa-file-o'
+          },
+          {
+              'type': 'LearningOutcomeDefinition',
+              'label': 'LearningOutcomeDefinition',
+              'isRoot': false,
+              'editable': false,
+              'childrenTypes': [],
+              'addType': 'Browser',
+              'iconClass': 'fa fa-file-o'
+          },
+          {
+              'type': 'PracticeQuestionSet',
+              'label': 'PracticeQuestionSet',
+              'isRoot': false,
+              'editable': false,
+              'childrenTypes': [],
+              'addType': 'Browser',
+              'iconClass': 'fa fa-file-o'
+          },
+          {
+              'type': 'CuriosityQuestions',
+              'label': 'CuriosityQuestions',
+              'isRoot': false,
+              'editable': false,
+              'childrenTypes': [],
+              'addType': 'Browser',
+              'iconClass': 'fa fa-file-o'
+          },
+          {
+              'type': 'MarkingSchemeRubric',
+              'label': 'MarkingSchemeRubric',
+              'isRoot': false,
+              'editable': false,
+              'childrenTypes': [],
+              'addType': 'Browser',
+              'iconClass': 'fa fa-file-o'
+          },
+          {
+              'type': 'ExplanationResource',
+              'label': 'ExplanationResource',
+              'isRoot': false,
+              'editable': false,
+              'childrenTypes': [],
+              'addType': 'Browser',
+              'iconClass': 'fa fa-file-o'
+          },
+          {
+              'type': 'ExperientialResource',
+              'label': 'ExperientialResource',
+              'isRoot': false,
+              'editable': false,
+              'childrenTypes': [],
+              'addType': 'Browser',
+              'iconClass': 'fa fa-file-o'
           }
         ]
       },
