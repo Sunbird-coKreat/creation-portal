@@ -540,7 +540,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   canPublishContent() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.router.url.includes('/contribute') && !this.resourceDetails.sampleContent === true && this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Review' && this.userService.getUserId() !== this.resourceDetails.createdBy);
+    return !!(this.router.url.includes('/contribute') && !this.resourceDetails.sampleContent && this.hasAccessFor(['REVIEWER']) && this.resourceStatus === 'Review' && this.userService.getUserId() !== this.resourceDetails.createdBy);
   }
 
   canReviewContent() {
