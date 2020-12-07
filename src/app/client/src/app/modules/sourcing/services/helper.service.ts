@@ -230,7 +230,8 @@ export class HelperService {
           source: `${baseUrl}/api/content/v1/read/${contentMetaData.identifier}`,
           metadata: {..._.pick(this._selectedCollectionMetaData, ['framework']),
                       ..._.pick(_.get(this._selectedCollectionMetaData, 'originData'), ['channel']),
-                       ..._.pick(contentMetaData, ['name', 'code', 'mimeType', 'contentType'])},
+                       ..._.pick(contentMetaData, ['name', 'code', 'mimeType', 'contentType']),
+                        ...{'lastPublishedBy': this.userService.userProfile.userId}},
           collection: [
             {
               identifier: originData.textbookOriginId,
@@ -238,7 +239,7 @@ export class HelperService {
             }
           ]
         };
-        const option = {
+        const reqOption = {
           url: this.configService.urlConFig.URLS.BULKJOB.DOCK_IMPORT_V1,
           data: {
             request: {
@@ -248,7 +249,7 @@ export class HelperService {
             }
           }
         };
-        this.learnerService.post(option).subscribe((res: any) => {
+        this.learnerService.post(reqOption).subscribe((res: any) => {
           if (res && res.result) {
             const me = this;
             setTimeout(() => {
