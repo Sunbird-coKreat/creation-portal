@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ConfigService, ServerResponse, BrowserCacheTtlService } from '@sunbird/shared';
-import { ContentService, ProgramsService, PublicDataService, ActionService } from '@sunbird/core';
+import { ContentService, ProgramsService, PublicDataService, ActionService, LearnerService } from '@sunbird/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import * as _ from 'lodash-es';
@@ -14,7 +14,7 @@ export class BulkJobService {
   constructor(private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService,
     private programsService: ProgramsService, private configService: ConfigService,
     private contentService: ContentService, private publicDataService: PublicDataService,
-    public actionService: ActionService) { }
+    public actionService: ActionService, public learnerService: LearnerService) { }
 
   getBulkOperationStatus(reqData): Observable<ServerResponse> {
     const req = {
@@ -68,9 +68,7 @@ export class BulkJobService {
     };
 
     if (type === 'bulk_approval') {
-      const originUrl = this.programsService.getContentOriginEnvironment();
-      const url =  originUrl + '/action/composite/v3/search';
-      return this.programsService.http.post(url, reqData);
+      return this.learnerService.post(reqData);
     } else if (type === 'bulk_upload') {
       // Get the extra fields that are needed in bulk upload download report
       // tslint:disable-next-line:max-line-length
@@ -78,7 +76,7 @@ export class BulkJobService {
       reqData.data.request.fields = _.concat(reqData.data.request.fields, extraFields);
       const req = {
         url: `${this.configService.urlConFig.URLS.COMPOSITE.SEARCH}`,
-        data: reqData
+        data: reqData.data
       };
       return this.contentService.post(req);
     }
