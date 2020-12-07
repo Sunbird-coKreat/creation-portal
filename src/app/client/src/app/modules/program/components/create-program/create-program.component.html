@@ -569,7 +569,7 @@
 									<div class="five wide column">
 										<div class="sb-bg-white b-1-100 br-4 o-y-auto">
 											<h5 class="py-15 px-20 font-weight-bold fs-0-92 text-capitalize">
-												{{tempCollections.length + ' ' + resource.frmelmnts.lbl.number.Of.Collections.Added}}
+												{{tempCollections.length + ' ' + (resource.frmelmnts.lbl.number.Of.Collections.Added | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName({target_collection_category: [collectionListForm.value.target_collection_category]}, 'plural'))}}
 											</h5>
 											<hr class="mt-0">
 											<div class="o-y-auto maxmin-h-375 fs-0-92 text-capitalize">
@@ -706,8 +706,8 @@
 						<div class="qq-upload-button-selector qq-upload-button sb-btn sb-btn-normal sb-btn-success">
 							<div>{{resource?.frmelmnts?.btn?.selectContentFiles}}</div>
 						</div>
-						<p class="mt-8">Upload {{assetConfig.pdf.accepted}} files ( Max size
-							{{assetConfig.pdf.size}} MB )</p>
+						<p class="mt-8">Upload {{assetConfig.pdfFiles}} files ( Max size
+							{{assetConfig.defaultfileSize}} MB )</p>
 					</div>
 					<dialog class="qq-confirm-dialog-selector">
 						<div class="qq-dialog-message-selector"></div>

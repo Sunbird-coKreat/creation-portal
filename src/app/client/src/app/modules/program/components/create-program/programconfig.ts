@@ -7,7 +7,7 @@ var programConfig = {
     'board': [],
     'gradeLevel': [],
     'medium': [],
-    'subject': [],
+    'subject': [], 
     'roles': [
       {
         'id': 1,

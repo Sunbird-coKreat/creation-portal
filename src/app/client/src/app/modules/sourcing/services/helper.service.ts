@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ConfigService, ToasterService, ServerResponse, ResourceService } from '@sunbird/shared';
 import { ContentService, ActionService, PublicDataService, ProgramsService, NotificationService, UserService,
-  FrameworkService } from '@sunbird/core';
+  FrameworkService, LearnerService } from '@sunbird/core';
 import { throwError, Observable, of, Subject, forkJoin } from 'rxjs';
 import { catchError, map, switchMap, tap, mergeMap, filter, first, skipWhile } from 'rxjs/operators';
 import * as _ from 'lodash-es';
@@ -21,13 +21,14 @@ export class HelperService {
   private _categoryMetaData$ = new Subject<any>();
   public readonly categoryMetaData$: Observable<any> = this._categoryMetaData$
     .asObservable().pipe(skipWhile(data => data === undefined || data === null));
+  private _selectedCollectionMetaData: any;
 
   constructor(private configService: ConfigService, private contentService: ContentService,
     private toasterService: ToasterService, private publicDataService: PublicDataService,
     private actionService: ActionService, private resourceService: ResourceService,
     public programStageService: ProgramStageService, private programsService: ProgramsService,
     private notificationService: NotificationService, private userService: UserService, private cacheService: CacheService,
-    public frameworkService: FrameworkService) { }
+    public frameworkService: FrameworkService, public learnerService: LearnerService) { }
 
   initialize(programDetails) {
     if (!this.getAvailableLicences()) {
@@ -51,6 +52,32 @@ export class HelperService {
 
   get selectedCategoryMetaData() {
     return this._categoryMetaData;
+  }
+
+  set selectedCollectionMetaData(data) {
+    this._selectedCollectionMetaData = data;
+  }
+
+  get selectedCollectionMetaData() {
+    return this._selectedCollectionMetaData;
+  }
+
+  checkIfCollectionFolder(data) {
+    // tslint:disable-next-line:max-line-length
+    if (data.primaryCategory === 'Textbook Unit' || data.primaryCategory === 'Course Unit' || (data.primaryCategory === 'Content Playlist' && data.visibility === 'Parent')) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  checkIfMainCollection (data) {
+    // tslint:disable-next-line:max-line-length
+    if (data.primaryCategory === 'Digital Textbook' || data.primaryCategory === 'Course' || (data.primaryCategory === 'Content Playlist' && data.visibility === 'Default')) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   getLicences(): Observable<any> {
@@ -184,7 +211,7 @@ export class HelperService {
   }
 
 
-  publishContentToDiksha(action, collectionId, contentId, originData, rejectedComments?) {
+  publishContentToDiksha(action, collectionId, contentId, originData, contentMetaData, rejectedComments?) {
     const option = {
       url: 'content/v3/read/' + collectionId,
       param: { 'mode': 'edit', 'fields': 'acceptedContents,rejectedContents,versionKey,sourcingRejectedComments' }
@@ -195,25 +222,39 @@ export class HelperService {
     this.actionService.get(option).pipe(map((res: any) => res.result.content)).subscribe((data) => {
       if (this.checkIfContentPublishedOrRejected(data, action, contentId)) { return; }
       if (action === 'accept' || action === 'acceptWithChanges') {
-        const req = {
-          url: `program/v1/content/publish`,
+        // tslint:disable-next-line:max-line-length
+        const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
+        ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : window.location.origin;
+
+        const reqFormat = {
+          source: `${baseUrl}/api/content/v1/read/${contentMetaData.identifier}`,
+          metadata: {..._.pick(this._selectedCollectionMetaData, ['framework']),
+                      ..._.pick(_.get(this._selectedCollectionMetaData, 'originData'), ['channel']),
+                       ..._.pick(contentMetaData, ['name', 'code', 'mimeType', 'contentType'])},
+          collection: [
+            {
+              identifier: originData.textbookOriginId,
+              unitId: originData.unitOriginId,
+            }
+          ]
+        };
+        const option = {
+          url: this.configService.urlConFig.URLS.BULKJOB.DOCK_IMPORT_V1,
           data: {
-            'request': {
-              'content_id': contentId,
-              'origin': {
-                'channel': _.get(originData, 'channel'),
-                'textbook_id': _.get(originData, 'textbookOriginId'),
-                'units': [_.get(originData, 'unitOriginId')],
-                'lastPublishedBy': this.userService.userProfile.userId
-              }
+            request: {
+              content: [
+                reqFormat
+              ]
             }
           }
         };
-        this.programsService.post(req).subscribe((response) => {
-          const me = this;
-          setTimeout(() => {
-            me.attachContentToTextbook(action, collectionId, contentId, data);
-          }, 1000);
+        this.learnerService.post(option).subscribe((res: any) => {
+          if (res && res.result) {
+            const me = this;
+            setTimeout(() => {
+              me.attachContentToTextbook(action, collectionId, contentId, data);
+            }, 1000);
+          }
         }, err => {
           this.acceptContent_errMsg(action);
         });
@@ -546,23 +587,23 @@ export class HelperService {
 
   mapContentTypesToCategories(nomContentTypes) {
       const mapping = {
-              "TeachingMethod" : "Teacher Resource",
-              "PedagogyFlow" : "Teacher Resource",
-              "FocusSpot" : "Teacher Resource",
-              "LearningOutcomeDefinition" : "Teacher Resource",
-              "PracticeQuestionSet" : "Practice Question Set",
-              "CuriosityQuestionSet": "Practice Question Set",
-              "MarkingSchemeRubric" : "Teacher Resource",
-              "ExplanationResource" : "Explanation Content",
-              "ExperientialResource" : "Learning Resource",
-              "ConceptMap" : "Learning Resource",
-              "SelfAssess" : "Course Assessment",
-              "ExplanationVideo" : "Explanation Content",
-              "ClassroomTeachingVideo" : "Explanation Content",
-              "ExplanationReadingMaterial" : "Learning Resource",
-              "PreviousBoardExamPapers" : "Learning Resource",
-              "LessonPlanResource" : "Teacher Resource",
-              "LearningActivity" : "Learning Resource",
+              'TeachingMethod' : 'Teacher Resource',
+              'PedagogyFlow' : 'Teacher Resource',
+              'FocusSpot' : 'Teacher Resource',
+              'LearningOutcomeDefinition' : 'Teacher Resource',
+              'PracticeQuestionSet' : 'Practice Question Set',
+              'CuriosityQuestionSet': 'Practice Question Set',
+              'MarkingSchemeRubric' : 'Teacher Resource',
+              'ExplanationResource' : 'Explanation Content',
+              'ExperientialResource' : 'Learning Resource',
+              'ConceptMap' : 'Learning Resource',
+              'SelfAssess' : 'Course Assessment',
+              'ExplanationVideo' : 'Explanation Content',
+              'ClassroomTeachingVideo' : 'Explanation Content',
+              'ExplanationReadingMaterial' : 'Learning Resource',
+              'PreviousBoardExamPapers' : 'Learning Resource',
+              'LessonPlanResource' : 'Teacher Resource',
+              'LearningActivity' : 'Learning Resource',
               };
       const oldContentTypes = _.keys(mapping);
       if (!_.isEmpty(nomContentTypes) && _.includes(oldContentTypes,  _.nth(nomContentTypes, 0))) {
@@ -574,5 +615,19 @@ export class HelperService {
       } else {
         return nomContentTypes;
       }
+  }
+
+  fetchRootMetaData(sharedContext, selectedSharedContext) {
+    return sharedContext.reduce((obj, context) => {
+              return { ...obj, ...(this.getContextObj(context, selectedSharedContext)) };
+            }, {});
+  }
+
+  getContextObj(context, selectedSharedContext) {
+    if (context === 'topic') { // Here topic is fetched from unitLevel meta
+      return {[context]: selectedSharedContext[context]};
+    } else {
+      return {[context]: this._selectedCollectionMetaData[context]};
+    }
   }
 }

@@ -708,17 +708,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.collectionListForm.controls['medium'].setValue('');
     this.collectionListForm.controls['gradeLevel'].setValue('');
     this.collectionListForm.controls['subject'].setValue('');
-    this.showTexbooklist(true , this.collectionListForm.value.target_collection_category);
+    this.showTexbooklist(true);
   }
-
-  /*handleContentTypes() {
-    const contentTypes = this.collectionListForm.value.content_types;
-    let configContentTypes = _.get(_.find(programConfigObj.components, { id: 'ng.sunbird.chapterList' }), 'config.contentTypes.value');
-    configContentTypes = _.filter(configContentTypes, (type) => {
-      return _.includes(contentTypes, type.metadata.contentType);
-    });
-    _.find(this.programConfig.components, { id: 'ng.sunbird.chapterList' }).config.contentTypes.value = configContentTypes;
-  }*/
 
   defaultContributeOrgReviewChanged($event) {
     this.createProgramForm.value.defaultContributeOrgReview = !$event.target.checked;
@@ -898,14 +889,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 onChangeTargetCollection() {
    if (this.callTargetCollection) {
-    this.showTexbooklist(true , this.collectionListForm.value.target_collection_category);
+    this.showTexbooklist(true);
     this.collectionListForm.value.pcollections = [];
+    this.tempCollections = [];
    }
 }
-  showTexbooklist(showTextBookSelector = true, primaryCategory) {
+  showTexbooklist(showTextBookSelector = true) {
+    const primaryCategory = this.collectionListForm.value.target_collection_category;
     // for scrolling window to top after Next button navigation
-    window.scrollTo(0,0);
-    this.tempCollections = [];
     const requestData = {
       request: {
         filters: {
@@ -963,11 +954,13 @@ onChangeTargetCollection() {
             });
           }
         } else {
-          this.showProgramScope = false;
+          this.showProgramScope = (!this.filterApplied) ? false : true;
           this.collections = [];
           this.tempSortCollections = [];
-        // tslint:disable-next-line: max-line-length
-        this.toasterService.warning(this.resource.messages.smsg.selectDifferentTargetCollection.replace('{TARGET_NAME}', primaryCategory));
+          if (!this.filterApplied) {
+           // tslint:disable-next-line: max-line-length
+           this.toasterService.warning(this.resource.messages.smsg.selectDifferentTargetCollection.replace('{TARGET_NAME}', primaryCategory));
+          }
         }
       },
       (err) => {
@@ -1340,6 +1333,7 @@ onChangeTargetCollection() {
         const cb = (error, resp) => {
           if (!error && resp) {
             this.showTextBookSelector = true;
+            window.scrollTo(0,0);
             ($event.target as HTMLButtonElement).disabled = false;
           } else {
             this.toasterService.error(this.resource.messages.emsg.m0005);
@@ -1350,6 +1344,7 @@ onChangeTargetCollection() {
         this.saveProgram(cb);
       } else if (this.createProgramForm.valid) {
         this.showTextBookSelector = true;
+        window.scrollTo(0,0);
       } else {
         this.formIsInvalid = true;
         this.validateAllFormFields(this.createProgramForm);

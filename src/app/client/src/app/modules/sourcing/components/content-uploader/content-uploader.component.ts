@@ -510,9 +510,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       if (!_.isEmpty(this.userService.userProfile.lastName)) {
         creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
       }
-      const reqBody = this.sharedContext.reduce((obj, context) => {
-        return { ...obj, [context]: this.selectedSharedContext[context] || this.sessionContext[context] };
-      }, {});
+      const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
       const option = {
         url: `content/v3/create`,
         data: {
@@ -530,7 +528,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
                 {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
               'programId': this.sessionContext.programId,
               'unitIdentifiers': [this.unitIdentifier],
-              ...(_.pickBy(reqBody, _.identity))
+              ...(_.pickBy(sharedMetaData, _.identity))
             }
           }
         }
@@ -1064,10 +1062,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         if (action === 'accept') {
           action = this.isMetadataOverridden ? 'acceptWithChanges' : 'accept';
           // tslint:disable-next-line:max-line-length
-          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentMetaData.identifier, originData);
+          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentMetaData.identifier, originData, this.contentMetaData);
         } else if (action === 'reject' && this.FormControl.value.rejectComment.length) {
           // tslint:disable-next-line:max-line-length
-          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentMetaData.identifier, originData, this.FormControl.value.rejectComment);
+          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentMetaData.identifier, originData, this.contentMetaData, this.FormControl.value.rejectComment);
         }
       } else {
         action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
