@@ -958,7 +958,8 @@ onChangeTargetCollection() {
           this.collections = [];
           this.tempSortCollections = [];
           if (!this.filterApplied) {
-           this.toasterService.warning('Please select different target collection');
+           // tslint:disable-next-line: max-line-length
+           this.toasterService.warning(this.resource.messages.smsg.selectDifferentTargetCollection.replace('{TARGET_NAME}', primaryCategory));
           }
         }
       },
@@ -1373,7 +1374,7 @@ onChangeTargetCollection() {
 
     if (_.isEmpty(this.collectionListForm.value.pcollections)) {
       this.disableCreateProgramBtn = false;
-      this.toasterService.warning('Please select at least a one collection');
+      this.toasterService.warning(this.resource.messages.smsg.selectOneTargetCollection);
       return false;
     }
 
