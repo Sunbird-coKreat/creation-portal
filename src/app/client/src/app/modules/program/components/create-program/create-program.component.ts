@@ -903,10 +903,11 @@ onChangeTargetCollection() {
           objectType: 'Collection',
           status: ['Draft'],
           primaryCategory: primaryCategory,
-          channel: this.userprofile.rootOrgId
+          channel: this.userprofile.rootOrgId,
         },
         limit: 1000,
-        not_exists: ['programId']
+        not_exists: ['programId'],
+        exists: ["medium", "gradeLevel", "subject"],
       }
     };
 
