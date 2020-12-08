@@ -386,7 +386,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   setTreeLeafStatusMessage(identifier, instance) {
     this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
     if (this.originalCollectionData && this.originalCollectionData.status !== 'Draft' && this.sourcingOrgReviewer) {
-      this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage;
+      this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage.replaceAll('{TARGET_NAME}', this.programsService.setTargetCollectionName(this.programContext));
+
     }
     this.getFolderLevelCount(this.collectionHierarchy);
     const hierarchy = instance.hierarchyObj;
@@ -1096,7 +1097,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
     // tslint:disable-next-line:max-line-length
     if (this.originalCollectionData && (_.indexOf(this.originalCollectionData.childNodes, collection.origin) < 0 || this.originalCollectionData.status !== 'Draft')) {
-      collection.statusMessage = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
+      collection.statusMessage = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage.replace('{TARGET_NAME}', this.programsService.setTargetCollectionName(this.programContext));
     }
 
     collection.totalLeaf = !_.isEmpty(collection.sourcingStatusDetail) ? _.sum(_.values(collection.sourcingStatusDetail)) :  collection.totalLeaf;
