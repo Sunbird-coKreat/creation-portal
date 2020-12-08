@@ -162,10 +162,34 @@ export class TextbookListComponent implements OnInit {
     };
     return this.programsService.post(req).subscribe((res) => {
       if (res.result && res.result.tableData && res.result.tableData.length) {
+        res.result = {
+          "tableData": [
+              {
+                  "program_id": "a549ffa0-3553-11eb-84ed-692ec8c8dbe9",
+                  "values": [
+                      {
+                          "Course Name": "Untitled Course",
+                          "Medium": "",
+                          "Class": "",
+                          "Subject": "",
+                          "Number of Chapters": 2,
+                          "Nominations Received": 2,
+                          "Samples Received": 1,
+                          "Nominations Accepted": 2,
+                          "Contributions Received": 1,
+                          "Contributions Accepted": 1,
+                          "Contributions Rejected": 0,
+                          "Contributions Pending": 0,
+                          "Contributions corrections pending": 0
+                      }
+                  ]
+              }
+          ]
+      }
         try {
         const headers = [
           this.resourceService.frmelmnts.lbl.projectName,
-          this.resourceService.frmelmnts.lbl.textbookName,
+          this.resourceService.frmelmnts.lbl.textbookName.replace('{TARGET_NAME}',this.programDetails.target_collection_category[0]),
           this.resourceService.frmelmnts.lbl.profile.Medium,
           this.resourceService.frmelmnts.lbl.profile.Classes,
           this.resourceService.frmelmnts.lbl.profile.Subjects,
