@@ -165,7 +165,7 @@ export class TextbookListComponent implements OnInit {
         try {
         const headers = [
           this.resourceService.frmelmnts.lbl.projectName,
-          this.resourceService.frmelmnts.lbl.textbookName,
+          this.resourceService.frmelmnts.lbl.textbookName.replace('{TARGET_NAME}',this.programDetails.target_collection_category[0]),
           this.resourceService.frmelmnts.lbl.profile.Medium,
           this.resourceService.frmelmnts.lbl.profile.Classes,
           this.resourceService.frmelmnts.lbl.profile.Subjects,
