@@ -1,0 +1,37 @@
+{
+  "objectType": "QuestionSet",
+  "relations": {
+    "children": {
+      "type": "hasSequenceMember",
+      "direction": "out",
+      "objects": ["Question", "QuestionImage", "QuestionSet", "QuestionSetImage"]
+    },
+    "collection": {
+      "type": "hasSequenceMember",
+      "direction": "in",
+      "objects": ["QuestionSet", "QuestionSetImage"]
+    }
+  },
+  "version": "enable",
+  "versionCheckMode": "OFF",
+  "frameworkCategories": [],
+  "cacheEnabled": false,
+  "schema_restrict_api": true,
+  "restrictProps": {
+    "create" : [
+      "children"
+    ],
+    "update" : [
+      "children", "visibility", "code", "status", "mimeType"
+    ]
+  },
+  "external": {
+    "tableName": "questionset_hierarchy",
+    "properties": {
+      "hierarchy": {
+        "type": "string"
+      }
+    },
+    "primaryKey": ["identifier"]
+  }
+}
