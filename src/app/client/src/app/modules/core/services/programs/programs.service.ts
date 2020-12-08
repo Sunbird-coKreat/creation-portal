@@ -1249,10 +1249,17 @@ export class ProgramsService extends DataService implements CanActivate {
     return count;
   }
   setTargetCollectionName(program, plural?) {
-    if (program.target_collection_category === null || program.target_collection_category[0] === 'Digital Textbook') {
-     return plural ? 'Textbooks' : 'Textbook';
+    if (program.target_collection_category === null) {
+     return plural ? 'Digital Textbooks' : 'Digital Textbook';
     } else  {
-     return plural ? program.target_collection_category + 's' : program.target_collection_category;
+      let collectionCat = '';
+      if (_.isArray(program.target_collection_category)) {
+        collectionCat = program.target_collection_category[0];
+      } else {
+        collectionCat = program.target_collection_category;
+      }
+
+     return plural ? collectionCat + 's' : collectionCat;
     }
- }
+  }
 }

@@ -992,7 +992,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.resourceService.frmelmnts.lbl.projectName,
       this.resourceService.frmelmnts.lbl.contributorName,
       this.resourceService.frmelmnts.lbl.type,
-      this.resourceService.frmelmnts.lbl.textbooks,
+      this.programsService.setTargetCollectionName(this.programDetails, true),
       this.resourceService.frmelmnts.lbl.samples,
       this.resourceService.frmelmnts.lbl.nominationDate,
       this.resourceService.frmelmnts.lbl.status,
