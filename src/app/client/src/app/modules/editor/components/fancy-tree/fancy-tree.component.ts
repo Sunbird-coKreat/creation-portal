@@ -29,7 +29,7 @@ export class FancyTreeComponent implements AfterViewInit {
         }
       },
       init: (event, data) => {
-          $(this.tree.nativeElement).fancytree('getTree').getNodeByKey('_3').setActive();
+          $(this.tree.nativeElement).fancytree('getTree').getNodeByKey('_2').setActive();
       },
       click: (event, data): boolean => {
         this.tree.nativeElement.click();
