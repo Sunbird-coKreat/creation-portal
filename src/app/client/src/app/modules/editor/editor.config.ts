@@ -389,7 +389,7 @@ export const collectionTreeNodes = {
           'type': 'mcq',
           'templateId': 'mcq-vertical',
           'editorState': {
-            'question': '<p><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">If f(x</span><sub>1</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">) = f (x</span><sub>2</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">) ⇒ x</span><sub>1</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);"> = x</span><sub>2</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);"> ∀ x</span><sub>1</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);"> x</span><sub>2</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);"> ∈ A then the function f: A → B is</span></p>',
+            'question': '<p>If f(x1) = f (x2) ⇒ x1 = x2 ∀ x1 x2 ∈ A then the function f: A → B is</p>',
             'options': [
               {
                 'answer': true,

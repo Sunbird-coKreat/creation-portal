@@ -4,7 +4,12 @@ import { UUID } from 'angular2-uuid';
 import { McqForm } from '../../../cbse-program';
 import { questionEditorConfig } from '../../editor.config';
 import {EditorService} from '../../services';
+import { QuestionService } from '../../services/question/question.service';
 import { Subscription } from 'rxjs';
+import { forkJoin, of, throwError } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { map, catchError } from 'rxjs/operators';
+import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   selector: 'app-multiplechoice-question',
   templateUrl: './multiplechoice-question.component.html',
@@ -38,8 +43,12 @@ export class MultiplechoiceQuestionComponent implements OnInit, OnChanges, OnDes
     'value': 'video'
   }];
   private subscription: Subscription;
+  body: any;
+  optionBody: any = [];
 
-  constructor(private editorService: EditorService) { }
+  constructor(private editorService: EditorService, private http: HttpClient,
+    private questionService: QuestionService, public route:ActivatedRoute,
+    public router: Router) { }
 
   ngOnInit() {
     this.initialized = true;
@@ -178,6 +187,7 @@ export class MultiplechoiceQuestionComponent implements OnInit, OnChanges, OnDes
     } else {
       // TODO: Save question
       console.log(this.mcqForm);
+      this.updateQuestion();
     }
   }
 
@@ -185,4 +195,111 @@ export class MultiplechoiceQuestionComponent implements OnInit, OnChanges, OnDes
     if (this.subscription) { this.subscription.unsubscribe(); }
   }
 
+  updateQuestion(optionalParams?: Array<{}>) {
+    forkJoin([this.getConvertedLatex(this.mcqForm.question), ...this.mcqForm.options.map(option => this.getConvertedLatex(option.body))])
+      .subscribe((res) => {
+        this.body = res[0]; // question with latex
+        const questionData = this.getQuestionHtml(this.body);
+        const correct_answer = this.mcqForm.answer;
+        let resindex;
+        const options = _.map(this.mcqForm.options, (opt, key) => {
+          resindex = Number(key);
+          if (Number(correct_answer) === key) {
+            return { 'answer': true, value: {'body': opt.body, 'value': resindex} };
+          } else {
+            return { 'answer': false, value: {'body': opt.body, 'value': resindex} };
+          }
+        });
+        let metadata = {
+          'code': UUID.UUID(),
+          'category': 'MCQ', // hardcoded value need to change it later
+          'templateId': this.mcqForm.templateId,
+          'name': 'question1', //hardcoded value need to change it later
+          'body': questionData.body,
+          'editorState' : {
+            'question': this.mcqForm.question,
+            'options': options
+          },
+          'interactions' : {
+            'response1': {
+              'type': 'choice',
+              'options': [options]
+            }
+          },
+          'responseDeclaration': questionData.responseDeclaration,
+          // 'qlevel': this.mcqForm.difficultyLevel,
+          'weightage': 1,
+          'maxScore': 1, // Number(this.mcqForm.maxScore),
+          'status': 'Draft',
+          'media': this.mediaArr,
+          'type': 'mcq',
+        };
+        let solutionObj: any;
+        if (!_.isUndefined(this.selectedSolutionType) && !_.isEmpty(this.selectedSolutionType)) {
+          solutionObj = {};
+          solutionObj.id = this.solutionUUID;
+          solutionObj.type = this.selectedSolutionType;
+          solutionObj.value = this.solutionValue;
+          metadata.editorState['solutions'] = [solutionObj];
+          metadata['solutions'] = [solutionObj];
+        }
+        this.questionService.createQuestion(metadata)
+        .subscribe((response) => {
+          console.log("response",response);
+          if (response) {
+            return this.router.navigate(['/create/questionSet/do_21212']); // hardcoded value need to change it later
+          }
+        });
+      });
+  }
+
+  getConvertedLatex(body) {
+    const getLatex = (encodedMath) => {
+      return this.http.get('https://www.wiris.net/demo/editor/mathml2latex?mml=' + encodedMath, {
+        responseType: 'text'
+      });
+    };
+    let latexBody;
+    const isMathML = body.match(/((<math("[^"]*"|[^\/">])*)(.*?)<\/math>)/gi);
+    if (isMathML && isMathML.length > 0) {
+      latexBody = isMathML.map(math => {
+        const encodedMath = encodeURIComponent(math);
+        return getLatex(encodedMath);
+      });
+    }
+    if (latexBody) {
+      return forkJoin(latexBody).pipe(
+        map((res) => {
+          _.forEach(res, (latex, i) => {
+            body = latex.includes('Error') ? body : body.replace(isMathML[i], '<span class="mathText">' + latex + '</span>');
+          });
+          return body;
+        })
+      );
+    } else {
+      return of(body);
+    }
+  }
+
+  getQuestionHtml(question) {
+    const mcqTemplateConfig = {
+      'mcqBody': '<div class=\'{templateClass} question-body\'><div class=\'mcq-title\'>{question}</div><div data-choice-interaction=\'response1\' class=\'mcq-vertical\'></div></div>'
+    };
+    const { mcqBody } = mcqTemplateConfig;
+    const questionBody = mcqBody.replace('{templateClass}', this.mcqForm.templateId)
+      .replace('{question}', question);
+    const responseDeclaration = {
+      responseValue: {
+        cardinality: 'single',
+        type: 'integer',
+        'correct_response': {
+          value: this.mcqForm.answer
+        }
+      }
+    };
+    return {
+      body: questionBody,
+      responseDeclaration: responseDeclaration,
+    };
+  }
 }

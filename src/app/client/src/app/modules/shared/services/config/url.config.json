@@ -283,6 +283,9 @@
     },
     "DOCK_TENANT": {
       "LIST": "program/v1/tenant/list"
+    },
+    "QUESTION": {
+      "CREATE": "question/v4/create"
     }
   }
 }
