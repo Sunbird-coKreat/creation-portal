@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, Subject } from 'rxjs';
 import { TreeService } from '../tree/tree.service';
-import { PublicDataService, UserService, ActionService, FrameworkService, ProgramsService } from '@sunbird/core';
+import { ActionService, UserService } from '@sunbird/core';
+import { ConfigService } from '@sunbird/shared';
 
 import * as _ from 'lodash-es';
 import { map } from 'rxjs/operators';
@@ -12,7 +13,8 @@ import { map } from 'rxjs/operators';
 export class EditorService {
   data: any;
   public questionStream$ = new Subject<any>();
-  constructor(public treeService: TreeService, public actionService: ActionService) { }
+  constructor(public treeService: TreeService, public actionService: ActionService, public configService: ConfigService,
+    public userService: UserService) { }
 
   fetchCollectionHierarchy(data): Observable<any> {
     const hierarchyUrl = 'content/v3/hierarchy/' + data.collectionId;
@@ -20,11 +22,22 @@ export class EditorService {
       url: hierarchyUrl,
       param: { 'mode': 'edit' }
     };
-    return this.actionService.get(req).pipe(map((res: any) => _.get(res, 'result.content')));
+    return this.actionService.get(req);
   }
 
-  save() {
-
+  updateHierarchy(): Observable<any> {
+    const req = {
+      url: this.configService.urlConFig.URLS.CONTENT.HIERARCHY_UPDATE,
+      data: {
+        request: {
+          data: {
+            ...this.getCollectionHierarchy(),
+            ...{lastUpdatedBy: this.userService.userProfile.userId}
+          }
+        }
+      }
+    };
+    return this.actionService.patch(req);
   }
 
   public getQuestionStream$() {

@@ -15,9 +15,30 @@ export class FancyTreeComponent implements AfterViewInit {
   @Input() public options: any;
   @Output() public treeEventEmitter: EventEmitter<any> = new EventEmitter();
   config: any = editorConfig;
+  public showTree: boolean;
   constructor(public activatedRoute: ActivatedRoute, public treeService: TreeService) { }
+
   ngAfterViewInit() {
-    let options: any = {
+    this.renderTree(this.getTreeConfig());
+    // const rootNode = $(this.tree.nativeElement).fancytree('getRootNode');
+    // const firstChild = rootNode.getFirstChild().getFirstChild(); // rootNode.getFirstChild() will always be available.
+    // firstChild ? firstChild.setActive() : rootNode.getFirstChild().setActive(); // select the first children node by default
+  }
+
+  renderTree(options) {
+    options = { ...options, ...this.options };
+    $(this.tree.nativeElement).fancytree(options);
+
+    this.treeService.setTreeElement(this.tree.nativeElement);
+
+    if (this.options.showConnectors) {
+      $('.fancytree-container').addClass('fancytree-connectors');
+    }
+    this.showTree = true;
+  }
+
+  getTreeConfig() {
+    const options: any = {
       extensions: ['glyph'],
       clickFolderMode: 3,
       source: this.nodes,
@@ -29,7 +50,9 @@ export class FancyTreeComponent implements AfterViewInit {
         }
       },
       init: (event, data) => {
+        if ($(this.tree.nativeElement).fancytree('getTree').getNodeByKey('_2')) {
           $(this.tree.nativeElement).fancytree('getTree').getNodeByKey('_2').setActive();
+        }
       },
       click: (event, data): boolean => {
         this.tree.nativeElement.click();
@@ -48,17 +71,7 @@ export class FancyTreeComponent implements AfterViewInit {
         }
       }
     };
-    options = { ...options, ...this.options };
-    $(this.tree.nativeElement).fancytree(options);
-
-    this.treeService.setTreeElement(this.tree.nativeElement);
-
-    if (this.options.showConnectors) {
-      $('.fancytree-container').addClass('fancytree-connectors');
-    }
-    // const rootNode = $(this.tree.nativeElement).fancytree('getRootNode');
-    // const firstChild = rootNode.getFirstChild().getFirstChild(); // rootNode.getFirstChild() will always be available.
-    // firstChild ? firstChild.setActive() : rootNode.getFirstChild().setActive(); // select the first children node by default
+    return options;
   }
 
   expandAll(flag) {

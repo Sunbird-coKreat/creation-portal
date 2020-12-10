@@ -3,13 +3,16 @@ import 'jquery.fancytree';
 import { UUID } from 'angular2-uuid';
 import {editorConfig} from '../../editor.config';
 
+import * as _ from 'lodash-es';
+
 @Injectable({
   providedIn: 'root'
 })
 export class TreeService {
   config: any = editorConfig;
   treeCache = {
-    nodesModified: {}
+    nodesModified: {},
+    nodes: []
   };
 
   treeNativeElement: any;
@@ -49,7 +52,8 @@ export class TreeService {
       }
       newNode = (createType === 'sibling') ? selectedNode.appendSibling(node) : selectedNode.addChildren(node);
       // tslint:disable-next-line:max-line-length
-      this.treeCache.nodesModified[node.id] = { isNew: true, root: false, metadata: { mimeType: 'application/vnd.ekstep.content-collection' } };
+      this.treeCache.nodesModified[node.id] = { isNew: true, root: false, metadata: { mimeType: 'application/vnd.ekstep.content-collection', contentType: _.get(this.getActiveNode(), 'data.objectType'), code: node.id, name: node.title } };
+      this.treeCache.nodes.push(node.id);
     } else {
       newNode = (createType === 'sibling') ? selectedNode.appendSibling(node) : selectedNode.addChildren(node);
     }
@@ -61,6 +65,14 @@ export class TreeService {
     $(this.treeNativeElement).scrollTop($('.fancytree-lastsib').height());
   }
 
+  removeNode() {
+    const selectedNode = this.getActiveNode();
+    selectedNode.remove();
+    this.getFirstChild().setExpanded();
+    $('span.fancytree-title').attr('style', 'width:11em;text-overflow:ellipsis;white-space:nowrap;overflow:hidden');
+    $(this.treeNativeElement).scrollLeft($('.fancytree-lastsib').width());
+    $(this.treeNativeElement).scrollTop($('.fancytree-lastsib').height());
+  }
 
   getActiveNode () {
     return $(this.treeNativeElement).fancytree('getTree').getActiveNode();
@@ -69,6 +81,32 @@ export class TreeService {
   getFirstChild () {
     // console.log($(this.treeNativeElement).fancytree('getRootNode').getChildren());
     return $(this.treeNativeElement).fancytree('getRootNode').getFirstChild();
+  }
+
+  findNode(nodeId) {
+    return $(this.treeNativeElement).fancytree('getTree').findFirst((node) => node.data.id === nodeId);
+  }
+
+  expandNode(nodeId) {
+    this.findNode(nodeId).setExpanded(true);
+  }
+
+  replaceNodeId(identifiers) {
+    $(this.treeNativeElement).fancytree('getTree').visit((node) => {
+      if (identifiers[node.data.id]) {
+        node.data.id = identifiers[node.data.id];
+      }
+    });
+  }
+
+  clearTreeCache(node?) {
+    if (node) {
+      delete this.treeCache.nodesModified[node.id];
+      _.remove(this.treeCache.nodes, val => val === node.id);
+    } else {
+      this.treeCache.nodesModified = {};
+      this.treeCache.nodes = [];
+    }
   }
 
 }

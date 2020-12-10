@@ -8,6 +8,13 @@ export const toolbarConfig = {
     style: 'sb-btn sb-btn-normal sb-btn-outline-primary mr-10',
   },
   {
+    name: 'Delete',
+    type: 'deleteContent',
+    buttonType: 'button',
+    style: 'sb-btn sb-btn-normal sb-btn-primary mr-10',
+    slot: `<i class="trash alternate outline icon"></i>`
+  },
+  {
     name: 'Submit',
     type: 'submitContent',
     buttonType: 'button',
@@ -57,7 +64,7 @@ export const editorConfig = {
     'keywordsLimit': 500,
     'editorConfig': {
       'rules': {
-        'levels': 2,
+        'levels': 4,
         'objectTypes': [
           {
             'type': 'QuestionSet',
