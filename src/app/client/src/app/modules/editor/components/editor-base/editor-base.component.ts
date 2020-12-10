@@ -27,8 +27,8 @@ export class EditorBaseComponent implements OnInit {
   constructor(public treeService: TreeService, private editorService: EditorService, private activatedRoute: ActivatedRoute,
       public toasterService: ToasterService) {
     this.editorParams = {
-      collectionId: this.activatedRoute.snapshot.params.collectionId,
-      type: this.activatedRoute.snapshot.params.type
+      collectionId: _.get(this.activatedRoute, 'snapshot.params.collectionId'),
+      type: _.get(this.activatedRoute, 'snapshot.params.type')
     };
   }
 
