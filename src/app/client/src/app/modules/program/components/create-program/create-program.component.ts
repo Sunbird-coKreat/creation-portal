@@ -59,6 +59,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public programData: any = {};
   showTextBookSelector = false;
   formIsInvalid = false;
+  onClickPrevious = false;
   /*frameworkOption = [];
   boardOption= [];
   subjectsOption = [];
@@ -656,6 +657,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   navigateTo(stepNo) {
     window.scrollTo(0,0);
     this.showTextBookSelector = false;
+    this.onClickPrevious = true;
   }
 
   validateDates() {
@@ -890,7 +892,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 onChangeTargetCollection() {
    if (this.callTargetCollection) {
     this.showTexbooklist(true);
-    this.collectionListForm.value.pcollections = [];
+    const control = <FormArray>this.collectionListForm.controls['pcollections'];
+    for (let i = control.length - 1; i >= 0; i--) {
+        control.removeAt(i);
+    }
     this.tempCollections = [];
    }
 }
@@ -1321,7 +1326,7 @@ onChangeTargetCollection() {
 
   saveAsDraftAndNext ($event) {
     this.callTargetCollection = true;
-    if (this.collectionListForm.value.target_collection_category) {
+    if (this.collectionListForm.value.target_collection_category && !this.onClickPrevious) {
       this.onChangeTargetCollection();
     }
     this.clearValidations();
