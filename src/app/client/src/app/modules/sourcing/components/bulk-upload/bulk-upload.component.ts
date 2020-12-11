@@ -612,7 +612,7 @@ export class BulkUploadComponent implements OnInit {
     const reqBody = this.sharedContext.reduce((obj, context) => {
       return { ...obj, [context]: this.sessionContext[context] };
     }, {});
-
+    const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.sessionContext);
     const content = {
       stage: this.stageStatus,
       metadata: {
@@ -635,7 +635,7 @@ export class BulkUploadComponent implements OnInit {
         attributions: row.attributions,
         keywords: row.keywords,
         contentPolicyCheck: true,
-        ...(_.pickBy(reqBody, _.identity))
+        ...(_.pickBy(sharedMetaData, _.identity))
       },
       collection: [{
         identifier: collectionId,
