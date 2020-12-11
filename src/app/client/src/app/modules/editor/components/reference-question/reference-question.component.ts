@@ -268,4 +268,14 @@ export class ReferenceQuestionComponent implements OnInit, OnChanges, OnDestroy 
     if (this.subscription) { this.subscription.unsubscribe(); }
   }
 
+  public AddQuestionModal = false;
+
+  openAddQuestionModal() {
+    this.AddQuestionModal = true;
+  }
+
+  closeAddQuestionModal() {
+    this.AddQuestionModal = false;
+  }
+
 }
