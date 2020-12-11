@@ -15,9 +15,25 @@ export class FancyTreeComponent implements AfterViewInit {
   @Input() public options: any;
   @Output() public treeEventEmitter: EventEmitter<any> = new EventEmitter();
   config: any = editorConfig;
+
   constructor(public activatedRoute: ActivatedRoute, public treeService: TreeService) { }
+
   ngAfterViewInit() {
-    let options: any = {
+    this.renderTree(this.getTreeConfig());
+  }
+
+  renderTree(options) {
+    options = { ...options, ...this.options };
+    $(this.tree.nativeElement).fancytree(options);
+    this.treeService.setTreeElement(this.tree.nativeElement);
+    if (this.options.showConnectors) {
+      $('.fancytree-container').addClass('fancytree-connectors');
+    }
+    this.treeService.setActiveNode();
+  }
+
+  getTreeConfig() {
+    const options: any = {
       extensions: ['glyph'],
       clickFolderMode: 3,
       source: this.nodes,
@@ -29,7 +45,7 @@ export class FancyTreeComponent implements AfterViewInit {
         }
       },
       init: (event, data) => {
-          $(this.tree.nativeElement).fancytree('getTree').getNodeByKey('_2').setActive();
+          // $(this.tree.nativeElement).fancytree('getTree').getNodeByKey('_2').setActive();
       },
       click: (event, data): boolean => {
         this.tree.nativeElement.click();
@@ -48,34 +64,12 @@ export class FancyTreeComponent implements AfterViewInit {
         }
       }
     };
-    options = { ...options, ...this.options };
-    $(this.tree.nativeElement).fancytree(options);
-
-    this.treeService.setTreeElement(this.tree.nativeElement);
-
-    if (this.options.showConnectors) {
-      $('.fancytree-container').addClass('fancytree-connectors');
-    }
-    // const rootNode = $(this.tree.nativeElement).fancytree('getRootNode');
-    // const firstChild = rootNode.getFirstChild().getFirstChild(); // rootNode.getFirstChild() will always be available.
-    // firstChild ? firstChild.setActive() : rootNode.getFirstChild().setActive(); // select the first children node by default
-  }
-
-  expandAll(flag) {
-    $(this.tree.nativeElement).fancytree('getTree').visit((node) => { node.setExpanded(flag); });
-  }
-
-  collapseAllChildrens(flag) {
-    const rootNode = $(this.tree.nativeElement).fancytree('getRootNode').getFirstChild();
-    _.forEach(rootNode.children, (child) => {
-      child.setExpanded(flag);
-    });
+    return options;
   }
 
   addChild() {
-    const tree = $(this.tree.nativeElement).fancytree('getTree');
-    const rootNode = $(this.tree.nativeElement).fancytree('getRootNode').getFirstChild();
-    const node = tree.getActiveNode();
+    const rootNode = this.treeService.getFirstChild();
+    const node = this.treeService.getActiveNode();
     if (this.getObjectType(node.data.objectType).editable) {
       const childrenTypes = this.getObjectType(rootNode.data.objectType).childrenTypes;
       this.treeService.addNode(this.getObjectType(childrenTypes[0]), {}, 'child');
@@ -86,10 +80,8 @@ export class FancyTreeComponent implements AfterViewInit {
   }
 
   addSibling() {
-    const tree = $(this.tree.nativeElement).fancytree('getTree');
-    const rootNode = $(this.tree.nativeElement).fancytree('getRootNode').getFirstChild();
-
-    const node = tree.getActiveNode();
+    const rootNode = this.treeService.getFirstChild();
+    const node = this.treeService.getActiveNode();
     if (!node.data.root) {
       const childrenTypes = this.getObjectType(rootNode.data.objectType).childrenTypes;
       this.treeService.addNode(this.getObjectType(childrenTypes[0]), {}, 'sibling');
@@ -97,10 +89,6 @@ export class FancyTreeComponent implements AfterViewInit {
     } else {
       alert('Sorry, this operation is not allowed.');
     }
-  }
-
-  getActiveNode() {
-    return $(this.tree.nativeElement).fancytree('getTree').getActiveNode();
   }
 
   getObjectType(type) {

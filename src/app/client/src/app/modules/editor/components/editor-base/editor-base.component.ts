@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { catchError, map } from 'rxjs/operators';
+import { throwError } from 'rxjs';
+import * as _ from 'lodash-es';
 import { TreeService, EditorService } from '../../services';
 import { toolbarConfig, collectionTreeNodes } from '../../editor.config';
-import { ActivatedRoute } from '@angular/router';
-import * as _ from 'lodash-es';
+import { CbseProgramService } from '../../../cbse-program/services';
 
 interface IeditorParams {
   collectionId: string;
@@ -20,20 +23,32 @@ export class EditorBaseComponent implements OnInit {
   toolbarConfig = toolbarConfig;
   public showQuestionTemplate: Boolean = false;
   private editorParams: IeditorParams;
+  public showLoader: Boolean = true;
 
-  constructor(public treeService: TreeService, private editorService: EditorService, private activatedRoute: ActivatedRoute) {
+  constructor(public treeService: TreeService, private editorService: EditorService, private activatedRoute: ActivatedRoute,
+    private cbseService: CbseProgramService) {
     this.editorParams = {
-      collectionId: _.get(this.activatedRoute, 'snapshot.params.collectionId'),
+      collectionId: _.get(this.activatedRoute, 'snapshot.params.questionSetId'),
       type: _.get(this.activatedRoute, 'snapshot.params.type')
     };
   }
 
   ngOnInit() {
-    if (this.editorParams.collectionId) {
-      // tslint:disable-next-line:max-line-length
-    this.editorService.fetchCollectionHierarchy(this.editorParams).subscribe(response => this.collectionTreeNodes = response && {data: response});
-    }
-    this.collectionTreeNodes = collectionTreeNodes;
+    this.fetchQuestionSetHierarchy();
+  }
+
+  fetchQuestionSetHierarchy() {
+    this.editorService.getQuestionSetHierarchy(this.editorParams.collectionId).pipe(catchError(error => {
+      this.showLoader = false;
+      const errInfo = {
+        errorMsg: 'Fetching question set details failed. Please try again...',
+       };
+      return throwError(this.cbseService.apiErrorHandling(error, errInfo));
+    })).subscribe(res => {
+      this.collectionTreeNodes = res;
+      this.showLoader = false;
+      // this.collectionTreeNodes = collectionTreeNodes;
+    });
   }
 
   toolbarEventListener(event) {
@@ -41,18 +56,27 @@ export class EditorBaseComponent implements OnInit {
       case 'saveContent':
         this.saveContent();
         break;
+      case 'removeQuestion':
+        this.removeNode();
+        break;
       default:
         break;
     }
   }
 
   saveContent() {
-    const tree = this.treeService.getTreeObject();
-    console.log(tree);
-    console.log(this.treeService.getActiveNode());
-    this.editorService.save();
-    console.log(this.editorService.getCollectionHierarchy());
+    this.editorService.updateQuestionSetHierarchy()
+    .pipe(map(data => _.get(data, 'result'))).subscribe(response => {
+      this.treeService.replaceNodeId(response.identifiers);
+      this.treeService.clearTreeCache();
+      alert('Hierarchy is Sucessfuly Updated');
+    });
   }
+
+  removeNode() {
+    this.treeService.removeNode();
+  }
+
 
   treeEventListener(event: any) {
     console.log(event);

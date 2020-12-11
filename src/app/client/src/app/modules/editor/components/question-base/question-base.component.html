@@ -1,19 +1,13 @@
 <div class="add-to-library mb-30">
-  <app-editor-header
-    [toolbarConfig]="toolbarConfig"
-    (toolbarEmitter)="toolbarEventListener($event)"
-  >
+  <app-editor-header [toolbarConfig]="toolbarConfig" (toolbarEmitter)="toolbarEventListener($event)">
   </app-editor-header>
 
   <div class="min-h-500 sb-bg-white py-20">
     <div class="ui container">
       <div class="ui twelve column wide">
-         <!-- <app-reference-question
-            [questionMetaData]="selectedQuestionData"
-          ></app-reference-question>-->
-          <app-multiplechoice-question
-            [questionMetaData]="selectedQuestionData1"
-          ></app-multiplechoice-question>
+        <app-reference-question [questionMetaData]="selectedQuestionData"></app-reference-question>
+        <!-- <app-multiplechoice-question [questionMetaData]="selectedQuestionData1"></app-multiplechoice-question>  -->
+        <!-- <app-contentplayer-page></app-contentplayer-page> -->
       </div>
     </div>
   </div>

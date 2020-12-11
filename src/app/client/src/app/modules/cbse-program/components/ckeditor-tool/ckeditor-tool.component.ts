@@ -140,7 +140,7 @@ export class CkeditorToolComponent implements OnInit, AfterViewInit, OnChanges {
                 value: '75'
             }
         ],
-        toolbar: ['imageStyle:alignLeft', 'imageStyle:full', 'imageStyle:alignRight', '|', 'imageResize'],
+        toolbar: ['imageStyle:alignLeft', 'imageStyle:full', 'imageStyle:alignRight'],
         styles: ['full', 'alignLeft', 'alignRight', 'alignCenter']
       },
       isReadOnly: false,

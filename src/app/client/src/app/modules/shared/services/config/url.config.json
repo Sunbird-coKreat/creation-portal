@@ -283,6 +283,12 @@
     },
     "DOCK_TENANT": {
       "LIST": "program/v1/tenant/list"
+    },
+    "QUESTION_SET" : {
+      "READ_HIERARCHY" : "questionset/v1/hierarchy",
+      "UPDATE_HIERARCHY" : "questionset/v1/hierarchy/update",
+      "ADD": "questionset/v1/add",
+      "REMOVE": "questionset/v1/remove"
     }
   }
 }

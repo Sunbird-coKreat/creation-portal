@@ -16,6 +16,7 @@ export class ReferenceQuestionComponent implements OnInit, OnChanges, OnDestroy 
   @Input() questionMetaData: any;
   public editorConfig: any = questionEditorConfig;
   public editorState: any = {};
+  public showPreview: Boolean = false;
   private initialized = false;
   public mediaArr: any = [];
   public videoShow = false;
@@ -160,14 +161,9 @@ export class ReferenceQuestionComponent implements OnInit, OnChanges, OnDestroy 
 
   buttonTypeHandler(event) {
     if (event === 'preview') {
-      // if (this.sessionContext.resourceStatus === 'Draft') {
-      //   this.handleSubmit(this.questionMetaForm);
-      // } else {
-      //   this.showPreview = true;
-      // }
+      this.showPreview = true;
     } else if (event === 'edit') {
-      // this.refreshEditor();
-      // this.showPreview = false;
+      this.showPreview = false;
     } else {
       this.handleSubmit();
     }
