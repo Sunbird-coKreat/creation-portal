@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ICollectionTreeNodes, ICollectionTreeOptions, MimeTypeTofileType } from '@sunbird/shared';
 import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
 import { editorConfig } from '../../editor.config';
@@ -22,26 +21,27 @@ export class CollectionTreeComponent implements OnInit {
   }
 
   private initialize() {
-    const data = this.nodes.data;
-    const treeData = this.buildTree(this.nodes.data);
+    const data = this.nodes;
+    const treeData = this.buildTree(this.nodes);
     this.rootNode = [{
       'id': data.identifier || UUID.UUID(),
       'title': data.name,
       'tooltip': data.name,
-      'objectType': data.contentType,
-      'metadata': _.omit(data, ['children', 'collections']),
+      'objectType': data.objectType,
+      'metadata': _.omit(data, ['children']),
       'folder': true,
       'children': treeData,
       'root': true,
-      'icon': this.getObjectType(data.contentType).iconClass
+      'icon': this.getObjectType(data.objectType).iconClass
     }];
+    console.log(this.rootNode);
   }
 
   buildTree(data, tree?) {
     tree = tree || [];
     if (data.children) { data.children = _.sortBy(data.children, ['index']); }
     _.forEach(data.children, (child) => {
-      const objectType = this.getObjectType(child.contentType);
+      const objectType = this.getObjectType(child.objectType);
       const childTree = [];
       if (objectType) {
         tree.push({
@@ -49,11 +49,11 @@ export class CollectionTreeComponent implements OnInit {
           'title': child.name,
           'tooltip': child.name,
           'objectType': child.contentType,
-          'metadata': _.omit(child, ['children', 'collections']),
+          'metadata': _.omit(child, ['children']),
           'folder': child.visibility === 'Default' ? false : (objectType.childrenTypes.length > 0),
           'children': childTree,
           'root': false,
-          'icon': child.visibility === 'Default' ? 'fa fa-file-o' : this.getObjectType(child.contentType).iconClass
+          'icon': child.visibility === 'Default' ? 'fa fa-file-o' : this.getObjectType(child.objectType).iconClass
         });
         if (child.visibility === 'Parent') {
           this.buildTree(child, childTree);

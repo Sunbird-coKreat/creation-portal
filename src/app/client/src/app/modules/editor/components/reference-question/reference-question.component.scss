@@ -1,6 +1,6 @@
-app-ckeditor-tool {
+/*app-ckeditor-tool {
   width: 85%;
-}
+}*/
 @import "variables";
 sui-select {
   width: 100%;
@@ -45,5 +45,58 @@ sui-select {
     font-weight: bold;
     color: #333;
     max-width: 180px;
+    height: 96px;
+    display: flex;
+    align-items: flex-end;
+    line-height: normal;
+    line-height: 13px;
+  }
+}
+
+.ckeditor-tool__option, 
+.ckeditor-tool__question{
+  border: 1px solid #c4c4c4;
+  border-radius: 4px;
+  border-top: 0;
+  position: relative;
+  display: flow-root;
+}
+.ckeditor-tool__solution{
+  border: 1px solid #c4c4c4;
+  border-radius: 4px;
+  margin-bottom: -4px;
+}
+.solution_video{
+  .ckeditor-tool__option{
+    border:0;
+  }
+}
+.ck-rounded-corners .ck.ck-editor__top .ck-sticky-panel .ck-toolbar{
+  border-radius: 4px !important;
+}
+.solution_html,
+.solution_video
+{
+  .sb-ckeditor{
+    .sb-ckeditor-close{
+      right: 5px;
+      top: -30px;
+      border: 0;
+      background: none;
+      min-width: auto;
+      padding: 0;
+      color: var(--gray-200);
+    }
+  }
+}
+.sb-ckeditor{
+  .sb-ckeditor-close{
+    right: -5px;
+    top: -22px;
+    border: 0;
+    background: none;
+    min-width: auto;
+    padding: 0;
+    color: var(--gray-200);
   }
 }

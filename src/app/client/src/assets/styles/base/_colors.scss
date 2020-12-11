@@ -37,7 +37,9 @@ $colours: "gray-hs" var(--gray-hs), "gray" var(--gray), "gray-0" var(--gray-0),
 .sb-color-black {
   color: $black;
 }
-
 .sb-color-red {
   color: $red-100;
-} 
+}
+.sb-color-gray-100{
+  color: var(--gray-100);
+}   

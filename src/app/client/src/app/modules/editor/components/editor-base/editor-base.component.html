@@ -1,4 +1,4 @@
-<div class="add-to-library mb-30">
+<div class="add-to-library mb-30" *ngIf='!showLoader'>
   <app-editor-header
     [toolbarConfig]="toolbarConfig"
     (toolbarEmitter)="toolbarEventListener($event)"
@@ -21,10 +21,13 @@
             <app-question-set></app-question-set>
           </ng-container>
           <ng-container *ngIf="selectedQuestionData?.folder === false">
-            <app-contentplayer-page></app-contentplayer-page>
+            <app-contentplayer-page (toolbarEmitter)="toolbarEventListener($event)"></app-contentplayer-page>
           </ng-container>
         </div>
       </div>
     </div>
   </div>
+</div>
+<div *ngIf='showLoader' class="ui container sb-chapter-list">
+  <app-loader></app-loader>
 </div>

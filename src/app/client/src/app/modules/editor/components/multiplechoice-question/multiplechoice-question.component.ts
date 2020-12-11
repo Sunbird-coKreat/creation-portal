@@ -14,6 +14,7 @@ export class MultiplechoiceQuestionComponent implements OnInit, OnChanges, OnDes
   @Input() questionMetaData: any;
   public editorConfig: any = questionEditorConfig;
   private initialized = false;
+  public showPreview: Boolean = false;
   public mcqForm: McqForm;
   public solutionValue: string;
   public setCharacterLimit = 160;
@@ -156,14 +157,9 @@ export class MultiplechoiceQuestionComponent implements OnInit, OnChanges, OnDes
 
   buttonTypeHandler(action) {
     if (action === 'preview') {
-      // if (this.sessionContext.resourceStatus === 'Draft') {
-      //   this.handleSubmit(this.questionMetaForm);
-      // } else {
-      //   this.showPreview = true;
-      // }
+      this.showPreview = true;
     } else if (action === 'edit') {
-      // this.refreshEditor();
-      // this.showPreview = false;
+      this.showPreview = false;
     } else {
       this.handleSubmit();
     }
