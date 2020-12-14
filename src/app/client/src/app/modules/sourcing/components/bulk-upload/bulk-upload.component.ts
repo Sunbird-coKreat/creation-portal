@@ -33,15 +33,7 @@ export class BulkUploadComponent implements OnInit {
       upload_success: 0
     }
   };
-  public mimeTypes: any = {
-    'pdf': 'application/pdf',
-    'mp4': 'video/mp4',
-    'webm': 'video/webm',
-    'html': 'application/vnd.ekstep.html-archive',
-    'epub': 'application/epub',
-    'h5p': 'application/vnd.ekstep.h5p-archive',
-    'mp3': 'audio/mp3'
-  };
+  public mimeTypes: any = this.configService.contentCategoryConfig.sourcingConfig.files
   public oldProcessStatus = '';
   public stageStatus = '';
   public contentTypes: Array<any> = [];
@@ -108,13 +100,15 @@ export class BulkUploadComponent implements OnInit {
 
       forkJoin(req).subscribe((res)=> {
         let mapped_array = _.map(res, (obj) => {
-          console.log(obj);
           const catDef = _.get(obj, 'result.objectCategoryDefinition');
           if (!_.isEmpty(_.get(catDef, 'objectMetadata.schema.properties.mimeType.enum'))) {
             const supportedMimeTypes = catDef.objectMetadata.schema.properties.mimeType.enum;
             let tempEditors = _.map(supportedMimeTypes, (mimetype) => {
               if (!_.isEmpty(appFilesConfig[mimetype])) {
                 this.catFormatMapping[_.toLower(catDef.name)].push(appFilesConfig[mimetype]);
+                if (mimetype === "application/vnd.ekstep.html-archive") {
+                  this.catFormatMapping[_.toLower(catDef.name)].push('html');
+                }
               }
             }); 
           }
@@ -332,7 +326,12 @@ export class BulkUploadComponent implements OnInit {
   }
 
   getFileFormat(mimeType) {
-    return _.findKey(this.mimeTypes, (value) => value === mimeType);
+    return this.mimeTypes[mimeType];
+  }
+
+  getMimeType (fileFormat) {
+    fileFormat = (fileFormat == 'html') ? 'zip' : fileFormat;
+    return _.findKey(this.mimeTypes, (value) => value === fileFormat); 
   }
 
   updateJob() {
@@ -350,7 +349,6 @@ export class BulkUploadComponent implements OnInit {
           this.bulkUploadState = 5;
         }
         this.oldProcessStatus = this.process.status;
-        // console.log('updateResponse res', JSON.stringify(updateResponse));
       }, (error) => {
         console.log(error);
       });
@@ -591,6 +589,7 @@ export class BulkUploadComponent implements OnInit {
       this.bulkUploadState = 5;
       this.checkBulkUploadStatus();
     } else {
+      this.setBulkUploadCsvConfig();
       this.bulkUploadState = 6;
     }
   }
@@ -653,7 +652,7 @@ export class BulkUploadComponent implements OnInit {
         creator: row.creator,
         audience: [_.upperFirst(_.toLower(row.audience))],
         code: UUID.UUID(),
-        mimeType: this.mimeTypes[_.toLower(row.fileFormat)],
+        mimeType: this.getMimeType([_.toLower(row.fileFormat)]),
         primaryCategory: row.contentType,
         lastPublishedBy: userId,
         createdBy: userId,
@@ -718,7 +717,6 @@ export class BulkUploadComponent implements OnInit {
   startBulkUpload(csvData) {
     this.completionPercentage = 0;
     this.createImportRequest(csvData).subscribe((importResponse) => {
-      // console.log('createImportRequest res', JSON.stringify(importResponse));
       this.process.process_id = _.get(importResponse, 'result.processId');
       this.createJobRequest(csvData.length)
         .subscribe((jobResponse) => {
