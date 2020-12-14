@@ -8,6 +8,7 @@ import { BulkJobService } from '../../services/bulk-job/bulk-job.service';
 import { UUID } from 'angular2-uuid';
 import { HelperService } from '../../services/helper.service';
 import { ProgramTelemetryService } from '../../../program/services';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-bulk-upload',
@@ -65,6 +66,7 @@ export class BulkUploadComponent implements OnInit {
     maxRows: 300,
     fileFormats: ['pdf', 'html', 'epub', 'h5p', 'mp4', 'webm', 'mp3']
   };
+  public catFormatMapping = {};
   public bulkUploadErrorMsgs = [];
   public bulkUploadValidationError = '';
   public levels = [];
@@ -83,12 +85,8 @@ export class BulkUploadComponent implements OnInit {
     public programTelemetryService: ProgramTelemetryService, public configService: ConfigService
   ) { }
 
-  ngOnInit() {
-    this.getContentTypes();
-    this.getLicences();
+  async ngOnInit() {
     this.checkBulkUploadStatus();
-    this.getChapters();
-    this.setBulkUploadCsvConfig();
     this.stageStatus = this.getContentStatus();
     this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
     // tslint:disable-next-line:max-line-length
@@ -99,10 +97,32 @@ export class BulkUploadComponent implements OnInit {
   }
 
   getContentTypes() {
-    this.contentTypes = _.get(this.programContext, 'content_types');
-    /* _.filter(this.programsService.contentTypes, (type) => {
-      return _.includes(_.get(this.programContext, 'content_types'), type.value);
-    });*/
+    const req = [];
+    const appFilesConfig = this.configService.contentCategoryConfig.sourcingConfig.files;
+    this.contentTypes = _.get(this.sessionContext, 'nominationDetails.content_types');
+    return new Promise((resolve) => {
+      _.forEach(this.contentTypes, (contentType) => {
+        this.catFormatMapping[_.toLower(contentType)] = [];
+        req.push(this.programsService.getCategoryDefinition(contentType, this.programContext.rootorg_id));
+      });
+
+      forkJoin(req).subscribe((res)=> {
+        let mapped_array = _.map(res, (obj) => {
+          console.log(obj);
+          const catDef = _.get(obj, 'result.objectCategoryDefinition');
+          if (!_.isEmpty(_.get(catDef, 'objectMetadata.schema.properties.mimeType.enum'))) {
+            const supportedMimeTypes = catDef.objectMetadata.schema.properties.mimeType.enum;
+            let tempEditors = _.map(supportedMimeTypes, (mimetype) => {
+              if (!_.isEmpty(appFilesConfig[mimetype])) {
+                this.catFormatMapping[_.toLower(catDef.name)].push(appFilesConfig[mimetype]);
+              }
+            }); 
+          }
+          return obj;
+        }) 
+        resolve(this.catFormatMapping);
+      });
+    });
   }
 
   getLicences() {
@@ -400,10 +420,6 @@ export class BulkUploadComponent implements OnInit {
       });
   }
 
-  getContentTypeDetails(key, value) {
-    return _.find(this.contentTypes, [key, value]);
-  }
-
   setBulkUploadCsvConfig() {
     const headerError = (headerName) => {
       this.setError(`${headerName} header is missing.`);
@@ -497,15 +513,28 @@ export class BulkUploadComponent implements OnInit {
       // Validate the content types
       row.contentType = _.toLower(row.contentType);
       const contentType = _.find(this.contentTypes, (content_type) => {
-        return (_.toLower(content_type) === row.contentType);
+          return (_.toLower(content_type) === row.contentType);
       });
       if (_.isEmpty(contentType)) {
         this.setError(`Content Type has invalid value at row: ${rowIndex}`);
         this.bulkUploadState = 4;
         return;
       }
-
       row.contentType = contentType;
+
+      // Validate if content type supports uploading format
+      if (_.isEmpty(this.catFormatMapping[_.toLower(row.contentType)])) {
+        this.setError(`Content Type value at row: ${rowIndex} is not supported for bulk upload`);
+        this.bulkUploadState = 4;
+        return;
+      }
+
+      // Validate if content type supports given format
+      if (!_.includes(this.catFormatMapping[_.toLower(row.contentType)], row.fileFormat)) {
+        this.setError(`File format has invalid value at row: ${rowIndex} . Supported formats are ` + _.join(this.catFormatMapping[_.toLower(row.contentType)], ','));
+        this.bulkUploadState = 4;
+        return;
+      }
     };
     const maxRowsError = (maxRows, actualRows) => {
       this.setError(`Expected max ${maxRows} rows but found ${actualRows} rows in the file`);
@@ -709,7 +738,11 @@ export class BulkUploadComponent implements OnInit {
     this.bulkUploadErrorMsgs.push(message);
   }
 
-  openBulkUploadModal() {
+  async openBulkUploadModal() {
+    const mappping = await this.getContentTypes();
+    this.getLicences();
+    this.getChapters();
+    this.setBulkUploadCsvConfig();
     this.bulkUploadState = 0;
     this.showBulkUploadModal = true;
     this.updateBulkUploadState('increment');
