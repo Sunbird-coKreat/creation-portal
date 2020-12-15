@@ -692,8 +692,14 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     if (program && program.config) {
       return type === 'board' ? program.config[type] : _.join(_.compact(_.uniq(program.config[type])), ', ');
     } else {
-      return type === 'board' ? program[type] : _.join(_.compact(_.uniq(JSON.parse(program[type]))), ', ');
-    }
+      try {
+        let newparse = JSON.parse(program[type]);
+        return _.join(_.compact(_.uniq(newparse)), ', ');
+      }
+      catch {
+        return program.board;
+            }
+      }
   }
 
   getProgramNominationStatus(program) {
