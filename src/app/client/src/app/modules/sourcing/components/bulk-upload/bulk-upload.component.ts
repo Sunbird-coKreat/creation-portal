@@ -652,7 +652,7 @@ export class BulkUploadComponent implements OnInit {
         creator: row.creator,
         audience: [_.upperFirst(_.toLower(row.audience))],
         code: UUID.UUID(),
-        mimeType: this.getMimeType([_.toLower(row.fileFormat)]),
+        mimeType: this.getMimeType(_.toLower(row.fileFormat)),
         primaryCategory: row.contentType,
         lastPublishedBy: userId,
         createdBy: userId,
