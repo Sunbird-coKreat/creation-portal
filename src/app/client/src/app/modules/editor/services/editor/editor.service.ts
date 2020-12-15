@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { TreeService } from '../tree/tree.service';
 import { ActionService, UserService } from '@sunbird/core';
 import { ConfigService } from '@sunbird/shared';
+import { IeventData } from '../../interfaces';
 
 import * as _ from 'lodash-es';
-import { map } from 'rxjs/operators';
+import { map, skipWhile } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -13,8 +14,15 @@ import { map } from 'rxjs/operators';
 export class EditorService {
   data: any;
   public questionStream$ = new Subject<any>();
+  private _formData$ = new BehaviorSubject<IeventData>(undefined);
+  public readonly formData$: Observable<IeventData> = this._formData$
+    .asObservable().pipe(skipWhile(data => data === undefined || data === null));
   constructor(public treeService: TreeService, public actionService: ActionService, public configService: ConfigService,
     public userService: UserService) { }
+
+  emitSelectedNodeMetaData(data: IeventData) {
+    this._formData$.next(data);
+  }
 
   fetchCollectionHierarchy(data): Observable<any> {
     const hierarchyUrl = 'content/v3/hierarchy/' + data.collectionId;

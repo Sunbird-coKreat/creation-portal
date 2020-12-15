@@ -51,6 +51,10 @@ export class TreeService {
         return;
       }
       newNode = (createType === 'sibling') ? selectedNode.appendSibling(node) : selectedNode.addChildren(node);
+      if (_.isEmpty(newNode.data.metadata)) {
+        // tslint:disable-next-line:max-line-length
+        newNode.data.metadata = { mimeType: 'application/vnd.ekstep.content-collection', contentType: _.get(this.getActiveNode(), 'data.objectType'), code: node.id, name: node.title };
+      }
       // tslint:disable-next-line:max-line-length
       this.treeCache.nodesModified[node.id] = { isNew: true, root: false, metadata: { mimeType: 'application/vnd.ekstep.content-collection', contentType: _.get(this.getActiveNode(), 'data.objectType'), code: node.id, name: node.title } };
       this.treeCache.nodes.push(node.id);
@@ -99,6 +103,29 @@ export class TreeService {
     });
   }
 
+  updateNodeMetadata(newData, nodeId) {
+    $(this.treeNativeElement).fancytree('getTree').visit((node) => {
+      if (nodeId === node.data.id) {
+        this.checkModification(node, newData);
+        node.data.metadata = {...node.data.metadata, ...newData.metadata};
+        node.title = newData.metadata.name;
+      }
+    });
+  }
+
+  checkModification(node, newData) {
+    const oldMetadata = _.get(node, 'data.metadata');
+    const newMetadata = _.get(newData, 'metadata');
+    if (oldMetadata) {
+      for (const key in oldMetadata) {
+        if (typeof(oldMetadata[key]) === 'string' && newMetadata[key] && oldMetadata[key] !== newMetadata[key]) {
+          // tslint:disable-next-line:max-line-length
+          this.treeCache.nodesModified[node.data.id] = { isNew: false, root: false, metadata: {...oldMetadata, ..._.pick(newMetadata, key)} };
+        }
+      }
+    }
+  }
+
   clearTreeCache(node?) {
     if (node) {
       delete this.treeCache.nodesModified[node.id];
@@ -107,6 +134,15 @@ export class TreeService {
       this.treeCache.nodesModified = {};
       this.treeCache.nodes = [];
     }
+  }
+
+  setNodeTitle(title) {
+    if (!title) { title = 'Untitled'; }
+    // title = instance.removeSpecialChars(title);
+    this.getActiveNode().applyPatch({ 'title': title }).done((a, b) => {
+      // instance.onRenderNode(undefined, { node: ecEditor.jQuery(‘#collection-tree’).fancytree(‘getTree’).getActiveNode() }, true)
+    });
+    $('span.fancytree-title').attr('style', 'width:11em;text-overflow:ellipsis;white-space:nowrap;overflow:hidden');
   }
 
 }

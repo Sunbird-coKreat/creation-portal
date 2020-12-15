@@ -17,10 +17,10 @@
         </div>
         <!-- Right Player Sections -->
         <div class="eight wide column bg-white pl-40">
-          <ng-container *ngIf="selectedQuestionData?.folder === true">
-            <app-question-set></app-question-set>
+          <ng-container *ngIf="selectedNodeData?.folder === true && selectedNodeData?.data?.root !== true">
+            <app-meta-form (prevNodeMeatadata)="updateNodeMetadata($event)"></app-meta-form>
           </ng-container>
-          <ng-container *ngIf="selectedQuestionData?.folder === false">
+          <ng-container *ngIf="selectedNodeData?.folder === false && selectedNodeData?.data?.root !== true">
             <app-contentplayer-page></app-contentplayer-page>
           </ng-container>
         </div>
