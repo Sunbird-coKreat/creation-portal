@@ -16,4 +16,8 @@ export class ContentplayerPageComponent implements OnInit {
     this.toolbarEmitter.emit({'button': { 'type' : 'removeQuestion'}});
   }
 
+  editQuestion() {
+    this.toolbarEmitter.emit({'button': { 'type' : 'editQuestion'}});
+  }
+
 }

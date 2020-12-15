@@ -2,7 +2,8 @@
 <div class="sb-bg-color-primary">
   <div class="ui container py-15">
     <div class="d-flex flex-ai-center sb-color-white">
-      <button class="sb-btn sb-btn-primary sb-btn-xs back-btn px-0 hover-none fs-0-92 font-weight-bold">
+      <button class="sb-btn sb-btn-primary sb-btn-xs back-btn px-0 hover-none fs-0-92 font-weight-bold"
+      name="backContent" type="backContent" (click)="buttonEmitter($event, {type: 'backContent'})">
         <i class="arrow left icon"></i>{{ toolbarConfig.headerName }}
       </button>
     </div>

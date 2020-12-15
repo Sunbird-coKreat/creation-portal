@@ -1,0 +1,98 @@
+<div *ngIf='showLoader' class="ui container sb-chapter-list">
+  <app-loader></app-loader>
+</div>
+<div class="add-to-library mb-30" *ngIf='!showLoader'>
+  <app-editor-header [toolbarConfig]="toolbarConfig" (toolbarEmitter)="toolbarEventListener($event)">
+  </app-editor-header>
+
+  <div class="min-h-500 sb-bg-white py-20">
+    <div class="ui container">
+      <div class="ui twelve column wide">
+        <div class="px-16">
+          <div class="b-1-100">
+            <div class="py-20 px-32 sb-bg-color-primary-0">
+              <div class="sb-field-group">
+                <label *ngIf="showFormError && [undefined, ''].includes(editorState.question)" class="sb-label sb-label-table sb-label-error-0">Fill Question</label>
+                <label>Question</label><span class="sb-required">*</span>
+                <div class="sb-field">
+                    <div class="ckeditor-tool__question mb-24">
+                    <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'question'); getMedia($event.mediaobj);"
+                    [editorDataInput]="editorState.question" [editorId]="'question_editor'"
+                    (videoDataOutput)="videoDataOutput($event)" [videoShow]="videoShow"></app-ckeditor-tool>
+                   </div> 
+                </div>
+                <!-- <div class="sb-field-group">
+                  <label *ngIf="showFormError && [undefined, ''].includes(editorState.answer)" class="sb-label sb-label-table sb-label-error-0">Fill Answer</label>
+                  <label>Answers</label><span class="sb-required">*</span>
+                  <div class="sb-field">
+                    <div class="ckeditor-tool__option mb-24">
+                      <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'answer')"
+                        [editorDataInput]="editorState.answer" [editorId]="'answer_editor'"></app-ckeditor-tool>
+                    </div>
+                  </div>
+                </div> -->
+
+                <app-answer *ngIf="(questionInteractionType === 'default')" [editorConfig]="editorConfig" [editorState]="editorState" (editorDataOutput)="editorDataHandler($event, 'answer')"></app-answer>
+
+                <app-options *ngIf="(questionInteractionType === 'choice')" [editorConfig]="editorConfig" [editorState]="editorState" (editorDataOutput)="editorDataHandler($event)" (optionMedia)="getMedia($event)"></app-options>
+
+                <div class="d-flex flex-ai-center ckeditor-tool__solution py-10 px-16 mt-15 sb-bg-color-white">
+                  <label class="fs-0-92 mb-0 ckeditor-tool__label pb-4">
+                    <span class="sb-color-primary fs-0-785">Solution</span>
+                    <span class="fs-0-785 sb-color-gray-100">(Optional) </span>
+                  </label>
+                  <div
+                    class="ui dropdown sb-btn sb-btn-outline-primary sb-btn-normal sb-right-icon-btn sb-btn-radius ml-auto fxsmall"
+                    suiDropdown autoClose="itemClick" *ngIf="showSolutionDropDown">
+                    <div class="text gray-200">Choose type</div>
+                    <i class="dropdown icon mx-8"></i>
+                    <div class="menu" suiDropdownMenu>
+                      <div class="item" (click)="selectSolutionType('Text+Image')">Text+Image</div>
+                      <div class="item" (click)="selectSolutionType('video')">Video</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="solution_html" *ngIf="selectedSolutionType == 'html'">
+                  <div class="ckeditor-tool-container">
+                    <div class="sb-ckeditor relative mb-8">
+                      <button (click)="deleteSolution()"
+                        class="sb-btn sb-ckeditor-close absolute"><i
+                          class="icon close"></i>
+                      </button>
+                      <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'solution')"
+                      [editorDataInput]="solutionValue" [editorId]="'solution_editor'" class="ckeditor-tool__option"></app-ckeditor-tool>
+                    </div>
+                  </div>
+                </div>
+                <div class="solution_video" *ngIf="selectedSolutionType == 'video' && showSolution">
+                  <div class="ckeditor-tool__solution sb-bg-color-white sb-w-85 sb-ckeditor relative">
+                    <div class="solution-media p-16 d-flex flex-ai-center ckeditor-tool__option p-16">
+                      <div class="mcq-checkbox-answer">
+                        <button class="sb-btn sb-ckeditor-close absolute"
+                          (click)="deleteSolution()"><i
+                          class="icon close"></i></button>
+                      </div>
+                      <div class="solution-media__video relative position">
+                        <div class="overlay-image"
+                          [ngStyle]="videoThumbnail ?  {'background' : 'url(' + videoThumbnail + ')' }  : {'background': 'rgba(0,0,0,0.3)'}">
+                          <i class="play circle icon"></i></div>
+                      </div>
+                      <div class="solution-media__desc ml-16 sb-color-primary">
+                        {{videoSolutionName}}<i
+                        class="icon ellipsis vertical sb-color-black"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+        <!-- <app-reference-question [questionMetaData]="selectedQuestionData"></app-reference-question> -->
+        <!-- <app-multiplechoice-question [questionMetaData]="selectedQuestionData1"></app-multiplechoice-question>  -->
+        <!-- <app-contentplayer-page></app-contentplayer-page> -->
+        <!-- <app-options [questionMetaData]="selectedQuestionData1"></app-options> -->
+      </div>
+    </div>
+  </div>
+</div>

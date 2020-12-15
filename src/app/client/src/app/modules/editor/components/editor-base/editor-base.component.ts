@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, map } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import * as _ from 'lodash-es';
 import { TreeService, EditorService } from '../../services';
 import { toolbarConfig, collectionTreeNodes } from '../../editor.config';
 import { CbseProgramService } from '../../../cbse-program/services';
-
+import { QuestionService } from '../../services/question/question.service';
 interface IeditorParams {
   collectionId: string;
   type: string;
@@ -26,7 +26,7 @@ export class EditorBaseComponent implements OnInit {
   public showLoader: Boolean = true;
 
   constructor(public treeService: TreeService, private editorService: EditorService, private activatedRoute: ActivatedRoute,
-    private cbseService: CbseProgramService) {
+    private cbseService: CbseProgramService, public questionService: QuestionService, private router: Router) {
     this.editorParams = {
       collectionId: _.get(this.activatedRoute, 'snapshot.params.questionSetId'),
       type: _.get(this.activatedRoute, 'snapshot.params.type')
@@ -59,6 +59,9 @@ export class EditorBaseComponent implements OnInit {
       case 'removeQuestion':
         this.removeNode();
         break;
+      // case 'editQuestion':
+      //   this.editQuestion();
+      //   break;
       default:
         break;
     }
@@ -88,4 +91,11 @@ export class EditorBaseComponent implements OnInit {
         break;
     }
   }
+
+  // editQuestion() {
+  //   this.questionService.setQuestionType("mcq");
+  //   this.questionService.setQuestionData(this.selectedQuestionData);
+  //   const questionsetId = _.get(this.activatedRoute, 'snapshot.params.questionSetId');
+  //     this.router.navigateByUrl(`create/questionSet/${questionsetId}/question`);
+  // }
 }

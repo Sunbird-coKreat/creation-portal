@@ -13,13 +13,16 @@ import { MultiplechoiceQuestionComponent } from './components/multiplechoice-que
 import { QuestionSetComponent } from './components/question-set/question-set.component';
 import { EditorBaseComponent } from './components/editor-base/editor-base.component';
 import {CbseProgramModule} from '../cbse-program';
+import { OptionsComponent } from './components/options/options.component';
+import { NewQuestionBaseComponent } from './components/new-question-base/new-question-base.component';
+import { AnswerComponent } from './components/answer/answer.component';
 
 // import { PlayerHelperModule } from '@sunbird/player-helper';
 
 @NgModule({
   declarations: [CollectionTreeComponent, EditorHeaderComponent, ReferenceQuestionComponent,
     MultiplechoiceQuestionComponent, QuestionSetComponent, EditorBaseComponent, FancyTreeComponent, QuestionTemplateComponent, 
-    QuestionBaseComponent, ContentplayerPageComponent],
+    QuestionBaseComponent, ContentplayerPageComponent, OptionsComponent, NewQuestionBaseComponent, AnswerComponent],
   imports: [
     CommonModule,
     FormsModule,
