@@ -77,7 +77,7 @@ export class BulkUploadComponent implements OnInit {
     public programTelemetryService: ProgramTelemetryService, public configService: ConfigService
   ) { }
 
-  async ngOnInit() {
+   ngOnInit() {
     this.checkBulkUploadStatus();
     this.stageStatus = this.getContentStatus();
     this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
