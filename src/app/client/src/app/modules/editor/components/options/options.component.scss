@@ -1,7 +1,8 @@
-/*app-ckeditor-tool {
-  width: 85%;
-}*/
 @import "variables";
+
+.sb-w-85{
+  width: 85%;
+}
 sui-select {
   width: 100%;
   border: 1px solid rgba(34, 36, 38, 0.15);
@@ -98,5 +99,14 @@ sui-select {
     min-width: auto;
     padding: 0;
     color: var(--gray-200);
+  }
+}
+.sb-mcq-form{
+  .sb-mcq-item:nth-child(4){
+    .sb-ckeditor{
+      .ckeditor-tool__option{
+        margin-bottom: 0 !important;
+      }
+    }
   }
 }
