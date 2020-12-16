@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, finalize, map } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import * as _ from 'lodash-es';
 import { TreeService, EditorService } from '../../services';
-import { toolbarConfig, collectionTreeNodes } from '../../editor.config';
+import { templateList, toolbarConfig} from '../../editor.config';
 import { CbseProgramService } from '../../../cbse-program/services';
-import { QuestionService } from '../../services/question/question.service';
+import { ProgramsService, UserService } from '@sunbird/core';
+import { ConfigService, ToasterService, ResourceService} from '@sunbird/shared';
+
 interface IeditorParams {
   collectionId: string;
   type: string;
@@ -18,15 +20,19 @@ interface IeditorParams {
 })
 export class EditorBaseComponent implements OnInit {
 
+  public toolbarConfig = toolbarConfig;
+  public templateList: any = templateList;
   public collectionTreeNodes: any;
   public selectedQuestionData: any = {};
-  toolbarConfig = toolbarConfig;
   public showQuestionTemplate: Boolean = false;
   private editorParams: IeditorParams;
   public showLoader: Boolean = true;
+  public showQuestionTemplatePopup: Boolean = false;
 
   constructor(public treeService: TreeService, private editorService: EditorService, private activatedRoute: ActivatedRoute,
-    private cbseService: CbseProgramService, public questionService: QuestionService, private router: Router) {
+    private cbseService: CbseProgramService, private userService: UserService, private programsService: ProgramsService,
+    public configService: ConfigService, private toasterService: ToasterService, public resourceService: ResourceService,
+    public router: Router) {
     this.editorParams = {
       collectionId: _.get(this.activatedRoute, 'snapshot.params.questionSetId'),
       type: _.get(this.activatedRoute, 'snapshot.params.type')
@@ -39,15 +45,15 @@ export class EditorBaseComponent implements OnInit {
 
   fetchQuestionSetHierarchy() {
     this.editorService.getQuestionSetHierarchy(this.editorParams.collectionId).pipe(catchError(error => {
-      this.showLoader = false;
       const errInfo = {
         errorMsg: 'Fetching question set details failed. Please try again...',
        };
       return throwError(this.cbseService.apiErrorHandling(error, errInfo));
-    })).subscribe(res => {
+    }), finalize(() => { this.showLoader = false; })).subscribe(res => {
       this.collectionTreeNodes = res;
-      this.showLoader = false;
-      // this.collectionTreeNodes = collectionTreeNodes;
+      if (_.isEmpty(res.children)) {
+          // TODO: Call update questionSet APIs if children property empty
+      }
     });
   }
 
@@ -59,9 +65,12 @@ export class EditorBaseComponent implements OnInit {
       case 'removeQuestion':
         this.removeNode();
         break;
-      // case 'editQuestion':
-      //   this.editQuestion();
-      //   break;
+      case 'editQuestion':
+        this.redirectToQuestionTab();
+        break;
+      case 'showQuestionTemplate':
+        this.showQuestionTemplatePopup = true;
+        break;
       default:
         break;
     }
@@ -80,22 +89,45 @@ export class EditorBaseComponent implements OnInit {
     this.treeService.removeNode();
   }
 
-
   treeEventListener(event: any) {
-    console.log(event);
     switch (event.type) {
       case 'nodeSelect':
         this.selectedQuestionData = event.data;
+        console.log(this.selectedQuestionData);
         break;
       default:
         break;
     }
   }
 
-  // editQuestion() {
-  //   this.questionService.setQuestionType("mcq");
-  //   this.questionService.setQuestionData(this.selectedQuestionData);
-  //   const questionsetId = _.get(this.activatedRoute, 'snapshot.params.questionSetId');
-  //     this.router.navigateByUrl(`create/questionSet/${questionsetId}/question`);
-  // }
+  handleTemplateSelection($event) {
+    this.showQuestionTemplatePopup = false;
+    const selectedQuestionType = $event.type;
+    if (selectedQuestionType === 'close') { return false; }
+    console.log(selectedQuestionType);
+    // this.programsService.getCategoryDefinition(selectedQuestionType, this.userService.channel).subscribe((res) => {
+    //   const selectedtemplateDetails = res.result.objectCategoryDefinition;
+    //   const catMetaData = selectedtemplateDetails.objectMetadata;
+    //   if (_.isEmpty(_.get(catMetaData, 'schema.properties.interactionTypes.enum'))) {
+    //       this.toasterService.error(this.resourceService.messages.emsg.m0026);
+    //   } else {
+    //     const supportedMimeTypes = catMetaData.schema.properties.interactionTypes.enum;
+    //     console.log(supportedMimeTypes);
+    //   }
+    // }, (err) => {
+    //   this.toasterService.error(this.resourceService.messages.emsg.m0027);
+    // });
+    this.redirectToQuestionTab('choice');
+  }
+
+  redirectToQuestionTab(type?) {
+    let questionId;
+    if (!type) {
+      type = this.selectedQuestionData.data.metadata.interactionTypes || 'default';
+      questionId = this.selectedQuestionData.data.metadata.identifier;
+    }
+    let queryParams = `?type=${type}`;
+    if (questionId) { queryParams += `&questionId=${questionId}`; }
+    this.router.navigateByUrl(`/create/questionSet/${this.editorParams.collectionId}/question${queryParams}`);
+  }
 }

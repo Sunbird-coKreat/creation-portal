@@ -1,22 +1,71 @@
-import { Component, AfterViewInit, Input, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
+import { Component, AfterViewInit, Input, ViewChild, ElementRef, Output, EventEmitter, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import 'jquery.fancytree';
 import { IFancytreeOptions } from '@sunbird/shared';
 import * as _ from 'lodash-es';
-import { ActivatedRoute } from '@angular/router';
+import { UUID } from 'angular2-uuid';
 import { TreeService } from '../../services';
 import { editorConfig } from '../../editor.config';
 @Component({
   selector: 'app-fancy-tree',
   templateUrl: './fancy-tree.component.html'
 })
-export class FancyTreeComponent implements AfterViewInit {
+export class FancyTreeComponent implements OnInit, AfterViewInit {
   @ViewChild('fancyTree') public tree: ElementRef;
   @Input() public nodes: any;
   @Input() public options: any;
   @Output() public treeEventEmitter: EventEmitter<any> = new EventEmitter();
   config: any = editorConfig;
+  public rootNode: any;
 
   constructor(public activatedRoute: ActivatedRoute, public treeService: TreeService) { }
+
+
+  ngOnInit() {
+    this.initialize();
+  }
+
+  private initialize() {
+    const data = this.nodes;
+    const treeData = this.buildTree(this.nodes);
+    this.rootNode = [{
+      'id': data.identifier || UUID.UUID(),
+      'title': data.name,
+      'tooltip': data.name,
+      'objectType': data.objectType,
+      'metadata': _.omit(data, ['children']),
+      'folder': true,
+      'children': treeData,
+      'root': true,
+      'icon': this.getObjectType(data.objectType).iconClass
+    }];
+  }
+
+  buildTree(data, tree?) {
+    tree = tree || [];
+    if (data.children) { data.children = _.sortBy(data.children, ['index']); }
+    _.forEach(data.children, (child) => {
+      const objectType = this.getObjectType(child.objectType);
+      const childTree = [];
+      if (objectType) {
+        tree.push({
+          'id': child.identifier || UUID.UUID(),
+          'title': child.name,
+          'tooltip': child.name,
+          'objectType': child.objectType,
+          'metadata': _.omit(child, ['children']),
+          'folder': child.visibility === 'Default' ? false : (objectType.childrenTypes.length > 0),
+          'children': childTree,
+          'root': false,
+          'icon': child.visibility === 'Default' ? 'fa fa-file-o' : objectType.iconClass
+        });
+        if (child.visibility === 'Parent') {
+          this.buildTree(child, childTree);
+        }
+      }
+    });
+    return tree;
+  }
 
   ngAfterViewInit() {
     this.renderTree(this.getTreeConfig());
@@ -36,7 +85,7 @@ export class FancyTreeComponent implements AfterViewInit {
     const options: any = {
       extensions: ['glyph'],
       clickFolderMode: 3,
-      source: this.nodes,
+      source: this.rootNode,
       glyph: {
         preset: 'awesome4',
         map: {

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-contentplayer-page',
@@ -6,6 +6,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
   styleUrls: ['./contentplayer-page.component.scss']
 })
 export class ContentplayerPageComponent implements OnInit {
+  @Input() questionMetaData: any;
   @Output() public toolbarEmitter: EventEmitter<any> = new EventEmitter();
   constructor() { }
 

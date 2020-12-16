@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { EditorBaseComponent, QuestionBaseComponent, NewQuestionBaseComponent } from './components';
+import { EditorBaseComponent, QuestionBaseComponent } from './components';
 
 
 const routes: Routes = [
@@ -17,7 +17,7 @@ const routes: Routes = [
     },
   },
   {
-    path: 'questionSet/:questionSetId/question', component: NewQuestionBaseComponent, pathMatch: 'full',
+    path: 'questionSet/:questionSetId/question', component: QuestionBaseComponent, pathMatch: 'full',
     data: {
       hideHeaderNFooter: 'true'
     },
