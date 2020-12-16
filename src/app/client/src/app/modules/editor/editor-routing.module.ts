@@ -17,7 +17,7 @@ const routes: Routes = [
     },
   },
   {
-    path: 'questionSet/:questionSetId/question/:questionId', component: QuestionBaseComponent, pathMatch: 'full',
+    path: 'questionSet/:questionSetId/question', component: QuestionBaseComponent, pathMatch: 'full',
     data: {
       hideHeaderNFooter: 'true'
     },

@@ -67,6 +67,15 @@ export class TreeService {
     firstChild ? firstChild.setActive() : rootFirstChildNode.setActive(); // select the first children node by default
   }
 
+  setNodeTitle(title) {
+    if (!title) { title = 'Untitled'; }
+    // title = instance.removeSpecialChars(title);
+    this.getActiveNode().applyPatch({ 'title': title }).done((a, b) => {
+      // instance.onRenderNode(undefined, { node: ecEditor.jQuery('#collection-tree').fancytree('getTree').getActiveNode() }, true)
+    });
+    $('span.fancytree-title').attr('style', 'width:11em;text-overflow:ellipsis;white-space:nowrap;overflow:hidden');
+  }
+
   replaceNodeId(identifiers) {
     this.getTreeObject().visit((node) => {
       if (identifiers[node.data.id]) {
