@@ -231,7 +231,10 @@
 					<thead class="sb-table-header sb-table-thead-gray">
 						<tr>
 							<th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('name')">
-								{{resourceService.frmelmnts.lbl.textbook}} &nbsp;&nbsp;
+								<span *ngIf="programDetails.target_collection_category[0] == 'Course' ">
+									{{resourceService.frmelmnts.lbl.course}} &nbsp;&nbsp; </span>
+									<span *ngIf="programDetails.target_collection_category[0] != 'Course' ">
+										{{resourceService.frmelmnts.lbl.textbook}} &nbsp;&nbsp; </span>
 								<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>
 								<span  *ngIf="sortColumn == 'name'" class="d-inline-block">
 									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
