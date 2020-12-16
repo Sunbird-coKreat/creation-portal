@@ -1222,7 +1222,8 @@ textbookLevelReportHeaders() {
     this.resourceService.frmelmnts.lbl.profile.Medium,
     this.resourceService.frmelmnts.lbl.profile.Classes,
     this.resourceService.frmelmnts.lbl.profile.Subjects,
-    this.resourceService.frmelmnts.lbl.textbookName.replace('{TARGET_NAME}',this.programDetails.target_collection_category[0]),
+    // tslint:disable-next-line:max-line-length
+    this.programDetails.target_collection_category ? this.resourceService.frmelmnts.lbl.textbookName.replace('{TARGET_NAME}', this.programDetails.target_collection_category[0]) : 'Textbook Name',
     this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn6,
     this.resourceService.frmelmnts.lbl.contentsContributed,
     this.resourceService.frmelmnts.lbl.contentsReviewed,
@@ -1240,7 +1241,8 @@ chapterLevelReportHeaders() {
     this.resourceService.frmelmnts.lbl.profile.Medium,
     this.resourceService.frmelmnts.lbl.profile.Classes,
     this.resourceService.frmelmnts.lbl.profile.Subjects,
-    this.resourceService.frmelmnts.lbl.textbookName.replace('{TARGET_NAME}',this.programDetails.target_collection_category[0]),
+    // tslint:disable-next-line:max-line-length
+    this.programDetails.target_collection_category ? this.resourceService.frmelmnts.lbl.textbookName.replace('{TARGET_NAME}', this.programDetails.target_collection_category[0]) : 'Textbook Name',
     this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn6,
     this.resourceService.frmelmnts.lbl.contentsContributed,
     this.resourceService.frmelmnts.lbl.contentsReviewed,
