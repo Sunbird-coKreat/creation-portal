@@ -528,7 +528,7 @@ export class BulkUploadComponent implements OnInit {
       }
 
       // Validate if content type supports given format
-      if (!_.includes(this.catFormatMapping[_.toLower(row.contentType)], row.fileFormat)) {
+      if (!_.includes(this.catFormatMapping[_.toLower(row.contentType)], _.toLower(row.fileFormat))) {
         this.setError(`File format has invalid value at row: ${rowIndex} . Supported formats are ` + _.join(this.catFormatMapping[_.toLower(row.contentType)], ','));
         this.bulkUploadState = 4;
         return;
