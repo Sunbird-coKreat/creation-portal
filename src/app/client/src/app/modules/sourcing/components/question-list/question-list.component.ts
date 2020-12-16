@@ -1046,6 +1046,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public createDefaultAssessmentItem() {
     const request = {
       url: `${this.configService.urlConFig.URLS.ASSESSMENT.CREATE}`,
+      header: {
+        'X-Channel-Id': this.programContext.rootorg_id
+      },
       data: this.prepareQuestionReqBody()
     };
 

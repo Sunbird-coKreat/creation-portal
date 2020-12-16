@@ -513,6 +513,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
       const option = {
         url: `content/v3/create`,
+        header: {
+          'X-Channel-Id': this.programContext.rootorg_id
+        },
         data: {
           request: {
             content: {
