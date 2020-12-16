@@ -273,6 +273,7 @@ export class NewQuestionBaseComponent implements OnInit {
         'code': UUID.UUID(),
         'templateId': 'NA',
         'body': rendererBody,
+        'answer': rendererAnswer,
         'responseDeclaration': {
           'responseValue': {
             'cardinality': 'single',
