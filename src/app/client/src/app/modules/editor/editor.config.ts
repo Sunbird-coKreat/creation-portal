@@ -43,11 +43,8 @@ export const questionToolbarConfig = {
 
 
 export const templateList = [
-    { questionCategory : 'VSA', type: 'reference' },
-    { questionCategory : 'SA', type: 'reference' },
-    { questionCategory : 'LA', type: 'reference' },
-    { questionCategory : 'MCQ' , type: 'mcq'},
-    { questionCategory : 'CuriosityQuestion', type: 'reference' }
+    { type : 'MCQ'},
+    { type : 'Short Answers'}
 ];
 
 export const editorConfig = {
