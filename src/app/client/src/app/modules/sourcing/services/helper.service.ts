@@ -22,7 +22,6 @@ export class HelperService {
   public readonly categoryMetaData$: Observable<any> = this._categoryMetaData$
     .asObservable().pipe(skipWhile(data => data === undefined || data === null));
   private _selectedCollectionMetaData: any;
-  public channelId: any;
   constructor(private configService: ConfigService, private contentService: ContentService,
     private toasterService: ToasterService, private publicDataService: PublicDataService,
     private actionService: ActionService, private resourceService: ResourceService,
@@ -37,7 +36,7 @@ export class HelperService {
     if (programDetails.rootorg_id) {
       this.fetchChannelData(programDetails.rootorg_id);
     }
-    this.channelId = programDetails.rootorg_id;
+    this.actionService.channelId = programDetails.rootorg_id;
   }
 
   getCategoryMetaData(category, channelId) {
@@ -124,9 +123,6 @@ export class HelperService {
   updateContent(req, contentId): Observable<ServerResponse> {
     const option = {
       url: this.configService.urlConFig.URLS.CONTENT.UPDATE + '/' + contentId,
-      header: {
-        'X-Channel-Id': this.channelId
-      },
       data: {
         'request': req
       }
@@ -137,9 +133,6 @@ export class HelperService {
   reviewContent(contentId): Observable<ServerResponse> {
     const option = {
       url: this.configService.urlConFig.URLS.CONTENT.REVIEW + '/' + contentId,
-      header: {
-        'X-Channel-Id': this.channelId
-      },
       data: {
         'request': {
           'content': {}
@@ -151,10 +144,7 @@ export class HelperService {
 
   retireContent(contentId): Observable<ServerResponse> {
     const option = {
-      url: this.configService.urlConFig.URLS.DOCKCONTENT.RETIRE + '/' + contentId,
-      header: {
-        'X-Channel-Id': this.channelId
-      }
+      url: this.configService.urlConFig.URLS.DOCKCONTENT.RETIRE + '/' + contentId
     };
     return this.actionService.delete(option);
   }
@@ -169,9 +159,6 @@ export class HelperService {
     };
     const option = {
       url: `content/v3/publish/${contentId}`,
-      header: {
-        'X-Channel-Id': this.channelId
-      },
       data: requestBody
     };
     return this.actionService.post(option);
@@ -187,9 +174,6 @@ export class HelperService {
     };
     const option = {
       url: `content/v3/reject/${contentId}`,
-      header: {
-        'X-Channel-Id': this.channelId
-      },
       data: requestBody
     };
     return this.actionService.post(option);
@@ -209,9 +193,6 @@ export class HelperService {
     }
     const option = {
       url: `system/v3/content/update/${contentId}`,
-      header: {
-        'X-Channel-Id': this.channelId
-      },
       data: requestBody
     };
     return this.actionService.patch(option);
