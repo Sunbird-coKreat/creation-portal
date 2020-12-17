@@ -2,20 +2,25 @@
   <div class="b-1-100">
     <div class="py-20 px-32 sb-bg-color-primary-0">
       <div class="sb-field-group">
+        <label class="fs-0-92">Question</label><span class="sb-required">*</span>
+        <div>
         <label *ngIf="showFormError && [undefined, ''].includes(editorState.question)" class="sb-label sb-label-table sb-label-error-0">Fill Question</label>
-        <label>Question</label><span class="sb-required">*</span>
+        </div>
+
         <div class="sb-field">
-            <div class="ckeditor-tool__question mb-24">
+            <div class="ckeditor-tool__question error-question-content mb-24">
             <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'question')"
             [editorDataInput]="editorState.question" [editorId]="'question_editor'"
             (videoDataOutput)="videoDataOutput($event)" [videoShow]="videoShow"></app-ckeditor-tool>
            </div> 
         </div>
         <div class="sb-field-group">
+          <label class="fs-0-92">Answers</label><span class="sb-required">*</span>
+          <div>
           <label *ngIf="showFormError && [undefined, ''].includes(editorState.answer)" class="sb-label sb-label-table sb-label-error-0">Fill Answer</label>
-          <label>Answers</label><span class="sb-required">*</span>
+          </div>
           <div class="sb-field">
-            <div class="ckeditor-tool__option mb-24">
+            <div class="ckeditor-tool__option error-question-content mb-24">
               <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'answer')"
                 [editorDataInput]="editorState.answer" [editorId]="'answer_editor'"></app-ckeditor-tool>
             </div>
@@ -23,11 +28,11 @@
         </div>
         <div class="d-flex flex-ai-center ckeditor-tool__solution py-10 px-16 mt-15 sb-bg-color-white">
           <label class="fs-0-92 mb-0 ckeditor-tool__label pb-4">
-            <span class="sb-color-primary fs-0-785">Solution</span>
-            <span class="fs-0-785 sb-color-gray-100">(Optional) </span>
+            <span class="sb-color-primary fs-0-785 mr-4">Solution</span>
+            <span class="sb-color-gray-200 fxsmall font-weight-normal ">(Optional) </span>
           </label>
           <div
-            class="ui dropdown sb-btn sb-btn-outline-primary sb-btn-normal sb-right-icon-btn sb-btn-radius ml-auto fxsmall"
+            class="ui dropdown sb-btn sb-btn-outline-primary sb-btn-normal sb-right-icon-btn sb-btn-radius ml-auto"
             suiDropdown autoClose="itemClick" *ngIf="showSolutionDropDown">
             <div class="text gray-200">Choose type</div>
             <i class="dropdown icon mx-8"></i>

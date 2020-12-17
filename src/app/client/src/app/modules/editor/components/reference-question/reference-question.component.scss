@@ -86,6 +86,11 @@ sui-select {
       min-width: auto;
       padding: 0;
       color: var(--gray-200);
+      .icon.close{
+        &:before{
+          content: url("assets/images/cancel-sign.png");
+        }
+      }
     }
   }
 }
@@ -98,5 +103,14 @@ sui-select {
     min-width: auto;
     padding: 0;
     color: var(--gray-200);
+  }
+}
+.error-question-content{
+  > .ck-editor{
+    .editorWrapper{
+        .ck.ck-editor__main{
+          border:1px solid red;
+        }
+    }   
   }
 }
