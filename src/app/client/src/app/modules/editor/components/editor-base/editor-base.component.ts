@@ -117,7 +117,7 @@ export class EditorBaseComponent implements OnInit {
     // }, (err) => {
     //   this.toasterService.error(this.resourceService.messages.emsg.m0027);
     // });
-    this.redirectToQuestionTab('choice');
+    this.redirectToQuestionTab('default');
   }
 
   redirectToQuestionTab(type?) {

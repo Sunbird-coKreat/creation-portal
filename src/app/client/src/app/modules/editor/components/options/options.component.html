@@ -1,0 +1,39 @@
+<div class="pt-10 fs-0-92 sb-w-85">
+  Options<span class="sb-required">*</span>
+  <i class="icon info circle ml-8"></i>
+  <span class="divider mr-8"></span>
+  <i class="icon image mx-4"></i>
+  <i class="icon align left mx-4"></i>
+  <i class="icon align right mx-4"></i>
+  <i class="icon align center mx-4"></i>
+</div>
+<label *ngIf="showFormError && !editorState.answer" class="ui basic red error label pt-1">Select one correct
+answer</label>
+<div class="d-flex py-10 flex-dc sb-mcq-form">
+  <div class="d-flex sb-mcq-item" *ngFor="let option of editorState.options; let i=index">
+    <label *ngIf="showFormError && (option.body === undefined || option.body === '')" class="sb-label sb-label-table sb-label-error-0 pt-1">Fill this option</label>
+    <div class="sb-w-85 sb-ckeditor relative mb-8">
+
+    <button [disabled]="editorState.options.length < 3"
+    class="sb-btn sb-ckeditor-close absolute"><i
+      class="icon close" (click)="editorState.deleteOption(i)"></i></button>
+    <app-ckeditor-tool (hasError)="handleEditorError($event)"
+      (editorDataOutput)="option.body = $event.body; option.length = $event.length; getMedia($event.mediaobj);"
+      [editorConfig]="editorConfig" [editorDataInput]="option.body" [setCharacterLimit]="setCharacterLimit"
+      [setImageLimit]="setImageLimit" class="ckeditor-tool__option mb-24"></app-ckeditor-tool>
+    </div>
+    <div class="sb-checkbox sb-checkbox-primary pl-10" [class.selected]="editorState.answer === i.toString()">
+      <input type="radio" name="example" value={{i}} [(ngModel)]="editorState.answer"
+        [ngModelOptions]="{standalone: true}" [checked]="editorState.answer === i.toString()">
+      <label for="check1" class="mr-0 fs-0-785">Correct answer</label>
+    </div>
+    <label *ngIf="option.length > 160" class="ui basic red error label pt-1">please reduce
+      the
+      size</label>
+  </div>
+  <div class="d-flex">
+      <button *ngIf='editorState.options.length < 4'
+      class="sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius text-inherit" (click)="editorState.addOptions()"><i
+        class="plus circle icon"></i>Add option</button>
+  </div>
+</div>

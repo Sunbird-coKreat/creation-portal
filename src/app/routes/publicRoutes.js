@@ -74,6 +74,11 @@ module.exports = function (app) {
         proxyReqPathResolver: proxyReqPathResolverMethod
     }))
 
+    app.use('/api/question/*', permissionsHelper.checkPermission(), proxy(contentProxyUrl, {
+        proxyReqOptDecorator: proxyHeaders.decorateRequestHeaders(),
+        proxyReqPathResolver: proxyReqPathResolverMethod
+    }))
+
     app.use('/api/*', permissionsHelper.checkPermission(), proxy(contentProxyUrl, {
         proxyReqPathResolver: proxyReqPathResolverMethod
     }))
