@@ -290,6 +290,11 @@
       "ADD": "questionset/v1/add",
       "REMOVE": "questionset/v1/remove",
       "REVIEW" : "questionset/v1/review"
+    },
+    "QUESTION": {
+      "CREATE": "question/v1/create",
+      "READ": "question/v1/read",
+      "UPDATE": "question/v1/update"
     }
   }
 }
