@@ -570,6 +570,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     // document.getElementById('qq-upload-actions').style.display = 'none';
     const option = {
       url: 'content/v3/upload/url/' + contentId,
+      header: {
+        'X-Channel-Id': this.programContext.rootorg_id
+      },
       data: {
         request: {
           content: {
@@ -649,6 +652,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     const option = {
       url: 'content/v3/upload/' + contentId,
       data: data,
+      header: {
+        'X-Channel-Id': this.programContext.rootorg_id
+      },
       param: config
     };
     this.actionService.post(option).pipe(catchError(err => {
