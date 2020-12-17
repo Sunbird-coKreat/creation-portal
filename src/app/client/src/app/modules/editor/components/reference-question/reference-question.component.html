@@ -8,7 +8,7 @@
         </div>
 
         <div class="sb-field">
-            <div class="ckeditor-tool__question error-question-content mb-24">
+            <div class="ckeditor-tool__question mb-24">
             <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'question')"
             [editorDataInput]="editorState.question" [editorId]="'question_editor'"
             (videoDataOutput)="videoDataOutput($event)" [videoShow]="videoShow"></app-ckeditor-tool>
@@ -20,7 +20,7 @@
           <label *ngIf="showFormError && [undefined, ''].includes(editorState.answer)" class="sb-label sb-label-table sb-label-error-0">Fill Answer</label>
           </div>
           <div class="sb-field">
-            <div class="ckeditor-tool__option error-question-content mb-24">
+            <div class="ckeditor-tool__option mb-24">
               <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'answer')"
                 [editorDataInput]="editorState.answer" [editorId]="'answer_editor'"></app-ckeditor-tool>
             </div>
