@@ -87,6 +87,11 @@ sui-select {
       min-width: auto;
       padding: 0;
       color: var(--gray-200);
+      .icon.close{
+        &:before{
+          content: url("assets/images/cancel-sign.png");
+        }
+      }
     }
   }
 }
@@ -99,6 +104,11 @@ sui-select {
     min-width: auto;
     padding: 0;
     color: var(--gray-200);
+    .icon.close{
+      &:before{
+        content: url("assets/images/cancel-sign.png");
+      }
+    }
   }
 }
 .sb-mcq-form{
