@@ -62,6 +62,9 @@ export class EditorBaseComponent implements OnInit {
       case 'saveContent':
         this.saveContent();
         break;
+      case 'submitContent':
+        this.submitContent();
+        break;
       case 'removeQuestion':
         this.removeNode();
         break;
@@ -82,6 +85,17 @@ export class EditorBaseComponent implements OnInit {
       this.treeService.replaceNodeId(response.identifiers);
       this.treeService.clearTreeCache();
       alert('Hierarchy is Sucessfuly Updated');
+    });
+  }
+
+  submitContent() {
+    this.editorService.sendQuestionSetForReview(this.editorParams.collectionId).pipe(catchError(error => {
+      const errInfo = {
+        errorMsg: 'Sending question set for review failed. Please try again...',
+       };
+      return throwError(this.cbseService.apiErrorHandling(error, errInfo));
+    })).subscribe(res => {
+      this.toasterService.success('Question set sent for review');
     });
   }
 
