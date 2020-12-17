@@ -310,8 +310,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   canEditMetadata() {
-    // tslint:disable-next-line:max-line-length
-    return !!(_.find(this.formFieldProperties, field => field.editable === true));
+    // // tslint:disable-next-line:max-line-length
+    if(this.contentMetaData.sampleContent == 'true' || typeof(this.contentMetaData.sampleContent) == 'undefined'){
+        return !!(_.find(this.formFieldProperties, field => field.editable === true));
+      }  else{
+           return ;
+         }
   }
 
   canSubmit() {
@@ -812,8 +816,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   saveMetadataForm(cb?) {
     if (this.helperService.validateForm(this.formFieldProperties, this.formData.formInputData || {})) {
-      console.log(this.formData.formInputData);
-      // tslint:disable-next-line:max-line-length
+     // tslint:disable-next-line:max-line-length
       const formattedData = this.helperService.getFormattedData(_.pick(this.formData.formInputData, this.editableFields), this.formFieldProperties);
       const request = {
         'content': {

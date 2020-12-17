@@ -19,7 +19,6 @@
             <div #contentTitle class="fs-1">
               <div class="d-flex flex-ai-center"><div class="practical-header__title font-weight-bold" suiPopup popupText="{{editTitle}}">{{editTitle}} </div>
               <span class="sb-color-primary font-weight-normal fs-0-785 ml-20" *ngIf="formFieldProperties && formFieldProperties.length">
-                <span *ngIf="contentMetaData.sampleContent !=true">
                 <i [ngClass]="{'edit': visibility && visibility.showEditMetadata, 'eye': visibility && !(visibility.showEditMetadata)}" class="icon sb-color-primary cursor-pointer"></i>
                 <a class="cursor-pointer text-underline text-capitalize"
                 appTelemetryInteract
@@ -27,7 +26,7 @@
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
-                (click)="showEditform('editForm');">{{(visibility && visibility.showEditMetadata) ? 'Edit details' : 'View details'}}</a></span></span>
+                (click)="showEditform('editForm');">{{(visibility && visibility.showEditMetadata) ? 'Edit details' : 'View details'}}</a></span>
                 <!-- <a class="fsmall ml-16 sb-color-primary font-weight-normal" *ngIf="visibility && visibility.showEditMetadata && sessionContext.topicList">
                   <span class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="showEditform(); requiredAction = 'editForm'">edit metadata</span>
                 </a> -->
