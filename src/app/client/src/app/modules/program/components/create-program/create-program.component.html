@@ -326,7 +326,7 @@
 										popupText="{{resource.frmelmnts.lbl.select.Target.Collection}}"></i>
 								</label>
 								<sui-select formControlName="target_collection_category" class="selecttarget"  placeholder="{{resource?.frmelmnts?.lbl?.Select}}"
-								(ngModelChange)="onChangeTargetCollection()" [(ngModel)]="selectedTargetCollection" [options]="collectionCategories"  #targetCollections>
+								(selectedOptionChange)="onChangeTargetCollection()" [(ngModel)]="selectedTargetCollection" [options]="collectionCategories"  #targetCollections>
 									<sui-select-option  *ngFor="let option of targetCollections.filteredOptions;" [value]="option">
 									</sui-select-option>
 								</sui-select>
