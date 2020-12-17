@@ -47,7 +47,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   tempCollections = [];
   collectionCategories = [];
   showProgramScope: any;
-  callTargetCollection: any;
   textbooks: any = {};
   chaptersSelectionForm : FormGroup;
   private userFramework;
@@ -888,14 +887,15 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.validateDates();
   }
 onChangeTargetCollection() {
-   if (this.callTargetCollection) {
     this.showTexbooklist(true);
     this.collectionListForm.value.pcollections = [];
     this.tempCollections = [];
-   }
 }
-  showTexbooklist(showTextBookSelector = true) {
+showTexbooklist(showTextBookSelector = true) {
     const primaryCategory = this.collectionListForm.value.target_collection_category;
+    if (!primaryCategory) {
+      return;
+    }
     // for scrolling window to top after Next button navigation
     const requestData = {
       request: {
@@ -1320,10 +1320,6 @@ onChangeTargetCollection() {
   }
 
   saveAsDraftAndNext ($event) {
-    this.callTargetCollection = true;
-    if (this.collectionListForm.value.target_collection_category) {
-      this.onChangeTargetCollection();
-    }
     this.clearValidations();
 
     if ((this.createProgramForm.dirty
@@ -1335,6 +1331,7 @@ onChangeTargetCollection() {
           if (!error && resp) {
             this.showTextBookSelector = true;
             window.scrollTo(0,0);
+            this.showTexbooklist();
             ($event.target as HTMLButtonElement).disabled = false;
           } else {
             this.toasterService.error(this.resource.messages.emsg.m0005);
@@ -1345,6 +1342,7 @@ onChangeTargetCollection() {
         this.saveProgram(cb);
       } else if (this.createProgramForm.valid) {
         this.showTextBookSelector = true;
+        this.showTexbooklist();
         window.scrollTo(0,0);
       } else {
         this.formIsInvalid = true;
