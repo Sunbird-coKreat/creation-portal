@@ -766,3 +766,46 @@ xxl calculateRem(180px) 24px 20px;
     left: 18px;
   }
 }
+.one-column-grid{
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  grid-template-rows: 1fr 1fr; 
+  column-gap: 0.5rem;
+}
+.two-column-grid{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: 1fr 1fr; 
+  column-gap: 0.5rem;
+}
+
+.three-column-grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 1fr 1fr; 
+  column-gap: 0.5rem;
+}
+
+// For grid column start add class
+// .sb-g-col-lg-2 for 2
+// .sb-g-col-lg-2 for 3
+
+.add-to-library{
+  .dynamic-form{
+    label{
+      font-size: 12px !important;
+      margin-bottom: .5rem !important;
+      color: #121213e0;
+      padding: 0 !important;
+    }
+    .sb-textbox,select{
+      border: 1px solid rgba(34,36,38,.15) !important;
+      padding: .25rem .5rem!important;
+      border-radius: .28571429rem;
+    }
+  }
+  sb-icon-dropdown{
+    top: 0 !important;
+    right: 6px !important;
+  }
+}

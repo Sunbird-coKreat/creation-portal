@@ -8,7 +8,7 @@ export const formConfig = [
         'label': 'Name',
         'name': 'Name',
         'placeholder': 'Name',
-        'renderingHints': {},
+        'renderingHints': {'class':'sb-g-col-lg-1'},
         'required': true,
         'visible': true,
         'validation': [{
@@ -26,7 +26,7 @@ export const formConfig = [
         'label': 'Author',
         'name': 'Author',
         'placeholder': 'Author',
-        'renderingHints': {},
+        'renderingHints': {'class':'sb-g-col-lg-1'},
         'required': true,
         'visible': true,
         'validation': [{
@@ -44,7 +44,7 @@ export const formConfig = [
         'label': 'Attributions',
         'name': 'Attributions',
         'placeholder': 'Attributions',
-        'renderingHints': {},
+        'renderingHints': {'class':'sb-g-col-lg-1'},
         'required': true,
         'visible': true,
         'validation': [{
@@ -62,7 +62,7 @@ export const formConfig = [
         'label': 'Copyright & year',
         'name': 'Copyright & year',
         'placeholder': 'Copyright & year',
-        'renderingHints': {},
+        'renderingHints': {'class':'sb-g-col-lg-1'},
         'required': true,
         'visible': true,
         'validation': [{
@@ -80,7 +80,7 @@ export const formConfig = [
         'label': 'Licence',
         'name': 'Licence',
         'placeholder': 'Select Licence',
-        'renderingHints': {},
+        'renderingHints': {'class':'sb-g-col-lg-1'},
         'required': true,
         'visible': true,
         'templateOptions': {
@@ -123,7 +123,7 @@ export const formConfig = [
         'label': 'Audience',
         'name': 'Audience',
         'placeholder': 'Select Audience',
-        'renderingHints': {},
+        'renderingHints': {'class':'sb-g-col-lg-1'},
         'required': true,
         'visible': true,
         'templateOptions': {
