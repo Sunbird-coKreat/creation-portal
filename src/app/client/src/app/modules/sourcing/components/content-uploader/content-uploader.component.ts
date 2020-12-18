@@ -311,11 +311,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   canEditMetadata() {
     // // tslint:disable-next-line:max-line-length
-    if(this.contentMetaData.sampleContent == 'true' || typeof(this.contentMetaData.sampleContent) == 'undefined'){
-        return !!(_.find(this.formFieldProperties, field => field.editable === true));
-      }  else{
-           return ;
-         }
+    if (this.contentMetaData.sampleContent == 'true' || typeof (this.contentMetaData.sampleContent) == 'undefined') {
+      return !!(_.find(this.formFieldProperties, field => field.editable === true));
+    } else {
+      return;
+    }
   }
 
   canSubmit() {
