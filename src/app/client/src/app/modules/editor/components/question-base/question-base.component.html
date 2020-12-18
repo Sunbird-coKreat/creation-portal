@@ -60,7 +60,7 @@
                           class="icon close"></i>
                       </button>
                       <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'solution')"
-                      [editorDataInput]="solutionValue" [editorId]="'solution_editor'" class="ckeditor-tool__option"></app-ckeditor-tool>
+                      [editorDataInput]="editorState.solutions" [editorId]="'solution_editor'" class="ckeditor-tool__option"></app-ckeditor-tool>
                     </div>
                   </div>
                 </div>
