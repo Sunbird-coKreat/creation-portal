@@ -24,7 +24,7 @@ export class EditorService {
     return this.publicDataService.get(req).pipe(map((res: any) => _.get(res, 'result.questionSet')));
   }
 
-  updateQuestionSetHierarchy(): Observable<any> {
+  public updateQuestionSetHierarchy(): Observable<any> {
     const req = {
       url: this.configService.urlConFig.URLS.QUESTION_SET.UPDATE_HIERARCHY,
       data: {
@@ -37,6 +37,18 @@ export class EditorService {
       }
     };
     return this.publicDataService.patch(req);
+  }
+
+  public sendQuestionSetForReview(identifier: string): Observable<any> {
+    const req = {
+      url: `${this.configService.urlConFig.URLS.QUESTION_SET.REVIEW}/${identifier}`,
+      data: {
+        'request' : {
+            'questionSet': {}
+        }
+    }
+    };
+    return this.publicDataService.post(req);
   }
 
   public getQuestionStream$() {

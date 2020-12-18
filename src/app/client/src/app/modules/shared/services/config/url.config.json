@@ -288,7 +288,8 @@
       "READ_HIERARCHY" : "questionset/v1/hierarchy",
       "UPDATE_HIERARCHY" : "questionset/v1/hierarchy/update",
       "ADD": "questionset/v1/add",
-      "REMOVE": "questionset/v1/remove"
+      "REMOVE": "questionset/v1/remove",
+      "REVIEW" : "questionset/v1/review"
     },
     "QUESTION": {
       "CREATE": "question/v1/create",
