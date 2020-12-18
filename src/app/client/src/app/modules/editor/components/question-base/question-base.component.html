@@ -23,16 +23,6 @@
                     (videoDataOutput)="videoDataOutput($event)" [videoShow]="videoShow"></app-ckeditor-tool>
                    </div>
                 </div>
-                <!-- <div class="sb-field-group">
-                  <label *ngIf="showFormError && [undefined, ''].includes(editorState.answer)" class="sb-label sb-label-table sb-label-error-0">Fill Answer</label>
-                  <label>Answers</label><span class="sb-required">*</span>
-                  <div class="sb-field">
-                    <div class="ckeditor-tool__option mb-24">
-                      <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'answer')"
-                        [editorDataInput]="editorState.answer" [editorId]="'answer_editor'"></app-ckeditor-tool>
-                    </div>
-                  </div>
-                </div> -->
 
                 <app-answer *ngIf="(questionInteractionType === 'default')" [editorConfig]="editorConfig" [editorState]="editorState" (editorDataOutput)="editorDataHandler($event, 'answer')"></app-answer>
 

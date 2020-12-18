@@ -9,7 +9,7 @@ import { questionEditorConfig } from '../../editor.config';
 import { McqForm } from '../../../cbse-program';
 import { forkJoin, of, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { map, catchError } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { ToasterService, ResourceService, ServerResponse } from '@sunbird/shared';
 @Component({
   selector: 'app-question-base',
@@ -22,10 +22,10 @@ export class QuestionBaseComponent implements OnInit {
   public editorConfig: any = questionEditorConfig;
   public editorState: any = {};
   private initialized = false;
-  public showPreview: Boolean = false;
+  public showPreview = false;
   public mediaArr: any = [];
   public videoShow = false;
-  public showFormError: Boolean = false;
+  public showFormError = false;
   selectedSolutionType: string;
   selectedSolutionTypeIndex: string;
   showSolutionDropDown = true;
@@ -47,7 +47,7 @@ export class QuestionBaseComponent implements OnInit {
   questionInteractionType;
   questionId;
   questionSetId;
-  public showLoader: Boolean = true;
+  public showLoader: boolean = true;
   constructor(private editorService: EditorService, private questionService: QuestionService,
     public activatedRoute:ActivatedRoute, public router: Router, private http: HttpClient,
     public toasterService: ToasterService, public resourceService: ResourceService) { }
@@ -472,7 +472,6 @@ export class QuestionBaseComponent implements OnInit {
       if (response.result) {
         this.toasterService.success(this.resourceService.messages.smsg.m0071);
         /*
-        const questionId = response.result.identifier;
         this.questionService.addQuestionToQuestionSet(this.questionSetId, questionId).
         subscribe(
           (res: ServerResponse) => {
@@ -487,7 +486,6 @@ export class QuestionBaseComponent implements OnInit {
         }
         )
         */
-       const questionId = response.result.identifier;
        this.router.navigate([`create/questionSet/${this.questionSetId}/question`], { queryParams: { type: this.questionInteractionType, questionId: questionId } });
       }
     },
