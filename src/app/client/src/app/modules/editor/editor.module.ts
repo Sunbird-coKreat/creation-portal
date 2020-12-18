@@ -5,6 +5,7 @@ import { CoreModule } from '@sunbird/core';
 import { SuiModule } from 'ng2-semantic-ui';
 import { SharedModule } from '@sunbird/shared';
 import { EditorRoutingModule } from './editor-routing.module';
+import { CommonFormElementsModule } from 'v-dynamic-forms';
 import { FancyTreeComponent, QuestionTemplateComponent, QuestionBaseComponent,
 ContentplayerPageComponent, EditorHeaderComponent,
 QuestionSetComponent, EditorBaseComponent, } from './components';
@@ -25,6 +26,7 @@ import { AnswerComponent } from './components/answer/answer.component';
     ReactiveFormsModule,
     EditorRoutingModule,
     SharedModule,
+    CommonFormElementsModule,
     // PlayerHelperModule
     CbseProgramModule
   ]

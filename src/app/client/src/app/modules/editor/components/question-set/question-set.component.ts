@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import {TreeService} from '../../services';
-import { templateList } from '../../editor.config';
-import { ProgramsService, UserService } from '@sunbird/core';
+import { TreeService } from '../../services';
+import { formConfig} from './formConfig';
+
 @Component({
   selector: 'app-question-set',
   templateUrl: './question-set.component.html',
@@ -10,7 +10,7 @@ import { ProgramsService, UserService } from '@sunbird/core';
 export class QuestionSetComponent implements OnInit {
   @Input() questionSetMetadata: any;
   @Output() toolbarEmitter = new EventEmitter<any>();
-
+  config = formConfig;
   constructor(private treeService: TreeService) { }
 
   ngOnInit() {
@@ -22,7 +22,11 @@ export class QuestionSetComponent implements OnInit {
   }
 
   addQuestion() {
-    this.toolbarEmitter.emit({'button': { 'type' : 'showQuestionTemplate'}});
+    this.toolbarEmitter.emit({ 'button': { 'type': 'showQuestionTemplate' } });
+  }
+
+  output(event) {
+    console.log(event);
   }
 
 }
