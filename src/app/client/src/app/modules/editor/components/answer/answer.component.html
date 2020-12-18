@@ -1,6 +1,8 @@
 <div class="sb-field-group">
-  <label *ngIf="showFormError && [undefined, ''].includes(editorState.answer)" class="sb-label sb-label-table sb-label-error-0">Fill Answer</label>
-  <label>Answers</label><span class="sb-required">*</span>
+  <label class="fs-0-92">Answers <span class="sb-required">*</span></label><i class="icon info circle ml-2" [popupPlacement]="'bottom'" suiPopup popupText="text description"></i>
+  <div>
+      <label *ngIf="showFormError && [undefined, ''].includes(editorState.answer)" class="sb-label sb-label-table sb-label-error-0">Fill Answer</label>
+  </div>
   <div class="sb-field">
   <div class="ckeditor-tool__option mb-24">
     <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event)"

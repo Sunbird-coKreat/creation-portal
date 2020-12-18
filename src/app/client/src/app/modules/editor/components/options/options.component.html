@@ -11,7 +11,9 @@
 answer</label>
 <div class="d-flex py-10 flex-dc sb-mcq-form">
   <div class="d-flex sb-mcq-item" *ngFor="let option of editorState.options; let i=index">
-    <label *ngIf="showFormError && (option.body === undefined || option.body === '')" class="sb-label sb-label-table sb-label-error-0 pt-1">Fill this option</label>
+    <div>
+      <label *ngIf="showFormError && (option.body === undefined || option.body === '')" class="sb-label sb-label-table sb-label-error-0 pt-1">Fill this option</label>
+    </div>
     <div class="sb-w-85 sb-ckeditor relative mb-8">
 
     <button [disabled]="editorState.options.length < 3"
