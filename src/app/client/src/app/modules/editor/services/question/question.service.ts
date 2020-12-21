@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ConfigService } from '@sunbird/shared';
-import { Observable, of as observableOf } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject} from 'rxjs';
+import { Observable } from 'rxjs';
 import { PublicDataService } from '@sunbird/core';
 import { ServerResponse } from '@sunbird/shared';
 
@@ -11,22 +9,7 @@ import { ServerResponse } from '@sunbird/shared';
 })
 export class QuestionService {
 
-  private questionData = new BehaviorSubject<any>({});
-  public questionDetails = this.questionData.asObservable();
-
-  private questionType = new BehaviorSubject<any>({});
-  public questionTypeDetails = this.questionType.asObservable();
-
-  constructor(private configService: ConfigService, private httpClient: HttpClient, public publicDataService: PublicDataService) { }
-
-  setQuestionData(data) {
-    this.questionData.next(data);
-  }
-
-  setQuestionType(data) {
-    this.questionType.next(data);
-  }
-
+  constructor(private configService: ConfigService, public publicDataService: PublicDataService) { }
 
   /**
   * create question

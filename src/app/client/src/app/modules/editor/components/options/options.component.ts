@@ -1,5 +1,4 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
-import * as _ from 'lodash-es';
 @Component({
   selector: 'app-options',
   templateUrl: './options.component.html',

@@ -7,7 +7,7 @@ import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
 import { questionEditorConfig } from '../../editor.config';
 import { McqForm } from '../../../cbse-program';
-import { forkJoin, of, throwError } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { ToasterService, ResourceService, ServerResponse } from '@sunbird/shared';
