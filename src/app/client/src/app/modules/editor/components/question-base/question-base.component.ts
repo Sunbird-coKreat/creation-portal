@@ -48,7 +48,7 @@ export class QuestionBaseComponent implements OnInit {
   questionId;
   questionSetId;
   public setCharacterLimit = 160;
-  public showLoader: boolean = true;
+  public showLoader = true;
   constructor(private editorService: EditorService, private questionService: QuestionService,
     public activatedRoute:ActivatedRoute, public router: Router, private http: HttpClient,
     public toasterService: ToasterService, public resourceService: ResourceService) { }
