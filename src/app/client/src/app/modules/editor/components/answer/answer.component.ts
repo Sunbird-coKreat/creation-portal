@@ -7,6 +7,7 @@ import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 export class AnswerComponent implements OnInit {
   @Input() editorConfig;
   @Input() editorState;
+  @Input() showFormError;
   @Output() editorDataOutput: EventEmitter<any> = new EventEmitter<any>();
   constructor() { }
 

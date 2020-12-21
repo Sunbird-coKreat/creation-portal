@@ -47,6 +47,7 @@ export class QuestionBaseComponent implements OnInit {
   questionInteractionType;
   questionId;
   questionSetId;
+  public setCharacterLimit = 160;
   public showLoader: boolean = true;
   constructor(private editorService: EditorService, private questionService: QuestionService,
     public activatedRoute:ActivatedRoute, public router: Router, private http: HttpClient,
@@ -152,20 +153,23 @@ export class QuestionBaseComponent implements OnInit {
   saveContent() {
     // to handle when question type is subjective
     if (this.questionInteractionType === 'default') {
-      if (this.editorState.question !== '') {
+      if (this.editorState.question !== '' && this.editorState.answer !== '') {
         this.showFormError = false;
         this.saveSubjectiveQuestion();
       } else {
         this.showFormError = true;
+        return;
       }
     }
     // to handle when question type is mcq
     if (this.questionInteractionType === 'choice') {
-      if (this.editorState.question !== '' && this.editorState.answer !== '') {
-        this.showFormError = false;
-        this.saveMcqQuestion();
-      } else {
+      const optionValid = _.find(this.editorState.options, option =>
+        (option.body === undefined || option.body === '' || option.length > this.setCharacterLimit));
+      if (optionValid || !this.editorState.answer || [undefined, ''].includes(this.editorState.question)) {
         this.showFormError = true;
+        return;
+      } else {
+        this.saveMcqQuestion();
       }
     }
   }

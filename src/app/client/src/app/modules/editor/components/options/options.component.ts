@@ -7,6 +7,7 @@ import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 export class OptionsComponent implements OnInit {
   @Input() editorConfig;
   @Input() editorState;
+  @Input() showFormError;
   @Output() editorDataOutput: EventEmitter<any> = new EventEmitter<any>();
   @Output() optionMedia: EventEmitter<any> = new EventEmitter<any>();
   public mediaArr = [];
