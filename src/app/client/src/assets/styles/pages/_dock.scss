@@ -800,7 +800,7 @@ xxl calculateRem(180px) 24px 20px;
     }
     .sb-textbox,select{
       border: 1px solid rgba(34,36,38,.15) !important;
-      padding: .25rem .5rem!important;
+      padding: .45rem .5rem!important;
       border-radius: .28571429rem;
     }
   }
@@ -808,4 +808,11 @@ xxl calculateRem(180px) 24px 20px;
     top: 0 !important;
     right: 6px !important;
   }
+
+}
+.h-7{
+  height: 7px;
+}
+.h-12{
+  height: 12px;
 }
