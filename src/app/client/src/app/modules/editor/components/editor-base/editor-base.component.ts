@@ -178,10 +178,10 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
   toolbarEventListener(event) {
     switch (event.button.type) {
       case 'saveCollection':
-        // this.saveCollection();
+        this.saveCollection();
         break;
       case 'submitCollection':
-        // this.submitCollection();
+        this.submitCollection();
         break;
       case 'removeContent':
         this.removeNode();

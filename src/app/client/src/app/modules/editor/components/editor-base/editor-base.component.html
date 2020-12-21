@@ -32,6 +32,6 @@
 
 
 <app-question-template *ngIf='showQuestionTemplatePopup'
-[templateList]="templateList"
+[templateList]="templateList" [telemetryEventsInput]="telemetryPageDetails"
 (templateSelection)="handleTemplateSelection($event)">
 </app-question-template>
