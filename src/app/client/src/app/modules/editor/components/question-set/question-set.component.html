@@ -3,22 +3,27 @@
     <sb-form [config]="config" (initialize)="output($event)"></sb-form>
   </div>
   <div class="ui grid">
-    <div class="twelve wide column sb-checkbox-tnc">
+    <div class="twelve wide column sb-checkbox-tnc mt-10">
       <div class="sb-checkbox sb-checkbox-primary font-italic"><input id="check5" name="example" type="checkbox">
         <label for="check5" class="fsmall pl-32"><span class="sb-required">*</span><span
             class="font-weight-bold mb-4 d-block">I agree that by submitting / publishing this Content,</span>
             <div class="sb-color-gray-300">I confirm that this Content complies with prescibed guidlines, including th Terms ofUse and Content Policy and
-          that I consent to publish it under the Creative Commons Framework in accordance with the Content Policy. I
-          have made sure that I do not violate other's copyright ir privacy rights.</div>
+              that I consent to publish it under the Creative Commons Framework in accordance with the Content Policy. I
+              that I consent to publish it under the <a class="sb-color-primary font-weight-bold cursor-pointer">Creative Commons Framework</a> in accordance with the <a class="sb-color-primary font-weight-bold cursor-pointer">Content Policy</a>. I
+              have made sure that I do not violate other's copyright ir privacy rights.</div>
         </label>
       </div>
     </div>
   </div>
   <hr class="my-20" />
-  <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="addQuestion()">
+  <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="addQuestion()" appTelemetryInteract 
+  [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add_question', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryEventsInput.telemetryPageId)"
+  [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(telemetryEventsInput.collectionId, 'Content', '1.0')"
+  [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
+  [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata">
     <i class="icon plus"></i> Add Question
   </button>
-  <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-15">
+  <!-- <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-15">
     <i class="icon plus"></i> Add from library
-  </button>
+  </button> -->
   <!-- </ng-container> -->

@@ -72,7 +72,7 @@ export class EditorService {
     const instance = this;
     if (data && data.data) {
       instance.data[data.data.id] = {
-        // 'name': data.title,
+        'name': data.title,
         // 'contentType': data.data.objectType,
         'children': _.map(data.children, (child) => {
           return child.data.id;

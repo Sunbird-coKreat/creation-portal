@@ -25,10 +25,10 @@ answer</label>
       [setImageLimit]="setImageLimit" class="ckeditor-tool__option mb-24"></app-ckeditor-tool>
     </div>
     <div class="sb-checkbox sb-checkbox-primary pl-10" [class.selected]="editorState.answer === i.toString()">
-      <input type="radio" name="example" value={{i}} [(ngModel)]="editorState.answer"
+      <input type="radio" id="{{i+1}}" name="example" value={{i}} [(ngModel)]="editorState.answer"
         [ngModelOptions]="{standalone: true}" [checked]="editorState.answer === i.toString()">
-      <label for="check1" class="mr-0 fs-0-785">Correct answer</label>
-    </div>
+        <label for="{{i+1}}" class="mr-0 fs-0-785">Correct answer</label>
+      </div>
     <label *ngIf="option.length > 160" class="ui basic red error label pt-1">please reduce
       the
       size</label>

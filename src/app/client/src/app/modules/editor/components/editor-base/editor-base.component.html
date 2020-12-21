@@ -1,10 +1,10 @@
 <div class="add-to-library mb-30" *ngIf='!showLoader'>
   <app-editor-header
-    [toolbarConfig]="toolbarConfig"
+    [toolbarConfig]="toolbarConfig" [telemetryEventsInput]="telemetryPageDetails"
     (toolbarEmitter)="toolbarEventListener($event)"
   >
   </app-editor-header>
-  <div class="min-h-500 sb-bg-white">
+  <div class="min-h-500 sb-bg-white" [appTelemetryStart]="telemetryStart">
     <div class="ui">
       <div class="ui twelve column grid m-0">
         <!-- Left Sidebar for cards -->
@@ -16,10 +16,10 @@
         <!-- Right Player Sections -->
         <div class="eight wide column bg-white pl-40">
           <ng-container *ngIf="selectedQuestionData?.folder === true">
-            <app-question-set [questionSetMetadata]="selectedQuestionData" (toolbarEmitter)="toolbarEventListener($event)"></app-question-set>
+            <app-question-set [telemetryEventsInput]="telemetryPageDetails" [questionSetMetadata]="selectedQuestionData" (toolbarEmitter)="toolbarEventListener($event)"></app-question-set>
           </ng-container>
           <ng-container *ngIf="selectedQuestionData?.folder === false">
-            <app-contentplayer-page [questionMetaData]="selectedQuestionData" (toolbarEmitter)="toolbarEventListener($event)"></app-contentplayer-page>
+            <app-contentplayer-page [telemetryEventsInput]="telemetryPageDetails" [questionMetaData]="selectedQuestionData" (toolbarEmitter)="toolbarEventListener($event)"></app-contentplayer-page>
           </ng-container>
         </div>
       </div>
