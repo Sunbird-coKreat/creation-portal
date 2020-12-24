@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CoreModule } from '@sunbird/core';
@@ -29,6 +29,7 @@ import { AnswerComponent } from './components/answer/answer.component';
     CommonFormElementsModule,
     // PlayerHelperModule
     CbseProgramModule
-  ]
+  ],
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ]
 })
 export class EditorModule { }
