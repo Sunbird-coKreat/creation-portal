@@ -2,14 +2,18 @@ export const toolbarConfig = {
   headerName: 'Create Question Set',
   title: 'Question Collection',
   buttons: [{
+    telemetryId: 'save_as_draft',
+    telemetrySubtype: 'submit',
     name: 'Save as draft',
-    type: 'saveContent',
+    type: 'saveCollection',
     buttonType: 'button',
     style: 'sb-btn sb-btn-normal sb-btn-outline-primary mr-10',
   },
   {
+    telemetryId: 'submit',
+    telemetrySubtype: 'submit',
     name: 'Submit',
-    type: 'submitContent',
+    type: 'submitCollection',
     buttonType: 'button',
     style: 'sb-btn sb-btn-normal sb-btn-primary',
     slot: `<i class="trash alternate outline icon"></i>`
@@ -21,18 +25,24 @@ export const questionToolbarConfig = {
   headerName: 'Edit Question',
   title: 'Q1 | MCQ',
   buttons: [{
+    telemetryId: 'preview',
+    telemetrySubtype: 'launch',
     name: 'Preview',
     type: 'previewContent',
     buttonType: 'button',
     style: 'sb-btn sb-btn-normal sb-btn-outline-primary mr-10',
     slot: `icon eye`
   }, {
+    telemetryId: 'cancel',
+    telemetrySubtype: 'launch',
     name: 'Cancel',
     type: 'cancelContent',
     buttonType: 'button',
     style: 'sb-btn sb-btn-normal sb-btn-outline-primary mr-10',
   },
   {
+    telemetryId: 'save',
+    telemetrySubtype: 'submit',
     name: 'Save',
     type: 'saveContent',
     buttonType: 'button',

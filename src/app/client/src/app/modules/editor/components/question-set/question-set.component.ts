@@ -1,5 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import * as _ from 'lodash-es';
 import { TreeService } from '../../services';
+import { ConfigService } from '@sunbird/shared';
+import { ProgramTelemetryService } from '../../../program/services';
 import { formConfig} from './formConfig';
 
 @Component({
@@ -9,16 +12,24 @@ import { formConfig} from './formConfig';
 })
 export class QuestionSetComponent implements OnInit {
   @Input() questionSetMetadata: any;
+  @Input() telemetryEventsInput: any;
   @Output() toolbarEmitter = new EventEmitter<any>();
   config = formConfig;
-  constructor(private treeService: TreeService) { }
+  constructor(private treeService: TreeService, public configService: ConfigService,
+    public programTelemetryService: ProgramTelemetryService) { }
 
   ngOnInit() {
+    this.prepareFormConfiguration();
   }
 
-  changeTitle($event) {
-    console.log($event.target.value);
-    this.treeService.setNodeTitle($event.target.value);
+  prepareFormConfiguration() {
+    const metadata = this.questionSetMetadata.data.metadata;
+    _.forEach(this.config, field => {
+      if (metadata && metadata[field.code]) {
+        field['default'] = metadata[field.code];
+      }
+    });
+    console.log(this.config);
   }
 
   addQuestion() {
@@ -27,6 +38,7 @@ export class QuestionSetComponent implements OnInit {
 
   output(event) {
     console.log(event);
+    this.treeService.updateNode(event);
   }
 
 }

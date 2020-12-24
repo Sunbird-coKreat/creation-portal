@@ -2,7 +2,7 @@
   <app-loader></app-loader>
 </div>
 <div class="add-to-library mb-30" *ngIf='!showLoader'>
-  <app-editor-header [toolbarConfig]="toolbarConfig" (toolbarEmitter)="toolbarEventListener($event)">
+  <app-editor-header [telemetryEventsInput]="telemetryPageDetails" [toolbarConfig]="toolbarConfig" (toolbarEmitter)="toolbarEventListener($event)">
   </app-editor-header>
 
   <div class="min-h-500 sb-bg-white py-20">
@@ -14,14 +14,14 @@
               <div class="sb-field-group">
                 <label class="fs-0-92">Question</label><span class="sb-required">*</span>
                 <div>
-                <label *ngIf="showFormError && [undefined, ''].includes(editorState.question)" class="sb-label sb-label-table sb-label-error-0">Fill Question</label>
                 </div>
                 <div class="sb-field">
-                    <div class="ckeditor-tool__question mb-24">
+                  <div class="ckeditor-tool__question mb-5">
                     <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'question'); getMedia($event.mediaobj);"
                     [editorDataInput]="editorState.question" [editorId]="'question_editor'"
                     (videoDataOutput)="videoDataOutput($event)" [videoShow]="videoShow"></app-ckeditor-tool>
                    </div>
+                   <label *ngIf="showFormError && [undefined, ''].includes(editorState.question)" class="sb-color-error fs-0-785">Fill Question</label>
                 </div>
 
                 <app-answer *ngIf="(questionInteractionType === 'default')" [editorConfig]="editorConfig" [editorState]="editorState" [showFormError]="showFormError" (editorDataOutput)="editorDataHandler($event, 'answer')"></app-answer>

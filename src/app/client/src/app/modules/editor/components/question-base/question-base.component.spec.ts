@@ -3,7 +3,6 @@ import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { QuestionBaseComponent } from './question-base.component';
 import { CoreModule, ContentService, PublicDataService } from '@sunbird/core';
 import { SharedModule } from '@sunbird/shared';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 describe('QuestionBaseComponent', () => {
   let component: QuestionBaseComponent;
