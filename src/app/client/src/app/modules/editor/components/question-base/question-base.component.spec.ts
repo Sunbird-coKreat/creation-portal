@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { QuestionBaseComponent } from './question-base.component';
-import { CoreModule, ContentService, PublicDataService } from '@sunbird/core';
+import { CoreModule } from '@sunbird/core';
 import { SharedModule } from '@sunbird/shared';
 import { RouterTestingModule } from '@angular/router/testing';
 describe('QuestionBaseComponent', () => {

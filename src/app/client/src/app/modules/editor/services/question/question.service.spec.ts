@@ -1,9 +1,9 @@
 import { TestBed, inject } from '@angular/core/testing';
 import { QuestionService } from './question.service';
-import { CoreModule, ContentService, PublicDataService } from '@sunbird/core';
+import { CoreModule, PublicDataService } from '@sunbird/core';
 import { SharedModule } from '@sunbird/shared';
 import * as mockData from './question.service.spec.data';
-import { throwError as observableThrowError, of as observableOf } from 'rxjs';
+import { of as observableOf } from 'rxjs';
 const testData = mockData.mockRes;
 describe('QuestionService', () => {
   beforeEach(() => TestBed.configureTestingModule({
