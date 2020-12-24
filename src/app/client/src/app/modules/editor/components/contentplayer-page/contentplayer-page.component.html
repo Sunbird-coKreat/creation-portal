@@ -1,7 +1,17 @@
 
 <h3>{{questionMetaData.title}}</h3>
-<button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="editQuestion();" ><i class="icon edit"></i>Edit Question</button>
-<button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-15" (click)="removeQuestion()"><i
+<button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="editQuestion();"
+appTelemetryInteract 
+[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('edit_question', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryEventsInput.telemetryPageId)"
+[telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(questionMetaData?.data?.metadata?.identifier, 'Question', '1.0')"
+[telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
+[telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"><i class="icon edit"></i>Edit Question</button>
+<button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-15" (click)="removeQuestion()"
+appTelemetryInteract 
+[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('delete', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryEventsInput.telemetryPageId)"
+[telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(questionMetaData?.data?.metadata?.identifier, 'Question', '1.0')"
+[telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
+[telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"><i
     class="icon trash sb-color-primary"></i>Delete</button>
 <hr class="my-20">
 <div class="ui grid pt-20">

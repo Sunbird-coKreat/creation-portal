@@ -9,8 +9,10 @@ import { questionEditorConfig } from '../../editor.config';
 import { McqForm } from '../../../cbse-program';
 import { forkJoin, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
-import { ToasterService, ResourceService, ServerResponse } from '@sunbird/shared';
+import { map, catchError } from 'rxjs/operators';
+import { ToasterService, ResourceService, ServerResponse, ConfigService } from '@sunbird/shared';
+import { UserService } from '@sunbird/core';
+import { ProgramTelemetryService } from '../../../program/services';
 @Component({
   selector: 'app-question-base',
   templateUrl: './question-base.component.html',
@@ -19,10 +21,11 @@ import { ToasterService, ResourceService, ServerResponse } from '@sunbird/shared
 export class QuestionBaseComponent implements OnInit {
 
   toolbarConfig = questionToolbarConfig;
+  public telemetryPageDetails: any = {};
+  public telemetryPageId: string;
   public editorConfig: any = questionEditorConfig;
   public editorState: any = {};
-  private initialized = false;
-  public showPreview = false;
+  public showPreview: Boolean = false;
   public mediaArr: any = [];
   public videoShow = false;
   public showFormError = false;
@@ -50,19 +53,36 @@ export class QuestionBaseComponent implements OnInit {
   public setCharacterLimit = 160;
   public showLoader = true;
   constructor(private editorService: EditorService, private questionService: QuestionService,
-    public activatedRoute:ActivatedRoute, public router: Router, private http: HttpClient,
-    public toasterService: ToasterService, public resourceService: ResourceService) { }
+    public activatedRoute: ActivatedRoute, public router: Router, private http: HttpClient,
+    public toasterService: ToasterService, public resourceService: ResourceService,
+    private userService: UserService, public programTelemetryService: ProgramTelemetryService,
+    private configService: ConfigService) { }
 
   ngOnInit() {
+    this.prepareTelemetryEvents();
     this.initialize();
-    this.initialized = true;
     this.solutionUUID = UUID.UUID();
   }
 
-  ngOnChanges() {
-    if (this.initialized) {
-      this.initialize();
-    }
+  prepareTelemetryEvents() {
+    this.telemetryPageDetails.telemetryPageId = this.getPageId();
+    this.telemetryPageDetails.telemetryInteractCdata = [
+      { id: this.userService.channel, type: 'sourcing_organization' },
+      // { id: '', type: 'project' },
+      // { id: '', type: 'linked_collection' } // TODO: Check
+    ];
+    // tslint:disable-next-line:max-line-length
+    this.telemetryPageDetails.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID);
+    this.telemetryPageDetails.telemetryPageId = this.telemetryPageId;
+    this.telemetryPageDetails.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(
+      _.get(this.activatedRoute, 'snapshot.queryParams.questionId'), 'Question', '1.0'
+    );
+    console.log(this.telemetryPageDetails);
+  }
+
+  getPageId() {
+    this.telemetryPageId = _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid');
+    return this.telemetryPageId;
   }
 
   initialize() {
@@ -73,7 +93,7 @@ export class QuestionBaseComponent implements OnInit {
 
     this.questionSetId = _.get(this.activatedRoute, 'snapshot.params.questionSetId');
 
-   if(!_.isUndefined(this.questionId)) {
+   if (!_.isUndefined(this.questionId)) {
       this.questionService.readQuestion(this.questionId)
       .subscribe((res)=> {
         if(res.result) {
@@ -122,12 +142,12 @@ export class QuestionBaseComponent implements OnInit {
         }
       });
     }
-    if(_.isUndefined(this.questionId)) {
-      if(this.questionInteractionType === 'default') {
+    if (_.isUndefined(this.questionId)) {
+      if (this.questionInteractionType === 'default') {
         this.editorState = { question: '', answer: '', solutions: '' };
         this.showLoader = false;
       }
-      if(this.questionInteractionType === 'choice') {
+      if (this.questionInteractionType === 'choice') {
         this.editorState = new McqForm({ question: '', options: [] }, {});
         this.showLoader = false;
       }
@@ -300,20 +320,23 @@ export class QuestionBaseComponent implements OnInit {
       if (_.isEmpty(this.editorState.solutions)) {
         metadata['solutions'] = [];
       }
-      if(_.isUndefined(this.questionId)) {
+      if (_.isUndefined(this.questionId)) {
+        // tslint:disable-next-line:max-line-length
         metadata = _.omit(metadata,['templateId', 'responseDeclaration', 'interactionTypes', 'weightage', 'maxScore', 'media', 'interactions', 'editorState', 'qType'])
-        console.log("subjective create metadata", metadata);
+        console.log('subjective create metadata', metadata);
         this.createQustion(metadata);
       }
-      if(!_.isUndefined(this.questionId)) {
+      if (!_.isUndefined(this.questionId)) {
+        // tslint:disable-next-line:max-line-length
         metadata = _.omit(metadata,['templateId', 'responseDeclaration', 'interactionTypes', 'weightage', 'maxScore', 'status', 'media', 'interactions', 'editorState', 'qType', 'visibility', 'code', 'status', 'mimeType'])
-        console.log("subjective update metadata", metadata);
+        console.log('subjective update metadata', metadata);
         this.updateQuestion(metadata, this.questionId)
       }
     });
   }
 
   saveMcqQuestion() {
+    // tslint:disable-next-line:max-line-length
     forkJoin([this.getConvertedLatex(this.editorState.question), ...this.editorState.options.map(option => this.getConvertedLatex(option.body))])
       .subscribe((res) => {
         const body = res[0]; // question with latex
@@ -331,7 +354,7 @@ export class QuestionBaseComponent implements OnInit {
         let metadata = {
           'code': UUID.UUID(),
           'templateId': ' mcq-vertical',
-          'name': 'untitled mcq', //hardcoded value need to change it later
+          'name': 'untitled mcq', // hardcoded value need to change it later
           'body': questionData.body,
           'responseDeclaration': questionData.responseDeclaration,
           'interactionTypes': ['choice'],

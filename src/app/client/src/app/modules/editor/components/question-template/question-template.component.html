@@ -1,8 +1,7 @@
-
-  <sui-modal [mustScroll]="false" [isClosable]="true" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
+<sui-modal [mustScroll]="false" [isClosable]="true" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
   appBodyScroll (dismissed)="modal.deny(); templateSelection.emit({type: 'close'})" #modal>
   <div class="sb-modal-header">
-    Question Set
+    Question type
   </div>
   <div class="sb-modal-content">
     <div class="mt-8 mb-20">
@@ -11,12 +10,13 @@
     <div class="twelve wide column">
       <div class="ui grid flex-jc-center mb-16">
         <div class="ui card text-center common-contribution-card m-16" *ngFor="let template of templateList"
-          (click)="showButton=true; templateSelected = template" [ngClass]="{'active': templateSelected?.type === template.type}">
+          (click)="showButton=true; templateSelected = template"
+          [ngClass]="{'active': templateSelected?.type === template.type}">
           <div class="content">
             <i class="check circle icon"></i>
             <img class="mt-16" rel="placeholder" src="assets/images/MCQ.png">
-            <div class="content-title pt-16 pb-8 fsmall">{{template.type}} <i
-                class="info circle link icon" [popupPlacement]="'left'" suiPopup popupText="text description"></i>
+            <div class="content-title pt-16 pb-8 fsmall">{{template.type}} <i class="info circle link icon"
+                [popupPlacement]="'left'" suiPopup popupText="text description"></i>
             </div>
           </div>
         </div>
@@ -24,6 +24,11 @@
     </div>
   </div>
   <div class="sb-modal-actions">
-    <button type="button" class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': showButton, 'sb-btn-disabled': !showButton}" (click)="next()"> Next </button>
+    <button type="button" class="sb-btn sb-btn-normal"
+      [ngClass]="{'sb-btn-primary': showButton, 'sb-btn-disabled': !showButton}" (click)="next()" appTelemetryInteract
+      [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('next', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryEventsInput.telemetryPageId,{selected_template:templateSelected,key:'dialog_id',value:'question_type'})"
+      [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"> Next </button>
   </div>
 </sui-modal>

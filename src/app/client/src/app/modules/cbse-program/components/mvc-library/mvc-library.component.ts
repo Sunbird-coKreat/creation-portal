@@ -107,7 +107,6 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
     this.telemetryPageId = _.get(this.route, 'snapshot.data.telemetry.pageid');
     return this.telemetryPageId;
   }
- 
 
   initialize() {
     forkJoin([this.getCollectionHierarchy(this.collectionId), this.getProgramDetails()]).subscribe(

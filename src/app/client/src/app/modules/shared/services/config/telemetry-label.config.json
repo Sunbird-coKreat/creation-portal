@@ -34,7 +34,8 @@
             "submitNominationSampleDetails" : "contribution_submit_nomination_sample_details",
             "myProjects" : "contribution_my_projects",
             "projectAddFromLibrary" : "contribution_project_add_from_library",
-            "help": "contribution_help"
+            "help": "contribution_help",
+            "questionSet" : "contribution_question_set"
         }       
     },
     "pageType": {

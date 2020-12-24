@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import 'jquery.fancytree';
 import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash-es';
+import { ToasterService } from '@sunbird/shared';
 import { editorConfig } from '../../editor.config';
 
 @Injectable({
@@ -15,7 +16,7 @@ export class TreeService {
   };
   treeNativeElement: any;
 
-  constructor() { }
+  constructor(public toasterService: ToasterService) { }
 
   setTreeElement(el) {
     this.treeNativeElement = el;
@@ -55,6 +56,18 @@ export class TreeService {
     $(this.treeNativeElement).scrollTop($('.fancytree-lastsib').height());
   }
 
+  updateNode(metadata) {
+    this.setNodeTitle(metadata.name);
+    const activeNode = this.getActiveNode();
+    const nodeId = activeNode.data.id;
+    if (_.isUndefined(this.treeCache.nodesModified[nodeId])) {
+      this.treeCache.nodesModified[nodeId] = { isNew: false, root: false };
+    }
+    // tslint:disable-next-line:max-line-length
+    this.treeCache.nodesModified[nodeId].metadata = metadata;
+    this.treeCache.nodesModified[nodeId].metadata.code = nodeId;
+  }
+
   removeNode() {
     const selectedNode = this.getActiveNode();
     selectedNode.remove();
@@ -69,11 +82,26 @@ export class TreeService {
 
   setNodeTitle(title) {
     if (!title) { title = 'Untitled'; }
-    // title = instance.removeSpecialChars(title);
+    title = this.removeSpecialChars(title);
     this.getActiveNode().applyPatch({ 'title': title }).done((a, b) => {
       // instance.onRenderNode(undefined, { node: ecEditor.jQuery('#collection-tree').fancytree('getTree').getActiveNode() }, true)
     });
     $('span.fancytree-title').attr('style', 'width:11em;text-overflow:ellipsis;white-space:nowrap;overflow:hidden');
+  }
+
+  removeSpecialChars(text) {
+    if (text) {
+      // tslint:disable-next-line:quotemark
+      const iChars = "!`~@#$^*+=[]\\\'{}|\"<>%/";
+      for (let i = 0; i < text.length; i++) {
+        if (iChars.indexOf(text.charAt(i)) !== -1) {
+          this.toasterService.warning('Special character "' + text.charAt(i) + '" is not allowed');
+        }
+      }
+      // tslint:disable-next-line:max-line-length
+      text = text.replace(/[^\u0600-\u06FF\uFB50-\uFDFF\uFE70-\uFEFF\uFB50-\uFDFF\u0980-\u09FF\u0900-\u097F\u0D00-\u0D7F\u0A80-\u0AFF\u0C80-\u0CFF\u0B00-\u0B7F\u0A00-\u0A7F\u0B80-\u0BFF\u0C00-\u0C7F\w:&_\-.(\),\/\s]|[/]/g, '');
+      return text;
+    }
   }
 
   replaceNodeId(identifiers) {
