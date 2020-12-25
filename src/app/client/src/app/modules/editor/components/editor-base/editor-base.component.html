@@ -9,7 +9,7 @@
       <div class="ui twelve column grid m-0">
         <!-- Left Sidebar for cards -->
         <div class="three wide column p-0 h-100vh">
-          <app-fancy-tree *ngIf="collectionTreeNodes" (treeEventEmitter)="treeEventListener($event)" [nodes]="collectionTreeNodes"
+          <app-fancy-tree *ngIf="collectionTreeNodes" [telemetryEventsInput]="telemetryPageDetails" (treeEventEmitter)="treeEventListener($event)" [nodes]="collectionTreeNodes"
             [options]="{ showConnectors: true }" class="sb-collectionTree-fancyTree sb-collectionTree-fancyTreelist">
           </app-fancy-tree>
         </div>

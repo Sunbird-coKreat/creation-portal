@@ -1,6 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { DebugElement } from '@angular/core';
+import {  DebugElement } from '@angular/core';
 import { SuiPopupModule, SuiModule } from 'ng2-semantic-ui';
+import { TelemetryService, TELEMETRY_PROVIDER } from '@sunbird/telemetry';
+import { CoreModule } from '@sunbird/core';
+import { ConfigService} from '@sunbird/shared';
+import { APP_BASE_HREF } from '@angular/common';
+import { RouterTestingModule } from '@angular/router/testing';
 import { QuestionTemplateComponent } from './question-template.component';
 import {mockData} from './question-template.component.spec.data';
 describe('QuestionTemplateComponent', () => {
@@ -10,8 +15,10 @@ describe('QuestionTemplateComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [SuiPopupModule, SuiModule],
-      declarations: [ QuestionTemplateComponent ]
+      imports: [SuiPopupModule, SuiModule, CoreModule, RouterTestingModule],
+      declarations: [ QuestionTemplateComponent ],
+      // tslint:disable-next-line:max-line-length
+      providers: [TelemetryService, ConfigService, { provide: TELEMETRY_PROVIDER, useValue: EkTelemetry }, {provide: APP_BASE_HREF, useValue: '/'}],
     })
     .compileComponents();
   }));

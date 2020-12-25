@@ -14,7 +14,7 @@ import { ProgramTelemetryService } from '../../../program/services';
 
 interface IeditorParams {
   collectionId: string;
-  type: string;
+  type?: string;
 }
 @Component({
   selector: 'app-editor-base',
@@ -34,7 +34,7 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
   public collectionTreeNodes: any;
   public selectedQuestionData: any = {};
   public showQuestionTemplate: Boolean = false;
-  private editorParams: IeditorParams;
+  public editorParams: IeditorParams;
   public showLoader: Boolean = true;
   public showQuestionTemplatePopup: Boolean = false;
   public pageStartTime;
@@ -46,7 +46,6 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
     private router: Router, private telemetryService: TelemetryService, private deviceDetectorService: DeviceDetectorService) {
     this.editorParams = {
       collectionId: _.get(this.activatedRoute, 'snapshot.params.questionSetId'),
-      type: _.get(this.activatedRoute, 'snapshot.params.type')
     };
   }
 
@@ -65,7 +64,6 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
     ];
     // tslint:disable-next-line:max-line-length
     this.telemetryPageDetails.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID);
-    this.telemetryPageDetails.telemetryPageId = this.telemetryPageId;
     // tslint:disable-next-line:max-line-length
     this.telemetryPageDetails.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.editorParams.collectionId, 'Content', '1.0');
     this.setTelemetryStartData();
