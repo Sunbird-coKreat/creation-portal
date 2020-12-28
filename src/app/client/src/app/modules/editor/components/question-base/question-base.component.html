@@ -23,20 +23,10 @@
                    </div>
                    <label *ngIf="showFormError && [undefined, ''].includes(editorState.question)" class="sb-color-error fs-0-785">Fill Question</label>
                 </div>
-                <!-- <div class="sb-field-group">
-                  <label *ngIf="showFormError && [undefined, ''].includes(editorState.answer)" class="sb-label sb-label-table sb-label-error-0">Fill Answer</label>
-                  <label>Answers</label><span class="sb-required">*</span>
-                  <div class="sb-field">
-                    <div class="ckeditor-tool__option mb-24">
-                      <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'answer')"
-                        [editorDataInput]="editorState.answer" [editorId]="'answer_editor'"></app-ckeditor-tool>
-                    </div>
-                  </div>
-                </div> -->
 
-                <app-answer *ngIf="(questionInteractionType === 'default')" [editorConfig]="editorConfig" [editorState]="editorState" (editorDataOutput)="editorDataHandler($event, 'answer')"></app-answer>
+                <app-answer *ngIf="(questionInteractionType === 'default')" [editorConfig]="editorConfig" [editorState]="editorState" [showFormError]="showFormError" (editorDataOutput)="editorDataHandler($event, 'answer')"></app-answer>
 
-                <app-options *ngIf="(questionInteractionType === 'choice')" [editorConfig]="editorConfig" [editorState]="editorState" (editorDataOutput)="editorDataHandler($event)" (optionMedia)="getMedia($event)"></app-options>
+                <app-options *ngIf="(questionInteractionType === 'choice')" [editorConfig]="editorConfig" [editorState]="editorState" [showFormError]="showFormError" (editorDataOutput)="editorDataHandler($event)" (optionMedia)="getMedia($event)"></app-options>
 
                 <div class="d-flex flex-ai-center ckeditor-tool__solution py-10 px-16 mt-15 sb-bg-color-white">
                   <label class="fs-0-92 mb-0 ckeditor-tool__label pb-4">
@@ -62,7 +52,7 @@
                           class="icon close"></i>
                       </button>
                       <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'solution')"
-                      [editorDataInput]="solutionValue" [editorId]="'solution_editor'" class="ckeditor-tool__option"></app-ckeditor-tool>
+                      [editorDataInput]="editorState.solutions" [editorId]="'solution_editor'" class="ckeditor-tool__option"></app-ckeditor-tool>
                     </div>
                   </div>
                 </div>

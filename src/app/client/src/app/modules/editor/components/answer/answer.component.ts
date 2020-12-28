@@ -1,6 +1,4 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-// import { editorConfig } from '../../editor.config';
-import * as _ from 'lodash-es';
 @Component({
   selector: 'app-answer',
   templateUrl: './answer.component.html',
@@ -9,6 +7,7 @@ import * as _ from 'lodash-es';
 export class AnswerComponent implements OnInit {
   @Input() editorConfig;
   @Input() editorState;
+  @Input() showFormError;
   @Output() editorDataOutput: EventEmitter<any> = new EventEmitter<any>();
   constructor() { }
 
