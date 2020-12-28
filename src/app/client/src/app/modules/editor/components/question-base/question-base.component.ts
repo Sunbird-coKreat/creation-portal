@@ -95,20 +95,19 @@ export class QuestionBaseComponent implements OnInit {
 
    if (!_.isUndefined(this.questionId)) {
       this.questionService.readQuestion(this.questionId)
-      .subscribe((res)=> {
-        if(res.result) {
+      .subscribe((res) => {
+        if (res.result) {
           this.questionMetaData = res.result.question;
 
-          if (this.questionInteractionType == 'default') {
-            if( this.questionMetaData.editorState){
+          if (this.questionInteractionType === 'default') {
+            if ( this.questionMetaData.editorState) {
               this.editorState = this.questionMetaData.editorState;
-            }
-            else {
+            } else {
               this.editorState = this.questionMetaData;
               this.editorState.question = this.questionMetaData.body;
             }
           }
-          if (this.questionInteractionType == 'choice') {
+          if (this.questionInteractionType === 'choice') {
             const { responseDeclaration, templateId } = this.questionMetaData;
             const numberOfOptions = this.questionMetaData.editorState.options.length;
             const options = _.map(this.questionMetaData.editorState.options, option => ({ body: option.value.body }));
@@ -131,7 +130,7 @@ export class QuestionBaseComponent implements OnInit {
               this.videoSolutionName = this.questionMetaData.media[index].name;
               this.videoThumbnail = this.questionMetaData.media[index].thumbnail;
             }
-            if(this.selectedSolutionType === 'html') {
+            if (this.selectedSolutionType === 'html') {
               this.editorState.solutions = this.editorState.solutions[0].value;
             }
           }
@@ -175,7 +174,8 @@ export class QuestionBaseComponent implements OnInit {
     if (this.questionInteractionType === 'default') {
       if (this.editorState.question !== '' && this.editorState.answer !== '') {
         this.showFormError = false;
-        this.saveSubjectiveQuestion();
+        const metadata = this.getSubjectiveMetadata(this.editorState);
+        this.saveQuestion(metadata);
       } else {
         this.showFormError = true;
         return;
@@ -189,7 +189,8 @@ export class QuestionBaseComponent implements OnInit {
         this.showFormError = true;
         return;
       } else {
-        this.saveMcqQuestion();
+        const metadata = this.getMcqMetadata(this.editorState);
+        this.saveQuestion(metadata);
       }
     }
   }
@@ -283,12 +284,28 @@ export class QuestionBaseComponent implements OnInit {
     this.showSolution = false;
   }
 
-  saveSubjectiveQuestion() {
-    forkJoin([this.getConvertedLatex(this.editorState.question), this.getConvertedLatex(this.editorState.answer)])
+  saveQuestion(metadata) {
+    if (_.isUndefined(this.questionId)) {
+      // tslint:disable-next-line:max-line-length
+      metadata = _.omit(metadata, ['templateId', 'responseDeclaration', 'interactionTypes', 'weightage', 'maxScore', 'media', 'interactions', 'editorState', 'qType']);
+      console.log('create metadata', metadata);
+      // this.createQustion(metadata);
+    }
+    if (!_.isUndefined(this.questionId)) {
+      // tslint:disable-next-line:max-line-length
+      metadata = _.omit(metadata, ['templateId', 'responseDeclaration', 'interactionTypes', 'weightage', 'maxScore', 'status', 'media', 'interactions', 'editorState', 'qType', 'visibility', 'code', 'status', 'mimeType']);
+      console.log('update metadata', metadata);
+      // this.updateQuestion(metadata, this.questionId);
+    }
+  }
+
+  getSubjectiveMetadata(editorState: any) {
+    let metadata: any;
+    forkJoin([this.getConvertedLatex(editorState.question), this.getConvertedLatex(editorState.answer)])
     .subscribe((res) => {
       const rendererBody = res[0];
       const rendererAnswer = res[1];
-      let metadata = {
+      metadata = {
         'code': UUID.UUID(),
         'body': rendererBody,
         'answer': rendererAnswer,
@@ -297,53 +314,39 @@ export class QuestionBaseComponent implements OnInit {
         'interactionTypes': [],
         'interactions': [],
         'editorState': {
-          'question': this.editorState.question,
-          'answer': this.editorState.answer
+          'question': editorState.question,
+          'answer': editorState.answer
         },
         'status': 'Draft',
-        'name': 'untitled SA',
+        'name': 'SA',
         'qType': 'SA',
         'media': this.mediaArr,
         'mimeType': 'application/vnd.ekstep.qml-archive',
         'primaryCategory': 'Practice Question Set'
       };
 
-      let solutionObj: any;
       if (!_.isUndefined(this.selectedSolutionType) && !_.isEmpty(this.selectedSolutionType)) {
-        solutionObj = {};
-        solutionObj.id = this.solutionUUID;
-        solutionObj.type = this.selectedSolutionType;
-        solutionObj.value = this.editorState.solutions;
+        const solutionObj = this.getSolutionObj(this.solutionUUID, this.selectedSolutionType, editorState.solutions);
         metadata.editorState['solutions'] = [solutionObj];
         metadata['solutions'] = [solutionObj];
       }
-      if (_.isEmpty(this.editorState.solutions)) {
+      if (_.isEmpty(editorState.solutions)) {
         metadata['solutions'] = [];
       }
-      if (_.isUndefined(this.questionId)) {
-        // tslint:disable-next-line:max-line-length
-        metadata = _.omit(metadata,['templateId', 'responseDeclaration', 'interactionTypes', 'weightage', 'maxScore', 'media', 'interactions', 'editorState', 'qType'])
-        console.log('subjective create metadata', metadata);
-        this.createQustion(metadata);
-      }
-      if (!_.isUndefined(this.questionId)) {
-        // tslint:disable-next-line:max-line-length
-        metadata = _.omit(metadata,['templateId', 'responseDeclaration', 'interactionTypes', 'weightage', 'maxScore', 'status', 'media', 'interactions', 'editorState', 'qType', 'visibility', 'code', 'status', 'mimeType'])
-        console.log('subjective update metadata', metadata);
-        this.updateQuestion(metadata, this.questionId)
-      }
     });
+    return metadata;
   }
 
-  saveMcqQuestion() {
+  getMcqMetadata(editorState) {
+    let metadata: any;
     // tslint:disable-next-line:max-line-length
-    forkJoin([this.getConvertedLatex(this.editorState.question), ...this.editorState.options.map(option => this.getConvertedLatex(option.body))])
+    forkJoin([this.getConvertedLatex(editorState.question), ...editorState.options.map(option => this.getConvertedLatex(option.body))])
       .subscribe((res) => {
         const body = res[0]; // question with latex
-        const questionData = this.getQuestionHtml(body);
-        const correct_answer = this.editorState.answer;
+        const questionData = this.getQuestionHtml(body, editorState);
+        const correct_answer = editorState.answer;
         let resindex;
-        const options = _.map(this.editorState.options, (opt, key) => {
+        const options = _.map(editorState.options, (opt, key) => {
           resindex = Number(key);
           if (Number(correct_answer) === key) {
             return { 'answer': true, value: {'body': opt.body, 'value': resindex} };
@@ -351,16 +354,16 @@ export class QuestionBaseComponent implements OnInit {
             return { 'answer': false, value: {'body': opt.body, 'value': resindex} };
           }
         });
-        let metadata = {
+        metadata = {
           'code': UUID.UUID(),
           'templateId': ' mcq-vertical',
-          'name': 'untitled mcq', // hardcoded value need to change it later
+          'name': 'MCQ', // hardcoded value need to change it later
           'body': questionData.body,
           'responseDeclaration': questionData.responseDeclaration,
           'interactionTypes': ['choice'],
-          'interactions' : this.getInteractions(this.editorState.options),
+          'interactions' : this.getInteractions(editorState.options),
           'editorState' : {
-            'question': this.editorState.question,
+            'question': editorState.question,
             'options': options
           },
           'status': 'Draft',
@@ -369,29 +372,25 @@ export class QuestionBaseComponent implements OnInit {
           'mimeType': 'application/vnd.ekstep.qml-archive',
           'primaryCategory': 'Practice Question Set'
         };
-        let solutionObj: any;
         if (!_.isUndefined(this.selectedSolutionType) && !_.isEmpty(this.selectedSolutionType)) {
-          solutionObj = {};
-          solutionObj.id = this.solutionUUID;
-          solutionObj.type = this.selectedSolutionType;
-          solutionObj.value = this.editorState.solutions;
+          const solutionObj = this.getSolutionObj(this.solutionUUID, this.selectedSolutionType, editorState.solutions);
           metadata.editorState['solutions'] = [solutionObj];
           metadata['solutions'] = [solutionObj];
         }
-        if (_.isEmpty(this.editorState.solutions)) {
+        if (_.isEmpty(editorState.solutions)) {
           metadata['solutions'] = [];
         }
-        if(_.isUndefined(this.questionId)) {
-          // metadata = _.omit(metadata,['templateId', 'interactionTypes', 'weightage', 'maxScore', 'media', 'interactions', 'editorState', 'qType'])
-          console.log("mcq create metadata", metadata);
-          // this.createQustion(metadata);
-        }
-        if(!_.isUndefined(this.questionId)) {
-          // metadata = _.omit(metadata,['templateId', 'interactionTypes', 'weightage', 'maxScore', 'status', 'media', 'interactions', 'editorState', 'qType'])
-          console.log("mcq update metadata", metadata);
-          // this.updateQuestion(metadata, this.questionId)
-        }
       });
+      return metadata;
+  }
+
+  getSolutionObj(solutionUUID, selectedSolutionType, editorStateSolutions: any) {
+    let solutionObj: any;
+    solutionObj = {};
+    solutionObj.id = solutionUUID;
+    solutionObj.type = selectedSolutionType;
+    solutionObj.value = editorStateSolutions;
+    return solutionObj;
   }
 
   getConvertedLatex(body) {
@@ -422,12 +421,13 @@ export class QuestionBaseComponent implements OnInit {
     }
   }
 
-  getQuestionHtml(question) {
+  getQuestionHtml(question, editorState: any) {
     const mcqTemplateConfig = {
-      'mcqBody': '<div class=\'question-body\'><div class=\'mcq-title\'>{question}</div><div data-choice-interaction=\'response1\' class=\'mcq-vertical\'></div></div>'
+      // tslint:disable-next-line:max-line-length
+      'mcqBody': '<div class=\"question-body\"><div class=\"mcq-title\">{question}</div><div data-choice-interaction=\"response1\" class=\"mcq-vertical\"></div></div>'
     };
     const { mcqBody } = mcqTemplateConfig;
-    const questionBody = mcqBody.replace('{templateClass}', this.editorState.templateId)
+    const questionBody = mcqBody.replace('{templateClass}', editorState.templateId)
       .replace('{question}', question);
     const responseDeclaration = {
       maxScore: 1,
@@ -435,7 +435,7 @@ export class QuestionBaseComponent implements OnInit {
         cardinality: 'single',
         type: 'integer',
         'correctResponse': {
-          value: this.editorState.answer,
+          value: editorState.answer,
           outcomes: {'SCORE': 1}
         }
       }
@@ -457,7 +457,7 @@ export class QuestionBaseComponent implements OnInit {
         'type': 'choice',
         'options': interactOptions
       }
-    }
+    };
     return interactions;
   }
 
@@ -482,6 +482,7 @@ export class QuestionBaseComponent implements OnInit {
         });
         */
        const questionId = response.result.identifier;
+       // tslint:disable-next-line:max-line-length
        this.router.navigate([`create/questionSet/${this.questionSetId}/question`], { queryParams: { type: this.questionInteractionType, questionId: questionId } });
       }
     },
@@ -513,6 +514,7 @@ export class QuestionBaseComponent implements OnInit {
         }
         )
         */
+       // tslint:disable-next-line:max-line-length
        this.router.navigate([`create/questionSet/${this.questionSetId}/question`], { queryParams: { type: this.questionInteractionType, questionId: questionId } });
       }
     },
