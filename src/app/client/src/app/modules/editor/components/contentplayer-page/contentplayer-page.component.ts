@@ -13,8 +13,7 @@ export class ContentplayerPageComponent implements OnInit {
   @Output() public toolbarEmitter: EventEmitter<any> = new EventEmitter();
   constructor(public configService: ConfigService, public programTelemetryService: ProgramTelemetryService) { }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   removeQuestion() {
     this.toolbarEmitter.emit({'button': { 'type' : 'removeContent'}});

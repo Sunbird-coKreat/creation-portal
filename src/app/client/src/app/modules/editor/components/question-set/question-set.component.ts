@@ -29,7 +29,6 @@ export class QuestionSetComponent implements OnInit {
         field['default'] = metadata[field.code];
       }
     });
-    console.log(this.config);
   }
 
   addQuestion() {
@@ -37,7 +36,6 @@ export class QuestionSetComponent implements OnInit {
   }
 
   output(event) {
-    console.log(event);
     this.treeService.updateNode(event);
   }
 
