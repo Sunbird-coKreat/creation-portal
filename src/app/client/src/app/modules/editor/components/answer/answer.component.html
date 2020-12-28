@@ -1,12 +1,12 @@
 <div class="sb-field-group">
-  <label class="fs-0-92">Answers <span class="sb-required">*</span></label><i class="icon info circle ml-2" [popupPlacement]="'bottom'" suiPopup popupText="text description"></i>
-  <div>
-      <label *ngIf="showFormError && [undefined, ''].includes(editorState.answer)" class="sb-label sb-label-table sb-label-error-0">Fill Answer</label>
-  </div>
+  <label class="fs-0-92">Answers<span class="sb-required">*</span></label><i class="icon info circle ml-2"
+    [popupPlacement]="'bottom'" suiPopup popupText="text description"></i>
   <div class="sb-field">
-  <div class="ckeditor-tool__option mb-24">
-    <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event)"
-      [editorDataInput]="editorState.answer" [editorId]="'answer_editor'"></app-ckeditor-tool>
-  </div>
+    <div class="ckeditor-tool__option mb-5">
+      <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event)"
+        [editorDataInput]="editorState.answer" [editorId]="'answer_editor'"></app-ckeditor-tool>
+    </div>
+    <label *ngIf="showFormError && [undefined, ''].includes(editorState.answer)"
+        class="sb-color-error fs-0-785">Answer is required</label>
   </div>
 </div>
