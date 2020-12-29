@@ -289,13 +289,13 @@ export class QuestionBaseComponent implements OnInit {
       // tslint:disable-next-line:max-line-length
       metadata = _.omit(metadata, ['templateId', 'responseDeclaration', 'interactionTypes', 'weightage', 'maxScore', 'media', 'interactions', 'editorState', 'qType']);
       console.log('create metadata', metadata);
-      // this.createQustion(metadata);
+      this.createQuestion(metadata);
     }
     if (!_.isUndefined(this.questionId)) {
       // tslint:disable-next-line:max-line-length
       metadata = _.omit(metadata, ['templateId', 'responseDeclaration', 'interactionTypes', 'weightage', 'maxScore', 'status', 'media', 'interactions', 'editorState', 'qType', 'visibility', 'code', 'status', 'mimeType']);
       console.log('update metadata', metadata);
-      // this.updateQuestion(metadata, this.questionId);
+      this.updateQuestion(metadata, this.questionId);
     }
   }
 
@@ -461,29 +461,16 @@ export class QuestionBaseComponent implements OnInit {
     return interactions;
   }
 
-  createQustion(metadata) {
+  createQuestion(metadata) {
     this.questionService.createQuestion(metadata)
     .subscribe(
       (response: ServerResponse) => {
       if (response.result) {
         this.toasterService.success(this.resourceService.messages.smsg.m0070);
-        /*const questionId = response.result.identifier;
-        this.questionService.addQuestionToQuestionSet(this.questionSetId, questionId).
-        subscribe(
-          (res: ServerResponse) => {
-          if(res.result) {
-            this.router.navigateByUrl(`create/questionSet/${this.questionSetId}`);
-            this.toasterService.success(this.resourceService.messages.smsg.m0072);
-          }
-        },
-        (err: ServerResponse) => {
-          this.toasterService.error(this.resourceService.messages.emsg.m0030);
-          console.log(err);
-        });
-        */
        const questionId = response.result.identifier;
        // tslint:disable-next-line:max-line-length
        this.router.navigate([`create/questionSet/${this.questionSetId}/question`], { queryParams: { type: this.questionInteractionType, questionId: questionId } });
+       this.addQuestionToQuestionSet(this.questionSetId, questionId);
       }
     },
     (err: ServerResponse) => {
@@ -499,28 +486,30 @@ export class QuestionBaseComponent implements OnInit {
       (response: ServerResponse) => {
       if (response.result) {
         this.toasterService.success(this.resourceService.messages.smsg.m0071);
-        /*
-        this.questionService.addQuestionToQuestionSet(this.questionSetId, questionId).
-        subscribe(
-          (res: ServerResponse) => {
-          if(res.result) {
-            this.router.navigateByUrl(`create/questionSet/${this.questionSetId}`);
-            this.toasterService.success(this.resourceService.messages.smsg.m0072);
-          }
-        },
-        (err: ServerResponse) => {
-          this.toasterService.error(this.resourceService.messages.emsg.m0030);
-          console.log(err);
-        }
-        )
-        */
-       // tslint:disable-next-line:max-line-length
-       this.router.navigate([`create/questionSet/${this.questionSetId}/question`], { queryParams: { type: this.questionInteractionType, questionId: questionId } });
+        // tslint:disable-next-line:max-line-length
+        this.router.navigate([`create/questionSet/${this.questionSetId}/question`], { queryParams: { type: this.questionInteractionType, questionId: questionId } });
+        this.addQuestionToQuestionSet(this.questionSetId, questionId);
       }
     },
     (err: ServerResponse) => {
       this.toasterService.error(this.resourceService.messages.emsg.m0029);
       console.log(err);
     });
+  }
+
+  addQuestionToQuestionSet(questionSetId, questionId) {
+    this.questionService.addQuestionToQuestionSet(questionSetId, questionId).
+    subscribe(
+      (res: ServerResponse) => {
+      if (res.result) {
+        // this.router.navigateByUrl(`create/questionSet/${questionSetId}`);
+        this.toasterService.success(this.resourceService.messages.smsg.m0072);
+      }
+    },
+    (err: ServerResponse) => {
+      this.toasterService.error(this.resourceService.messages.emsg.m0030);
+      console.log(err);
+    }
+    );
   }
 }

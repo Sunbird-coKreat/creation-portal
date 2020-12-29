@@ -126,5 +126,75 @@ export const mockRes = {
                 }
             ]
         }
+    },
+    createMetadata: {
+        'code': 'b04833ce-f2ae-4b51-086e-71bc1637fa84',
+        'body': '<p>Capital of India is?</p>',
+        'answer': '<p>New Delhi</p>',
+        'status': 'Draft',
+        'name': 'SA',
+        'mimeType': 'application/vnd.ekstep.qml-archive',
+        'primaryCategory': 'Practice Question Set',
+        'solutions': []
+    },
+    createResponse: {
+        'id': 'api.question.create',
+        'ver': '3.0',
+        'ts': '2020-12-28T16:41:39ZZ',
+        'params': {
+            'resmsgid': 'ef1740f3-15f9-489a-852d-5e2c16c52f51',
+            'msgid': null,
+            'err': null,
+            'status': 'successful',
+            'errmsg': null
+        },
+        'responseCode': 'OK',
+        'result': {
+            'identifier': 'do_1131823509449031681174',
+            'versionKey': '1609173699330'
+        }
+    },
+    updateMetadata: {
+        'body': '<p>Capital of India is?</p>',
+        'answer': '<p>New Delhiiii</p>',
+        'name': 'SA',
+        'primaryCategory': 'Practice Question Set',
+        'solutions': []
+    },
+    updateResponse: {
+        'id': 'api.question.update',
+        'ver': '3.0',
+        'ts': '2020-12-28T19:24:54ZZ',
+        'params': {
+            'resmsgid': 'a2960f6b-b9a7-444d-9a46-23a58625fe3a',
+            'msgid': null,
+            'err': null,
+            'status': 'successful',
+            'errmsg': null
+        },
+        'responseCode': 'OK',
+        'result': {
+            'identifier': 'do_1131823509449031681174',
+            'versionKey': '1609183494167'
+        }
+    },
+    addQuestionQuestionsetResponse: {
+        'id': 'api.questionset.add',
+        'ver': '3.0',
+        'ts': '2020-12-28T20:07:16ZZ',
+        'params': {
+            'resmsgid': '7fbcc47a-d3da-4d0c-9782-110e003bffac',
+            'msgid': null,
+            'err': null,
+            'status': 'successful',
+            'errmsg': null
+        },
+        'responseCode': 'OK',
+        'result': {
+            'rootId': 'do_1131737119720488961123',
+            'children': [
+                'do_1131737393366138881132'
+            ]
+        }
     }
 };
