@@ -83,6 +83,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public showPublishModal= false;
   uploadedDocument;
   showAddButton = false;
+  ticked = [] ; 
   loading = false;
   isOpenNominations = true;
   isClosable = true;
@@ -949,7 +950,11 @@ showTexbooklist(showTextBookSelector = true) {
               if (!_.isEmpty(draftCollections)) {
                 const index = draftCollections.findIndex(x => x.id === item.identifier);
                 if (index !== -1) {
-                  this.onCollectionCheck(item, true);
+                  if (this.ticked.length > 0) {
+                    this.onCollectionCheck(item, this.ticked[index], 'preview');
+                  } else {
+                    this.onCollectionCheck(item, true, 'preview');
+                  }
                 }
               }
             });
@@ -973,7 +978,7 @@ showTexbooklist(showTextBookSelector = true) {
     );
   }
 
-  onCollectionCheck(collection, isChecked: boolean) {
+  onCollectionCheck(collection, isChecked: boolean, status) {
     const pcollectionsFormArray = <FormArray>this.collectionListForm.controls.pcollections;
     const collectionId = collection.identifier;
 
@@ -982,7 +987,9 @@ showTexbooklist(showTextBookSelector = true) {
       if (controls.findIndex(c => c.value === collection.identifier) === -1) {
         pcollectionsFormArray.push(new FormControl(collectionId));
         this.tempCollections.push(collection);
-
+        if (status == 'added') {
+          this.ticked.push(isChecked);
+        }
         if (!this.textbooks[collectionId]) {
           this.getCollectionHierarchy(collectionId);
         }
@@ -994,6 +1001,9 @@ showTexbooklist(showTextBookSelector = true) {
       const cindex = this.tempCollections.findIndex(x => x.identifier === collectionId);
       this.tempCollections.splice(cindex, 1);
       delete this.textbooks[collectionId];
+      if (status == 'added') {
+        this.ticked.splice(cindex, 1);
+      }
     }
   }
 
