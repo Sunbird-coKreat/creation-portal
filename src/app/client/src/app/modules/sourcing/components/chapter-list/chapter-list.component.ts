@@ -386,7 +386,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   setTreeLeafStatusMessage(identifier, instance) {
     this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
     if (this.originalCollectionData && this.originalCollectionData.status !== 'Draft' && this.sourcingOrgReviewer) {
-      this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage;
+      this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage.replaceAll('{TARGET_NAME}', this.programsService.setTargetCollectionName(this.programContext));
+
     }
     this.getFolderLevelCount(this.collectionHierarchy);
     const hierarchy = instance.hierarchyObj;
@@ -458,7 +459,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         rootTree['leaf'] = _.map(data.children, (child) => {
           const meta = _.pick(child, this.sharedContext);
           const treeItem = this.generateNodeMeta(child, meta);
-          treeItem['visibility'] = this.shouldContentBeVisible(child);
+          treeItem['contentVisibility'] = this.shouldContentBeVisible(child);
           treeItem['sourcingStatus'] = this.checkSourcingStatus(child);
           return treeItem;
         });
@@ -478,28 +479,19 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   getTreeChildren(children) {
-    if (this.collectionData.primaryCategory === "Digital Textbook") {
-      return children && children.filter(item => item.primaryCategory === 'Textbook Unit');
-    } else if (this.collectionData.primaryCategory === "Course") {
-      return children && children.filter(item => item.primaryCategory === 'Course Unit');
-    } else if (this.collectionData.primaryCategory === "Content Playlist") {
-      return children && children.filter(item => item.primaryCategory === 'Content Playlist');
-    }
+    return children && children.filter(function (item) {
+      return item.mimeType === 'application/vnd.ekstep.content-collection' && item.visibility === "Parent";
+    });
   }
 
   getTreeLeaf(children) {
-    if (this.collectionData.primaryCategory === "Digital Textbook") {
-      return children && children.filter(item => item.primaryCategory !== 'Textbook Unit');
-    } else if (this.collectionData.primaryCategory === "Course") {
-      return children && children.filter(item => item.primaryCategory !== 'Course Unit');
-    } else if (this.collectionData.primaryCategory === "Content Playlist") {
-      return children && children.filter(item => item.primaryCategory !== 'Content Playlist');
-    }
+    return children && children.filter(function (item) {
+      return item.mimeType !== 'application/vnd.ekstep.content-collection';
+    });
   }
 
   checkifContent (content) {
-    const tempCats = ["Digital Textbook", "Course", "Content Playlist", "Textbook Unit", "Course Unit"];
-    if (!_.includes(tempCats, content.primaryCategory))  {
+    if (content.mimeType !== 'application/vnd.ekstep.content-collection' && content.visibility !== 'Parent') {
       return true;
     } else {
       return false;
@@ -655,6 +647,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
    const nodeMeta =  {
       identifier: node.identifier,
       name: node.name,
+      visibility: node.visibility,
       contentType: node.contentType,
       primaryCategory: node.primaryCategory,
       mimeType: node.mimeType,
@@ -682,7 +675,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     _.forEach(branch, (leaf) => {
       const contentVisibility = this.shouldContentBeVisible(leaf);
       const sourcingStatus = this.checkSourcingStatus(leaf);
-      leaf['visibility'] = contentVisibility;
+      leaf['contentVisibility'] = contentVisibility;
       leaf['sourcingStatus'] = sourcingStatus || null;
       leafNodes.push(leaf);
     });
@@ -771,6 +764,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
       const option = {
         url: `content/v3/create`,
+        header: {
+          'X-Channel-Id': this.programContext.rootorg_id
+        },
         data: {
           request: {
             content: {
@@ -1096,7 +1092,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
     // tslint:disable-next-line:max-line-length
     if (this.originalCollectionData && (_.indexOf(this.originalCollectionData.childNodes, collection.origin) < 0 || this.originalCollectionData.status !== 'Draft')) {
-      collection.statusMessage = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage;
+      collection.statusMessage = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage.replace('{TARGET_NAME}', this.programsService.setTargetCollectionName(this.programContext));
     }
 
     collection.totalLeaf = !_.isEmpty(collection.sourcingStatusDetail) ? _.sum(_.values(collection.sourcingStatusDetail)) :  collection.totalLeaf;
@@ -1113,7 +1109,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       ...(!onlySample && { sampleContent: null }),
       ...(createdBy && { createdBy }),
       ...(organisationId && { organisationId }),
-      ...(visibility && { visibility })
+      ...(visibility && { contentVisibility : true})
     };
     if (status && status.length > 0) {
       contents = _.filter(contents, leaf => {
@@ -1139,7 +1135,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       if (this.isContributingOrgContributor() && this.isContributingOrgReviewer()) {
         leaves = _.concat(leaves, _.filter(contents, (c) => {
           const result = (c.organisationId === organisationId && c.status === 'Draft' &&
-            ((c.createdBy === createdBy && c.visibility === true) || c.prevStatus === 'Review' || c.prevStatus === 'Live'));
+            ((c.createdBy === createdBy && c.contentVisibility === true) || c.prevStatus === 'Review' || c.prevStatus === 'Live'));
           return result;
         }));
 

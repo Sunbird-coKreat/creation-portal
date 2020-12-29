@@ -8,6 +8,7 @@ import { BulkJobService } from '../../services/bulk-job/bulk-job.service';
 import { UUID } from 'angular2-uuid';
 import { HelperService } from '../../services/helper.service';
 import { ProgramTelemetryService } from '../../../program/services';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-bulk-upload',
@@ -32,15 +33,7 @@ export class BulkUploadComponent implements OnInit {
       upload_success: 0
     }
   };
-  public mimeTypes: any = {
-    'pdf': 'application/pdf',
-    'mp4': 'video/mp4',
-    'webm': 'video/webm',
-    'html': 'application/vnd.ekstep.html-archive',
-    'epub': 'application/epub',
-    'h5p': 'application/vnd.ekstep.h5p-archive',
-    'mp3': 'audio/mp3'
-  };
+  public mimeTypes: any = this.configService.contentCategoryConfig.sourcingConfig.files
   public oldProcessStatus = '';
   public stageStatus = '';
   public contentTypes: Array<any> = [];
@@ -65,6 +58,7 @@ export class BulkUploadComponent implements OnInit {
     maxRows: 300,
     fileFormats: ['pdf', 'html', 'epub', 'h5p', 'mp4', 'webm', 'mp3']
   };
+  public catFormatMapping = {};
   public bulkUploadErrorMsgs = [];
   public bulkUploadValidationError = '';
   public levels = [];
@@ -83,12 +77,8 @@ export class BulkUploadComponent implements OnInit {
     public programTelemetryService: ProgramTelemetryService, public configService: ConfigService
   ) { }
 
-  ngOnInit() {
-    this.getContentTypes();
-    this.getLicences();
+   ngOnInit() {
     this.checkBulkUploadStatus();
-    this.getChapters();
-    this.setBulkUploadCsvConfig();
     this.stageStatus = this.getContentStatus();
     this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
     // tslint:disable-next-line:max-line-length
@@ -99,10 +89,34 @@ export class BulkUploadComponent implements OnInit {
   }
 
   getContentTypes() {
-    this.contentTypes = _.get(this.programContext, 'content_types');
-    /* _.filter(this.programsService.contentTypes, (type) => {
-      return _.includes(_.get(this.programContext, 'content_types'), type.value);
-    });*/
+    const req = [];
+    const appFilesConfig = this.configService.contentCategoryConfig.sourcingConfig.files;
+    this.contentTypes = _.get(this.sessionContext, 'nominationDetails.content_types');
+    return new Promise((resolve) => {
+      _.forEach(this.contentTypes, (contentType) => {
+        this.catFormatMapping[_.toLower(contentType)] = [];
+        req.push(this.programsService.getCategoryDefinition(contentType, this.programContext.rootorg_id));
+      });
+
+      forkJoin(req).subscribe((res)=> {
+        let mapped_array = _.map(res, (obj) => {
+          const catDef = _.get(obj, 'result.objectCategoryDefinition');
+          if (!_.isEmpty(_.get(catDef, 'objectMetadata.schema.properties.mimeType.enum'))) {
+            const supportedMimeTypes = catDef.objectMetadata.schema.properties.mimeType.enum;
+            let tempEditors = _.map(supportedMimeTypes, (mimetype) => {
+              if (!_.isEmpty(appFilesConfig[mimetype])) {
+                this.catFormatMapping[_.toLower(catDef.name)].push(appFilesConfig[mimetype]);
+                if (mimetype === "application/vnd.ekstep.html-archive") {
+                  this.catFormatMapping[_.toLower(catDef.name)].push('html');
+                }
+              }
+            }); 
+          }
+          return obj;
+        }) 
+        resolve(this.catFormatMapping);
+      });
+    });
   }
 
   getLicences() {
@@ -312,7 +326,12 @@ export class BulkUploadComponent implements OnInit {
   }
 
   getFileFormat(mimeType) {
-    return _.findKey(this.mimeTypes, (value) => value === mimeType);
+    return this.mimeTypes[mimeType];
+  }
+
+  getMimeType (fileFormat) {
+    fileFormat = (fileFormat == 'html') ? 'zip' : fileFormat;
+    return _.findKey(this.mimeTypes, (value) => value === fileFormat); 
   }
 
   updateJob() {
@@ -330,7 +349,6 @@ export class BulkUploadComponent implements OnInit {
           this.bulkUploadState = 5;
         }
         this.oldProcessStatus = this.process.status;
-        // console.log('updateResponse res', JSON.stringify(updateResponse));
       }, (error) => {
         console.log(error);
       });
@@ -398,10 +416,6 @@ export class BulkUploadComponent implements OnInit {
         this.uploader.reset();
         console.log(err);
       });
-  }
-
-  getContentTypeDetails(key, value) {
-    return _.find(this.contentTypes, [key, value]);
   }
 
   setBulkUploadCsvConfig() {
@@ -497,15 +511,28 @@ export class BulkUploadComponent implements OnInit {
       // Validate the content types
       row.contentType = _.toLower(row.contentType);
       const contentType = _.find(this.contentTypes, (content_type) => {
-        return (_.toLower(content_type) === row.contentType);
+          return (_.toLower(content_type) === row.contentType);
       });
       if (_.isEmpty(contentType)) {
         this.setError(`Content Type has invalid value at row: ${rowIndex}`);
         this.bulkUploadState = 4;
         return;
       }
-
       row.contentType = contentType;
+
+      // Validate if content type supports uploading format
+      if (_.isEmpty(this.catFormatMapping[_.toLower(row.contentType)])) {
+        this.setError(`Content Type value at row: ${rowIndex} is not supported for bulk upload`);
+        this.bulkUploadState = 4;
+        return;
+      }
+
+      // Validate if content type supports given format
+      if (!_.includes(this.catFormatMapping[_.toLower(row.contentType)], _.toLower(row.fileFormat))) {
+        this.setError(`File format has invalid value at row: ${rowIndex} . Supported formats are ` + _.join(this.catFormatMapping[_.toLower(row.contentType)], ','));
+        this.bulkUploadState = 4;
+        return;
+      }
     };
     const maxRowsError = (maxRows, actualRows) => {
       this.setError(`Expected max ${maxRows} rows but found ${actualRows} rows in the file`);
@@ -562,6 +589,7 @@ export class BulkUploadComponent implements OnInit {
       this.bulkUploadState = 5;
       this.checkBulkUploadStatus();
     } else {
+      this.setBulkUploadCsvConfig();
       this.bulkUploadState = 6;
     }
   }
@@ -612,7 +640,7 @@ export class BulkUploadComponent implements OnInit {
     const reqBody = this.sharedContext.reduce((obj, context) => {
       return { ...obj, [context]: this.sessionContext[context] };
     }, {});
-
+    const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.sessionContext);
     const content = {
       stage: this.stageStatus,
       metadata: {
@@ -624,7 +652,7 @@ export class BulkUploadComponent implements OnInit {
         creator: row.creator,
         audience: [_.upperFirst(_.toLower(row.audience))],
         code: UUID.UUID(),
-        mimeType: this.mimeTypes[_.toLower(row.fileFormat)],
+        mimeType: this.getMimeType(_.toLower(row.fileFormat)),
         primaryCategory: row.contentType,
         lastPublishedBy: userId,
         createdBy: userId,
@@ -635,7 +663,7 @@ export class BulkUploadComponent implements OnInit {
         attributions: row.attributions,
         keywords: row.keywords,
         contentPolicyCheck: true,
-        ...(_.pickBy(reqBody, _.identity))
+        ...(_.pickBy(sharedMetaData, _.identity))
       },
       collection: [{
         identifier: collectionId,
@@ -689,7 +717,6 @@ export class BulkUploadComponent implements OnInit {
   startBulkUpload(csvData) {
     this.completionPercentage = 0;
     this.createImportRequest(csvData).subscribe((importResponse) => {
-      // console.log('createImportRequest res', JSON.stringify(importResponse));
       this.process.process_id = _.get(importResponse, 'result.processId');
       this.createJobRequest(csvData.length)
         .subscribe((jobResponse) => {
@@ -709,7 +736,11 @@ export class BulkUploadComponent implements OnInit {
     this.bulkUploadErrorMsgs.push(message);
   }
 
-  openBulkUploadModal() {
+  async openBulkUploadModal() {
+    const mappping = await this.getContentTypes();
+    this.getLicences();
+    this.getChapters();
+    this.setBulkUploadCsvConfig();
     this.bulkUploadState = 0;
     this.showBulkUploadModal = true;
     this.updateBulkUploadState('increment');

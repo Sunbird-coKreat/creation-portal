@@ -233,14 +233,14 @@
 
 
     <div class='practical-sb-buttons'>
-        <button id="requestChanges" *ngIf="canReviewContent()" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="showRequestChangesPopup = true"
+        <button id="requestChanges" *ngIf="canReviewContent()" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="showRequestChangesPopup = true"
         appTelemetryInteract
         [telemetryInteractEdata]="{id:rejectComment === '' ? 'request_changes' : 'edit_comments',type:configService.telemetryLabels.eventType.click,subtype:configService.telemetryLabels.eventSubtype.launch,pageid:telemetryPageId}"
         [telemetryInteractObject]="getTelemetryInteractObject(questionMetaData?.data?.identifier, 'Question')"
         [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
         >
-            {{  rejectComment === '' ? 'Request Changes' : 'Edit Comments' }}
+            {{  rejectComment === '' ? 'Add Comments' : 'Edit Comments' }}
         </button>
     </div>
   </form>

@@ -129,8 +129,7 @@ export class RegistryService extends DataService {
                       }
                   });
               }
-              this.cacheService.set('orgUsersDetails', _.compact(orgUsersDetails));
-              return resolve(this.cacheService.get('orgUsersDetails'));
+              return resolve(_.compact(orgUsersDetails));
             }, (err) => { console.log(err); return reject([]); });
           } else {
             return resolve([]);

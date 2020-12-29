@@ -13,7 +13,7 @@
 		</a>
 		<button *ngIf="sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary my-10" (click)="showTextbookFiltersModal = true"
 		appTelemetryInteract
-                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filter_textbooks', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filter_collections', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
                                                         [telemetryInteractObject]="telemetryInteractObject"
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata"> <i class="filter icon"></i>
@@ -23,7 +23,7 @@
 		</button>
 		<button *ngIf="sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary ml-10" (click)="downloadCSV()"
 		appTelemetryInteract
-                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download_textbook_details', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download_collection_details', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                                                         [telemetryInteractObject]="telemetryInteractObject"
                                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                                         [telemetryInteractPdata]="telemetryInteractPdata"> <i class="download icon"></i> {{resourceService.frmelmnts.lbl.downloadProjectDetails | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName(programDetails)}}</button>
@@ -128,7 +128,7 @@
 							[options]="programDetails.config.medium"
 							[(ngModel)]="setPreferences['medium']"
 								appTelemetryInteract
-								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('medium', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {key:'dialog_id',value:'filter_textbooks'})"
+								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('medium', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {key:'dialog_id',value:'filter_collections'})"
 								[telemetryInteractObject]="telemetryInteractObject"
 								[telemetryInteractCdata]="telemetryInteractCdata"
 								[telemetryInteractPdata]="telemetryInteractPdata">
@@ -149,7 +149,7 @@
 							[options]="programDetails.config.subject"
 							[(ngModel)]="setPreferences['subject']"
 							appTelemetryInteract
-								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('subject', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {key:'dialog_id',value:'filter_textbooks'})"
+								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('subject', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {key:'dialog_id',value:'filter_collections'})"
 								[telemetryInteractObject]="telemetryInteractObject"
 								[telemetryInteractCdata]="telemetryInteractCdata"
 								[telemetryInteractPdata]="telemetryInteractPdata">
@@ -170,7 +170,7 @@
 							[options]="programDetails.config.gradeLevel"
 							[(ngModel)]="setPreferences['gradeLevel']"
 							appTelemetryInteract
-								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('class', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {key:'dialog_id',value:'filter_textbooks'})"
+								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('class', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {key:'dialog_id',value:'filter_collections'})"
 								[telemetryInteractObject]="telemetryInteractObject"
 								[telemetryInteractCdata]="telemetryInteractCdata"
 								[telemetryInteractPdata]="telemetryInteractPdata">
@@ -190,13 +190,13 @@
 	<div class="sb-modal-actions py-20">
 		<button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="applyTextbookFilters();"
 		appTelemetryInteract
-		[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('apply', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit,telemetryPageId, {filters: setPreferences,key:'dialog_id',value:'filter_textbooks'})"
+		[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('apply', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit,telemetryPageId, {filters: setPreferences,key:'dialog_id',value:'filter_collections'})"
 		[telemetryInteractObject]="telemetryInteractObject"
 		[telemetryInteractCdata]="telemetryInteractCdata"
 		[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.apply}} </button>
 		<button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="resetTextbookFilters();"
 		appTelemetryInteract
-		[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reset', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel, telemetryPageId, {key:'dialog_id',value:'filter_textbooks'})"
+		[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reset', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel, telemetryPageId, {key:'dialog_id',value:'filter_collections'})"
 		[telemetryInteractObject]="telemetryInteractObject"
 		[telemetryInteractCdata]="telemetryInteractCdata"
 		[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.reset}}</button>
