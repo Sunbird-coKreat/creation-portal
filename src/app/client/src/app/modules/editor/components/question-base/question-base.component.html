@@ -13,15 +13,13 @@
             <div class="py-20 px-32 sb-bg-color-primary-0">
               <div class="sb-field-group">
                 <label class="fs-0-92">Question</label><span class="sb-required">*</span>
-                <div>
-                </div>
                 <div class="sb-field">
-                  <div class="ckeditor-tool__question mb-5">
+                  <div class="ckeditor-tool__question mb-5" >
                     <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'question'); getMedia($event.mediaobj);"
                     [editorDataInput]="editorState.question" [editorId]="'question_editor'"
                     (videoDataOutput)="videoDataOutput($event)" [videoShow]="videoShow"></app-ckeditor-tool>
                    </div>
-                   <label *ngIf="showFormError && [undefined, ''].includes(editorState.question)" class="sb-color-error fs-0-785">Fill Question</label>
+                   <label *ngIf="showFormError && [undefined, ''].includes(editorState.question)" class="sb-color-error fs-0-785">Question is required</label>
                 </div>
 
                 <app-answer *ngIf="(questionInteractionType === 'default')" [editorConfig]="editorConfig" [editorState]="editorState" [showFormError]="showFormError" (editorDataOutput)="editorDataHandler($event, 'answer')"></app-answer>

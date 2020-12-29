@@ -61,10 +61,10 @@ export class TreeService {
     const activeNode = this.getActiveNode();
     const nodeId = activeNode.data.id;
     if (_.isUndefined(this.treeCache.nodesModified[nodeId])) {
-      this.treeCache.nodesModified[nodeId] = { isNew: false, root: false };
+      this.treeCache.nodesModified[nodeId] = { isNew: false, root: true };
     }
     // tslint:disable-next-line:max-line-length
-    this.treeCache.nodesModified[nodeId].metadata = metadata;
+    this.treeCache.nodesModified[nodeId].metadata = _.pickBy(metadata, _.identity);
     this.treeCache.nodesModified[nodeId].metadata.code = nodeId;
   }
 

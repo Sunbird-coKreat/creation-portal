@@ -10,6 +10,7 @@ export class OptionsComponent implements OnInit {
   @Input() showFormError;
   @Output() editorDataOutput: EventEmitter<any> = new EventEmitter<any>();
   @Output() optionMedia: EventEmitter<any> = new EventEmitter<any>();
+  public setCharacterLimit = 160;
   public mediaArr = [];
   constructor() { }
 

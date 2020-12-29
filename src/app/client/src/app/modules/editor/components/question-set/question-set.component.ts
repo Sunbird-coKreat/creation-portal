@@ -23,7 +23,9 @@ export class QuestionSetComponent implements OnInit {
   }
 
   prepareFormConfiguration() {
-    const metadata = this.questionSetMetadata.data.metadata;
+    const questionSetObj = this.questionSetMetadata.data.metadata;
+    // tslint:disable-next-line:max-line-length
+    const metadata = (_.isUndefined(this.treeService.treeCache.nodesModified[questionSetObj.identifier])) ? questionSetObj : _.assign(questionSetObj, this.treeService.treeCache.nodesModified[questionSetObj.identifier].metadata);
     _.forEach(this.config, field => {
       if (metadata && metadata[field.code]) {
         field['default'] = metadata[field.code];

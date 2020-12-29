@@ -1,41 +1,49 @@
 <div class="pt-10 fs-0-92 sb-w-85">
-  Options<span class="sb-required">*</span>
+  <label class="fs-0-92">Options<span class="sb-required">*</span></label>
   <i class="icon info circle ml-8"></i>
   <span class="divider mr-8"></span>
-  <i class="icon image mx-4"></i>
-  <i class="icon align left mx-4"></i>
-  <i class="icon align right mx-4"></i>
-  <i class="icon align center mx-4"></i>
+  <img src="assets/images/layoutoneicon.png" class="mr-10 h-7">
+  <img src="assets/images/layouttwoicon.png" class="mr-10 h-7">
+  <img src="assets/images/layoutthreeicon.png" class="mr-10 h-7">
+  <img src="assets/images/imageicon.png" class="h-12 mr-10">
+  <img src="assets/images/leftalignicon.png" class="h-12 mr-10">
+  <img src="assets/images/middlealignicon.png" class="h-12 mr-10">
+  <img src="assets/images/rightalignicon.png" class="h-12 mr-10">
 </div>
-<label *ngIf="showFormError && !editorState.answer" class="ui basic red error label pt-1">Select one correct
-answer</label>
+<label *ngIf="showFormError && !editorState.answer" class="ui basic red error label pt-1 mt-10">Select one correct
+  answer</label>
 <div class="d-flex py-10 flex-dc sb-mcq-form">
-  <div class="d-flex sb-mcq-item" *ngFor="let option of editorState.options; let i=index">
-    <div>
-      <label *ngIf="showFormError && (option.body === undefined || option.body === '')" class="sb-label sb-label-table sb-label-error-0 pt-1">Fill this option</label>
-    </div>
-    <div class="sb-w-85 sb-ckeditor relative mb-8">
-
-    <button [disabled]="editorState.options.length < 3"
-    class="sb-btn sb-ckeditor-close absolute"><i
-      class="icon close" (click)="editorState.deleteOption(i)"></i></button>
-    <app-ckeditor-tool (hasError)="handleEditorError($event)"
-      (editorDataOutput)="option.body = $event.body; option.length = $event.length; getMedia($event.mediaobj);"
-      [editorConfig]="editorConfig" [editorDataInput]="option.body" [setCharacterLimit]="setCharacterLimit"
-      [setImageLimit]="setImageLimit" class="ckeditor-tool__option mb-24"></app-ckeditor-tool>
+  <div class="d-flex sb-mcq-item mb-15" *ngFor="let option of editorState.options; let i = index">
+    <div class="sb-w-85 sb-ckeditor relative">
+      <button [disabled]="editorState.options.length < 3" class="sb-btn sb-ckeditor-close absolute"
+        (click)="editorState.deleteOption(i)">
+        <i class="icon close"></i>
+      </button>
+      <app-ckeditor-tool (hasError)="handleEditorError($event)" (editorDataOutput)="
+          option.body = $event.body;
+          option.length = $event.length;
+          getMedia($event.mediaobj)
+        " [editorConfig]="editorConfig" [editorDataInput]="option.body" [setCharacterLimit]="setCharacterLimit"
+        [setImageLimit]="setImageLimit" class="ckeditor-tool__option mb-24"
+        [class.mb-5]="showFormError && ([undefined, ''].includes(option.body) || option.length > setCharacterLimit)">
+      </app-ckeditor-tool>
+      <label *ngIf="
+          showFormError && (option.body === undefined || option.body === '')
+        " class="sb-color-error fs-0-785">Fill this option</label>
+      <label *ngIf="option.length > setCharacterLimit" class="ui basic red error label pt-1">Please reduce the
+        size</label>
     </div>
     <div class="sb-checkbox sb-checkbox-primary pl-10" [class.selected]="editorState.answer === i.toString()">
-      <input type="radio" id="{{i+1}}" name="example" value={{i}} [(ngModel)]="editorState.answer"
-        [ngModelOptions]="{standalone: true}" [checked]="editorState.answer === i.toString()">
-        <label for="{{i+1}}" class="mr-0 fs-0-785">Correct answer</label>
-      </div>
-    <label *ngIf="option.length > 160" class="ui basic red error label pt-1">please reduce
-      the
-      size</label>
+      <input type="radio" id="{{ i + 1 }}" name="example" value="{{ i }}" [(ngModel)]="editorState.answer"
+        [ngModelOptions]="{ standalone: true }" [checked]="editorState.answer === i.toString()" />
+      <label for="{{ i + 1 }}" class="mr-0 fs-0-785">Correct answer</label>
+    </div>
   </div>
   <div class="d-flex">
-      <button *ngIf='editorState.options.length < 4'
-      class="sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius text-inherit" (click)="editorState.addOptions()"><i
-        class="plus circle icon"></i>Add option</button>
+    <button *ngIf="editorState.options.length < 4"
+      class="sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius text-inherit b-0 bg-none"
+      (click)="editorState.addOptions()">
+      <i class="plus circle icon"></i>Add option
+    </button>
   </div>
 </div>
