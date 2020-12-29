@@ -343,6 +343,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         response.result.content.children = children;
         this.collectionData = response.result.content;
         this.storedCollectionData = unitIdentifier ?  this.storedCollectionData : _.cloneDeep(this.collectionData);
+        if (this.storedCollectionData['channel'] !== this.programContext.rootorg_id) {
+          this.storedCollectionData['channel'] = this.programContext.rootorg_id;
+        }
         this.helperService.selectedCollectionMetaData = _.omit(this.storedCollectionData, ['children', 'childNodes']);
         const textBookMetaData = [];
         instance.countData['total'] = 0;
