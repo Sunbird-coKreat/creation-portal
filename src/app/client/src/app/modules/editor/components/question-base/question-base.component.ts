@@ -68,6 +68,11 @@ export class QuestionBaseComponent implements OnInit {
       this.activatedRoute.queryParams.subscribe(params => {
         this.questionInteractionType = params['type'];
         this.questionId = params['questionId'];
+        if (this.questionInteractionType === 'default') {
+          this.toolbarConfig.title = 'Subjective';
+        } if (this.questionInteractionType === 'choice') {
+          this.toolbarConfig.title = 'MCQ';
+        }
       });
      }
 
