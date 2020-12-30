@@ -41,4 +41,7 @@ export class QuestionSetComponent implements OnInit {
     this.treeService.updateNode(event);
   }
 
+  onStatusChanges(event) {
+    this.toolbarEmitter.emit({ 'button': { 'type': 'onFormChange'}, 'event': event });
+  }
 }

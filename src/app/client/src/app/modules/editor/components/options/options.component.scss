@@ -120,3 +120,88 @@ sui-select {
     }
   }
 }
+
+.q-sb-layout-single{
+  &:before{
+    content: url("assets/images/layoutoneicon.svg");
+  }
+  &.active,
+  &:hover
+  {
+    &:before{
+      content: url("assets/images/layoutoneicon_blue.svg");
+    } 
+  }
+}
+.q-sb-layout-two{
+  &:before{
+    content: url("assets/images/layouttwoicon.svg");
+  }
+  &.active,
+  &:hover
+  {
+    &:before{
+      content: url("assets/images/layouttwoicon_blue.svg");
+    } 
+  }
+}
+.q-sb-layout-three{
+  &:before{
+    content: url("assets/images/layoutthreeicon.svg");
+  }
+  &.active,
+  &:hover
+  {
+    &:before{
+      content: url("assets/images/layoutthreeicon_blue.svg");
+    } 
+  }
+}
+.q-sb-layout-imgoption{
+  &:before{
+    content: url("assets/images/imageicon.svg");
+  }
+  &.active,
+  &:hover
+  {
+    &:before{
+      content: url("assets/images/imageicon_blue.svg");
+    } 
+  }
+}
+.q-sb-layout-alignleft{
+  &:before{
+    content: url("assets/images/leftalignicon.svg");
+  }
+  &.active,
+  &:hover
+  {
+    &:before{
+      content: url("assets/images/leftalignicon_blue.svg");
+    } 
+  }
+}
+.q-sb-layout-aligncenter{
+  &:before{
+    content: url("assets/images/middlealignicon.svg");
+  }
+  &.active,
+  &:hover
+  {
+    &:before{
+      content: url("assets/images/middlealignicon_blue.svg");
+    } 
+  }
+}
+.q-sb-layout-alignright{
+  &:before{
+    content: url("assets/images/rightalignicon.svg");
+  }
+  &.active,
+  &:hover
+  {
+    &:before{
+      content: url("assets/images/rightalignicon_blue.svg");
+    } 
+  }
+}
