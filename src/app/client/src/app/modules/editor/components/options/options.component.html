@@ -2,17 +2,17 @@
   <label class="fs-0-92">Options<span class="sb-required">*</span></label>
   <i class="icon info circle ml-8"></i>
   <span class="divider mr-8"></span>
-  <img src="assets/images/layoutoneicon.png" class="mr-10 h-7">
-  <img src="assets/images/layouttwoicon.png" class="mr-10 h-7">
-  <img src="assets/images/layoutthreeicon.png" class="mr-10 h-7">
-  <img src="assets/images/imageicon.png" class="h-12 mr-10">
-  <img src="assets/images/leftalignicon.png" class="h-12 mr-10">
-  <img src="assets/images/middlealignicon.png" class="h-12 mr-10">
-  <img src="assets/images/rightalignicon.png" class="h-12 mr-10">
+  <i class="q-sb-layout-single mr-10 h-7"></i>
+  <i class="q-sb-layout-two mr-10 h-7 active"></i>
+  <i class="q-sb-layout-three mr-10 h-7 w-20"></i>
+  <i class="q-sb-layout-imgoption mr-10 h-7"></i>
+  <i class="q-sb-layout-alignleft mr-10 h-7"></i>
+  <i class="q-sb-layout-aligncenter mr-10 h-7"></i>
+  <i class="q-sb-layout-alignright mr-10 h-7"></i>
 </div>
 <label *ngIf="showFormError && !editorState.answer" class="ui basic red error label pt-1 mt-10">Select one correct
   answer</label>
-<div class="d-flex py-10 flex-dc sb-mcq-form">
+<div class="d-flex pt-10 flex-dc sb-mcq-form">
   <div class="d-flex sb-mcq-item mb-15" *ngFor="let option of editorState.options; let i = index">
     <div class="sb-w-85 sb-ckeditor relative">
       <button [disabled]="editorState.options.length < 3" class="sb-btn sb-ckeditor-close absolute"
@@ -41,9 +41,9 @@
   </div>
   <div class="d-flex">
     <button *ngIf="editorState.options.length < 4"
-      class="sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius text-inherit b-0 bg-none"
-      (click)="editorState.addOptions()">
-      <i class="plus circle icon"></i>Add option
-    </button>
+    class="sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn text-inherit b-0 bg-none no-hover pl-0"
+    (click)="editorState.addOptions()">
+    <i class="plus circle icon fs-1-143 mr-5"></i>Add option
+  </button>
   </div>
 </div>

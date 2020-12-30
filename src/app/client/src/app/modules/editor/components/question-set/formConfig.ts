@@ -11,10 +11,12 @@ export const formConfig = [
         'renderingHints': {'class': 'sb-g-col-lg-1'},
         'required': true,
         'visible': true,
-        'validation': [{
+        'validations': [{
             'type': 'max',
             'value': '120',
             'message': 'Input is Exceded'
+        }, {
+            'type': 'required'
         }]
     },
     {
@@ -29,11 +31,6 @@ export const formConfig = [
         'renderingHints': {'class': 'sb-g-col-lg-1'},
         'required': true,
         'visible': true,
-        'validation': [{
-            'type': 'max',
-            'value': '120',
-            'message': 'Input is Exceded'
-        }]
     },
     {
         'code': 'attributions',
@@ -47,11 +44,6 @@ export const formConfig = [
         'renderingHints': {'class': 'sb-g-col-lg-1'},
         'required': true,
         'visible': true,
-        'validation': [{
-            'type': 'max',
-            'value': '120',
-            'message': 'Input is Exceded'
-        }]
     },
     {
         'code': 'copyright',
@@ -65,15 +57,10 @@ export const formConfig = [
         'renderingHints': {'class': 'sb-g-col-lg-1'},
         'required': true,
         'visible': true,
-        'validation': [{
-            'type': 'max',
-            'value': '120',
-            'message': 'Input is Exceded'
-        }]
     },
     {
         'code': 'license',
-        'dataType': 'text',
+        'dataType': 'list',
         'description': 'Licence',
         'editable': true,
         'inputType': 'select',
@@ -83,40 +70,18 @@ export const formConfig = [
         'renderingHints': {'class': 'sb-g-col-lg-1'},
         'required': true,
         'visible': true,
-        'templateOptions': {
-            'placeHolder': 'Select Licence',
-            'multiple': false,
-            'hidden': false,
-        },
-        'validations': [{
-            'type': 'required'
-        }],
-        'terms': [
-            {
-                'identifier': 'CC BY 4.0',
-                'code': 'CC BY 4.0',
-                'translations': null,
-                'name': 'CC BY 4.0',
-                'description': 'CC BY 4.0',
-                'index': 1,
-                'category': 'board',
-                'status': 'Live'
-            },
-            {
-                'identifier': 'CC BY-NC 4.0',
-                'code': 'CC BY-NC 4.0',
-                'translations': null,
-                'name': 'CC BY-NC 4.0',
-                'description': 'CC BY-NC 4.0',
-                'index': 1,
-                'category': 'board',
-                'status': 'Live'
+        'range': [{
+                'value': 'CC BY 4.0',
+                'label': 'CC BY 4.0',
+            }, {
+                'value': 'CC BY-NC 4.0',
+                'label': 'CC BY-NC 4.0',
             }
         ],
     },
     {
         'code': 'audience',
-        'dataType': 'text',
+        'dataType': 'list',
         'description': 'Audience',
         'editable': true,
         'inputType': 'select',
@@ -126,25 +91,6 @@ export const formConfig = [
         'renderingHints': {'class': 'sb-g-col-lg-1'},
         'required': true,
         'visible': true,
-        'templateOptions': {
-            'placeHolder': 'Select Audience',
-            'multiple': false,
-            'hidden': false,
-        },
-        'validations': [{
-            'type': 'required'
-        }],
-        'terms': [
-            {
-                'identifier': 'Student',
-                'code': 'Student',
-                'translations': null,
-                'name': 'Student',
-                'description': 'Student',
-                'index': 1,
-                'category': 'board',
-                'status': 'Live'
-            }
-        ],
+        'range': ['Student', 'Teacher', 'Administrator'],
     },
 ];

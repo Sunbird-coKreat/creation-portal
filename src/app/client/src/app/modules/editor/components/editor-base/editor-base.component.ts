@@ -37,6 +37,8 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
   public editorParams: IeditorParams;
   public showLoader: Boolean = true;
   public showQuestionTemplatePopup: Boolean = false;
+  public showConfirmPopup: Boolean = false;
+  public submitFormStatus: Boolean = false;
   public pageStartTime;
 
   constructor(public programTelemetryService: ProgramTelemetryService, private treeService: TreeService,
@@ -101,27 +103,27 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
   setTelemetryStartData() {
     const deviceInfo = this.deviceDetectorService.getDeviceInfo();
     setTimeout(() => {
-        this.telemetryStart = {
-          object: {
-            id: this.editorParams.collectionId || '',
-            type: 'question_set',
-          },
-          context: {
-            env: this.activatedRoute.snapshot.data.telemetry.env,
-            cdata: this.telemetryPageDetails.telemetryInteractCdata || [],
-          },
-          edata: {
-            type: this.configService.telemetryLabels.pageType.editor || '',
-            pageid: this.telemetryPageId,
-            uaspec: {
-              agent: deviceInfo.browser,
-              ver: deviceInfo.browser_version,
-              system: deviceInfo.os_version,
-              platform: deviceInfo.os,
-              raw: deviceInfo.userAgent
-            }
+      this.telemetryStart = {
+        object: {
+          id: this.editorParams.collectionId || '',
+          type: 'question_set',
+        },
+        context: {
+          env: this.activatedRoute.snapshot.data.telemetry.env,
+          cdata: this.telemetryPageDetails.telemetryInteractCdata || [],
+        },
+        edata: {
+          type: this.configService.telemetryLabels.pageType.editor || '',
+          pageid: this.telemetryPageId,
+          uaspec: {
+            agent: deviceInfo.browser,
+            ver: deviceInfo.browser_version,
+            system: deviceInfo.os_version,
+            platform: deviceInfo.os,
+            raw: deviceInfo.userAgent
           }
-        };
+        }
+      };
     });
   }
 
@@ -166,6 +168,7 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
       this.showLoader = false;
       this.logTelemetryImpressionEvent();
     })).subscribe(res => {
+      this.toolbarConfig.title = res.name;
       this.collectionTreeNodes = res;
       if (_.isEmpty(res.children)) {
         // TODO: Call update questionSet APIs if children property empty
@@ -179,7 +182,7 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
         this.saveCollection();
         break;
       case 'submitCollection':
-        this.submitCollection();
+        this.submitHandler();
         break;
       case 'removeContent':
         this.removeNode();
@@ -189,6 +192,9 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
         break;
       case 'showQuestionTemplate':
         this.showQuestionTemplatePopup = true;
+        break;
+      case 'onFormChange':
+        this.submitFormStatus = event.event.isValid;
         break;
       default:
         break;
@@ -200,8 +206,16 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
       .pipe(map(data => _.get(data, 'result'))).subscribe(response => {
         this.treeService.replaceNodeId(response.identifiers);
         this.treeService.clearTreeCache();
-        alert('Hierarchy is Sucessfuly Updated');
+        this.toasterService.success('Question set updated successfully');
       });
+  }
+
+  submitHandler() {
+    if (!this.submitFormStatus) {
+      this.toasterService.error('Please fill the required metadata');
+      return false;
+    }
+    this.submitCollection();
   }
 
   submitCollection() {
@@ -211,6 +225,7 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
       };
       return throwError(this.cbseService.apiErrorHandling(error, errInfo));
     })).subscribe(res => {
+      this.showConfirmPopup = false;
       this.generateTelemetryEndEvent('submit');
       this.toasterService.success('Question set sent for review');
     });

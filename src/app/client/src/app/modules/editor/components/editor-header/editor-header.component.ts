@@ -11,6 +11,7 @@ export class EditorHeaderComponent implements OnInit {
   @Input() toolbarConfig: any;
   @Input() telemetryEventsInput: any;
   @Output() toolbarEmitter = new EventEmitter<any>();
+  public preview: Boolean = false;
 
   constructor(public configService: ConfigService, public programTelemetryService: ProgramTelemetryService) { }
 
