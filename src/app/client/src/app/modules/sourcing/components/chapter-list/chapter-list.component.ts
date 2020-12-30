@@ -44,6 +44,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   private textBookMeta: any;
   public hierarchyObj = {};
   public collectionHierarchy = [];
+  public getOriginCollectionHierarchy : any;
   public countData: Array<any> = [];
   public levelOneChapterList: Array<any> = [];
   public selectedChapterOption: any = {};

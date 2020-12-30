@@ -40,6 +40,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public sharedContext: any;
   public selectedSharedContext: any;
   public roles: any;
+  public showResourceTitleEditor : any;
+  public saveResourceName : any;
   public templateDetails: any;
   public questionList: Array<any> = [];
   public selectedQuestionId: any;

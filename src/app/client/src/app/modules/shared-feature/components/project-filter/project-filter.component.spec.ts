@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { ProgramsService, DataService, FrameworkService, ActionService } from '@sunbird/core';
 import { ProjectFilterComponent } from './project-filter.component';
 import { programData } from './project-filter.component.spec.data';
 describe('ProjectFilterComponent', () => {
@@ -8,7 +8,8 @@ describe('ProjectFilterComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ProjectFilterComponent]
+      declarations: [ProjectFilterComponent],
+      providers: [ProgramsService, DataService, FrameworkService, ActionService,]
     })
       .compileComponents();
   }));
@@ -43,7 +44,7 @@ describe('ProjectFilterComponent', () => {
   });
   it('should get details about applied filters', () => {
     component.getAppliedFiltersDetails();
-    expect(component.programsService.getAppliedFiltersDetails()).toHaveBeenCalled();
+    expect(component.getAppliedFiltersDetails()).toHaveBeenCalled();
     expect(component.setPreferences['gradeLevel']).toEqual(programData.applyFilters.filterGradeLevel);
     expect(component.setPreferences['contentTypes']).toEqual(programData.applyFilters.filterContentTypes);
     expect(component.setPreferences['medium']).toEqual(programData.applyFilters.filterMedium);
@@ -65,7 +66,7 @@ describe('ProjectFilterComponent', () => {
   });
   it('should set filters based on selected filters ', () => {
     component.setAppliedFilters(programData.applyFilters);
-    expect(component.programsService.setAppliedFilters()).toHaveBeenCalled();
+    expect(component.setAppliedFilters({})).toHaveBeenCalled();
   });
   it('should show filters for my projects tab for sourcing user other than sourcing org ', () => {
     component.checkFilterShowCondition();

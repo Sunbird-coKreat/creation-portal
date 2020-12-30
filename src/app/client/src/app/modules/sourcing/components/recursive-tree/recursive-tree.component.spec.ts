@@ -148,7 +148,7 @@ describe('RecursiveTreeComponent', () => {
   it('should execute previewResource on event, collection, content', () => {
     fixture.detectChanges();
     const spy = spyOn(component, 'previewResource').and.callThrough();
-    component.previewResource({}, 'sampleContent_do_id', 'do_id=232323343434rff', 'do_123456');
+    component.previewResource({}, 'sampleContent_do_id', 'do_id=232323343434rff', 'do_123456','123456');
     fixture.whenStable().then(() => {
       fixture.detectChanges();
       expect(spy).toHaveBeenCalled();

@@ -19,6 +19,7 @@ export class MvcListComponent implements OnInit, OnDestroy {
   public width: any;
   public height: any;
   public inViewLogs = [];
+  public addToLibraryBtnVisibility : Boolean = false;
 
   constructor(public resourceService: ResourceService, public configService: ConfigService,
     public programTelemetryService: ProgramTelemetryService) { }
