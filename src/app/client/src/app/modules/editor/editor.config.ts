@@ -54,7 +54,7 @@ export const questionToolbarConfig = {
 
 export const templateList = [
     { type : 'MCQ'},
-    { type : 'Short Answers'}
+    { type : 'Subjective'}
 ];
 
 export const editorConfig = {

@@ -35,3 +35,29 @@
 [templateList]="templateList" [telemetryEventsInput]="telemetryPageDetails"
 (templateSelection)="handleTemplateSelection($event)">
 </app-question-template>
+
+
+<sui-modal [mustScroll]="false" [isClosable]="true" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
+  appBodyScroll *ngIf='showConfirmPopup' (dismissed)="showConfirmPopup = !showConfirmPopup; terms = false;">
+  <div class="sb-modal-header">
+    Accepting Terms & Conditions
+  </div>
+  <div class="sb-modal-content">
+    <div class="ui grid">
+      <div class="twelve wide column sb-checkbox-tnc mt-10">
+        <div class="sb-checkbox sb-checkbox-primary font-italic"><input [(ngModel)]="terms" id="termAndConditions" name="example" type="checkbox">
+          <label for="termAndConditions" class="fsmall pl-32"><span class="sb-required">*</span><span
+              class="font-weight-bold mb-4 d-block">"I agree that by submitting / publishing this Content,</span>
+              <div class="sb-color-gray-300">I confirm that this Content complies with prescibed guidlines, including th Terms ofUse and Content Policy and
+                that I consent to publish it under the Creative Commons Framework in accordance with the Content Policy. I
+                that I consent to publish it under the <a class="sb-color-primary font-weight-bold cursor-pointer">Creative Commons Framework</a> in accordance with the <a class="sb-color-primary font-weight-bold cursor-pointer">Content Policy</a>. I
+                have made sure that I do not violate other's copyright ir privacy rights."</div>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="sb-modal-actions">
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="!terms" (click)="submitCollection()"> Submit </button>
+  </div>
+</sui-modal>

@@ -63,8 +63,11 @@ export class TreeService {
     if (_.isUndefined(this.treeCache.nodesModified[nodeId])) {
       this.treeCache.nodesModified[nodeId] = { isNew: false, root: true };
     }
-    // tslint:disable-next-line:max-line-length
     this.treeCache.nodesModified[nodeId].metadata = _.pickBy(metadata, _.identity);
+    const attributions = this.treeCache.nodesModified[nodeId].metadata.attributions;
+    if (attributions) {
+      this.treeCache.nodesModified[nodeId].metadata.attributions = attributions.split(',');
+    }
     this.treeCache.nodesModified[nodeId].metadata.code = nodeId;
   }
 

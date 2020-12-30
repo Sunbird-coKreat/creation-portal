@@ -46,13 +46,13 @@ export class FancyTreeComponent implements OnInit, AfterViewInit {
   buildTree(data, tree?) {
     tree = tree || [];
     if (data.children) { data.children = _.sortBy(data.children, ['index']); }
-    _.forEach(data.children, (child) => {
+    _.forEach(data.children, (child, index) => {
       const objectType = this.getObjectType(child.objectType);
       const childTree = [];
       if (objectType) {
         tree.push({
           'id': child.identifier || UUID.UUID(),
-          'title': child.name,
+          'title': `Q${index + 1} | ${child.objectType}`,
           'tooltip': child.name,
           'objectType': child.objectType,
           'metadata': _.omit(child, ['children']),

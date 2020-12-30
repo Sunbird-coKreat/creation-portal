@@ -1,11 +1,12 @@
 
 <h3>{{questionMetaData.title}}</h3>
+<hr class="my-20">
 <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="editQuestion();"
 appTelemetryInteract 
-[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('edit_question', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryEventsInput.telemetryPageId)"
+[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('edit', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryEventsInput.telemetryPageId)"
 [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(questionMetaData?.data?.metadata?.identifier, 'Question', '1.0')"
 [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
-[telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"><i class="icon edit"></i>Edit Question</button>
+[telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"><i class="icon edit"></i>Edit</button>
 <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-15" (click)="removeQuestion()"
 appTelemetryInteract 
 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('delete', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryEventsInput.telemetryPageId)"
@@ -13,94 +14,3 @@ appTelemetryInteract
 [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
 [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"><i
     class="icon trash sb-color-primary"></i>Delete</button>
-<hr class="my-20">
-<div class="ui grid pt-20">
-  <div class="four wide column">
-    <div class="sb-field-group">
-      <label class="sb-color-gray-100">Board</label>
-      <div class="fs-0-92">
-        CBSE
-      </div>
-    </div>
-  </div>
-  <div class="four wide column">
-    <div class="sb-field-group">
-      <label class="sb-color-gray-100">Grade</label>
-      <div class="fs-0-92">
-        Class 6
-      </div>
-    </div>
-  </div>
-  <div class="four wide column pt-0">
-    <div class="sb-field-group">
-      <label class="sb-color-gray-100">Medium</label>
-      <div class="fs-0-92">
-        English
-      </div>
-    </div>
-  </div>
-  <div class="four wide column pt-0">
-    <div class="sb-field-group">
-      <label class="sb-color-gray-100">Board</label>
-      <div class="fs-0-92">
-        CBSE
-      </div>
-    </div>
-  </div>
-  <div class="four wide column pt-0">
-    <div class="sb-field-group">
-      <label class="sb-color-gray-100">Type</label>
-      <div class="fs-0-92">
-        Practise resource
-      </div>
-    </div>
-  </div>
-  <div class="four wide column pt-0">
-    <div class="sb-field-group">
-      <label class="sb-color-gray-100">Subject</label>
-      <div class="fs-0-92">
-        Literature
-      </div>
-    </div>
-  </div>
-  <div class="four wide column pt-0">
-    <div class="sb-field-group">
-      <label class="sb-color-gray-100">Author</label>
-      <div class="fs-0-92">
-        Elsa McBone
-      </div>
-    </div>
-  </div>
-  <div class="four wide column pt-0">
-    <div class="sb-field-group">
-      <label class="sb-color-gray-100">Attributions</label>
-      <div class="fs-0-92">
-        Elsa McBone
-      </div>
-    </div>
-  </div>
-  <div class="four wide column pt-0">
-    <div class="sb-field-group">
-      <label class="sb-color-gray-100">Audience</label>
-      <div class="fs-0-92">
-        Student
-      </div>
-    </div>
-  </div>
-  <div class="four wide column pt-0">
-    <div class="sb-field-group">
-      <label class="sb-color-gray-100">Copyright & Year</label>
-      <div class="fs-0-92">
-        Elsa McBone
-      </div>
-    </div>
-  </div>
-  <div class="four wide column pt-0">
-    <div class="sb-field-group">
-      <label class="sb-color-gray-100">Licensed by</label>
-      <div class="fs-0-92">
-        CC by 4.0
-      </div>
-    </div>
-  </div>
-</div>
