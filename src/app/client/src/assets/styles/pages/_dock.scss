@@ -14,8 +14,6 @@
       }
   }
 }
-.sb-dock-header {
-}
 .sb-dock-new-program {
   position: absolute !important;
   right: 330px;
@@ -715,8 +713,11 @@ xxl calculateRem(180px) 24px 20px;
             .fancytree-node{
                 padding: 6px 16px 8px 16px;
                 margin-left: 8px;
+                border: 1px solid transparent;
                 &.fancytree-active,
-                &.fancytree-focused{
+                &.fancytree-focused,
+                &:hover
+                {
                   border: 1px solid var(--primary-200);
                   background-color: #f3f8ff;
                   border-right: 0;
@@ -817,3 +818,26 @@ xxl calculateRem(180px) 24px 20px;
 .h-12{
   height: 12px;
 } 
+.w-20{
+  width:20px;
+}
+.b-0{
+  border:0 !important;
+} 
+.bg-none{
+  background-color: transparent !important;
+  &:hover,
+  &:focus{
+    background-color: transparent !important;
+  }
+}
+
+.sb-fixed-with-whitebg{
+    position: fixed;
+    width: 100%;
+    border-top: 1px solid #ddd;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #fff;
+}
