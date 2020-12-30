@@ -10,9 +10,11 @@ import { McqForm } from '../../../cbse-program';
 import { forkJoin, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { map, catchError } from 'rxjs/operators';
-import { ToasterService, ResourceService, ServerResponse, ConfigService } from '@sunbird/shared';
+import { ToasterService, ResourceService, ServerResponse, ConfigService, NavigationHelperService } from '@sunbird/shared';
 import { UserService } from '@sunbird/core';
 import { ProgramTelemetryService } from '../../../program/services';
+import { DeviceDetectorService } from 'ngx-device-detector';
+import { TelemetryService, IImpressionEventInput, IStartEventInput, IEndEventInput } from '@sunbird/telemetry';
 @Component({
   selector: 'app-question-base',
   templateUrl: './question-base.component.html',
@@ -52,13 +54,25 @@ export class QuestionBaseComponent implements OnInit {
   questionSetId;
   public setCharacterLimit = 160;
   public showLoader = true;
+  telemetryImpression: any;
+  public telemetryStart: IStartEventInput;
+  public telemetryEnd: IEndEventInput;
+  public pageStartTime;
+
   constructor(private editorService: EditorService, private questionService: QuestionService,
     public activatedRoute: ActivatedRoute, public router: Router, private http: HttpClient,
     public toasterService: ToasterService, public resourceService: ResourceService,
     private userService: UserService, public programTelemetryService: ProgramTelemetryService,
-    private configService: ConfigService) { }
+    private configService: ConfigService, private navigationHelperService: NavigationHelperService,
+    private deviceDetectorService: DeviceDetectorService, private telemetryService: TelemetryService) {
+      this.activatedRoute.queryParams.subscribe(params => {
+        this.questionInteractionType = params['type'];
+        this.questionId = params['questionId'];
+      });
+     }
 
   ngOnInit() {
+    this.pageStartTime = Date.now();
     this.prepareTelemetryEvents();
     this.initialize();
     this.solutionUUID = UUID.UUID();
@@ -77,7 +91,7 @@ export class QuestionBaseComponent implements OnInit {
     this.telemetryPageDetails.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(
       _.get(this.activatedRoute, 'snapshot.queryParams.questionId'), 'Question', '1.0'
     );
-    console.log(this.telemetryPageDetails);
+    this.setTelemetryStartData();
   }
 
   getPageId() {
@@ -85,14 +99,80 @@ export class QuestionBaseComponent implements OnInit {
     return this.telemetryPageId;
   }
 
-  initialize() {
-    this.activatedRoute.queryParams.subscribe(params => {
-      this.questionInteractionType = params['type'];
-      this.questionId = params['questionId'];
+  ngAfterViewInit() {
+    const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
+    const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+    setTimeout(() => {
+      this.telemetryImpression = {
+        context: {
+          env: this.activatedRoute.snapshot.data.telemetry.env,
+          cdata: this.telemetryPageDetails.telemetryInteractCdata || [],
+          pdata: {
+            id: this.userService.appId,
+            ver: version,
+            pid: `${this.configService.appConfig.TELEMETRY.PID}`
+          }
+        },
+        edata: {
+          type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
+          pageid: this.getPageId(),
+          // tslint:disable-next-line:max-line-length
+          uri: this.userService.slug.length ? `/${this.userService.slug}${this.activatedRoute.snapshot['_routerState'].url}` : this.activatedRoute.snapshot['_routerState'].url,
+          duration: this.navigationHelperService.getPageLoadTime(),
+        }
+      };
     });
+  }
 
-    this.questionSetId = _.get(this.activatedRoute, 'snapshot.params.questionSetId');
+  setTelemetryStartData() {
+    const deviceInfo = this.deviceDetectorService.getDeviceInfo();
+    setTimeout(() => {
+        this.telemetryStart = {
+          object: {
+            id: this.questionId || '',
+            type: 'question',
+          },
+          context: {
+            env: this.activatedRoute.snapshot.data.telemetry.env,
+            cdata: this.telemetryPageDetails.telemetryInteractCdata || [],
+          },
+          edata: {
+            type: this.configService.telemetryLabels.pageType.editor || '',
+            pageid: this.telemetryPageId,
+            uaspec: {
+              agent: deviceInfo.browser,
+              ver: deviceInfo.browser_version,
+              system: deviceInfo.os_version,
+              platform: deviceInfo.os,
+              raw: deviceInfo.userAgent
+            }
+          }
+        };
+    });
+  }
 
+  generateTelemetryEndEvent(eventMode) {
+    this.telemetryEnd = {
+      object: {
+        id: this.questionId || '',
+        type: 'question',
+      },
+      context: {
+        env: this.activatedRoute.snapshot.data.telemetry.env,
+        cdata: this.telemetryPageDetails.telemetryInteractCdata || [],
+      },
+      edata: {
+        type: this.configService.telemetryLabels.pageType.editor || '',
+        pageid: this.telemetryPageId,
+        mode: eventMode || '',
+        duration: _.toString((Date.now() - this.pageStartTime) / 1000)
+      }
+    };
+    this.telemetryService.end(this.telemetryEnd);
+  }
+
+  initialize() {
+   this.questionSetId = _.get(this.activatedRoute, 'snapshot.params.questionSetId');
    if (!_.isUndefined(this.questionId)) {
       this.questionService.readQuestion(this.questionId)
       .subscribe((res) => {
@@ -159,9 +239,11 @@ export class QuestionBaseComponent implements OnInit {
         this.saveContent();
         break;
       case 'cancelContent':
+        this.generateTelemetryEndEvent('cancel');
         this.redirectToQuestionset();
         break;
       case 'backContent':
+        this.generateTelemetryEndEvent('back');
         this.redirectToQuestionset();
         break;
       default:
@@ -486,8 +568,9 @@ export class QuestionBaseComponent implements OnInit {
       (response: ServerResponse) => {
       if (response.result) {
         this.toasterService.success(this.resourceService.messages.smsg.m0071);
+        const questionid = response.result.identifier;
         // tslint:disable-next-line:max-line-length
-        this.router.navigate([`create/questionSet/${this.questionSetId}/question`], { queryParams: { type: this.questionInteractionType, questionId: questionId } });
+        this.router.navigate([`create/questionSet/${this.questionSetId}/question`], { queryParams: { type: this.questionInteractionType, questionId: questionid } });
         this.addQuestionToQuestionSet(this.questionSetId, questionId);
       }
     },

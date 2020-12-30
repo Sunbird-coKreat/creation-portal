@@ -1,7 +1,7 @@
 <div *ngIf='showLoader' class="ui container sb-chapter-list">
   <app-loader></app-loader>
 </div>
-<div class="add-to-library mb-30" *ngIf='!showLoader'>
+<div class="add-to-library mb-30" *ngIf='!showLoader' [appTelemetryImpression]="telemetryImpression" [appTelemetryStart]="telemetryStart">
   <app-editor-header [telemetryEventsInput]="telemetryPageDetails" [toolbarConfig]="toolbarConfig" (toolbarEmitter)="toolbarEventListener($event)">
   </app-editor-header>
 
@@ -24,7 +24,7 @@
 
                 <app-answer *ngIf="(questionInteractionType === 'default')" [editorConfig]="editorConfig" [editorState]="editorState" [showFormError]="showFormError" (editorDataOutput)="editorDataHandler($event, 'answer')"></app-answer>
 
-                <app-options *ngIf="(questionInteractionType === 'choice')" [editorConfig]="editorConfig" [editorState]="editorState" [showFormError]="showFormError" (editorDataOutput)="editorDataHandler($event)" (optionMedia)="getMedia($event)"></app-options>
+                <app-options *ngIf="(questionInteractionType === 'choice')" [editorConfig]="editorConfig" [editorState]="editorState" [showFormError]="showFormError" [telemetryPageDetails]="telemetryPageDetails" [questionMetaData]="questionMetaData" (editorDataOutput)="editorDataHandler($event)" (optionMedia)="getMedia($event)"></app-options>
 
                 <div class="d-flex flex-ai-center ckeditor-tool__solution py-10 px-16 mt-15 sb-bg-color-white">
                   <label class="fs-0-92 mb-0 ckeditor-tool__label pb-4">
@@ -33,20 +33,43 @@
                   </label>
                   <div
                   class="ui dropdown sb-btn sb-btn-outline-primary sb-btn-normal sb-right-icon-btn sb-btn-radius ml-auto"
-                    suiDropdown autoClose="itemClick" *ngIf="showSolutionDropDown">
+                    suiDropdown autoClose="itemClick" *ngIf="showSolutionDropDown"
+                    appTelemetryInteract
+                    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('solution', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.singleSelect, telemetryPageDetails.telemetryPageId)"
+                    [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(questionMetaData?.data?.metadata?.identifier, 'Question', '1.0')"
+                    [telemetryInteractCdata]="telemetryPageDetails.telemetryInteractCdata"
+                    [telemetryInteractPdata]="telemetryPageDetails.telemetryInteractPdata"
+                    >
                     <div class="text gray-200">Choose type</div>
                     <i class="dropdown icon mx-8"></i>
                     <div class="menu" suiDropdownMenu>
-                      <div class="item" (click)="selectSolutionType('Text+Image')">Text+Image</div>
-                      <div class="item" (click)="selectSolutionType('video')">Video</div>
+                      <div class="item" (click)="selectSolutionType('Text+Image')"
+                      appTelemetryInteract
+                      [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('solution_type', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.singleSelect, telemetryPageDetails.telemetryPageId, {solutionType:'Text+Image'} )"
+                      [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(questionMetaData?.data?.metadata?.identifier, 'Question', '1.0')"
+                      [telemetryInteractCdata]="telemetryPageDetails.telemetryInteractCdata"
+                      [telemetryInteractPdata]="telemetryPageDetails.telemetryInteractPdata"
+                      >Text+Image</div>
+                      <div class="item" (click)="selectSolutionType('video')"
+                      appTelemetryInteract
+                      [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('solution_type', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.singleSelect, telemetryPageDetails.telemetryPageId, {solutionType:'video'} )"
+                      [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(questionMetaData?.data?.metadata?.identifier, 'Question', '1.0')"
+                      [telemetryInteractCdata]="telemetryPageDetails.telemetryInteractCdata"
+                      [telemetryInteractPdata]="telemetryPageDetails.telemetryInteractPdata">Video</div>
                     </div>
                   </div>
                 </div>
                 <div class="solution_html" *ngIf="selectedSolutionType == 'html'">
                   <div class="ckeditor-tool-container">
                     <div class="sb-ckeditor relative mb-8">
-                      <button (click)="deleteSolution()"
-                        class="sb-btn sb-ckeditor-close absolute"><i
+                      <button
+                       (click)="deleteSolution()"
+                        class="sb-btn sb-ckeditor-close absolute"
+                        appTelemetryInteract
+                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('delete_solution', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel, telemetryPageDetails.telemetryPageId, {solutionType:'Text+Image'})"
+                        [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(questionMetaData?.data?.metadata?.identifier, 'Question', '1.0')"
+                        [telemetryInteractCdata]="telemetryPageDetails.telemetryInteractCdata"
+                        [telemetryInteractPdata]="telemetryPageDetails.telemetryInteractPdata"><i
                           class="icon close"></i>
                       </button>
                       <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'solution')"
@@ -59,7 +82,12 @@
                     <div class="solution-media p-16 d-flex flex-ai-center ckeditor-tool__option p-16">
                       <div class="mcq-checkbox-answer">
                         <button class="sb-btn sb-ckeditor-close absolute"
-                          (click)="deleteSolution()"><i
+                          (click)="deleteSolution()"
+                          appTelemetryInteract
+                          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('delete_solution', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel, telemetryPageDetails.telemetryPageId, {solutionType:'video'})"
+                          [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(questionMetaData?.data?.metadata?.identifier, 'Question', '1.0')"
+                          [telemetryInteractCdata]="telemetryPageDetails.telemetryInteractCdata"
+                          [telemetryInteractPdata]="telemetryPageDetails.telemetryInteractPdata"><i
                           class="icon close"></i></button>
                       </div>
                       <div class="solution-media__video relative position">

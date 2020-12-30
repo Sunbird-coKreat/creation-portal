@@ -16,7 +16,12 @@
   <div class="d-flex sb-mcq-item mb-15" *ngFor="let option of editorState.options; let i = index">
     <div class="sb-w-85 sb-ckeditor relative">
       <button [disabled]="editorState.options.length < 3" class="sb-btn sb-ckeditor-close absolute"
-        (click)="editorState.deleteOption(i)">
+        (click)="editorState.deleteOption(i)"
+        appTelemetryInteract
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('delete_option', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit, telemetryPageDetails.telemetryPageId)"
+        [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(questionMetaData?.data?.metadata?.identifier, 'Question', '1.0')"
+        [telemetryInteractCdata]="telemetryPageDetails.telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryPageDetails.telemetryInteractPdata">
         <i class="icon close"></i>
       </button>
       <app-ckeditor-tool (hasError)="handleEditorError($event)" (editorDataOutput)="
@@ -34,15 +39,25 @@
         size</label>
     </div>
     <div class="sb-checkbox sb-checkbox-primary pl-10" [class.selected]="editorState.answer === i.toString()">
-      <input type="radio" id="{{ i + 1 }}" name="example" value="{{ i }}" [(ngModel)]="editorState.answer"
-        [ngModelOptions]="{ standalone: true }" [checked]="editorState.answer === i.toString()" />
+      <input type="radio" id="{{ i + 1 }}" name="example" value="{{ i }}"
+      appTelemetryInteract
+      [telemetryInteractEdata]="{id:'mark_as_right_anwser',type:configService.telemetryLabels.eventType.click,pageid:telemetryPageId,extra: {answer:i.toString()}}"
+      [telemetryInteractObject]="getTelemetryInteractObject(questionMetaData?.data?.identifier, 'Question')"
+      [telemetryInteractCdata]="telemetryPageDetails.telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryPageDetails.telemetryInteractPdata"
+      [(ngModel)]="editorState.answer" [ngModelOptions]="{ standalone: true }" [checked]="editorState.answer === i.toString()" />
       <label for="{{ i + 1 }}" class="mr-0 fs-0-785">Correct answer</label>
     </div>
   </div>
   <div class="d-flex">
     <button *ngIf="editorState.options.length < 4"
       class="sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius text-inherit b-0 bg-none"
-      (click)="editorState.addOptions()">
+      (click)="editorState.addOptions()"
+      appTelemetryInteract
+      [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add_option', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, telemetryPageDetails.telemetryPageId)"
+      [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(questionMetaData?.data?.metadata?.identifier, 'Question', '1.0')"
+      [telemetryInteractCdata]="telemetryPageDetails.telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryPageDetails.telemetryInteractPdata">
       <i class="plus circle icon"></i>Add option
     </button>
   </div>

@@ -35,7 +35,8 @@
             "myProjects" : "contribution_my_projects",
             "projectAddFromLibrary" : "contribution_project_add_from_library",
             "help": "contribution_help",
-            "questionSet" : "contribution_question_set"
+            "questionSet" : "contribution_question_set",
+            "question": "contribute_question"
         }       
     },
     "pageType": {

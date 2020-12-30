@@ -1,4 +1,8 @@
 export const mockRes = {
+    fakeParamMap: {
+        questionId: 'do_1131823509449031681174',
+        type: 'default'
+      },
     subjectiveEditorState: {
         'question': '<p>Capital of india is?</p>',
         'answer': '<p>New Delhi</p>',
