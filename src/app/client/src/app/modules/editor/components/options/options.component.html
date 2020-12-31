@@ -41,7 +41,7 @@
     <div class="sb-checkbox sb-checkbox-primary pl-10" [class.selected]="editorState.answer === i.toString()">
       <input type="radio" id="{{ i + 1 }}" name="example" value="{{ i }}"
       appTelemetryInteract
-      [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('mark_as_right_anwser', configService.telemetryLabels.eventType.click, '', telemetryPageDetails.telemetryPageId, {answer:i.toString()})"
+      [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('mark_as_right_anwser', configService.telemetryLabels.eventType.click, undefined, telemetryPageDetails.telemetryPageId, {answer:i.toString()})"
       [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(questionMetaData?.data?.metadata?.identifier, 'Question', '1.0')"
       [telemetryInteractCdata]="telemetryPageDetails.telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryPageDetails.telemetryInteractPdata"
