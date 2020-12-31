@@ -76,7 +76,7 @@ describe('QuestionBaseComponent', () => {
     expect(component).toBeDefined();
   });
 
-  it('#initialize should call after calls ngOnInit', () => {
+  it('#prepareTelemetryEvents should call after calls ngOnInit', () => {
     spyOn(component, 'prepareTelemetryEvents').and.callThrough();
     component.ngOnInit();
     expect(component.prepareTelemetryEvents).toHaveBeenCalled();
@@ -112,12 +112,12 @@ describe('QuestionBaseComponent', () => {
     expect(telemetryService.end).toHaveBeenCalledWith(component.telemetryEnd);
   });
 
-  it('should get question interaction data', fakeAsync(() => {
+  it('#getInteractions() should return expected result', fakeAsync(() => {
     const interactionData = component.getInteractions(testData.questionOptions);
     expect(interactionData).toEqual(testData.questionInteraction);
   }));
 
-  it('should get questionHtml', fakeAsync(() => {
+  it('#questionHtml() should return expected result', fakeAsync(() => {
     const question = '<p>capital of india is?</p>';
     const editorState = {
       'question': '<p>capital of india is?</p>',
@@ -138,19 +138,19 @@ describe('QuestionBaseComponent', () => {
     expect(questionHtml).toEqual(testData.questionHtml);
   }));
 
-  it('should get formatted subjective metadata', fakeAsync(() => {
+  it('#getSubjectiveMetadata() should return expected metadata', fakeAsync(() => {
     let subjectiveMeta = component.getSubjectiveMetadata(testData.subjectiveEditorState);
     subjectiveMeta = _.omit(subjectiveMeta, ['code', 'status', 'name', 'qType']);
     expect(subjectiveMeta).toEqual(testData.subjectiveMetadata);
   }));
 
-  it('should get formatted MCQ metadata', fakeAsync(() => {
+  it('#getMcqMetadata() should return expected metadata', fakeAsync(() => {
     let McqMeta = component.getMcqMetadata(testData.McqEditorState);
     McqMeta = _.omit(McqMeta, ['code', 'status', 'name', 'qType', 'responseDeclaration']);
     expect(McqMeta).toEqual(testData.McqMetadata);
   }));
 
-  it('should call createQuestion and get success response', inject([QuestionService],
+  it('#createQuestion() should return success response', inject([QuestionService],
     (questionService) => {
       spyOn(questionService, 'createQuestion').and.callFake(() => observableOf(testData.createResponse));
       spyOn(component, 'createQuestion').and.callThrough();
@@ -163,7 +163,7 @@ describe('QuestionBaseComponent', () => {
       });
     }));
 
-  xit('should call addQuestionToQuestionset and get success response', inject([QuestionService],
+  xit('#addQuestionToQuestionSet() should return success response', inject([QuestionService],
     (questionService) => {
       const questionsetId = 'do_1131737119720488961123';
       const questionId = 'do_1131824542805278721176';
@@ -178,7 +178,7 @@ describe('QuestionBaseComponent', () => {
       });
     }));
 
-  it('should call updateQuestion and get success response', inject([QuestionService],
+  it('#updateQuestion() should return success response', inject([QuestionService],
     (questionService) => {
       spyOn(questionService, 'updateQuestion').and.callFake(() => observableOf(testData.updateResponse));
       spyOn(component, 'updateQuestion').and.callThrough();
