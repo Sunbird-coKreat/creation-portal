@@ -311,7 +311,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   canEditMetadata() {
     // tslint:disable-next-line:max-line-length
-    return !!(_.find(this.formFieldProperties, field => field.editable === true));
+    return !!(!this.contentMetaData.sampleContent === true && _.find(this.formFieldProperties, field => field.editable === true));
   }
 
   canSubmit() {
@@ -539,7 +539,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       if (_.get(this.templateDetails, 'appIcon')) {
         option.data.request.content.appIcon = _.get(this.templateDetails, 'appIcon');
       }
-
       this.actionService.post(option).pipe(map((res: any) => res.result), catchError(err => {
         const errInfo = {
           errorMsg: 'Unable to create contentId, Please Try Again',
@@ -694,8 +693,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         contentData: res
       };
       this.contentMetaData = res;
-      /*const contentTypeValue = [this.contentMetaData.contentType];
-      this.contentType = this.programsService.getContentTypesName(contentTypeValue);*/
       this.editTitle = this.contentMetaData.name || '' ;
       this.resourceStatus = this.contentMetaData.status;
       if (this.resourceStatus === 'Review') {
@@ -1105,24 +1102,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     return false;
   }
 
-  /*showSourcingOrgRejectComments() {
-    const id = _.get(this.contentMetaData, 'identifier');
-    const sourcingRejectedComments = _.get(this.sessionContext, 'hierarchyObj.sourcingRejectedComments')
-    if (this.resourceStatus === 'Live' && id && !_.isEmpty(_.get(sourcingRejectedComments, id))) {
-      this.sourcingOrgReviewComments = _.get(sourcingRejectedComments, id);
-      return true;
-    } else {
-      return false;
-    }
-  }*/
-
-  /*showContributorOrgReviewComments() {
-    const rejectComment = _.get(this.contentMetaData, 'rejectComment');
-    const roles = _.get(this.sessionContext, 'currentRoles');
-    return !!(rejectComment && roles.includes('CONTRIBUTOR') && this.resourceStatus === 'Draft' && this.contentMetaData.prevStatus === 'Review');
-  }*/
-
   getEditableFields() {
+    if (this.contentMetaData.sampleContent === true) {
+      return;
+    }
     if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
       if (this.userService.getUserId() === this.contentMetaData.createdBy && this.resourceStatus === 'Draft') {
         this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.contentMetaData);
