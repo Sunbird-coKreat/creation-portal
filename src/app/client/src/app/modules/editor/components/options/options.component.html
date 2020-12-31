@@ -24,11 +24,8 @@
         [telemetryInteractPdata]="telemetryPageDetails.telemetryInteractPdata">
         <i class="icon close"></i>
       </button>
-      <app-ckeditor-tool (hasError)="handleEditorError($event)" (editorDataOutput)="
-          option.body = $event.body;
-          option.length = $event.length;
-          getMedia($event.mediaobj)
-        " [editorConfig]="editorConfig" [editorDataInput]="option.body" [setCharacterLimit]="setCharacterLimit"
+      <app-ckeditor-tool (editorDataOutput)="option.body = $event.body; option.length = $event.length; getMedia($event.mediaobj)"
+        [editorConfig]="editorConfig" [editorDataInput]="option.body" [setCharacterLimit]="setCharacterLimit"
         [setImageLimit]="setImageLimit" class="ckeditor-tool__option mb-24"
         [class.mb-5]="showFormError && ([undefined, ''].includes(option.body) || option.length > setCharacterLimit)">
       </app-ckeditor-tool>
@@ -39,14 +36,14 @@
         size</label>
     </div>
     <div class="sb-checkbox sb-checkbox-primary pl-10" [class.selected]="editorState.answer === i.toString()">
-      <input type="radio" id="{{ i + 1 }}" name="example" value="{{ i }}"
+      <input type="radio" id="answer_{{ i + 1 }}" name="example" value="{{ i }}"
       appTelemetryInteract
       [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('mark_as_right_anwser', configService.telemetryLabels.eventType.click, undefined, telemetryPageDetails.telemetryPageId, {answer:i.toString()})"
       [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(questionMetaData?.data?.metadata?.identifier, 'Question', '1.0')"
       [telemetryInteractCdata]="telemetryPageDetails.telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryPageDetails.telemetryInteractPdata"
       [(ngModel)]="editorState.answer" [ngModelOptions]="{ standalone: true }" [checked]="editorState.answer === i.toString()" />
-      <label for="{{ i + 1 }}" class="mr-0 fs-0-785">Correct answer</label>
+      <label for="answer_{{ i + 1 }}" class="mr-0 fs-0-785">Correct answer</label>
     </div>
   </div>
   <div class="d-flex">
