@@ -781,6 +781,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               'creator': creator,
               'programId': this.sessionContext.programId,
               'collectionId': this.sessionContext.collection,
+              'unitIdentifiers': [this.unitIdentifier],
               ...(this.sessionContext.nominationDetails &&
                 this.sessionContext.nominationDetails.organisation_id &&
                 {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
