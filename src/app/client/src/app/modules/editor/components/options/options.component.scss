@@ -148,6 +148,8 @@ sui-select {
 .q-sb-layout-three{
   &:before{
     content: url("assets/images/layoutthreeicon.svg");
+    top: -2px;
+    position: relative;
   }
   &.active,
   &:hover

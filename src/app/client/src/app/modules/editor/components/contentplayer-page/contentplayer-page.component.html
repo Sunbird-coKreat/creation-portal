@@ -1,16 +1,30 @@
 
 <h3>{{questionMetaData.title}}</h3>
 <hr class="my-20">
-<button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="editQuestion();"
-appTelemetryInteract 
-[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('edit', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryEventsInput.telemetryPageId)"
-[telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(questionMetaData?.data?.metadata?.identifier, 'Question', '1.0')"
-[telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
-[telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"><i class="icon edit"></i>Edit</button>
-<button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-15" (click)="removeQuestion()"
-appTelemetryInteract 
-[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('delete', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryEventsInput.telemetryPageId)"
-[telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(questionMetaData?.data?.metadata?.identifier, 'Question', '1.0')"
-[telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
-[telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"><i
-    class="icon trash sb-color-primary"></i>Delete</button>
+
+<div class="ui">
+    <div class="ui twelve column grid m-0">
+        <div class="eight wide column p-0 text-left">
+            <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="editQuestion();"
+            appTelemetryInteract 
+            [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('edit', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryEventsInput.telemetryPageId)"
+            [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(questionMetaData?.data?.metadata?.identifier, 'Question', '1.0')"
+            [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"><i class="icon edit"></i>Edit</button>
+            <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-15" (click)="removeQuestion()"
+            appTelemetryInteract 
+            [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('delete', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryEventsInput.telemetryPageId)"
+            [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(questionMetaData?.data?.metadata?.identifier, 'Question', '1.0')"
+            [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"><i
+                class="icon trash sb-color-primary"></i>Delete</button>
+        </div>
+        <div class="four wide column p-0 text-right">
+            <span>
+                <i class="tv icon sb-color-primary fs-1-143"></i>
+                <span class="fs-1-16 font-weight-normal sb-color-gray-100">|</span>
+                <i class="mobile alternate icon sb-color-primary fs-1-3 disabled"></i>
+             </span>
+        </div>
+    </div>
+</div>
