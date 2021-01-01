@@ -1,5 +1,5 @@
 import { async, TestBed, inject, ComponentFixture } from '@angular/core/testing';
-import { SharedModule } from '@sunbird/shared';
+import { SharedModule, ToasterService } from '@sunbird/shared';
 import { FrameworkService, UserService, ExtPluginService, RegistryService , ProgramsService} from '@sunbird/core';
 
 import { DynamicModule } from 'ng-dynamic-component';
@@ -8,18 +8,22 @@ import * as _ from 'lodash-es';
 import {  throwError , of } from 'rxjs';
 // tslint:disable-next-line:max-line-length
 import { addParticipentResponseSample, userProfile,  frameWorkData, programDetailsWithOutUserDetails,
-  programDetailsWithOutUserAndForm, extFrameWorkPostData, programDetailsWithUserDetails } from './program.component.spec.data';
+  programDetailsWithOutUserAndForm, extFrameWorkPostData, programDetailsWithUserDetails, roleNames, orgUser, updateNominationSuccessResponse, updateNominationErrorResponse } from './program.component.spec.data';
 import { CollectionComponent } from '../../../cbse-program/components/collection/collection.component';
 import { ProgramHeaderComponent } from '../program-header/program-header.component';
 import { OnboardPopupComponent } from '../onboard-popup/onboard-popup.component';
+import { CollectionHierarchyService } from '../../../cbse-program/services/collection-hierarchy/collection-hierarchy.service';
 // tslint:disable-next-line:prefer-const
 let errorInitiate;
 import { SuiModule } from 'ng2-semantic-ui';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import {userDetail, chunkedUserList} from '../../services/programUserTestData';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { DaysToGoPipe } from '../../../shared-feature';
+import { DatePipe } from '@angular/common';
 
 const userServiceStub = {
   get() {
@@ -34,8 +38,8 @@ const userServiceStub = {
     }
   },
   userid: userProfile.userId,
-  userProfile : userProfile
-
+  userProfile : userProfile,
+  slug: 'sunbird'
 };
 
 const extPluginServiceStub = {
@@ -73,6 +77,7 @@ const frameworkServiceStub = {
 
 describe('ProgramComponent On Bording test', () => {
   let component: ProgramComponent;
+  let toasterService: ToasterService;
   let fixture: ComponentFixture<ProgramComponent>;
 
   class RouterStub {
@@ -99,15 +104,21 @@ describe('ProgramComponent On Bording test', () => {
         SharedModule.forRoot(),
         FormsModule,
         TelemetryModule.forRoot(),
-        HttpClientTestingModule
+        HttpClientTestingModule,
+        ReactiveFormsModule
       ],
       declarations: [
         ProgramComponent,
         OnboardPopupComponent,
-        ProgramHeaderComponent
+        ProgramHeaderComponent,
+        DaysToGoPipe
       ],
       providers: [
+        ToasterService,
         RegistryService,
+        DatePipe,
+        DaysToGoPipe,
+        CollectionHierarchyService,
         {
           provide: Router,
           useClass: RouterStub
@@ -127,12 +138,14 @@ describe('ProgramComponent On Bording test', () => {
           provide: ExtPluginService,
           useValue: extPluginServiceStub
         }
-      ]
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ProgramComponent);
+    toasterService = TestBed.get(ToasterService);
     component = fixture.componentInstance;
 
     fixture.detectChanges();
@@ -290,5 +303,113 @@ describe('ProgramComponent On Bording test', () => {
      expect(component.paginatedContributorOrgUsers).toBe(sortedList);
      expect(component.contributorOrgUser).toBe(userDetail.result.response.content);
      expect(component.OrgUsersCnt).toBe(userDetail.result.response.content.length);
+    });
+    it('Should return true if nomination from organization', () => {
+      component.sessionContext = { nominationDetails: { organisation_id: '12345' } };
+      const result = component.isNominationOrg();
+      expect(result).toBe(true);
+    });
+
+    it('Should return false if nomination is not from organization', () => {
+      component.sessionContext = { nominationDetails: { } };
+      const result = component.isNominationOrg();
+      expect(result).toBe(false);
+    });
+
+    it('Should throw error toaster if selected role is not in configured roles', () => {
+      const user = { newRole: 'test' };
+      component.roleNames = roleNames;
+      spyOn(toasterService, 'error').and.callThrough();
+      component.onRoleChange(user);
+      expect(toasterService.error).toHaveBeenCalled();
+    });
+
+    it('Should show confirmation modal if newRole is NONE', () => {
+      const user = { newRole: 'NONE' };
+      component.roleNames = roleNames;
+      component.onRoleChange(user);
+      expect(component.showUserRemoveRoleModal).toBe(true);
+    });
+
+    it('Should call getProgramRoleMapping if newRole is not NONE', () => {
+      const user = _.cloneDeep(orgUser);
+      user['newRole'] = 'CONTRIBUTOR';
+      component.roleNames = roleNames;
+      spyOn(component, 'getProgramRoleMapping').and.callThrough();
+      component.onRoleChange(user);
+      expect(component.getProgramRoleMapping).toHaveBeenCalled();
+    });
+
+    it('Should show the option CONTRIBUTOR if user has CONTRIBUTOR role', () => {
+      const result = component.showUserRoleOption('CONTRIBUTOR', 'CONTRIBUTOR');
+      expect(result).toBe(true);
+    });
+
+    it('Should show the option REVIEWER if user has REVIEWER role', () => {
+      const result = component.showUserRoleOption('REVIEWER', 'REVIEWER');
+      expect(result).toBe(true);
+    });
+
+    it('Should not show the option NONE if user has no role', () => {
+      const result = component.showUserRoleOption('NONE', 'Select Role');
+      expect(result).toBe(false);
+    });
+
+    it('Should assign the old role back if confirmation is rejected and close the confirmation modal', () => {
+      const user = _.cloneDeep(orgUser);
+      user['projectselectedRole'] = 'REVIEWER';
+      user['newRole'] = 'NONE';
+      component.selectedUserToRemoveRole = user;
+      component.cancelRemoveUserFromProgram();
+      expect(component.selectedUserToRemoveRole['newRole']).toBe('REVIEWER');
+      expect(component.showUserRemoveRoleModal).toBe(false);
+    });
+
+    it('Should not call api until previous api response comes', () => {
+      component.userRemoveRoleLoader = true;
+      const result = component.removeUserFromProgram();
+      expect(result).toBe(false);
+    });
+
+    it('Should call getProgramRoleMapping if not already called', () => {
+      const user = _.cloneDeep(orgUser);
+      user['projectselectedRole'] = 'CONTRIBUTOR';
+      user['newRole'] = 'NONE';
+      component.selectedUserToRemoveRole = user;
+      spyOn(component, 'getProgramRoleMapping').and.callThrough();
+      component.removeUserFromProgram();
+      expect(component.getProgramRoleMapping).toHaveBeenCalled();
+    });
+
+    it('Should show error toaster if failed to update the nomination rolemapping', () => {
+      const user = _.cloneDeep(orgUser);
+      user['projectselectedRole'] = 'CONTRIBUTOR';
+      user['newRole'] = 'NONE';
+      errorInitiate =true;
+      component.selectedUserToRemoveRole = user;
+      spyOn(TestBed.get(ProgramsService), 'updateNomination').and.callFake(() => of(updateNominationErrorResponse));
+      spyOn(toasterService, 'error').and.callThrough();
+      component.removeUserFromProgram();
+      component.onRoleChange(user);
+      expect(toasterService.error).toHaveBeenCalled();
+      expect(component.showUserRemoveRoleModal).toBe(false);
+      expect(component.userRemoveRoleLoader).toBe(false);
+    });
+
+    it('Should show success toaster if nomination update successful', () => {
+      component.nominationDetails = {};
+      const user = _.cloneDeep(orgUser);
+      user['projectselectedRole'] = 'CONTRIBUTOR';
+      user['newRole'] = 'NONE';
+      errorInitiate =true;
+      component.selectedUserToRemoveRole = user;
+      spyOn(TestBed.get(ProgramsService), 'updateNomination').and.callFake(() => of(updateNominationSuccessResponse));
+      spyOn(toasterService, 'success').and.callThrough();
+      component.removeUserFromProgram();
+      component.onRoleChange(user);
+      expect(toasterService.success).toHaveBeenCalled();
+      expect(component.showUserRemoveRoleModal).toBe(false);
+      expect(component.userRemoveRoleLoader).toBe(false);
+      expect(component.selectedUserToRemoveRole.newRole).toBe('Select Role');
     });
 });
