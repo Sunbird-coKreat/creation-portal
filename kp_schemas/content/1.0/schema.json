@@ -171,6 +171,7 @@
             "type": "string",
             "enum": [
                 "Default",
+                "Private",
                 "Parent"
             ],
             "default": "Default"
@@ -1141,6 +1142,7 @@
                 "Course",
                 "Practice Question Set",
                 "eTextbook",
+                "Exam Paper",
                 "Teacher Resource",
                 "Course Assessment",
                 "Digital Textbook",
