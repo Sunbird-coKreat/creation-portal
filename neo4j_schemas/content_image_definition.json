@@ -3167,6 +3167,7 @@
             "eTextbook",
             "Teacher Resource",
             "Course Assessment",
+            "Question Paper",
             "Digital Textbook",
             "Content Playlist",
             "Template",
@@ -3177,6 +3178,7 @@
             "Textbook Unit"
           ],
           "defaultValue": "",
+          "visibility": ""
           "renderingHints": "{ 'inputType': 'text',  'order': 14 }",
           "indexed": true,
           "draft": false
