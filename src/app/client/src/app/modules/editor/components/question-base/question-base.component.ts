@@ -556,7 +556,7 @@ export class QuestionBaseComponent implements OnInit {
       (response: ServerResponse) => {
         if (response.result) {
           this.toasterService.success(this.resourceService.messages.smsg.m0070);
-         this.router.navigate([`create/questionSet/${this.questionSetId}/question`]);
+         this.router.navigate([`create/questionSet/${this.questionSetId}`]);
         }
       },
       (err: ServerResponse) => {
