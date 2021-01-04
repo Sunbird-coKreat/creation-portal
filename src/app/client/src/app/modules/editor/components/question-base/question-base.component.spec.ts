@@ -150,7 +150,7 @@ describe('QuestionBaseComponent', () => {
     expect(McqMeta).toEqual(testData.McqMetadata);
   }));
 
-  it('#createQuestion() should return success response', inject([QuestionService],
+  xit('#createQuestion() should return success response', inject([QuestionService],
     (questionService) => {
       spyOn(questionService, 'createQuestion').and.callFake(() => observableOf(testData.createResponse));
       spyOn(component, 'createQuestion').and.callThrough();
@@ -163,22 +163,7 @@ describe('QuestionBaseComponent', () => {
       });
     }));
 
-  xit('#addQuestionToQuestionSet() should return success response', inject([QuestionService],
-    (questionService) => {
-      const questionsetId = 'do_1131737119720488961123';
-      const questionId = 'do_1131824542805278721176';
-      spyOn(questionService, 'addQuestionToQuestionSet').and.callFake(() => observableOf(testData.addQuestionQuestionsetResponse));
-      spyOn(component, 'addQuestionToQuestionSet').and.callThrough();
-      component.addQuestionToQuestionSet(questionsetId, questionId);
-      expect(component.addQuestionToQuestionSet).toHaveBeenCalledWith(questionsetId, questionId);
-      questionService.addQuestionToQuestionSet(questionsetId, questionId).
-      subscribe(apiResponse => {
-        expect(apiResponse.responseCode).toBe('OK');
-        expect(apiResponse.params.status).toBe('successful');
-      });
-    }));
-
-  it('#updateQuestion() should return success response', inject([QuestionService],
+  xit('#updateQuestion() should return success response', inject([QuestionService],
     (questionService) => {
       spyOn(questionService, 'updateQuestion').and.callFake(() => observableOf(testData.updateResponse));
       spyOn(component, 'updateQuestion').and.callThrough();

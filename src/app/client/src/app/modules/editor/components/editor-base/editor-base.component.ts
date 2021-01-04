@@ -263,7 +263,7 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
     // }, (err) => {
     //   this.toasterService.error(this.resourceService.messages.emsg.m0027);
     // });
-    this.redirectToQuestionTab('default');
+    this.redirectToQuestionTab(selectedQuestionType);
   }
 
   redirectToQuestionTab(type?) {
@@ -271,6 +271,14 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
     if (!type) {
       type = this.selectedQuestionData.data.metadata.interactionTypes || 'default';
       questionId = this.selectedQuestionData.data.metadata.identifier;
+    }
+    if (type) {
+      if (type === 'MCQ') {
+        type = 'choice';
+      }
+      if (type === 'Subjective') {
+        type = 'default';
+      }
     }
     let queryParams = `?type=${type}`;
     if (questionId) { queryParams += `&questionId=${questionId}`; }
