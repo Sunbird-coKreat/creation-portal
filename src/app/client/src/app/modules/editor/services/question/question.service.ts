@@ -11,37 +11,6 @@ export class QuestionService {
 
   constructor(private configService: ConfigService, public publicDataService: PublicDataService) { }
 
-  /**
-  * create question
-  * @param questionMedataData
-  */
-  createQuestion(questionMedataData): Observable<ServerResponse> {
-    const option = {
-      url: `${this.configService.urlConFig.URLS.QUESTION.CREATE}`,
-      'data': {
-        'request': {
-         'question': questionMedataData
-        }
-      }
-      };
-      return this.publicDataService.post(option);
-  }
-
-  addQuestionToQuestionSet(questionSetId, questionId): Observable<ServerResponse> {
-    const option = {
-      url: `${this.configService.urlConFig.URLS.QUESTION_SET.ADD}`,
-      'data': {
-        'request': {
-          'questionSet' : {
-            'rootId': questionSetId,
-            'children' : [questionId]
-             }
-          }
-        }
-      };
-      return this.publicDataService.patch(option);
-  }
-
   readQuestion(questionId) {
     const filters = '?fields=body,answer,templateId,responseDeclaration,interactionTypes,interactions,name,solutions,editorState,media';
     const option = {
@@ -50,15 +19,62 @@ export class QuestionService {
     return this.publicDataService.get(option);
   }
 
-  updateQuestion(questionMedataData, questionId): Observable<ServerResponse> {
-    const option = {
-      url: `${this.configService.urlConFig.URLS.QUESTION.UPDATE}/${questionId}`,
+  updateHierarchyQuestionCreate(questionSetId, metadata, questionSetHierarchy): Observable<ServerResponse> {
+    let hierarchyChildren: Array<string>;
+    hierarchyChildren = questionSetHierarchy.childNodes;
+    hierarchyChildren.push('UUID');
+    const requestObj = {
       'data': {
-        'request': {
-         'question': questionMedataData
-        }
+          'nodesModified': {
+              'UUID': {
+                  'metadata': metadata,
+                  'objectType': 'Question',
+                  'root': false,
+                  'isNew': true
+              }
+          },
+          'hierarchy': {
+          }
       }
-      };
-      return this.publicDataService.patch(option);
+    };
+    requestObj.data.hierarchy[questionSetId] = {
+      'children': hierarchyChildren,
+      'root': true
+    };
+    const req = {
+      url: this.configService.urlConFig.URLS.QUESTION_SET.UPDATE_HIERARCHY,
+      data: {
+        request: requestObj
+      }
+    };
+    return this.publicDataService.patch(req);
+  }
+
+  updateHierarchyQuestionUpdate(questionSetId, questionId, metadata, questionSetHierarchy): Observable<ServerResponse> {
+    const requestObj = {
+      'data': {
+          'nodesModified': {
+          },
+          'hierarchy': {
+          }
+      }
+    };
+    requestObj.data.hierarchy[questionSetId] = {
+      'children': questionSetHierarchy.childNodes,
+      'root': true
+    };
+    requestObj.data.nodesModified[questionId] = {
+      'metadata': metadata,
+      'objectType': 'Question',
+      'root': false,
+      'isNew': false
+    };
+    const req = {
+      url: this.configService.urlConFig.URLS.QUESTION_SET.UPDATE_HIERARCHY,
+      data: {
+        request: requestObj
+      }
+    };
+    return this.publicDataService.patch(req);
   }
 }

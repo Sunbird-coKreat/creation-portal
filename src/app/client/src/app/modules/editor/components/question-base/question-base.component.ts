@@ -58,6 +58,7 @@ export class QuestionBaseComponent implements OnInit {
   public telemetryStart: IStartEventInput;
   public telemetryEnd: IEndEventInput;
   public pageStartTime;
+  questionSetHierarchy: any;
 
   constructor(private editorService: EditorService, private questionService: QuestionService,
     public activatedRoute: ActivatedRoute, public router: Router, private http: HttpClient,
@@ -178,6 +179,10 @@ export class QuestionBaseComponent implements OnInit {
 
   initialize() {
    this.questionSetId = _.get(this.activatedRoute, 'snapshot.params.questionSetId');
+   this.editorService.getQuestionSetHierarchy(this.questionSetId).
+   subscribe((response) => {
+    this.questionSetHierarchy = response;
+   });
    if (!_.isUndefined(this.questionId)) {
       this.questionService.readQuestion(this.questionId)
       .subscribe((res) => {
@@ -186,14 +191,16 @@ export class QuestionBaseComponent implements OnInit {
 
           if (this.questionInteractionType === 'default') {
             if ( this.questionMetaData.editorState) {
-              this.editorState = this.questionMetaData.editorState;
+              this.editorState = JSON.parse(this.questionMetaData.editorState);
             } else {
               this.editorState = this.questionMetaData;
               this.editorState.question = this.questionMetaData.body;
             }
           }
           if (this.questionInteractionType === 'choice') {
-            const { responseDeclaration, templateId } = this.questionMetaData;
+            const responseDeclaration = JSON.parse(this.questionMetaData.responseDeclaration);
+            const templateId = this.questionMetaData.templateId;
+            this.questionMetaData.editorState = JSON.parse(this.questionMetaData.editorState);
             const numberOfOptions = this.questionMetaData.editorState.options.length;
             const options = _.map(this.questionMetaData.editorState.options, option => ({ body: option.value.body }));
             const question = this.questionMetaData.editorState.question;
@@ -373,15 +380,10 @@ export class QuestionBaseComponent implements OnInit {
 
   saveQuestion(metadata) {
     if (_.isUndefined(this.questionId)) {
-      // tslint:disable-next-line:max-line-length
-      metadata = _.omit(metadata, ['templateId', 'responseDeclaration', 'interactionTypes', 'weightage', 'maxScore', 'media', 'interactions', 'editorState', 'qType']);
-      console.log('create metadata', metadata);
       this.createQuestion(metadata);
     }
     if (!_.isUndefined(this.questionId)) {
-      // tslint:disable-next-line:max-line-length
-      metadata = _.omit(metadata, ['templateId', 'responseDeclaration', 'interactionTypes', 'weightage', 'maxScore', 'status', 'media', 'interactions', 'editorState', 'qType', 'visibility', 'code', 'status', 'mimeType']);
-      console.log('update metadata', metadata);
+      metadata = _.omit(metadata, ['visibility', 'code', 'status', 'mimeType']);
       this.updateQuestion(metadata, this.questionId);
     }
   }
@@ -397,19 +399,19 @@ export class QuestionBaseComponent implements OnInit {
         'body': rendererBody,
         'answer': rendererAnswer,
         'templateId': '',
-        'responseDeclaration': {},
-        'interactionTypes': [],
-        'interactions': [],
-        'editorState': {
+        'responseDeclaration': JSON.stringify({}),
+        // 'interactionTypes': [],
+        'interactions': JSON.stringify({}),
+        'editorState': JSON.stringify({
           'question': editorState.question,
           'answer': editorState.answer
-        },
+        }),
         'status': 'Draft',
         'name': 'SA',
         'qType': 'SA',
         'media': this.mediaArr,
-        'mimeType': 'application/vnd.ekstep.qml-archive',
-        'primaryCategory': 'Practice Question Set'
+        'mimeType': 'application/vnd.sunbird.question',
+        'primaryCategory': 'Subjective Question'
       };
 
       if (!_.isUndefined(this.selectedSolutionType) && !_.isEmpty(this.selectedSolutionType)) {
@@ -446,18 +448,18 @@ export class QuestionBaseComponent implements OnInit {
           'templateId': ' mcq-vertical',
           'name': 'MCQ', // hardcoded value need to change it later
           'body': questionData.body,
-          'responseDeclaration': questionData.responseDeclaration,
+          'responseDeclaration': JSON.stringify(questionData.responseDeclaration),
           'interactionTypes': ['choice'],
-          'interactions' : this.getInteractions(editorState.options),
-          'editorState' : {
+          'interactions' : JSON.stringify(this.getInteractions(editorState.options)),
+          'editorState' : JSON.stringify({
             'question': editorState.question,
             'options': options
-          },
+          }),
           'status': 'Draft',
           'media': this.mediaArr,
           'qType': 'MCQ',
-          'mimeType': 'application/vnd.ekstep.qml-archive',
-          'primaryCategory': 'Practice Question Set'
+          'mimeType': 'application/vnd.sunbird.question',
+          'primaryCategory': 'Multiple Choice Question'
         };
         if (!_.isUndefined(this.selectedSolutionType) && !_.isEmpty(this.selectedSolutionType)) {
           const solutionObj = this.getSolutionObj(this.solutionUUID, this.selectedSolutionType, editorState.solutions);
@@ -549,55 +551,32 @@ export class QuestionBaseComponent implements OnInit {
   }
 
   createQuestion(metadata) {
-    this.questionService.createQuestion(metadata)
-    .subscribe(
+    this.questionService.updateHierarchyQuestionCreate(this.questionSetId, metadata, this.questionSetHierarchy).
+    subscribe(
       (response: ServerResponse) => {
-      if (response.result) {
-        this.toasterService.success(this.resourceService.messages.smsg.m0070);
-       const questionId = response.result.identifier;
-       // tslint:disable-next-line:max-line-length
-       this.router.navigate([`create/questionSet/${this.questionSetId}/question`], { queryParams: { type: this.questionInteractionType, questionId: questionId } });
-       this.addQuestionToQuestionSet(this.questionSetId, questionId);
-      }
-    },
-    (err: ServerResponse) => {
-      this.toasterService.error(this.resourceService.messages.emsg.m0028);
-      console.log(err);
-    }
-    );
+        if (response.result) {
+          this.toasterService.success(this.resourceService.messages.smsg.m0070);
+         this.router.navigate([`create/questionSet/${this.questionSetId}`]);
+        }
+      },
+      (err: ServerResponse) => {
+        this.toasterService.error(this.resourceService.messages.emsg.m0028);
+        console.log(err);
+      });
   }
 
   updateQuestion(metadata, questionId) {
-    this.questionService.updateQuestion(metadata, questionId)
-    .subscribe(
-      (response: ServerResponse) => {
-      if (response.result) {
-        this.toasterService.success(this.resourceService.messages.smsg.m0071);
-        const questionid = response.result.identifier;
-        // tslint:disable-next-line:max-line-length
-        this.router.navigate([`create/questionSet/${this.questionSetId}/question`], { queryParams: { type: this.questionInteractionType, questionId: questionid } });
-        this.addQuestionToQuestionSet(this.questionSetId, questionId);
-      }
-    },
-    (err: ServerResponse) => {
-      this.toasterService.error(this.resourceService.messages.emsg.m0029);
-      console.log(err);
-    });
-  }
-
-  addQuestionToQuestionSet(questionSetId, questionId) {
-    this.questionService.addQuestionToQuestionSet(questionSetId, questionId).
+    this.questionService.updateHierarchyQuestionUpdate(this.questionSetId, questionId, metadata, this.questionSetHierarchy).
     subscribe(
-      (res: ServerResponse) => {
-      if (res.result) {
-        // this.router.navigateByUrl(`create/questionSet/${questionSetId}`);
-        this.toasterService.success(this.resourceService.messages.smsg.m0072);
-      }
-    },
-    (err: ServerResponse) => {
-      this.toasterService.error(this.resourceService.messages.emsg.m0030);
-      console.log(err);
-    }
-    );
+      (response: ServerResponse) => {
+        if (response.result) {
+          this.toasterService.success(this.resourceService.messages.smsg.m0071);
+          this.router.navigate([`create/questionSet/${this.questionSetId}`]);
+        }
+      },
+      (err: ServerResponse) => {
+        this.toasterService.error(this.resourceService.messages.emsg.m0029);
+        console.log(err);
+      });
   }
 }
