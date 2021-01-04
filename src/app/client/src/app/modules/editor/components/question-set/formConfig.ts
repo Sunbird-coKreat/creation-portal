@@ -16,7 +16,8 @@ export const formConfig = [
             'value': '120',
             'message': 'Input is Exceded'
         }, {
-            'type': 'required'
+            'type': 'required',
+            'message': 'Name is required'
         }]
     },
     {

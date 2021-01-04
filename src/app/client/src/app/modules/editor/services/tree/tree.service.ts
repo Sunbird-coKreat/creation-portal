@@ -65,8 +65,12 @@ export class TreeService {
     }
     this.treeCache.nodesModified[nodeId].metadata = _.pickBy(metadata, _.identity);
     const attributions = this.treeCache.nodesModified[nodeId].metadata.attributions;
-    if (attributions) {
+    if (attributions && _.isString(attributions)) {
       this.treeCache.nodesModified[nodeId].metadata.attributions = attributions.split(',');
+    }
+    const audience = this.treeCache.nodesModified[nodeId].metadata.audience; // TODO: Remove this once fixed in the sb-form library
+    if (audience && _.isString(audience)) {
+      this.treeCache.nodesModified[nodeId].metadata.audience = [audience];
     }
     this.treeCache.nodesModified[nodeId].metadata.code = nodeId;
   }
