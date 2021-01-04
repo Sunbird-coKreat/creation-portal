@@ -402,6 +402,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getEditableFields() {
+    if (this.resourceDetails.sampleContent === true) {
+      return;
+    }
     if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
       if (this.userService.getUserId() === this.resourceDetails.createdBy && this.resourceStatus === 'Draft') {
         this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.resourceDetails);
@@ -535,7 +538,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   canEditMetadata() {
     // tslint:disable-next-line:max-line-length
-    return !!(_.find(this.formFieldProperties, field => field.editable === true));
+    return !!(!this.resourceDetails.sampleContent === true && _.find(this.formFieldProperties, field => field.editable === true));
   }
 
   canPublishContent() {
@@ -1122,6 +1125,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!_.isEmpty(data['medium'])) {
       data['medium'] = data['medium'][0];
     }
+  
     return data;
   }
 

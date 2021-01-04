@@ -32,7 +32,7 @@
                 </a> -->
               </div>
               <div class="mt-8 practice-set__status">
-                <span class="sb-label sb-label-table" [ngClass]="resourceStatusClass">{{ resourceStatusText }}</span>
+                <span class="sb-label sb-label-table" *ngIf="contentMetaData && !contentMetaData.sampleContent" [ngClass]="resourceStatusClass">{{ resourceStatusText }}</span>
                 <span class="cursor-pointer fs-0-785 ml-8"
                   *ngIf="contentMetaData && showCommentAddedAgainstContent()">
                   <i class="comment alternate outline icon sb-color-primary"></i>
