@@ -215,7 +215,7 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
       this.toasterService.error('Please fill the required metadata');
       return false;
     }
-    this.submitCollection();
+    this.showConfirmPopup = true;
   }
 
   submitCollection() {
