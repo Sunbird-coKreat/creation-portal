@@ -66,7 +66,7 @@ describe('QuestionService', () => {
       ( publicDataService, questionService) => {
         spyOn(publicDataService, 'patch').and.callFake(() => observableOf(testData.questionSetAdd));
         spyOn(questionService, 'addQuestionToQuestionSet').and.callThrough();
-        const questionSetId = 'do_1131737119720488961123'
+        const questionSetId = 'do_1131737119720488961123';
         const questionId = 'do_1131737393366138881132';
         questionService.addQuestionToQuestionSet(questionSetId, questionId);
         expect(publicDataService.patch).toHaveBeenCalled();

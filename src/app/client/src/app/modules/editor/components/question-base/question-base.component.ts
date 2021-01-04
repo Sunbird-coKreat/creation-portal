@@ -10,9 +10,11 @@ import { McqForm } from '../../../cbse-program';
 import { forkJoin, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { map, catchError } from 'rxjs/operators';
-import { ToasterService, ResourceService, ServerResponse, ConfigService } from '@sunbird/shared';
+import { ToasterService, ResourceService, ServerResponse, ConfigService, NavigationHelperService } from '@sunbird/shared';
 import { UserService } from '@sunbird/core';
 import { ProgramTelemetryService } from '../../../program/services';
+import { DeviceDetectorService } from 'ngx-device-detector';
+import { TelemetryService, IImpressionEventInput, IStartEventInput, IEndEventInput } from '@sunbird/telemetry';
 @Component({
   selector: 'app-question-base',
   templateUrl: './question-base.component.html',
@@ -52,13 +54,30 @@ export class QuestionBaseComponent implements OnInit {
   questionSetId;
   public setCharacterLimit = 160;
   public showLoader = true;
+  telemetryImpression: any;
+  public telemetryStart: IStartEventInput;
+  public telemetryEnd: IEndEventInput;
+  public pageStartTime;
+
   constructor(private editorService: EditorService, private questionService: QuestionService,
     public activatedRoute: ActivatedRoute, public router: Router, private http: HttpClient,
     public toasterService: ToasterService, public resourceService: ResourceService,
     private userService: UserService, public programTelemetryService: ProgramTelemetryService,
-    private configService: ConfigService) { }
+    private configService: ConfigService, private navigationHelperService: NavigationHelperService,
+    private deviceDetectorService: DeviceDetectorService, private telemetryService: TelemetryService) {
+      this.activatedRoute.queryParams.subscribe(params => {
+        this.questionInteractionType = params['type'];
+        this.questionId = params['questionId'];
+        if (this.questionInteractionType === 'default') {
+          this.toolbarConfig.title = 'Subjective';
+        } if (this.questionInteractionType === 'choice') {
+          this.toolbarConfig.title = 'MCQ';
+        }
+      });
+     }
 
   ngOnInit() {
+    this.pageStartTime = Date.now();
     this.prepareTelemetryEvents();
     this.initialize();
     this.solutionUUID = UUID.UUID();
@@ -77,7 +96,7 @@ export class QuestionBaseComponent implements OnInit {
     this.telemetryPageDetails.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(
       _.get(this.activatedRoute, 'snapshot.queryParams.questionId'), 'Question', '1.0'
     );
-    console.log(this.telemetryPageDetails);
+    this.setTelemetryStartData();
   }
 
   getPageId() {
@@ -85,30 +104,95 @@ export class QuestionBaseComponent implements OnInit {
     return this.telemetryPageId;
   }
 
-  initialize() {
-    this.activatedRoute.queryParams.subscribe(params => {
-      this.questionInteractionType = params['type'];
-      this.questionId = params['questionId'];
+  ngAfterViewInit() {
+    const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
+    const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+    setTimeout(() => {
+      this.telemetryImpression = {
+        context: {
+          env: this.activatedRoute.snapshot.data.telemetry.env,
+          cdata: this.telemetryPageDetails.telemetryInteractCdata || [],
+          pdata: {
+            id: this.userService.appId,
+            ver: version,
+            pid: `${this.configService.appConfig.TELEMETRY.PID}`
+          }
+        },
+        edata: {
+          type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
+          pageid: this.getPageId(),
+          // tslint:disable-next-line:max-line-length
+          uri: this.userService.slug.length ? `/${this.userService.slug}${this.activatedRoute.snapshot['_routerState'].url}` : this.activatedRoute.snapshot['_routerState'].url,
+          duration: this.navigationHelperService.getPageLoadTime(),
+        }
+      };
     });
+  }
 
-    this.questionSetId = _.get(this.activatedRoute, 'snapshot.params.questionSetId');
+  setTelemetryStartData() {
+    const deviceInfo = this.deviceDetectorService.getDeviceInfo();
+    setTimeout(() => {
+        this.telemetryStart = {
+          object: {
+            id: this.questionId || '',
+            type: 'question',
+          },
+          context: {
+            env: this.activatedRoute.snapshot.data.telemetry.env,
+            cdata: this.telemetryPageDetails.telemetryInteractCdata || [],
+          },
+          edata: {
+            type: this.configService.telemetryLabels.pageType.editor || '',
+            pageid: this.telemetryPageId,
+            uaspec: {
+              agent: deviceInfo.browser,
+              ver: deviceInfo.browser_version,
+              system: deviceInfo.os_version,
+              platform: deviceInfo.os,
+              raw: deviceInfo.userAgent
+            }
+          }
+        };
+    });
+  }
 
+  generateTelemetryEndEvent(eventMode) {
+    this.telemetryEnd = {
+      object: {
+        id: this.questionId || '',
+        type: 'question',
+      },
+      context: {
+        env: this.activatedRoute.snapshot.data.telemetry.env,
+        cdata: this.telemetryPageDetails.telemetryInteractCdata || [],
+      },
+      edata: {
+        type: this.configService.telemetryLabels.pageType.editor || '',
+        pageid: this.telemetryPageId,
+        mode: eventMode || '',
+        duration: _.toString((Date.now() - this.pageStartTime) / 1000)
+      }
+    };
+    this.telemetryService.end(this.telemetryEnd);
+  }
+
+  initialize() {
+   this.questionSetId = _.get(this.activatedRoute, 'snapshot.params.questionSetId');
    if (!_.isUndefined(this.questionId)) {
       this.questionService.readQuestion(this.questionId)
-      .subscribe((res)=> {
-        if(res.result) {
+      .subscribe((res) => {
+        if (res.result) {
           this.questionMetaData = res.result.question;
 
-          if (this.questionInteractionType == 'default') {
-            if( this.questionMetaData.editorState){
+          if (this.questionInteractionType === 'default') {
+            if ( this.questionMetaData.editorState) {
               this.editorState = this.questionMetaData.editorState;
-            }
-            else {
+            } else {
               this.editorState = this.questionMetaData;
               this.editorState.question = this.questionMetaData.body;
             }
           }
-          if (this.questionInteractionType == 'choice') {
+          if (this.questionInteractionType === 'choice') {
             const { responseDeclaration, templateId } = this.questionMetaData;
             const numberOfOptions = this.questionMetaData.editorState.options.length;
             const options = _.map(this.questionMetaData.editorState.options, option => ({ body: option.value.body }));
@@ -131,7 +215,7 @@ export class QuestionBaseComponent implements OnInit {
               this.videoSolutionName = this.questionMetaData.media[index].name;
               this.videoThumbnail = this.questionMetaData.media[index].thumbnail;
             }
-            if(this.selectedSolutionType === 'html') {
+            if (this.selectedSolutionType === 'html') {
               this.editorState.solutions = this.editorState.solutions[0].value;
             }
           }
@@ -160,9 +244,11 @@ export class QuestionBaseComponent implements OnInit {
         this.saveContent();
         break;
       case 'cancelContent':
+        this.generateTelemetryEndEvent('cancel');
         this.redirectToQuestionset();
         break;
       case 'backContent':
+        this.generateTelemetryEndEvent('back');
         this.redirectToQuestionset();
         break;
       default:
@@ -175,7 +261,8 @@ export class QuestionBaseComponent implements OnInit {
     if (this.questionInteractionType === 'default') {
       if (this.editorState.question !== '' && this.editorState.answer !== '') {
         this.showFormError = false;
-        this.saveSubjectiveQuestion();
+        const metadata = this.getSubjectiveMetadata(this.editorState);
+        this.saveQuestion(metadata);
       } else {
         this.showFormError = true;
         return;
@@ -189,7 +276,8 @@ export class QuestionBaseComponent implements OnInit {
         this.showFormError = true;
         return;
       } else {
-        this.saveMcqQuestion();
+        const metadata = this.getMcqMetadata(this.editorState);
+        this.saveQuestion(metadata);
       }
     }
   }
@@ -283,12 +371,28 @@ export class QuestionBaseComponent implements OnInit {
     this.showSolution = false;
   }
 
-  saveSubjectiveQuestion() {
-    forkJoin([this.getConvertedLatex(this.editorState.question), this.getConvertedLatex(this.editorState.answer)])
+  saveQuestion(metadata) {
+    if (_.isUndefined(this.questionId)) {
+      // tslint:disable-next-line:max-line-length
+      metadata = _.omit(metadata, ['templateId', 'responseDeclaration', 'interactionTypes', 'weightage', 'maxScore', 'media', 'interactions', 'editorState', 'qType']);
+      console.log('create metadata', metadata);
+      this.createQuestion(metadata);
+    }
+    if (!_.isUndefined(this.questionId)) {
+      // tslint:disable-next-line:max-line-length
+      metadata = _.omit(metadata, ['templateId', 'responseDeclaration', 'interactionTypes', 'weightage', 'maxScore', 'status', 'media', 'interactions', 'editorState', 'qType', 'visibility', 'code', 'status', 'mimeType']);
+      console.log('update metadata', metadata);
+      this.updateQuestion(metadata, this.questionId);
+    }
+  }
+
+  getSubjectiveMetadata(editorState: any) {
+    let metadata: any;
+    forkJoin([this.getConvertedLatex(editorState.question), this.getConvertedLatex(editorState.answer)])
     .subscribe((res) => {
       const rendererBody = res[0];
       const rendererAnswer = res[1];
-      let metadata = {
+      metadata = {
         'code': UUID.UUID(),
         'body': rendererBody,
         'answer': rendererAnswer,
@@ -297,53 +401,39 @@ export class QuestionBaseComponent implements OnInit {
         'interactionTypes': [],
         'interactions': [],
         'editorState': {
-          'question': this.editorState.question,
-          'answer': this.editorState.answer
+          'question': editorState.question,
+          'answer': editorState.answer
         },
         'status': 'Draft',
-        'name': 'untitled SA',
+        'name': 'SA',
         'qType': 'SA',
         'media': this.mediaArr,
         'mimeType': 'application/vnd.ekstep.qml-archive',
         'primaryCategory': 'Practice Question Set'
       };
 
-      let solutionObj: any;
       if (!_.isUndefined(this.selectedSolutionType) && !_.isEmpty(this.selectedSolutionType)) {
-        solutionObj = {};
-        solutionObj.id = this.solutionUUID;
-        solutionObj.type = this.selectedSolutionType;
-        solutionObj.value = this.editorState.solutions;
+        const solutionObj = this.getSolutionObj(this.solutionUUID, this.selectedSolutionType, editorState.solutions);
         metadata.editorState['solutions'] = [solutionObj];
         metadata['solutions'] = [solutionObj];
       }
-      if (_.isEmpty(this.editorState.solutions)) {
+      if (_.isEmpty(editorState.solutions)) {
         metadata['solutions'] = [];
       }
-      if (_.isUndefined(this.questionId)) {
-        // tslint:disable-next-line:max-line-length
-        metadata = _.omit(metadata,['templateId', 'responseDeclaration', 'interactionTypes', 'weightage', 'maxScore', 'media', 'interactions', 'editorState', 'qType'])
-        console.log('subjective create metadata', metadata);
-        this.createQustion(metadata);
-      }
-      if (!_.isUndefined(this.questionId)) {
-        // tslint:disable-next-line:max-line-length
-        metadata = _.omit(metadata,['templateId', 'responseDeclaration', 'interactionTypes', 'weightage', 'maxScore', 'status', 'media', 'interactions', 'editorState', 'qType', 'visibility', 'code', 'status', 'mimeType'])
-        console.log('subjective update metadata', metadata);
-        this.updateQuestion(metadata, this.questionId)
-      }
     });
+    return metadata;
   }
 
-  saveMcqQuestion() {
+  getMcqMetadata(editorState) {
+    let metadata: any;
     // tslint:disable-next-line:max-line-length
-    forkJoin([this.getConvertedLatex(this.editorState.question), ...this.editorState.options.map(option => this.getConvertedLatex(option.body))])
+    forkJoin([this.getConvertedLatex(editorState.question), ...editorState.options.map(option => this.getConvertedLatex(option.body))])
       .subscribe((res) => {
         const body = res[0]; // question with latex
-        const questionData = this.getQuestionHtml(body);
-        const correct_answer = this.editorState.answer;
+        const questionData = this.getQuestionHtml(body, editorState);
+        const correct_answer = editorState.answer;
         let resindex;
-        const options = _.map(this.editorState.options, (opt, key) => {
+        const options = _.map(editorState.options, (opt, key) => {
           resindex = Number(key);
           if (Number(correct_answer) === key) {
             return { 'answer': true, value: {'body': opt.body, 'value': resindex} };
@@ -351,16 +441,16 @@ export class QuestionBaseComponent implements OnInit {
             return { 'answer': false, value: {'body': opt.body, 'value': resindex} };
           }
         });
-        let metadata = {
+        metadata = {
           'code': UUID.UUID(),
           'templateId': ' mcq-vertical',
-          'name': 'untitled mcq', // hardcoded value need to change it later
+          'name': 'MCQ', // hardcoded value need to change it later
           'body': questionData.body,
           'responseDeclaration': questionData.responseDeclaration,
           'interactionTypes': ['choice'],
-          'interactions' : this.getInteractions(this.editorState.options),
+          'interactions' : this.getInteractions(editorState.options),
           'editorState' : {
-            'question': this.editorState.question,
+            'question': editorState.question,
             'options': options
           },
           'status': 'Draft',
@@ -369,29 +459,25 @@ export class QuestionBaseComponent implements OnInit {
           'mimeType': 'application/vnd.ekstep.qml-archive',
           'primaryCategory': 'Practice Question Set'
         };
-        let solutionObj: any;
         if (!_.isUndefined(this.selectedSolutionType) && !_.isEmpty(this.selectedSolutionType)) {
-          solutionObj = {};
-          solutionObj.id = this.solutionUUID;
-          solutionObj.type = this.selectedSolutionType;
-          solutionObj.value = this.editorState.solutions;
+          const solutionObj = this.getSolutionObj(this.solutionUUID, this.selectedSolutionType, editorState.solutions);
           metadata.editorState['solutions'] = [solutionObj];
           metadata['solutions'] = [solutionObj];
         }
-        if (_.isEmpty(this.editorState.solutions)) {
+        if (_.isEmpty(editorState.solutions)) {
           metadata['solutions'] = [];
         }
-        if(_.isUndefined(this.questionId)) {
-          // metadata = _.omit(metadata,['templateId', 'interactionTypes', 'weightage', 'maxScore', 'media', 'interactions', 'editorState', 'qType'])
-          console.log("mcq create metadata", metadata);
-          // this.createQustion(metadata);
-        }
-        if(!_.isUndefined(this.questionId)) {
-          // metadata = _.omit(metadata,['templateId', 'interactionTypes', 'weightage', 'maxScore', 'status', 'media', 'interactions', 'editorState', 'qType'])
-          console.log("mcq update metadata", metadata);
-          // this.updateQuestion(metadata, this.questionId)
-        }
       });
+      return metadata;
+  }
+
+  getSolutionObj(solutionUUID, selectedSolutionType, editorStateSolutions: any) {
+    let solutionObj: any;
+    solutionObj = {};
+    solutionObj.id = solutionUUID;
+    solutionObj.type = selectedSolutionType;
+    solutionObj.value = editorStateSolutions;
+    return solutionObj;
   }
 
   getConvertedLatex(body) {
@@ -422,12 +508,13 @@ export class QuestionBaseComponent implements OnInit {
     }
   }
 
-  getQuestionHtml(question) {
+  getQuestionHtml(question, editorState: any) {
     const mcqTemplateConfig = {
-      'mcqBody': '<div class=\'question-body\'><div class=\'mcq-title\'>{question}</div><div data-choice-interaction=\'response1\' class=\'mcq-vertical\'></div></div>'
+      // tslint:disable-next-line:max-line-length
+      'mcqBody': '<div class=\"question-body\"><div class=\"mcq-title\">{question}</div><div data-choice-interaction=\"response1\" class=\"mcq-vertical\"></div></div>'
     };
     const { mcqBody } = mcqTemplateConfig;
-    const questionBody = mcqBody.replace('{templateClass}', this.editorState.templateId)
+    const questionBody = mcqBody.replace('{templateClass}', editorState.templateId)
       .replace('{question}', question);
     const responseDeclaration = {
       maxScore: 1,
@@ -435,7 +522,7 @@ export class QuestionBaseComponent implements OnInit {
         cardinality: 'single',
         type: 'integer',
         'correctResponse': {
-          value: this.editorState.answer,
+          value: editorState.answer,
           outcomes: {'SCORE': 1}
         }
       }
@@ -457,32 +544,20 @@ export class QuestionBaseComponent implements OnInit {
         'type': 'choice',
         'options': interactOptions
       }
-    }
+    };
     return interactions;
   }
 
-  createQustion(metadata) {
+  createQuestion(metadata) {
     this.questionService.createQuestion(metadata)
     .subscribe(
       (response: ServerResponse) => {
       if (response.result) {
         this.toasterService.success(this.resourceService.messages.smsg.m0070);
-        /*const questionId = response.result.identifier;
-        this.questionService.addQuestionToQuestionSet(this.questionSetId, questionId).
-        subscribe(
-          (res: ServerResponse) => {
-          if(res.result) {
-            this.router.navigateByUrl(`create/questionSet/${this.questionSetId}`);
-            this.toasterService.success(this.resourceService.messages.smsg.m0072);
-          }
-        },
-        (err: ServerResponse) => {
-          this.toasterService.error(this.resourceService.messages.emsg.m0030);
-          console.log(err);
-        });
-        */
        const questionId = response.result.identifier;
+       // tslint:disable-next-line:max-line-length
        this.router.navigate([`create/questionSet/${this.questionSetId}/question`], { queryParams: { type: this.questionInteractionType, questionId: questionId } });
+       this.addQuestionToQuestionSet(this.questionSetId, questionId);
       }
     },
     (err: ServerResponse) => {
@@ -498,27 +573,31 @@ export class QuestionBaseComponent implements OnInit {
       (response: ServerResponse) => {
       if (response.result) {
         this.toasterService.success(this.resourceService.messages.smsg.m0071);
-        /*
-        this.questionService.addQuestionToQuestionSet(this.questionSetId, questionId).
-        subscribe(
-          (res: ServerResponse) => {
-          if(res.result) {
-            this.router.navigateByUrl(`create/questionSet/${this.questionSetId}`);
-            this.toasterService.success(this.resourceService.messages.smsg.m0072);
-          }
-        },
-        (err: ServerResponse) => {
-          this.toasterService.error(this.resourceService.messages.emsg.m0030);
-          console.log(err);
-        }
-        )
-        */
-       this.router.navigate([`create/questionSet/${this.questionSetId}/question`], { queryParams: { type: this.questionInteractionType, questionId: questionId } });
+        const questionid = response.result.identifier;
+        // tslint:disable-next-line:max-line-length
+        this.router.navigate([`create/questionSet/${this.questionSetId}/question`], { queryParams: { type: this.questionInteractionType, questionId: questionid } });
+        this.addQuestionToQuestionSet(this.questionSetId, questionId);
       }
     },
     (err: ServerResponse) => {
       this.toasterService.error(this.resourceService.messages.emsg.m0029);
       console.log(err);
     });
+  }
+
+  addQuestionToQuestionSet(questionSetId, questionId) {
+    this.questionService.addQuestionToQuestionSet(questionSetId, questionId).
+    subscribe(
+      (res: ServerResponse) => {
+      if (res.result) {
+        // this.router.navigateByUrl(`create/questionSet/${questionSetId}`);
+        this.toasterService.success(this.resourceService.messages.smsg.m0072);
+      }
+    },
+    (err: ServerResponse) => {
+      this.toasterService.error(this.resourceService.messages.emsg.m0030);
+      console.log(err);
+    }
+    );
   }
 }

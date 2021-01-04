@@ -26,7 +26,7 @@ const routes: Routes = [
     data: {
       hideHeaderNFooter: 'true',
       telemetry: {
-        env: 'creation-portal', pageid: telemetryPage.pageId.contribute.questionSet, type: telemetryPage.pageType.list,
+        env: 'creation-portal', pageid: telemetryPage.pageId.contribute.question, type: telemetryPage.pageType.list,
         subtype: telemetryPage.pageSubtype.paginate
       }
     },
