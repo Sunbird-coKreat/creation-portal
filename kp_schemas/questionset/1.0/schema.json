@@ -380,6 +380,14 @@
       ],
       "default": "No"
     },
+    "showHints": {
+      "type": "string",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "default": "No"
+    },
     "showFeedback": {
       "type": "string",
       "enum": [
