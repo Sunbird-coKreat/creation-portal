@@ -83,6 +83,12 @@
     "consumerId": {
       "type": "string"
     },
+    "childNodes": {
+      "type": "array"
+    },
+    "depth": {
+      "type": "number"
+    },
     "contentEncoding": {
       "type": "string",
       "enum": [
@@ -450,8 +456,7 @@
         "Score",
         "Duration",
         "Score & Duration"
-      ],
-      "default": "No"
+      ]
     },
     "shuffle": {
       "type": "string",
