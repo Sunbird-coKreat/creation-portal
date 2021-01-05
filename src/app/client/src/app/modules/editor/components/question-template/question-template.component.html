@@ -1,14 +1,11 @@
 <sui-modal [mustScroll]="false" [isClosable]="true" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
   appBodyScroll (dismissed)="modal.deny(); templateSelection.emit({type: 'close'})" #modal>
   <div class="sb-modal-header">
-    Question type
+    Create new
   </div>
   <div class="sb-modal-content">
-    <div class="mt-8 mb-20">
-      <label>Select a template to get started</label>
-    </div>
     <div class="twelve wide column">
-      <div class="ui grid flex-jc-center mb-16">
+      <div class="ui grid flex-jc-center my-16">
         <div class="ui card text-center common-contribution-card m-16" *ngFor="let template of templateList"
           (click)="showButton=true; templateSelected = template"
           [ngClass]="{'active': templateSelected?.type === template.type}">
