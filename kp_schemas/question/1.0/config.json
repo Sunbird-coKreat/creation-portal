@@ -26,10 +26,10 @@
         "type": "blob"
       },
       "editorState": {
-        "type": "blob"
+        "type": "string"
       },
       "answer": {
-        "type": "string"
+        "type": "blob"
       },
       "solutions": {
         "type": "string"

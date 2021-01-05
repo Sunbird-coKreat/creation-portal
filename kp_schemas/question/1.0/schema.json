@@ -173,7 +173,9 @@
           "Other"
         ]
       },
-      "default": ["English"]
+      "default": [
+        "English"
+      ]
     },
     "channel": {
       "type": "string"
@@ -181,19 +183,19 @@
     "framework": {
       "type": "string"
     },
-    "subject" : {
+    "subject": {
       "type": "array"
     },
-    "medium" : {
+    "medium": {
       "type": "array"
     },
-    "board" : {
+    "board": {
       "type": "string"
     },
-    "gradeLevel" : {
+    "gradeLevel": {
       "type": "array"
     },
-    "topic" : {
+    "topic": {
       "type": "array"
     },
     "boardIds": {
@@ -298,13 +300,12 @@
     "reviewError": {
       "type": "string"
     },
-
     "body": {
       "type": "string",
       "description": "External Property"
     },
     "editorState": {
-      "type": "string",
+      "type": "object",
       "description": "External Property"
     },
     "answer": {
@@ -312,31 +313,38 @@
       "description": "External Property"
     },
     "solutions": {
-      "type": "string",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "External Property"
     },
     "instructions": {
-      "type": "string",
+      "type": "object",
       "description": "External Property"
     },
     "hints": {
-      "type": "string",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
       "description": "External Property"
     },
     "media": {
-      "type": "string",
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
       "description": "External Property"
     },
     "responseDeclaration": {
-      "type": "string",
+      "type": "object",
       "description": "External Property"
     },
     "interactions": {
-      "type": "string",
+      "type": "object",
       "description": "External Property"
     },
-
-
     "qType": {
       "type": "string",
       "enum": [
@@ -385,7 +393,7 @@
       ],
       "default": "No"
     },
-    "interactionTypes":{
+    "interactionTypes": {
       "type": "array",
       "items": {
         "type": "string",
@@ -399,10 +407,10 @@
         ]
       }
     },
-    "templateId":{
+    "templateId": {
       "type": "string"
     },
-    "bloomsLevel" : {
+    "bloomsLevel": {
       "description": "Cognitive processes involved to answer the question set.",
       "type": "string",
       "enum": [
@@ -423,7 +431,6 @@
     "templateDeclaration": {
       "type": "object"
     },
-
     "dailySummaryReportEnabled": {
       "type": "string",
       "enum": [
