@@ -188,9 +188,33 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
       solutions: ''
     };
     this.manageFormConfiguration();
-    if (this.questionMetaData && this.questionMetaData.data) {
-      this.editorState.question = this.questionMetaData.data.editorState.question;
-      this.editorState.answer = this.questionMetaData.data.editorState.answer;
+    if (this.questionMetaData && this.questionMetaData.data) {      
+      if(this.sessionContext.questionType === 'mtf' && !(this.questionMetaData.data.editorState.question)) {   
+        
+        this.editorState.question = `Match the following:<br/><br/>
+        &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Column 1&emsp;&emsp;&emsp;&ensp;&#124;&#124;
+        &emsp;&emsp;&emsp;Column 2<br/>               
+        &emsp;&emsp;&emsp;&emsp;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;
+        &#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;<br/>
+        &emsp;&emsp;&emsp;&emsp;&ensp;&lt;<em>Insert Option</em>&gt;&emsp;&emsp;
+        &emsp;&#124;&#124;&emsp;&emsp;&emsp;&lt;<em>Insert Option</em>&gt;<br/><br/>      
+        &emsp;&emsp;&emsp;&emsp;&ensp;&lt;<em>Insert Option</em>&gt;&emsp;&emsp;&emsp;
+        &#124;&#124;&emsp;&emsp;&emsp;&lt;<em>Insert Option</em>&gt;<br/><br/>`      
+        
+        this.editorState.answer = `Match the following:<br/><br/>
+        &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Column 1&emsp;&emsp;&emsp;&ensp;&#124;&#124;
+        &emsp;&emsp;&emsp;Column 2<br/>               
+        &emsp;&emsp;&emsp;&emsp;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;
+        &#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;<br/>
+        &emsp;&emsp;&emsp;&emsp;&ensp;&lt;<em>Insert Option</em>&gt;&emsp;&emsp;
+        &emsp;&#124;&#124;&emsp;&emsp;&emsp;&lt;<em>Insert Option</em>&gt;<br/><br/>      
+        &emsp;&emsp;&emsp;&emsp;&ensp;&lt;<em>Insert Option</em>&gt;&emsp;&emsp;&emsp;
+        &#124;&#124;&emsp;&emsp;&emsp;&lt;<em>Insert Option</em>&gt;<br/><br/>`    
+      }
+      else {
+        this.editorState.question = this.questionMetaData.data.editorState.question;    
+        this.editorState.answer = this.questionMetaData.data.editorState.answer;
+      }
       if (!_.isEmpty(this.questionMetaData.data.editorState.solutions)) {
         const editor_state = this.questionMetaData.data.editorState;
         this.editorState.solutions = editor_state.solutions[0].value;

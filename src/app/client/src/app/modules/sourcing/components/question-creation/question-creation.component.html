@@ -18,8 +18,7 @@
                     <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'question')" [editorDataInput]="editorState.question" [editorId]="'question_editor'" (videoDataOutput)="videoDataOutput($event)" [videoShow]="videoShow"></app-ckeditor-tool>
                 </div>
             </div>
-        </div>
-
+        </div>  
         <label *ngIf="showFormError && [undefined, ''].includes(editorState.answer)" class="sb-label sb-label-table sb-label-error-0">Fill Answer</label>
         <div class="ckeditor-tool__question mb-24" [class.error-question-content]="showFormError && [undefined, ''].includes(editorState.answer)">
             <div class="sb-field mcq-title mb-16">
