@@ -21,7 +21,11 @@ export class QuestionService {
 
   updateHierarchyQuestionCreate(questionSetId, metadata, questionSetHierarchy): Observable<ServerResponse> {
     let hierarchyChildren: Array<string>;
-    hierarchyChildren = questionSetHierarchy.childNodes;
+    if (questionSetHierarchy.childNodes) {
+      hierarchyChildren = questionSetHierarchy.childNodes;
+    } else {
+      hierarchyChildren = [];
+    }
     hierarchyChildren.push('UUID');
     const requestObj = {
       'data': {
