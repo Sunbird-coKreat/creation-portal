@@ -400,7 +400,7 @@ export class QuestionBaseComponent implements OnInit {
         'answer': rendererAnswer,
         'templateId': '',
         'responseDeclaration': {},
-        'interactionTypes': [],
+        // 'interactionTypes': [],
         'interactions': {},
         'editorState': {
           'question': editorState.question,
@@ -478,7 +478,14 @@ export class QuestionBaseComponent implements OnInit {
     solutionObj = {};
     solutionObj.id = solutionUUID;
     solutionObj.type = selectedSolutionType;
-    solutionObj.value = editorStateSolutions;
+    if (_.isString(editorStateSolutions)) {
+      solutionObj.value = editorStateSolutions;
+    }
+    if (_.isArray(editorStateSolutions)) {
+      if (_.has(editorStateSolutions[0], 'value')) {
+        solutionObj.value = editorStateSolutions[0].value;
+      }
+    }
     return solutionObj;
   }
 
