@@ -29,6 +29,7 @@ export class QuestionBaseComponent implements OnInit {
   public editorState: any = {};
   public showPreview: Boolean = false;
   public mediaArr: any = [];
+  public mcqTemplate: string;
   public videoShow = false;
   public showFormError = false;
   selectedSolutionType: string;
@@ -59,6 +60,7 @@ export class QuestionBaseComponent implements OnInit {
   public telemetryEnd: IEndEventInput;
   public pageStartTime;
   questionSetHierarchy: any;
+  showConfirmPopup = false;
 
   constructor(private editorService: EditorService, private questionService: QuestionService,
     public activatedRoute: ActivatedRoute, public router: Router, private http: HttpClient,
@@ -252,14 +254,22 @@ export class QuestionBaseComponent implements OnInit {
         break;
       case 'cancelContent':
         this.generateTelemetryEndEvent('cancel');
-        this.redirectToQuestionset();
+        this.handleRedirectToQuestionset();
         break;
       case 'backContent':
         this.generateTelemetryEndEvent('back');
-        this.redirectToQuestionset();
+        this.handleRedirectToQuestionset();
         break;
       default:
         break;
+    }
+  }
+
+  handleRedirectToQuestionset() {
+    if (_.isUndefined(this.questionId)) {
+      this.showConfirmPopup = true;
+    } else {
+      this.redirectToQuestionset();
     }
   }
 
@@ -290,7 +300,11 @@ export class QuestionBaseComponent implements OnInit {
   }
 
   redirectToQuestionset() {
-    this.router.navigateByUrl(`create/questionSet/${this.questionSetId}`);
+    this.showConfirmPopup = false;
+    setTimeout(() => {
+      this.router.navigateByUrl(`create/questionSet/${this.questionSetId}`);
+    }, 100);
+
   }
 
   editorDataHandler(event, type) {
@@ -321,6 +335,14 @@ export class QuestionBaseComponent implements OnInit {
       if (value === undefined) {
         this.mediaArr.push(media);
       }
+    }
+  }
+
+  getTemplate(template) {
+    if (_.isUndefined(template)) {
+      this.mcqTemplate = 'mcq-vertical';
+    } else {
+      this.mcqTemplate = template;
     }
   }
 
@@ -400,7 +422,6 @@ export class QuestionBaseComponent implements OnInit {
         'answer': rendererAnswer,
         'templateId': '',
         'responseDeclaration': {},
-        // 'interactionTypes': [],
         'interactions': {},
         'editorState': {
           'question': editorState.question,
@@ -431,7 +452,13 @@ export class QuestionBaseComponent implements OnInit {
     // tslint:disable-next-line:max-line-length
     forkJoin([this.getConvertedLatex(editorState.question), ...editorState.options.map(option => this.getConvertedLatex(option.body))])
       .subscribe((res) => {
-        const body = res[0]; // question with latex
+        if (!_.isUndefined(this.mcqTemplate)) {
+          editorState.templateId = this.mcqTemplate;
+        }
+        if (_.isUndefined(editorState.templateId)) {
+          editorState.templateId = 'mcq-vertical';
+        }
+        const body = res[0];
         const questionData = this.getQuestionHtml(body, editorState);
         const correct_answer = editorState.answer;
         let resindex;
@@ -445,7 +472,7 @@ export class QuestionBaseComponent implements OnInit {
         });
         metadata = {
           'code': UUID.UUID(),
-          'templateId': 'mcq-vertical',
+          'templateId': editorState.templateId,
           'name': 'Multiple Choice',
           'body': questionData.body,
           'responseDeclaration': questionData.responseDeclaration,
@@ -520,7 +547,7 @@ export class QuestionBaseComponent implements OnInit {
   getQuestionHtml(question, editorState: any) {
     const mcqTemplateConfig = {
       // tslint:disable-next-line:max-line-length
-      'mcqBody': '<div class=\"question-body\"><div class=\"mcq-title\">{question}</div><div data-choice-interaction=\"response1\" class=\"mcq-vertical\"></div></div>'
+      'mcqBody': '<div class=\"question-body\"><div class=\"mcq-title\">{question}</div><div data-choice-interaction=\"response1\" class="{templateClass}"></div></div>'
     };
     const { mcqBody } = mcqTemplateConfig;
     const questionBody = mcqBody.replace('{templateClass}', editorState.templateId)
