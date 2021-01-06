@@ -15,6 +15,8 @@ import * as _ from 'lodash-es';
 import { SourcingService } from '../../services';
 import { HelperService } from '../../services/helper.service';
 import { ProgramTelemetryService } from '../../../program/services';
+import * as nonInteractiveBodyTemplates from './nonInteractiveBodyTemplates.json';
+
 
 @Component({
   selector: 'app-question-creation',
@@ -183,14 +185,16 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
     channel: this.sessionContext.channel
     };
     this.editorState = {
-      question : '',
-      answer: '',
+      question : nonInteractiveBodyTemplates[this.sessionContext.questionType].defaultQuestionBody,
+      answer: nonInteractiveBodyTemplates[this.sessionContext.questionType].defaultAnswerBody,
       solutions: ''
     };
     this.manageFormConfiguration();
-    if (this.questionMetaData && this.questionMetaData.data) {
-      this.editorState.question = this.questionMetaData.data.editorState.question;
-      this.editorState.answer = this.questionMetaData.data.editorState.answer;
+    if (this.questionMetaData && this.questionMetaData.data) {      
+      if(this.questionMetaData.data.editorState.question)
+        this.editorState.question = this.questionMetaData.data.editorState.question;
+      if(this.questionMetaData.data.editorState.answer)
+        this.editorState.answer = this.questionMetaData.data.editorState.answer;
       if (!_.isEmpty(this.questionMetaData.data.editorState.solutions)) {
         const editor_state = this.questionMetaData.data.editorState;
         this.editorState.solutions = editor_state.solutions[0].value;

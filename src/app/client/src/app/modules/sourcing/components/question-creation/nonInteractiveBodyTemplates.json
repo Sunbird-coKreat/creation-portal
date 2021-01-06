@@ -1,0 +1,22 @@
+{
+	"mtf": {
+		"defaultQuestionBody": "Match the following:<br/><br/>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Column 1&emsp;&emsp;&emsp;&ensp;&#124;&#124;&emsp;&emsp;&emsp;Column 2<br/>&emsp;&emsp;&emsp;&emsp;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;<br/>&emsp;&emsp;&emsp;&emsp;&ensp;&lt;<em>Insert Option</em>&gt;&emsp;&emsp;&emsp;&#124;&#124;&emsp;&emsp;&emsp;&lt;<em>Insert Option</em>&gt;<br/><br/>&emsp;&emsp;&emsp;&emsp;&ensp;&lt;<em>Insert Option</em>&gt;&emsp;&emsp;&emsp;&#124;&#124;&emsp;&emsp;&emsp;&lt;<em>Insert Option</em>&gt;<br/><br/>",
+		"defaultAnswerBody": "Match the following:<br/><br/>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Column 1&emsp;&emsp;&emsp;&ensp;&#124;&#124;&emsp;&emsp;&emsp;Column 2<br/>&emsp;&emsp;&emsp;&emsp;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;&#61;<br/>&emsp;&emsp;&emsp;&emsp;&ensp;&lt;<em>Insert Option</em>&gt;&emsp;&emsp;&emsp;&#124;&#124;&emsp;&emsp;&emsp;&lt;<em>Insert Option</em>&gt;<br/><br/>&emsp;&emsp;&emsp;&emsp;&ensp;&lt;<em>Insert Option</em>&gt;&emsp;&emsp;&emsp;&#124;&#124;&emsp;&emsp;&emsp;&lt;<em>Insert Option</em>&gt;<br/><br/>"
+	},
+	"ftb": {
+		"defaultQuestionBody": "",
+		"defaultAnswerBody": ""
+	},
+	"vsa": {
+		"defaultQuestionBody": "",
+		"defaultAnswerBody": ""
+	},
+	"sa": {
+		"defaultQuestionBody": "",
+		"defaultAnswerBody": ""
+	},
+	"la": {
+		"defaultQuestionBody": "",
+		"defaultAnswerBody": ""
+	}
+}
