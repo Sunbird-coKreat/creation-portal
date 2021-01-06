@@ -22,7 +22,7 @@ export const toolbarConfig = {
 };
 
 export const questionToolbarConfig = {
-  headerName: 'Edit Question',
+  headerName: 'Back',
   title: 'Q1 | MCQ',
   buttons: [{
     telemetryId: 'preview',
@@ -55,6 +55,12 @@ export const questionToolbarConfig = {
 export const templateList = [
     { type : 'MCQ'},
     { type : 'Subjective'}
+];
+
+export const McqQuestionTemplate = [
+  {templateType: 'mcq-vertical', class: 'q-sb-layout-single mr-10 h-7'},
+  {templateType: 'mcq-horizontal', class: 'q-sb-layout-two mr-10 h-7'},
+  {templateType: 'mcq-grid-split', class: 'q-sb-layout-three mr-10 h-7 w-20'}
 ];
 
 export const editorConfig = {
@@ -565,7 +571,7 @@ export const collectionTreeNodes = {
               }
             ]
           },
-          'body': '<div class=\'mcq-vertical cheveron-helper\'><div class=\'mcq-title\'><p><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">If f(x</span><sub>1</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">) = f (x</span><sub>2</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">) ⇒ x</span><sub>1</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);"> = x</span><sub>2</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);"> ∀ x</span><sub>1</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);"> x</span><sub>2</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);"> ∈ A then the function f: A → B is</span></p></div><i class=\'chevron down icon\'></i><div class=\'mcq-options\'><div data-simple-choice-interaction data-response-variable=\'responseValue\' value=0 class=\'mcq-option\'><p><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">one-one</span>&nbsp;</p></div><div data-simple-choice-interaction data-response-variable=\'responseValue\' value=1 class=\'mcq-option\'><p><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">one-one onto</span></p></div><div data-simple-choice-interaction data-response-variable=\'responseValue\' value=2 class=\'mcq-option\'><p><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">onto</span></p></div><div data-simple-choice-interaction data-response-variable=\'responseValue\' value=3 class=\'mcq-option\'><p><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">many one</span></p></div></div></div>',      
+          'body': '<div class=\'mcq-vertical cheveron-helper\'><div class=\'mcq-title\'><p><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">If f(x</span><sub>1</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">) = f (x</span><sub>2</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">) ⇒ x</span><sub>1</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);"> = x</span><sub>2</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);"> ∀ x</span><sub>1</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);"> x</span><sub>2</sub><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);"> ∈ A then the function f: A → B is</span></p></div><i class=\'chevron down icon\'></i><div class=\'mcq-options\'><div data-simple-choice-interaction data-response-variable=\'responseValue\' value=0 class=\'mcq-option\'><p><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">one-one</span>&nbsp;</p></div><div data-simple-choice-interaction data-response-variable=\'responseValue\' value=1 class=\'mcq-option\'><p><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">one-one onto</span></p></div><div data-simple-choice-interaction data-response-variable=\'responseValue\' value=2 class=\'mcq-option\'><p><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">onto</span></p></div><div data-simple-choice-interaction data-response-variable=\'responseValue\' value=3 class=\'mcq-option\'><p><span style="color:rgb(34,34,34);background-color:rgb(255,255,255);">many one</span></p></div></div></div>',
           'options': [
             {
               'answer': true,
