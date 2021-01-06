@@ -171,7 +171,8 @@
             "type": "string",
             "enum": [
                 "Default",
-                "Parent"
+                "Parent",
+                "Private"
             ],
             "default": "Default"
         },
@@ -1145,6 +1146,7 @@
                 "Course Assessment",
                 "Digital Textbook",
                 "Content Playlist",
+                "Exam Question",
                 "Template",
                 "Asset",
                 "Plugin",
