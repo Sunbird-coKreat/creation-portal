@@ -18,8 +18,6 @@ import { throwError as observableThrowError, of as observableOf } from 'rxjs';
 import { validateCertMockResponse } from './certificate-details.component.spec.data';
 import { DatePipe, Location } from '@angular/common';
 
-ProgramsService
-
 describe('CertificateDetailsComponent', () => {
   let component: CertificateDetailsComponent;
   let fixture: ComponentFixture<CertificateDetailsComponent>;
