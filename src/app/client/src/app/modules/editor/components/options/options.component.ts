@@ -40,8 +40,8 @@ export class OptionsComponent implements OnInit {
   }
 
   setTemplete(template) {
-    this.templateType = template;
     this.templateOutput.emit(template);
+    this.templateType = template;
   }
 
 }
