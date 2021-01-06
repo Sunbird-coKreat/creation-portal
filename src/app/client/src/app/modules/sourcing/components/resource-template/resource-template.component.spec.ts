@@ -7,9 +7,12 @@ import { TelemetryModule, TelemetryService } from '@sunbird/telemetry';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {
     ResourceService, ToasterService, SharedModule, ConfigService,
-    UtilService, BrowserCacheTtlService, NavigationHelperService
+    UtilService, BrowserCacheTtlService, NavigationHelperService,
   } from '@sunbird/shared';
   import { Router, ActivatedRoute } from '@angular/router';
+  import { RouterTestingModule } from '@angular/router/testing';
+  import { APP_BASE_HREF,DatePipe } from '@angular/common'; 
+  import { CacheService } from 'ng2-cache-service';
 
   const routerStub = {
     navigate: jasmine.createSpy('navigate')
@@ -31,10 +34,13 @@ describe('ResourceTemplateComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [SuiModule, TelemetryModule, HttpClientTestingModule],
+      imports: [SuiModule, TelemetryModule, HttpClientTestingModule,RouterTestingModule],
       declarations: [ ResourceTemplateComponent ],
-      providers: [ConfigService, TelemetryService, { provide: Router, useValue: routerStub},
-        { provide: ActivatedRoute, useValue: fakeActivatedRoute }]
+      providers: [ConfigService, TelemetryService,ResourceService,CacheService,BrowserCacheTtlService,ToasterService,DatePipe,
+        { provide: Router, useValue: routerStub},
+        { provide: ActivatedRoute, useValue: fakeActivatedRoute },
+        // { provide: ResourceService, useValue: resourceBundle },
+        {provide: APP_BASE_HREF, useValue: '/'}]
     })
     .compileComponents();
   }));
