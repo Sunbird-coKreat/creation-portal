@@ -1,5 +1,7 @@
 
-<h3>{{questionMetaData.title}}</h3>
+<div class="sb-quml-player">
+    <quml-player [QumlPlayerConfig]="QumlPlayerConfig" (playerEvent)="getPlayerEvents($event)" (telemetryEvent)="getTelemetryEvents($event)"></quml-player>
+</div>
 <hr class="my-20">
 <div class="ui">
     <div class="ui twelve column grid m-0">
