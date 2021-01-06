@@ -26,10 +26,28 @@
         "type": "blob"
       },
       "editorState": {
-        "type": "blob"
+        "type": "string"
       },
       "answer": {
         "type": "blob"
+      },
+      "solutions": {
+        "type": "string"
+      },
+      "instructions": {
+        "type": "string"
+      },
+      "hints": {
+        "type": "string"
+      },
+      "media": {
+        "type": "string"
+      },
+      "responseDeclaration": {
+        "type": "string"
+      },
+      "interactions": {
+        "type": "string"
       }
     },
     "primaryKey": ["identifier"]
