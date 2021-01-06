@@ -191,16 +191,16 @@ export class QuestionBaseComponent implements OnInit {
 
           if (this.questionInteractionType === 'default') {
             if ( this.questionMetaData.editorState) {
-              this.editorState = JSON.parse(this.questionMetaData.editorState);
+              this.editorState = this.questionMetaData.editorState;
             } else {
               this.editorState = this.questionMetaData;
               this.editorState.question = this.questionMetaData.body;
             }
           }
           if (this.questionInteractionType === 'choice') {
-            const responseDeclaration = JSON.parse(this.questionMetaData.responseDeclaration);
+            const responseDeclaration = this.questionMetaData.responseDeclaration;
             const templateId = this.questionMetaData.templateId;
-            this.questionMetaData.editorState = JSON.parse(this.questionMetaData.editorState);
+            this.questionMetaData.editorState = this.questionMetaData.editorState;
             const numberOfOptions = this.questionMetaData.editorState.options.length;
             const options = _.map(this.questionMetaData.editorState.options, option => ({ body: option.value.body }));
             const question = this.questionMetaData.editorState.question;
@@ -399,15 +399,15 @@ export class QuestionBaseComponent implements OnInit {
         'body': rendererBody,
         'answer': rendererAnswer,
         'templateId': '',
-        'responseDeclaration': JSON.stringify({}),
+        'responseDeclaration': {},
         // 'interactionTypes': [],
-        'interactions': JSON.stringify({}),
-        'editorState': JSON.stringify({
+        'interactions': {},
+        'editorState': {
           'question': editorState.question,
           'answer': editorState.answer
-        }),
+        },
         'status': 'Draft',
-        'name': 'SA',
+        'name': 'Subjective',
         'qType': 'SA',
         'media': this.mediaArr,
         'mimeType': 'application/vnd.sunbird.question',
@@ -445,16 +445,16 @@ export class QuestionBaseComponent implements OnInit {
         });
         metadata = {
           'code': UUID.UUID(),
-          'templateId': ' mcq-vertical',
-          'name': 'MCQ', // hardcoded value need to change it later
+          'templateId': 'mcq-vertical',
+          'name': 'Multiple Choice',
           'body': questionData.body,
-          'responseDeclaration': JSON.stringify(questionData.responseDeclaration),
+          'responseDeclaration': questionData.responseDeclaration,
           'interactionTypes': ['choice'],
-          'interactions' : JSON.stringify(this.getInteractions(editorState.options)),
-          'editorState' : JSON.stringify({
+          'interactions' : this.getInteractions(editorState.options),
+          'editorState' : {
             'question': editorState.question,
             'options': options
-          }),
+          },
           'status': 'Draft',
           'media': this.mediaArr,
           'qType': 'MCQ',
@@ -478,7 +478,14 @@ export class QuestionBaseComponent implements OnInit {
     solutionObj = {};
     solutionObj.id = solutionUUID;
     solutionObj.type = selectedSolutionType;
-    solutionObj.value = editorStateSolutions;
+    if (_.isString(editorStateSolutions)) {
+      solutionObj.value = editorStateSolutions;
+    }
+    if (_.isArray(editorStateSolutions)) {
+      if (_.has(editorStateSolutions[0], 'value')) {
+        solutionObj.value = editorStateSolutions[0].value;
+      }
+    }
     return solutionObj;
   }
 
@@ -519,8 +526,8 @@ export class QuestionBaseComponent implements OnInit {
     const questionBody = mcqBody.replace('{templateClass}', editorState.templateId)
       .replace('{question}', question);
     const responseDeclaration = {
-      maxScore: 1,
       response1: {
+        maxScore: 1,
         cardinality: 'single',
         type: 'integer',
         'correctResponse': {
@@ -539,7 +546,7 @@ export class QuestionBaseComponent implements OnInit {
     let index;
     const interactOptions = _.map(options, (opt, key) => {
       index = Number(key);
-        return { value: {'label': opt.body, 'value': index} };
+        return  {'label': opt.body, 'value': index} ;
     });
     const interactions = {
       'response1': {
