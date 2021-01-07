@@ -12,6 +12,8 @@ QuestionSetComponent, EditorBaseComponent, } from './components';
 import {CbseProgramModule} from '../cbse-program';
 import { OptionsComponent } from './components/options/options.component';
 import { AnswerComponent } from './components/answer/answer.component';
+import { QumlLibraryModule } from '@project-sunbird/sunbird-quml-player';
+import {CarouselModule} from 'ngx-bootstrap/carousel';
 
 // import { PlayerHelperModule } from '@sunbird/player-helper';
 
@@ -28,7 +30,9 @@ import { AnswerComponent } from './components/answer/answer.component';
     SharedModule,
     CommonFormElementsModule,
     // PlayerHelperModule
-    CbseProgramModule
+    CbseProgramModule,
+    QumlLibraryModule,
+    CarouselModule.forRoot()
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ]
 })
