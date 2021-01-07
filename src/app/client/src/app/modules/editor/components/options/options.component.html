@@ -16,7 +16,7 @@
   <div class="d-flex sb-mcq-item mb-15" *ngFor="let option of editorState.options; let i = index">
     <div class="sb-w-85 sb-ckeditor relative">
       <button [disabled]="editorState.options.length < 3" class="sb-btn sb-ckeditor-close absolute"
-        (click)="editorState.deleteOption(i)"
+        (click)="editorState.deleteOption(i);editorDataHandler($event);" 
         appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('delete_option', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit, telemetryPageDetails.telemetryPageId)"
         [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(questionMetaData?.data?.metadata?.identifier, 'Question', '1.0')"
@@ -24,7 +24,7 @@
         [telemetryInteractPdata]="telemetryPageDetails.telemetryInteractPdata">
         <i class="icon close"></i>
       </button>
-      <app-ckeditor-tool (editorDataOutput)="option.body = $event.body; option.length = $event.length; getMedia($event.mediaobj)"
+      <app-ckeditor-tool (editorDataOutput)="option.body = $event.body; option.length = $event.length; editorDataHandler($event)"
         [editorConfig]="editorConfig" [editorDataInput]="option.body" [setCharacterLimit]="setCharacterLimit"
         [setImageLimit]="setImageLimit" class="ckeditor-tool__option mb-24"
         [class.mb-5]="showFormError && ([undefined, ''].includes(option.body) || option.length > setCharacterLimit)">
@@ -36,7 +36,7 @@
         size</label>
     </div>
     <div class="sb-checkbox sb-checkbox-primary pl-10" [class.selected]="editorState.answer === i.toString()">
-      <input type="radio" id="answer_{{ i + 1 }}" name="example" value="{{ i }}"
+      <input type="radio" id="answer_{{ i + 1 }}" name="example" value="{{ i }}"  (change)="editorDataHandler($event);"
       appTelemetryInteract
       [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('mark_as_right_anwser', configService.telemetryLabels.eventType.click, undefined, telemetryPageDetails.telemetryPageId, {answer:i.toString()})"
       [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(questionMetaData?.data?.metadata?.identifier, 'Question', '1.0')"
@@ -49,7 +49,7 @@
   <div class="d-flex">
     <button *ngIf="editorState.options.length < 4"
 class="sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn text-inherit b-0 bg-none no-hover pl-0"
-(click)="editorState.addOptions()"
+(click)="editorState.addOptions();editorDataHandler($event);"
       appTelemetryInteract
       [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add_option', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, telemetryPageDetails.telemetryPageId)"
       [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(questionMetaData?.data?.metadata?.identifier, 'Question', '1.0')"
