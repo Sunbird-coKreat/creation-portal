@@ -5,7 +5,7 @@ import { throwError } from 'rxjs';
 import * as _ from 'lodash-es';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { TelemetryService, IImpressionEventInput, IStartEventInput, IEndEventInput } from '@sunbird/telemetry';
-import { TreeService, EditorService } from '../../services';
+import { TreeService, EditorService, HelperService } from '../../services';
 import { templateList, toolbarConfig } from '../../editor.config';
 import { CbseProgramService } from '../../../cbse-program/services';
 import { ProgramsService, UserService } from '@sunbird/core';
@@ -45,7 +45,8 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
     private editorService: EditorService, private activatedRoute: ActivatedRoute, private cbseService: CbseProgramService,
     private userService: UserService, private programsService: ProgramsService, private navigationHelperService: NavigationHelperService,
     private configService: ConfigService, private toasterService: ToasterService, public resourceService: ResourceService,
-    private router: Router, private telemetryService: TelemetryService, private deviceDetectorService: DeviceDetectorService) {
+    private router: Router, private telemetryService: TelemetryService, private deviceDetectorService: DeviceDetectorService,
+    public helperService: HelperService) {
     this.editorParams = {
       collectionId: _.get(this.activatedRoute, 'snapshot.params.questionSetId'),
     };
@@ -55,6 +56,7 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
     this.pageStartTime = Date.now();
     this.prepareTelemetryEvents();
     this.fetchQuestionSetHierarchy();
+    this.helperService.initialize();
   }
 
   prepareTelemetryEvents() {
