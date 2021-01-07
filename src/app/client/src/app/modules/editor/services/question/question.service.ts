@@ -26,11 +26,11 @@ export class QuestionService {
     } else {
       hierarchyChildren = [];
     }
-    hierarchyChildren.push('UUID');
+    hierarchyChildren.push('questionId');
     const requestObj = {
       'data': {
         'nodesModified': {
-          'UUID': {
+          'questionId': {
             'metadata': metadata,
             'objectType': 'Question',
             'root': false,

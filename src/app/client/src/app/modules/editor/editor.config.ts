@@ -24,7 +24,17 @@ export const toolbarConfig = {
 export const questionToolbarConfig = {
   headerName: 'Back',
   title: 'Q1 | MCQ',
-  buttons: [{
+  buttons: [
+    {
+      telemetryId: 'edit',
+      telemetrySubtype: 'launch',
+      name: 'Edit',
+      type: 'editContent',
+      buttonType: 'button',
+      style: 'sb-btn sb-btn-normal sb-btn-outline-primary mr-10',
+      slot: `icon edit`
+    },
+    {
     telemetryId: 'preview',
     telemetrySubtype: 'launch',
     name: 'Preview',

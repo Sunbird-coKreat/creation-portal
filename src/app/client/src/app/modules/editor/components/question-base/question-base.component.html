@@ -10,7 +10,11 @@
       <div class="ui twelve column wide">
         <div class="px-16">
           <div class="b-1-100">
-            <div class="py-20 px-32 sb-bg-color-primary-0">
+            <div *ngIf='showPreview && !showLoader'>
+              Player will be loaded here
+              <!-- <quml-player [QumlPlayerConfig]="QumlPlayerConfig" (playerEvent)="getPlayerEvents($event)" (telemetryEvent)="getTelemetryEvents($event)"></quml-player> -->
+            </div>
+            <div class="py-20 px-32 sb-bg-color-primary-0" *ngIf='!showPreview && !showLoader'>
               <div class="sb-field-group">
                 <label class="fs-0-92">Question<span class="sb-required">*</span></label>
                 <div class="sb-field">
