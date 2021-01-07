@@ -111,3 +111,20 @@
     </div>
   </div>
 </div>
+
+<sui-modal *ngIf="showConfirmPopup" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'"
+  class="sb-modal " appBodyScroll (dismissed)="showConfirmPopup = !showConfirmPopup" #modal>
+  <div class="sb-modal-header">
+  </div>
+  <div class="sb-modal-content">
+    This question will not be saved, are you sure you want to go back to questionset?
+  </div>
+  <div class="sb-modal-actions">
+    <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="redirectToQuestionset()">
+      Yes
+    </button>
+    <button class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showConfirmPopup = !showConfirmPopup">
+      No
+    </button>
+  </div>
+</sui-modal>

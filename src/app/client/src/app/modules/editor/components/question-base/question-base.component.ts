@@ -59,6 +59,7 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
   public telemetryEnd: IEndEventInput;
   public pageStartTime;
   questionSetHierarchy: any;
+  showConfirmPopup = false;
 
   constructor(private editorService: EditorService, private questionService: QuestionService,
     public activatedRoute: ActivatedRoute, public router: Router, private http: HttpClient,
@@ -250,14 +251,22 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
         break;
       case 'cancelContent':
         this.generateTelemetryEndEvent('cancel');
-        this.redirectToQuestionset();
+        this.handleRedirectToQuestionset();
         break;
       case 'backContent':
         this.generateTelemetryEndEvent('back');
-        this.redirectToQuestionset();
+        this.handleRedirectToQuestionset();
         break;
       default:
         break;
+    }
+  }
+
+  handleRedirectToQuestionset() {
+    if (_.isUndefined(this.questionId)) {
+      this.showConfirmPopup = true;
+    } else {
+      this.redirectToQuestionset();
     }
   }
 
@@ -293,7 +302,11 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
   }
 
   redirectToQuestionset() {
-    this.router.navigateByUrl(`create/questionSet/${this.questionSetId}`);
+    this.showConfirmPopup = false;
+    setTimeout(() => {
+      this.router.navigateByUrl(`create/questionSet/${this.questionSetId}`);
+    }, 100);
+
   }
 
   editorDataHandler(event, type) {
@@ -431,7 +444,7 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
   getMcqQuestionHtmlBody(question, templateId) {
     const mcqTemplateConfig = {
       // tslint:disable-next-line:max-line-length
-      'mcqBody': '<div class=\"question-body\"><div class=\"mcq-title\">{question}</div><div data-choice-interaction=\"response1\" class=\"mcq-vertical\"></div></div>'
+      'mcqBody': '<div class=\"question-body\"><div class=\"mcq-title\">{question}</div><div data-choice-interaction=\"response1\" class="{templateClass}"></div></div>'
     };
     const { mcqBody } = mcqTemplateConfig;
     const questionBody = mcqBody.replace('{templateClass}', templateId)

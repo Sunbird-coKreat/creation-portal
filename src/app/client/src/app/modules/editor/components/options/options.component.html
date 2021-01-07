@@ -2,13 +2,9 @@
   <label class="fs-0-92">Options<span class="sb-required">*</span></label>
   <i class="icon info circle ml-8"></i>
   <span class="divider mr-8"></span>
-  <i class="q-sb-layout-single mr-10 h-7"></i>
-  <i class="q-sb-layout-two mr-10 h-7 active"></i>
-  <i class="q-sb-layout-three mr-10 h-7 w-20"></i>
-  <i class="q-sb-layout-imgoption mr-10 h-7"></i>
-  <i class="q-sb-layout-alignleft mr-10 h-7"></i>
-  <i class="q-sb-layout-aligncenter mr-10 h-7"></i>
-  <i class="q-sb-layout-alignright mr-10 h-7"></i>
+  <span *ngFor="let template of mcqTemplateConfig">
+    <i class="{{template.class}}" [ngClass]="{active: template.templateType === templateType}" (click)="setTemplete(template.templateType)"></i>
+  </span>
 </div>
 <label *ngIf="showFormError && !editorState.answer" class="ui basic red error label pt-1 mt-10">Select one correct
   answer</label>

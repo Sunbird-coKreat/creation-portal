@@ -2,6 +2,7 @@ import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { ProgramTelemetryService } from '../../../program/services';
 import { ConfigService } from '@sunbird/shared';
 import * as _ from 'lodash-es';
+import {McqQuestionTemplate} from '../../editor.config';
 @Component({
   selector: 'app-options',
   templateUrl: './options.component.html',
@@ -9,16 +10,21 @@ import * as _ from 'lodash-es';
 })
 export class OptionsComponent implements OnInit {
   @Input() editorConfig;
-  @Input() editorState;
+  @Input() editorState: any;
   @Input() showFormError;
   @Input() telemetryPageDetails;
   @Input() questionMetaData;
   @Output() editorDataOutput: EventEmitter<any> = new EventEmitter<any>();
   public setCharacterLimit = 160;
+  public templateType = 'mcq-vertical';
+  public mcqTemplateConfig: any = McqQuestionTemplate;
   constructor(public programTelemetryService: ProgramTelemetryService,
-    private configService: ConfigService) { }
+    public configService: ConfigService) { }
 
   ngOnInit() {
+    if (!_.isUndefined(this.editorState.templateId)) {
+      this.templateType = this.editorState.templateId;
+    }
     this.editorDataHandler();
   }
 
@@ -40,7 +46,7 @@ export class OptionsComponent implements OnInit {
       }
     });
     metadata = {
-      'templateId': 'mcq-vertical',
+      'templateId': this.templateType,
       'name': 'Multiple Choice',
       'responseDeclaration': this.getResponseDeclaration(editorState),
       'interactionTypes': ['choice'],
@@ -82,6 +88,11 @@ export class OptionsComponent implements OnInit {
       }
     };
     return interactions;
+  }
+
+  setTemplete(template) {
+    this.templateType = template;
+    this.editorDataHandler();
   }
 
 }
