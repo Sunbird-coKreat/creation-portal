@@ -1119,6 +1119,12 @@
     },
     "courseId": {
       "type": "string"
+    },
+    "printable": {
+      "type": "boolean"
+    },
+    "printStatus": {
+      "type": "string"
     }
   }
 }
