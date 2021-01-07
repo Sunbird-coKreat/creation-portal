@@ -1,7 +1,4 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import { forkJoin, of } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { map, tap } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 @Component({
   selector: 'app-answer',
@@ -13,7 +10,7 @@ export class AnswerComponent implements OnInit {
   @Input() editorState;
   @Input() showFormError;
   @Output() editorDataOutput: EventEmitter<any> = new EventEmitter<any>();
-  constructor(private http: HttpClient) { }
+  constructor() { }
 
   ngOnInit() {
     this.editorDataHandler({body: this.editorState.answer});

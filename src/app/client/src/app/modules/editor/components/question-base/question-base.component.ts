@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { collectionTreeNodes, questionToolbarConfig } from '../../editor.config';
+import { questionToolbarConfig } from '../../editor.config';
 import { EditorService } from '../../services';
 import { QuestionService } from '../../services/question/question.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -7,14 +7,11 @@ import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
 import { questionEditorConfig } from '../../editor.config';
 import { McqForm } from '../../../cbse-program';
-import { forkJoin, of } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { map, catchError } from 'rxjs/operators';
 import { ToasterService, ResourceService, ServerResponse, ConfigService, NavigationHelperService } from '@sunbird/shared';
 import { UserService } from '@sunbird/core';
 import { ProgramTelemetryService } from '../../../program/services';
 import { DeviceDetectorService } from 'ngx-device-detector';
-import { TelemetryService, IImpressionEventInput, IStartEventInput, IEndEventInput } from '@sunbird/telemetry';
+import { TelemetryService, IStartEventInput, IEndEventInput } from '@sunbird/telemetry';
 @Component({
   selector: 'app-question-base',
   templateUrl: './question-base.component.html',
@@ -62,7 +59,7 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
   showConfirmPopup = false;
 
   constructor(private editorService: EditorService, private questionService: QuestionService,
-    public activatedRoute: ActivatedRoute, public router: Router, private http: HttpClient,
+    public activatedRoute: ActivatedRoute, public router: Router,
     public toasterService: ToasterService, public resourceService: ResourceService,
     private userService: UserService, public programTelemetryService: ProgramTelemetryService,
     private configService: ConfigService, private navigationHelperService: NavigationHelperService,
