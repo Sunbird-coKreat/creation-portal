@@ -13,7 +13,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 
 import { CacheService } from 'ng2-cache-service';
-describe('CollectionTreeComponent', () => {
+xdescribe('CollectionTreeComponent', () => {
   let component: CollectionTreeComponent;
   let fixture: ComponentFixture<CollectionTreeComponent>;
   const resourceBundle = {

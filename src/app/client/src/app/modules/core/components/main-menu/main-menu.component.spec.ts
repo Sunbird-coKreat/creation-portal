@@ -5,6 +5,10 @@ import { MainMenuComponent } from './main-menu.component';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 // import { WebExtensionModule } from '@project-sunbird/web-extensions';
 import { ActivatedRoute, Router } from '@angular/router';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { APP_BASE_HREF,DatePipe } from '@angular/common'; 
+import { TelemetryModule, TelemetryService } from '@sunbird/telemetry';
 
 describe('MainMenuComponent', () => {
   let component: MainMenuComponent;
@@ -16,8 +20,8 @@ describe('MainMenuComponent', () => {
   }
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientModule, CoreModule, SharedModule.forRoot()],
-      providers: [HttpClient, ResourceService, ConfigService, UserService,
+      imports: [HttpClientModule, TelemetryModule, HttpClientTestingModule,RouterTestingModule, CoreModule, SharedModule.forRoot()],
+      providers: [HttpClient, ResourceService, ConfigService, UserService,DatePipe,TelemetryService,
         LearnerService, ContentService, { provide: ActivatedRoute, useClass: FakeActivatedRoute },
         { provide: Router, useClass: RouterStub }]
     })

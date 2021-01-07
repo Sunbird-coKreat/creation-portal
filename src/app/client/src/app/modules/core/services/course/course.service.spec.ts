@@ -8,11 +8,13 @@ import { LearnerService } from './../learner/learner.service';
 import { SharedModule } from '@sunbird/shared';
 import * as mockData from './course.service.spec.data';
 import { CoreModule } from '@sunbird/core';
+import { RouterTestingModule } from '@angular/router/testing';
+
 const testData = mockData.mockRes;
 describe('CoursesService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, CoreModule, SharedModule.forRoot()],
+      imports: [HttpClientTestingModule,RouterTestingModule, CoreModule, SharedModule.forRoot()],
       providers: []
     });
   });

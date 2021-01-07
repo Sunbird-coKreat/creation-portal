@@ -41,7 +41,7 @@ class MockRouter {
   });
 }
 
-describe('PublicCourseConsumptionPageComponent', () => {
+xdescribe('PublicCourseConsumptionPageComponent', () => {
   let component: PublicCourseConsumptionPageComponent;
   let fixture: ComponentFixture<PublicCourseConsumptionPageComponent>;
   let activatedRouteStub, courseService, toasterService, courseConsumptionService, navigationHelperService;

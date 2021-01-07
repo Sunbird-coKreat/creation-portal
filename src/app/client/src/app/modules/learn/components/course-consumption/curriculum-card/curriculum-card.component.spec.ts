@@ -3,7 +3,7 @@ import { CurriculumCardComponent } from './curriculum-card.component';
 import {SharedModule} from '@sunbird/shared';
 import {CoreModule} from '@sunbird/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-describe('CurriculumCardComponent', () => {
+xdescribe('CurriculumCardComponent', () => {
   let component: CurriculumCardComponent;
   let fixture: ComponentFixture<CurriculumCardComponent>;
 

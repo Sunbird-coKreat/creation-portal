@@ -17,6 +17,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { recursiveTreeComponentInput } from './recursive-tree.component.spec.data';
 import { TelemetryService, TELEMETRY_PROVIDER } from '../../../telemetry/services/telemetry/telemetry.service';
 import {  NavigationHelperService } from '@sunbird/shared';
+import { APP_BASE_HREF } from '@angular/common'; 
 
 describe('RecursiveTreeComponent', () => {
 
@@ -63,7 +64,8 @@ describe('RecursiveTreeComponent', () => {
         },
         {
           provide: DatePipe,
-        }
+        },
+        {provide: APP_BASE_HREF, useValue: '/'}
       ]
     }).compileComponents();
   }));

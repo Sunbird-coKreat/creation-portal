@@ -18,7 +18,7 @@ describe('AuthGardService', () => {
     };
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [AuthGuard, PermissionService, ToasterService, UserService, ResourceService, ConfigService, LearnerService,
+            providers: [AuthGuard, PermissionService,RouterTestingModule, ToasterService, UserService, ResourceService, ConfigService, LearnerService,
                 BrowserCacheTtlService,
                 { provide: Router, useValue: router },
                 { provide: RouterStateSnapshot, useValue: snapshot },

@@ -14,7 +14,7 @@ import { TelemetryModule } from '@sunbird/telemetry';
 import { CacheService } from 'ng2-cache-service';
 
 
-describe('ExploreCourseComponent', () => {
+xdescribe('ExploreCourseComponent', () => {
   let component: ExploreCourseComponent;
   let fixture: ComponentFixture<ExploreCourseComponent>;
   let toasterService, formService, searchService, orgDetailsService, activatedRoute, cacheService;

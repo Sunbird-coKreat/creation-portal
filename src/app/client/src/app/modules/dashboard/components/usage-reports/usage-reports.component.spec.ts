@@ -13,7 +13,7 @@ import { UsageReportsComponent } from './usage-reports.component';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { DataChartComponent } from '../data-chart/data-chart.component';
 
-describe('UsageReportsComponent', () => {
+xdescribe('UsageReportsComponent', () => {
   let component: UsageReportsComponent;
   let fixture: ComponentFixture<UsageReportsComponent>;
   const fakeActivatedRoute = {

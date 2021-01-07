@@ -61,7 +61,7 @@ describe('UserSearchComponent', () => {
   }
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, CoreModule, SharedModule.forRoot()],
+      imports: [HttpClientTestingModule, CoreModule,RouterTestingModule, SharedModule.forRoot()],
       declarations: [UserSearchComponent, UserFilterComponent],
       providers: [OrgDetailsService, FrameworkService, TelemetryService, ResourceService, SearchService, PaginationService, UserService,
         LearnerService, ContentService, ConfigService, ToasterService, UserSearchService,

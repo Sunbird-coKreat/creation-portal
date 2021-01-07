@@ -11,6 +11,7 @@ import { Response } from './course-search.component.spec.data';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { CacheService } from 'ng2-cache-service';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('CourseSearchComponent', () => {
   let component: CourseSearchComponent;
@@ -53,7 +54,7 @@ describe('CourseSearchComponent', () => {
   }
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [SharedModule.forRoot(), CoreModule, HttpClientTestingModule, SuiModule, TelemetryModule.forRoot()],
+      imports: [SharedModule.forRoot(), CoreModule, HttpClientTestingModule,RouterTestingModule, SuiModule, TelemetryModule.forRoot()],
       declarations: [CourseSearchComponent],
       providers: [{ provide: ResourceService, useValue: resourceBundle },
       { provide: Router, useClass: RouterStub },
