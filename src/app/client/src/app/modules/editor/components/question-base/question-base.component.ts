@@ -255,9 +255,7 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
         this.handleRedirectToQuestionset();
         break;
       case 'previewContent':
-        // this.showLoader = true;
         // this.saveContent();
-        // this.showLoader = false;
         this.showPreview = true;
         break;
         case 'editContent':
