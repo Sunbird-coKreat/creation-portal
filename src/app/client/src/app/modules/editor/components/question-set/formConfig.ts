@@ -1,6 +1,6 @@
 export const formConfig = [
     {
-        'code': 'title',
+        'code': 'name',
         'dataType': 'text',
         'description': 'Name of the content',
         'editable': true,

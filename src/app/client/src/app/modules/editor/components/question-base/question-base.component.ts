@@ -57,6 +57,7 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
   public pageStartTime;
   questionSetHierarchy: any;
   showConfirmPopup = false;
+  public questionData: any = {};
 
   constructor(private editorService: EditorService, private questionService: QuestionService,
     public activatedRoute: ActivatedRoute, public router: Router,
@@ -64,15 +65,12 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
     private userService: UserService, public programTelemetryService: ProgramTelemetryService,
     private configService: ConfigService, private navigationHelperService: NavigationHelperService,
     private deviceDetectorService: DeviceDetectorService, private telemetryService: TelemetryService) {
-    this.activatedRoute.queryParams.subscribe(params => {
-      this.questionInteractionType = params['type'];
-      this.questionId = params['questionId'];
-      if (this.questionInteractionType === 'default') {
-        this.toolbarConfig.title = 'Subjective';
-      } if (this.questionInteractionType === 'choice') {
-        this.toolbarConfig.title = 'MCQ';
-      }
-    });
+      this.questionData = this.editorService.selectedChildren;
+      this.activatedRoute.queryParams.subscribe(params => {
+        this.questionInteractionType = params['type'];
+        this.questionId = params['questionId'];
+        this.toolbarConfig.title = this.questionData.primaryCategory;
+      });
   }
 
   ngOnInit() {
@@ -186,7 +184,7 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
         .subscribe((res) => {
           if (res.result) {
             this.questionMetaData = res.result.question;
-
+            this.questionInteractionType = this.questionMetaData.interactionTypes ? this.questionMetaData.interactionTypes[0] : 'default';
             if (this.questionInteractionType === 'default') {
               if (this.questionMetaData.editorState) {
                 this.editorState = this.questionMetaData.editorState;
