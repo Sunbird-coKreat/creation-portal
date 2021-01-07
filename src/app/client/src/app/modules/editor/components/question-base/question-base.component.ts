@@ -29,6 +29,7 @@ export class QuestionBaseComponent implements OnInit {
   public editorState: any = {};
   public showPreview: Boolean = false;
   public mediaArr: any = [];
+  public mcqTemplate: string;
   public videoShow = false;
   public showFormError = false;
   selectedSolutionType: string;
@@ -59,6 +60,7 @@ export class QuestionBaseComponent implements OnInit {
   public telemetryEnd: IEndEventInput;
   public pageStartTime;
   questionSetHierarchy: any;
+  showConfirmPopup = false;
 
   constructor(private editorService: EditorService, private questionService: QuestionService,
     public activatedRoute: ActivatedRoute, public router: Router, private http: HttpClient,
@@ -191,16 +193,16 @@ export class QuestionBaseComponent implements OnInit {
 
           if (this.questionInteractionType === 'default') {
             if ( this.questionMetaData.editorState) {
-              this.editorState = JSON.parse(this.questionMetaData.editorState);
+              this.editorState = this.questionMetaData.editorState;
             } else {
               this.editorState = this.questionMetaData;
               this.editorState.question = this.questionMetaData.body;
             }
           }
           if (this.questionInteractionType === 'choice') {
-            const responseDeclaration = JSON.parse(this.questionMetaData.responseDeclaration);
+            const responseDeclaration = this.questionMetaData.responseDeclaration;
             const templateId = this.questionMetaData.templateId;
-            this.questionMetaData.editorState = JSON.parse(this.questionMetaData.editorState);
+            this.questionMetaData.editorState = this.questionMetaData.editorState;
             const numberOfOptions = this.questionMetaData.editorState.options.length;
             const options = _.map(this.questionMetaData.editorState.options, option => ({ body: option.value.body }));
             const question = this.questionMetaData.editorState.question;
@@ -252,14 +254,22 @@ export class QuestionBaseComponent implements OnInit {
         break;
       case 'cancelContent':
         this.generateTelemetryEndEvent('cancel');
-        this.redirectToQuestionset();
+        this.handleRedirectToQuestionset();
         break;
       case 'backContent':
         this.generateTelemetryEndEvent('back');
-        this.redirectToQuestionset();
+        this.handleRedirectToQuestionset();
         break;
       default:
         break;
+    }
+  }
+
+  handleRedirectToQuestionset() {
+    if (_.isUndefined(this.questionId)) {
+      this.showConfirmPopup = true;
+    } else {
+      this.redirectToQuestionset();
     }
   }
 
@@ -290,7 +300,11 @@ export class QuestionBaseComponent implements OnInit {
   }
 
   redirectToQuestionset() {
-    this.router.navigateByUrl(`create/questionSet/${this.questionSetId}`);
+    this.showConfirmPopup = false;
+    setTimeout(() => {
+      this.router.navigateByUrl(`create/questionSet/${this.questionSetId}`);
+    }, 100);
+
   }
 
   editorDataHandler(event, type) {
@@ -321,6 +335,14 @@ export class QuestionBaseComponent implements OnInit {
       if (value === undefined) {
         this.mediaArr.push(media);
       }
+    }
+  }
+
+  getTemplate(template) {
+    if (_.isUndefined(template)) {
+      this.mcqTemplate = 'mcq-vertical';
+    } else {
+      this.mcqTemplate = template;
     }
   }
 
@@ -399,15 +421,14 @@ export class QuestionBaseComponent implements OnInit {
         'body': rendererBody,
         'answer': rendererAnswer,
         'templateId': '',
-        'responseDeclaration': JSON.stringify({}),
-        // 'interactionTypes': [],
-        'interactions': JSON.stringify({}),
-        'editorState': JSON.stringify({
+        'responseDeclaration': {},
+        'interactions': {},
+        'editorState': {
           'question': editorState.question,
           'answer': editorState.answer
-        }),
+        },
         'status': 'Draft',
-        'name': 'SA',
+        'name': 'Subjective',
         'qType': 'SA',
         'media': this.mediaArr,
         'mimeType': 'application/vnd.sunbird.question',
@@ -431,7 +452,13 @@ export class QuestionBaseComponent implements OnInit {
     // tslint:disable-next-line:max-line-length
     forkJoin([this.getConvertedLatex(editorState.question), ...editorState.options.map(option => this.getConvertedLatex(option.body))])
       .subscribe((res) => {
-        const body = res[0]; // question with latex
+        if (!_.isUndefined(this.mcqTemplate)) {
+          editorState.templateId = this.mcqTemplate;
+        }
+        if (_.isUndefined(editorState.templateId)) {
+          editorState.templateId = 'mcq-vertical';
+        }
+        const body = res[0];
         const questionData = this.getQuestionHtml(body, editorState);
         const correct_answer = editorState.answer;
         let resindex;
@@ -445,16 +472,16 @@ export class QuestionBaseComponent implements OnInit {
         });
         metadata = {
           'code': UUID.UUID(),
-          'templateId': ' mcq-vertical',
-          'name': 'MCQ', // hardcoded value need to change it later
+          'templateId': editorState.templateId,
+          'name': 'Multiple Choice',
           'body': questionData.body,
-          'responseDeclaration': JSON.stringify(questionData.responseDeclaration),
+          'responseDeclaration': questionData.responseDeclaration,
           'interactionTypes': ['choice'],
-          'interactions' : JSON.stringify(this.getInteractions(editorState.options)),
-          'editorState' : JSON.stringify({
+          'interactions' : this.getInteractions(editorState.options),
+          'editorState' : {
             'question': editorState.question,
             'options': options
-          }),
+          },
           'status': 'Draft',
           'media': this.mediaArr,
           'qType': 'MCQ',
@@ -478,7 +505,14 @@ export class QuestionBaseComponent implements OnInit {
     solutionObj = {};
     solutionObj.id = solutionUUID;
     solutionObj.type = selectedSolutionType;
-    solutionObj.value = editorStateSolutions;
+    if (_.isString(editorStateSolutions)) {
+      solutionObj.value = editorStateSolutions;
+    }
+    if (_.isArray(editorStateSolutions)) {
+      if (_.has(editorStateSolutions[0], 'value')) {
+        solutionObj.value = editorStateSolutions[0].value;
+      }
+    }
     return solutionObj;
   }
 
@@ -513,14 +547,14 @@ export class QuestionBaseComponent implements OnInit {
   getQuestionHtml(question, editorState: any) {
     const mcqTemplateConfig = {
       // tslint:disable-next-line:max-line-length
-      'mcqBody': '<div class=\"question-body\"><div class=\"mcq-title\">{question}</div><div data-choice-interaction=\"response1\" class=\"mcq-vertical\"></div></div>'
+      'mcqBody': '<div class=\"question-body\"><div class=\"mcq-title\">{question}</div><div data-choice-interaction=\"response1\" class="{templateClass}"></div></div>'
     };
     const { mcqBody } = mcqTemplateConfig;
     const questionBody = mcqBody.replace('{templateClass}', editorState.templateId)
       .replace('{question}', question);
     const responseDeclaration = {
-      maxScore: 1,
       response1: {
+        maxScore: 1,
         cardinality: 'single',
         type: 'integer',
         'correctResponse': {
@@ -539,7 +573,7 @@ export class QuestionBaseComponent implements OnInit {
     let index;
     const interactOptions = _.map(options, (opt, key) => {
       index = Number(key);
-        return { value: {'label': opt.body, 'value': index} };
+        return  {'label': opt.body, 'value': index} ;
     });
     const interactions = {
       'response1': {

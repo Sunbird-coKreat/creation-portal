@@ -21,20 +21,24 @@ export class QuestionService {
 
   updateHierarchyQuestionCreate(questionSetId, metadata, questionSetHierarchy): Observable<ServerResponse> {
     let hierarchyChildren: Array<string>;
-    hierarchyChildren = questionSetHierarchy.childNodes;
+    if (questionSetHierarchy.childNodes) {
+      hierarchyChildren = questionSetHierarchy.childNodes;
+    } else {
+      hierarchyChildren = [];
+    }
     hierarchyChildren.push('UUID');
     const requestObj = {
       'data': {
-          'nodesModified': {
-              'UUID': {
-                  'metadata': metadata,
-                  'objectType': 'Question',
-                  'root': false,
-                  'isNew': true
-              }
-          },
-          'hierarchy': {
+        'nodesModified': {
+          'UUID': {
+            'metadata': metadata,
+            'objectType': 'Question',
+            'root': false,
+            'isNew': true
           }
+        },
+        'hierarchy': {
+        }
       }
     };
     requestObj.data.hierarchy[questionSetId] = {
@@ -53,10 +57,8 @@ export class QuestionService {
   updateHierarchyQuestionUpdate(questionSetId, questionId, metadata, questionSetHierarchy): Observable<ServerResponse> {
     const requestObj = {
       'data': {
-          'nodesModified': {
-          },
-          'hierarchy': {
-          }
+        'nodesModified': {},
+        'hierarchy': {}
       }
     };
     requestObj.data.hierarchy[questionSetId] = {
