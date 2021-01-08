@@ -10,5 +10,7 @@
     "version": "disable",
     "versionCheckMode": "OFF",
     "frameworkCategories": [],
+    "orgFrameworkTerms": [],
+    "targetFrameworkTerms": [],
     "cacheEnabled": false
 }
