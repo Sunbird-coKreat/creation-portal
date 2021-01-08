@@ -13,7 +13,7 @@ import { throwError as observableThrowError, of as observableOf } from 'rxjs';
 import {mockData} from './org-reports.component.spec.data'
 
 
-describe('OrgReportsComponent', () => {
+xdescribe('OrgReportsComponent', () => {
   let component: OrgReportsComponent;
   let fixture: ComponentFixture<OrgReportsComponent>;
   const fakeActivatedRoute = {
