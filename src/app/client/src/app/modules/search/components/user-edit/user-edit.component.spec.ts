@@ -18,7 +18,7 @@ import { CoreModule, OrgDetailsService, } from '@sunbird/core';
 import { TelemetryService, TelemetryModule } from '@sunbird/telemetry';
 import { By } from '@angular/platform-browser';
 import { FormBuilder } from '@angular/forms';
-describe('UserEditComponent', () => {
+xdescribe('UserEditComponent', () => {
   let component: UserEditComponent;
   let fixture: ComponentFixture<UserEditComponent>;
   const resourceBundle = {

@@ -14,7 +14,7 @@ import { TelemetryModule } from '@sunbird/telemetry';
 import { NgInviewModule } from 'angular-inport';
 import { APP_BASE_HREF } from '@angular/common'; 
 
-describe('FlaggedComponent', () => {
+xdescribe('FlaggedComponent', () => {
   let component: FlaggedComponent;
   let fixture: ComponentFixture<FlaggedComponent>;
   const resourceBundle = {

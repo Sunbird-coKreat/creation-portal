@@ -10,7 +10,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { Response } from './resource.component.spec.data';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TelemetryModule } from '@sunbird/telemetry';
-
+import { RouterTestingModule } from '@angular/router/testing';
 describe('ResourceComponent', () => {
   let component: ResourceComponent;
   let fixture: ComponentFixture<ResourceComponent>;
@@ -36,7 +36,7 @@ describe('ResourceComponent', () => {
   }
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [SharedModule.forRoot(), CoreModule, HttpClientTestingModule, SuiModule, TelemetryModule.forRoot()],
+      imports: [SharedModule.forRoot(), CoreModule, HttpClientTestingModule, RouterTestingModule,SuiModule, TelemetryModule.forRoot()],
       declarations: [ResourceComponent],
       providers: [ ResourceService,
       { provide: Router, useClass: RouterStub },

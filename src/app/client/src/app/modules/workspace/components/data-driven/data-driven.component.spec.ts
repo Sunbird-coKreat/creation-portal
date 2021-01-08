@@ -15,7 +15,7 @@ import { mockFrameworkData } from './data-driven.component.spec.data';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { RouterTestingModule } from '@angular/router/testing';
 
-describe('DataDrivenComponent', () => {
+xdescribe('DataDrivenComponent', () => {
   let componentParent: DataDrivenComponent;
   let fixtureParent: ComponentFixture<DataDrivenComponent>;
   let componentChild: DefaultTemplateComponent;

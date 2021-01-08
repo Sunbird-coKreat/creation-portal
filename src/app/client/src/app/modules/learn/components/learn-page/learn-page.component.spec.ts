@@ -12,7 +12,7 @@ import { Response } from './learn-page.component.spec.data';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { CacheService } from 'ng2-cache-service';
-
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('LearnPageComponent', () => {
   let component: LearnPageComponent;
@@ -52,7 +52,7 @@ describe('LearnPageComponent', () => {
   }
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [SharedModule.forRoot(), CoreModule, HttpClientTestingModule, SuiModule, TelemetryModule.forRoot()],
+      imports: [SharedModule.forRoot(), CoreModule, HttpClientTestingModule,RouterTestingModule, SuiModule, TelemetryModule.forRoot()],
       declarations: [LearnPageComponent],
       providers: [{ provide: ResourceService, useValue: resourceBundle },
       { provide: Router, useClass: RouterStub },

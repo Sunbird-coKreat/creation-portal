@@ -11,7 +11,7 @@ import { UserService, OrgDetailsService } from '@sunbird/core';
 import { commonMessageApiResp } from './comming-soon.component.spec.data';
 
 
-describe('CommingSoonComponent', () => {
+xdescribe('CommingSoonComponent', () => {
   let component: CommingSoonComponent;
   let fixture: ComponentFixture<CommingSoonComponent>;
   class RouterStub {

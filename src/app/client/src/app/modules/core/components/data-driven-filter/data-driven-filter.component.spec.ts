@@ -1,5 +1,3 @@
-
-
 import { BehaviorSubject, throwError, of } from 'rxjs';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import * as _ from 'lodash-es';
@@ -12,6 +10,9 @@ import { SharedModule, ResourceService, ConfigService, ToasterService, BrowserCa
 import { CoreModule, FrameworkService, FormService, UserService, PublicDataService } from '@sunbird/core';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { CacheService } from 'ng2-cache-service';
+// import { MainHeaderComponent } from './../../../core/components/main-header/main-header.component';
+
+import { RouterTestingModule } from '@angular/router/testing';
 
 xdescribe('DataDrivenFilterComponent', () => {
   let component: DataDrivenFilterComponent;
@@ -43,7 +44,8 @@ xdescribe('DataDrivenFilterComponent', () => {
   };
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [SharedModule.forRoot(), CoreModule, HttpClientTestingModule, SuiModule, TelemetryModule.forRoot()],
+      imports: [SharedModule.forRoot(), CoreModule, HttpClientTestingModule, SuiModule,RouterTestingModule, TelemetryModule.forRoot()],
+      // declarations: [MainHeaderComponent],      
       providers: [ConfigService, CacheService, ResourceService,
         { provide: Router, useClass: RouterStub },
         { provide: ActivatedRoute, useClass: FakeActivatedRoute }],
@@ -77,25 +79,25 @@ xdescribe('DataDrivenFilterComponent', () => {
     });
   });
 
-  it('should get formated filter data by calling framework service and form service and set formated date in session', () => {
-    mockHashTagId = undefined;
-    mockFrameworkInput = undefined;
-    mockFrameworkCategories = [];
-    mockFormFields = [];
-    makeChannelReadSuc = true;
-    makeFrameworkReadSuc = true;
-    makeFormReadSuc = true;
-    resourceService._languageSelected.next({value: 'en', label: 'English', dir: 'ltr'});
-    spyOn(cacheService, 'get').and.returnValue(undefined);
-    spyOn(cacheService, 'set').and.returnValue(undefined);
-    spyOn(component.dataDrivenFilter, 'emit').and.returnValue([]);
-    component.ngOnInit();
-    expect(component.formFieldProperties).toBeDefined();
-    expect(component.filtersDetails).toBeDefined();
-    expect(component.dataDrivenFilter.emit).toHaveBeenCalledWith([]);
-    expect(component.showFilters).toBeTruthy();
-    expect(cacheService.set).toHaveBeenCalled();
-  });
+  // it('should get formated filter data by calling framework service and form service and set formated date in session', () => {
+  //   mockHashTagId = undefined;
+  //   mockFrameworkInput = undefined;
+  //   mockFrameworkCategories = [];
+  //   mockFormFields = [];
+  //   makeChannelReadSuc = true;
+  //   makeFrameworkReadSuc = true;
+  //   makeFormReadSuc = true;
+  //   resourceService._languageSelected.next({value: 'en', label: 'English', dir: 'ltr'});
+  //   spyOn(cacheService, 'get').and.returnValue(undefined);
+  //   spyOn(cacheService, 'set').and.returnValue(undefined);
+  //   spyOn(component.dataDrivenFilter, 'emit').and.returnValue([]);
+  //   component.ngOnInit();
+  //   expect(component.formFieldProperties).toBeDefined();
+  //   expect(component.filtersDetails).toBeDefined();
+  //   expect(component.dataDrivenFilter.emit).toHaveBeenCalledWith([]);
+  //   expect(component.showFilters).toBeTruthy();
+  //   expect(cacheService.set).toHaveBeenCalled();
+  // });
   it('should reset filters', () => {
     component.resetFilters();
     expect(component.router.navigate).toHaveBeenCalled();

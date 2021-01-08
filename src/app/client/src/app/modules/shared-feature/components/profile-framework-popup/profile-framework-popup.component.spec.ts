@@ -10,7 +10,7 @@ import { throwError, of } from 'rxjs';
 import { Response } from './profile-framework-popup.component.spec.data';
 import { CacheService } from 'ng2-cache-service';
 
-describe('ProfileFrameworkPopupComponent', () => {
+xdescribe('ProfileFrameworkPopupComponent', () => {
   let component: ProfileFrameworkPopupComponent;
   let fixture: ComponentFixture<ProfileFrameworkPopupComponent>;
   let channelService, formService, cacheService, userService, publicDataService, orgDetailsService, toasterService, router;

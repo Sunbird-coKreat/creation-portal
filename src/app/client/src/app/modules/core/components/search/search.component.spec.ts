@@ -11,6 +11,7 @@ import { Location } from '@angular/common';
 import { ActivatedRoute, Router, Params, UrlSegment, NavigationEnd} from '@angular/router';
 import { UserService, LearnerService, ContentService } from '@sunbird/core';
 import { mockResponse } from './search.component.spec.data';
+import { APP_BASE_HREF,DatePipe } from '@angular/common'; 
 
 import { CacheService } from 'ng2-cache-service';
 xdescribe('SearchComponent', () => {
@@ -41,7 +42,8 @@ xdescribe('SearchComponent', () => {
          { provide: ActivatedRoute, useValue: {queryParams: {
           subscribe: (fn: (value: Params) => void) => fn({
             subjects : ['english']
-          })}  }}, Location],
+          })}  }}, Location,
+          {provide: APP_BASE_HREF, useValue: '/'}],
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();

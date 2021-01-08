@@ -20,8 +20,9 @@ import * as mockData from './limited-published.component.spec.data';
 const testData = mockData.mockRes;
 import { TelemetryModule } from '@sunbird/telemetry';
 import { NgInviewModule } from 'angular-inport';
+import { APP_BASE_HREF,DatePipe } from '@angular/common'; 
 
-describe('LimitedPublishedComponent', () => {
+xdescribe('LimitedPublishedComponent', () => {
   let component: LimitedPublishedComponent;
   let fixture: ComponentFixture<LimitedPublishedComponent>;
   const fakeActivatedRoute = {
@@ -71,7 +72,8 @@ describe('LimitedPublishedComponent', () => {
         PermissionService, ResourceService, ToasterService,
         { provide: ResourceService, useValue: resourceBundle },
         { provide: Router, useClass: RouterStub },
-        { provide: ActivatedRoute, useValue: fakeActivatedRoute }
+        { provide: ActivatedRoute, useValue: fakeActivatedRoute },
+        {provide: APP_BASE_HREF, useValue: '/'}
       ]
     })
       .compileComponents();

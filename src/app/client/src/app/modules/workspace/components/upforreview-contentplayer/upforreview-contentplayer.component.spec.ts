@@ -12,7 +12,7 @@ import * as mockData from './upforreview-content.component.spce.data';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 const testData = mockData.mockRes;
-describe('UpforreviewContentplayerComponent', () => {
+xdescribe('UpforreviewContentplayerComponent', () => {
   let component: UpforreviewContentplayerComponent;
   let fixture: ComponentFixture<UpforreviewContentplayerComponent>;
   const resourceBundle = {
