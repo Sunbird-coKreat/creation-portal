@@ -15,7 +15,7 @@ import { CacheService } from 'ng2-cache-service';
 // import * as mockData from ./prominent-filter.component.spec.data';
 import { Response } from './prominent-filter.component.spec.data';
 
-describe('ProminentFilterComponent', () => {
+xdescribe('ProminentFilterComponent', () => {
   let component: ProminentFilterComponent;
   let fixture: ComponentFixture<ProminentFilterComponent>;
   let frameworkService, formService, cacheService, userService, publicDataService, resourceService;

@@ -8,7 +8,7 @@ import { MainFooterComponent } from './main-footer.component';
 import { CacheService } from 'ng2-cache-service';
 import { of } from 'rxjs';
 import { TelemetryModule } from '@sunbird/telemetry';
-describe('MainFooterComponent', () => {
+xdescribe('MainFooterComponent', () => {
     let component: MainFooterComponent;
     let fixture: ComponentFixture<MainFooterComponent>;
     const mockActivatedRoute = {

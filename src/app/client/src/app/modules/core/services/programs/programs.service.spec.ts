@@ -10,12 +10,13 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { mockResponseData } from './programs.service.spec.data';
 import * as _ from 'lodash-es';
 import { of, throwError } from 'rxjs';
+import { DatePipe } from '@angular/common';
 
 describe('ProgramsService', () => {
 
   beforeEach(() => TestBed.configureTestingModule({
     imports: [SharedModule.forRoot(), HttpClientTestingModule, RouterTestingModule],
-    providers: [ConfigService, ExtPluginService, OrgDetailsService, UserService]
+    providers: [ConfigService, ExtPluginService, OrgDetailsService, UserService, DatePipe]
   }));
 
   describe('enableContributeMenu method', () => {

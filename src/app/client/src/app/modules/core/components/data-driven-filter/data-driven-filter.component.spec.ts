@@ -13,7 +13,7 @@ import { CoreModule, FrameworkService, FormService, UserService, PublicDataServi
 import { TelemetryModule } from '@sunbird/telemetry';
 import { CacheService } from 'ng2-cache-service';
 
-describe('DataDrivenFilterComponent', () => {
+xdescribe('DataDrivenFilterComponent', () => {
   let component: DataDrivenFilterComponent;
   let fixture: ComponentFixture<DataDrivenFilterComponent>;
   let frameworkService, formService, cacheService, userService, publicDataService, resourceService;

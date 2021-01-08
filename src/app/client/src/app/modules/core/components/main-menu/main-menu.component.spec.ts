@@ -6,7 +6,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 // import { WebExtensionModule } from '@project-sunbird/web-extensions';
 import { ActivatedRoute, Router } from '@angular/router';
 
-describe('MainMenuComponent', () => {
+xdescribe('MainMenuComponent', () => {
   let component: MainMenuComponent;
   let fixture: ComponentFixture<MainMenuComponent>;
   class RouterStub {
