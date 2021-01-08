@@ -70,6 +70,8 @@
     "version": "enable",
     "versionCheckMode": "ON",
     "frameworkCategories": [],
+    "orgFrameworkTerms": [],
+    "targetFrameworkTerms": [],
     "edge": {
         "properties": {
             "license": "License"
