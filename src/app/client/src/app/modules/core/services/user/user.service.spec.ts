@@ -6,11 +6,13 @@ import { TestBed, inject } from '@angular/core/testing';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { LearnerService, UserService, PermissionService, CoreModule } from '@sunbird/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { Location } from '@angular/common';
+
 xdescribe('userService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, SharedModule.forRoot(), CoreModule],
-      providers: [UserService, ConfigService, LearnerService]
+      providers: [UserService, ConfigService, LearnerService, Location]
     });
   });
   it('should fetch user profile details', inject([UserService], (service: UserService) => {
