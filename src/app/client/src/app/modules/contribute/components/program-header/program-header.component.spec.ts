@@ -11,7 +11,6 @@ import * as _ from 'lodash-es';
 import { Router, ActivatedRoute } from '@angular/router';
 import { IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
 // import { MainHeaderComponent } from 'src/app/modules/core/components/main-header/main-header.component';
-import {MainHeaderComponent } from '../../../../modules/core/components/main-header/main-header.component'
 
 const fakeActivatedRoute = {
   snapshot: {
@@ -75,7 +74,7 @@ describe('ProgramHeaderComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [TelemetryModule, HttpClientTestingModule],
-      declarations: [ ProgramHeaderComponent,MainHeaderComponent ],
+      declarations: [ ProgramHeaderComponent ],
       providers: [ ProgramStageService, ToasterService, TelemetryService, ConfigService,
         { provide: ProgramTelemetryService, useValue: programTelemetryServiceStub},
         { provide: ActivatedRoute, useValue: fakeActivatedRoute },

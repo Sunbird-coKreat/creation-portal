@@ -13,7 +13,7 @@ import { TelemetryModule } from '@sunbird/telemetry';
 import { PlayerHelperModule } from '@sunbird/player-helper';
 import { throwError as observableThrowError, of as observableOf } from 'rxjs';
 import { validateCertMockResponse } from './certificate-details.component.spec.data';
-import { MainHeaderComponent } from './../../../core/components/main-header/main-header.component';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('CertificateDetailsComponent', () => {
   let component: CertificateDetailsComponent;
@@ -41,8 +41,8 @@ describe('CertificateDetailsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, FormsModule, SharedModule.forRoot(), SuiModule, TelemetryModule.forRoot(), PlayerHelperModule],
-      declarations: [CertificateDetailsComponent,MainHeaderComponent],
+      imports: [HttpClientTestingModule, FormsModule,RouterTestingModule, SharedModule.forRoot(), SuiModule, TelemetryModule.forRoot(), PlayerHelperModule],
+      declarations: [CertificateDetailsComponent],
       providers: [ResourceService, ConfigService, CacheService, BrowserCacheTtlService, DeviceDetectorService,
         { provide: Router, useClass: RouterStub },
         { provide: ActivatedRoute, useValue: fakeActivatedRoute }

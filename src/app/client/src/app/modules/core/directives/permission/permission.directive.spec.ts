@@ -16,7 +16,7 @@ import { APP_BASE_HREF,DatePipe } from '@angular/common';
 class TestWrapperComponent {
   adminDashboard = [];
 }
-describe('PermissionDirective', () => {
+xdescribe('PermissionDirective', () => {
   let component: TestWrapperComponent;
   let fixture: ComponentFixture<TestWrapperComponent>;
   beforeEach(() => {

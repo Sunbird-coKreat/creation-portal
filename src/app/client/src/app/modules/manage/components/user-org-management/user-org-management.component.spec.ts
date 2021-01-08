@@ -43,7 +43,7 @@ const resourceMockData = {
   }
 };
 
-describe('UserOrgManagementComponent', () => {
+xdescribe('UserOrgManagementComponent', () => {
 
   let component: UserOrgManagementComponent;
   let fixture: ComponentFixture<UserOrgManagementComponent>;

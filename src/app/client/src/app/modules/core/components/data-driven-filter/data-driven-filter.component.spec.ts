@@ -79,25 +79,25 @@ describe('DataDrivenFilterComponent', () => {
     });
   });
 
-  // it('should get formated filter data by calling framework service and form service and set formated date in session', () => {
-  //   mockHashTagId = undefined;
-  //   mockFrameworkInput = undefined;
-  //   mockFrameworkCategories = [];
-  //   mockFormFields = [];
-  //   makeChannelReadSuc = true;
-  //   makeFrameworkReadSuc = true;
-  //   makeFormReadSuc = true;
-  //   resourceService._languageSelected.next({value: 'en', label: 'English', dir: 'ltr'});
-  //   spyOn(cacheService, 'get').and.returnValue(undefined);
-  //   spyOn(cacheService, 'set').and.returnValue(undefined);
-  //   spyOn(component.dataDrivenFilter, 'emit').and.returnValue([]);
-  //   component.ngOnInit();
-  //   expect(component.formFieldProperties).toBeDefined();
-  //   expect(component.filtersDetails).toBeDefined();
-  //   expect(component.dataDrivenFilter.emit).toHaveBeenCalledWith([]);
-  //   expect(component.showFilters).toBeTruthy();
-  //   expect(cacheService.set).toHaveBeenCalled();
-  // });
+  xit('should get formated filter data by calling framework service and form service and set formated date in session', () => {
+    mockHashTagId = undefined;
+    mockFrameworkInput = undefined;
+    mockFrameworkCategories = [];
+    mockFormFields = [];
+    makeChannelReadSuc = true;
+    makeFrameworkReadSuc = true;
+    makeFormReadSuc = true;
+    resourceService._languageSelected.next({value: 'en', label: 'English', dir: 'ltr'});
+    spyOn(cacheService, 'get').and.returnValue(undefined);
+    spyOn(cacheService, 'set').and.returnValue(undefined);
+    spyOn(component.dataDrivenFilter, 'emit').and.returnValue([]);
+    component.ngOnInit();
+    expect(component.formFieldProperties).toBeDefined();
+    expect(component.filtersDetails).toBeDefined();
+    expect(component.dataDrivenFilter.emit).toHaveBeenCalledWith([]);
+    expect(component.showFilters).toBeTruthy();
+    expect(cacheService.set).toHaveBeenCalled();
+  });
   it('should reset filters', () => {
     component.resetFilters();
     expect(component.router.navigate).toHaveBeenCalled();

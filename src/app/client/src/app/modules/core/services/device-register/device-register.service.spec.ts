@@ -8,7 +8,7 @@ import {
     UtilService, BrowserCacheTtlService, NavigationHelperService,
   } from '@sunbird/shared';
 
-describe('DeviceRegisterService', () => {
+xdescribe('DeviceRegisterService', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
         imports: [HttpClientTestingModule, CoreModule, SharedModule.forRoot()],

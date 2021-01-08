@@ -16,7 +16,7 @@ import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui';
 
 // import {mockData} from './org-reports.component.spec.data'
 
-describe('OrgUserListComponent', () => {
+xdescribe('OrgUserListComponent', () => {
   let component: OrgUserListComponent;
   let fixture: ComponentFixture<OrgUserListComponent>;
   const fakeActivatedRoute = {
