@@ -73,29 +73,43 @@
     {{resourceService.frmelmnts.lbl.selectQuestionType}}
   </div>
   <div class="sb-modal-content">
-    <div class="py-10">
+    <div class="py-10 d-flex flex-dr flex-jc-space-around">
+      <div class="d-flex flex-dc">
+      <h4 class="my-10">Non-Interactive</h4>
+      <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+        <input type="radio" id="mtf" name="questionType" (click)="setQuestionType('MTF')">
+        <label for="mtf">MTF - Match The Following</label>
+      </div>
+      <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+        <input type="radio" id="ftb" name="questionType" (click)="setQuestionType('FTB')">
+        <label for="ftb">FTB - Fill in the Blank</label>
+      </div>   
       <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="vsa" name="questionType" (click)="setQuestionType('VSA')">
         <label for="vsa">VSA - Practice Sets</label>
-      </div>
+      </div>   
       <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="sa" name="questionType" (click)="setQuestionType('SA')">
         <label for="sa">SA - Practice Sets</label>
-      </div>
+      </div>   
       <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="la" name="questionType" (click)="setQuestionType('LA')">
         <label for="la">LA - Practice Sets</label>
-      </div>
-      <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-        <input type="radio" id="mcq" name="questionType" (click)="setQuestionType('MCQ')">
-        <label for="mcq">MCQ - Practice Sets</label>
-      </div>
+      </div>  
       <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="curiosity" name="questionType" (click)="setQuestionType('CuriosityQuestion')">
         <label for="curiosity">Curiosity Sets</label>
       </div>
     </div>
-  </div>
+    <div class="d-flex flex-dc">
+      <h4 class="my-10">Interactive</h4>   
+      <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+        <input type="radio" id="mcq" name="questionType" (click)="setQuestionType('MCQ')">
+        <label for="mcq">MCQ - Practice Sets</label>
+      </div>
+    </div>
+    </div>
+  </div>  
   <div class="sb-modal-actions">
     <button class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': showButton, 'sb-btn-disabled': !showButton}" (click)="submit()"
     appTelemetryInteract
