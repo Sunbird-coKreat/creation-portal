@@ -191,6 +191,8 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
         }, (err) => {
           this.toasterService.error(this.resourceService.messages.emsg.m0027);
         });
+      } else {
+        this.templateList = this.editorService.hierarchyConfig.children[this.childObject];
       }
       this.toolbarConfig.title = res.name;
       this.collectionTreeNodes = res;
