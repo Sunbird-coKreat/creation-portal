@@ -17,6 +17,8 @@
   "version": "enable",
   "versionCheckMode": "ON",
   "frameworkCategories": [],
+  "orgFrameworkTerms": [],
+  "targetFrameworkTerms": [],
   "cacheEnabled": false,
   "schema_restrict_api": true,
   "external": {

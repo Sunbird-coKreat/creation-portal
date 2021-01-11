@@ -182,15 +182,17 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
     config,
     channel: this.sessionContext.channel
     };
-    this.editorState = {
-      question : '',
-      answer: '',
+    this.editorState= {
+      question : this.configService.editorConfig.CONTENT_EDITOR.defaultStates.nonInteractiveQuestions[this.sessionContext.questionType].questionBody,
+      answer : this.configService.editorConfig.CONTENT_EDITOR.defaultStates.nonInteractiveQuestions[this.sessionContext.questionType].answerBody,
       solutions: ''
     };
     this.manageFormConfiguration();
     if (this.questionMetaData && this.questionMetaData.data) {
-      this.editorState.question = this.questionMetaData.data.editorState.question;
-      this.editorState.answer = this.questionMetaData.data.editorState.answer;
+      if(this.questionMetaData.data.editorState.question)
+        this.editorState.question = this.questionMetaData.data.editorState.question;
+      if(this.questionMetaData.data.editorState.answer)  
+        this.editorState.answer = this.questionMetaData.data.editorState.answer;
       if (!_.isEmpty(this.questionMetaData.data.editorState.solutions)) {
         const editor_state = this.questionMetaData.data.editorState;
         this.editorState.solutions = editor_state.solutions[0].value;
