@@ -16,8 +16,9 @@ import { UserProfileComponent } from './user-profile.component';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { Response } from './user-profile.component.spec.data';
 import { OrderModule } from 'ngx-order-pipe';
+import {APP_BASE_HREF} from '@angular/common';
 
-xdescribe('UserProfileComponent', () => {
+describe('UserProfileComponent', () => {
     let component: UserProfileComponent;
     let fixture: ComponentFixture<UserProfileComponent>;
     const resourceBundle = {
@@ -58,7 +59,9 @@ xdescribe('UserProfileComponent', () => {
                 LearnerService, ContentService, ConfigService, ToasterService, UserSearchService, RouterNavigationService,
                 BadgesService,
                 { provide: ResourceService, useValue: resourceBundle },
-                { provide: ActivatedRoute, useValue: fakeActivatedRoute }],
+                { provide: ActivatedRoute, useValue: fakeActivatedRoute },
+                { provide: APP_BASE_HREF, useValue: '/' }
+            ],
             schemas: [NO_ERRORS_SCHEMA]
         })
             .compileComponents();

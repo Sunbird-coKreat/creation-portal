@@ -17,9 +17,9 @@ const testData = mockData.mockRes;
 import { TelemetryModule } from '@sunbird/telemetry';
 import { NgInviewModule } from 'angular-inport';
 import { SuiModule } from 'ng2-semantic-ui';
-import { APP_BASE_HREF,DatePipe } from '@angular/common'; 
+import { APP_BASE_HREF,DatePipe } from '@angular/common';
 
-xdescribe('PublishedComponent', () => {
+describe('PublishedComponent', () => {
   let component: PublishedComponent;
   let fixture: ComponentFixture<PublishedComponent>;
   const fakeActivatedRoute = {

@@ -27,7 +27,7 @@ describe('OnboardPopupComponent', () => {
         SuiAccordionModule, TelemetryModule.forRoot(),
         HttpClientTestingModule],
       declarations: [ OnboardPopupComponent ],
-      providers: [ResourceService, ToasterService, BrowserCacheTtlService, CacheService, ConfigService, {provide: APP_BASE_HREF, useValue: '/my/app'}]
+      providers: [ResourceService, ToasterService, BrowserCacheTtlService, CacheService, ConfigService, {provide: APP_BASE_HREF, useValue: '/'}]
     })
     .compileComponents();
   }));

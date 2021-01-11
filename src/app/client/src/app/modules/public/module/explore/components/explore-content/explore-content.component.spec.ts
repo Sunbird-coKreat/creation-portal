@@ -11,8 +11,9 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { Response } from './explore-content.component.spec.data';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TelemetryModule } from '@sunbird/telemetry';
+import { RouterTestingModule } from '@angular/router/testing';
 
-xdescribe('ExploreContentComponent', () => {
+describe('ExploreContentComponent', () => {
   let component: ExploreContentComponent;
   let fixture: ComponentFixture<ExploreContentComponent>;
   let toasterService, userService, searchService, orgDetailsService, activatedRoute;
@@ -55,7 +56,7 @@ xdescribe('ExploreContentComponent', () => {
   }
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [SharedModule.forRoot(), CoreModule, HttpClientTestingModule, SuiModule, TelemetryModule.forRoot()],
+      imports: [RouterTestingModule, SharedModule.forRoot(), CoreModule, HttpClientTestingModule, SuiModule, TelemetryModule.forRoot()],
       declarations: [ExploreContentComponent],
       providers: [PublicPlayerService, { provide: ResourceService, useValue: resourceBundle },
       { provide: Router, useClass: RouterStub },

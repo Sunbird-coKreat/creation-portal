@@ -12,7 +12,7 @@ import { PublicPlayerService } from '@sunbird/public';
 import { SuiModule } from 'ng2-semantic-ui';
 import { RouterTestingModule } from '@angular/router/testing';
 
-xdescribe('ViewAllComponent', () => {
+describe('ViewAllComponent', () => {
   let component: ViewAllComponent;
   let fixture: ComponentFixture<ViewAllComponent>;
   const resourceBundle = {

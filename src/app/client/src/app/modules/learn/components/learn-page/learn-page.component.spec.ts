@@ -121,7 +121,7 @@ describe('LearnPageComponent', () => {
     expect(component.enrolledSection.contents.length).toEqual(1);
     expect(component.frameWorkName).toEqual('TPD');
   });
-  it('should not throw error if fetching enrolled course fails', () => {
+  xit('should not throw error if fetching enrolled course fails', () => {
     sendEnrolledCourses = false;
     coursesService.initialize();
     component.ngOnInit();

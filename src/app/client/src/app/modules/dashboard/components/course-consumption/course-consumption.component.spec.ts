@@ -16,9 +16,11 @@ import { UserService, SearchService, ContentService, LearnerService } from '@sun
 // Test data
 import * as mockData from './course-consumption.component.spec.data';
 import { TelemetryModule } from '@sunbird/telemetry';
+import { RouterTestingModule } from '@angular/router/testing';
+import { APP_BASE_HREF } from '@angular/common';
 
 const testData = mockData.mockRes;
-xdescribe('CourseConsumptionComponent', () => {
+describe('CourseConsumptionComponent', () => {
   let component: CourseConsumptionComponent;
   let fixture: ComponentFixture<CourseConsumptionComponent>;
   let router: Router;
@@ -46,7 +48,7 @@ xdescribe('CourseConsumptionComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [CourseConsumptionComponent],
-      imports: [HttpClientModule, FormsModule, SuiModule, ChartsModule, SharedModule.forRoot(), TelemetryModule.forRoot()],
+      imports: [RouterTestingModule, HttpClientModule, FormsModule, SuiModule, ChartsModule, SharedModule.forRoot(), TelemetryModule.forRoot()],
       providers: [CourseConsumptionService,
         RendererService,
         LearnerService,
@@ -58,7 +60,9 @@ xdescribe('CourseConsumptionComponent', () => {
         ConfigService,
         ResourceService,
         { provide: Router, useClass: RouterStub },
-        { provide: ActivatedRoute, useValue: fakeActivatedRoute }
+        { provide: ActivatedRoute, useValue: fakeActivatedRoute },
+        {provide: APP_BASE_HREF, useValue: '/'}
+
       ]
     })
     .compileComponents();

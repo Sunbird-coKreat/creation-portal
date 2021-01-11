@@ -12,9 +12,9 @@ import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { Response } from './flagged.component.spec.data';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { NgInviewModule } from 'angular-inport';
-import { APP_BASE_HREF } from '@angular/common'; 
+import { APP_BASE_HREF } from '@angular/common';
 
-xdescribe('FlaggedComponent', () => {
+describe('FlaggedComponent', () => {
   let component: FlaggedComponent;
   let fixture: ComponentFixture<FlaggedComponent>;
   const resourceBundle = {

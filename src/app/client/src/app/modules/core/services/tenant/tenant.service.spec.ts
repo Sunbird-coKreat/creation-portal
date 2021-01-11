@@ -9,7 +9,7 @@ import { TenantService } from './tenant.service';
 import { } from 'jasmine';
 import { UserService } from '../user/user.service';
 
-xdescribe('TenantService', () => {
+describe('TenantService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({

@@ -12,9 +12,9 @@ import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import * as mockData from './uploaded.component.spec.data';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { NgInviewModule } from 'angular-inport';
-import { APP_BASE_HREF,DatePipe } from '@angular/common'; 
+import { APP_BASE_HREF,DatePipe } from '@angular/common';
 const testData = mockData.mockRes;
-xdescribe('UploadedComponent', () => {
+describe('UploadedComponent', () => {
   let component: UploadedComponent;
   let fixture: ComponentFixture<UploadedComponent>;
   const fakeActivatedRoute = {

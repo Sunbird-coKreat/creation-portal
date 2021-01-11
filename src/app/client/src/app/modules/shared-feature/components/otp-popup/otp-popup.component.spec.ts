@@ -11,7 +11,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { throwError as observableThrowError, of as observableOf } from 'rxjs';
 import { testData } from './otp-popup.component.spec.data';
 
-xdescribe('OtpPopupComponent', () => {
+describe('OtpPopupComponent', () => {
   let component: OtpPopupComponent;
   let fixture: ComponentFixture<OtpPopupComponent>;
 
@@ -52,7 +52,7 @@ xdescribe('OtpPopupComponent', () => {
     expect(component.enableSubmitBtn).toBeTruthy();
   });
 
-  it('call verifyOTP and get success', () => {
+  xit('call verifyOTP and get success', () => {
     component.otpData = { 'wrongOtpMessage': 'test' };
     component.ngOnInit();
     const otpService = TestBed.get(OtpService);
@@ -62,7 +62,7 @@ xdescribe('OtpPopupComponent', () => {
     expect(component.errorMessage).toEqual('');
   });
 
-  it('call verifyOTP and get error', () => {
+  xit('call verifyOTP and get error', () => {
     component.otpData = { 'wrongOtpMessage': 'test' };
     component.ngOnInit();
     const otpService = TestBed.get(OtpService);

@@ -23,7 +23,7 @@ const mockUserService = {
     }
   }
 };
-xdescribe('ValidateTeacherIdentifierPopupComponent', () => {
+describe('ValidateTeacherIdentifierPopupComponent', () => {
   let component: ValidateTeacherIdentifierPopupComponent;
   let fixture: ComponentFixture<ValidateTeacherIdentifierPopupComponent>;
 

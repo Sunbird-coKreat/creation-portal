@@ -61,7 +61,7 @@ const fakeActivatedRoute = {
     }
 };
 
-xdescribe('UpdateCourseBatchComponent', () => {
+describe('UpdateCourseBatchComponent', () => {
   let component: UpdateCourseBatchComponent;
   let fixture: ComponentFixture<UpdateCourseBatchComponent>;
 

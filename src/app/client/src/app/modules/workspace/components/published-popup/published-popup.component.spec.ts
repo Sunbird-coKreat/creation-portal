@@ -13,7 +13,7 @@ import { SharedModule, ResourceService, ConfigService, ToasterService, Navigatio
 import { PublishedPopupComponent } from './published-popup.component';
 import { WorkSpaceService, ReviewCommentsService } from './../../services';
 import {mockRes} from './published-popup.component.spec.data';
-xdescribe('PublishedPopupComponent', () => {
+describe('PublishedPopupComponent', () => {
   let component: PublishedPopupComponent;
   let fixture: ComponentFixture<PublishedPopupComponent>;
 

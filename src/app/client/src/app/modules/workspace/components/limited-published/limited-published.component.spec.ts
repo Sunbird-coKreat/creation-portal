@@ -20,9 +20,9 @@ import * as mockData from './limited-published.component.spec.data';
 const testData = mockData.mockRes;
 import { TelemetryModule } from '@sunbird/telemetry';
 import { NgInviewModule } from 'angular-inport';
-import { APP_BASE_HREF,DatePipe } from '@angular/common'; 
+import { APP_BASE_HREF,DatePipe } from '@angular/common';
 
-xdescribe('LimitedPublishedComponent', () => {
+describe('LimitedPublishedComponent', () => {
   let component: LimitedPublishedComponent;
   let fixture: ComponentFixture<LimitedPublishedComponent>;
   const fakeActivatedRoute = {

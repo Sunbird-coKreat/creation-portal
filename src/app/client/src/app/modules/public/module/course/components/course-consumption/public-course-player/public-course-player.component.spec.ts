@@ -9,6 +9,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import {CourseConsumptionService, CourseProgressService, CourseBatchService} from '@sunbird/learn';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 
 const resourceServiceMockData = {
   messages : {
@@ -46,14 +47,14 @@ class MockRouter {
   });
 }
 
-xdescribe('PublicCoursePlayerComponent', () => {
+describe('PublicCoursePlayerComponent', () => {
   let component: PublicCoursePlayerComponent;
   let fixture: ComponentFixture<PublicCoursePlayerComponent>;
   let activatedRouteStub, courseService, toasterService, courseConsumptionService;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, SharedModule.forRoot(), CoreModule],
+      imports: [RouterTestingModule, HttpClientTestingModule, SharedModule.forRoot(), CoreModule],
       declarations: [ PublicCoursePlayerComponent ],
       providers: [{ provide: ActivatedRoute, useClass: ActivatedRouteStub },
         { provide: ResourceService, useValue: resourceServiceMockData },

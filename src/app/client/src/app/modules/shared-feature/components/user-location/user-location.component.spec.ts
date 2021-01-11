@@ -18,9 +18,9 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { userLocationMockData } from './user-location.component.spec.data';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { SharedModule } from '@sunbird/shared';
-import { APP_BASE_HREF,DatePipe } from '@angular/common'; 
+import { APP_BASE_HREF,DatePipe } from '@angular/common';
 
-xdescribe('UserLocationComponent', () => {
+describe('UserLocationComponent', () => {
   let component: UserLocationComponent;
   let fixture: ComponentFixture<UserLocationComponent>;
   let configService;

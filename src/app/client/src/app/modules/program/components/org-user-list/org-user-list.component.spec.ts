@@ -4,6 +4,9 @@ import { OrgUserListComponent } from './org-user-list.component';
 import {userDetail, chunkedUserList} from '../../services/programUserTestData';
 import { ProgramsService , RegistryService} from '@sunbird/core';
 import { APP_BASE_HREF,DatePipe } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TelemetryModule } from '@sunbird/telemetry';
+import { SuiModule } from 'ng2-semantic-ui';
 
 xdescribe('OrgUserListComponent', () => {
   let component: OrgUserListComponent;
@@ -11,6 +14,7 @@ xdescribe('OrgUserListComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports:[ReactiveFormsModule, SuiModule, FormsModule, TelemetryModule],
       declarations: [ OrgUserListComponent ],
       providers: [
         ProgramsService,
