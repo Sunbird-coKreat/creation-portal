@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { questionToolbarConfig } from '../../editor.config';
 import { EditorService } from '../../services';
+import { PlayerService } from '../../services';
 import { QuestionService } from '../../services/question/question.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash-es';
@@ -20,7 +21,7 @@ import { data3 } from '../contentplayer-page/quml-library-data';
 })
 export class QuestionBaseComponent implements OnInit, AfterViewInit {
 
-  QumlPlayerConfig = data3;
+  QumlPlayerConfig: any = {};
   toolbarConfig = questionToolbarConfig;
   public telemetryPageDetails: any = {};
   public telemetryPageId: string;
@@ -67,7 +68,8 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
     public toasterService: ToasterService, public resourceService: ResourceService,
     private userService: UserService, public programTelemetryService: ProgramTelemetryService,
     private configService: ConfigService, private navigationHelperService: NavigationHelperService,
-    private deviceDetectorService: DeviceDetectorService, private telemetryService: TelemetryService) {
+    private deviceDetectorService: DeviceDetectorService, private telemetryService: TelemetryService,
+    public playerService: PlayerService) {
       this.questionData = this.editorService.selectedChildren;
       this.activatedRoute.queryParams.subscribe(params => {
         this.questionInteractionType = params['type'];
@@ -502,9 +504,19 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
   }
 
   setQumlData() {
-    this.QumlPlayerConfig.data.children = [];
+    const playerConfig = this.playerService.getConfig();
+    this.QumlPlayerConfig['context'] = playerConfig.context;
+    this.QumlPlayerConfig['metadata'] = { contentData: []};
+    this.QumlPlayerConfig['data'] = {};
+    this.QumlPlayerConfig['data'] = this.questionSetHierarchy;
+    this.QumlPlayerConfig['data']['totalQuestions'] = 1;
+    this.QumlPlayerConfig['data']['maxQuestions'] = 1;
+    this.QumlPlayerConfig['data']['maxScore'] = 1;
+    this.QumlPlayerConfig['data']['context'] = {};
+    this.QumlPlayerConfig['data']['children'] = [];
     const questionMetadata = this.prepareRequestBody();
-    this.QumlPlayerConfig.data.children.push(questionMetadata);
+    this.QumlPlayerConfig['data']['children'].push(questionMetadata);
+    console.log('QumlPlayerConfig', this.QumlPlayerConfig);
   }
 
   getPlayerEvents(event) {
