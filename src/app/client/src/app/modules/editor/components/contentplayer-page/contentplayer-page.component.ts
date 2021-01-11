@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ConfigService } from '@sunbird/shared';
 import { ProgramTelemetryService } from '../../../program/services';
-import { data1 , data2, data3 } from './quml-library-data';
+import { data3 } from './quml-library-data';
 
 @Component({
   selector: 'app-contentplayer-page',

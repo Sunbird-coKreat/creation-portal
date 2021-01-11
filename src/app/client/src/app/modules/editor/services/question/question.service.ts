@@ -14,7 +14,9 @@ export class QuestionService {
   readQuestion(questionId) {
     const filters = '?fields=body,answer,templateId,responseDeclaration,interactionTypes,interactions,name,solutions,editorState,media';
     const option = {
-      url: `${this.configService.urlConFig.URLS.QUESTION.READ}/${questionId}${filters}`,
+      url: `${this.configService.urlConFig.URLS.QUESTION.READ}/${questionId}`,
+      // tslint:disable-next-line:max-line-length
+      param: { 'fields': 'code,body,answer,templateId,responseDeclaration,interactionTypes,interactions,name,solutions,editorState,media,code,primaryCategory,qType,identifier,languageCode' }
     };
     return this.publicDataService.get(option);
   }
@@ -26,11 +28,11 @@ export class QuestionService {
     } else {
       hierarchyChildren = [];
     }
-    hierarchyChildren.push('UUID');
+    hierarchyChildren.push('questionId');
     const requestObj = {
       'data': {
         'nodesModified': {
-          'UUID': {
+          'questionId': {
             'metadata': metadata,
             'objectType': 'Question',
             'root': false,

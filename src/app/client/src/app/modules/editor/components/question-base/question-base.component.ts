@@ -12,6 +12,7 @@ import { UserService } from '@sunbird/core';
 import { ProgramTelemetryService } from '../../../program/services';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { TelemetryService, IStartEventInput, IEndEventInput } from '@sunbird/telemetry';
+import { data3 } from '../contentplayer-page/quml-library-data';
 @Component({
   selector: 'app-question-base',
   templateUrl: './question-base.component.html',
@@ -19,6 +20,7 @@ import { TelemetryService, IStartEventInput, IEndEventInput } from '@sunbird/tel
 })
 export class QuestionBaseComponent implements OnInit, AfterViewInit {
 
+  QumlPlayerConfig = data3;
   toolbarConfig = questionToolbarConfig;
   public telemetryPageDetails: any = {};
   public telemetryPageId: string;
@@ -58,6 +60,7 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
   questionSetHierarchy: any;
   showConfirmPopup = false;
   public questionData: any = {};
+  validQuestionData = false;
 
   constructor(private editorService: EditorService, private questionService: QuestionService,
     public activatedRoute: ActivatedRoute, public router: Router,
@@ -252,6 +255,13 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
         this.generateTelemetryEndEvent('back');
         this.handleRedirectToQuestionset();
         break;
+      case 'previewContent':
+        this.previewContent();
+        break;
+        case 'editContent':
+          this.showPreview = false;
+          this.showLoader = false;
+          break;
       default:
         break;
     }
@@ -293,6 +303,7 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
         this.showFormError = false;
       }
     }
+    this.validQuestionData = true;
     this.saveQuestion();
   }
 
@@ -433,13 +444,13 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
     if (_.isEmpty(this.editorState.solutions)) {
       metadata['solutions'] = [];
     }
-    return _.omit(metadata, ['question', 'answer', 'numberOfOptions', 'options']);
+    return _.omit(metadata, ['question', 'numberOfOptions', 'options']);
   }
 
   getMcqQuestionHtmlBody(question, templateId) {
     const mcqTemplateConfig = {
       // tslint:disable-next-line:max-line-length
-      'mcqBody': '<div class=\"question-body\"><div class=\"mcq-title\">{question}</div><div data-choice-interaction=\"response1\" class="{templateClass}"></div></div>'
+      'mcqBody': '<div class=\'question-body\'><div class=\'mcq-title\'>{question}</div><div data-choice-interaction=\'response1\' class=\'{templateClass}\'></div></div>'
     };
     const { mcqBody } = mcqTemplateConfig;
     const questionBody = mcqBody.replace('{templateClass}', templateId)
@@ -453,8 +464,10 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
       subscribe(
         (response: ServerResponse) => {
           if (response.result) {
+            const questionId = response.result.identifiers.questionId;
             this.toasterService.success(this.resourceService.messages.smsg.m0070);
-            this.router.navigate([`create/questionSet/${this.questionSetId}`]);
+            // tslint:disable-next-line:max-line-length
+            this.router.navigate([`create/questionSet/${this.questionSetId}/question`], { queryParams: { type: this.questionInteractionType, questionId: questionId } });
           }
         },
         (err: ServerResponse) => {
@@ -469,8 +482,9 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
       subscribe(
         (response: ServerResponse) => {
           if (response.result) {
-            this.toasterService.success(this.resourceService.messages.smsg.m0071);
-            this.router.navigate([`create/questionSet/${this.questionSetId}`]);
+            this.toasterService.success(this.resourceService.messages.smsg.m0070);
+            // tslint:disable-next-line:max-line-length
+            this.router.navigate([`create/questionSet/${this.questionSetId}/question`], { queryParams: { type: this.questionInteractionType, questionId: questionId } });
           }
         },
         (err: ServerResponse) => {
@@ -478,4 +492,27 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
           console.log(err);
         });
   }
+
+ async previewContent() {
+   await this.saveContent();
+   if (this.validQuestionData === true) {
+    await this.setQumlData();
+    this.showPreview = true;
+   }
+  }
+
+  setQumlData() {
+    this.QumlPlayerConfig.data.children = [];
+    const questionMetadata = this.prepareRequestBody();
+    this.QumlPlayerConfig.data.children.push(questionMetadata);
+  }
+
+  getPlayerEvents(event) {
+    console.log('get player events', JSON.stringify(event));
+  }
+
+  getTelemetryEvents(event) {
+    console.log('event is for telemetry', JSON.stringify(event));
+  }
+
 }
