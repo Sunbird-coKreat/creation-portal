@@ -12,7 +12,7 @@ import { UserService } from '@sunbird/core';
 import { ProgramTelemetryService } from '../../../program/services';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { TelemetryService, IStartEventInput, IEndEventInput } from '@sunbird/telemetry';
-import { data1 , data2, data3 } from '../contentplayer-page/quml-library-data';
+import { data3 } from '../contentplayer-page/quml-library-data';
 @Component({
   selector: 'app-question-base',
   templateUrl: './question-base.component.html',
