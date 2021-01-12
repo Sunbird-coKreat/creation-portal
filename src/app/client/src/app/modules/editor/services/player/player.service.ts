@@ -20,17 +20,17 @@ export class PlayerService {
       metadata: {contentData: []},
       data: {}
     };
-    configuration.context['mode'] = this.configService.appConfig.PLAYER_CONFIG.playerConfig.context.mode;
-    configuration.context['sid'] = this.userService.sessionId;
-    configuration.context['uid'] = this.userService.userid;
-    configuration.context['timeDiff'] = this.userService.getServerTimeDiff;
-    configuration.context['contextRollup'] = this.getRollUpData(this.userService.userProfile.hashTagIds);
-    configuration.context['channel'] = this.userService.channel;
-    configuration.context['cdata'] = [];
+    configuration.context.mode = this.configService.appConfig.PLAYER_CONFIG.playerConfig.context.mode;
+    configuration.context.sid = this.userService.sessionId;
+    configuration.context.uid = this.userService.userid;
+    configuration.context.timeDiff = this.userService.getServerTimeDiff;
+    configuration.context.contextRollup = this.getRollUpData(this.userService.userProfile.hashTagIds);
+    configuration.context.channel = this.userService.channel;
+    configuration.context.cdata = [];
     const deviceId = (<HTMLInputElement>document.getElementById('deviceId'));
-    configuration.context['did'] = deviceId ? deviceId.value : '';
+    configuration.context.did = deviceId ? deviceId.value : '';
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
-    configuration.context['pdata'] = this.configService.appConfig.PLAYER_CONFIG.playerConfig.context.pdata;
+    configuration.context.pdata = this.configService.appConfig.PLAYER_CONFIG.playerConfig.context.pdata;
     configuration.context.pdata.ver = buildNumber && buildNumber.value ?
     buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     const tags = [];
@@ -39,12 +39,12 @@ export class PlayerService {
         tags.push(org.hashTagId);
       }
     });
-    configuration.context['tags'] = tags;
-    configuration.context['app'] = [this.userService.channel];
+    configuration.context.tags = tags;
+    configuration.context.app = [this.userService.channel];
     configuration.context.pdata.id = this.userService.appId;
-    configuration.context['host'] = '';
-    configuration.context['endpoint'] = '/data/v3/telemetry';
-    configuration.context['userData'] = {};
+    configuration.context.host = '';
+    configuration.context.endpoint = '/data/v3/telemetry';
+    configuration.context.userData = {};
     configuration.context.userData.firstName = '';
     configuration.context.userData.lastName = '';
     if (!_.isUndefined(this.userService.userProfile.firstName)) {
