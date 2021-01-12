@@ -9,7 +9,7 @@
     <div class="ui container">
       <div class="ui twelve column wide">
         <div class="px-16">
-          <div class="b-1-100">
+          <div class="sb-quml-player br-4 b-1-100">
             <div *ngIf='showPreview && !showLoader'>
               <quml-player [QumlPlayerConfig]="QumlPlayerConfig" (playerEvent)="getPlayerEvents($event)" (telemetryEvent)="getTelemetryEvents($event)"></quml-player>
             </div>

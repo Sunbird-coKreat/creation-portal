@@ -12,7 +12,6 @@ export class QuestionService {
   constructor(private configService: ConfigService, public publicDataService: PublicDataService) { }
 
   readQuestion(questionId) {
-    const filters = '?fields=body,answer,templateId,responseDeclaration,interactionTypes,interactions,name,solutions,editorState,media';
     const option = {
       url: `${this.configService.urlConFig.URLS.QUESTION.READ}/${questionId}`,
       // tslint:disable-next-line:max-line-length
