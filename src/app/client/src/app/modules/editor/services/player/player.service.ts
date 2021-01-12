@@ -16,7 +16,9 @@ export class PlayerService {
    */
   getConfig() {
     const configuration: any = {
-      context: {}
+      context: {},
+      metadata: {contentData: []},
+      data: {}
     };
     configuration.context['mode'] = this.configService.appConfig.PLAYER_CONFIG.playerConfig.context.mode;
     configuration.context['sid'] = this.userService.sessionId;

@@ -505,17 +505,16 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
 
   setQumlData() {
     const playerConfig = this.playerService.getConfig();
-    this.QumlPlayerConfig['context'] = playerConfig.context;
-    this.QumlPlayerConfig['metadata'] = { contentData: []};
-    this.QumlPlayerConfig['data'] = {};
-    this.QumlPlayerConfig['data'] = this.questionSetHierarchy;
-    this.QumlPlayerConfig['data']['totalQuestions'] = 1;
-    this.QumlPlayerConfig['data']['maxQuestions'] = 1;
-    this.QumlPlayerConfig['data']['maxScore'] = 1;
-    this.QumlPlayerConfig['data']['context'] = {};
-    this.QumlPlayerConfig['data']['children'] = [];
+    this.QumlPlayerConfig.metadata = playerConfig.metadata;
+    this.QumlPlayerConfig.context = playerConfig.context;
+    this.QumlPlayerConfig.data = this.questionSetHierarchy;
+    this.QumlPlayerConfig.data['totalQuestions'] = 1;
+    this.QumlPlayerConfig.data['maxQuestions'] = 1;
+    this.QumlPlayerConfig.data['maxScore'] = 1;
+    this.QumlPlayerConfig.data['context'] = {};
+    this.QumlPlayerConfig.data['children'] = [];
     const questionMetadata = this.prepareRequestBody();
-    this.QumlPlayerConfig['data']['children'].push(questionMetadata);
+    this.QumlPlayerConfig.data['children'].push(questionMetadata);
     console.log('QumlPlayerConfig', this.QumlPlayerConfig);
   }
 
