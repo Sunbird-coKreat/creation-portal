@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { questionToolbarConfig } from '../../editor.config';
 import { EditorService } from '../../services';
+import { PlayerService } from '../../services';
 import { QuestionService } from '../../services/question/question.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash-es';
@@ -12,7 +13,6 @@ import { UserService } from '@sunbird/core';
 import { ProgramTelemetryService } from '../../../program/services';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { TelemetryService, IStartEventInput, IEndEventInput } from '@sunbird/telemetry';
-import { data1 } from '../contentplayer-page/quml-library-data';
 @Component({
   selector: 'app-question-base',
   templateUrl: './question-base.component.html',
@@ -20,7 +20,7 @@ import { data1 } from '../contentplayer-page/quml-library-data';
 })
 export class QuestionBaseComponent implements OnInit, AfterViewInit {
 
-  QumlPlayerConfig = data1;
+  QumlPlayerConfig: any = {};
   toolbarConfig = questionToolbarConfig;
   public telemetryPageDetails: any = {};
   public telemetryPageId: string;
@@ -67,7 +67,8 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
     public toasterService: ToasterService, public resourceService: ResourceService,
     private userService: UserService, public programTelemetryService: ProgramTelemetryService,
     private configService: ConfigService, private navigationHelperService: NavigationHelperService,
-    private deviceDetectorService: DeviceDetectorService, private telemetryService: TelemetryService) {
+    private deviceDetectorService: DeviceDetectorService, private telemetryService: TelemetryService,
+    public playerService: PlayerService) {
       this.questionData = this.editorService.selectedChildren;
       this.activatedRoute.queryParams.subscribe(params => {
         this.questionInteractionType = params['type'];
@@ -500,6 +501,15 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
   }
 
   setQumlData() {
+    const playerConfig = this.playerService.getConfig();
+    this.QumlPlayerConfig.metadata = playerConfig.metadata;
+    this.QumlPlayerConfig.context = playerConfig.context;
+    this.QumlPlayerConfig.context.cdata = this.telemetryPageDetails.telemetryInteractCdata;
+    this.QumlPlayerConfig.context.pdata = this.telemetryPageDetails.telemetryInteractPdata;
+    this.QumlPlayerConfig.data = this.questionSetHierarchy;
+    this.QumlPlayerConfig.data.totalQuestions = 1;
+    this.QumlPlayerConfig.data.maxQuestions = this.QumlPlayerConfig.data.totalQuestions;
+    this.QumlPlayerConfig.data.maxScore = this.QumlPlayerConfig.data.totalQuestions;
     this.QumlPlayerConfig.data.children = [];
     const questionMetadata = this.prepareRequestBody();
     this.QumlPlayerConfig.data.children.push(questionMetadata);
