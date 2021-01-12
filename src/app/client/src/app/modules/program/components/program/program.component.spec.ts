@@ -70,7 +70,7 @@ const frameworkServiceStub = {
   frameworkData$:  of(frameWorkData)
 };
 
-describe('ProgramComponent On Bording test', () => {
+describe('ProgramComponent', () => {
   let component: ProgramComponent;
   let fixture: ComponentFixture<ProgramComponent>;
 
@@ -255,12 +255,12 @@ describe('ProgramComponent On Bording test', () => {
     expect(component.getDefaultActiveTab()).toEqual(1);
   });
 
-  xit('should initiateHeader be called', () => {
-    component.initiateHeader('failure');
-  });
+  // xit('should initiateHeader be called', () => {
+  //   component.initiateHeader('failure');
+  // });
 
 
-  xit('should unsubscribe subject', () => {
-    component.ngOnDestroy();
-  });
+  // xit('should unsubscribe subject', () => {
+  //   component.ngOnDestroy();
+  // });
 });
