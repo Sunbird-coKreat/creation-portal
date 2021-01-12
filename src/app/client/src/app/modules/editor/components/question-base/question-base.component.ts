@@ -515,7 +515,6 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
     this.QumlPlayerConfig.data['children'] = [];
     const questionMetadata = this.prepareRequestBody();
     this.QumlPlayerConfig.data['children'].push(questionMetadata);
-    console.log('QumlPlayerConfig', this.QumlPlayerConfig);
   }
 
   getPlayerEvents(event) {
