@@ -73,7 +73,6 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
       this.activatedRoute.queryParams.subscribe(params => {
         this.questionInteractionType = params['type'];
         this.questionId = params['questionId'];
-        this.toolbarConfig.title = this.questionData.primaryCategory;
       });
   }
 
@@ -177,70 +176,102 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
     this.telemetryService.end(this.telemetryEnd);
   }
 
+  setQuestionTitle(hierarchyChildNodes, questionId?) {
+    let index;
+    if (!_.isUndefined(questionId)) {
+      // tslint:disable-next-line:only-arrow-functions
+        index = _.findIndex(hierarchyChildNodes, function (el) {
+      return el === questionId;
+      });
+    } else {
+      index = hierarchyChildNodes.length;
+    }
+    const question = 'Q' + (index + 1).toString() + ' | ';
+    let questionTitle = '';
+    if (this.questionInteractionType === 'default') {
+      questionTitle = question + 'Subjective Question';
+    }
+    if (this.questionInteractionType === 'choice') {
+      questionTitle = question + 'Multiple Choice Question';
+      }
+      this.toolbarConfig.title = questionTitle;
+  }
+
   initialize() {
     this.questionSetId = _.get(this.activatedRoute, 'snapshot.params.questionSetId');
     this.editorService.getQuestionSetHierarchy(this.questionSetId).
       subscribe((response) => {
         this.questionSetHierarchy = response;
-      });
-    if (!_.isUndefined(this.questionId)) {
-      this.questionService.readQuestion(this.questionId)
-        .subscribe((res) => {
-          if (res.result) {
-            this.questionMetaData = res.result.question;
-            this.questionInteractionType = this.questionMetaData.interactionTypes ? this.questionMetaData.interactionTypes[0] : 'default';
-            if (this.questionInteractionType === 'default') {
-              if (this.questionMetaData.editorState) {
-                this.editorState = this.questionMetaData.editorState;
-              }
-            }
+        if (!_.isUndefined(this.questionId)) {
+          this.questionService.readQuestion(this.questionId)
+            .subscribe((res) => {
+              if (res.result) {
+                this.questionMetaData = res.result.question;
+                // tslint:disable-next-line:max-line-length
+                this.questionInteractionType = this.questionMetaData.interactionTypes ? this.questionMetaData.interactionTypes[0] : 'default';
+                if (this.questionInteractionType === 'default') {
+                  if (this.questionMetaData.editorState) {
+                    this.editorState = this.questionMetaData.editorState;
+                  }
+                }
 
-            if (this.questionInteractionType === 'choice') {
-              const responseDeclaration = this.questionMetaData.responseDeclaration;
-              const templateId = this.questionMetaData.templateId;
-              this.questionMetaData.editorState = this.questionMetaData.editorState;
-              const numberOfOptions = this.questionMetaData.editorState.options.length;
-              const options = _.map(this.questionMetaData.editorState.options, option => ({ body: option.value.body }));
-              const question = this.questionMetaData.editorState.question;
-              this.editorState = new McqForm({
-                question, options, answer: _.get(responseDeclaration, 'response1.correctResponse.value')
-              }, { templateId, numberOfOptions });
-              this.editorState.solutions = this.questionMetaData.editorState.solutions;
-            }
+                if (this.questionInteractionType === 'choice') {
+                  const responseDeclaration = this.questionMetaData.responseDeclaration;
+                  const templateId = this.questionMetaData.templateId;
+                  this.questionMetaData.editorState = this.questionMetaData.editorState;
+                  const numberOfOptions = this.questionMetaData.editorState.options.length;
+                  const options = _.map(this.questionMetaData.editorState.options, option => ({ body: option.value.body }));
+                  const question = this.questionMetaData.editorState.question;
+                  this.editorState = new McqForm({
+                    question, options, answer: _.get(responseDeclaration, 'response1.correctResponse.value')
+                  }, { templateId, numberOfOptions });
+                  this.editorState.solutions = this.questionMetaData.editorState.solutions;
+                }
+                this.setQuestionTitle(this.questionSetHierarchy.childNodes, this.questionId);
 
-            if (!_.isEmpty(this.editorState.solutions)) {
-              this.selectedSolutionType = this.editorState.solutions[0].type;
-              this.solutionUUID = this.editorState.solutions[0].id;
-              this.showSolutionDropDown = false;
-              this.showSolution = true;
-              if (this.selectedSolutionType === 'video') {
-                const index = _.findIndex(this.questionMetaData.media, (o) => {
-                  return o.type === 'video' && o.id === this.editorState.solutions[0].value;
-                });
-                this.videoSolutionName = this.questionMetaData.media[index].name;
-                this.videoThumbnail = this.questionMetaData.media[index].thumbnail;
+                if (!_.isEmpty(this.editorState.solutions)) {
+                  this.selectedSolutionType = this.editorState.solutions[0].type;
+                  this.solutionUUID = this.editorState.solutions[0].id;
+                  this.showSolutionDropDown = false;
+                  this.showSolution = true;
+                  if (this.selectedSolutionType === 'video') {
+                    const index = _.findIndex(this.questionMetaData.media, (o) => {
+                      return o.type === 'video' && o.id === this.editorState.solutions[0].value;
+                    });
+                    this.videoSolutionName = this.questionMetaData.media[index].name;
+                    this.videoThumbnail = this.questionMetaData.media[index].thumbnail;
+                  }
+                  if (this.selectedSolutionType === 'html') {
+                    this.editorState.solutions = this.editorState.solutions[0].value;
+                  }
+                }
+                if (this.questionMetaData.media) {
+                  this.mediaArr = this.questionMetaData.media;
+                }
+                this.showLoader = false;
               }
-              if (this.selectedSolutionType === 'html') {
-                this.editorState.solutions = this.editorState.solutions[0].value;
-              }
-            }
-            if (this.questionMetaData.media) {
-              this.mediaArr = this.questionMetaData.media;
-            }
+            },
+            (err: ServerResponse) => {
+              this.toasterService.error('Unable to get question detail');
+              console.log(err);
+            });
+        }
+        if (_.isUndefined(this.questionId)) {
+          this.setQuestionTitle(this.questionSetHierarchy.childNodes);
+          if (this.questionInteractionType === 'default') {
+            this.editorState = { question: '', answer: '', solutions: '' };
             this.showLoader = false;
           }
-        });
-    }
-    if (_.isUndefined(this.questionId)) {
-      if (this.questionInteractionType === 'default') {
-        this.editorState = { question: '', answer: '', solutions: '' };
-        this.showLoader = false;
-      }
-      if (this.questionInteractionType === 'choice') {
-        this.editorState = new McqForm({ question: '', options: [] }, {});
-        this.showLoader = false;
-      }
-    }
+          if (this.questionInteractionType === 'choice') {
+            this.editorState = new McqForm({ question: '', options: [] }, {});
+            this.showLoader = false;
+          }
+        }
+      },
+      (err: ServerResponse) => {
+        this.toasterService.error('Unable to get questionset detail');
+        console.log(err);
+      });
   }
 
   toolbarEventListener(event) {
@@ -507,6 +538,15 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
     this.QumlPlayerConfig.context.cdata = this.telemetryPageDetails.telemetryInteractCdata;
     this.QumlPlayerConfig.context.pdata = this.telemetryPageDetails.telemetryInteractPdata;
     this.QumlPlayerConfig.data = this.questionSetHierarchy;
+
+    this.QumlPlayerConfig.data.allowAnonymousAccess = true;
+    this.QumlPlayerConfig.data.allowSkip = true;
+    this.QumlPlayerConfig.data.requiresSubmit = true;
+    this.QumlPlayerConfig.data.showFeedback = false;
+    this.QumlPlayerConfig.data.showSolutions = true;
+    this.QumlPlayerConfig.data.showTimer = true;
+    this.QumlPlayerConfig.data.shuffle = true;
+
     this.QumlPlayerConfig.data.totalQuestions = 1;
     this.QumlPlayerConfig.data.maxQuestions = this.QumlPlayerConfig.data.totalQuestions;
     this.QumlPlayerConfig.data.maxScore = this.QumlPlayerConfig.data.totalQuestions;
