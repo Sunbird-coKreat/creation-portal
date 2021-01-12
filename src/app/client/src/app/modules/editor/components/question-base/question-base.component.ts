@@ -507,6 +507,8 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
     const playerConfig = this.playerService.getConfig();
     this.QumlPlayerConfig.metadata = playerConfig.metadata;
     this.QumlPlayerConfig.context = playerConfig.context;
+    this.QumlPlayerConfig.context.cdata = this.telemetryPageDetails.telemetryInteractCdata;
+    this.QumlPlayerConfig.context.pdata = this.telemetryPageDetails.telemetryInteractPdata;
     this.QumlPlayerConfig.data = this.questionSetHierarchy;
     this.QumlPlayerConfig.data.totalQuestions = 1;
     this.QumlPlayerConfig.data.maxQuestions = this.QumlPlayerConfig.data.totalQuestions;
