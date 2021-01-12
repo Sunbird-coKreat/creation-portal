@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { questionToolbarConfig } from '../../editor.config';
 import { EditorService } from '../../services';
 import { PlayerService } from '../../services';
@@ -68,7 +68,7 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
     private userService: UserService, public programTelemetryService: ProgramTelemetryService,
     private configService: ConfigService, private navigationHelperService: NavigationHelperService,
     private deviceDetectorService: DeviceDetectorService, private telemetryService: TelemetryService,
-    public playerService: PlayerService) {
+    public playerService: PlayerService, private cdr: ChangeDetectorRef) {
       this.questionData = this.editorService.selectedChildren;
       this.activatedRoute.queryParams.subscribe(params => {
         this.questionInteractionType = params['type'];
@@ -275,6 +275,8 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
   }
 
   toolbarEventListener(event) {
+    const editContentIndex = _.findIndex(this.toolbarConfig.buttons, {type: 'editContent'});
+    const previewContentIndex = _.findIndex(this.toolbarConfig.buttons, {type: 'previewContent'});
     switch (event.button.type) {
       case 'saveContent':
         this.saveContent();
@@ -288,15 +290,25 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
         this.handleRedirectToQuestionset();
         break;
       case 'previewContent':
+        this.refreshEditor();
+        this.toolbarConfig.buttons[editContentIndex].display = 'block';
+        this.toolbarConfig.buttons[previewContentIndex].display = 'none';
         this.previewContent();
         break;
         case 'editContent':
-          this.showPreview = false;
-          this.showLoader = false;
+        this.refreshEditor();
+        this.toolbarConfig.buttons[previewContentIndex].display = 'block';
+        this.toolbarConfig.buttons[editContentIndex].display = 'none';
+        this.showPreview = false;
+        this.showLoader = false;
           break;
       default:
         break;
     }
+  }
+
+  private refreshEditor() {
+    this.cdr.detectChanges();
   }
 
   handleRedirectToQuestionset() {
