@@ -119,7 +119,7 @@ describe('CourseSearchComponent', () => {
     expect(component.frameWorkName).toEqual('TPD');
     // expect(component.dataDrivenFilters).toEqual({ board: 'NCRT'});
   });
-  it('should not throw error if fetching enrolled course fails', () => {
+  xit('should not throw error if fetching enrolled course fails', () => {
     sendEnrolledCourses = false;
     coursesService.initialize();
     component.ngOnInit();
