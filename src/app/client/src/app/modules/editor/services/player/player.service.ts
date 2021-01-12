@@ -42,16 +42,17 @@ export class PlayerService {
     configuration.context['tags'] = tags;
     configuration.context['app'] = [this.userService.channel];
     configuration.context.pdata.id = this.userService.appId;
-    configuration.context['host'] = '/data/v3/telemetry';
-    // if (_.has(this.userService._userProfile, 'firstName')) {
-    //   configuration.context.userData.firstName = this.userService._userProfile.firstName;
-    // }
-    // if (_.has(this.userService._userProfile, 'lastName')) {
-    //   configuration.context.userData.lastName = this.userService._userProfile.lastName;
-    // }
+    configuration.context['host'] = '';
+    configuration.context['endpoint'] = '/data/v3/telemetry';
     configuration.context['userData'] = {};
-    configuration.context['userData']['firstName'] = 'John';
-    configuration.context['userData']['lastName'] = 'Doe';
+    configuration.context.userData.firstName = '';
+    configuration.context.userData.lastName = '';
+    if (!_.isUndefined(this.userService.userProfile.firstName)) {
+      configuration.context.userData.firstName = this.userService.userProfile.firstName;
+    }
+    if (!_.isUndefined(this.userService.userProfile.lastName)) {
+      configuration.context.userData.lastName = this.userService.userProfile.lastName;
+    }
     return configuration;
   }
 
