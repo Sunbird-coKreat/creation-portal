@@ -12,7 +12,7 @@ import { UserService } from '@sunbird/core';
 import { ProgramTelemetryService } from '../../../program/services';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { TelemetryService, IStartEventInput, IEndEventInput } from '@sunbird/telemetry';
-import { data3 } from '../contentplayer-page/quml-library-data';
+import { data1 } from '../contentplayer-page/quml-library-data';
 @Component({
   selector: 'app-question-base',
   templateUrl: './question-base.component.html',
@@ -20,7 +20,7 @@ import { data3 } from '../contentplayer-page/quml-library-data';
 })
 export class QuestionBaseComponent implements OnInit, AfterViewInit {
 
-  QumlPlayerConfig = data3;
+  QumlPlayerConfig = data1;
   toolbarConfig = questionToolbarConfig;
   public telemetryPageDetails: any = {};
   public telemetryPageId: string;
@@ -422,8 +422,6 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
 
   prepareRequestBody() {
     let metadata = {
-      'code': UUID.UUID(),
-      'status': 'Draft',
       'mimeType': 'application/vnd.sunbird.question',
       'media': this.mediaArr,
       'editorState': {}

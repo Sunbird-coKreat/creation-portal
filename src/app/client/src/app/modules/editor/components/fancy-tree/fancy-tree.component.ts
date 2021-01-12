@@ -52,7 +52,7 @@ export class FancyTreeComponent implements OnInit, AfterViewInit {
       if (objectType) {
         tree.push({
           'id': child.identifier || UUID.UUID(),
-          'title': `Q${index + 1} | ${child.objectType}`,
+          'title': `Q${index + 1} | ${child.primaryCategory}`,
           'tooltip': child.name,
           'objectType': child.objectType,
           'metadata': _.omit(child, ['children']),
