@@ -301,7 +301,7 @@ export const formConfig = [
         'visible': true
     },
     {
-        'code': 'shuffleQuestions',
+        'code': 'shuffle',
         'dataType': 'text',
         'description': 'Shuffle Questions',
         'editable': true,
