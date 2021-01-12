@@ -14,8 +14,10 @@ export class QuestionService {
   readQuestion(questionId) {
     const option = {
       url: `${this.configService.urlConFig.URLS.QUESTION.READ}/${questionId}`,
-      // tslint:disable-next-line:max-line-length
-      param: { 'fields': 'code,body,answer,templateId,responseDeclaration,interactionTypes,interactions,name,solutions,editorState,media,code,primaryCategory,qType,identifier,languageCode' }
+      param: {
+        // tslint:disable-next-line:max-line-length
+        'fields': 'body,primaryCategory, mimeType, qType, answer,templateId,responseDeclaration,interactionTypes,interactions,name,solutions,editorState,media' 
+      }
     };
     return this.publicDataService.get(option);
   }

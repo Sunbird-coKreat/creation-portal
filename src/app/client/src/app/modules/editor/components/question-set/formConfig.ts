@@ -69,9 +69,7 @@ export const formConfig = [
         'description': 'Type',
         'editable': false,
         'index': 4,
-        'renderingHints': {
-
-        },
+        'renderingHints': {'class': 'sb-g-col-lg-1'},
         'inputType': 'select',
         'label': 'Type',
         'name': 'Type',
@@ -93,9 +91,7 @@ export const formConfig = [
         'label': 'Additional Category',
         'name': 'Additional Category',
         'placeholder': 'Select Additional Category',
-        'renderingHints': {
-
-        },
+        'renderingHints': {'class': 'sb-g-col-lg-1'},
         'default': '',
         'range': [
             {
@@ -164,9 +160,7 @@ export const formConfig = [
         'depends': ['gradeLevel', 'medium', 'subject', 'topic'],
         'editable': true,
         'dataType': 'text',
-        'renderingHints': {
-
-        },
+        'renderingHints': {'class': 'sb-g-col-lg-1'},
         'description': 'Board',
         'index': 6,
         'label': 'Board/Syllabus',
@@ -188,9 +182,7 @@ export const formConfig = [
         'depends': ['gradeLevel', 'subject', 'topic'],
         'editable': true,
         'dataType': 'list',
-        'renderingHints': {
-
-        },
+        'renderingHints': {'class': 'sb-g-col-lg-1'},
         'description': '',
         'index': 7,
         'label': 'Medium',
@@ -212,9 +204,7 @@ export const formConfig = [
         'depends': ['subject', 'topic'],
         'editable': true,
         'dataType': 'list',
-        'renderingHints': {
-
-        },
+        'renderingHints': {'class': 'sb-g-col-lg-1'},
         'description': 'Class',
         'index': 8,
         'label': 'Class',
@@ -232,9 +222,7 @@ export const formConfig = [
         'depends': ['topic'],
         'editable': true,
         'dataType': 'list',
-        'renderingHints': {
-
-        },
+        'renderingHints': {'class': 'sb-g-col-lg-1'},
         'description': '',
         'index': 9,
         'label': 'Subject',
@@ -252,7 +240,7 @@ export const formConfig = [
         'visible': true,
         'editable': true,
         'dataType': 'list',
-        'renderingHints': {},
+        'renderingHints': {'class': 'sb-g-col-lg-1'},
         'name': 'Topic',
         'description': 'Choose a Topics',
         'index': 11,
@@ -295,8 +283,7 @@ export const formConfig = [
         'label': 'Show Feedback',
         'name': 'showFeedback',
         'placeholder': 'Show Feedback',
-        'renderingHints': {
-        },
+        'renderingHints': {'class': 'sb-g-col-lg-1'},
         'required': false,
         'visible': true
     },
@@ -311,8 +298,7 @@ export const formConfig = [
         'label': 'Shuffle Questions',
         'name': 'Shuffle Questions',
         'placeholder': 'Shuffle Questions',
-        'renderingHints': {
-        },
+        'renderingHints': {'class': 'sb-g-col-lg-1'},
         'required': false,
         'visible': true
     },
@@ -326,8 +312,7 @@ export const formConfig = [
         'label': 'Show Questions',
         'name': 'showQuestions',
         'placeholder': 'Show Questions',
-        'renderingHints': {
-        },
+        'renderingHints': {'class': 'sb-g-col-lg-1'},
         'required': false,
         'visible': true,
         'range': ''
