@@ -42,7 +42,7 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
   public pageStartTime;
   public rootObject = 'QuestionSet';
   public childObject = 'Question';
-  public mode = 'review';
+  public mode = 'create';
 
   constructor(public programTelemetryService: ProgramTelemetryService, private treeService: TreeService,
     private editorService: EditorService, private activatedRoute: ActivatedRoute, private cbseService: CbseProgramService,
@@ -56,7 +56,6 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    const userRole = this.userService.userProfile.userRoles;
     if (this.mode === 'review') {
       this.toolbarConfig = reviewerToolbarConfig;
     } else if (this.mode === 'create') {
