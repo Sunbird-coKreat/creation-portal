@@ -49,7 +49,7 @@ export const reviewerToolbarConfig = {
 
 export const questionToolbarConfig = {
   headerName: 'Back',
-  title: 'Q1 | MCQ',
+  title: '',
   buttons: [
     {
       telemetryId: 'edit',
