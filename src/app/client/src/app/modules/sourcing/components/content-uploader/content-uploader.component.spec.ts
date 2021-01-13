@@ -24,7 +24,7 @@ import { ActivatedRoute } from '@angular/router';
 import { DatePipe } from '@angular/common';
 
 // Following describe method is for 'PREVIEW' scenario
-describe('ContentUploaderComponent', () => {
+xdescribe('ContentUploaderComponent', () => {
   let component: ContentUploaderComponent;
   let fixture: ComponentFixture<ContentUploaderComponent>;
   let debugElement: DebugElement;
@@ -170,7 +170,7 @@ describe('ContentUploaderComponent', () => {
 });
 
 // Following describe method is for fresh 'UPLOAD' scenario
-describe('ContentUploaderComponent', () => {
+xdescribe('ContentUploaderComponent', () => {
   let component: ContentUploaderComponent;
   let fixture: ComponentFixture<ContentUploaderComponent>;
   let debugElement: DebugElement;
@@ -264,7 +264,7 @@ describe('ContentUploaderComponent', () => {
 });
 
 // Following describe method is for 'REVIEWER' role scenario
-describe('ContentUploaderComponent', () => {
+xdescribe('ContentUploaderComponent', () => {
   let component: ContentUploaderComponent;
   let fixture: ComponentFixture<ContentUploaderComponent>;
   let debugElement: DebugElement;

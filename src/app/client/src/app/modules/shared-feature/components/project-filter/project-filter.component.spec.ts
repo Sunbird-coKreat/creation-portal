@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ProgramsService, DataService, FrameworkService, ActionService } from '@sunbird/core';
 import { ProjectFilterComponent } from './project-filter.component';
 import { programData } from './project-filter.component.spec.data';
-describe('ProjectFilterComponent', () => {
+xdescribe('ProjectFilterComponent', () => {
   let component: ProjectFilterComponent;
   let fixture: ComponentFixture<ProjectFilterComponent>;
 
@@ -23,7 +23,7 @@ describe('ProjectFilterComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-  // “My Projects” page filters for contributor (individual or contrib org), reviewer (of contrib org or sourcing org) 
+  // “My Projects” page filters for contributor (individual or contrib org), reviewer (of contrib org or sourcing org)
   // Medium, Class, Subject, Content Type - All these filters are multi-select. Union of all the values from all “My Projects”.
   it('should show filters for my projects tab for contributor user ', () => {
     component.activeMyProgramsMenu = true;
