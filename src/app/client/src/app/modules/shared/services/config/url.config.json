@@ -290,7 +290,8 @@
       "ADD": "questionset/v1/add",
       "REMOVE": "questionset/v1/remove",
       "REVIEW" : "questionset/v1/review",
-      "PUBLISH": "questionset/v1/publish"
+      "PUBLISH": "questionset/v1/publish",
+      "REJECT": "questionset/v1/reject"
     },
     "QUESTION": {
       "CREATE": "question/v1/create",

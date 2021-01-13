@@ -239,6 +239,9 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
       case 'publishCollection':
         this.publishCollection();
         break;
+      case 'rejectCollection':
+        this.rejectCollection();
+        break;
       default:
         break;
     }
@@ -284,6 +287,19 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
       this.showConfirmPopup = false;
       this.generateTelemetryEndEvent('submit');
       this.toasterService.success('Question set published successfully');
+    });
+  }
+
+  rejectCollection() {
+    this.editorService.rejectQuestionSet(this.editorParams.collectionId).pipe(catchError(error => {
+      const errInfo = {
+        errorMsg: 'Rejecting question set failed. Please try again...',
+      };
+      return throwError(this.cbseService.apiErrorHandling(error, errInfo));
+    })).subscribe(res => {
+      this.showConfirmPopup = false;
+      this.generateTelemetryEndEvent('submit');
+      this.toasterService.success('Question set rejected successfully');
     });
   }
 

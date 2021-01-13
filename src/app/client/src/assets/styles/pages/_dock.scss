@@ -863,4 +863,10 @@ xxl calculateRem(180px) 24px 20px;
     background-color: #fff;
 }
 
-.bx-none .ui.modal{box-shadow:none !important}
+.bx-none .ui.modal{
+  box-shadow:none !important;
+}
+
+.overflow-modal .ui.modal{
+  bottom:auto !important;
+}
