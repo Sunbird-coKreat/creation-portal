@@ -298,8 +298,6 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
         break;
       case 'previewContent':
         this.refreshEditor();
-        this.toolbarConfig.buttons[editContentIndex].display = 'block';
-        this.toolbarConfig.buttons[previewContentIndex].display = 'none';
         this.previewContent();
         if (this.showFormError === false) {
           this.toolbarConfig.buttons[editContentIndex].display = 'block';
