@@ -301,7 +301,7 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
         this.previewContent();
         if (this.showFormError === false) {
           this.toolbarConfig.buttons[editContentIndex].display = 'block';
-        this.toolbarConfig.buttons[previewContentIndex].display = 'none';
+          this.toolbarConfig.buttons[previewContentIndex].display = 'none';
         }
         break;
         case 'editContent':
