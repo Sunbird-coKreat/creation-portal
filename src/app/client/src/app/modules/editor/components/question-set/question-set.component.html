@@ -1,6 +1,6 @@
 <div class="">
   <div class="form-container">
-    <sb-form [config]="config" (initialize)="output($event)" (statusChanges)="onStatusChanges($event)"></sb-form>
+    <sb-dynamic-form [config]="config" (initialize)="output($event)" (statusChanges)="onStatusChanges($event)" (valueChanges)="onValueChanges($event)"></sb-dynamic-form>
   </div>
   <div class="sb-fixed-with-whitebg py-10">
     <div class="ui">

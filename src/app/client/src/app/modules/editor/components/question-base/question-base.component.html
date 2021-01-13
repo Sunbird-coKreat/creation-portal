@@ -9,22 +9,25 @@
     <div class="ui container">
       <div class="ui twelve column wide">
         <div class="px-16">
-          <div class="b-1-100">
-            <div class="py-20 px-32 sb-bg-color-primary-0">
+          <div class="sb-quml-player br-4 b-1-100">
+            <div *ngIf='showPreview && !showLoader'>
+              <quml-player [QumlPlayerConfig]="QumlPlayerConfig" (playerEvent)="getPlayerEvents($event)" (telemetryEvent)="getTelemetryEvents($event)"></quml-player>
+            </div>
+            <div class="py-20 px-32 sb-bg-color-primary-0" *ngIf='!showPreview && !showLoader'>
               <div class="sb-field-group">
                 <label class="fs-0-92">Question<span class="sb-required">*</span></label>
                 <div class="sb-field">
                   <div class="ckeditor-tool__question mb-5" >
-                    <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'question'); getMedia($event.mediaobj);"
+                    <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'question');"
                     [editorDataInput]="editorState.question" [editorId]="'question_editor'"
                     (videoDataOutput)="videoDataOutput($event)" [videoShow]="videoShow"></app-ckeditor-tool>
                    </div>
                    <label *ngIf="showFormError && [undefined, ''].includes(editorState.question)" class="sb-color-error fs-0-785">Question is required</label>
                 </div>
 
-                <app-answer *ngIf="(questionInteractionType === 'default')" [editorConfig]="editorConfig" [editorState]="editorState" [showFormError]="showFormError" (editorDataOutput)="editorDataHandler($event, 'answer')"></app-answer>
+                <app-answer *ngIf="(questionInteractionType === 'default')" [editorConfig]="editorConfig" [editorState]="editorState" [showFormError]="showFormError" (editorDataOutput)="editorDataHandler($event)"></app-answer>
 
-                <app-options *ngIf="(questionInteractionType === 'choice')" [editorConfig]="editorConfig" [editorState]="editorState" [showFormError]="showFormError" [telemetryPageDetails]="telemetryPageDetails" [questionMetaData]="questionMetaData" (editorDataOutput)="editorDataHandler($event)" (templateOutput)="getTemplate($event)" [templateId]="editorState.templateId" (optionMedia)="getMedia($event)"></app-options>
+                <app-options *ngIf="(questionInteractionType === 'choice')" [editorConfig]="editorConfig" [editorState]="editorState" [showFormError]="showFormError" [telemetryPageDetails]="telemetryPageDetails" [questionMetaData]="questionMetaData" (editorDataOutput)="editorDataHandler($event)"></app-options>
 
                 <div class="d-flex flex-ai-center ckeditor-tool__solution py-10 px-16 mt-15 sb-bg-color-white w-85">
                   <label class="fs-0-92 mb-0 ckeditor-tool__label pb-4">

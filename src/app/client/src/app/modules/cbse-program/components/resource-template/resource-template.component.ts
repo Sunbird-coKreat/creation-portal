@@ -140,6 +140,10 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
         this.selectedtemplateDetails.onClick = 'editorComponent';
         this.selectedtemplateDetails.mimeType = ['application/vnd.ekstep.ecml-archive'];
         break;
+      case 'questionSet':
+          this.selectedtemplateDetails.onClick = 'questionEditorComponent';
+          this.selectedtemplateDetails.mimeType = ['application/vnd.sunbird.questionset'];
+          break;
       case 'upload':
       default:
         this.selectedtemplateDetails.onClick  = 'uploadComponent';

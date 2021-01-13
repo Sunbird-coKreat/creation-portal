@@ -10,8 +10,8 @@
                 "type": "question"
             },
             {
-                "mimetype": "application/vnd.ekstep.quml-archive",
-                "type": "question"
+                "mimetype": "application/vnd.sunbird.questionset",
+                "type": "questionset"
             },
             {
                 "mimetype": "application/vnd.ekstep.html-archive",

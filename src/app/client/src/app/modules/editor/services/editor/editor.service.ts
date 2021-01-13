@@ -6,14 +6,47 @@ import { TreeService } from '../tree/tree.service';
 import { PublicDataService, UserService } from '@sunbird/core';
 import { ConfigService } from '@sunbird/shared';
 
+
+interface SelectedChildren {
+  primaryCategory?: string;
+  mimeType?: string;
+  interactionType?: string;
+}
 @Injectable({
   providedIn: 'root'
 })
 export class EditorService {
   data: any;
+  private _selectedChildren: SelectedChildren = {};
+  private _hierarchyConfig: any;
   public questionStream$ = new Subject<any>();
   constructor(public treeService: TreeService, public configService: ConfigService,
     private publicDataService: PublicDataService, public userService: UserService) { }
+
+
+  set selectedChildren(value: SelectedChildren) {
+    if (value.mimeType) {
+      this._selectedChildren.mimeType = value.mimeType;
+    }
+    if (value.primaryCategory) {
+      this._selectedChildren.primaryCategory = value.primaryCategory;
+    }
+    if (value.interactionType) {
+      this._selectedChildren.interactionType = value.interactionType;
+    }
+  }
+
+  get selectedChildren() {
+    return this._selectedChildren;
+  }
+
+  set hierarchyConfig(value: any) {
+    this._hierarchyConfig = value;
+  }
+
+  get hierarchyConfig() {
+    return this._hierarchyConfig;
+  }
 
 
   public getQuestionSetHierarchy(identifier: string) {

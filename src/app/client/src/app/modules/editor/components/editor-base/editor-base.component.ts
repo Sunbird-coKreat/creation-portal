@@ -1,11 +1,11 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, finalize, map } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import * as _ from 'lodash-es';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { TelemetryService, IImpressionEventInput, IStartEventInput, IEndEventInput } from '@sunbird/telemetry';
-import { TreeService, EditorService } from '../../services';
+import { TreeService, EditorService, HelperService } from '../../services';
 import { templateList, toolbarConfig } from '../../editor.config';
 import { CbseProgramService } from '../../../cbse-program/services';
 import { ProgramsService, UserService } from '@sunbird/core';
@@ -30,7 +30,7 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
   public telemetryStart: IStartEventInput;
   public telemetryEnd: IEndEventInput;
   public toolbarConfig = toolbarConfig;
-  public templateList: any = templateList;
+  public templateList: any;
   public collectionTreeNodes: any;
   public selectedQuestionData: any = {};
   public showQuestionTemplate: Boolean = false;
@@ -40,12 +40,15 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
   public showConfirmPopup: Boolean = false;
   public submitFormStatus: Boolean = false;
   public pageStartTime;
+  public rootObject = 'QuestionSet';
+  public childObject = 'Question';
 
   constructor(public programTelemetryService: ProgramTelemetryService, private treeService: TreeService,
     private editorService: EditorService, private activatedRoute: ActivatedRoute, private cbseService: CbseProgramService,
     private userService: UserService, private programsService: ProgramsService, private navigationHelperService: NavigationHelperService,
     private configService: ConfigService, private toasterService: ToasterService, public resourceService: ResourceService,
-    private router: Router, private telemetryService: TelemetryService, private deviceDetectorService: DeviceDetectorService) {
+    private router: Router, private telemetryService: TelemetryService, private deviceDetectorService: DeviceDetectorService,
+    public helperService: HelperService, private cdr: ChangeDetectorRef) {
     this.editorParams = {
       collectionId: _.get(this.activatedRoute, 'snapshot.params.questionSetId'),
     };
@@ -55,6 +58,7 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
     this.pageStartTime = Date.now();
     this.prepareTelemetryEvents();
     this.fetchQuestionSetHierarchy();
+    this.helperService.initialize();
   }
 
   prepareTelemetryEvents() {
@@ -168,10 +172,35 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
       this.showLoader = false;
       this.logTelemetryImpressionEvent();
     })).subscribe(res => {
+      if (_.isUndefined(this.editorService.hierarchyConfig)) {
+        // tslint:disable-next-line:max-line-length
+        this.programsService.getCategoryDefinition(res.primaryCategory, this.userService ? this.userService.channel : null, this.rootObject).subscribe((categoryDefRes) => {
+          console.log('categoryDefRes ', categoryDefRes);
+          const objectMetadata = categoryDefRes.result.objectCategoryDefinition.objectMetadata;
+          if (!_.isEmpty(_.get(objectMetadata, 'config.hierarchyConfig'))) {
+            this.editorService.hierarchyConfig = objectMetadata.config.hierarchyConfig;
+          } else {
+            this.editorService.hierarchyConfig = {
+              'maxDepth': 1,
+              'children': {
+                  'Question': ['Multiple Choice Question', 'Subjective Question']
+              }
+            };
+          }
+          this.templateList = this.editorService.hierarchyConfig.children[this.childObject];
+        }, (err) => {
+          this.toasterService.error(this.resourceService.messages.emsg.m0027);
+        });
+      } else {
+        this.templateList = this.editorService.hierarchyConfig.children[this.childObject];
+      }
       this.toolbarConfig.title = res.name;
       this.collectionTreeNodes = res;
+      this.cdr.detectChanges();
       if (_.isEmpty(res.children)) {
-        // TODO: Call update questionSet APIs if children property empty
+        this.hideButton('submitCollection');
+      } else {
+        this.showButton('submitCollection');
       }
     });
   }
@@ -188,7 +217,7 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
         this.removeNode();
         break;
       case 'editContent':
-        this.redirectToQuestionTab();
+        this.redirectToQuestionTab('edit');
         break;
       case 'showQuestionTemplate':
         this.showQuestionTemplatePopup = true;
@@ -247,41 +276,53 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
   }
 
   handleTemplateSelection($event) {
-    this.showQuestionTemplatePopup = false;
-    const selectedQuestionType = $event.type;
+    const selectedQuestionType = $event;
     if (selectedQuestionType === 'close') { return false; }
     console.log(selectedQuestionType);
-    // this.programsService.getCategoryDefinition(selectedQuestionType, this.userService.channel).subscribe((res) => {
-    //   const selectedtemplateDetails = res.result.objectCategoryDefinition;
-    //   const catMetaData = selectedtemplateDetails.objectMetadata;
-    //   if (_.isEmpty(_.get(catMetaData, 'schema.properties.interactionTypes.enum'))) {
-    //       this.toasterService.error(this.resourceService.messages.emsg.m0026);
-    //   } else {
-    //     const supportedMimeTypes = catMetaData.schema.properties.interactionTypes.enum;
-    //     console.log(supportedMimeTypes);
-    //   }
-    // }, (err) => {
-    //   this.toasterService.error(this.resourceService.messages.emsg.m0027);
-    // });
-    this.redirectToQuestionTab(selectedQuestionType);
+    // tslint:disable-next-line:max-line-length
+    this.programsService.getCategoryDefinition(selectedQuestionType, this.userService ? this.userService.channel : null, this.childObject).subscribe((res) => {
+      const selectedtemplateDetails = res.result.objectCategoryDefinition;
+      const catMetaData = selectedtemplateDetails.objectMetadata;
+      if (_.isEmpty(_.get(catMetaData, 'schema.properties.interactionTypes.items.enum'))) {
+          // this.toasterService.error(this.resourceService.messages.emsg.m0026);
+          this.editorService.selectedChildren = {
+            primaryCategory: selectedQuestionType,
+            mimeType: catMetaData.schema.properties.mimeType.enum[0],
+            interactionType: null
+          };
+          this.redirectToQuestionTab(undefined, 'default');
+      } else {
+        const interactionTypes = catMetaData.schema.properties.interactionTypes.items.enum;
+        this.editorService.selectedChildren = {
+          primaryCategory: selectedQuestionType,
+          mimeType: catMetaData.schema.properties.mimeType.enum[0],
+          interactionType: interactionTypes[0]
+        };
+        this.redirectToQuestionTab(undefined, interactionTypes[0]);
+      }
+    }, (err) => {
+      this.toasterService.error(this.resourceService.messages.emsg.m0027);
+    });
   }
 
-  redirectToQuestionTab(type?) {
-    let questionId;
-    if (!type) {
-      type = this.selectedQuestionData.data.metadata.interactionTypes || 'default';
-      questionId = this.selectedQuestionData.data.metadata.identifier;
+  redirectToQuestionTab(mode?, interactionType?) {
+    let queryParams = '?';
+    if (interactionType) {
+      queryParams += `type=${interactionType}`;
     }
-    if (type) {
-      if (type === 'MCQ') {
-        type = 'choice';
-      }
-      if (type === 'Subjective') {
-        type = 'default';
-      }
+    if (mode === 'edit' && this.selectedQuestionData.data.metadata.identifier) {
+      queryParams += `questionId=${this.selectedQuestionData.data.metadata.identifier}`;
     }
-    let queryParams = `?type=${type}`;
-    if (questionId) { queryParams += `&questionId=${questionId}`; }
     this.router.navigateByUrl(`/create/questionSet/${this.editorParams.collectionId}/question${queryParams}`);
+  }
+
+  showButton(buttonType) {
+    const buttonIndex = _.findIndex(this.toolbarConfig.buttons, {type: buttonType});
+    this.toolbarConfig.buttons[buttonIndex].display = 'display';
+  }
+
+  hideButton(buttonType) {
+    const buttonIndex = _.findIndex(this.toolbarConfig.buttons, {type: buttonType});
+    this.toolbarConfig.buttons[buttonIndex].display = 'none';
   }
 }

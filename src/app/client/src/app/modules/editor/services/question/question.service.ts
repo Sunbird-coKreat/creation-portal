@@ -12,9 +12,12 @@ export class QuestionService {
   constructor(private configService: ConfigService, public publicDataService: PublicDataService) { }
 
   readQuestion(questionId) {
-    const filters = '?fields=body,answer,templateId,responseDeclaration,interactionTypes,interactions,name,solutions,editorState,media';
     const option = {
-      url: `${this.configService.urlConFig.URLS.QUESTION.READ}/${questionId}${filters}`,
+      url: `${this.configService.urlConFig.URLS.QUESTION.READ}/${questionId}`,
+      param: {
+        // tslint:disable-next-line:max-line-length
+        'fields': 'body,primaryCategory, mimeType, qType, answer,templateId,responseDeclaration,interactionTypes,interactions,name,solutions,editorState,media' 
+      }
     };
     return this.publicDataService.get(option);
   }
@@ -26,11 +29,11 @@ export class QuestionService {
     } else {
       hierarchyChildren = [];
     }
-    hierarchyChildren.push('UUID');
+    hierarchyChildren.push('questionId');
     const requestObj = {
       'data': {
         'nodesModified': {
-          'UUID': {
+          'questionId': {
             'metadata': metadata,
             'objectType': 'Question',
             'root': false,

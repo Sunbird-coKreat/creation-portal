@@ -8,11 +8,11 @@
       <div class="ui grid flex-jc-center my-16">
         <div class="ui card text-center common-contribution-card m-16" *ngFor="let template of templateList"
           (click)="showButton=true; templateSelected = template"
-          [ngClass]="{'active': templateSelected?.type === template.type}">
+          [ngClass]="{'active': templateSelected === template}">
           <div class="content">
             <i class="check circle icon"></i>
             <img class="mt-16" rel="placeholder" src="assets/images/MCQ.png">
-            <div class="content-title pt-16 pb-8 fsmall">{{template.type}} <i class="info circle link icon"
+            <div class="content-title pt-16 pb-8 fsmall">{{template}} <i class="info circle link icon"
                 [popupPlacement]="'left'" suiPopup popupText="text description"></i>
             </div>
           </div>

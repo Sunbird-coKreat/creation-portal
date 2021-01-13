@@ -41,7 +41,7 @@ export class ProgramsService extends DataService implements CanActivate {
   public http: HttpClient;
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
   private _contentTypes: any[];
-  //private _contentCategories: any[];
+  // private _contentCategories: any[];
   private _overrideMetaData: any[];
   private _sourcingOrgReviewers: Array<any>;
   // private orgUsers: Array<any>;
@@ -62,7 +62,7 @@ export class ProgramsService extends DataService implements CanActivate {
     public cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService) {
       super(http);
       this.config = config;
-      this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;//"http://localhost:6000/";//
+      this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX; // "http://localhost:6000/";//
     }
 
   /**
@@ -71,7 +71,7 @@ export class ProgramsService extends DataService implements CanActivate {
   public initialize() {
     // this.enableContributeMenu().subscribe();
     this.getAllContentTypes().subscribe();
-    //this.getAllContentCategories().subscribe();
+    // this.getAllContentCategories().subscribe();
     this.getOverridableMetaDataConfig().subscribe();
     this.mapSlugstoOrgId();
   }
@@ -151,8 +151,8 @@ export class ProgramsService extends DataService implements CanActivate {
   * Function used map the user with user role in registry
   */
  mapUsertoContributorOrgReg (orgOsid, UserOsid, userRegData) {
-  let contribOrgs = [];
-  let sourcingOrgs = [];
+  const contribOrgs = [];
+  const sourcingOrgs = [];
   let updateOsid = '';
   let uRoles = [];
   // Check if user is already part of the organisation
@@ -165,7 +165,7 @@ export class ProgramsService extends DataService implements CanActivate {
         sourcingOrgs.push(mappingObj.orgId);
       }
 
-      if (mappingObj.orgId == orgOsid) {
+      if (mappingObj.orgId === orgOsid) {
         uRoles = mappingObj.roles;
         if (this.router.url.includes('/sourcing') && !(mappingObj.roles.includes('sourcing_reviewer') || mappingObj.roles.includes('sourcing_admin'))) {
           uRoles.push('sourcing_reviewer');
@@ -182,7 +182,7 @@ export class ProgramsService extends DataService implements CanActivate {
     this.toasterService.warning(this.resourceService.messages.emsg.contributorjoin.m0002);
     this.router.navigate(['sourcing']);
     return false;
-  }else if (this.router.url.includes('/contribute') && contribOrgs.length > 0) {
+  } else if (this.router.url.includes('/contribute') && contribOrgs.length > 0) {
     if (contribOrgs.includes(orgOsid)) {
       this.toasterService.warning(this.resourceService.messages.emsg.contributorjoin.m0002);
       this.router.navigate(['contribute/myenrollprograms']);
@@ -195,17 +195,17 @@ export class ProgramsService extends DataService implements CanActivate {
   } else if (updateOsid) {
     this.updateUserRole(updateOsid, _.uniq(uRoles)).subscribe(
       (userAddRes) => {
-        console.log('User added to org'+ UserOsid, userAddRes);
+        console.log('User added to org' + UserOsid, userAddRes);
         this.onAfterJoinRedirect();
       },
       (userAddErr) => {
-          console.log('Error while adding User added to org'+ UserOsid, userAddErr);
+          console.log('Error while adding User added to org' + UserOsid, userAddErr);
           this.toasterService.error(this.resourceService.messages.fmsg.contributorjoin.m0002);
           this.router.navigate(['sourcing']);
         }
     );
-  } else if ((this.router.url.includes('/contribute') && contribOrgs.length == 0) ||
-  (this.router.url.includes('/sourcing') && ((sourcingOrgs.length == 0) || (sourcingOrgs.length > 0 && !sourcingOrgs.includes(orgOsid))))) {
+  } else if ((this.router.url.includes('/contribute') && contribOrgs.length === 0) ||
+  (this.router.url.includes('/sourcing') && ((sourcingOrgs.length === 0) || (sourcingOrgs.length > 0 && !sourcingOrgs.includes(orgOsid))))) {
       const userOrgAdd = {
         User_Org: {
           userId: UserOsid,
@@ -441,11 +441,11 @@ export class ProgramsService extends DataService implements CanActivate {
 
 
                       this.addToRegistry(userOrgAdd).subscribe(
-                        (userAddRes) => {console.log('User added to org'+ user.identifier, userAddRes);},
-                        (userAddErr) => {console.log('Errro while adding User added to org'+ user.identifier,userAddErr);}
+                        (userAddRes) => {console.log('User added to org' + user.identifier, userAddRes); },
+                        (userAddErr) => {console.log('Errro while adding User added to org' + user.identifier, userAddErr); }
                       );
                     },
-                    (error) => {console.log('Errro while adding User added to reg'+ user.identifier, error);}
+                    (error) => {console.log('Errro while adding User added to reg' + user.identifier, error); }
                 );
               } else if (!_.isEmpty(_.get(userProfile, 'user')) && _.isEmpty(_.get(userProfile, 'user_org'))) {
                 userOrgAdd = {
@@ -459,19 +459,19 @@ export class ProgramsService extends DataService implements CanActivate {
                   userOrgAdd.User_Org.roles = ['user', 'sourcing_reviewer'];
                 }
                 this.addToRegistry(userOrgAdd).subscribe(
-                  (userAddRes) => {console.log('User added to org'+ user.identifier, userAddRes);},
-                  (userAddErr) => {console.log('Errro while adding User added to org'+ user.identifier,userAddErr);}
+                  (userAddRes) => {console.log('User added to org' + user.identifier, userAddRes); },
+                  (userAddErr) => {console.log('Errro while adding User added to org' + user.identifier, userAddErr); }
                 );
               } else if (userOrgRoles.includes('CONTENT_REVIEWER')) {
                 const uOrgs = _.map(_.get(userProfile, 'user_org'), 'orgId');
-                if (uOrgs.includes(userRegData.User_Org.orgId)){
+                if (uOrgs.includes(userRegData.User_Org.orgId)) {
                 _.forEach(_.get(userProfile, 'user_org'), mapping => {
                   if (mapping.orgId === userRegData.User_Org.orgId) {
                       const uroles = mapping.roles;
                       uroles.push('sourcing_reviewer');
                       this.updateUserRole(mapping.osid, _.uniq(uroles)).subscribe(
-                        (userAddRes) => {console.log('User added to org'+ user.identifier, userAddRes);},
-                        (userAddErr) => {console.log('Errro while adding User added to org'+ user.identifier,userAddErr);}
+                        (userAddRes) => {console.log('User added to org' + user.identifier, userAddRes); },
+                        (userAddErr) => {console.log('Errro while adding User added to org' + user.identifier, userAddErr); }
                       );
                    }
                   });
@@ -484,8 +484,8 @@ export class ProgramsService extends DataService implements CanActivate {
                     }
                   };
                   this.addToRegistry(userOrgAdd).subscribe(
-                    (userAddRes) => {console.log('User added to org'+ user.identifier, userAddRes);},
-                    (userAddErr) => {console.log('Errro while adding User added to org'+ user.identifier,userAddErr);}
+                    (userAddRes) => {console.log('User added to org' + user.identifier, userAddRes); },
+                    (userAddErr) => {console.log('Errro while adding User added to org' + user.identifier, userAddErr); }
                   );
                 }
               }
@@ -952,7 +952,7 @@ export class ProgramsService extends DataService implements CanActivate {
     );
   }
 
-  getCategoryDefinition(categoryName, rootOrgId) {
+  getCategoryDefinition(categoryName, rootOrgId, objectType?: any) {
     const cacheInd = categoryName + ':' + rootOrgId;
     if (this.cacheService.get(cacheInd)) {
       return  of(this.cacheService.get(cacheInd));
@@ -961,16 +961,16 @@ export class ProgramsService extends DataService implements CanActivate {
         url: 'object/category/definition/v1/read?fields=objectMetadata,forms,name',
         data: {
           request: {
-            "objectCategoryDefinition": {
-                "objectType": "Content",
-                "name": categoryName,
-                "channel": rootOrgId
+            'objectCategoryDefinition': {
+                'objectType': objectType ? objectType : 'Content',
+                'name': categoryName
+                // 'channel': rootOrgId
             },
           }
         }
       };
       return this.post(req).pipe(tap(data => {
-        this.setSessionCache({name: cacheInd, value: data})
+        this.setSessionCache({name: cacheInd, value: data});
       }));
     }
   }
@@ -1153,7 +1153,7 @@ export class ProgramsService extends DataService implements CanActivate {
   }
 
   getContentOriginEnvironment() {
-    switch(window.location.hostname) {
+    switch (window.location.hostname) {
       case 'dock.sunbirded.org': return 'https://dev.sunbirded.org'; break;
       case 'vdn.diksha.gov.in': return 'https://diksha.gov.in'; break;
       case 'dock.preprod.ntp.net.in': return 'https://preprod.ntp.net.in'; break;
@@ -1242,7 +1242,7 @@ export class ProgramsService extends DataService implements CanActivate {
   getFiltersAppliedCount(appliedfilters) { // finding the applied filters count
     let count = 0;
     if (appliedfilters) {
-     _.map(_.compact(Object.values(appliedfilters)), (values) =>{
+     _.map(_.compact(Object.values(appliedfilters)), (values) => {
        values.length ? count++ : 0;
         });
     }
