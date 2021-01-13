@@ -27,7 +27,7 @@ class NavigationHelperServiceStub {
   public navigateToWorkSpace() {}
 }
 const mockUserService = { userProfile: { userId: '68777b59-b28b-4aee-88d6-50d46e4c35090'} };
-describe('ContentEditorComponent', () => {
+xdescribe('ContentEditorComponent', () => {
   let component: ContentEditorComponent;
   let fixture: ComponentFixture<ContentEditorComponent>;
   beforeEach(async(() => {
