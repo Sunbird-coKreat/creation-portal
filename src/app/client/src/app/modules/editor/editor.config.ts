@@ -32,7 +32,7 @@ export const reviewerToolbarConfig = {
     name: 'Reject',
     type: 'rejectCollection',
     buttonType: 'button',
-    style: 'sb-btn sb-btn-normal sb-btn-outline-primary mr-10',
+    style: 'sb-btn sb-btn-outline-error sb-btn-normal ripple mr-10',
     display: 'block'
   },
   {
@@ -41,7 +41,7 @@ export const reviewerToolbarConfig = {
     name: 'Publish',
     type: 'publishCollection',
     buttonType: 'button',
-    style: 'sb-btn sb-btn-normal sb-btn-primary',
+    style: 'sb-btn sb-btn-secondary sb-btn-normal ripple',
     display: 'block'
   }
   ]
