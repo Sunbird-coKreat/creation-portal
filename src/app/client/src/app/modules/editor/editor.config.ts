@@ -8,6 +8,7 @@ export const toolbarConfig = {
     type: 'saveCollection',
     buttonType: 'button',
     style: 'sb-btn sb-btn-normal sb-btn-outline-primary mr-10',
+    display: 'block'
   },
   {
     telemetryId: 'submit',
@@ -16,7 +17,8 @@ export const toolbarConfig = {
     type: 'submitCollection',
     buttonType: 'button',
     style: 'sb-btn sb-btn-normal sb-btn-primary',
-    slot: `<i class="trash alternate outline icon"></i>`
+    slot: `<i class="trash alternate outline icon"></i>`,
+    display: 'block'
   }
   ]
 };

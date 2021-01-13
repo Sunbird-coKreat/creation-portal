@@ -61,6 +61,7 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
   showConfirmPopup = false;
   public questionData: any = {};
   validQuestionData = false;
+  questionPrimaryCategory: string;
 
   constructor(private editorService: EditorService, private questionService: QuestionService,
     public activatedRoute: ActivatedRoute, public router: Router,
@@ -73,6 +74,7 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
       this.activatedRoute.queryParams.subscribe(params => {
         this.questionInteractionType = params['type'];
         this.questionId = params['questionId'];
+        this.questionPrimaryCategory = this.questionData.primaryCategory;
       });
   }
 
@@ -188,13 +190,8 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
     }
     const question = 'Q' + (index + 1).toString() + ' | ';
     let questionTitle = '';
-    if (this.questionInteractionType === 'default') {
-      questionTitle = question + 'Subjective Question';
-    }
-    if (this.questionInteractionType === 'choice') {
-      questionTitle = question + 'Multiple Choice Question';
-      }
-      this.toolbarConfig.title = questionTitle;
+    questionTitle = question + this.questionPrimaryCategory;
+    this.toolbarConfig.title = questionTitle;
   }
 
   initialize() {
@@ -207,6 +204,9 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
             .subscribe((res) => {
               if (res.result) {
                 this.questionMetaData = res.result.question;
+                if (_.isUndefined(this.questionPrimaryCategory)) {
+                  this.questionPrimaryCategory = this.questionMetaData.primaryCategory;
+                }
                 // tslint:disable-next-line:max-line-length
                 this.questionInteractionType = this.questionMetaData.interactionTypes ? this.questionMetaData.interactionTypes[0] : 'default';
                 if (this.questionInteractionType === 'default') {
@@ -227,7 +227,8 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
                   }, { templateId, numberOfOptions });
                   this.editorState.solutions = this.questionMetaData.editorState.solutions;
                 }
-                this.setQuestionTitle(this.questionSetHierarchy.childNodes, this.questionId);
+                const hierarchyChildNodes = this.questionSetHierarchy.childNodes ? this.questionSetHierarchy.childNodes : [];
+                this.setQuestionTitle(hierarchyChildNodes, this.questionId);
 
                 if (!_.isEmpty(this.editorState.solutions)) {
                   this.selectedSolutionType = this.editorState.solutions[0].type;
@@ -257,7 +258,8 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
             });
         }
         if (_.isUndefined(this.questionId)) {
-          this.setQuestionTitle(this.questionSetHierarchy.childNodes);
+          const hierarchyChildNodes = this.questionSetHierarchy.childNodes ? this.questionSetHierarchy.childNodes : [];
+          this.setQuestionTitle(hierarchyChildNodes);
           if (this.questionInteractionType === 'default') {
             this.editorState = { question: '', answer: '', solutions: '' };
             this.showLoader = false;
