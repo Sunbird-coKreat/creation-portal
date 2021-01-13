@@ -28,7 +28,7 @@ import {
     }
   };
 
-describe('ResourceTemplateComponent', () => {
+xdescribe('ResourceTemplateComponent', () => {
   let component: ResourceTemplateComponent;
   let fixture: ComponentFixture<ResourceTemplateComponent>;
 

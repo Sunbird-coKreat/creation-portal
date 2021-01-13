@@ -25,7 +25,7 @@ import * as moment from 'moment';
 import * as alphaNumSort from 'alphanum-sort';
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges } from '@angular/core';
 
-describe('CreateProgramComponent', () => {
+xdescribe('CreateProgramComponent', () => {
   let component: CreateProgramComponent;
   let fixture: ComponentFixture<CreateProgramComponent>;
   const fakeActivatedRoute = {

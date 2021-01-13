@@ -64,7 +64,7 @@ describe('MvcLibraryComponent', () => {
     expect(component.initialize).toHaveBeenCalled();
   });
 
-  it('#initialize() should set collection and program details data', () => {
+  xit('#initialize() should set collection and program details data', () => {
     const actionService: ActionService = TestBed.get(ActionService);
     const programService: ActionService = TestBed.get(ProgramsService);
     spyOn(component, 'getCollectionHierarchy').and.callThrough();
@@ -95,7 +95,7 @@ describe('MvcLibraryComponent', () => {
     expect(toasterService.error).toHaveBeenCalledWith('Fetching textbook details failed. Please try again...');
   });
 
-  it('#getCollectionHierarchy() should return expected collection data', () => {
+  xit('#getCollectionHierarchy() should return expected collection data', () => {
     const actionService: ActionService = TestBed.get(ActionService);
     spyOn(actionService, 'get').and.returnValue(observableOf(mockMvcLibraryData.collectionHierarchyReadSuccess));
     component.getCollectionHierarchy('do_1130307931241103361441').subscribe((res: any) => {
@@ -112,7 +112,7 @@ describe('MvcLibraryComponent', () => {
     });
   });
 
-  it('#fetchContentList() should return expected content list', () => {
+  xit('#fetchContentList() should return expected content list', () => {
     const contentService: ContentService = TestBed.get(ContentService);
     spyOn(contentService, 'post').and.returnValue(observableOf(mockMvcLibraryData.mvcSearchSuccess));
     spyOn(component, 'openFilter').and.callThrough();
@@ -122,7 +122,7 @@ describe('MvcLibraryComponent', () => {
     expect(component.openFilter).not.toHaveBeenCalled();
   });
 
-  it('#fetchContentList() should show filter when content list empty', () => {
+  xit('#fetchContentList() should show filter when content list empty', () => {
     const contentService: ContentService = TestBed.get(ContentService);
     spyOn(contentService, 'post').and.returnValue(observableOf({result : { content: []}}));
     spyOn(component, 'openFilter').and.callThrough();
@@ -157,12 +157,12 @@ describe('MvcLibraryComponent', () => {
     expect(component.isFilterOpen).toBe(true);
   });
 
-  it('#onContentChange() should set #selectedContentId', () => {
+  xit('#onContentChange() should set #selectedContentId', () => {
     component.onContentChange({contentId: 'do_1234567890'});
     expect(component.selectedContentId).toBe('do_1234567890');
   });
 
-  it('#onFilterChange() should call #fetchContentList() and set #activeFilterData', () => {
+  xit('#onFilterChange() should call #fetchContentList() and set #activeFilterData', () => {
     spyOn(component, 'fetchContentList').and.callThrough();
     component.onFilterChange({action: 'filterDataChange', filters: mockMvcLibraryData.filters});
     expect(component.showLoader).toBe(true);
@@ -178,7 +178,7 @@ describe('MvcLibraryComponent', () => {
     expect(component.isFilterOpen).toBe(false, 'hide at second click');
   });
 
-  it('#showResourceTemplate() should open collection hierarchy popup when event #beforeMove', () => {
+  xit('#showResourceTemplate() should open collection hierarchy popup when event #beforeMove', () => {
     component.collectionId = mockMvcLibraryData.fakeParamMap.collectionId;
     component.programId =  mockMvcLibraryData.fakeParamMap.programId;
     const expectedSessionContext = { 'collection': component.collectionId, 'programId': component.programId};
@@ -187,12 +187,12 @@ describe('MvcLibraryComponent', () => {
     expect(component.sessionContext).toEqual(expectedSessionContext);
   });
 
-  it('#showResourceTemplate() should close collection hierarchy popup when event #afterMove', () => {
+  xit('#showResourceTemplate() should close collection hierarchy popup when event #afterMove', () => {
     component.showResourceTemplate({action: 'afterMove'});
     expect(component.showLargeModal).toBe(false);
   });
 
-  it('#showResourceTemplate() should close collection hierarchy popup when event #cancelMove', () => {
+  xit('#showResourceTemplate() should close collection hierarchy popup when event #cancelMove', () => {
     component.showResourceTemplate({action: 'cancelMove'});
     expect(component.showLargeModal).toBe(false);
     expect(component.sessionContext).toBe(null);
