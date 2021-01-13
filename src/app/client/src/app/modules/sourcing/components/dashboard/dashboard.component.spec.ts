@@ -21,7 +21,7 @@ import { ExportToCsv } from 'export-to-csv';
 import { RouterTestingModule } from '@angular/router/testing';
 import { APP_BASE_HREF } from '@angular/common'; 
 
-describe('DashboardComponent', () => {
+xdescribe('DashboardComponent', () => {
   let component: DashboardComponent;
   let fixture: ComponentFixture<DashboardComponent>;
     // tslint:disable-next-line:prefer-const

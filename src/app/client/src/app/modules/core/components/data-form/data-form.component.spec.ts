@@ -4,7 +4,7 @@ import { SuiModule } from 'ng2-semantic-ui';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 
-describe('DataFormComponent', () => {
+xdescribe('DataFormComponent', () => {
   let component: DataFormComponent;
   let fixture: ComponentFixture<DataFormComponent>;
 

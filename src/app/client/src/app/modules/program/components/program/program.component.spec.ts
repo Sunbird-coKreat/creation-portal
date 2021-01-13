@@ -255,12 +255,12 @@ describe('ProgramComponent', () => {
     expect(component.getDefaultActiveTab()).toEqual(1);
   });
 
-  // xit('should initiateHeader be called', () => {
-  //   component.initiateHeader('failure');
-  // });
+  xit('should initiateHeader be called', () => {
+    component.initiateHeader('failure');
+  });
 
 
-  // xit('should unsubscribe subject', () => {
-  //   component.ngOnDestroy();
-  // });
+  xit('should unsubscribe subject', () => {
+    component.ngOnDestroy();
+  });
 });

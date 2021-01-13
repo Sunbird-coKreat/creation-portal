@@ -19,7 +19,7 @@ import { TelemetryService, TELEMETRY_PROVIDER } from '../../../telemetry/service
 import {  NavigationHelperService } from '@sunbird/shared';
 import { APP_BASE_HREF } from '@angular/common'; 
 
-describe('RecursiveTreeComponent', () => {
+xdescribe('RecursiveTreeComponent', () => {
 
   let fixture: ComponentFixture<RecursiveTreeComponent>;
   let component: RecursiveTreeComponent;

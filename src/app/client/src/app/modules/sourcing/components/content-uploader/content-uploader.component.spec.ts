@@ -95,7 +95,7 @@ xdescribe('ContentUploaderComponent', () => {
 
   beforeEach(async(() => {
     helperService = jasmine.createSpy('HelperService');
-    helperService.getNotification();
+    // helperService.getNotification();
     TestBed.configureTestingModule({
       imports: [SuiModule, SuiTabsModule, FormsModule, HttpClientTestingModule, ReactiveFormsModule, PlayerHelperModule,
                   RouterTestingModule, TelemetryModule, SharedModule],
@@ -334,7 +334,7 @@ xdescribe('ContentUploaderComponent', () => {
 
   beforeEach(async(() => {
     helperService = jasmine.createSpy('HelperService');
-    helperService.getNotification();
+    // helperService.getNotification();
     TestBed.configureTestingModule({
       imports: [SuiModule, SuiTabsModule, FormsModule, HttpClientTestingModule, ReactiveFormsModule, PlayerHelperModule,
                   RouterTestingModule, TelemetryModule],

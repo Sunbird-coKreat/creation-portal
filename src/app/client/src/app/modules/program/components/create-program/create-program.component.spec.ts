@@ -22,7 +22,7 @@ import * as alphaNumSort from 'alphanum-sort';
 import { Component, ViewChild} from '@angular/core';
 import { SuiModule } from 'ng2-semantic-ui';
 
-describe('CreateProgramComponent', () => {
+xdescribe('CreateProgramComponent', () => {
   let component: CreateProgramComponent;
   let fixture: ComponentFixture<CreateProgramComponent>;
   const fakeActivatedRoute = {
