@@ -19,7 +19,7 @@
             <app-question-set [telemetryEventsInput]="telemetryPageDetails" [questionSetMetadata]="selectedQuestionData" (toolbarEmitter)="toolbarEventListener($event)"></app-question-set>
           </ng-container>
           <ng-container *ngIf="selectedQuestionData?.folder === false">
-            <app-contentplayer-page [telemetryEventsInput]="telemetryPageDetails" [questionMetaData]="selectedQuestionData" (toolbarEmitter)="toolbarEventListener($event)"></app-contentplayer-page>
+            <app-contentplayer-page [telemetryEventsInput]="telemetryPageDetails" [questionMetaData]="selectedQuestionData" [mode]="mode" (toolbarEmitter)="toolbarEventListener($event)"></app-contentplayer-page>
           </ng-container>
         </div>
       </div>

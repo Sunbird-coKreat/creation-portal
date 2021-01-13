@@ -17,6 +17,7 @@ export class ContentplayerPageComponent implements OnInit, OnChanges {
   @Output() public toolbarEmitter: EventEmitter<any> = new EventEmitter();
   questionId: string;
   showPlayerPreview = false;
+  @Input() mode;
 
   constructor(public configService: ConfigService, public programTelemetryService: ProgramTelemetryService,
     private questionService: QuestionService, private toasterService: ToasterService) { }

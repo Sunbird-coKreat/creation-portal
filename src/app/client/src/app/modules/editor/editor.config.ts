@@ -23,6 +23,30 @@ export const toolbarConfig = {
   ]
 };
 
+export const reviewerToolbarConfig = {
+  headerName: 'Review Question Set',
+  title: 'Question Collection',
+  buttons: [{
+    telemetryId: 'reject',
+    telemetrySubtype: 'submit',
+    name: 'Reject',
+    type: 'rejectCollection',
+    buttonType: 'button',
+    style: 'sb-btn sb-btn-normal sb-btn-outline-primary mr-10',
+    display: 'block'
+  },
+  {
+    telemetryId: 'publish',
+    telemetrySubtype: 'submit',
+    name: 'Publish',
+    type: 'publishCollection',
+    buttonType: 'button',
+    style: 'sb-btn sb-btn-normal sb-btn-primary',
+    display: 'block'
+  }
+  ]
+};
+
 export const questionToolbarConfig = {
   headerName: 'Back',
   title: 'Q1 | MCQ',

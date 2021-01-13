@@ -84,6 +84,18 @@ export class EditorService {
     return this.publicDataService.post(req);
   }
 
+  public publishQuestionSet(identifier: string): Observable<any> {
+    const req = {
+      url: `${this.configService.urlConFig.URLS.QUESTION_SET.PUBLISH}/${identifier}`,
+      data: {
+        'request' : {
+            'questionSet': {}
+        }
+    }
+    };
+    return this.publicDataService.post(req);
+  }
+
   public getQuestionStream$() {
     return this.questionStream$;
   }

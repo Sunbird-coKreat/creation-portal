@@ -21,7 +21,7 @@ import { TelemetryService, IStartEventInput, IEndEventInput } from '@sunbird/tel
 export class QuestionBaseComponent implements OnInit, AfterViewInit {
 
   QumlPlayerConfig: any = {};
-  toolbarConfig = questionToolbarConfig;
+  toolbarConfig: any;
   public telemetryPageDetails: any = {};
   public telemetryPageId: string;
   public editorConfig: any = questionEditorConfig;
@@ -188,13 +188,18 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
     } else {
       index = hierarchyChildNodes.length;
     }
-    const question = 'Q' + (index + 1).toString() + ' | ';
-    let questionTitle = '';
-    questionTitle = question + this.questionPrimaryCategory;
+
+    const question = `Q ${(index + 1).toString()} | `;
+    let questionTitle = question;
+    if (!_.isUndefined(this.questionPrimaryCategory)) {
+      questionTitle = question + this.questionPrimaryCategory;
+    }
     this.toolbarConfig.title = questionTitle;
   }
 
   initialize() {
+    const intialtoolbarConfig = questionToolbarConfig;
+    this.toolbarConfig = intialtoolbarConfig;
     this.questionSetId = _.get(this.activatedRoute, 'snapshot.params.questionSetId');
     this.editorService.getQuestionSetHierarchy(this.questionSetId).
       subscribe((response) => {
@@ -293,9 +298,11 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
         break;
       case 'previewContent':
         this.refreshEditor();
-        this.toolbarConfig.buttons[editContentIndex].display = 'block';
-        this.toolbarConfig.buttons[previewContentIndex].display = 'none';
         this.previewContent();
+        if (this.showFormError === false) {
+          this.toolbarConfig.buttons[editContentIndex].display = 'block';
+        this.toolbarConfig.buttons[previewContentIndex].display = 'none';
+        }
         break;
         case 'editContent':
         this.refreshEditor();
