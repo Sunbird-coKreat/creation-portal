@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, finalize, map } from 'rxjs/operators';
 import { throwError } from 'rxjs';
@@ -48,7 +48,7 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
     private userService: UserService, private programsService: ProgramsService, private navigationHelperService: NavigationHelperService,
     private configService: ConfigService, private toasterService: ToasterService, public resourceService: ResourceService,
     private router: Router, private telemetryService: TelemetryService, private deviceDetectorService: DeviceDetectorService,
-    public helperService: HelperService) {
+    public helperService: HelperService, private cdr: ChangeDetectorRef) {
     this.editorParams = {
       collectionId: _.get(this.activatedRoute, 'snapshot.params.questionSetId'),
     };
@@ -196,8 +196,11 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
       }
       this.toolbarConfig.title = res.name;
       this.collectionTreeNodes = res;
+      this.cdr.detectChanges();
       if (_.isEmpty(res.children)) {
-        // TODO: Call update questionSet APIs if children property empty
+        this.hideButton('submitCollection');
+      } else {
+        this.showButton('submitCollection');
       }
     });
   }
@@ -311,5 +314,15 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
       queryParams += `questionId=${this.selectedQuestionData.data.metadata.identifier}`;
     }
     this.router.navigateByUrl(`/create/questionSet/${this.editorParams.collectionId}/question${queryParams}`);
+  }
+
+  showButton(buttonType) {
+    const buttonIndex = _.findIndex(this.toolbarConfig.buttons, {type: buttonType});
+    this.toolbarConfig.buttons[buttonIndex].display = 'display';
+  }
+
+  hideButton(buttonType) {
+    const buttonIndex = _.findIndex(this.toolbarConfig.buttons, {type: buttonType});
+    this.toolbarConfig.buttons[buttonIndex].display = 'none';
   }
 }

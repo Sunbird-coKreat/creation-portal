@@ -8,6 +8,7 @@ export const toolbarConfig = {
     type: 'saveCollection',
     buttonType: 'button',
     style: 'sb-btn sb-btn-normal sb-btn-outline-primary mr-10',
+    display: 'block'
   },
   {
     telemetryId: 'submit',
@@ -16,7 +17,8 @@ export const toolbarConfig = {
     type: 'submitCollection',
     buttonType: 'button',
     style: 'sb-btn sb-btn-normal sb-btn-primary',
-    slot: `<i class="trash alternate outline icon"></i>`
+    slot: `<i class="trash alternate outline icon"></i>`,
+    display: 'block'
   }
   ]
 };
@@ -32,7 +34,8 @@ export const questionToolbarConfig = {
       type: 'editContent',
       buttonType: 'button',
       style: 'sb-btn sb-btn-normal sb-btn-outline-primary mr-10',
-      slot: `icon edit`
+      slot: `icon edit`,
+      display: 'none'
     },
     {
     telemetryId: 'preview',
@@ -41,7 +44,8 @@ export const questionToolbarConfig = {
     type: 'previewContent',
     buttonType: 'button',
     style: 'sb-btn sb-btn-normal sb-btn-outline-primary mr-10',
-    slot: `icon eye`
+    slot: `icon eye`,
+    display: 'block'
   }, {
     telemetryId: 'cancel',
     telemetrySubtype: 'launch',
@@ -49,6 +53,7 @@ export const questionToolbarConfig = {
     type: 'cancelContent',
     buttonType: 'button',
     style: 'sb-btn sb-btn-normal sb-btn-outline-primary mr-10',
+    display: 'block'
   },
   {
     telemetryId: 'save',
@@ -56,7 +61,8 @@ export const questionToolbarConfig = {
     name: 'Save',
     type: 'saveContent',
     buttonType: 'button',
-    style: 'sb-btn sb-btn-normal sb-btn-primary'
+    style: 'sb-btn sb-btn-normal sb-btn-primary',
+    display: 'block'
   }
   ]
 };
