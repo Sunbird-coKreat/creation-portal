@@ -12,7 +12,7 @@ import { UserService} from './../../services';
   templateUrl: './main-footer.component.html'
 })
 export class MainFooterComponent implements OnInit, AfterViewInit {
-  @ViewChild('footerFix') footerFix: ElementRef;
+  @ViewChild('footerFix', {static: false}) footerFix: ElementRef;
   /**
    * reference of resourceService service.
    */

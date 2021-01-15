@@ -13,7 +13,7 @@ import { UserSearchService } from './../../services';
   templateUrl: './user-delete.component.html'
 })
 export class UserDeleteComponent implements OnInit, OnDestroy {
-   @ViewChild('modal') modal;
+   @ViewChild('modal', {static: false}) modal;
   /**
 	 * Contains unique announcement id
 	 */
