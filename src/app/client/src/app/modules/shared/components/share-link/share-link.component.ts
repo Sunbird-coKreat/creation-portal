@@ -1,7 +1,7 @@
 import { IShareEventData, IShareEventInput } from '@sunbird/telemetry';
 import {
   Component, OnInit, Input, EventEmitter,
-  ElementRef, ViewChild, Renderer, Output
+  ElementRef, ViewChild, Renderer2, Output
 } from '@angular/core';
 import { ResourceService } from '../../services/index';
 import { IPopup } from 'ng2-semantic-ui';
