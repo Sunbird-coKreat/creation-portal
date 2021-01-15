@@ -20,27 +20,7 @@ export const formConfig = [
             'message': 'Title is required'
         }]
     },
-    {
-        'code': 'description',
-        'dataType': 'text',
-        'description': 'Description of the content',
-        'editable': true,
-        'inputType': 'textarea',
-        'label': 'Description',
-        'name': 'Description',
-        'placeholder': 'Description',
-        'renderingHints': {'class': 'sb-g-col-lg-1'},
-        'required': true,
-        'visible': true,
-        'validations': [{
-            'type': 'max',
-            'value': '120',
-            'message': 'Input is Exceeded'
-        }, {
-            'type': 'required',
-            'message': 'Title is required'
-        }]
-    },
+   
     {
         'code': 'keywords',
         'visible': true,
@@ -62,24 +42,6 @@ export const formConfig = [
           'type': 'required',
           'message': 'Keyword is required'
         }]
-      },
-      {
-        'code': 'primaryCategory',
-        'dataType': 'text',
-        'description': 'Type',
-        'editable': false,
-        'index': 4,
-        'renderingHints': {'class': 'sb-g-col-lg-1'},
-        'inputType': 'select',
-        'label': 'Type',
-        'name': 'Type',
-        'placeholder': '',
-        'required': true,
-        'visible': true,
-        'section': {
-          'index': 2,
-          'name': ''
-        }
       },
       {
         'code': 'additionalCategories',
@@ -154,6 +116,25 @@ export const formConfig = [
           'name': ''
         }
       },
+      {
+        'code': 'primaryCategory',
+        'dataType': 'text',
+        'description': 'Type',
+        'editable': false,
+        'index': 4,
+        'renderingHints': {'class': 'sb-g-col-lg-1'},
+        'inputType': 'select',
+        'label': 'Type',
+        'name': 'Type',
+        'placeholder': '',
+        'required': true,
+        'visible': true,
+        'section': {
+          'index': 2,
+          'name': ''
+        }
+      },
+      
       {
         'code': 'board',
         'visible': true,
@@ -369,5 +350,26 @@ export const formConfig = [
         'required': true,
         'visible': true,
         'range': ''
-    }
+    },
+    {
+      'code': 'description',
+      'dataType': 'text',
+      'description': 'Description of the content',
+      'editable': true,
+      'inputType': 'textarea',
+      'label': 'Description',
+      'name': 'Description',
+      'placeholder': 'Description',
+      'renderingHints': {'class': 'sb-g-col-lg-1'},
+      'required': true,
+      'visible': true,
+      'validations': [{
+          'type': 'max',
+          'value': '120',
+          'message': 'Input is Exceeded'
+      }, {
+          'type': 'required',
+          'message': 'Title is required'
+      }]
+  }
 ];
