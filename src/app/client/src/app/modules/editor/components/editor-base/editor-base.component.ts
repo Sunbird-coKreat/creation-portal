@@ -42,7 +42,7 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
   public pageStartTime;
   public rootObject = 'QuestionSet';
   public childObject = 'Question';
-  public editorMode = this.editorService.editorMode;
+  private editorMode = this.editorService.editorMode;
 
   constructor(public programTelemetryService: ProgramTelemetryService, private treeService: TreeService,
     private editorService: EditorService, private activatedRoute: ActivatedRoute, private cbseService: CbseProgramService,
