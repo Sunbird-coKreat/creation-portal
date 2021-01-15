@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import { ConfigService, ServerResponse, ToasterService } from '@sunbird/shared';
 import { ProgramTelemetryService } from '../../../program/services';
 import { data1 } from './quml-library-data';
-import { QuestionService } from '../../services';
+import { QuestionService, EditorService } from '../../services';
 
 @Component({
   selector: 'app-contentplayer-page',
@@ -19,7 +19,8 @@ export class ContentplayerPageComponent implements OnInit, OnChanges {
   showPlayerPreview = false;
 
   constructor(public configService: ConfigService, public programTelemetryService: ProgramTelemetryService,
-    private questionService: QuestionService, private toasterService: ToasterService) { }
+    private questionService: QuestionService, private toasterService: ToasterService,
+    private editorService: EditorService) { }
 
   ngOnInit() {}
 

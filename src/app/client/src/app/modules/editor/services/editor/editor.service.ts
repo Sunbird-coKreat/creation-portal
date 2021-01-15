@@ -18,6 +18,7 @@ interface SelectedChildren {
 export class EditorService {
   data: any;
   private _selectedChildren: SelectedChildren = {};
+  private _editorMode = 'create';
   private _hierarchyConfig: any;
   public questionStream$ = new Subject<any>();
   constructor(public treeService: TreeService, public configService: ConfigService,
@@ -48,6 +49,14 @@ export class EditorService {
     return this._hierarchyConfig;
   }
 
+  set editorMode(mode) {
+    this._editorMode = mode;
+  }
+
+  get editorMode() {
+    return this._editorMode;
+  }
+
 
   public getQuestionSetHierarchy(identifier: string) {
     const req = {
@@ -75,6 +84,30 @@ export class EditorService {
   public sendQuestionSetForReview(identifier: string): Observable<any> {
     const req = {
       url: `${this.configService.urlConFig.URLS.QUESTION_SET.REVIEW}/${identifier}`,
+      data: {
+        'request' : {
+            'questionSet': {}
+        }
+    }
+    };
+    return this.publicDataService.post(req);
+  }
+
+  public publishQuestionSet(identifier: string): Observable<any> {
+    const req = {
+      url: `${this.configService.urlConFig.URLS.QUESTION_SET.PUBLISH}/${identifier}`,
+      data: {
+        'request' : {
+            'questionSet': {}
+        }
+    }
+    };
+    return this.publicDataService.post(req);
+  }
+
+  public rejectQuestionSet(identifier: string): Observable<any> {
+    const req = {
+      url: `${this.configService.urlConFig.URLS.QUESTION_SET.REJECT}/${identifier}`,
       data: {
         'request' : {
             'questionSet': {}

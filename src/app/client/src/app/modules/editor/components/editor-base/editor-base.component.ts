@@ -6,7 +6,7 @@ import * as _ from 'lodash-es';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { TelemetryService, IImpressionEventInput, IStartEventInput, IEndEventInput } from '@sunbird/telemetry';
 import { TreeService, EditorService, HelperService } from '../../services';
-import { templateList, toolbarConfig } from '../../editor.config';
+import { templateList, toolbarConfig, reviewerToolbarConfig } from '../../editor.config';
 import { CbseProgramService } from '../../../cbse-program/services';
 import { ProgramsService, UserService } from '@sunbird/core';
 import { ConfigService, ToasterService, ResourceService, NavigationHelperService } from '@sunbird/shared';
@@ -29,7 +29,7 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
   public impressionEventTriggered: Boolean = false;
   public telemetryStart: IStartEventInput;
   public telemetryEnd: IEndEventInput;
-  public toolbarConfig = toolbarConfig;
+  public toolbarConfig: any;
   public templateList: any;
   public collectionTreeNodes: any;
   public selectedQuestionData: any = {};
@@ -42,6 +42,7 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
   public pageStartTime;
   public rootObject = 'QuestionSet';
   public childObject = 'Question';
+  private editorMode = this.editorService.editorMode;
 
   constructor(public programTelemetryService: ProgramTelemetryService, private treeService: TreeService,
     private editorService: EditorService, private activatedRoute: ActivatedRoute, private cbseService: CbseProgramService,
@@ -55,6 +56,11 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    if (this.editorMode === 'review') {
+      this.toolbarConfig = reviewerToolbarConfig;
+    } else if (this.editorMode === 'create') {
+      this.toolbarConfig = toolbarConfig;
+    }
     this.pageStartTime = Date.now();
     this.prepareTelemetryEvents();
     this.fetchQuestionSetHierarchy();
@@ -198,9 +204,13 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
       this.collectionTreeNodes = res;
       this.cdr.detectChanges();
       if (_.isEmpty(res.children)) {
-        this.hideButton('submitCollection');
+        if (this.editorMode === 'create') {
+          this.hideButton('submitCollection');
+        }
       } else {
-        this.showButton('submitCollection');
+          if (this.editorMode === 'create') {
+            this.showButton('submitCollection');
+          }
       }
     });
   }
@@ -224,6 +234,12 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
         break;
       case 'onFormChange':
         this.submitFormStatus = event.event.isValid;
+        break;
+      case 'publishCollection':
+        this.publishCollection();
+        break;
+      case 'rejectCollection':
+        this.rejectCollection();
         break;
       default:
         break;
@@ -257,6 +273,32 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
       this.showConfirmPopup = false;
       this.generateTelemetryEndEvent('submit');
       this.toasterService.success('Question set sent for review');
+    });
+  }
+
+  publishCollection() {
+    this.editorService.publishQuestionSet(this.editorParams.collectionId).pipe(catchError(error => {
+      const errInfo = {
+        errorMsg: 'Publishing question set failed. Please try again...',
+      };
+      return throwError(this.cbseService.apiErrorHandling(error, errInfo));
+    })).subscribe(res => {
+      this.showConfirmPopup = false;
+      this.generateTelemetryEndEvent('submit');
+      this.toasterService.success('Question set published successfully');
+    });
+  }
+
+  rejectCollection() {
+    this.editorService.rejectQuestionSet(this.editorParams.collectionId).pipe(catchError(error => {
+      const errInfo = {
+        errorMsg: 'Rejecting question set failed. Please try again...',
+      };
+      return throwError(this.cbseService.apiErrorHandling(error, errInfo));
+    })).subscribe(res => {
+      this.showConfirmPopup = false;
+      this.generateTelemetryEndEvent('submit');
+      this.toasterService.success('Question set rejected successfully');
     });
   }
 
