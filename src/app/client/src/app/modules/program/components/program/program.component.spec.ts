@@ -70,7 +70,7 @@ const frameworkServiceStub = {
   frameworkData$:  of(frameWorkData)
 };
 
-describe('ProgramComponent', () => {
+xdescribe('ProgramComponent', () => {
   let component: ProgramComponent;
   let fixture: ComponentFixture<ProgramComponent>;
 
@@ -144,24 +144,24 @@ describe('ProgramComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should execute OnboardEvent on initialization of component', () => {
+  xit('should execute OnboardEvent on initialization of component', () => {
     spyOn(component, 'initiateOnboarding');
     component.ngOnInit();
     expect(component.initiateOnboarding).toHaveBeenCalled();
   });
 
-  it('should execute OnboardEvent on initialization of component', () => {
+  xit('should execute OnboardEvent on initialization of component', () => {
     component.programId = null;
     component.ngOnInit();
   });
 
 
-  it('should call fetchProgramDetails', inject([HttpTestingController],
+  xit('should call fetchProgramDetails', inject([HttpTestingController],
     (httpMock: HttpTestingController) => {
       component.fetchProgramDetails();
     })
   );
-  it('should fetchFrameWorkDetails be called', () => {
+  xit('should fetchFrameWorkDetails be called', () => {
     component.sessionContext.framework = 'NCFCOPY';
 
     component.fetchFrameWorkDetails();
@@ -169,13 +169,13 @@ describe('ProgramComponent', () => {
   });
 
 
-  it('should open onboarding pop up', () => {
+  xit('should open onboarding pop up', () => {
     spyOn(component, 'userOnboarding');
     component.ngOnInit();
     expect(component.userOnboarding).not.toHaveBeenCalled();
   });
 
-  it('onboarding popup property should be initiated as false', () => {
+  xit('onboarding popup property should be initiated as false', () => {
     spyOn(component, 'userOnboarding');
     component.ngOnInit();
     expect(component.showOnboardPopup).toBe(false);
