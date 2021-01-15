@@ -29,7 +29,7 @@
 
                 <app-options *ngIf="(questionInteractionType === 'choice')" [editorConfig]="editorConfig" [editorState]="editorState" [showFormError]="showFormError" [telemetryPageDetails]="telemetryPageDetails" [questionMetaData]="questionMetaData" (editorDataOutput)="editorDataHandler($event)"></app-options>
 
-                <div class="d-flex flex-ai-center ckeditor-tool__solution py-10 px-16 mt-15 sb-bg-color-white">
+                <div class="d-flex flex-ai-center ckeditor-tool__solution py-10 px-16 mt-15 sb-bg-color-white w-85">
                   <label class="fs-0-92 mb-0 ckeditor-tool__label pb-4">
                     <span class="sb-color-primary fs-0-785 mr-4">Solution</span>
                     <span class="sb-color-gray-200 fxsmall font-weight-normal">(Optional)</span>
