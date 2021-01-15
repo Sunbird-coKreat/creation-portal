@@ -42,7 +42,7 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
   public pageStartTime;
   public rootObject = 'QuestionSet';
   public childObject = 'Question';
-  public mode = 'create';
+  public editorMode = this.editorService.editorMode;
 
   constructor(public programTelemetryService: ProgramTelemetryService, private treeService: TreeService,
     private editorService: EditorService, private activatedRoute: ActivatedRoute, private cbseService: CbseProgramService,
@@ -56,9 +56,9 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    if (this.mode === 'review') {
+    if (this.editorMode === 'review') {
       this.toolbarConfig = reviewerToolbarConfig;
-    } else if (this.mode === 'create') {
+    } else if (this.editorMode === 'create') {
       this.toolbarConfig = toolbarConfig;
     }
     this.pageStartTime = Date.now();
@@ -204,11 +204,11 @@ export class EditorBaseComponent implements OnInit, AfterViewInit {
       this.collectionTreeNodes = res;
       this.cdr.detectChanges();
       if (_.isEmpty(res.children)) {
-        if (this.mode === 'create') {
+        if (this.editorMode === 'create') {
           this.hideButton('submitCollection');
         }
       } else {
-          if (this.mode === 'create') {
+          if (this.editorMode === 'create') {
             this.showButton('submitCollection');
           }
       }

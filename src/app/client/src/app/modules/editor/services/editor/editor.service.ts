@@ -18,6 +18,7 @@ interface SelectedChildren {
 export class EditorService {
   data: any;
   private _selectedChildren: SelectedChildren = {};
+  private _editorMode = 'create';
   private _hierarchyConfig: any;
   public questionStream$ = new Subject<any>();
   constructor(public treeService: TreeService, public configService: ConfigService,
@@ -46,6 +47,14 @@ export class EditorService {
 
   get hierarchyConfig() {
     return this._hierarchyConfig;
+  }
+
+  set editorMode(mode) {
+    this._editorMode = mode;
+  }
+
+  get editorMode() {
+    return this._editorMode;
   }
 
 
