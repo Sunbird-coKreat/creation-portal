@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { questionToolbarConfig } from '../../editor.config';
 import { EditorService } from '../../services';
 import { PlayerService } from '../../services';
@@ -60,8 +60,9 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
   questionSetHierarchy: any;
   showConfirmPopup = false;
   public questionData: any = {};
-  validQuestionData = false;
   questionPrimaryCategory: string;
+  editContentIndex;
+  previewContentIndex;
 
   constructor(private editorService: EditorService, private questionService: QuestionService,
     public activatedRoute: ActivatedRoute, public router: Router,
@@ -69,7 +70,7 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
     private userService: UserService, public programTelemetryService: ProgramTelemetryService,
     private configService: ConfigService, private navigationHelperService: NavigationHelperService,
     private deviceDetectorService: DeviceDetectorService, private telemetryService: TelemetryService,
-    public playerService: PlayerService, private cdr: ChangeDetectorRef) {
+    public playerService: PlayerService) {
       this.questionData = this.editorService.selectedChildren;
       this.activatedRoute.queryParams.subscribe(params => {
         this.questionInteractionType = params['type'];
@@ -198,8 +199,11 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
   }
 
   initialize() {
-    const intialtoolbarConfig = questionToolbarConfig;
-    this.toolbarConfig = intialtoolbarConfig;
+    this.toolbarConfig = questionToolbarConfig;
+    this.editContentIndex = _.findIndex(this.toolbarConfig.buttons, {type: 'editContent'});
+    this.previewContentIndex = _.findIndex(this.toolbarConfig.buttons, {type: 'previewContent'});
+    this.toolbarConfig.buttons[this.previewContentIndex].display = 'block';
+    this.toolbarConfig.buttons[this.editContentIndex].display = 'none';
     this.questionSetId = _.get(this.activatedRoute, 'snapshot.params.questionSetId');
     this.editorService.getQuestionSetHierarchy(this.questionSetId).
       subscribe((response) => {
@@ -282,8 +286,6 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
   }
 
   toolbarEventListener(event) {
-    const editContentIndex = _.findIndex(this.toolbarConfig.buttons, {type: 'editContent'});
-    const previewContentIndex = _.findIndex(this.toolbarConfig.buttons, {type: 'previewContent'});
     switch (event.button.type) {
       case 'saveContent':
         this.saveContent();
@@ -297,27 +299,17 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
         this.handleRedirectToQuestionset();
         break;
       case 'previewContent':
-        this.refreshEditor();
         this.previewContent();
-        if (this.showFormError === false) {
-          this.toolbarConfig.buttons[editContentIndex].display = 'block';
-          this.toolbarConfig.buttons[previewContentIndex].display = 'none';
-        }
         break;
         case 'editContent':
-        this.refreshEditor();
-        this.toolbarConfig.buttons[previewContentIndex].display = 'block';
-        this.toolbarConfig.buttons[editContentIndex].display = 'none';
+        this.toolbarConfig.buttons[this.previewContentIndex].display = 'block';
+        this.toolbarConfig.buttons[this.editContentIndex].display = 'none';
         this.showPreview = false;
         this.showLoader = false;
           break;
       default:
         break;
     }
-  }
-
-  private refreshEditor() {
-    this.cdr.detectChanges();
   }
 
   handleRedirectToQuestionset() {
@@ -329,7 +321,13 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
   }
 
   saveContent() {
+    this.validateQuestionData();
+    if (this.showFormError === false) {
+      this.saveQuestion();
+    }
+  }
 
+  validateQuestionData() {
     if ([undefined, ''].includes(this.editorState.question)) {
       this.showFormError = true;
       return;
@@ -356,8 +354,6 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
         this.showFormError = false;
       }
     }
-    this.validQuestionData = true;
-    this.saveQuestion();
   }
 
   redirectToQuestionset() {
@@ -365,7 +361,6 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.router.navigateByUrl(`create/questionSet/${this.questionSetId}`);
     }, 100);
-
   }
 
   editorDataHandler(event, type) {
@@ -517,8 +512,7 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
           if (response.result) {
             const questionId = response.result.identifiers.questionId;
             this.toasterService.success(this.resourceService.messages.smsg.m0070);
-            // tslint:disable-next-line:max-line-length
-            this.router.navigate([`create/questionSet/${this.questionSetId}/question`], { queryParams: { type: this.questionInteractionType, questionId: questionId } });
+            this.router.navigate([`create/questionSet/${this.questionSetId}`]);
           }
         },
         (err: ServerResponse) => {
@@ -534,20 +528,21 @@ export class QuestionBaseComponent implements OnInit, AfterViewInit {
         (response: ServerResponse) => {
           if (response.result) {
             this.toasterService.success(this.resourceService.messages.smsg.m0070);
-            // tslint:disable-next-line:max-line-length
-            this.router.navigate([`create/questionSet/${this.questionSetId}/question`], { queryParams: { type: this.questionInteractionType, questionId: questionId } });
+            this.router.navigate([`create/questionSet/${this.questionSetId}`]);
           }
         },
         (err: ServerResponse) => {
-          this.toasterService.error(this.resourceService.messages.emsg.m0029);
+          this.toasterService.error(this.resourceService.messages.emsg.m0028);
           console.log(err);
         });
   }
 
  async previewContent() {
-   await this.saveContent();
-   if (this.validQuestionData === true) {
+   await this.validateQuestionData();
+   if (this.showFormError === false) {
     await this.setQumlData();
+    this.toolbarConfig.buttons[this.editContentIndex].display = 'block';
+    this.toolbarConfig.buttons[this.previewContentIndex].display = 'none';
     this.showPreview = true;
    }
   }
