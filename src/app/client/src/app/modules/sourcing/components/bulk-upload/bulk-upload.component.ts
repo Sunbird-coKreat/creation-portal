@@ -20,7 +20,7 @@ export class BulkUploadComponent implements OnInit {
   @Input('sharedContext') sharedContext: any;
   @Input('programContext') programContext: any;
   @Input() storedCollectionData;
-  @ViewChild('fineUploaderUI') fineUploaderUI: ElementRef;
+  @ViewChild('fineUploaderUI', {static: false}) fineUploaderUI: ElementRef;
 
   public process: any = {
     process_id: '',

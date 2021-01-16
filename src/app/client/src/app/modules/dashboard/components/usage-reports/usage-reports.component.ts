@@ -27,7 +27,7 @@ export class UsageReportsComponent implements OnInit, AfterViewInit {
   telemetryInteractEdata: IInteractEventEdata;
   telemetryInteractDownloadEdata: IInteractEventEdata;
   downloadUrl;
-  @ViewChild(TelemetryInteractDirective) telemetryInteractDirective;
+  @ViewChild(TelemetryInteractDirective, {static: false}) telemetryInteractDirective;
   constructor(private usageService: UsageService, private sanitizer: DomSanitizer,
     public userService: UserService, private toasterService: ToasterService,
     public resourceService: ResourceService, activatedRoute: ActivatedRoute, private router: Router,

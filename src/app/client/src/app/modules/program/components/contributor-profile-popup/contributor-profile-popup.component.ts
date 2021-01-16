@@ -11,7 +11,7 @@ import * as _ from 'lodash-es';
 export class ContributorProfilePopupComponent implements OnInit, OnDestroy {
 
   @Output() close = new EventEmitter<any>();
-  @ViewChild('modal') private modal;
+  @ViewChild('modal', {static: false}) private modal;
   @Input() userId?: string;
   @Input() orgId?: string;
   @Input() showProfile: boolean;

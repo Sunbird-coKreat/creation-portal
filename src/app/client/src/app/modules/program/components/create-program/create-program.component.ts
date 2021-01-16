@@ -28,7 +28,7 @@ import { CacheService } from 'ng2-cache-service';
 })
 
 export class CreateProgramComponent implements OnInit, AfterViewInit {
-  @ViewChild('fineUploaderUI') fineUploaderUI: ElementRef;
+  @ViewChild('fineUploaderUI', {static: false}) fineUploaderUI: ElementRef;
   public unsubscribe = new Subject<void>();
   public programId: string;
   public guidLinefileName: String;

@@ -25,7 +25,7 @@ import { Subject } from 'rxjs';
  `],
 })
 export class FlagContentComponent implements OnInit, OnDestroy {
-  @ViewChild('modal') modal;
+  @ViewChild('modal', {static: false}) modal;
   /**
    * It is type of IFlagReason containing name, value and description
    */
