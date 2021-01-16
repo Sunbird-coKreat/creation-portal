@@ -57,7 +57,7 @@ export class ShareLinkComponent implements OnInit {
   *@param {ResourceService} SearchService Reference of SearchService
   *@param {WorkSpaceService} WorkSpaceService Reference of SearchService
   */
-  constructor(resourceService: ResourceService, private _renderer: Renderer) {
+  constructor(resourceService: ResourceService, private _renderer: Renderer2) {
     this.resourceService = resourceService;
     this.position = 'top center';
     this.baseUrl = document.location.origin + '/';

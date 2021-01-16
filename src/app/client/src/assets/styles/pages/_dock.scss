@@ -348,9 +348,9 @@ top: -4px;
     margin-bottom: 0.6rem;
   }
 }
-.sb-line-height-1.2{
-  line-height: 1.2rem;
-}
+// .sb-line-height-1.2{
+//   line-height: 1.2rem;
+// }
 .sb-success-loader{
     position: absolute !important;
     position: absolute !important;
@@ -606,7 +606,7 @@ xxl calculateRem(180px) 24px 20px;
     -webkit-appearance: none;
     box-shadow: none !important;
     &:focus,&:active{
-      border: 1px solid var(--primary-300) !important; 
+      border: 1px solid var(--primary-300) !important;
       outline: 0 !important;
     }
     option{
@@ -615,8 +615,8 @@ xxl calculateRem(180px) 24px 20px;
       padding: 6px 12px;
     }
   }
-  :-webkit-autofill { 
-    color: #fff !important; 
+  :-webkit-autofill {
+    color: #fff !important;
   }
     label:after {
       content:'\25BC';
@@ -657,8 +657,8 @@ xxl calculateRem(180px) 24px 20px;
   }
 }
 .iziModal-isAttached body {
-  overflow: inherit !important; 
-} 
+  overflow: inherit !important;
+}
 .selecttarget{
   .dropdown.icon{
     float: right !important;
@@ -668,7 +668,7 @@ xxl calculateRem(180px) 24px 20px;
 .selecttarget{
   .dropdown.icon{
     float: right !important;
-  }   
+  }
   .menu{
     width: 100%;
   }
