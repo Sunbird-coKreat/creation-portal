@@ -4,6 +4,7 @@ import { TreeService, HelperService } from '../../services';
 import { ConfigService } from '@sunbird/shared';
 import { ProgramTelemetryService } from '../../../program/services';
 import { formConfig} from './formConfig';
+import { EditorService } from '../../services';
 
 @Component({
   selector: 'app-question-set',
@@ -16,7 +17,9 @@ export class QuestionSetComponent implements OnInit {
   @Output() toolbarEmitter = new EventEmitter<any>();
   config = formConfig;
   constructor(private treeService: TreeService, public configService: ConfigService,
-    public programTelemetryService: ProgramTelemetryService, public helperService: HelperService) { }
+    public programTelemetryService: ProgramTelemetryService, public helperService: HelperService,
+    public editorService: EditorService) {
+    }
 
   ngOnInit() {
     this.prepareFormConfiguration();
@@ -84,6 +87,12 @@ export class QuestionSetComponent implements OnInit {
           break;
       }
     });
+
+    if (this.editorService.editorMode === 'review') {
+       _.forEach(this.config, (obj) => {
+         _.set(obj, 'editable', false);
+     });
+   }
   }
 
   addQuestion() {

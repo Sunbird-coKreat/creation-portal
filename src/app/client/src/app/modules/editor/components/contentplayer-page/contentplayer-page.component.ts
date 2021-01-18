@@ -20,7 +20,7 @@ export class ContentplayerPageComponent implements OnInit, OnChanges {
 
   constructor(public configService: ConfigService, public programTelemetryService: ProgramTelemetryService,
     private questionService: QuestionService, private toasterService: ToasterService,
-    private editorService: EditorService) { }
+    public editorService: EditorService) { }
 
   ngOnInit() {}
 
