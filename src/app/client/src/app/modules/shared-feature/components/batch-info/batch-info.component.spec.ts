@@ -9,7 +9,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { RouterModule } from '@angular/router';
 import { batchInfoMockResponse } from './batch-info.component.spec.data';
 
-xdescribe('BatchInfoComponent', () => {
+describe('BatchInfoComponent', () => {
   let component: BatchInfoComponent;
   let fixture: ComponentFixture<BatchInfoComponent>;
   const resourceBundle = {
@@ -28,7 +28,7 @@ xdescribe('BatchInfoComponent', () => {
   }
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, SharedModule.forRoot(), CoreModule],
+      imports: [HttpClientTestingModule,RouterTestingModule, SharedModule.forRoot(), CoreModule],
       declarations: [BatchInfoComponent],
       providers: [{ provide: ResourceService, useValue: resourceBundle },
         { provide: Router, useClass: RouterStub },

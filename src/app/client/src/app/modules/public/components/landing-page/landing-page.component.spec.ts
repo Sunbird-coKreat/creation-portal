@@ -1,27 +1,28 @@
-// import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-// import { LandingPageComponent } from './landing-page.component';
-// import { NO_ERRORS_SCHEMA } from '@angular/core';
-// import {  SharedModule } from '@sunbird/shared';
-// xdescribe('LandingPageComponent', () => {
-//   let component: LandingPageComponent;
-//   let fixture: ComponentFixture<LandingPageComponent>;
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { LandingPageComponent } from './landing-page.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import {  SharedModule } from '@sunbird/shared';
 
-//   beforeEach(async(() => {
-//     TestBed.configureTestingModule({
-//       imports: [SharedModule.forRoot()],
-//       declarations: [LandingPageComponent],
-//       schemas: [NO_ERRORS_SCHEMA]
-//     })
-//       .compileComponents();
-//   }));
+describe('LandingPageComponent', () => {
+  let component: LandingPageComponent;
+  let fixture: ComponentFixture<LandingPageComponent>;
 
-//   beforeEach(() => {
-//     fixture = TestBed.createComponent(LandingPageComponent);
-//     component = fixture.componentInstance;
-//     fixture.detectChanges();
-//   });
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      imports: [SharedModule.forRoot()],
+      declarations: [LandingPageComponent],
+      schemas: [NO_ERRORS_SCHEMA]
+    })
+      .compileComponents();
+  }));
 
-//   it('should create', () => {
-//     expect(component).toBeTruthy();
-//   });
-// });
+  beforeEach(() => {
+    fixture = TestBed.createComponent(LandingPageComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

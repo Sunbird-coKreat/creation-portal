@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BulkUploadComponent } from './bulk-upload.component';
 
-xdescribe('BulkUploadComponent', () => {
+describe('BulkUploadComponent', () => {
   let component: BulkUploadComponent;
   let fixture: ComponentFixture<BulkUploadComponent>;
 

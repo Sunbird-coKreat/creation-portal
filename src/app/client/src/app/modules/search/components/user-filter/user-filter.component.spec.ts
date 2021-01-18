@@ -12,8 +12,10 @@ import { Observable, of as observableOf } from 'rxjs';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { UserFilterComponent } from './user-filter.component';
 import { UserSearchService } from './../../services';
+import { RouterTestingModule } from '@angular/router/testing';
+import { APP_BASE_HREF } from '@angular/common'; 
 
-xdescribe('UserFilterComponent', () => {
+describe('UserFilterComponent', () => {
   let component: UserFilterComponent;
   let fixture: ComponentFixture<UserFilterComponent>;
  const fakeActivatedRoute = {
@@ -26,12 +28,13 @@ xdescribe('UserFilterComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, SharedModule.forRoot()],
+      imports: [HttpClientTestingModule,RouterTestingModule, SharedModule.forRoot()],
       declarations: [ UserFilterComponent ],
       providers: [ResourceService, SearchService, PaginationService, UserService,
         LearnerService, ContentService, ConfigService, ToasterService, UserSearchService,
         { provide: Router, useClass: RouterStub },
-      { provide: ActivatedRoute, useValue: fakeActivatedRoute}],
+      { provide: ActivatedRoute, useValue: fakeActivatedRoute},
+      {provide: APP_BASE_HREF, useValue: '/'}],
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
