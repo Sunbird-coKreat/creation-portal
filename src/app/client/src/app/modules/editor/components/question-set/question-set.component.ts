@@ -17,7 +17,8 @@ export class QuestionSetComponent implements OnInit {
   @Output() toolbarEmitter = new EventEmitter<any>();
   config: any;
   constructor(private treeService: TreeService, public configService: ConfigService,
-    public programTelemetryService: ProgramTelemetryService, public helperService: HelperService, private editorService: EditorService) {
+    public programTelemetryService: ProgramTelemetryService, public helperService: HelperService,
+    public editorService: EditorService) {
       this.config = formConfig;
     }
 
