@@ -2,7 +2,7 @@
   <div class="form-container">
     <sb-dynamic-form [config]="config" (initialize)="output($event)" (statusChanges)="onStatusChanges($event)" (valueChanges)="onValueChanges($event)"></sb-dynamic-form>
   </div>
-  <div class="sb-fixed-with-whitebg py-10">
+  <div class="sb-fixed-with-whitebg py-10" *ngIf="(editorService.editorMode !== 'review')">
     <div class="ui">
       <div class="ui twelve column grid m-0">
         <div class="three wide column p-0">
