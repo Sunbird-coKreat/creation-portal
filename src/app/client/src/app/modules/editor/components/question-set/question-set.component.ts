@@ -15,11 +15,10 @@ export class QuestionSetComponent implements OnInit {
   @Input() questionSetMetadata: any;
   @Input() telemetryEventsInput: any;
   @Output() toolbarEmitter = new EventEmitter<any>();
-  config: any;
+  config = formConfig;
   constructor(private treeService: TreeService, public configService: ConfigService,
     public programTelemetryService: ProgramTelemetryService, public helperService: HelperService,
     public editorService: EditorService) {
-      this.config = formConfig;
     }
 
   ngOnInit() {
