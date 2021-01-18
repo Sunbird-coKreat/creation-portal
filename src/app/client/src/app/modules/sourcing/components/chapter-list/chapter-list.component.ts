@@ -44,6 +44,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   private textBookMeta: any;
   public hierarchyObj = {};
   public collectionHierarchy = [];
+  public getOriginCollectionHierarchy : any;
   public countData: Array<any> = [];
   public levelOneChapterList: Array<any> = [];
   public selectedChapterOption: any = {};
@@ -127,7 +128,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
      */
     this.levelOneChapterList.push({
       identifier: 'all',
-      name: this.resourceService.frmelmnts.lbl.allChapters
+      name: _.get(this.resourceService, 'frmelmnts.lbl.allChapters')
     });
     this.selectedChapterOption = 'all';
     const mvcStageData = this.programsService.getMvcStageData();

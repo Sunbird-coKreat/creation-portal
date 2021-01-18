@@ -9,6 +9,8 @@ import { Router } from '@angular/router';
 import { CacheService } from 'ng2-cache-service';
 import { UserService, OrgDetailsService } from '@sunbird/core';
 import { commonMessageApiResp } from './comming-soon.component.spec.data';
+import { RouterTestingModule } from '@angular/router/testing';
+import {APP_BASE_HREF} from '@angular/common';
 
 
 describe('CommingSoonComponent', () => {
@@ -31,10 +33,13 @@ describe('CommingSoonComponent', () => {
   };
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [SuiModule , HttpClientTestingModule, SharedModule.forRoot()],
+      imports: [RouterTestingModule, SuiModule , HttpClientTestingModule, SharedModule.forRoot()],
       declarations: [CommingSoonComponent],
       providers: [ResourceService, UserService, OrgDetailsService, CacheService, BrowserCacheTtlService,
-      { provide: ResourceService, useValue: resourceBundle }, { provide: Router, useClass: RouterStub }, ],
+      { provide: ResourceService, useValue: resourceBundle },
+      { provide: Router, useClass: RouterStub },
+      { provide: APP_BASE_HREF, useValue: '/'}
+    ],
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();

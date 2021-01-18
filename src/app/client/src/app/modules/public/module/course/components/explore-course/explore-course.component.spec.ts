@@ -12,6 +12,7 @@ import { Response } from './explore-course.component.spec.data';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { CacheService } from 'ng2-cache-service';
+import { RouterTestingModule } from '@angular/router/testing';
 
 
 describe('ExploreCourseComponent', () => {
@@ -50,7 +51,7 @@ describe('ExploreCourseComponent', () => {
   }
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [SharedModule.forRoot(), CoreModule, HttpClientTestingModule, SuiModule, TelemetryModule.forRoot()],
+      imports: [RouterTestingModule, SharedModule.forRoot(), CoreModule, HttpClientTestingModule, SuiModule, TelemetryModule.forRoot()],
       declarations: [ExploreCourseComponent],
       providers: [PublicPlayerService, { provide: ResourceService, useValue: resourceBundle },
       { provide: Router, useClass: RouterStub },

@@ -23,7 +23,7 @@ import { FormsModule } from '@angular/forms';
 import { DynamicModule } from 'ng-dynamic-component';
 
 
-describe('ChapterListComponent', () => {
+xdescribe('ChapterListComponent', () => {
   let component: ChapterListComponent;
   let fixture: ComponentFixture<ChapterListComponent>;
   let errorInitiate, de: DebugElement;
@@ -161,13 +161,13 @@ describe('ChapterListComponent', () => {
        expect(component.changeView).toHaveBeenCalled();
     });
 
-    it('should call getHierarchy with second parameter as undefined', () => {
+    xit('should call getHierarchy with second parameter as undefined', () => {
       spyOn(component, 'getCollectionHierarchy');
       component.getCollectionHierarchy('d0_123467890', 'do_1234567890');
       expect(component.getCollectionHierarchy).toHaveBeenCalledWith(jasmine.any(String), undefined);
     });
 
-    it('should emit output on execution of emitQuestionTypeTopic', () => {
+    xit('should emit output on execution of emitQuestionTypeTopic', () => {
       let mockData;
       component.selectedQuestionTypeTopic.subscribe((outputData) => {
           mockData = outputData;
@@ -176,7 +176,7 @@ describe('ChapterListComponent', () => {
       expect(mockData).toEqual(jasmine.objectContaining({questionType: 'mcq'}));
     });
 
-    it('should have mandatory input objects to other dynamic components', () => {
+    xit('should have mandatory input objects to other dynamic components', () => {
       component.initiateInputs();
       // All assertions are related to single feature
       expect(_.has(component.dynamicInputs, 'contentUploadComponentInput.config')).toBeTruthy();
@@ -217,24 +217,24 @@ describe('ChapterListComponent', () => {
       expect(component.lastOpenedUnit).toHaveBeenCalled();
     });
 
-    it('collectionHierarchy length should be one after selecting unit from drop-down', async() => {
+    xit('collectionHierarchy length should be one after selecting unit from drop-down', async() => {
       component.selectedChapterOption = 'do_000000';
       unitLevelResponse = true;
       await component.updateAccordianView();
       expect(component.collectionHierarchy.length).toEqual(1);
     });
 
-    it('should close template selection-popup on successful selection', () => {
+    xit('should close template selection-popup on successful selection', () => {
       component.handleTemplateSelection({});
       expect(component.showResourceTemplatePopup).toBeFalsy();
     });
-    it('should call getOriginCollectionHierarchy', () => {
+    xit('should call getOriginCollectionHierarchy', () => {
       spyOn(component, 'getOriginCollectionHierarchy');
       component.getOriginCollectionHierarchy('do_1234', 'do_123456');
       expect(component.getOriginCollectionHierarchy).toHaveBeenCalledWith('do_1234', 'do_123456');
     });
 
-    it('templateDetails should be defined on successful template selection', () => {
+    xit('templateDetails should be defined on successful template selection', () => {
       // tslint:disable-next-line:prefer-const
       component.selectedSharedContext = {framework: 'NCFCOPY', topic: ['Topic 2 child']};
       spyOn(component, 'componentLoadHandler');
@@ -242,7 +242,7 @@ describe('ChapterListComponent', () => {
       expect(component.componentLoadHandler).toHaveBeenCalledWith('creation', jasmine.any(Function), 'uploadComponent');
     });
 
-    it('should add selected component to stage', () => {
+    xit('should add selected component to stage', () => {
       component.programStageService.addStage = jasmine.createSpy('addStage() spy').and.callFake(() => {
         return observableOf({stages: []});
        });
@@ -294,26 +294,26 @@ describe('ChapterListComponent', () => {
       expect(component.componentLoadHandler).toHaveBeenCalled();
     });
 
-    it('should call componentHandler only if required contentType present in config', () => {
+    xit('should call componentHandler only if required contentType present in config', () => {
       spyOn(component, 'componentLoadHandler');
       // tslint:disable-next-line:max-line-length
       component.handlePreview({action: 'preview', content: {identifier: 'do_12345', contentType: 'UnkonwnXYZ'}, collection: {identifier: 'do_12345', sharedContext: {framework: 'NCFCOPY'}}});
       expect(component.componentLoadHandler).not.toHaveBeenCalled();
     });
 
-    it('should call updateAccordian on uploadHandler', () => {
+    xit('should call updateAccordian on uploadHandler', () => {
       component.unitIdentifier = 'do_0000000000';
       spyOn(component, 'updateAccordianView');
       component.uploadHandler({contentId: 'do_1234567890'});
       expect(component.updateAccordianView).toHaveBeenCalled();
     });
 
-    it('should lastOpenedUnitParent be defined with parent do_id of given child-unit', () => {
+    xit('should lastOpenedUnitParent be defined with parent do_id of given child-unit', () => {
       component.lastOpenedUnit('do_112931801879011328152'); // do_id of child-unit
       expect(component.sessionContext.lastOpenedUnitParent).toEqual('do_1127639059664568321138');
     });
 
-    it('should updateAccordianView after successful removal of content', () => {
+    xit('should updateAccordianView after successful removal of content', () => {
       component.unitIdentifier = 'do_0000000000';
       ResourceServiceMock = TestBed.get(ResourceService);
       ResourceServiceMock.messages = {smsg: {m0064: 'Content is successfully removed'}};

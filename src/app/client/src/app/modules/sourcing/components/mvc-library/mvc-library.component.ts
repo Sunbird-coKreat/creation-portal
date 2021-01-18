@@ -19,8 +19,10 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
 
   public telemetryImpression: IImpressionEventInput;
   public sessionContext: any;
+  public selectedContentId : any;
   public showSelectResourceModal: Boolean = false;
   public isFilterOpen: Boolean = false;
+  public showLargeModal : Boolean = false;
   public showLoader: Boolean = false;
   public skeletonLoader: Boolean = false;
   public selectedContentDetails: string;

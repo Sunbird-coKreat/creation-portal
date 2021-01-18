@@ -34,6 +34,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public guidLinefileName: String;
   public isFormValueSet = false;
   public editPublished = false;
+  callTargetCollection =false;
   public choosedTextBook: any;
   selectChapter = false;
   public selectedContentTypes: String[];

@@ -12,6 +12,7 @@ import { TelemetryModule } from '@sunbird/telemetry';
 import { enrolledBatch } from './../../batch/batch-details/batch-details.component.data';
 import { CoursesService } from './../../../../core/services/course/course.service';
 import * as _ from 'lodash-es';
+import { RouterTestingModule } from '@angular/router/testing';
 describe('CoursePlayerComponent', () => {
   let component: CoursePlayerComponent;
   let fixture: ComponentFixture<CoursePlayerComponent>;
@@ -62,7 +63,7 @@ describe('CoursePlayerComponent', () => {
         { provide: Router, useClass: RouterStub },
         { provide: ActivatedRoute, useClass: ActivatedRouteStub }
       ],
-      imports: [SharedModule.forRoot(), CoreModule, HttpClientTestingModule, TelemetryModule.forRoot()],
+      imports: [RouterTestingModule, SharedModule.forRoot(), CoreModule, HttpClientTestingModule, TelemetryModule.forRoot()],
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();

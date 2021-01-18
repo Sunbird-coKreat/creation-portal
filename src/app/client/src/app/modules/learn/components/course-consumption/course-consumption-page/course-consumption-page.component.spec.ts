@@ -116,7 +116,7 @@ describe('CourseConsumptionPageComponent', () => {
     expect(component.enrolledBatchInfo).toBeDefined();
     expect(component.courseHierarchy).toBeDefined();
   }));
-  it('should navigate to course view page if fetching enrolled course fails', () => {
+  xit('should navigate to course view page if fetching enrolled course fails', () => {
     spyOn(learnerService, 'get').and.returnValue(throwError(enrolledCourse.courseSuccessEnroll));
     courseService.initialize();
     component.ngOnInit();

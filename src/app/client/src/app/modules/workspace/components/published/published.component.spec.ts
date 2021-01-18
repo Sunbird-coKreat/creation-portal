@@ -17,6 +17,7 @@ const testData = mockData.mockRes;
 import { TelemetryModule } from '@sunbird/telemetry';
 import { NgInviewModule } from 'angular-inport';
 import { SuiModule } from 'ng2-semantic-ui';
+import { APP_BASE_HREF,DatePipe } from '@angular/common';
 
 describe('PublishedComponent', () => {
   let component: PublishedComponent;
@@ -61,7 +62,8 @@ describe('PublishedComponent', () => {
         SearchService, ContentService, LearnerService, CoursesService,
         PermissionService, ResourceService, ToasterService,
         { provide: ActivatedRoute, useValue: fakeActivatedRoute },
-        { provide: ResourceService, useValue: resourceBundle }
+        { provide: ResourceService, useValue: resourceBundle },
+        {provide: APP_BASE_HREF, useValue: '/'}
       ]
     })
       .compileComponents();

@@ -18,6 +18,8 @@ import { UserService, SearchService, ContentService, LearnerService } from '@sun
 // Test data
 import * as mockData from './organization.component.spec.data';
 import { TelemetryModule } from '@sunbird/telemetry';
+import { RouterTestingModule } from '@angular/router/testing';
+import { APP_BASE_HREF } from '@angular/common'; 
 
 const testData = mockData.mockRes;
 describe('OrganisationComponent', () => {
@@ -47,7 +49,7 @@ describe('OrganisationComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [OrganisationComponent],
-      imports: [HttpClientModule, FormsModule, SuiModule, ChartsModule, SharedModule.forRoot(), TelemetryModule.forRoot()],
+      imports: [HttpClientModule, FormsModule, RouterTestingModule,SuiModule, ChartsModule, SharedModule.forRoot(), TelemetryModule.forRoot()],
       providers: [LearnerService,
         LineChartService,
         OrganisationService,
@@ -61,7 +63,8 @@ describe('OrganisationComponent', () => {
         ToasterService,
         ResourceService,
         { provide: Router, useClass: RouterStub },
-        { provide: ActivatedRoute, useValue: fakeActivatedRoute }
+        { provide: ActivatedRoute, useValue: fakeActivatedRoute },
+        {provide: APP_BASE_HREF, useValue: '/'}
       ]
     })
       .compileComponents();
