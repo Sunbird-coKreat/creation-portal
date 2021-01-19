@@ -31,7 +31,7 @@ describe('OtpPopupComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('should show validation error message for form', () => {
+  xit('should show validation error message for form', () => {
     spyOn(component, 'enableSubmitButton');
     component.ngOnInit();
     expect(component.otpForm.valid).toBeFalsy();
