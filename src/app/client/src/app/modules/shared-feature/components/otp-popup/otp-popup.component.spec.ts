@@ -11,7 +11,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { throwError as observableThrowError, of as observableOf } from 'rxjs';
 import { testData } from './otp-popup.component.spec.data';
 
-xdescribe('OtpPopupComponent', () => {
+describe('OtpPopupComponent', () => {
   let component: OtpPopupComponent;
   let fixture: ComponentFixture<OtpPopupComponent>;
 
@@ -31,7 +31,7 @@ xdescribe('OtpPopupComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('should show validation error message for form', () => {
+  xit('should show validation error message for form', () => {
     spyOn(component, 'enableSubmitButton');
     component.ngOnInit();
     expect(component.otpForm.valid).toBeFalsy();

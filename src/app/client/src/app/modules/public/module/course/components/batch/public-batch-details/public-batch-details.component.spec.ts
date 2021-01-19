@@ -36,7 +36,7 @@ const resourceServiceMockData = {
     }
   }
 };
-xdescribe('PublicBatchDetailsComponent', () => {
+describe('PublicBatchDetailsComponent', () => {
   let component: PublicBatchDetailsComponent;
   let fixture: ComponentFixture<PublicBatchDetailsComponent>;
   beforeEach(async(() => {

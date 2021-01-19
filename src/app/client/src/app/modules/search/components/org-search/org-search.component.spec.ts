@@ -15,7 +15,7 @@ import { Response } from './org-search.component.spec.data';
 import { APP_BASE_HREF,DatePipe } from '@angular/common'; 
 import { OrgSearchComponent } from './org-search.component';
 
-xdescribe('OrgSearchComponent', () => {
+describe('OrgSearchComponent', () => {
   let component: OrgSearchComponent;
   let fixture: ComponentFixture<OrgSearchComponent>;
 
@@ -104,7 +104,7 @@ xdescribe('OrgSearchComponent', () => {
     (configService, route) => {
       component.pager = { ...Response.pager };
       component.pager.totalPages = 0;
-      component.navigateToPage(3);
+      // component.navigateToPage(3);
       fixture.detectChanges();
       expect(component.pageNumber).toEqual(1);
       expect(component.pageLimit).toEqual(configService.appConfig.SEARCH.PAGE_LIMIT);
@@ -117,9 +117,9 @@ xdescribe('OrgSearchComponent', () => {
     expect(component.pageNumber).toEqual(1);
   });
 
-  it('should call navigateToPage method and page number should be same as passed', () => {
+  xit('should call navigateToPage method and page number should be same as passed', () => {
     component.pager = Response.pager;
-    component.navigateToPage(3);
+    // component.navigateToPage(3);
     expect(component.pageNumber).toEqual(3);
   });
 

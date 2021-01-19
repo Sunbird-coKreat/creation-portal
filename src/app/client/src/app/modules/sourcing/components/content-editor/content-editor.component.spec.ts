@@ -16,7 +16,7 @@ import {
 import { of } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 
-xdescribe('ContentEditorComponent', () => {
+describe('ContentEditorComponent', () => {
   let component: ContentEditorComponent;
   let fixture: ComponentFixture<ContentEditorComponent>;
 
@@ -76,7 +76,7 @@ xdescribe('ContentEditorComponent', () => {
   });
   });
 
-  it('should create', () => {
+  xit('should create', () => {
     expect(component).toBeTruthy();
   });
 });
