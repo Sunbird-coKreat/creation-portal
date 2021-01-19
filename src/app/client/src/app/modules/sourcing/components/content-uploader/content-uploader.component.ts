@@ -311,7 +311,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   canEditMetadata() {
     // tslint:disable-next-line:max-line-length
-    return !!(!this.contentMetaData.sampleContent === true && _.find(this.formFieldProperties, field => field.editable === true));
+    return !!(_.find(this.formFieldProperties, field => field.editable === true));
   }
 
   canSubmit() {
@@ -1103,9 +1103,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   getEditableFields() {
-    if (this.contentMetaData.sampleContent === true) {
-      return;
-    }
     if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
       if (this.userService.getUserId() === this.contentMetaData.createdBy && this.resourceStatus === 'Draft') {
         this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.contentMetaData);
