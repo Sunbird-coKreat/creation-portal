@@ -35,6 +35,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   public logo: string;
   public showLoader = true;
   public contentDetails: any;
+  public contentEditorComponentInputs : any;
   public ownershipType: any;
   public queryParams: object;
   public videoMaxSize: any;

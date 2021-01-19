@@ -12,6 +12,7 @@ import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { Response } from './flagged.component.spec.data';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { NgInviewModule } from 'angular-inport';
+import { APP_BASE_HREF } from '@angular/common';
 
 describe('FlaggedComponent', () => {
   let component: FlaggedComponent;
@@ -66,14 +67,15 @@ describe('FlaggedComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [FlaggedComponent],
-      imports: [HttpClientTestingModule, SharedModule.forRoot(), TelemetryModule.forRoot(),
+      imports: [HttpClientTestingModule, RouterTestingModule, SharedModule.forRoot(), TelemetryModule.forRoot(),
         NgInviewModule],
       providers: [PaginationService, WorkSpaceService, UserService,
         SearchService, ContentService, LearnerService, CoursesService,
         PermissionService, ResourceService, ToasterService,
         { provide: ResourceService, useValue: resourceBundle },
         { provide: Router, useClass: RouterStub },
-        { provide: ActivatedRoute, useValue: fakeActivatedRoute }
+        { provide: ActivatedRoute, useValue: fakeActivatedRoute },
+        {provide: APP_BASE_HREF, useValue: '/'}
       ]
     })
       .compileComponents();

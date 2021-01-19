@@ -17,6 +17,8 @@ import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import * as mockData from './draft.component.spec.data';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { NgInviewModule } from 'angular-inport';
+import {APP_BASE_HREF} from '@angular/common';
+
 const testData = mockData.mockRes;
 describe('DraftComponent', () => {
   let component: DraftComponent;
@@ -67,7 +69,8 @@ describe('DraftComponent', () => {
         PermissionService, ResourceService, ToasterService, SuiModalService,
         { provide: ResourceService, useValue: resourceBundle },
         { provide: Router, useClass: RouterStub },
-        { provide: ActivatedRoute, useValue: fakeActivatedRoute }
+        { provide: ActivatedRoute, useValue: fakeActivatedRoute },
+        {provide: APP_BASE_HREF, useValue: '/'}
       ]
     })
       .compileComponents();
@@ -203,7 +206,7 @@ describe('DraftComponent', () => {
       spyOn(component, 'fetchDrafts').and.callThrough();
       spyOn(component, 'delete').and.callFake(() => observableOf({}));
       spyOn(modalService, 'open').and.callFake(() => observableOf({}));
-      spyOn(modalService, 'approve').and.callFake(() => observableOf({}));
+      // spyOn(modalService, 'approve').and.callFake(() => observableOf({}));
       component.draftList = testData.localSingleContentData;
       component.deleteConfirmModal('do_112523105235623936168');
       expect(component.fetchDrafts).toHaveBeenCalled();

@@ -12,6 +12,8 @@ import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { Response } from './collaborating.component.spec.data';
 import { SuiModalService, TemplateModalConfig, ModalTemplate } from 'ng2-semantic-ui';
 import { OrderModule } from 'ngx-order-pipe';
+import { APP_BASE_HREF } from '@angular/common'; 
+
 describe('CollaboratingOnComponent', () => {
   let component: CollaboratingOnComponent;
   let fixture: ComponentFixture<CollaboratingOnComponent>;
@@ -54,13 +56,14 @@ describe('CollaboratingOnComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [CollaboratingOnComponent],
-      imports: [HttpClientTestingModule, OrderModule, SharedModule.forRoot()],
+      imports: [HttpClientTestingModule, OrderModule,RouterTestingModule, SharedModule.forRoot()],
       providers: [PaginationService, WorkSpaceService, UserService,
         SearchService, ContentService, LearnerService, CoursesService,
         PermissionService, ResourceService, ToasterService,
         { provide: ResourceService, useValue: resourceBundle },
         { provide: Router, useClass: RouterStub },
-        { provide: ActivatedRoute, useValue: fakeActivatedRoute }
+        { provide: ActivatedRoute, useValue: fakeActivatedRoute },
+        {provide: APP_BASE_HREF, useValue: '/'}
       ],
       schemas: [NO_ERRORS_SCHEMA]
     })

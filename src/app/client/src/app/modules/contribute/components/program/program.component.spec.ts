@@ -71,7 +71,7 @@ const frameworkServiceStub = {
   frameworkData$:  of(frameWorkData)
 };
 
-describe('ProgramComponent On Bording test', () => {
+xdescribe('ProgramComponent', () => {
   let component: ProgramComponent;
   let fixture: ComponentFixture<ProgramComponent>;
 

@@ -11,7 +11,7 @@ import * as mockData from './flag-contentplayer.componemt.spec.data';
 import { PlayerHelperModule } from '@sunbird/player-helper';
 import { TelemetryService } from '@sunbird/telemetry';
 const testData = mockData.mockRes;
-describe('FlagConentplayerComponent', () => {
+xdescribe('FlagConentplayerComponent', () => {
   let component: FlagConentplayerComponent;
   let fixture: ComponentFixture<FlagConentplayerComponent>;
   const resourceBundle = {

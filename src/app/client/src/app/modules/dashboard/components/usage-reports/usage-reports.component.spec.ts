@@ -12,6 +12,8 @@ import { Router } from '@angular/router';
 import { UsageReportsComponent } from './usage-reports.component';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { DataChartComponent } from '../data-chart/data-chart.component';
+import { RouterTestingModule } from '@angular/router/testing';
+import {APP_BASE_HREF} from '@angular/common';
 
 describe('UsageReportsComponent', () => {
   let component: UsageReportsComponent;
@@ -22,12 +24,13 @@ describe('UsageReportsComponent', () => {
   const routerStub = { url: '/dashBoard/organization' };
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, SharedModule.forRoot(), TelemetryModule.forRoot()],
+      imports: [RouterTestingModule, HttpClientTestingModule, SharedModule.forRoot(), TelemetryModule.forRoot()],
       schemas: [NO_ERRORS_SCHEMA],
       declarations: [UsageReportsComponent, DataChartComponent],
       providers: [ ToasterService, UserService, NavigationHelperService,
         { provide: ActivatedRoute, useValue: fakeActivatedRoute },
-        { provide: Router, useValue: routerStub }
+        { provide: Router, useValue: routerStub },
+        { provide: APP_BASE_HREF, useValue: '/' }
       ]
     })
       .compileComponents();
