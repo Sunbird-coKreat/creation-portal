@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '@sunbird/core';
 import { IUserProfile, ConfigService } from '@sunbird/shared';
@@ -12,8 +12,7 @@ import * as _ from 'lodash-es';
 })
 export class QuestionSetEditorComponent implements OnInit {
 
-  @Input() questionSetEditorComponentInput: any;
-  @Input() pageView;
+  pageView;
   editorConfig: any;
   editorParams: any;
   private userProfile: IUserProfile;
@@ -25,13 +24,14 @@ export class QuestionSetEditorComponent implements OnInit {
   constructor(private activatedRoute: ActivatedRoute, private userService: UserService,
     private telemetryService: TelemetryService, private configService: ConfigService) {
       const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
-    const deviceId = (<HTMLInputElement>document.getElementById('deviceId'));
-    this.deviceId = deviceId ? deviceId.value : '';
-    this.buildNumber = buildNumber ? buildNumber.value : '1.0';
-    this.portalVersion = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-    this.editorParams = {
-      collectionId: _.get(this.activatedRoute, 'snapshot.params.questionSetId'),
-    };
+      const deviceId = (<HTMLInputElement>document.getElementById('deviceId'));
+      this.pageView = _.get(this.activatedRoute, 'snapshot.data.pageView');
+      this.deviceId = deviceId ? deviceId.value : '';
+      this.buildNumber = buildNumber ? buildNumber.value : '1.0';
+      this.portalVersion = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+      this.editorParams = {
+        questionSetId: _.get(this.activatedRoute, 'snapshot.params.questionSetId'),
+      };
   }
 
   ngOnInit() {
@@ -42,7 +42,7 @@ export class QuestionSetEditorComponent implements OnInit {
   private setEditorContext() {
     this.editorConfig = {
       context: {
-        identifier: _.get(this.questionSetEditorComponentInput, 'identifier'),
+        identifier: this.editorParams.questionSetId,
         mode: 'create',
         sid: this.userService.sessionId,
         did: this.deviceId,

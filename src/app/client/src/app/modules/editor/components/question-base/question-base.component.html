@@ -1,4 +1,133 @@
 <div *ngIf='showLoader' class="ui container sb-chapter-list">
   <app-loader></app-loader>
 </div>
-<app-question-set-editor *ngIf='!showLoader' [pageView]="'question'" [questionSetEditorComponentInput]="questionSetdata"></app-question-set-editor>
+<div class="add-to-library mb-30" *ngIf='!showLoader' [appTelemetryImpression]="telemetryImpression" [appTelemetryStart]="telemetryStart">
+  <app-editor-header [telemetryEventsInput]="telemetryPageDetails" [toolbarConfig]="toolbarConfig" (toolbarEmitter)="toolbarEventListener($event)">
+  </app-editor-header>
+
+  <div class="min-h-500 sb-bg-white py-20">
+    <div class="ui container">
+      <div class="ui twelve column wide">
+        <div class="px-16">
+          <div class="sb-quml-player br-4 b-1-100">
+            <div *ngIf='showPreview && !showLoader'>
+              <quml-player [QumlPlayerConfig]="QumlPlayerConfig" (playerEvent)="getPlayerEvents($event)" (telemetryEvent)="getTelemetryEvents($event)"></quml-player>
+            </div>
+            <div class="py-20 px-32 sb-bg-color-primary-0" *ngIf='!showPreview && !showLoader'>
+              <div class="sb-field-group">
+                <label class="fs-0-92">Question<span class="sb-required">*</span></label>
+                <div class="sb-field">
+                  <div class="ckeditor-tool__question mb-5" >
+                    <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'question');"
+                    [editorDataInput]="editorState.question" [editorId]="'question_editor'"
+                    (videoDataOutput)="videoDataOutput($event)" [videoShow]="videoShow"></app-ckeditor-tool>
+                   </div>
+                   <label *ngIf="showFormError && [undefined, ''].includes(editorState.question)" class="sb-color-error fs-0-785">Question is required</label>
+                </div>
+
+                <app-answer *ngIf="(questionInteractionType === 'default')" [editorConfig]="editorConfig" [editorState]="editorState" [showFormError]="showFormError" (editorDataOutput)="editorDataHandler($event)"></app-answer>
+
+                <app-options *ngIf="(questionInteractionType === 'choice')" [editorConfig]="editorConfig" [editorState]="editorState" [showFormError]="showFormError" [telemetryPageDetails]="telemetryPageDetails" [questionMetaData]="questionMetaData" (editorDataOutput)="editorDataHandler($event)"></app-options>
+
+                <div class="d-flex flex-ai-center ckeditor-tool__solution py-10 px-16 mt-15 sb-bg-color-white">
+                  <label class="fs-0-92 mb-0 ckeditor-tool__label pb-4">
+                    <span class="sb-color-primary fs-0-785 mr-4">Solution</span>
+                    <span class="sb-color-gray-200 fxsmall font-weight-normal">(Optional)</span>
+                  </label>
+                  <div
+                  class="ui dropdown sb-btn sb-btn-outline-primary sb-btn-normal sb-right-icon-btn sb-btn-radius ml-auto"
+                    suiDropdown autoClose="itemClick" *ngIf="showSolutionDropDown"
+                    appTelemetryInteract
+                    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('solution', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.singleSelect, telemetryPageDetails.telemetryPageId)"
+                    [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(questionMetaData?.data?.metadata?.identifier, 'Question', '1.0')"
+                    [telemetryInteractCdata]="telemetryPageDetails.telemetryInteractCdata"
+                    [telemetryInteractPdata]="telemetryPageDetails.telemetryInteractPdata"
+                    >
+                    <div class="text gray-200">Choose type</div>
+                    <i class="dropdown icon mx-8"></i>
+                    <div class="menu" suiDropdownMenu>
+                      <div class="item" (click)="selectSolutionType('Text+Image')"
+                      appTelemetryInteract
+                      [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('solution_type', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.singleSelect, telemetryPageDetails.telemetryPageId, {solutionType:'Text+Image'} )"
+                      [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(questionMetaData?.data?.metadata?.identifier, 'Question', '1.0')"
+                      [telemetryInteractCdata]="telemetryPageDetails.telemetryInteractCdata"
+                      [telemetryInteractPdata]="telemetryPageDetails.telemetryInteractPdata"
+                      >Text+Image</div>
+                      <div class="item" (click)="selectSolutionType('video')"
+                      appTelemetryInteract
+                      [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('solution_type', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.singleSelect, telemetryPageDetails.telemetryPageId, {solutionType:'video'} )"
+                      [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(questionMetaData?.data?.metadata?.identifier, 'Question', '1.0')"
+                      [telemetryInteractCdata]="telemetryPageDetails.telemetryInteractCdata"
+                      [telemetryInteractPdata]="telemetryPageDetails.telemetryInteractPdata">Video</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="solution_html" *ngIf="selectedSolutionType == 'html'">
+                  <div class="ckeditor-tool-container">
+                    <div class="sb-ckeditor relative mb-8">
+                      <button
+                       (click)="deleteSolution()"
+                        class="sb-btn sb-ckeditor-close absolute"
+                        appTelemetryInteract
+                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('delete_solution', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel, telemetryPageDetails.telemetryPageId, {solutionType:'Text+Image'})"
+                        [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(questionMetaData?.data?.metadata?.identifier, 'Question', '1.0')"
+                        [telemetryInteractCdata]="telemetryPageDetails.telemetryInteractCdata"
+                        [telemetryInteractPdata]="telemetryPageDetails.telemetryInteractPdata"><i
+                          class="icon close"></i>
+                      </button>
+                      <app-ckeditor-tool [editorConfig]="editorConfig" (editorDataOutput)="editorDataHandler($event, 'solution')"
+                      [editorDataInput]="editorState.solutions" [editorId]="'solution_editor'" class="ckeditor-tool__option"></app-ckeditor-tool>
+                    </div>
+                  </div>
+                </div>
+                <div class="solution_video" *ngIf="selectedSolutionType == 'video' && showSolution">
+                  <div class="ckeditor-tool__solution sb-bg-color-white sb-ckeditor relative">
+                    <div class="solution-media p-16 d-flex flex-ai-center ckeditor-tool__option p-16">
+                      <div class="mcq-checkbox-answer">
+                        <button class="sb-btn sb-ckeditor-close absolute"
+                          (click)="deleteSolution()"
+                          appTelemetryInteract
+                          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('delete_solution', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel, telemetryPageDetails.telemetryPageId, {solutionType:'video'})"
+                          [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(questionMetaData?.data?.metadata?.identifier, 'Question', '1.0')"
+                          [telemetryInteractCdata]="telemetryPageDetails.telemetryInteractCdata"
+                          [telemetryInteractPdata]="telemetryPageDetails.telemetryInteractPdata"><i
+                          class="icon close"></i></button>
+                      </div>
+                      <div class="solution-media__video relative position">
+                        <div class="overlay-image"
+                          [ngStyle]="videoThumbnail ?  {'background' : 'url(' + videoThumbnail + ')' }  : {'background': 'rgba(0,0,0,0.3)'}">
+                          <i class="play circle icon"></i></div>
+                      </div>
+                      <div class="solution-media__desc ml-16 sb-color-primary">
+                        {{videoSolutionName}}<i
+                        class="icon ellipsis vertical sb-color-black"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+        <!-- <app-contentplayer-page></app-contentplayer-page> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<sui-modal *ngIf="showConfirmPopup" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'"
+  class="sb-modal bx-none" appBodyScroll (dismissed)="showConfirmPopup = !showConfirmPopup" #modal>
+  <div class="sb-modal-header">
+  </div>
+  <div class="sb-modal-content">
+    This question will not be saved, are you sure you want to go back to questionset?
+  </div>
+  <div class="sb-modal-actions">
+    <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="redirectToQuestionset()">
+      Yes
+    </button>
+    <button class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showConfirmPopup = !showConfirmPopup">
+      No
+    </button>
+  </div>
+</sui-modal>

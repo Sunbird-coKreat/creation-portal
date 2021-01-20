@@ -67,6 +67,6 @@ import { QuestionEditorLibraryModule } from 'question-editor-library';
     QuestionEditorLibraryModule
   ],
   providers: [CollectionHierarchyService],
-  exports: [ SanitizeHtmlPipe, CkeditorToolComponent, QuestionSetEditorComponent]
+  exports: [ SanitizeHtmlPipe, CkeditorToolComponent]
 })
 export class CbseProgramModule { }

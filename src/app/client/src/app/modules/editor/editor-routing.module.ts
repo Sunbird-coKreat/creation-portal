@@ -11,6 +11,7 @@ const routes: Routes = [
       hideHeaderNFooter: 'true',
     },
   },
+ /*
   {
     path: 'questionSet/:questionSetId', component: EditorBaseComponent, pathMatch: 'full',
     data: {
@@ -31,6 +32,7 @@ const routes: Routes = [
       }
     },
   }
+*/
 ];
 
 @NgModule({
