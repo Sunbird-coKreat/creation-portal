@@ -57,6 +57,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   originalProgramScope: any = {};
   userprofile;
   public programData: any = {};
+  ticked = [];
+  count = 0;
   showTextBookSelector = false;
   formIsInvalid = false;
   /*frameworkOption = [];
@@ -892,7 +894,11 @@ onChangeTargetCollection() {
     this.collectionListForm.value.pcollections = [];
     this.tempCollections = [];
 }
-showTexbooklist(showTextBookSelector = true) {
+  showTexbooklist(showTextBookSelector = true) {
+    this.count++;
+    if (this.count == 1) {
+      var status = 'added';
+    }
     const primaryCategory = this.collectionListForm.value.target_collection_category;
     if (!primaryCategory) {
       return;
@@ -937,6 +943,7 @@ showTexbooklist(showTextBookSelector = true) {
       (res) => {
         this.showTextBookSelector = showTextBookSelector;
         if (res.result.count) {
+
           this.collections = res.result.content;
           this.showProgramScope = true;
           this.tempSortCollections = this.collections;
@@ -950,7 +957,15 @@ showTexbooklist(showTextBookSelector = true) {
               if (!_.isEmpty(draftCollections)) {
                 const index = draftCollections.findIndex(x => x.id === item.identifier);
                 if (index !== -1) {
-                  this.onCollectionCheck(item, true);
+                  if (status == 'added' || this.count == 1) {
+                    this.onCollectionCheck(item, true, 'preview');
+                  } else {
+                    (this.ticked).forEach(function (i) {
+                      if (item.identifier == i.identifier) {
+                        this.onCollectionCheck(item, this.ticked[item.isChecked], 'preview');
+                      }
+                    });
+                  }
                 }
               }
             });
@@ -960,8 +975,8 @@ showTexbooklist(showTextBookSelector = true) {
           this.collections = [];
           this.tempSortCollections = [];
           if (!this.filterApplied) {
-           // tslint:disable-next-line: max-line-length
-           this.toasterService.warning(this.resource.messages.smsg.selectDifferentTargetCollection.replace('{TARGET_NAME}', primaryCategory));
+            // tslint:disable-next-line: max-line-length
+            this.toasterService.warning(this.resource.messages.smsg.selectDifferentTargetCollection.replace('{TARGET_NAME}', primaryCategory));
           }
         }
       },
@@ -974,16 +989,27 @@ showTexbooklist(showTextBookSelector = true) {
     );
   }
 
-  onCollectionCheck(collection, isChecked: boolean) {
+  onCollectionCheck(collection, isChecked: boolean, status) {
     const pcollectionsFormArray = <FormArray>this.collectionListForm.controls.pcollections;
     const collectionId = collection.identifier;
-
     if (isChecked) {
       const controls = _.get(pcollectionsFormArray, 'controls');
       if (controls.findIndex(c => c.value === collection.identifier) === -1) {
         pcollectionsFormArray.push(new FormControl(collectionId));
         this.tempCollections.push(collection);
-
+        if (status == 'preview' && this.count == 1) {
+          let obj = {
+            identifier: collection.identifier,
+            isChecked: isChecked
+          }
+          this.ticked.push(obj);
+        } else if (status == 'added') {
+          let obj = {
+            identifier: collection.identifier,
+            isChecked: isChecked
+          }
+          this.ticked.push(obj);
+        }
         if (!this.textbooks[collectionId]) {
           this.getCollectionHierarchy(collectionId);
         }
@@ -991,10 +1017,12 @@ showTexbooklist(showTextBookSelector = true) {
     } else {
       const index = pcollectionsFormArray.controls.findIndex(x => x.value === collectionId);
       pcollectionsFormArray.removeAt(index);
-
       const cindex = this.tempCollections.findIndex(x => x.identifier === collectionId);
       this.tempCollections.splice(cindex, 1);
       delete this.textbooks[collectionId];
+      if (status == 'added' || 'preview') {
+        this.ticked.splice(cindex, 1);
+      }
     }
   }
 

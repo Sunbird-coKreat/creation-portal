@@ -525,7 +525,7 @@
 															<div class="sb-checkbox sb-checkbox-primary">
 																<input type="checkbox"
 																	id="checkitem_{{data.identifier}}"
-																	(change)="onCollectionCheck(data, $event.target.checked)"
+																	(change)="onCollectionCheck(data, $event.target.checked, 'added')"
 																	[checked]="collectionListForm.value.pcollections.indexOf(data.identifier) != -1"
 																	name="checkitem" appTelemetryInteract
 																	[telemetryInteractEdata]="getTelemetryInteractEdata('textbook_selection_checkbox', configService.telemetryLabels.eventType.click, undefined, configService.telemetryLabels.pageId.sourcing.createProjectRequirements, {values: [data.identifier]})"
@@ -605,7 +605,7 @@
 															</div>
 														</div>
 														<div class="two wide column text-right cursor-pointer"
-															(click)="onCollectionCheck(tempCollection, false)"
+														(click)="onCollectionCheck(tempCollection, false, 'added')"
 															appTelemetryInteract
 															[telemetryInteractEdata]="getTelemetryInteractEdata('collection_check', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel, configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
 															[telemetryInteractObject]="telemetryInteractObject"
