@@ -1,0 +1,9 @@
+
+<div *ngIf='showLoader' class="ui container sb-chapter-list">
+  <app-loader></app-loader>
+</div>
+<div *ngIf="!showLoader">
+  <lib-editor *ngIf="(pageView === 'questionset')" [editorConfig]="editorConfig" ></lib-editor>
+  <lib-question *ngIf="(pageView === 'question')" [editorConfig]="editorConfig" ></lib-question>
+</div>
+
