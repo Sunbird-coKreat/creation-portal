@@ -52,7 +52,7 @@ describe('NavigationHelperService', () => {
     expect(service['_history']).toEqual([]);
   }));
 
-  it('should call getDesktopPreviousUrl', inject([NavigationHelperService, Router, ActivatedRoute, CacheService],
+  xit('should call getDesktopPreviousUrl', inject([NavigationHelperService, Router, ActivatedRoute, CacheService],
     (service: NavigationHelperService, router, activatedRoute, cacheService) => {
 
       const history = [
@@ -71,7 +71,7 @@ describe('NavigationHelperService', () => {
       expect(previousUrl).toEqual(history[0]);
     }));
 
-  it('should call goBack when previous URL is search and with queryParams',
+  xit('should call goBack when previous URL is search and with queryParams',
     inject([NavigationHelperService, Router, ActivatedRoute, CacheService, UtilService],
       (service: NavigationHelperService, router, activatedRoute, cacheService, utilService: UtilService) => {
         const previousUrl = {
@@ -89,7 +89,7 @@ describe('NavigationHelperService', () => {
         expect(service.history.pop).toHaveBeenCalled();
       }));
 
-  it('should call goBack when previous URL is without queryParams',
+  xit('should call goBack when previous URL is without queryParams',
     inject([NavigationHelperService, Router, ActivatedRoute, CacheService, UtilService],
       (service: NavigationHelperService, router, activatedRoute, cacheService, utilService: UtilService) => {
         const previousUrl = {
