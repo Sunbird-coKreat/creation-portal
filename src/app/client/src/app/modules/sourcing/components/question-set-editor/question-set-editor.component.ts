@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { UserService, FrameworkService } from '@sunbird/core';
-import { IUserProfile, ConfigService } from '@sunbird/shared';
-import { TelemetryService, IInteractEventEdata } from '@sunbird/telemetry';
+import { IUserProfile, ConfigService, ToasterService } from '@sunbird/shared';
+import { TelemetryService } from '@sunbird/telemetry';
 import * as _ from 'lodash-es';
 
 @Component({
   selector: 'app-question-set-editor',
   templateUrl: './question-set-editor.component.html',
-  styleUrls: ['./question-set-editor.component.scss']
+  styleUrls: ['./question-set-editor.component.scss'],
+  providers: [ToasterService]
 })
 export class QuestionSetEditorComponent implements OnInit {
 
@@ -37,6 +38,7 @@ export class QuestionSetEditorComponent implements OnInit {
      }
 
   ngOnInit() {
+    this.userProfile = this.userService.userProfile;
     this.setEditorContext();
   }
 
@@ -45,6 +47,7 @@ export class QuestionSetEditorComponent implements OnInit {
       context: {
         user: {
           id: this.userService.userid,
+          // tslint:disable-next-line:max-line-length
           name : !_.isEmpty(this.userProfile.lastName) ? this.userProfile.firstName + ' ' + this.userProfile.lastName :
           this.userProfile.firstName,
           orgIds: this.userProfile.organisationIds,
