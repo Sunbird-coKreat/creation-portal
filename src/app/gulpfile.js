@@ -16,7 +16,7 @@ const editorsDestPath = 'client/src/thirdparty/editors/'
 
 
 gulp.task('clean:editors', () => {
-    return gulp.src('./' + editorsDestPath, { read: false, allowEmpty: true })
+    return gulp.src('./' + editorsDestPath, {allowEmpty: true, read: false })
         .pipe(clean())
 })
 gulp.task('download:content:editor', () => {
@@ -113,7 +113,7 @@ gulp.task('prepare:app:dist', () => {
 })
 
 gulp.task('clean:app:dist', () => {
-    return gulp.src('./app_dist', { read: false })
+    return gulp.src('./app_dist', { read: false, allowEmpty: true })
         .pipe(clean())
 })
 
