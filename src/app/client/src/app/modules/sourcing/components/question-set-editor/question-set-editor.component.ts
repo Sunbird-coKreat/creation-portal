@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserService } from '@sunbird/core';
+import { UserService, FrameworkService } from '@sunbird/core';
 import { IUserProfile, ConfigService } from '@sunbird/shared';
 import { TelemetryService, IInteractEventEdata } from '@sunbird/telemetry';
 import * as _ from 'lodash-es';
@@ -22,7 +22,9 @@ export class QuestionSetEditorComponent implements OnInit {
   showLoader = true;
 
   constructor(private activatedRoute: ActivatedRoute, private userService: UserService,
-    private telemetryService: TelemetryService, private configService: ConfigService) {
+    private telemetryService: TelemetryService, private configService: ConfigService,
+    private frameworkService: FrameworkService
+    ) {
       const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
       const deviceId = (<HTMLInputElement>document.getElementById('deviceId'));
       this.pageView = _.get(this.activatedRoute, 'snapshot.data.pageView');
@@ -41,8 +43,16 @@ export class QuestionSetEditorComponent implements OnInit {
   private setEditorContext() {
     this.editorConfig = {
       context: {
+        user: {
+          id: this.userService.userid,
+          name : !_.isEmpty(this.userProfile.lastName) ? this.userProfile.firstName + ' ' + this.userProfile.lastName :
+          this.userProfile.firstName,
+          orgIds: this.userProfile.organisationIds,
+          organisations: this.userService.orgIdNameMap
+        },
         identifier: this.editorParams.questionSetId,
         mode: 'edit',
+        authToken: '',
         sid: this.userService.sessionId,
         did: this.deviceId,
         uid: this.userService.userid,
@@ -52,21 +62,23 @@ export class QuestionSetEditorComponent implements OnInit {
           ver: this.portalVersion,
           pid: this.configService.appConfig.TELEMETRY.PID
         },
-        // contextRollUp: this.telemetryService.getRollUpData(this.userProfile.organisationIds),
-        contextRollUp: {},
+        contextRollUp: this.telemetryService.getRollUpData(this.userProfile.organisationIds),
         tags: this.userService.dims,
         cdata: [],
         timeDiff: this.userService.getServerTimeDiff,
         objectRollup: {},
         host: '',
+        defaultLicense: this.frameworkService.getDefaultLicense(),
         endpoint: '/data/v3/telemetry',
-        // defaultLicense: this.frameworkService.getDefaultLicense(),
-        // framework: this.routeParams.framework,
-        env: 'question_set',
         userData: {
           firstName: '',
           lastName: ''
-        }
+        },
+        env: 'question_set',
+        framework: 'ekstep_ncert_k-12',
+        aws_s3_urls : this.userService.cloudStorageUrls ||
+        ['https://s3.ap-south-1.amazonaws.com/ekstep-public-qa/', 'https://ekstep-public-qa.s3-ap-south-1.amazonaws.com/',
+        'https://dockstorage.blob.core.windows.net/sunbird-content-dock/']
       }
     };
     if (!_.isUndefined(this.userService.userProfile.firstName) && !_.isNull(this.userService.userProfile.firstName)) {
