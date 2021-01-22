@@ -16,7 +16,7 @@ const editorsDestPath = 'client/src/thirdparty/editors/'
 
 
 gulp.task('clean:editors', () => {
-    return gulp.src('./' + editorsDestPath, { read: false })
+    return gulp.src('./' + editorsDestPath, { read: false, allowEmpty: true })
         .pipe(clean())
 })
 gulp.task('download:content:editor', () => {
