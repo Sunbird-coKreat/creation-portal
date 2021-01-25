@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UserService, FrameworkService } from '@sunbird/core';
-import { IUserProfile, ConfigService, ToasterService } from '@sunbird/shared';
+import { IUserProfile, ConfigService } from '@sunbird/shared';
 import { TelemetryService } from '@sunbird/telemetry';
 import * as _ from 'lodash-es';
 
 @Component({
   selector: 'app-question-set-editor',
   templateUrl: './question-set-editor.component.html',
-  styleUrls: ['./question-set-editor.component.scss'],
-  providers: [ToasterService]
+  styleUrls: ['./question-set-editor.component.scss']
 })
 export class QuestionSetEditorComponent implements OnInit {
 
