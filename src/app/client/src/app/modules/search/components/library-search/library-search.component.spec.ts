@@ -1,5 +1,4 @@
 import { LibrarySearchComponent } from './library-search.component';
-
 import { BehaviorSubject, throwError, of } from 'rxjs';
 import { async, ComponentFixture, TestBed, tick, fakeAsync } from '@angular/core/testing';
 import { ResourceService, ToasterService, SharedModule } from '@sunbird/shared';
@@ -11,6 +10,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { Response } from './library-search.component.spec.data';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TelemetryModule } from '@sunbird/telemetry';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('LibrarySearchComponent', () => {
   let component: LibrarySearchComponent;
@@ -45,7 +45,7 @@ describe('LibrarySearchComponent', () => {
   }
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [SharedModule.forRoot(), CoreModule, HttpClientTestingModule, SuiModule, TelemetryModule.forRoot()],
+      imports: [SharedModule.forRoot(), CoreModule, HttpClientTestingModule, RouterTestingModule,SuiModule, TelemetryModule.forRoot()],
       declarations: [LibrarySearchComponent],
       providers: [{ provide: ResourceService, useValue: resourceBundle },
       { provide: Router, useClass: RouterStub },

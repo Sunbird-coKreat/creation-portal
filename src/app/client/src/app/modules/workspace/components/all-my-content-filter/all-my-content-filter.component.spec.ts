@@ -9,6 +9,7 @@ import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
 import { Observable, of as observableOf } from 'rxjs';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { By } from '@angular/platform-browser';
+
 describe('AllMyContentFilterComponent', () => {
   let component: AllMyContentFilterComponent;
   let fixture: ComponentFixture<AllMyContentFilterComponent>;

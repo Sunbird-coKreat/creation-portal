@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import * as moment from 'moment';
-import { text } from '@angular/core/src/render3';
+// import { text } from '@angular/core/src/render3';
 
 @Pipe({
   name: 'daysToGo'

@@ -5,7 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import * as testData from './home-announcement.service.spec.data';
 import { TestBed, inject } from '@angular/core/testing';
-
+import { RouterTestingModule } from '@angular/router/testing';
 import { HomeAnnouncementService } from './home-announcement.service';
 import { ConfigService , BrowserCacheTtlService} from '@sunbird/shared';
 import { CacheService } from 'ng2-cache-service';
@@ -13,7 +13,7 @@ import { CacheService } from 'ng2-cache-service';
 describe('HomeAnnouncementService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      imports: [HttpClientTestingModule,RouterTestingModule],
       providers: [HttpClientModule, HomeAnnouncementService, ConfigService, CacheService, BrowserCacheTtlService]
     });
   });

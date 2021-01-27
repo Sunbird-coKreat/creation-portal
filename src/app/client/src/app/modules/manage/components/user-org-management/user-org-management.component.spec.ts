@@ -11,6 +11,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { UserOrgManagementComponent } from './user-org-management.component';
 import { throwError as observableThrowError, of as observableOf, of } from 'rxjs';
 import { mockManageData } from './user-org-management.mock.spec';
+import { APP_BASE_HREF } from '@angular/common'; 
 
 const fakeActivatedRoute = {
   snapshot: {
@@ -67,7 +68,8 @@ describe('UserOrgManagementComponent', () => {
         ToasterService,
         NavigationHelperService,
         { provide: ActivatedRoute, useValue: fakeActivatedRoute },
-        { provide: ResourceService, useValue: resourceMockData }
+        { provide: ResourceService, useValue: resourceMockData },
+        {provide: APP_BASE_HREF, useValue: '/'}
       ]
     }).compileComponents();
   }));

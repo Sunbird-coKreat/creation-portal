@@ -1,4 +1,4 @@
-@import "variables"; 
+@import "variables";
 @import "../../../../../assets/styles/mixins/mixins";
 /* fonts */
   .font-w-bold {
@@ -39,7 +39,7 @@
   .profile-label-container {
     max-width: 600px !important;
   }
-  
+
   .profile-label-container {
     .ui.basic.label:hover {
       border: 1px solid #fdfdfd !important;
@@ -142,7 +142,7 @@ display: inline-block;
 //       }
 //   }
 // }
-  
+
 
 // @-webkit-keyframes seconds {
 //   0% {
@@ -209,10 +209,10 @@ display: inline-block;
    }
 }
 
-.my-avatar.verified /deep/ .avatar-content {
+.my-avatar.verified ::ng-deep .avatar-content {
   border: 1px solid #008840 !important;
 }
- 
+
  @include respond-below(sm) {
   .avatar-tickmark {
     left: 67%;

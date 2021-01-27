@@ -22,7 +22,7 @@ export class MainHomeComponent implements OnInit, OnDestroy, AfterViewInit {
   * inviewLogs
  */
   inviewLogs = [];
-  @ViewChild('slickModal') slickModal;
+  @ViewChild('slickModal', {static: false}) slickModal;
   /**
 	 * telemetryImpression
 	*/

@@ -16,7 +16,7 @@ import * as moment from 'moment';
 })
 export class UpdateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  @ViewChild('updateBatchModal') private updateBatchModal;
+  @ViewChild('updateBatchModal', {static: false}) private updateBatchModal;
   /**
   * batchId
   */

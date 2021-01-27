@@ -21,6 +21,7 @@ export class MvcPlayerComponent implements OnInit, OnChanges {
   instance: string;
   public playerConfig: any;
   public contentData: any = {};
+  public getUploadedContentMeta : any;
   public contentId;
   constructor(
     private playerService: PlayerService, public configService: ConfigService, private actionService: ActionService,

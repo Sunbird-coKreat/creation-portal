@@ -18,7 +18,7 @@ export class ValidateTeacherIdentifierPopupComponent implements OnInit, OnDestro
   @Input() userFeedData: {};
   @Input() labels: {};
   @Output() close = new EventEmitter<any>();
-  @ViewChild('createValidateModal') createValidateModal;
+  @ViewChild('createValidateModal', {static: false}) createValidateModal;
   userDetailsForm: FormGroup;
   formBuilder: FormBuilder;
   processValidation = false;
