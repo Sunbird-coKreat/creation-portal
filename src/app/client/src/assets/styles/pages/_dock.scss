@@ -439,7 +439,7 @@ top: -4px;
     margin: 0.5rem !important;
   }
   .sb-btn-cover{
-    width: 33.3%;
+    width: 65%;
     justify-content: flex-end;
     border: none;
   }
@@ -672,5 +672,21 @@ xxl calculateRem(180px) 24px 20px;
   .menu{
     width: 100%;
   }
-
+}
+.sbtoc-container{
+  .ui.toggle.checkbox label{
+    min-height: 1rem;
+  }
+  .ui.toggle.checkbox label:before{
+    width: 3rem !important;
+    height: 1rem !important;
+  }
+  .ui.toggle.checkbox label:after{
+    width: 1rem !important;
+    height: 1rem !important;
+  }
+  .ui.selection.dropdown{
+    min-width: 7rem;
+    background: #fff;
+  }  
 }

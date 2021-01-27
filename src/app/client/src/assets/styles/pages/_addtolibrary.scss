@@ -1004,13 +1004,11 @@
   }
 .sb-prominent-filter-field{
   width: 33.2% !important;
-  &:nth-child(3n){
-    padding: 0;
-  }
-  &:nth-child(4n){
-    width: 66% !important;
-  }
+} 
+.sb-search-box{
+  width: 20%;
 }
+
 .sb-prominent-filter {
     position: relative;
     top: unset;

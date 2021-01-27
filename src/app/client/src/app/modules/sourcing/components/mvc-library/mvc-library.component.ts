@@ -240,7 +240,86 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
       }),
       map((data: any) => data.result.content ? data.result.content : []))
       .subscribe((result: any) => {
-        this.contentList = result;
+        // this.contentList = result;
+        this.contentList = [
+          {
+              'identifier': 'do_1130454074902364161152',
+              'board' : 'CBSE',
+              'subject': 'Computer Science',
+              // tslint:disable-next-line:max-line-length
+              'downloadUrl': 'https://ekstep-public-qa.s3-ap-south-1.amazonaws.com/ecar_files/do_2123125146963066881113/my-textbook-1_1539087291666_do_2123125146963066881113_4.0_spine.ecar',
+              // tslint:disable-next-line:max-line-length
+              'description': 'lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
+              'mimeType': 'application/vnd.ekstep.content-collection',
+              'medium': [
+                  'English',
+                  'Tamil',
+                  'Telegu'
+              ],
+              'objectType': 'Content',
+              'gradeLevel': [
+                  'Class 11',
+                  'Class 12'
+              ],
+              'framework': 'NCF',
+              'name': 'The Blue sharks when they are deep in the sea they are deep in the sea',
+              'lastUpdatedOn': '2020-05-09T12:14:48.558+0000',
+              'contentType': 'TextBook',
+              'resourceType': 'Book',
+              'status': 'Live'
+          },
+          {
+            'identifier': 'do_1130454643544227841156',
+            'board' : 'State (Gujarat)',
+            'subject': 'Computer Science',
+            // tslint:disable-next-line:max-line-length
+            'downloadUrl': 'https://ekstep-public-qa.s3-ap-south-1.amazonaws.com/ecar_files/do_2123125146963066881113/my-textbook-1_1539087291666_do_2123125146963066881113_4.0_spine.ecar',
+            'description': 'Computer Science textbook',
+            'mimeType': 'application/vnd.ekstep.content-collection',
+            'medium': [
+                'English',
+                'Tamil',
+                'Telegu'
+            ],
+            'objectType': 'Content',
+            'gradeLevel': [
+                'Class 11',
+                'Class 12'
+            ],
+            'framework': 'NCF',
+            'name': 'Once upon a time in a Forest',
+            'lastUpdatedOn': '2020-05-09T12:14:48.558+0000',
+            'contentType': 'TextBook',
+            'resourceType': 'Book',
+            'status': 'Live'
+        },
+        {
+          'identifier': 'do_1130483562925178881200',
+          'subject': 'Computer Science',
+          'board' : 'State (Assam)',
+          // tslint:disable-next-line:max-line-length
+          'downloadUrl': 'https://ekstep-public-qa.s3-ap-south-1.amazonaws.com/ecar_files/do_2123125146963066881113/my-textbook-1_1539087291666_do_2123125146963066881113_4.0_spine.ecar',
+          'description': 'Computer Science textbook - Footprints without Feet - English Supplementary Reader',
+          'mimeType': 'application/vnd.ekstep.content-collection',
+          'medium': [
+              'English',
+              'Tamil',
+              'Telegu'
+          ],
+          'objectType': 'Content',
+          'gradeLevel': [
+              'Class 11',
+              'Class 12'
+          ],
+          'isAdded': true,
+          'framework': 'NCF',
+          'name': 'Footprints without Feet - English Supplementary Reader',
+          'lastUpdatedOn': '2020-05-09T12:14:48.558+0000',
+          'contentType': 'TextBook',
+          'resourceType': 'Book',
+          'status': 'Live'
+      }
+        ];
         this.filterContentList();
       });
   }

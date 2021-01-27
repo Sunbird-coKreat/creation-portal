@@ -1,13 +1,36 @@
 <div class="sbtoc-container pr-8 mt-20">
   <div class="title sb-color-primary font-weight-bold fs-1">
-    {{resourceService.frmelmnts.lbl.showingContentsFromLibrary | interpolate:'{TOTAL}': contentList?.length}}
+    {{resourceService.frmelmnts.lbl.showingContents | interpolate:'{TOTAL}': contentList?.length}}
   </div>
-  <small class="font-italic sb-color-gray-200 d-block pb-10">{{resourceService.frmelmnts.lbl.selectAcontentToAddToTheTextbook}}</small>
-  <sui-checkbox class="toggle mb-10"  [(ngModel)]="showAddedContent" (checkChange)="onShowAddedContentChange();"
-  appTelemetryInteract
-  [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('show_added_content', configService.telemetryLabels.eventType.click, undefined,telemetryPageId)"
-  [telemetryInteractCdata]="getTelemetryInteractCdata('show_added_content',!showAddedContent)"
-  [telemetryInteractPdata]="sessionContext.telemetryInteractPdata">{{resourceService.frmelmnts.lbl.showContentAddedToTextbook}}</sui-checkbox>
+  <small class="sb-color-gray-200 d-block pb-10">{{resourceService.frmelmnts.lbl.selectAcontentToAddToTheTextbook}}</small>
+  <div class="d-flex flex-w-wrap flex-jc-space-between flex-ai-center mb-15">
+    <div>   
+      <sui-checkbox class="toggle"  [(ngModel)]="showAddedContent" (checkChange)="onShowAddedContentChange();"
+          appTelemetryInteract
+          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('show_added_content', configService.telemetryLabels.eventType.click, undefined,telemetryPageId)"
+          [telemetryInteractCdata]="getTelemetryInteractCdata('show_added_content',!showAddedContent)"
+          [telemetryInteractPdata]="sessionContext.telemetryInteractPdata">
+        </sui-checkbox>
+        <small class="d-block"> {{resourceService.frmelmnts.lbl.showContentAddedToTextbook}}</small>
+    </div>
+      <div>
+        <label class="d-block font-weight-normal">{{resourceService.frmelmnts.lbl.sortby}}</label>
+        <sui-multi-select class="selection"
+                          [(ngModel)]="selectedOptions"
+                          [options]="options"
+                          labelField="name"
+                          [isSearchable]="searchable"
+                          [isDisabled]="disabled"
+                          [hasLabels]="!hideLabels"
+                          #multiSelect>
+            <sui-select-option *ngFor="let option of multiSelect.filteredOptions"
+                               [value]="option">
+            </sui-select-option>
+        </sui-multi-select>
+    </div>
+  
+        
+  </div>
   <!-- Class separator -->
   <div class="sb-library-scroll" id="suggestions-tab" in-view-container (inview)="inView($event)">
     <div in-view-item [id]="i" [data]="content" *ngFor="let content of contentList; let i = index">

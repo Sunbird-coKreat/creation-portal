@@ -1,17 +1,24 @@
 <div class="sb-prominent-filter sb-bg-header-blue" [formGroup]="searchFilterForm">
   <div class="ui container py-20">
-    <div class="d-flex flex-w-wrap">
+    <div class="d-flex flex-w-wrap flex-jc-space-between flex-ai-center">
+      <div class="sb-search-box small no-btn">
+        <div class="input-div relative">
+            <i class="search icon"></i>
+            <input class="sb-search-input" type="text" placeholder="Search Library" />
+        </div>
+        <button class="sb-btn sb-btn-normal">Search</button>
+     </div>
       <div class="fs-0-785 cursor-pointer pr-20 font-weight-bold" (click)="showfilter()"
         appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filter_accordion', configService.telemetryLabels.eventType.click,undefined, telemetryPageId)"
         [telemetryInteractCdata]="getTelemetryInteractCdata('show-toggle',!isFilterShow)"
         [telemetryInteractPdata]="sessionContext.telemetryInteractPdata" >
-        <i class="question circle link icon sb-color-gray-200 fs-0-92" suiPopup popupDelay="500" popupText="{{resourceService.frmelmnts.lbl.changingFilterHelpsYouFindMoreContent}}"></i>
-        {{resourceService.frmelmnts.lbl.filters}} 
+        {{resourceService.frmelmnts.lbl.whatKindOfContentAreYouLookingFor}} 
         <i class="icon caret" [ngClass]="isFilterShow === true ? 'up' : 'down'"></i>
       </div>
     </div>
     <div class="sb-prominent-filter-container pt-16" *ngIf="isFilterShow">
+      <hr class="mb-20 w-100">
       <div class="sb-prominent-filter-field">
         <label class="fsmall d-block">{{resourceService.frmelmnts.lbl.contentType}}
         </label>
@@ -26,6 +33,54 @@
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('selectoption_contentType', configService.telemetryLabels.eventType.select,configService.telemetryLabels.eventSubtype.multiSelect, telemetryPageId)"
             [telemetryInteractCdata]="getTelemetryInteractCdata('value',contentType)"
             [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"> </sui-select-option>
+        </sui-multi-select>
+      </div>
+      <div class="sb-prominent-filter-field">
+        <label class="fsmall d-block">{{resourceService.frmelmnts.lbl.purpose}}
+        </label>
+        <sui-multi-select class="selection sb-select-searchfilter d-block" placeholder="{{resourceService.frmelmnts.lbl.selectClasses}}"
+          formControlName="gradeLevel" #gradeLevels [options]="filters.gradeLevel" [isSearchable]='true'
+          appTelemetryInteract
+          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('class', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId)"
+          [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
+          [telemetryInteractPdata]="sessionContext.telemetryInteractPdata">
+            <sui-select-option *ngFor="let gradeLevel of gradeLevels.filteredOptions" [value]="gradeLevel"
+            appTelemetryInteract
+          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('selectoption_class', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId)"
+          [telemetryInteractCdata]="getTelemetryInteractCdata('value',class)"
+          [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"> </sui-select-option>
+        </sui-multi-select>
+      </div>
+      <div class="sb-prominent-filter-field">
+        <label class="fsmall d-block">{{resourceService.frmelmnts.lbl.topics}}
+        </label>
+        <sui-multi-select class="selection sb-select-searchfilter d-block" placeholder="{{resourceService.frmelmnts.lbl.selectClasses}}"
+          formControlName="gradeLevel" #gradeLevels [options]="filters.gradeLevel" [isSearchable]='true'
+          appTelemetryInteract
+          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('class', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId)"
+          [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
+          [telemetryInteractPdata]="sessionContext.telemetryInteractPdata">
+            <sui-select-option *ngFor="let gradeLevel of gradeLevels.filteredOptions" [value]="gradeLevel"
+            appTelemetryInteract
+          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('selectoption_class', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId)"
+          [telemetryInteractCdata]="getTelemetryInteractCdata('value',class)"
+          [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"> </sui-select-option>
+        </sui-multi-select>
+      </div>
+      <div class="sb-prominent-filter-field">
+        <label class="fsmall d-block">{{resourceService.frmelmnts.lbl.board}}
+        </label>
+        <sui-multi-select class="selection sb-select-searchfilter d-block" placeholder="{{resourceService.frmelmnts.lbl.selectClasses}}"
+          formControlName="gradeLevel" #gradeLevels [options]="filters.gradeLevel" [isSearchable]='true'
+          appTelemetryInteract
+          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('class', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId)"
+          [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
+          [telemetryInteractPdata]="sessionContext.telemetryInteractPdata">
+            <sui-select-option *ngFor="let gradeLevel of gradeLevels.filteredOptions" [value]="gradeLevel"
+            appTelemetryInteract
+          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('selectoption_class', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId)"
+          [telemetryInteractCdata]="getTelemetryInteractCdata('value',class)"
+          [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"> </sui-select-option>
         </sui-multi-select>
       </div>
       <div class="sb-prominent-filter-field">
@@ -45,7 +100,23 @@
         </sui-multi-select>
       </div>
       <div class="sb-prominent-filter-field">
-        <label class="fsmall d-block">{{resourceService.frmelmnts.lbl.subject}}(s)
+        <label class="fsmall d-block">{{resourceService.frmelmnts.lbl.medium}}
+        </label>
+        <sui-multi-select class="selection sb-select-searchfilter d-block" placeholder="{{resourceService.frmelmnts.lbl.selectClasses}}"
+          formControlName="gradeLevel" #gradeLevels [options]="filters.gradeLevel" [isSearchable]='true'
+          appTelemetryInteract
+          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('class', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId)"
+          [telemetryInteractCdata]="sessionContext.telemetryInteractCdata"
+          [telemetryInteractPdata]="sessionContext.telemetryInteractPdata">
+            <sui-select-option *ngFor="let gradeLevel of gradeLevels.filteredOptions" [value]="gradeLevel"
+            appTelemetryInteract
+          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('selectoption_class', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId)"
+          [telemetryInteractCdata]="getTelemetryInteractCdata('value',class)"
+          [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"> </sui-select-option>
+        </sui-multi-select>
+      </div>
+      <div class="sb-prominent-filter-field">
+        <label class="fsmall d-block">{{resourceService.frmelmnts.lbl.subject}}
         </label>
         <sui-multi-select class="selection sb-select-searchfilter d-block" placeholder="{{resourceService.frmelmnts.lbl.selectSubjects}}"
           formControlName="subject" #subjects [options]="filters.subject" [isSearchable]='true'
@@ -60,7 +131,7 @@
           [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"> </sui-select-option>
         </sui-multi-select>
       </div>
-      <div class="sb-prominent-filter-field ml-0 text-left ">
+      <!-- <div class="sb-prominent-filter-field ml-0 text-left ">
         <label class="fsmall d-block">Chapter(s) </label>
           <sui-multi-select class="selection sb-select-searchfilter d-block sb-option-ellipsis" placeholder="{{resourceService.frmelmnts.lbl.selectChapters}}"
           formControlName="chapter" #chapters [options]="filters.chapter" [isSearchable]='true'
@@ -74,7 +145,7 @@
           [telemetryInteractCdata]="getTelemetryInteractCdata('value',chapter)"
           [telemetryInteractPdata]="sessionContext.telemetryInteractPdata"> </sui-select-option>
         </sui-multi-select>
-      </div>
+      </div> -->
       <div class="d-flex flex-as-center pt-10 sb-btn-cover">
         <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary ml-5" (click)="resetFilter();"
         appTelemetryInteract
