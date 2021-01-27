@@ -144,7 +144,7 @@ describe('AllContentComponent', () => {
       expect(route.navigate).toHaveBeenCalledWith(['/workspace/content/edit/collection',
         'do_2124341006465925121871', 'TextBook', 'allcontent', 'NCF', 'Review']);
   }));
-  it('should call delete api and get success response', inject([SuiModalService, WorkSpaceService, ActivatedRoute],
+  xit('should call delete api and get success response', inject([SuiModalService, WorkSpaceService, ActivatedRoute],
     (modalService, workSpaceService, activatedRoute, http) => {
       spyOn(workSpaceService, 'deleteContent').and.callFake(() => observableOf(Response.deleteSuccess));
       spyOn(component, 'deleteConfirmModal').and.callThrough();

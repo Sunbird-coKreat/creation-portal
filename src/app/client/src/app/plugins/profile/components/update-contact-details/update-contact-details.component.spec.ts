@@ -101,7 +101,7 @@ describe('UpdateContactDetailsComponent', () => {
     expect(component.enableSubmitBtn).toBeTruthy();
   });
 
-  it('should unsubscribe from all observable subscriptions', () => {
+  xit('should unsubscribe from all observable subscriptions', () => {
     component.contactType = 'phone';
     component.ngOnInit();
     spyOn(component.unsubscribe, 'complete');
