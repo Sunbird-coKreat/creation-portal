@@ -12,7 +12,6 @@ import * as _ from 'lodash-es';
 })
 export class QuestionSetEditorComponent implements OnInit {
 
-  pageView;
   editorConfig: any;
   editorParams: any;
   private userProfile: IUserProfile;
@@ -27,7 +26,6 @@ export class QuestionSetEditorComponent implements OnInit {
     ) {
       const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
       const deviceId = (<HTMLInputElement>document.getElementById('deviceId'));
-      this.pageView = _.get(this.activatedRoute, 'snapshot.data.pageView');
       this.deviceId = deviceId ? deviceId.value : '';
       this.buildNumber = buildNumber ? buildNumber.value : '1.0';
       this.portalVersion = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
@@ -46,7 +44,6 @@ export class QuestionSetEditorComponent implements OnInit {
       context: {
         user: {
           id: this.userService.userid,
-          // tslint:disable-next-line:max-line-length
           name : !_.isEmpty(this.userProfile.lastName) ? this.userProfile.firstName + ' ' + this.userProfile.lastName :
           this.userProfile.firstName,
           orgIds: this.userProfile.organisationIds,
