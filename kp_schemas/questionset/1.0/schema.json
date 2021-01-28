@@ -486,7 +486,7 @@
     "sampleContent": {
       "type": "boolean"
     },
-    "creators": {
+    "creator": {
       "type": "string"
     },
     "collectionId" : {
