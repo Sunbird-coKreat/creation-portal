@@ -375,9 +375,6 @@
     "timeLimits": {
       "type": "object"
     },
-    "maxScore": {
-      "type": "number"
-    },
     "showTimer": {
       "type": "string",
       "enum": [
@@ -479,6 +476,27 @@
         "No"
       ],
       "default": "No"
+    },
+    "organisationId" : {
+      "type": "string"
+    },
+    "programId": {
+        "type": "string"
+    },
+    "sampleContent": {
+      "type": "boolean"
+    },
+    "creators": {
+      "type": "string"
+    },
+    "collectionId" : {
+      "type": "string"
+    },
+    "unitIdentifiers": {
+      "type": "array"
+    },
+    "contentPolicyCheck" : {
+      "type": "boolean"
     }
   }
 }
