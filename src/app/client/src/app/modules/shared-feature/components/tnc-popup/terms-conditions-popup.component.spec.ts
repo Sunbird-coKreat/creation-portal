@@ -13,7 +13,7 @@ import { UserService, TenantService } from '@sunbird/core';
 import { mockUserData } from '../../../core/services/user/user.mock.spec.data';
 import { throwError as observableThrowError, of as observableOf } from 'rxjs';
 import { RouterTestingModule } from '@angular/router/testing';
-import { APP_BASE_HREF } from '@angular/common'; 
+import { APP_BASE_HREF } from '@angular/common';
 
 describe('TermsAndConditionsPopupComponent', () => {
   let component: TermsAndConditionsPopupComponent;
