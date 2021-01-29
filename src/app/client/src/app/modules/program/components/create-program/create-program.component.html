@@ -15,7 +15,7 @@
 					</div>
 					<div class="item" suiTabHeader="2" *ngIf="!editPublished" [isDisabled]="!showTextBookSelector"
 						[ngClass]="{'active' : showTextBookSelector}">
-						{{resource.frmelmnts.lbl.projectScope}}
+						{{resource?.frmelmnts?.lbl?.projectScope}}
 					</div>
 				</div>
 				<div class="ui segment mt-5" suiTabContent="1" [ngClass]="{'active' : !showTextBookSelector}">
@@ -320,10 +320,10 @@
 							</div-->
 							<div class="six wide column">
 								<div class="required field">
-									<label class="d-block">{{resource.frmelmnts.lbl.select.Target.Collection}}
+									<label class="d-block">{{resource?.frmelmnts?.lbl?.select?.Target?.Collection}}
 									<i class="pull-right question circle link icon pull-right" suiPopup
 										popupDelay="500" [popupPlacement]="'left'"
-										popupText="{{resource.frmelmnts.lbl.select.Target.Collection}}"></i>
+										popupText="{{resource?.frmelmnts?.lbl?.select?.Target?.Collection}}"></i>
 								</label>
 								<sui-select formControlName="target_collection_category" class="selecttarget"  placeholder="{{resource?.frmelmnts?.lbl?.Select}}"
 								(selectedOptionChange)="onChangeTargetCollection()" [(ngModel)]="selectedTargetCollection" [options]="collectionCategories"  #targetCollections>

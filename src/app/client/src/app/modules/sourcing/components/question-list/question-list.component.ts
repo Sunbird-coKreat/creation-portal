@@ -27,19 +27,21 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 
 export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  @ViewChild('questionCreationChild') questionCreationChild;
+  @ViewChild('questionCreationChild', {static: false}) questionCreationChild;
   @Output() changeStage = new EventEmitter<any>();
   @Input() practiceQuestionSetComponentInput: any;
-  @ViewChild('FormControl') FormControl: NgForm;
+  @ViewChild('FormControl', {static: false}) FormControl: NgForm;
   @Output() uploadedContentMeta = new EventEmitter<any>();
-  @ViewChild('resourceTtlTextarea') resourceTtlTextarea: ElementRef;
-  @ViewChild('formData') formData: DataFormComponent;
+  @ViewChild('resourceTtlTextarea', {static: false}) resourceTtlTextarea: ElementRef;
+  @ViewChild('formData', {static: false}) formData: DataFormComponent;
 
   public sessionContext: any;
   public programContext: any;
   public sharedContext: any;
   public selectedSharedContext: any;
   public roles: any;
+  public showResourceTitleEditor : any;
+  public saveResourceName : any;
   public templateDetails: any;
   public questionList: Array<any> = [];
   public selectedQuestionId: any;

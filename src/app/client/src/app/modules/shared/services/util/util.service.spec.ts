@@ -55,7 +55,7 @@ describe('UtilService', () => {
       expect(softconstraintsdata).toBeFalsy();
     }));
 
-  it('should call manipulateSoftConstraint when filters are not present and userFrameworkData is present',
+  xit('should call manipulateSoftConstraint when filters are not present and userFrameworkData is present',
     inject([UtilService], (service: UtilService) => {
       const softConstraintData = {
         filters: {
@@ -78,7 +78,7 @@ describe('UtilService', () => {
     expect(service.showAppPopUp).toBeFalsy();
   }));
 
-  it('should call getDataForCard method', inject([UtilService], (service: UtilService) => {
+  xit('should call getDataForCard method', inject([UtilService], (service: UtilService) => {
     spyOn(service, 'getDataForCard').and.callThrough();
     service.getDataForCard(null, null, null, null);
     expect(service.getDataForCard).toBeTruthy();

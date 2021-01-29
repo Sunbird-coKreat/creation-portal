@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ResourceService, ConfigService, BrowserCacheTtlService } from '@sunbird/shared';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CacheService } from 'ng2-cache-service';
-
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('TopicPickerComponent', () => {
     let component: TopicPickerComponent;
@@ -12,7 +12,7 @@ describe('TopicPickerComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            imports: [FormsModule, HttpClientTestingModule],
+            imports: [FormsModule, HttpClientTestingModule,RouterTestingModule],
             declarations: [ TopicPickerComponent ],
             providers: [ResourceService, ConfigService, CacheService, BrowserCacheTtlService]
         })

@@ -4,12 +4,13 @@ import { TestBed, inject } from '@angular/core/testing';
 import { ProfileService } from '@sunbird/profile';
 import { SharedModule } from '@sunbird/shared';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { CoreModule, LearnerService, UserService } from '@sunbird/core';
 import { mockRes } from './profile.service.spec.data';
 describe('ProfileService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, CoreModule, SharedModule.forRoot()],
+      imports: [HttpClientTestingModule, CoreModule,RouterTestingModule, SharedModule.forRoot()],
       providers: [ProfileService]
     });
   });

@@ -27,14 +27,14 @@ import { DeviceDetectorService } from 'ngx-device-detector';
   styleUrls: ['./content-uploader.component.scss']
 })
 export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('formData') formData: DataFormComponent;
-  @ViewChild('modal') modal;
+  @ViewChild('formData', {static: false}) formData: DataFormComponent;
+  @ViewChild('modal', {static: false}) modal;
   // @ViewChild('editmodal') editmodal;
-  @ViewChild('fineUploaderUI') fineUploaderUI: ElementRef;
-  @ViewChild('qq-upload-actions') actionButtons: ElementRef;
-  @ViewChild('titleTextArea') titleTextAreaa: ElementRef;
-  @ViewChild('FormControl') FormControl: NgForm;
-  // @ViewChild('contentTitle') contentTitle: ElementRef;
+  @ViewChild('fineUploaderUI', {static: false}) fineUploaderUI: ElementRef;
+  @ViewChild('qq-upload-actions', {static: false}) actionButtons: ElementRef;
+  @ViewChild('titleTextArea', {static: false}) titleTextAreaa: ElementRef;
+  @ViewChild('FormControl', {static: false}) FormControl: NgForm;
+  // @ViewChild('contentTitle', {static: false}) contentTitle: ElementRef;
   @Input() contentUploadComponentInput: IContentUploadComponentInput;
 
   public sessionContext: any;

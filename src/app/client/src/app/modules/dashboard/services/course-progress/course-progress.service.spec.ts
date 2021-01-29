@@ -7,7 +7,7 @@ import { TestBed, inject } from '@angular/core/testing';
 import { CourseProgressService } from './course-progress.service';
 import * as testData from './course-progress.service.spec.data';
 
-describe('CourseProgressService', () => {
+xdescribe('CourseProgressService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, CoreModule, SharedModule.forRoot()],

@@ -3,7 +3,7 @@ const download = require('gulp-download')
 const decompress = require('gulp-decompress')
 const rename = require('gulp-rename')
 const clean = require('gulp-clean')
-const gulpSequence = require('gulp-sequence')
+//~ const gulpSequence = require('gulp-sequence')
 const gzip = require('gulp-gzip')
 const exec = require('child_process').exec
 const brotli = require('gulp-brotli');
@@ -16,7 +16,7 @@ const editorsDestPath = 'client/src/thirdparty/editors/'
 
 
 gulp.task('clean:editors', () => {
-    return gulp.src('./' + editorsDestPath, { read: false })
+    return gulp.src('./' + editorsDestPath, {allowEmpty: true, read: false })
         .pipe(clean())
 })
 gulp.task('download:content:editor', () => {
@@ -44,7 +44,7 @@ gulp.task('gzip:editors', () => {
         .pipe(gulp.dest('./client/src/thirdparty/editors'))
 })
 
-gulp.task('download:editors', gulpSequence('clean:editors', ['download:content:editor', 'download:collection:editor', 'download:generic:editor'], 'gzip:editors'))
+gulp.task('download:editors', gulp.series('clean:editors', gulp.parallel('download:content:editor', 'download:collection:editor', 'download:generic:editor'), 'gzip:editors'))
 
 gulp.task('clean:client:install', (done) => {
     return gulp.src('./client/node_modules', { read: false })
@@ -113,7 +113,7 @@ gulp.task('prepare:app:dist', () => {
 })
 
 gulp.task('clean:app:dist', () => {
-    return gulp.src('./app_dist', { read: false })
+    return gulp.src('./app_dist', { read: false, allowEmpty: true })
         .pipe(clean())
 })
 
@@ -127,11 +127,11 @@ gulp.task('build-resource-bundles', (cb) => {
 const compress = process.env.devBuild === 'true' ? '' : ['client:gzip'] // removed brotli due to gulp issue
 const cleanClient = process.env.devBuild === 'true' ? '' : 'clean:client:install'
 gulp.task('deploy',
-    gulpSequence('clean:app:dist',
+    gulp.series('clean:app:dist',
         'clean:editors',
-        ['download:content:editor',
+        gulp.parallel('download:content:editor',
             'download:collection:editor',
-            'download:generic:editor'],
+            'download:generic:editor'),
         'gzip:editors',
         'build-resource-bundles',
         // cleanClient,
@@ -171,7 +171,7 @@ gulp.task('clean:content-player:modules', (done) => {
         .pipe(clean())
 })
 
-gulp.task('build-offline', gulpSequence(
+gulp.task('build-offline', gulp.series(
     'clean:client:install',
     'client:install',
     'offline-client:dist',

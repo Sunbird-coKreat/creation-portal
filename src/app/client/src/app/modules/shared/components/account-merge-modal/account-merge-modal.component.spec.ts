@@ -9,7 +9,7 @@ import {AccountMergeModalComponent} from './account-merge-modal.component';
 import {of as observableOf} from 'rxjs';
 import {InterpolatePipe} from './../../pipes';
 
-describe('AccountMergeModalComponent', () => {
+xdescribe('AccountMergeModalComponent', () => {
   let component: AccountMergeModalComponent;
   let fixture: ComponentFixture<AccountMergeModalComponent>;
 

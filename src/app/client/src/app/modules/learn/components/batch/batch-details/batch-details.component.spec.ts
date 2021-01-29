@@ -10,6 +10,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CourseBatchService, CourseProgressService } from './../../../services';
 import {userSearch, allBatchDetails, enrolledBatch } from './batch-details.component.data';
+import { RouterTestingModule } from '@angular/router/testing';
 class RouterStub {
   navigate = jasmine.createSpy('navigate');
 }
@@ -38,7 +39,7 @@ describe('BatchDetailsComponent', () => {
   let fixture: ComponentFixture<BatchDetailsComponent>;
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, SharedModule.forRoot(), CoreModule, SuiModule],
+      imports: [RouterTestingModule, HttpClientTestingModule, SharedModule.forRoot(), CoreModule, SuiModule],
       declarations: [BatchDetailsComponent],
       providers: [CourseBatchService, CourseProgressService, { provide: Router, useClass: RouterStub },
         { provide: ActivatedRoute, useValue: fakeActivatedRoute }],

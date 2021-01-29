@@ -22,7 +22,7 @@
               "src/favicon.png",
               {
                 "glob": "**/*.*",
-                "input": "./node_modules/@project-sunbird/common-consumption/assets",
+                "input": "./node_modules/@project-sunbird/common-consumption-v8/assets",
                 "output": "./assets/common-consumption"
               }
             ],
@@ -107,6 +107,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
+            "codeCoverage": true,
             "main": "src/test.ts",
             "karmaConfig": "./karma.conf.js",
             "polyfills": "src/polyfills.ts",
@@ -174,7 +175,7 @@
               { "glob": "**/*", "input": "./src/assets", "output": "./assets" },
               {
                 "glob": "**/*.*",
-                "input": "./node_modules/@project-sunbird/common-consumption/assets",
+                "input": "./node_modules/@project-sunbird/common-consumption-v8/assets",
                 "output": "./assets/common-consumption"
               }
             ],
@@ -247,6 +248,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
+            "codeCoverage": true,
             "main": "projects/desktop/src/test.ts",
             "polyfills": "projects/desktop/src/polyfills.ts",
             "tsConfig": "projects/desktop/tsconfig.spec.json",

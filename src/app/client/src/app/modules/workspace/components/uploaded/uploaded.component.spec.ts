@@ -12,6 +12,7 @@ import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import * as mockData from './uploaded.component.spec.data';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { NgInviewModule } from 'angular-inport';
+import { APP_BASE_HREF,DatePipe } from '@angular/common';
 const testData = mockData.mockRes;
 describe('UploadedComponent', () => {
   let component: UploadedComponent;
@@ -57,7 +58,8 @@ describe('UploadedComponent', () => {
         SearchService, ContentService, LearnerService, CoursesService,
         PermissionService, ResourceService, ToasterService,
         { provide: ActivatedRoute, useValue: fakeActivatedRoute },
-        { provide: ResourceService, useValue: resourceBundle }
+        { provide: ResourceService, useValue: resourceBundle },
+        {provide: APP_BASE_HREF, useValue: '/'}
       ]
     })
       .compileComponents();
