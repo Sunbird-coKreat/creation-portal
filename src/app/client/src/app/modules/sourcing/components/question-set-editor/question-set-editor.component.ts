@@ -88,4 +88,8 @@ export class QuestionSetEditorComponent implements OnInit {
     }
     this.showLoader = false;
   }
+
+  private editorEventListener($event) {
+    console.log($event);
+  } 
 }

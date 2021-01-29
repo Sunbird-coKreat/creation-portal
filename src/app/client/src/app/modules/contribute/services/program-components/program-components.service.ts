@@ -3,6 +3,7 @@ import { CollectionComponent } from '../../../sourcing/components/collection/col
 import {DashboardComponent } from '../../../sourcing/components/dashboard/dashboard.component';
 import { ContentUploaderComponent } from '../../../sourcing/components/content-uploader/content-uploader.component';
 import { QuestionListComponent } from '../../../sourcing/components/question-list/question-list.component';
+import { QuestionSetEditorComponent } from '../../../sourcing/components/question-set-editor/question-set-editor.component';
 import { ToasterService } from '@sunbird/shared';
 
 @Injectable({
@@ -13,6 +14,7 @@ export class ProgramComponentsService {
     dashboardComponent: DashboardComponent,
     collectionComponent: CollectionComponent,
     uploadComponent: ContentUploaderComponent,
+    questionSetEditorComponent: QuestionSetEditorComponent,
     questionSetComponent: QuestionListComponent,
     curiositySetComponent: QuestionListComponent
   };

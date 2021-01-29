@@ -34,7 +34,7 @@ import { MvcPlayerComponent } from './components/mvc-player/mvc-player.component
 import { SkeletonLoaderComponent } from './components/skeleton-loader/skeleton-loader.component';
 import { NgInviewModule } from 'angular-inport';
 import { QuestionSetEditorComponent } from './components/question-set-editor/question-set-editor.component';
-import { QuestionEditorLibraryModule } from 'question-editor-library';
+import { QuestionEditorLibraryModule } from 'question-editor-library-v8';
 import {CarouselModule} from 'ngx-bootstrap/carousel';
 @NgModule({
   declarations: [QuestionListComponent, QuestionCreationComponent,

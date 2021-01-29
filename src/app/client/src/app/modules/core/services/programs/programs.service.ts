@@ -962,7 +962,7 @@ export class ProgramsService extends DataService implements CanActivate {
         data: {
           request: {
             "objectCategoryDefinition": {
-                "objectType": "Content",
+                "objectType": "QuestionSet",
                 "name": categoryName,
                 "channel": rootOrgId
             },

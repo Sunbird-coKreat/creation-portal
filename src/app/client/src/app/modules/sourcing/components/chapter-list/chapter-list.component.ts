@@ -7,7 +7,7 @@ import { UUID } from 'angular2-uuid';
 import { SourcingService } from '../../services';
 import { map, catchError, first, filter } from 'rxjs/operators';
 import { throwError, Observable } from 'rxjs';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, NavigationExtras} from '@angular/router';
 import {
   IChapterListComponentInput, ISessionContext,
   IContentUploadComponentInput, IResourceTemplateComponentInput, IContentEditorComponentInput
@@ -764,9 +764,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       if (!_.isEmpty(this.userService.userProfile.lastName)) {
         creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
       }
-      const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
-      const option = {
-        url: `content/v3/create`,
+      const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext); 
+      let option = {
+        url: `questionset/v1/create`,
         header: {
           'X-Channel-Id': this.programContext.rootorg_id
         },
@@ -778,7 +778,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               'mimeType': this.templateDetails.mimeType[0],
               'createdBy': this.userService.userid,
               'primaryCategory': this.templateDetails.name,
-              'creator': creator,
+              //'creator': creator,
               'programId': this.sessionContext.programId,
               'collectionId': this.sessionContext.collection,
               'unitIdentifiers': [this.unitIdentifier],
@@ -790,6 +790,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           }
         }
       };
+
       if (this.sampleContent) {
         option.data.request.content.sampleContent = this.sampleContent;
       }
@@ -799,7 +800,15 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       if (_.get(this.templateDetails, 'appIcon')) {
         option.data.request.content.appIcon = _.get(this.templateDetails, 'appIcon');
       }
-      this.actionService.post(option).pipe(map((res: any) => res.result), catchError(err => {
+
+      let createRes = this.actionService.post(option);
+      if (_.get(this.templateDetails, 'modeOfCreation') === 'questionset') {
+        option.data.request['questionset'] = {};
+        option.data.request['questionset'] = option.data.request.content;
+        delete option.data.request.content;
+        createRes = this.publicDataService.post(option);
+      } 
+      createRes.pipe(map((res: any) => res.result), catchError(err => {
         const errInfo = {
           errorMsg: 'Unable to create contentId, Please Try Again',
           telemetryPageId: this.telemetryPageId,
@@ -813,6 +822,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           this.contentId = result.node_id;
           this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, result.identifier)
             .subscribe(() => {
+              if (_.get(this.templateDetails, 'modeOfCreation') === 'questionset') {
+              
+                const queryParams = "collectionId=" + this.sessionContext.collection + "&unitId=" + this.unitIdentifier;
+                
+                this.router.navigateByUrl('/contribute/questionSet/' + result.identifier + "?" + queryParams);
+                //this.router.navigate(['/contribute/questionSet/'], { queryParams: queryParams });
+              }
+
                // tslint:disable-next-line:max-line-length
                this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
             });
@@ -825,6 +842,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   handlePreview(event) {
+    if (event.content.mimeType === 'application/vnd.sunbird.questionset') {
+      const queryParams = "collectionId=" + this.sessionContext.collection + "&unitId=" + this.unitIdentifier;
+      this.router.navigateByUrl('/contribute/questionSet/' + event.content.identifier + "?" + queryParams);    
+    }
     //const templateList = this.programsService.contentCategories;
     this.programsService.getCategoryDefinition(event.content.primaryCategory, this.programContext.rootorg_id).subscribe((res)=>{
       this.templateDetails = res.result.objectCategoryDefinition;
