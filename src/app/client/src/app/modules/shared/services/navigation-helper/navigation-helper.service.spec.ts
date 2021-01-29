@@ -47,7 +47,7 @@ describe('NavigationHelperService', () => {
     // expect(history).toContain('/home');
   }));
 
-  it('should call clearHistory', inject([NavigationHelperService, Router], (service: NavigationHelperService, router) => {
+  xit('should call clearHistory', inject([NavigationHelperService, Router], (service: NavigationHelperService, router) => {
     service.clearHistory();
     expect(service['_history']).toEqual([]);
   }));
