@@ -15,17 +15,17 @@ jobs:
     steps:
       - checkout:
           path: ~/portal
-      - run:
-          name: Install node@v12.16.1
-          command: |
-            ./load-nvm.sh
-            nvm install v12.16.1
-            nvm alias default v12.16.1
-      - run:
-          name: Installing npm
-          command: |
-            ./load-nvm.sh
-            npm i npm@latest -g
+      #~ - run:
+          #~ name: Install node@v12.16.1
+          #~ command: |
+            #~ ./load-nvm.sh
+            #~ nvm install v12.16.1
+            #~ nvm alias default v12.16.1
+      #~ - run:
+          #~ name: Installing npm
+          #~ command: |
+            #~ ./load-nvm.sh
+            #~ npm i npm@latest -g
       - run:
           name: Installing angular cli
           command: 'npm install -g @angular/cli@6.0.8 --no-progress'
