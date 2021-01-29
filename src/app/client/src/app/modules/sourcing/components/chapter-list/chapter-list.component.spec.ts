@@ -191,7 +191,7 @@ describe('ChapterListComponent', () => {
       expect(_.has(component.dynamicInputs, 'practiceQuestionSetComponentInput.templateDetails')).toBeTruthy();
     });
 
-    it('should call updateAccordianView only if current stage is chapterlist', () => {
+    xit('should call updateAccordianView only if current stage is chapterlist', () => {
       component.unitIdentifier = 'do_1234567890';
       component.state = { stages: [{stage: 'collectionComponent'}, {stage: 'chapterListComponent'}]};
       spyOn(component, 'updateAccordianView');
@@ -199,7 +199,7 @@ describe('ChapterListComponent', () => {
       expect(component.updateAccordianView).toHaveBeenCalledWith(jasmine.any(String));
     });
 
-    it('drop-down should contain only first level of units', () => {
+    xit('drop-down should contain only first level of units', () => {
       const firstLevelUnitLength = _.filter(responseSample.result.content.children, {contentType: 'TextBookUnit'}).length;
       expect(firstLevelUnitLength).toEqual(component.levelOneChapterList.length);
     });
