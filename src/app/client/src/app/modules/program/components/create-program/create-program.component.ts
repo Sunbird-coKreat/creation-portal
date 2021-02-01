@@ -761,7 +761,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'board' }).defaultValue = this.userBoard;
 
     this.programConfig.defaultContributeOrgReview = !this.defaultContributeOrgReviewChecked;
-    this.programData['sourcing_org_name'] = this.userprofile.rootOrgName;
+    this.programData['sourcing_org_name'] = this.userprofile.rootOrg.orgName;
     this.programData['rootorg_id'] = this.userprofile.rootOrgId;
     this.programData['createdby'] = this.userprofile.id;
     this.programData['createdon'] = new Date();
