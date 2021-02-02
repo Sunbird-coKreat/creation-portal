@@ -766,7 +766,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       }
       const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext); 
       let option = {
-        url: `questionset/v1/create`,
+        url: `content/v3/create`,
         header: {
           'X-Channel-Id': this.programContext.rootorg_id
         },
@@ -800,14 +800,18 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       if (_.get(this.templateDetails, 'appIcon')) {
         option.data.request.content.appIcon = _.get(this.templateDetails, 'appIcon');
       }
-
-      let createRes = this.actionService.post(option);
+      
+      let createRes;
       if (_.get(this.templateDetails, 'modeOfCreation') === 'questionset') {
+        option.url = 'questionset/v1/create';
         option.data.request['questionset'] = {};
         option.data.request['questionset'] = option.data.request.content;
         delete option.data.request.content;
         createRes = this.publicDataService.post(option);
+      } else {
+        createRes = this.actionService.post(option);
       } 
+
       createRes.pipe(map((res: any) => res.result), catchError(err => {
         const errInfo = {
           errorMsg: 'Unable to create contentId, Please Try Again',
@@ -827,11 +831,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
                 const queryParams = "collectionId=" + this.sessionContext.collection + "&unitId=" + this.unitIdentifier;
                 
                 this.router.navigateByUrl('/contribute/questionSet/' + result.identifier + "?" + queryParams);
-                //this.router.navigate(['/contribute/questionSet/'], { queryParams: queryParams });
               }
-
-               // tslint:disable-next-line:max-line-length
-               this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
+              // tslint:disable-next-line:max-line-length
+              this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
             });
         });
     } else if (event.templateDetails) {
