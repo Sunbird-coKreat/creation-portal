@@ -594,7 +594,11 @@
                 "la": {
                     "questionBody": "",
                     "answerBody": ""
-                }    
+                }, 
+                "curiosity": {
+                    "questionBody": "",
+                    "answerBody": ""
+                }
             }            
         },
         "WINDOW_CONFIG": {
