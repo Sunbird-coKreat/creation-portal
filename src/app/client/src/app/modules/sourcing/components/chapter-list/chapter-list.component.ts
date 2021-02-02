@@ -778,7 +778,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               'mimeType': this.templateDetails.mimeType[0],
               'createdBy': this.userService.userid,
               'primaryCategory': this.templateDetails.name,
-              //'creator': creator,
+              'creator': creator,
               'programId': this.sessionContext.programId,
               'collectionId': this.sessionContext.collection,
               'unitIdentifiers': [this.unitIdentifier],
