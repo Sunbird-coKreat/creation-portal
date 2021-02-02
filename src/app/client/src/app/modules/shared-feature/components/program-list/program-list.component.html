@@ -193,7 +193,6 @@
                       <span class="sb-color-primary">{{resourceService.frmelmnts.lbl.editDraft}}</span>
                       <i class="icon trash sb-color-primary cursor-pointer ui fs-0-785 pl-10"> </i>
                     </div>
-                
                   <div *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')" class="px-0 d-inline-block">
                     <div class="sb-dock-icon-tooltip d-inline-block">
                       <i *ngIf="program.status === 'Live' || program.status === 'Unlisted'" class="icon edit sb-color-primary cursor-pointer ui fs-0-785 va-text-sup" data-tooltip="Modify" (click)="editOnClick(program)"
