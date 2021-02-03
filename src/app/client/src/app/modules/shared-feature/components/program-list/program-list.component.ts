@@ -52,6 +52,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   public telemetryPageId: string;
   public isFrameworkDetailsAvailable = false;
   showDeleteModal = false;
+  showcloseModal = true;
   public inviewLogs: any = [];
   public impressionEventTriggered: Boolean = false;
 
@@ -242,6 +243,37 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
           telemetryPageId: this.telemetryPageId,
           telemetryCdata : this.telemetryInteractCdata,
           env : this.activeRoute.snapshot.data.telemetry.env,
+          request: programData
+        };
+        this.sourcingService.apiErrorHandling(err, errInfo);
+        ($event.target as HTMLButtonElement).disabled = false;
+      }
+    );
+  }
+
+  closeProject($event: MouseEvent, program) {
+    if (!this.issourcingOrgAdmin) {
+      this.toasterService.error(this.resourceService.messages.imsg.m0035);
+      return this.router.navigate(['home']);
+    }
+
+    const programData = {
+      'program_id': program.program_id,
+      'status': 'Closed'
+    };
+
+    this.programsService.updateProgram(programData).subscribe(
+      (res) => {
+        this.toasterService.success(this.resourceService.frmelmnts.lbl.successTheProjectHasBeenClosed);
+        ($event.target as HTMLButtonElement).disabled = false;
+        this.showcloseModal = true;
+      },
+      (err) => {
+        const errInfo = {
+          errorMsg: this.resourceService.frmelmnts.lbl.errorMessageTheProjectHasBeenclosed,
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata: this.telemetryInteractCdata,
+          env: this.activeRoute.snapshot.data.telemetry.env,
           request: programData
         };
         this.sourcingService.apiErrorHandling(err, errInfo);
@@ -735,9 +767,19 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   }
 
   isActive(program, name, index) {
+    var hasNumber = /\d/;
     const date = moment(program[name]);
     const today = moment();
     const isFutureDate = date.isAfter(today);
+
+    if (hasNumber.test(name)) {
+      let date = moment(program['enddate']);
+      let today = moment();
+      let isFutureDate = today.isAfter(date);
+      if (isFutureDate && (program.status == 'Live' || program.status == 'Unlisted')) {
+        return true;
+      }
+    }
 
     if (!this.activeDates[index]) {
       this.activeDates[index] = {};
