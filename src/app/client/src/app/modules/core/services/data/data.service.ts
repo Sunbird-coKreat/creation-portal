@@ -44,6 +44,7 @@ export class DataService {
    * Constructor
    * @param {HttpClient} http HttpClient reference
    */
+  traceId;
   constructor(http: HttpClient) {
     this.http = http;
   }
@@ -191,6 +192,7 @@ export class DataService {
     try {
       this.deviceId = (<HTMLInputElement>document.getElementById('deviceId')).value;
       this.appId = (<HTMLInputElement>document.getElementById('appId')).value;
+      this.traceId = localStorage.getItem('traceId');
     } catch (err) { }
     if (this.deviceId) {
       default_headers['X-Device-ID'] = this.deviceId;
@@ -203,6 +205,9 @@ export class DataService {
     }
     if (this.appId) {
       default_headers['X-App-Id'] = this.appId;
+    }
+    if (this.traceId) {
+      default_headers['X-Request-ID'] = this.traceId;
     }
     if (headers) {
       return { ...default_headers, ...headers };
@@ -220,5 +225,5 @@ export class DataService {
       return 0;
     }
   }
-  
+
 }

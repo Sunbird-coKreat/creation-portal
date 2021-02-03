@@ -18,6 +18,7 @@ import { CacheSessionStorage } from 'ng2-cache-service/dist/src/services/storage
 import { DeviceDetectorModule } from 'ngx-device-detector';
 import { PluginModules } from './framework.config';
 import { ChatLibModule, ChatLibService } from '@project-sunbird/chatbot-client-v8';
+import { HeaderInterceptor } from './modules/core/interceptor/header/header.interceptor';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { ChatLibModule, ChatLibService } from '@project-sunbird/chatbot-client-v
     DatePipe,
     ChatLibService,
     { provide: CacheStorageAbstract, useClass: CacheSessionStorage },
-    { provide: HTTP_INTERCEPTORS, useClass: SessionExpiryInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: SessionExpiryInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: HeaderInterceptor, multi: true }
   ]
 })
 export class AppModule {
