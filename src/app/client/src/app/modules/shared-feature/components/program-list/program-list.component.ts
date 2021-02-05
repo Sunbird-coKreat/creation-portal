@@ -178,7 +178,6 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   }
 
   setClose(){
-    console.log("set close");
     this.showcloseModal = true;
   }
 
