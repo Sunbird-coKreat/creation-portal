@@ -171,7 +171,7 @@
                     <span class="sb-color-primary">{{ resourceService?.frmelmnts?.lbl?.modifyNomination.button }}</span>
                   </div>
                   <span [ngClass]="{'pull-right': !(issourcingOrgAdmin && this.router.url.includes('/sourcing'))}">
-                    <button *ngIf="(program.status === 'Live' || program.status === 'Unlisted')" type="button"
+                    <button *ngIf="(program.status === 'Live' || program.status === 'Unlisted' || program.status === 'Closed')" type="button"
                       class="sb-btn sb-btn-normal sb-btn-outline-primary mr-5" (click)="viewDetailsBtnClicked(program)"
                       appTelemetryInteract
                       [telemetryInteractEdata]="getTelemetryInteractEdata('open', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
@@ -213,9 +213,9 @@
                                 [telemetryInteractCdata]="getTelemetryInteractCdata(program.program_id,'project')"
                                 [telemetryInteractPdata]="telemetryInteractPdata"></i>{{resourceService.frmelmnts.lbl.delete}}
                             </a>
-                            <a *ngIf="isActive(program, program?.enddate, i)" class="item">
+                            <a *ngIf="isExpired(program, program?.enddate)" class="item">
                               <i class="icon close sb-color-primary cursor-pointer ui fs-0-785" data-tooltip="Close"
-                                (click)="closeProject($event,program)"></i> Close
+                              (click)="setClose()"></i>Close
                             </a>
                           </div>
                         </div>
@@ -260,6 +260,34 @@
   [telemetryInteractEdata]="getTelemetryInteractEdata('no', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel, telemetryPageId,{key:'dialog_id',value:'delete_project'})"
   [telemetryInteractObject]="telemetryInteractObject"
   [telemetryInteractCdata]="getTelemetryInteractCdata(program.program_id,'project')"
+  [telemetryInteractPdata]="telemetryInteractPdata">
+      {{resourceService.frmelmnts.btn.no}}
+    </button>
+  </div>
+</sui-modal>
+
+<sui-modal *ngIf="showcloseModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'"
+  class="sb-modal" appBodyScroll (dismissed)="showcloseModal = false" #modal>
+  <div class="sb-modal-header">
+    Close Project
+  </div>
+  <div class="sb-modal-content">
+    Are you sure you want to close this project?
+  </div>
+  <div class="sb-modal-actions" (click)="closeProject($event,program)"
+  appTelemetryInteract
+  [telemetryInteractEdata]="getTelemetryInteractEdata('yes', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit, telemetryPageId, {key:'dialog_id',value:'close_project'})"
+  [telemetryInteractObject]="telemetryInteractObject"
+  
+  [telemetryInteractPdata]="telemetryInteractPdata">
+    <button class="sb-btn sb-btn-normal sb-btn-primary">
+      {{resourceService.frmelmnts.btn.yes}}
+    </button>
+    <button class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showcloseModal = false"
+    appTelemetryInteract
+  [telemetryInteractEdata]="getTelemetryInteractEdata('no', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel, telemetryPageId,{key:'dialog_id',value:'close_project'})"
+  [telemetryInteractObject]="telemetryInteractObject"
+  
   [telemetryInteractPdata]="telemetryInteractPdata">
       {{resourceService.frmelmnts.btn.no}}
     </button>

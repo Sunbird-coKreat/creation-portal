@@ -52,7 +52,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   public telemetryPageId: string;
   public isFrameworkDetailsAvailable = false;
   showDeleteModal = false;
-  showcloseModal = true;
+  showcloseModal = false;
   public inviewLogs: any = [];
   public impressionEventTriggered: Boolean = false;
 
@@ -177,6 +177,11 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     return applyFilters;
   }
 
+  setClose(){
+    console.log("set close");
+    this.showcloseModal = true;
+  }
+
   setDelete(program, index) {
     if (!this.issourcingOrgAdmin) {
       this.toasterService.error(this.resourceService.messages.imsg.m0035);
@@ -266,7 +271,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       (res) => {
         this.toasterService.success(this.resourceService.frmelmnts.lbl.successTheProjectHasBeenClosed);
         ($event.target as HTMLButtonElement).disabled = false;
-        this.showcloseModal = true;
+        this.showcloseModal = false;
       },
       (err) => {
         const errInfo = {
@@ -766,11 +771,10 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     return this.router.navigateByUrl('/sourcing/edit/' + program.program_id);
   }
 
-  isActive(program, name, index) {
+  isExpired(program, name) {
     var hasNumber = /\d/;
     const date = moment(program[name]);
     const today = moment();
-    const isFutureDate = date.isAfter(today);
 
     if (hasNumber.test(name)) {
       let date = moment(program['enddate']);
@@ -780,6 +784,12 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         return true;
       }
     }
+  }
+
+  isActive(program, name, index) {
+    const date = moment(program[name]);
+    const today = moment();
+    const isFutureDate = date.isAfter(today);
 
     if (!this.activeDates[index]) {
       this.activeDates[index] = {};
