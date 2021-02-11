@@ -167,7 +167,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   canAssignUsersToProgram() {
     const today = moment();
-    return moment(this.programDetails.content_submission_enddate).isSameOrAfter(today, 'day');
+    return moment(this.programDetails.content_submission_enddate).isSameOrAfter(today, 'day') && this.programsService.isProjectLive(this.programDetails);
   }
   isSourcingOrgAdmin() {
     return _.includes(this.userProfile.userRoles, 'ORG_ADMIN') &&
