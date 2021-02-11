@@ -10,9 +10,10 @@ import { nodes, commonMessageApiResp } from './collection-tree.component.spec.da
 import { ResourceService, BrowserCacheTtlService, ConfigService, ToasterService } from '@sunbird/shared';
 import { UserService, OrgDetailsService } from '@sunbird/core';
 import { ActivatedRoute, Router } from '@angular/router';
-
-
 import { CacheService } from 'ng2-cache-service';
+import { RouterTestingModule } from '@angular/router/testing';
+import {APP_BASE_HREF} from '@angular/common';
+
 describe('CollectionTreeComponent', () => {
   let component: CollectionTreeComponent;
   let fixture: ComponentFixture<CollectionTreeComponent>;
@@ -35,11 +36,13 @@ describe('CollectionTreeComponent', () => {
   };
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [SuiAccordionModule, HttpClientTestingModule, HttpClientModule],
+      imports: [RouterTestingModule, SuiAccordionModule, HttpClientTestingModule, HttpClientModule],
       declarations: [CollectionTreeComponent, FancyTreeComponent],
-      providers: [ ResourceService, ToasterService,  { provide: ResourceService, useValue: resourceBundle },
+      providers: [ResourceService, ToasterService,  { provide: ResourceService, useValue: resourceBundle },
         { provide: Router, useClass: RouterStub }, CacheService, ConfigService, BrowserCacheTtlService,
-        { provide: ActivatedRoute, useValue: fakeActivatedRoute }]
+        { provide: ActivatedRoute, useValue: fakeActivatedRoute },
+        { provide: APP_BASE_HREF, useValue: '/' }
+      ]
     }).compileComponents();
   }));
 

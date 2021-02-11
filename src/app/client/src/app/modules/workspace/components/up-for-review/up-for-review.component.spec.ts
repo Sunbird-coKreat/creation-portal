@@ -12,6 +12,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { Response } from './up-for-review.component.spec.data';
 import { TelemetryModule } from '@sunbird/telemetry';
+import { APP_BASE_HREF } from '@angular/common'; 
 
 describe('UpForReviewComponent', () => {
   let component: UpForReviewComponent;
@@ -69,13 +70,14 @@ describe('UpForReviewComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [UpForReviewComponent],
-      imports: [HttpClientTestingModule, SharedModule.forRoot(), TelemetryModule.forRoot()],
+      imports: [HttpClientTestingModule, RouterTestingModule, SharedModule.forRoot(), TelemetryModule.forRoot()],
       providers: [PaginationService, WorkSpaceService, UserService,
         SearchService, ContentService, LearnerService, CoursesService,
         PermissionService, ResourceService, ToasterService,
         { provide: ResourceService, useValue: resourceBundle },
         { provide: Router, useClass: RouterStub },
-        { provide: ActivatedRoute, useValue: fakeActivatedRoute }
+        { provide: ActivatedRoute, useValue: fakeActivatedRoute },
+        {provide: APP_BASE_HREF, useValue: '/'}
       ],
       schemas: [NO_ERRORS_SCHEMA]
     })

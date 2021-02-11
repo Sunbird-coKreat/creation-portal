@@ -20,8 +20,8 @@ import { takeUntil, first, mergeMap, map, tap , filter, catchError} from 'rxjs/o
   templateUrl: './data-driven.component.html'
 })
 export class DataDrivenComponent extends WorkSpace implements OnInit, OnDestroy, AfterViewInit {
-  @ViewChild('formData') formData: DefaultTemplateComponent;
-  @ViewChild('modal') modal;
+  @ViewChild('formData', {static: false}) formData: DefaultTemplateComponent;
+  @ViewChild('modal', {static: false}) modal;
 
   /**
 	 * This variable hepls to show and hide page loader.

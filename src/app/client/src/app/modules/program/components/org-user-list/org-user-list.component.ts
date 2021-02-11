@@ -7,11 +7,13 @@ import { UserService, RegistryService, ProgramsService } from '@sunbird/core';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'lodash-es';
 import { SourcingService } from '../../../sourcing/services';
+import {DatePipe} from '@angular/common';
 
 @Component({
   selector: 'app-org-user-list',
   templateUrl: './org-user-list.component.html',
-  styleUrls: ['./org-user-list.component.scss']
+  styleUrls: ['./org-user-list.component.scss'],
+  providers: [DatePipe]
 })
 export class OrgUserListComponent implements OnInit, AfterViewInit {
   public position;
@@ -140,14 +142,14 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     clearInput ? this.searchInput = '' : this.searchInput;
     if (this.searchInput) {
       let filteredUser = this.registryService.getSearchedUserList(this.initialSourcingOrgUser, this.searchInput);
-      filteredUser.length > this.searchLimitCount ? this.searchLimitMessage = true: this.searchLimitMessage = false;     
+      filteredUser.length > this.searchLimitCount ? this.searchLimitMessage = true: this.searchLimitMessage = false;
       this.sortUsersList(filteredUser, true);
     } else {
       this.searchLimitMessage = false;
       this.sortUsersList(this.initialSourcingOrgUser, true);
     }
   }
-  
+
   sortUsersList(usersList, isUserSearch?) {
      this.orgUserscnt = usersList.length;
      this.allContributorOrgUsers = this.programsService.sortCollection(usersList, this.sortColumn, this.direction);

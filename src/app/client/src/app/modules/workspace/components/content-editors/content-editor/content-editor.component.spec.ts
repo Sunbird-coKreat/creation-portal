@@ -11,6 +11,7 @@ import { mockRes } from './content-editor.component.spec.data';
 import { Router, ActivatedRoute } from '@angular/router';
 import { WorkSpaceService } from '../../../services';
 import { TelemetryModule } from '@sunbird/telemetry';
+import { RouterTestingModule } from '@angular/router/testing';
 
 const mockResourceService = { messages: { emsg: { m0004: '1000' } } };
 const mockActivatedRoute = {
@@ -33,7 +34,7 @@ describe('ContentEditorComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ContentEditorComponent],
-      imports: [HttpClientTestingModule, CoreModule, TelemetryModule.forRoot()],
+      imports: [HttpClientTestingModule,RouterTestingModule, CoreModule, TelemetryModule.forRoot()],
       providers: [
         EditorService, UserService, ContentService, BrowserCacheTtlService,
         ResourceService, ToasterService, ConfigService, LearnerService,

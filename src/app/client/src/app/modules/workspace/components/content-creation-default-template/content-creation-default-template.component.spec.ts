@@ -12,6 +12,7 @@ import { CacheService } from 'ng2-cache-service';
 import { DefaultTemplateComponent } from './content-creation-default-template.component';
 import { mockData } from './content-creation-default-template.component.spec.data';
 import { expand } from 'rxjs/operators';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('DefaultTemplateComponent', () => {
   let component: DefaultTemplateComponent;
@@ -37,7 +38,7 @@ describe('DefaultTemplateComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, SuiModule, SharedModule.forRoot(), CoreModule],
+      imports: [HttpClientTestingModule, SuiModule,RouterTestingModule, SharedModule.forRoot(), CoreModule],
       declarations: [ DefaultTemplateComponent ],
       providers: [UserService, LearnerService,
         CacheService, EditorService, WorkSpaceService,

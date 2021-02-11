@@ -5,6 +5,7 @@ import { SharedModule } from '@sunbird/shared';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CoreModule, ContentService, PlayerService, UserService } from '@sunbird/core';
 import { RouterTestingModule } from '@angular/router/testing';
+import { APP_BASE_HREF,DatePipe } from '@angular/common'; 
 
 const serverRes = {
   id: 'api.content.read',
@@ -25,7 +26,7 @@ describe('PlayerService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, CoreModule, SharedModule.forRoot(), RouterTestingModule],
-      providers: []
+      providers: [ {provide: APP_BASE_HREF, useValue: '/'}]
     });
   });
 

@@ -1,14 +1,18 @@
 import { TestBed, inject } from '@angular/core/testing';
 import { CoreModule, DeviceRegisterService } from '@sunbird/core';
-import { SharedModule } from '@sunbird/shared';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { HttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
+import {
+    ResourceService, ToasterService, SharedModule, ConfigService,
+    UtilService, BrowserCacheTtlService, NavigationHelperService,
+  } from '@sunbird/shared';
 
-describe('DeviceRegisterService', () => {
+xdescribe('DeviceRegisterService', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
         imports: [HttpClientTestingModule, CoreModule, SharedModule.forRoot()],
+        providers : [ConfigService]
         });
         spyOn(document, 'getElementById').and.callFake((id) => {
             if (id === 'buildNumber') {
