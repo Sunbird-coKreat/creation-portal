@@ -131,6 +131,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       this.contentStatusNotify(action);
     });
     this.helperService.initialize(this.programContext);
+    debugger;
   }
   loadContentEditor() {
     if (!document.getElementById('contentEditor')) {
@@ -333,7 +334,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     this.helperService.getCategoryMetaData(this.contentData.primaryCategory, _.get(this.programContext, 'rootorg_id'));
   }
 
-  handleContentStatusText() {
+  handleContentStatusText() {    
     if (this.resourceStatus === 'Review') {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
       this.resourceStatusClass = 'sb-color-primary';

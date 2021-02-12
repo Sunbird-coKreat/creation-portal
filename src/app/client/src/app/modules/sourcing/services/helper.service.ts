@@ -473,23 +473,72 @@ export class HelperService {
 
   initializeMetadataForm(sessionContext, formFieldProperties, contentMetadata) {
     const categoryMasterList = sessionContext.frameworkData;
-    _.forEach(categoryMasterList, (category) => {
-      _.forEach(formFieldProperties, (formFieldCategory) => {
-        if (category.code === formFieldCategory.code && category.code !== 'learningOutcome') {
-          formFieldCategory.range = category.terms;
+    let { gradeLevel, subject} = sessionContext;
+    let gradeLevelTerms = [], subjectTerms = [], topicTerms = [];
+    let gradeLevelTopicAssociations = [], subjectTopicAssociations = [];
+    _.forEach(categoryMasterList, (category) => {     
+      if(category.code === 'gradeLevel') {
+        const terms = category.terms;
+        if(terms) {
+          gradeLevelTerms =  _.concat(gradeLevelTerms, _.filter(terms,  (t)  => _.includes(gradeLevel, t.name)));
         }
+      }
+
+      if(category.code === 'subject') {
+        const terms = category.terms;
+        if(terms) {
+          subjectTerms =  _.concat(subjectTerms, _.filter(terms,  (t)  => _.includes(subject, t.name)));
+        }
+      }
+      _.forEach(formFieldProperties, (formFieldCategory) => {
+        if (category.code === formFieldCategory.code && category.code !== 'learningOutcome' && category.code !== 'topic') {
+          formFieldCategory.range = category.terms;
+        }        
+
+        if(formFieldCategory.code === 'topic') {
+          if(!formFieldCategory.range) formFieldCategory.range = [];
+          if(!gradeLevelTopicAssociations.length && !subjectTopicAssociations.length && gradeLevelTerms.length && subjectTerms.length) {            
+            _.forEach(gradeLevelTerms, (term) => {
+              if(term.associations) {
+              gradeLevelTopicAssociations = _.concat(gradeLevelTopicAssociations, 
+                _.filter(term.associations, (association) => association.category === 'topic'))
+              }
+            })
+            _.forEach(subjectTerms, (term) => {      
+              if(term.associations) {       
+              subjectTopicAssociations = _.concat(subjectTopicAssociations, 
+                _.filter(term.associations, (association) => association.category === 'topic'))
+              }              
+            })            
+            formFieldCategory.range = _.intersectionWith(gradeLevelTopicAssociations, subjectTopicAssociations, (a, o) =>  a.name === o.name );            
+          }
+          topicTerms = _.filter(sessionContext.topicList, (t) => _.find(formFieldCategory.range, { name: t.name }))          
+        }
+
         if (formFieldCategory.code === 'learningOutcome') {
           const topicTerm = _.find(sessionContext.topicList, { name: _.first(sessionContext.topic) });
           if (topicTerm && topicTerm.associations) {
             formFieldCategory.range = _.map(topicTerm.associations, (learningOutcome) =>  learningOutcome);
           }
-        }
+          else {
+            if(topicTerms) {
+              _.forEach(topicTerms, (term) => {
+                if(term.associations) {
+                  formFieldCategory.range = _.concat(formFieldCategory.range || [], _.map(term.associations, (learningOutcome) =>learningOutcome));
+                }
+              })              
+            }           
+          }
+        }             
         if (formFieldCategory.code === 'additionalCategories') {
           console.log(this.cacheService.get(this.userService.hashTagId));
           // tslint:disable-next-line:max-line-length
           formFieldCategory.range = _.map(_.get(this.getProgramLevelChannelData(), 'contentAdditionalCategories'), data => {
             return {name: data};
           });
+        }
+        if(formFieldCategory.code === 'bloomsLevel' && !categoryMasterList[formFieldCategory.code]) {
+          categoryMasterList[formFieldCategory.code] === formFieldCategory.range;
         }
         if (formFieldCategory.code === 'license' && this.getAvailableLicences()) {
           formFieldCategory.range = this.getAvailableLicences();
@@ -513,7 +562,7 @@ export class HelperService {
             creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
           }
           formFieldCategory.defaultValue = creator;
-        }
+        }        
         if (formFieldCategory.code === 'learningOutcome' && formFieldCategory.inputType === 'select' && _.isArray(requiredData)) {
           formFieldCategory.defaultValue = _.first(requiredData) || '';
         }

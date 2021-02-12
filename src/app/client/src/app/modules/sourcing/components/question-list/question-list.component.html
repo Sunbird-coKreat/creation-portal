@@ -145,7 +145,7 @@
         <label class="fsmall mb-0">Question(s)</label>
 
         <!-- add button to be integrated -->
-        <button  class="sb-btn sb-btn-outline-primary sb-btn-normal sb-left-icon-btn sb-btn-radius ml-auto"
+        <button class="sb-btn sb-btn-outline-primary sb-btn-normal sb-left-icon-btn sb-btn-radius ml-auto"
         *ngIf="visibility && visibility.showCreateQuestion" (click)="createNewQuestion()"
         appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add_question', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"

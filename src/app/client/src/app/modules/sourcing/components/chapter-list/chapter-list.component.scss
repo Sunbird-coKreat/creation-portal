@@ -258,3 +258,25 @@
 .fmedium {
   font-size: 5rem !important;
 }
+
+// Blueprint Modal
+.blueprint-chip {
+  background: #e0e0e0;
+  display: inline-block;
+  padding: 0 12px;
+  border-radius: 32px;
+  font-size: 14px;
+  height: 32px;
+  line-height: 32px;
+}
+
+// Filters Dropdowns
+.filters-section {
+  top: -25%;
+  position: relative;
+  left: 0.5%;
+}
+
+.max-height-2-5 {
+  max-height: 2.5rem;
+}
