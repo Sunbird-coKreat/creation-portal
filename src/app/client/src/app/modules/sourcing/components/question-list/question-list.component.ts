@@ -496,7 +496,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.visibility['showCreateQuestion'] = submissionDateFlag && this.canCreateQuestion();
     // tslint:disable-next-line:max-line-length
     this.visibility['showDeleteQuestion'] = submissionDateFlag && this.canDeleteQuestion();
-    // tslint:disable-next-line:max-line-length   
+    // tslint:disable-next-line:max-line-length
     this.visibility['showRequestChanges'] = submissionDateFlag && this.canReviewContent();
     // tslint:disable-next-line:max-line-length
     this.visibility['showPublish'] = submissionDateFlag && this.canPublishContent();
