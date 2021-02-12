@@ -870,66 +870,11 @@ export class ProgramsService extends DataService implements CanActivate {
   }
 
   /**
-   * Get all the content types configured
-   */
-
-  /*get contentTypes() {
-    return _.cloneDeep(this._contentTypes);
-  }*/
-
-  /**
-   * Get all the categories  configured
-   */
-
-  /*get contentCategories() {
-    return _.cloneDeep(this._contentCategories);
-  }*/
-
-  /**
    * Get all overridable meta fields configured
    */
   get overrideMetaData() {
     return _.cloneDeep(this._overrideMetaData);
   }
-
-  /*private getAllContentTypes(): Observable<any[]> {
-    const option = {
-      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.CONTENTTYPE_LIST}`,
-    };
-
-    return this.get(option).pipe(
-      map(result => _.get(result, 'result.contentType')),
-      catchError(err => of([]))
-    ).pipe(
-      tap(contentTypes => {
-        this._contentTypes = contentTypes;
-      })
-    );
-  }*/
-
-  /*private getAllContentCategories(): Observable<any[]> {
-    const req = {
-      url:'composite/v1/search',
-      data: {
-        'request': {
-          "filters": {
-            "objectType":"ObjectCategoryDefinition",
-            "status": [],
-            "targetObjectType":"content"
-        },
-        }
-      }
-    };
-
-    return this.post(req).pipe(
-      map(result => _.get(result, 'result.ObjectCategoryDefinition')),
-      catchError(err => of([]))
-    ).pipe(
-      tap(contentCategories => {
-        this._contentCategories = contentCategories;
-      })
-    );
-  }*/
 
   getOverridableMetaDataConfig(): Observable<any[]> {
     const option = {
@@ -1248,6 +1193,7 @@ export class ProgramsService extends DataService implements CanActivate {
     }
     return count;
   }
+
   setTargetCollectionName(program, plural?) {
     if (program.target_collection_category === null) {
      return plural ? 'Digital Textbooks' : 'Digital Textbook';
@@ -1261,5 +1207,19 @@ export class ProgramsService extends DataService implements CanActivate {
 
      return plural ? collectionCat + 's' : collectionCat;
     }
+  }
+
+  isProjectEnded(program) {
+    const endDate  = moment(program.enddate);
+    const today = moment();
+    return (today.isAfter(endDate)) ? true : false;
+  }
+
+  isProjectClosed(program) {
+    return !! (this.isProjectEnded(program) || program.status === 'Closed');
+  }
+
+  isProjectLive(program) {
+    return !! (!this.isProjectEnded(program) && (program.status === 'Live' || program.status === 'Unlisted'));
   }
 }

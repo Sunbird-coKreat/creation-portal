@@ -579,7 +579,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
 
   canNominate() {
     const today = moment();
-    return moment(this.programContext.nomination_enddate).isSameOrAfter(today, 'day');
+    return moment(this.programContext.nomination_enddate).isSameOrAfter(today, 'day') && this.programsService.isProjectLive(this.programContext);
   }
 
   uploadSampleContent(event, collection) {

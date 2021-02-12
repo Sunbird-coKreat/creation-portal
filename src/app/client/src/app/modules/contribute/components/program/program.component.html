@@ -332,7 +332,7 @@
 								</div>
 							</td>
 							<td class="text-center">
-								<div *ngIf="nominationDetails?.status === 'Rejected'; else elseBlock">
+								<div *ngIf="programsService.isProjectClosed(programDetails) || nominationDetails?.status === 'Rejected'; else elseBlock">
 									{{ (orgUser?.projectselectedRole) ? orgUser.projectselectedRole : '-' }}
 								</div>
 								<ng-template #elseBlock>

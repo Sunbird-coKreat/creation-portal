@@ -47,6 +47,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   public selectedProgramToModify: any;
   public showModifyConfirmation: boolean;
   public showFiltersModal = false;
+  public showCloseModal = false;
   public filtersAppliedCount: any;
   public telemetryImpression: any;
   public telemetryPageId: string;
@@ -153,7 +154,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         // tslint:disable-next-line: max-line-length
         const applyFilters = this.getFilterDetails(setfilters, this.userService.slug ? 'contributeMyProgramAppliedFiltersTenantAccess' : 'contributeMyProgramAppliedFilters');
         // tslint:disable-next-line: max-line-length
-        this.getMyProgramsForContrib(['Live', 'Unlisted'], applyFilters, sort); // this method will call with applied req filters data other wise with origional req body
+        this.getMyProgramsForContrib(['Live', 'Unlisted', 'Closed'], applyFilters, sort); // this method will call with applied req filters data other wise with origional req body
       } else if (this.activeAllProgramsMenu) {
         // tslint:disable-next-line: max-line-length
         const applyFilters = this.getFilterDetails(setfilters, this.userService.slug ? 'contributeAllProgramAppliedFiltersTenantAccess' : 'contributeAllProgramAppliedFilters');
@@ -242,6 +243,43 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
           telemetryPageId: this.telemetryPageId,
           telemetryCdata : this.telemetryInteractCdata,
           env : this.activeRoute.snapshot.data.telemetry.env,
+          request: programData
+        };
+        this.sourcingService.apiErrorHandling(err, errInfo);
+        ($event.target as HTMLButtonElement).disabled = false;
+      }
+    );
+  }
+
+  setClose(program) {
+    this.program = program;
+    this.showCloseModal = true;
+  }
+
+  closeProject($event: MouseEvent) {
+    if (!this.issourcingOrgAdmin) {
+      this.toasterService.error(this.resourceService.messages.imsg.m0035);
+      return this.router.navigate(['home']);
+    }
+
+    const programData = {
+      'program_id': this.program.program_id,
+      'status': 'Closed'
+    };
+
+    this.programsService.updateProgram(programData).subscribe(
+      (res) => {
+        this.showCloseModal = false;
+        this.toasterService.success(this.resourceService.frmelmnts.lbl.successMessageOnClose);
+        ($event.target as HTMLButtonElement).disabled = false;
+        this.program.status = 'Closed';
+      },
+      (err) => {
+        const errInfo = {
+          errorMsg: this.resourceService.frmelmnts.lbl.errorMessageonClose,
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata: this.telemetryInteractCdata,
+          env: this.activeRoute.snapshot.data.telemetry.env,
           request: programData
         };
         this.sourcingService.apiErrorHandling(err, errInfo);
@@ -627,9 +665,9 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
 
     if (this.userService.isSourcingOrgAdmin()) {
       filters['rootorg_id'] = _.get(this.userService, 'userProfile.rootOrgId');
-      filters['status'] = ['Live', 'Unlisted', 'Draft'];
+      filters['status'] = ['Live', 'Unlisted', 'Draft', 'Closed'];
     } else {
-      filters['status'] = ['Live', 'Unlisted'];
+      filters['status'] = ['Live', 'Unlisted', 'Closed'];
       filters['role'] = ['REVIEWER'];
       filters['user_id'] = this.userService.userProfile.userId;
     }

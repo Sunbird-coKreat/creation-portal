@@ -757,7 +757,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     const contributionendDate  = moment(this.programDetails.content_submission_enddate);
     const endDate  = moment(this.programDetails.enddate);
     const today = moment();
-    return (contributionendDate.isSameOrAfter(today, 'day') && endDate.isSameOrAfter(today, 'day')) ? true : false;
+    return (contributionendDate.isSameOrAfter(today, 'day') && this.programsService.isProjectLive(this.programDetails)) ? true : false;
   }
 
   applyPreferences(preferences?) {
