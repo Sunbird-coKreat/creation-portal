@@ -76,6 +76,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   showError = false;
   public questionPattern: Array<any> = [];
   public viewBlueprintFlag: boolean;
+  public viewBlueprintDetailsFlag: boolean;
   public blueprintTemplate: any;
   public localBlueprint: any;
   localUniqueTopicsList: string[] = [];
@@ -273,6 +274,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     if(this.localBlueprint) {
       this.localBlueprint.count = {
         subjective: 0,
+        vsa: 0,
+        sa: 0,
+        la: 0,
         multipleChoice: 0,
         objective: 0,
         total: 0,
@@ -284,24 +288,27 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       };
       _.forEach(this.localBlueprint.questionTypes, (value, key) => {
         this.localBlueprint.count.total = this.localBlueprint.count.total + value;
-        if(key === "laType" || key === "saType" || key === "vsaType") {
+        if(key === "LA" || key === "SA" || key === "VSA") {
+          if(key === "LA") this.localBlueprint.count.la = this.localBlueprint.count.la + value;   
+          if(key === "SA") this.localBlueprint.count.sa = this.localBlueprint.count.sa + value;   
+          if(key === "VSA") this.localBlueprint.count.vsa = this.localBlueprint.count.vsa + value;        
           this.localBlueprint.count.subjective = this.localBlueprint.count.subjective + value;
         }
-        else if(key === "mcqType") {
+        else if(key === "MCQ") {
           this.localBlueprint.count.multipleChoice = this.localBlueprint.count.multipleChoice + value; 
         }
-        else if(key === "objectiveType") {
+        else if(key === "Objective") {
           this.localBlueprint.count.objective = this.localBlueprint.count.objective + value; 
         }
       })
       _.forEach(this.localBlueprint.learningLevels, (value, key) => {
-        if(key === "applicationLevel") {
+        if(key === "apply") {
           this.localBlueprint.count.apply = this.localBlueprint.count.apply + value;
         }
-        else if(key === "knowledgeLevel") {
+        else if(key === "remember") {
           this.localBlueprint.count.remember = this.localBlueprint.count.remember + value; 
         }
-        else if(key === "understandingLevel") {
+        else if(key === "understand") {
           this.localBlueprint.count.understand = this.localBlueprint.count.understand + value; 
         }
       })
@@ -314,11 +321,15 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.viewBlueprintFlag = true;
   }
 
+  viewBlueprintDetails(): void {
+    this.viewBlueprintDetailsFlag = true;
+  }
+
   fetchBlueprintTemplate(): void {
     this.programsService.getCollectionCategoryDefinition((this.collection && this.collection.primaryCategory)|| 'Question paper', this.currentRootOrgID).subscribe(res => {
       let templateDetails = res.result.objectCategoryDefinition;
       if(templateDetails && templateDetails.forms) {         
-        this.blueprintTemplate = templateDetails.forms.blueprintCreate;  
+        this.blueprintTemplate = templateDetails.forms.blueprintCreate;          
         if(this.blueprintTemplate && this.blueprintTemplate.properties) {
           _.forEach(this.blueprintTemplate.properties, (prop) => {
             prop.editable = false;
@@ -458,6 +469,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         instance.countData['sourcing_approved'] = 0;
         instance.countData['sourcing_rejected'] = 0;
         instance.countData['objective'] = 0;
+        instance.countData['vsa'] = 0;
+        instance.countData['sa'] = 0;
+        instance.countData['la'] = 0;
         instance.countData['subjective'] = 0;
         instance.countData['multipleChoice'] = 0;
         instance.countData['remember'] = 0;
@@ -732,14 +746,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;  
            // Add blueprint metrics count                
             if(data.questionCategories && data.questionCategories.length) {
-              _.forEach(data.questionCategories, (cat)=> {
-                if(cat === "MCQ") {
-                this.countData['multipleChoice'] = this.countData['multipleChoice'] + 1;
-                }
-                else if(cat === "MTF" || cat === "FTB") {
+              _.forEach(data.questionCategories, (cat)=> {               
+                if(cat === "MTF" || cat === "FTB" || cat === "MCQ") {
                   this.countData['objective'] = this.countData['objective'] + 1;
                 }
                 else if(cat === "VSA" || cat === "SA" || cat === "LA") {
+                  if(cat === "VSA") this.countData['vsa'] = this.countData['vsa'] + 1;
+                  if(cat === "SA") this.countData['sa'] = this.countData['sa'] + 1;
+                  if(cat === "LA") this.countData['la'] = this.countData['la'] + 1;
                   this.countData['subjective'] = this.countData['subjective'] + 1;
                 }
               })
@@ -759,8 +773,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               })
             }
             if(this.localBlueprint) {  
-              if(data.topics && data.topics.length) {
-                _.forEach(data.topics, (topic)=> {
+              if(data.topic && data.topic.length) {
+                _.forEach(data.topic, (topic)=> {
                   if(_.includes(this.localUniqueTopicsList, topic.name)) return;
                   else {
                     this.localUniqueTopicsList.push(topic.name);
@@ -769,8 +783,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
                   }         
                 })
               }
-              if(data.learningOutcomes && data.learningOutcomes.length) {
-                _.forEach(data.learningOutcomes, (lo)=> {
+              if(data.learningOutcome && data.learningOutcome.length) {
+                _.forEach(data.learningOutcome, (lo)=> {
                   if(_.includes(this.localUniqueLearningOutcomesList, lo.name)) return;
                   else {
                     this.localUniqueLearningOutcomesList.push(lo.name);

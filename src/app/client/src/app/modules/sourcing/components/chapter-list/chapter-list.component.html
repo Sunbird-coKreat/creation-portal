@@ -33,46 +33,49 @@
           </div>
         </div>
 
-        <div *ngIf="!sampleContent && localBlueprint && sourcingOrgReviewer" class="sb-meta-data-container sb-meta-data-column d-flex flex-w-wrap ml-16 width-inherit">          
-          <label class="d-block width-100" *ngIf="true">{{resourceService.frmelmnts.lbl.progressAgainstBlueprint}}</label>
-          <div class="d-flex" *ngIf="sessionContext.currentOrgRole != 'individual'">
-            <div class="d-flex flex-dc">
-              <dl class="sb-meta-data">
-                <dt>{{countData['sourcing_approved']}} / {{localBlueprint['count']['total']}}</dt>
+        <div *ngIf="!sampleContent && localBlueprint && sourcingOrgReviewer" class="sb-meta-data-container sb-meta-data-column d-flex flex-w-wrap ml-16 blueprint-progress">          
+          <div class="d-flex flex-dr flex-jc-space-between flex-grow-1">  
+            <label class="">{{resourceService.frmelmnts.lbl.progressAgainstBlueprint}}</label>
+            <button type="button" class="sb-btn sb-btn-xs sb-btn-outline-info text-inherit ml-10" (click)="viewBlueprintDetails()">{{resourceService?.frmelmnts?.lbl?.details}}</button>
+          </div>
+          <div class="d-flex" *ngIf="sessionContext.currentOrgRole != 'individual'">            
+              <dl class="sb-meta-data d-flex flex-as-center">
+                <dt class="fs-1-143">{{countData['sourcing_approved']}} / {{localBlueprint['count']['total']}}</dt>
                 <dd>{{resourceService.frmelmnts.lbl.total}}</dd>
-              </dl>     
-              <dl class="sb-meta-data">
-                <dt></dt>
-                <dd>{{resourceService.frmelmnts.lbl.skillTags}}</dd>
-              </dl> 
-              </div>
+              </dl>                                
               <div class="d-flex flex-dc">
-                <div class="d-flex flex-dr mb-10">              
+                <div class="d-flex flex-dr">     
                   <dl  class="sb-meta-data">
-                    <dt class="fs-0-92 text-gray">{{countData['objective']}} / {{localBlueprint['count']['objective']}} </dt>
+                    <dt class="font-weight-normal fsmall">{{resourceService.frmelmnts.lbl.questionTypes}} </dt>                                                            
+                  </dl> 
+                </div>
+                <div class="d-flex flex-dr mb-10">    
+                  <dl  class="sb-meta-data">
+                    <dt class="fs-0-785 line-height-1-3 text-gray">{{countData['objective']}} / {{localBlueprint['count']['objective']}} </dt>
                     <dd class="line-height-1-3">{{resourceService.frmelmnts.lbl.objective}}                    
                     </dd>
                   </dl>
                   <dl class="sb-meta-data">
-                    <dt class="fs-0-92 text-gray">{{countData['subjective']}} / {{localBlueprint['count']['subjective']}}</dt>
+                    <dt class="fs-0-785 line-height-1-3 text-gray">{{countData['subjective']}} / {{localBlueprint['count']['subjective']}}</dt>
                     <dd class="line-height-1-3">{{resourceService.frmelmnts.lbl.subjective}}</dd>
-                  </dl>
-                  <dl class="sb-meta-data">
-                    <dt class="fs-0-92 text-gray">{{countData['multipleChoice']}} / {{localBlueprint['count']['multipleChoice']}}</dt>
-                    <dd class="line-height-1-3">{{resourceService.frmelmnts.lbl.multipleChoice}}</dd>
-                  </dl>
+                  </dl>                
                 </div>
-                <div class="d-flex flex-dr">              
+                <div class="d-flex flex-dr">  
                   <dl  class="sb-meta-data">
-                    <dt class="fs-0-92 text-gray">{{countData['remember']}} / {{localBlueprint['count']['remember']}} </dt>
+                    <dt class="font-weight-normal fsmall">{{resourceService.frmelmnts.lbl.skills}} </dt>                                                            
+                  </dl>      
+                </div>    
+                <div class="d-flex flex-dr  mb-10">   
+                  <dl  class="sb-meta-data">
+                    <dt class="fs-0-785 line-height-1-3 text-gray">{{countData['remember']}} / {{localBlueprint['count']['remember']}} </dt>
                     <dd class="line-height-1-3">{{resourceService.frmelmnts.lbl.knowledge}}</dd>
                   </dl>
                   <dl class="sb-meta-data">
-                    <dt class="fs-0-92 text-gray">{{countData['understand']}} / {{localBlueprint['count']['understand']}}</dt>
+                    <dt class="fs-0-785 line-height-1-3 text-gray">{{countData['understand']}} / {{localBlueprint['count']['understand']}}</dt>
                     <dd class="line-height-1-3">{{resourceService.frmelmnts.lbl.understanding}}</dd>
                   </dl>
                   <dl class="sb-meta-data">
-                    <dt class="fs-0-92 text-gray">{{countData['apply']}} / {{localBlueprint['count']['apply']}}</dt>
+                    <dt class="fs-0-785 line-height-1-3 text-gray">{{countData['apply']}} / {{localBlueprint['count']['apply']}}</dt>
                     <dd class="line-height-1-3">{{resourceService.frmelmnts.lbl.application}}</dd>
                   </dl>
                 </div>
@@ -179,7 +182,7 @@
         <div class="ui container sb-textbook-details-container mb-24">
           <div class="d-flex flex-jc-space-between fs-0-785 sb-color-gray-300 mb-15">
             <span *ngIf="textbookStatusMessage" class="sb-color-error mr-8 pl-10 fs-0-785 font-weight-bold font-italic">{{textbookStatusMessage}}</span>
-            <span class="w-30 font-italic">{{resourceService.frmelmnts.lbl.partialTextbookSelectionNote | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName(programContext, 'plural') | lowercase}} </span>
+            <span class="w-30 font-italic">{{resourceService.frmelmnts.lbl.partialTextbookSelectionNote | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName(programContext) | interpolate: '{contentTypeUnit}': (localBlueprint ? (resourceService?.frmelmnts?.lbl?.sections) : (resourceService?.frmelmnts?.lbl?.chapters)) | interpolate: '{contentTypeUnit}': localBlueprint ? resourceService?.frmelmnts?.lbl?.sections : resourceService?.frmelmnts?.lbl?.chapters | lowercase }} </span>
             <div class="d-flex">
               <div *ngIf="sourcingOrgReviewer && storedCollectionData && !sessionContext.nominationDetails" class="d-flex">
                 <app-bulk-approval [programContext]="programContext" [sessionContext]="sessionContext" [storedCollectionData]="storedCollectionData" [originalCollectionData]="originalCollectionData" (updateToc)="bulkApprovalSuccess($event)"></app-bulk-approval>
@@ -286,8 +289,8 @@
 							<label class="d-inline-block fs-0-785 font-weight-normal mr-4">{{property.label}}</label><span class="sb-color-red" *ngIf="(property.required == true)">*</span>
 							<input *ngIf="property.inputType === 'text'" type="text" class="sb-form-control" name="{{property.code}}" [(ngModel)]="localBlueprint[property.code]"  [ngClass]="{ 'disabled':!property.editable}" [disabled]="!property.editable">
 							<div *ngIf="property.inputType === 'multiSelect' && !property.children" class="p-5">
-                <span *ngFor="let option of localBlueprint[property.code]" class="blueprint-chip fs-0-785 
-                mr-5 mb-5">{{option.name}}</span>                  
+                <span *ngFor="let option of localBlueprint[property.code]" class="blueprint-chip fs-0-785 mr-5 mb-5" suiPopup
+                popupText="{{option.name}}">{{option.name}}</span>                  
               </div>
 							<div *ngIf="property.children" class="d-flex">
 								<div *ngFor="let child of property.children" class="px-10 w-17-5 fs-0-785">
@@ -304,6 +307,87 @@
 	</div>
 	<div class="sb-modal-actions">
 		<button class="sb-btn sb-btn-normal sb-btn-primary" (click)="viewBlueprintFlag = false"  [disabled]="btnDoneDisabled">
+			{{resourceService?.frmelmnts?.lbl?.done}}
+		</button>
+	</div>
+</sui-modal>
+
+<sui-modal *ngIf="viewBlueprintDetailsFlag" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="this.viewBlueprintFlag = false" #blueprintModal>
+	<div class="sb-modal-header">
+		{{resourceService?.frmelmnts?.lbl?.progressAgainstBlueprint}}
+	</div>
+	<div class="sb-modal-content desktop-o-x-unset">		
+		<div class="segment mt-5 pb-30 pt-10">
+			<form class="ui form sb-dock-dropdown">
+				<div class="ui grid">	
+          <div class="d-flex" *ngIf="sessionContext.currentOrgRole != 'individual'">                                                         
+              <div class="d-flex flex-dc">
+                <div class="d-flex flex-dc mb-10">                       
+                  <span class="font-weight-normal fs-">{{resourceService.frmelmnts.lbl.questionTypes}} </span>                                                                              
+                </div>
+                <div class="d-flex flex-dr mb-10">    
+                  <dl  class="sb-meta-data mr-15">
+                    <dt class="text-gray mb-10" [class.text-green]="countData['objective'] === localBlueprint['count']['objective']">{{countData['objective']}} / {{localBlueprint['count']['objective']}} </dt>
+                    <dd class="font-weight-normal fsmall">{{resourceService.frmelmnts.lbl.objective}}                    
+                    </dd>
+                  </dl>
+                  <dl class="sb-meta-data mr-15">
+                    <dt class="text-gray mb-10" [class.text-green]="countData['vsa'] === localBlueprint['count']['vsa']">{{countData['vsa']}} / {{localBlueprint['count']['vsa']}}</dt>
+                    <dd class="font-weight-normal fsmall">{{resourceService.frmelmnts.lbl.vsa}}</dd>
+                  </dl>       
+                  <dl class="sb-meta-data mr-15">
+                    <dt class="text-gray mb-10" [class.text-green]="countData['sa'] === localBlueprint['count']['sa']">{{countData['sa']}} / {{localBlueprint['count']['sa']}}</dt>
+                    <dd class="font-weight-normal fsmall">{{resourceService.frmelmnts.lbl.sa}}</dd>
+                  </dl> 
+                  <dl class="sb-meta-data mr-15">
+                    <dt class="text-gray mb-10" [class.text-green]="countData['la'] === localBlueprint['count']['la']">{{countData['la']}} / {{localBlueprint['count']['la']}}</dt>
+                    <dd class="font-weight-normal fsmall">{{resourceService.frmelmnts.lbl.la}}</dd>
+                  </dl>          
+                </div>
+                <div class="d-flex flex-dc mb-10">                    
+                  <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.skills}} </span>                                                            
+                </div>    
+                <div class="d-flex flex-dr mb-10">   
+                  <dl  class="sb-meta-data mr-15">
+                    <dt class="text-gray mb-10" [class.text-green]="countData['remember'] === localBlueprint['count']['remember']">{{countData['remember']}} / {{localBlueprint['count']['remember']}} </dt>
+                    <dd class="font-weight-normal fsmall">{{resourceService.frmelmnts.lbl.knowledge}}</dd>
+                  </dl>
+                  <dl class="sb-meta-data mr-15">
+                    <dt class="text-gray mb-10" [class.text-green]="countData['understand'] === localBlueprint['count']['understand']">{{countData['understand']}} / {{localBlueprint['count']['understand']}}</dt>
+                    <dd class="font-weight-normal fsmall">{{resourceService.frmelmnts.lbl.understanding}}</dd>
+                  </dl>
+                  <dl class="sb-meta-data mr-15">
+                    <dt class="text-gray mb-10" [class.text-green]="countData['apply'] === localBlueprint['count']['apply']">{{countData['apply']}} / {{localBlueprint['count']['apply']}}</dt>
+                    <dd class="font-weight-normal fsmall">{{resourceService.frmelmnts.lbl.application}}</dd>
+                  </dl>
+                </div>
+                <div class="d-flex flex-dc mb-10">                    
+                  <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.topics}}</span>
+                  <em class="sb-color-warning fsmall font-weight-normal" *ngIf="!topicsInsideBlueprint">{{ resourceService?.frmelmnts?.lbl?.blueprintViolation | interpolate: '{contentUnits}': 'topics' }}</em>                                                                                                   
+                </div>    
+                <div class="d-flex flex-dr mb-10">   
+                  <dl  class="sb-meta-data mr-15">
+                    <dt class="text-gray mb-10" [class.text-green]="countData['topics'] === localBlueprint['count']['topics']">{{countData['topics']}} / {{localBlueprint['count']['topics']}} </dt>                    
+                  </dl>  
+                                
+                </div>
+                <div class="d-flex flex-dc mb-10">                    
+                  <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.learningOutcomes}} </span> 
+                  <em class="sb-color-warning fsmall font-weight-normal" *ngIf="!learningOutcomesInsideBlueprint">{{ resourceService?.frmelmnts?.lbl?.blueprintViolation | interpolate: '{contentUnits}': 'learning outcomes' }}</em>                                                                                   
+                </div>    
+                <div class="d-flex flex-dr mb-10">   
+                  <dl  class="sb-meta-data mr-15">
+                    <dt class="text-gray mb-10" [class.text-green]="countData['learningOutcomes'] === localBlueprint['count']['learningOutcomes']">{{countData['learningOutcomes']}} / {{localBlueprint['count']['learningOutcomes']}} </dt>                    
+                  </dl>                                  
+                </div>
+            </div>
+          </div>					
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="sb-modal-actions">
+		<button class="sb-btn sb-btn-normal sb-btn-primary" (click)="viewBlueprintDetailsFlag = false"  [disabled]="btnDoneDisabled">
 			{{resourceService?.frmelmnts?.lbl?.done}}
 		</button>
 	</div>

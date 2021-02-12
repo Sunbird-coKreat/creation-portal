@@ -130,8 +130,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     this.helperService.getNotification().pipe(takeUntil(this.onComponentDestroy$)).subscribe((action) => {
       this.contentStatusNotify(action);
     });
-    this.helperService.initialize(this.programContext);
-    debugger;
+    this.helperService.initialize(this.programContext);    
   }
   loadContentEditor() {
     if (!document.getElementById('contentEditor')) {

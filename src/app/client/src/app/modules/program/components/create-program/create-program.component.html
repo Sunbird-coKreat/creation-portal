@@ -598,11 +598,11 @@
 															<div class="sb-color-gray-400 fxsmall text-lowercase">
 																{{resource?.frmelmnts?.lbl?.selectedOutOfTotal | interpolate:'{selected}': tempCollection.selected || '0' | interpolate:'{total}': tempCollection.total || '0' | interpolate:'{contentTypeUnit}': tempCollection.contentTypeUnit || ''}}
 															</div>
-															<div *ngIf="tempCollection.selected && !blueprintTemplate"
+															<div *ngIf="tempCollection.selected"
 																class="sb-color-primary fxsmall cursor-pointer text-none"
 																(click)="chooseChapters(tempCollection);">
 																<i
-																	class="edit outline icon"></i>{{resource?.frmelmnts?.lbl?.editChapters}}
+																	class="edit outline icon"></i>{{blueprintTemplate ? resource?.frmelmnts?.lbl?.editSections : resource?.frmelmnts?.lbl.editChapters}}
 															</div>
 															<div *ngIf="blueprintTemplate"
 																class="sb-color-primary fxsmall cursor-pointer text-none"
@@ -757,7 +757,7 @@
 	class="sb-modal" appBodyScroll (dismissed)="this.selectChapter = false" #modal>
 	<form [formGroup]="chaptersSelectionForm" (ngSubmit)="updateSelection(choosedTextBook.identifier)">
 		<div class="sb-modal-header">
-			{{resource?.frmelmnts?.lbl?.selectChapters}}
+			{{blueprintTemplate ? resource?.frmelmnts?.lbl?.selectSections : resource?.frmelmnts?.lbl?.selectChapters}}
 		</div>
 		<div class="sb-modal-content">
 			<div class="pb-20 pt-5">{{choosedTextBook.name}}</div>

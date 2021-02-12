@@ -95,7 +95,7 @@
                     [telemetryInteractPdata]="telemetryInteractPdata"
                   >{{resourceService.frmelmnts.btn.sendForCorrections}}</button>
                 <button id="acceptContent" suiPopup
-                popupText="{{resourceService.frmelmnts.lbl.contentAcceptMessage | interpolate:'{category}': category}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="attachContentToTextbook('accept')"
+                popupText="{{resourceService.frmelmnts.lbl.contentAcceptMessage}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="attachContentToTextbook('accept')"
                 appTelemetryInteract
                   [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('approve', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,telemetryPageId)"
                   [telemetryInteractObject]="telemetryInteractObject"
