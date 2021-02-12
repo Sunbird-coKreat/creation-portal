@@ -772,24 +772,24 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
                 }
               })
             }
-            if(this.localBlueprint) {  
+            if(this.localBlueprint) {                
               if(data.topic && data.topic.length) {
                 _.forEach(data.topic, (topic)=> {
-                  if(_.includes(this.localUniqueTopicsList, topic.name)) return;
+                  if(_.includes(this.localUniqueTopicsList, topic)) return;
                   else {
-                    this.localUniqueTopicsList.push(topic.name);
+                    this.localUniqueTopicsList.push(topic);
                     this.countData['topics'] = this.countData['topics'] + 1;
-                    this.topicsInsideBlueprint = this.topicsInsideBlueprint && _.some(this.localBlueprint.topics, {name: topic.name})
+                    this.topicsInsideBlueprint = this.topicsInsideBlueprint && _.some(this.localBlueprint.topics, {name: topic})
                   }         
                 })
               }
               if(data.learningOutcome && data.learningOutcome.length) {
                 _.forEach(data.learningOutcome, (lo)=> {
-                  if(_.includes(this.localUniqueLearningOutcomesList, lo.name)) return;
+                  if(_.includes(this.localUniqueLearningOutcomesList, lo)) return;
                   else {
-                    this.localUniqueLearningOutcomesList.push(lo.name);
+                    this.localUniqueLearningOutcomesList.push(lo);
                     this.countData['learningOutcomes'] = this.countData['learningOutcomes'] + 1;
-                    this.learningOutcomesInsideBlueprint = this.learningOutcomesInsideBlueprint && _.some(this.localBlueprint.learningOutcomes, {name: lo.name})
+                    this.learningOutcomesInsideBlueprint = this.learningOutcomesInsideBlueprint && _.some(this.localBlueprint.learningOutcomes, {name: lo})
                   }         
                 })
               }
