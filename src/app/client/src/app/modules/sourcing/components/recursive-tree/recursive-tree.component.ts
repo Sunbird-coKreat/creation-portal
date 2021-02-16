@@ -42,21 +42,20 @@ export class RecursiveTreeComponent implements OnInit {
     this.sessionContext.currentRoleIds = !_.isEmpty(currentRoles) ? _.map(currentRoles, role => role.id) : null;
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
     const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
-    const isProjectLive = this.programsService.isProjectLive(this.programContext);
     this.mvcLibraryFeatureConfiguration = this.helperService.mvcLibraryFeatureConfiguration;
     this.telemetryPageId = this.sessionContext.telemetryPageDetails.telemetryPageId;
 
     this.visibility = {};
     // tslint:disable-next-line:max-line-length
-    this.visibility['showAddresource'] = submissionDateFlag && isProjectLive && this.hasAccessFor(['CONTRIBUTOR']);
+    this.visibility['showAddresource'] = submissionDateFlag && this.hasAccessFor(['CONTRIBUTOR']);
     // tslint:disable-next-line:max-line-length
-    this.visibility['showEditResource'] = isProjectLive && this.hasAccessFor(['CONTRIBUTOR']);
+    this.visibility['showEditResource'] = this.hasAccessFor(['CONTRIBUTOR']);
     // tslint:disable-next-line:max-line-length
-    this.visibility['showMoveResource'] = isProjectLive && this.hasAccessFor(['CONTRIBUTOR']);
+    this.visibility['showMoveResource'] = this.hasAccessFor(['CONTRIBUTOR']);
     // tslint:disable-next-line:max-line-length
-    this.visibility['showDeleteResource'] = isProjectLive && this.hasAccessFor(['CONTRIBUTOR']);
+    this.visibility['showDeleteResource'] = this.hasAccessFor(['CONTRIBUTOR']);
     // tslint:disable-next-line:max-line-length
-    this.visibility['showPreviewResource'] = isProjectLive &&  this.hasAccessFor(['REVIEWER']);
+    this.visibility['showPreviewResource'] = this.hasAccessFor(['REVIEWER']);
     this.visibility['showActionMenu'] = this.shouldActionMenuBeVisible();
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];

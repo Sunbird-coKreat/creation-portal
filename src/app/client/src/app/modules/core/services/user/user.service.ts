@@ -538,6 +538,7 @@ export class UserService {
   }
 
   isDefaultContributingOrg(program) {
-    return program.sourcing_org_name === _.get(this, 'userProfile.userRegData.Org.name');
+    return program.rootorg_id === _.get(this.userProfile, 'userRegData.Org.orgId');
+    
   }
 }

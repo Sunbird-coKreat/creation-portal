@@ -493,25 +493,23 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   handleActionButtons() {
     this.visibility = {};
     const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
-    const isProjectLive = this.programsService.isProjectLive(this.programContext);
-
     // tslint:disable-next-line:max-line-length
-    this.visibility['showCreateQuestion'] = isProjectLive && submissionDateFlag && this.canCreateQuestion();
+    this.visibility['showCreateQuestion'] = submissionDateFlag && this.canCreateQuestion();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showDeleteQuestion'] = isProjectLive && submissionDateFlag && this.canDeleteQuestion();
+    this.visibility['showDeleteQuestion'] = submissionDateFlag && this.canDeleteQuestion();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showRequestChanges'] = isProjectLive && submissionDateFlag && this.canReviewContent();
+    this.visibility['showRequestChanges'] = submissionDateFlag && this.canReviewContent();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showPublish'] = isProjectLive && submissionDateFlag && this.canPublishContent();
+    this.visibility['showPublish'] = submissionDateFlag && this.canPublishContent();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSubmit'] = isProjectLive && submissionDateFlag && this.canSubmit();
-    this.visibility['showSave'] = isProjectLive && submissionDateFlag && this.canSave();
+    this.visibility['showSubmit'] = submissionDateFlag && this.canSubmit();
+    this.visibility['showSave'] = submissionDateFlag && this.canSave();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showEditMetadata'] = isProjectLive && submissionDateFlag && this.canEditMetadata();
+    this.visibility['showEditMetadata'] = submissionDateFlag && this.canEditMetadata();
      // tslint:disable-next-line:max-line-length
-    this.visibility['showEdit'] = isProjectLive && submissionDateFlag && this.canEdit();
+    this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSourcingActionButtons'] = isProjectLive && this.canSourcingReviewerPerformActions();
+    this.visibility['showSourcingActionButtons'] = this.canSourcingReviewerPerformActions();
   }
 
   canDeleteQuestion() {

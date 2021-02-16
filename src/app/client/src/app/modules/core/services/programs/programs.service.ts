@@ -1168,9 +1168,8 @@ export class ProgramsService extends DataService implements CanActivate {
   /* To check if the content can be uploaded or updated*/
   checkForContentSubmissionDate(programDetails) {
     const contributionendDate  = moment(programDetails.content_submission_enddate);
-    const endDate  = moment(programDetails.enddate);
     const today = moment();
-    return (contributionendDate.isSameOrAfter(today, 'day') && endDate.isSameOrAfter(today, 'day')) ? true : false;
+    return (contributionendDate.isSameOrAfter(today, 'day') && this.isProjectLive(programDetails)) ? true : false;
   }
 
   getContentOriginEnvironment() {

@@ -277,22 +277,20 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   handleActionButtons() {
     this.visibility = {};
     const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
-    const isProjectLive = this.programsService.isProjectLive(this.programContext);
-
     // tslint:disable-next-line:max-line-length
-    this.visibility['showChangeFile'] = isProjectLive && submissionDateFlag && this.canChangeFile();
+    this.visibility['showChangeFile'] = submissionDateFlag && this.canChangeFile();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showRequestChanges'] = isProjectLive && submissionDateFlag && this.canReviewContent();
+    this.visibility['showRequestChanges'] = submissionDateFlag && this.canReviewContent();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showPublish'] = isProjectLive && submissionDateFlag && this.canPublishContent();
+    this.visibility['showPublish'] = submissionDateFlag && this.canPublishContent();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSubmit'] = isProjectLive && submissionDateFlag && this.canSubmit();
+    this.visibility['showSubmit'] = submissionDateFlag && this.canSubmit();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showEditMetadata'] = isProjectLive && submissionDateFlag && this.canEditMetadata();
+    this.visibility['showEditMetadata'] = submissionDateFlag && this.canEditMetadata();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showEdit'] = isProjectLive && submissionDateFlag && this.canEdit();
+    this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSourcingActionButtons'] = isProjectLive && this.canSourcingReviewerPerformActions();
+    this.visibility['showSourcingActionButtons'] = this.canSourcingReviewerPerformActions();
     this.visibility['showSendForCorrections'] = this.visibility['showSourcingActionButtons'] && this.canSendForCorrections();
   }
 
