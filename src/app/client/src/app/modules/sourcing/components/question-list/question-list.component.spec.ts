@@ -82,6 +82,30 @@ describe('QuestionListComponent', () => {
     expect(component.handleActionButtons).toHaveBeenCalled();
   });
 
+  it('should call canCreateQuestion', () => {
+    spyOn(component, 'canCreateQuestion');
+    component.handleActionButtons();
+    expect(component.canCreateQuestion).toHaveBeenCalled();
+  })
+
+  it('should call questionLimitReached', () => {
+    spyOn(component, 'questionLimitReached');
+    component.templateDetails = {
+      objectMetadata: {
+        schema: {
+          properties: {
+            maxQuestions: {
+              default: 1
+            }
+          }
+        }
+      }
+    }
+    component.canCreateQuestion();
+    expect(component.questionLimitReached).toHaveBeenCalled();
+    expect(component.questionLimitReached).toBe(true);
+  })
+
   it('should Call createDefaultQuestionAndItemset', () => {
     spyOn(component, 'createDefaultQuestionAndItemset');
     component.createDefaultQuestionAndItemset();

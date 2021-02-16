@@ -138,6 +138,18 @@ describe('ChapterListComponent', () => {
       expect(component.updateAccordianView).toHaveBeenCalled();
     });
 
+    it('should fetch blueprint template on initialize', () => {
+      spyOn(component, 'fetchBlueprintTemplate');
+      component.ngOnInit();
+      expect(component.fetchBlueprintTemplate).toHaveBeenCalled();
+    })
+
+    it('should set local blueprint on fetching blueprint template', () => {
+      spyOn(component, 'setLocalBlueprint');
+      component.fetchBlueprintTemplate();
+      expect(component.setLocalBlueprint).toHaveBeenCalled();
+    })
+
     it('sessionContext should be updated if session in chapterListComponentInput changes', () => {
       chapterListComponentInput.sessionContext.subject = ['dummyValue'];
       component.ngOnChanges({});

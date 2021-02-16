@@ -105,6 +105,11 @@ describe('CreateProgramComponent', () => {
     component.fetchFrameWorkDetails();
     expect(component.fetchFrameWorkDetails).toHaveBeenCalled();
   });
+  it('Should call the fetchBlueprintTemplate method', () => {
+    spyOn(component, 'fetchBlueprintTemplate');
+    component.fetchBlueprintTemplate();
+    expect(component.fetchBlueprintTemplate).toHaveBeenCalled();
+  });
   it('Should call the setFrameworkDataToProgram method', () => {
     spyOn(component, 'setFrameworkDataToProgram');
     component.setFrameworkDataToProgram();
@@ -135,6 +140,7 @@ describe('CreateProgramComponent', () => {
     component.callTargetCollection = true;
     component.onChangeTargetCollection();
     expect(component.showTexbooklist).toHaveBeenCalled();
+    expect(component.fetchBlueprintTemplate).toHaveBeenCalled();
     expect(component.collectionListForm.value.pcollections).toBeDefined([]);
   });
   it('Should call the saveAsDraftAndNext method', () => {
