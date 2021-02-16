@@ -199,13 +199,14 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   handleActionButtons() {
     this.visibility = {};
     const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
-    this.visibility['showRequestChanges'] = submissionDateFlag && this.canReviewContent();
-    this.visibility['showPublish'] = submissionDateFlag && this.canPublishContent();
-    this.visibility['showSubmit'] = submissionDateFlag && this.canSubmit();
-    this.visibility['showEditMetadata'] = submissionDateFlag && this.canEditMetadata();
-    this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
-    this.visibility['showSourcingActionButtons'] = this.canSourcingReviewerPerformActions();
-    this.visibility['showSendForCorrections'] = this.canSendForCorrections();
+    const isProjectLive = this.programsService.isProjectLive(this.programContext);
+    this.visibility['showRequestChanges'] = isProjectLive && submissionDateFlag && this.canReviewContent();
+    this.visibility['showPublish'] = isProjectLive && submissionDateFlag && this.canPublishContent();
+    this.visibility['showSubmit'] = isProjectLive && submissionDateFlag && this.canSubmit();
+    this.visibility['showEditMetadata'] = isProjectLive && submissionDateFlag && this.canEditMetadata();
+    this.visibility['showEdit'] = isProjectLive && submissionDateFlag && this.canEdit();
+    this.visibility['showSourcingActionButtons'] = isProjectLive && this.canSourcingReviewerPerformActions();
+    this.visibility['showSendForCorrections'] = this.visibility['showSourcingActionButtons'] && this.canSendForCorrections();
   }
 
   canSendForCorrections() {
