@@ -370,6 +370,8 @@ export class ProgramsService extends DataService implements CanActivate {
       }));
   }
 
+
+
   /**
    * makes api call to get the textbooks for program
    */
@@ -857,6 +859,56 @@ export class ProgramsService extends DataService implements CanActivate {
     return _.sortBy(_.unionBy(resultArray, 'identifier'), 'index');
   }
 
+  initializeBlueprintMetadata(selectedData: any, frameworkCategories) {
+    let { gradeLevel, subject} = selectedData;
+    let gradeLevelTerms = [], subjectTerms = [], topicTerms = [];
+    let gradeLevelTopicAssociations = [], subjectTopicAssociations = [];
+    let tempTopicOptions = [], tempLearningOutcomeOptions = [];
+    _.forEach(frameworkCategories, (category) => {     
+      if(category.code === 'gradeLevel') {
+        const terms = category.terms;
+        if(terms) gradeLevelTerms =  _.concat(gradeLevelTerms, _.filter(terms,  (t)  => _.includes(gradeLevel, t.name)));
+      }
+
+      if(category.code === 'topic') {
+        const terms = category.terms;
+        if(terms) topicTerms = terms;
+      }
+
+      if(category.code === 'subject') {
+        const terms = category.terms;
+        if(terms) subjectTerms =  _.concat(subjectTerms, _.filter(terms,  (t)  => _.includes(subject, t.name)));
+      } 
+    });     
+               
+    if(gradeLevelTerms.length && subjectTerms.length) {            
+        _.forEach(gradeLevelTerms, (term) => {
+          if(term.associations) {
+          gradeLevelTopicAssociations = _.concat(gradeLevelTopicAssociations, 
+            _.filter(term.associations, (association) => association.category === 'topic'))
+          }          
+        })
+        _.forEach(subjectTerms, (term) => {      
+          if(term.associations) {       
+          subjectTopicAssociations = _.concat(subjectTopicAssociations, 
+            _.filter(term.associations, (association) => association.category === 'topic'))
+          }              
+        })            
+          tempTopicOptions = _.intersectionWith(gradeLevelTopicAssociations, subjectTopicAssociations, (a, o) =>  a.name === o.name );                    
+        }        
+        topicTerms = _.filter(topicTerms, (t) => _.find(tempTopicOptions, { name: t.name }))          
+                          
+      if(topicTerms) {
+        _.forEach(topicTerms, (term) => {
+          if(term.associations) {
+            tempLearningOutcomeOptions = _.concat(tempLearningOutcomeOptions || [], _.map(term.associations, (learningOutcome) =>learningOutcome));
+              }             
+            });                     
+        }  
+        
+        return [tempTopicOptions, tempLearningOutcomeOptions];
+    }
+
   getNominationList(reqFilters) {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
@@ -918,6 +970,30 @@ export class ProgramsService extends DataService implements CanActivate {
         this.setSessionCache({name: cacheInd, value: data})
       }));
     }
+  }
+
+  getCollectionCategoryDefinition(categoryName, rootOrgId) {
+    const cacheInd = categoryName + ':' + rootOrgId;
+    if (this.cacheService.get(cacheInd)) {
+      return  of(this.cacheService.get(cacheInd));
+    } else {
+      const req = {
+        url: 'object/category/definition/v1/read?fields=objectMetadata,forms,name',
+        data: {
+          request: {
+            "objectCategoryDefinition": {
+                "objectType": "Collection",
+                "name": categoryName,
+                "channel": rootOrgId
+            },
+          }
+        }
+      };
+      return this.post(req).pipe(tap(data => {
+        this.setSessionCache({name: cacheInd, value: data})
+      }));
+    }
+
   }
 
   isNotEmpty(obj, key) {
