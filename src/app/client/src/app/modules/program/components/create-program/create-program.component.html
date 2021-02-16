@@ -516,7 +516,8 @@
 																	[ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
 															</span>
 														</th>
-														<th class="w-10">{{resource?.frmelmnts?.lbl?.chapters}}</th>
+														<th *ngIf="!blueprintTemplate" class="w-10">{{resource?.frmelmnts?.lbl?.chapters}}</th>
+														<th *ngIf="blueprintTemplate" class="w-10">{{resource?.frmelmnts?.lbl?.sections}}</th>
 													</tr>
 												</thead>
 												<tbody class="sb-table-body d-block w-100 o-y-auto max-height">
@@ -595,13 +596,19 @@
 														</div>
 														<div class="four wide column px-0 mt-5">
 															<div class="sb-color-gray-400 fxsmall text-lowercase">
-																{{resource?.frmelmnts?.lbl?.selectedOutOfTotal | interpolate:'{selected}': tempCollection.selected | interpolate:'{total}': tempCollection.total }}
+																{{resource?.frmelmnts?.lbl?.selectedOutOfTotal | interpolate:'{selected}': tempCollection.selected || '0' | interpolate:'{total}': tempCollection.total || '0' | interpolate:'{contentTypeUnit}': tempCollection.contentTypeUnit || ''}}
 															</div>
 															<div *ngIf="tempCollection.selected"
 																class="sb-color-primary fxsmall cursor-pointer text-none"
 																(click)="chooseChapters(tempCollection);">
 																<i
-																	class="edit outline icon"></i>{{resource?.frmelmnts?.lbl?.editChapters}}
+																	class="edit outline icon"></i>{{blueprintTemplate ? resource?.frmelmnts?.lbl?.editSections : resource?.frmelmnts?.lbl.editChapters}}
+															</div>
+															<div *ngIf="blueprintTemplate"
+																class="sb-color-primary fxsmall cursor-pointer text-none"
+																(click)="editBlueprint(tempCollection);">
+																<i
+																	class="edit outline icon"></i>{{resource?.frmelmnts?.lbl?.editBlueprint}}
 															</div>
 														</div>
 														<div class="two wide column text-right cursor-pointer"
@@ -750,7 +757,7 @@
 	class="sb-modal" appBodyScroll (dismissed)="this.selectChapter = false" #modal>
 	<form [formGroup]="chaptersSelectionForm" (ngSubmit)="updateSelection(choosedTextBook.identifier)">
 		<div class="sb-modal-header">
-			{{resource?.frmelmnts?.lbl?.selectChapters}}
+			{{blueprintTemplate ? resource?.frmelmnts?.lbl?.selectSections : resource?.frmelmnts?.lbl?.selectChapters}}
 		</div>
 		<div class="sb-modal-content">
 			<div class="pb-20 pt-5">{{choosedTextBook.name}}</div>
@@ -805,6 +812,60 @@
 			</button>
 		</div>
 	</form>
+</sui-modal>
+
+<sui-modal *ngIf="editBlueprintFlag" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'large'" class="sb-modal" appBodyScroll (dismissed)="this.editBlueprintFlag = false" #blueprintModal>
+	<div class="sb-modal-header">
+		{{resource?.frmelmnts?.lbl?.editBlueprint}}
+	</div>
+	<div class="sb-modal-content desktop-o-x-unset">		
+		<div class="segment mt-5 pb-30 pt-10">
+			<form class="ui form sb-dock-dropdown">
+				<div class="ui grid">	
+					<div *ngFor="let property of blueprintTemplate.properties" class="{{property.renderingHints?.semanticColumnWidth || 'six'}} wide column py-10">
+						<div class="field">
+							<label class="d-inline-block fs-0-785 font-weight-normal mr-4">{{property.label}}</label><span class="sb-color-red" *ngIf="(property.required == true)">*</span>
+							<input *ngIf="property.inputType === 'text'" type="text" class="sb-form-control" name="{{property.code}}" [(ngModel)]="localBlueprint[property.code]"  	autofocus />
+							<sui-multi-select #multiselect *ngIf="property.inputType === 'multiSelect' && !property.children" class="selection p-5 b-100 min-w-0"
+								[isSearchable]=true (selectedOptionChange)="onChangeBlueprint()"
+								name="{{property.code}}"								
+								[options]="property.options ? property.options : []"
+								[(ngModel)]="localBlueprint[property.code]" 
+								labelField="name"
+								>
+								<sui-select-option *ngFor="let option of multiselect.filteredOptions" [value]="option" ></sui-select-option>
+							</sui-multi-select>
+							<div *ngIf="property.children" class="d-flex">
+								<div *ngFor="let child of property.children" class="px-10 w-20">
+									<label class="d-block fs-0-785 font-weight-normal">{{child.label}}</label>
+									<sui-select class="selection p-5 b-100 min-w-0" #nestedSelect 
+									name="{{child.code}}"
+									[isSearchable]=true (selectedOptionChange)="onChangeBlueprint()"
+									[options]="property.options ? property.options : []"
+									[(ngModel)]="localBlueprint[property.code][child.code]">
+										<sui-select-option *ngFor="let option of nestedSelect.filteredOptions" [value]="option" ></sui-select-option>
+									</sui-select>
+								</div>
+							</div>
+							<sui-select class="selection p-5 b-100 min-w-0" #select *ngIf="property.inputType === 'select' && !property.children"
+								[isSearchable]=true (selectedOptionChange)="onChangeBlueprint()"
+								[options]="property.options ? property.options : questionCountRange"
+								name="{{property.code}}"
+								[(ngModel)]="localBlueprint[property.code]">
+								<sui-select-option *ngFor="let option of select.filteredOptions" [value]="option.name ? option.name : option" ></sui-select-option>
+							</sui-select>							
+						</div>
+					</div>	
+					<label class="fs-0-92 twelve wide column text-gray">{{resource?.frmelmnts.lbl?.totalQuestions}}: {{localBlueprint.totalQuestions || 0}}</label>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="sb-modal-actions">
+		<button class="sb-btn sb-btn-normal sb-btn-primary" (click)="mapBlueprintToId()" [disabled]="btnDoneDisabled">
+			{{resource?.frmelmnts?.lbl?.done}}
+		</button>
+	</div>
 </sui-modal>
 
 <sui-modal *ngIf="showPublishModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'"

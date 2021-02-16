@@ -240,7 +240,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   fetchCategoryDetails() {
     this.helperService.categoryMetaData$.pipe(take(1), takeUntil(this.onComponentDestroy$)).subscribe(data => {
-      this.fetchFormconfiguration();
+      this.fetchFormconfiguration();         
       this.handleActionButtons();
     });
     this.helperService.getCategoryMetaData(this.resourceDetails.primaryCategory, _.get(this.programContext, 'rootorg_id'));
@@ -400,6 +400,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     // tslint:disable-next-line:max-line-length
     [this.categoryMasterList, this.formFieldProperties] = this.helperService.initializeMetadataForm(this.sessionContext, this.formFieldProperties, this.resourceDetails);
+    if(this.formFieldProperties["bloomsLevel"] && !this.categoryMasterList["bloomsLevel"]) {      
+      this.categoryMasterList["bloomsLevel"] = this.formFieldProperties["bloomsLevel"].range;
+    }
     this.showEditMetaForm = true;
   }
 
@@ -516,9 +519,15 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     return !!(this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && this.questionList.length > 1 && this.userService.getUserId() === this.resourceDetails.createdBy);
   }
 
+  questionLimitReached() {
+    let limit = _.get(this.templateDetails, 'objectMetadata.schema.properties.maxQuestions.default', undefined);        
+    if(limit) return (limit === 1 ? true : this.questionList.length >= limit); 
+    return false;    
+  }
+
   canCreateQuestion() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && this.userService.getUserId() === this.resourceDetails.createdBy);
+    return !!(this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && !(this.questionLimitReached()) && this.userService.getUserId() === this.resourceDetails.createdBy);
   }
 
   canEdit() {
@@ -635,7 +644,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }))
     .subscribe((questionList) => {
           this.selectedQuestionId = questionList[0].identifier;
-          this.handleQuestionTabChange(this.selectedQuestionId);
+          this.handleQuestionTabChange(this.selectedQuestionId);          
           this.handleActionButtons();
     });
   }
@@ -724,7 +733,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }),
     mergeMap(requestParams => this.updateItemset(requestParams, this.itemSetIdentifier)))
     .subscribe((contentRes: any) => {
-      this.handleQuestionTabChange(this.selectedQuestionId);
+      this.handleQuestionTabChange(this.selectedQuestionId);      
       this.handleActionButtons();
       this.goToNextQuestionStatus = false;
     });
