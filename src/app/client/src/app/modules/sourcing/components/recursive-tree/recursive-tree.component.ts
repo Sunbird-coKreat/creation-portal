@@ -19,6 +19,7 @@ export class RecursiveTreeComponent implements OnInit {
   @Input() sessionContext;
   @Input() originalCollectionData;
   @Input() level;
+  @Input() selectedStatus;
   @Output() emitSelectedNode = new EventEmitter<any>();
   @Output() nodeMeta = new EventEmitter<any>();
   public showModal = false;
@@ -64,6 +65,10 @@ export class RecursiveTreeComponent implements OnInit {
 
   hasAccessFor(roles: Array<string>) {
     return !_.isEmpty(_.intersection(roles, this.sessionContext.currentRoles || []));
+  }
+
+  includes(sourcingOrgReviewer: Boolean, selectedStatus: Array<string>, string: String) {
+    return (!sourcingOrgReviewer) || _.includes(selectedStatus, string); //Always return true if not sourcingOrgReviewer
   }
 
   shouldActionMenuBeVisible() {

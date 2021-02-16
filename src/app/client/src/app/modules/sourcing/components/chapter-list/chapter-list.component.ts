@@ -71,10 +71,21 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public stageSubscription: any;
   public programContext: any;
   public currentUserID: string;
+  public currentRootOrgID: string;
   public collectionData;
   showLoader = true;
   showError = false;
   public questionPattern: Array<any> = [];
+  public viewBlueprintFlag: boolean;
+  public viewBlueprintDetailsFlag: boolean;
+  public blueprintTemplate: any;
+  public localBlueprint: any;
+  localUniqueTopicsList: string[] = [];
+  localUniqueLearningOutcomesList: string[] = [];
+  public topicsInsideBlueprint: boolean = true;
+  public learningOutcomesInsideBlueprint: boolean = true;
+  public statusOptionsList: any = [];
+  public selectedStatusOptions: any = [];
   showConfirmationModal = false;
   showRemoveConfirmationModal = false;
   contentName: string;
@@ -109,6 +120,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
     this.programContext = _.get(this.chapterListComponentInput, 'programContext');
     this.currentUserID = this.userService.userProfile.userId;
+    this.currentRootOrgID = this.userService.userProfile.rootOrgId;
     // this.currentUserID = _.get(this.programContext, 'userDetails.userId');
     this.roles = _.get(this.chapterListComponentInput, 'roles');
     this.collection = _.get(this.chapterListComponentInput, 'collection');
@@ -123,6 +135,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     if ( _.isUndefined(this.sessionContext.topicList)) {
         this.fetchFrameWorkDetails();
     }
+    this.fetchBlueprintTemplate();
     /**
      * @description : this will fetch question Category configuration based on currently active route
      */
@@ -145,7 +158,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       uploadedContentMeta: (contentMeta) => {
         this.uploadHandler(contentMeta);
       }
-    };
+    };   
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
     if (this.programContext['status'] === 'Unlisted') {
       const request = {
@@ -154,6 +167,24 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       };
       this.helperService.getProgramConfiguration(request).subscribe(res => {}, err => {});
     }
+
+    this.statusOptionsList = 
+    [
+      {
+      "label": "Pending",
+      "status": "Live"
+      },
+      {
+        "label": "Approved",
+        "status": "Approved"
+      },
+      {
+        "label": "Rejected",
+        "status": "Rejected"
+      }
+  ]
+
+    this.selectedStatusOptions = ["Live", "Approved"];
 
   }
 
@@ -236,6 +267,78 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         this.sessionContext.topicList = _.get(_.find(frameworkData, { code: 'topic' }), 'terms');
       }
     });
+  }
+
+  setLocalBlueprint(): void {
+    let localBlueprintMap = _.get(this.programContext, "config.blueprintMap");
+    this.localBlueprint = _.get(localBlueprintMap, `${this.collection && this.collection.code}`)
+    if(this.localBlueprint) {
+      this.localBlueprint.count = {
+        subjective: 0,
+        vsa: 0,
+        sa: 0,
+        la: 0,
+        multipleChoice: 0,
+        objective: 0,
+        total: 0,
+        learningOutcomes: 0,
+        topics: 0,
+        remember: 0,
+        understand: 0,
+        apply: 0
+      };
+      _.forEach(this.localBlueprint.questionTypes, (value, key) => {
+        this.localBlueprint.count.total = this.localBlueprint.count.total + value;
+        if(key === "LA" || key === "SA" || key === "VSA") {
+          if(key === "LA") this.localBlueprint.count.la = this.localBlueprint.count.la + value;   
+          if(key === "SA") this.localBlueprint.count.sa = this.localBlueprint.count.sa + value;   
+          if(key === "VSA") this.localBlueprint.count.vsa = this.localBlueprint.count.vsa + value;        
+          this.localBlueprint.count.subjective = this.localBlueprint.count.subjective + value;
+        }
+        else if(key === "MCQ") {
+          this.localBlueprint.count.multipleChoice = this.localBlueprint.count.multipleChoice + value; 
+        }
+        else if(key === "Objective") {
+          this.localBlueprint.count.objective = this.localBlueprint.count.objective + value; 
+        }
+      })
+      _.forEach(this.localBlueprint.learningLevels, (value, key) => {
+        if(key === "apply") {
+          this.localBlueprint.count.apply = this.localBlueprint.count.apply + value;
+        }
+        else if(key === "remember") {
+          this.localBlueprint.count.remember = this.localBlueprint.count.remember + value; 
+        }
+        else if(key === "understand") {
+          this.localBlueprint.count.understand = this.localBlueprint.count.understand + value; 
+        }
+      })
+      this.localBlueprint.count.topics = this.localBlueprint.topics && this.localBlueprint.topics.length;
+      this.localBlueprint.count.learningOutcomes = this.localBlueprint.learningOutcomes && this.localBlueprint.learningOutcomes.length;
+    }
+  }
+
+  viewBlueprint(): void {
+    this.viewBlueprintFlag = true;
+  }
+
+  viewBlueprintDetails(): void {
+    this.viewBlueprintDetailsFlag = true;
+  }
+
+  fetchBlueprintTemplate(): void {
+    this.programsService.getCollectionCategoryDefinition((this.collection && this.collection.primaryCategory)|| 'Question paper', this.currentRootOrgID).subscribe(res => {
+      let templateDetails = res.result.objectCategoryDefinition;
+      if(templateDetails && templateDetails.forms) {         
+        this.blueprintTemplate = templateDetails.forms.blueprintCreate;          
+        if(this.blueprintTemplate && this.blueprintTemplate.properties) {
+          _.forEach(this.blueprintTemplate.properties, (prop) => {
+            prop.editable = false;
+          })
+        }
+        this.setLocalBlueprint();                    
+      }
+    })
   }
 
   getTelemetryPageIdForContentDetailsPage() {
@@ -366,6 +469,17 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         instance.countData['sourcing_correctionPending'] = 0;
         instance.countData['sourcing_approved'] = 0;
         instance.countData['sourcing_rejected'] = 0;
+        instance.countData['objective'] = 0;
+        instance.countData['vsa'] = 0;
+        instance.countData['sa'] = 0;
+        instance.countData['la'] = 0;
+        instance.countData['subjective'] = 0;
+        instance.countData['multipleChoice'] = 0;
+        instance.countData['remember'] = 0;
+        instance.countData['understand'] = 0;
+        instance.countData['apply'] = 0;
+        instance.countData['topics'] = 0;
+        instance.countData['learningOutcomes'] = 0;
 
         const hierarchyUrl1 = '/action/content/v3/hierarchy/' + this.collectionData.origin + '?mode=edit';
         const originUrl = this.programsService.getContentOriginEnvironment();
@@ -443,7 +557,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       this.getSampleContentStatusCount(data);
     } else {
       this.sampleContent = false;
-      this.sessionContext['sampleContent'] = false;
+      this.sessionContext['sampleContent'] = false;      
       this.getContentStatusCount(data);
     }
     if (!this.checkIfMainCollection(data)) {
@@ -563,8 +677,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     const self = this;
     if (['admin', 'user'].includes(this.sessionContext.currentOrgRole)  && (this.sessionContext.currentRoles.includes('REVIEWER') || this.sessionContext.currentRoles.includes('CONTRIBUTOR') )) {
       // tslint:disable-next-line:max-line-length
-      if ((this.checkifContent(data) && this.myOrgId === data.organisationId)  && (!data.sampleContent || data.sampleContent === undefined)) {
-        this.countData['total'] = this.countData['total'] + 1;
+      if ((this.checkifContent(data) && this.myOrgId === data.organisationId)  && (!data.sampleContent || data.sampleContent === undefined)) {        
+        this.countData['total'] = this.countData['total'] + 1;        
         if (data.createdBy === this.currentUserID && data.status === 'Review') {
           this.countData['review'] = this.countData['review'] + 1;
         }
@@ -581,9 +695,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           if (data.createdBy !== this.currentUserID && data.status === 'Review') {
             this.countData['awaitingreview'] = this.countData['awaitingreview'] + 1;
           }
-        }
+        }     
       }
-    }
+    }   
      else if(['individual'].includes(this.sessionContext.currentOrgRole)  && this.sessionContext.currentRoles.includes('CONTRIBUTOR')) {
       if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' )  && (!data.sampleContent || data.sampleContent === undefined)) {
 
@@ -591,7 +705,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           this.countData['total'] = this.countData['total'] + 1;
         }
       }
-     }
+    }
     else {
       // tslint:disable-next-line:max-line-length
       if (this.checkifContent(data) && (!data.sampleContent || data.sampleContent === undefined)) {
@@ -616,7 +730,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         }
         if (data.createdBy !== this.currentUserID && data.status === 'Review') {
           this.countData['awaitingreview'] = this.countData['awaitingreview'] + 1;
-        }
+        }            
         if (this.sourcingOrgReviewer && data.status === 'Live' &&
         // tslint:disable-next-line:max-line-length
         !_.includes([...this.storedCollectionData.acceptedContents || [], ...this.storedCollectionData.rejectedContents || []], data.identifier)) {
@@ -630,7 +744,57 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         }
         if (this.sourcingOrgReviewer && data.status === 'Live' && _.includes([...this.storedCollectionData.acceptedContents || []], data.identifier)) {
           this.countData['sourcing_approved'] = this.countData['sourcing_approved'] + 1;
-          this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
+          this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;  
+           // Add blueprint metrics count                
+            if(data.questionCategories && data.questionCategories.length) {
+              _.forEach(data.questionCategories, (cat)=> {               
+                if(cat === "MTF" || cat === "FTB" || cat === "MCQ") {
+                  this.countData['objective'] = this.countData['objective'] + 1;
+                }
+                else if(cat === "VSA" || cat === "SA" || cat === "LA") {
+                  if(cat === "VSA") this.countData['vsa'] = this.countData['vsa'] + 1;
+                  if(cat === "SA") this.countData['sa'] = this.countData['sa'] + 1;
+                  if(cat === "LA") this.countData['la'] = this.countData['la'] + 1;
+                  this.countData['subjective'] = this.countData['subjective'] + 1;
+                }
+              })
+            }
+            if(data.bloomsLevel && data.bloomsLevel.length) {                                    
+              _.forEach(data.bloomsLevel, (bl)=> {      
+                bl = bl.toLowerCase();        
+                if(bl === "remember") {
+                this.countData['remember'] = this.countData['remember'] + 1;
+                }
+                else if(bl === "understand") {
+                  this.countData['understand'] = this.countData['understand'] + 1;
+                }
+                else if(bl === "apply") {
+                  this.countData['apply'] = this.countData['apply'] + 1;
+                }
+              })
+            }
+            if(this.localBlueprint) {                
+              if(data.topic && data.topic.length) {
+                _.forEach(data.topic, (topic)=> {
+                  if(_.includes(this.localUniqueTopicsList, topic)) return;
+                  else {
+                    this.localUniqueTopicsList.push(topic);
+                    this.countData['topics'] = this.countData['topics'] + 1;
+                    this.topicsInsideBlueprint = this.topicsInsideBlueprint && _.some(this.localBlueprint.topics, {name: topic})
+                  }         
+                })
+              }
+              if(data.learningOutcome && data.learningOutcome.length) {
+                _.forEach(data.learningOutcome, (lo)=> {
+                  if(_.includes(this.localUniqueLearningOutcomesList, lo)) return;
+                  else {
+                    this.localUniqueLearningOutcomesList.push(lo);
+                    this.countData['learningOutcomes'] = this.countData['learningOutcomes'] + 1;
+                    this.learningOutcomesInsideBlueprint = this.learningOutcomesInsideBlueprint && _.some(this.localBlueprint.learningOutcomes, {name: lo})
+                  }         
+                })
+              }
+            }           
         }
         if (this.sourcingOrgReviewer && data.status === 'Live' && _.includes([...this.storedCollectionData.rejectedContents || []], data.identifier)) {
           this.countData['sourcing_rejected'] = this.countData['sourcing_rejected'] + 1;
@@ -1332,4 +1496,5 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   bulkApprovalSuccess(e) {
     this.updateAccordianView();
   }
+
 }
