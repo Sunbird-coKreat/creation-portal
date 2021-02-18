@@ -840,7 +840,7 @@
 									<label class="d-block fs-0-785 font-weight-normal">{{child.label}}</label>
 									<sui-select class="selection p-5 b-100 min-w-0" #nestedSelect 
 									name="{{child.code}}"
-									[isSearchable]=true (selectedOptionChange)="onChangeBlueprint()"
+									[isSearchable]=false (selectedOptionChange)="onChangeBlueprint()"
 									[options]="property.options ? property.options : []"
 									[(ngModel)]="localBlueprint[property.code][child.code]">
 										<sui-select-option *ngFor="let option of nestedSelect.filteredOptions" [value]="option" ></sui-select-option>
