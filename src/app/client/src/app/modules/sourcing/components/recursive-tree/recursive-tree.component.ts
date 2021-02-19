@@ -67,8 +67,10 @@ export class RecursiveTreeComponent implements OnInit {
     return !_.isEmpty(_.intersection(roles, this.sessionContext.currentRoles || []));
   }
 
-  includes(sourcingOrgReviewer: Boolean, selectedStatus: Array<string>, string: String) {
-    return (!sourcingOrgReviewer) || _.includes(selectedStatus, string); //Always return true if not sourcingOrgReviewer
+  includes(sourcingOrgReviewer: Boolean, selectedStatus: Array<string>, currentStatus: String) {
+    // Always return true if not sourcingOrgReviewer    
+    return (!sourcingOrgReviewer) || _.includes(selectedStatus, currentStatus) 
+    
   }
 
   shouldActionMenuBeVisible() {
