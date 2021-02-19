@@ -333,7 +333,7 @@
 							</td>
 							<td class="text-center">
 								<div *ngIf="programsService.isProjectClosed(programDetails) || nominationDetails?.status === 'Rejected'; else elseBlock">
-									{{ (orgUser?.projectselectedRole) ? orgUser.projectselectedRole : '-' }}
+									{{ (orgUser?.projectselectedRole && orgUser.projectselectedRole !== 'Select Role') ? orgUser.projectselectedRole : '-' }}
 								</div>
 								<ng-template #elseBlock>
 									<div class="custom-selectbx">
