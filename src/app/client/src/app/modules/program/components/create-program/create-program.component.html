@@ -818,13 +818,13 @@
 	<div class="sb-modal-header">
 		{{resource?.frmelmnts?.lbl?.editBlueprint}}
 	</div>
-	<div class="sb-modal-content desktop-o-x-unset">		
+	<div class="sb-modal-content">		
 		<div class="segment mt-5 pb-30 pt-10">
 			<form class="ui form sb-dock-dropdown">
 				<div class="ui grid">	
 					<div *ngFor="let property of blueprintTemplate.properties" class="{{property.renderingHints?.semanticColumnWidth || 'six'}} wide column py-10">
 						<div class="field">
-							<label class="d-inline-block fs-0-785 font-weight-normal mr-4">{{property.label}}</label><span class="sb-color-red" *ngIf="(property.required == true)">*</span>
+							<label class="d-inline-block fs-0-925 font-weight-normal mr-4">{{property.label}}</label><span class="sb-color-red" *ngIf="(property.required == true)">*</span>
 							<input *ngIf="property.inputType === 'text'" type="text" class="sb-form-control" name="{{property.code}}" [(ngModel)]="localBlueprint[property.code]"  	autofocus />
 							<sui-multi-select #multiselect *ngIf="property.inputType === 'multiSelect' && !property.children" class="selection p-5 b-100 min-w-0"
 								[isSearchable]=true (selectedOptionChange)="onChangeBlueprint()"
@@ -836,7 +836,7 @@
 								<sui-select-option *ngFor="let option of multiselect.filteredOptions" [value]="option" ></sui-select-option>
 							</sui-multi-select>
 							<div *ngIf="property.children" class="d-flex">
-								<div *ngFor="let child of property.children" class="px-10 w-20">
+								<div *ngFor="let child of property.children" class="pl-10 w-60">
 									<label class="d-block fs-0-785 font-weight-normal">{{child.label}}</label>
 									<sui-select class="selection p-5 b-100 min-w-0" #nestedSelect 
 									name="{{child.code}}"
