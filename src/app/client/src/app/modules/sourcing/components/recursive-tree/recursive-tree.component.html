@@ -215,7 +215,7 @@
       </div>
       <div class="sb-chapterlist-child sb-dock-toc-accor" *ngIf="collection.children">
         <app-recursive-tree [collectionUnits]="collection.children" [level]="childlevel" [programContext]="programContext" [sessionContext]="sessionContext"  [selectedChapter]="selectedChapter" [originalCollectionData]="originalCollectionData"
-          (nodeMeta)="nodeMetaEmitter($event)"></app-recursive-tree>
+        [selectedStatus]="selectedStatus" (nodeMeta)="nodeMetaEmitter($event)"></app-recursive-tree>
       </div>
     </div>
   </sui-accordion-panel>

@@ -175,6 +175,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       "status": "Live"
       },
       {
+        "label": "Corrections Pending",
+        "status": "PendingForCorrections"
+      },
+      {
         "label": "Approved",
         "status": "Approved"
       },
