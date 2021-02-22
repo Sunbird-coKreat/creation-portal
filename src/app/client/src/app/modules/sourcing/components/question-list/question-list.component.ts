@@ -509,7 +509,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
      // tslint:disable-next-line:max-line-length
     this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSourcingActionButtons'] = this.canSourcingReviewerPerformActions();
+    this.visibility['showSourcingActionButtons'] = submissionDateFlag && this.canSourcingReviewerPerformActions();
   }
 
   canDeleteQuestion() {

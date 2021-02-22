@@ -181,7 +181,7 @@
       <div class="sb-pageSection-content sb-bg-white py-24 px-0 dynamicHeight">
         <div class="ui container sb-textbook-details-container mb-24">
           <div class="d-flex flex-jc-space-between fs-0-785 sb-color-gray-300 mb-15">
-            <span *ngIf="textbookStatusMessage" class="sb-color-error mr-8 pl-10 fs-0-785 font-weight-bold font-italic">{{textbookStatusMessage}}</span>
+            <span *ngIf="textbookStatusMessage" class="sb-color-error mr-8 pl-10 fs-0-785 font-weight-bold font-italic w-30">{{textbookStatusMessage}}</span>
             <span class="w-30 font-italic">{{resourceService.frmelmnts.lbl.partialTextbookSelectionNote | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName(programContext) | interpolate: '{contentTypeUnit}': (blueprintTemplate ? (resourceService?.frmelmnts?.lbl?.sections) : (resourceService?.frmelmnts?.lbl?.chapters)) | interpolate: '{contentTypeUnit}': blueprintTemplate ? resourceService?.frmelmnts?.lbl?.sections : resourceService?.frmelmnts?.lbl?.chapters | lowercase }} </span>
             <div class="d-flex">
               <div *ngIf="sourcingOrgReviewer && storedCollectionData && !sessionContext.nominationDetails && programsService.isProjectLive(programContext)" class="d-flex">
@@ -280,7 +280,7 @@
 	<div class="sb-modal-header">
 		{{resourceService?.frmelmnts?.lbl?.viewBlueprint}}
 	</div>
-	<div class="sb-modal-content desktop-o-x-unset">		
+	<div class="sb-modal-content">		
 		<div class="segment mt-5 pb-30 pt-10">
 			<form class="ui form sb-dock-dropdown">
 				<div class="ui grid">	
@@ -316,7 +316,7 @@
 	<div class="sb-modal-header">
 		{{resourceService?.frmelmnts?.lbl?.progressAgainstBlueprint}}
 	</div>
-	<div class="sb-modal-content desktop-o-x-unset">		
+	<div class="sb-modal-content">		
 		<div class="segment mt-5 pb-30 pt-10">
 			<form class="ui form sb-dock-dropdown">
 				<div class="ui grid">	

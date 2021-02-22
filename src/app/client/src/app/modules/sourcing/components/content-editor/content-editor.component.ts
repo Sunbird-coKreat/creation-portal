@@ -204,7 +204,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     this.visibility['showSubmit'] = submissionDateFlag && this.canSubmit();
     this.visibility['showEditMetadata'] = submissionDateFlag && this.canEditMetadata();
     this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
-    this.visibility['showSourcingActionButtons'] = this.canSourcingReviewerPerformActions();
+    this.visibility['showSourcingActionButtons'] = submissionDateFlag && this.canSourcingReviewerPerformActions();
     this.visibility['showSendForCorrections'] = this.visibility['showSourcingActionButtons'] && this.canSendForCorrections();
   }
 
