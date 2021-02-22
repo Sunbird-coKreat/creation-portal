@@ -1199,8 +1199,14 @@ showTexbooklist(showTextBookSelector = true) {
   }
 
   public mapBlueprintToId() {
-    this.editBlueprintFlag = false;
-    this.localBlueprintMap[this.choosedTextBook.code] = this.localBlueprint;
+    if(this.isBlueprintValid()) {
+      this.localBlueprintMap[this.choosedTextBook.code] = this.localBlueprint;
+      this.editBlueprintFlag = false;
+    }
+    else {
+      this.toasterService.error(this.resource.messages.emsg.blueprintViolation);
+    }
+    
   }
 
   initEditBlueprintForm(collection) { 
@@ -1224,6 +1230,28 @@ showTexbooklist(showTextBookSelector = true) {
     }
     else this.localBlueprint = blueprint; 
 
+  }
+
+  isBlueprintValid() {
+    let validity = true;
+    _.forEach(this.blueprintTemplate.properties, (prop) => {
+      let val = this.localBlueprint[prop.code]
+      if(prop.required) {
+        if(!val) validity = false;
+        else if(Array.isArray(val) && !val.length) {
+          validity = false;
+        } 
+        else if(typeof val === 'object') {
+          if(_.reduce(val, (result, child, key) => {
+            result = result + child;
+            return result;
+          }, 0) === 0) {
+            validity = false;
+          }
+        }
+      }
+    })
+    return validity;
   }
 
   initChaptersSelectionForm(chapters) {
