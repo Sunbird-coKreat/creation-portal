@@ -69,8 +69,12 @@ export class RecursiveTreeComponent implements OnInit {
 
   includes(sourcingOrgReviewer: Boolean, selectedStatus: Array<string>, currentStatus: String) {
     // Always return true if not sourcingOrgReviewer    
-    return (!sourcingOrgReviewer) || _.includes(selectedStatus, currentStatus) 
-    
+    if(!sourcingOrgReviewer) return true;
+    else {
+      // Always return true if no status selected 
+      return (!selectedStatus.length) || _.includes(selectedStatus, currentStatus)
+    }
+         
   }
 
   shouldActionMenuBeVisible() {
