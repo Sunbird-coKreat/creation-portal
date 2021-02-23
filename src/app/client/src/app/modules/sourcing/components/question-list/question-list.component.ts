@@ -518,7 +518,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   questionLimitReached() {
-    let limit = _.get(this.templateDetails, 'objectMetadata.schema.properties.maxQuestions.default', undefined);        
+    let limit = _.get(this.sessionContext, 'contentMetadata.maxQuestions', undefined);        
     if(limit) return (limit === 1 ? true : this.questionList.length >= limit); 
     return false;    
   }

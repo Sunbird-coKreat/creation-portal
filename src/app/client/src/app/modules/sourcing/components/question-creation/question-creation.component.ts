@@ -53,6 +53,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   public selectionFields: Array<any>;
   public multiSelectionFields: Array<any>;
   public rejectComment: string;
+  public questionLimit: Number;
   questionMetaForm: FormGroup;
   initialized = false;
   showFormError = false;
@@ -119,12 +120,12 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
     this.overrideMetaData = this.programsService.overrideMetaData;
     this.telemetryPageId =  this.sessionContext.telemetryPageId;
     this.telemetryEventsInput.telemetryPageId = this.telemetryPageId;
-    this.solutionUUID = UUID.UUID();
+    this.solutionUUID = UUID.UUID();       
     this.initialize();
     if (this.questionMetaData && this.questionMetaData.data) {
       this.mediaArr = this.questionMetaData.data.media || [];
     }
-    this.userName = this.setUserName();
+    this.userName = this.setUserName();    
   }
 
   ngAfterViewInit() {
@@ -160,6 +161,13 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   getTelemetryInteractObject(id: string, type: string) {
     return this.programTelemetryService.getTelemetryInteractObject(id, type, '1.0',
     { l1: this.sessionContext.collection, l2: this.sessionContext.textBookUnitIdentifier, l3: this.sessionContext.resourceIdentifier});
+  }
+
+  questionLimitReached() {
+    let limit = _.get(this.sessionContext, 'contentMetadata.maxQuestions', undefined);    
+    let questionList = _.get(this.sessionContext, 'questionList', undefined);
+    if(limit && questionList) return (limit === 1 ? true : questionList.length >= limit); 
+    return false;    
   }
 
   ngOnChanges() {
@@ -628,7 +636,8 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
       && this.sessionContext.resourceStatus === 'Review'
       && this.programsService.checkForContentSubmissionDate(this.sessionContext.programContext)
       && this.router.url.includes('/contribute')
-      && this.userService.userid !== _.get(this.sessionContext, 'contentMetadata.createdBy'));
+      && this.userService.userid !== _.get(this.sessionContext, 'contentMetadata.createdBy'))
+      && !this.questionLimitReached();
   }
 
   getEditableFields() {
