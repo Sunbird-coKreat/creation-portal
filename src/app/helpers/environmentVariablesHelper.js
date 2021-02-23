@@ -43,6 +43,7 @@ let envVariables = {
   dock_api_call_log_status: env.dock_api_call_log_status || false,
   SUNBIRD_PORTAL_URL: env.sunbird_portal_url,
   SUNBIRD_LEARNER_URL: env.sunbird_learner_url,
+  DOCK_PROGRAM_SERVICE_URL: env.dock_program_service_url,
 
 
   // TTL and Intervals
