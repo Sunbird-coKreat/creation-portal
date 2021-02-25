@@ -64,7 +64,7 @@ export class ProgramsService extends DataService implements CanActivate {
       this.config = config;
       this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;//"http://localhost:6000/";//
     }
-
+    
   /**
    * initializes the service is the user is logged in;
    */
@@ -1115,6 +1115,18 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
     return this.API_URL(req);
+  }
+
+  generateCollectionPDF(identifier) {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.PRINT_PREVIEW}`,
+      param: {
+        id: identifier,
+        format: 'json'
+      }
+    };    
+    
+  return this.contentService.get(req);
   }
 
   generateCSV(config) {

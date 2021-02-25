@@ -71,7 +71,7 @@ module.exports = (app) => {
             proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
             proxyReqPathResolver: (req) => {
               var originalUrl = req.originalUrl
-              originalUrl = originalUrl.replace('/action/', '')
+              originalUrl = originalUrl.replace('/content/', '')
               const URl = require('url').parse(programServiceUrl + originalUrl).path.replace('//', '/');
               console.log('programServiceUrl  ', URl)
               return URl
