@@ -435,7 +435,7 @@ export class BulkUploadComponent implements OnInit {
       this.setError(`${headerName} has invalid url value at row: ${rowNumber}`);
     };
     const maxLengthError = (headerName, rowNumber, columnNumber, maxLength, length) => {
-      this.setError(`${headerName} contains more than ${maxLength} characters at row: ${rowNumber}`);
+      this.setError(`Length of ${headerName} exceeds ${maxLength}. Please give a shorter ${headerName} at row: ${rowNumber}`);
     };
     const extraHeaderError = (invalidColumns, expectedColumns, foundColumns) => {
       this.setError(`Invalid data found in columns: ${invalidColumns.join(',')}`);
@@ -445,7 +445,7 @@ export class BulkUploadComponent implements OnInit {
     const licenses = this.licenses.map((license) => license.name);
 
     const headers = [
-      { name: 'Name of the Content', inputName: 'name', maxLength: 250, required: true, requiredError, headerError, maxLengthError },
+      { name: 'Name of the Content', inputName: 'name', maxLength: 50, required: true, requiredError, headerError, maxLengthError },
       { name: 'Description of the content', inputName: 'description', maxLength: 500, maxLengthError, headerError },
       { name: 'Keywords', inputName: 'keywords', isArray: true, headerError },
       // tslint:disable-next-line:max-line-length
