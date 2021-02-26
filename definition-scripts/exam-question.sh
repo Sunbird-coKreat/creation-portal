@@ -48,85 +48,79 @@ curl -L -X POST '{{host}}/object/category/definition/v4/create' \
               "description": "Name",
               "index": 1,
               "label": "Name",
-              "required": true,
+              "required": false,
               "name": "Name",
               "inputType": "text",
               "placeholder": "Name"
+            },
+            {
+              "code": "topic",
+              "dataType": "list",
+              "description": "",
+              "editable": true,
+              "index": 2,
+              "inputType": "multiSelect",
+              "label": "Chapter",
+              "name": "Chapter",
+              "placeholder": "Select chapter",
+              "renderingHints": {},
+              "required": false,
+              "visible": true
             },
             {
               "code": "learningOutcome",
               "dataType": "list",
               "description": "",
               "editable": true,
-              "index": 2,
+              "index": 3,
               "inputType": "multiSelect",
-              "label": "Learning Outcome :",
-              "name": "Learning Outcome :",
-              "placeholder": "Select Learning Outcome",
-              "depends": [
-                "topic"
-              ],
+              "label": "Competency",
+              "name": "Competency",
+              "placeholder": "Select competency",
               "renderingHints": {},
-              "required": true,
+              "required": false,
               "visible": true
             },
             {
-              "code": "author",
-              "dataType": "text",
-              "description": "Author",
-              "editable": true,
-              "index": 4,
-              "inputType": "text",
-              "label": "Author",
-              "name": "Author",
-              "placeholder": "Author",
-              "tooltip": "Provide name of creator of this content.",
-              "renderingHints": {},
-              "required": false
-            },
-            {
-              "code": "copyright",
-              "dataType": "text",
-              "description": "Copyright",
-              "editable": true,
-              "index": 5,
-              "inputType": "text",
-              "label": "Copyright and Year",
-              "name": "Copyright",
-              "placeholder": "Copyright",
-              "tooltip": "If you are an individual, creating original content, you are the copyright holder. If you are creating this course content on behalf of an organisation, the organisation may be the copyright holder. ",
-              "renderingHints": {},
-              "required": true
-            },
-            {
-              "code": "license",
-              "visible": true,
-              "editable": true,
-              "displayProperty": "Editable",
-              "dataType": "text",
-              "renderingHints": {
-                "semanticColumnWidth": "six"
-              }
-            },
-            {
-              "code": "bloomslevel",
+              "code": "bloomsLevel",
+              "inputType": "multiSelect",
               "dataType": "list",
-              "description": "Learning Level For The Content",
-              "editable": true,
-              "inputType": "select",
-              "label": "Learning Level",
-              "name": "LearningLevel",
-              "placeholder": "Select Learning Levels",
-              "required": true,
+              "description": "Cognitive processes involved to answer the question set.",
+              "index": 4,
+              "range": [
+                {
+                  "bloomLevel": "remember",
+                  "name": "Remember"
+                },
+                {
+                  "bloomLevel": "understand",
+                  "name": "Understand"
+                },
+                {
+                  "bloomLevel": "apply",
+                  "name": "Apply"
+                },
+                {
+                  "bloomLevel": "analyse",
+                  "name": "Analyse"
+                },
+                {
+                  "bloomLevel": "evaluate",
+                  "name": "Evaluate"
+                },
+                {
+                  "bloomLevel": "create",
+                  "name": "Create"
+                }
+              ],
+              "renderingHints": {
+                "semanticColumnWidth": "twelve"
+              },
+              "required": false,
               "visible": true,
-              "defaultValue": [
-                "Knowledge (Remembering)",
-                "Comprehension (Understanding)",
-                "Application (Transferring)",
-                "Analysis (Relating)",
-                "Evaluation (Judging)",
-                "Synthesis (Creating)"
-              ]
+              "editable": true,
+              "name": "Learning Level",
+              "label": "Skills Tested"
             },
             {
               "code": "marks",
@@ -141,26 +135,49 @@ curl -L -X POST '{{host}}/object/category/definition/v4/create' \
                 "semanticColumnWidth": "six"
               },
               "description": "Marks of the question in the examination",
-              "index": 6,
+              "index": 5,
               "inputType": "text",
               "placeholder": "0"
             },
             {
-              "code": "additionalCategories",
+              "code": "author",
+              "dataType": "text",
+              "description": "Author",
+              "editable": true,
+              "index": 6,
+              "inputType": "text",
+              "label": "Author",
+              "name": "Author",
+              "placeholder": "Author",
+              "tooltip": "Provide name of creator of this content.",
+              "renderingHints": {},
+              "required": false
+            },
+            {
+              "code": "copyright",
+              "dataType": "text",
+              "description": "Copyright",
+              "editable": true,
+              "index": 7,
+              "inputType": "text",
+              "label": "Copyright and Year",
+              "name": "Copyright",
+              "defaultValue": "2021 MIT",
+              "placeholder": "Copyright",
+              "tooltip": "If you are an individual, creating original content, you are the copyright holder. If you are creating this course content on behalf of an organisation, the organisation may be the copyright holder. ",
+              "renderingHints": {},
+              "required": false
+            },
+            {
+              "code": "license",
               "visible": true,
+              "index": 8,
               "editable": true,
               "displayProperty": "Editable",
-              "dataType": "list",
+              "dataType": "text",
               "renderingHints": {
                 "semanticColumnWidth": "six"
-              },
-              "description": "Subject of the Content to use to teach",
-              "index": 7,
-              "label": "Content Additional Categories",
-              "required": false,
-              "name": "additionalCategories",
-              "inputType": "multiSelect",
-              "placeholder": "Content Additional Categories"
+              }
             }
           ]
         }
