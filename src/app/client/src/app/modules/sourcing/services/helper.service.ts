@@ -561,7 +561,7 @@ export class HelperService {
           if (!_.isEmpty(this.userService.userProfile.lastName)) {
             creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
           }
-          formFieldCategory.defaultValue = creator;
+          formFieldCategory.defaultValue = contentMetadata.creator || creator;
         }        
         if (formFieldCategory.code === 'learningOutcome' && formFieldCategory.inputType === 'select' && _.isArray(requiredData)) {
           formFieldCategory.defaultValue = _.first(requiredData) || '';
