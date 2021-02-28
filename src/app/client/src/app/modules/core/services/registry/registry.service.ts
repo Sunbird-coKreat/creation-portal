@@ -21,7 +21,7 @@ export class RegistryService extends DataService {
   public mycontributionOrgUsers = [];
   osReqLimit =  250;
   searchLimitCount = 100;// setting count here , because in future we can get/set limit from configuration
-  programUserPageLimit = 200; // setting page limit here , because in future we can get/set limit from configuration 
+  programUserPageLimit = 200; // setting page limit here , because in future we can get/set limit from configuration
   constructor(config: ConfigService, http: HttpClient, public contentService: ContentService, public telemetryService: TelemetryService,
     public userService: UserService, public learnerService: LearnerService, public cacheService: CacheService) {
     super(http);
@@ -142,6 +142,77 @@ export class RegistryService extends DataService {
       })
     }
    }
+
+   public getOrgUsersDetails(userRegData?, forSourcing?) {
+    const roles = forSourcing ?  ["sourcing_reviewer", "sourcing_admin"] : ["user", "admin"];
+    if (_.isUndefined(userRegData)) {
+      userRegData = _.get(this.userService, 'userProfile.userRegData');
+    }
+    const orgId = _.get(userRegData, 'Org.osid');
+    if (orgId) {
+      return this.getAllOrgUsers(orgId, roles).then((allOrgUsers) => {
+        return new Promise((resolve, reject) => {
+          if (!_.isEmpty(allOrgUsers)) {
+            const userList = _.filter(allOrgUsers, obj => {
+              if ((obj.userId !== _.get(userRegData, 'User.osid'))) {
+                return obj;
+              }
+            });
+            if (userList.length == 0) {
+              return resolve([]);
+            }
+            return resolve(_.compact(userList));
+          }
+        });
+      });
+    } else {
+      return new Promise((resolve, reject) => {
+        return resolve([]);
+      })
+    }
+  }
+
+   getAllOrgUsers(orgId, roles?, offset?) {
+    offset = (!_.isUndefined(offset)) ? offset : 0;
+    return new Promise((resolve, reject) => {
+      this.getOrgUsers(orgId, roles, offset, this.osReqLimit).subscribe(
+        (res) => {
+          if (res.result && res.result.content && res.result.count > 0) {
+            this.mycontributionOrgUsers = _.compact(_.concat(this.mycontributionOrgUsers, res.result.content));
+            if (res.result.count < this.osReqLimit) {
+              return resolve(this.mycontributionOrgUsers);
+            }
+            offset = offset + this.osReqLimit;
+            return resolve(this.getAllOrgUsers(orgId, roles, offset));
+          } else {
+            return resolve(this.mycontributionOrgUsers);
+          }
+        },
+        (error) => { return reject([]);
+      });
+    });
+   }
+
+   public getOrgUsers(orgId, roles, offset?, limit?): Observable<ServerResponse> {
+    const req = {
+      url: `program/v1/user/list`,
+      data: {
+        'request': {
+          'filters': {
+            'User_Org': {
+              'orgId': {
+                'eq': orgId
+              },
+              'roles': roles,
+              'limit': limit || 250,
+              'offset': offset || 0
+            }
+          }
+        }
+      }
+    };
+    return this.contentService.post(req);
+  }
 
   public getAllContributionOrgUsers(orgId, forSourcing?, offset?) {
     offset = (!_.isUndefined(offset)) ? offset : 0;
@@ -337,7 +408,7 @@ export class RegistryService extends DataService {
       });
     });
   }
-  
+
   public getSearchedUserList(userList,searchInput) {
     let searchedUserList = [];
     searchInput = searchInput.toUpperCase();
