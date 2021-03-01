@@ -57,7 +57,6 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     this.registryService.getOpenSaberOrgByOrgId(this.userService.userProfile).subscribe((res1) => {
       this.userRegData['Org'] = (_.get(res1, 'result.Org').length > 0) ? _.first(_.get(res1, 'result.Org')) : {};
       this.orgLink = `${baseUrl}/sourcing/join/${this.userRegData.Org.osid}`;
-      // this.getContributionOrgUsers();
       this.getOrgUsersDetails();
     }, (error) => {
      console.log('No opensaber org for sourcing');
@@ -118,21 +117,6 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
       this.sortCollection('selectedRole');
     }
     this.showLoader = false;
-  }
-
-  getContributionOrgUsers() {
-    this.registryService.getcontributingOrgUsersDetails(this.userRegData, true).then((orgUsers) => {
-      this.setOrgUsers(orgUsers);
-    }).catch((error) => {
-       console.log('Error while getting all users');
-       const errInfo = {
-        telemetryPageId: this.getPageId(),
-        telemetryCdata : this.telemetryInteractCdata,
-        env : this.activatedRoute.snapshot.data.telemetry.env,
-        request: this.userRegData
-      };
-      this.sourcingService.apiErrorHandling(error, errInfo);
-    });
   }
 
   getOrgUsersDetails() {
