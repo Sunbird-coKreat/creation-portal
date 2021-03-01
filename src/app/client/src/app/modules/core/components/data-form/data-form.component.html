@@ -7,7 +7,7 @@
       </label>
       <span class="sb-color-red" *ngIf="(field.required == true)">*</span><i *ngIf="field.tooltip" class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{field.tooltip}}"></i>
       <div class="sb-field">
-        <input class="sb-form-control" name={{field.code}} type={{field.inputType}} [(ngModel)]="formInputData[field.code]" placeholder={{field.placeholder}} [disabled]="!field.editable" autofocus>
+        <input class="sb-form-control" name={{field.code}} type={{field.inputType}} maxlength="{{field.maxlength}}" [(ngModel)]="formInputData[field.code]" placeholder={{field.placeholder}} [disabled]="!field.editable" autofocus>
       </div>
     </div>
 
