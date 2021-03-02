@@ -63,7 +63,7 @@ export class RecursiveTreeComponent implements OnInit {
     this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
-    this.userId = this.userService.getUserId();
+    this.userId = this.userService.userid;
     this.showActionMenu = this.visibility && this.visibility['showActionMenu'];
   }
 
@@ -93,7 +93,7 @@ export class RecursiveTreeComponent implements OnInit {
   }
 
   // canViewActionMenu(content) {
-  //   return !!(this.visibility && this.visibility['showActionMenu'] && content.createdBy === this.userService.getUserId());
+  //   return !!(this.visibility && this.visibility['showActionMenu'] && content.createdBy === this.userService.userid);
   // }
 
   nodeMetaEmitter(event) {

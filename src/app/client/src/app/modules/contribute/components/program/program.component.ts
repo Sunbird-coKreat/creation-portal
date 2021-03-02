@@ -255,7 +255,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.userService.isUserBelongsToOrg()) {
       req.data.request.filters['organisation_id'] = this.userService.getUserOrgId();
     } else {
-      req.data.request.filters['user_id'] = this.userService.getUserId();
+      req.data.request.filters['user_id'] = this.userService.userid;
     }
     this.programsService.post(req).subscribe((data) => {
       const nominationDetails = _.first(_.get(data, 'result', []));

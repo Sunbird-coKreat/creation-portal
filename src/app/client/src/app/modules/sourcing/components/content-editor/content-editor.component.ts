@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, NgZone, Renderer2, OnDestroy, Input, 
 import * as _ from 'lodash-es';
 import * as iziModal from 'izimodal/js/iziModal';
 import { NavigationHelperService, ResourceService, ConfigService, ToasterService, IUserProfile } from '@sunbird/shared';
-import { UserService, TenantService, FrameworkService, PlayerService, NotificationService, ProgramsService, 
+import { UserService, TenantService, FrameworkService, PlayerService, NotificationService, ProgramsService,
   ActionService } from '@sunbird/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '@sunbird/environment';
@@ -131,7 +131,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     this.helperService.getNotification().pipe(takeUntil(this.onComponentDestroy$)).subscribe((action) => {
       this.contentStatusNotify(action);
     });
-    this.helperService.initialize(this.programContext);    
+    this.helperService.initialize(this.programContext);
   }
   loadContentEditor() {
     if (!document.getElementById('contentEditor')) {
@@ -214,12 +214,12 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
 
   canEdit() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.resourceStatus === 'Draft' && this.userService.getUserId() === this.contentData.createdBy);
+    return !!(this.resourceStatus === 'Draft' && this.userService.userid === this.contentData.createdBy);
   }
 
   canSave() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.hasAccessFor(['CONTRIBUTOR']) && !this.contentData.sampleContent === true && this.resourceStatus === 'Draft' && (this.userService.getUserId() === this.contentData.createdBy));
+    return !!(this.hasAccessFor(['CONTRIBUTOR']) && !this.contentData.sampleContent === true && this.resourceStatus === 'Draft' && (this.userService.userid === this.contentData.createdBy));
   }
 
   canEditMetadata() {
@@ -229,31 +229,31 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
 
   canSubmit() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && this.userService.getUserId() === this.contentData.createdBy);
+    return !!(this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && this.userService.userid === this.contentData.createdBy);
   }
 
   canViewContentPreview() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.sourcingOrgReviewer || (this.sessionContext.currentRoles.includes('REVIEWER') && this.userService.getUserId() !== this.contentData.createdBy) || (this.resourceStatus !== 'Draft' && this.userService.getUserId() === this.contentData.createdBy));
+    return !!(this.sourcingOrgReviewer || (this.sessionContext.currentRoles.includes('REVIEWER') && this.userService.userid !== this.contentData.createdBy) || (this.resourceStatus !== 'Draft' && this.userService.userid === this.contentData.createdBy));
   }
 
   canPublishContent() {
     // tslint:disable-next-line:max-line-length
     return !!(this.router.url.includes('/contribute') && !this.contentData.sampleContent === true &&
     // tslint:disable-next-line:max-line-length
-    this.hasAccessFor(['REVIEWER']) && this.resourceStatus === 'Review' && this.userService.getUserId() !== this.contentData.createdBy);
+    this.hasAccessFor(['REVIEWER']) && this.resourceStatus === 'Review' && this.userService.userid !== this.contentData.createdBy);
   }
 
   canReviewContent() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.router.url.includes('/contribute') && !this.contentData.sampleContent === true && this.hasAccessFor(['REVIEWER']) && this.resourceStatus === 'Review' && this.userService.getUserId() !== this.contentData.createdBy);
+    return !!(this.router.url.includes('/contribute') && !this.contentData.sampleContent === true && this.hasAccessFor(['REVIEWER']) && this.resourceStatus === 'Review' && this.userService.userid !== this.contentData.createdBy);
   }
 
   canSourcingReviewerPerformActions() {
     // tslint:disable-next-line:max-line-length
     return !!(this.router.url.includes('/sourcing')
     && !this.contentData.sampleContent === true && this.resourceStatus === 'Live'
-    && this.userService.getUserId() !== this.contentData.createdBy
+    && this.userService.userid !== this.contentData.createdBy
     && this.resourceStatus === 'Live' && !this.sourcingReviewStatus &&
     (this.originCollectionData.status === 'Draft' && this.selectedOriginUnitStatus === 'Draft'));
   }
@@ -334,7 +334,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     this.helperService.getCategoryMetaData(this.contentData.primaryCategory, _.get(this.programContext, 'rootorg_id'));
   }
 
-  handleContentStatusText() {    
+  handleContentStatusText() {
     if (this.resourceStatus === 'Review') {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
       this.resourceStatusClass = 'sb-color-primary';
@@ -399,7 +399,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
 
   getEditableFields() {
     if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
-      if (this.userService.getUserId() === this.contentData.createdBy && this.resourceStatus === 'Draft') {
+      if (this.userService.userid === this.contentData.createdBy && this.resourceStatus === 'Draft') {
         this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.contentData);
         this.contentEditRole = 'CONTRIBUTOR';
       } else if (this.canPublishContent()) {

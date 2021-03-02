@@ -240,7 +240,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   fetchCategoryDetails() {
     this.helperService.categoryMetaData$.pipe(take(1), takeUntil(this.onComponentDestroy$)).subscribe(data => {
-      this.fetchFormconfiguration();         
+      this.fetchFormconfiguration();
       this.handleActionButtons();
     });
     this.helperService.getCategoryMetaData(this.resourceDetails.primaryCategory, _.get(this.programContext, 'rootorg_id'));
@@ -400,7 +400,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     // tslint:disable-next-line:max-line-length
     [this.categoryMasterList, this.formFieldProperties] = this.helperService.initializeMetadataForm(this.sessionContext, this.formFieldProperties, this.resourceDetails);
-    if(this.formFieldProperties["bloomsLevel"] && !this.categoryMasterList["bloomsLevel"]) {      
+    if(this.formFieldProperties["bloomsLevel"] && !this.categoryMasterList["bloomsLevel"]) {
       this.categoryMasterList["bloomsLevel"] = this.formFieldProperties["bloomsLevel"].range;
     }
     this.showEditMetaForm = true;
@@ -408,7 +408,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getEditableFields() {
     if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
-      if (this.userService.getUserId() === this.resourceDetails.createdBy && this.resourceStatus === 'Draft') {
+      if (this.userService.userid === this.resourceDetails.createdBy && this.resourceStatus === 'Draft') {
         this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.resourceDetails);
         this.contentEditRole = 'CONTRIBUTOR';
       } else if (this.canPublishContent()) {
@@ -514,33 +514,33 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   canDeleteQuestion() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && this.questionList.length > 1 && this.userService.getUserId() === this.resourceDetails.createdBy);
+    return !!(this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && this.questionList.length > 1 && this.userService.userid === this.resourceDetails.createdBy);
   }
 
   questionLimitReached() {
-    let limit = _.get(this.sessionContext, 'contentMetadata.maxQuestions', undefined);        
-    if(limit) return (limit === 1 ? true : this.questionList.length >= limit); 
-    return false;    
+    let limit = _.get(this.sessionContext, 'contentMetadata.maxQuestions', undefined);
+    if(limit) return (limit === 1 ? true : this.questionList.length >= limit);
+    return false;
   }
 
   canCreateQuestion() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && !(this.questionLimitReached()) && this.userService.getUserId() === this.resourceDetails.createdBy);
+    return !!(this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && !(this.questionLimitReached()) && this.userService.userid === this.resourceDetails.createdBy);
   }
 
   canEdit() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && this.userService.getUserId() === this.resourceDetails.createdBy);
+    return !!(this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && this.userService.userid === this.resourceDetails.createdBy);
   }
 
   canSubmit() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && this.userService.getUserId() === this.resourceDetails.createdBy);
+    return !!(this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && this.userService.userid === this.resourceDetails.createdBy);
   }
 
   canSave() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && (this.userService.getUserId() === this.resourceDetails.createdBy));
+    return !!(this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && (this.userService.userid === this.resourceDetails.createdBy));
   }
 
   canEditMetadata() {
@@ -550,7 +550,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   canPublishContent() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.router.url.includes('/contribute') && !this.resourceDetails.sampleContent === true && this.hasAccessFor(['REVIEWER']) && this.resourceStatus === 'Review' && this.userService.getUserId() !== this.resourceDetails.createdBy);
+    return !!(this.router.url.includes('/contribute') && !this.resourceDetails.sampleContent === true && this.hasAccessFor(['REVIEWER']) && this.resourceStatus === 'Review' && this.userService.userid !== this.resourceDetails.createdBy);
   }
 
   canReviewContent() {
@@ -569,7 +569,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   canEditContentTitle() {
     const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
     // tslint:disable-next-line:max-line-length
-    if (submissionDateFlag && this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && this.userService.getUserId() === this.resourceDetails.createdBy) {
+    if (submissionDateFlag && this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && this.userService.userid === this.resourceDetails.createdBy) {
       return true;
     } else if (this.getEditableFieldsACL() === 'REVIEWER') {
       const nameFieldConfig = _.find(this.overrideMetaData, (item) => item.code === 'name');
@@ -642,7 +642,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }))
     .subscribe((questionList) => {
           this.selectedQuestionId = questionList[0].identifier;
-          this.handleQuestionTabChange(this.selectedQuestionId);          
+          this.handleQuestionTabChange(this.selectedQuestionId);
           this.handleActionButtons();
     });
   }
@@ -663,7 +663,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           mode: 'edit',
           data: assessment_item
         };
-        if (this.resourceStatus === 'Draft' && this.userService.getUserId() === this.resourceDetails.createdBy) {
+        if (this.resourceStatus === 'Draft' && this.userService.userid === this.resourceDetails.createdBy) {
           this.sessionContext.isReadOnlyMode = false;
         } else {
           this.sessionContext.isReadOnlyMode = true;
@@ -731,7 +731,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }),
     mergeMap(requestParams => this.updateItemset(requestParams, this.itemSetIdentifier)))
     .subscribe((contentRes: any) => {
-      this.handleQuestionTabChange(this.selectedQuestionId);      
+      this.handleQuestionTabChange(this.selectedQuestionId);
       this.handleActionButtons();
       this.goToNextQuestionStatus = false;
     });
@@ -1132,7 +1132,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!_.isEmpty(data['medium'])) {
       data['medium'] = data['medium'][0];
     }
-  
+
     return data;
   }
 
@@ -1323,7 +1323,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getEditableFieldsACL() {
     if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
-      if (this.userService.getUserId() === this.resourceDetails.createdBy && this.resourceStatus === 'Draft') {
+      if (this.userService.userid === this.resourceDetails.createdBy && this.resourceStatus === 'Draft') {
         return 'CONTRIBUTOR';
       } else if (this.canPublishContent()) {
         return 'REVIEWER';
