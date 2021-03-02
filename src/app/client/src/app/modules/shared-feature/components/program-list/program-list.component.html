@@ -203,7 +203,7 @@
                     [telemetryInteractObject]="telemetryInteractObject"
                     [telemetryInteractCdata]="getTelemetryInteractCdata(program.program_id,'project')"
                     [telemetryInteractPdata]="telemetryInteractPdata"></i>
-                     <i *ngIf="programsService.isProjectClosed(program)" (click)="setDelete(program, i)" class="icon trash sb-color-primary cursor-pointer ui fs-0-785" data-tooltip="Delete"
+                     <i *ngIf="program.status === 'Draft' || programsService.isProjectClosed(program)" (click)="setDelete(program, i)" class="icon trash sb-color-primary cursor-pointer ui fs-0-785" data-tooltip="Delete"
                     appTelemetryInteract
                     [telemetryInteractEdata]="getTelemetryInteractEdata('delete', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                     [telemetryInteractObject]="telemetryInteractObject"
