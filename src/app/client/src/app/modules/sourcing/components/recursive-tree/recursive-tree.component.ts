@@ -68,8 +68,10 @@ export class RecursiveTreeComponent implements OnInit {
   }
 
   includes(sourcingOrgReviewer: Boolean, selectedStatus: Array<string>, currentStatus: String) {
-    // Always return true if not sourcingOrgReviewer    
+    // Always return true if not sourcingOrgReviewer
     if(!sourcingOrgReviewer) return true;
+    // Always return true if sampleContent
+    else if(this.sessionContext.sampleContent) return true;
     else {
       // Always return true if no status selected 
       return (!selectedStatus.length) || _.includes(selectedStatus, currentStatus)
