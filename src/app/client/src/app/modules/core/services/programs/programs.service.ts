@@ -1291,7 +1291,7 @@ export class ProgramsService extends DataService implements CanActivate {
   }
 
   isProjectClosed(program) {
-    return !! ((this.isProjectEnded(program) && program.status === 'Live' || program.status === 'Unlisted') || program.status === 'Closed');
+    return !! ((this.isProjectEnded(program) && (program.status === 'Live' || program.status === 'Unlisted')) || program.status === 'Closed');
   }
 
   isProjectLive(program) {
