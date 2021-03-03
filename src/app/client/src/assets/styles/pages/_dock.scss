@@ -672,5 +672,26 @@ xxl calculateRem(180px) 24px 20px;
   .menu{
     width: 100%;
   }
-
 }
+.sb-modal.blueprint-modal{
+  .ui{
+      .modal{
+          margin: 0.5rem auto 0 !important;
+      }
+  }
+  .sb-modal-content{
+      height: calc(100vh - 100px) !important;
+  }
+}
+.sb-modal.applyFilter-modal{
+  .ui{
+      .modal{
+          margin: 1rem auto 0 !important;
+      }
+  }
+  .sb-modal-content{
+      max-height: 400px !important;
+      height: calc(100vh - 100px) !important;
+  }
+}
+
