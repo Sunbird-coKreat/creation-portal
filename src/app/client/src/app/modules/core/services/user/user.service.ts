@@ -492,25 +492,29 @@ export class UserService {
   }
 
   isContributingOrgAdmin() {
-    const roles = _.get(this, 'userProfile.userRegData.User_Org.roles', []);
+    const roles = _.get(this._userProfile, 'userRegData.User_Org.roles', []);
     return !_.isEmpty(roles) && _.includes(roles, 'admin');
   }
 
   isContributingOrgUser() {
-    const roles = _.get(this, 'userProfile.userRegData.User_Org.roles', []);
+    const roles = _.get(this._userProfile, '.userRegData.User_Org.roles', []);
     return !_.isEmpty(roles) && _.includes(roles, 'user');
   }
 
   isUserBelongsToOrg() {
-    return !!(_.get(this, 'userProfile.userRegData.User_Org'));
+    return !!(_.get(this._userProfile, 'userRegData.User_Org'));
   }
 
   getUserOrgRole() {
-    return _.get(this, 'userProfile.userRegData.User_Org.roles', []);
+    return _.get(this.userProfile, 'userRegData.User_Org.roles', []);
   }
 
   getUserId() {
     return _.get(this, 'userProfile.userId');
+  }
+
+  getUserProfileDataByKey(key) {
+    return this._userProfile[key];
   }
 
   getUserOrgId() {
@@ -518,12 +522,12 @@ export class UserService {
   }
 
   isSourcingOrgAdmin() {
-    return _.get(this, 'userProfile.userRoles', []).includes('ORG_ADMIN');
+    return _.get(this._userProfile, 'userRoles', []).includes('ORG_ADMIN');
   }
 
   isContributingOrgContributor(nomination, userId?) {
     if (_.isUndefined(userId)) {
-      userId = _.get(this, 'userProfile.userId');
+      userId = _.get(this._userProfile, 'userId');
     }
     const contributors = _.get(nomination, 'rolemapping.CONTRIBUTOR', []);
     return !_.isEmpty(contributors) && _.includes(contributors, userId);
@@ -531,14 +535,14 @@ export class UserService {
 
   isContributingOrgReviewer(nomination, userId?) {
     if (_.isUndefined(userId)) {
-      userId = _.get(this, 'userProfile.userId');
+      userId = _.get(this._userProfile, 'userId');
     }
     const contributors = _.get(nomination, 'rolemapping.REVIEWER', []);
     return !_.isEmpty(contributors) && _.includes(contributors, userId);
   }
 
   isDefaultContributingOrg(program) {
-    return program.rootorg_id === _.get(this.userProfile, 'userRegData.Org.orgId');
-    
+    return program.rootorg_id === _.get(this._userProfile, 'userRegData.Org.orgId');
+
   }
 }

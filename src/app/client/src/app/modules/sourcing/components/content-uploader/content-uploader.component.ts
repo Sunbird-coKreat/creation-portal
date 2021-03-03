@@ -102,7 +102,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public originCollectionData: any;
   selectedOriginUnitStatus: any;
   public bulkApprove: any;
-  public overrideMetaData: any;
   public editableFields = [];
   public isMetadataOverridden = false;
   public formFieldProperties: any;
@@ -130,7 +129,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   ngOnInit() {
     this.config = _.get(this.contentUploadComponentInput, 'config');
-    this.overrideMetaData = this.programsService.overrideMetaData;
     this.originCollectionData = _.get(this.contentUploadComponentInput, 'originCollectionData');
     this.selectedOriginUnitStatus = _.get(this.contentUploadComponentInput, 'content.originUnitStatus');
     this.sessionContext  = _.get(this.contentUploadComponentInput, 'sessionContext');
