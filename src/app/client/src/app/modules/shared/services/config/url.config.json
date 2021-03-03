@@ -258,7 +258,8 @@
       "CONFIGURATION_SEARCH": "program/v1/configuration/search",
       "PREFERENCE_READ": "program/v1/preference/read",
       "PREFERENCE_ADD": "program/v1/preference/create",
-      "FEED_SEARCH": "program/v1/feed/search"
+      "FEED_SEARCH": "program/v1/feed/search",
+      "PRINT_PREVIEW": "program/v1/print/pdf"
     },
     "DOCKCONTENT": {
       "CREATE": "content/v3/create",
@@ -280,7 +281,7 @@
       "UPDATE": "program/v1/process/update",
       "SEARCH": "program/v1/process/search",
       "DOCK_IMPORT": "content/v3/import",
-      "DOCK_IMPORT_V1": "content/v1/import"
+      "DOCK_IMPORT_V1": "content/v1/import"      
     },
     "DOCK_TENANT": {
       "LIST": "program/v1/tenant/list"

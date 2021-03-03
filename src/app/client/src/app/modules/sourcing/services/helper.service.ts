@@ -561,7 +561,7 @@ export class HelperService {
           if (!_.isEmpty(this.userService.userProfile.lastName)) {
             creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
           }
-          formFieldCategory.defaultValue = creator;
+          formFieldCategory.defaultValue = contentMetadata.creator || creator;
         }        
         if (formFieldCategory.code === 'learningOutcome' && formFieldCategory.inputType === 'select' && _.isArray(requiredData)) {
           formFieldCategory.defaultValue = _.first(requiredData) || '';
@@ -632,6 +632,15 @@ export class HelperService {
       'inputType': 'checkbox',
       'placeholder': 'Name'
     }];
+    _.forEach(formFields, formField => {
+      if(_.has(formField, 'validations')) {
+        _.forEach(formField.validations, validation => {
+            if (validation['type'] === 'maxlength') {
+              formField[validation['type']] = validation['value']
+            }
+        });
+       }
+    });
     return formFields && formFields.length ? [...formFields, ...contentPolicyCheck] : [];
   }
 
