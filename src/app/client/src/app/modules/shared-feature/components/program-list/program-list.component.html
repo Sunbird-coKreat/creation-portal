@@ -166,16 +166,16 @@
                     <div *ngIf="program.status === 'Draft'" class="sb-color-gray-300">{{resourceService?.frmelmnts?.lbl?.draft}}</div>
                     <div *ngIf="programsService.isProjectClosed(program)" class="sb-color-success">Closed</div>
                 </td>
-                <td class="text-center pl-0 pr-10">
+                <td class="text-center pl-0 pr-0">
 
-                  <div *ngIf="activeMyProgramsMenu && program.nomination_status  == 'Pending' && canNominate(program)" (click)="getProjectToModify(program)" class="d-inline-block cursor-pointer pr-10 pt-5">
+                  <div *ngIf="activeMyProgramsMenu && program.nomination_status  == 'Pending' && canNominate(program)" (click)="getProjectToModify(program)" class="d-inline-block cursor-pointer pr-5 pt-5">
                     <i class="icon edit sb-color-primary ui fs-0-92"></i>
                     <span class="sb-color-primary">{{ resourceService?.frmelmnts?.lbl?.modifyNomination.button }}</span>
                   </div>
                   <span [ngClass]="{'pull-right': !(issourcingOrgAdmin && this.router.url.includes('/sourcing'))}">
                     <button *ngIf="(programsService.isProjectLive(program) || programsService.isProjectClosed(program))"
                       type="button"
-                      class="sb-btn sb-btn-normal sb-btn-outline-primary mr-5"
+                      class="sb-btn sb-btn-normal sb-btn-outline-primary mr-10"
                       (click)="viewDetailsBtnClicked(program)"
                       appTelemetryInteract
                       [telemetryInteractEdata]="getTelemetryInteractEdata('open', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
@@ -197,13 +197,14 @@
                 
                   <div *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')" class="px-0 d-inline-block">
                     <div class="sb-dock-icon-tooltip d-inline-block">
-                      <i *ngIf="programsService.isProjectLive(program)" class="icon edit sb-color-primary cursor-pointer ui fs-0-785 px-20 va-text-sup" data-tooltip="Modify" (click)="editOnClick(program)"
+                      <i *ngIf="programsService.isProjectLive(program)" class="icon edit sb-color-primary cursor-pointer ui fs-0-785 px-5 va-text-sup" data-tooltip="Modify" (click)="editOnClick(program)"
                       appTelemetryInteract
                     [telemetryInteractEdata]="getTelemetryInteractEdata('modify', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                     [telemetryInteractObject]="telemetryInteractObject"
                     [telemetryInteractCdata]="getTelemetryInteractCdata(program.program_id,'project')"
                     [telemetryInteractPdata]="telemetryInteractPdata"></i>
-                     <i *ngIf="program.status === 'Draft' || programsService.isProjectClosed(program)" (click)="setDelete(program, i)" class="icon trash sb-color-primary cursor-pointer ui fs-0-785" data-tooltip="Delete"
+
+                     <i *ngIf="program.status === 'Draft' || programsService.isProjectClosed(program)" (click)="setDelete(program, i)" class="icon trash sb-color-primary cursor-pointer ui fs-0-785 va-text-sup ml-5" data-tooltip="Delete"
                     appTelemetryInteract
                     [telemetryInteractEdata]="getTelemetryInteractEdata('delete', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                     [telemetryInteractObject]="telemetryInteractObject"
