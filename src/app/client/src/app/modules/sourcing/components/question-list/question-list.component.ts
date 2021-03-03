@@ -870,7 +870,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   publishContent() {
-    this.helperService.publishContent(this.sessionContext.resourceIdentifier, this.userService.userProfile.userId)
+    this.helperService.publishContent(this.sessionContext.resourceIdentifier, this.userService.userid)
       .subscribe(res => {
         const contentId = res.result.node_id || res.result.identifier || res.result.content_id;
       this.showPublishModal = false;
@@ -1224,9 +1224,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getUserName() {
-    let creator = this.userService.userProfile.firstName;
-    if (!_.isEmpty(this.userService.userProfile.lastName)) {
-      creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
+    let creator = this.userService.getUserProfileDataByKey('firstName');
+    if (!_.isEmpty(this.userService.getUserProfileDataByKey('lastName'))) {
+      creator = this.userService.getUserProfileDataByKey('firstName') + ' ' + this.userService.getUserProfileDataByKey('lastName');
     }
     return creator;
   }

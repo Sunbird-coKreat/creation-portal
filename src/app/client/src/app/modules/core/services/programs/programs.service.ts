@@ -5,7 +5,8 @@ import { FrameworkService } from './../framework/framework.service';
 import { ExtPluginService } from './../ext-plugin/ext-plugin.service';
 import { PublicDataService } from './../public-data/public-data.service';
 import { ActionService } from './../action/action.service';
-import { ConfigService, ServerResponse, ToasterService, ResourceService, HttpOptions, BrowserCacheTtlService } from '@sunbird/shared';
+import { ConfigService, ServerResponse, ToasterService, ResourceService,
+  HttpOptions, BrowserCacheTtlService, IUserProfile } from '@sunbird/shared';
 import { Injectable } from '@angular/core';
 import { UserService } from '../user/user.service';
 import { combineLatest, of, iif, Observable, BehaviorSubject, throwError, merge, forkJoin, Subject} from 'rxjs';
@@ -52,6 +53,7 @@ export class ProgramsService extends DataService implements CanActivate {
     .pipe(skipWhile(data => data === undefined || data === null));
   private _projectFeedDays: string;
 
+  private userProfile: IUserProfile;
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService,
     private extFrameworkService: ExtPluginService, private datePipe: DatePipe,
@@ -64,7 +66,7 @@ export class ProgramsService extends DataService implements CanActivate {
       this.config = config;
       this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;//"http://localhost:6000/";//
     }
-    
+
   /**
    * initializes the service is the user is logged in;
    */
@@ -74,6 +76,12 @@ export class ProgramsService extends DataService implements CanActivate {
     //this.getAllContentCategories().subscribe();
     this.getOverridableMetaDataConfig().subscribe();
     this.mapSlugstoOrgId();
+
+    this.userService.userData$.subscribe((user: any) => {
+      if (user && !user.err) {
+        this.userProfile = user.userProfile;
+      }
+    });
   }
 
   mapSlugstoOrgId () {
@@ -335,8 +343,8 @@ export class ProgramsService extends DataService implements CanActivate {
   */
   checkforshowAllPrograms() {
     if (this.userService.userRegistryData &&
-      !_.isEmpty(this.userService.userProfile.userRegData.User_Org) &&
-      !this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
+      !_.isEmpty(this.userProfile.userRegData.User_Org) &&
+      !this.userProfile.userRegData.User_Org.roles.includes('admin')) {
         return false;
     }
 
@@ -864,7 +872,7 @@ export class ProgramsService extends DataService implements CanActivate {
     let gradeLevelTerms = [], subjectTerms = [], topicTerms = [];
     let gradeLevelTopicAssociations = [], subjectTopicAssociations = [];
     let tempTopicOptions = [], tempLearningOutcomeOptions = [];
-    _.forEach(frameworkCategories, (category) => {     
+    _.forEach(frameworkCategories, (category) => {
       if(category.code === 'gradeLevel') {
         const terms = category.terms;
         if(terms) gradeLevelTerms =  _.concat(gradeLevelTerms, _.filter(terms,  (t)  => _.includes(gradeLevel, t.name)));
@@ -878,34 +886,34 @@ export class ProgramsService extends DataService implements CanActivate {
       if(category.code === 'subject') {
         const terms = category.terms;
         if(terms) subjectTerms =  _.concat(subjectTerms, _.filter(terms,  (t)  => _.includes(subject, t.name)));
-      } 
-    });     
-               
-    if(gradeLevelTerms.length && subjectTerms.length) {            
+      }
+    });
+
+    if(gradeLevelTerms.length && subjectTerms.length) {
         _.forEach(gradeLevelTerms, (term) => {
           if(term.associations) {
-          gradeLevelTopicAssociations = _.concat(gradeLevelTopicAssociations, 
+          gradeLevelTopicAssociations = _.concat(gradeLevelTopicAssociations,
             _.filter(term.associations, (association) => association.category === 'topic'))
-          }          
+          }
         })
-        _.forEach(subjectTerms, (term) => {      
-          if(term.associations) {       
-          subjectTopicAssociations = _.concat(subjectTopicAssociations, 
+        _.forEach(subjectTerms, (term) => {
+          if(term.associations) {
+          subjectTopicAssociations = _.concat(subjectTopicAssociations,
             _.filter(term.associations, (association) => association.category === 'topic'))
-          }              
-        })            
-          tempTopicOptions = _.intersectionWith(gradeLevelTopicAssociations, subjectTopicAssociations, (a, o) =>  a.name === o.name );                    
-        }        
-        topicTerms = _.filter(topicTerms, (t) => _.find(tempTopicOptions, { name: t.name }))          
-                          
+          }
+        })
+          tempTopicOptions = _.intersectionWith(gradeLevelTopicAssociations, subjectTopicAssociations, (a, o) =>  a.name === o.name );
+        }
+        topicTerms = _.filter(topicTerms, (t) => _.find(tempTopicOptions, { name: t.name }))
+
       if(topicTerms) {
         _.forEach(topicTerms, (term) => {
           if(term.associations) {
             tempLearningOutcomeOptions = _.concat(tempLearningOutcomeOptions || [], _.map(term.associations, (learningOutcome) =>learningOutcome));
-              }             
-            });                     
-        }  
-        
+              }
+            });
+        }
+
         return [tempTopicOptions, tempLearningOutcomeOptions];
     }
 
@@ -925,7 +933,7 @@ export class ProgramsService extends DataService implements CanActivate {
    * Get all overridable meta fields configured
    */
   get overrideMetaData() {
-    return _.cloneDeep(this._overrideMetaData);
+    return this._overrideMetaData;
   }
 
   getOverridableMetaDataConfig(): Observable<any[]> {
@@ -1124,8 +1132,8 @@ export class ProgramsService extends DataService implements CanActivate {
         id: identifier,
         format: 'json'
       }
-    };    
-    
+    };
+
   return this.contentService.get(req);
   }
 
