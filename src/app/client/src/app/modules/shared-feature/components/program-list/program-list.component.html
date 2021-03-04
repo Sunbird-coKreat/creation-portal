@@ -175,7 +175,7 @@
                   <span [ngClass]="{'pull-right': !(issourcingOrgAdmin && this.router.url.includes('/sourcing'))}">
                     <button *ngIf="(programsService.isProjectLive(program) || programsService.isProjectClosed(program))"
                       type="button"
-                      class="sb-btn sb-btn-normal sb-btn-outline-primary mr-10"
+                      class="sb-btn sb-btn-normal sb-btn-outline-primary mr-20"
                       (click)="viewDetailsBtnClicked(program)"
                       appTelemetryInteract
                       [telemetryInteractEdata]="getTelemetryInteractEdata('open', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
@@ -185,7 +185,7 @@
                     </button>
                   </span>
 
-                    <div *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing') && program.status === 'Draft'" class="d-inline-block cursor-pointer pr-20 pl-5" (click)="editOnClick(program)"
+                    <div *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing') && program.status === 'Draft'" class="d-inline-block cursor-pointer pr-10 pl-5" (click)="editOnClick(program)"
                     appTelemetryInteract
                     [telemetryInteractEdata]="getTelemetryInteractEdata('edit_draft', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                     [telemetryInteractObject]="telemetryInteractObject"
