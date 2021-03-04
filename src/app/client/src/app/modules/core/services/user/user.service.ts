@@ -497,7 +497,7 @@ export class UserService {
   }
 
   isContributingOrgUser() {
-    const roles = _.get(this._userProfile, '.userRegData.User_Org.roles', []);
+    const roles = _.get(this._userProfile, 'userRegData.User_Org.roles', []);
     return !_.isEmpty(roles) && _.includes(roles, 'user');
   }
 
@@ -506,7 +506,7 @@ export class UserService {
   }
 
   getUserOrgRole() {
-    return _.get(this.userProfile, 'userRegData.User_Org.roles', []);
+    return _.get(this._userProfile, 'userRegData.User_Org.roles', []);
   }
 
   getUserId() {
