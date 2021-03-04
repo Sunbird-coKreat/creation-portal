@@ -136,7 +136,7 @@
               <span class="sb-color-primary"  *ngIf="content.status === 'Draft' && content.prevStatus === 'Live'">{{resourceService.frmelmnts.lbl.correctionsPending}}</span>
             </span>
             <div class="item-dropdown absolute position" (click)="menuClick($event)" *ngIf="content.status === 'Draft' && !content.sourceURL">
-              <div *ngIf="canViewActionMenu(content)" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
+              <div *ngIf="!!(showActionMenu && content.createdBy === userId)" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
                 suiDropdown
                 appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('context_menu', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
@@ -182,7 +182,7 @@
               </div>
             </div>
             <div class="item-dropdown absolute position" (click)="menuClick($event)" *ngIf="content.status === 'Live' && content.sourceURL && (content.sourcingStatus !== 'Approved' && content.sourcingStatus !== 'Rejected')">
-              <div *ngIf="canViewActionMenu(content)" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
+              <div *ngIf="!!(showActionMenu && content.createdBy === userId)" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
                 suiDropdown
                 appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('context_menu', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"

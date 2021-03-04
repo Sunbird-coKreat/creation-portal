@@ -82,7 +82,6 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
   solutionValue: string;
   telemetryImpression: any;
   public telemetryPageId = 'mcq-creation';
-  public overrideMetaData: any;
   public editableFields = [];
   @Input() editableFieldsACL: any;
 
@@ -200,11 +199,11 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
 
   setUserName() {
     let userName = '';
-    if (this.userService.userProfile.firstName) {
-      userName = this.userService.userProfile.firstName;
+    if (this.userService.getUserProfileDataByKey('firstName')) {
+      userName = this.userService.getUserProfileDataByKey('firstName');
     }
-    if (this.userService.userProfile.lastName) {
-      userName += (' ' + this.userService.userProfile.lastName);
+    if (this.userService.getUserProfileDataByKey('lastName')) {
+      userName += (' ' + this.userService.getUserProfileDataByKey('firstName'));
     }
     return userName;
   }
