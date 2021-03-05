@@ -67,6 +67,7 @@ module.exports = function (app) {
     '/action/content/v3/hierarchy/*',
     '/action/content/v3/import'
   ],
+  bodyParser.json({ limit: '50mb' }),
   proxy(kp_content_service_base_url, {
     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
     proxyReqPathResolver: function (req) {
@@ -100,6 +101,7 @@ module.exports = function (app) {
     '/action/itemset/v3/read/*', 
     '/action/itemset/v3/review/*', 
     '/action/itemset/v3/retire/*'],
+    bodyParser.json({ limit: '50mb' }),
   proxy(kp_assessment_service_base_url, {
     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
     proxyReqPathResolver: function (req) {
