@@ -62,8 +62,6 @@ module.exports = function (app) {
     '/action/content/v3/create',
     '/action/content/v3/hierarchy/add',
     '/action/content/v3/hierarchy/remove',
-    '/action/content/v3/update/*',
-    '/action/content/v3/upload/*',
     '/action/content/v3/hierarchy/*',
     '/action/content/v3/import'
   ],
@@ -76,6 +74,34 @@ module.exports = function (app) {
       return require('url').parse(kp_content_service_base_url + originalUrl).path
     }
   }))
+
+// Proxy for content create ,update & review Start
+  app.use([
+    '/action/content/v3/update/*'
+  ],
+  bodyParser.json({ limit: '50mb' }),
+  proxy(kp_content_service_base_url, {
+    proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+    proxyReqPathResolver: function (req) {
+      var originalUrl = req.originalUrl
+      originalUrl = originalUrl.replace('/action/', '')
+      return require('url').parse(kp_content_service_base_url + originalUrl).path
+    }
+  }))
+
+  app.post('/action/content/v3/upload/*',
+    proxy(kp_content_service_base_url, {
+      preserveHostHdr: true,
+      limit: reqDataLimitOfContentUpload,
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl
+        originalUrl = originalUrl.replace('/action/', '')
+        return require('url').parse(kp_content_service_base_url + originalUrl).path
+      },
+      userResDecorator: userResDecorator
+    })
+  )
 
   app.use([
     '/action/content/v3/review/*',
@@ -96,10 +122,10 @@ module.exports = function (app) {
   }))
 
   app.use(
-    ['/action/itemset/v3/create', 
-    '/action/itemset/v3/update/*', 
-    '/action/itemset/v3/read/*', 
-    '/action/itemset/v3/review/*', 
+    ['/action/itemset/v3/create',
+    '/action/itemset/v3/update/*',
+    '/action/itemset/v3/read/*',
+    '/action/itemset/v3/review/*',
     '/action/itemset/v3/retire/*'],
   bodyParser.json({ limit: '50mb' }),
   proxy(kp_assessment_service_base_url, {
@@ -170,7 +196,7 @@ module.exports = function (app) {
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,PATCH,DELETE,OPTIONS')
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization,' +
       'cid, user-id, x-auth, Cache-Control, X-Requested-With, *')
-  
+
     if (req.method === 'OPTIONS') {
       res.sendStatus(200)
     } else {
