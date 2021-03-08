@@ -93,7 +93,11 @@ module.exports = function (app) {
       preserveHostHdr: true,
       limit: reqDataLimitOfContentUpload,
       proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-      proxyReqPathResolver: proxyReqPathResolverMethod,
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl
+        originalUrl = originalUrl.replace('/action/', '')
+        return require('url').parse(kp_content_service_base_url + originalUrl).path
+      },
       userResDecorator: userResDecorator
     })
   )
@@ -117,10 +121,10 @@ module.exports = function (app) {
   }))
 
   app.use(
-    ['/action/itemset/v3/create', 
-    '/action/itemset/v3/update/*', 
-    '/action/itemset/v3/read/*', 
-    '/action/itemset/v3/review/*', 
+    ['/action/itemset/v3/create',
+    '/action/itemset/v3/update/*',
+    '/action/itemset/v3/read/*',
+    '/action/itemset/v3/review/*',
     '/action/itemset/v3/retire/*'],
   bodyParser.json({ limit: '50mb' }),
   proxy(kp_assessment_service_base_url, {
@@ -191,7 +195,7 @@ module.exports = function (app) {
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,PATCH,DELETE,OPTIONS')
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization,' +
       'cid, user-id, x-auth, Cache-Control, X-Requested-With, *')
-  
+
     if (req.method === 'OPTIONS') {
       res.sendStatus(200)
     } else {
