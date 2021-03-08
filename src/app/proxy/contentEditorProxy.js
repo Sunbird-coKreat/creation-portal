@@ -62,7 +62,6 @@ module.exports = function (app) {
     '/action/content/v3/create',
     '/action/content/v3/hierarchy/add',
     '/action/content/v3/hierarchy/remove',
-    '/action/content/v3/upload/*',
     '/action/content/v3/hierarchy/*',
     '/action/content/v3/import'
   ],
@@ -88,6 +87,16 @@ module.exports = function (app) {
       return require('url').parse(kp_content_service_base_url + originalUrl).path
     }
   }))
+
+  app.post('/action/content/v3/upload/*',
+    proxy(kp_content_service_base_url, {
+      preserveHostHdr: true,
+      limit: reqDataLimitOfContentUpload,
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: proxyReqPathResolverMethod,
+      userResDecorator: userResDecorator
+    })
+  )
 
   app.use([
     '/action/content/v3/review/*',
