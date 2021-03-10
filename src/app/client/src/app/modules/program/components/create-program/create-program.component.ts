@@ -1237,7 +1237,7 @@ showTexbooklist(showTextBookSelector = true) {
     _.forEach(this.blueprintTemplate.properties, (prop) => {
       let val = this.localBlueprint[prop.code]
       if(prop.required) {
-        if(!val) validity = false;        
+        if(!val) validity = false;
         else if(Array.isArray(val) && !val.length) {
           validity = false;
         } 
