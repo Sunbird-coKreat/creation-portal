@@ -1147,7 +1147,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   resourceTemplateInputData() {
-    let contentCategories = this.programContext.content_types;
+    /*let contentCategories = this.programContext.content_types;
     if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.content_types) {
       contentCategories = _.filter(contentCategories, (catName) => {
         if (_.includes(this.sessionContext.nominationDetails.content_types, catName)) {
@@ -1155,7 +1155,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           return catName;
         }
       });
-    }
+    }*/
+    let contentCategories = this.programsService.getNominatedTargetPrimaryCategories(this.programContext, this.sessionContext.nominationDetails);
     this.resourceTemplateComponentInput = {
       templateList: contentCategories,
       programContext: this.programContext,

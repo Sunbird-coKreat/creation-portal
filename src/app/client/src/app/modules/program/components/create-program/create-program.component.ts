@@ -38,7 +38,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public choosedTextBook: any;
   selectChapter = false;
   editBlueprintFlag = false;
-  public selectedContentTypes: String[];
+  public selectedTargetCategories: any;
   public selectedTargetCollection: any;
   createProgramForm: FormGroup;
   collectionListForm: FormGroup;
@@ -60,11 +60,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public programData: any = {};
   showTextBookSelector = false;
   formIsInvalid = false;
-  /*frameworkOption = [];
-  boardOption= [];
-  subjectsOption = [];
-  mediumOption = [];
-  gradeLevelOption = [];*/
   pickerMinDate = new Date(new Date().setHours(0, 0, 0, 0));
   pickerMinDateForEndDate = new Date(new Date().setHours(0, 0, 0, 0));
   public telemetryImpression: IImpressionEventInput;
@@ -294,8 +289,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     };
     this.programsService.get(req).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
-      this.selectedContentTypes = _.get(this.programDetails, 'content_types');
-      this.programDetails['content_types'] = _.join(this.selectedContentTypes, ', ');
+      
+      //this.selectedContentTypes = _.get(this.programDetails, 'content_types');
+      //this.programDetails['content_types'] = _.join(this.selectedContentTypes, ', ');
+
       // tslint:disable-next-line: max-line-length
       this.selectedTargetCollection = !_.isEmpty(_.get(this.programDetails, 'target_collection_category')) ? _.get(this.programDetails, 'target_collection_category')[0] : 'Digital Textbook';
       if (!_.isEmpty(this.programDetails.guidelines_url)) {
@@ -484,7 +481,18 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
   setFrameworkDataToProgram() {
     this.collectionCategories = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories');
-    this.programScope['purpose'] = _.get(this.cacheService.get(this.userService.hashTagId), 'contentPrimaryCategories');
+    const channelCats = _.get(this.cacheService.get(this.userService.hashTagId), 'primaryCategories');
+    this.programScope['targetPrimaryCategories'] = [];
+    this.programScope['targetPrimaryObjects'] =  _.filter(channelCats, (o) => {
+      if (o.targetObjectType === "Content" || o.targetObjectType === "QuestionSet") {
+        if (!_.includes(this.programScope['targetPrimaryCategories'], o.name)){
+          this.programScope['targetPrimaryCategories'].push(o.name)
+          return o;
+        }
+      }
+    });   
+    this.programScope['selectedTargetCategoryObjects'] = (this.programDetails) ? this.programsService.getProgramTargetPrimaryCategories(this.programDetails, channelCats) : [];
+    this.selectedTargetCategories = _.map(this.programScope['selectedTargetCategoryObjects'], 'name');
     this.programScope['medium'] = [];
     this.programScope['gradeLevel'] = [];
     this.programScope['subject'] = [];
@@ -544,10 +552,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   onMediumChange() {
-    // const thisClassOption = this.createProgramForm.value.gradeLevel;
-
-    /*this.programScope['gradeLevel'] = [];
-    this.programScope['subject'] = [];*/
     this.collectionListForm.controls['gradeLevel'].setValue('');
     this.collectionListForm.controls['subject'].setValue('');
 
@@ -566,12 +570,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   onClassChange() {
-    // const thisSubjectOption = this.createProgramForm.value.subject;
-    // this.programScope['subject'] = [];
     this.collectionListForm.controls['subject'].setValue('');
 
     if (!_.isEmpty(this.collectionListForm.value.gradeLevel)) {
-
       // tslint:disable-next-line: max-line-length
       const subjectOption = this.programsService.getAssociationData(this.collectionListForm.value.gradeLevel, 'subject', this.frameworkCategories);
 
@@ -613,7 +614,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       medium: [],
       gradeLevel: [],
       subject: [],
-      content_types: [null, Validators.required],
+      targetPrimaryCategories: [null, Validators.required],
       target_collection_category: [null, Validators.required],
     });
     if (!_.isEmpty(this.programDetails) && !_.isEmpty(this.programId)) {
@@ -742,8 +743,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.createProgramForm.controls['program_end_date'].updateValueAndValidity();
     this.createProgramForm.controls['content_submission_enddate'].setValidators(Validators.required);
     this.createProgramForm.controls['content_submission_enddate'].updateValueAndValidity();
-    this.collectionListForm.controls['content_types'].setValidators(Validators.required);
-    this.collectionListForm.controls['content_types'].updateValueAndValidity();
+    this.collectionListForm.controls['targetPrimaryCategories'].setValidators(Validators.required);
+    this.collectionListForm.controls['targetPrimaryCategories'].updateValueAndValidity();
     this.collectionListForm.controls['target_collection_category'].setValidators(Validators.required);
     this.collectionListForm.controls['target_collection_category'].updateValueAndValidity();
   }
@@ -757,8 +758,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.createProgramForm.controls['program_end_date'].updateValueAndValidity();
     this.createProgramForm.controls['content_submission_enddate'].clearValidators();
     this.createProgramForm.controls['content_submission_enddate'].updateValueAndValidity();
-    this.collectionListForm.controls['content_types'].clearValidators();
-    this.collectionListForm.controls['content_types'].updateValueAndValidity();
+    this.collectionListForm.controls['targetPrimaryCategories'].clearValidators();
+    this.collectionListForm.controls['targetPrimaryCategories'].updateValueAndValidity();
     this.collectionListForm.controls['target_collection_category'].clearValidators();
     this.collectionListForm.controls['target_collection_category'].updateValueAndValidity();
   }
@@ -773,13 +774,19 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       // tslint:disable-next-line:max-line-length
       _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'framework' }).defaultValue = this.userFramework;
     }
-    const contentTypes = this.collectionListForm.value.content_types;
-    this.programData['content_types']  = _.isEmpty(contentTypes) ? [] : contentTypes;
     this.programData['target_collection_category'] = [this.collectionListForm.value.target_collection_category];
     // tslint:disable-next-line: max-line-length
     _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'board' }).defaultValue = this.userBoard;
 
     this.programConfig.defaultContributeOrgReview = !this.defaultContributeOrgReviewChecked;
+    this.programData['content_types']  = [];
+    
+    this.programData['targetprimarycategories'] = _.filter(this.programScope['targetPrimaryObjects'], (o) => {
+      if (_.includes(this.selectedTargetCategories, o.name)) {
+        return o;
+      }
+    });
+    
     this.programData['sourcing_org_name'] = this.userprofile.rootOrg.orgName;
     this.programData['rootorg_id'] = this.userprofile.rootOrgId;
     this.programData['createdby'] = this.userprofile.id;
@@ -884,7 +891,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       prgData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : _.get(this.programDetails, 'guidelines_url');
 
       delete prgData.program_end_date;
-      delete prgData.content_types;
+      delete prgData.targetPrimaryCategories;
 
       if (this.isOpenNominations === false) {
         delete prgData.nomination_enddate;
