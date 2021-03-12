@@ -31,8 +31,8 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   @Input() telemetryEventsInput: any;
   @Input() roles: any;
   @Input() editableFieldsACL: any;
-  @ViewChild('author_names') authorName;
-  @ViewChild('reuestChangeForm') ReuestChangeForm: NgForm;
+  @ViewChild('author_names', {static: false}) authorName;
+  @ViewChild('reuestChangeForm', {static: false}) ReuestChangeForm: NgForm;
 
   public userProfile: IUserProfile;
   public publicDataService: PublicDataService;
@@ -53,6 +53,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   public selectionFields: Array<any>;
   public multiSelectionFields: Array<any>;
   public rejectComment: string;
+  public questionLimit: Number;
   questionMetaForm: FormGroup;
   initialized = false;
   showFormError = false;
@@ -95,7 +96,6 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   }];
   telemetryImpression: any;
   public telemetryPageId = 'question-creation';
-  public overrideMetaData: any;
   public editableFields = [];
 
   constructor(
@@ -116,7 +116,6 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
 
   ngOnInit() {
     this.initialized = true;
-    this.overrideMetaData = this.programsService.overrideMetaData;
     this.telemetryPageId =  this.sessionContext.telemetryPageId;
     this.telemetryEventsInput.telemetryPageId = this.telemetryPageId;
     this.solutionUUID = UUID.UUID();
@@ -162,6 +161,13 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
     { l1: this.sessionContext.collection, l2: this.sessionContext.textBookUnitIdentifier, l3: this.sessionContext.resourceIdentifier});
   }
 
+  questionLimitReached() {
+    let limit = _.get(this.sessionContext, 'contentMetadata.maxQuestions', undefined);
+    let questionList = _.get(this.sessionContext, 'questionList', undefined);
+    if(limit && questionList) return (limit === 1 ? true : questionList.length >= limit);
+    return false;
+  }
+
   ngOnChanges() {
     this.componentConfiguration =  _.get(this.sessionContext, 'practiceSetConfig');
     if (this.initialized) {
@@ -191,7 +197,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
     if (this.questionMetaData && this.questionMetaData.data) {
       if(this.questionMetaData.data.editorState.question)
         this.editorState.question = this.questionMetaData.data.editorState.question;
-      if(this.questionMetaData.data.editorState.answer)  
+      if(this.questionMetaData.data.editorState.answer)
         this.editorState.answer = this.questionMetaData.data.editorState.answer;
       if (!_.isEmpty(this.questionMetaData.data.editorState.solutions)) {
         const editor_state = this.questionMetaData.data.editorState;
@@ -628,7 +634,8 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
       && this.sessionContext.resourceStatus === 'Review'
       && this.programsService.checkForContentSubmissionDate(this.sessionContext.programContext)
       && this.router.url.includes('/contribute')
-      && this.userService.userid !== _.get(this.sessionContext, 'contentMetadata.createdBy'));
+      && this.userService.userid !== _.get(this.sessionContext, 'contentMetadata.createdBy'))
+      && !this.questionLimitReached();
   }
 
   getEditableFields() {

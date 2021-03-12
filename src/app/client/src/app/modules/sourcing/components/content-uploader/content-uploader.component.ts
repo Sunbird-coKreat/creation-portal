@@ -27,14 +27,14 @@ import { DeviceDetectorService } from 'ngx-device-detector';
   styleUrls: ['./content-uploader.component.scss']
 })
 export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('formData') formData: DataFormComponent;
-  @ViewChild('modal') modal;
+  @ViewChild('formData', {static: false}) formData: DataFormComponent;
+  @ViewChild('modal', {static: false}) modal;
   // @ViewChild('editmodal') editmodal;
-  @ViewChild('fineUploaderUI') fineUploaderUI: ElementRef;
-  @ViewChild('qq-upload-actions') actionButtons: ElementRef;
-  @ViewChild('titleTextArea') titleTextAreaa: ElementRef;
-  @ViewChild('FormControl') FormControl: NgForm;
-  // @ViewChild('contentTitle') contentTitle: ElementRef;
+  @ViewChild('fineUploaderUI', {static: false}) fineUploaderUI: ElementRef;
+  @ViewChild('qq-upload-actions', {static: false}) actionButtons: ElementRef;
+  @ViewChild('titleTextArea', {static: false}) titleTextAreaa: ElementRef;
+  @ViewChild('FormControl', {static: false}) FormControl: NgForm;
+  // @ViewChild('contentTitle', {static: false}) contentTitle: ElementRef;
   @Input() contentUploadComponentInput: IContentUploadComponentInput;
 
   public sessionContext: any;
@@ -102,7 +102,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public originCollectionData: any;
   selectedOriginUnitStatus: any;
   public bulkApprove: any;
-  public overrideMetaData: any;
   public editableFields = [];
   public isMetadataOverridden = false;
   public formFieldProperties: any;
@@ -130,7 +129,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   ngOnInit() {
     this.config = _.get(this.contentUploadComponentInput, 'config');
-    this.overrideMetaData = this.programsService.overrideMetaData;
     this.originCollectionData = _.get(this.contentUploadComponentInput, 'originCollectionData');
     this.selectedOriginUnitStatus = _.get(this.contentUploadComponentInput, 'content.originUnitStatus');
     this.sessionContext  = _.get(this.contentUploadComponentInput, 'sessionContext');
@@ -277,7 +275,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   handleActionButtons() {
     this.visibility = {};
     const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
-
     // tslint:disable-next-line:max-line-length
     this.visibility['showChangeFile'] = submissionDateFlag && this.canChangeFile();
     // tslint:disable-next-line:max-line-length
@@ -291,8 +288,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     // tslint:disable-next-line:max-line-length
     this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSourcingActionButtons'] = this.canSourcingReviewerPerformActions();
-    this.visibility['showSendForCorrections'] = this.canSendForCorrections();
+    this.visibility['showSourcingActionButtons'] = submissionDateFlag && this.canSourcingReviewerPerformActions();
+    this.visibility['showSendForCorrections'] = this.visibility['showSourcingActionButtons'] && this.canSendForCorrections();
   }
 
   canSendForCorrections() {
@@ -301,12 +298,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   canEdit() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && this.userService.getUserId() === this.contentMetaData.createdBy);
+    return !!(this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && this.userService.userid === this.contentMetaData.createdBy);
   }
 
   canSave() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.hasAccessFor(['CONTRIBUTOR']) && !this.contentMetaData.sampleContent === true && this.resourceStatus === 'Draft' && (this.userService.getUserId() === this.contentMetaData.createdBy));
+    return !!(this.hasAccessFor(['CONTRIBUTOR']) && !this.contentMetaData.sampleContent === true && this.resourceStatus === 'Draft' && (this.userService.userid === this.contentMetaData.createdBy));
   }
 
   canEditMetadata() {
@@ -316,36 +313,36 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   canSubmit() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && this.userService.getUserId() === this.contentMetaData.createdBy);
+    return !!(this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && this.userService.userid === this.contentMetaData.createdBy);
   }
 
   canChangeFile() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && this.userService.getUserId() === this.contentMetaData.createdBy);
+    return !!(this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && this.userService.userid === this.contentMetaData.createdBy);
   }
 
   canViewContentType() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.sourcingOrgReviewer || (this.sessionContext.currentRoles.includes('REVIEWER') && this.userService.getUserId() !== this.contentMetaData.createdBy));
+    return !!(this.sourcingOrgReviewer || (this.sessionContext.currentRoles.includes('REVIEWER') && this.userService.userid !== this.contentMetaData.createdBy));
   }
 
   canPublishContent() {
     // tslint:disable-next-line:max-line-length
     return !!(this.router.url.includes('/contribute') && !this.contentMetaData.sampleContent === true &&
     // tslint:disable-next-line:max-line-length
-    this.hasAccessFor(['REVIEWER']) && this.resourceStatus === 'Review' && this.userService.getUserId() !== this.contentMetaData.createdBy);
+    this.hasAccessFor(['REVIEWER']) && this.resourceStatus === 'Review' && this.userService.userid !== this.contentMetaData.createdBy);
   }
 
   canReviewContent() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.router.url.includes('/contribute') && !this.contentMetaData.sampleContent === true && this.hasAccessFor(['REVIEWER']) && this.resourceStatus === 'Review' && this.userService.getUserId() !== this.contentMetaData.createdBy);
+    return !!(this.router.url.includes('/contribute') && !this.contentMetaData.sampleContent === true && this.hasAccessFor(['REVIEWER']) && this.resourceStatus === 'Review' && this.userService.userid !== this.contentMetaData.createdBy);
   }
 
   canSourcingReviewerPerformActions() {
     // tslint:disable-next-line:max-line-length
     return !!(this.router.url.includes('/sourcing')
     && !this.contentMetaData.sampleContent === true && this.resourceStatus === 'Live'
-    && this.userService.getUserId() !== this.contentMetaData.createdBy
+    && this.userService.userid !== this.contentMetaData.createdBy
     && this.resourceStatus === 'Live' && !this.sourcingReviewStatus &&
     (this.originCollectionData.status === 'Draft' && this.selectedOriginUnitStatus === 'Draft'));
   }
@@ -519,7 +516,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
               'name': 'Untitled',
               'code': UUID.UUID(),
               'mimeType': this.detectMimeType(this.uploader.getName(0)),
-              'createdBy': this.userService.getUserId(),
+              'createdBy': this.userService.userid,
               'primaryCategory': this.templateDetails.name,
               'creator': creator,
               'collectionId': this.sessionContext.collection,
@@ -1104,7 +1101,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   getEditableFields() {
     if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
-      if (this.userService.getUserId() === this.contentMetaData.createdBy && this.resourceStatus === 'Draft') {
+      if (this.userService.userid === this.contentMetaData.createdBy && this.resourceStatus === 'Draft') {
         this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.contentMetaData);
         this.contentEditRole = 'CONTRIBUTOR';
       } else if (this.canPublishContent()) {

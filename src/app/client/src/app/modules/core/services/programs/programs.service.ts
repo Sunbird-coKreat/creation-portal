@@ -5,7 +5,8 @@ import { FrameworkService } from './../framework/framework.service';
 import { ExtPluginService } from './../ext-plugin/ext-plugin.service';
 import { PublicDataService } from './../public-data/public-data.service';
 import { ActionService } from './../action/action.service';
-import { ConfigService, ServerResponse, ToasterService, ResourceService, HttpOptions, BrowserCacheTtlService } from '@sunbird/shared';
+import { ConfigService, ServerResponse, ToasterService, ResourceService,
+  HttpOptions, BrowserCacheTtlService, IUserProfile } from '@sunbird/shared';
 import { Injectable } from '@angular/core';
 import { UserService } from '../user/user.service';
 import { combineLatest, of, iif, Observable, BehaviorSubject, throwError, merge, forkJoin, Subject} from 'rxjs';
@@ -52,6 +53,7 @@ export class ProgramsService extends DataService implements CanActivate {
     .pipe(skipWhile(data => data === undefined || data === null));
   private _projectFeedDays: string;
 
+  private userProfile: IUserProfile;
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService,
     private extFrameworkService: ExtPluginService, private datePipe: DatePipe,
@@ -74,6 +76,12 @@ export class ProgramsService extends DataService implements CanActivate {
     //this.getAllContentCategories().subscribe();
     this.getOverridableMetaDataConfig().subscribe();
     this.mapSlugstoOrgId();
+
+    this.userService.userData$.subscribe((user: any) => {
+      if (user && !user.err) {
+        this.userProfile = user.userProfile;
+      }
+    });
   }
 
   mapSlugstoOrgId () {
@@ -335,8 +343,8 @@ export class ProgramsService extends DataService implements CanActivate {
   */
   checkforshowAllPrograms() {
     if (this.userService.userRegistryData &&
-      !_.isEmpty(this.userService.userProfile.userRegData.User_Org) &&
-      !this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
+      !_.isEmpty(this.userProfile.userRegData.User_Org) &&
+      !this.userProfile.userRegData.User_Org.roles.includes('admin')) {
         return false;
     }
 
@@ -369,6 +377,8 @@ export class ProgramsService extends DataService implements CanActivate {
         return of(data);
       }));
   }
+
+
 
   /**
    * makes api call to get the textbooks for program
@@ -857,6 +867,56 @@ export class ProgramsService extends DataService implements CanActivate {
     return _.sortBy(_.unionBy(resultArray, 'identifier'), 'index');
   }
 
+  initializeBlueprintMetadata(selectedData: any, frameworkCategories) {
+    let { gradeLevel, subject} = selectedData;
+    let gradeLevelTerms = [], subjectTerms = [], topicTerms = [];
+    let gradeLevelTopicAssociations = [], subjectTopicAssociations = [];
+    let tempTopicOptions = [], tempLearningOutcomeOptions = [];
+    _.forEach(frameworkCategories, (category) => {
+      if(category.code === 'gradeLevel') {
+        const terms = category.terms;
+        if(terms) gradeLevelTerms =  _.concat(gradeLevelTerms, _.filter(terms,  (t)  => _.includes(gradeLevel, t.name)));
+      }
+
+      if(category.code === 'topic') {
+        const terms = category.terms;
+        if(terms) topicTerms = terms;
+      }
+
+      if(category.code === 'subject') {
+        const terms = category.terms;
+        if(terms) subjectTerms =  _.concat(subjectTerms, _.filter(terms,  (t)  => _.includes(subject, t.name)));
+      }
+    });
+
+    if(gradeLevelTerms.length && subjectTerms.length) {
+        _.forEach(gradeLevelTerms, (term) => {
+          if(term.associations) {
+          gradeLevelTopicAssociations = _.concat(gradeLevelTopicAssociations,
+            _.filter(term.associations, (association) => association.category === 'topic'))
+          }
+        })
+        _.forEach(subjectTerms, (term) => {
+          if(term.associations) {
+          subjectTopicAssociations = _.concat(subjectTopicAssociations,
+            _.filter(term.associations, (association) => association.category === 'topic'))
+          }
+        })
+          tempTopicOptions = _.intersectionWith(gradeLevelTopicAssociations, subjectTopicAssociations, (a, o) =>  a.name === o.name );
+        }
+        topicTerms = _.filter(topicTerms, (t) => _.find(tempTopicOptions, { name: t.name }))
+
+      if(topicTerms) {
+        _.forEach(topicTerms, (term) => {
+          if(term.associations) {
+            tempLearningOutcomeOptions = _.concat(tempLearningOutcomeOptions || [], _.map(term.associations, (learningOutcome) =>learningOutcome));
+              }
+            });
+        }
+
+        return [tempTopicOptions, tempLearningOutcomeOptions];
+    }
+
   getNominationList(reqFilters) {
     const req = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
@@ -870,66 +930,11 @@ export class ProgramsService extends DataService implements CanActivate {
   }
 
   /**
-   * Get all the content types configured
-   */
-
-  /*get contentTypes() {
-    return _.cloneDeep(this._contentTypes);
-  }*/
-
-  /**
-   * Get all the categories  configured
-   */
-
-  /*get contentCategories() {
-    return _.cloneDeep(this._contentCategories);
-  }*/
-
-  /**
    * Get all overridable meta fields configured
    */
   get overrideMetaData() {
-    return _.cloneDeep(this._overrideMetaData);
+    return this._overrideMetaData;
   }
-
-  /*private getAllContentTypes(): Observable<any[]> {
-    const option = {
-      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.CONTENTTYPE_LIST}`,
-    };
-
-    return this.get(option).pipe(
-      map(result => _.get(result, 'result.contentType')),
-      catchError(err => of([]))
-    ).pipe(
-      tap(contentTypes => {
-        this._contentTypes = contentTypes;
-      })
-    );
-  }*/
-
-  /*private getAllContentCategories(): Observable<any[]> {
-    const req = {
-      url:'composite/v1/search',
-      data: {
-        'request': {
-          "filters": {
-            "objectType":"ObjectCategoryDefinition",
-            "status": [],
-            "targetObjectType":"content"
-        },
-        }
-      }
-    };
-
-    return this.post(req).pipe(
-      map(result => _.get(result, 'result.ObjectCategoryDefinition')),
-      catchError(err => of([]))
-    ).pipe(
-      tap(contentCategories => {
-        this._contentCategories = contentCategories;
-      })
-    );
-  }*/
 
   getOverridableMetaDataConfig(): Observable<any[]> {
     const option = {
@@ -973,6 +978,30 @@ export class ProgramsService extends DataService implements CanActivate {
         this.setSessionCache({name: cacheInd, value: data})
       }));
     }
+  }
+
+  getCollectionCategoryDefinition(categoryName, rootOrgId) {
+    const cacheInd = categoryName + ':' + rootOrgId;
+    if (this.cacheService.get(cacheInd)) {
+      return  of(this.cacheService.get(cacheInd));
+    } else {
+      const req = {
+        url: 'object/category/definition/v1/read?fields=objectMetadata,forms,name',
+        data: {
+          request: {
+            "objectCategoryDefinition": {
+                "objectType": "Collection",
+                "name": categoryName,
+                "channel": rootOrgId
+            },
+          }
+        }
+      };
+      return this.post(req).pipe(tap(data => {
+        this.setSessionCache({name: cacheInd, value: data})
+      }));
+    }
+
   }
 
   isNotEmpty(obj, key) {
@@ -1096,6 +1125,18 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.API_URL(req);
   }
 
+  generateCollectionPDF(identifier) {
+    const req = {
+      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.PRINT_PREVIEW}`,
+      param: {
+        id: identifier,
+        format: 'json'
+      }
+    };
+
+  return this.contentService.get(req);
+  }
+
   generateCSV(config) {
     const tableData = config.tableData;
     delete config.tableData;
@@ -1147,9 +1188,8 @@ export class ProgramsService extends DataService implements CanActivate {
   /* To check if the content can be uploaded or updated*/
   checkForContentSubmissionDate(programDetails) {
     const contributionendDate  = moment(programDetails.content_submission_enddate);
-    const endDate  = moment(programDetails.enddate);
     const today = moment();
-    return (contributionendDate.isSameOrAfter(today, 'day') && endDate.isSameOrAfter(today, 'day')) ? true : false;
+    return (contributionendDate.isSameOrAfter(today, 'day') && this.isProjectLive(programDetails)) ? true : false;
   }
 
   getContentOriginEnvironment() {
@@ -1248,6 +1288,7 @@ export class ProgramsService extends DataService implements CanActivate {
     }
     return count;
   }
+
   setTargetCollectionName(program, plural?) {
     if (program.target_collection_category === null) {
      return plural ? 'Digital Textbooks' : 'Digital Textbook';
@@ -1261,5 +1302,19 @@ export class ProgramsService extends DataService implements CanActivate {
 
      return plural ? collectionCat + 's' : collectionCat;
     }
+  }
+
+  isProjectEnded(program) {
+    const endDate  = moment(program.enddate);
+    const today = moment();
+    return (today.isAfter(endDate)) ? true : false;
+  }
+
+  isProjectClosed(program) {
+    return !! ((this.isProjectEnded(program) && (program.status === 'Live' || program.status === 'Unlisted')) || program.status === 'Closed');
+  }
+
+  isProjectLive(program) {
+    return !! (!this.isProjectEnded(program) && (program.status === 'Live' || program.status === 'Unlisted'));
   }
 }

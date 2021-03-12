@@ -1,7 +1,7 @@
 import { IShareEventData, IShareEventInput } from '@sunbird/telemetry';
 import {
   Component, OnInit, Input, EventEmitter,
-  ElementRef, ViewChild, Renderer, Output
+  ElementRef, ViewChild, Renderer2, Output
 } from '@angular/core';
 import { ResourceService } from '../../services/index';
 import { IPopup } from 'ng2-semantic-ui';
@@ -39,7 +39,7 @@ export class ShareLinkComponent implements OnInit {
   /**
   *Element Ref  for copyLinkButton;
   */
-  @ViewChild('copyLinkButton') copyLinkButton: ElementRef;
+  @ViewChild('copyLinkButton', {static: false}) copyLinkButton: ElementRef;
   /**
   *Element Ref  for copyLinkData;
   */
@@ -57,7 +57,7 @@ export class ShareLinkComponent implements OnInit {
   *@param {ResourceService} SearchService Reference of SearchService
   *@param {WorkSpaceService} WorkSpaceService Reference of SearchService
   */
-  constructor(resourceService: ResourceService, private _renderer: Renderer) {
+  constructor(resourceService: ResourceService, private _renderer: Renderer2) {
     this.resourceService = resourceService;
     this.position = 'top center';
     this.baseUrl = document.location.origin + '/';

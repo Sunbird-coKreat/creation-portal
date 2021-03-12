@@ -15,7 +15,7 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
   @Input() playerConfig: PlayerConfig;
   @Output() assessmentEvents = new EventEmitter<any>();
   @Output() questionScoreSubmitEvents = new EventEmitter<any>();
-  @ViewChild('contentIframe') contentIframe: ElementRef;
+  @ViewChild('contentIframe', {static: false}) contentIframe: ElementRef;
   @Output() playerOnDestroyEvent = new EventEmitter<any>();
   @Output() sceneChangeEvent = new EventEmitter<any>();
   @Input() contentProgressEvents$: Subject<any>;
@@ -32,7 +32,7 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
   /**
  * Dom element reference of contentRatingModal
  */
-  @ViewChild('modal') modal;
+  @ViewChild('modal', {static: false}) modal;
   constructor(public configService: ConfigService, public router: Router, private toasterService: ToasterService,
     public resourceService: ResourceService, public navigationHelperService: NavigationHelperService) {
     this.buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'))

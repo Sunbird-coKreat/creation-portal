@@ -10,6 +10,7 @@ const _ = require('lodash')
 const logger = require('sb_logger_util_v2')
 var morgan = require('morgan')
 const logApiStatus = envHelper.dock_api_call_log_status
+const programServiceUrl = envHelper.DOCK_PROGRAM_SERVICE_URL
 
 
 module.exports = (app) => {
@@ -61,6 +62,33 @@ module.exports = (app) => {
                 }
             }
         }))
+
+    app.get('/content/program/v1/print/pdf',
+        permissionsHelper.checkPermission(),
+        proxyUtils.verifyToken(),
+        proxy(programServiceUrl, {
+            limit: reqDataLimitOfContentUpload,
+            proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+            proxyReqPathResolver: (req) => {
+              var originalUrl = req.originalUrl
+              originalUrl = originalUrl.replace('/content/', '')
+              const URl = require('url').parse(programServiceUrl + originalUrl).path.replace('//', '/');
+              console.log('programServiceUrl  ', URl)
+              return URl
+            },
+            userResDecorator: (proxyRes, proxyResData, req, res) => {
+                try {
+                    logger.info({msg: '/content/program/v1/print/pdf called'});
+                    const data = JSON.parse(proxyResData.toString('utf8'));
+                    if (req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
+                    else return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data)
+                } catch (err) {
+                    logger.error({msg: 'content api user res decorator json parse error', proxyResData});
+                    return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res)
+                }
+            }
+        })
+    )
 
     app.all('/content/program/*',
         permissionsHelper.checkPermission(),

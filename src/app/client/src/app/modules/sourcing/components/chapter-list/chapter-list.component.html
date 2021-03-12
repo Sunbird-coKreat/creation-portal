@@ -33,7 +33,64 @@
           </div>
         </div>
 
-        <div *ngIf="!sampleContent && hasAccessFor(['CONTRIBUTOR', 'REVIEWER'])" class="sb-meta-data-container sb-meta-data-column d-flex flex-w-wrap ml-16 width-inherit">
+        <div *ngIf="!sampleContent && localBlueprint && sourcingOrgReviewer" class="sb-meta-data-container sb-meta-data-column d-flex flex-w-wrap ml-16 blueprint-progress">          
+          <div class="d-flex flex-dr flex-jc-space-between flex-grow-1">  
+            <label class="">{{resourceService.frmelmnts.lbl.progressAgainstBlueprint}}</label>
+            <button type="button" class="sb-btn sb-btn-xs sb-btn-outline-info text-inherit ml-10" (click)="viewBlueprintDetails()">{{resourceService?.frmelmnts?.lbl?.details}}</button>
+          </div>
+          <div class="d-flex" *ngIf="sessionContext.currentOrgRole != 'individual'">            
+              <dl class="sb-meta-data d-flex flex-as-center">
+                <dt class="fs-1-143">{{countData['sourcing_approved']}} / {{localBlueprint['count']['total']}}</dt>
+                <dd>{{resourceService.frmelmnts.lbl.total}}</dd>
+              </dl>                                
+              <div class="d-flex flex-dc">
+                <div class="d-flex flex-dr">     
+                  <dl  class="sb-meta-data">
+                    <dt class="font-weight-normal fsmall">{{resourceService.frmelmnts.lbl.questionTypes}} </dt>                                                            
+                  </dl> 
+                </div>
+                <div class="d-flex flex-dr mb-10">    
+                  <dl  class="sb-meta-data">
+                    <dt class="fs-0-785 line-height-1-3 text-gray">{{countData['objective']}} / {{localBlueprint['count']['objective']}} </dt>
+                    <dd class="line-height-1-3">{{resourceService.frmelmnts.lbl.objective}}                    
+                    </dd>
+                  </dl>
+                  <dl class="sb-meta-data">
+                    <dt class="fs-0-785 line-height-1-3 text-gray">{{countData['subjective']}} / {{localBlueprint['count']['subjective']}}</dt>
+                    <dd class="line-height-1-3">{{resourceService.frmelmnts.lbl.subjective}}</dd>
+                  </dl>                
+                </div>
+                <div class="d-flex flex-dr">  
+                  <dl  class="sb-meta-data">
+                    <dt class="font-weight-normal fsmall">{{resourceService.frmelmnts.lbl.skills}} </dt>                                                            
+                  </dl>      
+                </div>    
+                <div class="d-flex flex-dr  mb-10">   
+                  <dl  class="sb-meta-data">
+                    <dt class="fs-0-785 line-height-1-3 text-gray">{{countData['remember']}} / {{localBlueprint['count']['remember']}} </dt>
+                    <dd class="line-height-1-3">{{resourceService.frmelmnts.lbl.knowledge}}</dd>
+                  </dl>
+                  <dl class="sb-meta-data">
+                    <dt class="fs-0-785 line-height-1-3 text-gray">{{countData['understand']}} / {{localBlueprint['count']['understand']}}</dt>
+                    <dd class="line-height-1-3">{{resourceService.frmelmnts.lbl.understanding}}</dd>
+                  </dl>
+                  <dl class="sb-meta-data">
+                    <dt class="fs-0-785 line-height-1-3 text-gray">{{countData['apply']}} / {{localBlueprint['count']['apply']}}</dt>
+                    <dd class="line-height-1-3">{{resourceService.frmelmnts.lbl.application}}</dd>
+                  </dl>
+                </div>
+            </div>
+          </div>
+          <div class="d-flex" *ngIf="sessionContext.currentOrgRole == 'individual'">
+            <dl *ngIf="hasAccessFor(['CONTRIBUTOR'])"
+              class="sb-meta-data">
+              <dt>{{countData['total']}}</dt>
+              <dd>{{resourceService.frmelmnts.lbl.total}}</dd>
+            </dl>          
+          </div>
+        </div>
+
+        <div *ngIf="!sampleContent && hasAccessFor(['CONTRIBUTOR', 'REVIEWER'])" class="sb-meta-data-container sb-meta-data-column d-flex flex-w-wrap width-inherit">
           <label class="d-block width-100" *ngIf="hasAccessFor(['CONTRIBUTOR']) && ((sessionContext.currentRoles.includes('CONTRIBUTOR') && sessionContext.currentRoles.includes('REVIEWER')) || sessionContext.currentRoles.includes('CONTRIBUTOR'))">Contributions</label>
           <label class="d-block width-100" *ngIf="hasAccessFor(['REVIEWER']) && sessionContext.currentRoles.includes('REVIEWER') && sessionContext.currentRoles.length === 1">Up for Review</label>
           <div class="d-flex" *ngIf="sessionContext.currentOrgRole != 'individual'">
@@ -81,7 +138,7 @@
               <dd>{{resourceService.frmelmnts.lbl.published}}</dd>
             </dl> -->
           </div>
-        </div>
+        </div>        
 
         <div *ngIf="sampleContent" class="sb-meta-data-container sb-meta-data-column d-flex flex-w-wrap ml-16">
           <label class="d-block width-100" >Number of Samples</label>
@@ -97,15 +154,25 @@
             </dl> -->
           </div>
         </div>
-        
-        <div class="sb-textbook-allchapters sb-field">
-          <label class="fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.selectChapters}}</label>
-          <sui-select class="selection w-100" placeholder="{{resourceService.frmelmnts.lbl.allChapters}}" [isSearchable]=true labelField="name"
-            valueField="identifier" [(ngModel)]="selectedChapterOption"
-            (selectedOptionChange)="onSelectChapterChange()" [options]="levelOneChapterList" #selectdChapter>
-            <sui-select-option *ngFor="let option of selectdChapter.filteredOptions" [value]="option">
-            </sui-select-option>
-          </sui-select>
+        <div class="d-flex flex-dc" [class.filters-section]="!!sourcingOrgReviewer && !sampleContent">
+          <div class="sb-textbook-allchapters sb-field">
+            <label class="fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.selectChapters}}</label>
+            <sui-select class="selection w-100" placeholder="{{resourceService.frmelmnts.lbl.allChapters}}" [isSearchable]=true labelField="name"
+              valueField="identifier" [(ngModel)]="selectedChapterOption"
+              (selectedOptionChange)="onSelectChapterChange()" [options]="levelOneChapterList" #selectdChapter>
+              <sui-select-option *ngFor="let option of selectdChapter.filteredOptions" [value]="option">
+              </sui-select-option>
+            </sui-select>
+          </div>
+          <div *ngIf="sourcingOrgReviewer && !sampleContent" class="sb-textbook-allchapters sb-field">
+            <label class="fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.selectStatus}}</label>
+            <sui-multi-select class="selection w-100 max-height-2-5" placeholder="{{resourceService.frmelmnts.lbl.allQuestions}}" [isSearchable]=false 
+              [(ngModel)]="selectedStatusOptions" labelField="label" valueField="status"
+              [options]="statusOptionsList" #selectedStatus>
+              <sui-select-option *ngFor="let option of selectedStatus.filteredOptions" [value]="option">
+              </sui-select-option>
+            </sui-multi-select>
+          </div>
         </div>
       </div>
       </div>
@@ -114,23 +181,29 @@
       <div class="sb-pageSection-content sb-bg-white py-24 px-0 dynamicHeight">
         <div class="ui container sb-textbook-details-container mb-24">
           <div class="d-flex flex-jc-space-between fs-0-785 sb-color-gray-300 mb-15">
-            <span *ngIf="textbookStatusMessage" class="sb-color-error mr-8 pl-10 fs-0-785 font-weight-bold font-italic">{{textbookStatusMessage}}</span>
-            <span class="w-30 font-italic">{{resourceService.frmelmnts.lbl.partialTextbookSelectionNote | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName(programContext, 'plural') | lowercase}} </span>
-            <div *ngIf="sourcingOrgReviewer && storedCollectionData && !sessionContext.nominationDetails" class="d-flex">
-              <app-bulk-approval [programContext]="programContext" [sessionContext]="sessionContext" [storedCollectionData]="storedCollectionData" [originalCollectionData]="originalCollectionData" (updateToc)="bulkApprovalSuccess($event)"></app-bulk-approval>
-            </div>
-            <app-bulk-upload 
-              *ngIf="showBulkUploadOption()"
-              [sharedContext]="sharedContext" 
-              [sessionContext]="sessionContext" 
-              [programContext]="programContext"
-              [storedCollectionData]="storedCollectionData"
-              ></app-bulk-upload>
+            <span *ngIf="textbookStatusMessage" class="sb-color-error mr-8 pl-10 fs-0-785 font-weight-bold font-italic w-30">{{textbookStatusMessage}}</span>
+            <span class="w-30 font-italic">{{resourceService.frmelmnts.lbl.partialTextbookSelectionNote | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName(programContext) | interpolate: '{contentTypeUnit}': (blueprintTemplate ? (resourceService?.frmelmnts?.lbl?.sections) : (resourceService?.frmelmnts?.lbl?.chapters)) | interpolate: '{contentTypeUnit}': blueprintTemplate ? resourceService?.frmelmnts?.lbl?.sections : resourceService?.frmelmnts?.lbl?.chapters | lowercase }} </span>
+            <div class="d-flex">
+              <div *ngIf="sourcingOrgReviewer && storedCollectionData && !sessionContext.nominationDetails && programsService.isProjectLive(programContext)" class="d-flex">
+                <app-bulk-approval [programContext]="programContext" [sessionContext]="sessionContext" [storedCollectionData]="storedCollectionData" [originalCollectionData]="originalCollectionData" (updateToc)="bulkApprovalSuccess($event)"></app-bulk-approval>
+              </div>            
+              <app-bulk-upload 
+                *ngIf="showBulkUploadOption()"
+                [sharedContext]="sharedContext" 
+                [sessionContext]="sessionContext" 
+                [programContext]="programContext"
+                [storedCollectionData]="storedCollectionData"
+                ></app-bulk-upload>
+                <div class="d-flex flex-dc">
+                  <button type="button" class="sb-btn sb-btn-normal sb-btn-primary text-inherit ml-10" style="margin-bottom: 0.75rem" (click)="viewBlueprint()" *ngIf="localBlueprint">{{resourceService?.frmelmnts?.lbl?.viewBlueprint}}</button>
+                  <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-info text-inherit ml-10" (click)="printPreview()" *ngIf="displayPrintPreview && sourcingOrgReviewer">{{resourceService?.frmelmnts?.btn?.printPreview}}</button>
+                </div>
+              </div>
           </div>
           <div class="sb-chapterlist">
             <sui-accordion class="styled fluid sb-accordion sb-chapterlist-accordion" [closeOthers]="true">
               <app-recursive-tree [collectionUnits]="collectionHierarchy" [level]="1" [programContext]="programContext" [sessionContext]="sessionContext" [selectedChapter]="selectedChapterOption" [originalCollectionData]="originalCollectionData"
-                (nodeMeta)="showResourceTemplate($event)"></app-recursive-tree>
+              [selectedStatus]="selectedStatusOptions" (nodeMeta)="showResourceTemplate($event)"></app-recursive-tree>
             </sui-accordion>
           </div>
         </div>
@@ -204,6 +277,123 @@
     [telemetryInteractCdata]="telemetryInteractCdata"
     [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.no}} </button>
   </div>
+</sui-modal>
+
+<sui-modal *ngIf="viewBlueprintFlag" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'large'" class="sb-modal" appBodyScroll (dismissed)="this.viewBlueprintFlag = false" #blueprintModal>
+	<div class="sb-modal-header">
+		{{resourceService?.frmelmnts?.lbl?.viewBlueprint}}
+	</div>
+	<div class="sb-modal-content">		
+		<div class="segment mt-5 pb-30 pt-10">
+			<form class="ui form sb-dock-dropdown">
+				<div class="ui grid">	
+					<div *ngFor="let property of blueprintTemplate.properties" class="{{property.renderingHints?.semanticColumnWidth || 'six'}} wide column py-10">
+						<div class="field">
+							<label class="d-inline-block fs-0-785 font-weight-normal mr-4">{{property.label}}</label><span class="sb-color-red" *ngIf="(property.required == true)">*</span>
+							<input *ngIf="property.inputType === 'text'" type="text" class="sb-form-control" name="{{property.code}}" [(ngModel)]="localBlueprint[property.code]"  [ngClass]="{ 'disabled':!property.editable}" [disabled]="!property.editable">
+							<div *ngIf="property.inputType === 'multiSelect' && !property.children" class="p-5">
+                <span *ngFor="let option of localBlueprint[property.code]" class="blueprint-chip fs-0-785 mr-5 mb-5" suiPopup
+                popupText="{{option.name}}">{{option.name}}</span>                  
+              </div>
+							<div *ngIf="property.children" class="d-flex">
+								<div *ngFor="let child of property.children" class="px-10 w-17-5 fs-0-785">
+									<label class="d-block fs-0-785 font-weight-normal">{{child.label}}</label>
+									<input class="sb-form-control" name="{{child.code}}"	[disabled]="!property.editable" [ngClass]="{ 'disabled':!property.editable}"	[(ngModel)]="localBlueprint[property.code][child.code]" />
+								</div>
+							</div>
+							<input class="sb-form-control"  *ngIf="property.inputType === 'select' && !property.children"	name="{{property.code}}" [(ngModel)]="localBlueprint[property.code]" [ngClass]="{ 'disabled':!property.editable}" [disabled]="!property.editable" />																					
+						</div>
+					</div>						
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="sb-modal-actions">
+		<button class="sb-btn sb-btn-normal sb-btn-primary" (click)="viewBlueprintFlag = false"  [disabled]="btnDoneDisabled">
+			{{resourceService?.frmelmnts?.lbl?.done}}
+		</button>
+	</div>
+</sui-modal>
+
+<sui-modal *ngIf="viewBlueprintDetailsFlag" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="this.viewBlueprintDetailsFlag = false" #blueprintModal>
+	<div class="sb-modal-header">
+		{{resourceService?.frmelmnts?.lbl?.progressAgainstBlueprint}}
+	</div>
+	<div class="sb-modal-content">		
+		<div class="segment mt-5 pb-30 pt-10">
+			<form class="ui form sb-dock-dropdown">
+				<div class="ui grid">	
+          <div class="d-flex" *ngIf="sessionContext.currentOrgRole != 'individual'">                                                         
+              <div class="d-flex flex-dc">
+                <div class="d-flex flex-dc mb-10">                       
+                  <span class="font-weight-normal fs-">{{resourceService.frmelmnts.lbl.questionTypes}} </span>                                                                              
+                </div>
+                <div class="d-flex flex-dr mb-10">    
+                  <dl  class="sb-meta-data mr-15">
+                    <dt class="text-gray mb-10" [class.text-green]="countData['objective'] === localBlueprint['count']['objective']">{{countData['objective']}} / {{localBlueprint['count']['objective']}} </dt>
+                    <dd class="font-weight-normal fsmall">{{resourceService.frmelmnts.lbl.objective}}                    
+                    </dd>
+                  </dl>
+                  <dl class="sb-meta-data mr-15">
+                    <dt class="text-gray mb-10" [class.text-green]="countData['vsa'] === localBlueprint['count']['vsa']">{{countData['vsa']}} / {{localBlueprint['count']['vsa']}}</dt>
+                    <dd class="font-weight-normal fsmall">{{resourceService.frmelmnts.lbl.vsa}}</dd>
+                  </dl>       
+                  <dl class="sb-meta-data mr-15">
+                    <dt class="text-gray mb-10" [class.text-green]="countData['sa'] === localBlueprint['count']['sa']">{{countData['sa']}} / {{localBlueprint['count']['sa']}}</dt>
+                    <dd class="font-weight-normal fsmall">{{resourceService.frmelmnts.lbl.sa}}</dd>
+                  </dl> 
+                  <dl class="sb-meta-data mr-15">
+                    <dt class="text-gray mb-10" [class.text-green]="countData['la'] === localBlueprint['count']['la']">{{countData['la']}} / {{localBlueprint['count']['la']}}</dt>
+                    <dd class="font-weight-normal fsmall">{{resourceService.frmelmnts.lbl.la}}</dd>
+                  </dl>          
+                </div>
+                <div class="d-flex flex-dc mb-10">                    
+                  <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.skills}} </span>                                                            
+                </div>    
+                <div class="d-flex flex-dr mb-10">   
+                  <dl  class="sb-meta-data mr-15">
+                    <dt class="text-gray mb-10" [class.text-green]="countData['remember'] === localBlueprint['count']['remember']">{{countData['remember']}} / {{localBlueprint['count']['remember']}} </dt>
+                    <dd class="font-weight-normal fsmall">{{resourceService.frmelmnts.lbl.knowledge}}</dd>
+                  </dl>
+                  <dl class="sb-meta-data mr-15">
+                    <dt class="text-gray mb-10" [class.text-green]="countData['understand'] === localBlueprint['count']['understand']">{{countData['understand']}} / {{localBlueprint['count']['understand']}}</dt>
+                    <dd class="font-weight-normal fsmall">{{resourceService.frmelmnts.lbl.understanding}}</dd>
+                  </dl>
+                  <dl class="sb-meta-data mr-15">
+                    <dt class="text-gray mb-10" [class.text-green]="countData['apply'] === localBlueprint['count']['apply']">{{countData['apply']}} / {{localBlueprint['count']['apply']}}</dt>
+                    <dd class="font-weight-normal fsmall">{{resourceService.frmelmnts.lbl.application}}</dd>
+                  </dl>
+                </div>
+                <div class="d-flex flex-dc mb-10">                    
+                  <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.chapters}}</span>
+                  <em class="sb-color-warning fsmall font-weight-normal line-height-20" *ngIf="!topicsInsideBlueprint">{{ resourceService?.frmelmnts?.lbl?.blueprintViolation | interpolate: '{contentUnits}': 'topics' }}</em>                                                                                                   
+                </div>    
+                <div class="d-flex flex-dr mb-10">   
+                  <dl  class="sb-meta-data mr-15">
+                    <dt class="text-gray mb-10" [class.text-green]="countData['topics'] === localBlueprint['count']['topics']">{{countData['topics']}} / {{localBlueprint['count']['topics']}} </dt>                    
+                  </dl>  
+                                
+                </div>
+                <div class="d-flex flex-dc mb-10">                    
+                  <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.competencies}} </span> 
+                  <em class="sb-color-warning fsmall font-weight-normal line-height-20" *ngIf="!learningOutcomesInsideBlueprint">{{ resourceService?.frmelmnts?.lbl?.blueprintViolation | interpolate: '{contentUnits}': 'learning outcomes' }}</em>                                                                                   
+                </div>    
+                <div class="d-flex flex-dr mb-10">   
+                  <dl  class="sb-meta-data mr-15">
+                    <dt class="text-gray mb-10" [class.text-green]="countData['learningOutcomes'] === localBlueprint['count']['learningOutcomes']">{{countData['learningOutcomes']}} / {{localBlueprint['count']['learningOutcomes']}} </dt>                    
+                  </dl>                                  
+                </div>
+            </div>
+          </div>					
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="sb-modal-actions">
+		<button class="sb-btn sb-btn-normal sb-btn-primary" (click)="viewBlueprintDetailsFlag = false"  [disabled]="btnDoneDisabled">
+			{{resourceService?.frmelmnts?.lbl?.done}}
+		</button>
+	</div>
 </sui-modal>
 
 <sui-modal *ngIf="showRemoveConfirmationModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"

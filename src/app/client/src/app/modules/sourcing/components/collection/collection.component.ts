@@ -216,7 +216,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
           if (this.userService.isUserBelongsToOrg()) {
             organisation_id = this.userService.getUserOrgId();
           } else {
-            createdBy = this.userService.getUserId();
+            createdBy = this.userService.userid;
           }
         // tslint:disable-next-line:max-line-length
         this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId, sampleValue, organisation_id, createdBy)
@@ -228,7 +228,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
                   this.contentStatusCounts = this.collectionHierarchyService.getContentCounts(contents, this.userService.getUserOrgId(), collections);
                 } else {
                   // tslint:disable-next-line:max-line-length
-                  this.contentStatusCounts = this.collectionHierarchyService.getContentCountsForIndividual(contents, this.userService.getUserId(), collections);
+                  this.contentStatusCounts = this.collectionHierarchyService.getContentCountsForIndividual(contents, this.userService.userid, collections);
                 }
               } else {
                 this.contentStatusCounts = this.collectionHierarchyService.getContentCountsForAll([], collections);
@@ -532,7 +532,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.userService.isUserBelongsToOrg()) {
       req.data.request.filters['organisation_id'] = this.userService.getUserOrgId();
     } else {
-      req.data.request.filters['user_id'] = this.userService.getUserId();
+      req.data.request.filters['user_id'] = this.userService.userid;
     }
     this.programsService.post(req).subscribe((data) => {
       const nomination = _.first(_.get(data, 'result', []));
@@ -579,7 +579,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
 
   canNominate() {
     const today = moment();
-    return moment(this.programContext.nomination_enddate).isSameOrAfter(today, 'day');
+    return moment(this.programContext.nomination_enddate).isSameOrAfter(today, 'day') && this.programsService.isProjectLive(this.programContext);
   }
 
   uploadSampleContent(event, collection) {
@@ -588,7 +588,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
         this.toasterService.error(this.resourceService.messages.emsg.nomination.m001);
     } else {
       const programId = this.activatedRoute.snapshot.params.programId;
-      const userId = this.userService.getUserId();
+      const userId = this.userService.userid;
       const request = {
         program_id: programId,
         status: 'Initiated',

@@ -13,9 +13,9 @@ import { empty } from 'rxjs';
 })
 export class ResourceTemplateComponent implements OnInit, OnDestroy {
 
-  @ViewChild('modal') private modal;
-  @ViewChild('questionTypeModal') questionTypeModal;
-  @ViewChild('modeofcreationmodal') modeofcreationmodal;
+  @ViewChild('modal', {static: false}) private modal;
+  @ViewChild('questionTypeModal', {static: false}) questionTypeModal;
+  @ViewChild('modeofcreationmodal', {static: false}) modeofcreationmodal;
 
   @Input() resourceTemplateComponentInput: IResourceTemplateComponentInput = {};
   @Output() templateSelection = new EventEmitter<any>();

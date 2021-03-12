@@ -72,7 +72,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   userPreferences: any = {};
   setPreferences = {};
   prefernceForm: FormGroup;
-  @ViewChild('prefModal') prefModal;
+  @ViewChild('prefModal', {static: false}) prefModal;
   public paginatedContributorOrgUsers: any = [];
   public allContributorOrgUsers: any = [];
   public contributorOrgUser: any = [];
@@ -93,7 +93,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   searchLimitCount: any;
 
   visitedTab = [];
-  @ViewChild('userRemoveRoleModal') userRemoveRoleModal;
+  @ViewChild('userRemoveRoleModal', {static: false}) userRemoveRoleModal;
   public userRemoveRoleLoader = false;
   public showUserRemoveRoleModal = false;
   public selectedUserToRemoveRole: any;
@@ -255,7 +255,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.userService.isUserBelongsToOrg()) {
       req.data.request.filters['organisation_id'] = this.userService.getUserOrgId();
     } else {
-      req.data.request.filters['user_id'] = this.userService.getUserId();
+      req.data.request.filters['user_id'] = this.userService.userid;
     }
     this.programsService.post(req).subscribe((data) => {
       const nominationDetails = _.first(_.get(data, 'result', []));
@@ -288,7 +288,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         const roles = _.filter(this.roles, role => this.sessionContext.currentRoles.includes(role.name));
         this.sessionContext.currentRoleIds = !_.isEmpty(roles) ? _.map(roles, role => role.id) : null;
         if (this.userService.isUserBelongsToOrg()) {
-          this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
+          this.registryService.getOrgUsersDetails().then((orgUsers) => {
             this.setOrgUsers(orgUsers);
           });
         }
@@ -757,7 +757,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     const contributionendDate  = moment(this.programDetails.content_submission_enddate);
     const endDate  = moment(this.programDetails.enddate);
     const today = moment();
-    return (contributionendDate.isSameOrAfter(today, 'day') && endDate.isSameOrAfter(today, 'day')) ? true : false;
+    return (contributionendDate.isSameOrAfter(today, 'day') && this.programsService.isProjectLive(this.programDetails)) ? true : false;
   }
 
   applyPreferences(preferences?) {

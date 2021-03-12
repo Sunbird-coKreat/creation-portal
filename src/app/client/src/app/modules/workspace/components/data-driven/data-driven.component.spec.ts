@@ -13,6 +13,7 @@ import { FrameworkService, FormService, ContentService, UserService, CoreModule 
 import { CacheService } from 'ng2-cache-service';
 import { mockFrameworkData } from './data-driven.component.spec.data';
 import { TelemetryModule } from '@sunbird/telemetry';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('DataDrivenComponent', () => {
   let componentParent: DataDrivenComponent;
@@ -56,7 +57,7 @@ describe('DataDrivenComponent', () => {
   };
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, SuiModule, SharedModule.forRoot(), CoreModule,
+      imports: [HttpClientTestingModule, SuiModule, RouterTestingModule, SharedModule.forRoot(), CoreModule,
         TelemetryModule.forRoot()],
       declarations: [DataDrivenComponent, DefaultTemplateComponent],
       providers: [CacheService, EditorService, WorkSpaceService,

@@ -15,7 +15,7 @@ export class McqTemplateSelectionComponent implements OnInit, OnDestroy {
   @Input() questionMetaData: any;
   @Input() sessionContext: any;
   @Input() telemetryEventsInput: any;
-  @ViewChild('modal') private modal;
+  @ViewChild('modal', {static: false}) private modal;
   @Output() templateSelection = new EventEmitter<any>();
   mcqTemplateConfig = mcqTemplateConfig.templateConfig;
   constructor(public configService: ConfigService, public programTelemetryService: ProgramTelemetryService) { }

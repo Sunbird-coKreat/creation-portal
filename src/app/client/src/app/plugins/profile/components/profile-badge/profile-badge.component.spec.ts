@@ -7,6 +7,7 @@ import { mockRes } from './profile-badge.component.spec.data';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { SharedModule } from '@sunbird/shared';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('ProfileBadgeComponent', () => {
   let component: ProfileBadgeComponent;
@@ -14,7 +15,7 @@ describe('ProfileBadgeComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [SharedModule.forRoot(), HttpClientTestingModule, CoreModule],
+      imports: [SharedModule.forRoot(), HttpClientTestingModule, CoreModule, RouterTestingModule],
       declarations: [ProfileBadgeComponent],
       providers: [UserService, BadgesService],
       schemas: [NO_ERRORS_SCHEMA]

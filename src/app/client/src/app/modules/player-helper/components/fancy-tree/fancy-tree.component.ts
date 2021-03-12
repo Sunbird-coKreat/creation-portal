@@ -9,12 +9,12 @@ import { ActivatedRoute } from '@angular/router';
   templateUrl: './fancy-tree.component.html'
 })
 export class FancyTreeComponent implements AfterViewInit {
-  @ViewChild('fancyTree') public tree: ElementRef;
+  @ViewChild('fancyTree', {static: false}) public tree: ElementRef;
   @Input() public nodes: any;
   @Input() public options: any;
   @Input() public rootNode;
   @Output() public itemSelect: EventEmitter<Fancytree.FancytreeNode> = new EventEmitter();
-  @ViewChild(TelemetryInteractDirective) telemetryInteractDirective: TelemetryInteractDirective;
+  @ViewChild(TelemetryInteractDirective, {static: false}) telemetryInteractDirective: TelemetryInteractDirective;
   constructor(public activatedRoute: ActivatedRoute) { }
   ngAfterViewInit() {
     let options: any = {

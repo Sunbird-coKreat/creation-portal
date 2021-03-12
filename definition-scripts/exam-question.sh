@@ -1,0 +1,187 @@
+curl -L -X POST '{{host}}/object/category/definition/v4/create' \
+-H 'Content-Type: application/json' \
+--data-raw '{
+  "request": {
+    "objectCategoryDefinition": {
+      "categoryId": "obj-cat:exam-question",
+      "targetObjectType": "Content",
+      "objectMetadata": {
+        "config": {
+          "sourcingConfig": {
+            "editor": [
+              {
+                "mimetype": "application/vnd.ekstep.ecml-archive",
+                "type": "question"
+              }
+            ]
+          }
+        },
+        "schema": {
+          "properties": {
+            "mimeType": {
+              "type": "string",
+              "enum": [
+                "application/vnd.ekstep.ecml-archive"
+              ]
+            },
+            "maxQuestions": {
+              "type": "number",
+              "default": 1
+            }
+          }
+        }
+      },
+      "languageCode": [],
+      "forms": {
+        "update": {
+          "templateName": "",
+          "required": [],
+          "properties": [
+            {
+              "code": "name",
+              "editable": true,
+              "displayProperty": "Editable",
+              "dataType": "text",
+              "renderingHints": {
+                "semanticColumnWidth": "twelve"
+              },
+              "description": "Name",
+              "index": 1,
+              "label": "Name",
+              "required": false,
+              "name": "Name",
+              "inputType": "text",
+              "placeholder": "Name"
+            },
+            {
+              "code": "topic",
+              "dataType": "list",
+              "description": "",
+              "editable": true,
+              "index": 2,
+              "inputType": "multiSelect",
+              "label": "Chapter",
+              "name": "Chapter",
+              "placeholder": "Select chapter",
+              "renderingHints": {},
+              "required": false,
+              "visible": true
+            },
+            {
+              "code": "learningOutcome",
+              "dataType": "list",
+              "description": "",
+              "editable": true,
+              "index": 3,
+              "inputType": "multiSelect",
+              "label": "Competency",
+              "name": "Competency",
+              "placeholder": "Select competency",
+              "renderingHints": {},
+              "required": false,
+              "visible": true
+            },
+            {
+              "code": "bloomsLevel",
+              "inputType": "multiSelect",
+              "dataType": "list",
+              "description": "Cognitive processes involved to answer the question set.",
+              "index": 4,
+              "range": [
+                {
+                  "bloomLevel": "remember",
+                  "name": "Remember"
+                },
+                {
+                  "bloomLevel": "understand",
+                  "name": "Understand"
+                },
+                {
+                  "bloomLevel": "apply",
+                  "name": "Apply"
+                },
+                {
+                  "bloomLevel": "analyse",
+                  "name": "Analyse"
+                },
+                {
+                  "bloomLevel": "evaluate",
+                  "name": "Evaluate"
+                },
+                {
+                  "bloomLevel": "create",
+                  "name": "Create"
+                }
+              ],
+              "renderingHints": {
+                "semanticColumnWidth": "twelve"
+              },
+              "required": false,
+              "visible": true,
+              "editable": true,
+              "name": "Learning Level",
+              "label": "Skills Tested"
+            },
+            {
+              "code": "marks",
+              "visible": true,
+              "editable": true,
+              "displayProperty": "Marks",
+              "dataType": "text",
+              "label": "Marks",
+              "name": "Marks",
+              "required": true,
+              "renderingHints": {
+                "semanticColumnWidth": "six"
+              },
+              "description": "Marks of the question in the examination",
+              "index": 5,
+              "inputType": "text",
+              "placeholder": "0"
+            },
+            {
+              "code": "author",
+              "dataType": "text",
+              "description": "Author",
+              "editable": true,
+              "index": 6,
+              "inputType": "text",
+              "label": "Author",
+              "name": "Author",
+              "placeholder": "Author",
+              "tooltip": "Provide name of creator of this content.",
+              "renderingHints": {},
+              "required": false
+            },
+            {
+              "code": "copyright",
+              "dataType": "text",
+              "description": "Copyright",
+              "editable": true,
+              "index": 7,
+              "inputType": "text",
+              "label": "Copyright and Year",
+              "name": "Copyright",
+              "defaultValue": "2021 MIT",
+              "placeholder": "Copyright",
+              "tooltip": "If you are an individual, creating original content, you are the copyright holder. If you are creating this course content on behalf of an organisation, the organisation may be the copyright holder. ",
+              "renderingHints": {},
+              "required": false
+            },
+            {
+              "code": "license",
+              "visible": true,
+              "index": 8,
+              "editable": true,
+              "displayProperty": "Editable",
+              "dataType": "text",
+              "renderingHints": {
+                "semanticColumnWidth": "six"
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}'

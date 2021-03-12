@@ -62,7 +62,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   public sampleDataCount = 0;
   public showLoader = true;
   sharedContext;
-  @ViewChild('FormControl') FormControl: NgForm;
+  @ViewChild('FormControl', {static: false}) FormControl: NgForm;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;

@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, NgZone, Renderer2, OnDestroy, Input, 
 import * as _ from 'lodash-es';
 import * as iziModal from 'izimodal/js/iziModal';
 import { NavigationHelperService, ResourceService, ConfigService, ToasterService, IUserProfile } from '@sunbird/shared';
-import { UserService, TenantService, FrameworkService, PlayerService, NotificationService, ProgramsService, 
+import { UserService, TenantService, FrameworkService, PlayerService, NotificationService, ProgramsService,
   ActionService } from '@sunbird/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '@sunbird/environment';
@@ -24,8 +24,8 @@ jQuery.fn.iziModal = iziModal;
 })
 export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() contentEditorComponentInput: IContentEditorComponentInput;
-  @ViewChild('formData') formData: DataFormComponent;
-  @ViewChild('FormControl') FormControl: NgForm;
+  @ViewChild('formData', {static: false}) formData: DataFormComponent;
+  @ViewChild('FormControl', {static: false}) FormControl: NgForm;
   @Output() uploadedContentMeta = new EventEmitter<any>();
   private userProfile: IUserProfile;
   private routeParams: any;
@@ -35,6 +35,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   public logo: string;
   public showLoader = true;
   public contentDetails: any;
+  public contentEditorComponentInputs : any;
   public ownershipType: any;
   public queryParams: object;
   public videoMaxSize: any;
@@ -203,8 +204,8 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     this.visibility['showSubmit'] = submissionDateFlag && this.canSubmit();
     this.visibility['showEditMetadata'] = submissionDateFlag && this.canEditMetadata();
     this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
-    this.visibility['showSourcingActionButtons'] = this.canSourcingReviewerPerformActions();
-    this.visibility['showSendForCorrections'] = this.canSendForCorrections();
+    this.visibility['showSourcingActionButtons'] = submissionDateFlag && this.canSourcingReviewerPerformActions();
+    this.visibility['showSendForCorrections'] = this.visibility['showSourcingActionButtons'] && this.canSendForCorrections();
   }
 
   canSendForCorrections() {
@@ -213,12 +214,12 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
 
   canEdit() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.resourceStatus === 'Draft' && this.userService.getUserId() === this.contentData.createdBy);
+    return !!(this.resourceStatus === 'Draft' && this.userService.userid === this.contentData.createdBy);
   }
 
   canSave() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.hasAccessFor(['CONTRIBUTOR']) && !this.contentData.sampleContent === true && this.resourceStatus === 'Draft' && (this.userService.getUserId() === this.contentData.createdBy));
+    return !!(this.hasAccessFor(['CONTRIBUTOR']) && !this.contentData.sampleContent === true && this.resourceStatus === 'Draft' && (this.userService.userid === this.contentData.createdBy));
   }
 
   canEditMetadata() {
@@ -228,31 +229,31 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
 
   canSubmit() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && this.userService.getUserId() === this.contentData.createdBy);
+    return !!(this.hasAccessFor(['CONTRIBUTOR']) && this.resourceStatus === 'Draft' && this.userService.userid === this.contentData.createdBy);
   }
 
   canViewContentPreview() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.sourcingOrgReviewer || (this.sessionContext.currentRoles.includes('REVIEWER') && this.userService.getUserId() !== this.contentData.createdBy) || (this.resourceStatus !== 'Draft' && this.userService.getUserId() === this.contentData.createdBy));
+    return !!(this.sourcingOrgReviewer || (this.sessionContext.currentRoles.includes('REVIEWER') && this.userService.userid !== this.contentData.createdBy) || (this.resourceStatus !== 'Draft' && this.userService.userid === this.contentData.createdBy));
   }
 
   canPublishContent() {
     // tslint:disable-next-line:max-line-length
     return !!(this.router.url.includes('/contribute') && !this.contentData.sampleContent === true &&
     // tslint:disable-next-line:max-line-length
-    this.hasAccessFor(['REVIEWER']) && this.resourceStatus === 'Review' && this.userService.getUserId() !== this.contentData.createdBy);
+    this.hasAccessFor(['REVIEWER']) && this.resourceStatus === 'Review' && this.userService.userid !== this.contentData.createdBy);
   }
 
   canReviewContent() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.router.url.includes('/contribute') && !this.contentData.sampleContent === true && this.hasAccessFor(['REVIEWER']) && this.resourceStatus === 'Review' && this.userService.getUserId() !== this.contentData.createdBy);
+    return !!(this.router.url.includes('/contribute') && !this.contentData.sampleContent === true && this.hasAccessFor(['REVIEWER']) && this.resourceStatus === 'Review' && this.userService.userid !== this.contentData.createdBy);
   }
 
   canSourcingReviewerPerformActions() {
     // tslint:disable-next-line:max-line-length
     return !!(this.router.url.includes('/sourcing')
     && !this.contentData.sampleContent === true && this.resourceStatus === 'Live'
-    && this.userService.getUserId() !== this.contentData.createdBy
+    && this.userService.userid !== this.contentData.createdBy
     && this.resourceStatus === 'Live' && !this.sourcingReviewStatus &&
     (this.originCollectionData.status === 'Draft' && this.selectedOriginUnitStatus === 'Draft'));
   }
@@ -398,7 +399,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
 
   getEditableFields() {
     if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
-      if (this.userService.getUserId() === this.contentData.createdBy && this.resourceStatus === 'Draft') {
+      if (this.userService.userid === this.contentData.createdBy && this.resourceStatus === 'Draft') {
         this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.contentData);
         this.contentEditRole = 'CONTRIBUTOR';
       } else if (this.canPublishContent()) {

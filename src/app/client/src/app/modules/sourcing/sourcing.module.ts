@@ -16,7 +16,7 @@ import { RecursiveTreeComponent } from './components/recursive-tree/recursive-tr
 import { ContentUploaderComponent } from './components/content-uploader/content-uploader.component';
 import { ResourceTemplateComponent } from './components/resource-template/resource-template.component';
 import { DynamicModule } from 'ng-dynamic-component';
-import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
 import { CollectionComponent } from './components/collection/collection.component';
 import { ResourceReorderComponent } from './components/resource-reorder/resource-reorder.component';
 import { ContentEditorComponent } from './components/content-editor/content-editor.component';

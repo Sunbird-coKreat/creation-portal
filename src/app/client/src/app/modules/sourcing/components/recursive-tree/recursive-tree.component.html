@@ -7,7 +7,7 @@
   [isOpen]=" (collection.identifier === sessionContext.lastOpenedUnitChild || collection.identifier === sessionContext.lastOpenedUnitParent) ? true : false">
     <div title class="sb-accordion-title d-flex flex-jc-flex-end sb-color-primary flex-ai-center"><span class="chapter-status mr-16"></span>
      <span class="flex-4"> {{collection.name}}</span>
-     <span class="sb-color-error font-weight-bold px-20 text-left" *ngIf="sourcingOrgReviewer">{{collection.statusMessage}}</span>
+     <span class="sb-color-error font-weight-bold px-20 text-left w-30" *ngIf="sourcingOrgReviewer">{{collection.statusMessage}}</span>
      <div *ngIf="sourcingOrgReviewer && collection.sourcingStatusDetail" class="single-row">
       <div class="sb-color-warning sb-count" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.approvalPending">
         <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.approvalPending}}:</span>
@@ -115,7 +115,7 @@
       <div class="chapter-lists level1" *ngIf="collection.leaf">
         <ng-container *ngFor="let content of collection.leaf; let ind = index">
           <div class="chapter-lists--item"
-          *ngIf="content.contentVisibility === true"
+          *ngIf="content.contentVisibility === true && includes(sourcingOrgReviewer, selectedStatus, content.sourcingStatus || content.status)"
           appTelemetryInteract
           [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('preview_resource', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
           [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
@@ -136,7 +136,7 @@
               <span class="sb-color-primary"  *ngIf="content.status === 'Draft' && content.prevStatus === 'Live'">{{resourceService.frmelmnts.lbl.correctionsPending}}</span>
             </span>
             <div class="item-dropdown absolute position" (click)="menuClick($event)" *ngIf="content.status === 'Draft' && !content.sourceURL">
-              <div *ngIf="canViewActionMenu(content)" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
+              <div *ngIf="!!(showActionMenu && content.createdBy === userId)" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
                 suiDropdown
                 appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('context_menu', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
@@ -182,7 +182,7 @@
               </div>
             </div>
             <div class="item-dropdown absolute position" (click)="menuClick($event)" *ngIf="content.status === 'Live' && content.sourceURL && (content.sourcingStatus !== 'Approved' && content.sourcingStatus !== 'Rejected')">
-              <div *ngIf="canViewActionMenu(content)" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
+              <div *ngIf="!!(showActionMenu && content.createdBy === userId)" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
                 suiDropdown
                 appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('context_menu', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
@@ -215,7 +215,7 @@
       </div>
       <div class="sb-chapterlist-child sb-dock-toc-accor" *ngIf="collection.children">
         <app-recursive-tree [collectionUnits]="collection.children" [level]="childlevel" [programContext]="programContext" [sessionContext]="sessionContext"  [selectedChapter]="selectedChapter" [originalCollectionData]="originalCollectionData"
-          (nodeMeta)="nodeMetaEmitter($event)"></app-recursive-tree>
+        [selectedStatus]="selectedStatus" (nodeMeta)="nodeMetaEmitter($event)"></app-recursive-tree>
       </div>
     </div>
   </sui-accordion-panel>

@@ -67,6 +67,10 @@
   flex: 10;
 }
 
+.text-light-gray {
+  color: #888888!important;
+}
+
 
 .template-items {
   .selected-icon {
@@ -257,4 +261,40 @@
 }
 .fmedium {
   font-size: 5rem !important;
+}
+
+// Blueprint Modal
+.blueprint-chip {
+  background: #e0e0e0;
+  display: inline-block;
+  padding: 0 12px;
+  border-radius: 32px;
+  font-size: 14px;
+  height: 32px;
+  line-height: 32px;
+  max-width: 400px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+// Blueprint Progress
+.blueprint-progress {
+  top: -20%;
+  position: relative;
+  left: -5%;
+}
+
+.text-green {
+  color: green!important;
+}
+
+// Filters Dropdowns
+.filters-section {
+  top: -25%;
+  position: relative;
+  left: 0.5%;
+}
+
+.max-height-2-5 {
+  max-height: 2.5rem;
 }

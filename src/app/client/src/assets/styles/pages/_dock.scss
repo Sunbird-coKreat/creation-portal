@@ -405,21 +405,19 @@ hr {
   }
 }
 
-.sb-line-height-1.2 {
-  line-height: 1.2rem;
-}
-
-.sb-success-loader {
-  position: absolute !important;
-  position: absolute !important;
-  top: 46% !important;
-  left: 50% !important;
-  transform: translate(-46%, -50%) !important;
-
-  &:after {
-    width: 1.2rem !important;
-    height: 1.2rem !important;
-  }
+// .sb-line-height-1.2{
+//   line-height: 1.2rem;
+// }
+.sb-success-loader{
+    position: absolute !important;
+    position: absolute !important;
+    top: 46% !important;
+    left: 50% !important;
+    transform: translate(-46%, -50%) !important;
+    &:after{
+      width: 1.2rem !important;
+      height: 1.2rem !important;
+    }
 }
 
 .sb-dock-loader {
@@ -703,8 +701,7 @@ $progressCircle: xs calculateRem(16px) 4px 10px, sm calculateRem(24px) 6px 10px,
     -webkit-appearance: none;
     box-shadow: none !important;
 
-    &:focus,
-    &:active {
+    &:focus,&:active{
       border: 1px solid var(--primary-300) !important;
       outline: 0 !important;
     }
@@ -718,17 +715,6 @@ $progressCircle: xs calculateRem(16px) 4px 10px, sm calculateRem(24px) 6px 10px,
 
   :-webkit-autofill {
     color: #fff !important;
-  }
-
-  label:after {
-    content: "\25BC";
-    display: inline-block;
-    box-sizing: border-box;
-    color: #000;
-    background-color: #fff;
-    margin-left: -14px;
-    pointer-events: none;
-    font-size: 10px;
   }
 }
 
@@ -765,6 +751,12 @@ $progressCircle: xs calculateRem(16px) 4px 10px, sm calculateRem(24px) 6px 10px,
 
 .iziModal-isAttached body {
   overflow: inherit !important;
+
+}
+.selecttarget{
+  .dropdown.icon{
+    float: right !important;
+  }
 }
 
 .selecttarget {
@@ -777,195 +769,28 @@ $progressCircle: xs calculateRem(16px) 4px 10px, sm calculateRem(24px) 6px 10px,
     float: right !important;
   }
 
-  .menu {
+  .menu{
     width: 100%;
   }
 }
-
-.sb-collectionTree-fancyTreelist {
-  .ui-fancytree {
-    &:before {
-      background: none !important;
-    }
-
-    ul {
-      &::before {
-        background: none !important;
+.sb-modal.blueprint-modal{
+  .ui{
+      .modal{
+          margin: 0.5rem auto 0 !important;
       }
-    }
-
-    .fancytree-folder {
-      .fancytree-title {
-        color: var(--primary-color) !important;
-        font-size: 0.9286rem !important;
-        font-weight: 700 !important;
-        padding-left: 5px;
-      }
-    }
-
-    li {
-      padding: 0;
-      margin: 0 0 1px 0;
-
-      .fancytree {
-        &-expanded {
-          padding: 15px 33px;
-          border: 1px solid transparent;
-          background-color: #fff;
-        }
-
-        &-active {
-          border: 1px solid #d0e0f3;
-          background-color: var(--primary-0);
-          padding: 15px 33px;
-        }
-      }
-
-      &:last-child {
-        &:after {
-          display: none;
-        }
-      }
-
-      ul {
-        padding-top: 1px;
-
-        li {
-          .fancytree-custom-icon {
-            &::before {
-              content: url("/assets/images/writing.png");
-              margin-top: 5px;
-              float: left;
-              margin-left: 11px;
-            }
-
-            &:last-child {
-              &:after {
-                display: none;
-              }
-            }
-          }
-
-          .fancytree-node {
-            padding: 6px 6px 8px 5px;
-            margin-left: 45px;
-            border: 1px solid transparent;
-
-            &.fancytree-active,
-            &.fancytree-focused,
-            &:hover {
-              border: 1px solid #d0e0f3;
-              background-color: var(--primary-0);
-              border-right: 0;
-            }
-          }
-        }
-      }
-
-      &::before {
-        background: none !important;
-      }
-
-      .sb-fancyTree-icon {
-        color: var(--gray-300) !important;
-      }
-
-      .fancytree-custom-icon {
-        &::before {
-          content: url("/assets/images/question_collection.svg");
-          margin-left: 5px;
-        }
-      }
-    }
-
-    .fa-caret-down {
-      display: block;
-      width: 10px;
-      padding-left: 2px;
-    }
-
-    .fa-caret-right {
-      display: block;
-      width: 10px;
-      padding-left: 6px;
-    }
   }
-
-  .ui-fancytree {
-    padding-right: 0.785rem;
-    height: calc(100vh - 126px);
-    margin: 0;
-    padding: 0;
+  .sb-modal-content{
+      height: calc(100vh - 100px) !important;
   }
 }
-
-.hover-none {
-  &:hover {
-    background: none !important;
+.sb-modal.applyFilter-modal{
+  .ui{
+      .modal{
+          margin: 1rem auto 0 !important;
+      }
   }
-}
-
-.sb-checkbox-tnc {
-  .sb-required {
-    position: absolute;
-    padding-left: 0;
-    left: 18px;
-  }
-}
-
-.one-column-grid {
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  grid-template-rows: 1fr 1fr;
-  column-gap: 0.5rem;
-}
-
-.two-column-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: 1fr 1fr;
-  column-gap: 0.5rem;
-}
-
-.three-column-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: 1fr 1fr;
-  column-gap: 0.5rem;
-}
-
-// For grid column start add class
-// .sb-g-col-lg-2 for 2
-// .sb-g-col-lg-2 for 3
-// FOR SB FORMS
-
-
-.h-7 {
-  height: 7px;
-}
-
-.h-12 {
-  height: 12px;
-}
-
-.w-85{
-  width: 85%;
-  max-width: 85%;
-}
-
-.b-0 {
-  border: 0 !important;
-}
-
-.sb-line-height-24 {
-  line-height: 24px;
-}
-
-.bg-none {
-  background-color: transparent !important;
-
-  &:hover,
-  &:focus {
-    background-color: transparent !important;
+  .sb-modal-content{
+      max-height: 400px !important;
+      height: calc(100vh - 100px) !important;
   }
 }

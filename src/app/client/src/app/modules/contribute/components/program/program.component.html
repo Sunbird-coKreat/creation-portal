@@ -332,8 +332,8 @@
 								</div>
 							</td>
 							<td class="text-center">
-								<div *ngIf="nominationDetails?.status === 'Rejected'; else elseBlock">
-									{{ (orgUser?.projectselectedRole) ? orgUser.projectselectedRole : '-' }}
+								<div *ngIf="programsService.isProjectClosed(programDetails) || nominationDetails?.status === 'Rejected'; else elseBlock">
+									{{ (orgUser?.projectselectedRole && orgUser.projectselectedRole !== 'Select Role') ? orgUser.projectselectedRole : '-' }}
 								</div>
 								<ng-template #elseBlock>
 									<div class="custom-selectbx">

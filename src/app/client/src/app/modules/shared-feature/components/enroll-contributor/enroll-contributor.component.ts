@@ -20,7 +20,7 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
   public unsubscribe = new Subject<void>();
   public enrollAsOrg = false;
   public enrollDetails: any = {};
-  @ViewChild('modal') modal;
+  @ViewChild('modal', {static: false}) modal;
   frameworkdetails;
   formIsInvalid = false;
   telemetryImpression: any;

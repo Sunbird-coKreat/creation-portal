@@ -28,14 +28,16 @@ import { CacheService } from 'ng2-cache-service';
 })
 
 export class CreateProgramComponent implements OnInit, AfterViewInit {
-  @ViewChild('fineUploaderUI') fineUploaderUI: ElementRef;
+  @ViewChild('fineUploaderUI', {static: false}) fineUploaderUI: ElementRef;
   public unsubscribe = new Subject<void>();
   public programId: string;
   public guidLinefileName: String;
   public isFormValueSet = false;
   public editPublished = false;
+  callTargetCollection =false;
   public choosedTextBook: any;
   selectChapter = false;
+  editBlueprintFlag = false;
   public selectedContentTypes: String[];
   public selectedTargetCollection: any;
   createProgramForm: FormGroup;
@@ -76,6 +78,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public direction = 'asc';
   public chaptersSortDir = 'asc';
   public tempSortCollections = [];
+  public initTopicOptions = [];
+  public initLearningOutcomeOptions = [];
   public filterApplied = false;
   public showDocumentUploader = false;
   public defaultContributeOrgReviewChecked = false;
@@ -91,7 +95,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   errorMsg: string;
   showErrorMsg = false;
   assetConfig: any = this.configService.contentCategoryConfig.sourcingConfig.asset;
+  localBlueprintMap: any;
   public programConfig: any;
+  public localBlueprint: any;
+  public blueprintTemplate: any;
   public disableCreateProgramBtn = false;
   public showLoader = true;
   public btnDoneDisabled = false;
@@ -122,9 +129,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programId = this.activatedRoute.snapshot.params.programId;
     this.userprofile = this.userService.userProfile;
     this.programConfig = _.cloneDeep(programConfigObj);
+    this.localBlueprint = {};
+    this.localBlueprintMap = {};
     this.telemetryInteractCdata = [{id: this.userService.channel || '', type: 'sourcing_organization'}];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
-    this.telemetryInteractObject = {};
+    this.telemetryInteractObject = {};    
     this.getPageId();
     this.acceptPdfType = this.getAcceptType(this.assetConfig.pdfFiles, 'pdf');
     // get target collection in dropdown
@@ -291,7 +300,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.selectedTargetCollection = !_.isEmpty(_.get(this.programDetails, 'target_collection_category')) ? _.get(this.programDetails, 'target_collection_category')[0] : 'Digital Textbook';
       if (!_.isEmpty(this.programDetails.guidelines_url)) {
         this.guidLinefileName = this.programDetails.guidelines_url.split("/").pop();
-      }
+      }      
       this.initializeFormFields();
     }, error => {
       this.showLoader = false;
@@ -574,6 +583,15 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
   }
 
+  fetchBlueprintTemplate(): void {
+    this.programsService.getCollectionCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId).subscribe(res => {
+      let templateDetails = res.result.objectCategoryDefinition;
+      if(templateDetails && templateDetails.forms) {         
+        this.blueprintTemplate = templateDetails.forms.blueprintCreate;                             
+      }
+    })
+  }
+
   /**
    * Executed when user come from any other page or directly hit the url
    *
@@ -633,8 +651,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       this.createProgramForm = this.sbFormBuilder.group(obj);
       this.defaultContributeOrgReviewChecked = _.get(this.programDetails, 'config.defaultContributeOrgReview') ? false : true;
+      this.fetchBlueprintTemplate();
       this.showProgramScope = false;
-      this.showTextBookSelector = false;
+      this.showTextBookSelector = false;      
     }
 
     this.showLoader = false;
@@ -761,7 +780,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'board' }).defaultValue = this.userBoard;
 
     this.programConfig.defaultContributeOrgReview = !this.defaultContributeOrgReviewChecked;
-    this.programData['sourcing_org_name'] = this.userprofile.rootOrgName;
+    this.programData['sourcing_org_name'] = this.userprofile.rootOrg.orgName;
     this.programData['rootorg_id'] = this.userprofile.rootOrgId;
     this.programData['createdby'] = this.userprofile.id;
     this.programData['createdon'] = new Date();
@@ -788,6 +807,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     if (!this.programData['content_submission_enddate']) {
       this.programData['content_submission_enddate'] = null;
+    }
+
+    if (!this.programConfig['blueprintMap']) {
+      this.programConfig['blueprintMap'] = this.localBlueprintMap;
     }
 
     delete this.programData.defaultContributeOrgReview;
@@ -820,7 +843,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           this.programConfig['gradeLevel'] = config.gradeLevel;
           this.programConfig['medium'] = config.medium;
           this.programConfig['subject'] = config.subject;
-          this.programConfig['collections'] = this.getCollections();
+          this.programConfig['collections'] = this.getCollections();          
           _.forEach(this.collectionListForm.value.pcollections, item => {
             this.programData['collection_ids'].push(item.id);
           });
@@ -889,6 +912,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 onChangeTargetCollection() {
     this.showTexbooklist(true);
     this.collectionListForm.value.pcollections = [];
+    this.fetchBlueprintTemplate();
     this.tempCollections = [];
 }
 showTexbooklist(showTextBookSelector = true) {
@@ -946,6 +970,7 @@ showTexbooklist(showTextBookSelector = true) {
           if (!this.editPublished) {
             _.forEach(this.collections, item => {
               const draftCollections = _.get(this.programDetails, 'config.collections');
+              const cindex = this.collections.findIndex(x => x.id === item.identifier);              
               if (!_.isEmpty(draftCollections)) {
                 const index = draftCollections.findIndex(x => x.id === item.identifier);
                 if (index !== -1) {
@@ -983,7 +1008,7 @@ showTexbooklist(showTextBookSelector = true) {
         pcollectionsFormArray.push(new FormControl(collectionId));
         this.tempCollections.push(collection);
 
-        if (!this.textbooks[collectionId]) {
+        if (!this.textbooks[collectionId]) {          
           this.getCollectionHierarchy(collectionId);
         }
       }
@@ -1155,6 +1180,80 @@ showTexbooklist(showTextBookSelector = true) {
     this.selectChapter = true;
   }
 
+  public editBlueprint(collection) {
+    if(!this.textbooks[collection.identifier]) {
+      this.getCollectionHierarchy(collection.identifier);   
+    } else {
+      this.choosedTextBook = this.textbooks[collection.identifier];
+      this.initEditBlueprintForm(this.choosedTextBook);
+    }
+    this.editBlueprintFlag = true;
+  }
+
+  public onChangeBlueprint() {
+    let revisedTotalCount = 0;
+    _.forEach(Object.keys(this.localBlueprint.questionTypes), (type: any) => {
+      revisedTotalCount = revisedTotalCount + this.localBlueprint.questionTypes[type]
+    });
+    this.localBlueprint.totalQuestions  = revisedTotalCount;
+  }
+
+  public mapBlueprintToId() {
+    if(this.isBlueprintValid()) {
+      this.localBlueprintMap[this.choosedTextBook.code] = this.localBlueprint;
+      this.editBlueprintFlag = false;
+    }
+    else {
+      this.toasterService.error(this.resource.messages.emsg.blueprintViolation);
+    }
+    
+  }
+
+  initEditBlueprintForm(collection) { 
+   [this.initTopicOptions, this.initLearningOutcomeOptions] = this.programsService.initializeBlueprintMetadata(this.choosedTextBook, this.frameworkCategories);
+   let blueprint = {};
+    this.blueprintTemplate.properties.forEach( (property) => {
+      if(!property.default) {         
+        if(property.code === 'topics') property.options = this.initTopicOptions;        
+        else if(property.code === 'learningOutcomes') property.options = this.initLearningOutcomeOptions;
+        blueprint[property.code] = [];              
+      }
+      if(property.children) {    
+        blueprint[property.code] = {};    
+        property.children.forEach((nestedProperty) => {
+          blueprint[property.code][nestedProperty.code] = property.default;          
+        })
+      }
+    })    
+    if(this.localBlueprintMap[this.choosedTextBook && this.choosedTextBook.code]) {
+      this.localBlueprint = this.localBlueprintMap[this.choosedTextBook.code]
+    }
+    else this.localBlueprint = blueprint; 
+
+  }
+
+  isBlueprintValid() {
+    let validity = true;
+    _.forEach(this.blueprintTemplate.properties, (prop) => {
+      let val = this.localBlueprint[prop.code]
+      if(prop.required) {
+        if(!val) validity = false;
+        else if(Array.isArray(val) && !val.length) {
+          validity = false;
+        } 
+        else if(typeof val === 'object') {
+          if(_.reduce(val, (result, child, key) => {
+            result = result + child;
+            return result;
+          }, 0) === 0) {
+            validity = false;
+          }
+        }
+      }
+    })
+    return validity;
+  }
+
   initChaptersSelectionForm(chapters) {
     let values = [];
 
@@ -1196,9 +1295,10 @@ showTexbooklist(showTextBookSelector = true) {
         }
       }
 
-      const cindex = this.tempCollections.findIndex(x => x.identifier === identifier);
+      const cindex = this.tempCollections.findIndex(x => x.identifier === identifier);    
       this.tempCollections[cindex]['selected'] = 0;
       this.tempCollections[cindex]['total']    = content.children.length;
+      this.tempCollections[cindex]['contentTypeUnit'] = this.blueprintTemplate ? 'Section' : 'Chapter';
 
       _.forEach(content.children, (item) => {
         if (!_.isEmpty(_.get(dcollection, 'children'))) {
