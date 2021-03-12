@@ -613,8 +613,15 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
               status: 'Initiated',
               program_id: programId,
               user_id: userId,
-              content_types: this.selectedContentTypes
             };
+
+            if (!isEmpty(this.programContext.targetprimarycategories)) {
+              this.sessionContext.nominationDetails['targetprimarycategories'] =  this.selectedContentTypes;
+              request['content_types'] = [];
+            } else {
+              this.sessionContext.nominationDetails['content_types'] = _.map(this.selectedContentTypes, 'name');
+            }
+          
             if (this.userService.isUserBelongsToOrg()) {
               this.sessionContext.nominationDetails['organisation_id'] = this.userService.getUserOrgId();
             }
