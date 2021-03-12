@@ -63,7 +63,7 @@
     "izimodal": "^1.5.1",
     "jquery": "^3.3.1",
     "jquery.fancytree": "^2.28.1",
-    "jspdf": "^1.5.3",
+    "jspdf": "^2.3.1",
     "lodash-es": "^4.17.11",
     "medium-zoom": "^1.0.4",
     "moment": "^2.20.1",
