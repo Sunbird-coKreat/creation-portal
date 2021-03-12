@@ -235,10 +235,10 @@
 											popupText="{{resource?.frmelmnts?.lbl?.contentTypesHint}}"></i>
 									</label>
 									<sui-multi-select class="w-100" *ngIf="!editPublished; else elseBlock"
-										class="selection" formControlName="content_types"
-										[options]="programScope.purpose" [(ngModel)]="selectedContentTypes"
+										class="selection" formControlName="targetPrimaryCategories"
+										[options]="programScope.targetPrimaryCategories" [(ngModel)]="selectedTargetCategories"
 										#multiSelect>
-										<sui-select-option *ngFor="let option of programScope.purpose" [value]="option"
+										<sui-select-option *ngFor="let option of programScope.targetPrimaryCategories" [value]="option"
 											appTelemetryInteract
 											[telemetryInteractEdata]="getTelemetryInteractEdata('content_type', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {values: [option.name]})"
 											[telemetryInteractObject]="telemetryInteractObject"
@@ -247,12 +247,12 @@
 										</sui-select-option>
 									</sui-multi-select>
 									<ng-template #elseBlock>
-										<span *ngIf="programDetails.content_types !== undefined"
-											class="sb-color-gray-200 fs-0-785">{{programDetails.content_types}}</span>
+										<span *ngIf="programDetails.targetprimarycategories !== undefined"
+											class="sb-color-gray-200 fs-0-785">{{programDetails.targetprimarycategories}}</span>
 									</ng-template>
 
 									<div class="ui pointing red basic label below "
-										*ngIf="collectionListForm.controls['content_types'].errors && collectionListForm.controls['content_types'].errors.required && (!collectionListForm.controls['content_types'].pristine || formIsInvalid)">
+										*ngIf="collectionListForm.controls['targetPrimaryCategories'].errors && collectionListForm.controls['targetPrimaryCategories'].errors.required && (!collectionListForm.controls['targetPrimaryCategories'].pristine || formIsInvalid)">
 										{{resource?.frmelmnts?.lbl?.contentTypesRequired }}
 									</div>
 								</div>

@@ -19,6 +19,7 @@ import { LearnerService } from '../learner/learner.service';
 import { RegistryService } from '../registry/registry.service';
 import { ExportToCsv } from 'export-to-csv';
 import { CacheService } from 'ng2-cache-service';
+import { isUndefined } from 'lodash';
 import * as moment from 'moment';
 
 @Injectable({
@@ -949,8 +950,8 @@ export class ProgramsService extends DataService implements CanActivate {
     );
   }
 
-  getCategoryDefinition(categoryName, rootOrgId) {
-    const cacheInd = categoryName + ':' + rootOrgId;
+  getCategoryDefinition(category, rootOrgId) {
+    const cacheInd = category.name + ':' + rootOrgId;
     if (this.cacheService.get(cacheInd)) {
       return  of(this.cacheService.get(cacheInd));
     } else {
@@ -959,8 +960,8 @@ export class ProgramsService extends DataService implements CanActivate {
         data: {
           request: {
             "objectCategoryDefinition": {
-                "objectType": "Content",
-                "name": categoryName,
+                "objectType": category.targetObjectType,
+                "name": category.name,
                 "channel": rootOrgId
             },
           }
@@ -1308,5 +1309,47 @@ export class ProgramsService extends DataService implements CanActivate {
 
   isProjectLive(program) {
     return !! (!this.isProjectEnded(program) && (program.status === 'Live' || program.status === 'Unlisted'));
+  }
+
+  getProgramTargetPrimaryCategories(program, channelCategories?) {
+    let targetPrimaryCategories = [];
+    if (!_.isEmpty(program.targetprimarycategories)) {
+      return program.targetprimarycategories;
+    } else {
+      _.forEach (program.content_types, (val) => {
+        let catObj = {
+          identifier: '',
+          name: val,
+          targetObjectType: 'Content'
+        };
+
+        if (!isUndefined(channelCategories)) {
+          let cat = _.find(channelCategories, {"name": val, "targetObjectType": 'Content'});
+          catObj['identifier'] = (cat) ? cat.identifier : '';
+        }
+        targetPrimaryCategories.push(catObj);
+      });
+      return targetPrimaryCategories;
+    }
+  }
+
+  getNominatedTargetPrimaryCategories(program, nomination) {
+    let projectPrimaryCategories = this.getProgramTargetPrimaryCategories(program);
+    let targetPrimaryCategories;
+    if (nomination && !_.isEmpty(nomination.targetprimarycategories)) {
+      targetPrimaryCategories = _.filter(nomination.targetprimarycategories, (nomCat) => {
+        let cat = _.find(projectPrimaryCategories, { 'identifier': nomCat.identifier });
+        if (cat) {
+          return cat;        
+        }
+      });
+    } else if (nomination && !_.isEmpty(nomination.content_types)) {
+      targetPrimaryCategories = _.filter(projectPrimaryCategories, (cat) => {
+        if (_.includes(nomination.content_types, cat.name)) {
+          return cat;        
+        } 
+      });
+    } 
+    return targetPrimaryCategories;
   }
 }
