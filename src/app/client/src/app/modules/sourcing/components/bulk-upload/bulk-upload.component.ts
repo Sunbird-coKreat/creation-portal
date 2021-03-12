@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
 import { UserService, ProgramsService, ActionService } from '@sunbird/core';
-import { ResourceService, ToasterService, ConfigService } from '@sunbird/shared';
+import { ResourceService, ToasterService, ConfigService, IUserProfile } from '@sunbird/shared';
 import { FineUploader } from 'fine-uploader';
 import CSVFileValidator, { CSVFileValidatorResponse } from './csv-helper-util';
 import * as _ from 'lodash-es';
@@ -8,7 +8,8 @@ import { BulkJobService } from '../../services/bulk-job/bulk-job.service';
 import { UUID } from 'angular2-uuid';
 import { HelperService } from '../../services/helper.service';
 import { ProgramTelemetryService } from '../../../program/services';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-bulk-upload',
@@ -68,6 +69,8 @@ export class BulkUploadComponent implements OnInit {
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
+  public userProfile: IUserProfile;
+  public unsubscribe = new Subject<void>();
   constructor(
     private userService: UserService,
     private resourceService: ResourceService,
@@ -80,6 +83,13 @@ export class BulkUploadComponent implements OnInit {
   ) { }
 
    ngOnInit() {
+    this.userService.userData$.pipe(
+      takeUntil(this.unsubscribe))
+      .subscribe((user: any) => {
+      if (user && !user.err) {
+        this.userProfile = user.userProfile;
+      }
+    });
     this.checkBulkUploadStatus();
     this.stageStatus = this.getContentStatus();
     this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
@@ -112,10 +122,10 @@ export class BulkUploadComponent implements OnInit {
                   this.catFormatMapping[_.toLower(catDef.name)].push('html');
                 }
               }
-            }); 
+            });
           }
           return obj;
-        }) 
+        })
         resolve(this.catFormatMapping);
       });
     });
@@ -162,7 +172,7 @@ export class BulkUploadComponent implements OnInit {
         program_id: _.get(this.programContext, 'program_id', ''),
         collection_id: _.get(this.sessionContext, 'collection', ''),
         type: 'bulk_upload',
-        createdby: _.get(this.userService, 'userProfile.userId', '')
+        createdby: _.get(this.userService, 'userid', '')
       },
       limit: 1
     };
@@ -208,7 +218,7 @@ export class BulkUploadComponent implements OnInit {
           }
         });
 
-        this.process.overall_stats.upload_pending = this.process.overall_stats.total - 
+        this.process.overall_stats.upload_pending = this.process.overall_stats.total -
         (this.process.overall_stats.upload_success + this.process.overall_stats.upload_failed);
 
         if (this.process.overall_stats.upload_pending === 0) {
@@ -235,8 +245,8 @@ export class BulkUploadComponent implements OnInit {
           if (this.oldProcessStatus !== this.process.status) {
             this.updateJob();
           }
-          
-        }); 
+
+        });
       }
     }, (error) => {
       console.log(error);
@@ -333,7 +343,7 @@ export class BulkUploadComponent implements OnInit {
 
   getMimeType (fileFormat) {
     fileFormat = (fileFormat == 'html') ? 'zip' : fileFormat;
-    return _.findKey(this.mimeTypes, (value) => value === fileFormat); 
+    return _.findKey(this.mimeTypes, (value) => value === fileFormat);
   }
 
   updateJob() {
@@ -341,7 +351,7 @@ export class BulkUploadComponent implements OnInit {
       process_id: this.process.process_id,
       overall_stats: this.process.overall_stats,
       status: this.process.status,
-      updatedby: _.get(this.userService, 'userProfile.userId')
+      updatedby: _.get(this.userService, 'userid')
     };
     this.bulkJobService.updateBulkJob(reqData)
       .subscribe((updateResponse) => {
@@ -620,20 +630,20 @@ export class BulkUploadComponent implements OnInit {
   }
 
   isContributorOrgUser() {
-    return !!(this.userService.userRegistryData && this.userService.userProfile.userRegData &&
-      this.userService.userProfile.userRegData.User_Org);
+    return !!(this.userService.userRegistryData && this.userProfile.userRegData &&
+      this.userProfile.userRegData.User_Org);
   }
 
   isDefaultContributingOrg() {
-    return !!(this.userService.userProfile.userRegData
-      && this.userService.userProfile.userRegData.Org
-      && this.programContext.sourcing_org_name === this.userService.userProfile.userRegData.Org.name);
+    return !!(this.userProfile.userRegData
+      && this.userProfile.userRegData.Org
+      && this.programContext.sourcing_org_name === this.userProfile.userRegData.Org.name);
   }
 
   getContentObject(row) {
     const unitName = row.level4 || row.level3 || row.level2 || row.level1;
     const unitId = this.getUnitIdFromName(row);
-    const userId = _.get(this.userService, 'userProfile.userId');
+    const userId = _.get(this.userService, 'userid');
     const collectionId = _.get(this.sessionContext, 'collection', '');
     const source = this.getDownloadableLink(row.source);
     const license = _.get(row, 'license');
@@ -685,8 +695,8 @@ export class BulkUploadComponent implements OnInit {
 
   createJobRequest(rowsCount) {
     this.bulkUploadState = 5;
-    const org_id = _.get(this.userService, 'userProfile.userRegData.User_Org.orgId', null);
-    const createdby = _.get(this.userService, 'userProfile.userId');
+    const org_id = _.get(this.userProfile, 'userRegData.User_Org.orgId', null);
+    const createdby = _.get(this.userService, 'userid');
     const program_id = _.get(this.programContext, 'program_id');
     const collection_id = _.get(this.sessionContext, 'collection');
 

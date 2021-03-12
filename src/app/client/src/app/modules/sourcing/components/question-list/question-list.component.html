@@ -4,7 +4,7 @@
   <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="handleBack()"
       type="button"
       appTelemetryInteract
-    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('back', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+    [telemetryInteractEdata]="{id: 'back', type: configService.telemetryLabels.eventType.click, subtype: configService.telemetryLabels.eventSubtype.launch, pageid: telemetryPageId }"
     [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
     [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
     [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata">
@@ -23,7 +23,7 @@
                 <i [ngClass]="{'edit': visibility && visibility.showEditMetadata, 'eye': visibility && !(visibility.showEditMetadata)}" class="icon sb-color-primary cursor-pointer"></i>
                 <a class="cursor-pointer text-underline text-capitalize"
                 appTelemetryInteract
-                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata((visibility && visibility.showEditMetadata) ? 'edit_details' : 'view_details', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                [telemetryInteractEdata]="{id: (visibility && visibility.showEditMetadata) ? 'edit_details' : 'view_details', type: configService.telemetryLabels.eventType.click, subtype: configService.telemetryLabels.eventSubtype.launch, pageid: telemetryPageId }"
                 [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
@@ -47,7 +47,7 @@
             <a id="viewContentOnDiksha" *ngIf="sourcingReviewStatus === 'Approved' && originPreviewUrl && originPreviewReady" class="sb-color-primary mr-8 pl-10 fs-0-785 font-weight-bold"
               href="{{originPreviewUrl}}" target="_blank"
               appTelemetryInteract
-            [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('view_content_on_diksha', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+            [telemetryInteractEdata]="{id: 'view_comments', type: configService.telemetryLabels.eventType.click, subtype: configService.telemetryLabels.eventSubtype.launch, pageid: telemetryPageId }"
             [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
             [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
             [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata">{{resourceService.frmelmnts.btn.viewContentOnDiksha}}
@@ -337,7 +337,7 @@
     <div class="sb-modal-content o-y-visible pb-8" *ngIf="formFieldProperties && categoryMasterList">
       <app-data-form
         #formData
-        [formFieldProperties]="formFieldProperties" 
+        [formFieldProperties]="formFieldProperties"
         [categoryMasterList]="categoryMasterList">
       </app-data-form>
     </div>

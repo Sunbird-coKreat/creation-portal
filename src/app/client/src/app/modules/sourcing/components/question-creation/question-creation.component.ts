@@ -96,7 +96,6 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   }];
   telemetryImpression: any;
   public telemetryPageId = 'question-creation';
-  public overrideMetaData: any;
   public editableFields = [];
 
   constructor(
@@ -117,15 +116,14 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
 
   ngOnInit() {
     this.initialized = true;
-    this.overrideMetaData = this.programsService.overrideMetaData;
     this.telemetryPageId =  this.sessionContext.telemetryPageId;
     this.telemetryEventsInput.telemetryPageId = this.telemetryPageId;
-    this.solutionUUID = UUID.UUID();       
+    this.solutionUUID = UUID.UUID();
     this.initialize();
     if (this.questionMetaData && this.questionMetaData.data) {
       this.mediaArr = this.questionMetaData.data.media || [];
     }
-    this.userName = this.setUserName();    
+    this.userName = this.setUserName();
   }
 
   ngAfterViewInit() {
@@ -164,10 +162,10 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   }
 
   questionLimitReached() {
-    let limit = _.get(this.sessionContext, 'contentMetadata.maxQuestions', undefined);    
+    let limit = _.get(this.sessionContext, 'contentMetadata.maxQuestions', undefined);
     let questionList = _.get(this.sessionContext, 'questionList', undefined);
-    if(limit && questionList) return (limit === 1 ? true : questionList.length >= limit); 
-    return false;    
+    if(limit && questionList) return (limit === 1 ? true : questionList.length >= limit);
+    return false;
   }
 
   ngOnChanges() {
@@ -199,7 +197,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
     if (this.questionMetaData && this.questionMetaData.data) {
       if(this.questionMetaData.data.editorState.question)
         this.editorState.question = this.questionMetaData.data.editorState.question;
-      if(this.questionMetaData.data.editorState.answer)  
+      if(this.questionMetaData.data.editorState.answer)
         this.editorState.answer = this.questionMetaData.data.editorState.answer;
       if (!_.isEmpty(this.questionMetaData.data.editorState.solutions)) {
         const editor_state = this.questionMetaData.data.editorState;

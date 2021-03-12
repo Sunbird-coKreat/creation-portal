@@ -814,7 +814,7 @@
 	</form>
 </sui-modal>
 
-<sui-modal *ngIf="editBlueprintFlag" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'large'" class="sb-modal" appBodyScroll (dismissed)="this.editBlueprintFlag = false" #blueprintModal>
+<sui-modal *ngIf="editBlueprintFlag" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'large'" class="sb-modal blueprint-modal" appBodyScroll (dismissed)="this.editBlueprintFlag = false" #blueprintModal>
 	<div class="sb-modal-header">
 		{{resource?.frmelmnts?.lbl?.editBlueprint}}
 	</div>
