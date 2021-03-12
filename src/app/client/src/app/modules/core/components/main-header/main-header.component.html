@@ -145,7 +145,7 @@
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata"><span class="sb-color-white">{{ resourceService?.frmelmnts?.lbl?.myPrograms }}</span></a>
-                    <a routerLink="contribute/orglist" *ngIf="router.url.includes('/contribute') && !router.url.includes('/contribute/help') && userService.userProfile?.userRegData?.User_Org?.roles?.includes('admin')" [class.active]="activeTab['manageUsers']" (click)="handleActiveTabState('manageUsers')"
+                    <a routerLink="contribute/orglist" *ngIf="router.url.includes('/contribute') && !router.url.includes('/contribute/help') && userProfile?.userRegData?.User_Org?.roles?.includes('admin')" [class.active]="activeTab['manageUsers']" (click)="handleActiveTabState('manageUsers')"
                     appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('manage-users', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch, pageId)"
       [telemetryInteractObject]="telemetryInteractObject"
