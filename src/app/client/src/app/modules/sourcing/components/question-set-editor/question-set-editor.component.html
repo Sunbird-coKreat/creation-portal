@@ -1,0 +1,6 @@
+<div *ngIf='showLoader' class="ui container sb-chapter-list">
+  <app-loader></app-loader>
+</div>
+<div *ngIf="!showLoader">
+  <lib-editor [editorConfig]="editorConfig" ></lib-editor>
+</div>
