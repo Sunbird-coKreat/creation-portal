@@ -108,6 +108,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
 
   // check the active tab
   getPageId() {
+    // tslint:disable-next-line:max-line-length
     this.telemetryPageId = this.userService.isContributingOrgUser() ? this.configService.telemetryLabels.pageId.contribute.myProjects : _.get(this.activeRoute, 'snapshot.data.telemetry.pageid');
     return this.telemetryPageId;
   }
@@ -299,7 +300,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         request: {
           filters: {
             nomination: {
-              organization_id: {
+              organisation_id: {
                 ne: this.userService.userProfile.userRegData.User_Org.orgId
               },
               nomination_enddate: 'open'
@@ -376,54 +377,10 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     this.direction = 'asc';
   }
 
-  public getContributionProgramList(req) {
-    this.programsService.getMyProgramsForContrib(req)
-      .subscribe((response) => {
-        this.programs = _.map(_.get(response, 'result.programs'), (nomination: any) => {
-          if (nomination.program) {
-            nomination.program = _.merge({}, nomination.program, {
-              contributionDate: nomination.createdon,
-              nomination_status: nomination.status,
-              nominated_collection_ids: nomination.collection_ids
-            });
-            return nomination.program;
-          }
-
-          nomination = _.merge({}, nomination, {
-            contributionDate: nomination.createdon,
-            nomination_status: nomination.status,
-            nominated_collection_ids: nomination.collection_ids
-          });
-          return nomination;
-        });
-        this.enrollPrograms = this.programs;
-        this.tempSortPrograms = this.programs;
-        this.count = this.programs.length;
-        if (!_.get(req, 'request.sort')) {
-          this.sortColumn = 'createdon';
-          this.direction = 'desc';
-          this.sortCollection(this.sortColumn);
-        }
-        this.logTelemetryImpressionEvent();
-        this.showLoader = false;
-      }, error => {
-        console.log(error);
-        this.logTelemetryImpressionEvent();
-        const errInfo = {
-          telemetryPageId: this.telemetryPageId,
-          telemetryCdata: this.telemetryInteractCdata,
-          env: this.activeRoute.snapshot.data.telemetry.env,
-        };
-        this.sourcingService.apiErrorHandling(error, errInfo);
-        // TODO: Add error toaster
-      });
-  }
-
   /**
    * fetch the list of programs.
    */
   private getMyProgramsForContrib(status, appliedfilters?, sort?) {
-    // If user is an individual user
     let req: any;
     if (!this.userService.isUserBelongsToOrg()) {
       // Request body for my programs tab for individual contributor
@@ -445,7 +402,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         request: {
           filters: {
             nomination: {
-              organization_id: {
+              organisation_id: {
                 eq: this.userService.userProfile.userRegData.User_Org.orgId
               }
             }
@@ -453,8 +410,8 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         }
       };
     } else {
-      // // Request body for my programs tab for  contributor org contributor and/or reviewer
       this.iscontributeOrgAdmin = false;
+       // Request body for my programs tab for  contributor org contributor and/or reviewer
       req = {
         request: {
           filters: {
@@ -462,11 +419,11 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
               user_id: {
                 eq: this.userService.userid
               },
-              organization_id: {
+              organisation_id: {
                 eq: this.userService.userProfile.userRegData.User_Org.orgId
               },
-              status: ['approved'],
-              roles: ['REVIEWER', 'CONTRIBUTOR']
+              status: ['Approved'],
+              roles: ['REVIEWER', 'CONTRIBUTOR'] // have to check this (hardcoded or get from config)
             }
           }
         }
@@ -479,7 +436,6 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
     }
     this.programsService.getMyProgramsForContrib(req).subscribe((programsResponse) => {
-      // Get only those programs for which the nominations are added
       this.programs = _.map(_.get(programsResponse, 'result.programs'), (obj: any) => {
         if (obj.program) {
           obj.program = _.merge({}, obj.program, {
