@@ -46,10 +46,15 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService,
     private paginationService: PaginationService, private telemetryService: TelemetryService,
     private sourcingService: SourcingService ) {
-
+    
+    /*if (this.isSourcingOrgAdmin()) {
+      this.getSourcingOrgUsers();
+    } else {
+      this.getContributionOrgUsers();
+    }*/
     this.getContributionOrgUsers();
   }
-
+  
   ngOnInit() {
     this.position = 'top center';
     this.getPageId();
@@ -94,21 +99,22 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     this.telemetryPageId = _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid');
     return this.telemetryPageId;
   }
-
+  
   setOrgUsers(orgUsersDetails) {
 
     this.allContributorOrgUsers = orgUsersDetails;
-
+   
     if (!_.isEmpty(this.allContributorOrgUsers)) {
       this.orgUserscnt =  this.allContributorOrgUsers.length;
-
+    
       this.sortCollection('selectedRole');
     }
     this.showLoader = false;
   }
 
   getContributionOrgUsers() {
-    this.registryService.getOrgUsersDetails().then((orgUsers:[]) => {
+    this.registryService.getcontributingOrgUsersDetails().then((orgUsers:[]) => {
+    
       this.setOrgUsers(orgUsers);
     });
   }
@@ -116,7 +122,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     clearInput ? this.searchInput = '': this.searchInput;
     if (this.searchInput) {
       let filteredUser = this.registryService.getSearchedUserList(this.initialSourcingOrgUser, this.searchInput);
-      filteredUser.length > this.searchLimitCount ? this.searchLimitMessage = true: this.searchLimitMessage = false;
+      filteredUser.length > this.searchLimitCount ? this.searchLimitMessage = true: this.searchLimitMessage = false;   
       this.sortUsersList(filteredUser, true);
     } else {
       this.searchLimitMessage = false;
@@ -124,9 +130,9 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     }
     this.sortColumn = 'selectedRole';
   }
-
+  
   sortUsersList(usersList, isUserSearch?) {
-
+ 
      this.orgUserscnt = usersList.length;
      this.allContributorOrgUsers = this.programsService.sortCollection(usersList, this.sortColumn, this.direction);
      if (this.isInitialSourcingOrgUser) {
@@ -160,7 +166,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   }
 
   sortCollection(column) {
-
+ 
     this.sortUsersList(this.allContributorOrgUsers);
     if (this.direction === 'asc' || this.direction === '') {
       this.direction = 'desc';
