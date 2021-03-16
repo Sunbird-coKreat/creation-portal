@@ -339,7 +339,9 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
             obj.program = _.merge({}, obj.program, {
               contributionDate: obj.createdon,
               nomination_status: obj.status,
-              nominated_collection_ids: obj.collection_ids
+              nominated_collection_ids: obj.collection_ids,
+              nominated_rolemapping: obj.rolemapping,
+              myRole: this.getMyProgramRole(obj)
             });
             return obj.program;
           }
@@ -443,7 +445,9 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
           obj.program = _.merge({}, obj.program, {
             contributionDate: obj.createdon,
             nomination_status: obj.status,
-            nominated_collection_ids: obj.collection_ids
+            nominated_collection_ids: obj.collection_ids,
+            nominated_rolemapping: obj.rolemapping,
+            myRole: this.getMyProgramRole(obj)
           });
           return obj.program;
         }
@@ -473,6 +477,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   }
 
   getProgramsAssignedToMe(nominations) {
+
     const nominationsAssignedToMe = _.filter(nominations, (nomination) => {
       const myRoles = this.userService.getMyRoleForProgram(nomination);
 
@@ -494,8 +499,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   }
 
   getMyProgramRole(program) {
-    const nomination = _.find(this.roleMapping, { program_id: program.program_id });
-    const roles = this.userService.getMyRoleForProgram(nomination);
+    const roles = this.userService.getMyRoleForProgram(program);
     if (_.isEmpty(roles)) {
       return '-';
     }
