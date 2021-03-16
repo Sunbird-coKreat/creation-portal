@@ -423,7 +423,9 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
                 eq: this.userService.userProfile.userRegData.User_Org.orgId
               },
               status: ['Approved'],
-              roles: ['REVIEWER', 'CONTRIBUTOR'] // have to check this (hardcoded or get from config)
+              roles: {
+                or: ['REVIEWER', 'CONTRIBUTOR']
+              }
             }
           }
         }
@@ -609,7 +611,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     }
     catch {
       return value;
-    } 
+    }
   }
 
   getProgramNominationStatus(program) {
