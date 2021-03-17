@@ -2,12 +2,12 @@ import { CollectionHierarchyService } from './../../../sourcing/services/collect
 import { DaysToGoPipe } from './../../../shared-feature/pipes/days-to-go.pipe';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { ConfigService, ResourceService, ToasterService, UtilService, BrowserCacheTtlService } from '@sunbird/shared';
+import { ConfigService, ResourceService, ToasterService, UtilService, BrowserCacheTtlService, SharedModule } from '@sunbird/shared';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CollectionComponent} from '../index';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ContentService } from '@sunbird/core';
+import { ContentService, UserService, CoreModule, ActionService, PublicDataService, ProgramsService} from '@sunbird/core';
 import { CacheService } from 'ng2-cache-service';
 import { ProgramStageService } from '../../../program/services';
 import { collectionComponentInput, collectionWithCard, searchCollectionResponse} from './collection.component.spec.data';
@@ -41,7 +41,15 @@ const activatedRouteStub = {
   }
 };
 
-xdescribe('CollectionComponent', () => {
+const UserServiceStub = {
+  userid: '874ed8a5-782e-4f6c-8f36-e0288455901e',
+  userProfile: {
+    firstName: 'Creator',
+    lastName: 'ekstep'
+  }
+};
+
+describe('CollectionComponent', () => {
   let component: CollectionComponent;
   let fixture: ComponentFixture<CollectionComponent>;
 
@@ -49,7 +57,7 @@ xdescribe('CollectionComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ CollectionComponent, DaysToGoPipe ],
-      imports: [HttpClientTestingModule, TelemetryModule.forRoot(), RouterTestingModule],
+      imports: [SharedModule.forRoot(), HttpClientTestingModule, TelemetryModule.forRoot(), RouterTestingModule],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         ConfigService,
@@ -70,7 +78,8 @@ xdescribe('CollectionComponent', () => {
         },
         {provide: APP_BASE_HREF, useValue: '/'},
         CollectionHierarchyService,
-        DatePipe
+        DatePipe,
+        { provide: UserService, useValue: UserServiceStub }
       ]
     })
     .compileComponents();
@@ -85,23 +94,23 @@ xdescribe('CollectionComponent', () => {
     component.collectionComponentConfig = collectionComponentInput.config;
     component.programContext = collectionComponentInput.programContext;
     component.collectionsWithCardImage = collectionWithCard;
-    fixture.detectChanges();
+    // fixture.detectChanges();
   });
 
-  afterEach(() => {
-    fixture.destroy();
-  });
+  // afterEach(() => {
+  //   fixture.destroy();
+  // });
 
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('stageSubscription should get subcribe on component initialize', () => {
+  xit('stageSubscription should get subcribe on component initialize', () => {
     expect(component.stageSubscription).toBeDefined();
   });
 
-  it('should call changeView on stage change', () => {
+  xit('should call changeView on stage change', () => {
     component.programStageService.getStage = jasmine.createSpy('getstage() spy').and.callFake(() => {
         return of({stages: []});
     });
@@ -125,7 +134,7 @@ xdescribe('CollectionComponent', () => {
     expect(_.includes(component.getImplicitFilters(), 'class_unwanted')).toBeFalsy();
   });
 
-  it('should be less than or equal to the filters mentioned in config', () => {
+  xit('should be less than or equal to the filters mentioned in config', () => {
     expect(component.filters.length).toBeLessThanOrEqual(collectionComponentInput.config.config.filters.implicit.length);
   });
 
@@ -140,7 +149,7 @@ xdescribe('CollectionComponent', () => {
     expect(keyArrayOfObject).toEqual(keyArray);
   });
 
-  it('should filter textbook of same identifier with status Draft', () => {
+  xit('should filter textbook of same identifier with status Draft', () => {
     expect(_.includes(component.filterTextBook, {status: 'Review'})).toBeFalsy();
   });
 
@@ -161,7 +170,7 @@ xdescribe('CollectionComponent', () => {
      expect(component.collectionList).toEqual(jasmine.any(Object));
    });
 
-   it('should define chapterListInput value on click of collection', () => {
+   xit('should define chapterListInput value on click of collection', () => {
      const sampleEvent = {
        data: {
          name: 'sampleName',
@@ -178,7 +187,7 @@ xdescribe('CollectionComponent', () => {
      expect(testData).toEqual(true);
    });
 
-   it('can pass medium to filterCollectionList as filterValue', () => {
+   xit('can pass medium to filterCollectionList as filterValue', () => {
     component.filterCollectionList('Kannada', 'medium');
     expect(_.has(component.collectionList, 'Kannada')).toEqual(true); // As per the spec data
    });
