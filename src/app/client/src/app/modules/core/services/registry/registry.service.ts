@@ -21,7 +21,7 @@ export class RegistryService extends DataService {
   public mycontributionOrgUsers = [];
   osReqLimit =  250;
   searchLimitCount = 100;// setting count here , because in future we can get/set limit from configuration
-  programUserPageLimit = 200; // setting page limit here , because in future we can get/set limit from configuration
+  programUserPageLimit = 200; // setting page limit here , because in future we can get/set limit from configuration 
   constructor(config: ConfigService, http: HttpClient, public contentService: ContentService, public telemetryService: TelemetryService,
     public userService: UserService, public learnerService: LearnerService, public cacheService: CacheService) {
     super(http);
@@ -34,25 +34,105 @@ export class RegistryService extends DataService {
       this.userService.userProfile.userRegData.User_Org && this.userService.userProfile.userRegData.Org);
   }
 
-   public getOrgUsersDetails(userRegData?, forSourcing?) {
-    const roles = forSourcing ?  ["sourcing_reviewer", "sourcing_admin"] : ["user", "admin"];
+  public getcontributingOrgUsersDetails(userRegData?, forSourcing?) {
+    const sourcingRoles = ["sourcing_reviewer", "sourcing_admin"];
+    const contribRoles = ["user", "admin"];
     if (_.isUndefined(userRegData)) {
       userRegData = _.get(this.userService, 'userProfile.userRegData');
     }
     const orgId = _.get(userRegData, 'Org.osid');
+    //const storedOrglist = this.cacheService.get('orgUsersDetails');
     if (orgId) {
-      return this.getAllOrgUsers(orgId, roles).then((allOrgUsers) => {
+      return this.getAllContributionOrgUsers(orgId, forSourcing).then((allOrgUsers) => {
         return new Promise((resolve, reject) => {
+          const tempMapping = [];
           if (!_.isEmpty(allOrgUsers)) {
-            const userList = _.filter(allOrgUsers, obj => {
-              if ((obj.userId !== _.get(userRegData, 'User.osid'))) {
-                return obj;
-              }
-            });
+            const userList = _.uniq(_.map(
+              _.filter(allOrgUsers, obj => {
+                const isHavingSouringRoles = _.intersection(sourcingRoles, obj.roles);
+                const isHavingContribRoles = _.intersection(contribRoles, obj.roles);
+                if ((obj.userId !== _.get(userRegData, 'User.osid')) &&
+                    (
+                      (!_.isUndefined(forSourcing) && forSourcing && isHavingSouringRoles.length > 0) ||
+                      ((_.isUndefined(forSourcing) || (!_.isUndefined(forSourcing) && !forSourcing)) && isHavingContribRoles.length > 0)
+                  )) {
+                    return obj
+                  }
+              }),
+              (mapObj) => {
+                tempMapping.push(mapObj);
+                return mapObj.userId;
+              }));
             if (userList.length == 0) {
               return resolve([]);
             }
-            return resolve(_.compact(userList));
+
+          let orgUsersDetails = {};
+          const tempUser = [];
+          const osUsersReq = _.map(_.chunk( userList, this.osReqLimit), chunk => {
+            return this.getUserdetailsByOsIds(chunk);
+          });
+
+          return forkJoin(osUsersReq).pipe(
+            switchMap((res2: any) => {
+              const usersReq = [];
+              if (!_.isEmpty(res2) && res2.length > 0) {
+              _.forEach(res2, (usersReqResult) => {
+                  if (usersReqResult && usersReqResult.result.User.length) {
+                    const userList = _.map(usersReqResult.result.User, (obj) => {
+                      tempUser.push(obj);
+                      return obj.userId;
+                    });
+
+                    const req = {
+                      url: this.config.urlConFig.URLS.ADMIN.USER_SEARCH,
+                      data: {
+                        'request': {
+                          'filters': {
+                            'identifier': _.compact(userList)
+                          }
+                        }
+                      }
+                    };
+                    usersReq.push(this.learnerService.post(req));
+                  }
+                });
+                if (!_.isEmpty(usersReq)) {
+                  return forkJoin(usersReq);
+                } else {
+                  return of(null);
+                }
+              } else {
+                return of(null);
+              }
+            })).subscribe((res) => {
+              if (!_.isEmpty(res) && res.length > 0) {
+              _.forEach(res, (usersReqResult) => {
+                  orgUsersDetails = _.compact(_.concat(orgUsersDetails, _.get(usersReqResult, 'result.response.content')));
+                });
+              }
+              if (!_.isEmpty(orgUsersDetails)) {
+                  orgUsersDetails = _.map(
+                    _.filter(orgUsersDetails, obj => { if (obj.identifier) { return obj; } }),
+                    (obj) => {
+                      if (obj.identifier) {
+                        const tempUserObj = _.find(tempUser, { 'userId': obj.identifier });
+                        obj.name = `${obj.firstName} ${obj.lastName || ''}`;
+                        obj.User = _.find(tempUser, { 'userId': obj.identifier });
+                        obj.User_Org = _.find(tempMapping, { 'userId': _.get(tempUserObj, 'osid') });
+                        if (!_.isUndefined(forSourcing) && forSourcing) {
+                          obj.selectedRole = _.first(_.intersection(sourcingRoles, obj.User_Org.roles));
+                        } else if (_.isUndefined(forSourcing) || (!_.isUndefined(forSourcing) && !forSourcing)) {
+                          obj.selectedRole = _.first(_.intersection(contribRoles, obj.User_Org.roles));
+                        }
+                        return obj;
+                      }
+                  });
+              }
+              return resolve(_.compact(orgUsersDetails));
+            }, (err) => { console.log(err); return reject([]); });
+          } else {
+            return resolve([]);
           }
         });
       });
@@ -61,20 +141,21 @@ export class RegistryService extends DataService {
         return resolve([]);
       })
     }
-  }
+   }
 
-   getAllOrgUsers(orgId, roles?, offset?) {
+  public getAllContributionOrgUsers(orgId, forSourcing?, offset?) {
     offset = (!_.isUndefined(offset)) ? offset : 0;
+
     return new Promise((resolve, reject) => {
-      this.getOrgUsers(orgId, roles, offset, this.osReqLimit).subscribe(
+      this.getContributionOrgUsers(orgId, forSourcing, offset, this.osReqLimit).subscribe(
         (res) => {
-          if (res.result && res.result.content && res.result.count > 0) {
-            this.mycontributionOrgUsers = _.compact(_.concat(this.mycontributionOrgUsers, res.result.content));
-            if (res.result.count < this.osReqLimit) {
+          if (res.result && res.result.User_Org && res.result.User_Org.length > 0) {
+            this.mycontributionOrgUsers = _.compact(_.concat(this.mycontributionOrgUsers, res.result.User_Org));
+            if (res.result.User_Org.length < this.osReqLimit) {
               return resolve(this.mycontributionOrgUsers);
             }
             offset = offset + this.osReqLimit;
-            return resolve(this.getAllOrgUsers(orgId, roles, offset));
+            return resolve(this.getAllContributionOrgUsers(orgId, forSourcing, offset));
           } else {
             return resolve(this.mycontributionOrgUsers);
           }
@@ -82,27 +163,6 @@ export class RegistryService extends DataService {
         (error) => { return reject([]);
       });
     });
-   }
-
-   public getOrgUsers(orgId, roles, offset?, limit?): Observable<ServerResponse> {
-    const req = {
-      url: `program/v1/user/list`,
-      data: {
-        'request': {
-          'filters': {
-            'User_Org': {
-              'orgId': {
-                'eq': orgId
-              },
-              'roles': roles,
-              'limit': limit || 250,
-              'offset': offset || 0
-            }
-          }
-        }
-      }
-    };
-    return this.contentService.post(req);
   }
 
   public getUserdetailsByOsIds(userList: []): Observable<ServerResponse> {
@@ -277,7 +337,7 @@ export class RegistryService extends DataService {
       });
     });
   }
-
+  
   public getSearchedUserList(userList,searchInput) {
     let searchedUserList = [];
     searchInput = searchInput.toUpperCase();

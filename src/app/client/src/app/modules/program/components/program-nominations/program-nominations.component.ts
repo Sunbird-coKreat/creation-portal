@@ -288,7 +288,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     clearInput ? this.searchInput = '': this.searchInput;
     if (this.searchInput) {
       let filteredUser = this.registryService.getSearchedUserList(this.initialSourcingOrgUser, this.searchInput);
-      filteredUser.length > this.searchLimitCount ? this.searchLimitMessage = true: this.searchLimitMessage = false;
+      filteredUser.length > this.searchLimitCount ? this.searchLimitMessage = true: this.searchLimitMessage = false;   
       this.sortUsersList(filteredUser, true);
     } else {
       this.searchLimitMessage = false;
@@ -327,8 +327,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     const userRegData = {};
     this.registryService.getOpenSaberOrgByOrgId(this.userService.userProfile).subscribe((res1) => {
       userRegData['Org'] = (_.get(res1, 'result.Org').length > 0) ? _.first(_.get(res1, 'result.Org')) : {};
-      this.registryService.getOrgUsersDetails(userRegData, true).then((orgUsers) => {
-        this.paginatedSourcingUsers = orgUsers;
+      this.registryService.getcontributingOrgUsersDetails(userRegData, true).then((orgUsers) => {
+          this.paginatedSourcingUsers = orgUsers;
           this.readRolesOfOrgUsers(orgUsers);
           this.sortUsersList(this.paginatedSourcingUsers);
           this.showUsersLoader = false;
