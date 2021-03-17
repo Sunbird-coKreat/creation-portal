@@ -69,7 +69,6 @@ module.exports = function (app) {
         })
     )
 
-
     app.use(['/api/questionset/*', '/api/question/*' ],
         proxy(contentProxyUrl, {
         proxyReqOptDecorator: proxyHeaders.decorateRequestHeaders(),
