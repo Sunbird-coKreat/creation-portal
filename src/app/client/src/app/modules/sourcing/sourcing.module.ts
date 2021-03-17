@@ -33,6 +33,9 @@ import { MvcFilterComponent } from './components/mvc-filter/mvc-filter.component
 import { MvcPlayerComponent } from './components/mvc-player/mvc-player.component';
 import { SkeletonLoaderComponent } from './components/skeleton-loader/skeleton-loader.component';
 import { NgInviewModule } from 'angular-inport';
+import { QuestionSetEditorComponent } from './components/question-set-editor/question-set-editor.component';
+import { QuestionEditorLibraryModule } from '@project-sunbird/sunbird-question-editor';
+import {CarouselModule} from 'ngx-bootstrap/carousel';
 @NgModule({
   declarations: [QuestionListComponent, QuestionCreationComponent,
     ChapterListComponent, McqCreationComponent, CkeditorToolComponent ,
@@ -41,7 +44,7 @@ import { NgInviewModule } from 'angular-inport';
     ContentUploaderComponent,  ResourceTemplateComponent, CollectionComponent,
     ResourceReorderComponent, ContentEditorComponent, MvcLibraryComponent,
     MvcListComponent, MvcFilterComponent, MvcPlayerComponent, SkeletonLoaderComponent,
-    BulkApprovalComponent, BulkUploadComponent],
+    BulkApprovalComponent, BulkUploadComponent, QuestionSetEditorComponent],
   imports: [
     RouterModule,
     CoreModule,
@@ -61,7 +64,9 @@ import { NgInviewModule } from 'angular-inport';
       McqTemplateSelectionComponent, QuestionPreviewComponent, QuestionCreationHeaderComponent,
       DashboardComponent, RecursiveTreeComponent, ContentUploaderComponent, ResourceTemplateComponent,
       ContentEditorComponent]),
-    NgInviewModule
+    NgInviewModule,
+    QuestionEditorLibraryModule,
+    CarouselModule.forRoot()
   ],
   providers: [CollectionHierarchyService],
   exports: [ SanitizeHtmlPipe ]

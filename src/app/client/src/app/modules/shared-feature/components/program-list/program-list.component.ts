@@ -11,6 +11,7 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { CacheService } from 'ng2-cache-service';
 import { first } from 'rxjs/operators';
 import { SourcingService } from '../../../sourcing/services';
+import { isEmpty } from 'lodash';
 
 @Component({
   selector: 'app-program-list',
@@ -756,8 +757,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     if (_.isEmpty(program) || _.isEmpty(program.program_id)) {
       return false;
     }
-
-    return _.join(program.content_types, ', ');
+    return (!isEmpty(program.targetprimarycategories)) ? _.join(_.map(program.targetprimarycategories, 'name'), ', ') : _.join(program.content_types, ', ');
   }
 
   viewDetailsBtnClicked(program) {

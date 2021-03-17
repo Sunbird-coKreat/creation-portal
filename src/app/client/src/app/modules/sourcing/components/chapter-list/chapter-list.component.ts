@@ -963,7 +963,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         creator = this.userProfile.firstName + ' ' + this.userProfile.lastName;
       }
       const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
-      const option = {
+      let option = {
         url: `content/v3/create`,
         header: {
           'X-Channel-Id': this.programContext.rootorg_id
@@ -997,7 +997,19 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       if (_.get(this.templateDetails, 'appIcon')) {
         option.data.request.content.appIcon = _.get(this.templateDetails, 'appIcon');
       }
-      this.actionService.post(option).pipe(map((res: any) => res.result), catchError(err => {
+
+      let createRes;
+      if (_.get(this.templateDetails, 'modeOfCreation') === 'questionset') {
+        option.url = 'questionset/v1/create';
+        option.data.request['questionset'] = {};
+        option.data.request['questionset'] = option.data.request.content;
+        delete option.data.request.content;
+        createRes = this.publicDataService.post(option);
+      } else {
+        createRes = this.actionService.post(option);
+      }
+    
+      createRes.pipe(map((res: any) => res.result), catchError(err => {
         const errInfo = {
           errorMsg: 'Unable to create contentId, Please Try Again',
           telemetryPageId: this.telemetryPageId,
@@ -1011,6 +1023,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           this.contentId = result.node_id;
           this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, result.identifier)
             .subscribe(() => {
+              if (_.get(this.templateDetails, 'modeOfCreation') === 'questionset') {
+                const queryParams = "collectionId=" + this.sessionContext.collection + "&unitId=" + this.unitIdentifier;
+                this.router.navigateByUrl('/contribute/questionSet/' + result.identifier + "?" + queryParams);
+              }
                // tslint:disable-next-line:max-line-length
                this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
             });
@@ -1023,6 +1039,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   handlePreview(event) {
+    if (event.content.mimeType === 'application/vnd.sunbird.questionset') {
+      const queryParams = "collectionId=" + this.sessionContext.collection + "&unitId=" + this.unitIdentifier;
+      this.router.navigateByUrl('/contribute/questionSet/' + event.content.identifier + "?" + queryParams);    
+    }
+
     //const templateList = this.programsService.contentCategories;
     this.programsService.getCategoryDefinition(event.content.primaryCategory, this.programContext.rootorg_id).subscribe((res)=>{
       this.templateDetails = res.result.objectCategoryDefinition;
@@ -1147,7 +1168,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   resourceTemplateInputData() {
-    let contentCategories = this.programContext.content_types;
+    /*let contentCategories = this.programContext.content_types;
     if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.content_types) {
       contentCategories = _.filter(contentCategories, (catName) => {
         if (_.includes(this.sessionContext.nominationDetails.content_types, catName)) {
@@ -1155,7 +1176,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           return catName;
         }
       });
-    }
+    }*/
+    let contentCategories = this.programsService.getNominatedTargetPrimaryCategories(this.programContext, this.sessionContext.nominationDetails);
     this.resourceTemplateComponentInput = {
       templateList: contentCategories,
       programContext: this.programContext,

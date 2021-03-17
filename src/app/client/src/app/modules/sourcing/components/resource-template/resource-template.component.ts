@@ -39,6 +39,7 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.templateList = _.get(this.resourceTemplateComponentInput, 'templateList');
+    console.log(this.templateList);
     this.programContext = _.get(this.resourceTemplateComponentInput, 'programContext');
     this.sessionContext = _.get(this.resourceTemplateComponentInput, 'sessionContext');
     this.unitIdentifier  = _.get(this.resourceTemplateComponentInput, 'unitIdentifier');
@@ -53,14 +54,6 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
 
 
   handleSubmit() {
-    /*this.selectedtemplateDetails = _.find(this.templateList, (template) => {
-     return template.identifier === this.templateSelected;
-    });*/
-    /*this.programsService.getCategoryDefinition(this.templateSelected).subscribe((res)=> {
-      this.selectedtemplateDetails = _.find(this.programsService.contentCategories, { 'name': this.templateSelected })
-    }, (err)=> {
-
-    })*/
     this.programsService.getCategoryDefinition(this.templateSelected, this.programContext.rootorg_id).subscribe((res) => {
       this.selectedtemplateDetails = res.result.objectCategoryDefinition;
       const catMetaData = this.selectedtemplateDetails.objectMetadata;
@@ -131,6 +124,10 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
     this.showModeofCreationModal = false;
     this.showQuestionTypeModal = false;
     switch (this.selectedtemplateDetails['modeOfCreation']) {
+      case 'questionset':
+        this.selectedtemplateDetails.onClick = 'questionSetEditorComponent';
+        this.selectedtemplateDetails.mimeType = ['application/vnd.sunbird.questionset'];
+        break;
       case 'question':
         this.selectedtemplateDetails.onClick = 'questionSetComponent';
         const temp = _.find(this.selectedtemplateDetails.editors, {'type': 'question'});
