@@ -63,7 +63,7 @@ import {CarouselModule} from 'ngx-bootstrap/carousel';
       QuestionCreationComponent, ChapterListComponent, McqCreationComponent, CkeditorToolComponent ,
       McqTemplateSelectionComponent, QuestionPreviewComponent, QuestionCreationHeaderComponent,
       DashboardComponent, RecursiveTreeComponent, ContentUploaderComponent, ResourceTemplateComponent,
-      ContentEditorComponent]),
+      ContentEditorComponent, QuestionSetEditorComponent]),
     NgInviewModule,
     QuestionEditorLibraryModule,
     CarouselModule.forRoot()

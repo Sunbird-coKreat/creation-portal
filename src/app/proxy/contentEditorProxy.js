@@ -56,8 +56,59 @@ module.exports = function (app) {
   // Log telemetry for action api's
   app.all('/action/*', telemetryHelper.generateTelemetryForProxy)
 
-
+  const contentURL = envHelper.CONTENT_URL
+  app.use([
+      '/action/questionset/v1/read/*',
+      '/action/question/v1/read/*',
+      '/action/questionset/v1/hierarchy/*',
+      ],
+        proxy(contentURL, {
+        proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+        proxyReqPathResolver: function (req) {
+          var originalUrl = req.originalUrl
+          originalUrl = originalUrl.replace('/action/', '')
+          console.log('learnerURLss ', contentURL, '  ===  ', require('url').parse(learnerURL + originalUrl).path)
+          return require('url').parse(contentURL + originalUrl).path
+        },
+        userResDecorator: userResDecorator
+      }))
+    app.post([
+      '/action/questionset/v1/create',
+      '/action/questionset/v1/review/*',
+      '/action/questionset/v1/publish/*',
+      '/action/question/v1/create',
+      '/action/question/v1/review/*',
+      '/action/question/v1/publish/*'
+    ],
+      proxy(contentURL, {
+        limit: reqDataLimitOfContentUpload,
+        proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+        proxyReqPathResolver: function (req) {
+          let originalUrl = req.originalUrl.replace('/action/', '')
+          return require('url').parse(contentURL + originalUrl).path
+        },
+        userResDecorator: userResDecorator
+      })
+    )
+    app.patch([
+      '/action/questionset/v1/hierarchy/update',
+      '/action/questionset/v1/update/*',
+      '/action/questionset/v1/add/*',
+      '/action/question/v1/update/*'
+    ],
+      proxyUtils.verifyToken(),
+      proxy(contentURL, {
+        limit: reqDataLimitOfContentUpload,
+        proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+        proxyReqPathResolver: function (req) {
+          let originalUrl = req.originalUrl.replace('/action/', '')
+          return require('url').parse(contentURL + originalUrl).path
+        },
+        userResDecorator: userResDecorator
+      })
+    )
   // Proxy for content create ,update & review Start
+  /*
   app.use([
     '/action/content/v3/create',
     '/action/content/v3/hierarchy/add',
@@ -146,7 +197,7 @@ module.exports = function (app) {
           return require('url').parse(contentServiceBaseUrl + originalUrl).path
       }
   }))
-
+*/
   // Proxy for content create , update & review END
 
   app.use('/action/content/v3/unlisted/publish/:contentId', permissionsHelper.checkPermission(),
