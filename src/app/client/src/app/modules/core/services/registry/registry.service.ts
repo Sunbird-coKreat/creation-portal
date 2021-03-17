@@ -97,6 +97,28 @@ export class RegistryService extends DataService {
               'roles': roles
             }
           },
+          "fields": [
+            "id",
+            "identifier",
+            "maskedEmail",
+            "maskedPhone",
+            "firstName",
+            "lastName",
+            "name",
+            "User",
+            "User_Org",
+            "selectedRole",
+            "roles",
+            "channel",
+            "stateValidated",
+            "isDeleted",
+            "flagsValue",
+            "thumbnail",
+            "userName",
+            "rootOrgId",
+            "userId",
+            "status",
+          ],
           'limit': limit || 250,
           'offset': offset || 0
         }
