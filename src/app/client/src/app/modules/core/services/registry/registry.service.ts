@@ -68,8 +68,8 @@ export class RegistryService extends DataService {
     return new Promise((resolve, reject) => {
       this.getOrgUsers(orgId, roles, offset, this.osReqLimit).subscribe(
         (res) => {
-          if (res.result && res.result.content && res.result.count > 0) {
-            this.mycontributionOrgUsers = _.compact(_.concat(this.mycontributionOrgUsers, res.result.content));
+          if (res.result && res.result.contributor && res.result.count > 0) {
+            this.mycontributionOrgUsers = _.compact(_.concat(this.mycontributionOrgUsers, res.result.contributor));
             if (res.result.count < this.osReqLimit) {
               return resolve(this.mycontributionOrgUsers);
             }
@@ -86,19 +86,19 @@ export class RegistryService extends DataService {
 
    public getOrgUsers(orgId, roles, offset?, limit?): Observable<ServerResponse> {
     const req = {
-      url: `program/v1/user/list`,
+      url: `program/v1/contributor/search`,
       data: {
         'request': {
           'filters': {
-            'User_Org': {
+            'user_org': {
               'orgId': {
                 'eq': orgId
               },
-              'roles': roles,
-              'limit': limit || 250,
-              'offset': offset || 0
+              'roles': roles
             }
-          }
+          },
+          'limit': limit || 250,
+          'offset': offset || 0
         }
       }
     };
