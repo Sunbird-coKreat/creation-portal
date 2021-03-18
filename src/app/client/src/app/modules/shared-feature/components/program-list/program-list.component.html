@@ -159,7 +159,7 @@
                   <span  [ngClass]="{'sb-color-error':program.nomination_status  == 'Rejected','sb-color-success':program.nomination_status  == 'Approved','sb-color-warning':program.nomination_status  == 'Pending'}">{{ getProgramNominationStatus(program) }}</span>
                 </td>
                 <td *ngIf="activeMyProgramsMenu && !iscontributeOrgAdmin" class="text-center">
-                  <div>{{ getMyProgramRole(program) }}</div>
+                  <div>{{ program?.myRole }}</div>
                 </td>
                 <td class="text-center pl-0 pr-0" *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')">
                     <div *ngIf="programsService.isProjectLive(program)" class="sb-color-success">{{resourceService?.frmelmnts?.lbl?.live}}</div>
@@ -194,7 +194,6 @@
                       <i class="icon edit sb-color-primary ui fs-0-92"></i>
                       <span class="sb-color-primary">{{resourceService.frmelmnts.lbl.editDraft}}</span>
                     </div>
-                
                   <div *ngIf="issourcingOrgAdmin && this.router.url.includes('/sourcing')" class="px-0 d-inline-block">
                     <div class="sb-dock-icon-tooltip d-inline-block">
                       <i *ngIf="programsService.isProjectLive(program)" class="icon edit sb-color-primary cursor-pointer ui fs-0-785 px-5 va-text-sup" data-tooltip="Modify" (click)="editOnClick(program)"

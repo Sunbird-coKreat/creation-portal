@@ -55,6 +55,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   showDeleteModal = false;
   public inviewLogs: any = [];
   public impressionEventTriggered: Boolean = false;
+  public userProfile = this.userService.userProfile;
 
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
@@ -108,6 +109,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
 
   // check the active tab
   getPageId() {
+    // tslint:disable-next-line:max-line-length
     this.telemetryPageId = this.userService.isContributingOrgUser() ? this.configService.telemetryLabels.pageId.contribute.myProjects : _.get(this.activeRoute, 'snapshot.data.telemetry.pageid');
     return this.telemetryPageId;
   }
@@ -291,119 +293,81 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
    * fetch the list of programs.
    */
   private getAllProgramsForContrib(type, status, appliedfilters?, sort?) {
-    let getAppliedFilters: any;
-    if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
-      getAppliedFilters = this.addFiltersInRequestBody(appliedfilters);
-    }
-    this.programsService.getAllProgramsByType(type, status, getAppliedFilters, sort).subscribe(
-      response => {
-        const allPrograms = _.get(response, 'result.programs');
-        if (allPrograms.length) {
-          if (this.userService.isContributingOrgAdmin()) {
-            this.iscontributeOrgAdmin = true;
-            const filters = {
-              organisation_id: _.get(this.userService, 'userProfile.userRegData.User_Org.orgId')
-            };
-            this.programsService.getNominationList(filters)
-              .subscribe(
-                (nominationsResponse) => {
-                  const nominations = _.get(nominationsResponse, 'result');
-                  let enrolledPrograms = [];
-                  if (!_.isEmpty(nominations)) {
-                    enrolledPrograms = _.uniq(_.map(nominations, 'program_id'));
-                  }
-                  this.filterOutEnrolledPrograms(allPrograms, enrolledPrograms);
-                }, (error) => {
-                  console.log(error);
-                  const errInfo = {
-                    errorMsg: this.resourceService.messages.emsg.projects.m0002,
-                    telemetryPageId: this.telemetryPageId,
-                    telemetryCdata : this.telemetryInteractCdata,
-                    env : this.activeRoute.snapshot.data.telemetry.env,
-                    request: filters
-                  };
-                  this.sourcingService.apiErrorHandling(error, errInfo);
-                });
-          } else {
-            this.iscontributeOrgAdmin = false;
-            const req = {
-              request: {
-                filters: {
-                  enrolled_id: {
-                    user_id: _.get(this.userService, 'userProfile.userId'),
-                  },
-                  status: status
-                }
+    let req: any;
+    if (this.userService.isContributingOrgAdmin()) {
+      this.iscontributeOrgAdmin = true;
+      // Request body for all programs tab for contributor org admin
+      req = {
+        request: {
+          filters: {
+            nomination: {
+              organisation_id: {
+                ne: this.userProfile.userRegData.User_Org.orgId
               }
-            };
-            if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
-              req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
-            }
-            this.programsService.getMyProgramsForContrib(req)
-              .subscribe((myProgramsResponse) => {
-                const enrolledPrograms = _.map(_.get(myProgramsResponse, 'result.programs'), (nomination: any) => {
-                  return nomination.program_id;
-                });
-                this.filterOutEnrolledPrograms(allPrograms, enrolledPrograms);
-              }, error => {
-                this.showLoader = false;
-                const errInfo = {
-                  errorMsg: this.resourceService.messages.emsg.projects.m0001,
-                  telemetryPageId: this.telemetryPageId,
-                  telemetryCdata : this.telemetryInteractCdata,
-                  env : this.activeRoute.snapshot.data.telemetry.env,
-                  request: req
-                };
-                this.sourcingService.apiErrorHandling(error, errInfo);
-              }
-              );
+            },
           }
-        } else {
-          this.programs = []; // for empty response programs need to set to []
-          this.showLoader = false;
         }
+      };
+    } else {
+      this.iscontributeOrgAdmin = false;
+      // Request body for all programs tab for individual contributor
+      req = {
+        request: {
+          filters: {
+            nomination: {
+              user_id: {
+                ne: this.userService.userid,
+              },
+            },
+          },
+        }
+      };
+    }
+    if (sort) {
+      req.request['sort'] = sort;
+    }
+    if (status) {
+      req.request.filters['status'] = status;
+    }
+    if (type) {
+      req.request.filters['type'] = type;
+    }
+    req.request.filters['nomination_enddate'] = 'open';
+
+    if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
+      req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
+    }
+    this.programsService.getAllProgramsByType(req)
+      .subscribe((myProgramsResponse) => {
+        this.programs = _.map(_.get(myProgramsResponse, 'result.programs'), (obj: any) => {
+          if (obj.program) {
+            obj.program = _.merge({}, obj.program, {
+              contributionDate: obj.createdon,
+              nomination_status: obj.status,
+              nominated_collection_ids: obj.collection_ids,
+              nominated_rolemapping: obj.rolemapping,
+              myRole: this.getMyProgramRole(obj)
+            });
+            return obj.program;
+          }
+        });
+        this.count = this.programs.length;
+        this.tempSortPrograms = this.programs;
+        this.showLoader = false;
       }, error => {
         this.showLoader = false;
-        this.logTelemetryImpressionEvent();
         const errInfo = {
           errorMsg: this.resourceService.messages.emsg.projects.m0001,
           telemetryPageId: this.telemetryPageId,
-          telemetryCdata : this.telemetryInteractCdata,
-          env : this.activeRoute.snapshot.data.telemetry.env,
-          request: getAppliedFilters
+          telemetryCdata: this.telemetryInteractCdata,
+          env: this.activeRoute.snapshot.data.telemetry.env,
+          request: req
         };
         this.sourcingService.apiErrorHandling(error, errInfo);
       }
-    );
+      );
   }
 
-  filterOutEnrolledPrograms(allPrograms, enrolledPrograms) {
-    if (!_.isEmpty(enrolledPrograms)) {
-      const temp = _.filter(allPrograms, program => {
-        return !enrolledPrograms.includes(program.program_id);
-      });
-      this.programs = this.filterProgramByDate(temp);
-      this.logTelemetryImpressionEvent();
-    } else {
-      this.programs = this.filterProgramByDate(allPrograms);
-    }
-    this.count = this.programs.length;
-    this.tempSortPrograms = this.programs;
-    this.showLoader = false;
-  }
-
-  filterProgramByDate(programs) {
-    const todayDate = new Date();
-    const dates = this.datePipe.transform(todayDate, 'yyyy-MM-dd');
-    const filteredProgram = [];
-    _.forEach(programs, (program) => {
-      const nominationEndDate = this.datePipe.transform(program.nomination_enddate, 'yyyy-MM-dd');
-      if (nominationEndDate >= dates) {
-        filteredProgram.push(program);
-      }
-    });
-    return filteredProgram;
-  }
 
   sortCollection(column) {
     this.programs = this.programsService.sortCollection(this.tempSortPrograms, column, this.direction);
@@ -420,186 +384,104 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     this.direction = 'asc';
   }
 
-  public getContributionProgramList(req) {
-    this.programsService.getMyProgramsForContrib(req)
-      .subscribe((response) => {
-        this.programs = _.map(_.get(response, 'result.programs'), (nomination: any) => {
-          if (nomination.program) {
-            nomination.program = _.merge({}, nomination.program, {
-              contributionDate: nomination.createdon,
-              nomination_status: nomination.status,
-              nominated_collection_ids: nomination.collection_ids
-            });
-            return nomination.program;
-          }
-
-          nomination = _.merge({}, nomination, {
-            contributionDate: nomination.createdon,
-            nomination_status: nomination.status,
-            nominated_collection_ids: nomination.collection_ids
-          });
-          return nomination;
-        });
-        this.enrollPrograms = this.programs;
-        this.tempSortPrograms = this.programs;
-        this.count = this.programs.length;
-        if (!_.get(req , 'request.sort')) {
-          this.sortColumn = 'createdon';
-          this.direction = 'desc';
-          this.sortCollection(this.sortColumn);
-        }
-        this.logTelemetryImpressionEvent();
-        this.showLoader = false;
-      }, error => {
-        console.log(error);
-        this.logTelemetryImpressionEvent();
-        const errInfo = {
-          telemetryPageId: this.telemetryPageId,
-          telemetryCdata : this.telemetryInteractCdata,
-          env : this.activeRoute.snapshot.data.telemetry.env,
-        };
-        this.sourcingService.apiErrorHandling(error, errInfo);
-        // TODO: Add error toaster
-      });
-  }
-
   /**
    * fetch the list of programs.
    */
   private getMyProgramsForContrib(status, appliedfilters?, sort?) {
-    // If user is an individual user
+    let req: any;
     if (!this.userService.isUserBelongsToOrg()) {
-      const req = {
+      // Request body for my programs tab for individual contributor
+      req = {
         request: {
           filters: {
-            enrolled_id: {
-              user_id: _.get(this.userService, 'userProfile.userId'),
+            nomination: {
+              user_id: {
+                eq: this.userService.userid,
+              }
             },
-            status: status
           }
         }
       };
-
-      if (sort) {
-        req.request['sort'] = sort;
-      }
-
-      if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
-        req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
-      }
-      this.getContributionProgramList(req);
-      return;
-    }
-
-    // If user is an org admin
-    if (this.userService.isContributingOrgAdmin()) {
+    } else if (this.userService.isContributingOrgAdmin()) {
       this.iscontributeOrgAdmin = true;
-      this.getNominationsByMyOrg().subscribe(
-        (nominationsResponse) => {
-          const nominations = _.get(nominationsResponse, 'result');
-          if (_.isEmpty(nominations)) {
-            this.showLoader = false;
-            return;
+      // Request body for my programs tab for contributor org admin
+      req = {
+        request: {
+          filters: {
+            nomination: {
+              organisation_id: {
+                eq: this.userProfile.userRegData.User_Org.orgId
+              }
+            },
           }
-
-          this.nominationList = _.uniq(_.map(nominations, 'program_id'));
-          const req = {
-            request: {
-              filters: {
-                program_id: this.nominationList,
-                status: status
+        }
+      };
+    } else {
+      this.iscontributeOrgAdmin = false;
+       // Request body for my programs tab for  contributor org contributor and/or reviewer
+      req = {
+        request: {
+          filters: {
+            nomination: {
+              user_id: {
+                eq: this.userService.userid
+              },
+              organisation_id: {
+                eq: this.userProfile.userRegData.User_Org.orgId
+              },
+              status: ['Approved'],
+              roles: {
+                or: ['REVIEWER', 'CONTRIBUTOR']
               }
             }
-          };
-
-          if (sort) {
-            req.request['sort'] = sort;
           }
-
-          if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
-            req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
-          }
-          this.programsService.getMyProgramsForContrib(req).subscribe((programsResponse) => {
-            // Get only those programs for which the nominations are added
-            const programs = _.get(programsResponse, 'result.programs');
-            this.programs = _.map(programs, (program) => {
-              const nomination = _.find(nominations, (n) => {
-                return n.program_id === program.program_id;
-              });
-              if (nomination) {
-                program = _.merge(program, {
-                  contributionDate: nomination.createdon,
-                  nomination_status: nomination.status,
-                  nominated_collection_ids: nomination.collection_ids
-                });
-                return program;
-              }
-            });
-            this.enrollPrograms = this.programs;
-            this.tempSortPrograms = this.programs;
-            this.count = this.programs.length;
-            if (!sort) {
-              this.sortColumn = 'contributionDate';
-              this.direction = 'desc';
-              this.sortCollection(this.sortColumn);
-            }
-            this.logTelemetryImpressionEvent();
-            this.showLoader = false;
-          });
-        }, (error) => {
-          this.showLoader = false;
-          console.log(error);
-          this.logTelemetryImpressionEvent();
-          const errInfo = {
-            errorMsg: this.resourceService.messages.emsg.projects.m0002,
-            telemetryPageId: this.telemetryPageId,
-            telemetryCdata : this.telemetryInteractCdata,
-            env : this.activeRoute.snapshot.data.telemetry.env,
-          };
-          this.sourcingService.apiErrorHandling(error, errInfo);
-        });
-      return;
+        }
+      };
     }
-
-    // If user is contributor org contributor and/or reviewer
-    this.iscontributeOrgAdmin = false;
-    this.getNominationsByMyOrg().subscribe(
-      (data) => {
-        let nominations = _.get(data, 'result');
-        if (_.isEmpty(nominations)) {
-          this.showLoader = false;
-          return;
+    if (sort) {
+      req.request['sort'] = sort;
+    }
+    if (status) {
+      req.request.filters['status'] = status;
+    }
+    if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
+      req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
+    }
+    this.programsService.getMyProgramsForContrib(req).subscribe((programsResponse) => {
+      this.programs = _.map(_.get(programsResponse, 'result.programs'), (obj: any) => {
+        if (obj.program) {
+          obj.program = _.merge({}, obj.program, {
+            contributionDate: obj.createdon,
+            nomination_status: obj.status,
+            nominated_collection_ids: obj.collection_ids,
+            nominated_rolemapping: obj.rolemapping,
+            myRole: this.getMyProgramRole(obj)
+          });
+          return obj.program;
         }
-
-        this.nominationList = this.getProgramsAssignedToMe(nominations);
-        if (_.isEmpty(this.nominationList)) {
-          this.showLoader = false;
-          return;
-        }
-
-        const req = {
-          request: {
-            filters: {
-              program_id: this.nominationList,
-              status: status
-            }
-          }
-        };
-        if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
-          req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
-        }
-        this.getContributionProgramList(req);
-      },
-      (error) => {
-        console.log(error);
-        const errInfo = {
-          errorMsg: this.resourceService.messages.emsg.projects.m0002,
-          telemetryPageId: this.telemetryPageId,
-          telemetryCdata : this.telemetryInteractCdata,
-          env : this.activeRoute.snapshot.data.telemetry.env,
-        };
-        this.sourcingService.apiErrorHandling(error, errInfo);
       });
+      this.enrollPrograms = this.programs;
+      this.tempSortPrograms = this.programs;
+      this.count = this.programs.length;
+      if (!sort) {
+        this.sortColumn = 'contributionDate';
+        this.direction = 'desc';
+        this.sortCollection(this.sortColumn);
+      }
+      this.logTelemetryImpressionEvent();
+      this.showLoader = false;
+    }, (error) => {
+      this.showLoader = false;
+      console.log(error);
+      this.logTelemetryImpressionEvent();
+      const errInfo = {
+        errorMsg: this.resourceService.messages.emsg.projects.m0001,
+        telemetryPageId: this.telemetryPageId,
+        telemetryCdata: this.telemetryInteractCdata,
+        env: this.activeRoute.snapshot.data.telemetry.env,
+      };
+      this.sourcingService.apiErrorHandling(error, errInfo);
+    });
   }
 
   getProgramsAssignedToMe(nominations) {
@@ -618,14 +500,13 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
 
   getNominationsByMyOrg() {
     const filters = {
-      organisation_id: this.userService.userProfile.userRegData.User_Org.orgId
+      organisation_id: this.userProfile.userRegData.User_Org.orgId
     };
     return this.programsService.getNominationList(filters);
   }
 
   getMyProgramRole(program) {
-    const nomination = _.find(this.roleMapping, { program_id: program.program_id });
-    const roles = this.userService.getMyRoleForProgram(nomination);
+    const roles = this.userService.getMyRoleForProgram(program);
     if (_.isEmpty(roles)) {
       return '-';
     }
@@ -741,7 +622,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     }
     catch {
       return value;
-    } 
+    }
   }
 
   getProgramNominationStatus(program) {
@@ -830,7 +711,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       const req = {
         program_id: this.selectedProgramToModify.program_id,
         status: 'Initiated',
-        updatedby: this.userService.userProfile.userId
+        updatedby: this.userService.userid
       };
 
       this.programsService.addorUpdateNomination(req).subscribe((data) => {
