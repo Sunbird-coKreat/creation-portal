@@ -15,7 +15,7 @@ import { throwError as observableThrowError, of as observableOf } from 'rxjs';
 import { RouterTestingModule } from '@angular/router/testing';
 import { APP_BASE_HREF } from '@angular/common';
 
-xdescribe('TermsAndConditionsPopupComponent', () => {
+describe('TermsAndConditionsPopupComponent', () => {
   let component: TermsAndConditionsPopupComponent;
   let fixture: ComponentFixture<TermsAndConditionsPopupComponent>;
 
