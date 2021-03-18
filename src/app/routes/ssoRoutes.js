@@ -420,6 +420,11 @@ module.exports = (app) => {
   app.all('/migrate/user/account', async (req, res) => {
     await ssoValidations(req, res)
   })
+
+  app.get('/v1/sourcing/sso/success/redirect', async (req, res) => {
+    console.log('req ', req, 'res ',res);
+  });
+
 };
 
 const handleProfileUpdateError = (error) => {
