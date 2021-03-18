@@ -33,7 +33,7 @@ class RouterStub {
 const testStage = {stageId: 1, stage: 'collectionComponent'};
 
 
-xdescribe('ProgramHeaderComponent', () => {
+describe('ProgramHeaderComponent', () => {
   let component: ProgramHeaderComponent;
   let fixture: ComponentFixture<ProgramHeaderComponent>;
   let programStageService;
