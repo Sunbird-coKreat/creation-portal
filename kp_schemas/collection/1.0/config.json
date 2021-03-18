@@ -23,7 +23,7 @@
     "children": {
       "type": "hasSequenceMember",
       "direction": "out",
-      "objects": ["Content", "ContentImage"]
+      "objects": ["Content", "ContentImage", "Collection", "CollectionImage", "QuestionSet", "QuestionSetImage"]
     },
     "collections": {
       "type": "hasSequenceMember",
