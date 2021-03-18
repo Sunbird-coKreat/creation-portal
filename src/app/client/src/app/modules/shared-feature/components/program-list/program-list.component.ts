@@ -55,6 +55,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   showDeleteModal = false;
   public inviewLogs: any = [];
   public impressionEventTriggered: Boolean = false;
+  public userProfile = this.userService.userProfile;
 
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
@@ -301,9 +302,8 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
           filters: {
             nomination: {
               organisation_id: {
-                ne: this.userService.userProfile.userRegData.User_Org.orgId
-              },
-              nomination_enddate: 'open'
+                ne: this.userProfile.userRegData.User_Org.orgId
+              }
             },
           }
         }
@@ -314,9 +314,6 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       req = {
         request: {
           filters: {
-            type: type,
-            nomination_enddate: 'open',
-            status: status,
             nomination: {
               user_id: {
                 ne: this.userService.userid,
@@ -329,17 +326,27 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     if (sort) {
       req.request['sort'] = sort;
     }
+    if (status) {
+      req.request.filters['status'] = status;
+    }
+    if (type) {
+      req.request.filters['type'] = type;
+    }
+    req.request.filters['nomination_enddate'] = 'open';
+
     if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
       req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
     }
-    this.programsService.getMyProgramsForContrib(req)
+    this.programsService.getAllProgramsByType(req)
       .subscribe((myProgramsResponse) => {
         this.programs = _.map(_.get(myProgramsResponse, 'result.programs'), (obj: any) => {
           if (obj.program) {
             obj.program = _.merge({}, obj.program, {
               contributionDate: obj.createdon,
               nomination_status: obj.status,
-              nominated_collection_ids: obj.collection_ids
+              nominated_collection_ids: obj.collection_ids,
+              nominated_rolemapping: obj.rolemapping,
+              myRole: this.getMyProgramRole(obj)
             });
             return obj.program;
           }
@@ -403,9 +410,9 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
           filters: {
             nomination: {
               organisation_id: {
-                eq: this.userService.userProfile.userRegData.User_Org.orgId
+                eq: this.userProfile.userRegData.User_Org.orgId
               }
-            }
+            },
           }
         }
       };
@@ -420,11 +427,11 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
                 eq: this.userService.userid
               },
               organisation_id: {
-                eq: this.userService.userProfile.userRegData.User_Org.orgId
+                eq: this.userProfile.userRegData.User_Org.orgId
               },
               status: ['Approved'],
               roles: {
-                or: ['REVIEWER', 'CONTRIBUTOR'] // have to check this (hardcoded or get from config)
+                or: ['REVIEWER', 'CONTRIBUTOR']
               }
             }
           }
@@ -433,6 +440,9 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     }
     if (sort) {
       req.request['sort'] = sort;
+    }
+    if (status) {
+      req.request.filters['status'] = status;
     }
     if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
       req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
@@ -443,7 +453,9 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
           obj.program = _.merge({}, obj.program, {
             contributionDate: obj.createdon,
             nomination_status: obj.status,
-            nominated_collection_ids: obj.collection_ids
+            nominated_collection_ids: obj.collection_ids,
+            nominated_rolemapping: obj.rolemapping,
+            myRole: this.getMyProgramRole(obj)
           });
           return obj.program;
         }
@@ -488,14 +500,13 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
 
   getNominationsByMyOrg() {
     const filters = {
-      organisation_id: this.userService.userProfile.userRegData.User_Org.orgId
+      organisation_id: this.userProfile.userRegData.User_Org.orgId
     };
     return this.programsService.getNominationList(filters);
   }
 
   getMyProgramRole(program) {
-    const nomination = _.find(this.roleMapping, { program_id: program.program_id });
-    const roles = this.userService.getMyRoleForProgram(nomination);
+    const roles = this.userService.getMyRoleForProgram(program);
     if (_.isEmpty(roles)) {
       return '-';
     }
@@ -611,7 +622,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     }
     catch {
       return value;
-    } 
+    }
   }
 
   getProgramNominationStatus(program) {
@@ -700,7 +711,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       const req = {
         program_id: this.selectedProgramToModify.program_id,
         status: 'Initiated',
-        updatedby: this.userService.userProfile.userId
+        updatedby: this.userService.userid
       };
 
       this.programsService.addorUpdateNomination(req).subscribe((data) => {
