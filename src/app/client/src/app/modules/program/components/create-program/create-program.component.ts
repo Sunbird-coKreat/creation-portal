@@ -143,7 +143,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     } else {
       this.initializeFormFields();
     }
-    this.fetchBlueprintTemplate();
     this.fetchFrameWorkDetails();
     this.setTelemetryStartData();
     this.pageStartTime = Date.now();
@@ -585,7 +584,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   fetchBlueprintTemplate(): void {
-    this.programsService.getCollectionCategoryDefinition(this.selectedTargetCollection || 'Question paper', this.userprofile.rootOrgId).subscribe(res => {
+    this.programsService.getCollectionCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId).subscribe(res => {
       let templateDetails = res.result.objectCategoryDefinition;
       if(templateDetails && templateDetails.forms) {         
         this.blueprintTemplate = templateDetails.forms.blueprintCreate;                             
@@ -652,8 +651,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       this.createProgramForm = this.sbFormBuilder.group(obj);
       this.defaultContributeOrgReviewChecked = _.get(this.programDetails, 'config.defaultContributeOrgReview') ? false : true;
+      this.fetchBlueprintTemplate();
       this.showProgramScope = false;
-      this.showTextBookSelector = false;
+      this.showTextBookSelector = false;      
     }
 
     this.showLoader = false;
@@ -1249,6 +1249,12 @@ showTexbooklist(showTextBookSelector = true) {
             validity = false;
           }
         }
+      }
+      if(prop.code === 'totalMarks') {
+        if(val) {
+          console.log(isNaN(val))
+          if(isNaN(val) && isNaN(parseFloat(val))) validity = false;
+        } 
       }
     })
     return validity;

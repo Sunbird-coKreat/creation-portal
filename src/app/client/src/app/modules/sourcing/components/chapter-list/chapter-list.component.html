@@ -154,7 +154,7 @@
             </dl> -->
           </div>
         </div>
-        <div class="d-flex flex-dc" [class.filters-section]="!!sourcingOrgReviewer">
+        <div class="d-flex flex-dc" [class.filters-section]="!!sourcingOrgReviewer && !sampleContent">
           <div class="sb-textbook-allchapters sb-field">
             <label class="fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.selectChapters}}</label>
             <sui-select class="selection w-100" placeholder="{{resourceService.frmelmnts.lbl.allChapters}}" [isSearchable]=true labelField="name"
@@ -164,7 +164,7 @@
               </sui-select-option>
             </sui-select>
           </div>
-          <div *ngIf="sourcingOrgReviewer" class="sb-textbook-allchapters sb-field">
+          <div *ngIf="sourcingOrgReviewer && !sampleContent" class="sb-textbook-allchapters sb-field">
             <label class="fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.selectStatus}}</label>
             <sui-multi-select class="selection w-100 max-height-2-5" placeholder="{{resourceService.frmelmnts.lbl.allQuestions}}" [isSearchable]=false 
               [(ngModel)]="selectedStatusOptions" labelField="label" valueField="status"
