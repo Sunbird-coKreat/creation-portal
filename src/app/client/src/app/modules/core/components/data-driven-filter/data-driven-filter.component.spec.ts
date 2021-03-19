@@ -14,7 +14,7 @@ import { CacheService } from 'ng2-cache-service';
 
 import { RouterTestingModule } from '@angular/router/testing';
 
-describe('DataDrivenFilterComponent', () => {
+xdescribe('DataDrivenFilterComponent', () => {
   let component: DataDrivenFilterComponent;
   let fixture: ComponentFixture<DataDrivenFilterComponent>;
   let frameworkService, formService, cacheService, userService, publicDataService, resourceService;
