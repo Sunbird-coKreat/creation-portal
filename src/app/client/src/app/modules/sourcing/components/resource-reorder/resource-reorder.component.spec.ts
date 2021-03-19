@@ -130,7 +130,7 @@ describe('ResourceReorderComponent', () => {
     );
   });
 
-  it('#getParents() call #getParentsHelper() with expected parameters', () => {
+  xit('#getParents() call #getParentsHelper() with expected parameters', () => {
     spyOn(component, 'getParentsHelper').and.callThrough();
     spyOn(component, 'getParents').and.callThrough();
     component.getParents(testData.collectionUnits, testData.prevUnitSelect);
