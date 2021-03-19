@@ -59,7 +59,7 @@ describe('LanguageDropdownComponent', () => {
         component = fixture.componentInstance;
     });
 
-    it('On language change', () => {
+    xit('On language change', () => {
         const utilService = TestBed.get(UtilService);
         const cacheService = TestBed.get(CacheService);
         spyOn(utilService, 'emitLanguageChangeEvent');
