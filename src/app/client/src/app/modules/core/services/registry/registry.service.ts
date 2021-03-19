@@ -84,7 +84,7 @@ export class RegistryService extends DataService {
     });
    }
 
-   public getOrgUsers(orgId, roles, offset?, limit?): Observable<ServerResponse> {
+   public getOrgUsers(orgId, roles, offset?, limit?, fields?): Observable<ServerResponse> {
     const req = {
       url: `program/v1/contributor/search`,
       data: {
@@ -97,25 +97,7 @@ export class RegistryService extends DataService {
               'roles': roles
             }
           },
-          "fields": [
-            "id",
-            "identifier",
-            "userId",
-            "rootOrgId",
-            "userName",
-            "status",
-            "roles",
-            "maskedEmail",
-            "maskedPhone",
-            "firstName",
-            "lastName",
-            "name",
-            "User",
-            "User_Org",
-            "stateValidated",
-            "selectedRole",
-            "channel",
-          ],
+          "fields": fields || [],
           'limit': limit || 250,
           'offset': offset || 0
         }
