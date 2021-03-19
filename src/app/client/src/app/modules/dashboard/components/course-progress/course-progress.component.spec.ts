@@ -22,7 +22,7 @@ import * as testData from './course-progress.component.spec.data';
 import { OrderModule } from 'ngx-order-pipe';
 import { TelemetryModule } from '@sunbird/telemetry';
 
-xdescribe('CourseProgressComponent', () => {
+describe('CourseProgressComponent', () => {
   let component: CourseProgressComponent;
   let fixture: ComponentFixture<CourseProgressComponent>;
   class RouterStub {
