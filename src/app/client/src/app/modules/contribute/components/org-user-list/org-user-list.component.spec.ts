@@ -18,7 +18,7 @@ import * as _ from 'lodash-es';
 
 // import {mockData} from './org-reports.component.spec.data'
 
-xdescribe('OrgUserListComponent', () => {
+describe('OrgUserListComponent', () => {
   let component: OrgUserListComponent;
   let fixture: ComponentFixture<OrgUserListComponent>;
   const fakeActivatedRoute = {
