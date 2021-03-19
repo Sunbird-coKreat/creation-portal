@@ -1250,6 +1250,12 @@ showTexbooklist(showTextBookSelector = true) {
           }
         }
       }
+      if(prop.code === 'totalMarks') {
+        if(val) {
+          console.log(isNaN(val))
+          if(isNaN(val) && isNaN(parseFloat(val))) validity = false;
+        } 
+      }
     })
     return validity;
   }
