@@ -24,7 +24,7 @@ import { ActivatedRoute } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
 
-describe('QuestionListComponent', () => {
+xdescribe('QuestionListComponent', () => {
 
   let fixture: ComponentFixture<QuestionListComponent>;
   let component: QuestionListComponent;
