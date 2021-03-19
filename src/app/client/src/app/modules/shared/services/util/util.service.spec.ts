@@ -138,23 +138,23 @@ describe('UtilService', () => {
     expect(service.getPlayerDownloadStatus).toBeTruthy();
   }));
 
-  xit('should call getPlayerDownloadStatus() when status is Downloading ', inject([UtilService], (service: UtilService) => {
+  it('should call getPlayerDownloadStatus() when status is Downloading ', inject([UtilService], (service: UtilService) => {
     spyOn(service, 'getPlayerDownloadStatus').and.callThrough();
     service.getPlayerDownloadStatus('DOWNLOADING', servicemockRes.successResult.result.content, 'browse');
     expect(service.getPlayerDownloadStatus).toBeTruthy();
   }));
 
-  xit('should call getPlayerDownloadStatus() when status is Downloading ', inject([UtilService], (service: UtilService) => {
+  it('should call getPlayerDownloadStatus() when status is Downloading ', inject([UtilService], (service: UtilService) => {
     spyOn(service, 'getPlayerDownloadStatus').and.callThrough();
     service.getPlayerDownloadStatus('DOWNLOADING', servicemockRes.successResult2.result.content, 'browse');
     expect(service.getPlayerDownloadStatus).toBeTruthy();
   }));
-  xit('should call getPlayerDownloadStatus() when status is Downloading ', inject([UtilService], (service: UtilService) => {
+  it('should call getPlayerDownloadStatus() when status is Downloading ', inject([UtilService], (service: UtilService) => {
     spyOn(service, 'getPlayerDownloadStatus').and.callThrough();
     service.getPlayerDownloadStatus('DOWNLOADING', servicemockRes.successResult3.result.content, 'browse');
     expect(service.getPlayerDownloadStatus).toBeTruthy();
   }));
-  xit('should call getPlayerDownloadStatus() when status is Downloading ', inject([UtilService], (service: UtilService) => {
+  it('should call getPlayerDownloadStatus() when status is Downloading ', inject([UtilService], (service: UtilService) => {
     spyOn(service, 'getPlayerDownloadStatus').and.callThrough();
     service.getPlayerDownloadStatus('DOWNLOAD', servicemockRes.successResult4.result.content, 'browse');
     expect(service.getPlayerDownloadStatus).toBeTruthy();
