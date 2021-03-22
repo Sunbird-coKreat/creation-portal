@@ -846,7 +846,8 @@
             "SA",
             "LA",
             "REFERENCE",
-            "CuriosityQuestion"
+            "CuriosityQuestion",
+            "COMPREHENSION"
           ],
           "defaultValue": "MCQ",
           "renderingHints": "{'order': 28}",
