@@ -243,7 +243,7 @@ export class QuestionSetEditorComponent implements OnInit {
 
   private getEditorMode() {
     const contentStatus = this.collectionDetails.status.toLowerCase();
-    if (contentStatus === 'draft' || contentStatus === 'live') {
+    if (contentStatus === 'draft') {
       return 'edit';
     }
     if (contentStatus === 'review') {
@@ -253,29 +253,39 @@ export class QuestionSetEditorComponent implements OnInit {
         return 'review';
       }
     }
+    if (contentStatus === 'live') {
+      return 'sourcingReview';
+    }
   }
 
   editorEventListener(event) {
    console.log(event);
    switch (event.action) {
-    case "submitCollection" : 
+    case "submitContent" : 
       // collection is sent for review. If individual contributor or contributor of default org and review is disabled publish the content
       if (this.helperService.isIndividualAndNotSample(this.sessionContext.currentOrgRole, this.sessionContext.sampleContent)) {
-        this.publishQuestionSet();
+        this.publishQuestionSet(event.identifier);
       }
       else {
        this.programStageService.removeLastStage();
       }
-      console.log(this.questionSetEditorInput);
       break;
+    case "sendForCorrections" : 
+      this.toasterService.success("This action is not enabled on the system yet");
+      this.programStageService.removeLastStage();
+      break;
+    case "sourcingApprove" : 
+        this.toasterService.success("This action is not enabled on the system yet");
+        this.programStageService.removeLastStage();
+        break;
     case "saveCollection" : // saving as draft
     default: this.programStageService.removeLastStage();
       break;
    }
   }
 
-  publishQuestionSet() {
-    this.helperService.publishQuestionSet(this.collectionDetails.identifier, this.userService.userProfile.userId)
+  publishQuestionSet(identifier) {
+    this.helperService.publishQuestionSet(identifier, this.userService.userProfile.userId)
        .subscribe(res => {
         if (this.sessionContext.collection && this.questionSetEditorInput.unitIdentifier) {
           // tslint:disable-next-line:max-line-length

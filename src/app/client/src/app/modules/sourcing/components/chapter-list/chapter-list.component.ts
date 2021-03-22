@@ -266,6 +266,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               this.sessionContext['contentOrigins'][obj.origin] = obj;
             }
           });
+          _.forEach( _.get(response, 'result.QuestionSet'), (obj) => {
+            if (obj.status == 'Live') {
+              this.sessionContext['contentOrigins'][obj.origin] = obj;
+            }
+          });
         }
       },
       (error) => {
@@ -1017,7 +1022,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         option.data.request['questionset'] = {};
         option.data.request['questionset'] = option.data.request.content;
         delete option.data.request.content;
-        createRes = this.publicDataService.post(option);
+        createRes = this.actionService.post(option);
       } else {
         createRes = this.actionService.post(option);
       }

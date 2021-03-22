@@ -292,7 +292,7 @@ export class CollectionHierarchyService {
       data: {
         request: {
           filters: {
-            objectType: 'content',
+            objectType: ['content', 'questionset'],
             programId: programId,
             status: [],
             mimeType: {'!=': 'application/vnd.ekstep.content-collection'},
@@ -473,7 +473,7 @@ export class CollectionHierarchyService {
       data: {
         request: {
           filters: {
-            objectType: 'content',
+            objectType: ['content', 'questionset'],
             origin: contentIds
           },
           exists: ['originData'],

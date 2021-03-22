@@ -177,7 +177,7 @@ export class HelperService {
       url: `questionset/v1/publish/${contentId}`,
       data: requestBody
     };
-    return this.publicDataService.post(option);
+    return this.actionService.post(option);
   }
 
   submitRequestChanges(contentId, comment) {
