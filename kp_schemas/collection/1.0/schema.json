@@ -1071,11 +1071,7 @@
     "additionalCategories": {
       "type": "array",
       "items": {
-        "type": "string",
-        "enum": [
-          "Textbook",
-          "Lesson Plan"
-        ]
+        "type": "string"
       }
     },
     "prevStatus": {
