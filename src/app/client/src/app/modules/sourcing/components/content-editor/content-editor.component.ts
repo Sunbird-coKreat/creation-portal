@@ -204,7 +204,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     this.visibility['showSubmit'] = submissionDateFlag && this.canSubmit();
     this.visibility['showEditMetadata'] = submissionDateFlag && this.canEditMetadata();
     this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
-    this.visibility['showSourcingActionButtons'] = submissionDateFlag && this.canSourcingReviewerPerformActions();
+    this.visibility['showSourcingActionButtons'] = this.canSourcingReviewerPerformActions();
     this.visibility['showSendForCorrections'] = this.visibility['showSourcingActionButtons'] && this.canSendForCorrections();
   }
 
@@ -255,7 +255,8 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     && !this.contentData.sampleContent === true && this.resourceStatus === 'Live'
     && this.userService.userid !== this.contentData.createdBy
     && this.resourceStatus === 'Live' && !this.sourcingReviewStatus &&
-    (this.originCollectionData.status === 'Draft' && this.selectedOriginUnitStatus === 'Draft'));
+    (this.originCollectionData.status === 'Draft' && this.selectedOriginUnitStatus === 'Draft')
+    && this.programsService.isProjectLive(this.programContext));
   }
 
   getContentMetadata() {
