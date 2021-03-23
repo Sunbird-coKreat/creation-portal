@@ -598,6 +598,10 @@
                 "curiosity": {
                     "questionBody": "",
                     "answerBody": ""
+                },
+                "comprehension": {
+                    "questionBody": "",
+                    "answerBody": ""
                 }
             }            
         },
