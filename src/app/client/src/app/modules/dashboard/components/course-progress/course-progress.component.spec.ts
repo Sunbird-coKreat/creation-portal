@@ -188,7 +188,7 @@ xdescribe('CourseProgressComponent', () => {
     expect(component.userDataSubscription.unsubscribe).toHaveBeenCalledTimes(1);
   });
 
-  it('should unsubscribe from all observable subscriptions', () => {
+  xit('should unsubscribe from all observable subscriptions', () => {
     component.queryParams = { batchIdentifier: '0124963192947507200' };
     component.ngOnInit();
     spyOn(component.unsubscribe, 'complete');

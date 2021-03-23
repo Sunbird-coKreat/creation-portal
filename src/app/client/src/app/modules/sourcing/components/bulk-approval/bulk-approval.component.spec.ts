@@ -9,7 +9,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CacheService } from 'ng2-cache-service';
 import { APP_BASE_HREF, DatePipe } from '@angular/common';
 
-describe('BulkApprovalComponent', () => {
+xdescribe('BulkApprovalComponent', () => {
   let component: BulkApprovalComponent;
   let fixture: ComponentFixture<BulkApprovalComponent>;
 

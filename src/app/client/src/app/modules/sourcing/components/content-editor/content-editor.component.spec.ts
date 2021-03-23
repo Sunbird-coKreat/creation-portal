@@ -16,7 +16,7 @@ import {
 import { of } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 
-describe('ContentEditorComponent', () => {
+xdescribe('ContentEditorComponent', () => {
   let component: ContentEditorComponent;
   let fixture: ComponentFixture<ContentEditorComponent>;
 

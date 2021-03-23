@@ -25,7 +25,7 @@ const resourceBundle = {
   }
 };
 
-describe('UtilService', () => {
+xdescribe('UtilService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [UtilService, { provide: ResourceService, useValue: resourceBundle }]

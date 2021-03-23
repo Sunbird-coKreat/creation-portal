@@ -49,7 +49,7 @@ const UserServiceStub = {
   }
 };
 
-describe('CollectionComponent', () => {
+xdescribe('CollectionComponent', () => {
   let component: CollectionComponent;
   let fixture: ComponentFixture<CollectionComponent>;
 
