@@ -16,7 +16,6 @@ import { mockMvcLibraryData } from './mvc-library.component.spec.data';
 describe('MvcLibraryComponent', () => {
   let component: MvcLibraryComponent;
   let fixture: ComponentFixture<MvcLibraryComponent>;
-  let debugElement: DebugElement;
 
   const fakeActivatedRoute = {
     paramMap: observableOf(convertToParamMap(mockMvcLibraryData.fakeParamMap)),
@@ -42,7 +41,6 @@ describe('MvcLibraryComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(MvcLibraryComponent);
     component = fixture.componentInstance;
-    debugElement = fixture.debugElement;
   });
 
   it('should create', () => {

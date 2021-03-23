@@ -16,14 +16,15 @@ import { TelemetryService} from '@sunbird/telemetry';
 describe('MvcFilterComponent', () => {
   let component: MvcFilterComponent;
   let fixture: ComponentFixture<MvcFilterComponent>;
-  let debugElement: DebugElement;
+
 
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule, ReactiveFormsModule, SuiPopupModule, SuiModule, TelemetryModule.forRoot()],
       declarations: [ MvcFilterComponent ],
-      providers: [ TelemetryService, ResourceService, ConfigService, CacheService, BrowserCacheTtlService, ToasterService, {provide: APP_BASE_HREF, useValue: '/'}
+      providers: [ TelemetryService, ResourceService, ConfigService, CacheService,
+        BrowserCacheTtlService, ToasterService, {provide: APP_BASE_HREF, useValue: '/'}
     ]
     })
     .compileComponents();
@@ -32,8 +33,6 @@ describe('MvcFilterComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(MvcFilterComponent);
     component = fixture.componentInstance;
-    debugElement = fixture.debugElement;
-
   });
 
   it('should create', () => {
