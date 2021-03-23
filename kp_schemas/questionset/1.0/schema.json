@@ -504,6 +504,9 @@
     },
     "contentPolicyCheck" : {
       "type": "boolean"
+    },
+    "maxAttempts": {
+      "type": "number"
     }
   }
 }
