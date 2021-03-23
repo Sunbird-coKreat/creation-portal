@@ -14,13 +14,13 @@ import { mockData} from './mvc-list.component.spec.data';
 describe('MvcListComponent', () => {
   let component: MvcListComponent;
   let fixture: ComponentFixture<MvcListComponent>;
-  let debugElement: DebugElement;
+  // let debugElement: DebugElement;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [SuiPopupModule, RouterTestingModule, FormsModule, ReactiveFormsModule, HttpClientTestingModule],
       declarations: [ MvcListComponent, InterpolatePipe ],
-      providers:[ResourceService, ConfigService, ProgramTelemetryService, CacheService, BrowserCacheTtlService,
+      providers: [ResourceService, ConfigService, ProgramTelemetryService, CacheService, BrowserCacheTtlService,
         {provide: APP_BASE_HREF, useValue: '/'}],
       schemas: [NO_ERRORS_SCHEMA]
     })
@@ -31,7 +31,7 @@ describe('MvcListComponent', () => {
     fixture = TestBed.createComponent(MvcListComponent);
     component = fixture.componentInstance;
     // fixture.detectChanges();
-    debugElement = fixture.debugElement;
+    // debugElement = fixture.debugElement;
   });
 
   it('should create', () => {

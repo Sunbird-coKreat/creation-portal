@@ -56,7 +56,7 @@ describe('QuestionListComponent', () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(QuestionListComponent);
-    component = fixture.debugElement.componentInstance;
+    component = fixture.componentInstance;
     // fixture.autoDetectChanges();
   });
 
@@ -98,7 +98,7 @@ describe('QuestionListComponent', () => {
     spyOn(component, 'canCreateQuestion');
     component.handleActionButtons();
     expect(component.canCreateQuestion).toHaveBeenCalled();
-  })
+  });
 
   xit('should call questionLimitReached', () => {
     spyOn(component, 'questionLimitReached');
@@ -112,11 +112,11 @@ describe('QuestionListComponent', () => {
           }
         }
       }
-    }
+    };
     component.canCreateQuestion();
     expect(component.questionLimitReached).toHaveBeenCalled();
     expect(component.questionLimitReached).toBe(true);
-  })
+  });
 
   it('should Call createDefaultQuestionAndItemset', () => {
     spyOn(component, 'createDefaultQuestionAndItemset');

@@ -18,7 +18,7 @@ import { from } from 'rxjs';
 describe('MvcPlayerComponent', () => {
   let component: MvcPlayerComponent;
   let fixture: ComponentFixture<MvcPlayerComponent>;
-  let debugElement: DebugElement;
+  // let debugElement: DebugElement;
 
   const playerServiceStub = {
     getConfig() {
@@ -28,7 +28,8 @@ describe('MvcPlayerComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, SharedModule.forRoot(), CoreModule,RouterTestingModule, PlayerHelperModule, SuiModalModule, SuiAccordionModule],
+      imports: [HttpClientTestingModule, SharedModule.forRoot(),
+        CoreModule, RouterTestingModule, PlayerHelperModule, SuiModalModule, SuiAccordionModule],
       declarations: [ MvcPlayerComponent ],
       providers: [ToasterService, TelemetryService, { provide: TELEMETRY_PROVIDER, useValue: EkTelemetry },
         SourcingService, PlayerService, ActionService, ConfigService,
@@ -41,7 +42,7 @@ describe('MvcPlayerComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(MvcPlayerComponent);
     component = fixture.componentInstance;
-    debugElement = fixture.debugElement;
+    // debugElement = fixture.debugElement;
   });
 
   it('should create', () => {

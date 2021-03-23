@@ -17,8 +17,6 @@ describe('MvcFilterComponent', () => {
   let component: MvcFilterComponent;
   let fixture: ComponentFixture<MvcFilterComponent>;
 
-
-
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule, ReactiveFormsModule, SuiPopupModule, SuiModule, TelemetryModule.forRoot()],
