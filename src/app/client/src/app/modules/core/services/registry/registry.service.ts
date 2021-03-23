@@ -45,7 +45,7 @@ export class RegistryService extends DataService {
         return new Promise((resolve, reject) => {
           if (!_.isEmpty(allOrgUsers)) {
             const userList = _.filter(allOrgUsers, obj => {
-              if ((obj.userId !== _.get(userRegData, 'User.osid'))) {
+              if ((_.get(obj, 'User_Org.userId') !== _.get(userRegData, 'User.osid'))) {
                 return obj;
               }
             });
