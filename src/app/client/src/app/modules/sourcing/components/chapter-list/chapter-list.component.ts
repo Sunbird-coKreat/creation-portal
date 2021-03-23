@@ -1253,9 +1253,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   ngOnDestroy() {
-    this.stageSubscription.unsubscribe();
-    this.unsubscribe.next();
-    this.unsubscribe.complete();
+    if (this.stageSubscription) {
+      this.stageSubscription.unsubscribe();
+    }
+    if (this.unsubscribe) {
+      this.unsubscribe.next();
+      this.unsubscribe.complete();
+    }
   }
 
   getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: string): IInteractEventEdata {

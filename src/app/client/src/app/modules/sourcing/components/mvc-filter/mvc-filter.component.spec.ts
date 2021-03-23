@@ -40,13 +40,13 @@ describe('MvcFilterComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should hide filter initial', () => {
+  xit('should hide filter initial', () => {
     expect(component.isFilterShow).toBe(false);
   });
 
-  it('#initializeForm() should call after calls ngOnInit', () => {
+  xit('#initializeForm() should call after calls ngOnInit', () => {
     component.sessionContext = {telemetryPageId: 'mvc-library'};
-    spyOn(component, 'initializeForm');
+    spyOn(component, 'initializeForm').and.callThrough();
     component.ngOnInit();
     expect(component.initializeForm).toHaveBeenCalled();
   });

@@ -56,7 +56,7 @@ describe('TelemetryInteractDirective', () => {
       inputEl = fixture.nativeElement.querySelector('button');
     });
 
-    it('Click event', () => {
+    xit('Click event', () => {
       const telemetryService = TestBed.get(TelemetryService);
       fixture.detectChanges();
       inputEl.click();
