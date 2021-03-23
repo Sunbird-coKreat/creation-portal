@@ -23,7 +23,7 @@ import { FormsModule } from '@angular/forms';
 import { DynamicModule } from 'ng-dynamic-component';
 
 
-xdescribe('ChapterListComponent', () => {
+describe('ChapterListComponent', () => {
   let component: ChapterListComponent;
   let fixture: ComponentFixture<ChapterListComponent>;
   let errorInitiate, de: DebugElement;

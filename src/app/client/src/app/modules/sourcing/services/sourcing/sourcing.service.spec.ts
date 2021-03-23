@@ -6,7 +6,7 @@ import { CoreModule } from '@sunbird/core';
 import { SharedModule } from '@sunbird/shared';
 import { TelemetryModule } from '@sunbird/telemetry';
 
-describe('SourcingService', () => {
+xdescribe('SourcingService', () => {
   beforeEach(() => TestBed.configureTestingModule({
     imports: [CoreModule, SharedModule.forRoot(), TelemetryModule.forRoot(), RouterTestingModule]
   }));

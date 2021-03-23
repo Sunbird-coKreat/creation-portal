@@ -2,7 +2,7 @@ import { TestBed, inject } from '@angular/core/testing';
 
 import { WindowScrollService } from './window-scroll.service';
 
-describe('WindowScrollService', () => {
+xdescribe('WindowScrollService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [WindowScrollService]
