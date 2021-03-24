@@ -7,7 +7,6 @@ import * as _ from 'lodash-es';
 import * as moment from 'moment';
 import { DatePipe } from '@angular/common';
 import { IInteractEventEdata, TelemetryService } from '@sunbird/telemetry';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { CacheService } from 'ng2-cache-service';
 import { first } from 'rxjs/operators';
 import { SourcingService } from '../../../sourcing/services';
