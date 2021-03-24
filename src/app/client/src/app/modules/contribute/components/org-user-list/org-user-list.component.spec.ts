@@ -35,7 +35,8 @@ describe('OrgUserListComponent', () => {
   const routerStub = { url: '/sourcing/orgreports' };
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, SharedModule.forRoot(), TelemetryModule.forRoot(), RouterTestingModule,
+      imports: [HttpClientTestingModule, SharedModule.forRoot(),
+         TelemetryModule.forRoot(), RouterTestingModule,
         SuiTabsModule, SuiModule],
       schemas: [NO_ERRORS_SCHEMA],
       declarations: [ OrgUserListComponent ],
