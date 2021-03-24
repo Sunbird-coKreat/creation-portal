@@ -11,7 +11,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { throwError as observableThrowError, of as observableOf } from 'rxjs';
 import { testData } from './otp-popup.component.spec.data';
 
-xdescribe('OtpPopupComponent', () => {
+describe('OtpPopupComponent', () => {
   let component: OtpPopupComponent;
   let fixture: ComponentFixture<OtpPopupComponent>;
 

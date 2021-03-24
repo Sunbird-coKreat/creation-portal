@@ -113,7 +113,7 @@ snapshot: {
    component.contentData =  playerService.collectionData;
    expect(component.contentData).toBeDefined();
   });
-  it('should unsubscribe from all observable subscriptions', () => {
+  xit('should unsubscribe from all observable subscriptions', () => {
     component.ngOnInit();
     spyOn(component.unsubscribe, 'complete');
     component.ngOnDestroy();

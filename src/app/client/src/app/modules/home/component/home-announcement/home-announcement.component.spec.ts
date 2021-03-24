@@ -12,7 +12,7 @@ import * as mockData from './home-announcement.component.spec.data';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { CacheService } from 'ng2-cache-service';
 const testData = mockData.mockRes;
-xdescribe('HomeAnnouncementComponent', () => {
+describe('HomeAnnouncementComponent', () => {
   let component: HomeAnnouncementComponent;
   let fixture: ComponentFixture<HomeAnnouncementComponent>;
   const fakeActivatedRoute = { 'params': observableOf({ 'pageNumber': 1 }) };
