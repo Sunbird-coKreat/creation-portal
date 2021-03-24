@@ -1238,9 +1238,13 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.sessionContext.questionList = [];
-    this.onComponentDestroy$.next();
-    this.onComponentDestroy$.complete();
+    if (this.sessionContext && _.has(this.sessionContext, 'questionList')) {
+      this.sessionContext.questionList = [];
+    }
+    if (this.onComponentDestroy$) {
+      this.onComponentDestroy$.next();
+      this.onComponentDestroy$.complete();
+    }
   }
 
   handleBack() {

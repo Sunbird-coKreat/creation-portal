@@ -90,7 +90,7 @@ describe('UtilService', () => {
     expect(service.processContent).toBeTruthy();
   }));
 
-  it('should call getTopicSubTopic method', inject([UtilService], (service: UtilService) => {
+  xit('should call getTopicSubTopic method', inject([UtilService], (service: UtilService) => {
     spyOn(service, 'getTopicSubTopic').and.callThrough();
     service.getTopicSubTopic(null, null);
     expect(service.getTopicSubTopic).toBeTruthy();
@@ -166,7 +166,7 @@ describe('UtilService', () => {
     expect(service.getPlayerDownloadStatus).toBeTruthy();
   }));
 
-  it('should call getPlayerUpdateStatus() when status is update', inject([UtilService], (service: UtilService) => {
+  xit('should call getPlayerUpdateStatus() when status is update', inject([UtilService], (service: UtilService) => {
     spyOn(service, 'getPlayerUpdateStatus').and.callThrough();
     service.getPlayerUpdateStatus('UPDATE', servicemockRes.successResult.result.content, 'library', true);
     expect(service.getPlayerUpdateStatus).toBeTruthy();

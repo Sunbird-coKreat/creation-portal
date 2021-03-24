@@ -162,6 +162,8 @@ export class UpdateUserDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.userDetailsModal.deny();
+    if (this.userDetailsModal) {
+      this.userDetailsModal.deny();
+    }
   }
 }
