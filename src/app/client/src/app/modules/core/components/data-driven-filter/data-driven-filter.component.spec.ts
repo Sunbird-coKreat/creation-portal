@@ -113,4 +113,5 @@ describe('DataDrivenFilterComponent', () => {
     component.removeFilterSelection('subject', 'English');
     expect(component.formInputData.subject).toEqual([]);
   });
+
 });
