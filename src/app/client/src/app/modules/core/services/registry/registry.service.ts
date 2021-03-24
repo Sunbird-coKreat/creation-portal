@@ -35,6 +35,7 @@ export class RegistryService extends DataService {
   }
 
    public getOrgUsersDetails(userRegData?, forSourcing?) {
+    this.mycontributionOrgUsers = [];
     const roles = forSourcing ?  ["sourcing_reviewer", "sourcing_admin"] : ["user", "admin"];
     if (_.isUndefined(userRegData)) {
       userRegData = _.get(this.userService, 'userProfile.userRegData');
