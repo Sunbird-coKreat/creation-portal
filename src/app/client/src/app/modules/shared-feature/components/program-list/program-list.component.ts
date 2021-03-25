@@ -338,18 +338,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     }
     this.programsService.getAllProgramsByType(req)
       .subscribe((myProgramsResponse) => {
-        this.programs = _.map(_.get(myProgramsResponse, 'result.programs'), (obj: any) => {
-          if (obj.program) {
-            obj.program = _.merge({}, obj.program, {
-              contributionDate: obj.createdon,
-              nomination_status: obj.status,
-              nominated_collection_ids: obj.collection_ids,
-              nominated_rolemapping: obj.rolemapping,
-              myRole: this.getMyProgramRole(obj)
-            });
-            return obj.program;
-          }
-        });
+        this.programs = _.get(myProgramsResponse, 'result.programs');
         this.count = this.programs.length;
         this.tempSortPrograms = this.programs;
         this.showLoader = false;
