@@ -1,0 +1,13 @@
+{
+  "objectType": "Category",
+  "external": {},
+  "relations": {
+    "terms": {
+      "type": "hasSequenceMember",
+      "direction": "out",
+      "objects": [
+        "Term"
+      ]
+    }
+  }
+}
