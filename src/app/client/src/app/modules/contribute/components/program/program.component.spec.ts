@@ -162,8 +162,6 @@ describe('ProgramComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ProgramComponent);
     component = fixture.componentInstance;
-
-    // fixture.detectChanges();
   });
 
   it('should have a defined component', () => {
@@ -210,7 +208,7 @@ describe('ProgramComponent', () => {
   it('#fetchFrameWorkDetails() should called #frameworkService()', () => {
     component.programDetails = {
       config: { framework: 'NCFCOPY'}
-    }
+    };
     const frameworkService = TestBed.get(FrameworkService);
     spyOn(frameworkService, 'initialize').and.callThrough();
     spyOn(component, 'fetchFrameWorkDetails').and.callThrough();
