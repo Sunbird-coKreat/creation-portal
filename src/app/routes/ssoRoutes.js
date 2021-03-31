@@ -421,8 +421,10 @@ module.exports = (app) => {
     await ssoValidations(req, res)
   })
 
-  app.get('/v1/sourcing/sso/success/redirect', async (req, res) => {
-    console.log('req ', req, 'res ',res);
+  app.get('/v1/sourcing/sso/success/redirect', (req, res) => {
+    logger.info({msg: '/v1/sourcing/sso/success/redirect called'});
+    console.log('sourcing req ', req);
+    console.log('sourcing res ', res);
   });
 
 };
