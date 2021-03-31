@@ -642,8 +642,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!_.isEmpty(contributorTextbooks) && this.isNominationOrg()) {
       this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId).subscribe(
         (response) => {
-          if (response && response.result && response.result.content) {
-            const contents = _.get(response.result, 'content');
+          if (response && response.result && (_.get(response.result, 'content')|| _.get(response.result, 'QuestionSet'))) {
+            const contents = _.compact(_.concat(_.get(response.result, 'QuestionSet'), _.get(response.result, 'content')));
             // tslint:disable-next-line:max-line-length
             this.contentStatusCounts = this.collectionHierarchyService.getContentCounts(contents, this.sessionContext.nominationDetails.organisation_id, contributorTextbooks);
             // tslint:disable-next-line:max-line-length

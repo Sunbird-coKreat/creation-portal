@@ -225,8 +225,11 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
         this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId, sampleValue, organisation_id, createdBy)
           .subscribe(
             (response) => {
-              if (response && response.result && response.result.content) {
-                const contents = _.get(response.result, 'content');
+              if (response && response.result && (_.get(response.result, 'content')|| _.get(response.result, 'QuestionSet'))) {
+                //const contents = _.get(response.result, 'content');
+
+                const contents = _.compact(_.concat(_.get(response.result, 'QuestionSet'), _.get(response.result, 'content')));
+
                 if (this.userService.isUserBelongsToOrg()) {
                   this.contentStatusCounts = this.collectionHierarchyService.getContentCounts(contents, this.userService.getUserOrgId(), collections);
                 } else {
