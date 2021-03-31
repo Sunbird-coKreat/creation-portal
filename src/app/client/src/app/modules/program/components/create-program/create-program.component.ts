@@ -931,7 +931,6 @@ showTexbooklist(showTextBookSelector = true) {
         },
         limit: 1000,
         not_exists: ['programId'],
-        exists: ["medium", "gradeLevel", "subject"],
       }
     };
 
