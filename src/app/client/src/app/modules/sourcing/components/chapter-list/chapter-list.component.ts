@@ -102,6 +102,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
+  public hasAccessForContributor: any;
+  public hasAccessForReviewer: any;
+  public hasAccessForBoth: any;
   public unsubscribe = new Subject<void>();
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
@@ -115,6 +118,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   ngOnInit() {
+   this.hasAccessForContributor =  this.hasAccessFor(['CONTRIBUTOR']);
+   this.hasAccessForReviewer =  this.hasAccessFor(['REVIEWER']);
+   this.hasAccessForBoth =  this.hasAccessFor(['CONTRIBUTOR', 'REVIEWER']);
+
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
       this.changeView();
@@ -902,8 +909,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   shouldContentBeVisible(content) {
-    const creatorViewRole = this.hasAccessFor(['CONTRIBUTOR']);
-    const reviewerViewRole = this.hasAccessFor(['REVIEWER']);
+    const creatorViewRole = this.hasAccessForContributor;
+    const reviewerViewRole = this.hasAccessForReviewer;
     const creatorAndReviewerRole = creatorViewRole && reviewerViewRole;
     const contributingOrgAdmin = this.userService.isContributingOrgAdmin();
     if (this.isSourcingOrgReviewer() && this.sourcingOrgReviewer) {

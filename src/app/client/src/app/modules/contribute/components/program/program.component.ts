@@ -91,7 +91,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   initialSourcingOrgUser = [];
   searchLimitMessage: any;
   searchLimitCount: any;
-
+  isContributingOrgAdmin: any;
   visitedTab = [];
   @ViewChild('userRemoveRoleModal', {static: false}) userRemoveRoleModal;
   public userRemoveRoleLoader = false;
@@ -135,6 +135,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    this.isContributingOrgAdmin =  this.userService.isContributingOrgAdmin();
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     setTimeout(() => {

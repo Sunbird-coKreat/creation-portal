@@ -15,7 +15,6 @@ export class SkeletonLoaderComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log('widht and height received', this.height, this.width);
     this.skeletonStyles = {
       'height' : this.height ? this.height : '8px',
       'width' : this.width ? this.width : '100%',

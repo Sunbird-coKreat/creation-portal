@@ -82,7 +82,7 @@
             </div>
           </div>
           <div class="d-flex" *ngIf="sessionContext.currentOrgRole == 'individual'">
-            <dl *ngIf="hasAccessFor(['CONTRIBUTOR'])"
+            <dl *ngIf="hasAccessForContributor"
               class="sb-meta-data">
               <dt>{{countData['total']}}</dt>
               <dd>{{resourceService.frmelmnts.lbl.total}}</dd>
@@ -90,41 +90,41 @@
           </div>
         </div>
 
-        <div *ngIf="!sampleContent && hasAccessFor(['CONTRIBUTOR', 'REVIEWER'])" class="sb-meta-data-container sb-meta-data-column d-flex flex-w-wrap width-inherit">
-          <label class="d-block width-100" *ngIf="hasAccessFor(['CONTRIBUTOR']) && ((sessionContext.currentRoles.includes('CONTRIBUTOR') && sessionContext.currentRoles.includes('REVIEWER')) || sessionContext.currentRoles.includes('CONTRIBUTOR'))">Contributions</label>
-          <label class="d-block width-100" *ngIf="hasAccessFor(['REVIEWER']) && sessionContext.currentRoles.includes('REVIEWER') && sessionContext.currentRoles.length === 1">Up for Review</label>
+        <div *ngIf="!sampleContent && hasAccessForBoth" class="sb-meta-data-container sb-meta-data-column d-flex flex-w-wrap width-inherit">
+          <label class="d-block width-100" *ngIf="hasAccessForContributor && ((sessionContext.currentRoles.includes('CONTRIBUTOR') && sessionContext.currentRoles.includes('REVIEWER')) || sessionContext.currentRoles.includes('CONTRIBUTOR'))">Contributions</label>
+          <label class="d-block width-100" *ngIf="hasAccessForReviewer && sessionContext.currentRoles.includes('REVIEWER') && sessionContext.currentRoles.length === 1">Up for Review</label>
           <div class="d-flex" *ngIf="sessionContext.currentOrgRole != 'individual'">
-            <dl *ngIf="!sourcingOrgReviewer && (hasAccessFor(['CONTRIBUTOR']) || hasAccessFor(['REVIEWER']))"
+            <dl *ngIf="!sourcingOrgReviewer && (hasAccessForContributor || hasAccessForReviewer)"
               class="sb-meta-data">
               <dt>{{countData['total']}}</dt>
               <dd>Total</dd>
             </dl>
-            <dl *ngIf="sourcingOrgReviewer && (hasAccessFor(['CONTRIBUTOR']) || hasAccessFor(['REVIEWER']))"
+            <dl *ngIf="sourcingOrgReviewer && (hasAccessForContributor || hasAccessForReviewer)"
               class="sb-meta-data">
               <dt>{{countData['sourcing_total']}}</dt>
               <dd>Total</dd>
             </dl>
-            <dl *ngIf="hasAccessFor(['CONTRIBUTOR'])"
+            <dl *ngIf="hasAccessForContributor"
               class="sb-meta-data">
               <dt>{{countData['mycontribution']}}</dt>
               <dd>My Content</dd>
             </dl>
-            <dl *ngIf="hasAccessFor(['CONTRIBUTOR'])" class="sb-meta-data">
+            <dl *ngIf="hasAccessForContributor" class="sb-meta-data">
               <dt>{{countData['reject']}}</dt>
               <dd>Rejected</dd>
             </dl>
-            <dl *ngIf="hasAccessFor(['CONTRIBUTOR'])" class="sb-meta-data">
+            <dl *ngIf="hasAccessForContributor" class="sb-meta-data">
               <dt>{{countData['review']}}</dt>
               <dd>Review in Progress</dd>
             </dl>
-            <dl *ngIf="hasAccessFor(['REVIEWER'])" class="sb-meta-data">
+            <dl *ngIf="hasAccessForReviewer" class="sb-meta-data">
               <dt>{{sourcingOrgReviewer ? countData['pendingReview'] : countData['awaitingreview']}}</dt>
               <dd>Awaiting my review</dd>
             </dl>
           </div>
           <div class="d-flex" *ngIf="sessionContext.currentOrgRole == 'individual'">
 
-            <dl *ngIf="hasAccessFor(['CONTRIBUTOR'])"
+            <dl *ngIf="hasAccessForContributor"
               class="sb-meta-data">
               <dt>{{countData['total']}}</dt>
               <dd>{{resourceService.frmelmnts.lbl.total}}</dd>
