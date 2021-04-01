@@ -1307,7 +1307,7 @@ export class ProgramsService extends DataService implements CanActivate {
   isProjectEnded(program) {
     const endDate  = moment(program.enddate);
     const today = moment();
-    return (today.isAfter(endDate)) ? true : false;
+    return (today.isAfter(endDate, 'day')) ? true : false;
   }
 
   isProjectClosed(program) {
