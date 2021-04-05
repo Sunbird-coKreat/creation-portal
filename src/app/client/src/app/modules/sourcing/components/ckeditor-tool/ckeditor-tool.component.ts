@@ -8,7 +8,7 @@ import * as _ from 'lodash-es';
 import { catchError, map} from 'rxjs/operators';
 import { throwError, Observable} from 'rxjs';
 import { SourcingService } from '../../services';
-import MathText from '../../../../../assets/libs/mathEquation/plugin/mathTextPlugin.js';
+// import MathText from '../../../../../assets/libs/mathEquation/plugin/mathTextPlugin.js';
 
 @Component({
   selector: 'app-ckeditor-tool',
@@ -89,7 +89,7 @@ export class CkeditorToolComponent implements OnInit, AfterViewInit, OnChanges {
       });
     this.editorConfig = _.assign({
       toolbar: ['bold', '|', 'italic', '|', 'underline',
-        '|', 'numberedList', '|', 'fontSize', '|', 'subscript', '|', 'superscript', '|', 'MathText', '|'
+        '|', 'numberedList', '|', 'fontSize', '|', 'subscript', '|', 'superscript', '|', 'MathText', '|', 'specialCharacters', '|'
       ],
       fontSize: {
         options: [
@@ -109,7 +109,7 @@ export class CkeditorToolComponent implements OnInit, AfterViewInit, OnChanges {
         styles: ['full', 'alignLeft', 'alignRight', 'alignCenter']
       },
       isReadOnly: false,
-      removePlugins: ['ImageCaption', 'mathtype', 'ChemType']
+      removePlugins: ['EasyImage', 'ImageCaption', 'mathtype', 'ChemType']
     }, this.editorConfig);
 
     this.acceptVideoType = this.getAcceptType(this.assetConfig.videoFiles, 'video');
@@ -227,8 +227,7 @@ export class CkeditorToolComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   initializeEditors() {
-    ClassicEditor.create(this.editorRef.nativeElement, {
-      extraPlugins: ['Font', MathText],
+    ClassicEditor.create(this.editorRef.nativeElement, {      
       toolbar: this.editorConfig.toolbar,
       fontSize: this.editorConfig.fontSize,
       image: this.editorConfig.image,
