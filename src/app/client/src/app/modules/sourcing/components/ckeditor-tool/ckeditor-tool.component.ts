@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, Output, Input, EventEmitter, OnChanges, ViewChild, ElementRef } from '@angular/core';
-import * as ClassicEditor from '@project-sunbird/ckeditor-build-font';
+import * as ClassicEditor from '@samagra-x/ckeditor5-build-classic';
 import { FineUploader } from 'fine-uploader';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigService, ResourceService, IUserData, IUserProfile, ToasterService } from '@sunbird/shared';
