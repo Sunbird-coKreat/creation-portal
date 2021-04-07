@@ -17,7 +17,7 @@ Please describe the tests that you ran to verify your changes in the below check
 - [ ] Ran Test B
 
 **Test Configuration**:
-* Software versions:
+* Software versions: Angular 8, Nodejs 12.16.1
 * Hardware versions:
 
 ### Checklist:
