@@ -74,6 +74,9 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   _slideConfig = {'slidesToShow': 10, 'slidesToScroll': 1, 'variableWidth': true};
   public preSavedContentTypes = [];
   public disableNominate = false;
+  public targetCollection: string;
+  public targetCollections: string;
+
   constructor(public configService: ConfigService, public publicDataService: PublicDataService,
     public actionService: ActionService,
     private sourcingService: SourcingService, private collectionHierarchyService: CollectionHierarchyService,
@@ -97,6 +100,8 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     this.userProfile = _.get(this.collectionComponentInput, 'userProfile');
     this.collectionComponentConfig = _.get(this.collectionComponentInput, 'config');
     this.programContext = _.get(this.collectionComponentInput, 'programContext');
+    this.targetCollection = this.programsService.setTargetCollectionName(this.programContext);
+    this.targetCollections = this.programsService.setTargetCollectionName(this.programContext, 'plural');
     this.sharedContext = this.collectionComponentInput.programContext.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});

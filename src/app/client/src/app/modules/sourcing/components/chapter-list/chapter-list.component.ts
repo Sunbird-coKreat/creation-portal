@@ -105,6 +105,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public hasAccessForContributor: any;
   public hasAccessForReviewer: any;
   public hasAccessForBoth: any;
+  public targetCollection: string;
   public unsubscribe = new Subject<void>();
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
@@ -129,6 +130,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.currentStage = 'chapterListComponent';
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
     this.programContext = _.get(this.chapterListComponentInput, 'programContext');
+    this.targetCollection = this.programsService.setTargetCollectionName(this.programContext);
     this.currentUserID = this.userService.userid;
     this.currentRootOrgID = this.userService.rootOrgId;
     this.userService.userData$.pipe(
@@ -544,7 +546,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   setTreeLeafStatusMessage(identifier, instance) {
     this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
     if (this.originalCollectionData && this.originalCollectionData.status !== 'Draft' && this.sourcingOrgReviewer) {
-      this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage.replaceAll('{TARGET_NAME}', this.programsService.setTargetCollectionName(this.programContext));
+      this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage.replaceAll('{TARGET_NAME}', this.targetCollection);
 
     }
     this.getFolderLevelCount(this.collectionHierarchy);
@@ -1303,7 +1305,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
     // tslint:disable-next-line:max-line-length
     if (this.originalCollectionData && (_.indexOf(this.originalCollectionData.childNodes, collection.origin) < 0 || this.originalCollectionData.status !== 'Draft')) {
-      collection.statusMessage = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage.replace('{TARGET_NAME}', this.programsService.setTargetCollectionName(this.programContext));
+      collection.statusMessage = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage.replace('{TARGET_NAME}', this.targetCollection);
     }
 
     collection.totalLeaf = !_.isEmpty(collection.sourcingStatusDetail) ? _.sum(_.values(collection.sourcingStatusDetail)) :  collection.totalLeaf;

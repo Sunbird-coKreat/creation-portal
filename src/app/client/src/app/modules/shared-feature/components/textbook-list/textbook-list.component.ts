@@ -52,6 +52,8 @@ export class TextbookListComponent implements OnInit {
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
+  public targetCollection: string;
+  public targetCollections: string;
 
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
@@ -76,6 +78,8 @@ export class TextbookListComponent implements OnInit {
   initialize() {
     this.programId = this.activatedRoute.snapshot.params.programId;
     // tslint:disable-next-line:max-line-length
+    this.targetCollection = this.programsService.setTargetCollectionName(this.programDetails);
+    this.targetCollections = this.programsService.setTargetCollectionName(this.programDetails, 'plural');
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
     if (this.router.url.includes('sourcing/nominations/' + this.programId) && this.programDetails.program_id) {
       this.showTexbooklist(this.collectionsInput, this.contentAggregationInput);
