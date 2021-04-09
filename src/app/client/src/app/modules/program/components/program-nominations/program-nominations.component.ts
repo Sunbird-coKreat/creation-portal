@@ -101,6 +101,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   pageNumberUsers = 1;
   searchInput: any;
   public telemetryPageId: string;
+  public targetCollection: string;
+  public targetCollections: string;
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     private sourcingService: SourcingService,
     public resourceService: ResourceService, public config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
@@ -599,6 +601,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     };
     this.programsService.get(req).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
+      this.targetCollection = this.programsService.setTargetCollectionName(this.programDetails);
+      this.targetCollections = this.programsService.setTargetCollectionName(this.programDetails, 'plural');
       this.programDetails.config.medium = _.compact(this.programDetails.config.medium);
       this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
       this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);

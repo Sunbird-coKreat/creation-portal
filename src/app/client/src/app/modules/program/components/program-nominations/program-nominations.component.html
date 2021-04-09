@@ -90,7 +90,7 @@
                     [telemetryInteractEdata]="getTelemetryInteractEdata('textbooks', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,config.telemetryLabels.pageId.sourcing.projectContributions)"
                     [telemetryInteractObject]="telemetryInteractObject"
                     [telemetryInteractCdata]="telemetryInteractCdata"
-                    [telemetryInteractPdata]="telemetryInteractPdata">{{programsService.setTargetCollectionName(programDetails, 'plural')}}
+                    [telemetryInteractPdata]="telemetryInteractPdata">{{targetCollections}}
                         <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ collectionsCount }}</span>
                     </a>
                     <a class="item" *ngIf="programDetails?.status !== 'Unlisted'" [isActive]="activeTab === 'nomination'"  suiTabHeader="1"  (click)="resetStatusFilter('nomination')"
@@ -153,7 +153,7 @@
                             <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ contributedByIndividual  || 0}}</span> {{resourceService.frmelmnts.lbl.individual}}
                             <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ contributedByOrganisation || 0}}</span> {{resourceService.frmelmnts.lbl.organisation}}
                         </div>
-                        <div class="br-1 text-center flex-grow-1 bl-2"> {{programsService.setTargetCollectionName(programDetails, 'plural')}}:
+                        <div class="br-1 text-center flex-grow-1 bl-2"> {{targetCollections}}:
                             <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ collectionsCount || 0}}</span> {{resourceService.frmelmnts.lbl.total}}
                             <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ nominatedTextbook || 0}}</span> {{resourceService.frmelmnts.lbl.nominated}}
                         </div>
@@ -194,7 +194,7 @@
                                                     <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
                                                 </span>
                                             </th>
-                                            <th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('textbooks', nominations)">{{ programsService.setTargetCollectionName(programDetails, 'plural') }} &nbsp;&nbsp;
+                                            <th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('textbooks', nominations)">{{targetCollections}} &nbsp;&nbsp;
                                                 <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'textbooks' "></i>
                                                 <span  *ngIf="sortColumn == 'textbooks'" class="d-inline-block">
                                                     <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
@@ -615,8 +615,8 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.TextbookLevelReportName | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName(programDetails)}}</td>
-                                    <td>{{resourceService.frmelmnts.lbl.TextbookLevelReportDescription | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName(programDetails) | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName(programDetails)}} </td>
+                                    <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.TextbookLevelReportName | interpolate:'{TARGET_NAME}': targetCollection}}</td>
+                                    <td>{{resourceService.frmelmnts.lbl.TextbookLevelReportDescription | interpolate:'{TARGET_NAME}': targetCollection | interpolate:'{TARGET_NAME}': targetCollection}} </td>
                                     <td class="text-center"><button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('textbookLevelReport')"
                                         appTelemetryInteract
                                     [telemetryInteractEdata]="getTelemetryInteractEdata('textbook_level_content_report',config.telemetryLabels.eventType.click ,config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
@@ -626,7 +626,7 @@
                                 </tr>
                                 <tr>
                                     <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.ChapterLevelReportName}}</td>
-                                    <td>{{resourceService.frmelmnts.lbl.ChapterLevelReportDescription | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName(programDetails)}}</td>
+                                    <td>{{resourceService.frmelmnts.lbl.ChapterLevelReportDescription | interpolate:'{TARGET_NAME}': targetCollection}}</td>
                                     <td class="text-center"><button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('chapterLevelReport')"
                                         appTelemetryInteract
                                         [telemetryInteractEdata]="getTelemetryInteractEdata('chapter_level_content_report', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,telemetryPageId)"

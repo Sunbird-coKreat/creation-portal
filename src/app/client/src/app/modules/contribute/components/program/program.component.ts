@@ -100,8 +100,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public telemetryPageId: string;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
-  public targetCollection;
-  public targetCollections;
+  public targetCollection: string;
+  public targetCollections: string;
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
     public extPluginService: ExtPluginService, public userService: UserService,
