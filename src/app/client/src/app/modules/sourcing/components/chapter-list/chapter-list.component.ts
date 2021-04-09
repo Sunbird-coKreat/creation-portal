@@ -123,10 +123,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
    this.hasAccessForReviewer =  this.hasAccessFor(['REVIEWER']);
    this.hasAccessForBoth =  this.hasAccessFor(['CONTRIBUTOR', 'REVIEWER']);
 
-    this.stageSubscription = this.programStageService.getStage().subscribe({next :state => {
+    this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
       this.changeView();
-    }});
+    });
     this.currentStage = 'chapterListComponent';
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
     this.programContext = _.get(this.chapterListComponentInput, 'programContext');
