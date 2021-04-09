@@ -45,6 +45,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   };
   public telemetryPageId = 'collection';
+
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
     public extPluginService: ExtPluginService, public userService: UserService,
