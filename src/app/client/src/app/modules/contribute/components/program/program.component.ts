@@ -100,6 +100,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public telemetryPageId: string;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
+  public targetCollection;
+  public targetCollections;
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
     public extPluginService: ExtPluginService, public userService: UserService,
@@ -171,6 +173,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     };
     this.programsService.get(req).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
+      this.targetCollection = this.programsService.setTargetCollectionName(this.programDetails);
+      this.targetCollections = this.programsService.setTargetCollectionName(this.programDetails, 'plural');
       this.programDetails.config.medium = _.compact(this.programDetails.config.medium);
       this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
       this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
