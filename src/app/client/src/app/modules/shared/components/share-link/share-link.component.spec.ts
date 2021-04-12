@@ -33,19 +33,19 @@ describe('ShareLinkComponent', () => {
     expect(component.copyLinkButton).toBeDefined();
     expect(component.telemetryShare).toBeDefined();
   });
-  it('should take content share link  INPUT  ', () => {
+  xit('should take content share link  INPUT  ', () => {
     component.shareLink = Response.contentShare;
     expect(component.sharelinkModal).toBeDefined();
     expect(component.sharelinkModal).toBeFalsy();
     expect(component.shareLink).toBeDefined();
     expect(component.shareLink).toBe(Response.contentShare);
   });
-  it('Should show the content share model', () => {
+  xit('Should show the content share model', () => {
     spyOn(component, 'initializeModal').and.callThrough();
     component.initializeModal();
     expect(component.sharelinkModal).toBeFalsy();
   });
-  it('Should call copyLink and copy the the link', () => {
+  xit('Should call copyLink and copy the the link', () => {
     spyOn(component, 'copyLink').and.callThrough();
     spyOn(document, 'execCommand').and.callThrough();
     fixture.whenStable().then(() => {
