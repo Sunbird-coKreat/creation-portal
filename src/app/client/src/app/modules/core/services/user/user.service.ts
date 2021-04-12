@@ -126,7 +126,7 @@ export class UserService {
     } catch (error) {
     }
 
-    this._slug = baseHref.split('/')[1] ? baseHref.split('/')[1] : '';
+    this._slug =  baseHref && baseHref.split('/')[1] ? baseHref.split('/')[1] : '';
   }
 
   get slug() {
