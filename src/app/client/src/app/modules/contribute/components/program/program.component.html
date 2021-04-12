@@ -107,7 +107,7 @@
 					[telemetryInteractEdata]="getTelemetryInteractEdata('textbooks', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, configService.telemetryLabels.pageId.contribute.projectContributions)"
 					[telemetryInteractObject]="telemetryInteractObject"
 					[telemetryInteractCdata]="telemetryInteractCdata"
-					[telemetryInteractPdata]="telemetryInteractPdata">{{targetCollections}}<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{contributorTextbooks.length || 0}}</span></div>
+					[telemetryInteractPdata]="telemetryInteractPdata">{{ targetCollections }}<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{contributorTextbooks.length || 0}}</span></div>
 					<div class="item cursor-pointer" *ngIf="isContributingOrgAdmin" suiTabHeader="3" (click)="setTelemetryPageId('user')"
 					appTelemetryInteract
 					[telemetryInteractEdata]="getTelemetryInteractEdata('assign_users_to_project', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,configService.telemetryLabels.pageId.contribute.projectAssignUsers)"
