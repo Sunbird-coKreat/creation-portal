@@ -79,6 +79,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   public notificationSubscription: Subscription;
   public notificationData: Array<any>;
   public showGlobalNotification: boolean;
+  public notification: any;
 
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
@@ -161,6 +162,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       this.notificationData = _.filter(data, prg => prg.notificationData);
     }
   });
+  this.getNumberofNotification();
   }
 
   ngOnDestroy() {
@@ -395,6 +397,6 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     const notificationArray = _.map(this.notificationData, data => {
       return _.compact([_.get(data, 'notificationData.nominationCount'), _.get(data, 'notificationData.contributionCount')]);
     });
-    return _.flattenDeep(notificationArray).length;
+    this.notification =  _.flattenDeep(notificationArray).length;
   }
 }

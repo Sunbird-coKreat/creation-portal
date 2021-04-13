@@ -42,7 +42,7 @@
                 tabindex="0">
                 <div suiDropdown class="ui dropdown right top pointing" id="dropdown-menu-list-header">
                     <i class="icon bell fs-1-3 sb-color-black" *ngIf='userProfile'></i>
-                    <div *ngIf= "notificationData && getNumberofNotification()" class="sb-circle-notification">{{getNumberofNotification()}}</div>
+                    <div *ngIf= "notificationData && notification?.length" class="sb-circle-notification">{{notification?.length}}</div>
                     <div class="menu" suiDropdownMenu>
                       <ul class="sb-list-notification">
                           <div *ngFor="let notification of notificationData">
