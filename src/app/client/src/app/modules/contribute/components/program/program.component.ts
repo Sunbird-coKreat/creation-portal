@@ -91,7 +91,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   initialSourcingOrgUser = [];
   searchLimitMessage: any;
   searchLimitCount: any;
-
+  isContributingOrgAdmin: any;
   visitedTab = [];
   @ViewChild('userRemoveRoleModal', {static: false}) userRemoveRoleModal;
   public userRemoveRoleLoader = false;
@@ -100,6 +100,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public telemetryPageId: string;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
+  public targetCollection: string;
+  public targetCollections: string;
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
     public extPluginService: ExtPluginService, public userService: UserService,
@@ -135,6 +137,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    this.isContributingOrgAdmin =  this.userService.isContributingOrgAdmin();
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     setTimeout(() => {
@@ -182,6 +185,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.fetchFrameWorkDetails();
       this.getNominationStatus();
       this.setActiveDate();
+      this.setTargetCollectionValue();
       this.showSkipReview = !!(_.get(this.userService, 'userProfile.rootOrgId') === _.get(this.programDetails, 'rootorg_id') &&
       this.programDetails.config.defaultContributeOrgReview === false) ;
     }, error => {
@@ -195,6 +199,14 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       };
       this.sourcingService.apiErrorHandling(error, errInfo);
     });
+  }
+
+  setTargetCollectionValue() {
+    console.log('programDetails', this.programDetails);
+    if (!_.isUndefined(this.programDetails)) {
+      this.targetCollection = this.programsService.setTargetCollectionName(this.programDetails);
+    this.targetCollections = this.programsService.setTargetCollectionName(this.programDetails, 'plural');
+    }
   }
 
   public fetchFrameWorkDetails() {

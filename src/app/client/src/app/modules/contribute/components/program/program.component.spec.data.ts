@@ -390,3 +390,17 @@ export const userProfile = {
     'b00bc992ef25f1a9a8d63291e20efc8d'
   ]
 };
+
+export const programDetailsTargetCollection = {
+  'content_types': [
+      'Course Assessment',
+      'eTextbook',
+      'Explanation Content',
+      'Learning Resource',
+      'Practice Question Set',
+      'Teacher Resource'
+  ],
+  'target_collection_category': [
+      'Question paper'
+  ]
+};
