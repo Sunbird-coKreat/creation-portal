@@ -143,8 +143,8 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
 
   setTargetCollectionValue() {
     if (!_.isUndefined(this.programContext)) {
-      this.targetCollection = this.programsService.setTargetCollectionName(this.programDetails);
-      this.targetCollections = this.programsService.setTargetCollectionName(this.programDetails, 'plural');
+      this.targetCollection = this.programsService.setTargetCollectionName(this.programContext);
+      this.targetCollections = this.programsService.setTargetCollectionName(this.programContext, 'plural');
     }
   }
 
