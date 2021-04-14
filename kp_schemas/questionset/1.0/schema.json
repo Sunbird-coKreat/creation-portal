@@ -117,7 +117,7 @@
     },
     "compatibilityLevel": {
       "type": "number",
-      "default": 4
+      "default": 5
     },
     "downloadUrl": {
       "type": "string",
