@@ -360,3 +360,9 @@ export const templateSelectionEvent = {
   },
   type: 'next'
 };
+
+export const programDetailsTargetCollection = {
+  'target_collection_category': [
+      'Question paper'
+  ]
+};

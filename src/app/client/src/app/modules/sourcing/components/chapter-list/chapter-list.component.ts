@@ -119,10 +119,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   ngOnInit() {
-   this.hasAccessForContributor =  this.hasAccessFor(['CONTRIBUTOR']);
-   this.hasAccessForReviewer =  this.hasAccessFor(['REVIEWER']);
-   this.hasAccessForBoth =  this.hasAccessFor(['CONTRIBUTOR', 'REVIEWER']);
-
+    this.setUserAccess();
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
       this.changeView();
@@ -130,7 +127,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.currentStage = 'chapterListComponent';
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
     this.programContext = _.get(this.chapterListComponentInput, 'programContext');
-    this.targetCollection = this.programsService.setTargetCollectionName(this.programContext);
+    this.setTargetCollectionValue();
     this.currentUserID = this.userService.userid;
     this.currentRootOrgID = this.userService.rootOrgId;
     this.userService.userData$.pipe(
@@ -209,6 +206,18 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
     this.selectedStatusOptions = ["Live", "Approved"];
     this.displayPrintPreview = _.get(this.collection, 'printable', false);
+  }
+
+  setUserAccess() {
+    this.hasAccessForContributor =  this.hasAccessFor(['CONTRIBUTOR']);
+    this.hasAccessForReviewer =  this.hasAccessFor(['REVIEWER']);
+    this.hasAccessForBoth =  this.hasAccessFor(['CONTRIBUTOR', 'REVIEWER']);
+  }
+
+  setTargetCollectionValue() {
+    if (!_.isUndefined(this.programContext)) {
+      this.targetCollection = this.programsService.setTargetCollectionName(this.programContext);
+    }
   }
 
   showBulkUploadOption() {
@@ -1262,9 +1271,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   ngOnDestroy() {
-    this.stageSubscription.unsubscribe();
-    this.unsubscribe.next();
-    this.unsubscribe.complete();
+    if (this.stageSubscription) {
+      this.stageSubscription.unsubscribe();
+    }
+    if (this.unsubscribe) {
+      this.unsubscribe.next();
+      this.unsubscribe.complete();
+    }
   }
 
   getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: string): IInteractEventEdata {

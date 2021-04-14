@@ -398,7 +398,9 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
-    this.stageSubscription.unsubscribe();
+    if (this.stageSubscription) {
+      this.stageSubscription.unsubscribe();
+    }
   }
 
   ChangeUploadStatus(rowId) {

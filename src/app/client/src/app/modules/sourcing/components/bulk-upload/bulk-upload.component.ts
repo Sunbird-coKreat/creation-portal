@@ -69,7 +69,6 @@ export class BulkUploadComponent implements OnInit {
   public telemetryInteractObject: any;
   public userProfile: IUserProfile;
   public unsubscribe = new Subject<void>();
-  public userId: any;
   constructor(
     private userService: UserService,
     private resourceService: ResourceService,
@@ -82,7 +81,6 @@ export class BulkUploadComponent implements OnInit {
   ) { }
 
    ngOnInit() {
-    this.userId = _.get(this.userService, 'userid', '');
     this.userService.userData$.pipe(
       takeUntil(this.unsubscribe))
       .subscribe((user: any) => {
@@ -172,7 +170,7 @@ export class BulkUploadComponent implements OnInit {
         program_id: _.get(this.programContext, 'program_id', ''),
         collection_id: _.get(this.sessionContext, 'collection', ''),
         type: 'bulk_upload',
-        createdby: this.userId
+        createdby: _.get(this.userService, 'userid', '')
       },
       limit: 1
     };
@@ -351,7 +349,7 @@ export class BulkUploadComponent implements OnInit {
       process_id: this.process.process_id,
       overall_stats: this.process.overall_stats,
       status: this.process.status,
-      updatedby: this.userId
+      updatedby: _.get(this.userService, 'userid')
     };
     this.bulkJobService.updateBulkJob(reqData)
       .subscribe((updateResponse) => {
@@ -643,7 +641,7 @@ export class BulkUploadComponent implements OnInit {
   getContentObject(row) {
     const unitName = row.level4 || row.level3 || row.level2 || row.level1;
     const unitId = this.getUnitIdFromName(row);
-    const userId = this.userId;
+    const userId = _.get(this.userService, 'userid');
     const collectionId = _.get(this.sessionContext, 'collection', '');
     const source = this.getDownloadableLink(row.source);
     const license = _.get(row, 'license');
@@ -696,7 +694,7 @@ export class BulkUploadComponent implements OnInit {
   createJobRequest(rowsCount) {
     this.bulkUploadState = 5;
     const org_id = _.get(this.userProfile, 'userRegData.User_Org.orgId', null);
-    const createdby = this.userId;
+    const createdby = _.get(this.userService, 'userid');
     const program_id = _.get(this.programContext, 'program_id');
     const collection_id = _.get(this.sessionContext, 'collection');
 
