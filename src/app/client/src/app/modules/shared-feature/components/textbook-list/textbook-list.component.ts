@@ -52,6 +52,8 @@ export class TextbookListComponent implements OnInit {
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
+  public targetCollection: string;
+  public targetCollections: string;
 
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
@@ -74,6 +76,7 @@ export class TextbookListComponent implements OnInit {
   }
 
   initialize() {
+    this.setTargetCollectionValue();
     this.programId = this.activatedRoute.snapshot.params.programId;
     // tslint:disable-next-line:max-line-length
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
@@ -99,6 +102,13 @@ export class TextbookListComponent implements OnInit {
       subject: [],
       gradeLevel: [],
     });
+  }
+
+  setTargetCollectionValue() {
+    if (!_.isUndefined(this.programDetails)) {
+      this.targetCollection = this.programsService.setTargetCollectionName(this.programDetails);
+      this.targetCollections = this.programsService.setTargetCollectionName(this.programDetails, 'plural');
+    }
   }
 
   getTelemetryInteractCdata(id, type) {

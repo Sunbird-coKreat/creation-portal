@@ -67,6 +67,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
   public telemetryPageId: string;
+  public targetCollections: string;
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private userService: UserService, private frameworkService: FrameworkService,
     public config: ConfigService, private publicDataService: PublicDataService,
@@ -186,6 +187,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     };
     return this.programsService.get(req).pipe(tap((programDetails: any) => {
       this.programDetails = programDetails.result;
+      this.targetCollections = this.programsService.setTargetCollectionName(this.programDetails, 'plural');
       this.mediums = _.join(this.programDetails.config['medium'], ', ');
       this.grades = _.join(this.programDetails.config['gradeLevel'], ', ');
     }));

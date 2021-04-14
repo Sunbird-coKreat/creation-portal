@@ -102,6 +102,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
+  public hasAccessForContributor: any;
+  public hasAccessForReviewer: any;
+  public hasAccessForBoth: any;
+  public targetCollection: string;
   public unsubscribe = new Subject<void>();
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
@@ -115,6 +119,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   ngOnInit() {
+   this.hasAccessForContributor =  this.hasAccessFor(['CONTRIBUTOR']);
+   this.hasAccessForReviewer =  this.hasAccessFor(['REVIEWER']);
+   this.hasAccessForBoth =  this.hasAccessFor(['CONTRIBUTOR', 'REVIEWER']);
+
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
       this.changeView();
@@ -122,6 +130,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.currentStage = 'chapterListComponent';
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
     this.programContext = _.get(this.chapterListComponentInput, 'programContext');
+    this.targetCollection = this.programsService.setTargetCollectionName(this.programContext);
     this.currentUserID = this.userService.userid;
     this.currentRootOrgID = this.userService.rootOrgId;
     this.userService.userData$.pipe(
@@ -537,7 +546,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   setTreeLeafStatusMessage(identifier, instance) {
     this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
     if (this.originalCollectionData && this.originalCollectionData.status !== 'Draft' && this.sourcingOrgReviewer) {
-      this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage.replaceAll('{TARGET_NAME}', this.programsService.setTargetCollectionName(this.programContext));
+      this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage.replaceAll('{TARGET_NAME}', this.targetCollection);
 
     }
     this.getFolderLevelCount(this.collectionHierarchy);
@@ -902,8 +911,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   shouldContentBeVisible(content) {
-    const creatorViewRole = this.hasAccessFor(['CONTRIBUTOR']);
-    const reviewerViewRole = this.hasAccessFor(['REVIEWER']);
+    const creatorViewRole = this.hasAccessForContributor;
+    const reviewerViewRole = this.hasAccessForReviewer;
     const creatorAndReviewerRole = creatorViewRole && reviewerViewRole;
     const contributingOrgAdmin = this.userService.isContributingOrgAdmin();
     if (this.isSourcingOrgReviewer() && this.sourcingOrgReviewer) {
@@ -1296,7 +1305,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
     // tslint:disable-next-line:max-line-length
     if (this.originalCollectionData && (_.indexOf(this.originalCollectionData.childNodes, collection.origin) < 0 || this.originalCollectionData.status !== 'Draft')) {
-      collection.statusMessage = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage.replace('{TARGET_NAME}', this.programsService.setTargetCollectionName(this.programContext));
+      collection.statusMessage = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage.replace('{TARGET_NAME}', this.targetCollection);
     }
 
     collection.totalLeaf = !_.isEmpty(collection.sourcingStatusDetail) ? _.sum(_.values(collection.sourcingStatusDetail)) :  collection.totalLeaf;
