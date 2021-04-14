@@ -202,10 +202,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   setTargetCollectionValue() {
-    console.log('programDetails', this.programDetails);
     if (!_.isUndefined(this.programDetails)) {
       this.targetCollection = this.programsService.setTargetCollectionName(this.programDetails);
-    this.targetCollections = this.programsService.setTargetCollectionName(this.programDetails, 'plural');
+      this.targetCollections = this.programsService.setTargetCollectionName(this.programDetails, 'plural');
     }
   }
 

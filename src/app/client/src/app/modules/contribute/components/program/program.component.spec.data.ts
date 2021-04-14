@@ -392,14 +392,6 @@ export const userProfile = {
 };
 
 export const programDetailsTargetCollection = {
-  'content_types': [
-      'Course Assessment',
-      'eTextbook',
-      'Explanation Content',
-      'Learning Resource',
-      'Practice Question Set',
-      'Teacher Resource'
-  ],
   'target_collection_category': [
       'Question paper'
   ]

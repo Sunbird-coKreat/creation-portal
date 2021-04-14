@@ -101,6 +101,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   pageNumberUsers = 1;
   searchInput: any;
   public telemetryPageId: string;
+  public targetCollection: string;
+  public targetCollections: string;
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     private sourcingService: SourcingService,
     public resourceService: ResourceService, public config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
@@ -350,20 +352,17 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.paginatedSourcingUsers = [];
       this.sourcingOrgUser = [];
     }
-
     const OrgDetails = this.userProfile.organisations[0];
     const filters = {
       'organisations.organisationId': OrgDetails.organisationId,
       'organisations.roles': ['CONTENT_REVIEWER']
       };
-
     this.programsService.getSourcingOrgUsers(filters, offset, 1000).subscribe(
       (res) => {
         this.sourcingOrgUserCnt = res.result.response.count || 0;
         const responseContent = _.get(res, 'result.response.content');
         const responseContentLength =  responseContent ? responseContent.length : offset;
         this.paginatedSourcingUsers = _.compact(_.concat(this.paginatedSourcingUsers, res.result.response.content));
-
         if (this.sourcingOrgUserCnt > this.paginatedSourcingUsers.length) {
           iteration++;
           this.getsourcingOrgReviewers(responseContentLength * iteration, iteration);
@@ -604,6 +603,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
 
       this.fetchFrameWorkDetails();
+      this.setTargetCollectionValue();
 
       forkJoin(this.getAggregatedNominationsCount(), this.getcontentAggregationData()).subscribe(
         (response) => {
@@ -637,6 +637,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       };
       this.sourcingService.apiErrorHandling(error, errInfo);
     });
+  }
+
+  setTargetCollectionValue() {
+    if (!_.isUndefined(this.programDetails)) {
+      this.targetCollection = this.programsService.setTargetCollectionName(this.programDetails);
+      this.targetCollections = this.programsService.setTargetCollectionName(this.programDetails, 'plural');
+    }
   }
 
   public fetchFrameWorkDetails() {
