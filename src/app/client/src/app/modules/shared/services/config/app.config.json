@@ -815,6 +815,17 @@
       "ExplanationResource",
       "ExperientialResource"
     ],
+    "primaryCategory": [
+      "Course",
+      "Digital Textbook",
+      "Content Playlist",
+      "Explanation Content",
+      "Learning Resource",
+      "Practice Question Set",
+      "eTextbook",
+      "Teacher Resource",
+      "Course Assessment"
+    ],
     "mimeType": [
       "application/vnd.ekstep.ecml-archive",
       "application/vnd.ekstep.content-collection"
@@ -1068,7 +1079,11 @@
       "dynamicFields": {
         "ribbon.right.name": "contentType"
       }
-    }
+    },
+    "questionPrimaryCategories": [
+      "Multiple Choice Question",
+      "Subjective Question"
+    ]
   },
   "DASHBOARD": {
     "PAGE_LIMIT": 200

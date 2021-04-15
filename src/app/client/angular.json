@@ -24,14 +24,37 @@
                 "glob": "**/*.*",
                 "input": "./node_modules/@project-sunbird/common-consumption-v8/assets",
                 "output": "./assets/common-consumption"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@project-sunbird/sunbird-pdf-player-v8/lib/assets/",
+                "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@project-sunbird/sunbird-video-player-v8/lib/assets/",
+                "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@project-sunbird/sunbird-collection-editor/lib/assets/",
+                "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@project-sunbird/sunbird-quml-player-v8/lib/assets/",
+                "output": "/assets/"
               }
             ],
             "styles": [
+              "src/assets/quml-styles/quml-carousel.css",
               "node_modules/datatables.net-dt/css/jquery.dataTables.min.css",
               "src/assets/styles/semantic/semantic.min.css",
               "node_modules/font-awesome/css/font-awesome.css",
               "src/assets/styles/styles.scss",
-              "./node_modules/common-consumption-styles/assets/_styles.scss"
+              "./node_modules/common-consumption-styles/assets/_styles.scss",
+              "./node_modules/katex/dist/katex.min.css",
+              "node_modules/video.js/dist/video-js.min.css"
             ],
             "stylePreprocessorOptions": {
               "includePaths": [
@@ -44,7 +67,13 @@
               "node_modules/slick-carousel/slick/slick.min.js",
               "node_modules/@project-sunbird/telemetry-sdk/index.js",
               "src/assets/libs/semantic.min.js",
-              "node_modules/jquery.fancytree/dist/jquery.fancytree-all-deps.min.js"
+              "node_modules/jquery.fancytree/dist/jquery.fancytree-all-deps.min.js",
+              "./node_modules/katex/dist/katex.min.js",
+              {
+                "input": "src/assets/libs/semantic-ui-tree-picker/semantic-ui-tree-picker.js",
+                "lazy": true,
+                "bundleName": "semanticTreePicker"
+              }
             ]
           },
           "configurations": {

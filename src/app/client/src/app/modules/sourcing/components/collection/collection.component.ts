@@ -11,6 +11,7 @@ import { ISessionContext, IChapterListComponentInput } from '../../interfaces';
 import { InitialState } from '../../interfaces';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
+import { isEmpty } from 'lodash';
 
 @Component({
   selector: 'app-collection',
@@ -100,7 +101,9 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sharedContext = this.collectionComponentInput.programContext.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});
-    this.contentType = _.get(this.programContext, 'content_types');
+    
+    this.contentType = this.programsService.getProgramTargetPrimaryCategories(this.programContext);
+    
     this.sessionContext = _.assign(this.collectionComponentInput.sessionContext, {
       bloomsLevel: _.get(this.programContext, 'config.scope.bloomsLevel'),
       programId: _.get(this.programContext, 'programId'),
@@ -222,8 +225,11 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
         this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId, sampleValue, organisation_id, createdBy)
           .subscribe(
             (response) => {
-              if (response && response.result && response.result.content) {
-                const contents = _.get(response.result, 'content');
+              if (response && response.result && (_.get(response.result, 'content')|| _.get(response.result, 'QuestionSet'))) {
+                //const contents = _.get(response.result, 'content');
+
+                const contents = _.compact(_.concat(_.get(response.result, 'QuestionSet'), _.get(response.result, 'content')));
+
                 if (this.userService.isUserBelongsToOrg()) {
                   this.contentStatusCounts = this.collectionHierarchyService.getContentCounts(contents, this.userService.getUserOrgId(), collections);
                 } else {
@@ -417,26 +423,23 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   toggle(item: any) {
-    if (_.includes(this.selectedContentTypes, item)) {
+    let catObj = _.find(this.selectedContentTypes, (element) => {
+      return element.name === item.name;
+    });
+    if (catObj) {
       _.remove(this.selectedContentTypes, (data) => {
-        return data === item;
+        return data.name === item.name;
       });
     } else {
       this.selectedContentTypes.push(item);
     }
-   //this.markSelectedContentTypes();
   }
 
   checkIfSelected(contentType) {
-    return (_.includes(this.selectedContentTypes, contentType)) ? true : false;
-    this.contentType = _.map(this.contentType, (type) => {
-      if (_.includes(this.selectedContentTypes, type)) {
-         type['isSelected'] = true;
-      } else {
-        type['isSelected'] = false;
-      }
-      return type;
-  });
+    let catObj = _.find(this.selectedContentTypes, (element) => {
+      return element.name === contentType.name;
+    });
+    return (catObj) ? true : false;
   }
 
   uploadSample(event, collection) {
@@ -469,9 +472,15 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     const request = {
       program_id: programId,
       status: 'Pending',
-      content_types: this.selectedContentTypes,
       collection_ids: this.selectedCollectionIds,
     };
+
+    if (!isEmpty(this.programContext.targetprimarycategories)) {
+      request['targetprimarycategories'] =  this.selectedContentTypes;
+      request['content_types'] = [];
+    } else {
+      request['content_types'] = _.map(this.selectedContentTypes, 'name');
+    }
 
     this.programsService.addorUpdateNomination(request).subscribe(
       (data) => {
@@ -552,8 +561,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!_.isEmpty(nominationDetails)) {
       this.currentNominationStatus =  _.get(nominationDetails, 'status');
       this.sessionContext.nominationDetails = nominationDetails;
-      this.selectedContentTypes = _.get(nominationDetails, 'content_types', []);
-      //this.markSelectedContentTypes();
+      this.selectedContentTypes = this.programsService.getNominatedTargetPrimaryCategories(this.programContext, nominationDetails);
     }
     if (this.userService.isUserBelongsToOrg()) {
       this.sessionContext.currentOrgRole = _.first(this.userService.getUserOrgRole());
@@ -592,9 +600,14 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       const request = {
         program_id: programId,
         status: 'Initiated',
-        content_types: this.selectedContentTypes
       };
 
+      if (!isEmpty(this.programContext.targetprimarycategories)) {
+        request['targetprimarycategories'] =  this.selectedContentTypes;
+        request['content_types'] = [];
+      } else {
+        request['content_types'] = _.map(this.selectedContentTypes, 'name');
+      }
       this.programsService.addorUpdateNomination(request).subscribe(
         (data) => {
           if (data.result && !_.isEmpty(data.result)) {
@@ -603,8 +616,15 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
               status: 'Initiated',
               program_id: programId,
               user_id: userId,
-              content_types: this.selectedContentTypes
             };
+
+            if (!isEmpty(this.programContext.targetprimarycategories)) {
+              this.sessionContext.nominationDetails['targetprimarycategories'] =  this.selectedContentTypes;
+              request['content_types'] = [];
+            } else {
+              this.sessionContext.nominationDetails['content_types'] = _.map(this.selectedContentTypes, 'name');
+            }
+          
             if (this.userService.isUserBelongsToOrg()) {
               this.sessionContext.nominationDetails['organisation_id'] = this.userService.getUserOrgId();
             }
