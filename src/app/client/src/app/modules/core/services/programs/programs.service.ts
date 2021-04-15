@@ -743,34 +743,18 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * makes api call to get list of programs from ext framework Service
    */
-  getAllProgramsByType(type, status, appliedfilters?, sort?): Observable<ServerResponse> {
-    const req = {
+  getAllProgramsByType(req): Observable<ServerResponse> {
+    const request = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
-      data: {
-        request: {
-          filters: {
-            type: type,
-            status: status
-          }
-        }
-      }
+      data: req
     };
-
-    if (sort) {
-      req.data.request['sort'] = sort;
-    }
-
-    if (appliedfilters) {
-      req.data.request.filters = {...req.data.request.filters , ...appliedfilters};
-    }
-
     // Check if slug is present in the URL, if yes then fetch the program those slug org only
     const urlSlug = this.userService.slug;
     if (urlSlug && !_.isEmpty(this._organisations[urlSlug])) {
-      req.data.request.filters['rootorg_id'] = this._organisations[urlSlug];
-      return this.API_URL(req);
+      request.data.request.filters['rootorg_id'] = this._organisations[urlSlug];
+      return this.API_URL(request);
     } else {
-      return this.API_URL(req);
+      return this.API_URL(request);
     }
   }
 

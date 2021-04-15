@@ -1,5 +1,5 @@
 import { async, TestBed, inject, ComponentFixture } from '@angular/core/testing';
-import { SharedModule } from '@sunbird/shared';
+import { SharedModule, ToasterService, ResourceService } from '@sunbird/shared';
 import { FrameworkService, UserService, ExtPluginService, RegistryService , ProgramsService} from '@sunbird/core';
 
 import { DynamicModule } from 'ng-dynamic-component';
@@ -15,11 +15,16 @@ import { OnboardPopupComponent } from '../onboard-popup/onboard-popup.component'
 // tslint:disable-next-line:prefer-const
 let errorInitiate;
 import { SuiModule } from 'ng2-semantic-ui';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import {userDetail, chunkedUserList} from '../../services/programUserTestData';
+import { DaysToGoPipe } from '@sunbird/shared-feature';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
+import { programSession } from './data';
 
 const userServiceStub = {
   get() {
@@ -34,8 +39,9 @@ const userServiceStub = {
     }
   },
   userid: userProfile.userId,
-  userProfile : userProfile
-
+  userProfile : userProfile,
+  channel: '123456789',
+  appId: 'dummyValue',
 };
 
 const extPluginServiceStub = {
@@ -63,6 +69,16 @@ const extPluginServiceStub = {
   }
 };
 
+const resourceServiceStub = {
+  messages: {
+    emsg: {
+      project: {
+        m0001: 'm0001'
+      }
+    }
+  }
+};
+
 
 const frameworkServiceStub = {
   initialize() {
@@ -71,7 +87,7 @@ const frameworkServiceStub = {
   frameworkData$:  of(frameWorkData)
 };
 
-xdescribe('ProgramComponent', () => {
+describe('ProgramComponent', () => {
   let component: ProgramComponent;
   let fixture: ComponentFixture<ProgramComponent>;
 
@@ -85,7 +101,8 @@ xdescribe('ProgramComponent', () => {
       },
       data: {
         telemetry: {
-          env: 'programs'
+          env: 'programs',
+          pageid: 'program'
         }
       }
     }
@@ -98,20 +115,23 @@ xdescribe('ProgramComponent', () => {
         SuiModule,
         SharedModule.forRoot(),
         FormsModule,
+        ReactiveFormsModule,
         TelemetryModule.forRoot(),
         HttpClientTestingModule
       ],
       declarations: [
         ProgramComponent,
         OnboardPopupComponent,
-        ProgramHeaderComponent
+        ProgramHeaderComponent,
+        DaysToGoPipe
       ],
       providers: [
         RegistryService,
         {
           provide: Router,
           useClass: RouterStub
-        }, {
+        },
+        {
           provide: FrameworkService,
           useValue: frameworkServiceStub
         },
@@ -126,8 +146,16 @@ xdescribe('ProgramComponent', () => {
         {
           provide: ExtPluginService,
           useValue: extPluginServiceStub
+        },
+        DatePipe,
+        CollectionHierarchyService,
+        ToasterService,
+        {
+          provide: ResourceService,
+          useValue: resourceServiceStub
         }
-      ]
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
   }));
 
@@ -135,7 +163,7 @@ xdescribe('ProgramComponent', () => {
     fixture = TestBed.createComponent(ProgramComponent);
     component = fixture.componentInstance;
 
-    fixture.detectChanges();
+    // fixture.detectChanges();
   });
 
   it('should have a defined component', () => {
@@ -146,83 +174,49 @@ xdescribe('ProgramComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  xit('should execute OnboardEvent on initialization of component', () => {
+  it('#ngOnInit() should call toaster.error when program is null', () => {
     component.programId = null;
+    const toasterService = TestBed.get(ToasterService);
+    const resourceService = TestBed.get(ResourceService);
+    spyOn(component, 'getPageId').and.callThrough();
+    spyOn(toasterService, 'error').and.callThrough();
+    spyOn(component, 'ngOnInit').and.callThrough();
     component.ngOnInit();
+    expect(toasterService.error).toHaveBeenCalledWith(resourceService.messages.emsg.project.m0001);
+    expect(component.getPageId).toHaveBeenCalled();
+  });
+
+  it('#ngOnInit() should call #getPageId()', () => {
+    spyOn(component, 'getPageId').and.callThrough();
+    spyOn(component, 'ngOnInit').and.callThrough();
+    component.ngOnInit();
+    expect(component.getPageId).toHaveBeenCalled();
+  });
+
+  it('#getPageId() should set telemetryPageId value', () => {
+    spyOn(component, 'getPageId').and.callThrough();
+    component.getPageId();
+    expect(component.telemetryPageId).toBeDefined();
   });
 
 
-  xit('should call fetchProgramDetails', inject([HttpTestingController],
-    (httpMock: HttpTestingController) => {
-      component.getProgramDetails();
-    })
-  );
-  xit('should fetchFrameWorkDetails be called', () => {
-    component.sessionContext.framework = 'NCFCOPY';
+  it('#ngOnInit() should call #getProgramDetails()', () => {
+    spyOn(component, 'getProgramDetails').and.callThrough();
+    spyOn(component, 'ngOnInit').and.callThrough();
+    component.ngOnInit();
+    expect(component.getProgramDetails).toHaveBeenCalled();
+  });
 
+  it('#fetchFrameWorkDetails() should called #frameworkService()', () => {
+    component.programDetails = {
+      config: { framework: 'NCFCOPY'}
+    }
+    const frameworkService = TestBed.get(FrameworkService);
+    spyOn(frameworkService, 'initialize').and.callThrough();
+    spyOn(component, 'fetchFrameWorkDetails').and.callThrough();
     component.fetchFrameWorkDetails();
-    expect(component.sessionContext.frameworkData.length).toBeGreaterThan(0);
+    expect(frameworkService.initialize).toHaveBeenCalledWith('NCFCOPY');
   });
-
-
-  // it('should open onboarding pop up', () => {
-  //   spyOn(component, 'userOnboarding');
-  //   component.ngOnInit();
-  //   expect(component.userOnboarding).not.toHaveBeenCalled();
-  // });
-
-  // it('onboarding popup property should be initiated as false', () => {
-  //   spyOn(component, 'userOnboarding');
-  //   component.ngOnInit();
-  //   expect(component.showOnboardPopup).toBe(false);
-  // });
-
-
-  // it('should not trigger the onboard popup as participant details are available in DB', () => {
-  //   spyOn(component, 'userOnboarding');
-  //   component.programDetails = programDetailsWithUserDetails;
-  //   component.handleOnboarding();
-  //   expect(component.showOnboardPopup).toBe(false);
-  //   expect(component.userOnboarding).not.toHaveBeenCalled();
-  // });
-
-  // it('should trigger the onboard popup as participant details are not available in DB', () => {
-  //   component.programDetails = programDetailsWithOutUserDetails;
-  //   component.handleOnboarding();
-  //   spyOn(component, 'userOnboarding');
-  //   expect(component.showOnboardPopup).toBe(true);
-  //   expect(component.userOnboarding).not.toHaveBeenCalled();
-  // });
-
-  // it('should not trigger the onboard popup as no onboarding form even though no user details are available in DB', () => {
-  //   spyOn(component, 'userOnboarding');
-  //   component.programDetails = programDetailsWithOutUserAndForm;
-  //   component.handleOnboarding();
-  //   expect(component.userOnboarding).toHaveBeenCalled();
-  // });
-
-
-  // it('should userOnboarding be triggered', () => {
-  //   spyOn(component, 'setUserParticipantDetails');
-  //   component.userOnboarding();
-  //   expect(component.setUserParticipantDetails).toHaveBeenCalledWith({data: extFrameWorkPostData, onBoardingData: {}});
-  //   // expect(component.programDetails.userDetails) =
-  // });
-
-
-  // it('should set userDetails when calling setUserParticipantDetails', () => {
-  //   const userDetailsMock = {
-  //     enrolledOn: extFrameWorkPostData.ts,
-  //     onBoarded: true,
-  //     onBoardingData: {},
-  //     programId: extFrameWorkPostData.result.programId,
-  //     roles: ['CONTRIBUTOR'], // TODO: get default role from config
-  //     userId: component.userService.userid
-  //   };
-  //   component.setUserParticipantDetails({data: extFrameWorkPostData, onBoardingData: {}});
-  //   expect(component.programDetails.userDetails).toEqual(jasmine.objectContaining(userDetailsMock));
-  // });
-
 
   it('should tabChangeHandler be triggered', () => {
     component.tabChangeHandler('collectionComponent');
@@ -245,62 +239,59 @@ xdescribe('ProgramComponent', () => {
     expect(component.currentStage).toBe('collectionComponent');
   });
 
-
-  // it('should getDefaultActiveTab be called', () => {
-  //   component.programDetails = programDetailsWithUserDetails;
-  //   expect(component.getDefaultActiveTab()).toEqual(1);
-  // });
-
-  // it('should initiateHeader be called', () => {
-  //   component.initiateHeader('failure');
-  // });
-
-
-  it('should unsubscribe subject', () => {
+  xit('should unsubscribe subject', () => {
     component.ngOnDestroy();
   });
-  it('reset the user list when there is no search input', () => {
-    spyOn(component, 'sortUsersList');
+
+  it('#getUserDetailsBySearch() should call #sortUsersList() when there is no search input', () => {
     component.searchInput = '';
-    expect(component.sortUsersList).toHaveBeenCalledWith(userDetail.result.response.content);
+    component.initialSourcingOrgUser = ['dummyUser'];
+    spyOn(component, 'sortUsersList').and.callThrough();
+    spyOn(component, 'getUserDetailsBySearch').and.callThrough();
+    component.getUserDetailsBySearch();
+    expect(component.sortUsersList).toHaveBeenCalledWith(['dummyUser'], true);
   });
-  it('get the user list when there is a search input', () => {
-    spyOn(component, 'sortUsersList');
+
+  it('#getUserDetailsBySearch() should call registryService.getSearchedUserList() when there is a search input', () => {
     component.searchInput = 'jnc68';
+    component.initialSourcingOrgUser = ['dummyUser'];
+    const sortUsersListData = ['user1', 'user2', 'user3'];
     const  registryService  = TestBed.get(RegistryService);
-    const userList = registryService.getSearchedUserList(userDetail.result.response.content, component.searchInput)
-    expect(component.sortUsersList).toHaveBeenCalledWith(userList);
-    });
- it('call the sortUsersList method when there is input', () => {
-    component.pageLimit = 1;
-    component.searchInput = 'jnc68';
-    const  programsService  = TestBed.get(ProgramsService);
-    component.sortUsersList(userDetail.result.response.content);
-    const sortedList = programsService.sortCollection(userDetail.result.response.content,  'projectselectedRole', 'asc')
-    expect(component.paginatedContributorOrgUsers).toBe(sortedList);
-    expect(component.contributorOrgUser).toBe(chunkedUserList[0]);
-    expect(component.OrgUsersCnt).toBe(chunkedUserList[0].length);
+    spyOn(component, 'sortUsersList');
+    spyOn(registryService, 'getSearchedUserList').and.returnValue(sortUsersListData);
+    spyOn(component, 'getUserDetailsBySearch').and.callThrough();
+    component.getUserDetailsBySearch();
+    expect(registryService.getSearchedUserList).toHaveBeenCalledWith(['dummyUser'], 'jnc68');
+    expect(component.sortUsersList).toHaveBeenCalledWith(sortUsersListData, true);
   });
-  it('call the sortUsersList method when there is empty input', () => {
-     component.pageLimit = 1;
-     component.searchInput = '';
-     const  programsService  = TestBed.get(ProgramsService);
-     component.sortUsersList(userDetail.result.response.content);
-     const sortedList = programsService.sortCollection(userDetail.result.response.content,  'projectselectedRole', 'asc')
-     expect(component.paginatedContributorOrgUsers).toBe(sortedList);
-     expect(component.contributorOrgUser).toBe(userDetail.result.response.content);
-     expect(component.OrgUsersCnt).toBe(userDetail.result.response.content.length);
+
+  it('#sortUsersList() should call programsService.sortCollection()', () => {
+   const usersList = ['user1', 'user2', 'user3'];
+   const usersListDesc = ['user3', 'user2', 'user1'];
+   component.sortColumnOrgUsers = 'projectselectedRole';
+   component.directionOrgUsers = 'desc';
+   component.OrgUsersCnt = 0;
+   const  programsService  = TestBed.get(ProgramsService);
+   spyOn(component, 'sortUsersList').and.callThrough();
+   spyOn(programsService, 'sortCollection').and.returnValue(usersListDesc);
+   component.sortUsersList(usersList);
+   expect(component.OrgUsersCnt).toEqual(usersList.length);
+   expect(programsService.sortCollection).toHaveBeenCalledWith(usersList, 'projectselectedRole', 'desc');
+   expect(component.allContributorOrgUsers).toEqual(usersListDesc);
+  });
+
+  it('call the sortUsersList method and put user to initial org list', () => {
+    component.pageLimit = 1;
+    const usersList = ['user1', 'user2', 'user3'];
+    const usersListDesc = ['user3', 'user2', 'user1'];
+    const chunkList = [ ['user3'], ['user2'], ['user1']];
+    component.isInitialSourcingOrgUser = true;
+    const  programsService  = TestBed.get(ProgramsService);
+    spyOn(component, 'sortUsersList').and.callThrough();
+    spyOn(programsService, 'sortCollection').and.returnValue(usersListDesc);
+    component.sortUsersList(usersList, true);
+    const sortedList = programsService.sortCollection(usersList,  'projectselectedRole', 'desc');
+    expect(component.paginatedContributorOrgUsers).toEqual(chunkList);
+    expect(component.contributorOrgUser).toEqual(chunkList[0]);
     });
-    it('call the sortUsersList method and put user to initial org list', () => {
-      component.pageLimit = 1;
-      component.searchInput = '';
-      component.isInitialSourcingOrgUser = true;
-      const  programsService  = TestBed.get(ProgramsService);
-      component.sortUsersList(userDetail.result.response.content);
-      const sortedList = programsService.sortCollection(userDetail.result.response.content,  'projectselectedRole', 'asc')
-      expect(component.paginatedContributorOrgUsers).toBe(sortedList);
-      expect(component.contributorOrgUser).toBe(userDetail.result.response.content);
-      expect(component.initialSourcingOrgUser).toBe(userDetail.result.response.content);
-      expect(component.OrgUsersCnt).toBe(userDetail.result.response.content.length);
-     });
 });

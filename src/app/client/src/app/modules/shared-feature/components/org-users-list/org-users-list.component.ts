@@ -43,7 +43,7 @@ export class OrgUsersListComponent implements OnInit {
   }
 
   getContributionOrgUsers() {
-    this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
+    this.registryService.getOrgUsersDetails().then((orgUsers) => {
       this.contributorOrgUsers = orgUsers;
       this.tempSortOrgUser = orgUsers;
       this.showLoader = false;

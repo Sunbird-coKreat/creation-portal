@@ -182,6 +182,7 @@
                 "enum": [
                     "Student",
                     "Teacher",
+                    "Parent",
                     "Administrator"
                 ]
             },
@@ -1036,7 +1037,7 @@
         },
         "itemSetPreviewUrl": {
             "type": "string"
-        }, 
+        },
         "sampleContent": {
             "type": "boolean"
         },
@@ -1139,22 +1140,7 @@
         "additionalCategories": {
             "type": "array",
             "items": {
-                "type": "string",
-                "enum": [
-                    "Textbook",
-                    "TV Lesson",
-                    "Previous Board Exam Papers",
-                    "Pedagogy Flow",
-                    "Marking Scheme Rubric",
-                    "Lesson Plan",
-                    "Learning Outcome Definition",
-                    "Focus Spot",
-                    "Explanation Video",
-                    "Experiential Resource",
-                    "Curiosity Question Set",
-                    "Concept Map",
-                    "Classroom Teaching Video"
-                ]
+                "type": "string"
             }
         },
         "prevStatus": {
@@ -1192,6 +1178,138 @@
         },
         "program": {
             "type": "string"
+        },
+      "boardIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
         }
+      },
+      "gradeLevelIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "subjectIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "mediumIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "topicsIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "targetFWIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "targetBoardIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "targetGradeLevelIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "targetSubjectIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "targetMediumIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "targetTopicIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "se_FWIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "se_boardIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "se_subjectIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "se_mediumIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "se_topicIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "se_gradeLevelIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "se_boards": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "se_subjects": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "se_mediums": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "se_topics": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "se_gradeLevels": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
     }
 }

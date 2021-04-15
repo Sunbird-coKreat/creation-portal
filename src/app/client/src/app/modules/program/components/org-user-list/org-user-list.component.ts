@@ -51,18 +51,13 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     private paginationService: PaginationService, private sourcingService: SourcingService
     ) {
 
-    /*if (this.isSourcingOrgAdmin()) {
-      this.getSourcingOrgUsers();
-    } else {
-      this.getContributionOrgUsers();
-    }*/
     this.position = 'top center';
     const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
     ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
     this.registryService.getOpenSaberOrgByOrgId(this.userService.userProfile).subscribe((res1) => {
       this.userRegData['Org'] = (_.get(res1, 'result.Org').length > 0) ? _.first(_.get(res1, 'result.Org')) : {};
       this.orgLink = `${baseUrl}/sourcing/join/${this.userRegData.Org.osid}`;
-      this.getContributionOrgUsers();
+      this.getOrgUsersDetails();
     }, (error) => {
      console.log('No opensaber org for sourcing');
      const errInfo = {
@@ -124,8 +119,8 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     this.showLoader = false;
   }
 
-  getContributionOrgUsers() {
-    this.registryService.getcontributingOrgUsersDetails(this.userRegData, true).then((orgUsers) => {
+  getOrgUsersDetails() {
+    this.registryService.getOrgUsersDetails(this.userRegData, true).then((orgUsers) => {
       this.setOrgUsers(orgUsers);
     }).catch((error) => {
        console.log('Error while getting all users');
@@ -138,6 +133,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
       this.sourcingService.apiErrorHandling(error, errInfo);
     });
   }
+
   getUserDetailsBySearch(clearInput?) {
     clearInput ? this.searchInput = '' : this.searchInput;
     if (this.searchInput) {

@@ -288,7 +288,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         const roles = _.filter(this.roles, role => this.sessionContext.currentRoles.includes(role.name));
         this.sessionContext.currentRoleIds = !_.isEmpty(roles) ? _.map(roles, role => role.id) : null;
         if (this.userService.isUserBelongsToOrg()) {
-          this.registryService.getcontributingOrgUsersDetails().then((orgUsers) => {
+          this.registryService.getOrgUsersDetails().then((orgUsers) => {
             this.setOrgUsers(orgUsers);
           });
         }
