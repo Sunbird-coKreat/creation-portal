@@ -930,8 +930,7 @@ showTexbooklist(showTextBookSelector = true) {
           channel: this.userprofile.rootOrgId,
         },
         limit: 1000,
-        not_exists: ['programId'],
-        exists: ["medium", "gradeLevel", "subject"],
+        not_exists: ['programId']
       }
     };
 
