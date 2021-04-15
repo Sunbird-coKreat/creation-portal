@@ -108,7 +108,6 @@ module.exports = function (app) {
       })
     )
   // Proxy for content create ,update & review Start
-  /*
   app.use([
     '/action/content/v3/create',
     '/action/content/v3/hierarchy/add',
@@ -197,7 +196,6 @@ module.exports = function (app) {
           return require('url').parse(contentServiceBaseUrl + originalUrl).path
       }
   }))
-*/
   // Proxy for content create , update & review END
 
   app.use('/action/content/v3/unlisted/publish/:contentId', permissionsHelper.checkPermission(),
