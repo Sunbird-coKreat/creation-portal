@@ -24,6 +24,10 @@ curl -L -X POST '{{host}}/object/category/definition/v4/create' \
                 "application/vnd.ekstep.ecml-archive"
               ]
             },
+            "visibility": {
+              "type": "string",
+              "default": "Private"
+            },
             "maxQuestions": {
               "type": "number",
               "default": 1
@@ -85,7 +89,7 @@ curl -L -X POST '{{host}}/object/category/definition/v4/create' \
               "code": "bloomsLevel",
               "inputType": "multiSelect",
               "dataType": "list",
-              "description": "Cognitive processes involved to answer the question set.",
+              "description": "Cognitive processes involved to answer the question set",
               "index": 4,
               "range": [
                 {

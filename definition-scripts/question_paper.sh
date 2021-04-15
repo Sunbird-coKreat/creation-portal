@@ -15,6 +15,18 @@ curl -L -X POST '{{host}}/object/category/definition/v4/create' \
                 "application/vnd.ekstep.content-collection"
               ]
             },
+            "appIcon": {
+               "type": "string",
+               "default": "https://sunbirddev.blob.core.windows.net/sunbird-content-dev/content/do_11320764935163904015/artifact/2020101299.png"                            
+            },
+            "author": {
+              "type": "string",
+              "default": "SCERT Haryana"
+            },
+            "visibility": {
+              "type": "string",
+              "default":"Private"
+            },  
             "printable": {
               "type": "boolean",
               "default": true
@@ -118,7 +130,7 @@ curl -L -X POST '{{host}}/object/category/definition/v4/create' \
                   "type": "questionType",
                   "label": "Objective",
                   "code": "Objective"
-                },
+                },                
                 {
                   "type": "questionType",
                   "label": "Very Short Answer",
