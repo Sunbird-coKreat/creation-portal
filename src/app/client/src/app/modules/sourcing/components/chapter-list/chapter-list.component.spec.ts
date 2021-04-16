@@ -142,13 +142,13 @@ describe('ChapterListComponent', () => {
       spyOn(component, 'fetchBlueprintTemplate');
       component.ngOnInit();
       expect(component.fetchBlueprintTemplate).toHaveBeenCalled();
-    })
+    });
 
     xit('should set local blueprint on fetching blueprint template', () => {
       spyOn(component, 'setLocalBlueprint');
       component.fetchBlueprintTemplate();
       expect(component.setLocalBlueprint).toHaveBeenCalled();
-    })
+    });
 
     it('sessionContext should be updated if session in chapterListComponentInput changes', () => {
       component.chapterListComponentInput.sessionContext.subject = ['dummyValue'];

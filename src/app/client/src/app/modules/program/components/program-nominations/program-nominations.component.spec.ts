@@ -172,7 +172,7 @@ describe('ProgramNominationsComponent', () => {
         return of(SpecData.programCollectionListApiSuccessRes);
     });
     component.getProgramDetails();
-    expect(component.contributionDashboardData.length).toBe(2)
+    expect(component.contributionDashboardData.length).toBe(2);
   });
 
   xit('should call getContribDashboardHeaders method', () => {
@@ -236,15 +236,15 @@ describe('ProgramNominationsComponent', () => {
     spyOn(component, 'sortUsersList');
     component.searchInput = 'jnc68';
     const  registryService  = TestBed.get(RegistryService);
-    const userList = registryService.getSearchedUserList(userDetail.result.response.content, component.searchInput)
+    const userList = registryService.getSearchedUserList(userDetail.result.response.content, component.searchInput);
     expect(component.sortUsersList).toHaveBeenCalledWith(userList);
     });
  xit('call the sortUsersList method when there is input', () => {
     component.pageLimit = 1;
     component.searchInput = 'jnc68';
-    const  programsService  = TestBed.get(ProgramsService);
+    const  service  = TestBed.get(ProgramsService);
     component.sortUsersList(userDetail.result.response.content);
-    const sortedList = programsService.sortCollection(userDetail.result.response.content,  'selectedRole', 'desc')
+    const sortedList = service.sortCollection(userDetail.result.response.content,  'selectedRole', 'desc');
     expect(component.paginatedSourcingUsers).toBe(sortedList);
     expect(component.sourcingOrgUser).toBe(chunkedUserList[0]);
     expect(component.sourcingOrgUserCnt).toBe(chunkedUserList[0].length);
@@ -252,9 +252,9 @@ describe('ProgramNominationsComponent', () => {
   xit('call the sortUsersList method when there is empty input', () => {
      component.pageLimit = 1;
      component.searchInput = '';
-     const  programsService  = TestBed.get(ProgramsService);
+     const  service  = TestBed.get(ProgramsService);
      component.sortUsersList(userDetail.result.response.content);
-     const sortedList = programsService.sortCollection(userDetail.result.response.content,  'selectedRole', 'desc')
+     const sortedList = service.sortCollection(userDetail.result.response.content,  'selectedRole', 'desc');
      expect(component.paginatedSourcingUsers).toBe(sortedList);
      expect(component.sourcingOrgUser).toBe(userDetail.result.response.content);
      expect(component.sourcingOrgUserCnt).toBe(userDetail.result.response.content.length);
