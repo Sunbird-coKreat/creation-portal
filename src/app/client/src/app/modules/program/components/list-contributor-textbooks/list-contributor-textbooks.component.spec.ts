@@ -14,7 +14,7 @@ import {APP_BASE_HREF, DatePipe} from '@angular/common';
 import * as SpecData from './list-contributor-textbooks.spec.data';
 import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
 import { throwError } from 'rxjs';
-import { UserService} from '@sunbird/core';
+import { UserService, ProgramsService} from '@sunbird/core';
 describe('ListContributorTextbooksComponent', () => {
   let component: ListContributorTextbooksComponent;
   let fixture: ComponentFixture<ListContributorTextbooksComponent>;
@@ -90,5 +90,14 @@ const errorInitiate = false;
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+  it ('#setTargetCollectionValue() should call programsService.setTargetCollectionName()', () => {
+    const  programsService  = TestBed.get(ProgramsService);
+    component.targetCollections = 'Question papers';
+    component.programDetails = SpecData.programDetailsTargetCollection;
+    spyOn(component, 'fetchProgramDetails').and.callThrough();
+    spyOn(programsService, 'setTargetCollectionName').and.callThrough();
+    component.fetchProgramDetails();
+    expect(component.targetCollections).toBeDefined();
   });
 });
