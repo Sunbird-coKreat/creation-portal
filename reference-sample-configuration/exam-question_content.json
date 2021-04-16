@@ -1,6 +1,6 @@
 "request" : {
 	"objectCategoryDefinition": {
-		"categoryId": "obj-cat:exam-question",
+		"categoryId": "obj-cat:exam-question_{{channelId}}",
 		"targetObjectType": "Content",
 		"objectMetadata": {
 			"config": {
