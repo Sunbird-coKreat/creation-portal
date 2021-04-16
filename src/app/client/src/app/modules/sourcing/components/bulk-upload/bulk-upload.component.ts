@@ -68,6 +68,7 @@ export class BulkUploadComponent implements OnInit {
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
   public userProfile: IUserProfile;
+  
   public unsubscribe = new Subject<void>();
   constructor(
     private userService: UserService,
