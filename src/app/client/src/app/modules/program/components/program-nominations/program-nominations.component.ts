@@ -479,7 +479,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     return this.collectionHierarchyService.getContentAggregation(this.programId).pipe(
       tap((response: any) => {
         if (response && response.result && response.result.content) {
-          this.contentAggregationData = _.get(response.result, 'content');
+          this.contentAggregationData = _.compact(_.concat(_.get(response.result, 'QuestionSet'), _.get(response.result, 'content')));
         }
       }),
       catchError(err => {
@@ -622,9 +622,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
       this.setActiveDate();
       this.collectionsCount = _.get(this.programDetails, 'collection_ids').length;
-      this.totalContentTypeCount = _.get(this.programDetails, 'content_types').length;
-      this.programContentTypes = _.join(this.programDetails.content_types, ', ');
-
+      const programContentTypesArr = this.programDetails.targetprimarycategories ? _.map(this.programDetails.targetprimarycategories, 'name') : this.programDetails.content_types;
+      this.programContentTypes = _.join(programContentTypesArr, ',');
+      this.totalContentTypeCount = programContentTypesArr.length;
       const currentRoles = _.filter(this.programDetails.config.roles, role => this.sessionContext.currentRoles.includes(role.name));
       this.sessionContext.currentRoleIds = !_.isEmpty(currentRoles) ? _.map(currentRoles, role => role.id) : null;
     }, error => {

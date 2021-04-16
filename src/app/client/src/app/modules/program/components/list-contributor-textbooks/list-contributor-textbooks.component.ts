@@ -113,7 +113,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
     });
     this.contributor = this.selectedNominationDetails;
-    this.nominatedContentTypes = _.join(this.helperService.mapContentTypesToCategories(this.contributor.nominationData.content_types), ', ');
+    this.nominatedContentTypes = this.contributor.nominationData.targetprimarycategories ? _.join(_.map(this.contributor.nominationData.targetprimarycategories, 'name'), ', ') : _.join(this.helperService.mapContentTypesToCategories(this.contributor.nominationData.content_types), ', ');
   }
 
   sortCollection(column) {

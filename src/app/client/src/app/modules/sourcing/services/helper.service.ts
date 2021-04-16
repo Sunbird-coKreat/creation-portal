@@ -7,6 +7,7 @@ import { catchError, map, switchMap, tap, mergeMap, filter, first, skipWhile } f
 import * as _ from 'lodash-es';
 import { ProgramStageService } from '../../program/services';
 import { CacheService } from 'ng2-cache-service';
+import { isUndefined } from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -159,6 +160,21 @@ export class HelperService {
     };
     const option = {
       url: `content/v3/publish/${contentId}`,
+      data: requestBody
+    };
+    return this.actionService.post(option);
+  }
+
+  publishQuestionSet(contentId, userId) {
+    const requestBody = {
+      request: {
+        content: {
+          lastPublishedBy: userId
+        }
+      }
+    };
+    const option = {
+      url: `questionset/v1/publish/${contentId}`,
       data: requestBody
     };
     return this.actionService.post(option);
@@ -688,5 +704,22 @@ export class HelperService {
     } else {
       return {[context]: this._selectedCollectionMetaData[context]};
     }
+  }
+
+  isIndividualAndNotSample(currentOrgRole, sampleContent) {
+    return !!(currentOrgRole === 'individual' && sampleContent !== true);
+  }
+   /**
+   * get content details by id and query param
+   */
+  getContent(contentId: string, option: any = { params: {} }): Observable<ServerResponse> {
+    const param = { fields: this.configService.editorConfig.DEFAULT_PARAMS_FIELDS };
+    const req = {
+        url: `${this.configService.urlConFig.URLS.CONTENT.GET}/${contentId}`,
+        param: { ...param, ...option.params }
+    };
+    return this.publicDataService.get(req).pipe(map((response: ServerResponse) => {
+        return response;
+    }));
   }
 }

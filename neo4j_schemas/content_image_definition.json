@@ -164,6 +164,7 @@
           "range": [
             "Student",
             "Teacher",
+            "Parent",
             "Administrator"
           ],
           "defaultValue": "Student",

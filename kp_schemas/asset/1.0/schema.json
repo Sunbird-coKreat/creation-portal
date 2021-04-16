@@ -180,6 +180,7 @@
                 "enum": [
                     "Student",
                     "Teacher",
+                    "Parent",
                     "Administrator"
                 ]
             },

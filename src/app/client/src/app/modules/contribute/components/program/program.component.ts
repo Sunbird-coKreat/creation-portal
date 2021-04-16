@@ -176,7 +176,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.programDetails.config.medium = _.compact(this.programDetails.config.medium);
       this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
       this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
-      this.programContentTypes = _.join(this.programDetails.content_types, ', ');
+      this.programContentTypes = (!_.isEmpty(this.programDetails.targetprimarycategories)) ? _.join(_.map(this.programDetails.targetprimarycategories, 'name'), ', ') : _.join(this.programDetails.content_types, ', ');
       this.roles =_.get(this.programDetails, 'config.roles');
       this.roles.push({'id': 3, 'name': 'BOTH', 'defaultTab': 3, 'tabs': [3]});
       this.rolesWithNone = _.cloneDeep(this.roles);
@@ -653,8 +653,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!_.isEmpty(contributorTextbooks) && this.isNominationOrg()) {
       this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId).subscribe(
         (response) => {
-          if (response && response.result && response.result.content) {
-            const contents = _.get(response.result, 'content');
+          if (response && response.result && (_.get(response.result, 'content')|| _.get(response.result, 'QuestionSet'))) {
+            const contents = _.compact(_.concat(_.get(response.result, 'QuestionSet'), _.get(response.result, 'content')));
             // tslint:disable-next-line:max-line-length
             this.contentStatusCounts = this.collectionHierarchyService.getContentCounts(contents, this.sessionContext.nominationDetails.organisation_id, contributorTextbooks);
             // tslint:disable-next-line:max-line-length

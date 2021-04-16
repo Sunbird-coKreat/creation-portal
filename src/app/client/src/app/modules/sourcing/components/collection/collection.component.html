@@ -274,9 +274,8 @@
           [telemetryInteractObject]="telemetryInteractObject"
           [telemetryInteractCdata]="telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryInteractPdata">
-          <label for="{{i+1}}" class="mb-0"> {{contenttype}}</label>
+          <label for="{{i+1}}" class="mb-0"> {{contenttype.name}}</label>
       </div>
-      <!-- <sui-checkbox name="{{contenttype.name}}" (click)="toggle($event, contenttype, contenttype.value);">{{contenttype.name}}</sui-checkbox> -->
     </div>
   </div>
   <div class="sb-modal-actions">
