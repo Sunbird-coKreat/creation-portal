@@ -1,8 +1,9 @@
 {
   "request": {
     "objectCategoryDefinition": {
-      "categoryId": "obj-cat:question-paper_{{channelId}}",
+      "categoryId": "obj-cat:question-paper",
       "targetObjectType": "Collection",
+      "Channel": "{{channelId}}",
       "objectMetadata": {
         "config": {},
         "schema": {
