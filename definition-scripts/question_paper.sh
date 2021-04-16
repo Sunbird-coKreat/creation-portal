@@ -3,7 +3,7 @@ curl -L -X POST '{{host}}/object/category/definition/v4/create' \
 --data-raw '{
   "request": {
     "objectCategoryDefinition": {
-      "categoryId": "obj-cat:question-paper",
+      "categoryId": "obj-cat:question-paper_{{channelId}}",
       "targetObjectType": "Collection",
       "objectMetadata": {
         "config": {},
