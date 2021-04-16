@@ -572,6 +572,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   setTreeLeafStatusMessage(identifier, instance) {
     this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
     if (this.originalCollectionData && this.originalCollectionData.status !== 'Draft' && this.sourcingOrgReviewer) {
+      // tslint:disable-next-line:max-line-length
       this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage.replaceAll('{TARGET_NAME}', this.targetCollection);
 
     }
@@ -1360,9 +1361,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
     // tslint:disable-next-line:max-line-length
     if (this.originalCollectionData && (_.indexOf(this.originalCollectionData.childNodes, collection.origin) < 0 || this.originalCollectionData.status !== 'Draft')) {
+      // tslint:disable-next-line:max-line-length
       collection.statusMessage = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage.replace('{TARGET_NAME}', this.targetCollection);
     }
 
+    // tslint:disable-next-line:max-line-length
     collection.totalLeaf = !_.isEmpty(collection.sourcingStatusDetail) ? _.sum(_.values(collection.sourcingStatusDetail)) :  collection.totalLeaf;
     return [collection.sourcingStatusDetail, collection.totalLeaf];
   }

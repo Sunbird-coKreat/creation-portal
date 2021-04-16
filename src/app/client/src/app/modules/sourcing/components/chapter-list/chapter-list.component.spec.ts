@@ -267,7 +267,7 @@ describe('ChapterListComponent', () => {
     });
 
     it('should show confirmation Modal when delete event comes', () => {
-      component.programContext = { content_types: ['eTextbook']}
+      component.programContext = { content_types: ['eTextbook']};
       spyOn(component, 'showResourceTemplate').and.callThrough();
       // tslint:disable-next-line:max-line-length
       component.showResourceTemplate({action: 'delete', content: {identifier: 'do_12345'}, collection: {identifier: 'do_12345', sharedContext: {framework: 'NCFCOPY'}}});
@@ -275,7 +275,7 @@ describe('ChapterListComponent', () => {
     });
 
     it('should define prevUnitSelect beforeMove the content to other unit', () => {
-      component.programContext = { content_types: ['eTextbook']}
+      component.programContext = { content_types: ['eTextbook']};
       spyOn(component, 'showResourceTemplate').and.callThrough();
       // tslint:disable-next-line:max-line-length
       component.showResourceTemplate({action: 'beforeMove', content: {identifier: 'do_12345'}, collection: {identifier: 'do_12345', sharedContext: {framework: 'NCFCOPY'}}});
@@ -283,7 +283,7 @@ describe('ChapterListComponent', () => {
     });
 
     it('should updateAccordianView after successful move of content', () => {
-      component.programContext = { content_types: ['eTextbook']}
+      component.programContext = { content_types: ['eTextbook']};
       spyOn(component, 'showResourceTemplate').and.callThrough();
       spyOn(component, 'updateAccordianView');
       // tslint:disable-next-line:max-line-length
@@ -292,7 +292,7 @@ describe('ChapterListComponent', () => {
     });
 
     it('should clear assigned unitIdentifier and contentIdentifier', () => {
-      component.programContext = { content_types: ['eTextbook']}
+      component.programContext = { content_types: ['eTextbook']};
       spyOn(component, 'showResourceTemplate').and.callThrough();
       // tslint:disable-next-line:max-line-length
       component.showResourceTemplate({action: 'cancelMove', content: {identifier: 'do_12345'}, collection: {identifier: 'do_12345', sharedContext: {framework: 'NCFCOPY'}}});
@@ -300,7 +300,7 @@ describe('ChapterListComponent', () => {
     });
 
     it('should call handlePreview on preview event', () => {
-      component.programContext = { content_types: ['eTextbook']}
+      component.programContext = { content_types: ['eTextbook']};
       spyOn(component, 'showResourceTemplate').and.callThrough();
       spyOn(component, 'handlePreview');
       // tslint:disable-next-line:max-line-length

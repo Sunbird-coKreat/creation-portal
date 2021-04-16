@@ -2,7 +2,8 @@ import { CollectionHierarchyService } from './../../../sourcing/services/collect
 import { DaysToGoPipe } from './../../../shared-feature/pipes/days-to-go.pipe';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { ConfigService, ResourceService, ToasterService, UtilService, BrowserCacheTtlService, NavigationHelperService } from '@sunbird/shared';
+import { ConfigService, ResourceService, ToasterService, UtilService,
+   BrowserCacheTtlService, NavigationHelperService } from '@sunbird/shared';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CollectionComponent} from '../index';
 import { TelemetryModule } from '@sunbird/telemetry';
@@ -10,7 +11,8 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ContentService, UserService, ProgramsService } from '@sunbird/core';
 import { CacheService } from 'ng2-cache-service';
 import { ProgramStageService } from '../../../program/services';
-import { collectionComponentInput, collectionWithCard, searchCollectionResponse, userProfile, addParticipentResponseSample, } from './collection.component.spec.data';
+import { collectionComponentInput, collectionWithCard, searchCollectionResponse,
+   userProfile, addParticipentResponseSample, } from './collection.component.spec.data';
 import { of, throwError } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash-es';
