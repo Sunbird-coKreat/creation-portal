@@ -360,29 +360,27 @@ describe('ChapterListComponent', () => {
     });
 
     it ('#setTargetCollectionValue() should set targetCollection values', () => {
-      const  programsService  = TestBed.get(ProgramsService);
-      spyOn(programsService, 'setTargetCollectionName').and.returnValue('Digital Textbook');
+      const  service  = TestBed.get(ProgramsService);
+      spyOn(service, 'setTargetCollectionName').and.returnValue('Digital Textbook');
       component.programContext = programDetailsTargetCollection;
       spyOn(component, 'setTargetCollectionValue').and.callThrough();
       component.setTargetCollectionValue();
       expect(component.targetCollection).not.toBeUndefined();
-  });
-
-  it ('#setTargetCollectionValue() should not set targetCollection values', () => {
-    const  programsService  = TestBed.get(ProgramsService);
-    spyOn(programsService, 'setTargetCollectionName').and.returnValue(undefined);
-    component.programContext = undefined;
-    spyOn(component, 'setTargetCollectionValue').and.callThrough();
-    component.setTargetCollectionValue();
-    expect(component.targetCollection).toBeUndefined();
-  });
-
-  it ('#setTargetCollectionValue() should call programsService.setTargetCollectionName()', () => {
-    const  programsService  = TestBed.get(ProgramsService);
-    component.programContext = programDetailsTargetCollection;
-    spyOn(component, 'setTargetCollectionValue').and.callThrough();
-    spyOn(programsService, 'setTargetCollectionName').and.callThrough();
-    component.setTargetCollectionValue();
-    expect(programsService.setTargetCollectionName).toHaveBeenCalled();
-  });
+    });
+    it ('#setTargetCollectionValue() should not set targetCollection values', () => {
+      const  service  = TestBed.get(ProgramsService);
+      spyOn(service, 'setTargetCollectionName').and.returnValue(undefined);
+      component.programContext = undefined;
+      spyOn(component, 'setTargetCollectionValue').and.callThrough();
+      component.setTargetCollectionValue();
+      expect(component.targetCollection).toBeUndefined();
+    });
+    it ('#setTargetCollectionValue() should call programsService.setTargetCollectionName()', () => {
+      const  service  = TestBed.get(ProgramsService);
+      component.programContext = programDetailsTargetCollection;
+      spyOn(component, 'setTargetCollectionValue').and.callThrough();
+      spyOn(service, 'setTargetCollectionName').and.callThrough();
+      component.setTargetCollectionValue();
+      expect(service.setTargetCollectionName).toHaveBeenCalled();
+    });
 });

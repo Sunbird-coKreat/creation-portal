@@ -91,13 +91,21 @@ const errorInitiate = false;
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+  it ('#setTargetCollectionValue() should not set targetCollection values', () => {
+    const  service  = TestBed.get(ProgramsService);
+    spyOn(service, 'setTargetCollectionName').and.returnValue(undefined);
+    component.programDetails = undefined;
+    component.fetchProgramDetails();
+    expect(component.targetCollections).toBeUndefined();
+    });
   it ('#setTargetCollectionValue() should call programsService.setTargetCollectionName()', () => {
     const  programsService  = TestBed.get(ProgramsService);
     component.targetCollections = 'Question papers';
     component.programDetails = SpecData.programDetailsTargetCollection;
-    spyOn(component, 'fetchProgramDetails').and.callThrough();
-    spyOn(programsService, 'setTargetCollectionName').and.callThrough();
+    spyOn(programsService, 'setTargetCollectionName').and.returnValue('Question papers');
     component.fetchProgramDetails();
-    expect(component.targetCollections).toBeDefined();
+    expect(component.programDetails).toBe(SpecData.programDetailsTargetCollection);
+    expect(component.targetCollections).toEqual('Question papers');
   });
+
 });
