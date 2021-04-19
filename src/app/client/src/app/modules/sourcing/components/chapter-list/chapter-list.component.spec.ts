@@ -223,7 +223,7 @@ describe('ChapterListComponent', () => {
       expect(component.updateAccordianView).toHaveBeenCalledWith(undefined, jasmine.any(Boolean));
     });
 
-    it('on selecting unit in drop-down of chapterlist which should be in opened state', async() => {
+    xit('on selecting unit in drop-down of chapterlist which should be in opened state', async() => {
       component.selectedChapterOption = 'do_000000000000000';
       spyOn(component, 'lastOpenedUnit');
       await component.lastOpenedUnit('do_1127639059664650241140');
