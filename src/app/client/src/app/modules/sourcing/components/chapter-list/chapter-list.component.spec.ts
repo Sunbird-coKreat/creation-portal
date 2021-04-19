@@ -377,6 +377,7 @@ describe('ChapterListComponent', () => {
       expect(component.targetCollection).toBeUndefined();
     });
 
+
     it ('#setTargetCollectionValue() should call programsService.setTargetCollectionName()', () => {
       const  programsService  = TestBed.get(ProgramsService);
       component.programContext = programDetailsTargetCollection;
