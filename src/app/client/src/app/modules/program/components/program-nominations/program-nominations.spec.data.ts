@@ -1109,3 +1109,9 @@ export const addParticipentResponseSample = {
       }
     }]
   };
+
+  export const programDetailsTargetCollection = {
+    'target_collection_category': [
+        'Question paper'
+    ]
+  };

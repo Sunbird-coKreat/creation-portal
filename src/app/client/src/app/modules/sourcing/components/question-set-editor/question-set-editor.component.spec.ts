@@ -9,7 +9,7 @@ import { TelemetryService } from '@sunbird/telemetry';
 import { ActivatedRoute, Router} from '@angular/router';
 import { NO_ERRORS_SCHEMA, DebugElement } from '@angular/core';
 
-describe('QuestionSetEditorComponent', () => {
+xdescribe('QuestionSetEditorComponent', () => {
   let component: QuestionSetEditorComponent;
   let fixture: ComponentFixture<QuestionSetEditorComponent>;
   let debugElement: DebugElement;
