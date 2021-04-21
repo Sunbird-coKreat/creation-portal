@@ -69,13 +69,58 @@ module.exports = function (app) {
         })
     )
 
-    app.use(['/api/object/*', '/api/composite*' ], permissionsHelper.checkPermission(), proxy(contentProxyUrl, {
-        proxyReqOptDecorator: proxyHeaders.decoratePublicRequestHeaders(),
-        proxyReqPathResolver: proxyReqPathResolverMethod
+    app.use(['/api/object/*', '/api/composite/*' ],
+      permissionsHelper.checkPermission(),
+      proxy(contentProxyUrl, {
+        proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
+        proxyReqPathResolver: function (req) {
+          let urlParam = req.originalUrl.replace('/api/', '')
+          let query = require('url').parse(req.url).query
+          console.log('/api/object  ', require('url').parse(contentProxyUrl + urlParam).path);
+          if (query) {
+            return require('url').parse(contentProxyUrl + urlParam + '?' + query).path
+          } else {
+            return require('url').parse(contentProxyUrl + urlParam).path
+          }
+        },
+        userResDecorator: (proxyRes, proxyResData, req, res) => {
+          try {
+            logger.info({msg: '/api/object'});
+            const data = JSON.parse(proxyResData.toString('utf8'));
+            if(req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
+            else return proxyHeaders.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
+          } catch(err) {
+            logger.error({msg:'content api user res decorator json parse error:', proxyResData})
+                return proxyHeaders.handleSessionExpiry(proxyRes, proxyResData, req, res);
+          }
+        }
     }))
-    app.use(['/api/framework/*', '/api/channel/*'], permissionsHelper.checkPermission(), proxy(learnerURL, {
-        proxyReqOptDecorator: proxyHeaders.decoratePublicRequestHeaders(),
-        proxyReqPathResolver: proxyReqPathResolverMethod
+
+    app.use(['/api/framework/*', '/api/channel/*'],
+      permissionsHelper.checkPermission(),
+      proxy(learnerURL, {
+        proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
+        proxyReqPathResolver: function (req) {
+          let urlParam = req.originalUrl.replace('/api/', '')
+          let query = require('url').parse(req.url).query
+          console.log('/api/framework  ', require('url').parse(learnerURL + urlParam).path);
+          if (query) {
+            return require('url').parse(learnerURL + urlParam + '?' + query).path
+          } else {
+            return require('url').parse(learnerURL + urlParam).path
+          }
+        },
+        userResDecorator: (proxyRes, proxyResData, req, res) => {
+          try {
+            logger.info({msg: '/api/questionset'});
+            const data = JSON.parse(proxyResData.toString('utf8'));
+            if(req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
+            else return proxyHeaders.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
+          } catch(err) {
+            logger.error({msg:'content api user res decorator json parse error:', proxyResData})
+                return proxyHeaders.handleSessionExpiry(proxyRes, proxyResData, req, res);
+          }
+        }
     }))
 
     app.use(['/api/questionset/*', '/api/question/*' ],
