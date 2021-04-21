@@ -103,7 +103,7 @@ module.exports = function (app) {
         proxyReqPathResolver: function (req) {
           let urlParam = req.originalUrl.replace('/api/', '')
           let query = require('url').parse(req.url).query
-          console.log('/api/framework  ', require('url').parse(learnerURL + urlParam).path);
+          console.log('/api/framework  ', learnerURL, require('url').parse(learnerURL + urlParam).path);
           if (query) {
             return require('url').parse(learnerURL + urlParam + '?' + query).path
           } else {
