@@ -72,7 +72,7 @@ module.exports = function (app) {
     app.use(['/api/object/*', '/api/composite/*' ],
       permissionsHelper.checkPermission(),
       proxy(contentProxyUrl, {
-        proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
+        proxyReqOptDecorator: proxyHeaders.decorateSunbirdRequestHeaders(),
         proxyReqPathResolver: function (req) {
           let urlParam = req.originalUrl.replace('/api/', '')
           let query = require('url').parse(req.url).query
@@ -99,7 +99,7 @@ module.exports = function (app) {
     app.use(['/api/framework/*', '/api/channel/*'],
       permissionsHelper.checkPermission(),
       proxy(learnerURL, {
-        proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
+        proxyReqOptDecorator: proxyHeaders.decorateSunbirdRequestHeaders(),
         proxyReqPathResolver: function (req) {
           let urlParam = req.originalUrl.replace('/api/', '')
           let query = require('url').parse(req.url).query
