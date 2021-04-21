@@ -69,6 +69,15 @@ module.exports = function (app) {
         })
     )
 
+    app.use(['/api/object/*', '/api/composite*' ], permissionsHelper.checkPermission(), proxy(contentProxyUrl, {
+        proxyReqOptDecorator: proxyHeaders.decoratePublicRequestHeaders(),
+        proxyReqPathResolver: proxyReqPathResolverMethod
+    }))
+    app.use(['/api/framework/*', '/api/channel/*'], permissionsHelper.checkPermission(), proxy(learnerURL, {
+        proxyReqOptDecorator: proxyHeaders.decoratePublicRequestHeaders(),
+        proxyReqPathResolver: proxyReqPathResolverMethod
+    }))
+
     app.use(['/api/questionset/*', '/api/question/*' ],
         proxy(contentProxyUrl, {
         proxyReqOptDecorator: proxyHeaders.decorateRequestHeaders(),

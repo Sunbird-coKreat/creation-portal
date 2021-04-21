@@ -942,8 +942,8 @@ export class ProgramsService extends DataService implements CanActivate {
     );
   }
 
-  getCategoryDefinition(category, rootOrgId) {
-    const cacheInd = category.name + ':' + rootOrgId;
+  getCategoryDefinition(catName, rootOrgId, catObjectType = 'Content') {
+    const cacheInd = catName + ':' + rootOrgId;
     if (this.cacheService.get(cacheInd)) {
       return  of(this.cacheService.get(cacheInd));
     } else {
@@ -952,8 +952,8 @@ export class ProgramsService extends DataService implements CanActivate {
         data: {
           request: {
             "objectCategoryDefinition": {
-                "objectType": category.targetObjectType,
-                "name": category.name,
+                "objectType": catObjectType,
+                "name": catName,
                 "channel": rootOrgId
             },
           }

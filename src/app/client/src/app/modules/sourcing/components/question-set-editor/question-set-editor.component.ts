@@ -131,13 +131,7 @@ export class QuestionSetEditorComponent implements OnInit {
   
 
   getFrameWorkDetails() {
-    const objectType = this.collectionDetails.mimeType === 'application/vnd.sunbird.questionset' ? 'QuestionSet' : 'Collection';
-    let catObj = {
-      name: this.collectionDetails.primaryCategory,
-      targetObjectType: 'QuestionSet'
-    }
-
-    this.programsService.getCategoryDefinition(catObj, this.userService.channel)
+    this.programsService.getCategoryDefinition(this.collectionDetails.primaryCategory, this.userService.channel, 'QuestionSet')
     .subscribe(data => {
       // tslint:disable-next-line:max-line-length
       if (_.get(data, 'result.objectCategoryDefinition.objectMetadata.config')) {

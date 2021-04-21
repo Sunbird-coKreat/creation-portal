@@ -1076,12 +1076,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   handlePreview(event) {
-    /*if (event.content.mimeType === 'application/vnd.sunbird.questionset') {
-      const queryParams = "collectionId=" + this.sessionContext.collection + "&unitId=" + this.unitIdentifier;
-      this.router.navigateByUrl('/contribute/questionSet/' + event.content.identifier + "?" + queryParams);    
-    } else {*/
-    //const templateList = this.programsService.contentCategories;
-    //this.programsService.getCategoryDefinition(event.content.primaryCategory, this.programContext.rootorg_id).subscribe((res)=>{
         this.templateDetails = {
           'name' : event.content.primaryCategory
         };

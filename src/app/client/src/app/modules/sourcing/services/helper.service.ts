@@ -41,7 +41,7 @@ export class HelperService {
   }
 
   getCategoryMetaData(category, channelId) {
-    this.programsService.getCategoryDefinition(category, channelId).subscribe(data => {
+    this.programsService.getCategoryDefinition(category.name, channelId, category.targetObjectType).subscribe(data => {
       this.selectedCategoryMetaData = data;
       this._categoryMetaData$.next(data);
     });
