@@ -54,7 +54,7 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
 
 
   handleSubmit() {
-    this.programsService.getCategoryDefinition(this.templateSelected, this.programContext.rootorg_id).subscribe((res) => {
+    this.programsService.getCategoryDefinition(this.templateSelected.name, this.programContext.rootorg_id, this.templateSelected.targetObjectType).subscribe((res) => {
       this.selectedtemplateDetails = res.result.objectCategoryDefinition;
       const catMetaData = this.selectedtemplateDetails.objectMetadata;
       if (_.isEmpty(_.get(catMetaData, 'schema.properties.mimeType.enum'))) {
