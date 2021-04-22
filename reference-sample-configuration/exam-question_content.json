@@ -21,10 +21,6 @@
               "type": "string",
               "enum": ["application/vnd.ekstep.ecml-archive"]
             },
-            "visibility": {
-              "type": "string",
-              "default": "Private"
-            },
             "maxQuestions": {
               "type": "number",
               "default": 1

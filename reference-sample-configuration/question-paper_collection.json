@@ -20,10 +20,6 @@
               "type": "string",
               "default": "SCERT Haryana"
             },
-            "visibility": {
-              "type": "string",
-              "default": "Private"
-            },
             "printable": {
               "type": "boolean",
               "default": true
