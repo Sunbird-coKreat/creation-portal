@@ -40,8 +40,8 @@ export class HelperService {
     this.actionService.channelId = programDetails.rootorg_id;
   }
 
-  getCategoryMetaData(category, channelId) {
-    this.programsService.getCategoryDefinition(category.name, channelId, category.targetObjectType).subscribe(data => {
+  getCategoryMetaData(category, channelId, objectType) {
+    this.programsService.getCategoryDefinition(category, channelId, objectType).subscribe(data => {
       this.selectedCategoryMetaData = data;
       this._categoryMetaData$.next(data);
     });

@@ -332,7 +332,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       this.fetchFormconfiguration();
      this.handleActionButtons();
     });
-    this.helperService.getCategoryMetaData(this.contentData.primaryCategory, _.get(this.programContext, 'rootorg_id'));
+    this.helperService.getCategoryMetaData(this.contentData.primaryCategory, _.get(this.programContext, 'rootorg_id'), this.contentData.objectType);
   }
 
   handleContentStatusText() {
