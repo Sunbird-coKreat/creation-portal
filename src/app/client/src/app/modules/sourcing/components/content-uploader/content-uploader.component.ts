@@ -794,7 +794,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.fetchFormconfiguration();
       this.handleActionButtons();
     });
-    this.helperService.getCategoryMetaData(this.contentMetaData.primaryCategory, _.get(this.programContext, 'rootorg_id'));
+    this.helperService.getCategoryMetaData(this.contentMetaData.primaryCategory, _.get(this.programContext, 'rootorg_id'), this.contentMetaData.objectType);
   }
 
   changePolicyCheckValue (event) {

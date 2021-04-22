@@ -243,7 +243,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.fetchFormconfiguration();
       this.handleActionButtons();
     });
-    this.helperService.getCategoryMetaData(this.resourceDetails.primaryCategory, _.get(this.programContext, 'rootorg_id'));
+    this.helperService.getCategoryMetaData(this.resourceDetails.primaryCategory, _.get(this.programContext, 'rootorg_id'), this.resourceDetails.objectType);
   }
 
   public preprareTelemetryEvents() {
