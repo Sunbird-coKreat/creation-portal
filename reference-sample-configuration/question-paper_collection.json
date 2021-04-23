@@ -1,32 +1,25 @@
-curl -L -X POST '{{host}}/object/category/definition/v4/create' \
--H 'Content-Type: application/json' \
---data-raw '{
+{
   "request": {
     "objectCategoryDefinition": {
-      "categoryId": "obj-cat:question-paper_{{channelId}}",
+      "categoryId": "obj-cat:question-paper",
       "targetObjectType": "Collection",
+      "Channel": "{{channelId}}",
       "objectMetadata": {
         "config": {},
         "schema": {
           "properties": {
             "mimeType": {
               "type": "string",
-              "enum": [
-                "application/vnd.ekstep.content-collection"
-              ]
+              "enum": ["application/vnd.ekstep.content-collection"]
             },
-            "appIcon": {
-               "type": "string",
-               "default": "https://sunbirddev.blob.core.windows.net/sunbird-content-dev/content/do_11320764935163904015/artifact/2020101299.png"                            
-            },
-            "author": {
-              "type": "string",
-              "default": "SCERT Haryana"
+            "appIcon": {
+              "type": "string",
+              "default": "https://sunbirddev.blob.core.windows.net/sunbird-content-dev/content/do_11320764935163904015/artifact/2020101299.png"
             },
-            "visibility": {
-              "type": "string",
-              "default":"Private"
-            },  
+            "author": {
+              "type": "string",
+              "default": "SCERT Haryana"
+            },
             "printable": {
               "type": "boolean",
               "default": true
@@ -63,9 +56,7 @@ curl -L -X POST '{{host}}/object/category/definition/v4/create' \
               "label": "Competencies",
               "name": "Competencies",
               "placeholder": "Please select Competencies",
-              "depends": [
-                "chapters"
-              ],
+              "depends": ["chapters"],
               "renderingHints": {},
               "required": true
             },
@@ -84,14 +75,7 @@ curl -L -X POST '{{host}}/object/category/definition/v4/create' \
               "inputType": "select",
               "placeholder": "",
               "default": 0,
-              "options": [
-                0,
-                1,
-                2,
-                3,
-                4,
-                5
-              ],
+              "options": [0, 1, 2, 3, 4, 5],
               "children": [
                 {
                   "type": "learningLevel",
@@ -130,7 +114,7 @@ curl -L -X POST '{{host}}/object/category/definition/v4/create' \
                   "type": "questionType",
                   "label": "Objective",
                   "code": "Objective"
-                },                
+                },
                 {
                   "type": "questionType",
                   "label": "Very Short Answer",
@@ -147,14 +131,7 @@ curl -L -X POST '{{host}}/object/category/definition/v4/create' \
                   "code": "LA"
                 }
               ],
-              "options": [
-                0,
-                1,
-                2,
-                3,
-                4,
-                5
-              ],
+              "options": [0, 1, 2, 3, 4, 5],
               "placeholder": "Question Types"
             },
             {
@@ -179,4 +156,4 @@ curl -L -X POST '{{host}}/object/category/definition/v4/create' \
       }
     }
   }
-}'
+}

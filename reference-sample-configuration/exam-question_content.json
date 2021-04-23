@@ -1,10 +1,9 @@
-curl -L -X POST '{{host}}/object/category/definition/v4/create' \
--H 'Content-Type: application/json' \
---data-raw '{
+{
   "request": {
     "objectCategoryDefinition": {
-      "categoryId": "obj-cat:exam-question_{{channelId}}",
+      "categoryId": "obj-cat:exam-question",
       "targetObjectType": "Content",
+      "Channel": "{{channelId}}",
       "objectMetadata": {
         "config": {
           "sourcingConfig": {
@@ -20,13 +19,7 @@ curl -L -X POST '{{host}}/object/category/definition/v4/create' \
           "properties": {
             "mimeType": {
               "type": "string",
-              "enum": [
-                "application/vnd.ekstep.ecml-archive"
-              ]
-            },
-            "visibility": {
-              "type": "string",
-              "default": "Private"
+              "enum": ["application/vnd.ekstep.ecml-archive"]
             },
             "maxQuestions": {
               "type": "number",
@@ -188,4 +181,4 @@ curl -L -X POST '{{host}}/object/category/definition/v4/create' \
       }
     }
   }
-}'
+}

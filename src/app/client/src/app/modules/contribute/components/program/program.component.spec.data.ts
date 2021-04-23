@@ -390,3 +390,9 @@ export const userProfile = {
     'b00bc992ef25f1a9a8d63291e20efc8d'
   ]
 };
+
+export const programDetailsTargetCollection = {
+  'target_collection_category': [
+      'Question paper'
+  ]
+};

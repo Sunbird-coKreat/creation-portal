@@ -8,7 +8,7 @@ import * as _ from 'lodash-es';
 import {  throwError , of } from 'rxjs';
 // tslint:disable-next-line:max-line-length
 import { addParticipentResponseSample, userProfile,  frameWorkData, programDetailsWithOutUserDetails,
-  programDetailsWithOutUserAndForm, extFrameWorkPostData, programDetailsWithUserDetails } from './program.component.spec.data';
+  programDetailsWithOutUserAndForm, extFrameWorkPostData, programDetailsWithUserDetails, programDetailsTargetCollection } from './program.component.spec.data';
 import { CollectionComponent } from '../../../sourcing/components/collection/collection.component';
 import { ProgramHeaderComponent } from '../program-header/program-header.component';
 import { OnboardPopupComponent } from '../onboard-popup/onboard-popup.component';
@@ -294,4 +294,33 @@ describe('ProgramComponent', () => {
     expect(component.paginatedContributorOrgUsers).toEqual(chunkList);
     expect(component.contributorOrgUser).toEqual(chunkList[0]);
     });
+
+    it ('#setTargetCollectionValue() should set targetCollection values', () => {
+      const  programsService  = TestBed.get(ProgramsService);
+      spyOn(programsService, 'setTargetCollectionName').and.returnValue('Digital Textbook');
+      component.programDetails = programDetailsTargetCollection;
+      spyOn(component, 'setTargetCollectionValue').and.callThrough();
+      component.setTargetCollectionValue();
+      expect(component.targetCollection).not.toBeUndefined();
+      expect(component.targetCollections).not.toBeUndefined();
+  });
+
+  it ('#setTargetCollectionValue() should not set targetCollection values', () => {
+    const  programsService  = TestBed.get(ProgramsService);
+    spyOn(programsService, 'setTargetCollectionName').and.returnValue(undefined);
+    component.programDetails = undefined;
+    spyOn(component, 'setTargetCollectionValue').and.callThrough();
+    component.setTargetCollectionValue();
+    expect(component.targetCollection).toBeUndefined();
+    expect(component.targetCollections).toBeUndefined();
+  });
+
+  it ('#setTargetCollectionValue() should call programsService.setTargetCollectionName()', () => {
+    const  programsService  = TestBed.get(ProgramsService);
+    component.programDetails = programDetailsTargetCollection;
+    spyOn(component, 'setTargetCollectionValue').and.callThrough();
+    spyOn(programsService, 'setTargetCollectionName').and.callThrough();
+    component.setTargetCollectionValue();
+    expect(programsService.setTargetCollectionName).toHaveBeenCalled();
+  });
 });

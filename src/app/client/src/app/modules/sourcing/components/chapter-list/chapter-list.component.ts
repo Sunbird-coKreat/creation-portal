@@ -103,6 +103,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
+  public hasAccessForContributor: any;
+  public hasAccessForReviewer: any;
+  public hasAccessForBoth: any;
+  public targetCollection: string;
   public unsubscribe = new Subject<void>();
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
@@ -116,6 +120,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   ngOnInit() {
+    this.setUserAccess();
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
       this.changeView();
@@ -123,6 +128,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.currentStage = 'chapterListComponent';
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
     this.programContext = _.get(this.chapterListComponentInput, 'programContext');
+    this.setTargetCollectionValue();
     this.currentUserID = this.userService.userid;
     this.currentRootOrgID = this.userService.rootOrgId;
     this.userService.userData$.pipe(
@@ -201,6 +207,18 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
     this.selectedStatusOptions = ["Live", "Approved"];
     this.displayPrintPreview = _.get(this.collection, 'printable', false);
+  }
+
+  setUserAccess() {
+    this.hasAccessForContributor =  this.hasAccessFor(['CONTRIBUTOR']);
+    this.hasAccessForReviewer =  this.hasAccessFor(['REVIEWER']);
+    this.hasAccessForBoth =  this.hasAccessFor(['CONTRIBUTOR', 'REVIEWER']);
+  }
+
+  setTargetCollectionValue() {
+    if (!_.isUndefined(this.programContext)) {
+      this.targetCollection = this.programsService.setTargetCollectionName(this.programContext);
+    }
   }
 
   showBulkUploadOption() {
@@ -554,7 +572,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   setTreeLeafStatusMessage(identifier, instance) {
     this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
     if (this.originalCollectionData && this.originalCollectionData.status !== 'Draft' && this.sourcingOrgReviewer) {
-      this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage.replaceAll('{TARGET_NAME}', this.programsService.setTargetCollectionName(this.programContext));
+      // tslint:disable-next-line:max-line-length
+      this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage.replaceAll('{TARGET_NAME}', this.targetCollection);
 
     }
     this.getFolderLevelCount(this.collectionHierarchy);
@@ -919,8 +938,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   shouldContentBeVisible(content) {
-    const creatorViewRole = this.hasAccessFor(['CONTRIBUTOR']);
-    const reviewerViewRole = this.hasAccessFor(['REVIEWER']);
+    const creatorViewRole = this.hasAccessForContributor;
+    const reviewerViewRole = this.hasAccessForReviewer;
     const creatorAndReviewerRole = creatorViewRole && reviewerViewRole;
     const contributingOrgAdmin = this.userService.isContributingOrgAdmin();
     if (this.isSourcingOrgReviewer() && this.sourcingOrgReviewer) {
@@ -1289,9 +1308,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   ngOnDestroy() {
-    this.stageSubscription.unsubscribe();
-    this.unsubscribe.next();
-    this.unsubscribe.complete();
+    if (this.stageSubscription) {
+      this.stageSubscription.unsubscribe();
+    }
+    if (this.unsubscribe) {
+      this.unsubscribe.next();
+      this.unsubscribe.complete();
+    }
   }
 
   getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: string): IInteractEventEdata {
@@ -1332,9 +1355,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
     // tslint:disable-next-line:max-line-length
     if (this.originalCollectionData && (_.indexOf(this.originalCollectionData.childNodes, collection.origin) < 0 || this.originalCollectionData.status !== 'Draft')) {
-      collection.statusMessage = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage.replace('{TARGET_NAME}', this.programsService.setTargetCollectionName(this.programContext));
+      // tslint:disable-next-line:max-line-length
+      collection.statusMessage = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage.replace('{TARGET_NAME}', this.targetCollection);
     }
 
+    // tslint:disable-next-line:max-line-length
     collection.totalLeaf = !_.isEmpty(collection.sourcingStatusDetail) ? _.sum(_.values(collection.sourcingStatusDetail)) :  collection.totalLeaf;
     return [collection.sourcingStatusDetail, collection.totalLeaf];
   }

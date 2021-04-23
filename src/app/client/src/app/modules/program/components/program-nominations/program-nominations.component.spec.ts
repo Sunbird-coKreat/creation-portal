@@ -69,7 +69,7 @@ const frameworkServiceStub = {
   frameworkData$:  of(SpecData.frameWorkData)
 };
 
-xdescribe('ProgramNominationsComponent', () => {
+describe('ProgramNominationsComponent', () => {
   let component: ProgramNominationsComponent;
   let collectionHierarchyService: CollectionHierarchyService;
   let programsService: ProgramsService;
@@ -146,14 +146,14 @@ xdescribe('ProgramNominationsComponent', () => {
     programsService = TestBed.get(ProgramsService);
     collectionHierarchyService = TestBed.get(CollectionHierarchyService);
 
-    fixture.detectChanges();
+    // fixture.detectChanges();
   });
 
   it('should have create and defined component', () => {
     expect(component).toBeDefined() && expect(component).toBeTruthy();
   });
 
-  it('should contribution dashboard data should not be empty', () => {
+  xit('should contribution dashboard data should not be empty', () => {
     spyOn(programsService, 'get').and.callFake(() => {
         return of(SpecData.readProgramApiSuccessRes);
     });
@@ -172,10 +172,10 @@ xdescribe('ProgramNominationsComponent', () => {
         return of(SpecData.programCollectionListApiSuccessRes);
     });
     component.getProgramDetails();
-    expect(component.contributionDashboardData.length).toBe(2)
+    expect(component.contributionDashboardData.length).toBe(2);
   });
 
-  it('should call getContribDashboardHeaders method', () => {
+  xit('should call getContribDashboardHeaders method', () => {
     spyOn(programsService, 'get').and.callFake(() => {
         return of(SpecData.readProgramApiSuccessRes);
     });
@@ -201,7 +201,7 @@ xdescribe('ProgramNominationsComponent', () => {
     expect(component.getContribDashboardHeaders).toHaveBeenCalled();
   });
 
-  it('should call generateCSV method', () => {
+  xit('should call generateCSV method', () => {
     spyOn(programsService, 'get').and.callFake(() => {
         return of(SpecData.readProgramApiSuccessRes);
     });
@@ -227,36 +227,62 @@ xdescribe('ProgramNominationsComponent', () => {
 
     expect(programsService.generateCSV).toHaveBeenCalled();
   });
-  it('reset the user list when there is no search input', () => {
+  xit('reset the user list when there is no search input', () => {
     spyOn(component, 'sortUsersList');
     component.searchInput = '';
     expect(component.sortUsersList).toHaveBeenCalledWith(userDetail.result.response.content);
   });
-  it('get the user list when there is a search input', () => {
+  xit('get the user list when there is a search input', () => {
     spyOn(component, 'sortUsersList');
     component.searchInput = 'jnc68';
     const  registryService  = TestBed.get(RegistryService);
-    const userList = registryService.getSearchedUserList(userDetail.result.response.content, component.searchInput)
+    const userList = registryService.getSearchedUserList(userDetail.result.response.content, component.searchInput);
     expect(component.sortUsersList).toHaveBeenCalledWith(userList);
     });
- it('call the sortUsersList method when there is input', () => {
+ xit('call the sortUsersList method when there is input', () => {
     component.pageLimit = 1;
     component.searchInput = 'jnc68';
-    const  programsService  = TestBed.get(ProgramsService);
+    const  service  = TestBed.get(ProgramsService);
     component.sortUsersList(userDetail.result.response.content);
-    const sortedList = programsService.sortCollection(userDetail.result.response.content,  'selectedRole', 'desc')
+    const sortedList = service.sortCollection(userDetail.result.response.content,  'selectedRole', 'desc');
     expect(component.paginatedSourcingUsers).toBe(sortedList);
     expect(component.sourcingOrgUser).toBe(chunkedUserList[0]);
     expect(component.sourcingOrgUserCnt).toBe(chunkedUserList[0].length);
   });
-  it('call the sortUsersList method when there is empty input', () => {
+  xit('call the sortUsersList method when there is empty input', () => {
      component.pageLimit = 1;
      component.searchInput = '';
-     const  programsService  = TestBed.get(ProgramsService);
+     const  service  = TestBed.get(ProgramsService);
      component.sortUsersList(userDetail.result.response.content);
-     const sortedList = programsService.sortCollection(userDetail.result.response.content,  'selectedRole', 'desc')
+     const sortedList = service.sortCollection(userDetail.result.response.content,  'selectedRole', 'desc');
      expect(component.paginatedSourcingUsers).toBe(sortedList);
      expect(component.sourcingOrgUser).toBe(userDetail.result.response.content);
      expect(component.sourcingOrgUserCnt).toBe(userDetail.result.response.content.length);
+    });
+    it ('#setTargetCollectionValue() should set targetCollection values', () => {
+      const  service  = TestBed.get(ProgramsService);
+      spyOn(service, 'setTargetCollectionName').and.returnValue('Digital Textbook');
+      component.programDetails = SpecData.programDetailsTargetCollection;
+      spyOn(component, 'setTargetCollectionValue').and.callThrough();
+      component.setTargetCollectionValue();
+      expect(component.targetCollection).not.toBeUndefined();
+      expect(component.targetCollections).not.toBeUndefined();
+    });
+    it ('#setTargetCollectionValue() should not set targetCollection values', () => {
+      const  service  = TestBed.get(ProgramsService);
+      spyOn(service, 'setTargetCollectionName').and.returnValue(undefined);
+      component.programDetails = undefined;
+      spyOn(component, 'setTargetCollectionValue').and.callThrough();
+      component.setTargetCollectionValue();
+      expect(component.targetCollection).toBeUndefined();
+      expect(component.targetCollections).toBeUndefined();
+      });
+    it ('#setTargetCollectionValue() should call programsService.setTargetCollectionName()', () => {
+      const  service  = TestBed.get(ProgramsService);
+      component.programDetails = SpecData.programDetailsTargetCollection;
+      spyOn(component, 'setTargetCollectionValue').and.callThrough();
+      spyOn(service, 'setTargetCollectionName').and.callThrough();
+      component.setTargetCollectionValue();
+      expect(service.setTargetCollectionName).toHaveBeenCalled();
     });
 });

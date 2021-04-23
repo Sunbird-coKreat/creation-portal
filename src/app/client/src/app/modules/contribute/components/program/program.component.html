@@ -107,8 +107,8 @@
 					[telemetryInteractEdata]="getTelemetryInteractEdata('textbooks', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, configService.telemetryLabels.pageId.contribute.projectContributions)"
 					[telemetryInteractObject]="telemetryInteractObject"
 					[telemetryInteractCdata]="telemetryInteractCdata"
-					[telemetryInteractPdata]="telemetryInteractPdata">{{ programsService.setTargetCollectionName(programDetails, 'plural') }}<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{contributorTextbooks.length || 0}}</span></div>
-					<div class="item cursor-pointer" *ngIf="userService.isContributingOrgAdmin()" suiTabHeader="3" (click)="setTelemetryPageId('user')"
+					[telemetryInteractPdata]="telemetryInteractPdata">{{ targetCollections }}<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{contributorTextbooks.length || 0}}</span></div>
+					<div class="item cursor-pointer" *ngIf="isContributingOrgAdmin" suiTabHeader="3" (click)="setTelemetryPageId('user')"
 					appTelemetryInteract
 					[telemetryInteractEdata]="getTelemetryInteractEdata('assign_users_to_project', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,configService.telemetryLabels.pageId.contribute.projectAssignUsers)"
 					[telemetryInteractObject]="telemetryInteractObject"
@@ -121,15 +121,15 @@
 				<div class="ui container p-0 m-0">
 				<div class="pt-10 text-capitalize fs-0-785 line-height-1-3 sb-pageSection-document ui grid mt-10">
 					<div class="twelve wide tablet five wide computer column">
-						<div *ngIf="userService.isContributingOrgAdmin()" class="sb-color-gray-100 d-inline-block br-2 pr-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.draft || 0}}</span> {{resourceService.frmelmnts.lbl.drafts}}</div>
-						<div *ngIf="userService.isContributingOrgAdmin()" class="sb-color-primary d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.review || 0}}</span> {{resourceService.frmelmnts.lbl.reviewInProgress}}</div>
-						<div *ngIf="userService.isContributingOrgAdmin()" class="sb-color-error d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.rejected || 0}}</span> {{resourceService.frmelmnts.lbl.notAccepted}}</div>
-						<div *ngIf="userService.isContributingOrgAdmin()" class="sb-color-warning d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.live || 0}}</span> {{resourceService.frmelmnts.lbl.sentForApproval}}</div>
-						<!-- <div *ngIf="userService.isContributingOrgAdmin()" class="sb-color-error d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts?.sourcingOrgStatus?.rejected || 0}}</span> {{resourceService.frmelmnts.lbl.notAccepted}}</div>
-						<div *ngIf="userService.isContributingOrgAdmin()" class="sb-color-warning d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts?.sourcingOrgStatus?.pending|| 0}}</span> {{resourceService.frmelmnts.lbl.sentForApproval}}</div> -->
+						<div *ngIf="isContributingOrgAdmin" class="sb-color-gray-100 d-inline-block br-2 pr-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.draft || 0}}</span> {{resourceService.frmelmnts.lbl.drafts}}</div>
+						<div *ngIf="isContributingOrgAdmin" class="sb-color-primary d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.review || 0}}</span> {{resourceService.frmelmnts.lbl.reviewInProgress}}</div>
+						<div *ngIf="isContributingOrgAdmin" class="sb-color-error d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.rejected || 0}}</span> {{resourceService.frmelmnts.lbl.notAccepted}}</div>
+						<div *ngIf="isContributingOrgAdmin" class="sb-color-warning d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.live || 0}}</span> {{resourceService.frmelmnts.lbl.sentForApproval}}</div>
+						<!-- <div *ngIf="isContributingOrgAdmin" class="sb-color-error d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts?.sourcingOrgStatus?.rejected || 0}}</span> {{resourceService.frmelmnts.lbl.notAccepted}}</div>
+						<div *ngIf="isContributingOrgAdmin" class="sb-color-warning d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts?.sourcingOrgStatus?.pending|| 0}}</span> {{resourceService.frmelmnts.lbl.sentForApproval}}</div> -->
 					</div>
 					<div class="twelve wide tablet seven wide computer column text-right">
-						<a class="fs-0-785 text-decor-none font-weight-bold sb-color-primary pt-10" href="{{ programDetails?.guidelines_url }}" target="_blank" *ngIf="programDetails?.guidelines_url" [ngClass]="{'mb-10': !userService.isContributingOrgAdmin()}"
+						<a class="fs-0-785 text-decor-none font-weight-bold sb-color-primary pt-10" href="{{ programDetails?.guidelines_url }}" target="_blank" *ngIf="programDetails?.guidelines_url" [ngClass]="{'mb-10': !isContributingOrgAdmin}"
 						appTelemetryInteract
 						[telemetryInteractEdata]="getTelemetryInteractEdata('view_content_guidelines_document', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
 						[telemetryInteractObject]="telemetryInteractObject"
@@ -138,14 +138,14 @@
 							<i class="file sb-file-icon outline icon pr-10 sb-color-primary"></i>
 							{{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
 						</a>
-						<button *ngIf="userService.isContributingOrgAdmin() || sessionContext?.currentRoles?.includes('REVIEWER')" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" (click)="showTextbookFiltersModal = true"
+						<button *ngIf="isContributingOrgAdmin || sessionContext?.currentRoles?.includes('REVIEWER')" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" (click)="showTextbookFiltersModal = true"
 						appTelemetryInteract
 						[telemetryInteractEdata]="getTelemetryInteractEdata(textbookFiltersApplied ? 'modify_filters' : 'filter_collections', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
 						[telemetryInteractObject]="telemetryInteractObject"
 						[telemetryInteractCdata]="telemetryInteractCdata"
 						[telemetryInteractPdata]="telemetryInteractPdata"> <i class="filter icon"></i>
 							<i [ngClass]="{'sb-dock-circle': textbookFiltersApplied}"></i>
-							<span *ngIf="!textbookFiltersApplied">{{resourceService.frmelmnts.lbl.addFilters | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName(programDetails, 'plural') }}</span>
+							<span *ngIf="!textbookFiltersApplied">{{resourceService.frmelmnts.lbl.addFilters | interpolate:'{TARGET_NAME}': targetCollections }}</span>
 							<span *ngIf="textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.modifyFilters }}</span>
 						</button>
 					</div>
@@ -157,7 +157,7 @@
 									<thead class="sb-table-header sb-table-thead-gray">
 										<tr>
 											<th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('name')">
-												{{programsService.setTargetCollectionName(programDetails)}} &nbsp;&nbsp;
+												{{targetCollection}} &nbsp;&nbsp;
 												<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>
 												<span  *ngIf="sortColumn == 'name'" class="d-inline-block">
 													<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
@@ -188,7 +188,7 @@
 													<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 												</span>
 											</th>
-											<th *ngIf="userService.isContributingOrgAdmin()" class="w-20">{{resourceService.frmelmnts.lbl.contentStatus}}</th>
+											<th *ngIf="isContributingOrgAdmin" class="w-20">{{resourceService.frmelmnts.lbl.contentStatus}}</th>
 											<th class="w-5"></th>
 										</tr>
 									</thead>
@@ -200,7 +200,7 @@
 											<td>{{contributorTextbook.medium}}</td>
 											<td>{{contributorTextbook.gradeLevel}}</td>
 											<td>{{contributorTextbook.subject}}</td>
-											<td *ngIf="userService.isContributingOrgAdmin()">
+											<td *ngIf="isContributingOrgAdmin">
 												<div class="text-capitalize fs-0-785">
 													<span class="sb-color-primary d-inline-block br-2 pr-5">{{contributorTextbook.reviewCount || 0}}  {{resourceService.frmelmnts.lbl.pending}}</span>
 													<span class="sb-color-error d-inline-block br-2 px-5">{{contributorTextbook.rejectedCount || 0}} {{resourceService.frmelmnts.lbl.notAccepted}}</span>
@@ -404,7 +404,7 @@
 
 <sui-modal *ngIf="showTextbookFiltersModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'" class="sb-modal" appBodyScroll (dismissed)="showTextbookFiltersModal = false" #prefModal>
 	<div class="sb-modal-header">
-		{{resourceService.frmelmnts.lbl.addFilters | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName(programDetails, 'plural')}}
+		{{resourceService.frmelmnts.lbl.addFilters | interpolate:'{TARGET_NAME}': targetCollections}}
 	</div>
 	<div class="sb-modal-content desktop-o-x-unset">
 		<p>{{resourceService.frmelmnts.lbl.pleaseSelectFiltersYouWishToAdd}}</p>
