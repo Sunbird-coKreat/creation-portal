@@ -1040,7 +1040,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   attachContentToTextbook (action) {
-    this.helperService.manageSourcingActions(action, this.sessionContext, this.unitIdentifier, this.contentMetaData, this.FormControl.value.rejectComment, this.isMetadataOverridden);
+    let rejectComment = '';
+    if (action === 'reject' && this.FormControl.value.rejectComment.length) {
+      rejectComment = this.FormControl.value.rejectComment;
+    }
+    this.helperService.manageSourcingActions(action, this.sessionContext, this.unitIdentifier, this.contentMetaData, rejectComment, this.isMetadataOverridden);
   }
 
   ngOnDestroy() {
