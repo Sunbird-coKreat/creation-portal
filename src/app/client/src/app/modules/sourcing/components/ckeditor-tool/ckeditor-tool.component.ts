@@ -89,7 +89,7 @@ export class CkeditorToolComponent implements OnInit, AfterViewInit, OnChanges {
       });
     this.editorConfig = _.assign({
       toolbar: ['bold', '|', 'italic', '|', 'underline',
-        '|', 'numberedList', '|', 'fontSize', '|', 'subscript', '|', 'superscript', '|', 'MathText', '|'
+        '|', 'numberedList', '|', 'fontSize', '|', 'subscript', '|', 'superscript', '|', 'MathText', '|', 'specialCharacters', '|'
       ],
       fontSize: {
         options: [
@@ -109,7 +109,7 @@ export class CkeditorToolComponent implements OnInit, AfterViewInit, OnChanges {
         styles: ['full', 'alignLeft', 'alignRight', 'alignCenter']
       },
       isReadOnly: false,
-      removePlugins: ['ImageCaption', 'mathtype', 'ChemType']
+      removePlugins: ['EasyImage', 'ImageCaption', 'mathtype', 'ChemType']
     }, this.editorConfig);
 
     this.acceptVideoType = this.getAcceptType(this.assetConfig.videoFiles, 'video');
