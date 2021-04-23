@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserService, FrameworkService, ProgramsService, ContentService } from '@sunbird/core';
+import { UserService, FrameworkService, ProgramsService, ContentService, NotificationService } from '@sunbird/core';
 import { IUserProfile, ConfigService, ToasterService, ResourceService,} from '@sunbird/shared';
 import { TelemetryService } from '@sunbird/telemetry';
 import { IContentEditorComponentInput } from '../../interfaces';
@@ -41,7 +41,7 @@ export class QuestionSetEditorComponent implements OnInit {
     private contentService: ContentService, public toasterService: ToasterService,
     private resourceService: ResourceService, private programStageService: ProgramStageService,
     private helperService: HelperService, private collectionHierarchyService: CollectionHierarchyService,
-    private sourcingService: SourcingService, public router: Router
+    private sourcingService: SourcingService, public router: Router, private notificationService: NotificationService,
     ) {
       const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
       const deviceId = (<HTMLInputElement>document.getElementById('deviceId'));
@@ -305,8 +305,7 @@ export class QuestionSetEditorComponent implements OnInit {
       }
       break;
     case "sendForCorrections": 
-      this.toasterService.success("This action is not enabled on the system yet");
-      this.programStageService.removeLastStage();
+      this.requestCorrectionsBySourcing(event.identifier, event.comment)
       break;
     case "sourcingApprove":
       this.helperService.manageSourcingActions('accept', this.sessionContext, this.unitIdentifier, this.collectionDetails);
@@ -339,5 +338,51 @@ export class QuestionSetEditorComponent implements OnInit {
         };
         this.sourcingService.apiErrorHandling(err, errInfo);
       });
+  }
+
+  requestCorrectionsBySourcing(questionsetId, rejectComment) {
+    if (rejectComment) {
+      this.helperService.updateQuestionSetStatus(questionsetId, "Draft", rejectComment)
+      .subscribe(res => {
+        this.contentStatusNotify('Reject');
+        this.toasterService.success(this.resourceService.messages.smsg.m0069);
+        this.programStageService.removeLastStage();
+      }, (err) => {
+        const errInfo = {
+          errorMsg: this.resourceService.messages.fmsg.m00106,
+          telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+          env : this.activatedRoute.snapshot.data.telemetry.env
+        };
+        this.sourcingService.apiErrorHandling(err, errInfo);
+      });
+    }
+  }
+
+  contentStatusNotify(status) {
+    if (!this.sessionContext.nominationDetails && this.collectionDetails.organisationId && status !== 'Request') {
+      const programDetails = { name: this.programContext.name};
+      this.helperService.prepareNotificationData(status, this.collectionDetails, programDetails);
+    } else {
+      const notificationForContributor = {
+        user_id: this.collectionDetails.createdBy,
+        content: { name: this.collectionDetails.name },
+        org: { name:  _.get(this.sessionContext, 'nominationDetails.orgData.name') || '--'},
+        program: { name: this.programContext.name },
+        status: status
+      };
+      this.notificationService.onAfterContentStatusChange(notificationForContributor)
+      .subscribe((res) => {  });
+      if (!_.isEmpty(this.sessionContext.nominationDetails) && !_.isEmpty(this.sessionContext.nominationDetails.user_id) && status !== 'Request') {
+        const notificationForPublisher = {
+          user_id: this.sessionContext.nominationDetails.user_id,
+          content: { name: this.collectionDetails.name },
+          org: { name:  this.sessionContext.nominationDetails.orgData.name},
+          program: { name: this.programContext.name },
+          status: status
+        };
+        this.notificationService.onAfterContentStatusChange(notificationForPublisher)
+        .subscribe((res) => {  });
+      }
+    }
   }
 }

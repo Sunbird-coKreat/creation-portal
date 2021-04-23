@@ -385,8 +385,6 @@ export class HelperService {
     });
   }
 
-
-
   getProgramConfiguration(reqData) {
     const option = {
       url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.CONFIGURATION_SEARCH}`,
@@ -766,5 +764,24 @@ export class HelperService {
       this.toasterService.error(this.resourceService.messages.fmsg.m00100);
       console.error('origin data missing');
     }
+  }
+
+  updateQuestionSetStatus(questionsetId, status, comment?) {
+    const requestBody = {
+      request: {
+        questionset: {
+          status: status
+        }
+      }
+    };
+
+    // if (!_.isUndefined(comment)) {
+    //   requestBody.request.questionset['requestChanges'] = _.trim(comment);
+    // }
+    const option = {
+      url: `questionset/v4/system/update/${questionsetId}`,
+      data: requestBody
+    };
+    return this.actionService.patch(option);
   }
 }
