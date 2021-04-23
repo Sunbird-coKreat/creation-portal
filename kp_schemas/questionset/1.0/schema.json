@@ -576,6 +576,9 @@
     },
     "maxAttempts": {
       "type": "number"
+    },
+    "requestChanges": {
+      "type": "string"
     }
   }
 }
